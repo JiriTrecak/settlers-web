@@ -1,10 +1,9 @@
 import { Application } from "pixi.js";
 import type { GridPos } from "../shared";
-import type { MapCatalogEntry } from "../assets/map";
-import { MAPS, generateMap, mapViewFromGrid, originalMapToGrid, allDecorations, type MapView, type MapDecoration } from "../sim";
+import { MAPS, generateMap, mapViewFromGrid, allDecorations, type MapView, type MapDecoration } from "../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets } from "../render";
 import { lookAtMinimap, mountHud, paintMinimap, paintMinimapViewport, type HudMapOption } from "../ui";
-import { fetchMapCatalog, fetchOriginalMap } from "./maps";
+import { fetchDumpedMap, fetchMapCatalog, type MapCatalogEntry } from "./maps";
 
 const WASD_SPEED = 900;
 
@@ -250,9 +249,11 @@ export class GameApp {
     }
     const entry = this.catalog.find((m) => m.id === id);
     if (!entry) throw new Error(`unknown map ${id}`);
-    const map = await fetchOriginalMap(entry.file);
-    const grid = originalMapToGrid(map);
-    return { grid, decorations: allDecorations(mapViewFromGrid(grid), map) };
+    const dumped = await fetchDumpedMap(entry.file);
+    return {
+      grid: dumped.grid,
+      decorations: allDecorations(mapViewFromGrid(dumped.grid), dumped.decorations),
+    };
   }
 
   stop(): void {

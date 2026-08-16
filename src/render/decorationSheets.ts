@@ -1,5 +1,4 @@
 import { Texture } from "pixi.js";
-import type { Sprite as CatalogSprite } from "../assets/catalog/sprite";
 
 const BASE = "/graphics/";
 
@@ -14,6 +13,15 @@ export type DecorationSheets = {
   trees: PropFrame[][];
   stones: PropFrame[];
   waves: PropFrame[];
+};
+
+type CatalogSprite = {
+  path: string;
+  group?: string;
+  frame?: number;
+  offsetX: number;
+  offsetY: number;
+  shadow?: { path: string; offsetX: number; offsetY: number };
 };
 
 type CatalogFile = { sprites?: CatalogSprite[] };

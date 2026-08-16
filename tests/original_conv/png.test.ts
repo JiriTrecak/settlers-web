@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { encodePng } from "../../src/assets/png";
+import { encodePng } from "../../original_conv/png";
 
 describe("png", () => {
   it("writes a valid signature and IHDR", () => {

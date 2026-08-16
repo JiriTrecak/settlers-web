@@ -1,12 +1,13 @@
 /**
- * Copy original S3 maps into assets/maps + catalog.json.
+ * Convert original S3 maps into native JSON dumps + catalog.json.
  * Run: npm run dump:maps
  */
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
-import type { MapCatalogEntry } from "../src/assets/map/catalog";
-import { parseOriginalMap } from "../src/assets/map/parseOriginalMap";
+import type { MapCatalogEntry } from "../src/sim/dumpedMap";
+import { parseOriginalMap } from "./map/parseOriginalMap";
+import { toDumpedMap } from "./map/toNative";
 import { originalMapDir, REPO_ROOT } from "./original";
 
 const SRC = originalMapDir();
@@ -45,7 +46,7 @@ async function listMaps(dir: string): Promise<string[]> {
 }
 
 if (!existsSync(SRC)) {
-  console.error(`missing ${SRC} — extract S3 first (scripts/extract-s3.sh)`);
+  console.error(`missing ${SRC} — extract S3 first (original_conv/extract-s3.sh)`);
   process.exit(1);
 }
 
@@ -57,13 +58,13 @@ for (const { dir, group } of GROUPS) {
   files.sort((a, b) => a.localeCompare(b));
   for (const abs of files) {
     const rel = relative(join(SRC, dir), abs).replace(/\\/g, "/");
-    const destRel = `${group}/${rel}`;
+    const destRel = `${group}/${rel.replace(/\.map$/i, ".json")}`;
     const dest = join(OUT, destRel);
     await mkdir(dirname(dest), { recursive: true });
     try {
-      const buf = await readFile(abs);
-      const parsed = parseOriginalMap(buf);
-      await copyFile(abs, dest);
+      const parsed = parseOriginalMap(await readFile(abs));
+      const dumped = toDumpedMap(parsed);
+      await writeFile(dest, JSON.stringify(dumped));
       catalog.push({
         id: slug(`${group}/${rel}`),
         name: prettyName(rel.split("/").pop()!),

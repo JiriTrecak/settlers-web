@@ -7,9 +7,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "dump:graphics": "vite-node scripts/dump-graphics.ts",
-    "dump:landscape-atlas": "vite-node scripts/dump-landscape-atlas.ts",
-    "dump:maps": "vite-node scripts/dump-maps.ts"
+    "dump:graphics": "vite-node original_conv/dump-graphics.ts",
+    "dump:landscape-atlas": "vite-node original_conv/dump-landscape-atlas.ts",
+    "dump:maps": "vite-node original_conv/dump-maps.ts"
   },
   "dependencies": {
     "pixi.js": "^8.19.0"

@@ -5,8 +5,8 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { DatArchive, packLandscapeAtlas, parseDatFileName } from "../src/assets/dat";
-import { encodePng } from "../src/assets/png";
+import { DatArchive, packLandscapeAtlas, parseDatFileName } from "./dat";
+import { encodePng } from "./png";
 import { ORIGINAL_GFX, REPO_ROOT } from "./original";
 
 const GFX = ORIGINAL_GFX;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildings, findBuildings, originKey, primaryRef } from "../../src/assets/catalog";
+import { buildings, findBuildings, originKey, primaryRef } from "../../original_conv/catalog";
 
 describe("building catalog", () => {
   it("has all four civs", () => {

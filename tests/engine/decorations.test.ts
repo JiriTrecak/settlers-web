@@ -1,8 +1,9 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { parseOriginalMap } from "../../src/assets/map/parseOriginalMap";
-import { mapDecorations, stoneCapacity, treeTypeAt, waveDecorations } from "../../src/sim/decorations";
+import { stoneCapacity } from "../../original_conv/map/objects";
+import { isDumpedMap } from "../../src/sim/dumpedMap";
+import { treeTypeAt, waveDecorations } from "../../src/sim/decorations";
 import { MapGrid } from "../../src/sim/mapGrid";
 import { mapViewFromGrid } from "../../src/sim/mapView";
 
@@ -36,15 +37,15 @@ describe("waveDecorations", () => {
   });
 });
 
-describe("mapDecorations T1", () => {
-  const path = "assets/maps/tutorial/T1.MAP";
+describe("dumped T1 decorations", () => {
+  const path = "assets/maps/tutorial/T1.json";
   const has = existsSync(path);
 
-  it.skipIf(!has)("reads trees and stones from the object byte", async () => {
-    const map = parseOriginalMap(await readFile(path));
-    expect(map.objects.length).toBe(map.width * map.width);
-    const decos = mapDecorations(map);
-    expect(decos.filter((d) => d.kind === "tree").length).toBeGreaterThan(10);
-    expect(decos.filter((d) => d.kind === "stone").length).toBeGreaterThan(0);
+  it.skipIf(!has)("has trees and stones", async () => {
+    const data: unknown = JSON.parse(await readFile(path, "utf8"));
+    expect(isDumpedMap(data)).toBe(true);
+    if (!isDumpedMap(data)) return;
+    expect(data.trees.length).toBeGreaterThan(10);
+    expect(data.stones.length).toBeGreaterThan(0);
   });
 });

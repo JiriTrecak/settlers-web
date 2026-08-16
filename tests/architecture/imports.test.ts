@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const simRoot = join(repoRoot, "src/sim");
 
 async function walkTs(dir: string): Promise<string[]> {
   const out: string[] = [];
@@ -22,7 +21,7 @@ async function walkTs(dir: string): Promise<string[]> {
 
 describe("architecture", () => {
   it("sim does not import pixi.js", async () => {
-    const files = await walkTs(simRoot);
+    const files = await walkTs(join(repoRoot, "src/sim"));
     expect(files.length).toBeGreaterThan(0);
     for (const file of files) {
       const text = await readFile(file, "utf8");
@@ -30,12 +29,12 @@ describe("architecture", () => {
     }
   });
 
-  it("assets/dat does not import pixi.js", async () => {
-    const files = await walkTs(join(repoRoot, "src/assets"));
+  it("src does not import original_conv", async () => {
+    const files = await walkTs(join(repoRoot, "src"));
     expect(files.length).toBeGreaterThan(0);
     for (const file of files) {
       const text = await readFile(file, "utf8");
-      expect(text, file).not.toMatch(/pixi\.js/);
+      expect(text, file).not.toMatch(/from\s+["'][^"']*original_conv/);
     }
   });
 });

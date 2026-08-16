@@ -5,18 +5,18 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { DatArchive, packLandscapeAtlas, parseDatFileName, type DecodedImage, type SeqKind } from "../src/assets/dat";
-import { encodePng } from "../src/assets/png";
-import { clipPath, framesOf, loadAllMovableClips } from "../src/assets/catalog/movables";
+import { DatArchive, packLandscapeAtlas, parseDatFileName, type DecodedImage, type SeqKind } from "./dat";
+import { encodePng } from "./png";
+import { clipPath, framesOf, loadAllMovableClips } from "./catalog/movables";
 import { landscapeInfo } from "../src/shared/landscape";
-import type { BuildingEntry } from "../src/assets/catalog/types";
-import type { Category, LayerRef, Sprite } from "../src/assets/catalog/sprite";
+import type { BuildingEntry } from "./catalog/types";
+import type { Category, LayerRef, Sprite } from "./catalog/sprite";
 import { ORIGINAL_GFX, REPO_ROOT } from "./original";
 
 const ROOT = REPO_ROOT;
 const GFX = ORIGINAL_GFX;
 const OUT = join(ROOT, "assets/graphics");
-const MOVABLES = join(ROOT, "src/assets/catalog/movables");
+const MOVABLES = join(ROOT, "original_conv/catalog/movables");
 
 type Job = {
   id: string;
@@ -64,7 +64,7 @@ function layerOf(rel: string, img: DecodedImage): LayerRef {
   };
 }
 
-const buildingsJson = JSON.parse(await readFile(join(ROOT, "src/assets/catalog/buildings.json"), "utf8")) as {
+const buildingsJson = JSON.parse(await readFile(join(ROOT, "original_conv/catalog/buildings.json"), "utf8")) as {
   buildings: BuildingEntry[];
 };
 
@@ -187,7 +187,7 @@ for (const p of props) {
 }
 
 if (!existsSync(GFX)) {
-  console.error(`missing ${GFX} — extract S3 first (scripts/extract-s3.sh)`);
+  console.error(`missing ${GFX} — extract S3 first (original_conv/extract-s3.sh)`);
   process.exit(1);
 }
 

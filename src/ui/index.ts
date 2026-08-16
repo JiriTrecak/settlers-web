@@ -49,7 +49,7 @@ export function mountHud(
     document.createTextNode("drag / WASD pan  ·  wheel zoom  ·  minimap drag  ·  click tile  ·  space fit  ·  1–9 maps  ·  "),
   );
   const assetsLink = document.createElement("a");
-  assetsLink.href = "/viewer.html";
+  assetsLink.href = "/original_conv/viewer/index.html";
   assetsLink.className = "hud-link";
   assetsLink.textContent = "assets";
   help.append(assetsLink);

@@ -1,9 +1,9 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { originalLandscapeType } from "../../src/assets/map/landscape";
-import { checksumValid, parseOriginalMap } from "../../src/assets/map/parseOriginalMap";
-import { originalMapToGrid } from "../../src/sim/originalMap";
+import { originalLandscapeType } from "../../original_conv/map/landscape";
+import { checksumValid, parseOriginalMap } from "../../original_conv/map/parseOriginalMap";
+import { toDumpedMap } from "../../original_conv/map/toNative";
 
 describe("original landscape ids", () => {
   it("maps water/grass/mountain like Java OriginalLandscape", () => {
@@ -17,24 +17,21 @@ describe("original landscape ids", () => {
 });
 
 describe("parse T1.MAP", () => {
-  const path = "assets/maps/tutorial/T1.MAP";
+  const path = "original/Map/TUTORIAL/T1.MAP";
   const has = existsSync(path);
 
-  it.skipIf(!has)("checksums and reads a square landscape", async () => {
+  it.skipIf(!has)("checksums and dumps native landscape", async () => {
     const buf = await readFile(path);
     expect(checksumValid(buf)).toBe(true);
     const map = parseOriginalMap(buf);
     expect(map.width).toBeGreaterThanOrEqual(32);
     expect(map.width).toBeLessThanOrEqual(1024);
     expect(map.landscape.length).toBe(map.width * map.width);
-    expect(map.heights.length).toBe(map.width * map.width);
-    const grid = originalMapToGrid(map);
-    expect(grid.width).toBe(map.width);
-    expect(grid.landscapeAt(0, 0)).toBeTruthy();
-    const kinds = new Set<string>();
-    for (let y = 0; y < map.width; y += 8) {
-      for (let x = 0; x < map.width; x += 8) kinds.add(grid.landscapeAt(x, y));
-    }
+    const dumped = toDumpedMap(map);
+    expect(dumped.width).toBe(map.width);
+    expect(dumped.landscape).toHaveLength(map.width * map.width);
+    expect(dumped.landscape[0]).toBeTruthy();
+    const kinds = new Set(dumped.landscape.filter((_, i) => i % (map.width * 8) === 0));
     expect([...kinds].some((k) => k.startsWith("water") || k === "grass" || k === "sand")).toBe(true);
   });
 });

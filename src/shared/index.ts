@@ -1,4 +1,4 @@
-export type { Action, GridPos, ImageKind, ImageRef } from "./types";
+export type { Action, GridPos } from "./types";
 export {
   HEIGHT_X,
   HEIGHT_Y,

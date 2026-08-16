@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TEXTURE_SIZE } from "../../src/assets/dat/atlasPositions";
+import { TEXTURE_SIZE } from "../../src/render/atlasPositions";
 import { buildLandscapeGeometry, landscapeTriangleCount } from "../../src/render/landscapeGeometry";
 import { realModulo, triangleTexture } from "../../src/render/landscapeUv";
 import { Camera } from "../../src/render/camera";

@@ -1,4 +1,14 @@
-import { parseOriginalMap, type MapCatalogEntry, type ParsedOriginalMap } from "../assets/map";
+import {
+  decorationsFromDumpedMap,
+  gridFromDumpedMap,
+  isDumpedMap,
+  type DumpedMap,
+  type MapCatalogEntry,
+} from "../sim/dumpedMap";
+import type { MapDecoration } from "../sim/decorations";
+import type { MapGrid } from "../sim/mapGrid";
+
+export type { MapCatalogEntry, MapGroup } from "../sim/dumpedMap";
 
 export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   try {
@@ -13,12 +23,16 @@ export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   }
 }
 
-export async function fetchOriginalMap(file: string): Promise<ParsedOriginalMap> {
+export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; decorations: MapDecoration[] }> {
   const path = file
     .split("/")
     .map((part) => encodeURIComponent(part))
     .join("/");
   const res = await fetch(`/maps/${path}`);
   if (!res.ok) throw new Error(`map ${file}: ${res.status}`);
-  return parseOriginalMap(await res.arrayBuffer());
+  const data: unknown = await res.json();
+  if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);
+  return { grid: gridFromDumpedMap(data), decorations: decorationsFromDumpedMap(data) };
 }
+
+export type { DumpedMap };

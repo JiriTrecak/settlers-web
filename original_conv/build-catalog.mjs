@@ -7,7 +7,7 @@ const javaBuildings = join(
   root,
   "../SettlersJava/jsettlers.common/src/main/resources/jsettlers/common/buildings",
 );
-const out = join(root, "src/assets/catalog/buildings.json");
+const out = join(root, "original_conv/catalog/buildings.json");
 
 const civs = ["roman", "egyptian", "asian", "amazon"];
 const imgRe = /<image\b([^>]*)\/?>/gi;

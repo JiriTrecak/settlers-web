@@ -1,6 +1,4 @@
-/** Original S3 landscape bytes → our LandscapeType. Java OriginalLandscape. */
-
-import type { LandscapeType } from "../../shared/landscape";
+import type { LandscapeType } from "../../src/shared/landscape";
 
 const ORIGINAL_LANDSCAPE: Record<number, LandscapeType> = {
   0: "water1",

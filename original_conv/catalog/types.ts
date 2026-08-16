@@ -1,10 +1,8 @@
-import type { ImageKind } from "../../shared";
-
 export type Civ = "roman" | "egyptian" | "asian" | "amazon";
 
 export type CatalogRef = {
   file: number;
-  kind: ImageKind | "torso" | "shadow";
+  kind: "settler" | "gui" | "landscape" | "torso" | "shadow";
   sequence: number;
   frame: number;
 };

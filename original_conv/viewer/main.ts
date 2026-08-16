@@ -1,4 +1,4 @@
-import { compositeSettler, toImageData, type DecodedImage } from "../assets/dat";
+import { compositeSettler, toImageData, type DecodedImage } from "../dat";
 import {
   CATEGORIES,
   catalogItems,
@@ -13,7 +13,7 @@ import {
   type Category,
   type Race,
   type Sprite,
-} from "../assets/catalog/sprite";
+} from "../catalog/sprite";
 
 const BASE = "/graphics/";
 const LIMIT = 480;

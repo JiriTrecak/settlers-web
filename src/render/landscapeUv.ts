@@ -1,6 +1,6 @@
 /** Java Background triangle UVs: atlas cell + diamond orientation + border blends. */
 
-import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "../assets/dat/atlasPositions";
+import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "./atlasPositions";
 import { TILE_WIDTH, isRiver, type LandscapeType, landscapeInfo } from "../shared";
 
 /** River1–4 are animation frames of the same blend; mixed triangles still need a river slot. */

@@ -1,4 +1,4 @@
-import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "./atlasPositions";
+import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "../../src/render/atlasPositions";
 import { EMPTY_IMAGE } from "./decodeBitmap";
 import type { DecodedImage } from "./types";
 
