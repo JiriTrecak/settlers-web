@@ -2,7 +2,7 @@ import { Texture } from "pixi.js";
 
 export const LANDSCAPE_ATLAS_URL = "/graphics/landscape-atlas.png";
 
-/** Java 1024² landscape atlas dumped from DAT file 0. */
+/** Loads assets/graphics/landscape-atlas.png (1024², nearest, no mips). */
 export async function loadLandscapeAtlas(): Promise<Texture | null> {
   try {
     const img = new Image();

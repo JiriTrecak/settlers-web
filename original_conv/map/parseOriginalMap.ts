@@ -1,8 +1,4 @@
-/**
- * Original Settlers III .map reader.
- * Layout + XOR decrypt copied from Java OriginalMapFileContentReader.
- * "BE" ints in that file are actually little-endian.
- */
+/** Original Settlers III .map reader. XOR-decrypts segments. Integers are little-endian. */
 
 const VERSION_DEFAULT = 0x0a;
 const VERSION_AMAZONS = 0x0b;

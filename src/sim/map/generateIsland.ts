@@ -1,5 +1,5 @@
-import { HEX_DELTAS, isRiver, isWater, landscapeInfo, type LandscapeType } from "../shared/landscape";
-import { seedRng, type Rng } from "./rng";
+import { HEX_DELTAS, isRiver, isWater, landscapeInfo, type LandscapeType } from "../../shared";
+import { seedRng, type Rng } from "../rng/rng";
 import { MapGrid } from "./mapGrid";
 
 export type MapId = "coast" | "isles" | "peak";
@@ -17,7 +17,7 @@ export const MAPS: readonly MapDef[] = [
   { id: "peak", name: "Snow Peak", seed: 333, size: 96 },
 ];
 
-/** Elevation staircase. Adjacent verts may only differ by one step so Java blend diamonds fire. */
+/** Elevation staircase. Adjacent verts may only differ by one step so border blends can fire. */
 const ELEV_CHAIN = [
   "water8",
   "water7",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Camera } from "../../src/render/camera";
+import { Camera } from "../../src/render/camera/camera";
 import { gridToWorld } from "../../src/shared";
-import { gridToMinimapPx, minimapPxToGrid, viewportMinimapQuad } from "../../src/ui/minimap";
+import { gridToMinimapPx, minimapPxToGrid, viewportMinimapQuad } from "../../src/ui/minimap/minimap";
 
 function quadArea(quad: { x: number; y: number }[]): number {
   let area = 0;

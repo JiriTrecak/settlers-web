@@ -1,4 +1,4 @@
-/** [gridX, gridY, cellSize] — Java Background.TEXTURE_POSITIONS, 32px grid in a 1024 atlas. */
+/** [gridX, gridY, cellSize] — 32px cells in the 1024 landscape atlas. */
 export const TEXTURE_SIZE = 1024;
 export const TEXTURE_GRID = 32;
 

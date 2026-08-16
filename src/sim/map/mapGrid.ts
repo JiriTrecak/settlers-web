@@ -3,7 +3,7 @@ import {
   LANDSCAPE_TYPES,
   landscapeIndex,
   type LandscapeType,
-} from "../shared/landscape";
+} from "../../shared";
 
 export class MapGrid {
   readonly width: number;

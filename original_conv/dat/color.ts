@@ -2,16 +2,16 @@ import type { DatColor } from "./types";
 
 export type { DatColor };
 
-/** Java Color.cnv5to8 / cnv6to8 — truncates toward 0. */
+/** Expand 5-bit / 6-bit channels to 8-bit, truncating toward 0. */
 const cnv5 = (v: number): number => ((v & 31) * 255) / 31 | 0;
 const cnv6 = (v: number): number => ((v & 63) * 255) / 63 | 0;
 
-/** Java Color.convert565to8888 → RGBA bytes. */
+/** RGB565 packed → RGBA bytes. */
 export function rgb565ToRgba(c: number): [number, number, number, number] {
   return [cnv5(c >> 11), cnv6(c >> 5), cnv5(c), 255];
 }
 
-/** Java Color.convert555to8888 → RGBA bytes. */
+/** RGB555 packed → RGBA bytes. */
 export function rgb555ToRgba(c: number): [number, number, number, number] {
   return [cnv5(c >> 10), cnv5(c >> 5), cnv5(c), 255];
 }

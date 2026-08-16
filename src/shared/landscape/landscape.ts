@@ -1,6 +1,5 @@
 /**
- * S3 landscape types. Colors and image ids from Java ELandscapeType.
- * Domain API is the string; s3Image is the DAT landscape sequence index.
+ * Landscape types. Domain API is the string; atlasSlot indexes landscape-atlas.png.
  */
 
 export const LANDSCAPE_TYPES = [
@@ -50,8 +49,8 @@ export const landscapeIndex: Record<LandscapeType, number> = Object.fromEntries(
 ) as Record<LandscapeType, number>;
 
 type LandscapeInfo = {
-  s3Image: number;
-  /** sRGB 0–1, from Java Color(0xffRRGGBB) */
+  atlasSlot: number;
+  /** sRGB 0–1 */
   color: readonly [number, number, number];
   water: boolean;
   flat: boolean;
@@ -64,43 +63,43 @@ const rgb = (hex: number): readonly [number, number, number] => [
 ];
 
 export const landscapeInfo: Record<LandscapeType, LandscapeInfo> = {
-  grass: { s3Image: 0, color: rgb(0x156e15), water: false, flat: false },
-  dryGrass: { s3Image: 1, color: rgb(0xad8432), water: false, flat: false },
-  desert: { s3Image: 18, color: rgb(0xa09738), water: false, flat: false },
-  earth: { s3Image: 2, color: rgb(0xa2653e), water: false, flat: false },
-  mountain: { s3Image: 21, color: rgb(0x5c5c5c), water: false, flat: false },
-  snow: { s3Image: 24, color: rgb(0xc0cdcf), water: false, flat: false },
-  sand: { s3Image: 31, color: rgb(0xadab00), water: false, flat: false },
-  flattened: { s3Image: 35, color: rgb(0x105910), water: false, flat: false },
-  river1: { s3Image: 17, color: rgb(0x4786fc), water: false, flat: false },
-  river2: { s3Image: 17, color: rgb(0x4786fc), water: false, flat: false },
-  river3: { s3Image: 17, color: rgb(0x4786fc), water: false, flat: false },
-  river4: { s3Image: 17, color: rgb(0x4786fc), water: false, flat: false },
-  mountainBorder: { s3Image: 22, color: rgb(0x424142), water: false, flat: false },
-  mountainBorderOuter: { s3Image: 23, color: rgb(0x105910), water: false, flat: false },
-  water1: { s3Image: 17, color: rgb(0x1863f0), water: true, flat: true },
-  water2: { s3Image: 16, color: rgb(0x1562e0), water: true, flat: true },
-  water3: { s3Image: 15, color: rgb(0x1260d0), water: true, flat: true },
-  water4: { s3Image: 14, color: rgb(0x0e5cc8), water: true, flat: true },
-  water5: { s3Image: 13, color: rgb(0x0c53c0), water: true, flat: true },
-  water6: { s3Image: 12, color: rgb(0x084cb8), water: true, flat: true },
-  water7: { s3Image: 11, color: rgb(0x0443b0), water: true, flat: true },
-  water8: { s3Image: 10, color: rgb(0x003cab), water: true, flat: true },
-  moor: { s3Image: 7, color: rgb(0x003f1c), water: false, flat: true },
-  moorBorder: { s3Image: 8, color: rgb(0x003f1c), water: false, flat: true },
-  moorBorderOuter: { s3Image: 9, color: rgb(0x003f1c), water: false, flat: false },
-  flattenedDesert: { s3Image: 217, color: rgb(0x949200), water: false, flat: false },
-  sharpFlattenedDesert: { s3Image: 217, color: rgb(0x949200), water: false, flat: false },
-  gravel: { s3Image: 230, color: rgb(0x3a3a3a), water: false, flat: false },
-  desertBorder: { s3Image: 19, color: rgb(0x949200), water: false, flat: false },
-  desertBorderOuter: { s3Image: 20, color: rgb(0x949200), water: false, flat: false },
-  snowBorder: { s3Image: 25, color: rgb(0xd7fffe), water: false, flat: false },
-  snowBorderOuter: { s3Image: 26, color: rgb(0xd7fffe), water: false, flat: false },
-  mud: { s3Image: 4, color: rgb(0x0e87cc), water: false, flat: false },
-  mudBorder: { s3Image: 5, color: rgb(0x0e87cc), water: false, flat: false },
-  mudBorderOuter: { s3Image: 6, color: rgb(0x0e87cc), water: false, flat: false },
-  road: { s3Image: 34, color: rgb(0x156e15), water: false, flat: false },
-  dryEarth: { s3Image: 36, color: rgb(0xadab00), water: false, flat: false },
+  grass: { atlasSlot: 0, color: rgb(0x156e15), water: false, flat: false },
+  dryGrass: { atlasSlot: 1, color: rgb(0xad8432), water: false, flat: false },
+  desert: { atlasSlot: 18, color: rgb(0xa09738), water: false, flat: false },
+  earth: { atlasSlot: 2, color: rgb(0xa2653e), water: false, flat: false },
+  mountain: { atlasSlot: 21, color: rgb(0x5c5c5c), water: false, flat: false },
+  snow: { atlasSlot: 24, color: rgb(0xc0cdcf), water: false, flat: false },
+  sand: { atlasSlot: 31, color: rgb(0xadab00), water: false, flat: false },
+  flattened: { atlasSlot: 35, color: rgb(0x105910), water: false, flat: false },
+  river1: { atlasSlot: 17, color: rgb(0x4786fc), water: false, flat: false },
+  river2: { atlasSlot: 17, color: rgb(0x4786fc), water: false, flat: false },
+  river3: { atlasSlot: 17, color: rgb(0x4786fc), water: false, flat: false },
+  river4: { atlasSlot: 17, color: rgb(0x4786fc), water: false, flat: false },
+  mountainBorder: { atlasSlot: 22, color: rgb(0x424142), water: false, flat: false },
+  mountainBorderOuter: { atlasSlot: 23, color: rgb(0x105910), water: false, flat: false },
+  water1: { atlasSlot: 17, color: rgb(0x1863f0), water: true, flat: true },
+  water2: { atlasSlot: 16, color: rgb(0x1562e0), water: true, flat: true },
+  water3: { atlasSlot: 15, color: rgb(0x1260d0), water: true, flat: true },
+  water4: { atlasSlot: 14, color: rgb(0x0e5cc8), water: true, flat: true },
+  water5: { atlasSlot: 13, color: rgb(0x0c53c0), water: true, flat: true },
+  water6: { atlasSlot: 12, color: rgb(0x084cb8), water: true, flat: true },
+  water7: { atlasSlot: 11, color: rgb(0x0443b0), water: true, flat: true },
+  water8: { atlasSlot: 10, color: rgb(0x003cab), water: true, flat: true },
+  moor: { atlasSlot: 7, color: rgb(0x003f1c), water: false, flat: true },
+  moorBorder: { atlasSlot: 8, color: rgb(0x003f1c), water: false, flat: true },
+  moorBorderOuter: { atlasSlot: 9, color: rgb(0x003f1c), water: false, flat: false },
+  flattenedDesert: { atlasSlot: 217, color: rgb(0x949200), water: false, flat: false },
+  sharpFlattenedDesert: { atlasSlot: 217, color: rgb(0x949200), water: false, flat: false },
+  gravel: { atlasSlot: 230, color: rgb(0x3a3a3a), water: false, flat: false },
+  desertBorder: { atlasSlot: 19, color: rgb(0x949200), water: false, flat: false },
+  desertBorderOuter: { atlasSlot: 20, color: rgb(0x949200), water: false, flat: false },
+  snowBorder: { atlasSlot: 25, color: rgb(0xd7fffe), water: false, flat: false },
+  snowBorderOuter: { atlasSlot: 26, color: rgb(0xd7fffe), water: false, flat: false },
+  mud: { atlasSlot: 4, color: rgb(0x0e87cc), water: false, flat: false },
+  mudBorder: { atlasSlot: 5, color: rgb(0x0e87cc), water: false, flat: false },
+  mudBorderOuter: { atlasSlot: 6, color: rgb(0x0e87cc), water: false, flat: false },
+  road: { atlasSlot: 34, color: rgb(0x156e15), water: false, flat: false },
+  dryEarth: { atlasSlot: 36, color: rgb(0xadab00), water: false, flat: false },
 };
 
 export function isWater(type: LandscapeType): boolean {
@@ -113,7 +112,7 @@ export function isRiver(type: LandscapeType): boolean {
 
 const n = (...types: LandscapeType[]): ReadonlySet<LandscapeType> => new Set(types);
 
-/** Java ELandscapeType.neighbors — a triangle only blends if all 3 verts are an allowed pair. */
+/** A triangle only blends if every pair of verts is an allowed neighbor. */
 export const landscapeNeighbors: Record<LandscapeType, ReadonlySet<LandscapeType>> = {
   water8: n("water8", "water7"),
   water7: n("water8", "water7", "water6"),
@@ -174,7 +173,7 @@ export function isAllowedNeighbor(a: LandscapeType, b: LandscapeType): boolean {
   return landscapeNeighbors[a].has(b);
 }
 
-/** Java Background.addPointToGeometry slope shade. */
+/** North-face darkening from the height delta to the northern neighbor. */
 export function slopeShade(height: number, northHeight: number): number {
   let color = 0.875 + (northHeight - height) * 0.125;
   if (color < 0.4) color = 0.4;

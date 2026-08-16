@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { DatArchive, packLandscapeAtlas, parseDatFileName, type DecodedImage, type SeqKind } from "./dat";
 import { encodePng } from "./png";
 import { clipPath, framesOf, loadAllMovableClips } from "./catalog/movables";
-import { landscapeInfo } from "../src/shared/landscape";
+import { landscapeInfo } from "../src/shared/landscape/landscape";
 import type { BuildingEntry } from "./catalog/types";
 import type { Category, LayerRef, Sprite } from "./catalog/sprite";
 import { ORIGINAL_GFX, REPO_ROOT } from "./original";
@@ -125,20 +125,20 @@ for (const clip of clips) {
 
 const landDone = new Map<number, string>();
 for (const [name, info] of Object.entries(landscapeInfo)) {
-  let rel = landDone.get(info.s3Image);
+  let rel = landDone.get(info.atlasSlot);
   if (!rel) {
     rel = `landscape/${name}`;
-    landDone.set(info.s3Image, rel);
+    landDone.set(info.atlasSlot, rel);
   }
   add({
     id: `landscape/${name}`,
     category: "landscape",
     title: name,
-    subtitle: `slot ${info.s3Image}`,
+    subtitle: `slot ${info.atlasSlot}`,
     tags: ["landscape", name],
     file: 0,
     kind: "landscape",
-    sequence: info.s3Image,
+    sequence: info.atlasSlot,
     frameIndex: 0,
     rel,
   });

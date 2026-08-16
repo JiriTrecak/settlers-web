@@ -1,4 +1,4 @@
-import { isWater, type LandscapeType } from "../shared/landscape";
+import { isWater, type LandscapeType } from "../../shared";
 import type { MapGrid } from "./mapGrid";
 
 export type MapView = {

@@ -14,7 +14,7 @@ describe("parseDatFileName", () => {
 });
 
 describe("color", () => {
-  it("matches Java convert565to8888 channels", () => {
+  it("expands 565 channels to 8-bit", () => {
     expect(rgb565ToRgba(0xf800)).toEqual([255, 0, 0, 255]);
     expect(rgb565ToRgba(0x07e0)).toEqual([0, 255, 0, 255]);
     expect(rgb565ToRgba(0x001f)).toEqual([0, 0, 255, 255]);

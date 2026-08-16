@@ -4,11 +4,11 @@ import {
   isDumpedMap,
   type DumpedMap,
   type MapCatalogEntry,
-} from "../sim/dumpedMap";
-import type { MapDecoration } from "../sim/decorations";
-import type { MapGrid } from "../sim/mapGrid";
+} from "../../sim/map/dumpedMap";
+import type { MapDecoration } from "../../sim/decorations/decorations";
+import type { MapGrid } from "../../sim/map/mapGrid";
 
-export type { MapCatalogEntry, MapGroup } from "../sim/dumpedMap";
+export type { MapCatalogEntry, MapGroup } from "../../sim/map/dumpedMap";
 
 export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   try {

@@ -1,7 +1,7 @@
 import { Container, Sprite } from "pixi.js";
-import { gridToWorld } from "../shared";
-import type { MapView } from "../sim/mapView";
-import { treeTypeAt, type MapDecoration } from "../sim/decorations";
+import { gridToWorld } from "../../shared";
+import type { MapView } from "../../sim/map/mapView";
+import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { DecorationSheets, PropFrame } from "./decorationSheets";
 
 type Placed = {
@@ -86,7 +86,7 @@ export class DecorationLayer {
 
   private indexOf(deco: MapDecoration, sheets: DecorationSheets, step: number): number {
     if (deco.kind === "tree") {
-      const frames = sheets.trees[treeTypeAt(deco.x, deco.y)] ?? sheets.trees[0]!;
+      const frames = sheets.trees[deco.sheet] ?? sheets.trees[0]!;
       const anim = 0x0fffffff & ((step + deco.x * 167 + deco.y * 1223) | 0);
       return frames.length === 0 ? 0 : anim % frames.length;
     }
@@ -106,7 +106,7 @@ export class DecorationLayer {
 
   private frameAt(deco: MapDecoration, sheets: DecorationSheets, index: number): PropFrame | null {
     if (deco.kind === "tree") {
-      const frames = sheets.trees[treeTypeAt(deco.x, deco.y)] ?? sheets.trees[0];
+      const frames = sheets.trees[deco.sheet] ?? sheets.trees[0];
       return frames?.[index] ?? frames?.[0] ?? null;
     }
     if (deco.kind === "wave") return sheets.waves[index] ?? null;

@@ -1,4 +1,5 @@
-import type { DumpedMap } from "../../src/sim/dumpedMap";
+import { treeSheetAt } from "../../src/sim/decorations/decorations";
+import type { DumpedMap } from "../../src/sim/map/dumpedMap";
 import { ORIGINAL_HEIGHT_SCALE, originalLandscapeType } from "./landscape";
 import { isTreeObject, stoneCapacity } from "./objects";
 import type { ParsedOriginalMap } from "./parseOriginalMap";
@@ -17,7 +18,7 @@ export function toDumpedMap(map: ParsedOriginalMap): DumpedMap {
     heights[i] = Math.round((map.heights[i] ?? 0) * ORIGINAL_HEIGHT_SCALE);
     const id = objects[i]!;
     if (id === 0) continue;
-    if (isTreeObject(id)) trees.push({ x, y });
+    if (isTreeObject(id)) trees.push({ x, y, sheet: treeSheetAt(x, y) });
     else {
       const capacity = stoneCapacity(id);
       if (capacity !== null) stones.push({ x, y, capacity });

@@ -6,7 +6,7 @@ import { checksumValid, parseOriginalMap } from "../../original_conv/map/parseOr
 import { toDumpedMap } from "../../original_conv/map/toNative";
 
 describe("original landscape ids", () => {
-  it("maps water/grass/mountain like Java OriginalLandscape", () => {
+  it("maps original landscape bytes to our types", () => {
     expect(originalLandscapeType(0)).toBe("water1");
     expect(originalLandscapeType(7)).toBe("water8");
     expect(originalLandscapeType(16)).toBe("grass");

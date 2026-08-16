@@ -1,7 +1,7 @@
-/** Java Background triangle UVs: atlas cell + diamond orientation + border blends. */
+/** Triangle UVs: atlas cell + diamond orientation + border blends. */
 
 import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "./atlasPositions";
-import { TILE_WIDTH, isRiver, type LandscapeType, landscapeInfo } from "../shared";
+import { TILE_WIDTH, isRiver, type LandscapeType, landscapeInfo } from "../../shared";
 
 /** River1–4 are animation frames of the same blend; mixed triangles still need a river slot. */
 function blendKey(type: LandscapeType): LandscapeType {
@@ -14,7 +14,7 @@ const TEXTURE_BORDER_OFFSET = 0.5;
 
 type Orientation = readonly [number, number, number, number, number, number];
 
-/** left, bottom, right — Java ETextureOrientation. */
+/** left, bottom, right — diamond orientation inside a tile. */
 const CONTINUOUS: readonly [Orientation, Orientation] = [
   [TEXTUREUNIT_X / 2, 0, 0, TEXTUREUNIT_Y, TEXTUREUNIT_X, TEXTUREUNIT_Y],
   [TEXTUREUNIT_X / 2, 0, TEXTUREUNIT_X, TEXTUREUNIT_Y, (TEXTUREUNIT_X * 3) / 2, 0],
@@ -71,7 +71,7 @@ function blend(type1: LandscapeType, type2: LandscapeType, baseIndex: number, ty
   return { type1, type1alt, type2, baseIndex };
 }
 
-/** Java Background.borderTextures — extra DAT slots for type-pair diamonds. */
+/** Extra atlas slots for type-pair diamonds. */
 const BORDER_BLENDS: readonly BorderBlend[] = [
   blend("sand", "water1", 37),
   blend("grass", "river1", 52, "sand"),
@@ -145,10 +145,10 @@ export function triangleTexture(
   const rightK = blendKey(right);
 
   if (aK === leftK && aK === rightK) {
-    textureIndex = landscapeInfo[a].s3Image;
+    textureIndex = landscapeInfo[a].atlasSlot;
     texturePos = CONTINUOUS[orientationIndex];
   } else {
-    textureIndex = landscapeInfo[left].s3Image;
+    textureIndex = landscapeInfo[left].atlasSlot;
     for (const intersect of BORDER_BLENDS) {
       let type1count = 0;
       let type1acount = 0;

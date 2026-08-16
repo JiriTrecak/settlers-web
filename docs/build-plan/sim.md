@@ -58,25 +58,19 @@ type ViewSnapshot = {
 };
 ```
 
-`MapView` is the Java `IGraphicsGrid` contract, cleaned up. `objectsAt` returns an array, not a linked list.
-
-`Action` is a discriminated union (Java `IAction` / `EActionType`). Start small in Phase 4 (`moveTo`), grow in 6+.
+`objectsAt` returns an array. `Action` is a discriminated union. Start small in Phase 4 (`moveTo`), grow in 6+.
 
 ## Clock
 
-Spec: [`RescheduleTimer.java`](../../../SettlersJava/jsettlers.logic/src/main/java/jsettlers/logic/timer/RescheduleTimer.java).
-
 - 25ms slot
 - Things schedule themselves `n` ms ahead
-- One wheel of slots, not a heap (keep the algorithm — it's cache-friendly for "wake thousands of settlers")
+- One wheel of slots, not a heap (cache-friendly for "wake thousands of settlers")
 - **No singleton.** `Game` owns `Clock`.
 - RNG: `Rng` with `nextInt`, `nextFloat`, seed in `MatchConfig`. Every sim random goes through it.
 
-Render interpolates; sim only sees integer ticks and `moveProgress` stored on the movable as a 0–1 float updated on tick (Java already does this).
+Render interpolates; sim only sees integer ticks and `moveProgress` stored on the movable as a 0–1 float updated on tick.
 
 ## World split
-
-Java `MainGrid` is a god object. Split:
 
 | Module | Owns |
 |---|---|
@@ -93,7 +87,7 @@ Hot data is SoA typed arrays. See [conventions.md](conventions.md).
 
 ## Hex
 
-6 directions. Deltas from Java `EDirection`:
+6 directions. Deltas in `shared`:
 
 ```
 NE (0, -1)  E (1, 0)  SE (1, 1)
@@ -102,23 +96,28 @@ SW (0, 1)   W (-1, 0) NW (-1, -1)
 
 Keep that table. Pathfinding and building shapes depend on it.
 
+## Maps
+
+Engine loads dumped JSON (`DumpedMap`): landscape type names, scaled heights, trees with `sheet`, stones with `capacity`. Original `.map` parsing is `original_conv` only.
+
+Waves are generated at load from water neighbors (`waveDecorations`). Trees/stones come from the dump.
+
 ## Phase 0
 
-- `src/sim/index.ts` exports `Clock` stub: `tickIndex`, `tick()` increments it
-- `src/sim/rng.ts` stub: `seedRng(seed: number): Rng` (mulberry32 or similar — **not** `Math.random`)
-- `src/sim/types.ts` — `GridPos`, empty `Action` union (`{ type: "noop" }`)
+- `Clock` stub: `tickIndex`, `tick()` increments it
+- `seedRng(seed: number): Rng` (mulberry32 or similar — **not** `Math.random`)
+- `GridPos`, empty `Action` union (`{ type: "noop" }`)
 - Zero Pixi imports
 - No grid yet
 
 ## Phase 1
 
-- Nothing required (render uses a synthetic view). Optional: `MapGrid` with landscape/height arrays and a `MapView` adapter, so render can already consume sim data. Prefer this if it's small — one source of truth early.
+- Nothing required (render uses a synthetic view). Optional: `MapGrid` with landscape/height arrays and a `MapView` adapter.
 
 ## Phase 3
 
-- `MapData` parsed from original `.map`
-- Spec: [`OriginalMapFileContentReader.java`](../../../SettlersJava/jsettlers.logic/src/main/java/jsettlers/logic/map/loading/original/OriginalMapFileContentReader.java) — encrypted segments, landscape, height, objects, start points
-- Decoder in `src/sim/map/original/` using `DataView`. Port the crypt loop carefully; write tests against a fixture we generate, or golden values from running Java once and recording (don't check in copyrighted maps)
+- `DumpedMap` ingested into `MapGrid` + decorations
+- Tests against dumped fixtures we generate; don't check in copyrighted original maps
 
 ## Phase 4
 
@@ -130,49 +129,35 @@ Keep that table. Pathfinding and building shapes depend on it.
 
 ## Phase 5
 
-- Port A* (bucket queue). Spec: `BucketQueueAStar.java` + tests
-- Behavior trees: rewrite as small TS functions/objects. Spec: `jsettlers/algorithms/simplebehaviortree`. Same node semantics (`sequence`, `selector`, `condition`, `action`, `wait`), not the Java visitor soup.
-- Map objects: tree, stone, stack. `stateProgress` as in `IMapObject`
+- A* (bucket queue)
+- Behavior trees as small TS functions/objects. Node semantics: `sequence`, `selector`, `condition`, `action`, `wait`.
+- Map objects: tree, stone, stack. `stateProgress` on objects
 
 ## Phase 6
 
 - Buildings: place, flatten, construct, work radius
 - Construction marks algorithm
-- Spec: `jsettlers.logic/.../buildings/`, `jsettlers.common/.../buildings/`
-- Building definitions: Java uses XML/enums. We use TypeScript data modules (`src/sim/data/buildings.ts`), not XML.
+- Building definitions as TypeScript data modules (`src/sim/data/buildings.ts`)
 
 ## Phase 7
 
 - **The game.** `PartitionManager`, material requests, bearer jobs, distribution, priorities
-- Spec: `jsettlers.logic/.../partition/manager/`
-- Tests from `MaterialsManagerTest` etc. Re-express as Vitest. Same cases, our types.
+- Same cases as our economy tests. Same rules.
 
 ## Phase 8–10
 
-- FOW (`FogOfWar.java`)
+- FOW
 - Combat / soldiers / specialists
-- AI (`jsettlers.logic/.../ai/`) last. It is a player that emits `Action`s. Keep that. Internals can be rewritten more aggressively — Java AI is a pile of finders.
+- AI last. It is a player that emits `Action`s.
 
 ## Phase 12
 
 - Lockstep: tick N waits until all players' actions for N arrived
-- Spec: `jsettlers.network` conceptually, not the TCP framing
 - Replay = log of `{ tick, player, action }[]` + seed + map id
-
-## Spec pointers (logic)
-
-- `JSettlersGame.java` — lifecycle
-- `MainGrid.java` — what subsystems exist (read as a map, don't clone)
-- `Movable.java` + `movable/` — unit state machines / BT roots
-- `RescheduleTimer.java` — clock
-- `IMapData.java` — loaded map
-- `ReplayValidationIT.java` — **this is the north star.** When sim is mature, a Java replay should reproduce on our engine, or we record our own replays and checksum world state.
 
 ## Refusals
 
 - Pixi, DOM, `window`, `performance.now` inside `src/sim`.
 - `Math.random`, `Date.now` inside `src/sim`.
-- Porting `MainGrid` as one 2k-line class.
-- `short` / `byte` types. Use `number` + typed arrays.
-- `synchronized`, `Thread`, `ObjectOutputStream`.
+- One 2k-line god class for the world.
 - Making the economy "simpler" in Phase 7. S3's bearer-job system **is** the game. Clean implementation, same rules.

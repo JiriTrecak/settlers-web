@@ -11,10 +11,12 @@ Render/Pixi: few tests. Visuals get eyeballed. Pure camera math **is** unit-test
 ## Layout
 
 ```
-src/sim/**/*.test.ts      # colocated unit tests (preferred for sim)
-src/shared/**/*.test.ts
-tests/smoke.test.ts       # boot-level, architecture
-tests/architecture.test.ts
+tests/engine/          # sim + shared
+tests/render/
+tests/camera/
+tests/ui/
+tests/original_conv/   # conversion only
+tests/architecture/    # import rules
 ```
 
 - Vitest, Node environment for sim
@@ -35,7 +37,7 @@ npm run build
 Must exist and pass:
 
 1. **Smoke** — `Clock` stub ticks: `tickIndex` goes 0 → 1
-2. **Architecture** — every file under `src/sim/**` is read as text; fail if it contains `pixi.js` or `from "pixi.js"`. Cheap and vicious.
+2. **Architecture** — every file under `src/sim/**` is read as text; fail if it contains `pixi.js`. Cheap and vicious. `src` must not import `original_conv`.
 3. **RNG** — `seedRng(1)` twice produces the same sequence; does not call `Math.random`
 
 That's it. No coverage threshold.
@@ -56,6 +58,7 @@ That's it. No coverage threshold.
 
 - Original map crypt/segment reader against a tiny self-made fixture
 - Landscape/height arrays have expected `width * height`
+- Dumped maps: trees carry `sheet`, stones carry `capacity`
 
 Do not check in Ubisoft/Blue Byte `.map` files.
 
@@ -68,39 +71,31 @@ Do not check in Ubisoft/Blue Byte `.map` files.
 
 ## Phase 5+
 
-Port Java test **cases**, not JUnit classes:
-
-| Java | Becomes |
+| Area | Test |
 |---|---|
-| `BucketQueueAStarTest` | `src/sim/path/astar.test.ts` |
-| `SimpleBehaviorTreeTest` | `src/sim/behavior/tree.test.ts` |
-| `MaterialsManagerTest` | `src/sim/economy/materials.test.ts` |
-| `PartitionsGridTest` | `src/sim/partition/grid.test.ts` |
-| `ReplayValidationIT` | later: `tests/replay/*.test.ts` |
+| Pathfinding | `src/sim/path/astar.test.ts` |
+| Behavior trees | `src/sim/behavior/tree.test.ts` |
+| Materials | `src/sim/economy/materials.test.ts` |
+| Partitions | `src/sim/partition/grid.test.ts` |
+| Replay | later: `tests/replay/*.test.ts` |
 
-Replay north star: same seed + same action log ⇒ same checksum of world (material counts, unit positions hashed). Java replays are a bonus if we can parse them; our own format is the requirement.
+Replay north star: same seed + same action log ⇒ same checksum of world (material counts, unit positions hashed). Our own format is the requirement.
 
 ## What not to test
 
 - Pixi `Application` booting (fragile in CI)
 - DAT decode of real S3 files in CI (no assets)
 - Pixel-perfect screenshots in Phase 0–4
-- Swing UI tests, obviously
 
 ## Architecture rules (keep adding)
 
 Phase 0:
 
 - `src/sim` must not import `pixi.js`
+- `src` must not import `original_conv`
 
 Add later:
 
 - `src/sim` must not import `src/render`, `src/ui`, `src/app`
 - `src/shared` must not import pixi / dom / other areas
 - `Action` union exhaustiveness: a type-level test or a switch helper that `never`-checks
-
-## Spec pointers
-
-- `jsettlers.logic/src/test/java/` — cases
-- `jsettlers.tests/` — integration
-- `ReplayValidationIT.java`, `AutoReplayIT.java` — how they thought about correctness

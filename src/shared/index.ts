@@ -1,4 +1,4 @@
-export type { Action, GridPos } from "./types";
+export type { Action, GridPos } from "./types/types";
 export {
   HEIGHT_X,
   HEIGHT_Y,
@@ -8,7 +8,7 @@ export {
   pickGrid,
   worldToGrid,
   type WorldPos,
-} from "./iso";
+} from "./iso/iso";
 export {
   HEX_DELTAS,
   LANDSCAPE_TYPES,
@@ -20,4 +20,4 @@ export {
   landscapeNeighbors,
   slopeShade,
   type LandscapeType,
-} from "./landscape";
+} from "./landscape/landscape";

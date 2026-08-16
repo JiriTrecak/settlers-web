@@ -1,20 +1,19 @@
-import { HEX_DELTAS, isWater } from "../shared/landscape";
-import type { MapView } from "./mapView";
+import { HEX_DELTAS, isWater } from "../../shared";
+import type { MapView } from "../map/mapView";
 
-/** Java MapObjectDrawer.TREE_TYPES. */
-export const TREE_TYPES = 7;
+export const TREE_SHEETS = 7;
 
 export type MapDecoration =
-  | { kind: "tree"; x: number; y: number }
+  | { kind: "tree"; x: number; y: number; sheet: number }
   | { kind: "stone"; x: number; y: number; capacity: number }
   | { kind: "wave"; x: number; y: number };
 
-/** Java MapObjectDrawer.getTreeType. */
-export function treeTypeAt(x: number, y: number): number {
-  return (x + ((x / 5) | 0) + ((y / 3) | 0) + y + ((y / 7) | 0)) % TREE_TYPES;
+/** Assign one of `TREE_SHEETS` looks from tile coords. Used when converting maps that don't store a sheet. */
+export function treeSheetAt(x: number, y: number): number {
+  return (x + ((x / 5) | 0) + ((y / 3) | 0) + y + ((y / 7) | 0)) % TREE_SHEETS;
 }
 
-/** Java MainGrid: 4-hex lattice, all 6 neighbors water. */
+/** Wave sprites on a 4-hex lattice where all 6 neighbors are water. */
 export function waveDecorations(view: MapView): MapDecoration[] {
   const out: MapDecoration[] = [];
   const { width, height } = view;

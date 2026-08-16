@@ -1,12 +1,12 @@
 import { Application, Container, Graphics, type Texture } from "pixi.js";
-import { gridToWorld, pickGrid, type GridPos } from "../shared";
-import type { MapDecoration } from "../sim/decorations";
-import type { MapView } from "../sim/mapView";
-import { Camera } from "./camera";
-import { DecorationLayer } from "./decorationLayer";
-import type { DecorationSheets } from "./decorationSheets";
-import { buildLandscapeGeometry } from "./landscapeGeometry";
-import { createLandscapeMesh } from "./landscapeMesh";
+import { gridToWorld, pickGrid, type GridPos } from "../../shared";
+import type { MapDecoration } from "../../sim/decorations/decorations";
+import type { MapView } from "../../sim/map/mapView";
+import { Camera } from "../camera/camera";
+import { DecorationLayer } from "../decoration/decorationLayer";
+import type { DecorationSheets } from "../decoration/decorationSheets";
+import { buildLandscapeGeometry } from "../landscape/landscapeGeometry";
+import { createLandscapeMesh } from "../landscape/landscapeMesh";
 
 export class Renderer {
   readonly camera = new Camera();

@@ -1,84 +1,73 @@
 # Conventions
 
-Java is a spec. TypeScript is the language we actually write. If a Java type is ugly, the TS version is the one they should have written.
+TypeScript is what we write. Types should be the ones this codebase actually wants.
 
 ## Style
 
 - ESM. `strict`. No `any`. No `as unknown as`.
 - Interfaces for contracts. No abstract-class pyramids.
-- Properties, not JavaBean getters: `movable.action`, not `getAction()`.
+- Properties, not getters: `movable.action`, not `getAction()`.
 - `readonly` on view types the renderer sees.
-- Discriminated unions for actions, not `IAction` + `getActionType()` + instanceof.
-- Const objects + union types instead of Java enums. Numeric S3 ids live in adapters, not in the domain API.
+- Discriminated unions for actions.
+- Const objects + union types instead of numeric enums. Original S3 ids live in `original_conv` adapters, not in the domain API.
 - Typed arrays for grids (`Uint8Array`, `Int8Array`, `Uint16Array`). Not `number[][]`.
-- No Hungarian (`I`, `E`, `m_`). No `J` prefix. No `jsettlers` in our names.
+- No Hungarian (`I`, `E`, `m_`).
 - File names: `camelCase.ts` for modules, `PascalCase.ts` only if the file is exactly one class/type of that name. Prefer one concept per file.
 
 ## Names we keep
 
 Domain words that mean something in S3: `Movable`, `Bearer`, `Pioneer`, `Partition`, `Landscape`, `FogOfWar`, `Manna`. Keep them.
 
-## Java → TypeScript
+## Types
 
-| Java | TypeScript | Notes |
-|---|---|---|
-| `JSettlersGame` | `Game` | |
-| `MainGrid` | split: `World`, `MapGrid`, `ObjectGrid`, … | God class. Do not port as one file. |
-| `IGraphicsGrid` | `MapView` | Read-only snapshot/query the renderer uses. |
-| `IGraphicsMovable` | `MovableView` | |
-| `IMapObject` | `MapObjectView` | Linked-list `getNextObject()` becomes an array. |
-| `IMapInterfaceConnector` | `UiBridge` | Sim → UI notifications. |
-| `IAction` / `EActionType` | `Action` union | `{ type: "build"; building: BuildingType; at: GridPos }` |
-| `RescheduleTimer` | `Clock` | 25ms slots. Same semantics, not the same code. |
-| `ShortPoint2D` | `GridPos` | `{ readonly x: number; readonly y: number }` |
-| `RelativePoint` | `GridDelta` | |
-| `ELandscapeType` | `LandscapeType` | String union. S3 tile ids in `s3/landscapeIds.ts`. |
-| `EMovableType` | `MovableType` | |
-| `EDirection` | `Direction` | 6 hex dirs. Keep the delta table from Java. |
-| `EMaterialType` | `Material` | |
-| `EBuildingType` | `BuildingType` | |
-| `EMapObjectType` | `MapObjectType` | |
-| `ECivilisation` | `Civilization` | American spelling, one word, no `s`. |
-| `ImageLink` | `ImageRef` | `{ file: number; kind: "settler" \| "gui" \| "landscape"; sequence: number; frame: number }` |
-| `DatFileReader` | `DatFile` | |
-| `SettlerImageMap` | `settlerSprites` | Lookup fn, not a 5D array class. |
-| `GuiInterface` | `InputRouter` | Actions in, sim commands out. |
-| `MatchConstants` | `MatchConfig` | Plain object, injected. No process-wide mutable statics. |
-| `CommonConstants` | `config` | |
-| `Player` | `Player` | Fine. |
-| `FogOfWar` | `FogOfWar` | Fine. |
-| `BucketQueueAStar` | `AStar` | Keep the bucket-queue algorithm. |
-| `PartitionManager` | `PartitionManager` | Fine, but internals get split. |
+| Type | Notes |
+|---|---|
+| `Game` | Match lifecycle |
+| `World` | Facade over grid / objects / movables / buildings |
+| `MapView` | Read-only snapshot/query the renderer uses |
+| `MovableView` | |
+| `MapObjectView` | Array of objects on a tile, not a linked list |
+| `UiBridge` | Sim → UI notifications |
+| `Action` union | `{ type: "build"; building: BuildingType; at: GridPos }` |
+| `Clock` | 25ms slots |
+| `GridPos` | `{ readonly x: number; readonly y: number }` |
+| `GridDelta` | |
+| `LandscapeType` | String union. Original tile ids stay in conversion. |
+| `MovableType` | |
+| `Direction` | 6 hex dirs. Delta table in `shared`. |
+| `Material` | |
+| `BuildingType` | |
+| `MapObjectType` | |
+| `Civilization` | American spelling, one word, no `s`. |
+| `ImageRef` | `{ file: number; kind: "settler" \| "gui" \| "landscape"; sequence: number; frame: number }` |
+| `settlerSprites` | Lookup fn |
+| `InputRouter` | Actions in, sim commands out |
+| `MatchConfig` | Plain object, injected. No process-wide mutable statics. |
+| `AStar` | Bucket-queue algorithm |
+| `PartitionManager` | Internals get split |
 
-## Things we never port
+## Things we never do
 
-- `MutableInt` / `MutableBoolean` / `Mutable<T>` — just return values or close over a let.
-- `DoubleLinkedList`, `ArrayListSet`, `ArrayListMap` — `Set`, `Map`, arrays.
-- `Serializable`, `ObjectInputStream`, `serialVersionUID` — our own snapshot format when we need one.
+- Mutable box types — just return values or close over a let.
+- Homegrown list/set/map — `Set`, `Map`, arrays.
 - `IFoo` / `EFoo` prefixes.
-- Package `jsettlers.*`. Ours is `src/{app,render,assets,sim,ui,shared}`.
-- `go.graphics`, Swing, Android, LWJGL.
-- Static singletons (`ImageProvider.getInstance()`, `RescheduleTimer.get()`). Inject.
-- `Thread.sleep` "until serializer finishes".
-- Checked exceptions. Throw or return `Result`. Prefer fail-loud in sim.
-- Java `Random` as a hidden global. `Rng` interface, seeded, injected into `Clock` / `MatchConfig`.
+- Static singletons. Inject.
+- Hidden global RNG. `Rng` interface, seeded, injected into `Clock` / `MatchConfig`.
 
-## Numbers that look Java-y but stay
-
-S3 and the remake use specific constants. We keep the **values**, not the class they lived in.
+## Constants
 
 - Tick: `25` ms (`Clock.tickMs`)
-- Iso: `tileWidth = 16`, `tileHeight = 9` (Java `DrawConstants.DISTANCE_X/Y`)
+- Iso: `tileWidth = 16`, `tileHeight = 9`
 - Height displacement: `0` x, `2` y per height unit
-- Landscape atlas: `1024`, grid `32` (Java `Background`)
+- Landscape atlas: `1024`, grid `32`
 - FOW: visible `100`, explored `50`, dim start `30`
-- Hex: 6 directions, deltas from `EDirection`
+- Hex: 6 directions, deltas in `shared`
 
 Integer grid coords stay integers. JS numbers are safe for this (well below 2^53). Do not introduce float grid positions in sim. Interpolation (`moveProgress ∈ [0, 1)`) is view-only.
 
-## Enum ordinals
+## File format ids
 
-Java enums are ordered and that order is baked into `.map` files and DAT indices. **Never** use TS enum numeric auto-increment as a file format.
+Original `.map` bytes and DAT indices are ordered tables. **Never** use TS enum numeric auto-increment as a file format.
 
 Pattern:
 
@@ -92,7 +81,7 @@ export const landscapeS3Id: Record<LandscapeType, number> = {
 };
 ```
 
-Domain code talks `LandscapeType`. Loaders/savers talk S3 ids.
+Domain code talks `LandscapeType`. Loaders/savers talk original ids. Conversion owns that mapping.
 
 ## Data layout
 
@@ -106,16 +95,16 @@ player: Uint8Array;      // 255 = none
 fow: Uint8Array;
 ```
 
-Index: `i = y * width + x`. Same as a sane C port, unlike Java's `object[x][y]` cache-unfriendly default.
+Index: `i = y * width + x`. Row-major.
 
 ## Imports
 
 ```
 sim    → shared, nothing else
-assets → shared
-render → shared, assets, pixi.js
+render → shared, pixi.js
 ui     → shared
-app    → everything
+app    → everything in src
+original_conv → may import src types; src never imports original_conv
 ```
 
 `shared` has types and pure functions only. No Pixi. No DOM.

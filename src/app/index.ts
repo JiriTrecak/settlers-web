@@ -1,1 +1,1 @@
-export { GameApp } from "./GameApp";
+export { GameApp } from "./game/GameApp";

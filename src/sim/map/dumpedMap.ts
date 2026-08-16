@@ -1,13 +1,13 @@
-import type { LandscapeType } from "../shared/landscape";
+import type { LandscapeType } from "../../shared";
 import { MapGrid } from "./mapGrid";
-import type { MapDecoration } from "./decorations";
+import { treeSheetAt, type MapDecoration } from "../decorations/decorations";
 
 /** Converted map dump. The engine never sees .map / DAT. */
 export type DumpedMap = {
   width: number;
   heights: number[];
   landscape: LandscapeType[];
-  trees: { x: number; y: number }[];
+  trees: { x: number; y: number; sheet?: number }[];
   stones: { x: number; y: number; capacity: number }[];
 };
 
@@ -48,7 +48,12 @@ export function gridFromDumpedMap(map: DumpedMap): MapGrid {
 
 export function decorationsFromDumpedMap(map: DumpedMap): MapDecoration[] {
   return [
-    ...map.trees.map((t) => ({ kind: "tree" as const, x: t.x, y: t.y })),
+    ...map.trees.map((t) => ({
+      kind: "tree" as const,
+      x: t.x,
+      y: t.y,
+      sheet: t.sheet ?? treeSheetAt(t.x, t.y),
+    })),
     ...map.stones.map((s) => ({ kind: "stone" as const, x: s.x, y: s.y, capacity: s.capacity })),
   ];
 }

@@ -28,7 +28,7 @@ function blit(
   }
 }
 
-/** Hotspot = min offsets of the three layers, same as Java SettlerImage. */
+/** Hotspot = min offsets of body, torso, and shadow. */
 export function compositeSettler(
   body: DecodedImage,
   torso: DecodedImage | null,

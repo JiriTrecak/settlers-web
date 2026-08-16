@@ -1,5 +1,5 @@
-import { gridToWorld, landscapeInfo, worldToGrid } from "../shared";
-import type { MapView } from "../sim/mapView";
+import { gridToWorld, landscapeInfo, worldToGrid } from "../../shared";
+import type { MapView } from "../../sim/map/mapView";
 
 export type MinimapCamera = {
   panX: number;

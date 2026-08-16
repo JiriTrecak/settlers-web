@@ -1,5 +1,5 @@
-import { gridToWorld, landscapeInfo, slopeShade } from "../shared";
-import type { MapView } from "../sim/mapView";
+import { gridToWorld, landscapeInfo, slopeShade } from "../../shared";
+import type { MapView } from "../../sim/map/mapView";
 import { triangleTexture } from "./landscapeUv";
 
 export type LandscapeGeometryData = {
@@ -15,8 +15,8 @@ export function landscapeTriangleCount(width: number, height: number): number {
 }
 
 /**
- * Duplicated verts like Java Background: two triangles per cell, unique UVs.
- * Shade from addPointToGeometry. Colors kept for untextured fallback.
+ * Two triangles per cell, verts duplicated so each triangle can have its own UVs.
+ * Shade from the north height delta. Vertex colors kept for untextured fallback.
  */
 export function buildLandscapeGeometry(view: MapView): LandscapeGeometryData {
   const { width, height } = view;

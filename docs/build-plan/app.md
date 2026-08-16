@@ -1,6 +1,6 @@
 # App
 
-Composition root. Wires sim, render, assets, UI. Owns the browser loop. Owns "user dropped a folder."
+Composition root. Wires sim, render, dumped graphics, UI. Owns the browser loop.
 
 ## Purpose
 
@@ -25,12 +25,12 @@ Sim ticks on its own schedule (Phase 4+: accumulator of 25ms). Render runs every
 
 ## Phase 0
 
-- Vite entry: `index.html` → `src/app/main.ts`
+- Vite entry: `index.html` → `src/app/boot/main.ts`
 - Create Pixi `Application`, `resizeTo: window`, dark background
 - Mount canvas into `#game`
-- Visible boot marker (e.g. a 64px rectangle) so we know it started
+- Visible boot marker so we know it started
 - `GameApp.start()` / `stop()`
-- No folder-drop, no sim ticking, no camera
+- No sim ticking, no camera
 
 ## Phase 1
 
@@ -40,15 +40,14 @@ Sim ticks on its own schedule (Phase 4+: accumulator of 25ms). Render runs every
 
 ## Phase 2
 
-- Folder-drop / `<input webkitdirectory>` / File System Access API for `GFX/`
-- Hand files to `assets`
-- Loading UI state: "drop your S3 GFX folder" vs "loading" vs "ready"
-- Never upload files anywhere. All local.
+- Load dumped graphics (atlas + catalog)
+- Loading UI state: loading vs ready
 
 ## Phase 3
 
-- Also accept `MAP/` (and later `SND/`)
-- Map picker: list dropped `.map` files, load one into sim, give renderer the view
+- Map picker from dumped catalog JSON
+- Load one into sim, give renderer the view
+- Loads are generation-guarded so a slow fetch can't clobber a newer selection
 
 ## Phase 4
 
@@ -65,15 +64,8 @@ Sim ticks on its own schedule (Phase 4+: accumulator of 25ms). Render runs every
 - Replay recording hook (append actions + tick index)
 - Multiplayer (Phase 12): same action pipe, lockstep delay
 
-## Spec pointers
-
-- [`jsettlers.logic/.../JSettlersGame.java`](../../../SettlersJava/jsettlers.logic/src/main/java/jsettlers/main/JSettlersGame.java) — load, run, tear down. Steal the lifecycle, not the thread soup.
-- [`jsettlers.common/.../IMapInterfaceConnector.java`](../../../SettlersJava/jsettlers.common/src/main/java/jsettlers/common/menu/IMapInterfaceConnector.java) — sim ↔ UI. Becomes `UiBridge` events, not a 12-method interface.
-- [`jsettlers.logic/.../GuiInterface.java`](../../../SettlersJava/jsettlers.logic/src/main/java/jsettlers/input/GuiInterface.java) — action dispatch. Becomes `InputRouter`. Discriminated unions, not instanceof chains.
-
 ## Refusals
 
-- No `Thread`, no `synchronized`, no `stopMutex`.
-- No static `MatchConstants.clock()`.
-- No mixing rAF and sim ticks into one `update(dt)` that makes the economy frame-rate dependent.
+- Mixing rAF and sim ticks into one `update(dt)` that makes the economy frame-rate dependent.
 - App does not decode DAT files or draw triangles. It delegates.
+- App does not import `original_conv`.

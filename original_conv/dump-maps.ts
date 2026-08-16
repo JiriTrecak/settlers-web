@@ -5,7 +5,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
-import type { MapCatalogEntry } from "../src/sim/dumpedMap";
+import type { MapCatalogEntry } from "../src/sim/map/dumpedMap";
 import { parseOriginalMap } from "./map/parseOriginalMap";
 import { toDumpedMap } from "./map/toNative";
 import { originalMapDir, REPO_ROOT } from "./original";

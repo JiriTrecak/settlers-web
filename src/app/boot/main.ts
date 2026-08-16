@@ -1,4 +1,4 @@
-import { GameApp } from "./GameApp";
+import { GameApp } from "../game/GameApp";
 
 const gameRoot = document.getElementById("game");
 const hudRoot = document.getElementById("hud");

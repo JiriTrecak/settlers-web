@@ -1,9 +1,9 @@
 import { Application } from "pixi.js";
-import type { GridPos } from "../shared";
-import { MAPS, generateMap, mapViewFromGrid, allDecorations, type MapView, type MapDecoration } from "../sim";
-import { Renderer, loadLandscapeAtlas, loadDecorationSheets } from "../render";
-import { lookAtMinimap, mountHud, paintMinimap, paintMinimapViewport, type HudMapOption } from "../ui";
-import { fetchDumpedMap, fetchMapCatalog, type MapCatalogEntry } from "./maps";
+import type { GridPos } from "../../shared";
+import { MAPS, generateMap, mapViewFromGrid, allDecorations, type MapView, type MapDecoration } from "../../sim";
+import { Renderer, loadLandscapeAtlas, loadDecorationSheets } from "../../render";
+import { lookAtMinimap, mountHud, paintMinimap, paintMinimapViewport, type HudMapOption } from "../../ui";
+import { fetchDumpedMap, fetchMapCatalog, type MapCatalogEntry } from "../maps/maps";
 
 const WASD_SPEED = 900;
 

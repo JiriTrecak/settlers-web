@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, pickGrid, worldToGrid } from "../../src/shared/iso";
+import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, pickGrid, worldToGrid } from "../../src/shared/iso/iso";
 
 describe("iso", () => {
   it("round-trips grid points at height 0", () => {
@@ -19,7 +19,7 @@ describe("iso", () => {
     }
   });
 
-  it("uses Java 16×9 diamond", () => {
+  it("uses a 16×9 diamond", () => {
     const a = gridToWorld(1, 0, 0);
     const b = gridToWorld(0, 1, 0);
     expect(a.x - gridToWorld(0, 0, 0).x).toBe(TILE_WIDTH);
@@ -27,7 +27,7 @@ describe("iso", () => {
     expect(b.y - gridToWorld(0, 0, 0).y).toBe(TILE_HEIGHT);
   });
 
-  it("drops height on pick like Java", () => {
+  it("drops height on pick", () => {
     const w = gridToWorld(5, 8, 12);
     const flat = gridToWorld(5, 8, 0);
     expect(pickGrid(flat.x, flat.y)).toEqual({ x: 5, y: 8 });

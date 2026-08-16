@@ -3,10 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const javaBuildings = join(
-  root,
-  "../SettlersJava/jsettlers.common/src/main/resources/jsettlers/common/buildings",
-);
+const buildingsXml = join(root, "original_conv/catalog/buildings-xml");
 const out = join(root, "original_conv/catalog/buildings.json");
 
 const civs = ["roman", "egyptian", "asian", "amazon"];
@@ -32,7 +29,7 @@ function refFrom(a) {
 
 const entries = [];
 for (const civ of civs) {
-  const dir = join(javaBuildings, civ);
+  const dir = join(buildingsXml, civ);
   const files = (await readdir(dir)).filter((f) => f.endsWith(".xml")).sort();
   for (const file of files) {
     const building = file.replace(/\.xml$/, "");

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { TEXTURE_SIZE } from "../../src/render/atlasPositions";
-import { buildLandscapeGeometry, landscapeTriangleCount } from "../../src/render/landscapeGeometry";
-import { realModulo, triangleTexture } from "../../src/render/landscapeUv";
-import { Camera } from "../../src/render/camera";
-import { pickGrid } from "../../src/shared/iso";
-import { MapGrid } from "../../src/sim/mapGrid";
-import { mapViewFromGrid } from "../../src/sim/mapView";
+import { TEXTURE_SIZE } from "../../src/render/landscape/atlasPositions";
+import { buildLandscapeGeometry, landscapeTriangleCount } from "../../src/render/landscape/landscapeGeometry";
+import { realModulo, triangleTexture } from "../../src/render/landscape/landscapeUv";
+import { Camera } from "../../src/render/camera/camera";
+import { pickGrid } from "../../src/shared/iso/iso";
+import { MapGrid } from "../../src/sim/map/mapGrid";
+import { mapViewFromGrid } from "../../src/sim/map/mapView";
 
 describe("landscape geometry", () => {
   it("emits two triangles per cell with duplicated verts", () => {
@@ -40,7 +40,7 @@ describe("landscape geometry", () => {
 });
 
 describe("realModulo", () => {
-  it("matches Java remainder for negatives", () => {
+  it("wraps negatives the way % should for UV tiling", () => {
     expect(realModulo(40, 128)).toBe(40);
     expect(realModulo(-8, 128)).toBe(120);
   });

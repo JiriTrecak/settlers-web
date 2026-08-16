@@ -1,10 +1,10 @@
-import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "../../src/render/atlasPositions";
+import { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "../../src/render/landscape/atlasPositions";
 import { EMPTY_IMAGE } from "./decodeBitmap";
 import type { DecodedImage } from "./types";
 
 export { TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE };
 
-/** Pack file-0 landscape frames into Java's 1024 atlas. Tiles wrap to fill each cell. */
+/** Pack landscape frames into the 1024 atlas. Tiles wrap to fill each cell. */
 export function packLandscapeAtlas(images: readonly DecodedImage[]): DecodedImage {
   const rgba = new Uint8ClampedArray(TEXTURE_SIZE * TEXTURE_SIZE * 4);
   const n = Math.min(images.length, TEXTURE_POSITIONS.length);

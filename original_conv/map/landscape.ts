@@ -1,4 +1,4 @@
-import type { LandscapeType } from "../../src/shared/landscape";
+import type { LandscapeType } from "../../src/shared/landscape/landscape";
 
 const ORIGINAL_LANDSCAPE: Record<number, LandscapeType> = {
   0: "water1",

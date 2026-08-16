@@ -200,7 +200,7 @@ export class DatArchive {
     }
   }
 
-  /** Torso/shadow lists are shorter than settlers — pad to match Java AdvancedDatFileReader. */
+  /** Torso/shadow lists are shorter than settlers — pad empty sequences at the front. */
   private alignSettlerLayers(): void {
     const n = this.settlers.length;
     const empty = (): SequenceEntry => ({ offset: 0, frames: [] });
@@ -235,7 +235,7 @@ export class DatArchive {
     }
   }
 
-  /** Extra per-file shadow remaps from Java ShadowMapping. */
+  /** Per-file shadow index remaps. */
   private mapShadowIndex(settlerIndex: number): number {
     const f = this.fileIndex;
     if (f === 1) {

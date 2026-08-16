@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock } from "../../src/sim/clock";
+import { Clock } from "../../src/sim/clock/clock";
 
 describe("clock", () => {
   it("tick increments tickIndex", () => {

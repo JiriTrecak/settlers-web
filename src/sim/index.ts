@@ -1,7 +1,7 @@
-export { Clock } from "./clock";
-export { seedRng, type Rng } from "./rng";
-export { MapGrid } from "./mapGrid";
-export { generateIsland, generateMap, mapById, MAPS, type MapDef, type MapId } from "./generateIsland";
+export { Clock } from "./clock/clock";
+export { seedRng, type Rng } from "./rng/rng";
+export { MapGrid } from "./map/mapGrid";
+export { generateIsland, generateMap, mapById, MAPS, type MapDef, type MapId } from "./map/generateIsland";
 export {
   decorationsFromDumpedMap,
   gridFromDumpedMap,
@@ -9,6 +9,6 @@ export {
   type DumpedMap,
   type MapCatalogEntry,
   type MapGroup,
-} from "./dumpedMap";
-export { allDecorations, treeTypeAt, waveDecorations, type MapDecoration } from "./decorations";
-export { mapViewFromGrid, type MapView } from "./mapView";
+} from "./map/dumpedMap";
+export { allDecorations, treeSheetAt, waveDecorations, type MapDecoration } from "./decorations/decorations";
+export { mapViewFromGrid, type MapView } from "./map/mapView";
