@@ -12,9 +12,9 @@ export type GfxManifestEntry = {
   bytes: number;
 };
 
-/** Dev-only: serve gitignored GFX/ at /s3 without copying into dist. */
+/** Dev-only: serve gitignored original/GFX at /s3 without copying into dist. */
 export function localS3Plugin(): Plugin {
-  const gfxDir = resolve("GFX");
+  const gfxDir = resolve("original/GFX");
 
   return {
     name: "local-s3",

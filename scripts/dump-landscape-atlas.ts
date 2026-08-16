@@ -5,13 +5,12 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { DatArchive, packLandscapeAtlas, parseDatFileName } from "../src/assets/dat";
 import { encodePng } from "../src/assets/png";
+import { ORIGINAL_GFX, REPO_ROOT } from "./original";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const GFX = join(ROOT, "GFX");
-const OUT = join(ROOT, "assets/graphics/landscape-atlas.png");
+const GFX = ORIGINAL_GFX;
+const OUT = join(REPO_ROOT, "assets/graphics/landscape-atlas.png");
 
 if (!existsSync(GFX)) {
   console.error(`missing ${GFX}`);

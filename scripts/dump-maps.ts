@@ -5,13 +5,12 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { MapCatalogEntry } from "../src/assets/map/catalog";
 import { parseOriginalMap } from "../src/assets/map/parseOriginalMap";
+import { originalMapDir, REPO_ROOT } from "./original";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SRC = join(ROOT, "MAP");
-const OUT = join(ROOT, "assets/maps");
+const SRC = originalMapDir();
+const OUT = join(REPO_ROOT, "assets/maps");
 
 const GROUPS = [
   { dir: "TUTORIAL", group: "tutorial" as const },

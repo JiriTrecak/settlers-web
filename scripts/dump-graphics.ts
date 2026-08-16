@@ -5,16 +5,16 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { DatArchive, packLandscapeAtlas, parseDatFileName, type DecodedImage, type SeqKind } from "../src/assets/dat";
 import { encodePng } from "../src/assets/png";
 import { clipPath, framesOf, loadAllMovableClips } from "../src/assets/catalog/movables";
 import { landscapeInfo } from "../src/shared/landscape";
 import type { BuildingEntry } from "../src/assets/catalog/types";
 import type { Category, LayerRef, Sprite } from "../src/assets/catalog/sprite";
+import { ORIGINAL_GFX, REPO_ROOT } from "./original";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const GFX = join(ROOT, "GFX");
+const ROOT = REPO_ROOT;
+const GFX = ORIGINAL_GFX;
 const OUT = join(ROOT, "assets/graphics");
 const MOVABLES = join(ROOT, "src/assets/catalog/movables");
 
