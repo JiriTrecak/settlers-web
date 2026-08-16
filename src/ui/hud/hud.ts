@@ -9,14 +9,6 @@ export type HudMapOption = {
   detail?: string;
 };
 
-export type HudHandle = {
-  update(state: HudState): void;
-  setMap(id: string): void;
-  setBusy(busy: boolean): void;
-  readonly mapIds: readonly string[];
-  readonly minimap: HTMLCanvasElement;
-};
-
 export type HudState = {
   cursor: GridPos | null;
   landscape: LandscapeType | null;
@@ -33,87 +25,96 @@ const GROUP_LABEL: Record<HudMapGroup, string> = {
 
 const GROUP_ORDER: HudMapGroup[] = ["tutorial", "single", "multi", "generated"];
 
-export function mountHud(
-  host: HTMLElement,
-  maps: readonly HudMapOption[],
-  onSelectMap: (id: string) => void,
-): HudHandle {
-  host.replaceChildren();
+/** Stats, help, map picker. Does not own the minimap. */
+export class Hud {
+  readonly mapIds: readonly string[];
+  private readonly stats: HTMLDivElement;
+  private readonly help: HTMLDivElement;
+  private readonly picker: HTMLDivElement;
+  private readonly select: HTMLSelectElement;
+  private readonly onSelectMap: (id: string) => void;
 
-  const stats = document.createElement("div");
-  stats.className = "hud-stats";
+  constructor(host: HTMLElement, maps: readonly HudMapOption[], hooks: { onSelectMap: (id: string) => void }) {
+    this.onSelectMap = hooks.onSelectMap;
 
-  const help = document.createElement("div");
-  help.className = "hud-help";
-  help.append(
-    document.createTextNode("drag / WASD pan  ·  wheel zoom  ·  minimap drag  ·  click tile  ·  space fit  ·  1–9 maps  ·  "),
-  );
-  const assetsLink = document.createElement("a");
-  assetsLink.href = "/original_conv/viewer/index.html";
-  assetsLink.className = "hud-link";
-  assetsLink.textContent = "assets";
-  help.append(assetsLink);
+    this.stats = document.createElement("div");
+    this.stats.className = "hud-stats";
 
-  const minimap = document.createElement("canvas");
-  minimap.className = "hud-minimap";
-  minimap.width = 168;
-  minimap.height = 168;
+    this.help = document.createElement("div");
+    this.help.className = "hud-help";
+    this.help.append(
+      document.createTextNode("drag / WASD pan  ·  wheel zoom  ·  minimap drag  ·  click tile  ·  space fit  ·  1–9 maps  ·  "),
+    );
+    const assetsLink = document.createElement("a");
+    assetsLink.href = "/original_conv/viewer/index.html";
+    assetsLink.className = "hud-link";
+    assetsLink.textContent = "assets";
+    this.help.append(assetsLink);
 
-  const picker = document.createElement("div");
-  picker.className = "hud-maps";
-  const select = document.createElement("select");
-  select.className = "hud-map-select";
-  select.setAttribute("aria-label", "Map");
+    this.picker = document.createElement("div");
+    this.picker.className = "hud-maps";
+    this.select = document.createElement("select");
+    this.select.className = "hud-map-select";
+    this.select.setAttribute("aria-label", "Map");
 
-  for (const group of GROUP_ORDER) {
-    const items = maps.filter((m) => m.group === group);
-    if (items.length === 0) continue;
-    const optgroup = document.createElement("optgroup");
-    optgroup.label = GROUP_LABEL[group];
-    for (const map of items) {
-      const opt = document.createElement("option");
-      opt.value = map.id;
-      opt.textContent = map.detail ? `${map.name}  ·  ${map.detail}` : map.name;
-      optgroup.append(opt);
+    for (const group of GROUP_ORDER) {
+      const items = maps.filter((m) => m.group === group);
+      if (items.length === 0) continue;
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = GROUP_LABEL[group];
+      for (const map of items) {
+        const opt = document.createElement("option");
+        opt.value = map.id;
+        opt.textContent = map.detail ? `${map.name}  ·  ${map.detail}` : map.name;
+        optgroup.append(opt);
+      }
+      this.select.append(optgroup);
     }
-    select.append(optgroup);
+
+    if (maps.length === 0) {
+      const opt = document.createElement("option");
+      opt.textContent = "no maps";
+      opt.disabled = true;
+      this.select.append(opt);
+    }
+
+    this.select.addEventListener("change", this.onChange);
+    this.picker.append(this.select);
+
+    if (!maps.some((m) => m.group !== "generated")) {
+      const hint = document.createElement("div");
+      hint.className = "hud-maps-hint";
+      hint.textContent = "npm run dump:maps";
+      this.picker.append(hint);
+    }
+
+    host.append(this.stats, this.help, this.picker);
+    this.mapIds = maps.map((m) => m.id);
   }
 
-  if (maps.length === 0) {
-    const opt = document.createElement("option");
-    opt.textContent = "no maps";
-    opt.disabled = true;
-    select.append(opt);
+  setMap(id: string): void {
+    this.select.value = id;
   }
 
-  select.addEventListener("change", () => onSelectMap(select.value));
-  picker.append(select);
-
-  if (!maps.some((m) => m.group !== "generated")) {
-    const hint = document.createElement("div");
-    hint.className = "hud-maps-hint";
-    hint.textContent = "npm run dump:maps";
-    picker.append(hint);
+  setBusy(busy: boolean): void {
+    this.select.disabled = busy;
   }
 
-  host.append(stats, help, minimap, picker);
+  update(state: HudState): void {
+    const tile = state.cursor
+      ? `${state.cursor.x}, ${state.cursor.y}   ${state.landscape ?? "—"}   h=${state.height ?? 0}`
+      : "—";
+    this.stats.textContent = `${tile}\n${state.zoom.toFixed(2)}×`;
+  }
 
-  const mapIds = maps.map((m) => m.id);
+  destroy(): void {
+    this.select.removeEventListener("change", this.onChange);
+    this.stats.remove();
+    this.help.remove();
+    this.picker.remove();
+  }
 
-  return {
-    minimap,
-    mapIds,
-    setMap(id) {
-      select.value = id;
-    },
-    setBusy(busy) {
-      select.disabled = busy;
-    },
-    update(state) {
-      const tile = state.cursor
-        ? `${state.cursor.x}, ${state.cursor.y}   ${state.landscape ?? "—"}   h=${state.height ?? 0}`
-        : "—";
-      stats.textContent = `${tile}\n${state.zoom.toFixed(2)}×`;
-    },
+  private readonly onChange = (): void => {
+    this.onSelectMap(this.select.value);
   };
 }

@@ -37,7 +37,7 @@ View models are plain data. UI does not query `World` directly.
 
 - `#hud` overlay in `index.html`
 - A single status line so we know HTML sits on top of Pixi
-- `src/ui/index.ts` exports `mountHud(host: HTMLElement)`
+- `src/ui` exports `Hud` and `Minimap` classes
 - No menus, no buttons that do game things
 
 ## Phase 1

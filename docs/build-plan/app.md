@@ -1,10 +1,10 @@
 # App
 
-Composition root. Wires sim, render, dumped graphics, UI. Owns the browser loop.
+Boot. Creates Pixi, creates `Session`, pumps the ticker. No feature code.
 
 ## Purpose
 
-`src/app` is allowed to know about every other area. Nothing else is. If render needs a clock, app passes it. If UI needs to fire an action, app routes it into sim.
+`src/app` is the platform host. Match logic lives in `session`. If UI needs to fire an action, session routes it into sim.
 
 ## Public API (target)
 

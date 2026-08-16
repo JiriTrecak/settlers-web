@@ -1,13 +1,10 @@
-export type {
-  HudHandle,
-  HudMapGroup,
-  HudMapOption,
-  HudState,
-} from "./hud/hud";
-export { mountHud } from "./hud/hud";
+export type { HudMapGroup, HudMapOption, HudState } from "./hud/hud";
+export { Hud } from "./hud/hud";
 export {
-  lookAtMinimap,
-  paintMinimap,
-  paintMinimapViewport,
+  Minimap,
+  gridToMinimapPx,
+  minimapClientToGrid,
+  minimapPxToGrid,
+  viewportMinimapQuad,
   type MinimapCamera,
 } from "./minimap/minimap";

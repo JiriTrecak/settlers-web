@@ -1,0 +1,28 @@
+---
+description: Closed module boundaries — widgets and match state are classes, app is boot only
+alwaysApply: true
+---
+
+# Modules
+
+If it has lifecycle, retained state, or input, it is a **class with a closed boundary**. `Session` constructs it and subscribes (`onLookAt`, `onSelectMap`, …). Session never grabs a child canvas or implements that widget's pointer machine.
+
+```
+app/      Pixi boot + ticker. No feature code.
+session/  Running match: map load, input routing, subscriptions.
+sim/      Deterministic world. No Pixi, fetch, or DOM.
+render/   Pixi drawing. Reads views, does not mutate sim.
+ui/       DOM widgets (Hud, Minimap). Own their DOM and input.
+```
+
+Classes for `Session`, `World`/`MapGrid`, `Clock`, `Renderer`, `Camera`, `Hud`, `Minimap`, `MapInput`. Functions for pure math (`gridToWorld`, `treeSheetAt`, dump parse).
+
+```ts
+// BAD — session reaches into the widget
+hud.minimap.addEventListener("pointerdown", ...)
+paintMinimap(hud.minimap, view)
+
+// GOOD
+new Minimap(host, { onLookAt: (x, y) => session.lookAt(x, y) })
+minimap.setView(view)
+```

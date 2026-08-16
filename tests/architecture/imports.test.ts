@@ -1,11 +1,12 @@
 import { readdir, readFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const TEXT = /\.(ts|mjs|md)$/;
 const SKIP = new Set(["node_modules", "assets", "dist"]);
+const FROM = /from\s+["']([^"']+)["']/g;
 
 async function walk(dir: string, pred: (name: string) => boolean): Promise<string[]> {
   const out: string[] = [];
@@ -21,6 +22,15 @@ async function walk(dir: string, pred: (name: string) => boolean): Promise<strin
 
 async function walkTs(dir: string): Promise<string[]> {
   return walk(dir, (name) => name.endsWith(".ts"));
+}
+
+function importSpecs(text: string): string[] {
+  return [...text.matchAll(FROM)].map((m) => m[1]!);
+}
+
+function importsArea(spec: string, area: string): boolean {
+  if (area === "pixi") return spec === "pixi.js" || spec.startsWith("pixi.js/");
+  return spec.split("/").includes(area);
 }
 
 describe("architecture", () => {
@@ -39,6 +49,27 @@ describe("architecture", () => {
     for (const file of files) {
       const text = await readFile(file, "utf8");
       expect(text, file).not.toMatch(/from\s+["'][^"']*original_conv/);
+    }
+  });
+
+  it("layer imports stay one-way", async () => {
+    const bans: Record<string, string[]> = {
+      sim: ["pixi", "app", "session", "ui", "render"],
+      ui: ["pixi", "app", "session", "render"],
+      render: ["app", "session", "ui"],
+      session: ["app"],
+    };
+    for (const [layer, forbidden] of Object.entries(bans)) {
+      const files = await walkTs(join(repoRoot, "src", layer));
+      expect(files.length).toBeGreaterThan(0);
+      for (const file of files) {
+        const specs = importSpecs(await readFile(file, "utf8"));
+        for (const spec of specs) {
+          for (const area of forbidden) {
+            expect(importsArea(spec, area), `${relative(repoRoot, file)} → ${spec}`).toBe(false);
+          }
+        }
+      }
     }
   });
 

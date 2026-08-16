@@ -1,7 +1,9 @@
 # minimap
 
-Top-down grid projection of landscape colors (not iso). The “view rectangle” is the camera frustum projected through `worldToGrid` — a parallelogram.
+`Minimap` owns the canvas, drag, terrain cache, viewport quad.
 
-Drag: fractional grid look-at, height 0, so it doesn't hop on hills. Terrain is cached in a WeakMap; the overlay is redrawn every ticker frame.
+Top-down grid projection of landscape colors (not iso). The view quad is the camera frustum through `worldToGrid` — a parallelogram.
+
+Emits `onLookAt(x, y)` in grid space (height 0). Does not mutate the camera.
 
 Screen corners can fall outside the map; stroke is clipped by the canvas.

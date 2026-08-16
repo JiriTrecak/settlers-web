@@ -9,6 +9,7 @@ import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapGrid } from "../../sim/map/mapGrid";
 
 export type { MapCatalogEntry, MapGroup } from "../../sim/map/dumpedMap";
+export type { DumpedMap };
 
 export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   try {
@@ -34,5 +35,3 @@ export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; dec
   if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);
   return { grid: gridFromDumpedMap(data), decorations: decorationsFromDumpedMap(data) };
 }
-
-export type { DumpedMap };

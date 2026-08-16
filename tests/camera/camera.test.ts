@@ -20,6 +20,15 @@ describe("camera", () => {
     }
   });
 
+  it("lookAt centers a world point on screen", () => {
+    const cam = new Camera();
+    cam.zoom = 2;
+    cam.lookAt(40, 18, 800, 600);
+    const s = cam.worldToScreen(40, 18);
+    expect(s.x).toBeCloseTo(400, 8);
+    expect(s.y).toBeCloseTo(300, 8);
+  });
+
   it("zoomAt keeps the world point under the cursor", () => {
     const cam = new Camera();
     cam.panX = 50;

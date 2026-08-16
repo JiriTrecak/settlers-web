@@ -100,10 +100,11 @@ Index: `i = y * width + x`. Row-major.
 ## Imports
 
 ```
-sim    → shared, nothing else
-render → shared, pixi.js
-ui     → shared
-app    → everything in src
+sim      → shared
+render   → shared, pixi.js
+ui       → shared, sim (read-only views)
+session  → sim, render, ui, shared, pixi.js
+app      → session, pixi.js
 original_conv → may import src types; src never imports original_conv
 ```
 

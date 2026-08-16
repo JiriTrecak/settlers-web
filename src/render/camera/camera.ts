@@ -25,6 +25,11 @@ export class Camera {
     this.panY = sy - world.y * this.zoom;
   }
 
+  lookAt(wx: number, wy: number, screenW: number, screenH: number): void {
+    this.panX = screenW / 2 - wx * this.zoom;
+    this.panY = screenH / 2 - wy * this.zoom;
+  }
+
   fit(bounds: { minX: number; minY: number; maxX: number; maxY: number }, screenW: number, screenH: number, pad = 0.88): void {
     const bw = Math.max(1, bounds.maxX - bounds.minX);
     const bh = Math.max(1, bounds.maxY - bounds.minY);

@@ -9,7 +9,8 @@ This folder is the build plan. One file per area. Implement against these docs.
 | File | Owns |
 |---|---|
 | [conventions.md](conventions.md) | Naming, TS style |
-| [app.md](app.md) | Composition root, game loop, wiring |
+| [app.md](app.md) | Boot: Pixi, ticker, wires Session |
+| [session](../src/session/index.md) | Running match: map load, input, widget subscriptions |
 | [render.md](render.md) | Pixi stage, camera, landscape mesh, sprites |
 | [assets.md](assets.md) | Dumped graphics, catalog, conversion (`original_conv`) |
 | [sim.md](sim.md) | Headless engine: clock, grid, movables, economy |
@@ -19,17 +20,18 @@ This folder is the build plan. One file per area. Implement against these docs.
 ## Architecture
 
 ```
-ui  ──actions──►  sim  ──ViewSnapshot──►  render
+ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  render
                    ▲                         ▲
                    │                         │
-                 app (loop, wiring)       dumped graphics
+                 app (boot, ticker)       dumped graphics
 ```
 
 - `sim` never imports `pixi.js`. Enforced by test. See [testing.md](testing.md).
 - `render` never mutates sim state. It reads a `ViewSnapshot` (or queries a read-only view) each frame.
+- `session` is the running match: map load, input routing, widget subscriptions.
+- `app` boots Pixi and pumps `session.tick`. No feature code.
 - The engine loads dumped PNG/JSON. Original `.dat` / `.map` stay in `original_conv`.
-- `ui` is HTML/CSS. Pixi draws the map only.
-- `app` is the only layer that knows about all of the above.
+- `ui` is HTML/CSS widgets with closed boundaries. Pixi draws the map only.
 - `src` never imports `original_conv`.
 
 ## Phases

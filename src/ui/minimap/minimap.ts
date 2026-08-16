@@ -1,4 +1,4 @@
-import { gridToWorld, landscapeInfo, worldToGrid } from "../../shared";
+import { landscapeInfo, worldToGrid } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 
 export type MinimapCamera = {
@@ -7,8 +7,6 @@ export type MinimapCamera = {
   zoom: number;
   screenToWorld(sx: number, sy: number): { x: number; y: number };
 };
-
-const terrainCache = new WeakMap<HTMLCanvasElement, HTMLCanvasElement>();
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -79,106 +77,144 @@ export function viewportMinimapQuad(
   });
 }
 
-export function lookAtMinimap(
-  camera: MinimapCamera,
-  screenW: number,
-  screenH: number,
+export function minimapClientToGrid(
   view: MapView,
   canvas: HTMLCanvasElement,
   clientX: number,
   clientY: number,
-): void {
+): { x: number; y: number } {
   const px = minimapEventPx(canvas, clientX, clientY);
-  const g = minimapPxToGrid(px.x, px.y, view.width, view.height, canvas.width, canvas.height);
-  const world = gridToWorld(
-    clamp(g.x, 0, Math.max(0, view.width - 1)),
-    clamp(g.y, 0, Math.max(0, view.height - 1)),
-  );
-  camera.panX = screenW / 2 - world.x * camera.zoom;
-  camera.panY = screenH / 2 - world.y * camera.zoom;
+  return minimapPxToGrid(px.x, px.y, view.width, view.height, canvas.width, canvas.height);
 }
 
-export function paintMinimap(canvas: HTMLCanvasElement, view: MapView): void {
-  const buf = acquireTerrain(canvas);
-  const ctx = buf.getContext("2d");
-  if (!ctx) return;
-  const { width, height } = view;
-  const image = ctx.createImageData(buf.width, buf.height);
-  const data = image.data;
-  for (let py = 0; py < buf.height; py++) {
-    for (let px = 0; px < buf.width; px++) {
-      const x = Math.min(width - 1, Math.floor((px / buf.width) * width));
-      const y = Math.min(height - 1, Math.floor((py / buf.height) * height));
-      const [r, g, b] = landscapeInfo[view.landscapeAt(x, y)].color;
-      const i = (py * buf.width + px) * 4;
-      data[i] = Math.round(r * 255);
-      data[i + 1] = Math.round(g * 255);
-      data[i + 2] = Math.round(b * 255);
-      data[i + 3] = 255;
+/** Top-down terrain + viewport quad. Emits look-at in grid space; does not touch the camera. */
+export class Minimap {
+  private readonly canvas: HTMLCanvasElement;
+  private readonly terrain = document.createElement("canvas");
+  private readonly onLookAt: (x: number, y: number) => void;
+  private view: MapView | null = null;
+  private dragging = false;
+
+  constructor(host: HTMLElement, hooks: { onLookAt: (x: number, y: number) => void }) {
+    this.onLookAt = hooks.onLookAt;
+    this.canvas = document.createElement("canvas");
+    this.canvas.className = "hud-minimap";
+    this.canvas.width = 168;
+    this.canvas.height = 168;
+    this.terrain.width = 168;
+    this.terrain.height = 168;
+    host.append(this.canvas);
+
+    this.canvas.addEventListener("pointerdown", this.onDown);
+    this.canvas.addEventListener("pointermove", this.onMove);
+    this.canvas.addEventListener("pointerup", this.onUp);
+    this.canvas.addEventListener("pointercancel", this.onUp);
+  }
+
+  setView(view: MapView | null): void {
+    this.view = view;
+    if (!view) {
+      const ctx = this.canvas.getContext("2d");
+      ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      return;
     }
+    this.paintTerrain(view);
+    this.blitTerrain();
   }
-  ctx.putImageData(image, 0, 0);
-  blitTerrain(canvas);
-}
 
-export function paintMinimapViewport(
-  canvas: HTMLCanvasElement,
-  camera: MinimapCamera,
-  screenW: number,
-  screenH: number,
-  view: MapView,
-): void {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  blitTerrain(canvas);
-  const quad = viewportMinimapQuad(
-    camera,
-    screenW,
-    screenH,
-    view.width,
-    view.height,
-    canvas.width,
-    canvas.height,
-  );
-  const first = quad[0];
-  if (!first) return;
-  ctx.beginPath();
-  ctx.moveTo(first.x, first.y);
-  for (let i = 1; i < quad.length; i++) {
-    const p = quad[i]!;
-    ctx.lineTo(p.x, p.y);
+  setCamera(camera: MinimapCamera, screenW: number, screenH: number): void {
+    const view = this.view;
+    const ctx = this.canvas.getContext("2d");
+    if (!view || !ctx) return;
+    this.blitTerrain();
+    const quad = viewportMinimapQuad(
+      camera,
+      screenW,
+      screenH,
+      view.width,
+      view.height,
+      this.canvas.width,
+      this.canvas.height,
+    );
+    const first = quad[0];
+    if (!first) return;
+    ctx.beginPath();
+    ctx.moveTo(first.x, first.y);
+    for (let i = 1; i < quad.length; i++) {
+      const p = quad[i]!;
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(232, 224, 208, 0.14)";
+    ctx.fill();
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.strokeStyle = "#e8c36a";
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
   }
-  ctx.closePath();
-  ctx.fillStyle = "rgba(232, 224, 208, 0.14)";
-  ctx.fill();
-  ctx.lineJoin = "round";
-  ctx.strokeStyle = "#000000";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  ctx.strokeStyle = "#e8c36a";
-  ctx.lineWidth = 1.25;
-  ctx.stroke();
-}
 
-function acquireTerrain(canvas: HTMLCanvasElement): HTMLCanvasElement {
-  let buf = terrainCache.get(canvas);
-  if (!buf || buf.width !== canvas.width || buf.height !== canvas.height) {
-    buf = document.createElement("canvas");
-    buf.width = canvas.width;
-    buf.height = canvas.height;
-    terrainCache.set(canvas, buf);
+  destroy(): void {
+    this.canvas.removeEventListener("pointerdown", this.onDown);
+    this.canvas.removeEventListener("pointermove", this.onMove);
+    this.canvas.removeEventListener("pointerup", this.onUp);
+    this.canvas.removeEventListener("pointercancel", this.onUp);
+    this.canvas.remove();
   }
-  return buf;
-}
 
-function blitTerrain(canvas: HTMLCanvasElement): void {
-  const buf = terrainCache.get(canvas);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  if (!buf) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    return;
+  private paintTerrain(view: MapView): void {
+    const ctx = this.terrain.getContext("2d");
+    if (!ctx) return;
+    const { width, height } = view;
+    const image = ctx.createImageData(this.terrain.width, this.terrain.height);
+    const data = image.data;
+    for (let py = 0; py < this.terrain.height; py++) {
+      for (let px = 0; px < this.terrain.width; px++) {
+        const x = Math.min(width - 1, Math.floor((px / this.terrain.width) * width));
+        const y = Math.min(height - 1, Math.floor((py / this.terrain.height) * height));
+        const [r, g, b] = landscapeInfo[view.landscapeAt(x, y)].color;
+        const i = (py * this.terrain.width + px) * 4;
+        data[i] = Math.round(r * 255);
+        data[i + 1] = Math.round(g * 255);
+        data[i + 2] = Math.round(b * 255);
+        data[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(image, 0, 0);
   }
-  ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(buf, 0, 0);
+
+  private blitTerrain(): void {
+    const ctx = this.canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(this.terrain, 0, 0);
+  }
+
+  private emitLookAt(e: PointerEvent): void {
+    if (!this.view) return;
+    const g = minimapClientToGrid(this.view, this.canvas, e.clientX, e.clientY);
+    this.onLookAt(g.x, g.y);
+  }
+
+  private readonly onDown = (e: PointerEvent): void => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    this.dragging = true;
+    this.canvas.classList.add("is-dragging");
+    this.canvas.setPointerCapture(e.pointerId);
+    this.emitLookAt(e);
+  };
+
+  private readonly onMove = (e: PointerEvent): void => {
+    if (!this.dragging) return;
+    this.emitLookAt(e);
+  };
+
+  private readonly onUp = (e: PointerEvent): void => {
+    if (e.button !== 0 && e.type !== "pointercancel") return;
+    this.dragging = false;
+    this.canvas.classList.remove("is-dragging");
+  };
 }

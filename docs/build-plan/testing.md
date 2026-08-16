@@ -93,6 +93,10 @@ Phase 0:
 
 - `src/sim` must not import `pixi.js`
 - `src` must not import `original_conv`
+- `sim` must not import `app` / `session` / `ui` / `render`
+- `ui` must not import `app` / `session` / `render` / pixi
+- `render` must not import `app` / `session` / `ui`
+- `session` must not import `app`
 
 Add later:
 
