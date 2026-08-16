@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, pickGrid, worldToGrid } from "./iso";
+import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, pickGrid, worldToGrid } from "../../src/shared/iso";
 
 describe("iso", () => {
   it("round-trips grid points at height 0", () => {

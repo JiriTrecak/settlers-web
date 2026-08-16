@@ -1,10 +1,10 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { parseOriginalMap } from "../assets/map/parseOriginalMap";
-import { MapGrid } from "./mapGrid";
-import { mapViewFromGrid } from "./mapView";
-import { mapDecorations, stoneCapacity, treeTypeAt, waveDecorations } from "./decorations";
+import { parseOriginalMap } from "../../src/assets/map/parseOriginalMap";
+import { mapDecorations, stoneCapacity, treeTypeAt, waveDecorations } from "../../src/sim/decorations";
+import { MapGrid } from "../../src/sim/mapGrid";
+import { mapViewFromGrid } from "../../src/sim/mapView";
 
 describe("treeTypeAt", () => {
   it("matches Java MapObjectDrawer.getTreeType", () => {
@@ -37,7 +37,7 @@ describe("waveDecorations", () => {
 });
 
 describe("mapDecorations T1", () => {
-  const path = "MAP/TUTORIAL/T1.MAP";
+  const path = "assets/maps/tutorial/T1.MAP";
   const has = existsSync(path);
 
   it.skipIf(!has)("reads trees and stones from the object byte", async () => {

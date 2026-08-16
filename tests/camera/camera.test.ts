@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Camera } from "./camera";
+import { Camera } from "../../src/render/camera";
 
 describe("camera", () => {
   it("worldToScreen ∘ screenToWorld round-trips", () => {

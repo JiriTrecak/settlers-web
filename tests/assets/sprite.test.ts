@@ -6,7 +6,7 @@ import {
   matchesRace,
   searchItems,
   type Sprite,
-} from "./sprite";
+} from "../../src/assets/catalog/sprite";
 
 function sprite(partial: Partial<Sprite> & Pick<Sprite, "id" | "title">): Sprite {
   return {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { MAPS, generateIsland, generateMap } from "./generateIsland";
-import { seedRng } from "./rng";
-import { HEX_DELTAS, isAllowedNeighbor, isRiver, isWater } from "../shared/landscape";
+import { HEX_DELTAS, isAllowedNeighbor, isRiver, isWater } from "../../src/shared/landscape";
+import { MAPS, generateIsland, generateMap } from "../../src/sim/generateIsland";
+import { seedRng } from "../../src/sim/rng";
 
 describe("generateIsland", () => {
   it("is deterministic for a seed and has ocean corners", () => {

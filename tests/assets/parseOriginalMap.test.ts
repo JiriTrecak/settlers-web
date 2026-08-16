@@ -1,9 +1,9 @@
 import { existsSync } from "node:fs";
-import { describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
-import { checksumValid, parseOriginalMap } from "./parseOriginalMap";
-import { originalLandscapeType } from "./landscape";
-import { originalMapToGrid } from "../../sim/originalMap";
+import { describe, expect, it } from "vitest";
+import { originalLandscapeType } from "../../src/assets/map/landscape";
+import { checksumValid, parseOriginalMap } from "../../src/assets/map/parseOriginalMap";
+import { originalMapToGrid } from "../../src/sim/originalMap";
 
 describe("original landscape ids", () => {
   it("maps water/grass/mountain like Java OriginalLandscape", () => {
@@ -17,7 +17,7 @@ describe("original landscape ids", () => {
 });
 
 describe("parse T1.MAP", () => {
-  const path = "MAP/TUTORIAL/T1.MAP";
+  const path = "assets/maps/tutorial/T1.MAP";
   const has = existsSync(path);
 
   it.skipIf(!has)("checksums and reads a square landscape", async () => {

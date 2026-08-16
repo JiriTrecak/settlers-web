@@ -1,9 +1,9 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { clipPath, framesOf, loadAllMovableClips, parseMovablesText } from "./movables";
+import { clipPath, framesOf, loadAllMovableClips, parseMovablesText } from "../../src/assets/catalog/movables";
 
-const dir = join(dirname(fileURLToPath(import.meta.url)), "movables");
+const dir = join(dirname(fileURLToPath(import.meta.url)), "../../src/assets/catalog/movables");
 
 describe("movables", () => {
   it("expands SETTLER_MATERIAL into walk + idle per civ", () => {

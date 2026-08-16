@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { MapGrid } from "../sim/mapGrid";
-import { mapViewFromGrid } from "../sim/mapView";
-import { Camera } from "./camera";
-import { pickGrid } from "../shared/iso";
-import { TEXTURE_SIZE } from "../assets/dat/atlasPositions";
-import { buildLandscapeGeometry, landscapeTriangleCount } from "./landscapeGeometry";
-import { realModulo, triangleTexture } from "./landscapeUv";
+import { TEXTURE_SIZE } from "../../src/assets/dat/atlasPositions";
+import { buildLandscapeGeometry, landscapeTriangleCount } from "../../src/render/landscapeGeometry";
+import { realModulo, triangleTexture } from "../../src/render/landscapeUv";
+import { Camera } from "../../src/render/camera";
+import { pickGrid } from "../../src/shared/iso";
+import { MapGrid } from "../../src/sim/mapGrid";
+import { mapViewFromGrid } from "../../src/sim/mapView";
 
 describe("landscape geometry", () => {
   it("emits two triangles per cell with duplicated verts", () => {

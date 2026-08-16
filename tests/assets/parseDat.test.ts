@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { packLandscapeAtlas, TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "./atlas";
-import { buildDat } from "./buildDat";
-import { packRgb565, rgb565ToRgba } from "./color";
-import { compositeSettler } from "./composite";
-import { parseDat, parseDatFileName } from "./parseDat";
+import { packLandscapeAtlas, TEXTURE_GRID, TEXTURE_POSITIONS, TEXTURE_SIZE } from "../../src/assets/dat/atlas";
+import { buildDat } from "../../src/assets/dat/buildDat";
+import { packRgb565, rgb565ToRgba } from "../../src/assets/dat/color";
+import { compositeSettler } from "../../src/assets/dat/composite";
+import { parseDat, parseDatFileName } from "../../src/assets/dat/parseDat";
 
 describe("parseDatFileName", () => {
   it("reads gold 565 and amazon 555", () => {
