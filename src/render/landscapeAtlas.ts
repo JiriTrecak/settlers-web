@@ -1,0 +1,20 @@
+import { Texture } from "pixi.js";
+
+export const LANDSCAPE_ATLAS_URL = "/graphics/landscape-atlas.png";
+
+/** Java 1024² landscape atlas dumped from DAT file 0. */
+export async function loadLandscapeAtlas(): Promise<Texture | null> {
+  try {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = LANDSCAPE_ATLAS_URL;
+    await img.decode();
+    const texture = Texture.from(img);
+    texture.source.autoGenerateMipmaps = false;
+    texture.source.scaleMode = "nearest";
+    texture.source.addressMode = "clamp-to-edge";
+    return texture;
+  } catch {
+    return null;
+  }
+}

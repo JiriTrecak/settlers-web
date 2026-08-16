@@ -1,0 +1,110 @@
+import { Application, Container, Graphics, type Texture } from "pixi.js";
+import { gridToWorld, pickGrid, type GridPos } from "../shared";
+import type { MapDecoration } from "../sim/decorations";
+import type { MapView } from "../sim/mapView";
+import { Camera } from "./camera";
+import { DecorationLayer } from "./decorationLayer";
+import type { DecorationSheets } from "./decorationSheets";
+import { buildLandscapeGeometry } from "./landscapeGeometry";
+import { createLandscapeMesh } from "./landscapeMesh";
+
+export class Renderer {
+  readonly camera = new Camera();
+  readonly world = new Container();
+  private readonly decorations = new DecorationLayer();
+
+  private view: MapView | null = null;
+  private atlas: Texture | null = null;
+  private objects: readonly MapDecoration[] = [];
+  private readonly hover = new Graphics();
+  private readonly select = new Graphics();
+
+  constructor(private readonly app: Application) {
+    this.app.stage.addChild(this.world);
+    this.world.sortableChildren = true;
+    this.hover.eventMode = "none";
+    this.select.eventMode = "none";
+    this.hover.zIndex = 1_000_000;
+    this.select.zIndex = 1_000_001;
+    this.world.addChild(this.decorations.root, this.select, this.hover);
+  }
+
+  setAtlas(atlas: Texture | null): void {
+    this.atlas = atlas;
+    if (this.view) this.setView(this.view);
+  }
+
+  setSheets(sheets: DecorationSheets | null): void {
+    this.decorations.setSheets(sheets);
+  }
+
+  setView(view: MapView, objects: readonly MapDecoration[] = this.objects): void {
+    this.view = view;
+    this.objects = objects;
+    const mesh = createLandscapeMesh(buildLandscapeGeometry(view), this.atlas);
+    mesh.eventMode = "none";
+    mesh.zIndex = -1;
+    this.world.removeChildren();
+    this.world.addChild(mesh, this.decorations.root, this.select, this.hover);
+    this.decorations.setDecorations(view, objects);
+
+    const w = view.width;
+    const h = view.height;
+    const corners = [
+      gridToWorld(0, 0),
+      gridToWorld(w - 1, 0),
+      gridToWorld(0, h - 1),
+      gridToWorld(w - 1, h - 1),
+    ];
+    this.camera.fit(
+      {
+        minX: Math.min(...corners.map((c) => c.x)),
+        maxX: Math.max(...corners.map((c) => c.x)),
+        minY: Math.min(...corners.map((c) => c.y)),
+        maxY: Math.max(...corners.map((c) => c.y)),
+      },
+      this.app.renderer.width,
+      this.app.renderer.height,
+    );
+    this.applyCamera();
+  }
+
+  tick(nowMs: number): void {
+    this.decorations.tick(nowMs);
+  }
+
+  applyCamera(): void {
+    this.world.position.set(this.camera.panX, this.camera.panY);
+    this.world.scale.set(this.camera.zoom);
+  }
+
+  pick(screen: { x: number; y: number }): GridPos | null {
+    if (!this.view) return null;
+    const world = this.camera.screenToWorld(screen.x, screen.y);
+    const g = pickGrid(world.x, world.y);
+    if (g.x < 0 || g.y < 0 || g.x >= this.view.width || g.y >= this.view.height) {
+      return null;
+    }
+    return g;
+  }
+
+  highlight(pos: GridPos | null, kind: "hover" | "select"): void {
+    const g = kind === "hover" ? this.hover : this.select;
+    g.clear();
+    if (!pos || !this.view) return;
+    const { x, y } = pos;
+    if (x >= this.view.width - 1 || y >= this.view.height - 1) return;
+    const pts = [
+      gridToWorld(x, y, this.view.heightAt(x, y)),
+      gridToWorld(x + 1, y, this.view.heightAt(x + 1, y)),
+      gridToWorld(x + 1, y + 1, this.view.heightAt(x + 1, y + 1)),
+      gridToWorld(x, y + 1, this.view.heightAt(x, y + 1)),
+    ];
+    const color = kind === "hover" ? 0xfff3c4 : 0xffffff;
+    g.poly(pts).stroke({
+      color,
+      width: 1.25 / this.camera.zoom,
+      alignment: 0.5,
+    });
+  }
+}

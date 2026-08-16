@@ -1,0 +1,24 @@
+{
+  "name": "settlers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "dump:graphics": "vite-node scripts/dump-graphics.ts",
+    "dump:landscape-atlas": "vite-node scripts/dump-landscape-atlas.ts",
+    "dump:maps": "vite-node scripts/dump-maps.ts"
+  },
+  "dependencies": {
+    "pixi.js": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vite-node": "^6.0.0",
+    "vitest": "^4.1.10"
+  }
+}

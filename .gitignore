@@ -1,0 +1,24 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Original Settlers III data — never commit (anchor to repo root; unanchored MAP/ also matches src/assets/map on macOS)
+/GFX/
+/SND/
+/Map/
+/MAP/
+/MUSIC/
+/S3MCD/
+/S3/
+/S3QOTA/
+/S3GOLD/
+/s3/
+
+# Reconstructed pixels + generated catalog — never commit
+assets/graphics/*
+!assets/graphics/.gitkeep
+
+# Original .map copies + generated catalog — never commit
+assets/maps/*
+!assets/maps/.gitkeep

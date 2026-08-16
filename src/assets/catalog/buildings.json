@@ -1,0 +1,4224 @@
+{
+  "buildings": [
+    {
+      "id": "building/roman/baker",
+      "civ": "roman",
+      "building": "baker",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 39,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/barrack",
+      "civ": "roman",
+      "building": "barrack",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 57,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/big_livinghouse",
+      "civ": "roman",
+      "building": "big_livinghouse",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 78,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/big_temple",
+      "civ": "roman",
+      "building": "big_temple",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 105,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/big_tower",
+      "civ": "roman",
+      "building": "big_tower",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 60,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/castle",
+      "civ": "roman",
+      "building": "castle",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 63,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/charcoal_burner",
+      "civ": "roman",
+      "building": "charcoal_burner",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 81,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/coalmine",
+      "civ": "roman",
+      "building": "coalmine",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 51,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/dockyard",
+      "civ": "roman",
+      "building": "dockyard",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 44,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 44,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 108,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/donkey_farm",
+      "civ": "roman",
+      "building": "donkey_farm",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 87,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/farm",
+      "civ": "roman",
+      "building": "farm",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 69,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/fisher",
+      "civ": "roman",
+      "building": "fisher",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 18,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/forester",
+      "civ": "roman",
+      "building": "forester",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 3,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/goldmelt",
+      "civ": "roman",
+      "building": "goldmelt",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 21,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/goldmine",
+      "civ": "roman",
+      "building": "goldmine",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 48,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/harbor",
+      "civ": "roman",
+      "building": "harbor",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 45,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 45,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 84,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/hospital",
+      "civ": "roman",
+      "building": "hospital",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 93,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/ironmelt",
+      "civ": "roman",
+      "building": "ironmelt",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 24,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/ironmine",
+      "civ": "roman",
+      "building": "ironmine",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 45,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/lookout_tower",
+      "civ": "roman",
+      "building": "lookout_tower",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 9,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/lumberjack",
+      "civ": "roman",
+      "building": "lumberjack",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/market_place",
+      "civ": "roman",
+      "building": "market_place",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 1
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 2
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 3
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 99,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/medium_livinghouse",
+      "civ": "roman",
+      "building": "medium_livinghouse",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 75,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/mill",
+      "civ": "roman",
+      "building": "mill",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 15,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/pig_farm",
+      "civ": "roman",
+      "building": "pig_farm",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 66,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/sawmill",
+      "civ": "roman",
+      "building": "sawmill",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 6,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/slaughterhouse",
+      "civ": "roman",
+      "building": "slaughterhouse",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 12,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/small_livinghouse",
+      "civ": "roman",
+      "building": "small_livinghouse",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 72,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/stock",
+      "civ": "roman",
+      "building": "stock",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 1
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 2
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 3
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 4
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 5
+        }
+      ],
+      "scaffold": [],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 33,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/stonecutter",
+      "civ": "roman",
+      "building": "stonecutter",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 42,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/temple",
+      "civ": "roman",
+      "building": "temple",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 102,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/toolsmith",
+      "civ": "roman",
+      "building": "toolsmith",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 30,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/tower",
+      "civ": "roman",
+      "building": "tower",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 0
+        },
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 54,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/waterworks",
+      "civ": "roman",
+      "building": "waterworks",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 36,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/weaponsmith",
+      "civ": "roman",
+      "building": "weaponsmith",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 27,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/roman/winegrower",
+      "civ": "roman",
+      "building": "winegrower",
+      "built": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 13,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 14,
+        "kind": "gui",
+        "sequence": 90,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/baker",
+      "civ": "egyptian",
+      "building": "baker",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 39,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/barrack",
+      "civ": "egyptian",
+      "building": "barrack",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 57,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/big_livinghouse",
+      "civ": "egyptian",
+      "building": "big_livinghouse",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 78,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/big_temple",
+      "civ": "egyptian",
+      "building": "big_temple",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 102,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/big_tower",
+      "civ": "egyptian",
+      "building": "big_tower",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 0
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 60,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/brewery",
+      "civ": "egyptian",
+      "building": "brewery",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 90,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/castle",
+      "civ": "egyptian",
+      "building": "castle",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 0
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 63,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/coalmine",
+      "civ": "egyptian",
+      "building": "coalmine",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 51,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/dockyard",
+      "civ": "egyptian",
+      "building": "dockyard",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 45,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 45,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 108,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/donkey_farm",
+      "civ": "egyptian",
+      "building": "donkey_farm",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 81,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/farm",
+      "civ": "egyptian",
+      "building": "farm",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 69,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/fisher",
+      "civ": "egyptian",
+      "building": "fisher",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 18,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/forester",
+      "civ": "egyptian",
+      "building": "forester",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 3,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/gemsmine",
+      "civ": "egyptian",
+      "building": "gemsmine",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 96,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/goldmelt",
+      "civ": "egyptian",
+      "building": "goldmelt",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 21,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/goldmine",
+      "civ": "egyptian",
+      "building": "goldmine",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 48,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/harbor",
+      "civ": "egyptian",
+      "building": "harbor",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 46,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 46,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 108,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/hospital",
+      "civ": "egyptian",
+      "building": "hospital",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 72,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/ironmelt",
+      "civ": "egyptian",
+      "building": "ironmelt",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 24,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/ironmine",
+      "civ": "egyptian",
+      "building": "ironmine",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 45,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/lookout_tower",
+      "civ": "egyptian",
+      "building": "lookout_tower",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 9,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/lumberjack",
+      "civ": "egyptian",
+      "building": "lumberjack",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/market_place",
+      "civ": "egyptian",
+      "building": "market_place",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 0
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 1
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 2
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 3
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 93,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/medium_livinghouse",
+      "civ": "egyptian",
+      "building": "medium_livinghouse",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 75,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/mill",
+      "civ": "egyptian",
+      "building": "mill",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 15,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/pig_farm",
+      "civ": "egyptian",
+      "building": "pig_farm",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 66,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/sawmill",
+      "civ": "egyptian",
+      "building": "sawmill",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 6,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/slaughterhouse",
+      "civ": "egyptian",
+      "building": "slaughterhouse",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 12,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/small_livinghouse",
+      "civ": "egyptian",
+      "building": "small_livinghouse",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 72,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/stock",
+      "civ": "egyptian",
+      "building": "stock",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 0
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 1
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 2
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 3
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 4
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 5
+        }
+      ],
+      "scaffold": [],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 33,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/stonecutter",
+      "civ": "egyptian",
+      "building": "stonecutter",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 42,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/temple",
+      "civ": "egyptian",
+      "building": "temple",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 105,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/toolsmith",
+      "civ": "egyptian",
+      "building": "toolsmith",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 30,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/tower",
+      "civ": "egyptian",
+      "building": "tower",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 0
+        },
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 54,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/waterworks",
+      "civ": "egyptian",
+      "building": "waterworks",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 36,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/egyptian/weaponsmith",
+      "civ": "egyptian",
+      "building": "weaponsmith",
+      "built": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 23,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 24,
+        "kind": "gui",
+        "sequence": 27,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/baker",
+      "civ": "asian",
+      "building": "baker",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 42,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/barrack",
+      "civ": "asian",
+      "building": "barrack",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 60,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/big_livinghouse",
+      "civ": "asian",
+      "building": "big_livinghouse",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 81,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/big_temple",
+      "civ": "asian",
+      "building": "big_temple",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 87,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/big_tower",
+      "civ": "asian",
+      "building": "big_tower",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 0
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 63,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/castle",
+      "civ": "asian",
+      "building": "castle",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 0
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 66,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/coalmine",
+      "civ": "asian",
+      "building": "coalmine",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 54,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/distillery",
+      "civ": "asian",
+      "building": "distillery",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 96,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/dockyard",
+      "civ": "asian",
+      "building": "dockyard",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 47,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 47,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 114,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/donkey_farm",
+      "civ": "asian",
+      "building": "donkey_farm",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 90,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/farm",
+      "civ": "asian",
+      "building": "farm",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 72,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/fisher",
+      "civ": "asian",
+      "building": "fisher",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 21,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/forester",
+      "civ": "asian",
+      "building": "forester",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 36,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 36,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 3,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/goldmelt",
+      "civ": "asian",
+      "building": "goldmelt",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 24,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/goldmine",
+      "civ": "asian",
+      "building": "goldmine",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 108,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/harbor",
+      "civ": "asian",
+      "building": "harbor",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 48,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 48,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 15,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/hospital",
+      "civ": "asian",
+      "building": "hospital",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 93,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/ironmelt",
+      "civ": "asian",
+      "building": "ironmelt",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 27,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/ironmine",
+      "civ": "asian",
+      "building": "ironmine",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 48,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/lookout_tower",
+      "civ": "asian",
+      "building": "lookout_tower",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 9,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/lumberjack",
+      "civ": "asian",
+      "building": "lumberjack",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 37,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 37,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/market_place",
+      "civ": "asian",
+      "building": "market_place",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 0
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 1
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 2
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 3
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 99,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/medium_livinghouse",
+      "civ": "asian",
+      "building": "medium_livinghouse",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 78,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/mill",
+      "civ": "asian",
+      "building": "mill",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 20,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 18,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/pig_farm",
+      "civ": "asian",
+      "building": "pig_farm",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 69,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/rice_farm",
+      "civ": "asian",
+      "building": "rice_farm",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 102,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/sawmill",
+      "civ": "asian",
+      "building": "sawmill",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 6,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/slaughterhouse",
+      "civ": "asian",
+      "building": "slaughterhouse",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 12,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/small_livinghouse",
+      "civ": "asian",
+      "building": "small_livinghouse",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 75,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/stock",
+      "civ": "asian",
+      "building": "stock",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 0
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 1
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 2
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 3
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 4
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 5
+        }
+      ],
+      "scaffold": [],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 36,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/stonecutter",
+      "civ": "asian",
+      "building": "stonecutter",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 45,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/sulfurmine",
+      "civ": "asian",
+      "building": "sulfurmine",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 51,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/temple",
+      "civ": "asian",
+      "building": "temple",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 32,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 84,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/toolsmith",
+      "civ": "asian",
+      "building": "toolsmith",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 33,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/tower",
+      "civ": "asian",
+      "building": "tower",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 0
+        },
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 57,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/waterworks",
+      "civ": "asian",
+      "building": "waterworks",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 39,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/asian/weaponsmith",
+      "civ": "asian",
+      "building": "weaponsmith",
+      "built": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 33,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 34,
+        "kind": "gui",
+        "sequence": 30,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/baker",
+      "civ": "amazon",
+      "building": "baker",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 28,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 42,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/barrack",
+      "civ": "amazon",
+      "building": "barrack",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 37,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 37,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 63,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/beekeeping",
+      "civ": "amazon",
+      "building": "beekeeping",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 3,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 117,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/big_livinghouse",
+      "civ": "amazon",
+      "building": "big_livinghouse",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 31,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 84,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/big_temple",
+      "civ": "amazon",
+      "building": "big_temple",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 36,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 36,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 111,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/big_tower",
+      "civ": "amazon",
+      "building": "big_tower",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 23,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 66,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/castle",
+      "civ": "amazon",
+      "building": "castle",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 21,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 69,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/coalmine",
+      "civ": "amazon",
+      "building": "coalmine",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 11,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 57,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/dockyard",
+      "civ": "amazon",
+      "building": "dockyard",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 47,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 47,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 114,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/donkey_farm",
+      "civ": "amazon",
+      "building": "donkey_farm",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 38,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 38,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 93,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/farm",
+      "civ": "amazon",
+      "building": "farm",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 26,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 75,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/fisher",
+      "civ": "amazon",
+      "building": "fisher",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 27,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 21,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/forester",
+      "civ": "amazon",
+      "building": "forester",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 12,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 3,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/gemsmine",
+      "civ": "amazon",
+      "building": "gemsmine",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 1,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 15,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/goldmelt",
+      "civ": "amazon",
+      "building": "goldmelt",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 13,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 24,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/goldmine",
+      "civ": "amazon",
+      "building": "goldmine",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 10,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 54,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/harbor",
+      "civ": "amazon",
+      "building": "harbor",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 48,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 48,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 90,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/hospital",
+      "civ": "amazon",
+      "building": "hospital",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 34,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 99,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/ironmelt",
+      "civ": "amazon",
+      "building": "ironmelt",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 14,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 27,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/ironmine",
+      "civ": "amazon",
+      "building": "ironmine",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 9,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 51,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/laboratory",
+      "civ": "amazon",
+      "building": "laboratory",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 0,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 87,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/lookout_tower",
+      "civ": "amazon",
+      "building": "lookout_tower",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 7,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 9,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/lumberjack",
+      "civ": "amazon",
+      "building": "lumberjack",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 5,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/market_place",
+      "civ": "amazon",
+      "building": "market_place",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 1
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 2
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 33,
+          "frame": 3
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 105,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/mead_brewery",
+      "civ": "amazon",
+      "building": "mead_brewery",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 4,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 96,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/medium_livinghouse",
+      "civ": "amazon",
+      "building": "medium_livinghouse",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 30,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 81,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/mill",
+      "civ": "amazon",
+      "building": "mill",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 19,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 18,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/pig_farm",
+      "civ": "amazon",
+      "building": "pig_farm",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 25,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 72,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/sawmill",
+      "civ": "amazon",
+      "building": "sawmill",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 6,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 6,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/slaughterhouse",
+      "civ": "amazon",
+      "building": "slaughterhouse",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 18,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 12,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/small_livinghouse",
+      "civ": "amazon",
+      "building": "small_livinghouse",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 29,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 78,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/stock",
+      "civ": "amazon",
+      "building": "stock",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 1
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 2
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 3
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 4
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 17,
+          "frame": 5
+        }
+      ],
+      "scaffold": [],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 36,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/stonecutter",
+      "civ": "amazon",
+      "building": "stonecutter",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 8,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 48,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/sulfurmine",
+      "civ": "amazon",
+      "building": "sulfurmine",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 2,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 45,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/temple",
+      "civ": "amazon",
+      "building": "temple",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 35,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 108,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/toolsmith",
+      "civ": "amazon",
+      "building": "toolsmith",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 15,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 33,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/tower",
+      "civ": "amazon",
+      "building": "tower",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 0
+        },
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 2
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 22,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 60,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/waterworks",
+      "civ": "amazon",
+      "building": "waterworks",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 24,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 39,
+        "frame": 0
+      }
+    },
+    {
+      "id": "building/amazon/weaponsmith",
+      "civ": "amazon",
+      "building": "weaponsmith",
+      "built": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 0
+        }
+      ],
+      "scaffold": [
+        {
+          "file": 43,
+          "kind": "settler",
+          "sequence": 16,
+          "frame": 1
+        }
+      ],
+      "gui": {
+        "file": 44,
+        "kind": "gui",
+        "sequence": 30,
+        "frame": 0
+      }
+    }
+  ]
+}
