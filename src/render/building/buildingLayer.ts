@@ -2,9 +2,13 @@
  * Huts. Scaffold while `plan` / `building`; the finished sprite grows from the
  * bottom over the scaffold while bricklayers hammer (saw-edge mask, 10 teeth).
  * Depth is `isoDepth` on the shared iso container.
+ *
+ * Flags sit at `def.flag`. Door flags sort as props on that tile; roof flags
+ * share the hut's depth so they sit on top. Torso is grayscale × player color.
  */
 import { Container, Graphics, Sprite } from "pixi.js";
-import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING } from "../../shared";
+import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING, ISO_DEPTH_PROP, PLAYER_COLORS, clampPlayer } from "../../shared";
+import { buildingDef } from "../../sim/data/buildings";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingState, BuildingView } from "../../sim/building/building";
 import type { BuildingSheet, BuildingSheets } from "./buildingSheets";
@@ -21,14 +25,19 @@ type Drawn = {
   built: Sprite;
   mask: Graphics;
   shadow: Sprite;
+  flagShadow: Sprite;
+  flagBody: Sprite;
+  flagTorso: Sprite;
   state: BuildingState;
   progress: number;
+  building: BuildingView;
 };
 
 export class BuildingLayer {
   private sheets: BuildingSheets | null = null;
   private view: MapView | null = null;
   private drawn = new Map<number, Drawn>();
+  private animationStep = 0;
 
   constructor(private readonly parent: Container) {}
 
@@ -53,14 +62,29 @@ export class BuildingLayer {
         if (placed) this.drawn.set(b.id, placed);
         continue;
       }
-      if (existing.state === b.state && existing.progress === b.buildProgress) continue;
+      existing.building = b;
+      if (existing.state === b.state && existing.progress === b.buildProgress) {
+        this.paintFlag(existing, b, view, sheets, this.animationStep);
+        continue;
+      }
       this.apply(existing, b, view, sheets);
     }
     for (const [id, d] of this.drawn) {
       if (want.has(id)) continue;
       d.root.destroy({ children: true });
+      d.flagShadow.destroy();
+      d.flagBody.destroy();
+      d.flagTorso.destroy();
       this.drawn.delete(id);
     }
+  }
+
+  tick(nowMs: number): void {
+    const sheets = this.sheets;
+    const view = this.view;
+    if (!sheets || !view) return;
+    this.animationStep = ((nowMs / 100) | 0) & 0x7fffffff;
+    for (const d of this.drawn.values()) this.paintFlag(d, d.building, view, sheets, this.animationStep);
   }
 
   private spawn(b: BuildingView, view: MapView, sheets: BuildingSheets): Drawn | null {
@@ -83,6 +107,14 @@ export class BuildingLayer {
     mask.eventMode = "none";
     root.addChild(shadow, scaffold, built, mask);
 
+    const flagShadow = new Sprite();
+    flagShadow.eventMode = "none";
+    const flagBody = new Sprite();
+    flagBody.eventMode = "none";
+    const flagTorso = new Sprite();
+    flagTorso.eventMode = "none";
+    this.parent.addChild(flagShadow, flagBody, flagTorso);
+
     const drawn: Drawn = {
       id: b.id,
       root,
@@ -90,10 +122,15 @@ export class BuildingLayer {
       built,
       mask,
       shadow,
+      flagShadow,
+      flagBody,
+      flagTorso,
       state: b.state,
       progress: b.buildProgress,
+      building: b,
     };
     this.paint(drawn, sheet, world, z, b);
+    this.paintFlag(drawn, b, view, sheets, this.animationStep);
     return drawn;
   }
 
@@ -102,8 +139,10 @@ export class BuildingLayer {
     if (!sheet) return;
     d.state = b.state;
     d.progress = b.buildProgress;
+    d.building = b;
     const world = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
     this.paint(d, sheet, world, isoDepth(world.x, world.y, ISO_DEPTH_BUILDING), b);
+    this.paintFlag(d, b, view, sheets, this.animationStep);
   }
 
   private paint(d: Drawn, sheet: BuildingSheet, world: { x: number; y: number }, z: number, b: BuildingView): void {
@@ -135,11 +174,56 @@ export class BuildingLayer {
       d.shadow.visible = false;
     }
   }
+
+  private paintFlag(d: Drawn, b: BuildingView, view: MapView, sheets: BuildingSheets, step: number): void {
+    const frames = b.flag === "door" ? sheets.flags.door : b.flag === "roof" ? sheets.flags.roof : undefined;
+    if (!b.flag || !frames?.length) {
+      d.flagShadow.visible = false;
+      d.flagBody.visible = false;
+      d.flagTorso.visible = false;
+      return;
+    }
+    const def = buildingDef(b.kind);
+    const fx = b.x + def.flag.dx;
+    const fy = b.y + def.flag.dy;
+    const flagWorld = gridToWorld(fx, fy, view.heightAt(fx, fy));
+    const hutWorld = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
+    const z =
+      b.flag === "roof"
+        ? isoDepth(hutWorld.x, hutWorld.y, ISO_DEPTH_BUILDING)
+        : isoDepth(flagWorld.x, flagWorld.y, ISO_DEPTH_PROP);
+    const frame = frames[step % frames.length]!;
+    placeWorldSprite(d.flagBody, frame, flagWorld, z);
+    if (frame.torso) {
+      d.flagTorso.visible = true;
+      d.flagTorso.texture = frame.torso.texture;
+      d.flagTorso.tint = PLAYER_COLORS[clampPlayer(b.player)];
+      d.flagTorso.position.set(flagWorld.x + frame.torso.offsetX, flagWorld.y + frame.torso.offsetY);
+      d.flagTorso.zIndex = z;
+    } else {
+      d.flagTorso.visible = false;
+    }
+    if (frame.shadow) {
+      d.flagShadow.visible = true;
+      d.flagShadow.texture = frame.shadow.texture;
+      d.flagShadow.position.set(flagWorld.x + frame.shadow.offsetX, flagWorld.y + frame.shadow.offsetY);
+      d.flagShadow.zIndex = z;
+    } else {
+      d.flagShadow.visible = false;
+    }
+  }
 }
 
 function placeSprite(sprite: Sprite, frame: PropFrame): void {
   sprite.texture = frame.texture;
   sprite.position.set(frame.offsetX, frame.offsetY);
+}
+
+function placeWorldSprite(sprite: Sprite, frame: PropFrame, world: { x: number; y: number }, z: number): void {
+  sprite.visible = true;
+  sprite.texture = frame.texture;
+  sprite.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
+  sprite.zIndex = z;
 }
 
 /** Bottom-up clip plus a saw edge — `drawWithConstructionMask`. */

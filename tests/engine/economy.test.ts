@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { hexDist } from "../../src/shared";
 import { lumberjack as hutDef } from "../../src/sim/data/buildings/lumberjack";
 import { sawmill as millDef } from "../../src/sim/data/buildings/sawmill";
+import { small_livinghouse as houseDef } from "../../src/sim/data/buildings/small_livinghouse";
 import { placeColony } from "../../src/sim/economy/startKit";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { goodsStack, STACK_SIZE } from "../../src/sim/object/object";
@@ -87,5 +89,20 @@ describe("house", () => {
     expect(world.view().movables.filter((m) => m.type === "bearer")).toHaveLength(10);
     for (let i = 0; i < 200; i++) world.tick();
     expect(world.view().movables.filter((m) => m.type === "bearer")).toHaveLength(10);
+  });
+
+  it("jobless bearers flock away from the door", () => {
+    const world = new World(grass(40, 40));
+    const at = { x: 16, y: 16 };
+    expect(world.placeBuilding("small_livinghouse", at, 0)).toBeDefined();
+    tickUntil(world, () => world.view().movables.filter((m) => m.type === "bearer").length >= 10, 3000);
+    for (let i = 0; i < 400; i++) world.tick();
+    const door = { x: at.x + houseDef.door.dx, y: at.y + houseDef.door.dy };
+    const bearers = world.view().movables.filter((m) => m.type === "bearer");
+    expect(bearers).toHaveLength(10);
+    const tiles = new Set(bearers.map((m) => `${m.pos.x},${m.pos.y}`));
+    expect(tiles.size).toBe(10);
+    const huddled = bearers.filter((m) => hexDist(m.pos.x, m.pos.y, door.x, door.y) <= 1);
+    expect(huddled.length).toBeLessThan(10);
   });
 });

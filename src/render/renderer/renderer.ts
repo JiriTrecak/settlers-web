@@ -111,6 +111,7 @@ export class Renderer {
 
   tick(nowMs: number): void {
     this.decorations.tick(nowMs);
+    this.buildings.tick(nowMs);
   }
 
   /** Movables + map objects from the last sim snapshot. `alpha` is leftover ms into the next tick. */

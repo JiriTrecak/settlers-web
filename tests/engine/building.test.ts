@@ -25,6 +25,25 @@ describe("buildings", () => {
     expect(isWalkable(world.grid, at.x + skirt.dx, at.y + skirt.dy, world.buildings)).toBe(true);
   });
 
+  it("flies a door flag on workerless huts from placement", () => {
+    const world = new World(grass(24, 24));
+    world.placeBuilding("tower", { x: 8, y: 8 }, 0);
+    world.placeBuilding("small_livinghouse", { x: 16, y: 8 }, 0);
+    expect(world.view().buildings.map((b) => b.flag)).toEqual(["door", "door"]);
+    world.placePlan("tower", { x: 8, y: 16 }, 0);
+    expect(world.view().buildings.find((b) => b.y === 16)?.flag).toBe("door");
+  });
+
+  it("flies a roof flag only once the hut's own worker occupies", () => {
+    const world = new World(grass(24, 24));
+    expect(world.placePlan("lumberjack", { x: 10, y: 10 }, 0)).toBeDefined();
+    expect(world.view().buildings[0]!.flag).toBeNull();
+    const finished = new World(grass(24, 24));
+    const hut = finished.placeBuilding("lumberjack", { x: 10, y: 10 }, 0);
+    expect(hut).toBeDefined();
+    expect(finished.view().buildings[0]!.flag).toBe("roof");
+  });
+
   it("refuses overlap, water, and occupied tiles", () => {
     const world = new World(grass(24, 24));
     expect(world.placeBuilding("tower", { x: 8, y: 8 })).toBeDefined();
@@ -47,7 +66,7 @@ describe("buildings", () => {
   it("placeBuilding action does not need a pre-existing unit", () => {
     const world = new World(grass(24, 24));
     world.dispatch({ type: "placeBuilding", kind: "lumberjack", at: { x: 10, y: 10 } });
-    expect(world.view().buildings[0]).toMatchObject({ kind: "lumberjack", x: 10, y: 10, state: "plan" });
+    expect(world.view().buildings[0]).toMatchObject({ kind: "lumberjack", x: 10, y: 10, state: "plan", flag: null });
     expect(world.view().movables).toEqual([]);
   });
 });

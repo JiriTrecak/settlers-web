@@ -40,6 +40,7 @@ describe("construction", () => {
 
     const toBuilding = tickUntil(world, () => world.view().buildings[0]?.state === "building");
     expect(toBuilding).toBeGreaterThan(0);
+    expect(world.view().buildings[0]!.flag).toBeNull();
     expect(world.objects.get(plankAt.x, plankAt.y)).toBeDefined();
     expect(world.objects.get(stoneAt.x, stoneAt.y)).toBeDefined();
 
@@ -58,12 +59,14 @@ describe("construction", () => {
     const toBuilt = tickUntil(world, () => world.view().buildings[0]?.state === "built");
     expect(toBuilt).toBeGreaterThan(0);
     expect(toBuilt).toBeLessThan(8000);
+    expect(world.view().buildings[0]!.flag).toBeNull();
     expect(world.objects.get(plankAt.x, plankAt.y)).toBeUndefined();
     expect(world.objects.get(stoneAt.x, stoneAt.y)).toBeUndefined();
 
     tickUntil(world, () => world.view().movables.some((m) => m.type === "lumberjack"), 2000);
     const worker = world.view().movables.find((m) => m.type === "lumberjack");
     expect(worker).toMatchObject({ workplaceId: 1, inside: true });
+    expect(world.view().buildings[0]!.flag).toBe("roof");
     expect(world.view().movables.some((m) => m.type === "bearer")).toBe(false);
     expect(world.view().movables.some((m) => m.type === "bricklayer")).toBe(false);
   });

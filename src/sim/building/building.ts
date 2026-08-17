@@ -2,6 +2,9 @@
  * Buildings on the map. Footprint from the def: `blocked` is unwalkable,
  * `protected` forbids overlapping another hut. `plan` waits for hauled goods,
  * `building` is bricklayers on the scaffold, `built` is finished.
+ *
+ * Flags: workerless huts fly `door` from placement. Worker huts fly `roof` only
+ * while their own worker has `workplaceId` — bricklayers on the scaffold do not count.
  */
 import type { GridPos, LandscapeType } from "../../shared";
 import { buildingDef, type BuildingKind } from "../data/buildings";
@@ -9,6 +12,9 @@ import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
 
 export type BuildingState = "plan" | "building" | "built";
+
+/** `door` = no-worker hut. `roof` = worker hut with its worker inside/assigned. */
+export type BuildingFlag = "door" | "roof";
 
 export type BuildingView = {
   id: number;
@@ -19,7 +25,18 @@ export type BuildingView = {
   state: BuildingState;
   /** 0 at plan, 0→1 while bricklayers hammer, 1 when finished. Drives the built-sprite mask. */
   buildProgress: number;
+  flag: BuildingFlag | null;
 };
+
+/** Door from placement for workerless huts; roof only when the def's worker occupies. */
+export function buildingFlag(
+  b: { id: number; kind: BuildingKind },
+  units: readonly { type: string; workplaceId: number | null }[],
+): BuildingFlag | null {
+  const worker = buildingDef(b.kind).worker;
+  if (!worker) return "door";
+  return units.some((m) => m.workplaceId === b.id && m.type === worker) ? "roof" : null;
+}
 
 export class Building {
   readonly id: number;
@@ -42,7 +59,7 @@ export class Building {
     this.player = player;
   }
 
-  view(): BuildingView {
+  view(flag: BuildingFlag | null = null): BuildingView {
     return {
       id: this.id,
       kind: this.kind,
@@ -51,6 +68,7 @@ export class Building {
       player: this.player,
       state: this.state,
       buildProgress: this.state === "built" ? 1 : this.constructionProgress,
+      flag,
     };
   }
 }
@@ -103,10 +121,10 @@ export class BuildingGrid {
     return this.protectedAt[this.index(x, y)] !== 0;
   }
 
-  view(): BuildingView[] {
+  view(units: readonly { type: string; workplaceId: number | null }[] = []): BuildingView[] {
     const out: BuildingView[] = [];
     for (const b of this.items) {
-      if (b) out.push(b.view());
+      if (b) out.push(b.view(buildingFlag(b, units)));
     }
     return out;
   }

@@ -53,6 +53,9 @@ export class Movable {
   /** Idle ticks left inside the hut before the next search. */
   restLeft = 0;
   inside = false;
+  /** Idle flock: ms between checks when not crowded. */
+  flockDelayMs = 700;
+  flockLeft = 0;
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
@@ -135,6 +138,8 @@ export class Movable {
     this.action = "idle";
     this.moveProgress = 0;
     this.from = this.pos;
+    this.flockDelayMs = 700;
+    this.flockLeft = 0;
     if (def.restMs) {
       this.restLeft = Math.max(0, Math.round(def.restMs / tickMs));
       this.enter();

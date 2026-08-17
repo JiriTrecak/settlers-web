@@ -1,6 +1,6 @@
 /** Shared grid math and landscape types. No Pixi, no DOM. */
 export type { Action, GridPos } from "./types/types";
-export { DIRECTIONS, deltaOf, directionFromDelta, type Direction } from "./direction/direction";
+export { DIRECTIONS, approxDirection, deltaOf, directionFromDelta, neighborDir, type Direction } from "./direction/direction";
 export { PLAYER_COLORS, clampPlayer, playerCss } from "./player/player";
 export {
   HEIGHT_X,

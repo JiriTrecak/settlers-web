@@ -13,6 +13,7 @@ import type { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
 import { tickTrees } from "../object/tree";
 import { Movable, type MovableView } from "../movable/movable";
+import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession } from "../profession/profession";
 import { seedRng, type Rng } from "../rng/rng";
@@ -167,6 +168,16 @@ export class World {
     });
     tickMatcher(this.units, this.buildings, this.objects);
     for (const m of this.units) {
+      tickFlock(m, {
+        grid: this.grid,
+        objects: this.objects,
+        buildings: this.buildings,
+        units: this.units,
+        rng: this.rng,
+        tickMs: this.clock.tickMs,
+      });
+    }
+    for (const m of this.units) {
       tickJob(m, this.jobCtx(m.id));
     }
     this.syncOcc();
@@ -177,7 +188,7 @@ export class World {
       tick: this.clock.tickIndex,
       movables: this.units.map((u) => u.view()),
       objects: this.objects.view(),
-      buildings: this.buildings.view(),
+      buildings: this.buildings.view(this.units),
     };
   }
 

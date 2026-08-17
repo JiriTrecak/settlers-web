@@ -64,8 +64,8 @@ describe("debug overlay", () => {
         { kind: "stack", x: 5, y: 5, sheet: 0, capacity: 2, stateProgress: 1, material: "plank" },
       ],
       buildings: [
-        { id: 1, kind: "lumberjack", x: 8, y: 8, player: 0, state: "built", buildProgress: 1 },
-        { id: 2, kind: "sawmill", x: 12, y: 8, player: 0, state: "plan", buildProgress: 0 },
+        { id: 1, kind: "lumberjack", x: 8, y: 8, player: 0, state: "built", buildProgress: 1, flag: "roof" },
+        { id: 2, kind: "sawmill", x: 12, y: 8, player: 0, state: "plan", buildProgress: 0, flag: null },
       ],
     };
     const d = debugFrom(snap, frame);
