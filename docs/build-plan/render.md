@@ -55,7 +55,7 @@ screenY = y * tileHeight - height * heightY + panY
 
 Fixed tile pixels + camera pan/zoom. Zoom is a camera scale, not a change of `tileWidth`.
 
-`pick` / `worldToGrid` ignore height so hills don't steal clicks.
+`pick` hits the height-displaced mesh cell (`pickCell`). `worldToGrid` stays the flat inverse (minimap).
 
 ## Landscape mesh
 

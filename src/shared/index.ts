@@ -6,6 +6,7 @@ export {
   TILE_HEIGHT,
   TILE_WIDTH,
   gridToWorld,
+  pickCell,
   pickGrid,
   worldToGrid,
   type WorldPos,

@@ -3,7 +3,7 @@
  * Reads `MapView`; never writes sim.
  */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
-import { gridToWorld, pickGrid, type GridPos } from "../../shared";
+import { gridToWorld, pickCell, type GridPos } from "../../shared";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapView } from "../../sim/map/mapView";
 import { Camera } from "../camera/camera";
@@ -83,15 +83,12 @@ export class Renderer {
     this.world.scale.set(this.camera.zoom);
   }
 
-  /** Screen pixel → grid via camera inverse + height-0 pick. */
+  /** Screen pixel → cell whose height-displaced diamond is under the cursor. */
   pick(screen: { x: number; y: number }): GridPos | null {
     if (!this.view) return null;
     const world = this.camera.screenToWorld(screen.x, screen.y);
-    const g = pickGrid(world.x, world.y);
-    if (g.x < 0 || g.y < 0 || g.x >= this.view.width || g.y >= this.view.height) {
-      return null;
-    }
-    return g;
+    const view = this.view;
+    return pickCell(world.x, world.y, view.width, view.height, (x, y) => view.heightAt(x, y));
   }
 
   /** Diamond outline on the four verts of a cell, stroke width inverse to zoom. */
