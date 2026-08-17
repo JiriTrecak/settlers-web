@@ -1,3 +1,7 @@
+/**
+ * Procedural maps (`coast` / `isles` / `peak`). Noise → elevation chain →
+ * neighbor clamp so border blends can fire, then rivers / biomes / height smooth.
+ */
 import { HEX_DELTAS, isRiver, isWater, landscapeInfo, type LandscapeType } from "../../shared";
 import { seedRng, type Rng } from "../rng/rng";
 import { MapGrid } from "./mapGrid";
@@ -61,6 +65,7 @@ export function generateMap(def: MapDef, rng: Rng = seedRng(def.seed)): MapGrid 
   }
 
   forceOceanBorder(idx, size);
+  // Adjacent chain steps may only differ by 1 or the UV blender has nothing to draw.
   clampLand(idx, size);
   applyLand(grid, idx, elevs, def.id);
   fillWaterByDistance(grid);
@@ -168,6 +173,7 @@ function applyLand(grid: MapGrid, idx: Int8Array, elevs: Float32Array, id: MapId
   }
 }
 
+/** BFS from land: water8 far from shore, water1 at the beach. */
 function fillWaterByDistance(grid: MapGrid): void {
   const { width, height } = grid;
   const dist = new Int16Array(width * height);
@@ -205,6 +211,7 @@ function fillWaterByDistance(grid: MapGrid): void {
   }
 }
 
+/** Soft island silhouette; `isles` is two blobs. */
 function mask(id: MapId, x: number, y: number, size: number): number {
   const falloff = (cx: number, cy: number, radius: number): number => {
     const nx = (x - cx) / radius;
@@ -314,6 +321,7 @@ function allNeighbors(grid: MapGrid, x: number, y: number, pred: (t: LandscapeTy
   return true;
 }
 
+/** Inner / border / outer rings so atlas blends have a legal neighbor chain. */
 function ringBorders(
   grid: MapGrid,
   inner: LandscapeType,
@@ -348,6 +356,7 @@ function ringBorders(
   }
 }
 
+/** Greedy downhill path from a high grass cell to water. Variants 1–4 are animation frames. */
 function carveRiver(grid: MapGrid): void {
   const riverOk = (t: LandscapeType) => t === "grass" || t === "sand" || isWater(t);
   const painted = new Set<number>();
@@ -459,6 +468,7 @@ function flattenFlats(grid: MapGrid): void {
   }
 }
 
+/** Cap neighbor height deltas so the mesh doesn't cliff. */
 function smoothHeights(grid: MapGrid): void {
   const maxDelta = 2;
   let changed = true;

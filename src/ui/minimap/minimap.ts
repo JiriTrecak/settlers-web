@@ -1,3 +1,6 @@
+/**
+ * Top-down terrain + viewport quad. Emits look-at in grid space; does not touch the camera.
+ */
 import { landscapeInfo, worldToGrid } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 
@@ -87,7 +90,7 @@ export function minimapClientToGrid(
   return minimapPxToGrid(px.x, px.y, view.width, view.height, canvas.width, canvas.height);
 }
 
-/** Top-down terrain + viewport quad. Emits look-at in grid space; does not touch the camera. */
+/** Top-down canvas widget. Session calls `setView` / `setCamera`. */
 export class Minimap {
   private readonly canvas: HTMLCanvasElement;
   private readonly terrain = document.createElement("canvas");
@@ -164,6 +167,7 @@ export class Minimap {
     this.canvas.remove();
   }
 
+  /** Rasterize landscape colors into the offscreen terrain canvas (once per map). */
   private paintTerrain(view: MapView): void {
     const ctx = this.terrain.getContext("2d");
     if (!ctx) return;

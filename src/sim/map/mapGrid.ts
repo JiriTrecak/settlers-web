@@ -1,3 +1,4 @@
+/** Mutable tile grid: landscape type + height per cell. Row-major, y * width + x. */
 import {
   HEX_DELTAS,
   LANDSCAPE_TYPES,

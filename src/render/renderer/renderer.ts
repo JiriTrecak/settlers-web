@@ -1,3 +1,7 @@
+/**
+ * Pixi world: landscape mesh, decorations, hover/select outlines, camera apply.
+ * Reads `MapView`; never writes sim.
+ */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
 import { gridToWorld, pickGrid, type GridPos } from "../../shared";
 import type { MapDecoration } from "../../sim/decorations/decorations";
@@ -48,6 +52,7 @@ export class Renderer {
     this.world.addChild(mesh, this.decorations.root, this.select, this.hover);
     this.decorations.setDecorations(view, objects);
 
+    // Fit the diamond AABB of the four map corners, then apply pan/zoom.
     const w = view.width;
     const h = view.height;
     const corners = [
@@ -78,6 +83,7 @@ export class Renderer {
     this.world.scale.set(this.camera.zoom);
   }
 
+  /** Screen pixel → grid via camera inverse + height-0 pick. */
   pick(screen: { x: number; y: number }): GridPos | null {
     if (!this.view) return null;
     const world = this.camera.screenToWorld(screen.x, screen.y);
@@ -88,6 +94,7 @@ export class Renderer {
     return g;
   }
 
+  /** Diamond outline on the four verts of a cell, stroke width inverse to zoom. */
   highlight(pos: GridPos | null, kind: "hover" | "select"): void {
     const g = kind === "hover" ? this.hover : this.select;
     g.clear();
@@ -106,5 +113,10 @@ export class Renderer {
       width: 1.25 / this.camera.zoom,
       alignment: 0.5,
     });
+  }
+
+  destroy(): void {
+    this.world.removeFromParent();
+    this.world.destroy({ children: true });
   }
 }

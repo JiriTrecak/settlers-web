@@ -4,8 +4,8 @@ Game code. Original S3 conversion does **not** live here — that's `original_co
 
 | Folder | Owns |
 |---|---|
-| `app/` | Boot. Pixi application, ticker, wires `Session`. |
-| `session/` | Running match: map load, input routing, widget subscriptions |
+| `app/` | Pixi + `ScreenHost`. `PlayScreen` holds the session. |
+| `session/` | One match. Lives inside `PlayScreen`. |
 | `sim/` | Deterministic world state. No Pixi. |
 | `render/` | Pixi drawing. Reads sim views, never mutates them. |
 | `ui/` | DOM widgets (HUD, minimap). Closed boundaries. |
@@ -13,4 +13,4 @@ Game code. Original S3 conversion does **not** live here — that's `original_co
 
 Rule: a top-level folder's root contains only `index.ts` (public re-exports) and `index.md`. Everything else is a named subfolder with its own `*.md`.
 
-If a module has lifecycle, retained state, or input, it is a class with a closed boundary. Session constructs it and subscribes. Session never grabs a child canvas or implements that widget's pointer machine.
+Class vs function, comments: `.cursor/rules/rules.mdc`. Folder boundaries: `.cursor/rules/modules.mdc`.

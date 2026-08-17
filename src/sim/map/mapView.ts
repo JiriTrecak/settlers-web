@@ -1,3 +1,7 @@
+/**
+ * Read-only map snapshot for render/UI. Out-of-bounds landscape is `water8`
+ * so the mesh edge doesn't sample garbage.
+ */
 import { isWater, type LandscapeType } from "../../shared";
 import type { MapGrid } from "./mapGrid";
 

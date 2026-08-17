@@ -1,4 +1,8 @@
-import type { Application } from "pixi.js";
+/**
+ * One match: load map, subscribe widgets, tick renderer/input.
+ * Lives inside `PlayScreen`. `stop()` tears down Pixi world + DOM widgets.
+ */
+import type { Application, Texture } from "pixi.js";
 import { gridToWorld, type GridPos } from "../../shared";
 import {
   MAPS,
@@ -9,41 +13,58 @@ import {
   type MapDecoration,
 } from "../../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets } from "../../render";
-import { Hud, Minimap, type HudMapOption } from "../../ui";
+import type { DecorationSheets } from "../../render/decoration/decorationSheets";
+import { Minimap, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
-import { fetchDumpedMap, fetchMapCatalog, type MapCatalogEntry } from "../maps/maps";
+import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
+
+export type SessionHooks = {
+  onHud(state: HudState): void;
+  onLeave(): void;
+};
+
+export type SessionConfig = {
+  mapId: string;
+  catalog: readonly MapCatalogEntry[];
+  hooks: SessionHooks;
+};
+
+/** Atlas + decoration sheets are shared across matches in one page load. */
+let graphics: Promise<{ atlas: Texture | null; sheets: DecorationSheets | null }> | null = null;
+
+function loadGraphics(): Promise<{ atlas: Texture | null; sheets: DecorationSheets | null }> {
+  graphics ??= Promise.all([loadLandscapeAtlas(), loadDecorationSheets()]).then(([atlas, sheets]) => ({
+    atlas,
+    sheets,
+  }));
+  return graphics;
+}
 
 export class Session {
+  readonly mapId: string;
   private renderer: Renderer | null = null;
   private view: MapView | null = null;
-  private mapId = "";
-  private catalog: MapCatalogEntry[] = [];
-  private loadGen = 0;
   private selected: GridPos | null = null;
-  private hud: Hud | null = null;
   private minimap: Minimap | null = null;
   private input: MapInput | null = null;
 
   constructor(
     private readonly pixi: Application,
-    private readonly hudRoot: HTMLElement,
-  ) {}
+    private readonly overlay: HTMLElement,
+    private readonly config: SessionConfig,
+  ) {
+    this.mapId = config.mapId;
+  }
 
   async start(): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
-    const [atlas, sheets] = await Promise.all([loadLandscapeAtlas(), loadDecorationSheets()]);
+    const { atlas, sheets } = await loadGraphics();
     renderer.setAtlas(atlas);
     renderer.setSheets(sheets);
 
-    this.catalog = await fetchMapCatalog();
-    this.hudRoot.replaceChildren();
-    this.hud = new Hud(this.hudRoot, hudMaps(this.catalog), {
-      onSelectMap: (id) => {
-        void this.loadMap(id);
-      },
-    });
-    this.minimap = new Minimap(this.hudRoot, {
+    // Widgets own their input; we only subscribe.
+    this.minimap = new Minimap(this.overlay, {
       onLookAt: (x, y) => this.lookAt(x, y),
     });
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
@@ -52,14 +73,20 @@ export class Session {
       onSelect: (pos) => this.setSelect(pos),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
-      onMapHotkey: (index) => {
-        const id = this.hud?.mapIds[index];
-        if (id) void this.loadMap(id);
-      },
+      onLeave: () => this.config.hooks.onLeave(),
     });
 
-    await this.loadMap(defaultMapId(this.catalog));
-    this.hud.update({ cursor: null, landscape: null, height: null, zoom: renderer.camera.zoom });
+    const { grid, decorations } = await this.loadGrid(this.mapId);
+    if (!this.renderer) return;
+    this.view = mapViewFromGrid(grid);
+    this.renderer.setView(this.view, decorations);
+    this.minimap.setView(this.view);
+    this.config.hooks.onHud({
+      cursor: null,
+      landscape: null,
+      height: null,
+      zoom: renderer.camera.zoom,
+    });
   }
 
   tick(dtMs: number, nowMs: number): void {
@@ -75,14 +102,14 @@ export class Session {
   stop(): void {
     this.input?.destroy();
     this.minimap?.destroy();
-    this.hud?.destroy();
+    this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
-    this.hud = null;
     this.renderer = null;
     this.view = null;
   }
 
+  /** Minimap click → center camera on that grid cell. */
   private lookAt(gx: number, gy: number): void {
     const view = this.view;
     const renderer = this.renderer;
@@ -97,10 +124,9 @@ export class Session {
   private setHover(pos: GridPos | null): void {
     const renderer = this.renderer;
     const view = this.view;
-    const hud = this.hud;
-    if (!renderer || !view || !hud) return;
+    if (!renderer || !view) return;
     renderer.highlight(pos, "hover");
-    hud.update({
+    this.config.hooks.onHud({
       cursor: pos,
       landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
       height: pos ? view.heightAt(pos.x, pos.y) : null,
@@ -128,43 +154,14 @@ export class Session {
     this.renderer.highlight(null, "select");
   }
 
-  private async loadMap(id: string): Promise<void> {
-    if (!this.renderer) return;
-    if (this.view && this.mapId === id) return;
-    const gen = ++this.loadGen;
-    this.hud?.setBusy(true);
-    try {
-      const { grid, decorations } = await this.loadGrid(id);
-      if (gen !== this.loadGen || !this.renderer) return;
-      this.mapId = id;
-      this.view = mapViewFromGrid(grid);
-      this.selected = null;
-      this.renderer.setView(this.view, decorations);
-      this.renderer.highlight(null, "select");
-      this.renderer.highlight(null, "hover");
-      this.minimap?.setView(this.view);
-      this.hud?.setMap(id);
-      this.hud?.update({
-        cursor: null,
-        landscape: null,
-        height: null,
-        zoom: this.renderer.camera.zoom,
-      });
-    } catch (err) {
-      console.error(err);
-      if (id !== MAPS[0].id) await this.loadMap(MAPS[0].id);
-    } finally {
-      if (gen === this.loadGen) this.hud?.setBusy(false);
-    }
-  }
-
+  /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */
   private async loadGrid(id: string): Promise<{ grid: ReturnType<typeof generateMap>; decorations: MapDecoration[] }> {
     const procedural = MAPS.find((m) => m.id === id);
     if (procedural) {
       const grid = generateMap(procedural);
       return { grid, decorations: allDecorations(mapViewFromGrid(grid)) };
     }
-    const entry = this.catalog.find((m) => m.id === id);
+    const entry = this.config.catalog.find((m) => m.id === id);
     if (!entry) throw new Error(`unknown map ${id}`);
     const dumped = await fetchDumpedMap(entry.file);
     return {
@@ -172,25 +169,4 @@ export class Session {
       decorations: allDecorations(mapViewFromGrid(dumped.grid), dumped.decorations),
     };
   }
-}
-
-function hudMaps(catalog: readonly MapCatalogEntry[]): HudMapOption[] {
-  return [
-    ...catalog.map((m) => ({
-      id: m.id,
-      name: m.name,
-      group: m.group,
-      detail: `${m.size} · ${m.players}p`,
-    })),
-    ...MAPS.map((m) => ({
-      id: m.id,
-      name: m.name,
-      group: "generated" as const,
-      detail: String(m.size),
-    })),
-  ];
-}
-
-function defaultMapId(catalog: readonly MapCatalogEntry[]): string {
-  return catalog.find((m) => m.group === "tutorial")?.id ?? catalog[0]?.id ?? MAPS[0].id;
 }

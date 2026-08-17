@@ -1,12 +1,15 @@
+/**
+ * Deterministic PRNG (Mulberry32). Never use Math.random in sim.
+ */
 export type Rng = {
   nextFloat(): number;
   nextInt(max: number): number;
 };
 
-/** Deterministic PRNG. Never use Math.random in sim. */
 export function seedRng(seed: number): Rng {
   let a = seed >>> 0;
   const nextFloat = (): number => {
+    // Mulberry32
     a += 0x6d2b79f5;
     let t = a;
     t = Math.imul(t ^ (t >>> 15), t | 1);

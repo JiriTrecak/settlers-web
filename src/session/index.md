@@ -1,11 +1,11 @@
 # session
 
-The running match. Not boot, not sim rules, not widgets.
+The running match. Constructed on demand; not alive in the lobby.
 
 | Folder | Owns |
 |---|---|
-| `session/` | `Session` — loaded map, selection, ticker glue |
-| `maps/` | Fetch dump catalog + JSON. Ingest stays in `sim`. |
+| `session/` | `Session` — one map, selection, camera, ticker glue |
+| `maps/` | Fetch dump catalog + JSON. Picker options for the lobby. |
 | `input/` | `MapInput` — canvas pan/zoom/WASD/pick |
 
-Session constructs `Hud`, `Minimap`, `MapInput` and subscribes. It does not grab their DOM or implement their pointer machines.
+Session constructs `Minimap` + `MapInput` and pushes HUD stats through hooks. Lobby HUD (`Hud`, map picker) lives in `app`.

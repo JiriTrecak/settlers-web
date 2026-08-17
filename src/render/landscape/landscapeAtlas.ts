@@ -1,8 +1,10 @@
+/**
+ * Loads assets/graphics/landscape-atlas.png (1024², nearest, no mips).
+ */
 import { Texture } from "pixi.js";
 
 export const LANDSCAPE_ATLAS_URL = "/graphics/landscape-atlas.png";
 
-/** Loads assets/graphics/landscape-atlas.png (1024², nearest, no mips). */
 export async function loadLandscapeAtlas(): Promise<Texture | null> {
   try {
     const img = new Image();

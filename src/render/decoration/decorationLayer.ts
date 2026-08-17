@@ -1,3 +1,6 @@
+/**
+ * Trees, stones, waves as sprites. zIndex = 2y so south draws on top of north.
+ */
 import { Container, Sprite } from "pixi.js";
 import { gridToWorld } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
@@ -45,6 +48,7 @@ export class DecorationLayer {
       const frame = this.frameOf(deco, sheets, this.animationStep);
       if (!frame) continue;
       const world = gridToWorld(deco.x, deco.y, view.heightAt(deco.x, deco.y));
+      // Waves sit under trees/stones on the same row.
       const z = deco.kind === "wave" ? deco.y * 2 : deco.y * 2 + 1;
       let shadow: Sprite | null = null;
       if (frame.shadow) {
@@ -87,6 +91,7 @@ export class DecorationLayer {
   private indexOf(deco: MapDecoration, sheets: DecorationSheets, step: number): number {
     if (deco.kind === "tree") {
       const frames = sheets.trees[deco.sheet] ?? sheets.trees[0]!;
+      // Phase offset per tile so a grove doesn't blink in lockstep.
       const anim = 0x0fffffff & ((step + deco.x * 167 + deco.y * 1223) | 0);
       return frames.length === 0 ? 0 : anim % frames.length;
     }
@@ -97,6 +102,7 @@ export class DecorationLayer {
     }
     const n = sheets.stones.length;
     if (n === 0) return 0;
+    // Remaining capacity → later frames (emptier piles).
     return Math.max(0, Math.min(n - 1, n - deco.capacity - 1));
   }
 

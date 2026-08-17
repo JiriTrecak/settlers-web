@@ -1,3 +1,7 @@
+/**
+ * Fetch catalog + dumped maps from `/maps`. Sim parses; this is the HTTP edge.
+ */
+import { MAPS } from "../../sim/map/generateIsland";
 import {
   decorationsFromDumpedMap,
   gridFromDumpedMap,
@@ -7,6 +11,7 @@ import {
 } from "../../sim/map/dumpedMap";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapGrid } from "../../sim/map/mapGrid";
+import type { MapOption } from "../../ui/menu/menu";
 
 export type { MapCatalogEntry, MapGroup } from "../../sim/map/dumpedMap";
 export type { DumpedMap };
@@ -20,11 +25,13 @@ export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
     const maps = (data as { maps: unknown }).maps;
     return Array.isArray(maps) ? (maps as MapCatalogEntry[]) : [];
   } catch {
+    // Dev without dumps: generated maps still show in the picker.
     return [];
   }
 }
 
 export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; decorations: MapDecoration[] }> {
+  // Nested paths in the catalog (`tutorial/foo.json`) need each segment encoded.
   const path = file
     .split("/")
     .map((part) => encodeURIComponent(part))
@@ -35,3 +42,26 @@ export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; dec
   if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);
   return { grid: gridFromDumpedMap(data), decorations: decorationsFromDumpedMap(data) };
 }
+
+export function mapPickerOptions(catalog: readonly MapCatalogEntry[]): MapOption[] {
+  return [
+    ...catalog.map((m) => ({
+      id: m.id,
+      name: m.name,
+      group: m.group,
+      detail: `${m.size} · ${m.players}p`,
+    })),
+    ...MAPS.map((m) => ({
+      id: m.id,
+      name: m.name,
+      group: "generated" as const,
+      detail: String(m.size),
+    })),
+  ];
+}
+
+export function defaultMapId(catalog: readonly MapCatalogEntry[]): string {
+  return catalog.find((m) => m.group === "tutorial")?.id ?? catalog[0]?.id ?? MAPS[0].id;
+}
+
+export const FALLBACK_MAP_ID = MAPS[0].id;

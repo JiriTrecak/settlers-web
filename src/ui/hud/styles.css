@@ -71,43 +71,136 @@ body {
   cursor: grabbing;
 }
 
-.hud-maps {
-  position: absolute;
-  top: 188px;
-  right: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 220px;
+.hud-leave {
   pointer-events: auto;
-}
-
-.hud-map-select {
-  appearance: none;
-  width: 100%;
+  position: absolute;
+  top: 12px;
+  right: 192px;
   border: 1px solid rgba(232, 224, 208, 0.28);
   background: rgba(8, 14, 28, 0.82);
   color: #e8e0d0;
   font: inherit;
   font-size: 12px;
   letter-spacing: 0.04em;
-  padding: 6px 8px;
+  padding: 6px 10px;
   cursor: pointer;
 }
 
-.hud-map-select:hover,
-.hud-map-select:focus {
+.hud-leave:hover,
+.hud-leave:focus {
   border-color: rgba(232, 224, 208, 0.55);
   outline: none;
 }
 
-.hud-map-select:disabled {
-  opacity: 0.55;
-  cursor: wait;
+.screen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.hud-maps-hint {
-  font-size: 10px;
+.menu {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 8, 20, 0.78);
+}
+
+.menu-panel {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-panel-wide {
+  width: min(480px, calc(100vw - 48px));
+  max-height: min(80vh, 720px);
+}
+
+.menu-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.menu-body {
+  margin: 8px 0 0;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.menu-btn {
+  pointer-events: auto;
+  appearance: none;
+  width: 100%;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.82);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-align: left;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.menu-btn:hover,
+.menu-btn:focus {
+  border-color: #c4a35a;
+  outline: none;
+}
+
+.menu-btn-row {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 8px 12px;
+}
+
+.menu-back {
+  pointer-events: auto;
+  appearance: none;
+  align-self: flex-start;
+  border: none;
+  background: none;
+  color: #c4a35a;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0;
+  cursor: pointer;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+  max-height: 60vh;
+  padding-right: 4px;
+}
+
+.menu-group {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.menu-empty {
+  font-size: 12px;
   letter-spacing: 0.04em;
   opacity: 0.55;
+  padding: 8px 0;
 }

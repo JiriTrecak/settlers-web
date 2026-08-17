@@ -1,21 +1,21 @@
 ---
-description: Closed module boundaries — widgets and match state are classes, app is boot only
+description: Module boundaries — app boots, screens own UI, session is one match
 alwaysApply: true
 ---
 
 # Modules
 
-If it has lifecycle, retained state, or input, it is a **class with a closed boundary**. `Session` constructs it and subscribes (`onLookAt`, `onSelectMap`, …). Session never grabs a child canvas or implements that widget's pointer machine.
+`Session` constructs match widgets and subscribes (`onLookAt`, `onLeave`, …). It never grabs a child canvas or implements that widget's pointer machine.
+
+`Session` exists only while a match is running, inside `PlayScreen`. `ScreenHost` shows exactly one `GameScreen`. `play(mapId)` shows a `PlayScreen`; Menu / Escape replaces it.
 
 ```
-app/      Pixi boot + ticker. No feature code.
-session/  Running match: map load, input routing, subscriptions.
+app/      Pixi boot, ScreenHost, ticker. Creates Session on demand.
+session/  One match: that map, input, widget subscriptions.
 sim/      Deterministic world. No Pixi, fetch, or DOM.
 render/   Pixi drawing. Reads views, does not mutate sim.
-ui/       DOM widgets (Hud, Minimap). Own their DOM and input.
+ui/       DOM widgets and GameScreens. Own their DOM and input.
 ```
-
-Classes for `Session`, `World`/`MapGrid`, `Clock`, `Renderer`, `Camera`, `Hud`, `Minimap`, `MapInput`. Functions for pure math (`gridToWorld`, `treeSheetAt`, dump parse).
 
 ```ts
 // BAD — session reaches into the widget

@@ -180,6 +180,7 @@ export function slopeShade(height: number, northHeight: number): number {
   return color;
 }
 
+/** Six neighbors on the diamond grid (not cube-hex axial). */
 export const HEX_DELTAS: readonly { dx: number; dy: number }[] = [
   { dx: 0, dy: -1 },
   { dx: 1, dy: 0 },

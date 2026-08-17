@@ -1,3 +1,7 @@
+/**
+ * Diamond iso: 16×9 tiles, height lifts Y by 2px per step.
+ * Grid origin is the north corner of the map diamond.
+ */
 export const TILE_WIDTH = 16;
 export const TILE_HEIGHT = 9;
 export const HEIGHT_X = 0;

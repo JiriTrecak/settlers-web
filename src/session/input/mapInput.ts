@@ -1,3 +1,6 @@
+/**
+ * Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it to the world.
+ */
 import type { GridPos } from "../../shared";
 import type { Camera } from "../../render/camera/camera";
 
@@ -9,10 +12,9 @@ export type MapInputHooks = {
   onSelect(pos: GridPos | null): void;
   onCameraChanged(): void;
   onFit(): void;
-  onMapHotkey(index: number): void;
+  onLeave(): void;
 };
 
-/** Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it. */
 export class MapInput {
   private readonly keys = new Set<string>();
   private dragging = false;
@@ -37,6 +39,7 @@ export class MapInput {
     const step = WASD_SPEED * (dtMs / 1000);
     let dx = 0;
     let dy = 0;
+    // WASD pans the camera, not the world: left = camera right.
     if (this.keys.has("a") || this.keys.has("arrowleft")) dx += step;
     if (this.keys.has("d") || this.keys.has("arrowright")) dx -= step;
     if (this.keys.has("w") || this.keys.has("arrowup")) dy += step;
@@ -76,6 +79,7 @@ export class MapInput {
     if (e.button !== 0) return;
     this.dragging = false;
     this.canvas.style.cursor = "grab";
+    // Click without a drag selects the tile under the pointer.
     if (!this.dragMoved) this.hooks.onSelect(this.hooks.pick({ x: e.clientX, y: e.clientY }));
   };
 
@@ -92,8 +96,10 @@ export class MapInput {
       e.preventDefault();
       this.hooks.onFit();
     }
-    const index = Number(e.key) - 1;
-    if (index >= 0 && index < 9) this.hooks.onMapHotkey(index);
+    if (e.key === "Escape") {
+      e.preventDefault();
+      this.hooks.onLeave();
+    }
   };
 
   private readonly onKeyUp = (e: KeyboardEvent): void => {

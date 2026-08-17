@@ -1,3 +1,4 @@
+/** Public render surface. Pixi drawing only. */
 export { Camera } from "./camera/camera";
 export { Renderer } from "./renderer/renderer";
 export { loadLandscapeAtlas } from "./landscape/landscapeAtlas";

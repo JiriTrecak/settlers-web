@@ -1,3 +1,6 @@
+/**
+ * Landscape mesh buffers: two triangles per cell, verts duplicated for unique UVs.
+ */
 import { gridToWorld, landscapeInfo, slopeShade } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import { triangleTexture } from "./landscapeUv";
@@ -73,6 +76,7 @@ export function buildLandscapeGeometry(view: MapView): LandscapeGeometryData {
 
   for (let y = 0; y < height - 1; y++) {
     for (let x = 0; x < width - 1; x++) {
+      // `useSecondParameter` jitters which blend variant the UV picker uses.
       emitTriangle(x, y, true, x * 37 + y * 17);
       emitTriangle(x, y, false, x);
     }

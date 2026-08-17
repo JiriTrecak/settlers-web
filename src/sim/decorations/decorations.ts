@@ -1,3 +1,7 @@
+/**
+ * Trees / stones from the dump; waves generated from water neighbors.
+ * `sheet` is stored on the decoration — render does not pick a tree look.
+ */
 import { HEX_DELTAS, isWater } from "../../shared";
 import type { MapView } from "../map/mapView";
 

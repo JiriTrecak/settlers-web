@@ -148,6 +148,7 @@ export function triangleTexture(
     textureIndex = landscapeInfo[a].atlasSlot;
     texturePos = CONTINUOUS[orientationIndex];
   } else {
+    // Mixed triangle: pick a BORDER_BLENDS row that covers all three verts.
     textureIndex = landscapeInfo[left].atlasSlot;
     for (const intersect of BORDER_BLENDS) {
       let type1count = 0;

@@ -1,3 +1,4 @@
+/** Shared grid math and landscape types. No Pixi, no DOM. */
 export type { Action, GridPos } from "./types/types";
 export {
   HEIGHT_X,

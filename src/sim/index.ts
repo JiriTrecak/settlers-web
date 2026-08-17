@@ -1,3 +1,4 @@
+/** Public sim surface. No Pixi. */
 export { Clock } from "./clock/clock";
 export { seedRng, type Rng } from "./rng/rng";
 export { MapGrid } from "./map/mapGrid";

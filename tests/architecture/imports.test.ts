@@ -58,6 +58,7 @@ describe("architecture", () => {
       ui: ["pixi", "app", "session", "render"],
       render: ["app", "session", "ui"],
       session: ["app"],
+      app: ["sim", "render"],
     };
     for (const [layer, forbidden] of Object.entries(bans)) {
       const files = await walkTs(join(repoRoot, "src", layer));

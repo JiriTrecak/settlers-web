@@ -1,0 +1,29 @@
+---
+description: Classes vs functions, and how we comment code
+alwaysApply: true
+---
+
+# Style
+
+## Classes
+
+Lifecycle, retained state, or input → a **class** with a closed boundary. Pure math and one-shot transforms stay functions.
+
+Use classes for `Session`, `MapGrid`, `Clock`, `Renderer`, `Camera`, `GameScreen`, `Hud`, `Minimap`, `MapInput`. Functions for `gridToWorld`, `treeSheetAt`, dump parse, UV math.
+
+Do not flatten a widget into exported functions plus a WeakMap. That state belongs on the instance.
+
+## Comments
+
+Every `.ts` file states what it is for — a file header and/or a comment on the main export. A file with no comments is unfinished.
+
+Do **not** comment every line or narrate `x += 1`.
+
+Do comment:
+
+- Non-obvious math (iso, atlas UVs, hashes, lattices)
+- Why a call into another class exists (hooks, not reach-ins)
+- Races / generation counters / load cancellation
+- A block that does a whole job (mount UI, build a mesh, ingest a dump)
+
+Write what it *does* and *why*, not a restatement of the identifier.

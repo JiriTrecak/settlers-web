@@ -1,4 +1,4 @@
-/** [gridX, gridY, cellSize] — 32px cells in the 1024 landscape atlas. */
+/** [gridX, gridY, cellSize] — 32px cells in the 1024 landscape atlas. Keep in lockstep with dump-graphics. */
 export const TEXTURE_SIZE = 1024;
 export const TEXTURE_GRID = 32;
 

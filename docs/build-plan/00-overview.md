@@ -28,7 +28,7 @@ ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  
 
 - `sim` never imports `pixi.js`. Enforced by test. See [testing.md](testing.md).
 - `render` never mutates sim state. It reads a `ViewSnapshot` (or queries a read-only view) each frame.
-- `session` is the running match: map load, input routing, widget subscriptions.
+- `session` is one match, created when a map is chosen. Lobby lives in `app`.
 - `app` boots Pixi and pumps `session.tick`. No feature code.
 - The engine loads dumped PNG/JSON. Original `.dat` / `.map` stay in `original_conv`.
 - `ui` is HTML/CSS widgets with closed boundaries. Pixi draws the map only.

@@ -1,8 +1,11 @@
+/**
+ * Converted map dump. The engine never sees .map / DAT — ingest JSON only.
+ */
 import type { LandscapeType } from "../../shared";
 import { MapGrid } from "./mapGrid";
 import { treeSheetAt, type MapDecoration } from "../decorations/decorations";
 
-/** Converted map dump. The engine never sees .map / DAT. */
+/** Converted map dump JSON. */
 export type DumpedMap = {
   width: number;
   heights: number[];
@@ -36,6 +39,7 @@ export function isDumpedMap(value: unknown): value is DumpedMap {
 }
 
 export function gridFromDumpedMap(map: DumpedMap): MapGrid {
+  // Dumps are square: width is both axes; arrays are row-major.
   const grid = new MapGrid(map.width, map.width);
   for (let i = 0; i < map.width * map.width; i++) {
     const x = i % map.width;
@@ -52,6 +56,7 @@ export function decorationsFromDumpedMap(map: DumpedMap): MapDecoration[] {
       kind: "tree" as const,
       x: t.x,
       y: t.y,
+      // Old dumps omit sheet; same hash the converter uses.
       sheet: t.sheet ?? treeSheetAt(t.x, t.y),
     })),
     ...map.stones.map((s) => ({ kind: "stone" as const, x: s.x, y: s.y, capacity: s.capacity })),

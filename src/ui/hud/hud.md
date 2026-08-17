@@ -1,5 +1,5 @@
 # hud
 
-`Hud` builds stats / help / map picker. No minimap. Styles in `styles.css` (linked from `index.html`).
+In-match overlay: coords, help, Menu button. Styles in `styles.css` (also menu chrome).
 
-Map picker sits at `top: 188px` under the minimap — if you change minimap size, move that.
+Leave: Menu click or Escape (via `MapInput`). Minimap sits to the right of Menu.

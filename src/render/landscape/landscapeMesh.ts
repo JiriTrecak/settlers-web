@@ -1,3 +1,7 @@
+/**
+ * Landscape mesh: textured if atlas loaded, vertex-color fallback otherwise.
+ * Shade is multiplied in the fragment shader (textured) or baked into color.
+ */
 import { Geometry, Mesh, Shader, type Texture } from "pixi.js";
 import type { LandscapeGeometryData } from "./landscapeGeometry";
 

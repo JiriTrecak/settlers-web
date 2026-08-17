@@ -1,7 +1,5 @@
 # session
 
-`Session` is the match: graphics load, map load, hover/select, camera apply.
+`Session` is one match: that map, hover/select, camera. Graphics are cached after the first session.
 
-Map loads are generation-guarded (`loadGen`) so a slow fetch can't clobber a newer selection. Default map is first tutorial dump, else first generated preset.
-
-`Minimap.onLookAt` → `Camera.lookAt`. Space → `Renderer.setView` (refit).
+`Minimap.onLookAt` → `Camera.lookAt`. Space → `Renderer.setView` (refit). Escape → `onLeave` (lobby).

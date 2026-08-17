@@ -1,3 +1,7 @@
+/**
+ * 2D pan/zoom in screen pixels. World is scaled around `panX/panY`.
+ * `lookAt` / `fit` are called by Session; MapInput only `pan` / `zoomAt`.
+ */
 export class Camera {
   panX = 0;
   panY = 0;
@@ -18,6 +22,7 @@ export class Camera {
     this.panY += dy;
   }
 
+  /** Zoom keeping the world point under `(sx, sy)` fixed on screen. */
   zoomAt(sx: number, sy: number, factor: number): void {
     const world = this.screenToWorld(sx, sy);
     this.zoom = Math.min(this.maxZoom, Math.max(this.minZoom, this.zoom * factor));

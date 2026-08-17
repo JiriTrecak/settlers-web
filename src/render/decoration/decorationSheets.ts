@@ -1,3 +1,6 @@
+/**
+ * Loads `/graphics/catalog.json` + PNGs. Trees are seven sheet groups (`tree-1`…`7`).
+ */
 import { Texture } from "pixi.js";
 
 const BASE = "/graphics/";
