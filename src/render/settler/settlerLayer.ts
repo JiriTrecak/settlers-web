@@ -109,12 +109,15 @@ export class SettlerLayer {
   private frameOf(m: MovableView, progress: number): PropFrame | null {
     const sheets = this.sheets;
     if (!sheets) return null;
+    const carrying = m.material === "trunk";
     const clip =
       m.action === "walk"
-        ? sheets.walk[m.direction]
+        ? (carrying ? sheets.walkTrunk[m.direction] : sheets.walk[m.direction])
         : m.action === "work"
-          ? sheets.work[m.direction]
-          : sheets.idle[m.direction];
+          ? (m.job === "pickup" || m.job === "drop" ? sheets.pickup[m.direction] : sheets.chop[m.direction])
+          : carrying
+            ? sheets.idleTrunk[m.direction]
+            : sheets.idle[m.direction];
     if (!clip || clip.length === 0) return null;
     if (m.action === "walk") {
       const i = progress >= 1 ? clip.length - 1 : (progress * clip.length) | 0;

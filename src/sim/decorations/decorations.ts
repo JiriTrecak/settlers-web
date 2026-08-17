@@ -10,6 +10,7 @@ export const TREE_SHEETS = 7;
 export type MapDecoration =
   | { kind: "tree"; x: number; y: number; sheet: number; stateProgress?: number }
   | { kind: "stone"; x: number; y: number; capacity: number }
+  | { kind: "stack"; x: number; y: number; capacity: number }
   | { kind: "wave"; x: number; y: number };
 
 /** Assign one of `TREE_SHEETS` looks from tile coords. Used when converting maps that don't store a sheet. */

@@ -1,5 +1,5 @@
 /**
- * One object per tile: trees and stones. Blocks walking; `stateProgress` is chop/grow.
+ * One object per tile: trees, stones, stacks. Blocks walking; `stateProgress` is chop/grow.
  */
 import { HEX_DELTAS, type GridPos } from "../../shared";
 import type { MapGrid } from "../map/mapGrid";
@@ -7,7 +7,8 @@ import { treeSheetAt } from "../decorations/decorations";
 import type { DumpedMap } from "../map/dumpedMap";
 import type { Rng } from "../rng/rng";
 
-export type MapObjectKind = "tree" | "stone";
+export type MapObjectKind = "tree" | "stone" | "stack";
+export type StackMaterial = "trunk";
 
 export type MapObjectView = {
   kind: MapObjectKind;
@@ -17,6 +18,7 @@ export type MapObjectView = {
   capacity: number;
   /** 1 = intact, 0 = gone (removed). Chopping interpolates. */
   stateProgress: number;
+  material?: StackMaterial;
 };
 
 export class ObjectGrid {
@@ -126,4 +128,17 @@ export function scatterTrees(land: MapGrid, objects: ObjectGrid, rng: Rng, densi
 
 export function isAdjacent(a: GridPos, b: GridPos): boolean {
   return HEX_DELTAS.some((d) => a.x + d.dx === b.x && a.y + d.dy === b.y);
+}
+
+/** One trunk on the ground. Chop and drop both place this. */
+export function trunkStack(at: GridPos): MapObjectView {
+  return {
+    kind: "stack",
+    x: at.x,
+    y: at.y,
+    sheet: 0,
+    capacity: 1,
+    stateProgress: 1,
+    material: "trunk",
+  };
 }

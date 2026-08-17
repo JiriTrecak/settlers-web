@@ -187,17 +187,26 @@ export class Session {
 
   private setSelect(pos: GridPos | null): void {
     if (!this.renderer || !this.world || !pos) return;
-    const tree = this.world.objects.get(pos.x, pos.y);
-    if (tree?.kind === "tree") {
+    const obj = this.world.objects.get(pos.x, pos.y);
+    if (obj?.kind === "tree") {
       this.selected = pos;
       this.renderer.highlight(pos, "select");
       this.world.dispatch({ type: "chop", id: this.heroId, at: pos });
       return;
     }
+    if (obj?.kind === "stack") {
+      this.selected = pos;
+      this.renderer.highlight(pos, "select");
+      this.world.dispatch({ type: "pickup", id: this.heroId, at: pos });
+      return;
+    }
     if (!this.world.canStand(pos.x, pos.y, this.heroId)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
-    this.world.dispatch({ type: "moveTo", id: this.heroId, to: pos });
+    const carrying = this.world.view().movables.find((u) => u.id === this.heroId)?.material !== "none";
+    this.world.dispatch(
+      carrying ? { type: "drop", id: this.heroId, at: pos } : { type: "moveTo", id: this.heroId, to: pos },
+    );
   }
 
   private syncCamera(): void {

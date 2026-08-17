@@ -75,6 +75,24 @@ export class World {
       m.assignJob({ type: "chop", at: action.at });
       tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
       this.syncOcc();
+      return;
+    }
+    if (action.type === "pickup") {
+      const stack = this.objects.get(action.at.x, action.at.y);
+      if (!stack || stack.kind !== "stack" || m.material !== "none") return;
+      m.assignJob({ type: "pickup", at: action.at });
+      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      this.syncOcc();
+      return;
+    }
+    if (action.type === "drop") {
+      if (m.material === "none") return;
+      if (this.objects.get(action.at.x, action.at.y)) return;
+      if (!isWalkable(this.grid, action.at.x, action.at.y, this.objects)) return;
+      if (this.occ.idAt(action.at.x, action.at.y) !== 0) return;
+      m.assignJob({ type: "drop", at: action.at });
+      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      this.syncOcc();
     }
   }
 

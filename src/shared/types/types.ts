@@ -7,4 +7,6 @@ export type GridPos = {
 export type Action =
   | { type: "noop" }
   | { type: "moveTo"; id: number; to: GridPos }
-  | { type: "chop"; id: number; at: GridPos };
+  | { type: "chop"; id: number; at: GridPos }
+  | { type: "pickup"; id: number; at: GridPos }
+  | { type: "drop"; id: number; at: GridPos };

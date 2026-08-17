@@ -1,7 +1,7 @@
 /**
- * Trees, stones, waves as sprites. Depth is `isoDepth` on the shared iso container
+ * Trees, stones, stacks, waves as sprites. Depth is `isoDepth` on the shared iso container
  * so props and settlers interleave (south in front, stones cover units).
- * Waves are static; trees/stones sync from the sim snapshot each draw.
+ * Waves are static; trees/stones/stacks sync from the sim snapshot each draw.
  */
 import { Container, Sprite } from "pixi.js";
 import { gridToWorld, isoDepth, ISO_DEPTH_PROP, ISO_DEPTH_WAVE } from "../../shared";
@@ -48,7 +48,7 @@ export class DecorationLayer {
     }
   }
 
-  /** Diff trees/stones against the last snapshot. Waves stay put. */
+  /** Diff trees/stones/stacks against the last snapshot. Waves stay put. */
   syncObjects(objects: readonly MapObjectView[]): void {
     const view = this.view;
     const sheets = this.sheets;
@@ -145,6 +145,11 @@ export class DecorationLayer {
       if (n === 0) return 0;
       return (((step / 2) | 0) + ((deco.x / 2) | 0) + ((deco.y / 2) | 0)) % n;
     }
+    if (deco.kind === "stack") {
+      const n = sheets.stacks.length;
+      if (n === 0) return 0;
+      return Math.max(0, Math.min(n - 1, deco.capacity - 1));
+    }
     const n = sheets.stones.length;
     if (n === 0) return 0;
     return Math.max(0, Math.min(n - 1, n - deco.capacity - 1));
@@ -163,6 +168,7 @@ export class DecorationLayer {
       return frames?.[index] ?? frames?.[0] ?? null;
     }
     if (deco.kind === "wave") return sheets.waves[index] ?? null;
+    if (deco.kind === "stack") return sheets.stacks[index] ?? sheets.stacks[0] ?? null;
     return sheets.stones[index] ?? null;
   }
 
@@ -176,6 +182,9 @@ export class DecorationLayer {
 function objectToDeco(obj: MapObjectView): MapDecoration {
   if (obj.kind === "tree") {
     return { kind: "tree", x: obj.x, y: obj.y, sheet: obj.sheet, stateProgress: obj.stateProgress };
+  }
+  if (obj.kind === "stack") {
+    return { kind: "stack", x: obj.x, y: obj.y, capacity: obj.capacity };
   }
   return { kind: "stone", x: obj.x, y: obj.y, capacity: obj.capacity };
 }

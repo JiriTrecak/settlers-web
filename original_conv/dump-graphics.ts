@@ -164,6 +164,7 @@ const props: Array<{ title: string; file: number; seq: number }> = [
   { title: "wine", file: 1, seq: 25 },
   { title: "waves", file: 1, seq: 26 },
   { title: "stone", file: 1, seq: 31 },
+  { title: "stack trunk", file: 1, seq: 33 },
   { title: "pig", file: 6, seq: 0 },
   { title: "fish", file: 6, seq: 7 },
   { title: "hive empty", file: 6, seq: 8 },

@@ -10,6 +10,7 @@ import { findPath, type Blockers } from "../path/path";
 
 export type MovableType = "bearer";
 export type MovableAction = "idle" | "walk" | "work";
+export type MovableMaterial = "none" | "trunk";
 
 /** Bearer step is 0.6s × 0.75 speedup = 450ms → 18 ticks at 25ms. */
 export const BEARER_STEP_MS = 450;
@@ -26,6 +27,8 @@ export type MovableView = {
   workProgress: number;
   workTicks: number;
   player: number;
+  material: MovableMaterial;
+  job: Job["type"] | null;
 };
 
 export class Movable {
@@ -40,6 +43,7 @@ export class Movable {
   readonly player: number;
   job: Job | null = null;
   workElapsed = 0;
+  material: MovableMaterial = "none";
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
@@ -67,6 +71,8 @@ export class Movable {
       workProgress: this.action === "work" ? this.workElapsed / workTicks : 0,
       workTicks,
       player: this.player,
+      material: this.material,
+      job: this.job?.type ?? null,
     };
   }
 

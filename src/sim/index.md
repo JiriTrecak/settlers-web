@@ -8,8 +8,8 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `decorations/` | Trees/stones from dumps + wave lattice |
 | `clock/` | 25ms ticks |
 | `rng/` | Seeded RNG, never `Math.random` |
-| `object/` | Trees/stones on tiles, chop `stateProgress` |
-| `job/` | Unit assignments (`chop`, …). `tickJob` runs the verb. |
+| `object/` | Trees/stones/stacks on tiles, chop `stateProgress` |
+| `job/` | Unit assignments (`chop`, `pickup`, `drop`). `tickJob` runs the verb. |
 | `path/` | Walkable BFS (land + objects) |
 | `movable/` | One unit, tile steps + `moveProgress` |
 | `world/` | Match: clock + grid + objects + dispatch |

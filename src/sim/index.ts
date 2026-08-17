@@ -22,15 +22,18 @@ export {
   isAdjacent,
   objectsFromDumpedMap,
   scatterTrees,
+  trunkStack,
   type MapObjectKind,
   type MapObjectView,
+  type StackMaterial,
 } from "./object/object";
 export {
   BEARER_STEP_MS,
   Movable,
   type MovableAction,
+  type MovableMaterial,
   type MovableType,
   type MovableView,
 } from "./movable/movable";
-export { CHOP_TICKS, tickJob, workTicksOf, type Job, type JobContext } from "./job/job";
+export { CHOP_TICKS, DROP_TICKS, PICKUP_TICKS, tickJob, workTicksOf, type Job, type JobContext } from "./job/job";
 export { findPath, isWalkable, nearestWalkable, standBeside, type Blockers } from "./path/path";
