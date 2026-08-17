@@ -2,11 +2,16 @@
  * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
  * Reads `MapView`; never writes sim. Debug path / ownership overlays are HUD toggles.
  */
-import { Application, Container, Graphics, type Texture } from "pixi.js";
+import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
 import type { BuildingKind } from "../../sim/data/buildings";
+import type { BuildingView } from "../../sim/building/building";
 import type { MapDecoration } from "../../sim/decorations/decorations";
+import type { FogView } from "../../sim/fog/fog";
+import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { MapView } from "../../sim/map/mapView";
+import type { MapObjectView } from "../../sim/object/object";
+import type { MovableView } from "../../sim/movable/movable";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { BuildingLayer } from "../building/buildingLayer";
 import { GhostLayer } from "../building/ghostLayer";
@@ -37,6 +42,11 @@ export class Renderer {
   private view: MapView | null = null;
   private atlas: Texture | null = null;
   private waves: readonly MapDecoration[] = [];
+  private mesh: Mesh<Geometry, Shader> | null = null;
+  private cells: Uint32Array | null = null;
+  private mapWidth = 0;
+  private fogGen = -1;
+  private fog: FogView | null = null;
   private readonly hover = new Graphics();
   private readonly select = new Graphics();
 
@@ -78,9 +88,14 @@ export class Renderer {
   setView(view: MapView, waves: readonly MapDecoration[] = this.waves, fit = true): void {
     this.view = view;
     this.waves = waves;
-    const mesh = createLandscapeMesh(buildLandscapeGeometry(view), this.atlas);
+    const data = buildLandscapeGeometry(view);
+    const mesh = createLandscapeMesh(data, this.atlas);
     mesh.eventMode = "none";
     mesh.zIndex = -1;
+    this.mesh = mesh;
+    this.cells = data.cells;
+    this.mapWidth = data.width;
+    this.fogGen = -1;
     this.world.removeChildren();
     this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
     this.decorations.setWaves(view, waves);
@@ -127,12 +142,15 @@ export class Renderer {
 
   /** Movables + map objects from the last sim snapshot. `alpha` is leftover ms into the next tick. */
   draw(snapshot: ViewSnapshot, alpha: number): void {
-    this.decorations.syncObjects(snapshot.objects);
-    this.buildings.sync(snapshot.buildings);
-    this.settlers.draw(snapshot.movables, alpha);
+    this.fog = snapshot.fog;
+    this.applyLandscapeFog(snapshot.fog);
+    this.decorations.setFog(snapshot.fog);
+    this.decorations.syncObjects(visibleObjects(snapshot));
+    this.buildings.sync(visibleBuildings(snapshot), snapshot.fog);
+    this.settlers.draw(visibleMovables(snapshot.movables, snapshot.fog), alpha, snapshot.fog);
     this.paths.draw(snapshot.movables, alpha);
     this.land.draw(snapshot.land);
-    this.borders.draw(snapshot.land);
+    this.borders.draw(snapshot.land, snapshot.fog);
   }
 
   applyCamera(): void {
@@ -174,7 +192,7 @@ export class Renderer {
 
   /** Scaffold + footprint while a build tool is selected. `kind` null hides it. */
   ghost(kind: BuildingKind | null, pos: GridPos | null, ok: boolean): void {
-    if (!kind || !pos) {
+    if (!kind || !pos || (this.fog && this.fog.sightAt(pos.x, pos.y) === 0)) {
       this.ghostPlot.hide();
       return;
     }
@@ -197,8 +215,55 @@ export class Renderer {
     this.land.setPreview(pos, player);
   }
 
+  /** Per-vert sight/100. Positions still use live height — snapshots are objects/huts only until flatten. */
+  private applyLandscapeFog(fog: FogView): void {
+    const mesh = this.mesh;
+    const cells = this.cells;
+    if (!mesh || !cells || this.fogGen === fog.generation) return;
+    this.fogGen = fog.generation;
+    const attr = mesh.geometry.attributes.aFog;
+    if (!attr) return;
+    const data = attr.buffer.data as Float32Array;
+    const w = this.mapWidth;
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i] ?? 0;
+      data[i] = fog.sightAt(cell % w, (cell / w) | 0) / FOG_VISIBLE;
+    }
+    attr.buffer.update();
+  }
+
   destroy(): void {
     this.world.removeFromParent();
     this.world.destroy({ children: true });
   }
+}
+
+function visibleObjects(snapshot: ViewSnapshot): MapObjectView[] {
+  const fog = snapshot.fog;
+  const out: MapObjectView[] = [];
+  for (const o of snapshot.objects) {
+    if (fog.sightAt(o.x, o.y) === 0 || fog.isHidden(o.x, o.y)) continue;
+    out.push(o);
+  }
+  fog.forEachHidden((_x, _y, tile) => {
+    if (tile.object && fog.sightAt(tile.object.x, tile.object.y) > 0) out.push(tile.object);
+  });
+  return out;
+}
+
+function visibleBuildings(snapshot: ViewSnapshot): BuildingView[] {
+  const fog = snapshot.fog;
+  const out: BuildingView[] = [];
+  for (const b of snapshot.buildings) {
+    if (fog.sightAt(b.x, b.y) === 0 || fog.isHidden(b.x, b.y)) continue;
+    out.push(b);
+  }
+  fog.forEachHidden((_x, _y, tile) => {
+    if (tile.building && fog.sightAt(tile.building.x, tile.building.y) > 0) out.push(tile.building);
+  });
+  return out;
+}
+
+function visibleMovables(movables: readonly MovableView[], fog: FogView): MovableView[] {
+  return movables.filter((m) => fog.isClear(m.pos.x, m.pos.y));
 }

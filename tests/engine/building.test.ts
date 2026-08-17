@@ -110,4 +110,27 @@ describe("buildings", () => {
     expect(world.land.playerAt(far.x, far.y)).toBe(0);
     expect(world.canPlaceBuilding("lumberjack", far, 0)).toBe(true);
   });
+
+  it("removes a hut, unstamps land, and lets you rebuild the plot", () => {
+    const world = new World(grass(80, 80));
+    const hq = { x: 16, y: 16 };
+    const extra = { x: 48, y: 16 };
+    expect(world.placeBuilding("tower", hq, 0)).toBeDefined();
+    expect(world.placeBuilding("tower", extra, 0)).toBeDefined();
+    expect(world.land.playerAt(70, 16)).toBe(0);
+    expect(world.destroyBuilding(extra)).toBe(true);
+    expect(world.buildings.at(extra.x, extra.y)).toBeUndefined();
+    expect(isWalkable(world.grid, extra.x, extra.y, world.buildings)).toBe(true);
+    expect(world.land.playerAt(hq.x, hq.y)).toBe(0);
+    expect(world.land.playerAt(70, 16)).toBe(UNOWNED);
+    expect(world.placeBuilding("tower", extra, 0)).toBeDefined();
+  });
+
+  it("kicks the worker out as a bearer", () => {
+    const world = new World(grass(32, 32));
+    const hut = world.placeBuilding("lumberjack", { x: 10, y: 10 }, 0)!;
+    expect(world.view().movables[0]).toMatchObject({ type: "lumberjack", workplaceId: hut.id, inside: true });
+    expect(world.destroyBuilding(hut.pos)).toBe(true);
+    expect(world.view().movables[0]).toMatchObject({ type: "bearer", workplaceId: null, inside: false });
+  });
 });

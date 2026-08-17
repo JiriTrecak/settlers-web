@@ -8,6 +8,8 @@ import { gridToWorld, isoDepth, ISO_DEPTH_PROP, ISO_DEPTH_WAVE } from "../../sha
 import type { MapView } from "../../sim/map/mapView";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapObjectView } from "../../sim/object/object";
+import type { FogView } from "../../sim/fog/fog";
+import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { DecorationSheets, PropFrame } from "./decorationSheets";
 
 type Placed = {
@@ -22,6 +24,7 @@ export class DecorationLayer {
   private props = new Map<string, Placed>();
   private sheets: DecorationSheets | null = null;
   private view: MapView | null = null;
+  private fog: FogView | null = null;
   private animationStep = 0;
 
   constructor(private readonly parent: Container) {}
@@ -32,6 +35,10 @@ export class DecorationLayer {
 
   setView(view: MapView | null): void {
     this.view = view;
+  }
+
+  setFog(fog: FogView | null): void {
+    this.fog = fog;
   }
 
   setWaves(view: MapView, waves: readonly MapDecoration[]): void {
@@ -127,6 +134,14 @@ export class DecorationLayer {
       p.shadow.position.set(world.x + frame.shadow.offsetX * scale, world.y + frame.shadow.offsetY * scale);
       p.shadow.zIndex = p.body.zIndex;
       p.shadow.scale.set(scale);
+    }
+    const sight = this.fog?.sightAt(p.deco.x, p.deco.y) ?? FOG_VISIBLE;
+    const seen = sight > 0;
+    p.body.visible = seen;
+    p.body.alpha = sight / FOG_VISIBLE;
+    if (p.shadow) {
+      p.shadow.visible = seen && !!frame.shadow;
+      p.shadow.alpha = p.body.alpha;
     }
   }
 

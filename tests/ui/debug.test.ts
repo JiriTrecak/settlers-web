@@ -1,8 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { debugFrom, formatDebug } from "../../src/ui/hud/debug";
+import type { FogView } from "../../src/sim/fog/fog";
 import type { ViewSnapshot } from "../../src/sim/world/world";
 
-const empty: ViewSnapshot = { tick: 12, movables: [], objects: [], buildings: [] };
+const fog: FogView = {
+  width: 1,
+  height: 1,
+  generation: 0,
+  sightAt: () => 100,
+  isHidden: () => false,
+  hiddenAt: () => undefined,
+  forEachHidden: () => undefined,
+  isClear: () => true,
+};
+
+const empty: ViewSnapshot = { tick: 12, movables: [], objects: [], buildings: [], fog };
 
 const frame = {
   fps: 60,
@@ -69,6 +81,7 @@ describe("debug overlay", () => {
         { id: 1, kind: "lumberjack", x: 8, y: 8, player: 0, state: "built", buildProgress: 1, flag: "roof" },
         { id: 2, kind: "sawmill", x: 12, y: 8, player: 0, state: "plan", buildProgress: 0, flag: null },
       ],
+      fog,
     };
     const d = debugFrom(snap, frame);
     expect(d.settlerTotal).toBe(2);

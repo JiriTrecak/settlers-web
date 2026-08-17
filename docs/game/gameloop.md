@@ -24,7 +24,8 @@ Order matters — later systems see this tick’s assignments.
 8. Idle flock (skipped if a job was just assigned)
 9. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
 10. Newly finished occupying buildings stamp a tower-radius disk
-11. Occupancy grid rebuild (units with `inside` do not occupy a tile)
+11. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
+12. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
 `dispatch` is the only mutation from outside the tick (place a plan, tests that click-chop, etc.).
 
@@ -37,7 +38,7 @@ World RNG is seeded (`seedRng(1)` unless a test passes another). No `Math.random
 App ticker calls `session.tick(dtMs, nowMs)`.
 
 - Sim: as many 25 ms beats as the accumulator allows
-- Draw: `ViewSnapshot` (movables, objects, buildings) + leftover alpha
+- Draw: `ViewSnapshot` (movables, objects, buildings, fog) + leftover alpha
 - Decorations / flags wave on `nowMs` (visual only)
 - WASD / pan / zoom are camera, not sim
 
@@ -53,6 +54,7 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
 | Click empty valid owned land with a tool | Place a **plan** (scaffold), drop the tool |
 | Click an existing hut | Select it (highlight origin) |
+| Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
 | F3 | Debug overlay (paths / ownership / claim) |
 | Escape | Deselect: build ghost, then claim tool, then hut |

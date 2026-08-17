@@ -7,6 +7,7 @@ import { Container, Sprite } from "pixi.js";
 import { PLAYER_COLORS, clampPlayer, gridToWorld, isoDepth, ISO_DEPTH_WAVE } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import { UNOWNED, type LandView } from "../../sim/land/land";
+import type { FogView } from "../../sim/fog/fog";
 import type { PropFrame } from "../graphics/textures";
 
 type Post = {
@@ -22,6 +23,7 @@ export class BorderLayer {
   private frames: PropFrame[] = [];
   private view: MapView | null = null;
   private painted = -1;
+  private fogPainted = -1;
   private readonly posts = new Map<string, Post>();
 
   constructor(private readonly parent: Container) {}
@@ -33,23 +35,27 @@ export class BorderLayer {
   setView(view: MapView | null): void {
     this.view = view;
     this.painted = -1;
+    this.fogPainted = -1;
   }
 
-  draw(land: LandView | undefined): void {
+  draw(land: LandView | undefined, fog?: FogView): void {
     const view = this.view;
     const frame = this.frames[0];
     if (!view || !frame || !land) {
       this.clear();
       return;
     }
-    if (this.painted === land.generation) return;
+    const fogGen = fog?.generation ?? -1;
+    if (this.painted === land.generation && this.fogPainted === fogGen) return;
     this.painted = land.generation;
+    this.fogPainted = fogGen;
     const want = new Set<string>();
     const w = land.width;
     const h = land.height;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         if (!land.isBorder(x, y)) continue;
+        if (fog && !fog.isClear(x, y)) continue;
         const p = land.playerAt(x, y);
         if (p === UNOWNED) continue;
         const key = `${x},${y}`;
@@ -120,5 +126,6 @@ export class BorderLayer {
     }
     this.posts.clear();
     this.painted = -1;
+    this.fogPainted = -1;
   }
 }

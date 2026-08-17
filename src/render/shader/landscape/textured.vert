@@ -7,9 +7,11 @@
 in vec2 aPosition;
 in vec2 aUv;
 in float aShade;
+in float aFog;
 
 out vec2 vUv;
 out float vShade;
+out float vFog;
 
 uniform mat3 uProjectionMatrix;
 uniform mat3 uWorldTransformMatrix;
@@ -18,6 +20,7 @@ uniform mat3 uTransformMatrix;
 void main() {
   vUv = aUv;
   vShade = aShade;
+  vFog = aFog;
   mat3 mvp = uProjectionMatrix * uWorldTransformMatrix * uTransformMatrix;
   gl_Position = vec4((mvp * vec3(aPosition, 1.0)).xy, 0.0, 1.0);
 }

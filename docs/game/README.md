@@ -14,8 +14,8 @@ Read these when you need the rules, timings, and “what does the player actuall
 
 ## In play now
 
-Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; extra T1 towers extend it. You build only on owned land. Border posts on the rim. No flatten, no fog, no combat.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; extra T1 towers extend it. You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). No flatten, no combat.
 
 ## Not yet
 
-Flatten / diggers, building destroy, goods priorities, other professions, soldiers, fog of war, click-to-command settlers (the sim verbs exist; the play loop does not wire them). F3 **claim** stamps extra occupy disks.
+Flatten / diggers, goods priorities, other professions, soldiers, click-to-command settlers (the sim verbs exist; the play loop does not wire them). F3 **claim** stamps extra occupy disks.

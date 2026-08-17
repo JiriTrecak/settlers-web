@@ -97,4 +97,18 @@ describe("land", () => {
     expect(land.owns(19, 19, 0)).toBe(false);
     expect(land.owns(5, 5, 1)).toBe(false);
   });
+
+  it("release drops a disk and keeps overlapping same-player land", () => {
+    const land = new LandGrid(200, 200);
+    land.occupy({ x: 50, y: 100 }, 0);
+    land.occupy({ x: 70, y: 100 }, 0);
+    expect(land.playerAt(110, 100)).toBe(0);
+    land.release({ x: 70, y: 100 });
+    expect(land.playerAt(50, 100)).toBe(0);
+    expect(land.playerAt(90, 100)).toBe(0);
+    expect(land.playerAt(110, 100)).toBe(UNOWNED);
+    land.release({ x: 50, y: 100 });
+    expect(land.playerAt(50, 100)).toBe(UNOWNED);
+    expect(land.hasLand()).toBe(false);
+  });
 });

@@ -4,6 +4,8 @@ A building is an origin cell plus a footprint from its def. All currently playab
 
 Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house, tower (T1 occupy). Lookout / big tower are not in play.
 
+`viewDistance` on the def is the fog look radius once finished (tower 38, work huts 0). Empty worker huts still get 5; plans get 0. Units add their own disk (default 8).
+
 ## Footprint
 
 Two masks, both relative to origin:
@@ -93,6 +95,10 @@ The hut is a workplace + stack slots + a work radius. The **cycle** lives on the
 
 Door, flag, bricklayer spots, construction piles, work spot (sawmill) are all relative points on the def.
 
+## Destroy
+
+Click a hut, then **Delete** / **Backspace**. Instant: footprint gone, worker dumped as a bearer, occupy disk released (overlap with another tower stays). Fog circle resizes to 0 — that area fades to grey (50), not black. Units still light their own disk of 8.
+
 ## Not yet
 
-Destroy / deconstruct, other civilizations in a match, flatten before build, lookout / big tower, stock, temples, farms.
+Deconstruct-with-goods, other civilizations in a match, flatten before build, lookout / big tower, stock, temples, farms.

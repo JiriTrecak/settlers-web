@@ -39,11 +39,27 @@ Hex neighbors are the six diamond steps (ne, e, se, sw, w, nw). Distance is hex:
 
 ## Ownership
 
-Per-tile owner (`-1` unowned) plus a tower-count. A finished occupying building (HQ and extra T1 towers) or debug **claim** click stamps a disk of radius **40** using axial distance (`Y_SCALE` ≈ √3/2), clipped to the map. Same-player overlap extends the blob. Tiles another player already enforces (`towerCount > 0`) stay theirs, except the clicked cell.
+Per-tile owner (`-1` unowned) plus a tower-count. A finished occupying building (HQ and extra T1 towers) or debug **claim** click stamps a disk of radius **40** using axial distance (`Y_SCALE` ≈ √3/2), clipped to the map. Same-player overlap extends the blob. Destroying an occupying hut (or a future release) drops that disk; remaining towers keep theirs. Tiles another player already enforces (`towerCount > 0`) stay theirs, except the clicked cell.
 
 Once any disk exists, new huts must sit entirely on that player's land (`protected` tiles). Foresters plant and lumberjacks chop only on owned tiles (`acceptWork` / plant search). Settlers with `needsPlayersGround` (default true) path and flock on their own ground.
 
-Rim posts: owned, not water, hex neighbor a different owner (not water). Rendered always (player-tinted `props/border`). F3 **ownership** is the debug fill on top.
+Rim posts: owned, not water, hex neighbor a different owner (not water). Drawn only while that tile's sight is >50 (player-tinted `props/border`). F3 **ownership** is the debug fill on top.
+
+## Fog of war
+
+Per-player sight 0–100 on every tile. Graphics multiply color by `sight/100`. Sim is omniscient — fog is a view layer.
+
+Finished huts and units stamp a padded disk (`radius + 1.5×10`). Inner `radius + 5` is full 100; each ring outside knocks 10 off. Once a tile has been ≥50 it never returns to 0 (explored floor). Sight walks toward that target at 30/s. Match start snaps the colony's circles so the first frame is already fully lit; a tower you finish later still fades in.
+
+| sight | terrain / trees / stacks / huts | units | border posts |
+|---|---|---|---|
+| 0 | nothing | nothing | nothing |
+| 1–50 | dimmed (frozen snapshot if the tile left 51+) | hidden | hidden |
+| 51–100 | dim→full | drawn, tinted | drawn |
+
+Snapshots freeze landscape, height, object, and hut origin when sight crosses down through 50. Clear when it goes back above 50. Until flatten exists, the terrain mesh still uses live height — objects and huts are the part you actually notice.
+
+View distance is an attribute on the def: plan/scaffold **0**, empty worker hut **5**, occupied or workerless = `def.viewDistance` (tower **38**, most work huts **0**). Units default **8**. Tweaking the number is enough; the circles, dimmer, and snapshots are already wired.
 
 ## Things on tiles
 

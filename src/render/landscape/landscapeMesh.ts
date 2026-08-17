@@ -13,6 +13,7 @@ export function createLandscapeMesh(data: LandscapeGeometryData, atlas?: Texture
       aColor: { buffer: data.colors, format: "float32x3" },
       aUv: data.uvs,
       aShade: { buffer: data.shades, format: "float32" },
+      aFog: { buffer: data.fogs, format: "float32" },
     },
     indexBuffer: data.indices,
   });

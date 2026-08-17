@@ -17,6 +17,7 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `mark/` | Work-claim bits (chop/plant lock a resource tile) |
 | `path/` | Walkable BFS (land + objects) |
 | `land/` | Player occupy disks + rim (tower radius, HQ, debug claim) |
+| `fog/` | Per-player sight 0–100, padded view circles, explored floor, snapshots |
 | `movable/` | One unit, tile steps + `moveProgress`, idle flock |
 | `world/` | Match: clock + grid + objects + dispatch |
 

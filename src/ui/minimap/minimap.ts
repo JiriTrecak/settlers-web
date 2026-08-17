@@ -3,6 +3,8 @@
  */
 import { landscapeInfo, worldToGrid } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
+import type { FogView } from "../../sim/fog/fog";
+import { FOG_VISIBLE } from "../../sim/fog/fog";
 
 export type MinimapCamera = {
   panX: number;
@@ -93,9 +95,12 @@ export function minimapClientToGrid(
 /** Top-down canvas widget. Session calls `setView` / `setCamera`. */
 export class Minimap {
   private readonly canvas: HTMLCanvasElement;
+  private readonly base = document.createElement("canvas");
   private readonly terrain = document.createElement("canvas");
   private readonly onLookAt: (x: number, y: number) => void;
   private view: MapView | null = null;
+  private fog: FogView | null = null;
+  private fogGen = -1;
   private dragging = false;
 
   constructor(host: HTMLElement, hooks: { onLookAt: (x: number, y: number) => void }) {
@@ -104,6 +109,8 @@ export class Minimap {
     this.canvas.className = "hud-minimap";
     this.canvas.width = 168;
     this.canvas.height = 168;
+    this.base.width = 168;
+    this.base.height = 168;
     this.terrain.width = 168;
     this.terrain.height = 168;
     host.append(this.canvas);
@@ -122,6 +129,16 @@ export class Minimap {
       return;
     }
     this.paintTerrain(view);
+    this.fogGen = -1;
+    this.paintFog();
+    this.blitTerrain();
+  }
+
+  setFog(fog: FogView | null): void {
+    this.fog = fog;
+    if (!fog || fog.generation === this.fogGen) return;
+    this.fogGen = fog.generation;
+    this.paintFog();
     this.blitTerrain();
   }
 
@@ -167,19 +184,19 @@ export class Minimap {
     this.canvas.remove();
   }
 
-  /** Rasterize landscape colors into the offscreen terrain canvas (once per map). */
+  /** Rasterize landscape colors into the offscreen base canvas (once per map). */
   private paintTerrain(view: MapView): void {
-    const ctx = this.terrain.getContext("2d");
+    const ctx = this.base.getContext("2d");
     if (!ctx) return;
     const { width, height } = view;
-    const image = ctx.createImageData(this.terrain.width, this.terrain.height);
+    const image = ctx.createImageData(this.base.width, this.base.height);
     const data = image.data;
-    for (let py = 0; py < this.terrain.height; py++) {
-      for (let px = 0; px < this.terrain.width; px++) {
-        const x = Math.min(width - 1, Math.floor((px / this.terrain.width) * width));
-        const y = Math.min(height - 1, Math.floor((py / this.terrain.height) * height));
+    for (let py = 0; py < this.base.height; py++) {
+      for (let px = 0; px < this.base.width; px++) {
+        const x = Math.min(width - 1, Math.floor((px / this.base.width) * width));
+        const y = Math.min(height - 1, Math.floor((py / this.base.height) * height));
         const [r, g, b] = landscapeInfo[view.landscapeAt(x, y)].color;
-        const i = (py * this.terrain.width + px) * 4;
+        const i = (py * this.base.width + px) * 4;
         data[i] = Math.round(r * 255);
         data[i + 1] = Math.round(g * 255);
         data[i + 2] = Math.round(b * 255);
@@ -187,6 +204,30 @@ export class Minimap {
       }
     }
     ctx.putImageData(image, 0, 0);
+  }
+
+  private paintFog(): void {
+    const view = this.view;
+    const dst = this.terrain.getContext("2d");
+    if (!view || !dst) return;
+    dst.drawImage(this.base, 0, 0);
+    const fog = this.fog;
+    if (!fog) return;
+    const image = dst.getImageData(0, 0, this.terrain.width, this.terrain.height);
+    const data = image.data;
+    const { width, height } = view;
+    for (let py = 0; py < this.terrain.height; py++) {
+      for (let px = 0; px < this.terrain.width; px++) {
+        const x = Math.min(width - 1, Math.floor((px / this.terrain.width) * width));
+        const y = Math.min(height - 1, Math.floor((py / this.terrain.height) * height));
+        const mul = fog.sightAt(x, y) / FOG_VISIBLE;
+        const i = (py * this.terrain.width + px) * 4;
+        data[i] = Math.round((data[i] ?? 0) * mul);
+        data[i + 1] = Math.round((data[i + 1] ?? 0) * mul);
+        data[i + 2] = Math.round((data[i + 2] ?? 0) * mul);
+      }
+    }
+    dst.putImageData(image, 0, 0);
   }
 
   private blitTerrain(): void {

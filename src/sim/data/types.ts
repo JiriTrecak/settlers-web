@@ -64,4 +64,6 @@ export type SettlerDef = {
    * Pioneer / thief / geologist / soldiers set `false`.
    */
   needsPlayersGround?: boolean;
+  /** Look radius for fog. Omit → 8. Donkey would be 0. */
+  viewDistance?: number;
 };

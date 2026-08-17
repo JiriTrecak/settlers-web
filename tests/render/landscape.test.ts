@@ -16,6 +16,8 @@ describe("landscape geometry", () => {
     expect(data.indices.length / 3).toBe(tris);
     expect(data.positions.length / 2).toBe(tris * 3);
     expect(data.uvs.length / 2).toBe(tris * 3);
+    expect(data.fogs.length).toBe(tris * 3);
+    expect(data.cells.length).toBe(tris * 3);
   });
 
   it("maps a solid grass cell onto the grass atlas slot", () => {

@@ -111,6 +111,28 @@ export class LandGrid {
   }
 
   /**
+   * Drop one occupy disk at `at` (first match). Remaining disks are replayed
+   * so overlapping same-player land stays and the rest goes back to unowned.
+   */
+  release(
+    at: { x: number; y: number },
+    blocked: (x: number, y: number) => boolean = () => false,
+  ): void {
+    const i = this.occupies.findIndex((o) => o.x === at.x && o.y === at.y);
+    if (i < 0) return;
+    const remaining = this.occupies.filter((_, k) => k !== i);
+    this.occupies.length = 0;
+    this.owner.fill(UNOWNED);
+    this.towers.fill(0);
+    this.borders.fill(0);
+    if (remaining.length === 0) {
+      this.generation += 1;
+      return;
+    }
+    for (const t of remaining) this.occupy({ x: t.x, y: t.y }, t.player, t.radius, blocked);
+  }
+
+  /**
    * Owned, not blocked, and a hex neighbor is a different owner (also not blocked).
    * Water neighbors do not make a rim.
    */

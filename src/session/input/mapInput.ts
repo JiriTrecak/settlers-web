@@ -1,5 +1,6 @@
 /**
  * Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it to the world.
+ * Escape deselects; Delete / Backspace destroys the selected hut.
  */
 import type { GridPos } from "../../shared";
 import type { Camera } from "../../render/camera/camera";
@@ -13,6 +14,7 @@ export type MapInputHooks = {
   onCameraChanged(): void;
   onFit(): void;
   onEscape(): void;
+  onDelete(): void;
 };
 
 export class MapInput {
@@ -99,6 +101,10 @@ export class MapInput {
     if (e.key === "Escape") {
       e.preventDefault();
       this.hooks.onEscape();
+    }
+    if (e.key === "Delete" || e.key === "Backspace") {
+      e.preventDefault();
+      this.hooks.onDelete();
     }
   };
 

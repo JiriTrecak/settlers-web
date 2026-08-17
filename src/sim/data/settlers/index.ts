@@ -1,4 +1,5 @@
 /** Settler defs. One file per profession; this file is the registry. */
+import { DEFAULT_UNIT_VIEW_DISTANCE } from "../../fog/constants";
 import type { SettlerDef } from "../types";
 import { bearer } from "./bearer";
 import { bricklayer } from "./bricklayer";
@@ -26,4 +27,10 @@ export function settlerDef<K extends SettlerKind>(kind: K): (typeof settlers)[K]
 export function needsPlayersGround(kind: SettlerKind): boolean {
   const def: SettlerDef = settlerDef(kind);
   return def.needsPlayersGround !== false;
+}
+
+/** Fog look radius. Omit on the def → 8. */
+export function unitViewDistance(kind: SettlerKind): number {
+  const def: SettlerDef = settlerDef(kind);
+  return def.viewDistance ?? DEFAULT_UNIT_VIEW_DISTANCE;
 }

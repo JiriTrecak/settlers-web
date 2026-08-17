@@ -12,6 +12,8 @@ import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING, PLAYER_COLORS, clampPlayer }
 import { buildingDef } from "../../sim/data/buildings";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingState, BuildingView } from "../../sim/building/building";
+import type { FogView } from "../../sim/fog/fog";
+import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { BuildingSheet, BuildingSheets } from "./buildingSheets";
 import type { PropFrame } from "../graphics/textures";
 
@@ -50,7 +52,7 @@ export class BuildingLayer {
     this.view = view;
   }
 
-  sync(buildings: readonly BuildingView[]): void {
+  sync(buildings: readonly BuildingView[], fog?: FogView): void {
     const view = this.view;
     const sheets = this.sheets;
     if (!view || !sheets) return;
@@ -61,14 +63,16 @@ export class BuildingLayer {
       if (!existing) {
         const placed = this.spawn(b, view, sheets);
         if (placed) this.drawn.set(b.id, placed);
-        continue;
+      } else {
+        existing.building = b;
+        if (existing.state === b.state && existing.progress === b.buildProgress) {
+          this.paintFlag(existing, b, view, sheets, this.animationStep);
+        } else {
+          this.apply(existing, b, view, sheets);
+        }
       }
-      existing.building = b;
-      if (existing.state === b.state && existing.progress === b.buildProgress) {
-        this.paintFlag(existing, b, view, sheets, this.animationStep);
-        continue;
-      }
-      this.apply(existing, b, view, sheets);
+      const drawn = this.drawn.get(b.id);
+      if (drawn) this.tintFog(drawn, fog?.sightAt(b.x, b.y) ?? FOG_VISIBLE);
     }
     for (const [id, d] of this.drawn) {
       if (want.has(id)) continue;
@@ -128,6 +132,11 @@ export class BuildingLayer {
     this.paint(drawn, sheet, world, z, b);
     this.paintFlag(drawn, b, view, sheets, this.animationStep);
     return drawn;
+  }
+
+  private tintFog(d: Drawn, sight: number): void {
+    d.root.visible = sight > 0;
+    d.root.alpha = sight / FOG_VISIBLE;
   }
 
   private apply(d: Drawn, b: BuildingView, view: MapView, sheets: BuildingSheets): void {

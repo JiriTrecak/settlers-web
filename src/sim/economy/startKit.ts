@@ -23,7 +23,7 @@ const STACKS: { material: Goods; capacity: number }[] = [
   { material: "saw", capacity: 1 },
 ];
 
-/** Stamp HQ + house + piles + bearers at `at`. */
+/** Stamp HQ + house + piles + bearers at `at`, then snap fog so the first frame is fully lit. */
 export function placeColony(world: World, at: GridPos, player = 0): void {
   world.placeBuilding("tower", at, player, true);
   const houseAt = findPlace(world, "small_livinghouse", at, player);
@@ -50,6 +50,7 @@ export function placeColony(world: World, at: GridPos, player = 0): void {
     }
     placed += 1;
   }
+  world.snapFog();
 }
 
 function findPlace(world: World, kind: BuildingKind, around: GridPos, player: number): GridPos | null {

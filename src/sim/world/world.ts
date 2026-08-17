@@ -1,11 +1,11 @@
 /**
- * One match's sim: clock, grid, objects, buildings, land, marks, movables. Session ticks this; render reads `view()`.
+ * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables. Session ticks this; render reads `view()`.
  */
 import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
-import { BuildingGrid, canPlace, type Building, type BuildingView } from "../building/building";
+import { BuildingGrid, buildingFlag, canPlace, type Building, type BuildingView } from "../building/building";
 import { buildingDef, type BuildingKind } from "../data/buildings";
-import { settlers, settlerDef, needsPlayersGround, type SettlerKind } from "../data/settlers";
+import { settlers, settlerDef, needsPlayersGround, unitViewDistance, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
 import { tickConstruction } from "../economy/construction";
@@ -18,6 +18,7 @@ import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession } from "../profession/profession";
 import { seedRng, type Rng } from "../rng/rng";
 import { LandGrid, type LandView } from "../land/land";
+import { FogGrid, buildingViewDistance, type FogView, type FogWorld } from "../fog/fog";
 import { MarkGrid } from "../mark/mark";
 
 export type ViewSnapshot = {
@@ -26,6 +27,7 @@ export type ViewSnapshot = {
   objects: readonly MapObjectView[];
   buildings: readonly BuildingView[];
   land?: LandView;
+  fog: FogView;
 };
 
 class Occupancy {
@@ -56,10 +58,12 @@ export class World {
   readonly objects: ObjectGrid;
   readonly buildings: BuildingGrid;
   readonly land: LandGrid;
+  readonly fog: FogGrid;
   readonly marks: MarkGrid;
   readonly rng: Rng;
   private readonly occ: Occupancy;
   private readonly units: Movable[] = [];
+  private readonly fogAt = new Map<number, GridPos>();
   private nextId = 1;
 
   constructor(grid: MapGrid, objects: ObjectGrid = new ObjectGrid(grid.width, grid.height), rng: Rng = seedRng(1)) {
@@ -67,6 +71,7 @@ export class World {
     this.objects = objects;
     this.buildings = new BuildingGrid(grid.width, grid.height);
     this.land = new LandGrid(grid.width, grid.height);
+    this.fog = new FogGrid(grid.width, grid.height);
     this.marks = new MarkGrid(grid.width, grid.height);
     this.occ = new Occupancy(grid.width, grid.height);
     this.rng = rng;
@@ -87,6 +92,7 @@ export class World {
     }
     this.units.push(m);
     this.syncOcc();
+    this.noteFogUnit(m);
     return m;
   }
 
@@ -97,7 +103,15 @@ export class World {
     if (!hut) return undefined;
     this.staffFinished(hut);
     this.syncLandClaims();
+    this.syncFog();
+    this.fog.tickDim(this.clock.tickMs, this.fogWorld());
     return hut;
+  }
+
+  /** Instantly walk sight to the current ref target. Match start skips the fade-in. */
+  snapFog(): void {
+    this.syncFog();
+    this.fog.tickDim(10_000, this.fogWorld());
   }
 
   /** Scaffold. Matcher hauls `constructionStacks`; bricklayers hammer; a bearer occupies once built. */
@@ -107,6 +121,35 @@ export class World {
     if (!hut) return undefined;
     hut.state = "plan";
     return hut;
+  }
+
+  /**
+   * Instant remove. Unstamps fog + occupy land, kicks the worker out as a
+   * bearer, cancels jobs aimed at this hut. Sight dims toward 50 on the next ticks.
+   */
+  destroyBuilding(at: GridPos): boolean {
+    const hut = this.buildings.at(at.x, at.y);
+    if (!hut) return false;
+    if (hut.fogDistance > 0) {
+      this.fog.resizeCircle(hut.pos, hut.player, hut.fogDistance, 0);
+      hut.fogDistance = 0;
+    }
+    if (hut.landClaimed) {
+      this.land.release(hut.pos, (x, y) => this.landscapeBlocked(x, y));
+      hut.landClaimed = false;
+    }
+    for (const m of this.units) {
+      if (m.workplaceId === hut.id) {
+        m.leave();
+        m.become("bearer", null, this.clock.tickMs);
+      } else if (m.job && "hutId" in m.job && m.job.hutId === hut.id) {
+        m.idle();
+      }
+    }
+    this.buildings.remove(hut.id);
+    this.syncOcc();
+    this.fog.tickDim(this.clock.tickMs, this.fogWorld());
+    return true;
   }
 
   canPlaceBuilding(kind: BuildingKind, at: GridPos, player = 0): boolean {
@@ -122,6 +165,10 @@ export class World {
     }
     if (action.type === "occupy") {
       this.claimAt(action.at, action.player ?? 0);
+      return;
+    }
+    if (action.type === "destroyBuilding") {
+      this.destroyBuilding(action.at);
       return;
     }
     const m = this.units.find((u) => u.id === action.id);
@@ -200,16 +247,19 @@ export class World {
       tickJob(m, this.jobCtx(m));
     }
     this.syncLandClaims();
+    this.syncFog();
+    this.fog.tickDim(this.clock.tickMs, this.fogWorld());
     this.syncOcc();
   }
 
-  view(): ViewSnapshot {
+  view(player = 0): ViewSnapshot {
     return {
       tick: this.clock.tickIndex,
       movables: this.units.map((u) => u.view()),
       objects: this.objects.view(),
       buildings: this.buildings.view(this.units),
       land: this.land.view(),
+      fog: this.fog.view(player),
     };
   }
 
@@ -315,5 +365,51 @@ export class World {
       this.claimAt(b.pos, b.player);
       b.landClaimed = true;
     }
+  }
+
+  /** Resize hut/unit view circles when state or tile changes. */
+  private syncFog(): void {
+    for (const b of this.buildings.all()) {
+      const occupied = this.hutOccupied(b);
+      const vd = buildingViewDistance(b.kind, b.state, occupied);
+      if (vd === b.fogDistance) continue;
+      this.fog.resizeCircle(b.pos, b.player, b.fogDistance, vd);
+      b.fogDistance = vd;
+    }
+    for (const m of this.units) {
+      const vd = unitViewDistance(m.type);
+      const prev = this.fogAt.get(m.id) ?? null;
+      const at = { x: m.pos.x, y: m.pos.y };
+      if (prev && prev.x === at.x && prev.y === at.y) continue;
+      this.fog.moveCircle(m.player, prev, at, vd);
+      this.fogAt.set(m.id, at);
+    }
+  }
+
+  private noteFogUnit(m: Movable): void {
+    const vd = unitViewDistance(m.type);
+    const prev = this.fogAt.get(m.id) ?? null;
+    const at = { x: m.pos.x, y: m.pos.y };
+    this.fog.moveCircle(m.player, prev, at, vd);
+    this.fogAt.set(m.id, at);
+  }
+
+  private hutOccupied(b: Building): boolean {
+    const worker = buildingDef(b.kind).worker;
+    if (!worker) return false;
+    return this.units.some((m) => m.workplaceId === b.id && m.type === worker);
+  }
+
+  private fogWorld(): FogWorld {
+    return {
+      landscapeAt: (x, y) => this.grid.landscapeAt(x, y),
+      heightAt: (x, y) => this.grid.heightAt(x, y),
+      objectAt: (x, y) => this.objects.get(x, y),
+      buildingAt: (x, y) => {
+        const b = this.buildings.at(x, y);
+        if (!b || b.pos.x !== x || b.pos.y !== y) return undefined;
+        return b.view(buildingFlag(b, this.units));
+      },
+    };
   }
 }

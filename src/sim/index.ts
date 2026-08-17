@@ -18,10 +18,18 @@ export { allDecorations, treeSheetAt, waveDecorations, type MapDecoration } from
 export { mapViewFromGrid, type MapView } from "./map/mapView";
 export { World, type ViewSnapshot } from "./world/world";
 export { LandGrid, UNOWNED, type LandView } from "./land/land";
+export {
+  FogGrid,
+  FOG_EXPLORED,
+  FOG_VISIBLE,
+  buildingViewDistance,
+  type FogView,
+  type HiddenTile,
+} from "./fog/fog";
 export { MarkGrid } from "./mark/mark";
 export { Building, BuildingGrid, canPlace, type BuildingState, type BuildingView } from "./building/building";
 export { buildings, buildingDef, type BuildingKind } from "./data/buildings";
-export { settlers, settlerDef, needsPlayersGround, type SettlerKind } from "./data/settlers";
+export { settlers, settlerDef, needsPlayersGround, unitViewDistance, type SettlerKind } from "./data/settlers";
 export {
   ObjectGrid,
   STACK_SIZE,

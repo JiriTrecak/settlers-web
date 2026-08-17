@@ -1,6 +1,6 @@
 # economy
 
-Match start stamps a tower, a small house, low-goods piles (plank/stone/tools), and 16 jobless bearers in a spiral around the HQ. The finished tower occupies a radius-40 disk; later huts must sit on that land. Extra T1 towers from the strip extend it when they finish.
+Match start stamps a tower, a small house, low-goods piles (plank/stone/tools), and 16 jobless bearers in a spiral around the HQ. The finished tower occupies a radius-40 disk; later huts must sit on that land. Extra T1 towers from the strip extend it when they finish. Fog snaps to full sight after the kit is down.
 
 Each tick the matcher pairs the closest idle bearer to the closest offer of a requested material. Built huts request `requestStacks`; plans request `constructionStacks` (stop at `required`). `building` huts request nothing. No partitions. `deliver` is a job: pickup at the offer, drop at the request.
 

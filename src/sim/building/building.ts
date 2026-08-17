@@ -53,6 +53,8 @@ export class Building {
   remainingMaterialActions = 0;
   /** True after this hut's occupy disk has been stamped. */
   landClaimed = false;
+  /** Last view-circle radius stamped into fog. */
+  fogDistance = 0;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {
     this.id = id;
@@ -156,6 +158,23 @@ export class BuildingGrid {
     for (const t of tiles(def.protected, at)) this.protectedAt[this.index(t.x, t.y)] = id;
     for (const t of tiles(def.blocked, at)) this.blockedAt[this.index(t.x, t.y)] = id;
     return building;
+  }
+
+  /** Clears the footprint. Ids are not reused. */
+  remove(id: number): Building | undefined {
+    const b = this.items[id];
+    if (!b) return undefined;
+    const def = buildingDef(b.kind);
+    for (const t of tiles(def.protected, b.pos)) {
+      const i = this.index(t.x, t.y);
+      if (this.protectedAt[i] === id) this.protectedAt[i] = 0;
+    }
+    for (const t of tiles(def.blocked, b.pos)) {
+      const i = this.index(t.x, t.y);
+      if (this.blockedAt[i] === id) this.blockedAt[i] = 0;
+    }
+    this.items[id] = null;
+    return b;
   }
 }
 

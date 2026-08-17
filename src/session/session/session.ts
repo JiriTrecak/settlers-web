@@ -129,6 +129,7 @@ export class Session {
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
       onEscape: () => this.deselect(),
+      onDelete: () => this.deleteSelected(),
     });
 
     const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
@@ -143,8 +144,9 @@ export class Session {
     // Native 1× on the first HQ. Space still fits the whole map.
     this.renderer.camera.zoom = 1;
     this.lookAt(start.x, start.y);
-    const snap = world.view();
+    const snap = world.view(this.config.player);
     this.renderer.draw(snap, 0);
+    this.minimap.setFog(snap.fog);
     this.pushHud(snap, 16.67, 0, false);
   }
 
@@ -163,12 +165,13 @@ export class Session {
       n++;
     }
     if (n >= cap) this.acc = 0;
-    const snap = world.view();
+    const snap = world.view(this.config.player);
     renderer.draw(snap, this.acc / step);
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
     this.pushHud(snap, dtMs, n, n >= cap);
     if (this.view && this.minimap) {
+      this.minimap.setFog(snap.fog);
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
   }
@@ -203,6 +206,16 @@ export class Session {
       this.selected = null;
       this.renderer?.highlight(null, "select");
     }
+  }
+
+  /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
+  deleteSelected(): void {
+    const world = this.world;
+    if (!world || !this.selected) return;
+    if (!world.buildings.at(this.selected.x, this.selected.y)) return;
+    world.dispatch({ type: "destroyBuilding", at: this.selected });
+    this.selected = null;
+    this.renderer?.highlight(null, "select");
   }
 
   setClaiming(on: boolean): void {

@@ -10,7 +10,10 @@ export type LandscapeGeometryData = {
   colors: Float32Array;
   uvs: Float32Array;
   shades: Float32Array;
+  fogs: Float32Array;
+  cells: Uint32Array;
   indices: Uint32Array;
+  width: number;
 };
 
 export function landscapeTriangleCount(width: number, height: number): number {
@@ -28,6 +31,8 @@ export function buildLandscapeGeometry(view: MapView): LandscapeGeometryData {
   const colors = new Float32Array(vertCount * 3);
   const uvs = new Float32Array(vertCount * 2);
   const shades = new Float32Array(vertCount);
+  const fogs = new Float32Array(vertCount);
+  const cells = new Uint32Array(vertCount);
   const indices = new Uint32Array(vertCount);
 
   const interior = (x: number, y: number) => x > 0 && x < width - 2 && y > 0 && y < height - 2;
@@ -46,6 +51,10 @@ export function buildLandscapeGeometry(view: MapView): LandscapeGeometryData {
       shade = slopeShade(h, view.heightAt(x, y - 1));
     }
     shades[vi] = shade;
+    // Unseen until the renderer writes aFog. Live height/type — flatten later
+    // must sample FogView.hiddenAt for grey tiles so the mesh matches the snapshot.
+    fogs[vi] = 0;
+    cells[vi] = y * width + x;
     colors[vi * 3] = r * shade;
     colors[vi * 3 + 1] = g * shade;
     colors[vi * 3 + 2] = b * shade;
@@ -82,5 +91,5 @@ export function buildLandscapeGeometry(view: MapView): LandscapeGeometryData {
     }
   }
 
-  return { positions, colors, uvs, shades, indices };
+  return { positions, colors, uvs, shades, fogs, cells, indices, width };
 }

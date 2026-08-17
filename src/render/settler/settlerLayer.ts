@@ -6,6 +6,8 @@ import { Container, Graphics, Sprite } from "pixi.js"
 import { gridToWorld, isoDepth, ISO_DEPTH_UNIT } from "../../shared"
 import type { MapView } from "../../sim/map/mapView"
 import type { MovableView } from "../../sim/movable/movable"
+import type { FogView } from "../../sim/fog/fog"
+import { FOG_VISIBLE } from "../../sim/fog/fog"
 import type { PropFrame } from "../graphics/textures"
 import { PLAYER_COLORS, clampPlayer } from "../../shared"
 import type { SettlerSheets } from "./settlerSheets"
@@ -35,7 +37,7 @@ export class SettlerLayer {
   }
 
   /** `alpha` is leftover accumulator / tickMs — visual only, not sim. */
-  draw(movables: readonly MovableView[], alpha: number): void {
+  draw(movables: readonly MovableView[], alpha: number, fog?: FogView): void {
     const view = this.view
     if (!view) return
     const seen = new Set<number>()
@@ -50,6 +52,8 @@ export class SettlerLayer {
       const h1 = view.heightAt(m.pos.x, m.pos.y)
       const world = gridToWorld(x, y, h0 + (h1 - h0) * p)
       drawn.root.zIndex = isoDepth(world.x, world.y, ISO_DEPTH_UNIT)
+      const sight = fog?.sightAt(m.pos.x, m.pos.y) ?? FOG_VISIBLE
+      drawn.root.alpha = sight / FOG_VISIBLE
       const frame = this.frameOf(m, p)
       if (frame) {
         drawn.fallback.visible = false

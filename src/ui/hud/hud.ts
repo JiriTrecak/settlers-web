@@ -38,6 +38,9 @@ export class Hud {
   private showOwnership = false;
   private claiming = false;
   private last: HudState = { cursor: null, landscape: null, height: null, zoom: 1 };
+  private fpsShown = 60;
+  private fpsFrames = 0;
+  private fpsMs = 0;
 
   constructor(host: HTMLElement, hooks: HudHooks) {
     this.host = host;
@@ -80,7 +83,7 @@ export class Hud {
     this.help = document.createElement("div");
     this.help.className = "hud-help";
     this.help.textContent =
-      "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc deselect  ·  F3 debug";
+      "pick a hut, click to place  ·  click hut, del to destroy  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc deselect  ·  F3 debug";
 
     this.exit = document.createElement("button");
     this.exit.type = "button";
@@ -106,8 +109,18 @@ export class Hud {
   }
 
   update(state: HudState): void {
-    if (state.debug) this.last = state;
-    else this.last = { ...this.last, ...state };
+    if (state.debug) {
+      this.last = state;
+      this.fpsFrames += 1;
+      this.fpsMs += state.debug.dtMs;
+      if (this.fpsMs >= 1000) {
+        this.fpsShown = Math.round((this.fpsFrames * 1000) / this.fpsMs);
+        this.fpsFrames = 0;
+        this.fpsMs = 0;
+      }
+    } else {
+      this.last = { ...this.last, ...state };
+    }
     this.paint();
   }
 
@@ -201,7 +214,7 @@ export class Hud {
 
   private paint(): void {
     const s = this.last;
-    const fps = s.debug ? `${s.debug.fps.toFixed(0)} fps` : "— fps";
+    const fps = `${this.fpsShown} fps`;
     const tile = s.cursor
       ? `${s.cursor.x}, ${s.cursor.y}   ${s.landscape ?? "—"}   h=${s.height ?? 0}`
       : "—";

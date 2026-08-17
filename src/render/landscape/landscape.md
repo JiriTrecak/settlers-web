@@ -4,7 +4,7 @@ Terrain mesh from `MapView`, sampled from `assets/graphics/landscape-atlas.png`.
 
 - `atlasPositions.ts` — 32px cells in a 1024 atlas. Changing this without re-dumping the PNG will scramble every tile.
 - `landscapeUv.ts` — diamond UVs + border-blend slot table. River1–4 collapse to one blend key; mixed river frames on one triangle still pick a river slot.
-- `landscapeGeometry.ts` — two triangles per cell, duplicated verts (per-triangle UVs).
+- `landscapeGeometry.ts` — two triangles per cell, duplicated verts (per-triangle UVs). `aFog` starts at 0 (unseen); the renderer writes sight/100 per vert. Positions still use live height.
 - `landscapeMesh.ts` — Pixi mesh. Shaders: `render/shader/landscape/`.
 - `landscapeAtlas.ts` — nearest, no mips.
 
