@@ -64,9 +64,9 @@ lumberjack fells adult tree ──trunk──► lumberjack offer
 
 Rest **3 s** inside. If the offer stack is full (8), stay inside.
 
-Else nearest adult unclaimed tree in radius **30** on the player's land whose **SE** tile is walkable. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
+Else nearest adult tree in radius **30** on the player's land whose **SE** tile is walkable and not marked. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
 
-Another lumberjack already chopping that tree → skip. Saplings / still-growing → skip.
+Another lumberjack already chopping that tree (tile marked) → skip. Saplings / still-growing → skip.
 
 Bearer click-chop (tests only): any neighbor, face the tree, **1.8 s**, leaves a 1-trunk pile on the stump.
 

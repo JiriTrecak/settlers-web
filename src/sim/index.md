@@ -14,6 +14,7 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `job/` | Unit assignments (`chop`, `pickup`, `drop`, `build`, `plant`, `occupy`). `tickJob` runs the verb. |
 | `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller, bricklayer, forester) |
 | `economy/` | Start kit + matcher + construction (plan → bricklayers → occupy) |
+| `mark/` | Work-claim bits (chop/plant lock a resource tile) |
 | `path/` | Walkable BFS (land + objects) |
 | `land/` | Player occupy disks + rim (tower radius, HQ, debug claim) |
 | `movable/` | One unit, tile steps + `moveProgress`, idle flock |

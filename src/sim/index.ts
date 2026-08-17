@@ -18,9 +18,10 @@ export { allDecorations, treeSheetAt, waveDecorations, type MapDecoration } from
 export { mapViewFromGrid, type MapView } from "./map/mapView";
 export { World, type ViewSnapshot } from "./world/world";
 export { LandGrid, UNOWNED, type LandView } from "./land/land";
+export { MarkGrid } from "./mark/mark";
 export { Building, BuildingGrid, canPlace, type BuildingState, type BuildingView } from "./building/building";
 export { buildings, buildingDef, type BuildingKind } from "./data/buildings";
-export { settlers, settlerDef, type SettlerKind } from "./data/settlers";
+export { settlers, settlerDef, needsPlayersGround, type SettlerKind } from "./data/settlers";
 export {
   ObjectGrid,
   STACK_SIZE,
@@ -43,7 +44,7 @@ export {
   type MovableType,
   type MovableView,
 } from "./movable/movable";
-export { CHOP_TICKS, DROP_TICKS, PICKUP_TICKS, tickJob, workTicksOf, type Job, type JobContext } from "./job/job";
+export { CHOP_TICKS, DROP_TICKS, PICKUP_TICKS, tickJob, workTicksOf, markOf, type Job, type JobContext } from "./job/job";
 export { tickProfession, type ProfessionContext } from "./profession/profession";
 export { placeColony } from "./economy/startKit";
 export { tickMatcher } from "./economy/matcher";

@@ -59,4 +59,9 @@ export type SettlerDef = {
   fallMs?: number;
   /** Building `kind` this profession works, if any. */
   workplace?: string;
+  /**
+   * Path and flock stay on own land. Default true (every civilian).
+   * Pioneer / thief / geologist / soldiers set `false`.
+   */
+  needsPlayersGround?: boolean;
 };

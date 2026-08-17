@@ -20,9 +20,11 @@ At most one standing unit per tile. `inside` units are in their hut: no sprite, 
 
 A step **occupies the destination immediately**; `moveProgress` is visual lerp only. Pathing treats other units as blockers (self ignored).
 
+`chop` / `plant` also **mark** the resource tile (`MarkGrid`) until the job ends, so a second worker will not pick the same tree or plant cell. Not occupancy — they still walk.
+
 ## Walking
 
-BFS, 6 hex directions. Once any occupy disk exists, civilians only walk tiles they own. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
+BFS, 6 hex directions. Settlers with `needsPlayersGround` (default: every civilian) only walk tiles they own once any occupy disk exists. Pioneer / thief / soldier set the flag `false`. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
 
 Click-to-move exists on `dispatch({ type: "moveTo" })` but the play loop does not call it.
 

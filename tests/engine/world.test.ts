@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DIRECTIONS, deltaOf, directionFromDelta } from "../../src/shared/direction/direction";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { findPath, isWalkable } from "../../src/sim/path/path";
+import { UNOWNED } from "../../src/sim/land/land";
 import { World } from "../../src/sim/world/world";
 
 function grass(w: number, h: number): MapGrid {
@@ -88,5 +89,14 @@ describe("world", () => {
     expect(v.action).toBe("idle");
     expect(v.path).toEqual([]);
     expect(world.view().tick).toBe(ticks);
+  });
+
+  it("needsPlayersGround settlers cannot path onto unowned land", () => {
+    const world = new World(grass(40, 40));
+    world.land.occupy({ x: 10, y: 10 }, 0, 8);
+    const bearer = world.spawnBearer({ x: 10, y: 10 });
+    world.dispatch({ type: "moveTo", id: bearer.id, to: { x: 30, y: 10 } });
+    expect(world.land.playerAt(30, 10)).toBe(UNOWNED);
+    expect(world.view().movables[0]).toMatchObject({ pos: { x: 10, y: 10 }, path: [] });
   });
 });

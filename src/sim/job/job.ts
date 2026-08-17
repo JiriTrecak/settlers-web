@@ -7,6 +7,7 @@ import type { BuildingGrid } from "../building/building";
 import { settlerDef, type SettlerKind } from "../data/settlers";
 import { tryTakeMaterial } from "../economy/construction";
 import type { LandGrid } from "../land/land";
+import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
@@ -22,6 +23,14 @@ export type Job =
   | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind }
   | { type: "build"; at: GridPos; hutId: number; direction: Direction }
   | { type: "plant"; at: GridPos };
+
+/** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
+export function markOf(job: Job | null): GridPos | null {
+  if (!job) return null;
+  if (job.type === "chop") return job.at;
+  if (job.type === "plant") return { x: job.at.x, y: job.at.y + 1 };
+  return null;
+}
 
 /** Chop duration: 1.8s at 25ms for click-chop. Lumberjack uses `chopMs` (6s of axe loops). */
 export const CHOP_TICKS = 72;
@@ -42,6 +51,7 @@ export type JobContext = {
   buildings: BuildingGrid;
   units: Movable[];
   land: LandGrid;
+  marks: MarkGrid;
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {

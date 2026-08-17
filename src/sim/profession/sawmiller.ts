@@ -4,11 +4,10 @@
  */
 import { deltaOf } from "../../shared";
 import { buildingDef } from "../data/buildings";
-import { settlerDef } from "../data/settlers";
 import type { Movable } from "../movable/movable";
 import { canDeposit, STACK_SIZE } from "../object/object";
 import { stackCount } from "../job/job";
-import { atDoor, goDoor, goHome, type ProfessionContext } from "./profession";
+import { beginRest, goHome, readyAtHut, type ProfessionContext } from "./profession";
 
 export function tickSawmiller(m: Movable, ctx: ProfessionContext): void {
   if (m.job || m.walking) return;
@@ -25,7 +24,7 @@ export function tickSawmiller(m: Movable, ctx: ProfessionContext): void {
 
   if (m.material === "plank") {
     if (canDeposit(ctx.objects, offer, "plank")) {
-      m.restLeft = restTicks(ctx.tickMs);
+      beginRest(m, ctx.tickMs);
       m.assignJob({ type: "drop", at: offer });
     } else goHome(m, mill, ctx);
     return;
@@ -38,20 +37,8 @@ export function tickSawmiller(m: Movable, ctx: ProfessionContext): void {
     return;
   }
 
-  if (!atDoor(m, mill)) {
-    goDoor(m, mill, ctx);
-    return;
-  }
-  m.enter();
-  if (m.restLeft > 0) {
-    m.restLeft -= 1;
-    return;
-  }
+  if (!readyAtHut(m, mill, ctx)) return;
   if (stackCount(ctx.objects, request, "trunk") <= 0) return;
   if (stackCount(ctx.objects, offer, "plank") >= STACK_SIZE) return;
   m.assignJob({ type: "pickup", at: request });
-}
-
-function restTicks(tickMs: number): number {
-  return Math.max(0, Math.round((settlerDef("sawmiller").restMs ?? 0) / tickMs));
 }

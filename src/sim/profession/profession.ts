@@ -1,10 +1,14 @@
 /**
  * Profession brains. They assign jobs; `tickJob` still runs the verbs.
  * Workers hide in the hut (`enter`) between cycles — the unit stays, occupancy/render skip it.
+ *
+ * Outdoor gatherers share `acceptWork` (radius + owned + unclaimed resource + walkable stand).
+ * Pathing is `needsPlayersGround` on the settler def, not a per-profession check.
  */
-import type { GridPos } from "../../shared";
+import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
 import { buildingDef } from "../data/buildings";
+import { settlerDef } from "../data/settlers";
 import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
 import type { Rng } from "../rng/rng";
@@ -36,6 +40,44 @@ export function doorOf(hut: Building): GridPos {
 export function atDoor(m: Movable, hut: Building): boolean {
   const d = doorOf(hut);
   return m.pos.x === d.x && m.pos.y === d.y;
+}
+
+/** Walk to the door, enter, tick rest. True when the next search/pickup may run. */
+export function readyAtHut(m: Movable, hut: Building, ctx: ProfessionContext): boolean {
+  if (!atDoor(m, hut)) {
+    goDoor(m, hut, ctx);
+    return false;
+  }
+  m.enter();
+  if (m.restLeft > 0) {
+    m.restLeft -= 1;
+    return false;
+  }
+  return true;
+}
+
+export function beginRest(m: Movable, tickMs: number): void {
+  const ms = settlerDef(m.type).restMs ?? 0;
+  m.restLeft = Math.max(0, Math.round(ms / tickMs));
+}
+
+/**
+ * Outdoor gatherer gate: resource in `workRadius`, owned, not already claimed, stand walkable.
+ * Stonecutter / fisher / farmer call this; they only name the two tiles.
+ */
+export function acceptWork(
+  ctx: ProfessionContext,
+  player: number,
+  center: GridPos,
+  radius: number,
+  resource: GridPos,
+  stand: GridPos,
+): boolean {
+  const d = hexDist(center.x, center.y, resource.x, resource.y);
+  if (d > radius || d === 0) return false;
+  if (ctx.marks.claimed(resource.x, resource.y)) return false;
+  if (!ctx.land.owns(resource.x, resource.y, player)) return false;
+  return isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers);
 }
 
 /** Walk to the door, or vanish into the hut if already there. */

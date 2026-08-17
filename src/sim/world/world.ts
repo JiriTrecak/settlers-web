@@ -1,11 +1,11 @@
 /**
- * One match's sim: clock, grid, objects, buildings, movables. Session ticks this; render reads `view()`.
+ * One match's sim: clock, grid, objects, buildings, land, marks, movables. Session ticks this; render reads `view()`.
  */
 import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { BuildingGrid, canPlace, type Building, type BuildingView } from "../building/building";
 import { buildingDef, type BuildingKind } from "../data/buildings";
-import { settlers, settlerDef, type SettlerKind } from "../data/settlers";
+import { settlers, settlerDef, needsPlayersGround, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
 import { tickConstruction } from "../economy/construction";
@@ -18,6 +18,7 @@ import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession } from "../profession/profession";
 import { seedRng, type Rng } from "../rng/rng";
 import { LandGrid, type LandView } from "../land/land";
+import { MarkGrid } from "../mark/mark";
 
 export type ViewSnapshot = {
   tick: number;
@@ -55,6 +56,7 @@ export class World {
   readonly objects: ObjectGrid;
   readonly buildings: BuildingGrid;
   readonly land: LandGrid;
+  readonly marks: MarkGrid;
   readonly rng: Rng;
   private readonly occ: Occupancy;
   private readonly units: Movable[] = [];
@@ -65,6 +67,7 @@ export class World {
     this.objects = objects;
     this.buildings = new BuildingGrid(grid.width, grid.height);
     this.land = new LandGrid(grid.width, grid.height);
+    this.marks = new MarkGrid(grid.width, grid.height);
     this.occ = new Occupancy(grid.width, grid.height);
     this.rng = rng;
   }
@@ -76,8 +79,8 @@ export class World {
   spawnSettler(kind: SettlerKind, at?: GridPos, player = 0, workplaceId: number | null = null): Movable {
     const def = settlerDef(kind);
     const seed = at ?? { x: (this.grid.width / 2) | 0, y: (this.grid.height / 2) | 0 };
-    const pos = nearestWalkable(this.grid, seed, this.blockers()) ?? seed;
-    const m = new Movable(this.nextId++, kind, pos, def.stepMs, this.clock.tickMs, player, workplaceId);
+    const pos = nearestWalkable(this.grid, seed, this.blockers(0, this.groundPlayer(kind, player))) ?? seed;
+    const m = new Movable(this.nextId++, kind, pos, def.stepMs, this.clock.tickMs, player, workplaceId, this.marks);
     if (def.restMs) {
       m.restLeft = Math.max(0, Math.round(def.restMs / this.clock.tickMs));
       m.enter();
@@ -124,7 +127,7 @@ export class World {
     const m = this.units.find((u) => u.id === action.id);
     if (!m) return;
     if (action.type === "moveTo") {
-      m.goTo(this.grid, action.to, this.blockers(m.id, m.player));
+      m.goTo(this.grid, action.to, this.unitBlockers(m));
       this.syncOcc();
       return;
     }
@@ -165,11 +168,12 @@ export class World {
         grid: this.grid,
         objects: this.objects,
         buildings: this.buildings,
-        blockers: this.blockers(m.id, m.player),
+        blockers: this.unitBlockers(m),
         tickMs: this.clock.tickMs,
         units: this.units,
         rng: this.rng,
         land: this.land,
+        marks: this.marks,
       });
     }
     tickConstruction({
@@ -229,8 +233,8 @@ export class World {
         for (const { dx, dy } of HEX_DELTAS) {
           const x = m.pos.x + dx;
           const y = m.pos.y + dy;
-          if (!isWalkable(this.grid, x, y, this.blockers(m.id, m.player))) continue;
-          m.pathTo(this.grid, { x, y }, this.blockers(m.id, m.player));
+          if (!isWalkable(this.grid, x, y, this.unitBlockers(m))) continue;
+          m.pathTo(this.grid, { x, y }, this.unitBlockers(m));
           break;
         }
       }
@@ -251,15 +255,24 @@ export class World {
     return {
       grid: this.grid,
       objects: this.objects,
-      blockers: this.blockers(m.id, m.player),
+      blockers: this.unitBlockers(m),
       tickMs: this.clock.tickMs,
       buildings: this.buildings,
       units: this.units,
       land: this.land,
+      marks: this.marks,
     };
   }
 
-  /** Civilians stay on their own ground once any occupy disk exists. */
+  private unitBlockers(m: Movable): Blockers {
+    return this.blockers(m.id, this.groundPlayer(m.type, m.player));
+  }
+
+  private groundPlayer(kind: SettlerKind, player: number): number | undefined {
+    return needsPlayersGround(kind) ? player : undefined;
+  }
+
+  /** Occupancy + objects + buildings. `player` set → own-land tiles only. */
   private blockers(ignoreId = 0, player?: number): Blockers {
     return {
       blocks: (x, y) =>

@@ -6,7 +6,8 @@ import { directionFromDelta, type Direction, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
 import { settlerDef, type SettlerKind } from "../data/settlers";
 import type { Job } from "../job/job";
-import { workTicksOf } from "../job/job";
+import { markOf, workTicksOf } from "../job/job";
+import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
 import { findPath, type Blockers } from "../path/path";
 
@@ -62,6 +63,8 @@ export class Movable {
   private queue: GridPos[] = [];
   private stepElapsed = 0;
   private stepping = false;
+  private marked: GridPos | null = null;
+  private readonly marks: MarkGrid | null;
 
   constructor(
     id: number,
@@ -71,6 +74,7 @@ export class Movable {
     tickMs: number,
     player = 0,
     workplaceId: number | null = null,
+    marks: MarkGrid | null = null,
   ) {
     this.id = id;
     this.type = type;
@@ -79,6 +83,7 @@ export class Movable {
     this.stepTicks = Math.max(1, Math.round(stepMs / tickMs));
     this.player = player;
     this.workplaceId = workplaceId;
+    this.marks = marks;
   }
 
   view(): MovableView {
@@ -133,6 +138,7 @@ export class Movable {
     this.workplaceId = workplaceId;
     const def = settlerDef(kind);
     this.stepTicks = Math.max(1, Math.round(def.stepMs / tickMs));
+    this.releaseMark();
     this.job = null;
     this.workElapsed = 0;
     this.material = "none";
@@ -149,13 +155,19 @@ export class Movable {
     }
   }
 
-  /** Assign a job. Does not cancel an in-flight step. Pops out of the hut. */
+  /** Assign a job. Does not cancel an in-flight step. Pops out of the hut. Claims the resource tile. */
   assignJob(job: Job): void {
+    this.releaseMark();
     this.leave();
     this.job = job;
     this.workElapsed = 0;
     this.queue = [];
     if (this.action === "work") this.action = "idle";
+    const at = markOf(job);
+    if (at && this.marks) {
+      this.marks.claim(at);
+      this.marked = at;
+    }
   }
 
   /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. */
@@ -179,6 +191,7 @@ export class Movable {
   }
 
   idle(): void {
+    this.releaseMark();
     this.action = "idle";
     this.stepping = false;
     this.moveProgress = 0;
@@ -204,9 +217,15 @@ export class Movable {
   }
 
   private clearJob(): void {
+    this.releaseMark();
     this.job = null;
     this.workElapsed = 0;
     if (this.action === "work") this.action = "idle";
+  }
+
+  private releaseMark(): void {
+    if (this.marked && this.marks) this.marks.release(this.marked);
+    this.marked = null;
   }
 
   private startStep(): void {

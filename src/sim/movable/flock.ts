@@ -4,9 +4,10 @@
  */
 import { approxDirection, deltaOf, DIRECTIONS, hexDist, neighborDir, type Direction } from "../../shared";
 import type { BuildingGrid } from "../building/building";
+import { needsPlayersGround } from "../data/settlers";
+import type { LandGrid } from "../land/land";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
-import type { LandGrid } from "../land/land";
 import { isWalkable } from "../path/path";
 import type { Rng } from "../rng/rng";
 import type { Movable } from "./movable";
@@ -95,7 +96,7 @@ function flockBlockers(ctx: FlockContext, m: Movable) {
       ctx.objects.blocks(x, y) ||
       ctx.buildings.blocks(x, y) ||
       occupied(ctx, x, y, m.id) ||
-      !ctx.land.owns(x, y, m.player),
+      (needsPlayersGround(m.type) && !ctx.land.owns(x, y, m.player)),
   };
 }
 
