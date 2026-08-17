@@ -3,11 +3,12 @@
  * bottom over the scaffold while bricklayers hammer (saw-edge mask, 10 teeth).
  * Depth is `isoDepth` on the shared iso container.
  *
- * Flags sit at `def.flag`. Door flags sort as props on that tile; roof flags
- * share the hut's depth so they sit on top. Torso is grayscale × player color.
+ * Flags sit at `def.flag`, parented to the hut so the roof flag draws on top of
+ * the building sprite (door flags stick out south and were already visible).
+ * Torso is grayscale × player color.
  */
 import { Container, Graphics, Sprite } from "pixi.js";
-import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING, ISO_DEPTH_PROP, PLAYER_COLORS, clampPlayer } from "../../shared";
+import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING, PLAYER_COLORS, clampPlayer } from "../../shared";
 import { buildingDef } from "../../sim/data/buildings";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingState, BuildingView } from "../../sim/building/building";
@@ -72,9 +73,6 @@ export class BuildingLayer {
     for (const [id, d] of this.drawn) {
       if (want.has(id)) continue;
       d.root.destroy({ children: true });
-      d.flagShadow.destroy();
-      d.flagBody.destroy();
-      d.flagTorso.destroy();
       this.drawn.delete(id);
     }
   }
@@ -105,15 +103,13 @@ export class BuildingLayer {
     built.eventMode = "none";
     const mask = new Graphics();
     mask.eventMode = "none";
-    root.addChild(shadow, scaffold, built, mask);
-
     const flagShadow = new Sprite();
     flagShadow.eventMode = "none";
     const flagBody = new Sprite();
     flagBody.eventMode = "none";
     const flagTorso = new Sprite();
     flagTorso.eventMode = "none";
-    this.parent.addChild(flagShadow, flagBody, flagTorso);
+    root.addChild(shadow, scaffold, built, mask, flagShadow, flagBody, flagTorso);
 
     const drawn: Drawn = {
       id: b.id,
@@ -188,26 +184,24 @@ export class BuildingLayer {
     const fy = b.y + def.flag.dy;
     const flagWorld = gridToWorld(fx, fy, view.heightAt(fx, fy));
     const hutWorld = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
-    const z =
-      b.flag === "roof"
-        ? isoDepth(hutWorld.x, hutWorld.y, ISO_DEPTH_BUILDING)
-        : isoDepth(flagWorld.x, flagWorld.y, ISO_DEPTH_PROP);
+    const ox = flagWorld.x - hutWorld.x;
+    const oy = flagWorld.y - hutWorld.y;
     const frame = frames[step % frames.length]!;
-    placeWorldSprite(d.flagBody, frame, flagWorld, z);
+    d.flagBody.visible = true;
+    d.flagBody.texture = frame.texture;
+    d.flagBody.position.set(ox + frame.offsetX, oy + frame.offsetY);
     if (frame.torso) {
       d.flagTorso.visible = true;
       d.flagTorso.texture = frame.torso.texture;
       d.flagTorso.tint = PLAYER_COLORS[clampPlayer(b.player)];
-      d.flagTorso.position.set(flagWorld.x + frame.torso.offsetX, flagWorld.y + frame.torso.offsetY);
-      d.flagTorso.zIndex = z;
+      d.flagTorso.position.set(ox + frame.torso.offsetX, oy + frame.torso.offsetY);
     } else {
       d.flagTorso.visible = false;
     }
     if (frame.shadow) {
       d.flagShadow.visible = true;
       d.flagShadow.texture = frame.shadow.texture;
-      d.flagShadow.position.set(flagWorld.x + frame.shadow.offsetX, flagWorld.y + frame.shadow.offsetY);
-      d.flagShadow.zIndex = z;
+      d.flagShadow.position.set(ox + frame.shadow.offsetX, oy + frame.shadow.offsetY);
     } else {
       d.flagShadow.visible = false;
     }
@@ -217,13 +211,6 @@ export class BuildingLayer {
 function placeSprite(sprite: Sprite, frame: PropFrame): void {
   sprite.texture = frame.texture;
   sprite.position.set(frame.offsetX, frame.offsetY);
-}
-
-function placeWorldSprite(sprite: Sprite, frame: PropFrame, world: { x: number; y: number }, z: number): void {
-  sprite.visible = true;
-  sprite.texture = frame.texture;
-  sprite.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
-  sprite.zIndex = z;
 }
 
 /** Bottom-up clip plus a saw edge — `drawWithConstructionMask`. */

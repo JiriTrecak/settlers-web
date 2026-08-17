@@ -38,10 +38,10 @@ describe("buildings", () => {
     const world = new World(grass(24, 24));
     expect(world.placePlan("lumberjack", { x: 10, y: 10 }, 0)).toBeDefined();
     expect(world.view().buildings[0]!.flag).toBeNull();
-    const finished = new World(grass(24, 24));
-    const hut = finished.placeBuilding("lumberjack", { x: 10, y: 10 }, 0);
-    expect(hut).toBeDefined();
-    expect(finished.view().buildings[0]!.flag).toBe("roof");
+    const finished = new World(grass(32, 32));
+    expect(finished.placeBuilding("lumberjack", { x: 10, y: 10 }, 0)).toBeDefined();
+    expect(finished.placeBuilding("sawmill", { x: 22, y: 10 }, 0)).toBeDefined();
+    expect(finished.view().buildings.map((b) => b.flag)).toEqual(["roof", "roof"]);
   });
 
   it("refuses overlap, water, and occupied tiles", () => {

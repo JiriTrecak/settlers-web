@@ -9,8 +9,8 @@ import { tryTakeMaterial } from "../economy/construction";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
-import { isPlantSearch, plantTree } from "../object/tree";
-import { standBeside, type Blockers } from "../path/path";
+import { isPlantSearch, plantTree, chopStand } from "../object/tree";
+import { isWalkable, standBeside, type Blockers } from "../path/path";
 
 export type Job =
   | { type: "chop"; at: GridPos }
@@ -91,7 +91,7 @@ function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
     m.idle();
     return;
   }
-  if (!readyToWork(m, target, ctx)) return;
+  if (!readyToChop(m, target, ctx)) return;
   const ticks = workTicksOf(m.job, m.type);
   if (m.action !== "work") {
     m.beginWork();
@@ -264,6 +264,23 @@ function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobCon
   }
   m.material = "none";
   m.idle();
+}
+
+/** Lumberjack: SE of the tree, face nw. Anyone else: any neighbor, face the tile. */
+function readyToChop(m: Movable, target: GridPos, ctx: JobContext): boolean {
+  if (m.type !== "lumberjack") return readyToWork(m, target, ctx);
+  const stand = chopStand(target);
+  if (!isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers)) {
+    m.idle();
+    return false;
+  }
+  if (m.pos.x === stand.x && m.pos.y === stand.y && !m.walking) {
+    m.direction = "nw";
+    return true;
+  }
+  if (m.walking) return false;
+  m.pathTo(ctx.grid, stand, ctx.blockers);
+  return false;
 }
 
 /** Face the tile and work, or path to a free neighbor. `idle()` if boxed in. */

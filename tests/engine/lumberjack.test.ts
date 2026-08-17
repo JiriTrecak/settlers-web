@@ -77,24 +77,28 @@ describe("lumberjack", () => {
 
   it("axes for the full chop window before the tree is gone", () => {
     const objects = new ObjectGrid(32, 32);
-    objects.place({ kind: "tree", x: 14, y: 13, sheet: 0, capacity: 0, stateProgress: 1 });
+    objects.place({ kind: "tree", x: 20, y: 12, sheet: 0, capacity: 0, stateProgress: 1 });
     const world = new World(grass(32, 32), objects);
     world.placeBuilding("lumberjack", { x: 12, y: 12 }, 0);
     tickUntil(world, () => world.view().movables[0]?.action === "work", 2000);
+    expect(world.view().movables[0]).toMatchObject({
+      pos: { x: 21, y: 13 },
+      direction: "nw",
+    });
     const started = world.view().tick;
-    tickUntil(world, () => world.objects.get(14, 13)?.kind !== "tree", 400);
+    tickUntil(world, () => world.objects.get(20, 12)?.kind !== "tree", 400);
     expect(world.view().tick - started).toBeGreaterThanOrEqual(200);
   });
 
   it("plays the fall clip for fallMs before the tree is removed", () => {
     const objects = new ObjectGrid(32, 32);
-    objects.place({ kind: "tree", x: 14, y: 13, sheet: 0, capacity: 0, stateProgress: 1 });
+    objects.place({ kind: "tree", x: 20, y: 12, sheet: 0, capacity: 0, stateProgress: 1 });
     const world = new World(grass(32, 32), objects);
     world.placeBuilding("lumberjack", { x: 12, y: 12 }, 0);
     tickUntil(world, () => world.view().movables[0]?.action === "work", 2000);
-    tickUntil(world, () => (world.objects.get(14, 13)?.stateProgress ?? 1) < 1, 400);
+    tickUntil(world, () => (world.objects.get(20, 12)?.stateProgress ?? 1) < 1, 400);
     const fallStart = world.view().tick;
-    tickUntil(world, () => world.objects.get(14, 13)?.kind !== "tree", 200);
+    tickUntil(world, () => world.objects.get(20, 12)?.kind !== "tree", 200);
     expect(world.view().tick - fallStart).toBeGreaterThanOrEqual(50);
   });
 

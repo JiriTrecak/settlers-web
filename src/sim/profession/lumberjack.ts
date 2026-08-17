@@ -1,5 +1,5 @@
 /**
- * Lumberjack cycle: rest inside the hut, fell a tree in the work radius,
+ * Lumberjack cycle: rest inside the hut, stand SE of a tree facing nw, fell it,
  * carry the trunk, dump it on the offer stack.
  */
 import { hexDist, type GridPos } from "../../shared";
@@ -7,7 +7,8 @@ import { buildingDef } from "../data/buildings";
 import { settlerDef } from "../data/settlers";
 import type { Movable } from "../movable/movable";
 import { canDeposit } from "../object/object";
-import { standBeside } from "../path/path";
+import { chopStand } from "../object/tree";
+import { isWalkable } from "../path/path";
 import { atDoor, goDoor, goHome, type ProfessionContext } from "./profession";
 
 export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
@@ -40,7 +41,7 @@ export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
   }
   if (!canDeposit(ctx.objects, offer, "trunk")) return;
 
-  const tree = nearestTree(hut.pos, def.workRadius, m.pos, ctx);
+  const tree = nearestTree(hut.pos, def.workRadius, ctx);
   if (!tree) return;
   m.assignJob({ type: "chop", at: tree });
 }
@@ -50,7 +51,7 @@ function restTicks(tickMs: number): number {
   return Math.max(0, Math.round(ms / tickMs));
 }
 
-function nearestTree(center: GridPos, radius: number, from: GridPos, ctx: ProfessionContext): GridPos | null {
+function nearestTree(center: GridPos, radius: number, ctx: ProfessionContext): GridPos | null {
   let best: GridPos | null = null;
   let bestD = Infinity;
   for (const obj of ctx.objects.view()) {
@@ -60,7 +61,8 @@ function nearestTree(center: GridPos, radius: number, from: GridPos, ctx: Profes
     if (d > radius || d === 0) continue;
     if ((obj.stateProgress ?? 1) < 1) continue;
     if (chopClaimed(at, ctx.units)) continue;
-    if (!standBeside(ctx.grid, at, from, ctx.blockers)) continue;
+    const stand = chopStand(at);
+    if (!isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers)) continue;
     if (d < bestD) {
       bestD = d;
       best = at;

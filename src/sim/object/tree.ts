@@ -1,5 +1,6 @@
 /**
  * Tree planting / growth. Foresters plant saplings; they become adult after `TREE_GROW_MS`.
+ * Lumberjacks chop from the tile SE of the tree (`chopStand`).
  */
 import { HEX_DELTAS, isRiver, isWater, type GridPos } from "../../shared";
 import type { BuildingGrid } from "../building/building";
@@ -26,6 +27,11 @@ export function isPlantSearch(grid: MapGrid, buildings: BuildingGrid, objects: O
   if (!grid.inBounds(x, y + 1)) return false;
   if (!isTreePlantable(grid, buildings, objects, x, y + 1)) return false;
   return !hasProtectedNeighbor(buildings, x, y + 1);
+}
+
+/** Lumberjack stands SE of the tree and faces nw — the axe clip is aimed at that trunk. */
+export function chopStand(tree: GridPos): GridPos {
+  return { x: tree.x + 1, y: tree.y + 1 };
 }
 
 function hasBlockedNeighbor(grid: MapGrid, buildings: BuildingGrid, objects: ObjectGrid, x: number, y: number): boolean {
