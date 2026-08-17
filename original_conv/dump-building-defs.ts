@@ -100,7 +100,7 @@ function parse(kind: string, xml: string): string {
 
   const titles: Record<string, string> = {
     lumberjack: "Roman lumberjack hut. Trunk offer, work radius 30.",
-    tower: "Roman tower. Match-start HQ.",
+    tower: "Roman tower. Placeable T1 occupy; also the match-start HQ.",
     sawmill: "Roman sawmill. Requests trunks, offers planks.",
     small_livinghouse: "Roman small house. Spawns 10 bearers.",
     forester: "Roman forester hut. Plants trees in work radius 18.",

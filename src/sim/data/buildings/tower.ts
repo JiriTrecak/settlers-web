@@ -1,5 +1,5 @@
 /**
- * Roman tower. Match-start HQ.
+ * Roman tower. Placeable T1 occupy; also the match-start HQ.
  */
 import type { BuildingDef } from "../types";
 

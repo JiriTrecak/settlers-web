@@ -31,7 +31,6 @@ import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 
 export type SessionHooks = {
   onHud(state: HudState): void;
-  onLeave(): void;
   onClaiming?(on: boolean): void;
 };
 
@@ -129,7 +128,7 @@ export class Session {
       onSelect: (pos, shift) => this.setSelect(pos, shift),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
-      onLeave: () => this.config.hooks.onLeave(),
+      onEscape: () => this.deselect(),
     });
 
     const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
@@ -185,6 +184,25 @@ export class Session {
     this.renderer?.setShowOwnership(on);
     if (!on) this.renderer?.previewOccupy(null);
     else if (this.claiming) this.renderer?.previewOccupy(this.hover, this.config.player);
+  }
+
+  /** Esc: drop the build ghost, then the claim tool, then the hut highlight. */
+  deselect(): void {
+    if (this.buildKind) {
+      this.buildKind = null;
+      this.buildMenu?.setKind(null);
+      this.syncGhost();
+      return;
+    }
+    if (this.claiming) {
+      this.setClaiming(false);
+      this.config.hooks.onClaiming?.(false);
+      return;
+    }
+    if (this.selected) {
+      this.selected = null;
+      this.renderer?.highlight(null, "select");
+    }
   }
 
   setClaiming(on: boolean): void {
@@ -289,6 +307,8 @@ export class Session {
     this.selected = pos;
     this.renderer.highlight(pos, "select");
     this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });
+    this.buildKind = null;
+    this.buildMenu?.setKind(null);
     this.syncGhost();
   }
 

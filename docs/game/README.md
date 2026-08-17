@@ -14,7 +14,7 @@ Read these when you need the rules, timings, and “what does the player actuall
 
 ## In play now
 
-Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; you build only on that land. Border posts on the rim. No flatten, no fog, no combat.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; extra T1 towers extend it. You build only on owned land. Border posts on the rim. No flatten, no fog, no combat.
 
 ## Not yet
 

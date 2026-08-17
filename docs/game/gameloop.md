@@ -1,6 +1,6 @@
 # Game loop
 
-One match is a `Session` inside `PlayScreen`. The lobby is a different screen; Escape tears the session down.
+One match is a `Session` inside `PlayScreen`. The lobby is a different screen; **Exit** (with confirm) tears the session down.
 
 ## Clock
 
@@ -22,8 +22,9 @@ Order matters — later systems see this tick’s assignments.
 6. Construction: plan → scaffold, recruit bricklayers, occupy finished worker huts
 7. Matcher assigns `deliver` to idle bearers
 8. Idle flock (skipped if a job was just assigned)
-9. `tickJob` walks / swings / plants / occupies
-10. Occupancy grid rebuild (units with `inside` do not occupy a tile)
+9. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
+10. Newly finished occupying buildings stamp a tower-radius disk
+11. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
 `dispatch` is the only mutation from outside the tick (place a plan, tests that click-chop, etc.).
 
@@ -49,12 +50,13 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Drag / WASD / wheel | Camera pan / zoom (zoom-at-cursor) |
 | Space | Fit whole map |
 | Minimap drag | Look-at that cell |
-| Build strip | Select lumberjack / forester / stonecutter / sawmill / house |
-| Click empty valid owned land with a tool | Place a **plan** (scaffold) |
+| Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
+| Click empty valid owned land with a tool | Place a **plan** (scaffold), drop the tool |
 | Click an existing hut | Select it (highlight origin) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
 | F3 | Debug overlay (paths / ownership / claim) |
-| Escape / Menu | Leave to lobby |
+| Escape | Deselect: build ghost, then claim tool, then hut |
+| Exit | Confirm, then leave to map select |
 
 No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests. F3 **claim** is the occupy click (tower-radius disk).
 

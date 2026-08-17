@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { MapGrid } from "../../src/sim/map/mapGrid";
-import { ObjectGrid } from "../../src/sim/object/object";
+import { goodsStack, ObjectGrid } from "../../src/sim/object/object";
 import { isWalkable } from "../../src/sim/path/path";
 import { World } from "../../src/sim/world/world";
 import { tower } from "../../src/sim/data/buildings/tower";
+import { UNOWNED } from "../../src/sim/land/land";
 
 function grass(w: number, h: number): MapGrid {
   const grid = new MapGrid(w, h);
@@ -79,5 +80,34 @@ describe("buildings", () => {
     expect(world.placePlan("lumberjack", { x: 28, y: 16 }, 0)).toBeDefined();
     expect(world.canPlaceBuilding("lumberjack", { x: 70, y: 16 }, 0)).toBe(false);
     expect(world.placePlan("lumberjack", { x: 70, y: 16 }, 0)).toBeUndefined();
+  });
+
+  it("constructed tower extends occupy land", () => {
+    const world = new World(grass(80, 80));
+    expect(world.placeBuilding("tower", { x: 16, y: 16 }, 0)).toBeDefined();
+    const far = { x: 70, y: 16 };
+    const at = { x: 48, y: 16 };
+    expect(world.land.playerAt(far.x, far.y)).toBe(UNOWNED);
+    expect(world.canPlaceBuilding("lumberjack", far, 0)).toBe(false);
+    expect(world.canPlaceBuilding("tower", far, 0)).toBe(false);
+    expect(world.placePlan("tower", at, 0)).toBeDefined();
+    expect(world.land.playerAt(far.x, far.y)).toBe(UNOWNED);
+
+    for (const slot of tower.constructionStacks) {
+      world.objects.place(goodsStack({ x: at.x + slot.dx, y: at.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    world.spawnBearer({ x: at.x + 6, y: at.y }, 0);
+    world.spawnBearer({ x: at.x + 6, y: at.y + 2 }, 0);
+
+    let n = 0;
+    while (world.view().buildings.find((b) => b.x === at.x)?.state !== "built" && n < 8000) {
+      world.tick();
+      n++;
+    }
+    expect(n).toBeGreaterThan(0);
+    expect(n).toBeLessThan(8000);
+    expect(world.view().buildings.find((b) => b.x === at.x)).toMatchObject({ state: "built", flag: "door" });
+    expect(world.land.playerAt(far.x, far.y)).toBe(0);
+    expect(world.canPlaceBuilding("lumberjack", far, 0)).toBe(true);
   });
 });

@@ -2,7 +2,7 @@
 
 A building is an origin cell plus a footprint from its def. All currently playable huts are Roman.
 
-Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house. Tower is match-start HQ only (same placement rules if you stamp one in tests).
+Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house, tower (T1 occupy). Lookout / big tower are not in play.
 
 ## Footprint
 
@@ -17,9 +17,9 @@ Flatten / diggers are skipped: if the land is legal types, it places, heights un
 
 ## Placement
 
-Build-strip click on empty valid **owned** land dispatches a **plan** (scaffold). Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
+Build-strip click on empty valid **owned** land dispatches a **plan** (scaffold) and drops the tool. Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
 
-`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk. The play loop never uses `placeBuilding` for the strip.
+`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk — HQ at match start, and each T1 you construct from the strip. The play loop never uses `placeBuilding` for the strip.
 
 ## Lifecycle
 
@@ -95,4 +95,4 @@ Door, flag, bricklayer spots, construction piles, work spot (sawmill) are all re
 
 ## Not yet
 
-Destroy / deconstruct, other civilizations in a match, flatten before build, extra towers from the strip, stock, temples, farms.
+Destroy / deconstruct, other civilizations in a match, flatten before build, lookout / big tower, stock, temples, farms.

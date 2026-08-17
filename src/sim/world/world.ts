@@ -184,7 +184,6 @@ export class World {
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
     });
-    this.syncLandClaims();
     tickMatcher(this.units, this.buildings, this.objects);
     for (const m of this.units) {
       tickFlock(m, {
@@ -200,6 +199,7 @@ export class World {
     for (const m of this.units) {
       tickJob(m, this.jobCtx(m));
     }
+    this.syncLandClaims();
     this.syncOcc();
   }
 

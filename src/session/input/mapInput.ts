@@ -12,7 +12,7 @@ export type MapInputHooks = {
   onSelect(pos: GridPos | null, shift: boolean): void;
   onCameraChanged(): void;
   onFit(): void;
-  onLeave(): void;
+  onEscape(): void;
 };
 
 export class MapInput {
@@ -98,7 +98,7 @@ export class MapInput {
     }
     if (e.key === "Escape") {
       e.preventDefault();
-      this.hooks.onLeave();
+      this.hooks.onEscape();
     }
   };
 

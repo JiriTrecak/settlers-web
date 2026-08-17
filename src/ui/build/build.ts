@@ -9,6 +9,7 @@ export const PLACEABLE: { kind: BuildingKind; label: string }[] = [
   { kind: "stonecutter", label: "Stonecutter" },
   { kind: "sawmill", label: "Sawmill" },
   { kind: "small_livinghouse", label: "House" },
+  { kind: "tower", label: "Tower" },
 ];
 
 export class BuildMenu {

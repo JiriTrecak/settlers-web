@@ -39,7 +39,7 @@ Hex neighbors are the six diamond steps (ne, e, se, sw, w, nw). Distance is hex:
 
 ## Ownership
 
-Per-tile owner (`-1` unowned) plus a tower-count. A finished occupying building (HQ tower) or debug **claim** click stamps a disk of radius **40** using axial distance (`Y_SCALE` ≈ √3/2), clipped to the map. Same-player overlap extends the blob. Tiles another player already enforces (`towerCount > 0`) stay theirs, except the clicked cell.
+Per-tile owner (`-1` unowned) plus a tower-count. A finished occupying building (HQ and extra T1 towers) or debug **claim** click stamps a disk of radius **40** using axial distance (`Y_SCALE` ≈ √3/2), clipped to the map. Same-player overlap extends the blob. Tiles another player already enforces (`towerCount > 0`) stay theirs, except the clicked cell.
 
 Once any disk exists, new huts must sit entirely on that player's land (`protected` tiles). Foresters plant and lumberjacks chop only on owned tiles (`acceptWork` / plant search). Settlers with `needsPlayersGround` (default true) path and flock on their own ground.
 

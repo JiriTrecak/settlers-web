@@ -150,7 +150,7 @@ body {
   cursor: grabbing;
 }
 
-.hud-leave {
+.hud-exit {
   pointer-events: auto;
   position: absolute;
   top: 12px;
@@ -165,10 +165,77 @@ body {
   cursor: pointer;
 }
 
-.hud-leave:hover,
-.hud-leave:focus {
+.hud-exit:hover,
+.hud-exit:focus {
   border-color: rgba(232, 224, 208, 0.55);
   outline: none;
+}
+
+.hud-confirm {
+  pointer-events: auto;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 8, 20, 0.72);
+}
+
+.hud-confirm-panel {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.94);
+  box-shadow: 0 8px 32px #000a;
+}
+
+.hud-confirm-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hud-confirm-body {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.hud-confirm-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.hud-confirm-actions button {
+  flex: 1;
+  appearance: none;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.55);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.hud-confirm-actions button:hover,
+.hud-confirm-actions button:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
+}
+
+.hud-confirm-actions button.is-danger {
+  border-color: rgba(196, 80, 64, 0.55);
+  color: #e8b4a8;
 }
 
 .hud-speed {

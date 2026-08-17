@@ -2,8 +2,8 @@
  * Production slice: vite-build the game + only in-play graphics/maps.
  * Full dump is ~1 GB; this is the roman loop that's actually loaded.
  *
- *   npm run pack
- *   npx serve dist
+ *   npm run pack          web zip → settlers-play.zip
+ *   npm run pack:app      Tauri mac + win → build/macosx, build/win
  */
 import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -18,6 +18,7 @@ const GFX = join(ROOT, "assets/graphics");
 const MAPS = join(ROOT, "assets/maps");
 const DIST = join(ROOT, "dist");
 const ZIP = join(ROOT, "settlers-play.zip");
+const zip = !process.argv.includes("--no-zip");
 
 const CIV = "roman";
 
@@ -103,14 +104,16 @@ for (const m of tutorial) {
   await copyIf(join(MAPS, m.file), join(mapsOut, m.file));
 }
 
-if (existsSync(ZIP)) {
-  const { unlink } = await import("node:fs/promises");
-  await unlink(ZIP);
+if (zip) {
+  if (existsSync(ZIP)) {
+    const { unlink } = await import("node:fs/promises");
+    await unlink(ZIP);
+  }
+  execSync(`ditto -c -k --sequesterRsrc "${DIST}" "${ZIP}"`, { cwd: ROOT, stdio: "inherit" });
+  const zipBytes = await bytes(ZIP);
+  console.log(`zip   ${ZIP}  (${(zipBytes / 1e6).toFixed(1)} MB)`);
+  console.log("share: unzip, then  npx serve .");
 }
-execSync(`ditto -c -k --sequesterRsrc "${DIST}" "${ZIP}"`, { cwd: ROOT, stdio: "inherit" });
 
-const zipBytes = await bytes(ZIP);
 console.log(`dist  ${DIST}`);
-console.log(`zip   ${ZIP}  (${(zipBytes / 1e6).toFixed(1)} MB)`);
-console.log("share: unzip, then  npx serve .");
 console.log("contains reconstructed S3 graphics — they should own the game");

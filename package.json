@@ -6,6 +6,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "pack": "vite-node original_conv/pack-play.ts",
+    "pack:web": "vite-node original_conv/pack-play.ts --no-zip",
+    "pack:app": "vite-node original_conv/pack-app.ts",
+    "tauri": "tauri",
     "preview": "vite preview",
     "test": "vitest run",
     "dump:graphics": "vite-node original_conv/dump-graphics.ts",
@@ -22,6 +25,7 @@
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-node": "^6.0.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "@tauri-apps/cli": "^2"
   }
 }

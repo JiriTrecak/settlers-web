@@ -30,7 +30,6 @@ export class PlayScreen extends GameScreen {
       player: hooks.player,
       hooks: {
         onHud: (state) => this.hud.update(state),
-        onLeave: hooks.onLeave,
         onClaiming: (on) => this.hud.setClaiming(on, false),
       },
     });

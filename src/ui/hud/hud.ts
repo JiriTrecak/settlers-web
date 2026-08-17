@@ -1,6 +1,6 @@
 /**
  * In-match overlay. Compact stats always on; F3 / ` / button expands the debug dump.
- * Leave is Escape / Menu — not a map picker.
+ * Exit asks before leaving. Escape deselects (session), not leave.
  */
 import type { GridPos, LandscapeType } from "../../shared";
 import { formatDebug, type DebugStats } from "./debug";
@@ -21,6 +21,7 @@ export type HudHooks = {
 };
 
 export class Hud {
+  private readonly host: HTMLElement;
   private readonly stats: HTMLDivElement;
   private readonly toggle: HTMLButtonElement;
   private readonly panel: HTMLDivElement;
@@ -29,7 +30,8 @@ export class Hud {
   private readonly ownershipToggle: HTMLButtonElement;
   private readonly claimToggle: HTMLButtonElement;
   private readonly help: HTMLDivElement;
-  private readonly leave: HTMLButtonElement;
+  private readonly exit: HTMLButtonElement;
+  private confirm: HTMLDivElement | null = null;
   private readonly hooks: HudHooks;
   private open = false;
   private showPaths = false;
@@ -38,6 +40,7 @@ export class Hud {
   private last: HudState = { cursor: null, landscape: null, height: null, zoom: 1 };
 
   constructor(host: HTMLElement, hooks: HudHooks) {
+    this.host = host;
     this.hooks = hooks;
     this.stats = document.createElement("div");
     this.stats.className = "hud-stats";
@@ -77,15 +80,16 @@ export class Hud {
     this.help = document.createElement("div");
     this.help.className = "hud-help";
     this.help.textContent =
-      "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  F3 debug  ·  esc menu";
+      "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc deselect  ·  F3 debug";
 
-    this.leave = document.createElement("button");
-    this.leave.type = "button";
-    this.leave.className = "hud-leave";
-    this.leave.textContent = "Menu";
-    this.leave.addEventListener("click", hooks.onLeave);
+    this.exit = document.createElement("button");
+    this.exit.type = "button";
+    this.exit.className = "hud-exit";
+    this.exit.textContent = "Exit";
+    this.exit.title = "Leave this match";
+    this.exit.addEventListener("click", () => this.askLeave());
 
-    host.append(this.stats, this.toggle, this.panel, this.help, this.leave);
+    host.append(this.stats, this.toggle, this.panel, this.help, this.exit);
     window.addEventListener("keydown", this.onKey);
     this.syncOpts();
   }
@@ -109,12 +113,71 @@ export class Hud {
 
   destroy(): void {
     window.removeEventListener("keydown", this.onKey);
+    this.dismissConfirm();
     this.stats.remove();
     this.toggle.remove();
     this.panel.remove();
     this.help.remove();
-    this.leave.remove();
+    this.exit.remove();
   }
+
+  private askLeave(): void {
+    if (this.confirm) return;
+    const overlay = document.createElement("div");
+    overlay.className = "hud-confirm";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "hud-confirm-title");
+
+    const panel = document.createElement("div");
+    panel.className = "hud-confirm-panel";
+
+    const title = document.createElement("h2");
+    title.id = "hud-confirm-title";
+    title.className = "hud-confirm-title";
+    title.textContent = "Leave this match?";
+
+    const body = document.createElement("p");
+    body.className = "hud-confirm-body";
+    body.textContent = "Progress is not saved.";
+
+    const actions = document.createElement("div");
+    actions.className = "hud-confirm-actions";
+    const stay = document.createElement("button");
+    stay.type = "button";
+    stay.textContent = "Stay";
+    stay.addEventListener("click", () => this.dismissConfirm());
+    const leave = document.createElement("button");
+    leave.type = "button";
+    leave.className = "is-danger";
+    leave.textContent = "Exit";
+    leave.addEventListener("click", () => this.hooks.onLeave());
+    actions.append(stay, leave);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) this.dismissConfirm();
+    });
+    panel.append(title, body, actions);
+    overlay.append(panel);
+    this.host.append(overlay);
+    this.confirm = overlay;
+    window.addEventListener("keydown", this.onConfirmKey, true);
+    stay.focus();
+  }
+
+  private dismissConfirm(): void {
+    if (!this.confirm) return;
+    window.removeEventListener("keydown", this.onConfirmKey, true);
+    this.confirm.remove();
+    this.confirm = null;
+  }
+
+  private readonly onConfirmKey = (e: KeyboardEvent): void => {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    this.dismissConfirm();
+  };
 
   private readonly onKey = (e: KeyboardEvent): void => {
     if (e.repeat) return;

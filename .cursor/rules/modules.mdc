@@ -5,9 +5,9 @@ alwaysApply: true
 
 # Modules
 
-`Session` constructs match widgets and subscribes (`onLookAt`, `onLeave`, …). It never grabs a child canvas or implements that widget's pointer machine.
+`Session` constructs match widgets and subscribes (`onLookAt`, `onKind`, …). It never grabs a child canvas or implements that widget's pointer machine.
 
-`Session` exists only while a match is running, inside `PlayScreen`. `ScreenHost` shows exactly one `GameScreen`. `play(mapId)` shows a `PlayScreen`; Menu / Escape replaces it.
+`Session` exists only while a match is running, inside `PlayScreen`. `ScreenHost` shows exactly one `GameScreen`. `play(mapId)` shows a `PlayScreen`; Exit (confirm) replaces it.
 
 ```
 app/      Pixi boot, ScreenHost, ticker. Creates Session on demand.
