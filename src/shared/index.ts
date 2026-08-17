@@ -10,6 +10,7 @@ export {
   gridToWorld,
   isoDepth,
   ISO_DEPTH_PROP,
+  ISO_DEPTH_BUILDING,
   ISO_DEPTH_UNIT,
   ISO_DEPTH_WAVE,
   pickCell,
@@ -20,6 +21,7 @@ export {
 export {
   HEX_DELTAS,
   LANDSCAPE_TYPES,
+  hexDist,
   isAllowedNeighbor,
   isRiver,
   isWater,

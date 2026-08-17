@@ -1,0 +1,89 @@
+/**
+ * Roman tower. Match-start HQ.
+ */
+import type { BuildingDef } from "../types";
+
+export const tower = {
+  kind: "tower",
+  civ: "roman",
+  sheet: "buildings/roman/tower",
+  worker: null,
+  workRadius: 0,
+  viewDistance: 38,
+  ground: ["grass", "earth", "flattened"],
+  blocked: [
+    { dx: -1, dy: 0 },
+    { dx: 0, dy: 1 },
+    { dx: 2, dy: 2 },
+    { dx: 2, dy: 0 },
+    { dx: 1, dy: -1 },
+    { dx: 0, dy: -2 },
+    { dx: -1, dy: -1 },
+    { dx: -1, dy: -2 },
+    { dx: 0, dy: -1 },
+    { dx: 1, dy: 1 },
+    { dx: 1, dy: 0 },
+    { dx: 1, dy: 2 },
+    { dx: 0, dy: 0 }
+  ],
+  protected: [
+    { dx: -1, dy: 0 },
+    { dx: 0, dy: 1 },
+    { dx: 2, dy: 2 },
+    { dx: 2, dy: 1 },
+    { dx: 2, dy: 0 },
+    { dx: 1, dy: -1 },
+    { dx: 0, dy: -2 },
+    { dx: -1, dy: -1 },
+    { dx: -1, dy: -2 },
+    { dx: 0, dy: -1 },
+    { dx: 1, dy: 1 },
+    { dx: 1, dy: 0 },
+    { dx: 1, dy: 2 },
+    { dx: 0, dy: 0 },
+    { dx: -1, dy: -3 },
+    { dx: 0, dy: -3 },
+    { dx: 1, dy: -2 },
+    { dx: 2, dy: -1 },
+    { dx: 3, dy: 0 },
+    { dx: 3, dy: 1 },
+    { dx: 3, dy: 2 },
+    { dx: 3, dy: 3 },
+    { dx: 2, dy: 3 },
+    { dx: 1, dy: 3 },
+    { dx: 0, dy: 2 },
+    { dx: -1, dy: 1 },
+    { dx: -2, dy: 0 },
+    { dx: -2, dy: -1 },
+    { dx: -2, dy: -2 },
+    { dx: -2, dy: -3 },
+    { dx: 3, dy: 4 },
+    { dx: 2, dy: 4 },
+    { dx: 4, dy: 4 },
+    { dx: 4, dy: 3 },
+    { dx: 4, dy: 2 }
+  ],
+  door: { dx: 2, dy: 1 },
+  flag: { dx: 3, dy: 2 },
+  constructionStacks: [
+    { dx: 4, dy: 4, material: "plank", required: 2 },
+    { dx: 2, dy: 4, material: "stone", required: 3 }
+  ],
+  requestStacks: [],
+  offerStacks: [],
+  bricklayers: [
+    { dx: -1, dy: 1, direction: "ne" },
+    { dx: 1, dy: 3, direction: "ne" },
+    { dx: 3, dy: 3, direction: "nw" },
+    { dx: 3, dy: 1, direction: "nw" },
+    { dx: 3, dy: 2, direction: "nw" }
+  ],
+  buildMarks: [
+    { dx: 2, dy: 0 },
+    { dx: 2, dy: 2 },
+    { dx: 1, dy: 2 },
+    { dx: -1, dy: 0 },
+    { dx: -1, dy: -2 },
+    { dx: 0, dy: -2 }
+  ],
+} as const satisfies BuildingDef;

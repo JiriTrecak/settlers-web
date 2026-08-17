@@ -1,6 +1,6 @@
 # settler
 
-Bearer sprites from `settlers/roman/bearer/{walk,idle}/{none,trunk}/{dir}`. Chop uses lumberjack `action1`. Pickup and drop use `settlers/roman/bearer/bend/trunk/{dir}`. Missing clip → idle pose.
+Clips keyed by profession: `settlers/roman/{type}/{walk,idle,action1,bend}/{none,trunk,plank,...}/{dir}`. Chop/saw loop `action1` once per second for the whole work window. Pickup/drop/deliver play `bend` once. Missing clip → that profession's idle, then bearer.
 
 `SettlerLayer.draw` lerps `from`→`pos` with `moveProgress` plus the session's leftover tick fraction. z = `isoDepth` (same container as props, so stones can cover the unit). Missing catalog → yellow dot.
 

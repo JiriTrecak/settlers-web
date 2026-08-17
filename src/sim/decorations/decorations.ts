@@ -3,6 +3,7 @@
  * `sheet` is stored on the decoration — render does not pick a tree look.
  */
 import { HEX_DELTAS, isWater } from "../../shared";
+import type { Goods } from "../data/types";
 import type { MapView } from "../map/mapView";
 
 export const TREE_SHEETS = 7;
@@ -10,7 +11,7 @@ export const TREE_SHEETS = 7;
 export type MapDecoration =
   | { kind: "tree"; x: number; y: number; sheet: number; stateProgress?: number }
   | { kind: "stone"; x: number; y: number; capacity: number }
-  | { kind: "stack"; x: number; y: number; capacity: number }
+  | { kind: "stack"; x: number; y: number; capacity: number; material?: Goods }
   | { kind: "wave"; x: number; y: number };
 
 /** Assign one of `TREE_SHEETS` looks from tile coords. Used when converting maps that don't store a sheet. */

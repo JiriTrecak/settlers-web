@@ -9,4 +9,5 @@ export type Action =
   | { type: "moveTo"; id: number; to: GridPos }
   | { type: "chop"; id: number; at: GridPos }
   | { type: "pickup"; id: number; at: GridPos }
-  | { type: "drop"; id: number; at: GridPos };
+  | { type: "drop"; id: number; at: GridPos }
+  | { type: "placeBuilding"; kind: "lumberjack" | "tower" | "sawmill" | "small_livinghouse"; at: GridPos; player?: number };

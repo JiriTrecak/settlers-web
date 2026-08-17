@@ -2,13 +2,17 @@
  * One object per tile: trees, stones, stacks. Blocks walking; `stateProgress` is chop/grow.
  */
 import { HEX_DELTAS, type GridPos } from "../../shared";
+import type { Goods } from "../data/types";
 import type { MapGrid } from "../map/mapGrid";
 import { treeSheetAt } from "../decorations/decorations";
 import type { DumpedMap } from "../map/dumpedMap";
 import type { Rng } from "../rng/rng";
 
 export type MapObjectKind = "tree" | "stone" | "stack";
-export type StackMaterial = "trunk";
+export type StackMaterial = Goods;
+
+/** Ground / building stacks hold this many of one material. */
+export const STACK_SIZE = 8;
 
 export type MapObjectView = {
   kind: MapObjectKind;
@@ -130,15 +134,36 @@ export function isAdjacent(a: GridPos, b: GridPos): boolean {
   return HEX_DELTAS.some((d) => a.x + d.dx === b.x && a.y + d.dy === b.y);
 }
 
-/** One trunk on the ground. Chop and drop both place this. */
-export function trunkStack(at: GridPos): MapObjectView {
+/** One pile on the ground or a building slot. */
+export function goodsStack(at: GridPos, material: StackMaterial, capacity = 1): MapObjectView {
   return {
     kind: "stack",
     x: at.x,
     y: at.y,
     sheet: 0,
-    capacity: 1,
+    capacity,
     stateProgress: 1,
-    material: "trunk",
+    material,
   };
+}
+
+/** One trunk on the ground. Chop and drop both place this. */
+export function trunkStack(at: GridPos): MapObjectView {
+  return goodsStack(at, "trunk");
+}
+
+/** Empty tile, or a same-material stack with room. */
+export function canDeposit(objects: ObjectGrid, at: GridPos, material: StackMaterial): boolean {
+  const cur = objects.get(at.x, at.y);
+  if (!cur) return true;
+  return cur.kind === "stack" && cur.material === material && cur.capacity < STACK_SIZE;
+}
+
+/** Place a new stack or increment an existing one. False if the tile is full / wrong. */
+export function addToStack(objects: ObjectGrid, at: GridPos, material: StackMaterial): boolean {
+  const cur = objects.get(at.x, at.y);
+  if (!cur) return objects.place(goodsStack(at, material)) !== undefined;
+  if (cur.kind !== "stack" || cur.material !== material || cur.capacity >= STACK_SIZE) return false;
+  cur.capacity += 1;
+  return true;
 }

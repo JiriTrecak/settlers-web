@@ -3,14 +3,16 @@
  * is 0→1 over `stepTicks` so render can lerp from `from` to `pos`.
  */
 import { directionFromDelta, type Direction, type GridPos } from "../../shared";
+import type { Goods } from "../data/types";
+import type { SettlerKind } from "../data/settlers";
 import type { Job } from "../job/job";
 import { workTicksOf } from "../job/job";
 import type { MapGrid } from "../map/mapGrid";
 import { findPath, type Blockers } from "../path/path";
 
-export type MovableType = "bearer";
+export type MovableType = SettlerKind;
 export type MovableAction = "idle" | "walk" | "work";
-export type MovableMaterial = "none" | "trunk";
+export type MovableMaterial = "none" | Goods;
 
 /** Bearer step is 0.6s × 0.75 speedup = 450ms → 18 ticks at 25ms. */
 export const BEARER_STEP_MS = 450;
@@ -29,11 +31,13 @@ export type MovableView = {
   player: number;
   material: MovableMaterial;
   job: Job["type"] | null;
+  workplaceId: number | null;
 };
 
 export class Movable {
   readonly id: number;
-  readonly type: MovableType = "bearer";
+  readonly type: MovableType;
+  readonly workplaceId: number | null;
   pos: GridPos;
   from: GridPos;
   direction: Direction = "e";
@@ -44,21 +48,33 @@ export class Movable {
   job: Job | null = null;
   workElapsed = 0;
   material: MovableMaterial = "none";
+  /** Idle ticks left at the hut door before the next search. */
+  restLeft = 0;
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
   private stepping = false;
 
-  constructor(id: number, pos: GridPos, stepMs: number, tickMs: number, player = 0) {
+  constructor(
+    id: number,
+    type: MovableType,
+    pos: GridPos,
+    stepMs: number,
+    tickMs: number,
+    player = 0,
+    workplaceId: number | null = null,
+  ) {
     this.id = id;
+    this.type = type;
     this.pos = pos;
     this.from = pos;
     this.stepTicks = Math.max(1, Math.round(stepMs / tickMs));
     this.player = player;
+    this.workplaceId = workplaceId;
   }
 
   view(): MovableView {
-    const workTicks = workTicksOf(this.job);
+    const workTicks = workTicksOf(this.job, this.type);
     return {
       id: this.id,
       type: this.type,
@@ -73,6 +89,7 @@ export class Movable {
       player: this.player,
       material: this.material,
       job: this.job?.type ?? null,
+      workplaceId: this.workplaceId,
     };
   }
 

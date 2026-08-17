@@ -16,6 +16,7 @@ export type PropFrame = {
 export type CatalogSprite = {
   path: string;
   group?: string;
+  variant?: string;
   frame?: number;
   offsetX: number;
   offsetY: number;
@@ -34,8 +35,14 @@ export async function fetchCatalogSprites(): Promise<CatalogSprite[] | null> {
   }
 }
 
-export async function loadGroup(sprites: readonly CatalogSprite[], group: string): Promise<PropFrame[]> {
-  const frames = sprites.filter((s) => s.group === group).sort((a, b) => (a.frame ?? 0) - (b.frame ?? 0));
+export async function loadGroup(
+  sprites: readonly CatalogSprite[],
+  group: string,
+  variant?: string,
+): Promise<PropFrame[]> {
+  const frames = sprites
+    .filter((s) => s.group === group && (variant === undefined || s.variant === variant))
+    .sort((a, b) => (a.frame ?? 0) - (b.frame ?? 0));
   const loaded = await Promise.all(
     frames.map(async (s): Promise<PropFrame | null> => {
       const texture = await loadTexture(s.path);

@@ -146,7 +146,8 @@ export class DecorationLayer {
       return (((step / 2) | 0) + ((deco.x / 2) | 0) + ((deco.y / 2) | 0)) % n;
     }
     if (deco.kind === "stack") {
-      const n = sheets.stacks.length;
+      const frames = stackFrames(deco, sheets);
+      const n = frames.length;
       if (n === 0) return 0;
       return Math.max(0, Math.min(n - 1, deco.capacity - 1));
     }
@@ -168,7 +169,10 @@ export class DecorationLayer {
       return frames?.[index] ?? frames?.[0] ?? null;
     }
     if (deco.kind === "wave") return sheets.waves[index] ?? null;
-    if (deco.kind === "stack") return sheets.stacks[index] ?? sheets.stacks[0] ?? null;
+    if (deco.kind === "stack") {
+      const frames = stackFrames(deco, sheets);
+      return frames[index] ?? frames[0] ?? null;
+    }
     return sheets.stones[index] ?? null;
   }
 
@@ -184,7 +188,13 @@ function objectToDeco(obj: MapObjectView): MapDecoration {
     return { kind: "tree", x: obj.x, y: obj.y, sheet: obj.sheet, stateProgress: obj.stateProgress };
   }
   if (obj.kind === "stack") {
-    return { kind: "stack", x: obj.x, y: obj.y, capacity: obj.capacity };
+    return { kind: "stack", x: obj.x, y: obj.y, capacity: obj.capacity, material: obj.material };
   }
   return { kind: "stone", x: obj.x, y: obj.y, capacity: obj.capacity };
+}
+
+function stackFrames(deco: MapDecoration, sheets: DecorationSheets): PropFrame[] {
+  if (deco.kind !== "stack") return [];
+  const mat = deco.material;
+  return (mat ? sheets.stacks[mat] : undefined) ?? sheets.stacks.trunk ?? [];
 }

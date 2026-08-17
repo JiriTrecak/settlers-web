@@ -9,7 +9,7 @@ const WASD_SPEED = 900;
 export type MapInputHooks = {
   pick(screen: { x: number; y: number }): GridPos | null;
   onHover(pos: GridPos | null): void;
-  onSelect(pos: GridPos | null): void;
+  onSelect(pos: GridPos | null, shift: boolean): void;
   onCameraChanged(): void;
   onFit(): void;
   onLeave(): void;
@@ -80,7 +80,7 @@ export class MapInput {
     this.dragging = false;
     this.canvas.style.cursor = "grab";
     // Click without a drag selects the tile under the pointer.
-    if (!this.dragMoved) this.hooks.onSelect(this.hooks.pick({ x: e.clientX, y: e.clientY }));
+    if (!this.dragMoved) this.hooks.onSelect(this.hooks.pick({ x: e.clientX, y: e.clientY }), e.shiftKey);
   };
 
   private readonly onWheel = (e: WheelEvent): void => {

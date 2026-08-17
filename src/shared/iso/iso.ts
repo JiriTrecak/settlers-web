@@ -32,6 +32,7 @@ export function isoDepth(wx: number, wy: number, bias = 0): number {
 export const ISO_DEPTH_WAVE = 0;
 export const ISO_DEPTH_UNIT = 1;
 export const ISO_DEPTH_PROP = 2;
+export const ISO_DEPTH_BUILDING = 3;
 
 export function pickGrid(wx: number, wy: number): { x: number; y: number } {
   const g = worldToGrid(wx, wy);

@@ -14,11 +14,13 @@ import {
   scatterTrees,
   seedRng,
   startForPlayer,
+  placeColony,
   type MapView,
   type MapDecoration,
   type MapStart,
 } from "../../sim";
-import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadSettlerSheets } from "../../render";
+import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
+import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
 import { Minimap, SpeedControl, type GameSpeed, type HudState } from "../../ui";
@@ -37,21 +39,26 @@ export type SessionConfig = {
   hooks: SessionHooks;
 };
 
-/** Atlas + decoration + settler sheets are shared across matches in one page load. */
+/** Atlas + decoration + building + settler sheets are shared across matches in one page load. */
 let graphics: Promise<{
   atlas: Texture | null;
   sheets: DecorationSheets | null;
+  buildings: BuildingSheets | null;
   settlers: SettlerSheets | null;
 }> | null = null;
 
 function loadGraphics(): Promise<{
   atlas: Texture | null;
   sheets: DecorationSheets | null;
+  buildings: BuildingSheets | null;
   settlers: SettlerSheets | null;
 }> {
-  graphics ??= Promise.all([loadLandscapeAtlas(), loadDecorationSheets(), loadSettlerSheets()]).then(
-    ([atlas, sheets, settlers]) => ({ atlas, sheets, settlers }),
-  );
+  graphics ??= Promise.all([
+    loadLandscapeAtlas(),
+    loadDecorationSheets(),
+    loadBuildingSheets(),
+    loadSettlerSheets(),
+  ]).then(([atlas, sheets, buildings, settlers]) => ({ atlas, sheets, buildings, settlers }));
   return graphics;
 }
 
@@ -64,7 +71,6 @@ export class Session {
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
   private input: MapInput | null = null;
-  private heroId = 0;
   private acc = 0;
   private speed: GameSpeed = 1;
 
@@ -79,9 +85,10 @@ export class Session {
   async start(): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
-    const { atlas, sheets, settlers } = await loadGraphics();
+    const { atlas, sheets, buildings, settlers } = await loadGraphics();
     renderer.setAtlas(atlas);
     renderer.setSheets(sheets);
+    renderer.setBuildingSheets(buildings);
     renderer.setSettlerSheets(settlers);
 
     // Widgets own their input; we only subscribe.
@@ -96,7 +103,7 @@ export class Session {
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
       pick: (screen) => renderer.pick(screen),
       onHover: (pos) => this.setHover(pos),
-      onSelect: (pos) => this.setSelect(pos),
+      onSelect: (pos, shift) => this.setSelect(pos, shift),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
       onLeave: () => this.config.hooks.onLeave(),
@@ -106,14 +113,14 @@ export class Session {
     if (!this.renderer) return;
     const world = new World(grid, objects);
     this.world = world;
-    const hero = world.spawnBearer(startForPlayer(starts, 0), this.config.player);
-    this.heroId = hero.id;
+    const start = startForPlayer(starts, 0) ?? { x: (grid.width / 2) | 0, y: (grid.height / 2) | 0 };
+    placeColony(world, start, this.config.player);
     this.view = mapViewFromGrid(grid);
     this.renderer.setView(this.view, waves, false);
     this.minimap.setView(this.view);
     // Native 1× on the first HQ. Space still fits the whole map.
     this.renderer.camera.zoom = 1;
-    this.lookAt(hero.pos.x, hero.pos.y);
+    this.lookAt(start.x, start.y);
     this.renderer.draw(world.view(), 0);
     this.config.hooks.onHud({
       cursor: null,
@@ -185,28 +192,19 @@ export class Session {
     });
   }
 
-  private setSelect(pos: GridPos | null): void {
+  private setSelect(pos: GridPos | null, shift = false): void {
     if (!this.renderer || !this.world || !pos) return;
-    const obj = this.world.objects.get(pos.x, pos.y);
-    if (obj?.kind === "tree") {
-      this.selected = pos;
-      this.renderer.highlight(pos, "select");
-      this.world.dispatch({ type: "chop", id: this.heroId, at: pos });
+    const hut = this.world.buildings.at(pos.x, pos.y);
+    if (hut) {
+      this.selected = { x: hut.pos.x, y: hut.pos.y };
+      this.renderer.highlight(this.selected, "select");
       return;
     }
-    if (obj?.kind === "stack") {
-      this.selected = pos;
-      this.renderer.highlight(pos, "select");
-      this.world.dispatch({ type: "pickup", id: this.heroId, at: pos });
-      return;
-    }
-    if (!this.world.canStand(pos.x, pos.y, this.heroId)) return;
+    const kind = shift ? "sawmill" : "lumberjack";
+    if (!this.world.canPlaceBuilding(kind, pos)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
-    const carrying = this.world.view().movables.find((u) => u.id === this.heroId)?.material !== "none";
-    this.world.dispatch(
-      carrying ? { type: "drop", id: this.heroId, at: pos } : { type: "moveTo", id: this.heroId, to: pos },
-    );
+    this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });
   }
 
   private syncCamera(): void {

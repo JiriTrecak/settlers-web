@@ -189,3 +189,11 @@ export const HEX_DELTAS: readonly { dx: number; dy: number }[] = [
   { dx: -1, dy: 0 },
   { dx: -1, dy: -1 },
 ];
+
+/** Tile steps between two cells. Same-sign axes take max; otherwise manhattan. */
+export function hexDist(ax: number, ay: number, bx: number, by: number): number {
+  const dx = bx - ax;
+  const dy = by - ay;
+  if (dx * dy > 0) return Math.max(Math.abs(dx), Math.abs(dy));
+  return Math.abs(dx) + Math.abs(dy);
+}

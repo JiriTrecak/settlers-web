@@ -1,5 +1,5 @@
 /**
- * Pixi world: landscape mesh, decorations, hover/select outlines, camera apply.
+ * Pixi world: landscape mesh, decorations, buildings, hover/select outlines, camera apply.
  * Reads `MapView`; never writes sim.
  */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
@@ -7,6 +7,8 @@ import { gridToWorld, pickCell, type GridPos } from "../../shared";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapView } from "../../sim/map/mapView";
 import type { ViewSnapshot } from "../../sim/world/world";
+import { BuildingLayer } from "../building/buildingLayer";
+import type { BuildingSheets } from "../building/buildingSheets";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
 import type { DecorationSheets } from "../decoration/decorationSheets";
@@ -20,6 +22,7 @@ export class Renderer {
   readonly world = new Container();
   private readonly iso = new Container();
   private readonly decorations: DecorationLayer;
+  private readonly buildings: BuildingLayer;
   private readonly settlers: SettlerLayer;
 
   private view: MapView | null = null;
@@ -34,6 +37,7 @@ export class Renderer {
     this.iso.sortableChildren = true;
     this.iso.eventMode = "none";
     this.decorations = new DecorationLayer(this.iso);
+    this.buildings = new BuildingLayer(this.iso);
     this.settlers = new SettlerLayer(this.iso);
     this.hover.eventMode = "none";
     this.select.eventMode = "none";
@@ -51,6 +55,10 @@ export class Renderer {
     this.decorations.setSheets(sheets);
   }
 
+  setBuildingSheets(sheets: BuildingSheets | null): void {
+    this.buildings.setSheets(sheets);
+  }
+
   setSettlerSheets(sheets: SettlerSheets | null): void {
     this.settlers.setSheets(sheets);
   }
@@ -64,6 +72,7 @@ export class Renderer {
     this.world.removeChildren();
     this.world.addChild(mesh, this.iso, this.select, this.hover);
     this.decorations.setWaves(view, waves);
+    this.buildings.setView(view);
     this.settlers.setView(view);
 
     if (fit) this.fitCamera();
@@ -102,6 +111,7 @@ export class Renderer {
   /** Movables + map objects from the last sim snapshot. `alpha` is leftover ms into the next tick. */
   draw(snapshot: ViewSnapshot, alpha: number): void {
     this.decorations.syncObjects(snapshot.objects);
+    this.buildings.sync(snapshot.buildings);
     this.settlers.draw(snapshot.movables, alpha);
   }
 
