@@ -34,6 +34,8 @@ export type MovableView = {
   workplaceId: number | null;
   /** Hidden in the workplace. Still in the unit list; not on a tile. */
   inside: boolean;
+  /** Remaining waypoints after the current step dest (`pos`). Empty when idle. */
+  path: readonly GridPos[];
 };
 
 export class Movable {
@@ -97,6 +99,7 @@ export class Movable {
       job: this.job?.type ?? null,
       workplaceId: this.workplaceId,
       inside: this.inside,
+      path: this.queue.map((p) => ({ x: p.x, y: p.y })),
     };
   }
 

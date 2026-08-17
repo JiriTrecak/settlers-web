@@ -79,6 +79,39 @@ body {
   font-size: 11px;
   line-height: 1.5;
   letter-spacing: 0;
+}
+
+.hud-debug-opts {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.hud-debug-opts button {
+  appearance: none;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.55);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.hud-debug-opts button:hover,
+.hud-debug-opts button:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
+}
+
+.hud-debug-opts button.is-selected {
+  border-color: #e8c36a;
+  color: #e8c36a;
+}
+
+.hud-debug-dump {
+  margin: 0;
   white-space: pre;
   user-select: text;
 }

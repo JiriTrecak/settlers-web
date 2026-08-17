@@ -47,6 +47,7 @@ describe("world", () => {
       from: { x: 3, y: 3 },
       action: "walk",
       moveProgress: 0,
+      path: [],
     });
     expect(world.view().movables[0]!.player).toBe(0);
     expect(world.view().objects).toEqual([]);
@@ -76,11 +77,16 @@ describe("world", () => {
     const world = new World(grass(12, 12));
     const bearer = world.spawnBearer({ x: 2, y: 2 });
     world.dispatch({ type: "moveTo", id: bearer.id, to: { x: 4, y: 2 } });
+    expect(world.view().movables[0]).toMatchObject({
+      pos: { x: 3, y: 2 },
+      path: [{ x: 4, y: 2 }],
+    });
     const ticks = bearer.stepTicks * 2;
     for (let i = 0; i < ticks; i++) world.tick();
     const v = world.view().movables[0]!;
     expect(v.pos).toEqual({ x: 4, y: 2 });
     expect(v.action).toBe("idle");
+    expect(v.path).toEqual([]);
     expect(world.view().tick).toBe(ticks);
   });
 });

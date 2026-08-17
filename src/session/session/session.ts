@@ -79,6 +79,7 @@ export class Session {
   private buildKind: BuildingKind | null = null;
   private hover: GridPos | null = null;
   private fps = 60;
+  private showPaths = false;
 
   constructor(
     private readonly pixi: Application,
@@ -96,6 +97,7 @@ export class Session {
     renderer.setSheets(sheets);
     renderer.setBuildingSheets(buildings);
     renderer.setSettlerSheets(settlers);
+    renderer.setShowPaths(this.showPaths);
 
     // Widgets own their input; we only subscribe.
     this.minimap = new Minimap(this.overlay, {
@@ -161,6 +163,12 @@ export class Session {
     if (this.view && this.minimap) {
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
+  }
+
+  /** Debug overlay toggle. Sticky after F3 closes; renderer may not exist yet. */
+  setShowPaths(on: boolean): void {
+    this.showPaths = on;
+    this.renderer?.setShowPaths(on);
   }
 
   stop(): void {

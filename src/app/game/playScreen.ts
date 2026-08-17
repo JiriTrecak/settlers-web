@@ -18,7 +18,10 @@ export class PlayScreen extends GameScreen {
   ) {
     super("screen");
     this.mapId = mapId;
-    this.hud = new Hud(this.root, { onLeave: hooks.onLeave });
+    this.hud = new Hud(this.root, {
+      onLeave: hooks.onLeave,
+      onShowPaths: (on) => this.session.setShowPaths(on),
+    });
     this.session = new Session(pixi, this.root, {
       mapId,
       catalog,

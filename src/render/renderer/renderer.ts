@@ -1,6 +1,6 @@
 /**
  * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
- * Reads `MapView`; never writes sim.
+ * Reads `MapView`; never writes sim. Debug path overlay is a HUD toggle.
  */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
@@ -16,6 +16,7 @@ import { DecorationLayer } from "../decoration/decorationLayer";
 import type { DecorationSheets } from "../decoration/decorationSheets";
 import { buildLandscapeGeometry } from "../landscape/landscapeGeometry";
 import { createLandscapeMesh } from "../landscape/landscapeMesh";
+import { PathLayer } from "../debug/pathLayer";
 import { SettlerLayer } from "../settler/settlerLayer";
 import type { SettlerSheets } from "../settler/settlerSheets";
 
@@ -27,6 +28,7 @@ export class Renderer {
   private readonly buildings: BuildingLayer;
   private readonly settlers: SettlerLayer;
   private readonly ghostPlot = new GhostLayer();
+  private readonly paths = new PathLayer();
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
@@ -46,7 +48,7 @@ export class Renderer {
     this.select.eventMode = "none";
     this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root);
+    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root, this.paths.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -74,11 +76,12 @@ export class Renderer {
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root);
+    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.paths.root);
     this.decorations.setWaves(view, waves);
     this.buildings.setView(view);
     this.settlers.setView(view);
     this.ghostPlot.setView(view);
+    this.paths.setView(view);
 
     if (fit) this.fitCamera();
     this.applyCamera();
@@ -119,12 +122,14 @@ export class Renderer {
     this.decorations.syncObjects(snapshot.objects);
     this.buildings.sync(snapshot.buildings);
     this.settlers.draw(snapshot.movables, alpha);
+    this.paths.draw(snapshot.movables, alpha);
   }
 
   applyCamera(): void {
     this.world.position.set(this.camera.panX, this.camera.panY);
     this.world.scale.set(this.camera.zoom);
     this.ghostPlot.setZoom(this.camera.zoom);
+    this.paths.setZoom(this.camera.zoom);
   }
 
   /** Screen pixel → cell whose height-displaced diamond is under the cursor. */
@@ -164,6 +169,11 @@ export class Renderer {
     }
     this.ghostPlot.setZoom(this.camera.zoom);
     this.ghostPlot.show(kind, pos, ok);
+  }
+
+  /** Remaining walk queues. Sticky until toggled off — F3 does not have to stay open. */
+  setShowPaths(on: boolean): void {
+    this.paths.setOn(on);
   }
 
   destroy(): void {

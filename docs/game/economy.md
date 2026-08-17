@@ -1,0 +1,107 @@
+# Economy
+
+No partitions, no priorities, no player land. One global matcher. Goods live on ground stacks (max **8**) or in a settler’s hands.
+
+Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`. A sapling in hand is `tree` — not a stack good.
+
+## Colony kit
+
+On match start, at player-slot 0:
+
+- Tower (finished, objects on the footprint cleared)
+- Small house nearby (finished)
+- Low-goods piles in a spiral around HQ, skipping protected tiles
+- **16** jobless bearers in that same spiral
+
+| Good | Piles |
+|---|---|
+| Plank | 6 + 6 |
+| Stone | 6 + 6 |
+| Blade | 5 |
+| Hammer | 6 |
+| Axe | 3 |
+| Pick | 2 |
+| Saw | 1 |
+
+House then drips more bearers (10 beds, 2 s). See [building.md](building.md).
+
+## Matcher
+
+Each tick, closest idle empty-handed bearer → closest offer of a requested material.
+
+- **Plan** huts request `constructionStacks` (stop at `required`)
+- **Built** huts request `requestStacks` (fill to stack cap 8)
+- **Building** (scaffold hammering) requests nothing
+
+Inbound `deliver` jobs count against room so two bearers don’t overfill. `building` construction piles are already on the plot; leftover piles are deleted when the hut finishes.
+
+Pickup / drop is 200 ms each end of a deliver.
+
+## Wood chain
+
+The playable loop: trees → trunks → planks, plus foresters replacing trees.
+
+```
+forester plants sapling
+        │  7 min growth
+        ▼
+lumberjack fells adult tree ──trunk──► lumberjack offer
+                                         │
+                                    bearer deliver
+                                         ▼
+                                   sawmill request
+                                         │
+                                    sawmiller
+                                         ▼
+                                    sawmill offer (plank)
+                                         │
+                                    bearer deliver
+                                         ▼
+                              construction / (later: more consumers)
+```
+
+### Lumberjack
+
+Rest **3 s** inside. If the offer stack is full (8), stay inside.
+
+Else nearest adult unclaimed tree in radius **30** whose **SE** tile is walkable. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
+
+Another lumberjack already chopping that tree → skip. Saplings / still-growing → skip.
+
+Bearer click-chop (tests only): any neighbor, face the tree, **1.8 s**, leaves a 1-trunk pile on the stump.
+
+### Forester
+
+Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18**): 100 polar samples from hut origin, radius biased `u^3.9` toward the hut (more plants near home). Stand tile is walkable; plant is **south** of the stand (`y+1`).
+
+Plant tile: grass, not protected, no blocked neighbor, no protected neighbor. Face nw, kneel **3 s**. Home.
+
+Growth **7 minutes** at 1× (`TREE_GROW_MS`). Render: static (no wind), scale 0.35 / 0.6 / 0.85 around the tile origin until adult.
+
+### Sawmiller
+
+Rest **1 s** inside. Needs a trunk on the request and room on the plank offer. Pickup trunk, walk to `workSpot`, face the spot’s direction (**nw**), saw **4.5 s**, trunk → plank, drop on offer. Full offer or empty request → stay inside.
+
+## Timings cheat sheet
+
+All at 1×. Clock is 25 ms.
+
+| Thing | Time |
+|---|---|
+| Sim tick | 25 ms |
+| Walk one tile | 450 ms |
+| Pickup / drop bend | 200 ms |
+| House spawn gap | 2 s |
+| Lumberjack rest | 3 s |
+| Lumberjack axe | 6 s (fall last 1.5 s) |
+| Forester rest | 4 s |
+| Forester kneel | 3 s |
+| Tree growth | 7 min |
+| Sawmiller rest | 1 s |
+| Saw | 4.5 s |
+| Bricklayer swing | 1 s |
+| Construction | 12 s of swinging per plank/stone item |
+
+## Not yet
+
+Distribution priorities, storehouse, mines, farms, tool production, soldier goods, trading. Bearers will haul tools if something requested them — nothing in play requests tools yet except future construction defs.

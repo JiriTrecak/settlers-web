@@ -39,6 +39,7 @@ describe("debug overlay", () => {
           job: "deliver",
           workplaceId: null,
           inside: false,
+          path: [],
         },
         {
           id: 2,
@@ -56,6 +57,7 @@ describe("debug overlay", () => {
           job: null,
           workplaceId: 1,
           inside: true,
+          path: [],
         },
       ],
       objects: [
