@@ -131,7 +131,7 @@ Waves are generated at load from water neighbors (`waveDecorations`). Trees/ston
 
 - A* (bucket queue)
 - Behavior trees as small TS functions/objects. Node semantics: `sequence`, `selector`, `condition`, `action`, `wait`.
-- Map objects: tree, stone, stack. `stateProgress` on objects
+- Map objects: tree, stone. `stateProgress` on trees while chopping. Click tree → walk adjacent → work → remove.
 
 ## Phase 6
 

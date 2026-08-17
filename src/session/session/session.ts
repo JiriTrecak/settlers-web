@@ -8,9 +8,11 @@ import {
   MAPS,
   generateMap,
   mapViewFromGrid,
-  allDecorations,
+  waveDecorations,
   World,
-  isWalkable,
+  ObjectGrid,
+  scatterTrees,
+  seedRng,
   startForPlayer,
   type MapView,
   type MapDecoration,
@@ -100,14 +102,14 @@ export class Session {
       onLeave: () => this.config.hooks.onLeave(),
     });
 
-    const { grid, decorations, starts } = await this.loadGrid(this.mapId);
+    const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
     if (!this.renderer) return;
-    const world = new World(grid);
+    const world = new World(grid, objects);
     this.world = world;
     const hero = world.spawnBearer(startForPlayer(starts, 0), this.config.player);
     this.heroId = hero.id;
     this.view = mapViewFromGrid(grid);
-    this.renderer.setView(this.view, decorations, false);
+    this.renderer.setView(this.view, waves, false);
     this.minimap.setView(this.view);
     // Native 1× on the first HQ. Space still fits the whole map.
     this.renderer.camera.zoom = 1;
@@ -185,7 +187,14 @@ export class Session {
 
   private setSelect(pos: GridPos | null): void {
     if (!this.renderer || !this.world || !pos) return;
-    if (!isWalkable(this.world.grid, pos.x, pos.y)) return;
+    const tree = this.world.objects.get(pos.x, pos.y);
+    if (tree?.kind === "tree") {
+      this.selected = pos;
+      this.renderer.highlight(pos, "select");
+      this.world.dispatch({ type: "chop", id: this.heroId, at: pos });
+      return;
+    }
+    if (!this.world.canStand(pos.x, pos.y, this.heroId)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
     this.world.dispatch({ type: "moveTo", id: this.heroId, to: pos });
@@ -208,18 +217,26 @@ export class Session {
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */
   private async loadGrid(
     id: string,
-  ): Promise<{ grid: ReturnType<typeof generateMap>; decorations: MapDecoration[]; starts: MapStart[] }> {
+  ): Promise<{
+    grid: ReturnType<typeof generateMap>;
+    objects: ObjectGrid;
+    waves: MapDecoration[];
+    starts: MapStart[];
+  }> {
     const procedural = MAPS.find((m) => m.id === id);
     if (procedural) {
       const grid = generateMap(procedural);
-      return { grid, decorations: allDecorations(mapViewFromGrid(grid)), starts: [] };
+      const objects = new ObjectGrid(grid.width, grid.height);
+      scatterTrees(grid, objects, seedRng(procedural.seed));
+      return { grid, objects, waves: waveDecorations(mapViewFromGrid(grid)), starts: [] };
     }
     const entry = this.config.catalog.find((m) => m.id === id);
     if (!entry) throw new Error(`unknown map ${id}`);
     const dumped = await fetchDumpedMap(entry.file);
     return {
       grid: dumped.grid,
-      decorations: allDecorations(mapViewFromGrid(dumped.grid), dumped.decorations),
+      objects: dumped.objects,
+      waves: waveDecorations(mapViewFromGrid(dumped.grid)),
       starts: dumped.starts,
     };
   }

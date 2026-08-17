@@ -4,13 +4,16 @@
  */
 import { directionFromDelta, type Direction, type GridPos } from "../../shared";
 import type { MapGrid } from "../map/mapGrid";
-import { findPath } from "../path/path";
+import { findPath, type Blockers } from "../path/path";
 
 export type MovableType = "bearer";
-export type MovableAction = "idle" | "walk";
+export type MovableAction = "idle" | "walk" | "work";
 
 /** Bearer step is 0.6s × 0.75 speedup = 450ms → 18 ticks at 25ms. */
 export const BEARER_STEP_MS = 450;
+
+/** Chop duration: 1.8s at 25ms. */
+export const CHOP_TICKS = 72;
 
 export type MovableView = {
   id: number;
@@ -21,6 +24,8 @@ export type MovableView = {
   action: MovableAction;
   moveProgress: number;
   stepTicks: number;
+  workProgress: number;
+  workTicks: number;
   player: number;
 };
 
@@ -34,6 +39,8 @@ export class Movable {
   moveProgress = 0;
   readonly stepTicks: number;
   readonly player: number;
+  chopAt: GridPos | null = null;
+  workElapsed = 0;
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
@@ -57,18 +64,62 @@ export class Movable {
       action: this.action,
       moveProgress: this.moveProgress,
       stepTicks: this.stepTicks,
+      workProgress: this.action === "work" ? this.workElapsed / CHOP_TICKS : 0,
+      workTicks: CHOP_TICKS,
       player: this.player,
     };
   }
 
-  /** Replace the remaining path. The current tile-step always finishes. */
-  goTo(grid: MapGrid, to: GridPos): void {
-    const path = findPath(grid, this.pos, to);
+  get walking(): boolean {
+    return this.stepping;
+  }
+
+  /** Replace the remaining path. The current tile-step always finishes. Cancels chop. */
+  goTo(grid: MapGrid, to: GridPos, blockers?: Blockers): void {
+    this.chopAt = null;
+    this.workElapsed = 0;
+    if (this.action === "work") this.action = "idle";
+    this.pathTo(grid, to, blockers);
+  }
+
+  /** Walk beside the tree, then work. Does not cancel an in-flight step. */
+  chop(at: GridPos): void {
+    this.chopAt = at;
+    this.workElapsed = 0;
+    this.queue = [];
+    if (this.action === "work") this.action = "idle";
+  }
+
+  /** Queue a path without touching `chopAt`. Current step still finishes. */
+  pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): void {
+    const path = findPath(grid, this.pos, to, blockers);
     this.queue = path ? path.slice() : [];
-    if (!this.stepping) this.startStep();
+    if (!this.stepping && this.action !== "work") this.startStep();
+  }
+
+  face(toward: GridPos): void {
+    this.direction = directionFromDelta(toward.x - this.pos.x, toward.y - this.pos.y);
+  }
+
+  beginWork(): void {
+    this.queue = [];
+    this.stepping = false;
+    this.action = "work";
+    this.moveProgress = 0;
+    this.from = this.pos;
+  }
+
+  idle(): void {
+    this.action = "idle";
+    this.stepping = false;
+    this.moveProgress = 0;
+    this.workElapsed = 0;
+    this.chopAt = null;
+    this.from = this.pos;
   }
 
   tick(): void {
+    if (this.action === "work") return;
     if (!this.stepping) {
       this.startStep();
       return;
@@ -86,7 +137,7 @@ export class Movable {
   private startStep(): void {
     const next = this.queue.shift();
     if (!next) {
-      this.action = "idle";
+      this.action = this.action === "work" ? "work" : "idle";
       this.stepping = false;
       this.moveProgress = 0;
       this.from = this.pos;

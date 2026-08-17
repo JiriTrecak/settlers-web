@@ -9,7 +9,7 @@ alwaysApply: true
 
 Lifecycle, retained state, or input → a **class** with a closed boundary. Pure math and one-shot transforms stay functions.
 
-Use classes for `Session`, `World`, `Movable`, `MapGrid`, `Clock`, `Renderer`, `Camera`, `GameScreen`, `Hud`, `Minimap`, `SpeedControl`, `MapInput`. Functions for `gridToWorld`, `treeSheetAt`, dump parse, UV math, BFS.
+Use classes for `Session`, `World`, `Movable`, `MapGrid`, `ObjectGrid`, `Clock`, `Renderer`, `Camera`, `GameScreen`, `Hud`, `Minimap`, `SpeedControl`, `MapInput`. Functions for `gridToWorld`, `treeSheetAt`, dump parse, UV math, BFS.
 
 Do not flatten a widget into exported functions plus a WeakMap. That state belongs on the instance.
 

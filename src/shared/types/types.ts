@@ -4,4 +4,7 @@ export type GridPos = {
   readonly y: number;
 };
 
-export type Action = { type: "noop" } | { type: "moveTo"; id: number; to: GridPos };
+export type Action =
+  | { type: "noop" }
+  | { type: "moveTo"; id: number; to: GridPos }
+  | { type: "chop"; id: number; at: GridPos };

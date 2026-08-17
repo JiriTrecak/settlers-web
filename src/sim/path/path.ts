@@ -1,19 +1,29 @@
 /**
  * Walkability + BFS on the diamond grid. Phase 4 pathing — A* comes later.
+ * Trees/stones block via `ObjectGrid`.
  */
 import { HEX_DELTAS, isRiver, isWater, type GridPos } from "../../shared";
 import type { MapGrid } from "../map/mapGrid";
+import { isAdjacent } from "../object/object";
 
-export function isWalkable(grid: MapGrid, x: number, y: number): boolean {
+export type Blockers = { blocks(x: number, y: number): boolean };
+
+export function isWalkable(grid: MapGrid, x: number, y: number, blockers?: Blockers): boolean {
   if (!grid.inBounds(x, y)) return false;
   const t = grid.landscapeAt(x, y);
-  return !isWater(t) && !isRiver(t);
+  if (isWater(t) || isRiver(t)) return false;
+  return !blockers?.blocks(x, y);
 }
 
 /** Path from `from` to `to`, excluding start. Empty if already there. Null if blocked. */
-export function findPath(grid: MapGrid, from: GridPos, to: GridPos): GridPos[] | null {
+export function findPath(
+  grid: MapGrid,
+  from: GridPos,
+  to: GridPos,
+  blockers?: Blockers,
+): GridPos[] | null {
   if (from.x === to.x && from.y === to.y) return [];
-  if (!isWalkable(grid, to.x, to.y)) return null;
+  if (!isWalkable(grid, to.x, to.y, blockers)) return null;
 
   const w = grid.width;
   const key = (x: number, y: number) => y * w + x;
@@ -32,7 +42,7 @@ export function findPath(grid: MapGrid, from: GridPos, to: GridPos): GridPos[] |
     for (const { dx, dy } of HEX_DELTAS) {
       const nx = x + dx;
       const ny = y + dy;
-      if (!isWalkable(grid, nx, ny)) continue;
+      if (!isWalkable(grid, nx, ny, blockers)) continue;
       const nk = key(nx, ny);
       if (came[nk] !== -1) continue;
       came[nk] = cur;
@@ -53,12 +63,12 @@ export function findPath(grid: MapGrid, from: GridPos, to: GridPos): GridPos[] |
 }
 
 /** Nearest walkable tile, BFS from `seed`. */
-export function nearestWalkable(grid: MapGrid, seed: GridPos): GridPos | null {
-  if (isWalkable(grid, seed.x, seed.y)) return seed;
+export function nearestWalkable(grid: MapGrid, seed: GridPos, blockers?: Blockers): GridPos | null {
+  if (isWalkable(grid, seed.x, seed.y, blockers)) return seed;
   const w = grid.width;
   const seen = new Uint8Array(w * grid.height);
   const q: GridPos[] = [seed];
-  seen[seed.y * w + seed.x] = 1;
+  if (grid.inBounds(seed.x, seed.y)) seen[seed.y * w + seed.x] = 1;
   let head = 0;
   while (head < q.length) {
     const { x, y } = q[head++]!;
@@ -69,9 +79,32 @@ export function nearestWalkable(grid: MapGrid, seed: GridPos): GridPos | null {
       const i = ny * w + nx;
       if (seen[i]) continue;
       seen[i] = 1;
-      if (isWalkable(grid, nx, ny)) return { x: nx, y: ny };
+      if (isWalkable(grid, nx, ny, blockers)) return { x: nx, y: ny };
       q.push({ x: nx, y: ny });
     }
   }
   return null;
+}
+
+/** Walkable neighbor of `target` closest to `from`. `from` itself if already adjacent. */
+export function standBeside(
+  grid: MapGrid,
+  target: GridPos,
+  from: GridPos,
+  blockers?: Blockers,
+): GridPos | null {
+  if (isAdjacent(from, target) && isWalkable(grid, from.x, from.y, blockers)) return from;
+  let best: GridPos | null = null;
+  let bestD = Infinity;
+  for (const { dx, dy } of HEX_DELTAS) {
+    const x = target.x + dx;
+    const y = target.y + dy;
+    if (!isWalkable(grid, x, y, blockers)) continue;
+    const d = (x - from.x) * (x - from.x) + (y - from.y) * (y - from.y);
+    if (d < bestD) {
+      bestD = d;
+      best = { x, y };
+    }
+  }
+  return best;
 }

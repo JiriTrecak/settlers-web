@@ -18,10 +18,19 @@ export { allDecorations, treeSheetAt, waveDecorations, type MapDecoration } from
 export { mapViewFromGrid, type MapView } from "./map/mapView";
 export { World, type ViewSnapshot } from "./world/world";
 export {
+  ObjectGrid,
+  isAdjacent,
+  objectsFromDumpedMap,
+  scatterTrees,
+  type MapObjectKind,
+  type MapObjectView,
+} from "./object/object";
+export {
   BEARER_STEP_MS,
+  CHOP_TICKS,
   Movable,
   type MovableAction,
   type MovableType,
   type MovableView,
 } from "./movable/movable";
-export { findPath, isWalkable, nearestWalkable } from "./path/path";
+export { findPath, isWalkable, nearestWalkable, standBeside, type Blockers } from "./path/path";

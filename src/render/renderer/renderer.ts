@@ -23,7 +23,7 @@ export class Renderer {
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
-  private objects: readonly MapDecoration[] = [];
+  private waves: readonly MapDecoration[] = [];
   private readonly hover = new Graphics();
   private readonly select = new Graphics();
 
@@ -50,15 +50,15 @@ export class Renderer {
     this.settlers.setSheets(sheets);
   }
 
-  setView(view: MapView, objects: readonly MapDecoration[] = this.objects, fit = true): void {
+  setView(view: MapView, waves: readonly MapDecoration[] = this.waves, fit = true): void {
     this.view = view;
-    this.objects = objects;
+    this.waves = waves;
     const mesh = createLandscapeMesh(buildLandscapeGeometry(view), this.atlas);
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
     this.world.addChild(mesh, this.decorations.root, this.settlers.root, this.select, this.hover);
-    this.decorations.setDecorations(view, objects);
+    this.decorations.setWaves(view, waves);
     this.settlers.setView(view);
 
     if (fit) this.fitCamera();
@@ -94,8 +94,9 @@ export class Renderer {
     this.decorations.tick(nowMs);
   }
 
-  /** Movables from the last sim snapshot. `alpha` is leftover ms into the next tick. */
+  /** Movables + map objects from the last sim snapshot. `alpha` is leftover ms into the next tick. */
   draw(snapshot: ViewSnapshot, alpha: number): void {
+    this.decorations.syncObjects(snapshot.objects);
     this.settlers.draw(snapshot.movables, alpha);
   }
 

@@ -49,6 +49,7 @@ describe("world", () => {
       moveProgress: 0,
     });
     expect(world.view().movables[0]!.player).toBe(0);
+    expect(world.view().objects).toEqual([]);
     const red = new World(grass(12, 12)).spawnBearer({ x: 3, y: 3 }, 1);
     expect(red.player).toBe(1);
     for (const dir of DIRECTIONS) {

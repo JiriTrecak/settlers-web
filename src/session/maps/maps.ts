@@ -3,14 +3,13 @@
  */
 import { MAPS } from "../../sim/map/generateIsland";
 import {
-  decorationsFromDumpedMap,
   gridFromDumpedMap,
   isDumpedMap,
   startsFromDumpedMap,
   type MapCatalogEntry,
   type MapStart,
 } from "../../sim/map/dumpedMap";
-import type { MapDecoration } from "../../sim/decorations/decorations";
+import { objectsFromDumpedMap, type ObjectGrid } from "../../sim/object/object";
 import type { MapGrid } from "../../sim/map/mapGrid";
 import type { MapOption } from "../../ui/menu/menu";
 
@@ -32,7 +31,7 @@ export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
 
 export async function fetchDumpedMap(
   file: string,
-): Promise<{ grid: MapGrid; decorations: MapDecoration[]; starts: MapStart[] }> {
+): Promise<{ grid: MapGrid; objects: ObjectGrid; starts: MapStart[] }> {
   // Nested paths in the catalog (`tutorial/foo.json`) need each segment encoded.
   const path = file
     .split("/")
@@ -44,7 +43,7 @@ export async function fetchDumpedMap(
   if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);
   return {
     grid: gridFromDumpedMap(data),
-    decorations: decorationsFromDumpedMap(data),
+    objects: objectsFromDumpedMap(data),
     starts: startsFromDumpedMap(data),
   };
 }

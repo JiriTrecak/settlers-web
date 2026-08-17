@@ -8,7 +8,7 @@ import type { MapView } from "../map/mapView";
 export const TREE_SHEETS = 7;
 
 export type MapDecoration =
-  | { kind: "tree"; x: number; y: number; sheet: number }
+  | { kind: "tree"; x: number; y: number; sheet: number; stateProgress?: number }
   | { kind: "stone"; x: number; y: number; capacity: number }
   | { kind: "wave"; x: number; y: number };
 

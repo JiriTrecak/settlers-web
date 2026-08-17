@@ -113,17 +113,27 @@ export class SettlerLayer {
   private frameOf(m: MovableView, progress: number): PropFrame | null {
     const sheets = this.sheets;
     if (!sheets) return null;
-    const clip = m.action === "walk" ? sheets.walk[m.direction] : sheets.idle[m.direction];
+    const clip =
+      m.action === "walk"
+        ? sheets.walk[m.direction]
+        : m.action === "work"
+          ? sheets.work[m.direction]
+          : sheets.idle[m.direction];
     if (!clip || clip.length === 0) return null;
     if (m.action === "walk") {
       const i = progress >= 1 ? clip.length - 1 : (progress * clip.length) | 0;
       return clip[i] ?? clip[0]!;
+    }
+    if (m.action === "work") {
+      const i = (progress * clip.length) | 0;
+      return clip[i % clip.length] ?? clip[0]!;
     }
     return clip[0]!;
   }
 }
 
 function visualProgress(m: MovableView, alpha: number): number {
-  if (m.action !== "walk") return 0;
-  return Math.min(1, m.moveProgress + alpha / m.stepTicks);
+  if (m.action === "walk") return Math.min(1, m.moveProgress + alpha / m.stepTicks);
+  if (m.action === "work") return Math.min(1, m.workProgress + alpha / m.workTicks);
+  return 0;
 }
