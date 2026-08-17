@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "pack": "vite-node original_conv/pack-play.ts",
     "preview": "vite preview",
     "test": "vitest run",
     "dump:graphics": "vite-node original_conv/dump-graphics.ts",

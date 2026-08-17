@@ -1,5 +1,6 @@
 /**
  * One object per tile: trees, stones, stacks. Blocks walking; `stateProgress` is chop/grow.
+ * Stones shrink via `capacity` (remaining cuts).
  */
 import { HEX_DELTAS, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";

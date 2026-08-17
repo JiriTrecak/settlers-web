@@ -70,6 +70,26 @@ Another lumberjack already chopping that tree (tile marked) → skip. Saplings /
 
 Bearer click-chop (tests only): any neighbor, face the tree, **1.8 s**, leaves a 1-trunk pile on the stump.
 
+## Stone chain
+
+```
+stonecutter picks rock ──stone──► stonecutter offer
+                                     │
+                                bearer deliver
+                                     ▼
+                              construction
+```
+
+### Stonecutter
+
+Rest **3 s** inside. If the offer stack is full (8), stay inside.
+
+Else nearest stone with `capacity > 0` in radius **20** whose **stand** (`cutStand` = stone + (1, −1), i.e. NE of the rock) is owned, unclaimed, and walkable. The rock itself does **not** need to be owned — a border pile is cuttable if you can stand on your land.
+
+Stands on that tile, faces **sw**. **4.5 s** of picks (6 × 750 ms). Decrements `capacity`; at 0 the pile is removed (no leftover rubble). Carries the stone (no ground pile at the rock). Drops on the hut offer. Home, enter, rest.
+
+Another stonecutter already cutting that stand (tile marked) → skip. `capacity <= 0` → skip.
+
 ### Forester
 
 Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18**): 100 polar samples from hut origin, radius biased `u^3.9` toward the hut (more plants near home). Stand tile is walkable; plant is **south** of the stand (`y+1`) and on the worker's land.
@@ -94,6 +114,8 @@ All at 1×. Clock is 25 ms.
 | House spawn gap | 2 s |
 | Lumberjack rest | 3 s |
 | Lumberjack axe | 6 s (fall last 1.5 s) |
+| Stonecutter rest | 3 s |
+| Stonecutter pick | 4.5 s |
 | Forester rest | 4 s |
 | Forester kneel | 3 s |
 | Tree growth | 7 min |

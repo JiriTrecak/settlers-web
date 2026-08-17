@@ -24,7 +24,7 @@ const DIR: Record<string, string> = {
   NORTH_WEST: "nw",
 };
 
-const ONLY = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ["lumberjack", "tower", "sawmill", "small_livinghouse"]);
+const ONLY = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ["lumberjack", "tower", "sawmill", "small_livinghouse", "forester", "stonecutter"]);
 
 function attrs(tag: string): Record<string, string> {
   const out: Record<string, string> = {};
@@ -104,6 +104,7 @@ function parse(kind: string, xml: string): string {
     sawmill: "Roman sawmill. Requests trunks, offers planks.",
     small_livinghouse: "Roman small house. Spawns 10 bearers.",
     forester: "Roman forester hut. Plants trees in work radius 18.",
+    stonecutter: "Roman stonecutter hut. Stone offer, work radius 20.",
   };
   const extra: Record<string, string> = {
     small_livinghouse: "  beds: 10,\n  produceMs: 2000,\n",

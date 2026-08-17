@@ -3,7 +3,7 @@
  */
 import { Texture } from "pixi.js";
 
-const BASE = "/graphics/";
+const BASE = `${import.meta.env.BASE_URL}graphics/`;
 
 export type PropFrame = {
   texture: Texture;

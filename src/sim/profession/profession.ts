@@ -2,8 +2,9 @@
  * Profession brains. They assign jobs; `tickJob` still runs the verbs.
  * Workers hide in the hut (`enter`) between cycles — the unit stays, occupancy/render skip it.
  *
- * Outdoor gatherers share `acceptWork` (radius + owned + unclaimed resource + walkable stand).
- * Pathing is `needsPlayersGround` on the settler def, not a per-profession check.
+ * Outdoor gatherers share `acceptWork` (radius + owned + unclaimed lock tile + walkable stand).
+ * Lumberjack locks the resource; stonecutter locks the stand. Pathing is
+ * `needsPlayersGround` on the settler def, not a per-profession check.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
@@ -17,6 +18,7 @@ import { tickBricklayer } from "./bricklayer";
 import { tickForester } from "./forester";
 import { tickLumberjack } from "./lumberjack";
 import { tickSawmiller } from "./sawmiller";
+import { tickStonecutter } from "./stonecutter";
 
 export type ProfessionContext = JobContext & {
   buildings: BuildingGrid;
@@ -30,6 +32,7 @@ export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   else if (m.type === "sawmiller") tickSawmiller(m, ctx);
   else if (m.type === "bricklayer") tickBricklayer(m, ctx);
   else if (m.type === "forester") tickForester(m, ctx);
+  else if (m.type === "stonecutter") tickStonecutter(m, ctx);
 }
 
 export function doorOf(hut: Building): GridPos {
@@ -61,9 +64,12 @@ export function beginRest(m: Movable, tickMs: number): void {
   m.restLeft = Math.max(0, Math.round(ms / tickMs));
 }
 
+/** Which tile `acceptWork` owns and marks. Lumberjack: the tree. Stonecutter: the stand. */
+export type WorkLock = "resource" | "stand";
+
 /**
- * Outdoor gatherer gate: resource in `workRadius`, owned, not already claimed, stand walkable.
- * Stonecutter / fisher / farmer call this; they only name the two tiles.
+ * Outdoor gatherer gate: resource in `workRadius`, lock tile owned and unclaimed, stand walkable.
+ * Callers only name the two tiles and which one is exclusive.
  */
 export function acceptWork(
   ctx: ProfessionContext,
@@ -72,11 +78,13 @@ export function acceptWork(
   radius: number,
   resource: GridPos,
   stand: GridPos,
+  lock: WorkLock = "resource",
 ): boolean {
   const d = hexDist(center.x, center.y, resource.x, resource.y);
   if (d > radius || d === 0) return false;
-  if (ctx.marks.claimed(resource.x, resource.y)) return false;
-  if (!ctx.land.owns(resource.x, resource.y, player)) return false;
+  const at = lock === "stand" ? stand : resource;
+  if (ctx.marks.claimed(at.x, at.y)) return false;
+  if (!ctx.land.owns(at.x, at.y, player)) return false;
   return isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers);
 }
 

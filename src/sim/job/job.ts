@@ -11,11 +11,13 @@ import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
+import { cutStand } from "../object/stone";
 import { isPlantSearch, plantTree, chopStand } from "../object/tree";
 import { isWalkable, standBeside, type Blockers } from "../path/path";
 
 export type Job =
   | { type: "chop"; at: GridPos }
+  | { type: "cut"; at: GridPos }
   | { type: "pickup"; at: GridPos }
   | { type: "drop"; at: GridPos }
   | { type: "deliver"; material: Goods; from: GridPos; to: GridPos }
@@ -28,6 +30,7 @@ export type Job =
 export function markOf(job: Job | null): GridPos | null {
   if (!job) return null;
   if (job.type === "chop") return job.at;
+  if (job.type === "cut") return cutStand(job.at);
   if (job.type === "plant") return { x: job.at.x, y: job.at.y + 1 };
   return null;
 }
@@ -74,6 +77,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("forester").chopMs;
     return Math.max(1, Math.round((ms ?? 3000) / 25));
   }
+  if (job?.type === "cut") {
+    const ms = settlerDef("stonecutter").chopMs;
+    return Math.max(1, Math.round((ms ?? 4500) / 25));
+  }
   if (job?.type === "pickup" || job?.type === "drop" || job?.type === "deliver") return BEND_TICKS;
   return 1;
 }
@@ -88,13 +95,14 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   const job = m.job;
   if (!job) return;
   if (job.type === "chop") tickChop(m, job.at, ctx);
+  else if (job.type === "cut") tickCut(m, job.at, ctx);
   else if (job.type === "pickup") tickPickup(m, job.at, ctx, true);
   else if (job.type === "drop") tickDrop(m, job.at, ctx, true);
   else if (job.type === "deliver") tickDeliver(m, job, ctx);
   else if (job.type === "occupy") tickOccupy(m, job, ctx);
   else if (job.type === "build") tickBuild(m, job, ctx);
   else if (job.type === "plant") tickPlant(m, job, ctx);
-  else tickSaw(m, job.at, ctx);
+  else if (job.type === "saw") tickSaw(m, job.at, ctx);
 }
 
 function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
@@ -116,6 +124,27 @@ function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
     ctx.objects.remove(target.x, target.y);
     if (m.type === "lumberjack") m.material = "trunk";
     else ctx.objects.place(trunkStack(target));
+    m.idle();
+  }
+}
+
+function tickCut(m: Movable, target: GridPos, ctx: JobContext): void {
+  const stone = ctx.objects.get(target.x, target.y);
+  if (!stone || stone.kind !== "stone" || stone.capacity <= 0) {
+    m.idle();
+    return;
+  }
+  if (!readyToCut(m, target, ctx)) return;
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed >= ticks) {
+    stone.capacity -= 1;
+    if (stone.capacity <= 0) ctx.objects.remove(target.x, target.y);
+    m.material = "stone";
     m.idle();
   }
 }
@@ -276,6 +305,22 @@ function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobCon
   }
   m.material = "none";
   m.idle();
+}
+
+/** Stonecutter: NE of the rock, face sw. */
+function readyToCut(m: Movable, target: GridPos, ctx: JobContext): boolean {
+  const stand = cutStand(target);
+  if (!isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers)) {
+    m.idle();
+    return false;
+  }
+  if (m.pos.x === stand.x && m.pos.y === stand.y && !m.walking) {
+    m.direction = "sw";
+    return true;
+  }
+  if (m.walking) return false;
+  m.pathTo(ctx.grid, stand, ctx.blockers);
+  return false;
 }
 
 /** Lumberjack: SE of the tree, face nw. Anyone else: any neighbor, face the tile. */

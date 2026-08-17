@@ -3,7 +3,7 @@
  */
 import { Texture } from "pixi.js";
 
-export const LANDSCAPE_ATLAS_URL = "/graphics/landscape-atlas.png";
+export const LANDSCAPE_ATLAS_URL = `${import.meta.env.BASE_URL}graphics/landscape-atlas.png`;
 
 export async function loadLandscapeAtlas(): Promise<Texture | null> {
   try {

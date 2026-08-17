@@ -17,7 +17,7 @@ export type { DumpedMap, MapCatalogEntry, MapGroup } from "../../sim/map/dumpedM
 
 export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   try {
-    const res = await fetch("/maps/catalog.json");
+    const res = await fetch(`${import.meta.env.BASE_URL}maps/catalog.json`);
     if (!res.ok) return [];
     const data: unknown = await res.json();
     if (!data || typeof data !== "object" || !("maps" in data)) return [];
@@ -37,7 +37,7 @@ export async function fetchDumpedMap(
     .split("/")
     .map((part) => encodeURIComponent(part))
     .join("/");
-  const res = await fetch(`/maps/${path}`);
+  const res = await fetch(`${import.meta.env.BASE_URL}maps/${path}`);
   if (!res.ok) throw new Error(`map ${file}: ${res.status}`);
   const data: unknown = await res.json();
   if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);

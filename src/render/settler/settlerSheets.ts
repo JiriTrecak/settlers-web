@@ -28,6 +28,7 @@ const CARRY: Record<MovableType, readonly CarryKind[]> = {
   forester: ["tree"],
   lumberjack: ["trunk"],
   sawmiller: ["trunk", "plank"],
+  stonecutter: ["stone"],
 };
 
 export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
@@ -40,7 +41,8 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const sawmiller = (await loadUnit(sprites, "sawmiller", CARRY.sawmiller)) ?? bearer;
     const bricklayer = (await loadUnit(sprites, "bricklayer", CARRY.bricklayer)) ?? bearer;
     const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
-    return { bearer, lumberjack, sawmiller, bricklayer, forester };
+    const stonecutter = (await loadUnit(sprites, "stonecutter", CARRY.stonecutter)) ?? bearer;
+    return { bearer, lumberjack, sawmiller, bricklayer, forester, stonecutter };
   } catch {
     return null;
   }
@@ -60,7 +62,12 @@ async function loadUnit(sprites: CatalogSprite[], profession: string, goods: rea
     if (idle[dir].length === 0) idle[dir] = walk[dir].slice(0, 1);
     chop[dir] = await loadGroup(sprites, `${root}/action1/none/${dir}`);
     if (chop[dir].length === 0) chop[dir] = idle[dir];
-    pickup[dir] = await loadGroup(sprites, `${root}/bend/trunk/${dir}`);
+    pickup[dir] = [];
+    for (const g of goods) {
+      pickup[dir] = await loadGroup(sprites, `${root}/bend/${g}/${dir}`);
+      if (pickup[dir].length > 0) break;
+    }
+    if (pickup[dir].length === 0) pickup[dir] = await loadGroup(sprites, `${root}/bend/trunk/${dir}`);
     if (pickup[dir].length === 0) pickup[dir] = await loadGroup(sprites, `${root}/bend/none/${dir}`);
     if (pickup[dir].length === 0) pickup[dir] = idle[dir];
   }

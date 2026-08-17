@@ -5,6 +5,7 @@ import { bricklayer } from "./bricklayer";
 import { forester } from "./forester";
 import { lumberjack } from "./lumberjack";
 import { sawmiller } from "./sawmiller";
+import { stonecutter } from "./stonecutter";
 
 export const settlers = {
   bearer,
@@ -12,6 +13,7 @@ export const settlers = {
   forester,
   lumberjack,
   sawmiller,
+  stonecutter,
 } as const;
 
 export type SettlerKind = keyof typeof settlers;

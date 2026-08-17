@@ -10,11 +10,11 @@ Read these when you need the rules, timings, and “what does the player actuall
 | [terrain.md](terrain.md) | Grid, landscape, height, iso, walkability, maps, waves, ownership |
 | [building.md](building.md) | Footprints, place → construct → occupy, flags, houses |
 | [settlers.md](settlers.md) | Units, pathing, occupancy, idle flock, jobs |
-| [economy.md](economy.md) | Colony kit, stacks, bearer hauling, wood chain |
+| [economy.md](economy.md) | Colony kit, stacks, bearer hauling, wood + stone |
 
 ## In play now
 
-Roman lumberjack / forester / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; you build only on that land. Border posts on the rim. No flatten, no fog, no combat.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Trees grow. HQ occupies a radius-40 disk; you build only on that land. Border posts on the rim. No flatten, no fog, no combat.
 
 ## Not yet
 

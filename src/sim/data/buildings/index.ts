@@ -3,6 +3,7 @@ import { forester } from "./forester";
 import { lumberjack } from "./lumberjack";
 import { sawmill } from "./sawmill";
 import { small_livinghouse } from "./small_livinghouse";
+import { stonecutter } from "./stonecutter";
 import { tower } from "./tower";
 
 export const buildings = {
@@ -10,6 +11,7 @@ export const buildings = {
   lumberjack,
   sawmill,
   small_livinghouse,
+  stonecutter,
   tower,
 } as const;
 

@@ -2,7 +2,7 @@
 
 A building is an origin cell plus a footprint from its def. All currently playable huts are Roman.
 
-Placeable from the strip: lumberjack, forester, sawmill, small house. Tower is match-start HQ only (same placement rules if you stamp one in tests).
+Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house. Tower is match-start HQ only (same placement rules if you stamp one in tests).
 
 ## Footprint
 
@@ -43,6 +43,7 @@ Each hut lists plank/stone piles and how many items each pile needs:
 |---|---:|---:|---:|---:|---:|
 | Lumberjack | 2 | 2 | 4 | 48 s | 24 s |
 | Forester | 3 | 1 | 4 | 48 s | 24 s |
+| Stonecutter | 2 | 3 | 5 | 60 s | 30 s |
 | Small house | 2 | 3 | 5 | 60 s | 30 s |
 | Tower | 2 | 3 | 5 | 60 s | 30 s |
 | Sawmill | 3 | 4 | 7 | 84 s | 42 s |
@@ -87,6 +88,7 @@ The hut is a workplace + stack slots + a work radius. The **cycle** lives on the
 |---|---|---:|---|---|
 | Lumberjack | lumberjack | 30 | trunk | — |
 | Forester | forester | 18 | — | — |
+| Stonecutter | stonecutter | 20 | stone | — |
 | Sawmill | sawmiller | 0 | plank | trunk |
 
 Door, flag, bricklayer spots, construction piles, work spot (sawmill) are all relative points on the def.
