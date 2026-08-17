@@ -32,6 +32,8 @@ export type MovableView = {
   material: MovableMaterial;
   job: Job["type"] | null;
   workplaceId: number | null;
+  /** Hidden in the workplace. Still in the unit list; not on a tile. */
+  inside: boolean;
 };
 
 export class Movable {
@@ -48,8 +50,9 @@ export class Movable {
   job: Job | null = null;
   workElapsed = 0;
   material: MovableMaterial = "none";
-  /** Idle ticks left at the hut door before the next search. */
+  /** Idle ticks left inside the hut before the next search. */
   restLeft = 0;
+  inside = false;
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
@@ -90,6 +93,7 @@ export class Movable {
       material: this.material,
       job: this.job?.type ?? null,
       workplaceId: this.workplaceId,
+      inside: this.inside,
     };
   }
 
@@ -103,16 +107,32 @@ export class Movable {
     this.pathTo(grid, to, blockers);
   }
 
-  /** Assign a job. Does not cancel an in-flight step. */
+  /** Hide in the workplace. Occupancy and render skip this unit until `leave`. */
+  enter(): void {
+    this.inside = true;
+    this.action = "idle";
+    this.stepping = false;
+    this.queue = [];
+    this.moveProgress = 0;
+    this.from = this.pos;
+  }
+
+  leave(): void {
+    this.inside = false;
+  }
+
+  /** Assign a job. Does not cancel an in-flight step. Pops out of the hut. */
   assignJob(job: Job): void {
+    this.leave();
     this.job = job;
     this.workElapsed = 0;
     this.queue = [];
     if (this.action === "work") this.action = "idle";
   }
 
-  /** Queue a path without touching `job`. Current step still finishes. */
+  /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. */
   pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): void {
+    this.leave();
     const path = findPath(grid, this.pos, to, blockers);
     this.queue = path ? path.slice() : [];
     if (!this.stepping && this.action !== "work") this.startStep();
@@ -140,7 +160,7 @@ export class Movable {
   }
 
   tick(): void {
-    if (this.action === "work") return;
+    if (this.inside || this.action === "work") return;
     if (!this.stepping) {
       this.startStep();
       return;

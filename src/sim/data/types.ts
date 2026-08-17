@@ -49,10 +49,12 @@ export type SettlerDef = {
   kind: string;
   /** Tile step duration at 1×. */
   stepMs: number;
-  /** Idle at the hut door between work cycles. */
+  /** Idle inside the hut between work cycles. */
   restMs?: number;
   /** Axe / work clip length. Falls back to the shared chop duration. */
   chopMs?: number;
+  /** Last this many ms of `chopMs` play the tree-fall clip. */
+  fallMs?: number;
   /** Building `kind` this profession works, if any. */
   workplace?: string;
 };

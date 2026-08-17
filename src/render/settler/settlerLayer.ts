@@ -40,6 +40,7 @@ export class SettlerLayer {
     if (!view) return
     const seen = new Set<number>()
     for (const m of movables) {
+      if (m.inside) continue
       seen.add(m.id)
       const drawn = this.ensure(m)
       const p = visualProgress(m, alpha)

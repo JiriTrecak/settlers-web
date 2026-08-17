@@ -1,15 +1,14 @@
 /**
- * Lumberjack cycle: rest at the hut door, fell a tree in the work radius,
+ * Lumberjack cycle: rest inside the hut, fell a tree in the work radius,
  * carry the trunk, dump it on the offer stack.
  */
 import { hexDist, type GridPos } from "../../shared";
-import type { Building } from "../building/building";
 import { buildingDef } from "../data/buildings";
 import { settlerDef } from "../data/settlers";
 import type { Movable } from "../movable/movable";
 import { canDeposit } from "../object/object";
-import { isWalkable, nearestWalkable, standBeside } from "../path/path";
-import type { ProfessionContext } from "./profession";
+import { standBeside } from "../path/path";
+import { atDoor, goDoor, goHome, type ProfessionContext } from "./profession";
 
 export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
   if (m.job || m.walking) return;
@@ -25,7 +24,7 @@ export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
       m.restLeft = restTicks(ctx.tickMs);
       m.assignJob({ type: "drop", at: offer });
     } else {
-      goDoor(m, hut, ctx);
+      goHome(m, hut, ctx);
     }
     return;
   }
@@ -34,6 +33,7 @@ export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
     goDoor(m, hut, ctx);
     return;
   }
+  m.enter();
   if (m.restLeft > 0) {
     m.restLeft -= 1;
     return;
@@ -50,26 +50,6 @@ function restTicks(tickMs: number): number {
   return Math.max(0, Math.round(ms / tickMs));
 }
 
-function doorOf(hut: Building): GridPos {
-  const d = buildingDef(hut.kind).door;
-  return { x: hut.pos.x + d.dx, y: hut.pos.y + d.dy };
-}
-
-function atDoor(m: Movable, hut: Building): boolean {
-  const d = doorOf(hut);
-  return m.pos.x === d.x && m.pos.y === d.y;
-}
-
-function goDoor(m: Movable, hut: Building, ctx: ProfessionContext): void {
-  const door = doorOf(hut);
-  const stand = isWalkable(ctx.grid, door.x, door.y, ctx.blockers)
-    ? door
-    : nearestWalkable(ctx.grid, door, ctx.blockers);
-  if (!stand) return;
-  if (m.pos.x === stand.x && m.pos.y === stand.y) return;
-  m.pathTo(ctx.grid, stand, ctx.blockers);
-}
-
 function nearestTree(center: GridPos, radius: number, from: GridPos, ctx: ProfessionContext): GridPos | null {
   let best: GridPos | null = null;
   let bestD = Infinity;
@@ -78,6 +58,8 @@ function nearestTree(center: GridPos, radius: number, from: GridPos, ctx: Profes
     const at = { x: obj.x, y: obj.y };
     const d = hexDist(center.x, center.y, at.x, at.y);
     if (d > radius || d === 0) continue;
+    if ((obj.stateProgress ?? 1) < 1) continue;
+    if (chopClaimed(at, ctx.units)) continue;
     if (!standBeside(ctx.grid, at, from, ctx.blockers)) continue;
     if (d < bestD) {
       bestD = d;
@@ -85,4 +67,11 @@ function nearestTree(center: GridPos, radius: number, from: GridPos, ctx: Profes
     }
   }
   return best;
+}
+
+function chopClaimed(at: GridPos, units: readonly Movable[]): boolean {
+  for (const u of units) {
+    if (u.job?.type === "chop" && u.job.at.x === at.x && u.job.at.y === at.y) return true;
+  }
+  return false;
 }

@@ -68,7 +68,10 @@ export class World {
     const seed = at ?? { x: (this.grid.width / 2) | 0, y: (this.grid.height / 2) | 0 };
     const pos = nearestWalkable(this.grid, seed, this.blockers()) ?? seed;
     const m = new Movable(this.nextId++, kind, pos, def.stepMs, this.clock.tickMs, player, workplaceId);
-    if (def.restMs) m.restLeft = Math.max(0, Math.round(def.restMs / this.clock.tickMs));
+    if (def.restMs) {
+      m.restLeft = Math.max(0, Math.round(def.restMs / this.clock.tickMs));
+      m.enter();
+    }
     this.units.push(m);
     this.syncOcc();
     return m;
@@ -142,6 +145,7 @@ export class World {
         buildings: this.buildings,
         blockers: this.blockers(m.id),
         tickMs: this.clock.tickMs,
+        units: this.units,
       });
     }
     tickMatcher(this.units, this.buildings, this.objects);
@@ -199,6 +203,9 @@ export class World {
 
   private syncOcc(): void {
     this.occ.clear();
-    for (const m of this.units) this.occ.occupy(m.id, m.pos.x, m.pos.y);
+    for (const m of this.units) {
+      if (m.inside) continue;
+      this.occ.occupy(m.id, m.pos.x, m.pos.y);
+    }
   }
 }

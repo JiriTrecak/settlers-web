@@ -19,6 +19,9 @@ export type Job =
 /** Chop duration: 1.8s at 25ms for click-chop. Lumberjack uses `chopMs` (6s of axe loops). */
 export const CHOP_TICKS = 72;
 
+/** Default tree-fall window when the settler has no `fallMs`. */
+export const FALL_TICKS = 20;
+
 /** Bend clip is 4 frames; 8 ticks = 200ms. Pickup and drop share it. */
 export const BEND_TICKS = 8;
 export const PICKUP_TICKS = BEND_TICKS;
@@ -46,6 +49,12 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
   return 1;
 }
 
+function fallTicksOf(m: Movable, chopTicks: number): number {
+  const ms = m.type === "lumberjack" ? settlerDef("lumberjack").fallMs : undefined;
+  const ticks = ms != null ? Math.max(1, Math.round(ms / 25)) : FALL_TICKS;
+  return Math.min(ticks, chopTicks);
+}
+
 export function tickJob(m: Movable, ctx: JobContext): void {
   const job = m.job;
   if (!job) return;
@@ -69,7 +78,7 @@ function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
     m.workElapsed = 0;
   }
   m.workElapsed += 1;
-  const fallTicks = Math.min(20, ticks);
+  const fallTicks = fallTicksOf(m, ticks);
   tree.stateProgress = m.workElapsed + fallTicks >= ticks ? Math.max(0, (ticks - m.workElapsed) / fallTicks) : 1;
   if (m.workElapsed >= ticks) {
     ctx.objects.remove(target.x, target.y);
