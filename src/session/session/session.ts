@@ -18,12 +18,13 @@ import {
   type MapView,
   type MapDecoration,
   type MapStart,
+  type BuildingKind,
 } from "../../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, BuildMenu, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 
@@ -70,9 +71,11 @@ export class Session {
   private selected: GridPos | null = null;
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
+  private buildMenu: BuildMenu | null = null;
   private input: MapInput | null = null;
   private acc = 0;
   private speed: GameSpeed = 1;
+  private buildKind: BuildingKind | null = null;
 
   constructor(
     private readonly pixi: Application,
@@ -98,6 +101,11 @@ export class Session {
     this.speedControl = new SpeedControl(this.overlay, {
       onSpeed: (speed) => {
         this.speed = speed;
+      },
+    });
+    this.buildMenu = new BuildMenu(this.overlay, {
+      onKind: (kind) => {
+        this.buildKind = kind;
       },
     });
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
@@ -157,10 +165,12 @@ export class Session {
     this.input?.destroy();
     this.minimap?.destroy();
     this.speedControl?.destroy();
+    this.buildMenu?.destroy();
     this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
     this.speedControl = null;
+    this.buildMenu = null;
     this.renderer = null;
     this.world = null;
     this.view = null;
@@ -192,7 +202,7 @@ export class Session {
     });
   }
 
-  private setSelect(pos: GridPos | null, shift = false): void {
+  private setSelect(pos: GridPos | null, _shift = false): void {
     if (!this.renderer || !this.world || !pos) return;
     const hut = this.world.buildings.at(pos.x, pos.y);
     if (hut) {
@@ -200,8 +210,8 @@ export class Session {
       this.renderer.highlight(this.selected, "select");
       return;
     }
-    const kind = shift ? "sawmill" : "lumberjack";
-    if (!this.world.canPlaceBuilding(kind, pos)) return;
+    const kind = this.buildKind;
+    if (!kind || !this.world.canPlaceBuilding(kind, pos)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
     this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });

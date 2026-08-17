@@ -46,5 +46,6 @@ export { CHOP_TICKS, DROP_TICKS, PICKUP_TICKS, tickJob, workTicksOf, type Job, t
 export { tickProfession, type ProfessionContext } from "./profession/profession";
 export { placeColony } from "./economy/startKit";
 export { tickMatcher } from "./economy/matcher";
+export { tickConstruction, type ConstructionContext } from "./economy/construction";
 export type { Goods } from "./data/types";
 export { findPath, isWalkable, nearestWalkable, standBeside, type Blockers } from "./path/path";

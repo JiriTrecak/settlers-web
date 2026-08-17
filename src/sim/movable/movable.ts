@@ -4,7 +4,7 @@
  */
 import { directionFromDelta, type Direction, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
-import type { SettlerKind } from "../data/settlers";
+import { settlerDef, type SettlerKind } from "../data/settlers";
 import type { Job } from "../job/job";
 import { workTicksOf } from "../job/job";
 import type { MapGrid } from "../map/mapGrid";
@@ -38,14 +38,14 @@ export type MovableView = {
 
 export class Movable {
   readonly id: number;
-  readonly type: MovableType;
-  readonly workplaceId: number | null;
+  type: MovableType;
+  workplaceId: number | null;
   pos: GridPos;
   from: GridPos;
   direction: Direction = "e";
   action: MovableAction = "idle";
   moveProgress = 0;
-  readonly stepTicks: number;
+  stepTicks: number;
   readonly player: number;
   job: Job | null = null;
   workElapsed = 0;
@@ -119,6 +119,26 @@ export class Movable {
 
   leave(): void {
     this.inside = false;
+  }
+
+  /** Bearer → workplace profession. Enters the hut if that def has `restMs`. */
+  become(kind: SettlerKind, workplaceId: number, tickMs: number): void {
+    this.type = kind;
+    this.workplaceId = workplaceId;
+    const def = settlerDef(kind);
+    this.stepTicks = Math.max(1, Math.round(def.stepMs / tickMs));
+    this.job = null;
+    this.workElapsed = 0;
+    this.material = "none";
+    this.queue = [];
+    this.stepping = false;
+    this.action = "idle";
+    this.moveProgress = 0;
+    this.from = this.pos;
+    if (def.restMs) {
+      this.restLeft = Math.max(0, Math.round(def.restMs / tickMs));
+      this.enter();
+    }
   }
 
   /** Assign a job. Does not cancel an in-flight step. Pops out of the hut. */

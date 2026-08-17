@@ -21,7 +21,7 @@ export class Hud {
 
     this.help = document.createElement("div");
     this.help.className = "hud-help";
-    this.help.textContent = "click lumberjack  ·  shift-click sawmill  ·  they haul trunks  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc menu";
+    this.help.textContent = "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc menu";
 
     this.leave = document.createElement("button");
     this.leave.type = "button";

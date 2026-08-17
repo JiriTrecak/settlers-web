@@ -1,9 +1,10 @@
 /**
  * Closest idle bearer to the closest offer, assigned to a request with room.
  * One global matcher — no partitions.
+ * Built huts use `requestStacks`; plans use `constructionStacks` (capped at `required`).
  */
 import { hexDist, type GridPos } from "../../shared";
-import type { BuildingGrid } from "../building/building";
+import type { Building, BuildingGrid } from "../building/building";
 import { buildingDef } from "../data/buildings";
 import type { Goods } from "../data/types";
 import type { Movable } from "../movable/movable";
@@ -18,7 +19,7 @@ export function tickMatcher(units: readonly Movable[], buildings: BuildingGrid, 
   for (const req of requestsOf(buildings, objects)) {
     if (jobless.length === 0) return;
     const inbound = inFlightTo(units, req.at, req.material);
-    const room = STACK_SIZE - stackCount(objects, req.at, req.material) - inbound;
+    const room = req.need - stackCount(objects, req.at, req.material) - inbound;
     if (room <= 0) continue;
     const offer = closestOffer(objects, req, requestKeys, units);
     if (!offer) continue;
@@ -28,17 +29,23 @@ export function tickMatcher(units: readonly Movable[], buildings: BuildingGrid, 
   }
 }
 
-type Slot = { at: GridPos; material: Goods };
+type Slot = { at: GridPos; material: Goods; need: number };
+
+function requestSlots(b: Building): { dx: number; dy: number; material: Goods; required?: number }[] {
+  const def = buildingDef(b.kind);
+  if (b.state === "plan") return [...def.constructionStacks];
+  if (b.state === "built") return [...def.requestStacks];
+  return [];
+}
 
 function requestsOf(buildings: BuildingGrid, objects: ObjectGrid): Slot[] {
   const out: Slot[] = [];
   for (const b of buildings.all()) {
-    const def = buildingDef(b.kind);
-    for (const slot of def.requestStacks) {
+    for (const slot of requestSlots(b)) {
       const at = { x: b.pos.x + slot.dx, y: b.pos.y + slot.dy };
       const cur = objects.get(at.x, at.y);
       if (cur && (cur.kind !== "stack" || cur.material !== slot.material)) continue;
-      out.push({ at, material: slot.material });
+      out.push({ at, material: slot.material, need: slot.required ?? STACK_SIZE });
     }
   }
   return out;
@@ -47,8 +54,7 @@ function requestsOf(buildings: BuildingGrid, objects: ObjectGrid): Slot[] {
 function requestTiles(buildings: BuildingGrid): Set<string> {
   const keys = new Set<string>();
   for (const b of buildings.all()) {
-    const def = buildingDef(b.kind);
-    for (const slot of def.requestStacks) {
+    for (const slot of requestSlots(b)) {
       keys.add(`${b.pos.x + slot.dx},${b.pos.y + slot.dy},${slot.material}`);
     }
   }

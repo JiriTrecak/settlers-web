@@ -3,11 +3,12 @@
  */
 import { HEX_DELTAS, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
-import { BuildingGrid, canPlace, type BuildingView } from "../building/building";
+import { BuildingGrid, canPlace, type Building, type BuildingView } from "../building/building";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import { settlers, settlerDef, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
+import { tickConstruction } from "../economy/construction";
 import type { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
 import { Movable, type MovableView } from "../movable/movable";
@@ -80,13 +81,15 @@ export class World {
   placeBuilding(kind: BuildingKind, at: GridPos, player = 0, clear = false) {
     const hut = this.buildings.place(kind, at, player, this.grid, this.objects, clear);
     if (!hut) return undefined;
-    const worker = buildingDef(kind).worker;
-    if (worker && worker in settlers) {
-      const door = buildingDef(kind).door;
-      this.spawnSettler(worker as SettlerKind, { x: at.x + door.dx, y: at.y + door.dy }, player, hut.id);
-    }
-    const def = buildingDef(kind);
-    if ("beds" in def && def.beds) hut.produceWait = Math.max(1, Math.round((def.produceMs ?? 2000) / this.clock.tickMs));
+    this.staffFinished(hut);
+    return hut;
+  }
+
+  /** Scaffold. Matcher hauls `constructionStacks`; a bearer occupies once built. */
+  placePlan(kind: BuildingKind, at: GridPos, player = 0) {
+    const hut = this.buildings.place(kind, at, player, this.grid, this.objects);
+    if (!hut) return undefined;
+    hut.state = "plan";
     return hut;
   }
 
@@ -97,7 +100,7 @@ export class World {
   dispatch(action: Action): void {
     if (action.type === "noop") return;
     if (action.type === "placeBuilding") {
-      this.placeBuilding(action.kind, action.at, action.player ?? 0);
+      this.placePlan(action.kind, action.at, action.player ?? 0);
       return;
     }
     const m = this.units.find((u) => u.id === action.id);
@@ -111,7 +114,7 @@ export class World {
       const tree = this.objects.get(action.at.x, action.at.y);
       if (!tree || tree.kind !== "tree") return;
       m.assignJob({ type: "chop", at: action.at });
-      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      tickJob(m, this.jobCtx(m.id));
       this.syncOcc();
       return;
     }
@@ -119,7 +122,7 @@ export class World {
       const stack = this.objects.get(action.at.x, action.at.y);
       if (!stack || stack.kind !== "stack" || m.material !== "none") return;
       m.assignJob({ type: "pickup", at: action.at });
-      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      tickJob(m, this.jobCtx(m.id));
       this.syncOcc();
       return;
     }
@@ -129,7 +132,7 @@ export class World {
       if (!isWalkable(this.grid, action.at.x, action.at.y, this.blockers())) return;
       if (this.occ.idAt(action.at.x, action.at.y) !== 0) return;
       m.assignJob({ type: "drop", at: action.at });
-      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      tickJob(m, this.jobCtx(m.id));
       this.syncOcc();
     }
   }
@@ -148,9 +151,17 @@ export class World {
         units: this.units,
       });
     }
+    tickConstruction({
+      units: this.units,
+      buildings: this.buildings,
+      objects: this.objects,
+      grid: this.grid,
+      blockers: (ignoreId) => this.blockers(ignoreId),
+      tickMs: this.clock.tickMs,
+    });
     tickMatcher(this.units, this.buildings, this.objects);
     for (const m of this.units) {
-      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+      tickJob(m, this.jobCtx(m.id));
     }
     this.syncOcc();
   }
@@ -171,7 +182,7 @@ export class World {
   private tickHouses(): void {
     for (const b of this.buildings.all()) {
       const def = buildingDef(b.kind);
-      if (!("beds" in def) || !def.beds || b.produced >= def.beds) continue;
+      if (!("beds" in def) || !def.beds || b.state !== "built" || b.produced >= def.beds) continue;
       if (b.produceWait > 0) {
         b.produceWait -= 1;
         continue;
@@ -190,6 +201,20 @@ export class World {
         }
       }
     }
+  }
+
+  private staffFinished(hut: Building): void {
+    const def = buildingDef(hut.kind);
+    const worker = def.worker;
+    if (worker && worker in settlers) {
+      const door = def.door;
+      this.spawnSettler(worker as SettlerKind, { x: hut.pos.x + door.dx, y: hut.pos.y + door.dy }, hut.player, hut.id);
+    }
+    if ("beds" in def && def.beds) hut.produceWait = Math.max(1, Math.round((def.produceMs ?? 2000) / this.clock.tickMs));
+  }
+
+  private jobCtx(id: number) {
+    return { grid: this.grid, objects: this.objects, blockers: this.blockers(id), tickMs: this.clock.tickMs };
   }
 
   private blockers(ignoreId = 0): Blockers {

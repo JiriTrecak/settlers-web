@@ -3,7 +3,7 @@
  */
 import type { GridPos } from "../../shared";
 import type { Goods } from "../data/types";
-import { settlerDef } from "../data/settlers";
+import { settlerDef, type SettlerKind } from "../data/settlers";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
@@ -14,7 +14,8 @@ export type Job =
   | { type: "pickup"; at: GridPos }
   | { type: "drop"; at: GridPos }
   | { type: "deliver"; material: Goods; from: GridPos; to: GridPos }
-  | { type: "saw"; at: GridPos };
+  | { type: "saw"; at: GridPos }
+  | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind };
 
 /** Chop duration: 1.8s at 25ms for click-chop. Lumberjack uses `chopMs` (6s of axe loops). */
 export const CHOP_TICKS = 72;
@@ -31,6 +32,7 @@ export type JobContext = {
   grid: MapGrid;
   objects: ObjectGrid;
   blockers: Blockers;
+  tickMs: number;
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {
@@ -62,6 +64,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "pickup") tickPickup(m, job.at, ctx, true);
   else if (job.type === "drop") tickDrop(m, job.at, ctx, true);
   else if (job.type === "deliver") tickDeliver(m, job, ctx);
+  else if (job.type === "occupy") tickOccupy(m, job, ctx);
   else tickSaw(m, job.at, ctx);
 }
 
@@ -177,6 +180,16 @@ function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
     m.material = "plank";
     m.idle();
   }
+}
+
+function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    if (m.walking) return;
+    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    return;
+  }
+  if (m.walking) return;
+  m.become(job.worker, job.hutId, ctx.tickMs);
 }
 
 /** Face the tile and work, or path to a free neighbor. `idle()` if boxed in. */

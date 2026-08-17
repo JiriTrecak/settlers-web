@@ -14,3 +14,4 @@ export {
   type MinimapCamera,
 } from "./minimap/minimap";
 export { GAME_SPEEDS, SpeedControl, isGameSpeed, type GameSpeed } from "./speed/speed";
+export { BuildMenu, PLACEABLE } from "./build/build";

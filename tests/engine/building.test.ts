@@ -47,7 +47,7 @@ describe("buildings", () => {
   it("placeBuilding action does not need a pre-existing unit", () => {
     const world = new World(grass(24, 24));
     world.dispatch({ type: "placeBuilding", kind: "lumberjack", at: { x: 10, y: 10 } });
-    expect(world.view().buildings[0]).toMatchObject({ kind: "lumberjack", x: 10, y: 10 });
-    expect(world.view().movables[0]).toMatchObject({ type: "lumberjack", workplaceId: 1 });
+    expect(world.view().buildings[0]).toMatchObject({ kind: "lumberjack", x: 10, y: 10, state: "plan" });
+    expect(world.view().movables).toEqual([]);
   });
 });

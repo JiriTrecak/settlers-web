@@ -1,13 +1,13 @@
 /**
  * Buildings on the map. Footprint from the def: `blocked` is unwalkable,
- * `protected` forbids overlapping another hut. Instant-built (no flatten / bricklayers).
+ * `protected` forbids overlapping another hut. Plans wait for hauled goods; `built` is finished.
  */
 import type { GridPos, LandscapeType } from "../../shared";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
 
-export type BuildingState = "built";
+export type BuildingState = "plan" | "built";
 
 export type BuildingView = {
   id: number;
@@ -97,7 +97,8 @@ export class BuildingGrid {
   }
 
   /**
-   * Instant-built hut. `clear` removes objects on the protected tiles (match-start HQ).
+   * Stamps the footprint. Caller sets `state` (`plan` vs finished).
+   * `clear` removes objects on the protected tiles (match-start HQ).
    * Returns undefined if the footprint is illegal.
    */
   place(
