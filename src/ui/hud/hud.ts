@@ -21,7 +21,7 @@ export class Hud {
 
     this.help = document.createElement("div");
     this.help.className = "hud-help";
-    this.help.textContent = "drag / WASD pan  ·  wheel zoom  ·  minimap drag  ·  click tile  ·  space fit  ·  esc menu";
+    this.help.textContent = "click to walk  ·  drag / WASD pan  ·  wheel zoom  ·  minimap  ·  space fit  ·  esc menu";
 
     this.leave = document.createElement("button");
     this.leave.type = "button";

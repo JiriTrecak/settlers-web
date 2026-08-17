@@ -78,7 +78,7 @@ Culling: only upload / draw the camera frustum. Phase 1 can draw all of a small 
 - Direction: 6 framesets. Lookup via `settlerSprites`.
 - Z-order: iso depth `x + y` (plus a tiny type bias so units sit in front of the tile they're on). Re-sort the sprite layer when things move; don't z-sort the landscape mesh.
 
-Torso/shadow: S3 settlers are layered (body + torso tint + shadow). Phase 4 can be body-only. Phase 5+ composite the three layers.
+Torso/shadow: S3 settlers are layered (body + torso tint + shadow). Torso is grayscale × player color.
 
 Trees carry `sheet` (0–6). Stones use `seqLength - capacity - 1`. Waves come from sim's water lattice. Missing decoration catalog → layer no-ops.
 

@@ -6,15 +6,15 @@ import {
   decorationsFromDumpedMap,
   gridFromDumpedMap,
   isDumpedMap,
-  type DumpedMap,
+  startsFromDumpedMap,
   type MapCatalogEntry,
+  type MapStart,
 } from "../../sim/map/dumpedMap";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapGrid } from "../../sim/map/mapGrid";
 import type { MapOption } from "../../ui/menu/menu";
 
-export type { MapCatalogEntry, MapGroup } from "../../sim/map/dumpedMap";
-export type { DumpedMap };
+export type { DumpedMap, MapCatalogEntry, MapGroup } from "../../sim/map/dumpedMap";
 
 export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   try {
@@ -30,7 +30,9 @@ export async function fetchMapCatalog(): Promise<MapCatalogEntry[]> {
   }
 }
 
-export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; decorations: MapDecoration[] }> {
+export async function fetchDumpedMap(
+  file: string,
+): Promise<{ grid: MapGrid; decorations: MapDecoration[]; starts: MapStart[] }> {
   // Nested paths in the catalog (`tutorial/foo.json`) need each segment encoded.
   const path = file
     .split("/")
@@ -40,7 +42,11 @@ export async function fetchDumpedMap(file: string): Promise<{ grid: MapGrid; dec
   if (!res.ok) throw new Error(`map ${file}: ${res.status}`);
   const data: unknown = await res.json();
   if (!isDumpedMap(data)) throw new Error(`map ${file}: bad dump`);
-  return { grid: gridFromDumpedMap(data), decorations: decorationsFromDumpedMap(data) };
+  return {
+    grid: gridFromDumpedMap(data),
+    decorations: decorationsFromDumpedMap(data),
+    starts: startsFromDumpedMap(data),
+  };
 }
 
 export function mapPickerOptions(catalog: readonly MapCatalogEntry[]): MapOption[] {

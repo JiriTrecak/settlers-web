@@ -58,7 +58,7 @@ That's it. No coverage threshold.
 
 - Original map crypt/segment reader against a tiny self-made fixture
 - Landscape/height arrays have expected `width * height`
-- Dumped maps: trees carry `sheet`, stones carry `capacity`
+- Dumped maps: trees carry `sheet`, stones carry `capacity`, `starts` from player-info
 
 Do not check in Ubisoft/Blue Byte `.map` files.
 

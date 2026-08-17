@@ -1,3 +1,4 @@
+/** Parsed .map → engine JSON. Landscape ids / heights / objects decoded; player starts kept. */
 import { treeSheetAt } from "../../src/sim/decorations/decorations";
 import type { DumpedMap } from "../../src/sim/map/dumpedMap";
 import { ORIGINAL_HEIGHT_SCALE, originalLandscapeType } from "./landscape";
@@ -24,5 +25,12 @@ export function toDumpedMap(map: ParsedOriginalMap): DumpedMap {
       if (capacity !== null) stones.push({ x, y, capacity });
     }
   }
-  return { width, heights, landscape, trees, stones };
+  return {
+    width,
+    heights,
+    landscape,
+    trees,
+    stones,
+    starts: map.players.map((p) => ({ x: p.startX, y: p.startY })),
+  };
 }

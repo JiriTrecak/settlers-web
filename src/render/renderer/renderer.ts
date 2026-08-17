@@ -6,16 +6,20 @@ import { Application, Container, Graphics, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapView } from "../../sim/map/mapView";
+import type { ViewSnapshot } from "../../sim/world/world";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
 import type { DecorationSheets } from "../decoration/decorationSheets";
 import { buildLandscapeGeometry } from "../landscape/landscapeGeometry";
 import { createLandscapeMesh } from "../landscape/landscapeMesh";
+import { SettlerLayer } from "../settler/settlerLayer";
+import type { SettlerSheets } from "../settler/settlerSheets";
 
 export class Renderer {
   readonly camera = new Camera();
   readonly world = new Container();
   private readonly decorations = new DecorationLayer();
+  private readonly settlers = new SettlerLayer();
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
@@ -30,7 +34,7 @@ export class Renderer {
     this.select.eventMode = "none";
     this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.decorations.root, this.select, this.hover);
+    this.world.addChild(this.decorations.root, this.settlers.root, this.select, this.hover);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -42,17 +46,29 @@ export class Renderer {
     this.decorations.setSheets(sheets);
   }
 
-  setView(view: MapView, objects: readonly MapDecoration[] = this.objects): void {
+  setSettlerSheets(sheets: SettlerSheets | null): void {
+    this.settlers.setSheets(sheets);
+  }
+
+  setView(view: MapView, objects: readonly MapDecoration[] = this.objects, fit = true): void {
     this.view = view;
     this.objects = objects;
     const mesh = createLandscapeMesh(buildLandscapeGeometry(view), this.atlas);
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.decorations.root, this.select, this.hover);
+    this.world.addChild(mesh, this.decorations.root, this.settlers.root, this.select, this.hover);
     this.decorations.setDecorations(view, objects);
+    this.settlers.setView(view);
 
-    // Fit the diamond AABB of the four map corners, then apply pan/zoom.
+    if (fit) this.fitCamera();
+    this.applyCamera();
+  }
+
+  /** Diamond AABB of the four map corners. Space / HUD fit calls this. */
+  fitCamera(): void {
+    const view = this.view;
+    if (!view) return;
     const w = view.width;
     const h = view.height;
     const corners = [
@@ -76,6 +92,11 @@ export class Renderer {
 
   tick(nowMs: number): void {
     this.decorations.tick(nowMs);
+  }
+
+  /** Movables from the last sim snapshot. `alpha` is leftover ms into the next tick. */
+  draw(snapshot: ViewSnapshot, alpha: number): void {
+    this.settlers.draw(snapshot.movables, alpha);
   }
 
   applyCamera(): void {

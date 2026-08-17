@@ -1,4 +1,4 @@
-/** Public UI surface: screens, HUD, minimap math. */
+/** Public UI surface: screens, HUD, minimap, speed. */
 export type { HudState } from "./hud/hud";
 export { Hud } from "./hud/hud";
 export { GameScreen, ScreenHost } from "./screen/screen";
@@ -13,3 +13,4 @@ export {
   viewportMinimapQuad,
   type MinimapCamera,
 } from "./minimap/minimap";
+export { GAME_SPEEDS, SpeedControl, isGameSpeed, type GameSpeed } from "./speed/speed";

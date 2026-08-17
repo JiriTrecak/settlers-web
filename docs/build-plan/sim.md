@@ -98,7 +98,7 @@ Keep that table. Pathfinding and building shapes depend on it.
 
 ## Maps
 
-Engine loads dumped JSON (`DumpedMap`): landscape type names, scaled heights, trees with `sheet`, stones with `capacity`. Original `.map` parsing is `original_conv` only.
+Engine loads dumped JSON (`DumpedMap`): landscape type names, scaled heights, trees with `sheet`, stones with `capacity`, `starts` from the original player-info block. Original `.map` parsing is `original_conv` only.
 
 Waves are generated at load from water neighbors (`waveDecorations`). Trees/stones come from the dump.
 

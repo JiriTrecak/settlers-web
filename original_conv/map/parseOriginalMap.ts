@@ -13,6 +13,7 @@ const PART = {
 
 export type OriginalMapPlayer = {
   name: string;
+  /** Grid cell of that player's HQ / first tower. */
   startX: number;
   startY: number;
   nation: number;

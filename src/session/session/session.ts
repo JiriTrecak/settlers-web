@@ -9,12 +9,17 @@ import {
   generateMap,
   mapViewFromGrid,
   allDecorations,
+  World,
+  isWalkable,
+  startForPlayer,
   type MapView,
   type MapDecoration,
+  type MapStart,
 } from "../../sim";
-import { Renderer, loadLandscapeAtlas, loadDecorationSheets } from "../../render";
+import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadSettlerSheets } from "../../render";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
-import { Minimap, type HudState } from "../../ui";
+import type { SettlerSheets } from "../../render/settler/settlerSheets";
+import { Minimap, SpeedControl, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 
@@ -26,27 +31,40 @@ export type SessionHooks = {
 export type SessionConfig = {
   mapId: string;
   catalog: readonly MapCatalogEntry[];
+  player: number;
   hooks: SessionHooks;
 };
 
-/** Atlas + decoration sheets are shared across matches in one page load. */
-let graphics: Promise<{ atlas: Texture | null; sheets: DecorationSheets | null }> | null = null;
+/** Atlas + decoration + settler sheets are shared across matches in one page load. */
+let graphics: Promise<{
+  atlas: Texture | null;
+  sheets: DecorationSheets | null;
+  settlers: SettlerSheets | null;
+}> | null = null;
 
-function loadGraphics(): Promise<{ atlas: Texture | null; sheets: DecorationSheets | null }> {
-  graphics ??= Promise.all([loadLandscapeAtlas(), loadDecorationSheets()]).then(([atlas, sheets]) => ({
-    atlas,
-    sheets,
-  }));
+function loadGraphics(): Promise<{
+  atlas: Texture | null;
+  sheets: DecorationSheets | null;
+  settlers: SettlerSheets | null;
+}> {
+  graphics ??= Promise.all([loadLandscapeAtlas(), loadDecorationSheets(), loadSettlerSheets()]).then(
+    ([atlas, sheets, settlers]) => ({ atlas, sheets, settlers }),
+  );
   return graphics;
 }
 
 export class Session {
   readonly mapId: string;
   private renderer: Renderer | null = null;
+  private world: World | null = null;
   private view: MapView | null = null;
   private selected: GridPos | null = null;
   private minimap: Minimap | null = null;
+  private speedControl: SpeedControl | null = null;
   private input: MapInput | null = null;
+  private heroId = 0;
+  private acc = 0;
+  private speed: GameSpeed = 1;
 
   constructor(
     private readonly pixi: Application,
@@ -59,13 +77,19 @@ export class Session {
   async start(): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
-    const { atlas, sheets } = await loadGraphics();
+    const { atlas, sheets, settlers } = await loadGraphics();
     renderer.setAtlas(atlas);
     renderer.setSheets(sheets);
+    renderer.setSettlerSheets(settlers);
 
     // Widgets own their input; we only subscribe.
     this.minimap = new Minimap(this.overlay, {
       onLookAt: (x, y) => this.lookAt(x, y),
+    });
+    this.speedControl = new SpeedControl(this.overlay, {
+      onSpeed: (speed) => {
+        this.speed = speed;
+      },
     });
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
       pick: (screen) => renderer.pick(screen),
@@ -76,11 +100,19 @@ export class Session {
       onLeave: () => this.config.hooks.onLeave(),
     });
 
-    const { grid, decorations } = await this.loadGrid(this.mapId);
+    const { grid, decorations, starts } = await this.loadGrid(this.mapId);
     if (!this.renderer) return;
+    const world = new World(grid);
+    this.world = world;
+    const hero = world.spawnBearer(startForPlayer(starts, 0), this.config.player);
+    this.heroId = hero.id;
     this.view = mapViewFromGrid(grid);
-    this.renderer.setView(this.view, decorations);
+    this.renderer.setView(this.view, decorations, false);
     this.minimap.setView(this.view);
+    // Native 1× on the first HQ. Space still fits the whole map.
+    this.renderer.camera.zoom = 1;
+    this.lookAt(hero.pos.x, hero.pos.y);
+    this.renderer.draw(world.view(), 0);
     this.config.hooks.onHud({
       cursor: null,
       landscape: null,
@@ -91,7 +123,20 @@ export class Session {
 
   tick(dtMs: number, nowMs: number): void {
     const renderer = this.renderer;
-    if (!renderer) return;
+    const world = this.world;
+    if (!renderer || !world) return;
+    this.acc += dtMs * this.speed;
+    const step = world.clock.tickMs;
+    // 8 ticks/frame at 1×, scaled so 8× can still catch a hitch without spiraling.
+    const cap = 8 * this.speed;
+    let n = 0;
+    while (this.acc >= step && n < cap) {
+      this.acc -= step;
+      world.tick();
+      n++;
+    }
+    if (n >= cap) this.acc = 0;
+    renderer.draw(world.view(), this.acc / step);
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
     if (this.view && this.minimap) {
@@ -102,11 +147,15 @@ export class Session {
   stop(): void {
     this.input?.destroy();
     this.minimap?.destroy();
+    this.speedControl?.destroy();
     this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
+    this.speedControl = null;
     this.renderer = null;
+    this.world = null;
     this.view = null;
+    this.acc = 0;
   }
 
   /** Minimap click → center camera on that grid cell. */
@@ -116,7 +165,7 @@ export class Session {
     if (!view || !renderer) return;
     const x = Math.min(Math.max(gx, 0), Math.max(0, view.width - 1));
     const y = Math.min(Math.max(gy, 0), Math.max(0, view.height - 1));
-    const world = gridToWorld(x, y);
+    const world = gridToWorld(x, y, view.heightAt(x, y));
     renderer.camera.lookAt(world.x, world.y, this.pixi.renderer.width, this.pixi.renderer.height);
     this.syncCamera();
   }
@@ -135,9 +184,11 @@ export class Session {
   }
 
   private setSelect(pos: GridPos | null): void {
-    if (!this.renderer) return;
+    if (!this.renderer || !this.world || !pos) return;
+    if (!isWalkable(this.world.grid, pos.x, pos.y)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
+    this.world.dispatch({ type: "moveTo", id: this.heroId, to: pos });
   }
 
   private syncCamera(): void {
@@ -149,17 +200,19 @@ export class Session {
 
   private fit(): void {
     if (!this.view || !this.renderer) return;
-    this.renderer.setView(this.view);
-    this.setSelect(null);
+    this.renderer.fitCamera();
+    this.selected = null;
     this.renderer.highlight(null, "select");
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */
-  private async loadGrid(id: string): Promise<{ grid: ReturnType<typeof generateMap>; decorations: MapDecoration[] }> {
+  private async loadGrid(
+    id: string,
+  ): Promise<{ grid: ReturnType<typeof generateMap>; decorations: MapDecoration[]; starts: MapStart[] }> {
     const procedural = MAPS.find((m) => m.id === id);
     if (procedural) {
       const grid = generateMap(procedural);
-      return { grid, decorations: allDecorations(mapViewFromGrid(grid)) };
+      return { grid, decorations: allDecorations(mapViewFromGrid(grid)), starts: [] };
     }
     const entry = this.config.catalog.find((m) => m.id === id);
     if (!entry) throw new Error(`unknown map ${id}`);
@@ -167,6 +220,7 @@ export class Session {
     return {
       grid: dumped.grid,
       decorations: allDecorations(mapViewFromGrid(dumped.grid), dumped.decorations),
+      starts: dumped.starts,
     };
   }
 }

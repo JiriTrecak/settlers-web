@@ -1,6 +1,7 @@
 /**
- * Map list. Picking one asks the lobby to start a session.
+ * Map list. Picking one asks the lobby to start a session with the chosen player tint.
  */
+import { PLAYER_COLORS, clampPlayer, playerCss } from "../../shared";
 import { GameScreen } from "../screen/screen";
 import type { MapOption, MapOptionGroup } from "./menu";
 
@@ -16,8 +17,14 @@ const GROUP_LABEL: Record<MapOptionGroup, string> = {
 const GROUP_ORDER: MapOptionGroup[] = ["tutorial", "single", "multi", "generated"];
 
 export class MapSelect extends GameScreen {
-  constructor(maps: readonly MapOption[], hooks: { onBack: () => void; onPick: (id: string) => void }) {
+  private player: number;
+
+  constructor(
+    maps: readonly MapOption[],
+    hooks: { onBack: () => void; onPick: (id: string, player: number) => void; player?: number },
+  ) {
     super("screen menu");
+    this.player = clampPlayer(hooks.player ?? 0);
     const panel = document.createElement("div");
     panel.className = "menu-panel menu-panel-wide";
 
@@ -32,6 +39,24 @@ export class MapSelect extends GameScreen {
     title.className = "menu-title";
     title.textContent = "Single player";
     head.append(back, title);
+
+    const colors = document.createElement("div");
+    colors.className = "menu-colors";
+    const swatches: HTMLButtonElement[] = [];
+    for (let i = 0; i < PLAYER_COLORS.length; i++) {
+      const swatch = document.createElement("button");
+      swatch.type = "button";
+      swatch.className = "menu-color";
+      swatch.style.background = playerCss(i);
+      swatch.setAttribute("aria-label", `Player color ${i + 1}`);
+      swatch.addEventListener("click", () => {
+        this.player = i;
+        for (const s of swatches) s.classList.toggle("is-selected", s === swatch);
+      });
+      if (i === this.player) swatch.classList.add("is-selected");
+      swatches.push(swatch);
+      colors.append(swatch);
+    }
 
     const list = document.createElement("div");
     list.className = "menu-list";
@@ -48,7 +73,7 @@ export class MapSelect extends GameScreen {
         item.type = "button";
         item.className = "menu-btn menu-btn-row";
         item.textContent = map.detail ? `${map.name}  ·  ${map.detail}` : map.name;
-        item.addEventListener("click", () => hooks.onPick(map.id));
+        item.addEventListener("click", () => hooks.onPick(map.id, this.player));
         list.append(item);
       }
     }
@@ -65,7 +90,7 @@ export class MapSelect extends GameScreen {
       list.append(hint);
     }
 
-    panel.append(head, list);
+    panel.append(head, colors, list);
     this.root.append(panel);
     this.onEscape(hooks.onBack);
   }

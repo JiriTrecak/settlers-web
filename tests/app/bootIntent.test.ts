@@ -15,6 +15,11 @@ describe("parseBootIntent", () => {
     expect(parseBootIntent("?screen=single")).toEqual({ kind: "single" });
   });
 
+  it("reads ?color= as player tint", () => {
+    expect(parseBootIntent("?map=coast&color=3")).toEqual({ kind: "play", mapId: "coast", player: 3 });
+    expect(parseBootIntent("?color=99").player).toBe(7);
+  });
+
   it("prefers ?map= over ?screen=", () => {
     expect(parseBootIntent("?screen=single&map=peak")).toEqual({ kind: "play", mapId: "peak" });
   });

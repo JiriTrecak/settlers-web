@@ -1,9 +1,12 @@
 /**
  * Converted map dump. The engine never sees .map / DAT — ingest JSON only.
  */
-import type { LandscapeType } from "../../shared";
+import type { GridPos, LandscapeType } from "../../shared";
 import { MapGrid } from "./mapGrid";
 import { treeSheetAt, type MapDecoration } from "../decorations/decorations";
+
+/** HQ / first-tower tile from the original player-info block. */
+export type MapStart = GridPos;
 
 /** Converted map dump JSON. */
 export type DumpedMap = {
@@ -12,6 +15,8 @@ export type DumpedMap = {
   landscape: LandscapeType[];
   trees: { x: number; y: number; sheet?: number }[];
   stones: { x: number; y: number; capacity: number }[];
+  /** One entry per original player slot. Older dumps omit this. */
+  starts?: MapStart[];
 };
 
 export type MapGroup = "tutorial" | "single" | "multi";
@@ -36,6 +41,17 @@ export function isDumpedMap(value: unknown): value is DumpedMap {
     Array.isArray(v.trees) &&
     Array.isArray(v.stones)
   );
+}
+
+/** Player-slot start, else slot 0. Undefined if the dump has none. */
+export function startForPlayer(starts: readonly MapStart[] | undefined, player: number): MapStart | undefined {
+  if (!starts?.length) return undefined;
+  return starts[player] ?? starts[0];
+}
+
+export function startsFromDumpedMap(map: DumpedMap): MapStart[] {
+  if (!Array.isArray(map.starts)) return [];
+  return map.starts.filter((s) => s && typeof s.x === "number" && typeof s.y === "number");
 }
 
 export function gridFromDumpedMap(map: DumpedMap): MapGrid {

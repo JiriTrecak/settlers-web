@@ -14,7 +14,7 @@ export class PlayScreen extends GameScreen {
     pixi: Application,
     catalog: readonly MapCatalogEntry[],
     mapId: string,
-    hooks: { onLeave: () => void },
+    hooks: { onLeave: () => void; player: number },
   ) {
     super("screen");
     this.mapId = mapId;
@@ -22,6 +22,7 @@ export class PlayScreen extends GameScreen {
     this.session = new Session(pixi, this.root, {
       mapId,
       catalog,
+      player: hooks.player,
       hooks: {
         onHud: (state) => this.hud.update(state),
         onLeave: hooks.onLeave,

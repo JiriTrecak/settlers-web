@@ -56,7 +56,7 @@ View models are plain data. UI does not query `World` directly.
 
 ## Phase 4
 
-- Pause / 1× (speed later)
+- Pause / 1× / 2× / 4× / 8× under the minimap
 - Nothing else. Don't build a control panel for one bearer.
 
 ## Phase 6+

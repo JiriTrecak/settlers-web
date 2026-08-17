@@ -14,6 +14,7 @@ export class GameApp {
   private pixi: Application | null = null;
   private screens: ScreenHost | null = null;
   private catalog: MapCatalogEntry[] = [];
+  private player = 0;
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
 
@@ -40,6 +41,7 @@ export class GameApp {
     });
 
     const intent = parseBootIntent();
+    if (intent.player !== undefined) this.player = intent.player;
     if (intent.kind === "play") await this.play(intent.mapId);
     else if (intent.kind === "single") this.showMapSelect();
     else this.showMenu();
@@ -70,8 +72,10 @@ export class GameApp {
     this.playGen++;
     this.screens?.show(
       new MapSelect(mapPickerOptions(this.catalog), {
+        player: this.player,
         onBack: () => this.showMenu(),
-        onPick: (id) => {
+        onPick: (id, player) => {
+          this.player = player;
           void this.play(id);
         },
       }),
@@ -93,6 +97,7 @@ export class GameApp {
     if (current instanceof PlayScreen && current.mapId === id) return;
     const gen = ++this.playGen;
     const play = new PlayScreen(this.pixi, this.catalog, id, {
+      player: this.player,
       onLeave: () => this.showMapSelect(),
     });
     this.screens.show(play);

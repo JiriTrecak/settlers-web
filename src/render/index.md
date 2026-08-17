@@ -8,6 +8,8 @@ PixiJS drawing. Consumes `MapView` + dumped graphics. Does not own game state.
 | `landscape/` | Terrain mesh + atlas UVs |
 | `shader/` | GLSL (`.vert` / `.frag`). One subfolder per program. |
 | `decoration/` | Tree / stone / wave sprites |
+| `settler/` | Bearer walk/idle sprites |
+| `graphics/` | Catalog PNG load |
 | `camera/` | Pan / zoom / screen↔world |
 
 Public entry: `index.ts`.
