@@ -12,7 +12,7 @@ import { findPath, type Blockers } from "../path/path";
 
 export type MovableType = SettlerKind;
 export type MovableAction = "idle" | "walk" | "work";
-export type MovableMaterial = "none" | Goods;
+export type MovableMaterial = "none" | Goods | "tree";
 
 /** Bearer step is 0.6s × 0.75 speedup = 450ms → 18 ticks at 25ms. */
 export const BEARER_STEP_MS = 450;

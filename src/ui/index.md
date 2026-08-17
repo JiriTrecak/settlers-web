@@ -9,4 +9,4 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `hud/` | Compact fps/cursor; F3 debug dump; help; leave |
 | `minimap/` | Terrain blit, view quad, drag look-at |
 | `speed/` | 1× / 2× / 4× / 8× under the minimap |
-| `build/` | Lumberjack / sawmill / house strip |
+| `build/` | Lumberjack / forester / sawmill / house strip |

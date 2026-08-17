@@ -9,6 +9,7 @@ import { tryTakeMaterial } from "../economy/construction";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
+import { isPlantSearch, plantTree } from "../object/tree";
 import { standBeside, type Blockers } from "../path/path";
 
 export type Job =
@@ -18,7 +19,8 @@ export type Job =
   | { type: "deliver"; material: Goods; from: GridPos; to: GridPos }
   | { type: "saw"; at: GridPos }
   | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind }
-  | { type: "build"; at: GridPos; hutId: number; direction: Direction };
+  | { type: "build"; at: GridPos; hutId: number; direction: Direction }
+  | { type: "plant"; at: GridPos };
 
 /** Chop duration: 1.8s at 25ms for click-chop. Lumberjack uses `chopMs` (6s of axe loops). */
 export const CHOP_TICKS = 72;
@@ -56,6 +58,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("bricklayer").chopMs;
     return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
+  if (job?.type === "plant") {
+    const ms = settlerDef("forester").chopMs;
+    return Math.max(1, Math.round((ms ?? 3000) / 25));
+  }
   if (job?.type === "pickup" || job?.type === "drop" || job?.type === "deliver") return BEND_TICKS;
   return 1;
 }
@@ -75,12 +81,13 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "deliver") tickDeliver(m, job, ctx);
   else if (job.type === "occupy") tickOccupy(m, job, ctx);
   else if (job.type === "build") tickBuild(m, job, ctx);
+  else if (job.type === "plant") tickPlant(m, job, ctx);
   else tickSaw(m, job.at, ctx);
 }
 
 function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
   const tree = ctx.objects.get(target.x, target.y);
-  if (!tree || tree.kind !== "tree") {
+  if (!tree || tree.kind !== "tree" || tree.growing) {
     m.idle();
     return;
   }
@@ -132,11 +139,12 @@ function tickPickup(m: Movable, target: GridPos, ctx: JobContext, finish: boolea
 }
 
 function tickDrop(m: Movable, target: GridPos, ctx: JobContext, finish: boolean): boolean {
-  if (m.material === "none") {
+  const mat = m.material;
+  if (mat === "none" || mat === "tree") {
     if (finish) m.idle();
-    return true;
+    return mat === "none";
   }
-  if (!canDeposit(ctx.objects, target, m.material)) {
+  if (!canDeposit(ctx.objects, target, mat)) {
     m.idle();
     return false;
   }
@@ -147,7 +155,7 @@ function tickDrop(m: Movable, target: GridPos, ctx: JobContext, finish: boolean)
   }
   m.workElapsed += 1;
   if (m.workElapsed < BEND_TICKS) return false;
-  addToStack(ctx.objects, target, m.material);
+  addToStack(ctx.objects, target, mat);
   m.material = "none";
   m.workElapsed = 0;
   if (finish) m.idle();
@@ -227,6 +235,35 @@ function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobCon
   }
   m.workElapsed += 1;
   if (m.workElapsed >= ticks) m.idle();
+}
+
+/** Walk to the stand tile, face nw, plant a sapling on `y+1`. */
+function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    if (m.walking) return;
+    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    return;
+  }
+  if (m.walking) return;
+  const plantAt = { x: job.at.x, y: job.at.y + 1 };
+  m.direction = "nw";
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    if (!isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y)) {
+      m.material = "none";
+      m.idle();
+      return;
+    }
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  if (isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y)) {
+    plantTree(ctx.objects, plantAt);
+  }
+  m.material = "none";
+  m.idle();
 }
 
 /** Face the tile and work, or path to a free neighbor. `idle()` if boxed in. */

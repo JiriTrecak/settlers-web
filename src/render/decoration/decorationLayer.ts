@@ -114,22 +114,25 @@ export class DecorationLayer {
     if (!frame) return;
     p.lastFrame = index;
     const world = gridToWorld(p.deco.x, p.deco.y, view.heightAt(p.deco.x, p.deco.y));
-    p.body.texture = frame.texture;
-    p.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
-    p.body.zIndex = isoDepth(world.x, world.y, p.deco.kind === "wave" ? ISO_DEPTH_WAVE : ISO_DEPTH_PROP);
+    const growing = p.deco.kind === "tree" && p.deco.growing;
     const treeProgress = p.deco.kind === "tree" ? (p.deco.stateProgress ?? 1) : 1;
-    const chopping = p.deco.kind === "tree" && treeProgress < 1 && !this.fallOf(p.deco, sheets);
-    p.body.scale.set(chopping ? 0.35 + 0.65 * treeProgress : 1);
+    const chopping = p.deco.kind === "tree" && treeProgress < 1 && !growing && !this.fallOf(p.deco, sheets);
+    const scale = growing ? growScale(treeProgress) : chopping ? 0.35 + 0.65 * treeProgress : 1;
+    p.body.texture = frame.texture;
+    p.body.position.set(world.x + frame.offsetX * scale, world.y + frame.offsetY * scale);
+    p.body.scale.set(scale);
+    p.body.zIndex = isoDepth(world.x, world.y, p.deco.kind === "wave" ? ISO_DEPTH_WAVE : ISO_DEPTH_PROP);
     if (p.shadow && frame.shadow) {
       p.shadow.texture = frame.shadow.texture;
-      p.shadow.position.set(world.x + frame.shadow.offsetX, world.y + frame.shadow.offsetY);
+      p.shadow.position.set(world.x + frame.shadow.offsetX * scale, world.y + frame.shadow.offsetY * scale);
       p.shadow.zIndex = p.body.zIndex;
-      p.shadow.scale.set(p.body.scale.x);
+      p.shadow.scale.set(scale);
     }
   }
 
   private indexOf(deco: MapDecoration, sheets: DecorationSheets, step: number): number {
     if (deco.kind === "tree") {
+      if (deco.growing) return 0;
       const progress = deco.stateProgress ?? 1;
       const fall = this.fallOf(deco, sheets);
       if (fall && progress < 1) {
@@ -177,7 +180,7 @@ export class DecorationLayer {
   }
 
   private fallOf(deco: MapDecoration, sheets: DecorationSheets): PropFrame[] | undefined {
-    if (deco.kind !== "tree") return undefined;
+    if (deco.kind !== "tree" || deco.growing) return undefined;
     const clip = sheets.falls[deco.sheet % 4];
     return clip && clip.length > 0 ? clip : undefined;
   }
@@ -185,7 +188,7 @@ export class DecorationLayer {
 
 function objectToDeco(obj: MapObjectView): MapDecoration {
   if (obj.kind === "tree") {
-    return { kind: "tree", x: obj.x, y: obj.y, sheet: obj.sheet, stateProgress: obj.stateProgress };
+    return { kind: "tree", x: obj.x, y: obj.y, sheet: obj.sheet, stateProgress: obj.stateProgress, growing: obj.growing };
   }
   if (obj.kind === "stack") {
     return { kind: "stack", x: obj.x, y: obj.y, capacity: obj.capacity, material: obj.material };
@@ -197,4 +200,11 @@ function stackFrames(deco: MapDecoration, sheets: DecorationSheets): PropFrame[]
   if (deco.kind !== "stack") return [];
   const mat = deco.material;
   return (mat ? sheets.stacks[mat] : undefined) ?? sheets.stacks.trunk ?? [];
+}
+
+/** Discrete sapling / small / medium stages — not the chop-scale path. */
+function growScale(progress: number): number {
+  if (progress < 0.33) return 0.35;
+  if (progress < 0.66) return 0.6;
+  return 0.85;
 }

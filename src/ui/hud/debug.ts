@@ -6,12 +6,14 @@ import type { ViewSnapshot } from "../../sim/world/world";
 import type { BuildingKind } from "../../sim/data/buildings";
 import type { SettlerKind } from "../../sim/data/settlers";
 import type { Goods } from "../../sim/data/types";
+import type { MovableMaterial } from "../../sim/movable/movable";
 
-const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "lumberjack", "sawmiller"];
-const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "sawmill"];
+const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "forester", "lumberjack", "sawmiller"];
+const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill"];
 const GOODS: Goods[] = ["trunk", "plank", "stone", "axe", "hammer", "blade", "pick", "saw"];
 const ACTIONS = ["idle", "walk", "work"] as const;
-const JOBS = ["chop", "pickup", "drop", "deliver", "saw", "occupy", "build"] as const;
+const JOBS = ["chop", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant"] as const;
+const CARRY: MovableMaterial[] = [...GOODS, "tree", "none"];
 
 export type DebugFrame = {
   fps: number;
@@ -34,7 +36,7 @@ export type DebugStats = DebugFrame & {
   actions: Record<(typeof ACTIONS)[number], number>;
   jobs: Record<(typeof JOBS)[number] | "none", number>;
   inside: number;
-  carry: Record<Goods | "none", number>;
+  carry: Record<MovableMaterial, number>;
   buildings: Record<BuildingKind, { plan: number; building: number; built: number }>;
   buildingTotal: number;
   objects: { tree: number; stone: number; stack: number };
@@ -45,7 +47,7 @@ export function debugFrom(snap: ViewSnapshot, frame: DebugFrame): DebugStats {
   const settlers = zero(SETTLERS);
   const actions = zero(ACTIONS);
   const jobs = { ...zero(JOBS), none: 0 };
-  const carry = { ...zero(GOODS), none: 0 };
+  const carry = zero(CARRY);
   let inside = 0;
   for (const m of snap.movables) {
     settlers[m.type] += 1;
@@ -99,7 +101,7 @@ export function formatDebug(d: DebugStats): string {
     `  ${pairs(SETTLERS.map((k) => [k, d.settlers[k]]))}`,
     `  ${pairs(ACTIONS.map((k) => [k, d.actions[k]]))}`,
     `  job  ${pairs([...JOBS.map((k) => [k, d.jobs[k]] as const), ["none", d.jobs.none]])}`,
-    `  carry  ${pairs([...GOODS.map((k) => [k, d.carry[k]] as const), ["none", d.carry.none]])}`,
+    `  carry  ${pairs(CARRY.map((k) => [k, d.carry[k]] as const))}`,
     "",
     `buildings  ${d.buildingTotal}`,
     `  ${BUILDINGS.map((k) => fmtHut(k, d.buildings[k])).filter(Boolean).join("   ") || "—"}`,

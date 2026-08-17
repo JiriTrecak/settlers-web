@@ -5,6 +5,7 @@ import type { BuildingKind } from "../../sim/data/buildings";
 
 export const PLACEABLE: { kind: BuildingKind; label: string }[] = [
   { kind: "lumberjack", label: "Lumberjack" },
+  { kind: "forester", label: "Forester" },
   { kind: "sawmill", label: "Sawmill" },
   { kind: "small_livinghouse", label: "House" },
 ];

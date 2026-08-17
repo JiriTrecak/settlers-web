@@ -7,8 +7,10 @@ import type { Building, BuildingGrid } from "../building/building";
 import { buildingDef } from "../data/buildings";
 import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
+import type { Rng } from "../rng/rng";
 import { isWalkable, nearestWalkable } from "../path/path";
 import { tickBricklayer } from "./bricklayer";
+import { tickForester } from "./forester";
 import { tickLumberjack } from "./lumberjack";
 import { tickSawmiller } from "./sawmiller";
 
@@ -16,12 +18,14 @@ export type ProfessionContext = JobContext & {
   buildings: BuildingGrid;
   tickMs: number;
   units: readonly Movable[];
+  rng: Rng;
 };
 
 export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   if (m.type === "lumberjack") tickLumberjack(m, ctx);
   else if (m.type === "sawmiller") tickSawmiller(m, ctx);
   else if (m.type === "bricklayer") tickBricklayer(m, ctx);
+  else if (m.type === "forester") tickForester(m, ctx);
 }
 
 export function doorOf(hut: Building): GridPos {

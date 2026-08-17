@@ -20,9 +20,11 @@ export type MapObjectView = {
   y: number;
   sheet: number;
   capacity: number;
-  /** 1 = intact, 0 = gone (removed). Chopping interpolates. */
+  /** 1 = intact adult, 0 = gone. Growing trees climb 0→1; chopping falls 1→0. */
   stateProgress: number;
   material?: StackMaterial;
+  /** Sapling. Lumberjacks skip these; render uses staged scale, not the fall clip. */
+  growing?: boolean;
 };
 
 export class ObjectGrid {
@@ -81,6 +83,15 @@ export class ObjectGrid {
     const out: MapObjectView[] = [];
     for (const obj of this.items) {
       if (obj) out.push({ ...obj });
+    }
+    return out;
+  }
+
+  /** Live objects — growth mutates `stateProgress` in place. */
+  all(): MapObjectView[] {
+    const out: MapObjectView[] = [];
+    for (const obj of this.items) {
+      if (obj) out.push(obj);
     }
     return out;
   }

@@ -11,9 +11,11 @@ import { tickMatcher } from "../economy/matcher";
 import { tickConstruction } from "../economy/construction";
 import type { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
+import { tickTrees } from "../object/tree";
 import { Movable, type MovableView } from "../movable/movable";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession } from "../profession/profession";
+import { seedRng, type Rng } from "../rng/rng";
 
 export type ViewSnapshot = {
   tick: number;
@@ -49,15 +51,17 @@ export class World {
   readonly grid: MapGrid;
   readonly objects: ObjectGrid;
   readonly buildings: BuildingGrid;
+  readonly rng: Rng;
   private readonly occ: Occupancy;
   private readonly units: Movable[] = [];
   private nextId = 1;
 
-  constructor(grid: MapGrid, objects: ObjectGrid = new ObjectGrid(grid.width, grid.height)) {
+  constructor(grid: MapGrid, objects: ObjectGrid = new ObjectGrid(grid.width, grid.height), rng: Rng = seedRng(1)) {
     this.grid = grid;
     this.objects = objects;
     this.buildings = new BuildingGrid(grid.width, grid.height);
     this.occ = new Occupancy(grid.width, grid.height);
+    this.rng = rng;
   }
 
   spawnBearer(at?: GridPos, player = 0): Movable {
@@ -112,7 +116,7 @@ export class World {
     }
     if (action.type === "chop") {
       const tree = this.objects.get(action.at.x, action.at.y);
-      if (!tree || tree.kind !== "tree") return;
+      if (!tree || tree.kind !== "tree" || tree.growing) return;
       m.assignJob({ type: "chop", at: action.at });
       tickJob(m, this.jobCtx(m.id));
       this.syncOcc();
@@ -139,6 +143,7 @@ export class World {
 
   tick(): void {
     this.clock.tick();
+    tickTrees(this.objects, this.clock.tickMs);
     for (const m of this.units) m.tick();
     this.tickHouses();
     for (const m of this.units) {
@@ -149,6 +154,7 @@ export class World {
         blockers: this.blockers(m.id),
         tickMs: this.clock.tickMs,
         units: this.units,
+        rng: this.rng,
       });
     }
     tickConstruction({

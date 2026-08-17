@@ -10,9 +10,9 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `rng/` | Seeded RNG, never `Math.random` |
 | `building/` | Instant-built huts, footprint blockers |
 | `data/` | One-file defs for buildings and settlers |
-| `object/` | Trees/stones/stacks on tiles, chop `stateProgress` |
-| `job/` | Unit assignments (`chop`, `pickup`, `drop`, `build`, `occupy`). `tickJob` runs the verb. |
-| `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller, bricklayer) |
+| `object/` | Trees/stones/stacks on tiles, chop `stateProgress`, sapling growth |
+| `job/` | Unit assignments (`chop`, `pickup`, `drop`, `build`, `plant`, `occupy`). `tickJob` runs the verb. |
+| `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller, bricklayer, forester) |
 | `economy/` | Start kit + matcher + construction (plan → bricklayers → occupy) |
 | `path/` | Walkable BFS (land + objects) |
 | `movable/` | One unit, tile steps + `moveProgress` |

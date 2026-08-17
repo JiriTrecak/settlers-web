@@ -103,6 +103,7 @@ function parse(kind: string, xml: string): string {
     tower: "Roman tower. Match-start HQ.",
     sawmill: "Roman sawmill. Requests trunks, offers planks.",
     small_livinghouse: "Roman small house. Spawns 10 bearers.",
+    forester: "Roman forester hut. Plants trees in work radius 18.",
   };
   const extra: Record<string, string> = {
     small_livinghouse: "  beds: 10,\n  produceMs: 2000,\n",

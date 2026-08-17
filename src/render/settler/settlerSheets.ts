@@ -3,27 +3,29 @@
  * Missing clip → idle pose of that profession, then bearer.
  */
 import { DIRECTIONS, type Direction } from "../../shared";
-import type { Goods } from "../../sim/data/types";
-import type { MovableType } from "../../sim/movable/movable";
+import type { MovableMaterial, MovableType } from "../../sim/movable/movable";
 import { fetchCatalogSprites, loadGroup, type CatalogSprite, type PropFrame } from "../graphics/textures";
 
 export type DirClips = Record<Direction, PropFrame[]>;
 
 export type CarryClips = { walk: DirClips; idle: DirClips };
 
+export type CarryKind = Exclude<MovableMaterial, "none">;
+
 export type UnitClips = {
   walk: DirClips;
   idle: DirClips;
   chop: DirClips;
   pickup: DirClips;
-  carry: Partial<Record<Goods, CarryClips>>;
+  carry: Partial<Record<CarryKind, CarryClips>>;
 };
 
 export type SettlerSheets = Record<MovableType, UnitClips>;
 
-const CARRY: Record<MovableType, readonly Goods[]> = {
+const CARRY: Record<MovableType, readonly CarryKind[]> = {
   bearer: ["trunk", "plank", "stone"],
   bricklayer: [],
+  forester: ["tree"],
   lumberjack: ["trunk"],
   sawmiller: ["trunk", "plank"],
 };
@@ -37,13 +39,14 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const lumberjack = (await loadUnit(sprites, "lumberjack", CARRY.lumberjack)) ?? bearer;
     const sawmiller = (await loadUnit(sprites, "sawmiller", CARRY.sawmiller)) ?? bearer;
     const bricklayer = (await loadUnit(sprites, "bricklayer", CARRY.bricklayer)) ?? bearer;
-    return { bearer, lumberjack, sawmiller, bricklayer };
+    const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
+    return { bearer, lumberjack, sawmiller, bricklayer, forester };
   } catch {
     return null;
   }
 }
 
-async function loadUnit(sprites: CatalogSprite[], profession: string, goods: readonly Goods[]): Promise<UnitClips | null> {
+async function loadUnit(sprites: CatalogSprite[], profession: string, goods: readonly CarryKind[]): Promise<UnitClips | null> {
   const walk = {} as DirClips;
   const idle = {} as DirClips;
   const chop = {} as DirClips;
