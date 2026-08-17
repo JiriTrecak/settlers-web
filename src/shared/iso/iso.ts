@@ -24,6 +24,15 @@ export function worldToGrid(wx: number, wy: number): WorldPos {
   return { x, y };
 }
 
+/** Draw order: larger = in front. South (world y) first, then east (world x). */
+export function isoDepth(wx: number, wy: number, bias = 0): number {
+  return Math.round(wy * 1024 + wx) * 4 + bias;
+}
+
+export const ISO_DEPTH_WAVE = 0;
+export const ISO_DEPTH_UNIT = 1;
+export const ISO_DEPTH_PROP = 2;
+
 export function pickGrid(wx: number, wy: number): { x: number; y: number } {
   const g = worldToGrid(wx, wy);
   return { x: Math.round(g.x), y: Math.round(g.y) };

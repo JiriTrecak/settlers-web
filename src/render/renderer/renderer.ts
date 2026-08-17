@@ -18,8 +18,9 @@ import type { SettlerSheets } from "../settler/settlerSheets";
 export class Renderer {
   readonly camera = new Camera();
   readonly world = new Container();
-  private readonly decorations = new DecorationLayer();
-  private readonly settlers = new SettlerLayer();
+  private readonly iso = new Container();
+  private readonly decorations: DecorationLayer;
+  private readonly settlers: SettlerLayer;
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
@@ -30,11 +31,15 @@ export class Renderer {
   constructor(private readonly app: Application) {
     this.app.stage.addChild(this.world);
     this.world.sortableChildren = true;
+    this.iso.sortableChildren = true;
+    this.iso.eventMode = "none";
+    this.decorations = new DecorationLayer(this.iso);
+    this.settlers = new SettlerLayer(this.iso);
     this.hover.eventMode = "none";
     this.select.eventMode = "none";
     this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.decorations.root, this.settlers.root, this.select, this.hover);
+    this.world.addChild(this.iso, this.select, this.hover);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -57,7 +62,7 @@ export class Renderer {
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.decorations.root, this.settlers.root, this.select, this.hover);
+    this.world.addChild(mesh, this.iso, this.select, this.hover);
     this.decorations.setWaves(view, waves);
     this.settlers.setView(view);
 

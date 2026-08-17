@@ -3,10 +3,11 @@
  */
 import type { Action, GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
+import { tickJob } from "../job/job";
 import type { MapGrid } from "../map/mapGrid";
-import { ObjectGrid, isAdjacent, type MapObjectView } from "../object/object";
-import { BEARER_STEP_MS, CHOP_TICKS, Movable, type MovableView } from "../movable/movable";
-import { isWalkable, nearestWalkable, standBeside, type Blockers } from "../path/path";
+import { ObjectGrid, type MapObjectView } from "../object/object";
+import { BEARER_STEP_MS, Movable, type MovableView } from "../movable/movable";
+import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 
 export type ViewSnapshot = {
   tick: number;
@@ -71,8 +72,8 @@ export class World {
     if (action.type === "chop") {
       const tree = this.objects.get(action.at.x, action.at.y);
       if (!tree || tree.kind !== "tree") return;
-      m.chop(action.at);
-      this.advanceJob(m);
+      m.assignJob({ type: "chop", at: action.at });
+      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
       this.syncOcc();
     }
   }
@@ -80,7 +81,9 @@ export class World {
   tick(): void {
     this.clock.tick();
     for (const m of this.units) m.tick();
-    for (const m of this.units) this.advanceJob(m);
+    for (const m of this.units) {
+      tickJob(m, { grid: this.grid, objects: this.objects, blockers: this.blockers(m.id) });
+    }
     this.syncOcc();
   }
 
@@ -105,38 +108,5 @@ export class World {
   private syncOcc(): void {
     this.occ.clear();
     for (const m of this.units) this.occ.occupy(m.id, m.pos.x, m.pos.y);
-  }
-
-  private advanceJob(m: Movable): void {
-    const target = m.chopAt;
-    if (!target) return;
-    const tree = this.objects.get(target.x, target.y);
-    if (!tree || tree.kind !== "tree") {
-      m.idle();
-      return;
-    }
-    const blockers = this.blockers(m.id);
-    if (isAdjacent(m.pos, target) && !m.walking) {
-      m.face(target);
-      if (m.action !== "work") {
-        m.beginWork();
-        m.workElapsed = 0;
-      }
-      m.workElapsed += 1;
-      tree.stateProgress = Math.max(0, 1 - m.workElapsed / CHOP_TICKS);
-      if (m.workElapsed >= CHOP_TICKS) {
-        this.objects.remove(target.x, target.y);
-        m.idle();
-      }
-      return;
-    }
-    if (m.walking) return;
-    const stand = standBeside(this.grid, target, m.pos, blockers);
-    if (!stand) {
-      m.idle();
-      return;
-    }
-    m.pathTo(this.grid, stand, blockers);
-    m.chopAt = target;
   }
 }

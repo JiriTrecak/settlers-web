@@ -33,12 +33,14 @@ describe("chop", () => {
     const world = new World(grass(12, 12), objects);
     const bearer = world.spawnBearer({ x: 3, y: 3 });
     world.dispatch({ type: "chop", id: bearer.id, at: { x: 5, y: 3 } });
+    expect(bearer.job).toEqual({ type: "chop", at: { x: 5, y: 3 } });
     let n = 0;
     while (world.objects.get(5, 3) && n < 400) {
       world.tick();
       n++;
     }
     expect(world.objects.get(5, 3)).toBeUndefined();
+    expect(bearer.job).toBeNull();
     expect(world.view().movables[0]!.action).toBe("idle");
     expect(n).toBeGreaterThan(CHOP_TICKS);
   });

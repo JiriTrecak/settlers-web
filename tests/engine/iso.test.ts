@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, pickCell, pickGrid, worldToGrid } from "../../src/shared/iso/iso";
+import { TILE_HEIGHT, TILE_WIDTH, gridToWorld, isoDepth, ISO_DEPTH_PROP, ISO_DEPTH_UNIT, pickCell, pickGrid, worldToGrid } from "../../src/shared/iso/iso";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { mapViewFromGrid } from "../../src/sim/map/mapView";
 
@@ -27,6 +27,14 @@ describe("iso", () => {
     expect(a.x - gridToWorld(0, 0, 0).x).toBe(TILE_WIDTH);
     expect(b.x - gridToWorld(0, 0, 0).x).toBe(-TILE_WIDTH / 2);
     expect(b.y - gridToWorld(0, 0, 0).y).toBe(TILE_HEIGHT);
+  });
+
+  it("isoDepth puts south in front and props over units", () => {
+    const north = gridToWorld(4, 4, 0);
+    const south = gridToWorld(4, 5, 0);
+    expect(isoDepth(south.x, south.y)).toBeGreaterThan(isoDepth(north.x, north.y));
+    const stone = gridToWorld(5, 8, 0);
+    expect(isoDepth(stone.x, stone.y, ISO_DEPTH_PROP)).toBeGreaterThan(isoDepth(stone.x, stone.y, ISO_DEPTH_UNIT));
   });
 
   it("flat inverse does not follow height (that's pickCell's job)", () => {

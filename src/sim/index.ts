@@ -27,10 +27,10 @@ export {
 } from "./object/object";
 export {
   BEARER_STEP_MS,
-  CHOP_TICKS,
   Movable,
   type MovableAction,
   type MovableType,
   type MovableView,
 } from "./movable/movable";
+export { CHOP_TICKS, tickJob, workTicksOf, type Job, type JobContext } from "./job/job";
 export { findPath, isWalkable, nearestWalkable, standBeside, type Blockers } from "./path/path";

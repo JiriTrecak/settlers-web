@@ -4,4 +4,4 @@ Owns the Pixi stage: landscape mesh, decoration layer, hover/select graphics, ca
 
 `setView` rebuilds the mesh and stamps waves; third arg `fit` (default true) recenters the whole map. Match start passes `false` then looks at the HQ at zoom 1. Space calls `fitCamera`. `draw` syncs sim objects + settlers. `tick` advances wave/tree wind frames.
 
-Mesh `zIndex = -1`, decorations sortable by y, settlers in front of trees (`y*2+2`). Hover/select sit on top. `pick` uses `pickCell` (height-displaced mesh tris).
+Mesh `zIndex = -1`. Props and settlers share one sortable iso container; `isoDepth` (south, then east; props above units). Hover/select sit on top. `pick` uses `pickCell` (height-displaced mesh tris).

@@ -1,9 +1,10 @@
 /**
- * Trees, stones, waves as sprites. zIndex = 2y so south draws on top of north.
+ * Trees, stones, waves as sprites. Depth is `isoDepth` on the shared iso container
+ * so props and settlers interleave (south in front, stones cover units).
  * Waves are static; trees/stones sync from the sim snapshot each draw.
  */
 import { Container, Sprite } from "pixi.js";
-import { gridToWorld } from "../../shared";
+import { gridToWorld, isoDepth, ISO_DEPTH_PROP, ISO_DEPTH_WAVE } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapObjectView } from "../../sim/object/object";
@@ -17,17 +18,13 @@ type Placed = {
 };
 
 export class DecorationLayer {
-  readonly root = new Container();
   private waves: Placed[] = [];
   private props = new Map<string, Placed>();
   private sheets: DecorationSheets | null = null;
   private view: MapView | null = null;
   private animationStep = 0;
 
-  constructor() {
-    this.root.eventMode = "none";
-    this.root.sortableChildren = true;
-  }
+  constructor(private readonly parent: Container) {}
 
   setSheets(sheets: DecorationSheets | null): void {
     this.sheets = sheets;
@@ -93,18 +90,19 @@ export class DecorationLayer {
     if (!sheets || !view) return null;
     const frame = this.frameOf(deco, sheets, this.animationStep);
     if (!frame) return null;
-    const z = deco.kind === "wave" ? deco.y * 2 : deco.y * 2 + 1;
+    const world = gridToWorld(deco.x, deco.y, view.heightAt(deco.x, deco.y));
+    const z = isoDepth(world.x, world.y, deco.kind === "wave" ? ISO_DEPTH_WAVE : ISO_DEPTH_PROP);
     let shadow: Sprite | null = null;
     if (frame.shadow) {
       shadow = new Sprite(frame.shadow.texture);
       shadow.eventMode = "none";
       shadow.zIndex = z;
-      this.root.addChild(shadow);
+      this.parent.addChild(shadow);
     }
     const body = new Sprite(frame.texture);
     body.eventMode = "none";
     body.zIndex = z;
-    this.root.addChild(body);
+    this.parent.addChild(body);
     const placed: Placed = { deco, body, shadow, lastFrame: -1 };
     this.applyFrame(placed, view, sheets, this.animationStep);
     return placed;
@@ -118,7 +116,7 @@ export class DecorationLayer {
     const world = gridToWorld(p.deco.x, p.deco.y, view.heightAt(p.deco.x, p.deco.y));
     p.body.texture = frame.texture;
     p.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
-    p.body.zIndex = p.deco.kind === "wave" ? p.deco.y * 2 : p.deco.y * 2 + 1;
+    p.body.zIndex = isoDepth(world.x, world.y, p.deco.kind === "wave" ? ISO_DEPTH_WAVE : ISO_DEPTH_PROP);
     const treeProgress = p.deco.kind === "tree" ? (p.deco.stateProgress ?? 1) : 1;
     const chopping = p.deco.kind === "tree" && treeProgress < 1 && !this.fallOf(p.deco, sheets);
     p.body.scale.set(chopping ? 0.35 + 0.65 * treeProgress : 1);

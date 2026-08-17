@@ -3,7 +3,7 @@
  * One container per unit: shadow → body → torso so player-color clothing stays on top.
  */
 import { Container, Graphics, Sprite } from "pixi.js";
-import { gridToWorld } from "../../shared";
+import { gridToWorld, isoDepth, ISO_DEPTH_UNIT } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import type { MovableView } from "../../sim/movable/movable";
 import type { PropFrame } from "../graphics/textures";
@@ -20,15 +20,11 @@ type Drawn = {
 };
 
 export class SettlerLayer {
-  readonly root = new Container();
   private sheets: SettlerSheets | null = null;
   private view: MapView | null = null;
   private drawn = new Map<number, Drawn>();
 
-  constructor() {
-    this.root.eventMode = "none";
-    this.root.sortableChildren = true;
-  }
+  constructor(private readonly parent: Container) {}
 
   setSheets(sheets: SettlerSheets | null): void {
     this.sheets = sheets;
@@ -52,7 +48,7 @@ export class SettlerLayer {
       const h0 = view.heightAt(m.from.x, m.from.y);
       const h1 = view.heightAt(m.pos.x, m.pos.y);
       const world = gridToWorld(x, y, h0 + (h1 - h0) * p);
-      drawn.root.zIndex = (y * 2 + 2) | 0;
+      drawn.root.zIndex = isoDepth(world.x, world.y, ISO_DEPTH_UNIT);
       const frame = this.frameOf(m, p);
       if (frame) {
         drawn.fallback.visible = false;
@@ -104,7 +100,7 @@ export class SettlerLayer {
     fallback.eventMode = "none";
     fallback.circle(0, -4, 4).fill({ color: 0xe8c36a });
     unit.addChild(shadow, body, torso, fallback);
-    this.root.addChild(unit);
+    this.parent.addChild(unit);
     const drawn: Drawn = { id: m.id, root: unit, body, torso, shadow, fallback };
     this.drawn.set(m.id, drawn);
     return drawn;
