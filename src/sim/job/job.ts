@@ -1,9 +1,11 @@
 /**
  * A unit's assignment. Movable only walks/works; `tickJob` is the verb.
  */
-import type { GridPos } from "../../shared";
+import type { Direction, GridPos } from "../../shared";
 import type { Goods } from "../data/types";
+import type { BuildingGrid } from "../building/building";
 import { settlerDef, type SettlerKind } from "../data/settlers";
+import { tryTakeMaterial } from "../economy/construction";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
@@ -15,7 +17,8 @@ export type Job =
   | { type: "drop"; at: GridPos }
   | { type: "deliver"; material: Goods; from: GridPos; to: GridPos }
   | { type: "saw"; at: GridPos }
-  | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind };
+  | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind }
+  | { type: "build"; at: GridPos; hutId: number; direction: Direction };
 
 /** Chop duration: 1.8s at 25ms for click-chop. Lumberjack uses `chopMs` (6s of axe loops). */
 export const CHOP_TICKS = 72;
@@ -33,6 +36,8 @@ export type JobContext = {
   objects: ObjectGrid;
   blockers: Blockers;
   tickMs: number;
+  buildings: BuildingGrid;
+  units: Movable[];
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {
@@ -46,6 +51,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
   if (job?.type === "saw") {
     const ms = settlerDef("sawmiller").chopMs;
     return Math.max(1, Math.round(ms / 25));
+  }
+  if (job?.type === "build") {
+    const ms = settlerDef("bricklayer").chopMs;
+    return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
   if (job?.type === "pickup" || job?.type === "drop" || job?.type === "deliver") return BEND_TICKS;
   return 1;
@@ -65,6 +74,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "drop") tickDrop(m, job.at, ctx, true);
   else if (job.type === "deliver") tickDeliver(m, job, ctx);
   else if (job.type === "occupy") tickOccupy(m, job, ctx);
+  else if (job.type === "build") tickBuild(m, job, ctx);
   else tickSaw(m, job.at, ctx);
 }
 
@@ -190,6 +200,33 @@ function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobC
   }
   if (m.walking) return;
   m.become(job.worker, job.hutId, ctx.tickMs);
+}
+
+/** Walk onto the bricklayer spot, become, hammer one 1s swing. Progress bumps at swing start. */
+function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    if (m.walking) return;
+    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    return;
+  }
+  if (m.walking) return;
+  if (m.type !== "bricklayer") {
+    m.become("bricklayer", job.hutId, ctx.tickMs);
+    m.assignJob(job);
+  }
+  m.direction = job.direction;
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    const hut = ctx.buildings.get(job.hutId);
+    if (!hut || !tryTakeMaterial(hut, ctx)) {
+      m.idle();
+      return;
+    }
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed >= ticks) m.idle();
 }
 
 /** Face the tile and work, or path to a free neighbor. `idle()` if boxed in. */

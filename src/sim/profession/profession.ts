@@ -8,6 +8,7 @@ import { buildingDef } from "../data/buildings";
 import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
 import { isWalkable, nearestWalkable } from "../path/path";
+import { tickBricklayer } from "./bricklayer";
 import { tickLumberjack } from "./lumberjack";
 import { tickSawmiller } from "./sawmiller";
 
@@ -20,6 +21,7 @@ export type ProfessionContext = JobContext & {
 export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   if (m.type === "lumberjack") tickLumberjack(m, ctx);
   else if (m.type === "sawmiller") tickSawmiller(m, ctx);
+  else if (m.type === "bricklayer") tickBricklayer(m, ctx);
 }
 
 export function doorOf(hut: Building): GridPos {

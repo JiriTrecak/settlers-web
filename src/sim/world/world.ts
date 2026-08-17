@@ -85,7 +85,7 @@ export class World {
     return hut;
   }
 
-  /** Scaffold. Matcher hauls `constructionStacks`; a bearer occupies once built. */
+  /** Scaffold. Matcher hauls `constructionStacks`; bricklayers hammer; a bearer occupies once built. */
   placePlan(kind: BuildingKind, at: GridPos, player = 0) {
     const hut = this.buildings.place(kind, at, player, this.grid, this.objects);
     if (!hut) return undefined;
@@ -214,7 +214,14 @@ export class World {
   }
 
   private jobCtx(id: number) {
-    return { grid: this.grid, objects: this.objects, blockers: this.blockers(id), tickMs: this.clock.tickMs };
+    return {
+      grid: this.grid,
+      objects: this.objects,
+      blockers: this.blockers(id),
+      tickMs: this.clock.tickMs,
+      buildings: this.buildings,
+      units: this.units,
+    };
   }
 
   private blockers(ignoreId = 0): Blockers {

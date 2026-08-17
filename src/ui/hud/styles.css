@@ -30,11 +30,57 @@ body {
 .hud-stats {
   position: absolute;
   top: 12px;
-  left: 12px;
+  left: 52px;
   font-size: 13px;
   letter-spacing: 0.04em;
   white-space: pre;
   line-height: 1.45;
+}
+
+.hud-debug-toggle {
+  pointer-events: auto;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.82);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.hud-debug-toggle:hover,
+.hud-debug-toggle:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
+}
+
+.hud-debug-toggle.is-selected {
+  border-color: #e8c36a;
+  color: #e8c36a;
+}
+
+.hud-debug {
+  pointer-events: auto;
+  position: absolute;
+  top: 52px;
+  left: 12px;
+  margin: 0;
+  max-height: min(70vh, 640px);
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid rgba(232, 224, 208, 0.22);
+  background: rgba(8, 14, 28, 0.88);
+  color: #e8e0d0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  white-space: pre;
+  user-select: text;
 }
 
 .hud-help {

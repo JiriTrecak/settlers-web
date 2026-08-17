@@ -1,19 +1,28 @@
 /**
- * Huts. Scaffold while `plan`, finished sprite once `built`.
+ * Huts. Scaffold while `plan` / `building`; the finished sprite grows from the
+ * bottom over the scaffold while bricklayers hammer (saw-edge mask, 10 teeth).
  * Depth is `isoDepth` on the shared iso container.
  */
-import { Container, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { gridToWorld, isoDepth, ISO_DEPTH_BUILDING } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingState, BuildingView } from "../../sim/building/building";
 import type { BuildingSheet, BuildingSheets } from "./buildingSheets";
 import type { PropFrame } from "../graphics/textures";
 
+/** Same as the original construction mask: 10 triangles, 5% of sprite height. */
+const GROW_TILES = 10;
+const GROW_JAG = 0.05;
+
 type Drawn = {
   id: number;
-  body: Sprite;
-  shadow: Sprite | null;
+  root: Container;
+  scaffold: Sprite;
+  built: Sprite;
+  mask: Graphics;
+  shadow: Sprite;
   state: BuildingState;
+  progress: number;
 };
 
 export class BuildingLayer {
@@ -44,61 +53,111 @@ export class BuildingLayer {
         if (placed) this.drawn.set(b.id, placed);
         continue;
       }
-      if (existing.state === b.state) continue;
+      if (existing.state === b.state && existing.progress === b.buildProgress) continue;
       this.apply(existing, b, view, sheets);
     }
     for (const [id, d] of this.drawn) {
       if (want.has(id)) continue;
-      d.body.destroy();
-      d.shadow?.destroy();
+      d.root.destroy({ children: true });
       this.drawn.delete(id);
     }
   }
 
   private spawn(b: BuildingView, view: MapView, sheets: BuildingSheets): Drawn | null {
     const sheet = sheets[b.kind];
-    const frame = frameOf(sheet, b.state);
-    if (!sheet || !frame) return null;
+    if (!sheet) return null;
     const world = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
     const z = isoDepth(world.x, world.y, ISO_DEPTH_BUILDING);
-    let shadow: Sprite | null = null;
-    if (frame.shadow) {
-      shadow = new Sprite(frame.shadow.texture);
-      shadow.eventMode = "none";
-      this.parent.addChild(shadow);
-    }
-    const body = new Sprite(frame.texture);
-    body.eventMode = "none";
-    this.parent.addChild(body);
-    const drawn: Drawn = { id: b.id, body, shadow, state: b.state };
-    this.paint(drawn, frame, world, z);
+    const root = new Container();
+    root.eventMode = "none";
+    root.sortableChildren = false;
+    this.parent.addChild(root);
+
+    const shadow = new Sprite();
+    shadow.eventMode = "none";
+    const scaffold = new Sprite(sheet.scaffold.texture);
+    scaffold.eventMode = "none";
+    const built = new Sprite(sheet.built.texture);
+    built.eventMode = "none";
+    const mask = new Graphics();
+    mask.eventMode = "none";
+    root.addChild(shadow, scaffold, built, mask);
+
+    const drawn: Drawn = {
+      id: b.id,
+      root,
+      scaffold,
+      built,
+      mask,
+      shadow,
+      state: b.state,
+      progress: b.buildProgress,
+    };
+    this.paint(drawn, sheet, world, z, b);
     return drawn;
   }
 
   private apply(d: Drawn, b: BuildingView, view: MapView, sheets: BuildingSheets): void {
-    const frame = frameOf(sheets[b.kind], b.state);
-    if (!frame) return;
+    const sheet = sheets[b.kind];
+    if (!sheet) return;
     d.state = b.state;
+    d.progress = b.buildProgress;
     const world = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
-    this.paint(d, frame, world, isoDepth(world.x, world.y, ISO_DEPTH_BUILDING));
+    this.paint(d, sheet, world, isoDepth(world.x, world.y, ISO_DEPTH_BUILDING), b);
   }
 
-  private paint(d: Drawn, frame: PropFrame, world: { x: number; y: number }, z: number): void {
-    d.body.texture = frame.texture;
-    d.body.zIndex = z;
-    d.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
-    if (d.shadow && frame.shadow) {
-      d.shadow.texture = frame.shadow.texture;
-      d.shadow.zIndex = z;
-      d.shadow.position.set(world.x + frame.shadow.offsetX, world.y + frame.shadow.offsetY);
+  private paint(d: Drawn, sheet: BuildingSheet, world: { x: number; y: number }, z: number, b: BuildingView): void {
+    d.root.zIndex = z;
+    d.root.position.set(world.x, world.y);
+    placeSprite(d.scaffold, sheet.scaffold);
+    placeSprite(d.built, sheet.built);
+
+    const finished = b.state === "built" || b.buildProgress >= 1;
+    const growing = b.state === "building" && !finished;
+    d.scaffold.visible = !finished;
+    d.built.visible = finished || growing;
+    if (growing) {
+      paintGrowMask(d.mask, sheet.built, b.buildProgress);
+      d.built.mask = d.mask;
+      d.mask.visible = true;
+    } else {
+      d.built.mask = null;
+      d.mask.clear();
+      d.mask.visible = false;
+    }
+
+    const shadowFrame = finished ? sheet.built.shadow : sheet.scaffold.shadow;
+    if (shadowFrame) {
       d.shadow.visible = true;
-    } else if (d.shadow) {
+      d.shadow.texture = shadowFrame.texture;
+      d.shadow.position.set(shadowFrame.offsetX, shadowFrame.offsetY);
+    } else {
       d.shadow.visible = false;
     }
   }
 }
 
-function frameOf(sheet: BuildingSheet | undefined, state: BuildingState): PropFrame | undefined {
-  if (!sheet) return undefined;
-  return state === "plan" ? sheet.scaffold : sheet.built;
+function placeSprite(sprite: Sprite, frame: PropFrame): void {
+  sprite.texture = frame.texture;
+  sprite.position.set(frame.offsetX, frame.offsetY);
+}
+
+/** Bottom-up clip plus a saw edge — `drawWithConstructionMask`. */
+function paintGrowMask(g: Graphics, frame: PropFrame, progress: number): void {
+  g.clear();
+  const w = frame.texture.width;
+  const h = frame.texture.height;
+  if (progress <= 0 || w <= 0 || h <= 0) return;
+  const p = Math.min(1, progress);
+  const x = frame.offsetX;
+  const y = frame.offsetY;
+  const shown = h * p;
+  const solidTop = y + h - shown;
+  g.rect(x, solidTop, w, shown).fill({ color: 0xffffff });
+  if (p >= 1) return;
+  const peak = Math.max(y, solidTop - h * GROW_JAG);
+  const tw = w / GROW_TILES;
+  for (let i = 0; i < GROW_TILES; i++) {
+    g.poly([x + i * tw, solidTop, x + (i + 0.5) * tw, peak, x + (i + 1) * tw, solidTop]).fill({ color: 0xffffff });
+  }
 }

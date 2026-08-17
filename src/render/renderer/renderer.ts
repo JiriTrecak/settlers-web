@@ -1,13 +1,15 @@
 /**
- * Pixi world: landscape mesh, decorations, buildings, hover/select outlines, camera apply.
+ * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
  * Reads `MapView`; never writes sim.
  */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
+import type { BuildingKind } from "../../sim/data/buildings";
 import type { MapDecoration } from "../../sim/decorations/decorations";
 import type { MapView } from "../../sim/map/mapView";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { BuildingLayer } from "../building/buildingLayer";
+import { GhostLayer } from "../building/ghostLayer";
 import type { BuildingSheets } from "../building/buildingSheets";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
@@ -24,6 +26,7 @@ export class Renderer {
   private readonly decorations: DecorationLayer;
   private readonly buildings: BuildingLayer;
   private readonly settlers: SettlerLayer;
+  private readonly ghostPlot = new GhostLayer();
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
@@ -43,7 +46,7 @@ export class Renderer {
     this.select.eventMode = "none";
     this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.iso, this.select, this.hover);
+    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -57,6 +60,7 @@ export class Renderer {
 
   setBuildingSheets(sheets: BuildingSheets | null): void {
     this.buildings.setSheets(sheets);
+    this.ghostPlot.setSheets(sheets);
   }
 
   setSettlerSheets(sheets: SettlerSheets | null): void {
@@ -70,10 +74,11 @@ export class Renderer {
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.hover);
+    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root);
     this.decorations.setWaves(view, waves);
     this.buildings.setView(view);
     this.settlers.setView(view);
+    this.ghostPlot.setView(view);
 
     if (fit) this.fitCamera();
     this.applyCamera();
@@ -118,6 +123,7 @@ export class Renderer {
   applyCamera(): void {
     this.world.position.set(this.camera.panX, this.camera.panY);
     this.world.scale.set(this.camera.zoom);
+    this.ghostPlot.setZoom(this.camera.zoom);
   }
 
   /** Screen pixel → cell whose height-displaced diamond is under the cursor. */
@@ -147,6 +153,16 @@ export class Renderer {
       width: 1.25 / this.camera.zoom,
       alignment: 0.5,
     });
+  }
+
+  /** Scaffold + footprint while a build tool is selected. `kind` null hides it. */
+  ghost(kind: BuildingKind | null, pos: GridPos | null, ok: boolean): void {
+    if (!kind || !pos) {
+      this.ghostPlot.hide();
+      return;
+    }
+    this.ghostPlot.setZoom(this.camera.zoom);
+    this.ghostPlot.show(kind, pos, ok);
   }
 
   destroy(): void {

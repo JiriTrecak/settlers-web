@@ -23,6 +23,7 @@ export type SettlerSheets = Record<MovableType, UnitClips>;
 
 const CARRY: Record<MovableType, readonly Goods[]> = {
   bearer: ["trunk", "plank", "stone"],
+  bricklayer: [],
   lumberjack: ["trunk"],
   sawmiller: ["trunk", "plank"],
 };
@@ -35,7 +36,8 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     if (!bearer) return null;
     const lumberjack = (await loadUnit(sprites, "lumberjack", CARRY.lumberjack)) ?? bearer;
     const sawmiller = (await loadUnit(sprites, "sawmiller", CARRY.sawmiller)) ?? bearer;
-    return { bearer, lumberjack, sawmiller };
+    const bricklayer = (await loadUnit(sprites, "bricklayer", CARRY.bricklayer)) ?? bearer;
+    return { bearer, lumberjack, sawmiller, bricklayer };
   } catch {
     return null;
   }

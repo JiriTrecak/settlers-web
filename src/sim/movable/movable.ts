@@ -121,8 +121,8 @@ export class Movable {
     this.inside = false;
   }
 
-  /** Bearer → workplace profession. Enters the hut if that def has `restMs`. */
-  become(kind: SettlerKind, workplaceId: number, tickMs: number): void {
+  /** Profession swap. `workplaceId` is null when reverting bricklayer → bearer. Enters if `restMs`. */
+  become(kind: SettlerKind, workplaceId: number | null, tickMs: number): void {
     this.type = kind;
     this.workplaceId = workplaceId;
     const def = settlerDef(kind);

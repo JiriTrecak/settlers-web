@@ -1,27 +1,46 @@
 /**
- * In-match overlay. Stats + help. Leave is Escape / Menu — not a map picker.
+ * In-match overlay. Compact stats always on; F3 / ` / button expands the debug dump.
+ * Leave is Escape / Menu — not a map picker.
  */
 import type { GridPos, LandscapeType } from "../../shared";
+import { formatDebug, type DebugStats } from "./debug";
 
 export type HudState = {
   cursor: GridPos | null;
   landscape: LandscapeType | null;
   height: number | null;
   zoom: number;
+  debug?: DebugStats;
 };
 
 export class Hud {
   private readonly stats: HTMLDivElement;
+  private readonly toggle: HTMLButtonElement;
+  private readonly panel: HTMLPreElement;
   private readonly help: HTMLDivElement;
   private readonly leave: HTMLButtonElement;
+  private open = false;
+  private last: HudState = { cursor: null, landscape: null, height: null, zoom: 1 };
 
   constructor(host: HTMLElement, hooks: { onLeave: () => void }) {
     this.stats = document.createElement("div");
     this.stats.className = "hud-stats";
 
+    this.toggle = document.createElement("button");
+    this.toggle.type = "button";
+    this.toggle.className = "hud-debug-toggle";
+    this.toggle.textContent = "F3";
+    this.toggle.title = "Debug overlay (F3)";
+    this.toggle.addEventListener("click", () => this.setOpen(!this.open));
+
+    this.panel = document.createElement("pre");
+    this.panel.className = "hud-debug";
+    this.panel.hidden = true;
+
     this.help = document.createElement("div");
     this.help.className = "hud-help";
-    this.help.textContent = "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc menu";
+    this.help.textContent =
+      "pick a hut, click to place  ·  bearers haul planks & stone  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  F3 debug  ·  esc menu";
 
     this.leave = document.createElement("button");
     this.leave.type = "button";
@@ -29,19 +48,46 @@ export class Hud {
     this.leave.textContent = "Menu";
     this.leave.addEventListener("click", hooks.onLeave);
 
-    host.append(this.stats, this.help, this.leave);
+    host.append(this.stats, this.toggle, this.panel, this.help, this.leave);
+    window.addEventListener("keydown", this.onKey);
   }
 
   update(state: HudState): void {
-    const tile = state.cursor
-      ? `${state.cursor.x}, ${state.cursor.y}   ${state.landscape ?? "—"}   h=${state.height ?? 0}`
-      : "—";
-    this.stats.textContent = `${tile}\n${state.zoom.toFixed(2)}×`;
+    if (state.debug) this.last = state;
+    else this.last = { ...this.last, ...state };
+    this.paint();
   }
 
   destroy(): void {
+    window.removeEventListener("keydown", this.onKey);
     this.stats.remove();
+    this.toggle.remove();
+    this.panel.remove();
     this.help.remove();
     this.leave.remove();
+  }
+
+  private readonly onKey = (e: KeyboardEvent): void => {
+    if (e.repeat) return;
+    if (e.key !== "F3" && e.key !== "`") return;
+    e.preventDefault();
+    this.setOpen(!this.open);
+  };
+
+  private setOpen(open: boolean): void {
+    this.open = open;
+    this.panel.hidden = !open;
+    this.toggle.classList.toggle("is-selected", open);
+    this.paint();
+  }
+
+  private paint(): void {
+    const s = this.last;
+    const fps = s.debug ? `${s.debug.fps.toFixed(0)} fps` : "— fps";
+    const tile = s.cursor
+      ? `${s.cursor.x}, ${s.cursor.y}   ${s.landscape ?? "—"}   h=${s.height ?? 0}`
+      : "—";
+    this.stats.textContent = `${fps}   ${tile}\n${s.zoom.toFixed(2)}×`;
+    if (this.open && s.debug) this.panel.textContent = formatDebug(s.debug);
   }
 }

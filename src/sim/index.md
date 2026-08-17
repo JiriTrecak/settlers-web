@@ -11,9 +11,9 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `building/` | Instant-built huts, footprint blockers |
 | `data/` | One-file defs for buildings and settlers |
 | `object/` | Trees/stones/stacks on tiles, chop `stateProgress` |
-| `job/` | Unit assignments (`chop`, `pickup`, `drop`). `tickJob` runs the verb. |
-| `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller) |
-| `economy/` | Start kit + global bearer matcher |
+| `job/` | Unit assignments (`chop`, `pickup`, `drop`, `build`, `occupy`). `tickJob` runs the verb. |
+| `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller, bricklayer) |
+| `economy/` | Start kit + matcher + construction (plan → bricklayers → occupy) |
 | `path/` | Walkable BFS (land + objects) |
 | `movable/` | One unit, tile steps + `moveProgress` |
 | `world/` | Match: clock + grid + objects + dispatch |

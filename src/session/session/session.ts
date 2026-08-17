@@ -19,12 +19,13 @@ import {
   type MapDecoration,
   type MapStart,
   type BuildingKind,
+  type ViewSnapshot,
 } from "../../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, BuildMenu, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, BuildMenu, debugFrom, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 
@@ -76,6 +77,8 @@ export class Session {
   private acc = 0;
   private speed: GameSpeed = 1;
   private buildKind: BuildingKind | null = null;
+  private hover: GridPos | null = null;
+  private fps = 60;
 
   constructor(
     private readonly pixi: Application,
@@ -106,6 +109,7 @@ export class Session {
     this.buildMenu = new BuildMenu(this.overlay, {
       onKind: (kind) => {
         this.buildKind = kind;
+        this.syncGhost();
       },
     });
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
@@ -129,13 +133,9 @@ export class Session {
     // Native 1× on the first HQ. Space still fits the whole map.
     this.renderer.camera.zoom = 1;
     this.lookAt(start.x, start.y);
-    this.renderer.draw(world.view(), 0);
-    this.config.hooks.onHud({
-      cursor: null,
-      landscape: null,
-      height: null,
-      zoom: renderer.camera.zoom,
-    });
+    const snap = world.view();
+    this.renderer.draw(snap, 0);
+    this.pushHud(snap, 16.67, 0, false);
   }
 
   tick(dtMs: number, nowMs: number): void {
@@ -153,9 +153,11 @@ export class Session {
       n++;
     }
     if (n >= cap) this.acc = 0;
-    renderer.draw(world.view(), this.acc / step);
+    const snap = world.view();
+    renderer.draw(snap, this.acc / step);
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
+    this.pushHud(snap, dtMs, n, n >= cap);
     if (this.view && this.minimap) {
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
@@ -175,6 +177,35 @@ export class Session {
     this.world = null;
     this.view = null;
     this.acc = 0;
+    this.hover = null;
+  }
+
+  private pushHud(snap: ViewSnapshot, dtMs: number, simPerFrame: number, simCapped: boolean): void {
+    const renderer = this.renderer;
+    const view = this.view;
+    if (!renderer || !view) return;
+    const dt = Math.max(1, Math.min(dtMs, 100));
+    this.fps = this.fps * 0.9 + (1000 / dt) * 0.1;
+    const pos = this.hover;
+    this.config.hooks.onHud({
+      cursor: pos,
+      landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
+      height: pos ? view.heightAt(pos.x, pos.y) : null,
+      zoom: renderer.camera.zoom,
+      debug: debugFrom(snap, {
+        fps: this.fps,
+        dtMs,
+        speed: this.speed,
+        simPerFrame,
+        simCapped,
+        accMs: this.acc,
+        zoom: renderer.camera.zoom,
+        mapW: view.width,
+        mapH: view.height,
+        tool: this.buildKind,
+        selected: this.selected,
+      }),
+    });
   }
 
   /** Minimap click → center camera on that grid cell. */
@@ -193,7 +224,9 @@ export class Session {
     const renderer = this.renderer;
     const view = this.view;
     if (!renderer || !view) return;
+    this.hover = pos;
     renderer.highlight(pos, "hover");
+    this.syncGhost();
     this.config.hooks.onHud({
       cursor: pos,
       landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
@@ -208,6 +241,7 @@ export class Session {
     if (hut) {
       this.selected = { x: hut.pos.x, y: hut.pos.y };
       this.renderer.highlight(this.selected, "select");
+      this.syncGhost();
       return;
     }
     const kind = this.buildKind;
@@ -215,6 +249,7 @@ export class Session {
     this.selected = pos;
     this.renderer.highlight(pos, "select");
     this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });
+    this.syncGhost();
   }
 
   private syncCamera(): void {
@@ -222,6 +257,7 @@ export class Session {
     if (!renderer) return;
     renderer.applyCamera();
     renderer.highlight(this.selected, "select");
+    this.syncGhost();
   }
 
   private fit(): void {
@@ -229,6 +265,20 @@ export class Session {
     this.renderer.fitCamera();
     this.selected = null;
     this.renderer.highlight(null, "select");
+    this.syncGhost();
+  }
+
+  private syncGhost(): void {
+    const renderer = this.renderer;
+    const world = this.world;
+    const kind = this.buildKind;
+    const pos = this.hover;
+    if (!renderer) return;
+    if (!kind || !pos || !world || world.buildings.at(pos.x, pos.y)) {
+      renderer.ghost(null, null, false);
+      return;
+    }
+    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos));
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */

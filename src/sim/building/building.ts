@@ -1,13 +1,14 @@
 /**
  * Buildings on the map. Footprint from the def: `blocked` is unwalkable,
- * `protected` forbids overlapping another hut. Plans wait for hauled goods; `built` is finished.
+ * `protected` forbids overlapping another hut. `plan` waits for hauled goods,
+ * `building` is bricklayers on the scaffold, `built` is finished.
  */
 import type { GridPos, LandscapeType } from "../../shared";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
 
-export type BuildingState = "plan" | "built";
+export type BuildingState = "plan" | "building" | "built";
 
 export type BuildingView = {
   id: number;
@@ -16,6 +17,8 @@ export type BuildingView = {
   y: number;
   player: number;
   state: BuildingState;
+  /** 0 at plan, 0→1 while bricklayers hammer, 1 when finished. Drives the built-sprite mask. */
+  buildProgress: number;
 };
 
 export class Building {
@@ -27,6 +30,10 @@ export class Building {
 
   produceWait = 0;
   produced = 0;
+  /** 0→1 in discrete hammer bumps (`1 / (12 × construction materials)` each). */
+  constructionProgress = 0;
+  /** Actions left on the current board/stone before the next pile is popped. */
+  remainingMaterialActions = 0;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {
     this.id = id;
@@ -36,7 +43,15 @@ export class Building {
   }
 
   view(): BuildingView {
-    return { id: this.id, kind: this.kind, x: this.pos.x, y: this.pos.y, player: this.player, state: this.state };
+    return {
+      id: this.id,
+      kind: this.kind,
+      x: this.pos.x,
+      y: this.pos.y,
+      player: this.player,
+      state: this.state,
+      buildProgress: this.state === "built" ? 1 : this.constructionProgress,
+    };
   }
 }
 

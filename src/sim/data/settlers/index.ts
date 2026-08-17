@@ -1,10 +1,12 @@
 /** Settler defs. One file per profession; this file is the registry. */
 import { bearer } from "./bearer";
+import { bricklayer } from "./bricklayer";
 import { lumberjack } from "./lumberjack";
 import { sawmiller } from "./sawmiller";
 
 export const settlers = {
   bearer,
+  bricklayer,
   lumberjack,
   sawmiller,
 } as const;

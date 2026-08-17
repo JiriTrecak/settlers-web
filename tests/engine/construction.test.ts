@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { lumberjack as hutDef } from "../../src/sim/data/buildings/lumberjack";
+import { BRICKLAYER_ACTIONS_PER_MATERIAL } from "../../src/sim/economy/construction";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { goodsStack } from "../../src/sim/object/object";
 import { World } from "../../src/sim/world/world";
+
+const MATERIALS = hutDef.constructionStacks.reduce((n, s) => n + (s.required ?? 1), 0);
+const STEP = 1 / (BRICKLAYER_ACTIONS_PER_MATERIAL * MATERIALS);
 
 function grass(w: number, h: number): MapGrid {
   const grid = new MapGrid(w, h);
@@ -22,7 +26,7 @@ function tickUntil(world: World, pred: () => boolean, cap = 8000): number {
 }
 
 describe("construction", () => {
-  it("hauls construction goods, finishes the plan, and converts a bearer", () => {
+  it("hauls goods, bricklayers hammer, then a bearer occupies", () => {
     const world = new World(grass(48, 48));
     const at = { x: 16, y: 16 };
     expect(world.placePlan("lumberjack", at, 0)).toMatchObject({ state: "plan" });
@@ -31,11 +35,29 @@ describe("construction", () => {
     world.objects.place(goodsStack({ x: 24, y: 18 }, "stone", 2));
     world.spawnBearer({ x: 22, y: 16 }, 0);
 
-    const n = tickUntil(world, () => world.view().buildings[0]?.state === "built");
-    expect(n).toBeGreaterThan(0);
-    expect(n).toBeLessThan(8000);
     const plankAt = { x: at.x + hutDef.constructionStacks[1]!.dx, y: at.y + hutDef.constructionStacks[1]!.dy };
     const stoneAt = { x: at.x + hutDef.constructionStacks[0]!.dx, y: at.y + hutDef.constructionStacks[0]!.dy };
+
+    const toBuilding = tickUntil(world, () => world.view().buildings[0]?.state === "building");
+    expect(toBuilding).toBeGreaterThan(0);
+    expect(world.objects.get(plankAt.x, plankAt.y)).toBeDefined();
+    expect(world.objects.get(stoneAt.x, stoneAt.y)).toBeDefined();
+
+    tickUntil(
+      world,
+      () => world.view().movables.some((m) => m.type === "bricklayer" && m.action === "work"),
+      2000,
+    );
+    const p0 = world.view().buildings[0]!.buildProgress;
+    expect(p0).toBeCloseTo(STEP, 5);
+    for (let i = 0; i < 20; i++) world.tick();
+    expect(world.view().buildings[0]!.buildProgress).toBeCloseTo(p0, 5);
+    for (let i = 0; i < 25; i++) world.tick();
+    expect(world.view().buildings[0]!.buildProgress).toBeCloseTo(p0 + STEP, 5);
+
+    const toBuilt = tickUntil(world, () => world.view().buildings[0]?.state === "built");
+    expect(toBuilt).toBeGreaterThan(0);
+    expect(toBuilt).toBeLessThan(8000);
     expect(world.objects.get(plankAt.x, plankAt.y)).toBeUndefined();
     expect(world.objects.get(stoneAt.x, stoneAt.y)).toBeUndefined();
 
@@ -43,6 +65,33 @@ describe("construction", () => {
     const worker = world.view().movables.find((m) => m.type === "lumberjack");
     expect(worker).toMatchObject({ workplaceId: 1, inside: true });
     expect(world.view().movables.some((m) => m.type === "bearer")).toBe(false);
+    expect(world.view().movables.some((m) => m.type === "bricklayer")).toBe(false);
+  });
+
+  it("sends two bricklayers onto a hut", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 16, y: 16 };
+    expect(world.placePlan("lumberjack", at, 0)).toBeDefined();
+    world.objects.place(goodsStack({ x: 24, y: 16 }, "plank", 2));
+    world.objects.place(goodsStack({ x: 24, y: 18 }, "stone", 2));
+    world.spawnBearer({ x: 22, y: 16 }, 0);
+    world.spawnBearer({ x: 22, y: 18 }, 0);
+
+    tickUntil(world, () => world.view().buildings[0]?.state === "building");
+    tickUntil(
+      world,
+      () => world.view().movables.filter((m) => m.type === "bricklayer" && m.action === "work").length >= 2,
+      4000,
+    );
+    const p = world.view().buildings[0]!.buildProgress;
+    expect(p).toBeGreaterThanOrEqual(2 * STEP - 1e-9);
+    for (let i = 0; i < 50; i++) world.tick();
+    const later = world.view().buildings[0]!.buildProgress;
+    expect(later).toBeGreaterThan(p + STEP);
+    expect(later).toBeLessThanOrEqual(p + 3 * STEP + 1e-6);
+
+    tickUntil(world, () => world.view().buildings[0]?.state === "built");
+    expect(world.view().buildings[0]?.state).toBe("built");
   });
 
   it("does not steal another plan's construction pile", () => {
