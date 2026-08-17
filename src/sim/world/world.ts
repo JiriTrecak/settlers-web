@@ -1,7 +1,7 @@
 /**
  * One match's sim: clock, grid, objects, buildings, movables. Session ticks this; render reads `view()`.
  */
-import { HEX_DELTAS, type Action, type GridPos } from "../../shared";
+import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { BuildingGrid, canPlace, type Building, type BuildingView } from "../building/building";
 import { buildingDef, type BuildingKind } from "../data/buildings";
@@ -17,12 +17,14 @@ import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession } from "../profession/profession";
 import { seedRng, type Rng } from "../rng/rng";
+import { LandGrid, type LandView } from "../land/land";
 
 export type ViewSnapshot = {
   tick: number;
   movables: readonly MovableView[];
   objects: readonly MapObjectView[];
   buildings: readonly BuildingView[];
+  land?: LandView;
 };
 
 class Occupancy {
@@ -52,6 +54,7 @@ export class World {
   readonly grid: MapGrid;
   readonly objects: ObjectGrid;
   readonly buildings: BuildingGrid;
+  readonly land: LandGrid;
   readonly rng: Rng;
   private readonly occ: Occupancy;
   private readonly units: Movable[] = [];
@@ -61,6 +64,7 @@ export class World {
     this.grid = grid;
     this.objects = objects;
     this.buildings = new BuildingGrid(grid.width, grid.height);
+    this.land = new LandGrid(grid.width, grid.height);
     this.occ = new Occupancy(grid.width, grid.height);
     this.rng = rng;
   }
@@ -84,22 +88,27 @@ export class World {
   }
 
   placeBuilding(kind: BuildingKind, at: GridPos, player = 0, clear = false) {
+    if (!clear && !this.canPlaceBuilding(kind, at, player)) return undefined;
+    if (clear && !this.landAllows(kind, at, player)) return undefined;
     const hut = this.buildings.place(kind, at, player, this.grid, this.objects, clear);
     if (!hut) return undefined;
     this.staffFinished(hut);
+    this.syncLandClaims();
     return hut;
   }
 
   /** Scaffold. Matcher hauls `constructionStacks`; bricklayers hammer; a bearer occupies once built. */
   placePlan(kind: BuildingKind, at: GridPos, player = 0) {
+    if (!this.canPlaceBuilding(kind, at, player)) return undefined;
     const hut = this.buildings.place(kind, at, player, this.grid, this.objects);
     if (!hut) return undefined;
     hut.state = "plan";
     return hut;
   }
 
-  canPlaceBuilding(kind: BuildingKind, at: GridPos): boolean {
-    return canPlace(this.buildings, buildingDef(kind), at, this.grid, this.objects);
+  canPlaceBuilding(kind: BuildingKind, at: GridPos, player = 0): boolean {
+    if (!canPlace(this.buildings, buildingDef(kind), at, this.grid, this.objects)) return false;
+    return this.landAllows(kind, at, player);
   }
 
   dispatch(action: Action): void {
@@ -108,10 +117,14 @@ export class World {
       this.placePlan(action.kind, action.at, action.player ?? 0);
       return;
     }
+    if (action.type === "occupy") {
+      this.claimAt(action.at, action.player ?? 0);
+      return;
+    }
     const m = this.units.find((u) => u.id === action.id);
     if (!m) return;
     if (action.type === "moveTo") {
-      m.goTo(this.grid, action.to, this.blockers(m.id));
+      m.goTo(this.grid, action.to, this.blockers(m.id, m.player));
       this.syncOcc();
       return;
     }
@@ -119,7 +132,7 @@ export class World {
       const tree = this.objects.get(action.at.x, action.at.y);
       if (!tree || tree.kind !== "tree" || tree.growing) return;
       m.assignJob({ type: "chop", at: action.at });
-      tickJob(m, this.jobCtx(m.id));
+      tickJob(m, this.jobCtx(m));
       this.syncOcc();
       return;
     }
@@ -127,7 +140,7 @@ export class World {
       const stack = this.objects.get(action.at.x, action.at.y);
       if (!stack || stack.kind !== "stack" || m.material !== "none") return;
       m.assignJob({ type: "pickup", at: action.at });
-      tickJob(m, this.jobCtx(m.id));
+      tickJob(m, this.jobCtx(m));
       this.syncOcc();
       return;
     }
@@ -137,7 +150,7 @@ export class World {
       if (!isWalkable(this.grid, action.at.x, action.at.y, this.blockers())) return;
       if (this.occ.idAt(action.at.x, action.at.y) !== 0) return;
       m.assignJob({ type: "drop", at: action.at });
-      tickJob(m, this.jobCtx(m.id));
+      tickJob(m, this.jobCtx(m));
       this.syncOcc();
     }
   }
@@ -152,10 +165,11 @@ export class World {
         grid: this.grid,
         objects: this.objects,
         buildings: this.buildings,
-        blockers: this.blockers(m.id),
+        blockers: this.blockers(m.id, m.player),
         tickMs: this.clock.tickMs,
         units: this.units,
         rng: this.rng,
+        land: this.land,
       });
     }
     tickConstruction({
@@ -166,6 +180,7 @@ export class World {
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
     });
+    this.syncLandClaims();
     tickMatcher(this.units, this.buildings, this.objects);
     for (const m of this.units) {
       tickFlock(m, {
@@ -175,10 +190,11 @@ export class World {
         units: this.units,
         rng: this.rng,
         tickMs: this.clock.tickMs,
+        land: this.land,
       });
     }
     for (const m of this.units) {
-      tickJob(m, this.jobCtx(m.id));
+      tickJob(m, this.jobCtx(m));
     }
     this.syncOcc();
   }
@@ -189,6 +205,7 @@ export class World {
       movables: this.units.map((u) => u.view()),
       objects: this.objects.view(),
       buildings: this.buildings.view(this.units),
+      land: this.land.view(),
     };
   }
 
@@ -212,8 +229,8 @@ export class World {
         for (const { dx, dy } of HEX_DELTAS) {
           const x = m.pos.x + dx;
           const y = m.pos.y + dy;
-          if (!isWalkable(this.grid, x, y, this.blockers(m.id))) continue;
-          m.pathTo(this.grid, { x, y }, this.blockers(m.id));
+          if (!isWalkable(this.grid, x, y, this.blockers(m.id, m.player))) continue;
+          m.pathTo(this.grid, { x, y }, this.blockers(m.id, m.player));
           break;
         }
       }
@@ -230,23 +247,26 @@ export class World {
     if ("beds" in def && def.beds) hut.produceWait = Math.max(1, Math.round((def.produceMs ?? 2000) / this.clock.tickMs));
   }
 
-  private jobCtx(id: number) {
+  private jobCtx(m: Movable) {
     return {
       grid: this.grid,
       objects: this.objects,
-      blockers: this.blockers(id),
+      blockers: this.blockers(m.id, m.player),
       tickMs: this.clock.tickMs,
       buildings: this.buildings,
       units: this.units,
+      land: this.land,
     };
   }
 
-  private blockers(ignoreId = 0): Blockers {
+  /** Civilians stay on their own ground once any occupy disk exists. */
+  private blockers(ignoreId = 0, player?: number): Blockers {
     return {
       blocks: (x, y) =>
         this.objects.blocks(x, y) ||
         this.buildings.blocks(x, y) ||
-        (this.occ.idAt(x, y) !== 0 && this.occ.idAt(x, y) !== ignoreId),
+        (this.occ.idAt(x, y) !== 0 && this.occ.idAt(x, y) !== ignoreId) ||
+        (player != null && !this.land.owns(x, y, player)),
     };
   }
 
@@ -255,6 +275,32 @@ export class World {
     for (const m of this.units) {
       if (m.inside) continue;
       this.occ.occupy(m.id, m.pos.x, m.pos.y);
+    }
+  }
+
+  private landAllows(kind: BuildingKind, at: GridPos, player: number): boolean {
+    if (!this.land.hasLand()) return true;
+    return this.land.ownsFootprint(buildingDef(kind).protected, at, player);
+  }
+
+  private landscapeBlocked(x: number, y: number): boolean {
+    if (!this.grid.inBounds(x, y)) return true;
+    const t = this.grid.landscapeAt(x, y);
+    return isWater(t) || isRiver(t);
+  }
+
+  private claimAt(at: GridPos, player: number): void {
+    this.land.occupy(at, player, TOWER_RADIUS, (x, y) => this.landscapeBlocked(x, y));
+  }
+
+  /** Finished occupying buildings stamp their disk once. */
+  private syncLandClaims(): void {
+    for (const b of this.buildings.all()) {
+      if (b.landClaimed || b.state !== "built") continue;
+      const def = buildingDef(b.kind);
+      if (!("occupies" in def) || !def.occupies) continue;
+      this.claimAt(b.pos, b.player);
+      b.landClaimed = true;
     }
   }
 }

@@ -50,13 +50,13 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Space | Fit whole map |
 | Minimap drag | Look-at that cell |
 | Build strip | Select lumberjack / forester / sawmill / house |
-| Click empty valid land with a tool | Place a **plan** (scaffold) |
+| Click empty valid owned land with a tool | Place a **plan** (scaffold) |
 | Click an existing hut | Select it (highlight origin) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
-| F3 | Debug overlay (paths toggle draws remaining walk queues; sticky) |
+| F3 | Debug overlay (paths / ownership / claim) |
 | Escape / Menu | Leave to lobby |
 
-No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests.
+No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests. F3 **claim** is the occupy click (tower-radius disk).
 
 Match start looks at player-slot 0’s HQ at zoom 1, not a fit of the whole map.
 

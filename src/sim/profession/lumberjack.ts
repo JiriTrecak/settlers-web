@@ -41,7 +41,7 @@ export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
   }
   if (!canDeposit(ctx.objects, offer, "trunk")) return;
 
-  const tree = nearestTree(hut.pos, def.workRadius, ctx);
+  const tree = nearestTree(hut.pos, def.workRadius, hut.player, ctx);
   if (!tree) return;
   m.assignJob({ type: "chop", at: tree });
 }
@@ -51,7 +51,7 @@ function restTicks(tickMs: number): number {
   return Math.max(0, Math.round(ms / tickMs));
 }
 
-function nearestTree(center: GridPos, radius: number, ctx: ProfessionContext): GridPos | null {
+function nearestTree(center: GridPos, radius: number, player: number, ctx: ProfessionContext): GridPos | null {
   let best: GridPos | null = null;
   let bestD = Infinity;
   for (const obj of ctx.objects.view()) {
@@ -60,6 +60,7 @@ function nearestTree(center: GridPos, radius: number, ctx: ProfessionContext): G
     const d = hexDist(center.x, center.y, at.x, at.y);
     if (d > radius || d === 0) continue;
     if ((obj.stateProgress ?? 1) < 1) continue;
+    if (!ctx.land.owns(at.x, at.y, player)) continue;
     if (chopClaimed(at, ctx.units)) continue;
     const stand = chopStand(at);
     if (!isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers)) continue;

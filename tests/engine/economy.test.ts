@@ -38,6 +38,8 @@ describe("colony", () => {
     expect(stacks.some((s) => s.material === "plank")).toBe(true);
     expect(stacks.some((s) => s.material === "stone")).toBe(true);
     expect(stacks.some((s) => s.material === "axe")).toBe(true);
+    expect(world.land.playerAt(32, 32)).toBe(0);
+    expect(world.land.hasLand()).toBe(true);
   });
 });
 

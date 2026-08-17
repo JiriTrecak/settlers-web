@@ -6,6 +6,7 @@ import type { Goods } from "../data/types";
 import type { BuildingGrid } from "../building/building";
 import { settlerDef, type SettlerKind } from "../data/settlers";
 import { tryTakeMaterial } from "../economy/construction";
+import type { LandGrid } from "../land/land";
 import type { MapGrid } from "../map/mapGrid";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
@@ -40,6 +41,7 @@ export type JobContext = {
   tickMs: number;
   buildings: BuildingGrid;
   units: Movable[];
+  land: LandGrid;
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {
@@ -249,7 +251,7 @@ function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobCon
   m.direction = "nw";
   const ticks = workTicksOf(m.job, m.type);
   if (m.action !== "work") {
-    if (!isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y)) {
+    if (!isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y, ctx.land, m.player)) {
       m.material = "none";
       m.idle();
       return;
@@ -259,7 +261,7 @@ function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobCon
   }
   m.workElapsed += 1;
   if (m.workElapsed < ticks) return;
-  if (isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y)) {
+  if (isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y, ctx.land, m.player)) {
     plantTree(ctx.objects, plantAt);
   }
   m.material = "none";

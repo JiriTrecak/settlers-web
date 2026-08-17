@@ -15,6 +15,7 @@ export type DecorationSheets = {
   stones: PropFrame[];
   waves: PropFrame[];
   stacks: Partial<Record<Goods, PropFrame[]>>;
+  border: PropFrame[];
 };
 
 export async function loadDecorationSheets(): Promise<DecorationSheets | null> {
@@ -35,7 +36,8 @@ export async function loadDecorationSheets(): Promise<DecorationSheets | null> {
       if (legacy.length > 0) stacks.trunk = legacy;
     }
     if (trees.some((t) => t.length === 0) || stones.length === 0 || waves.length === 0) return null;
-    return { trees, falls, stones, waves, stacks };
+    const border = await loadGroup(sprites, "props/border");
+    return { trees, falls, stones, waves, stacks, border };
   } catch {
     return null;
   }

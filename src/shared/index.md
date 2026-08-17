@@ -9,3 +9,4 @@ Types and math both sim and render need. No Pixi, no DOM, no dump formats.
 | `player/` | Eight clothing tints |
 | `landscape/` | Landscape type union, colors, hex neighbors |
 | `types/` | `GridPos`, `Action` |
+| `shape/` | Tower occupy disk (`TOWER_RADIUS`, axial distance) |

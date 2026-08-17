@@ -4,6 +4,7 @@ import { forester as hutDef } from "../../src/sim/data/buildings/forester";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { TREE_GROW_MS, tickTrees } from "../../src/sim/object/tree";
 import { World } from "../../src/sim/world/world";
+import { UNOWNED } from "../../src/sim/land/land";
 
 function grass(w: number, h: number): MapGrid {
   const grid = new MapGrid(w, h);
@@ -95,5 +96,20 @@ describe("forester", () => {
       growing: false,
       stateProgress: 1,
     });
+  });
+
+  it("plants only on owned land once a disk exists", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 16, y: 16 };
+    world.land.occupy(at, 0, 10);
+    expect(world.land.playerAt(31, 16)).toBe(UNOWNED);
+    world.placeBuilding("forester", at, 0);
+    tickUntil(world, () => sapling(world) != null, 5000);
+    for (let i = 0; i < 8000; i++) world.tick();
+    const trees = world.objects.all().filter((o) => o.kind === "tree");
+    expect(trees.length).toBeGreaterThan(0);
+    for (const t of trees) {
+      expect(world.land.playerAt(t.x, t.y)).toBe(0);
+    }
   });
 });

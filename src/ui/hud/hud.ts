@@ -13,19 +13,32 @@ export type HudState = {
   debug?: DebugStats;
 };
 
+export type HudHooks = {
+  onLeave: () => void;
+  onShowPaths?: (on: boolean) => void;
+  onShowOwnership?: (on: boolean) => void;
+  onClaim?: (on: boolean) => void;
+};
+
 export class Hud {
   private readonly stats: HTMLDivElement;
   private readonly toggle: HTMLButtonElement;
   private readonly panel: HTMLDivElement;
   private readonly dump: HTMLPreElement;
   private readonly pathToggle: HTMLButtonElement;
+  private readonly ownershipToggle: HTMLButtonElement;
+  private readonly claimToggle: HTMLButtonElement;
   private readonly help: HTMLDivElement;
   private readonly leave: HTMLButtonElement;
+  private readonly hooks: HudHooks;
   private open = false;
   private showPaths = false;
+  private showOwnership = false;
+  private claiming = false;
   private last: HudState = { cursor: null, landscape: null, height: null, zoom: 1 };
 
-  constructor(host: HTMLElement, hooks: { onLeave: () => void; onShowPaths?: (on: boolean) => void }) {
+  constructor(host: HTMLElement, hooks: HudHooks) {
+    this.hooks = hooks;
     this.stats = document.createElement("div");
     this.stats.className = "hud-stats";
 
@@ -42,16 +55,20 @@ export class Hud {
 
     const opts = document.createElement("div");
     opts.className = "hud-debug-opts";
-    this.pathToggle = document.createElement("button");
-    this.pathToggle.type = "button";
-    this.pathToggle.textContent = "paths";
-    this.pathToggle.title = "Draw remaining walk queues";
-    this.pathToggle.addEventListener("click", () => {
+    this.pathToggle = optButton("paths", "Draw remaining walk queues", () => {
       this.showPaths = !this.showPaths;
-      this.syncPathToggle();
+      this.syncOpts();
       hooks.onShowPaths?.(this.showPaths);
     });
-    opts.append(this.pathToggle);
+    this.ownershipToggle = optButton("ownership", "Draw owned cells", () => {
+      this.showOwnership = !this.showOwnership;
+      this.syncOpts();
+      hooks.onShowOwnership?.(this.showOwnership);
+    });
+    this.claimToggle = optButton("claim", "Click a cell to stamp a tower-radius occupy disk", () => {
+      this.setClaiming(!this.claiming);
+    });
+    opts.append(this.pathToggle, this.ownershipToggle, this.claimToggle);
 
     this.dump = document.createElement("pre");
     this.dump.className = "hud-debug-dump";
@@ -70,7 +87,18 @@ export class Hud {
 
     host.append(this.stats, this.toggle, this.panel, this.help, this.leave);
     window.addEventListener("keydown", this.onKey);
-    this.syncPathToggle();
+    this.syncOpts();
+  }
+
+  /** Build strip picked a hut — claim tool yields. `emit` false skips the session callback. */
+  setClaiming(on: boolean, emit = true): void {
+    this.claiming = on;
+    if (on && !this.showOwnership) {
+      this.showOwnership = true;
+      this.hooks.onShowOwnership?.(true);
+    }
+    this.syncOpts();
+    if (emit) this.hooks.onClaim?.(on);
   }
 
   update(state: HudState): void {
@@ -102,8 +130,10 @@ export class Hud {
     this.paint();
   }
 
-  private syncPathToggle(): void {
+  private syncOpts(): void {
     this.pathToggle.classList.toggle("is-selected", this.showPaths);
+    this.ownershipToggle.classList.toggle("is-selected", this.showOwnership);
+    this.claimToggle.classList.toggle("is-selected", this.claiming);
   }
 
   private paint(): void {
@@ -115,4 +145,13 @@ export class Hud {
     this.stats.textContent = `${fps}   ${tile}\n${s.zoom.toFixed(2)}×`;
     if (this.open && s.debug) this.dump.textContent = formatDebug(s.debug);
   }
+}
+
+function optButton(label: string, title: string, onClick: () => void): HTMLButtonElement {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.textContent = label;
+  btn.title = title;
+  btn.addEventListener("click", onClick);
+  return btn;
 }

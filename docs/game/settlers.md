@@ -22,7 +22,7 @@ A step **occupies the destination immediately**; `moveProgress` is visual lerp o
 
 ## Walking
 
-BFS, 6 hex directions. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
+BFS, 6 hex directions. Once any occupy disk exists, civilians only walk tiles they own. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
 
 Click-to-move exists on `dispatch({ type: "moveTo" })` but the play loop does not call it.
 

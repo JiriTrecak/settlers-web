@@ -177,6 +177,7 @@ const props: Array<{ title: string; file: number; seq: number }> = [
   { title: "hive empty", file: 6, seq: 8 },
   { title: "flag door", file: 13, seq: 63 },
   { title: "flag roof", file: 13, seq: 64 },
+  { title: "border", file: 13, seq: 65 },
 ];
 
 for (const p of props) {

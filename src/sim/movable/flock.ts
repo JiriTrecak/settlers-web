@@ -6,6 +6,7 @@ import { approxDirection, deltaOf, DIRECTIONS, hexDist, neighborDir, type Direct
 import type { BuildingGrid } from "../building/building";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
+import type { LandGrid } from "../land/land";
 import { isWalkable } from "../path/path";
 import type { Rng } from "../rng/rng";
 import type { Movable } from "./movable";
@@ -17,6 +18,7 @@ export type FlockContext = {
   units: readonly Movable[];
   rng: Rng;
   tickMs: number;
+  land: LandGrid;
 };
 
 const FLOCK_RADIUS = 2;
@@ -73,7 +75,7 @@ function decentVector(m: Movable, ctx: FlockContext): { x: number; y: number } {
 function stepIfFree(m: Movable, dir: Direction, ctx: FlockContext): boolean {
   const d = deltaOf(dir);
   const to = { x: m.pos.x + d.dx, y: m.pos.y + d.dy };
-  const blockers = flockBlockers(ctx, m.id);
+  const blockers = flockBlockers(ctx, m);
   if (!isWalkable(ctx.grid, to.x, to.y, blockers)) return false;
   m.pathTo(ctx.grid, to, blockers);
   return true;
@@ -87,9 +89,13 @@ function stepRandomFree(m: Movable, ctx: FlockContext): boolean {
   return false;
 }
 
-function flockBlockers(ctx: FlockContext, ignoreId: number) {
+function flockBlockers(ctx: FlockContext, m: Movable) {
   return {
-    blocks: (x: number, y: number) => ctx.objects.blocks(x, y) || ctx.buildings.blocks(x, y) || occupied(ctx, x, y, ignoreId),
+    blocks: (x: number, y: number) =>
+      ctx.objects.blocks(x, y) ||
+      ctx.buildings.blocks(x, y) ||
+      occupied(ctx, x, y, m.id) ||
+      !ctx.land.owns(x, y, m.player),
   };
 }
 

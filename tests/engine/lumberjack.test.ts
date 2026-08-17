@@ -4,6 +4,7 @@ import { lumberjack as hutDef } from "../../src/sim/data/buildings/lumberjack";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { ObjectGrid, STACK_SIZE } from "../../src/sim/object/object";
 import { World } from "../../src/sim/world/world";
+import { UNOWNED } from "../../src/sim/land/land";
 
 function grass(w: number, h: number): MapGrid {
   const grid = new MapGrid(w, h);
@@ -138,5 +139,18 @@ describe("lumberjack", () => {
     expect(idle?.inside).toBe(true);
     tickUntil(world, () => world.objects.get(tree.x, tree.y)?.kind !== "tree", 800);
     expect(world.view().movables.filter((m) => m.job === "chop")).toHaveLength(0);
+  });
+
+  it("does not chop a tree off owned land", () => {
+    const objects = new ObjectGrid(40, 40);
+    objects.place({ kind: "tree", x: 28, y: 12, sheet: 0, capacity: 0, stateProgress: 1 });
+    const world = new World(grass(40, 40), objects);
+    world.land.occupy({ x: 12, y: 12 }, 0, 10);
+    expect(hexDist(12, 12, 28, 12)).toBeLessThanOrEqual(hutDef.workRadius);
+    expect(world.land.playerAt(28, 12)).toBe(UNOWNED);
+    world.placeBuilding("lumberjack", { x: 12, y: 12 }, 0);
+    for (let i = 0; i < 800; i++) world.tick();
+    expect(world.objects.get(28, 12)?.kind).toBe("tree");
+    expect(world.view().movables[0]!.inside).toBe(true);
   });
 });

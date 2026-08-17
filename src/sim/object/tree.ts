@@ -4,6 +4,7 @@
  */
 import { HEX_DELTAS, isRiver, isWater, type GridPos } from "../../shared";
 import type { BuildingGrid } from "../building/building";
+import type { LandGrid } from "../land/land";
 import type { MapGrid } from "../map/mapGrid";
 import { treeSheetAt } from "../decorations/decorations";
 import { ObjectGrid, type MapObjectView } from "./object";
@@ -13,7 +14,7 @@ export const TREE_GROW_MS = 7 * 60 * 1000;
 
 /**
  * Grass, not protected, no blocked neighbor (OOB / water / hut wall / tree).
- * The search adds "no protected neighbor" via `isPlantSearch`.
+ * `isPlantSearch` also forbids a protected neighbor and unowned plant tiles.
  */
 export function isTreePlantable(grid: MapGrid, buildings: BuildingGrid, objects: ObjectGrid, x: number, y: number): boolean {
   if (!grid.inBounds(x, y)) return false;
@@ -22,11 +23,21 @@ export function isTreePlantable(grid: MapGrid, buildings: BuildingGrid, objects:
   return !hasBlockedNeighbor(grid, buildings, objects, x, y);
 }
 
-/** Stand `(x, y)` plants at `(x, y+1)`. */
-export function isPlantSearch(grid: MapGrid, buildings: BuildingGrid, objects: ObjectGrid, x: number, y: number): boolean {
+/** Stand `(x, y)` plants at `(x, y+1)`. Plant tile must be the worker's land. */
+export function isPlantSearch(
+  grid: MapGrid,
+  buildings: BuildingGrid,
+  objects: ObjectGrid,
+  x: number,
+  y: number,
+  land?: LandGrid,
+  player?: number,
+): boolean {
   if (!grid.inBounds(x, y + 1)) return false;
   if (!isTreePlantable(grid, buildings, objects, x, y + 1)) return false;
-  return !hasProtectedNeighbor(buildings, x, y + 1);
+  if (hasProtectedNeighbor(buildings, x, y + 1)) return false;
+  if (land != null && player != null && !land.owns(x, y + 1, player)) return false;
+  return true;
 }
 
 /** Lumberjack stands SE of the tree and faces nw — the axe clip is aimed at that trunk. */

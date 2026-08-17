@@ -26,7 +26,7 @@ const STACKS: { material: Goods; capacity: number }[] = [
 /** Stamp HQ + house + piles + bearers at `at`. */
 export function placeColony(world: World, at: GridPos, player = 0): void {
   world.placeBuilding("tower", at, player, true);
-  const houseAt = findPlace(world, "small_livinghouse", at);
+  const houseAt = findPlace(world, "small_livinghouse", at, player);
   if (houseAt) world.placeBuilding("small_livinghouse", houseAt, player, true);
   const jobs: Array<{ kind: "stack"; material: Goods; capacity: number } | { kind: "bearer" }> = [
     ...STACKS.map((s) => ({ kind: "stack" as const, ...s })),
@@ -52,13 +52,13 @@ export function placeColony(world: World, at: GridPos, player = 0): void {
   }
 }
 
-function findPlace(world: World, kind: BuildingKind, around: GridPos): GridPos | null {
+function findPlace(world: World, kind: BuildingKind, around: GridPos, player: number): GridPos | null {
   for (let r = 6; r <= 24; r++) {
     for (let y = around.y - r; y <= around.y + r; y++) {
       for (let x = around.x - r; x <= around.x + r; x++) {
         if (hexDist(around.x, around.y, x, y) !== r) continue;
         if (!world.grid.inBounds(x, y)) continue;
-        if (world.canPlaceBuilding(kind, { x, y })) return { x, y };
+        if (world.canPlaceBuilding(kind, { x, y }, player)) return { x, y };
       }
     }
   }

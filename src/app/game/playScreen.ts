@@ -21,6 +21,8 @@ export class PlayScreen extends GameScreen {
     this.hud = new Hud(this.root, {
       onLeave: hooks.onLeave,
       onShowPaths: (on) => this.session.setShowPaths(on),
+      onShowOwnership: (on) => this.session.setShowOwnership(on),
+      onClaim: (on) => this.session.setClaiming(on),
     });
     this.session = new Session(pixi, this.root, {
       mapId,
@@ -29,6 +31,7 @@ export class PlayScreen extends GameScreen {
       hooks: {
         onHud: (state) => this.hud.update(state),
         onLeave: hooks.onLeave,
+        onClaiming: (on) => this.hud.setClaiming(on, false),
       },
     });
   }

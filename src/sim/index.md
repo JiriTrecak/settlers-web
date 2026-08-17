@@ -15,6 +15,7 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `profession/` | Workplace brains that *assign* jobs (lumberjack, sawmiller, bricklayer, forester) |
 | `economy/` | Start kit + matcher + construction (plan → bricklayers → occupy) |
 | `path/` | Walkable BFS (land + objects) |
+| `land/` | Player occupy disks + rim (tower radius, HQ, debug claim) |
 | `movable/` | One unit, tile steps + `moveProgress`, idle flock |
 | `world/` | Match: clock + grid + objects + dispatch |
 

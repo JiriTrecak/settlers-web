@@ -69,4 +69,15 @@ describe("buildings", () => {
     expect(world.view().buildings[0]).toMatchObject({ kind: "lumberjack", x: 10, y: 10, state: "plan", flag: null });
     expect(world.view().movables).toEqual([]);
   });
+
+  it("finished tower stamps occupy land; placement then needs that owner", () => {
+    const world = new World(grass(80, 80));
+    expect(world.placeBuilding("tower", { x: 16, y: 16 }, 0)).toBeDefined();
+    expect(world.land.playerAt(16, 16)).toBe(0);
+    expect(world.land.isBorder(16, 16)).toBe(false);
+    expect(world.canPlaceBuilding("lumberjack", { x: 28, y: 16 }, 0)).toBe(true);
+    expect(world.placePlan("lumberjack", { x: 28, y: 16 }, 0)).toBeDefined();
+    expect(world.canPlaceBuilding("lumberjack", { x: 70, y: 16 }, 0)).toBe(false);
+    expect(world.placePlan("lumberjack", { x: 70, y: 16 }, 0)).toBeUndefined();
+  });
 });

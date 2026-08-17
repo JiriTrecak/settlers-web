@@ -64,7 +64,7 @@ lumberjack fells adult tree ──trunk──► lumberjack offer
 
 Rest **3 s** inside. If the offer stack is full (8), stay inside.
 
-Else nearest adult unclaimed tree in radius **30** whose **SE** tile is walkable. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
+Else nearest adult unclaimed tree in radius **30** on the player's land whose **SE** tile is walkable. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
 
 Another lumberjack already chopping that tree → skip. Saplings / still-growing → skip.
 
@@ -72,9 +72,9 @@ Bearer click-chop (tests only): any neighbor, face the tree, **1.8 s**, leaves a
 
 ### Forester
 
-Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18**): 100 polar samples from hut origin, radius biased `u^3.9` toward the hut (more plants near home). Stand tile is walkable; plant is **south** of the stand (`y+1`).
+Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18**): 100 polar samples from hut origin, radius biased `u^3.9` toward the hut (more plants near home). Stand tile is walkable; plant is **south** of the stand (`y+1`) and on the worker's land.
 
-Plant tile: grass, not protected, no blocked neighbor, no protected neighbor. Face nw, kneel **3 s**. Home.
+Plant tile: grass, owned, not protected, no blocked neighbor, no protected neighbor. Face nw, kneel **3 s**. Home.
 
 Growth **7 minutes** at 1× (`TREE_GROW_MS`). Render: static (no wind), scale 0.35 / 0.6 / 0.85 around the tile origin until adult.
 

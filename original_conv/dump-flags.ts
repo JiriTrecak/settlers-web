@@ -1,9 +1,10 @@
 /**
- * Dump hut flags from GFX file 13 into `props/flag-door` / `props/flag-roof`
- * and patch catalog.json. Full `dump:graphics` also writes these; this is the cheap path.
+ * Dump hut flags and the land-border post from GFX file 13 into
+ * `props/flag-door` / `props/flag-roof` / `props/border` and patch catalog.json.
+ * Full `dump:graphics` also writes these; this is the cheap path.
  *
  * Door = seq 63 (workerless huts). Roof = seq 64 (occupied worker huts).
- * Torso layer is the cloth tinted with player color.
+ * Border = seq 65 (player-tinted occupy rim). Torso layer is the cloth tint.
  */
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -18,6 +19,7 @@ const FILE = 13;
 const FLAGS: { title: string; slug: string; seq: number }[] = [
   { title: "flag door", slug: "flag-door", seq: 63 },
   { title: "flag roof", slug: "flag-roof", seq: 64 },
+  { title: "border", slug: "border", seq: 65 },
 ];
 
 function pad(n: number, w = 3): string {

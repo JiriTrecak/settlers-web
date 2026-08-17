@@ -28,7 +28,7 @@ export function tickForester(m: Movable, ctx: ProfessionContext): void {
     return;
   }
 
-  const stand = plantStandInArea(hut.pos, buildingDef(hut.kind).workRadius, ctx);
+  const stand = plantStandInArea(hut.pos, buildingDef(hut.kind).workRadius, hut.player, ctx);
   if (!stand) return;
   m.restLeft = restTicks(ctx.tickMs);
   m.material = "tree";
@@ -43,12 +43,17 @@ function restTicks(tickMs: number): number {
  * Random stand tile in the work circle. Tree goes at `y+1`.
  * Samples polar `(angle, u^3.9 * radius)` from the hut origin (default work center).
  */
-function plantStandInArea(center: { x: number; y: number }, radius: number, ctx: ProfessionContext): { x: number; y: number } | null {
+function plantStandInArea(
+  center: { x: number; y: number },
+  radius: number,
+  player: number,
+  ctx: ProfessionContext,
+): { x: number; y: number } | null {
   const rng = ctx.rng;
   for (let i = 0; i < PLANT_SAMPLES; i++) {
     const stand = sampleInArea(rng, center, radius);
     if (!isWalkable(ctx.grid, stand.x, stand.y, ctx.blockers)) continue;
-    if (!isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, stand.x, stand.y)) continue;
+    if (!isPlantSearch(ctx.grid, ctx.buildings, ctx.objects, stand.x, stand.y, ctx.land, player)) continue;
     if (plantClaimed({ x: stand.x, y: stand.y + 1 }, ctx.units)) continue;
     return stand;
   }

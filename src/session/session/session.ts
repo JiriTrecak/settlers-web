@@ -32,6 +32,7 @@ import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 export type SessionHooks = {
   onHud(state: HudState): void;
   onLeave(): void;
+  onClaiming?(on: boolean): void;
 };
 
 export type SessionConfig = {
@@ -80,6 +81,8 @@ export class Session {
   private hover: GridPos | null = null;
   private fps = 60;
   private showPaths = false;
+  private showOwnership = false;
+  private claiming = false;
 
   constructor(
     private readonly pixi: Application,
@@ -98,6 +101,7 @@ export class Session {
     renderer.setBuildingSheets(buildings);
     renderer.setSettlerSheets(settlers);
     renderer.setShowPaths(this.showPaths);
+    renderer.setShowOwnership(this.showOwnership);
 
     // Widgets own their input; we only subscribe.
     this.minimap = new Minimap(this.overlay, {
@@ -111,6 +115,11 @@ export class Session {
     this.buildMenu = new BuildMenu(this.overlay, {
       onKind: (kind) => {
         this.buildKind = kind;
+        if (kind && this.claiming) {
+          this.claiming = false;
+          this.renderer?.previewOccupy(null);
+          this.config.hooks.onClaiming?.(false);
+        }
         this.syncGhost();
       },
     });
@@ -171,6 +180,23 @@ export class Session {
     this.renderer?.setShowPaths(on);
   }
 
+  setShowOwnership(on: boolean): void {
+    this.showOwnership = on;
+    this.renderer?.setShowOwnership(on);
+    if (!on) this.renderer?.previewOccupy(null);
+    else if (this.claiming) this.renderer?.previewOccupy(this.hover, this.config.player);
+  }
+
+  setClaiming(on: boolean): void {
+    this.claiming = on;
+    if (on) {
+      this.buildKind = null;
+      this.buildMenu?.setKind(null);
+    }
+    this.syncGhost();
+    this.renderer?.previewOccupy(on ? this.hover : null, this.config.player);
+  }
+
   stop(): void {
     this.input?.destroy();
     this.minimap?.destroy();
@@ -186,6 +212,7 @@ export class Session {
     this.view = null;
     this.acc = 0;
     this.hover = null;
+    this.claiming = false;
   }
 
   private pushHud(snap: ViewSnapshot, dtMs: number, simPerFrame: number, simCapped: boolean): void {
@@ -235,6 +262,7 @@ export class Session {
     this.hover = pos;
     renderer.highlight(pos, "hover");
     this.syncGhost();
+    if (this.claiming) renderer.previewOccupy(pos, this.config.player);
     this.config.hooks.onHud({
       cursor: pos,
       landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
@@ -245,6 +273,10 @@ export class Session {
 
   private setSelect(pos: GridPos | null, _shift = false): void {
     if (!this.renderer || !this.world || !pos) return;
+    if (this.claiming) {
+      this.world.dispatch({ type: "occupy", at: pos, player: this.config.player });
+      return;
+    }
     const hut = this.world.buildings.at(pos.x, pos.y);
     if (hut) {
       this.selected = { x: hut.pos.x, y: hut.pos.y };
@@ -253,7 +285,7 @@ export class Session {
       return;
     }
     const kind = this.buildKind;
-    if (!kind || !this.world.canPlaceBuilding(kind, pos)) return;
+    if (!kind || !this.world.canPlaceBuilding(kind, pos, this.config.player)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
     this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });
@@ -282,11 +314,11 @@ export class Session {
     const kind = this.buildKind;
     const pos = this.hover;
     if (!renderer) return;
-    if (!kind || !pos || !world || world.buildings.at(pos.x, pos.y)) {
+    if (this.claiming || !kind || !pos || !world || world.buildings.at(pos.x, pos.y)) {
       renderer.ghost(null, null, false);
       return;
     }
-    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos));
+    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.config.player));
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */

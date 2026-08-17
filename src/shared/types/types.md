@@ -1,3 +1,3 @@
 # types
 
-`GridPos` is integer map coords. `Action` is a discriminated union (`noop`, `moveTo`, `chop`, `pickup`, `drop`, `placeBuilding`). Session dispatches `placeBuilding` as a plan; sim is the only writer.
+`GridPos` is integer map coords. `Action` is a discriminated union (`noop`, `moveTo`, `chop`, `pickup`, `drop`, `placeBuilding`, `occupy`). Session dispatches `placeBuilding` as a plan and `occupy` from the debug claim tool; sim is the only writer.

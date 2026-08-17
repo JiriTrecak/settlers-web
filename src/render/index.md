@@ -10,7 +10,8 @@ PixiJS drawing. Consumes `MapView` + dumped graphics. Does not own game state.
 | `building/` | Hut sprites + waving player-tinted flags |
 | `decoration/` | Tree / stone / stack / wave sprites |
 | `settler/` | Per-profession walk/idle (empty + trunk) + chop/pickup |
-| `debug/` | Walk-path polylines (HUD F3 toggle) |
+| `land/` | Occupy rim posts (always on, player-tinted) |
+| `debug/` | Walk-path polylines + owned-cell fill (HUD F3 toggles) |
 | `graphics/` | Catalog PNG load |
 | `camera/` | Pan / zoom / screen↔world |
 

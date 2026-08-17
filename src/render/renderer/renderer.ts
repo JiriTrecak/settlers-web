@@ -1,6 +1,6 @@
 /**
  * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
- * Reads `MapView`; never writes sim. Debug path overlay is a HUD toggle.
+ * Reads `MapView`; never writes sim. Debug path / ownership overlays are HUD toggles.
  */
 import { Application, Container, Graphics, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
@@ -17,6 +17,8 @@ import type { DecorationSheets } from "../decoration/decorationSheets";
 import { buildLandscapeGeometry } from "../landscape/landscapeGeometry";
 import { createLandscapeMesh } from "../landscape/landscapeMesh";
 import { PathLayer } from "../debug/pathLayer";
+import { LandLayer } from "../debug/landLayer";
+import { BorderLayer } from "../land/borderLayer";
 import { SettlerLayer } from "../settler/settlerLayer";
 import type { SettlerSheets } from "../settler/settlerSheets";
 
@@ -27,8 +29,10 @@ export class Renderer {
   private readonly decorations: DecorationLayer;
   private readonly buildings: BuildingLayer;
   private readonly settlers: SettlerLayer;
+  private readonly borders: BorderLayer;
   private readonly ghostPlot = new GhostLayer();
   private readonly paths = new PathLayer();
+  private readonly land = new LandLayer();
 
   private view: MapView | null = null;
   private atlas: Texture | null = null;
@@ -44,11 +48,12 @@ export class Renderer {
     this.decorations = new DecorationLayer(this.iso);
     this.buildings = new BuildingLayer(this.iso);
     this.settlers = new SettlerLayer(this.iso);
+    this.borders = new BorderLayer(this.iso);
     this.hover.eventMode = "none";
     this.select.eventMode = "none";
     this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root, this.paths.root);
+    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -58,6 +63,7 @@ export class Renderer {
 
   setSheets(sheets: DecorationSheets | null): void {
     this.decorations.setSheets(sheets);
+    this.borders.setFrames(sheets?.border ?? []);
   }
 
   setBuildingSheets(sheets: BuildingSheets | null): void {
@@ -76,12 +82,14 @@ export class Renderer {
     mesh.eventMode = "none";
     mesh.zIndex = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.paths.root);
+    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
     this.decorations.setWaves(view, waves);
     this.buildings.setView(view);
     this.settlers.setView(view);
     this.ghostPlot.setView(view);
     this.paths.setView(view);
+    this.land.setView(view);
+    this.borders.setView(view);
 
     if (fit) this.fitCamera();
     this.applyCamera();
@@ -123,6 +131,8 @@ export class Renderer {
     this.buildings.sync(snapshot.buildings);
     this.settlers.draw(snapshot.movables, alpha);
     this.paths.draw(snapshot.movables, alpha);
+    this.land.draw(snapshot.land);
+    this.borders.draw(snapshot.land);
   }
 
   applyCamera(): void {
@@ -130,6 +140,7 @@ export class Renderer {
     this.world.scale.set(this.camera.zoom);
     this.ghostPlot.setZoom(this.camera.zoom);
     this.paths.setZoom(this.camera.zoom);
+    this.land.setZoom(this.camera.zoom);
   }
 
   /** Screen pixel → cell whose height-displaced diamond is under the cursor. */
@@ -174,6 +185,16 @@ export class Renderer {
   /** Remaining walk queues. Sticky until toggled off — F3 does not have to stay open. */
   setShowPaths(on: boolean): void {
     this.paths.setOn(on);
+  }
+
+  /** Owned cells, player tint at 50%. Sticky like paths. */
+  setShowOwnership(on: boolean): void {
+    this.land.setOn(on);
+  }
+
+  /** Claim-tool hover: rim of the disk that a click would stamp. */
+  previewOccupy(pos: GridPos | null, player = 0): void {
+    this.land.setPreview(pos, player);
   }
 
   destroy(): void {

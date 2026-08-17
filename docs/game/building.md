@@ -11,15 +11,15 @@ Two masks, both relative to origin:
 - **blocked** — unwalkable walls. Settlers path around these.
 - **protected** — blocked plus a skirt. No second hut may overlap. Units *can* stand on skirt tiles.
 
-Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot.
+Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot. Once any occupy disk exists, every protected tile must also be owned by the placing player.
 
 Flatten / diggers are skipped: if the land is legal types, it places, heights unchanged.
 
 ## Placement
 
-Build-strip click on empty valid land dispatches a **plan** (scaffold). Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal. Hidden while hovering an existing hut.
+Build-strip click on empty valid **owned** land dispatches a **plan** (scaffold). Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
 
-`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. The play loop never uses that for the strip.
+`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk. The play loop never uses `placeBuilding` for the strip.
 
 ## Lifecycle
 
@@ -93,4 +93,4 @@ Door, flag, bricklayer spots, construction piles, work spot (sawmill) are all re
 
 ## Not yet
 
-Destroy / deconstruct, other civilizations in a match, flatten before build, military occupy (tower is just an HQ sprite + door flag), stock, temples, farms.
+Destroy / deconstruct, other civilizations in a match, flatten before build, extra towers from the strip, stock, temples, farms.

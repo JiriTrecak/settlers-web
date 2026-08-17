@@ -33,9 +33,17 @@ A tile is standable when:
 - no hut **blocked** tile (the walls, not the protected skirt)
 - no other unit occupying it (`inside` units do not occupy)
 
-Pathing is BFS on that graph. No A* yet.
+Pathing is BFS on walkable tiles. Once any occupy disk exists, civilians also refuse tiles they do not own.
 
 Hex neighbors are the six diamond steps (ne, e, se, sw, w, nw). Distance is hex: same-sign axes take max, otherwise manhattan.
+
+## Ownership
+
+Per-tile owner (`-1` unowned) plus a tower-count. A finished occupying building (HQ tower) or debug **claim** click stamps a disk of radius **40** using axial distance (`Y_SCALE` ≈ √3/2), clipped to the map. Same-player overlap extends the blob. Tiles another player already enforces (`towerCount > 0`) stay theirs, except the clicked cell.
+
+Once any disk exists, new huts must sit entirely on that player's land (`protected` tiles). Foresters plant and lumberjacks chop only on owned tiles. Civilians path and flock on their own ground.
+
+Rim posts: owned, not water, hex neighbor a different owner (not water). Rendered always (player-tinted `props/border`). F3 **ownership** is the debug fill on top.
 
 ## Things on tiles
 

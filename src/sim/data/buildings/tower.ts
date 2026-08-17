@@ -10,6 +10,7 @@ export const tower = {
   worker: null,
   workRadius: 0,
   viewDistance: 38,
+  occupies: true,
   ground: ["grass", "earth", "flattened"],
   blocked: [
     { dx: -1, dy: 0 },

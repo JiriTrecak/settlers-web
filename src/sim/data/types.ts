@@ -43,6 +43,8 @@ export type BuildingDef = {
   beds?: number;
   /** Livinghouse: ms between spawns. */
   produceMs?: number;
+  /** Finished building stamps a tower-radius occupy disk (HQ / military). */
+  occupies?: boolean;
 };
 
 export type SettlerDef = {

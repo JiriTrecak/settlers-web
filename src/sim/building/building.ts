@@ -51,6 +51,8 @@ export class Building {
   constructionProgress = 0;
   /** Actions left on the current board/stone before the next pile is popped. */
   remainingMaterialActions = 0;
+  /** True after this hut's occupy disk has been stamped. */
+  landClaimed = false;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {
     this.id = id;

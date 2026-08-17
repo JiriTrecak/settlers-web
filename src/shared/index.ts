@@ -1,5 +1,16 @@
 /** Shared grid math and landscape types. No Pixi, no DOM. */
 export type { Action, GridPos } from "./types/types";
+export {
+  TOWER_RADIUS,
+  Y_SCALE,
+  circleBounds,
+  circleContains,
+  distanceSquared,
+  forEachCircleBorder,
+  forEachCircleTile,
+  squaredDistance,
+  type CircleRect,
+} from "./shape/mapCircle";
 export { DIRECTIONS, approxDirection, deltaOf, directionFromDelta, neighborDir, type Direction } from "./direction/direction";
 export { PLAYER_COLORS, clampPlayer, playerCss } from "./player/player";
 export {
