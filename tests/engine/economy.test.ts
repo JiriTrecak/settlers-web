@@ -26,7 +26,7 @@ function tickUntil(world: World, pred: () => boolean, cap = 6000): number {
 }
 
 describe("colony", () => {
-  it("stamps tower, house, goods, and jobless bearers", () => {
+  it("stamps tower, house, goods, bearers, and infantry", () => {
     const world = new World(grass(64, 64));
     placeColony(world, { x: 32, y: 32 }, 0);
     const kinds = world.view().buildings.map((b) => b.kind).sort();
@@ -34,6 +34,8 @@ describe("colony", () => {
     expect(kinds).toContain("small_livinghouse");
     const bearers = world.view().movables.filter((m) => m.type === "bearer");
     expect(bearers.length).toBeGreaterThanOrEqual(16);
+    expect(world.view().movables.filter((m) => m.type === "swordsman")).toHaveLength(6);
+    expect(world.view().movables.some((m) => m.type === "swordsman" && m.inside)).toBe(true);
     expect(world.view().movables.filter((m) => m.type === "pioneer")).toHaveLength(0);
     const stacks = world.view().objects.filter((o) => o.kind === "stack");
     expect(stacks.some((s) => s.material === "plank")).toBe(true);

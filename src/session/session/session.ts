@@ -15,6 +15,7 @@ import {
   seedRng,
   matchStarts,
   emptyTickTimings,
+  isControllable,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -27,6 +28,7 @@ import type { DecorationSheets } from "../../render/decoration/decorationSheets"
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
 import { Minimap, SpeedControl, BuildMenu, debugFrom, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
+import { tilesAround, type ScreenPt } from "../input/boxSelect";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 import { Opponent } from "../opponent/opponent";
 
@@ -74,7 +76,7 @@ export class Session {
   private world: World | null = null;
   private view: MapView | null = null;
   private selected: GridPos | null = null;
-  private selectedUnitId: number | null = null;
+  private selectedUnitIds: number[] = [];
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
   private buildMenu: BuildMenu | null = null;
@@ -135,13 +137,15 @@ export class Session {
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
       pick: (screen) => renderer.pick(screen),
       onHover: (pos) => this.setHover(pos),
-      onSelect: (pos, shift) => this.setSelect(pos, shift),
-      onCommand: (pos) => this.commandSelected(pos),
+      onSelect: (pos, add, screen) => this.setSelect(pos, add, screen),
+      onBox: (a, b) => this.boxSelect(a, b),
+      onCommand: (pos, shift) => this.commandSelected(pos, shift),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
       onEscape: () => this.deselect(),
       onDelete: () => this.deleteSelected(),
       onConvert: () => this.convertSelected(),
+      onEnlist: () => this.enlistSelected(),
     });
 
     const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
@@ -202,8 +206,10 @@ export class Session {
     const snap = world.view(this.me);
     const snapMs = performance.now() - tSnap;
     const tDraw = performance.now();
+    this.pruneSelection();
+    renderer.setSelected(this.selectedUnitIds);
     renderer.draw(snap, this.acc / step);
-    this.syncUnitHighlight();
+    this.paintHutSelect();
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
     const drawMs = performance.now() - tDraw;
@@ -249,25 +255,39 @@ export class Session {
       this.config.hooks.onClaiming?.(false);
       return;
     }
-    if (this.selectedUnitId != null) {
-      this.selectedUnitId = null;
-      this.renderer?.highlight(null, "select");
+    if (this.selectedUnitIds.length > 0) {
+      this.selectedUnitIds = [];
+      this.syncSelectionVisual();
       return;
     }
     if (this.selected) {
       this.selected = null;
-      this.renderer?.highlight(null, "select");
+      this.renderer?.highlight(null);
     }
   }
 
-  /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). */
+  /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). Every selected unit. */
   convertSelected(): void {
     const world = this.world;
-    if (!world || this.selectedUnitId == null) return;
-    const unit = world.movable(this.selectedUnitId);
-    if (!unit || unit.player !== this.me) return;
-    if (unit.type === "bearer") world.enqueue({ type: "convert", id: unit.id, to: "pioneer" });
-    else if (unit.type === "pioneer") world.enqueue({ type: "convert", id: unit.id, to: "bearer" });
+    if (!world) return;
+    for (const id of this.selectedUnitIds) {
+      const unit = world.movable(id);
+      if (!unit || unit.player !== this.me) continue;
+      if (unit.type === "bearer") world.enqueue({ type: "convert", id: unit.id, to: "pioneer" });
+      else if (unit.type === "pioneer") world.enqueue({ type: "convert", id: unit.id, to: "bearer" });
+    }
+  }
+
+  /** X: empty-handed bearer → L1 swordsman. Barracks later. Every selected bearer. */
+  enlistSelected(): void {
+    const world = this.world;
+    if (!world) return;
+    for (const id of this.selectedUnitIds) {
+      const unit = world.movable(id);
+      if (!unit || unit.player !== this.me) continue;
+      if (unit.type !== "bearer" || unit.material !== "none") continue;
+      world.enqueue({ type: "convert", id: unit.id, to: "swordsman" });
+    }
   }
 
   /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
@@ -277,7 +297,7 @@ export class Session {
     if (!world.buildings.at(this.selected.x, this.selected.y)) return;
     world.enqueue({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
-    this.renderer?.highlight(null, "select");
+    this.renderer?.highlight(null);
   }
 
   setClaiming(on: boolean): void {
@@ -307,7 +327,7 @@ export class Session {
     this.acc = 0;
     this.hover = null;
     this.claiming = false;
-    this.selectedUnitId = null;
+    this.selectedUnitIds = [];
   }
 
   private pushHud(
@@ -366,7 +386,6 @@ export class Session {
     const view = this.view;
     if (!renderer || !view) return;
     this.hover = pos;
-    renderer.highlight(pos, "hover");
     this.syncGhost();
     if (this.claiming) renderer.previewOccupy(pos, this.me);
     this.config.hooks.onHud({
@@ -377,78 +396,132 @@ export class Session {
     });
   }
 
-  private setSelect(pos: GridPos | null, _shift = false): void {
-    if (!this.renderer || !this.world || !pos) return;
+  private setSelect(pos: GridPos | null, add = false, screen?: ScreenPt): void {
+    if (!this.renderer || !this.world) return;
     if (this.claiming) {
-      this.world.enqueue({ type: "occupy", at: pos, player: this.me });
+      if (pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
       return;
     }
     const kind = this.buildKind;
-    if (kind && this.world.canPlaceBuilding(kind, pos, this.me)) {
+    if (kind && pos && this.world.canPlaceBuilding(kind, pos, this.me)) {
       this.selected = pos;
-      this.selectedUnitId = null;
-      this.renderer.highlight(pos, "select");
+      this.selectedUnitIds = [];
+      this.syncSelectionVisual();
       this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.me });
       this.buildKind = null;
       this.buildMenu?.setKind(null);
       this.syncGhost();
       return;
     }
-    const unit = this.world.unitAt(pos.x, pos.y);
-    if (unit && unit.player === this.me && (unit.type === "pioneer" || unit.type === "bearer")) {
-      this.selectedUnitId = unit.id;
+    const hitId = screen ? this.renderer.pickUnit(screen) : null;
+    const unit = hitId != null ? this.world.movable(hitId) : undefined;
+    if (unit && unit.player === this.me && isControllable(unit.type)) {
       this.selected = null;
-      this.renderer.highlight(unit.pos, "select");
+      if (add) {
+        this.selectedUnitIds = this.selectedUnitIds.includes(unit.id)
+          ? this.selectedUnitIds.filter((id) => id !== unit.id)
+          : [...this.selectedUnitIds, unit.id];
+      } else {
+        this.selectedUnitIds = [unit.id];
+      }
+      this.syncSelectionVisual();
       this.syncGhost();
+      return;
+    }
+    if (!pos) {
+      if (add) return;
+      this.selectedUnitIds = [];
+      this.selected = null;
+      this.syncSelectionVisual();
       return;
     }
     const hut = this.world.buildings.at(pos.x, pos.y);
     if (hut) {
-      this.selectedUnitId = null;
+      if (add) return;
+      this.selectedUnitIds = [];
       this.selected = { x: hut.pos.x, y: hut.pos.y };
-      this.renderer.highlight(this.selected, "select");
+      this.syncSelectionVisual();
       this.syncGhost();
       return;
     }
-    if (this.selectedUnitId != null) {
-      this.commandSelected(pos);
-      return;
-    }
+    if (add) return;
+    this.selectedUnitIds = [];
+    this.selected = null;
+    this.syncSelectionVisual();
   }
 
-  /** RMB, or LMB on empty land with a unit selected. Pioneer works; bearer just walks. */
-  private commandSelected(pos: GridPos | null): void {
-    const world = this.world;
-    if (!world || !pos || this.selectedUnitId == null) return;
-    const unit = world.movable(this.selectedUnitId);
-    if (!unit || unit.player !== this.me) {
-      this.selectedUnitId = null;
-      this.renderer?.highlight(null, "select");
-      return;
-    }
-    if (unit.type === "pioneer") world.enqueue({ type: "pioneerWork", id: unit.id, to: pos });
-    else world.enqueue({ type: "moveTo", id: unit.id, to: pos });
-  }
-
-  private syncUnitHighlight(): void {
+  private boxSelect(a: ScreenPt, b: ScreenPt): void {
     const world = this.world;
     const renderer = this.renderer;
-    if (!world || !renderer || this.selectedUnitId == null) return;
-    const unit = world.movable(this.selectedUnitId);
-    if (!unit || unit.inside) {
-      this.selectedUnitId = null;
-      renderer.highlight(null, "select");
+    if (!world || !renderer) return;
+    this.selected = null;
+    this.selectedUnitIds = renderer.unitsInBox(a, b).filter((id) => {
+      const u = world.movable(id);
+      return !!u && u.player === this.me && isControllable(u.type);
+    });
+    this.syncSelectionVisual();
+    this.syncGhost();
+  }
+
+  /** RMB. Pioneers claim toward the tile; everyone else walks. Shift = forced. Group walk spreads onto nearby tiles. */
+  private commandSelected(pos: GridPos | null, forced = false): void {
+    const world = this.world;
+    if (!world || !pos || this.selectedUnitIds.length === 0) return;
+    const walkers: number[] = [];
+    for (const id of this.selectedUnitIds) {
+      const unit = world.movable(id);
+      if (!unit || unit.player !== this.me) continue;
+      if (unit.type === "pioneer") world.enqueue({ type: "pioneerWork", id: unit.id, to: pos });
+      else walkers.push(unit.id);
+    }
+    const dests = this.spreadDests(pos, walkers.length);
+    for (let i = 0; i < walkers.length; i++) {
+      world.enqueue({ type: "moveTo", id: walkers[i]!, to: dests[i] ?? pos, forced });
+    }
+  }
+
+  private spreadDests(center: GridPos, n: number): GridPos[] {
+    const world = this.world;
+    if (!world || n <= 0) return [];
+    const out: GridPos[] = [];
+    for (const t of tilesAround(center, Math.max(n * 8, 16))) {
+      if (!world.canStand(t.x, t.y)) continue;
+      out.push(t);
+      if (out.length >= n) break;
+    }
+    while (out.length < n) out.push(center);
+    return out;
+  }
+
+  private pruneSelection(): void {
+    const world = this.world;
+    if (!world) {
+      this.selectedUnitIds = [];
       return;
     }
-    renderer.highlight(unit.pos, "select");
+    this.selectedUnitIds = this.selectedUnitIds.filter((id) => {
+      const u = world.movable(id);
+      return !!u && u.player === this.me && !u.inside && isControllable(u.type);
+    });
+  }
+
+  private syncSelectionVisual(): void {
+    this.renderer?.setSelected(this.selectedUnitIds);
+    this.paintHutSelect();
+  }
+
+  private paintHutSelect(): void {
+    const renderer = this.renderer;
+    if (!renderer) return;
+    if (this.selectedUnitIds.length > 0) renderer.highlight(null);
+    else renderer.highlight(this.selected);
   }
 
   private syncCamera(): void {
     const renderer = this.renderer;
     if (!renderer) return;
     renderer.applyCamera();
-    if (this.selectedUnitId != null) this.syncUnitHighlight();
-    else renderer.highlight(this.selected, "select");
+    this.syncSelectionVisual();
     this.syncGhost();
   }
 
@@ -456,8 +529,8 @@ export class Session {
     if (!this.view || !this.renderer) return;
     this.renderer.fitCamera();
     this.selected = null;
-    this.selectedUnitId = null;
-    this.renderer.highlight(null, "select");
+    this.selectedUnitIds = [];
+    this.syncSelectionVisual();
     this.syncGhost();
   }
 

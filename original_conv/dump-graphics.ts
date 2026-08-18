@@ -180,6 +180,8 @@ const props: Array<{ title: string; file: number; seq: number }> = [
   { title: "border", file: 13, seq: 65 },
   { title: "site post", file: 1, seq: 92 },
   { title: "site sign", file: 1, seq: 93 },
+  { title: "health", file: 4, seq: 6 },
+  { title: "select mark", file: 4, seq: 7 },
 ];
 
 for (const p of props) {

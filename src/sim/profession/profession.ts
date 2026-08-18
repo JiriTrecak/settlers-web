@@ -9,7 +9,7 @@
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
 import { buildingDef } from "../data/buildings";
-import { settlerDef } from "../data/settlers";
+import { isSoldier, settlerDef } from "../data/settlers";
 import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
 import type { Rng } from "../rng/rng";
@@ -20,6 +20,7 @@ import { tickForester } from "./forester";
 import { tickLumberjack } from "./lumberjack";
 import { tickPioneer } from "./pioneer";
 import { tickSawmiller } from "./sawmiller";
+import { tickSoldier } from "./soldier";
 import { tickStonecutter } from "./stonecutter";
 
 export type ProfessionContext = JobContext & {
@@ -37,6 +38,7 @@ export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   else if (m.type === "stonecutter") tickStonecutter(m, ctx);
   else if (m.type === "pioneer") tickPioneer(m, ctx);
   else if (m.type === "digger") tickDigger(m, ctx);
+  else if (m.type === "swordsman") tickSoldier(m, ctx);
 }
 
 export function doorOf(hut: Building): GridPos {
@@ -109,4 +111,13 @@ export function goDoor(m: Movable, hut: Building, ctx: ProfessionContext): void 
   if (!stand) return;
   if (m.pos.x === stand.x && m.pos.y === stand.y) return;
   m.pathTo(ctx.grid, stand, ctx.blockers);
+}
+
+/** Soldiers inside a military hut. Land stamps while this is > 0. */
+export function garrisonCount(hut: Building, units: readonly Movable[]): number {
+  let n = 0;
+  for (const u of units) {
+    if (u.workplaceId === hut.id && u.inside && isSoldier(u.type)) n += 1;
+  }
+  return n;
 }

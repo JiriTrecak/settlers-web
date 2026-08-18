@@ -17,7 +17,7 @@ export function gridToWorld(x: number, y: number, height = 0): WorldPos {
   };
 }
 
-/** Inverse of gridToWorld at height 0. Minimap frustum uses this; hover uses `pickCell`. */
+/** Inverse of gridToWorld at height 0. Minimap frustum uses this; tile pick uses `pickCell`. */
 export function worldToGrid(wx: number, wy: number): WorldPos {
   const y = wy / TILE_HEIGHT;
   const x = wx / TILE_WIDTH + y / 2;

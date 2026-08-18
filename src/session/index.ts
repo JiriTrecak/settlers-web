@@ -1,6 +1,6 @@
 /** Public session surface: match class, map fetch, canvas input. */
 export { Session, type SessionConfig, type SessionHooks } from "./session/session";
-export { Opponent, OPPONENT_CONVERT_TICK, OPPONENT_TOWER_TICK } from "./opponent/opponent";
+export { Opponent, OPPONENT_CONVERT_TICK, OPPONENT_ENLIST_TICK, OPPONENT_TOWER_TICK } from "./opponent/opponent";
 export { MapInput } from "./input/mapInput";
 export {
   defaultMapId,

@@ -31,7 +31,7 @@ export {
 export { MarkGrid } from "./mark/mark";
 export { Building, BuildingGrid, canPlace, type BuildingState, type BuildingView } from "./building/building";
 export { buildings, buildingDef, type BuildingKind } from "./data/buildings";
-export { settlers, settlerDef, needsPlayersGround, unitViewDistance, type SettlerKind } from "./data/settlers";
+export { settlers, settlerDef, needsPlayersGround, unitViewDistance, isAttackable, isControllable, isSoldier, type SettlerKind } from "./data/settlers";
 export {
   ObjectGrid,
   STACK_SIZE,

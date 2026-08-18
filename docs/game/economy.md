@@ -8,12 +8,13 @@ Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`
 
 On match start (`placeColony` action), at each player slot's `starts[i]`:
 
-- Tower (finished, objects on the footprint cleared)
+- Tower (finished, objects on the footprint cleared). One L1 already inside, so the occupy disk exists on frame 1.
 - Small house nearby (finished)
 - Low-goods piles in a spiral around HQ, skipping protected tiles
 - **16** jobless bearers in that same spiral
+- **5** more L1 swordsmen in that spiral (6 infantry total). They occupy extra towers.
 
-Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kneel-claim). **C** again on own land → bearer.
+Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kneel-claim). **C** again on own land → bearer. **X** enlists a bearer as L1.
 
 | Good | Piles |
 |---|---|

@@ -1,5 +1,5 @@
 /**
- * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
+ * Pixi world: landscape mesh, decorations, buildings, placement ghost, hut select, camera.
  * Reads `MapView`; never writes sim. Debug path / ownership / fog overlays are HUD toggles.
  */
 import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
@@ -52,7 +52,6 @@ export class Renderer {
   private meshData: LandscapeGeometryData | null = null;
   private lastHeight = new Int8Array(0);
   private lastLand = new Uint8Array(0);
-  private readonly hover = new Graphics();
   private readonly select = new Graphics();
 
   constructor(private readonly app: Application) {
@@ -64,11 +63,9 @@ export class Renderer {
     this.buildings = new BuildingLayer(this.iso);
     this.settlers = new SettlerLayer(this.iso);
     this.borders = new BorderLayer(this.iso);
-    this.hover.eventMode = "none";
     this.select.eventMode = "none";
-    this.hover.zIndex = 1_000_000;
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.world.addChild(this.iso, this.select, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -88,6 +85,11 @@ export class Renderer {
 
   setSettlerSheets(sheets: SettlerSheets | null): void {
     this.settlers.setSheets(sheets);
+  }
+
+  /** Selection marks on those unit ids. Empty hides them. */
+  setSelected(ids: readonly number[]): void {
+    this.settlers.setSelected(ids);
   }
 
   setView(view: MapView, waves: readonly MapDecoration[] = this.waves, fit = true): void {
@@ -171,10 +173,20 @@ export class Renderer {
     return pickCell(world.x, world.y, view.width, view.height, (x, y) => view.heightAt(x, y));
   }
 
-  /** Diamond outline on the four verts of a cell, stroke width inverse to zoom. */
-  highlight(pos: GridPos | null, kind: "hover" | "select"): void {
-    const g = kind === "hover" ? this.hover : this.select;
-    g.clear();
+  /** Frontmost settler whose body/torso pixel contains the cursor. */
+  pickUnit(screen: { x: number; y: number }): number | null {
+    const world = this.camera.screenToWorld(screen.x, screen.y);
+    return this.settlers.hitAt(world.x, world.y);
+  }
+
+  /** Drawn settlers whose sprite AABB overlaps the screen marquee. */
+  unitsInBox(a: { x: number; y: number }, b: { x: number; y: number }): number[] {
+    return this.settlers.idsInScreenBox(a.x, a.y, b.x, b.y, (wx, wy) => this.camera.worldToScreen(wx, wy));
+  }
+
+  /** Diamond outline on a hut cell. Units use the sprite mark instead. */
+  highlight(pos: GridPos | null): void {
+    this.select.clear();
     if (!pos || !this.view) return;
     const { x, y } = pos;
     if (x >= this.view.width - 1 || y >= this.view.height - 1) return;
@@ -184,9 +196,8 @@ export class Renderer {
       gridToWorld(x + 1, y + 1, this.view.heightAt(x + 1, y + 1)),
       gridToWorld(x, y + 1, this.view.heightAt(x, y + 1)),
     ];
-    const color = kind === "hover" ? 0xfff3c4 : 0xffffff;
-    g.poly(pts).stroke({
-      color,
+    this.select.poly(pts).stroke({
+      color: 0xffffff,
       width: 1.25 / this.camera.zoom,
       alignment: 0.5,
     });
@@ -331,7 +342,7 @@ export class Renderer {
     this.captureTerrain(view);
     this.fogGen = -1;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.world.addChild(mesh, this.iso, this.select, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   destroy(): void {

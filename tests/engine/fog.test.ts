@@ -125,9 +125,10 @@ describe("world fog", () => {
     expect(world.destroyBuilding(at)).toBe(true);
     world.fog.tickDim(10_000, fw);
     const fog = world.view(0).fog;
-    expect(fog.sightAt(20, 40)).toBe(50);
-    expect(fog.isClear(20, 40)).toBe(false);
-    expect(fog.isHidden(20, 40)).toBe(true);
+    // Origin stays lit: the garrison walks out and keeps a disk of 8.
+    expect(fog.sightAt(50, 40)).toBe(50);
+    expect(fog.isClear(50, 40)).toBe(false);
+    expect(fog.isHidden(50, 40)).toBe(true);
     expect(world.view(0).buildings).toHaveLength(0);
   });
 

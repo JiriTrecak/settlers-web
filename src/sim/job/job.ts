@@ -1,10 +1,11 @@
 /**
  * A unit's assignment. Movable only walks/works; `tickJob` is the verb.
  */
-import { isRiver, isWater, type Direction, type GridPos } from "../../shared";
-import type { Goods } from "../data/types";
+import { hexDist, isWater, type Direction, type GridPos } from "../../shared";
+import type { Goods, SettlerDef } from "../data/types";
 import type { BuildingGrid } from "../building/building";
-import { settlerDef, type SettlerKind } from "../data/settlers";
+import { buildingDef } from "../data/buildings";
+import { isAttackable, settlerDef, type SettlerKind } from "../data/settlers";
 import { tryTakeMaterial } from "../economy/construction";
 import type { LandGrid } from "../land/land";
 import type { MarkGrid } from "../mark/mark";
@@ -27,7 +28,8 @@ export type Job =
   | { type: "build"; at: GridPos; hutId: number; direction: Direction }
   | { type: "plant"; at: GridPos }
   | { type: "pioneer"; at: GridPos; arrived: boolean }
-  | { type: "flatten"; at: GridPos; hutId: number };
+  | { type: "flatten"; at: GridPos; hutId: number }
+  | { type: "attack"; targetId: number };
 
 /** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
 export function markOf(job: Job | null): GridPos | null {
@@ -89,6 +91,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("digger").chopMs;
     return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
+  if (job?.type === "attack") {
+    const ms = settlerDef("swordsman").chopMs;
+    return Math.max(1, Math.round((ms ?? 1000) / 25));
+  }
   if (job?.type === "cut") {
     const ms = settlerDef("stonecutter").chopMs;
     return Math.max(1, Math.round((ms ?? 4500) / 25));
@@ -117,6 +123,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "pioneer") tickPioneerWork(m, ctx);
   else if (job.type === "flatten") tickFlatten(m, job, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
+  else if (job.type === "attack") tickAttack(m, job, ctx);
 }
 
 function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
@@ -262,7 +269,16 @@ function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobC
     return;
   }
   if (m.walking) return;
-  m.become(job.worker, job.hutId, ctx.tickMs);
+  const hut = ctx.buildings.get(job.hutId);
+  if (!hut || hut.state !== "built") {
+    m.idle();
+    return;
+  }
+  if (m.type !== job.worker) m.become(job.worker, job.hutId, ctx.tickMs);
+  else m.workplaceId = job.hutId;
+  const def = buildingDef(hut.kind);
+  if ("occupies" in def && def.occupies) m.enter();
+  if (m.job) m.idle();
 }
 
 /** Walk onto the bricklayer spot, become, hammer one 1s swing. Progress bumps at swing start. */
@@ -337,11 +353,53 @@ function tickPioneerWork(m: Movable, ctx: JobContext): void {
   ctx.land.claim(m.pos, m.player, (x, y) => {
     if (!ctx.grid.inBounds(x, y)) return true;
     const t = ctx.grid.landscapeAt(x, y);
-    return isWater(t) || isRiver(t);
+    return isWater(t);
   });
   m.action = "idle";
   m.workElapsed = 0;
   m.from = m.pos;
+}
+
+/** Face, 1s swing, subtract strength. Chase to an adjacent stand if out of range. */
+function tickAttack(m: Movable, job: Extract<Job, { type: "attack" }>, ctx: JobContext): void {
+  const target = ctx.units.find((u) => u.id === job.targetId);
+  if (!target || target.health <= 0 || !isAttackable(target.type) || target.player === m.player || target.inside) {
+    m.idle();
+    return;
+  }
+  const def: SettlerDef = settlerDef(m.type);
+  const range = def.attackRange ?? 1;
+  const d = hexDist(m.pos.x, m.pos.y, target.pos.x, target.pos.y);
+  if (d <= range) {
+    if (m.walking) return;
+    m.face(target.pos);
+    const ticks = workTicksOf(m.job, m.type);
+    if (m.action !== "work") {
+      m.beginWork();
+      m.workElapsed = 0;
+    }
+    m.workElapsed += 1;
+    if (m.workElapsed < ticks) return;
+    const dmg = def.strength ?? 0;
+    target.health -= dmg;
+    m.workElapsed = 0;
+    m.action = "idle";
+    m.from = m.pos;
+    if (target.health <= 0) m.idle();
+    return;
+  }
+  if (m.walking) return;
+  if (m.action === "work") {
+    m.action = "idle";
+    m.workElapsed = 0;
+    m.from = m.pos;
+  }
+  const stand = standBeside(ctx.grid, target.pos, m.pos, ctx.blockers);
+  if (!stand) {
+    m.idle();
+    return;
+  }
+  m.pathTo(ctx.grid, stand, ctx.blockers);
 }
 
 /** Walk onto the cell, kneel 1s, step height ±1 toward the hut's frozen mean. */

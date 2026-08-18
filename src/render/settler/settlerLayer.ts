@@ -1,30 +1,54 @@
 /**
  * Movable sprites. Interpolates `from`→`pos` with moveProgress (+ frame leftover).
  * One container per unit: shadow → body → torso so player-color clothing stays on top.
+ * Attackable units get the original health pip (file 4 seq 6) above the head.
+ * Selected units get the original mark (file 4 seq 7) under the pip.
+ * Clicks sample opaque body/torso pixels; the marquee uses those sprite boxes.
  */
-import { Container, Graphics, Sprite } from "pixi.js"
+import { Container, Graphics, Sprite, type Texture } from "pixi.js"
 import { gridToWorld, isoDepth, ISO_DEPTH_UNIT } from "../../shared"
 import type { MapView } from "../../sim/map/mapView"
-import type { MovableView } from "../../sim/movable/movable"
+import type { MovableType, MovableView } from "../../sim/movable/movable"
 import type { FogView } from "../../sim/fog/fog"
 import { FOG_VISIBLE } from "../../sim/fog/fog"
+import { isAttackable, isControllable, settlerDef } from "../../sim/data/settlers"
+import type { SettlerDef } from "../../sim/data/types"
 import type { PropFrame } from "../graphics/textures"
 import { PLAYER_COLORS, clampPlayer } from "../../shared"
 import type { SettlerSheets } from "./settlerSheets"
+import { aabbOverlap, localHits } from "./spriteHit"
+
+const ALPHA = new WeakMap<Texture, Uint8Array | null>()
+
+/** Original draws the pip 38px above the tile origin (their Y-up). Pixi is Y-down. */
+const HEALTH_Y = -38
+/** Selection mark sits closer to the unit than the health pip. */
+const MARK_Y = -20
 
 type Drawn = {
   id: number
+  type: MovableType
   root: Container
   body: Sprite
   torso: Sprite
   shadow: Sprite
   fallback: Graphics
+  mark: Sprite
+  health: Sprite
+}
+
+/** Frame 0 = full HP, last = almost dead. Same mapping as the original sequence. */
+export function healthFrameIndex(hp: number, maxHp: number, frames: number): number {
+  if (frames <= 0) return 0
+  const pct = Math.max(0, Math.min(1, maxHp > 0 ? hp / maxHp : 0))
+  return Math.min(((1 - pct) * frames) | 0, frames - 1)
 }
 
 export class SettlerLayer {
   private sheets: SettlerSheets | null = null
   private view: MapView | null = null
   private drawn = new Map<number, Drawn>()
+  private selected = new Set<number>()
 
   constructor(private readonly parent: Container) {}
 
@@ -32,8 +56,38 @@ export class SettlerLayer {
     this.sheets = sheets
   }
 
+  setSelected(ids: readonly number[]): void {
+    this.selected = new Set(ids)
+  }
+
   setView(view: MapView | null): void {
     this.view = view
+  }
+
+  /** Frontmost unit whose body/torso pixel contains the world point. */
+  hitAt(wx: number, wy: number): number | null {
+    let best: { id: number; z: number } | null = null
+    for (const d of this.drawn.values()) {
+      if (!isControllable(d.type) || !this.drawnHits(d, wx, wy)) continue
+      if (!best || d.root.zIndex >= best.z) best = { id: d.id, z: d.root.zIndex }
+    }
+    return best?.id ?? null
+  }
+
+  /** Units whose body/torso screen AABB overlaps the marquee. */
+  idsInScreenBox(
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number,
+    toScreen: (wx: number, wy: number) => { x: number; y: number },
+  ): number[] {
+    const out: number[] = []
+    for (const d of this.drawn.values()) {
+      if (!isControllable(d.type) || !this.drawnBoxHits(d, ax, ay, bx, by, toScreen)) continue
+      out.push(d.id)
+    }
+    return out
   }
 
   /** `alpha` is leftover accumulator / tickMs — visual only, not sim. */
@@ -45,6 +99,7 @@ export class SettlerLayer {
       if (m.inside) continue
       seen.add(m.id)
       const drawn = this.ensure(m)
+      drawn.type = m.type
       const p = visualProgress(m, alpha)
       const x = m.from.x + (m.pos.x - m.from.x) * p
       const y = m.from.y + (m.pos.y - m.from.y) * p
@@ -82,6 +137,8 @@ export class SettlerLayer {
         drawn.fallback.visible = true
         drawn.fallback.position.set(world.x, world.y)
       }
+      this.paintMark(drawn, m, world.x, world.y)
+      this.paintHealth(drawn, m, world.x, world.y)
     }
     for (const [id, d] of this.drawn) {
       if (seen.has(id)) continue
@@ -104,11 +161,64 @@ export class SettlerLayer {
     const fallback = new Graphics()
     fallback.eventMode = "none"
     fallback.circle(0, -4, 4).fill({ color: 0xe8c36a })
-    unit.addChild(shadow, body, torso, fallback)
+    const health = new Sprite()
+    health.eventMode = "none"
+    const mark = new Sprite()
+    mark.eventMode = "none"
+    unit.addChild(shadow, body, torso, fallback, mark, health)
     this.parent.addChild(unit)
-    const drawn: Drawn = { id: m.id, root: unit, body, torso, shadow, fallback }
+    const drawn: Drawn = { id: m.id, type: m.type, root: unit, body, torso, shadow, fallback, mark, health }
     this.drawn.set(m.id, drawn)
     return drawn
+  }
+
+  private paintMark(drawn: Drawn, m: MovableView, wx: number, wy: number): void {
+    const frame = this.sheets?.mark ?? null
+    const show = !!frame && this.selected.has(m.id)
+    drawn.mark.visible = show
+    if (!show || !frame) return
+    drawn.mark.texture = frame.texture
+    drawn.mark.position.set(wx + frame.offsetX, wy + MARK_Y + frame.offsetY)
+  }
+
+  private paintHealth(drawn: Drawn, m: MovableView, wx: number, wy: number): void {
+    const bars = this.sheets?.health ?? []
+    const show = bars.length > 0 && isAttackable(m.type)
+    drawn.health.visible = show
+    if (!show) return
+    const def: SettlerDef = settlerDef(m.type)
+    const max = def.health ?? 100
+    const frame = bars[healthFrameIndex(m.health, max, bars.length)]!
+    drawn.health.texture = frame.texture
+    drawn.health.position.set(wx + frame.offsetX, wy + HEALTH_Y + frame.offsetY)
+  }
+
+  private drawnHits(d: Drawn, wx: number, wy: number): boolean {
+    if (d.body.visible && spritePixelHits(d.body, wx, wy)) return true
+    if (d.torso.visible && spritePixelHits(d.torso, wx, wy)) return true
+    if (d.fallback.visible) {
+      const dx = wx - d.fallback.position.x
+      const dy = wy - (d.fallback.position.y - 4)
+      return dx * dx + dy * dy <= 16
+    }
+    return false
+  }
+
+  private drawnBoxHits(
+    d: Drawn,
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number,
+    toScreen: (wx: number, wy: number) => { x: number; y: number },
+  ): boolean {
+    if (d.body.visible && spriteBoxHits(d.body, ax, ay, bx, by, toScreen)) return true
+    if (d.torso.visible && spriteBoxHits(d.torso, ax, ay, bx, by, toScreen)) return true
+    if (d.fallback.visible) {
+      const p = toScreen(d.fallback.position.x, d.fallback.position.y - 4)
+      return aabbOverlap(p.x - 4, p.y - 4, p.x + 4, p.y + 4, ax, ay, bx, by)
+    }
+    return false
   }
 
   private frameOf(m: MovableView, progress: number): PropFrame | null {
@@ -148,4 +258,56 @@ function visualProgress(m: MovableView, alpha: number): number {
   if (m.action === "walk") return Math.min(1, m.moveProgress + alpha / m.stepTicks)
   if (m.action === "work") return Math.min(1, m.workProgress + alpha / m.workTicks)
   return 0
+}
+
+function spritePixelHits(sprite: Sprite, wx: number, wy: number): boolean {
+  const tex = sprite.texture
+  if (!tex || tex.width === 0 || tex.height === 0) return false
+  return localHits(wx - sprite.position.x, wy - sprite.position.y, tex.width, tex.height, alphaOf(tex))
+}
+
+function spriteBoxHits(
+  sprite: Sprite,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  toScreen: (wx: number, wy: number) => { x: number; y: number },
+): boolean {
+  const tex = sprite.texture
+  if (!tex || tex.width === 0 || tex.height === 0) return false
+  const p0 = toScreen(sprite.position.x, sprite.position.y)
+  const p1 = toScreen(sprite.position.x + tex.width, sprite.position.y + tex.height)
+  return aabbOverlap(p0.x, p0.y, p1.x, p1.y, ax, ay, bx, by)
+}
+
+function alphaOf(tex: Texture): Uint8Array | null {
+  if (ALPHA.has(tex)) return ALPHA.get(tex) ?? null
+  const a = readAlpha(tex)
+  ALPHA.set(tex, a)
+  return a
+}
+
+/** Same-origin catalog PNGs. Failure → AABB-only hit. */
+function readAlpha(tex: Texture): Uint8Array | null {
+  const w = tex.width | 0
+  const h = tex.height | 0
+  if (w <= 0 || h <= 0) return null
+  const src = tex.source.resource
+  if (!src) return null
+  try {
+    const c = document.createElement("canvas")
+    c.width = w
+    c.height = h
+    const ctx = c.getContext("2d", { willReadFrequently: true })
+    if (!ctx) return null
+    const frame = tex.frame
+    ctx.drawImage(src as CanvasImageSource, frame.x, frame.y, frame.width, frame.height, 0, 0, w, h)
+    const data = ctx.getImageData(0, 0, w, h).data
+    const a = new Uint8Array(w * h)
+    for (let i = 0; i < a.length; i++) a[i] = data[i * 4 + 3]!
+    return a
+  } catch {
+    return null
+  }
 }

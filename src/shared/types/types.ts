@@ -7,7 +7,7 @@ export type GridPos = {
 export type Action =
   | { type: "noop" }
   | { type: "placeColony"; at: GridPos; player?: number }
-  | { type: "moveTo"; id: number; to: GridPos }
+  | { type: "moveTo"; id: number; to: GridPos; forced?: boolean }
   | { type: "chop"; id: number; at: GridPos }
   | { type: "pickup"; id: number; at: GridPos }
   | { type: "drop"; id: number; at: GridPos }
@@ -15,4 +15,4 @@ export type Action =
   | { type: "occupy"; at: GridPos; player?: number }
   | { type: "destroyBuilding"; at: GridPos }
   | { type: "pioneerWork"; id: number; to: GridPos }
-  | { type: "convert"; id: number; to: "pioneer" | "bearer" };
+  | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" };

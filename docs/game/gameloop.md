@@ -19,16 +19,17 @@ Order matters — later systems see this tick’s assignments.
 3. Trees grow
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
-6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / digger / pioneer search)
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / digger / pioneer search / swordsman aggro or garrison)
 7. Construction: plan → flatten (if the def asks) → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)
 10. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
-11. Newly finished occupying buildings stamp a tower-radius disk
-12. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
-13. Occupancy grid rebuild (units with `inside` do not occupy a tile)
+11. Dead units drop out and unstamp fog
+12. Garrisoned occupying buildings stamp a tower-radius disk (empty ones release)
+13. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
+14. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
-Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony` per slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may enqueue for the next beat (convert, pioneer, tower plan).
+Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony` per slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may enqueue for the next beat (convert, pioneer, tower plan, enlist).
 
 ## Determinism
 
@@ -55,9 +56,12 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
 | Click empty valid owned land with a tool | Place a **plan** (fence), drop the tool |
 | Click an existing hut | Select it (highlight origin) |
-| Click own pioneer / bearer | Select the unit (highlight follows) |
-| C with a bearer / pioneer selected | Convert bearer → pioneer, or pioneer → bearer (own land, empty hands) |
-| RMB / LMB empty with a unit selected | Pioneer: claim toward that tile. Bearer: `moveTo` |
+| Click own pioneer / swordsman | Select that unit (click the sprite, not the tile). Shift-click toggles. Bearers / workers ignore clicks |
+| Shift-drag | Marquee: all own controllable units in the rect |
+| C with a pioneer selected | Convert pioneer → bearer (own land, empty hands) |
+| X with empty bearers selected | Enlist as L1 swordsman (no selected bearers until barracks) |
+| RMB with units selected | Pioneer: claim toward that tile. Swordsman: `moveTo` (spread). Shift = forced walk |
+| Click empty land | Clear unit / hut selection |
 | Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
 | F3 | Debug overlay (frame cost + sim phases, fog / paths / ownership / claim) |

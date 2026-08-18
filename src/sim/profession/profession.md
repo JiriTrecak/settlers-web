@@ -17,3 +17,5 @@ Bricklayer: temporary. Construction assigns a `build` job; on arrival they `beco
 Digger: temporary. Construction assigns `flatten` on a plan whose protected heights are off the frozen mean. Walk onto the cell (hut footprint is walkable for them, stacks included), kneel 1s, ±1 height. `ceil(protected/15)` at once. Revert when the plot is level or the hut leaves `plan`.
 
 Pioneer: no workplace. Job `pioneer` is the click. Walk there, then claim unenforced foreign tiles (hex 1–6 toward the target, else 30). Kneel 1.2s, `land.claim`. Tower-covered tiles stay put.
+
+Swordsman: no workplace until they garrison. Closest attackable enemy in hex 30 gets an `attack` job (peels a DEFAULT walk). Else an empty tower with a free infantry slot gets `occupy` (enter, land stamps). Forced walk (shift-RMB) skips both until they stop. Bearers / workers are not attackable. Inside a tower they stay put.

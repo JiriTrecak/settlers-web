@@ -4,13 +4,13 @@ The map is a square grid (`width × width` for original dumps). Each cell has a 
 
 ## Landscape
 
-Types are the domain names (`grass`, `earth`, `water8`, rivers, …). Water and river are **unwalkable**. Everything else is walkable unless an object or hut wall sits on the tile.
+Types are the domain names (`grass`, `earth`, `water8`, rivers, …). Water is **unwalkable**. Rivers are fords — settlers walk them. Everything else is walkable unless an object or hut wall sits on the tile.
 
 Procedural islands must obey the neighbor-blend table or the mesh will not pick the right diamonds. Dumped maps already do.
 
 ## Height
 
-Dump heights are 0–127. Each step lifts the diamond **2 px** up the screen (`y' = 9y - 2h`). Hover/select ray-tests the same height-displaced triangles as the mesh — a flat inverse would highlight tiles north of a mountain.
+Dump heights are 0–127. Each step lifts the diamond **2 px** up the screen (`y' = 9y - 2h`). Tile pick (`pickCell`) tests the same height-displaced triangles as the mesh — a flat inverse would hit tiles north of a mountain. Unit select samples the sprite instead.
 
 ## Iso
 
@@ -28,7 +28,7 @@ Draw order (`isoDepth`): south in front, then east. Bias on the same pixel: wave
 A tile is standable when:
 
 - in bounds
-- not water / river
+- not water (rivers are walkable)
 - no tree / stone / stack
 - no hut **blocked** tile (the walls, not the protected skirt)
 - no other unit occupying it (`inside` units do not occupy)

@@ -20,7 +20,12 @@ export type UnitClips = {
   carry: Partial<Record<CarryKind, CarryClips>>;
 };
 
-export type SettlerSheets = Record<MovableType, UnitClips>;
+export type SettlerSheets = Record<MovableType, UnitClips> & {
+  /** File 4 seq 6. Frame 0 = full, last = almost dead. */
+  health: PropFrame[];
+  /** File 4 seq 7. Drawn on selected units. */
+  mark: PropFrame | null;
+};
 
 const CARRY: Record<MovableType, readonly CarryKind[]> = {
   bearer: ["trunk", "plank", "stone"],
@@ -31,6 +36,7 @@ const CARRY: Record<MovableType, readonly CarryKind[]> = {
   pioneer: [],
   sawmiller: ["trunk", "plank"],
   stonecutter: ["stone"],
+  swordsman: [],
 };
 
 export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
@@ -46,7 +52,12 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
     const stonecutter = (await loadUnit(sprites, "stonecutter", CARRY.stonecutter)) ?? bearer;
     const pioneer = (await loadUnit(sprites, "pioneer", CARRY.pioneer)) ?? bearer;
-    return { bearer, lumberjack, sawmiller, bricklayer, digger, forester, stonecutter, pioneer };
+    const swordsman = (await loadUnit(sprites, "swordsman-l1", CARRY.swordsman)) ?? bearer;
+    const named = await loadGroup(sprites, "props/health");
+    const health = named.length > 0 ? named : await loadGroup(sprites, "uncatalogued/settler/04/006");
+    const markNamed = await loadGroup(sprites, "props/select-mark");
+    const mark = (markNamed[0] ?? (await loadGroup(sprites, "uncatalogued/settler/04/007"))[0]) ?? null;
+    return { bearer, lumberjack, sawmiller, bricklayer, digger, forester, stonecutter, pioneer, swordsman, health, mark };
   } catch {
     return null;
   }

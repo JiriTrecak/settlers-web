@@ -30,6 +30,14 @@ describe("path", () => {
     expect(path!.some((p) => p.x === 3 && p.y !== 4)).toBe(false);
   });
 
+  it("walks across rivers", () => {
+    const grid = grass(8, 8);
+    for (let y = 0; y < 8; y++) grid.setLandscape(3, y, "river1");
+    const path = findPath(grid, { x: 1, y: 4 }, { x: 5, y: 4 });
+    expect(path).not.toBeNull();
+    expect(path!.some((p) => p.x === 3)).toBe(true);
+  });
+
   it("returns null for water goals", () => {
     const grid = grass(8, 8);
     grid.setLandscape(4, 4, "water8");

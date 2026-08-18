@@ -43,8 +43,10 @@ export type BuildingDef = {
   beds?: number;
   /** Livinghouse: ms between spawns. */
   produceMs?: number;
-  /** Finished building stamps a tower-radius occupy disk (HQ / military). */
+  /** Finished building stamps a tower-radius occupy disk while garrisoned (HQ / military). */
   occupies?: boolean;
+  /** Infantry slots. Land stamps while at least one soldier is inside. Omit → 0. */
+  garrison?: number;
   /**
    * Diggers level `protected` to the integer mean height before bricklayers.
    * Already-level plots skip. Omit → heights ignored (this slice: lumberjack only).
@@ -71,4 +73,18 @@ export type SettlerDef = {
   needsPlayersGround?: boolean;
   /** Look radius for fog. Omit → 8. Donkey would be 0. */
   viewDistance?: number;
+  /** Soldiers / pioneer / thief. Omit → not a combat target. */
+  attackable?: boolean;
+  /** Click-to-command. Omit → not selectable (bearers / workers). */
+  controllable?: boolean;
+  /** Max HP. Omit → 100. */
+  health?: number;
+  /** Damage per connected swing. Omit → 0. */
+  strength?: number;
+  /** Aggro disk. Soldiers 30. */
+  searchRadius?: number;
+  /** Hexes at which a swing connects. Melee 1. */
+  attackRange?: number;
+  /** Catalog folder under `settlers/{civ}/`. Omit → `kind`. */
+  sheet?: string;
 };

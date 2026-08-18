@@ -37,9 +37,9 @@ ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  
 
 ## Where we are
 
-Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten (lumberjack), land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent.
+Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten (lumberjack), land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee.
 
-Not a game yet: no combat. Other huts still ignore height.
+Not a game yet: no netcode. Other huts still ignore height. Towers don't garrison.
 
 Forward plan: **[P2.md](P2.md)**. Not more huts, not water, not sound.
 

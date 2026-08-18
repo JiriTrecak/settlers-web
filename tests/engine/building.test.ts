@@ -82,7 +82,7 @@ describe("buildings", () => {
     expect(world.placePlan("lumberjack", { x: 70, y: 16 }, 0)).toBeUndefined();
   });
 
-  it("constructed tower extends occupy land", () => {
+  it("constructed tower extends occupy land once a soldier enters", () => {
     const world = new World(grass(80, 80));
     expect(world.placeBuilding("tower", { x: 16, y: 16 }, 0)).toBeDefined();
     const far = { x: 70, y: 16 };
@@ -98,9 +98,10 @@ describe("buildings", () => {
     }
     world.spawnBearer({ x: at.x + 6, y: at.y }, 0);
     world.spawnBearer({ x: at.x + 6, y: at.y + 2 }, 0);
+    world.spawnSettler("swordsman", { x: at.x + 6, y: at.y + 4 }, 0);
 
     let n = 0;
-    while (world.view().buildings.find((b) => b.x === at.x)?.state !== "built" && n < 8000) {
+    while (world.land.playerAt(far.x, far.y) !== 0 && n < 8000) {
       world.tick();
       n++;
     }
@@ -109,6 +110,36 @@ describe("buildings", () => {
     expect(world.view().buildings.find((b) => b.x === at.x)).toMatchObject({ state: "built", flag: "door" });
     expect(world.land.playerAt(far.x, far.y)).toBe(0);
     expect(world.canPlaceBuilding("lumberjack", far, 0)).toBe(true);
+  });
+
+  it("finished empty tower does not stamp land", () => {
+    const world = new World(grass(80, 80));
+    expect(world.placeBuilding("tower", { x: 16, y: 16 }, 0)).toBeDefined();
+    const at = { x: 48, y: 16 };
+    expect(world.placePlan("tower", at, 0)).toBeDefined();
+    for (const slot of tower.constructionStacks) {
+      world.objects.place(goodsStack({ x: at.x + slot.dx, y: at.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    world.spawnBearer({ x: at.x + 6, y: at.y }, 0);
+    world.spawnBearer({ x: at.x + 6, y: at.y + 2 }, 0);
+    let n = 0;
+    while (world.view().buildings.find((b) => b.x === at.x)?.state !== "built" && n < 8000) {
+      world.tick();
+      n++;
+    }
+    expect(world.view().buildings.find((b) => b.x === at.x)?.state).toBe("built");
+    expect(world.land.playerAt(70, 16)).toBe(UNOWNED);
+  });
+
+  it("emptying the garrison unstamps land", () => {
+    const world = new World(grass(80, 80));
+    expect(world.placeBuilding("tower", { x: 16, y: 16 }, 0)).toBeDefined();
+    expect(world.land.playerAt(16, 16)).toBe(0);
+    const guard = world.view().movables.find((m) => m.type === "swordsman")!;
+    world.movable(guard.id)!.health = 0;
+    world.tick();
+    expect(world.movable(guard.id)).toBeUndefined();
+    expect(world.land.playerAt(16, 16)).toBe(UNOWNED);
   });
 
   it("removes a hut, unstamps land, and lets you rebuild the plot", () => {

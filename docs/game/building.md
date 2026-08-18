@@ -21,7 +21,7 @@ Lumberjack has `flatten: true`. Target height is the integer mean of `protected`
 
 Build-strip click on empty valid **owned** land `enqueue`s a **plan** (fence posts, no hut sprite) and drops the tool. Hover shows a ghost: posts + blocked-tile fill. Red if illegal (including off-land) or a flatten hut sits on uneven height — click still places if `canPlace`. Hidden while hovering an existing hut.
 
-`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk — HQ at match start, and each T1 you construct from the strip. The play loop never uses `placeBuilding` for the strip.
+`placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower needs a soldier inside before it stamps the radius-40 disk — HQ at match start already garrisons one infantry. Extra T1s from the strip wait until a spare swordsman walks in. The play loop never uses `placeBuilding` for the strip.
 
 ## Lifecycle
 
@@ -60,9 +60,11 @@ No work while waiting for the next plank/stone — a swing that cannot take mate
 
 Worker huts (`def.worker` set): after `built`, a jobless empty-handed bearer walks to the door and `become`s the worker (`workplaceId` = hut id). They enter and rest.
 
+Military huts (`garrison`): idle swordsmen walk to the door and enter. Land stamps while at least one is inside; emptying the garrison releases the disk. T1 has **1** infantry slot.
+
 Bricklayers on the scaffold do **not** count as occupying.
 
-Colony `placeBuilding` spawns the worker at the door already assigned (and inside if that profession has `restMs`).
+Colony `placeBuilding` spawns the worker at the door already assigned (and inside if that profession has `restMs`). Towers spawn one swordsman already inside.
 
 ## Flags
 

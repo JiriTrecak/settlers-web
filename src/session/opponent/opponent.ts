@@ -9,6 +9,8 @@ import type { World } from "../../sim";
 export const OPPONENT_CONVERT_TICK = 80;
 /** ~5s. Tower plan on own land toward the opponent. */
 export const OPPONENT_TOWER_TICK = 200;
+/** ~6s. Enlist a bearer and walk them at the human HQ. */
+export const OPPONENT_ENLIST_TICK = 240;
 
 export class Opponent {
   private phase = 0;
@@ -24,6 +26,7 @@ export class Opponent {
     const t = world.clock.tickIndex;
     if (this.phase === 0 && t >= OPPONENT_CONVERT_TICK && this.convertPioneer(world)) this.phase = 1;
     if (this.phase >= 1 && this.phase < 2 && t >= OPPONENT_TOWER_TICK && this.placeTower(world)) this.phase = 2;
+    if (this.phase === 2 && t >= OPPONENT_ENLIST_TICK && this.enlistSword(world)) this.phase = 3;
   }
 
   private convertPioneer(world: World): boolean {
@@ -39,6 +42,14 @@ export class Opponent {
     const at = findTower(world, seed, this.player) ?? findTower(world, this.home, this.player);
     if (!at) return false;
     world.enqueue({ type: "placeBuilding", kind: "tower", at, player: this.player });
+    return true;
+  }
+
+  private enlistSword(world: World): boolean {
+    const id = this.idleBearerId(world);
+    if (id == null) return false;
+    world.enqueue({ type: "convert", id, to: "swordsman" });
+    world.enqueue({ type: "moveTo", id, to: this.toward });
     return true;
   }
 

@@ -3,7 +3,7 @@
  * is 0→1 over `stepTicks` so render can lerp from `from` to `pos`.
  */
 import { directionFromDelta, type Direction, type GridPos } from "../../shared";
-import type { Goods } from "../data/types";
+import type { Goods, SettlerDef } from "../data/types";
 import { settlerDef, type SettlerKind } from "../data/settlers";
 import type { Job } from "../job/job";
 import { markOf, workTicksOf } from "../job/job";
@@ -33,6 +33,7 @@ export type MovableView = {
   material: MovableMaterial;
   job: Job["type"] | null;
   workplaceId: number | null;
+  health: number;
   /** Hidden in the workplace. Still in the unit list; not on a tile. */
   inside: boolean;
   /** Remaining waypoints after the current step dest (`pos`). Empty when idle. */
@@ -59,6 +60,9 @@ export class Movable {
   /** Idle flock: ms between checks when not crowded. */
   flockDelayMs = 700;
   flockLeft = 0;
+  health: number;
+  /** Forced walk: ignore aggro until this step finishes. */
+  forcedUntil: GridPos | null = null;
 
   private queue: GridPos[] = [];
   private stepElapsed = 0;
@@ -84,6 +88,8 @@ export class Movable {
     this.player = player;
     this.workplaceId = workplaceId;
     this.marks = marks;
+    const start: SettlerDef = settlerDef(type);
+    this.health = start.health ?? 100;
   }
 
   view(): MovableView {
@@ -103,6 +109,7 @@ export class Movable {
       material: this.material,
       job: this.job?.type ?? null,
       workplaceId: this.workplaceId,
+      health: this.health,
       inside: this.inside,
       path: this.queue.map((p) => ({ x: p.x, y: p.y })),
     };
@@ -136,7 +143,7 @@ export class Movable {
   become(kind: SettlerKind, workplaceId: number | null, tickMs: number): void {
     this.type = kind;
     this.workplaceId = workplaceId;
-    const def = settlerDef(kind);
+    const def: SettlerDef = settlerDef(kind);
     this.stepTicks = Math.max(1, Math.round(def.stepMs / tickMs));
     this.releaseMark();
     this.job = null;
@@ -149,6 +156,8 @@ export class Movable {
     this.from = this.pos;
     this.flockDelayMs = 700;
     this.flockLeft = 0;
+    this.forcedUntil = null;
+    this.health = def.health ?? 100;
     if (def.restMs) {
       this.restLeft = Math.max(0, Math.round(def.restMs / tickMs));
       this.enter();

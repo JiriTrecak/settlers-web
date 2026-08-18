@@ -1,5 +1,6 @@
 /**
  * Roman tower. Placeable T1 occupy; also the match-start HQ.
+ * One infantry slot — land only while a soldier is inside.
  */
 import type { BuildingDef } from "../types";
 
@@ -11,6 +12,7 @@ export const tower = {
   workRadius: 0,
   viewDistance: 38,
   occupies: true,
+  garrison: 1,
   ground: ["grass", "earth", "flattened"],
   blocked: [
     { dx: -1, dy: 0 },

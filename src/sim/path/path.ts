@@ -2,7 +2,7 @@
  * Walkability + BFS on the diamond grid.
  * Trees/stones block via `ObjectGrid`.
  */
-import { HEX_DELTAS, isRiver, isWater, type GridPos } from "../../shared";
+import { HEX_DELTAS, isWater, type GridPos } from "../../shared";
 import type { MapGrid } from "../map/mapGrid";
 import { isAdjacent } from "../object/object";
 
@@ -11,7 +11,7 @@ export type Blockers = { blocks(x: number, y: number): boolean };
 export function isWalkable(grid: MapGrid, x: number, y: number, blockers?: Blockers): boolean {
   if (!grid.inBounds(x, y)) return false;
   const t = grid.landscapeAt(x, y);
-  if (isWater(t) || isRiver(t)) return false;
+  if (isWater(t)) return false;
   return !blockers?.blocks(x, y);
 }
 

@@ -6,9 +6,10 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 
 | Type | Step | Notes |
 |---|---:|---|
-| Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / digger / worker. |
+| Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / digger / worker / pioneer / swordsman. Not selectable. Not a combat target. |
 | Digger | 450 ms | Temporary. 1s kneel, ±1 height toward the plan's frozen mean. Reverts. |
-| Pioneer | 450 ms | Controllable. `needsPlayersGround: false`. Kneel 1.2 s, take one unenforced tile. Convert from a bearer (C). Distinct walk/kneel clips. |
+| Pioneer | 450 ms | Controllable. `needsPlayersGround: false`. Kneel 1.2 s, take one unenforced tile. Convert from a bearer (C). Attackable, strength 0. Distinct walk/kneel clips. |
+| Swordsman | 338 ms | L1. Controllable. Walks off own land. Auto-aggro hex 30, melee 1 / 1s / 10 dmg / 100 hp. Occupies T1 (1 slot). Enlist a bearer (X). Kit has 6. |
 | Lumberjack | 450 ms | Workplace. See [economy.md](economy.md). |
 | Forester | 450 ms | Workplace. |
 | Stonecutter | 450 ms | Workplace. |
@@ -29,7 +30,7 @@ A step **occupies the destination immediately**; `moveProgress` is visual lerp o
 
 BFS, 6 hex directions. Settlers with `needsPlayersGround` (default: every civilian) only walk tiles they own once any occupy disk exists. Pioneer / thief / soldier set the flag `false`. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
 
-Click a pioneer or bearer to select. RMB (or LMB on empty land) commands: pioneer `pioneerWork` (walk there, then keep claiming), bearer `moveTo`. **C** converts bearer → pioneer, or pioneer → bearer (must stand on own land, empty-handed). Esc peels unit selection after the build ghost and claim tool.
+Click the **sprite** of a pioneer or swordsman to select (opaque body/torso pixels, not the tile). Bearers and workers are click-through. Shift-click toggles; shift-drag marquees sprite AABBs. RMB commands the group: pioneer `pioneerWork`, swordsman `moveTo` (spread onto nearby tiles). Shift-RMB is a forced walk (soldiers ignore aggro until they stop). Empty LMB clears the group. **C** converts a selected pioneer → bearer (own land, empty-handed). **X** enlists selected empty bearers as L1 swordsmen (needs a selected bearer — barracks later). Esc peels unit selection after the build ghost and claim tool.
 
 ## Jobs
 
@@ -44,9 +45,10 @@ A unit *has* a job; it does not implement the verb. Profession / matcher / const
 | `plant` | Forester | Stand, face nw, kneel 3 s, sapling on `y+1` |
 | `saw` | Sawmiller | Work-spot, 4.5 s, trunk → plank |
 | `build` | Bricklayer | Spot + facing from the def, 1 s swings |
-| `occupy` | Bearer | Walk to the door, become the worker |
+| `occupy` | Bearer / swordsman | Walk to the door; become the worker, or enter a tower |
 | `pioneer` | Pioneer | Walk to the click, then kneel 1.2 s per unenforced tile toward that target |
 | `flatten` | Digger | Walk onto the cell, kneel 1 s, ±1 toward the hut mean |
+| `attack` | Swordsman | Face, 1 s swing, subtract strength. Chase to an adjacent stand |
 
 Pickup / drop / deliver all share the bend clip.
 
@@ -63,3 +65,5 @@ Skipped if matcher / profession just handed them a job (flock runs after those).
 Walk / idle / work clips by profession, 6 directions, carry variants (trunk, plank, stone, sapling, …). Missing clip → that profession’s idle, then bearer. Missing catalog → yellow dot.
 
 `inside` is not drawn. Interpolation uses `from → pos` with `moveProgress` plus the frame leftover.
+
+Attackable units (swordsman, pioneer) always show the original health pip above the head. Frame 0 is full HP, last is almost dead. Bearers and workers have none. Selected units show the original mark under the pip.

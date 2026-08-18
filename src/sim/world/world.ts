@@ -2,7 +2,7 @@
  * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables.
  * Session ticks this and enqueues Actions; render reads `view()`.
  */
-import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
+import { HEX_DELTAS, TOWER_RADIUS, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { TickTimer, type TickTimings } from "../clock/profile";
 import { BuildingGrid, buildingFlag, canPlace, type Building, type BuildingView } from "../building/building";
@@ -18,7 +18,7 @@ import { tickTrees } from "../object/tree";
 import { Movable, type MovableView } from "../movable/movable";
 import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
-import { tickProfession } from "../profession/profession";
+import { tickProfession, garrisonCount } from "../profession/profession";
 import { seedRng, type Rng } from "../rng/rng";
 import { LandGrid, type LandView } from "../land/land";
 import { FogGrid, buildingViewDistance, type FogView, type FogWorld } from "../fog/fog";
@@ -169,7 +169,9 @@ export class World {
     for (const m of this.units) {
       if (m.workplaceId === hut.id) {
         m.leave();
-        m.become("bearer", null, this.clock.tickMs);
+        const worker = buildingDef(hut.kind).worker;
+        if (worker && m.type === worker) m.become("bearer", null, this.clock.tickMs);
+        else m.workplaceId = null;
       } else if (m.job && "hutId" in m.job && m.job.hutId === hut.id) {
         m.idle();
       }
@@ -258,6 +260,7 @@ export class World {
       mixStr(m.material);
       mix(m.inside ? 1 : 0);
       mix(m.workplaceId ?? 0);
+      mix(m.health | 0);
     }
     const huts = this.buildings.all().slice().sort((a, b) => a.id - b.id);
     mix(huts.length);
@@ -300,11 +303,15 @@ export class World {
     t.mark("apply");
     tickTrees(this.objects, this.clock.tickMs);
     t.mark("trees");
-    for (const m of this.units) m.tick();
+    for (const m of this.units) {
+      if (m.health <= 0) continue;
+      m.tick();
+    }
     t.mark("step");
     this.tickHouses();
     t.mark("houses");
     for (const m of this.units) {
+      if (m.health <= 0) continue;
       tickProfession(m, {
         grid: this.grid,
         objects: this.objects,
@@ -332,6 +339,7 @@ export class World {
     tickMatcher(this.units, this.buildings, this.objects, this.land);
     t.mark("matcher");
     for (const m of this.units) {
+      if (m.health <= 0) continue;
       tickFlock(m, {
         grid: this.grid,
         objects: this.objects,
@@ -347,6 +355,7 @@ export class World {
       tickJob(m, this.jobCtx(m));
     }
     t.mark("jobs");
+    this.reapDead();
     this.syncLandClaims();
     t.mark("land");
     this.syncFog();
@@ -408,6 +417,7 @@ export class World {
     const m = this.units.find((u) => u.id === action.id);
     if (!m) return;
     if (action.type === "moveTo") {
+      m.forcedUntil = action.forced ? action.to : null;
       m.goTo(this.grid, action.to, this.unitBlockers(m));
       this.syncOcc();
       return;
@@ -416,6 +426,9 @@ export class World {
       if (action.to === "pioneer") {
         if (m.type !== "bearer" || m.material !== "none") return;
         m.become("pioneer", null, this.clock.tickMs);
+      } else if (action.to === "swordsman") {
+        if (m.type !== "bearer" || m.material !== "none") return;
+        m.become("swordsman", null, this.clock.tickMs);
       } else {
         if (m.type !== "pioneer") return;
         if (this.land.playerAt(m.pos.x, m.pos.y) !== m.player) return;
@@ -505,8 +518,26 @@ export class World {
     if (worker && worker in settlers) {
       const door = def.door;
       this.spawnSettler(worker as SettlerKind, { x: hut.pos.x + door.dx, y: hut.pos.y + door.dy }, hut.player, hut.id);
+    } else if ("occupies" in def && def.occupies && "garrison" in def && (def.garrison ?? 0) > 0) {
+      const door = { x: hut.pos.x + def.door.dx, y: hut.pos.y + def.door.dy };
+      const m = this.spawnSettler("swordsman", door, hut.player, hut.id);
+      m.enter();
+      this.syncOcc();
     }
     if ("beds" in def && def.beds) hut.produceWait = Math.max(1, Math.round((def.produceMs ?? 2000) / this.clock.tickMs));
+  }
+
+  /** Fog unstamp + drop from the unit list. After jobs so both sides can swing this beat. */
+  private reapDead(): void {
+    for (let i = this.units.length - 1; i >= 0; i--) {
+      const m = this.units[i]!;
+      if (m.health > 0) continue;
+      m.idle();
+      const prev = this.fogAt.get(m.id) ?? null;
+      this.fog.moveCircle(m.player, prev, null, unitViewDistance(m.type));
+      this.fogAt.delete(m.id);
+      this.units.splice(i, 1);
+    }
   }
 
   private jobCtx(m: Movable) {
@@ -567,21 +598,26 @@ export class World {
   private landscapeBlocked(x: number, y: number): boolean {
     if (!this.grid.inBounds(x, y)) return true;
     const t = this.grid.landscapeAt(x, y);
-    return isWater(t) || isRiver(t);
+    return isWater(t);
   }
 
   private claimAt(at: GridPos, player: number): void {
     this.land.occupy(at, player, TOWER_RADIUS, (x, y) => this.landscapeBlocked(x, y));
   }
 
-  /** Finished occupying buildings stamp their disk once. */
+  /** Military huts stamp their disk while garrisoned; empty ones release it. */
   private syncLandClaims(): void {
     for (const b of this.buildings.all()) {
-      if (b.landClaimed || b.state !== "built") continue;
       const def = buildingDef(b.kind);
       if (!("occupies" in def) || !def.occupies) continue;
-      this.claimAt(b.pos, b.player);
-      b.landClaimed = true;
+      const manned = b.state === "built" && garrisonCount(b, this.units) > 0;
+      if (manned && !b.landClaimed) {
+        this.claimAt(b.pos, b.player);
+        b.landClaimed = true;
+      } else if (!manned && b.landClaimed) {
+        this.land.release(b.pos, (x, y) => this.landscapeBlocked(x, y));
+        b.landClaimed = false;
+      }
     }
   }
 

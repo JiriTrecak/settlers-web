@@ -27,7 +27,7 @@ const FLOCK_DELAY_MIN = 500;
 const FLOCK_DELAY_MAX = 1000;
 
 export function tickFlock(m: Movable, ctx: FlockContext): void {
-  if (m.job || m.walking || m.inside) return;
+  if (m.job || m.walking || m.inside || m.health <= 0) return;
   if (!needsPlayersGround(m.type)) return;
   if (m.flockLeft > 0) {
     m.flockLeft -= 1;

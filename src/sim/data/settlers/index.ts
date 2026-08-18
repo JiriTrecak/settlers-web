@@ -9,6 +9,7 @@ import { lumberjack } from "./lumberjack";
 import { pioneer } from "./pioneer";
 import { sawmiller } from "./sawmiller";
 import { stonecutter } from "./stonecutter";
+import { swordsman } from "./swordsman";
 
 export const settlers = {
   bearer,
@@ -19,6 +20,7 @@ export const settlers = {
   pioneer,
   sawmiller,
   stonecutter,
+  swordsman,
 } as const;
 
 export type SettlerKind = keyof typeof settlers;
@@ -37,4 +39,21 @@ export function needsPlayersGround(kind: SettlerKind): boolean {
 export function unitViewDistance(kind: SettlerKind): number {
   const def: SettlerDef = settlerDef(kind);
   return def.viewDistance ?? DEFAULT_UNIT_VIEW_DISTANCE;
+}
+
+/** Combat target. Omit on the def → false (bearers / workers). */
+export function isAttackable(kind: SettlerKind): boolean {
+  const def: SettlerDef = settlerDef(kind);
+  return def.attackable === true;
+}
+
+/** Click-to-command. Omit on the def → false (bearers / workers). */
+export function isControllable(kind: SettlerKind): boolean {
+  const def: SettlerDef = settlerDef(kind);
+  return def.controllable === true;
+}
+
+/** Can garrison a tower. Bow / pike later. */
+export function isSoldier(kind: SettlerKind): boolean {
+  return kind === "swordsman";
 }

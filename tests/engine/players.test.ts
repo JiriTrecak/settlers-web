@@ -132,5 +132,12 @@ describe("opponent script", () => {
     const towerPlan = world.log().find((a) => a.action.type === "placeBuilding" && a.action.kind === "tower");
     expect(towerPlan).toMatchObject({ player: 1 });
     expect(world.view().buildings.some((b) => b.kind === "tower" && b.player === 1 && b.state === "plan")).toBe(true);
+
+    for (let i = 0; i < 4; i++) {
+      world.tick();
+      opp.onTick(world);
+    }
+    expect(world.log().some((a) => a.action.type === "convert" && a.action.to === "swordsman")).toBe(true);
+    expect(world.view().movables.some((m) => m.player === 1 && m.type === "swordsman")).toBe(true);
   });
 });
