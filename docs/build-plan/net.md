@@ -2,6 +2,26 @@
 
 Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate Node app**: lobby + room + command mailbox. It does not draw. Steam is later. Camera, fog, selection, HUD stay local.
 
+## Status (what is code vs contract)
+
+**In the repo (land order 1–2).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` (2 Worlds, one `Room`, same checksum). Architecture test: `sim` ↛ `net` ↛ `sim`.
+
+| Piece | Where | Notes |
+|---|---|---|
+| `MatchConfig`, `localMatch` | `src/shared/match/` | SP `delay: 1`. `COMMAND_DELAY = 2` is the MP starting guess. |
+| Wire types | `src/shared/net/wire.ts` | Subset: `hello` / `ready` / `turn` / `hash` / `ended` + `start` / `go` / `commit` / `desync` / `error`. **Not sent yet:** `ready`, `go`, `hash`. Field names differ from the lobby block below (`hash.value` vs `checksum`). |
+| `Channel`, `Room`, `MemoryChannel`, `Lockstep` | `src/net/` | `Room.confirm` + broadcast `commit`. No listen port. |
+| Session play loop | `src/session/session/session.ts` | Confirm all local slots `through: next` **before** take. `enqueue(action, next, { player, seq })`. Kits = `dispatch(placeColony)` per `config.slots` at tick 0. Seed = `seedRng(MatchConfig.seed)` (`DEFAULT_WORLD_SEED` in SP). |
+| Envelope reject | `World.enqueue` | Foreign unit/hut/`action.player`; `placeColony` after tick 0. Tests may omit envelope. |
+| Opponent | `src/session/opponent/` | Bundle producer on its own `Lockstep` / `MemoryChannel`. Must confirm every beat. |
+| Building plop | Session `pendingPlans` | **Render-only** predicted fence until commit. Not sim prediction, not on the wire. |
+| `mapRevision` | SP | Catalog `file` path today, not a dump hash. |
+| Channel ownership | Session | Session `new Room` + `MemoryChannel` per slot. **App does not construct Channel yet.** |
+
+**Not built.** `server/` (no folder, no `npm run server`). WebSocketChannel. HTTP lobby. `ready` / `go` handshake. Checksum on the wire. Drop-in empty confirms. Spectate-as-commit-stream (watch mode is still a replay log). EC2. `App` handing a Channel into Session.
+
+A reviewer treating the HTTP/WS sections as implemented will hallucinate. Those sections are the **contract for land order 3+**. The play loop, envelope, Room, MemoryChannel, D, and CI bar are real.
+
 Same map + same `MatchConfig` + same committed action log ⇒ same checksum. That is already the engine. Replays are that log. Spectators are a Session with `watching: true` on the same commit stream.
 
 The server is **not** an FPS authority. It does not send unit positions. It **commits ticks**: when every playing slot has confirmed through `T`, it broadcasts the full command set for `T`. Every client (and optional headless `World` later) applies that set and ticks once.
@@ -80,7 +100,7 @@ JSON. No sim.
 | Method | Path | Who | What |
 |---|---|---|---|
 | GET | `/health` | anyone | `{ ok, version }` |
-| GET | `/rooms` | anyone | list: searching + in_progress (ended optional, last N) |
+| GET | `/rooms` | anyone | list: `waiting` + `playing` (ended optional, last N) |
 | POST | `/rooms` | guest | create; caller is host; body = draft config |
 | POST | `/rooms/:id/join` | guest | claim a free playing slot **or** `role: "spectator"` |
 | POST | `/rooms/:id/leave` | member | leave; host leave while `waiting` cancels the room |
@@ -167,6 +187,8 @@ Replay file stays `{ mapId, seed, me, duration, checksum, outcome, log, … }`. 
 ---
 
 ## Wire (WebSocket)
+
+**Contract for `server/`.** Implemented-now types live in `src/shared/net/wire.ts` and are a smaller set (no `welcome` / `room` / `hashOk`; `go` has no `tick`; `hash` uses `value` not `checksum`; `ended` has `replayId` not `{ tick, checksum }`). Align these when Node lands — do not implement both.
 
 All messages: `{ type: string, ... }`. Unknown `type` → ignore (forward compat).
 
@@ -259,7 +281,7 @@ while acc >= 25 and n < cap:
       world.enqueue(action, next, { player: slot.player, seq: i })
   acc -= 25
   world.tick()
-  if next % checksumEvery == 0: send hash
+  if next % checksumEvery == 0: send hash   // contract; Session does not send hash yet
 ```
 
 Confirm **before** take. `through: next` is the beat about to apply (`tickIndex + 1`), so the first beat can commit without a prior tick. Sending `through: next` *after* `tick()` (when `tickIndex === next`) deadlocks waiting for `next+1`. Stall leaves `acc` alone. Catch-up still capped. Burning `acc` while waiting would skip beats.
@@ -270,7 +292,7 @@ Apply order: **player**, then **seq**. `seq` is the index in that slot’s `comm
 
 SP and MP are the same command path. Session never `world.enqueue`s from a click. Click → Lockstep → Channel → Room `commit` → Session `enqueue(action, tick, player)`. MemoryChannel is an in-process Room; WebSocket is that Room on the network. `Opponent` is a bundle producer for another slot on the same path.
 
-`enqueue(action, tick, player)` — envelope wins.
+`enqueue(action, tick, { player, seq })` — envelope wins. Tests may omit envelope (`actionPlayer` inferred). `dispatch` is test + tick-0 kit helper.
 
 Reject (no-op):
 
@@ -279,9 +301,7 @@ Reject (no-op):
 - `placeBuilding` / `occupy` / `placeColony` for a different player
 - `placeColony` after tick 0
 
-Today `actionPlayer` infers from the unit and Session writes `World` directly. That is a cheat in SP too — you can already command the script opponent’s swordsmen. Hygiene is the play loop, not an MP extra. Tests may still `world.dispatch` / `world.enqueue` — engine API, not the play loop. `dispatch` stays a test + tick-0 kit helper.
-
-`src/net` imports `shared` only. It does not import `sim`. It never calls `world.tick`. Session translates `commit` → `enqueue`. App constructs the Channel and hands it to Session. Session never `new WebSocket`.
+`src/net` imports `shared` only. It does not import `sim`. It never calls `world.tick`. Session translates `commit` → `enqueue`. Session never `new WebSocket`. SP: Session constructs `MemoryChannel`. MP: App will construct WebSocketChannel and hand it in.
 
 ---
 
@@ -420,7 +440,7 @@ Desync dumps a replay. Same as step 1, over the wire.
 
 ## Explicitly not this architecture
 
-- Rollback / prediction of the sim
+- Rollback / prediction of the **sim** (a render-only pending fence on place is fine; it is not in `World` or the log)
 - Snapshot sync of settlers
 - Session opening sockets
 - `World.tick()` blocking on WS
