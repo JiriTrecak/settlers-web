@@ -8,7 +8,7 @@ export type ReplayOption = {
   mapName: string;
   savedAt: number;
   duration: number;
-  result: "victory" | "defeat" | "ended";
+  result: "victory" | "defeat" | "ended" | "saved";
 };
 
 export class ReplaySelect extends GameScreen {
@@ -38,7 +38,7 @@ export class ReplaySelect extends GameScreen {
     if (replays.length === 0) {
       const empty = document.createElement("div");
       empty.className = "menu-empty";
-      empty.textContent = "No replays yet. Finish a match (victory or defeat).";
+      empty.textContent = "No replays yet. Finish a match, or Save replay during one.";
       list.append(empty);
     } else {
       for (const replay of replays) {
@@ -47,7 +47,8 @@ export class ReplaySelect extends GameScreen {
         const item = document.createElement("button");
         item.type = "button";
         item.className = "menu-btn menu-btn-row menu-replay-pick";
-        const result = replay.result === "victory" ? "Victory" : replay.result === "defeat" ? "Defeat" : "Ended";
+        const result =
+          replay.result === "victory" ? "Victory" : replay.result === "defeat" ? "Defeat" : replay.result === "saved" ? "Saved" : "Ended";
         const label = document.createElement("span");
         label.textContent = `${result}  ·  ${replay.mapName}  ·  ${formatTime(replay.duration)}`;
         const when = document.createElement("span");

@@ -752,14 +752,29 @@ export class Session {
     const world = this.world;
     if (!world?.outcome) return;
     this.recorded = true;
-    const file = makeReplayFile({
-      mapId: this.mapId,
-      mapName: this.mapLabel(),
-      seed: this.worldSeed,
-      me: this.me,
-      world,
-    });
-    if (file) this.config.hooks.onReplay?.(file);
+    this.config.hooks.onReplay?.(
+      makeReplayFile({
+        mapId: this.mapId,
+        mapName: this.mapLabel(),
+        seed: this.worldSeed,
+        me: this.me,
+        world,
+      }),
+    );
+  }
+
+  /** Mid-match snapshot. Same log a Victory save would have, cut at this tick. */
+  saveReplay(): void {
+    if (this.watching || !this.world) return;
+    this.config.hooks.onReplay?.(
+      makeReplayFile({
+        mapId: this.mapId,
+        mapName: this.mapLabel(),
+        seed: this.worldSeed,
+        me: this.me,
+        world: this.world,
+      }),
+    );
   }
 
   private mapLabel(): string {

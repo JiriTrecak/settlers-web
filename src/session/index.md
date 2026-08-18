@@ -5,7 +5,7 @@ The running match. Constructed on demand; not alive in the lobby.
 | Folder | Owns |
 |---|---|
 | `session/` | `Session` — one map, selection, camera, ticker glue. Replay mode seeks the log. |
-| `opponent/` | Other slot: same Actions a human would click. Will send through Lockstep, not `world.enqueue`. |
+| `opponent/` | Other slot: 5s planner (economy then towers toward you). Will send through Lockstep, not `world.enqueue`. |
 | `maps/` | Fetch dump catalog + JSON. Picker options for the lobby. |
 | `input/` | `MapInput` — canvas pan/zoom/WASD/pick, shift-drag marquee |
 | `replay/` | Replay file + `ReplayStore` (localStorage). Saved on Victory/Defeat. |

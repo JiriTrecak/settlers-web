@@ -28,6 +28,7 @@ export class PlayScreen extends GameScreen {
     this.replayId = hooks.replay?.id ?? null;
     this.hud = new Hud(this.root, {
       onLeave: hooks.onLeave,
+      onSaveReplay: hooks.replay || !hooks.onReplay ? undefined : () => this.session.saveReplay(),
       replay: hooks.replay != null,
       onShowPaths: (on) => this.session.setShowPaths(on),
       onShowOwnership: (on) => this.session.setShowOwnership(on),

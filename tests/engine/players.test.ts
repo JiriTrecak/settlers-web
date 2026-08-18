@@ -11,8 +11,8 @@ import { World } from "../../src/sim/world/world";
 import { sawmill as millDef } from "../../src/sim/data/buildings/sawmill";
 import {
   Opponent,
-  OPPONENT_CONVERT_TICK,
-  OPPONENT_TOWER_TICK,
+  OPPONENT_START_TICK,
+  OPPONENT_THINK_TICKS,
 } from "../../src/session/opponent/opponent";
 
 const P0 = { x: 40, y: 40 };
@@ -33,7 +33,7 @@ function twoColonies(): World {
   return world;
 }
 
-function firstPlace(world: World, kind: "lumberjack" | "sawmill" | "tower", player: number) {
+function firstPlace(world: World, kind: "lumberjack" | "sawmill" | "stonecutter" | "tower", player: number) {
   for (let y = 0; y < world.grid.height; y++) {
     for (let x = 0; x < world.grid.width; x++) {
       if (world.canPlaceBuilding(kind, { x, y }, player)) return { x, y };
@@ -113,31 +113,45 @@ describe("two colonies", () => {
   });
 });
 
+function drive(world: World, opp: Opponent, ticks: number): void {
+  for (let i = 0; i < ticks; i++) {
+    world.tick();
+    opp.onTick(world);
+  }
+}
+
 describe("opponent script", () => {
-  it("converts a pioneer toward the human, then plans a tower", () => {
+  it("converts a pioneer, then plans a lumberjack, and waits until it is built", () => {
     const world = twoColonies();
     const opp = new Opponent(1, P1, P0);
-    for (let i = 0; i < OPPONENT_CONVERT_TICK + 2; i++) {
-      world.tick();
-      opp.onTick(world);
-    }
+    drive(world, opp, OPPONENT_START_TICK + 1);
     expect(world.log().some((a) => a.action.type === "convert" && a.player === 1)).toBe(true);
-    expect(world.log().some((a) => a.action.type === "pioneerWork" && a.player === 1)).toBe(true);
     expect(world.view().movables.some((m) => m.player === 1 && m.type === "pioneer")).toBe(true);
 
-    for (let i = 0; i < OPPONENT_TOWER_TICK; i++) {
-      world.tick();
-      opp.onTick(world);
+    drive(world, opp, OPPONENT_THINK_TICKS + 1);
+    expect(world.log().some((a) => a.action.type === "placeBuilding" && a.action.kind === "lumberjack" && a.player === 1)).toBe(true);
+    expect(world.view().buildings.some((b) => b.kind === "lumberjack" && b.player === 1 && b.state === "plan")).toBe(true);
+
+    drive(world, opp, OPPONENT_THINK_TICKS + 1);
+    expect(world.log().some((a) => a.action.type === "placeBuilding" && a.action.kind === "sawmill")).toBe(false);
+  });
+
+  it("after economy is built, plans extra towers toward the human", () => {
+    const world = twoColonies();
+    for (const kind of ["lumberjack", "sawmill", "stonecutter"] as const) {
+      const at = firstPlace(world, kind, 1);
+      expect(at).not.toBeNull();
+      expect(world.placeBuilding(kind, at!, 1)).toBeDefined();
     }
+    const opp = new Opponent(1, P1, P0);
+    drive(world, opp, OPPONENT_START_TICK + 1);
+    drive(world, opp, OPPONENT_THINK_TICKS + 1);
     const towerPlan = world.log().find((a) => a.action.type === "placeBuilding" && a.action.kind === "tower");
     expect(towerPlan).toMatchObject({ player: 1 });
     expect(world.view().buildings.some((b) => b.kind === "tower" && b.player === 1 && b.state === "plan")).toBe(true);
 
-    for (let i = 0; i < 4; i++) {
-      world.tick();
-      opp.onTick(world);
-    }
-    expect(world.log().some((a) => a.action.type === "convert" && a.action.to === "swordsman")).toBe(true);
-    expect(world.view().movables.some((m) => m.player === 1 && m.type === "swordsman")).toBe(true);
+    const plans = world.log().filter((a) => a.action.type === "placeBuilding" && a.action.kind === "tower").length;
+    drive(world, opp, OPPONENT_THINK_TICKS + 1);
+    expect(world.log().filter((a) => a.action.type === "placeBuilding" && a.action.kind === "tower")).toHaveLength(plans);
   });
 });

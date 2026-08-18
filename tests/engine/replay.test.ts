@@ -74,6 +74,19 @@ describe("world replay untilTick", () => {
     expect(b.outcome).toEqual(a.outcome);
   });
 
+  it("snapshots an in-progress match as saved", () => {
+    const a = kit();
+    a.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    for (let i = 0; i < 40; i++) a.tick();
+    const file = makeReplayFile({ mapId: "test", mapName: "Test", seed: DEFAULT_WORLD_SEED, me: 0, world: a });
+    expect(file.outcome).toEqual({ winner: null, defeated: [] });
+    expect(replayResult(file)).toBe("saved");
+    const b = kit();
+    b.replay(file.log, file.duration);
+    expect(b.checksum()).toBe(file.checksum);
+    expect(b.outcome).toBeNull();
+  });
+
   it("lists every slot from the log, including old files without players", () => {
     const file = {
       v: 1 as const,

@@ -25,7 +25,7 @@ export type ReplayFile = {
   log: LoggedAction[];
 };
 
-export type ReplayResult = "victory" | "defeat" | "ended";
+export type ReplayResult = "victory" | "defeat" | "ended" | "saved";
 
 export type ReplayInfo = {
   id: string;
@@ -39,6 +39,7 @@ export function replayResult(file: ReplayFile): ReplayResult {
   const o = file.outcome;
   if (o.winner === file.me) return "victory";
   if (o.defeated.includes(file.me)) return "defeat";
+  if (o.defeated.length === 0) return "saved";
   return "ended";
 }
 
@@ -58,9 +59,8 @@ export function makeReplayFile(args: {
   seed: number;
   me: number;
   world: World;
-}): ReplayFile | null {
+}): ReplayFile {
   const outcome = args.world.outcome;
-  if (!outcome) return null;
   return {
     v: REPLAY_VERSION,
     id: crypto.randomUUID(),
@@ -72,7 +72,9 @@ export function makeReplayFile(args: {
     players: replayPlayersFromLog(args.me, args.world.log(), args.world.outcome),
     duration: args.world.clock.tickIndex,
     checksum: args.world.checksum(),
-    outcome: { winner: outcome.winner, defeated: [...outcome.defeated] },
+    outcome: outcome
+      ? { winner: outcome.winner, defeated: [...outcome.defeated] }
+      : { winner: null, defeated: [] },
     log: args.world.log().map((e) => ({ tick: e.tick, player: e.player, action: e.action })),
   };
 }

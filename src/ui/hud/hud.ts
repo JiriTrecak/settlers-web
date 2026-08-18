@@ -1,6 +1,6 @@
 /**
  * In-match overlay. Compact stats always on; F3 / ` / button expands the debug dump.
- * Exit asks before leaving. Escape deselects (session), not leave.
+ * Exit asks before leaving. Save replay snapshots the log at this tick. Escape deselects (session), not leave.
  */
 import type { GridPos, LandscapeType } from "../../shared";
 import { formatDebug, type DebugStats } from "./debug";
@@ -16,6 +16,7 @@ export type HudState = {
 
 export type HudHooks = {
   onLeave: () => void;
+  onSaveReplay?: () => void;
   onShowPaths?: (on: boolean) => void;
   onShowOwnership?: (on: boolean) => void;
   onShowFog?: (on: boolean) => void;
@@ -35,6 +36,8 @@ export class Hud {
   private readonly fogToggle: HTMLButtonElement;
   private readonly claimToggle: HTMLButtonElement;
   private readonly exit: HTMLButtonElement;
+  private readonly nav: HTMLDivElement;
+  private saveReset = 0;
   private readonly banner: HTMLDivElement;
   private confirm: HTMLDivElement | null = null;
   private readonly hooks: HudHooks;
@@ -92,18 +95,37 @@ export class Hud {
     this.dump.className = "hud-debug-dump";
     this.panel.append(opts, this.dump);
 
+    this.nav = document.createElement("div");
+    this.nav.className = "hud-nav";
+    if (hooks.onSaveReplay) {
+      const save = document.createElement("button");
+      save.type = "button";
+      save.className = "hud-exit";
+      save.textContent = "Save replay";
+      save.title = "Snapshot this tick to the replay list";
+      save.addEventListener("click", () => {
+        hooks.onSaveReplay?.();
+        save.textContent = "Saved";
+        window.clearTimeout(this.saveReset);
+        this.saveReset = window.setTimeout(() => {
+          save.textContent = "Save replay";
+        }, 1200);
+      });
+      this.nav.append(save);
+    }
     this.exit = document.createElement("button");
     this.exit.type = "button";
     this.exit.className = "hud-exit";
     this.exit.textContent = "Exit";
     this.exit.title = "Leave this match";
     this.exit.addEventListener("click", () => this.askLeave());
+    this.nav.append(this.exit);
 
     this.banner = document.createElement("div");
     this.banner.className = "hud-outcome";
     this.banner.hidden = true;
 
-    host.append(this.stats, this.toggle, this.panel, this.exit, this.banner);
+    host.append(this.stats, this.toggle, this.panel, this.nav, this.banner);
     window.addEventListener("keydown", this.onKey);
     this.syncOpts();
   }
@@ -138,10 +160,11 @@ export class Hud {
   destroy(): void {
     window.removeEventListener("keydown", this.onKey);
     this.dismissConfirm();
+    window.clearTimeout(this.saveReset);
     this.stats.remove();
     this.toggle.remove();
     this.panel.remove();
-    this.exit.remove();
+    this.nav.remove();
     this.banner.remove();
   }
 
