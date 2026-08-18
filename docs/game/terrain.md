@@ -33,7 +33,7 @@ A tile is standable when:
 - no hut **blocked** tile (the walls, not the protected skirt)
 - no other unit occupying it (`inside` units do not occupy)
 
-Pathing is BFS on walkable tiles. Once any occupy disk exists, civilians also refuse tiles they do not own.
+Pathing is BFS on pathable tiles (landscape + objects + huts). Other units are occupancy at step time, not a wall. Once any occupy disk exists, civilians also refuse tiles they do not own.
 
 Hex neighbors are the six diamond steps (ne, e, se, sw, w, nw). Distance is hex: same-sign axes take max, otherwise manhattan.
 

@@ -1,5 +1,6 @@
 /**
  * A unit's assignment. Movable only walks/works; `tickJob` is the verb.
+ * Walks use `ensurePath` so a live queue is not rebuilt every beat.
  */
 import { hexDist, isWater, type Direction, type GridPos } from "../../shared";
 import type { Goods, SettlerDef } from "../data/types";
@@ -250,8 +251,7 @@ function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
     return;
   }
   if (m.pos.x !== target.x || m.pos.y !== target.y) {
-    if (m.walking) return;
-    m.pathTo(ctx.grid, target, ctx.blockers);
+    walkTo(m, target, ctx);
     return;
   }
   const ticks = workTicksOf(m.job, m.type);
@@ -268,8 +268,7 @@ function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
 
 function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobContext): void {
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
-    if (m.walking) return;
-    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    walkTo(m, job.at, ctx);
     return;
   }
   if (m.walking) return;
@@ -288,8 +287,7 @@ function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobC
 /** Walk onto the bricklayer spot, become, hammer one 1s swing. Progress bumps at swing start. */
 function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobContext): void {
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
-    if (m.walking) return;
-    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    walkTo(m, job.at, ctx);
     return;
   }
   if (m.walking) return;
@@ -315,8 +313,7 @@ function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobCon
 /** Walk to the stand tile, face nw, plant a sapling on `y+1`. */
 function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobContext): void {
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
-    if (m.walking) return;
-    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    walkTo(m, job.at, ctx);
     return;
   }
   if (m.walking) return;
@@ -403,7 +400,7 @@ function tickAttack(m: Movable, job: Extract<Job, { type: "attack" }>, ctx: JobC
     m.idle();
     return;
   }
-  m.pathTo(ctx.grid, stand, ctx.blockers);
+  if (!m.ensurePath(ctx.grid, stand, ctx.blockers)) return;
 }
 
 /** Hit the door until it breaks, then the garrison, then the hut changes owner. */
@@ -429,7 +426,7 @@ function tickAssault(m: Movable, job: Extract<Job, { type: "assault" }>, ctx: Jo
       m.idle();
       return;
     }
-    m.pathTo(ctx.grid, stand, ctx.blockers);
+    if (!m.ensurePath(ctx.grid, stand, ctx.blockers)) return;
     return;
   }
   if (m.walking) return;
@@ -490,8 +487,7 @@ function tickFlatten(m: Movable, job: Extract<Job, { type: "flatten" }>, ctx: Jo
     return;
   }
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
-    if (m.walking) return;
-    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    walkTo(m, job.at, ctx);
     return;
   }
   if (m.walking) return;
@@ -522,7 +518,7 @@ function readyToCut(m: Movable, target: GridPos, ctx: JobContext): boolean {
     return true;
   }
   if (m.walking) return false;
-  m.pathTo(ctx.grid, stand, ctx.blockers);
+  walkTo(m, stand, ctx);
   return false;
 }
 
@@ -539,7 +535,7 @@ function readyToChop(m: Movable, target: GridPos, ctx: JobContext): boolean {
     return true;
   }
   if (m.walking) return false;
-  m.pathTo(ctx.grid, stand, ctx.blockers);
+  walkTo(m, stand, ctx);
   return false;
 }
 
@@ -555,8 +551,13 @@ function readyToWork(m: Movable, target: GridPos, ctx: JobContext): boolean {
     m.idle();
     return false;
   }
-  m.pathTo(ctx.grid, stand, ctx.blockers);
+  walkTo(m, stand, ctx);
   return false;
+}
+
+/** One BFS per dest. Live queue stays; miss keeps the job (retry / cooldown). */
+function walkTo(m: Movable, to: GridPos, ctx: JobContext): boolean {
+  return m.ensurePath(ctx.grid, to, ctx.blockers);
 }
 
 export function stackCount(objects: ObjectGrid, at: GridPos, material: StackMaterial): number {

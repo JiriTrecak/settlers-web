@@ -5,6 +5,7 @@
  * Outdoor gatherers share `acceptWork` (radius + owned + unclaimed lock tile + walkable stand).
  * Lumberjack locks the resource; stonecutter locks the stand. Pathing is
  * `needsPlayersGround` on the settler def, not a per-profession check.
+ * `goDoor` asks `ensurePath` — not a fresh BFS every rest cycle beat.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
@@ -110,7 +111,7 @@ export function goDoor(m: Movable, hut: Building, ctx: ProfessionContext): void 
     : nearestWalkable(ctx.grid, door, ctx.blockers);
   if (!stand) return;
   if (m.pos.x === stand.x && m.pos.y === stand.y) return;
-  m.pathTo(ctx.grid, stand, ctx.blockers);
+  m.ensurePath(ctx.grid, stand, ctx.blockers);
 }
 
 /** Soldiers inside a military hut. Land stamps while this is > 0. */

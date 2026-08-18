@@ -1,18 +1,45 @@
 /**
  * Walkability + BFS on the diamond grid.
- * Trees/stones block via `ObjectGrid`.
+ * Trees/stones/huts block via `blocks`. Other units are `occupied` — BFS walks
+ * through them (prefer free hexes of equal length); the step still refuses a taken tile.
  */
 import { HEX_DELTAS, isWater, type GridPos } from "../../shared";
 import type { MapGrid } from "../map/mapGrid";
 import { isAdjacent } from "../object/object";
 
-export type Blockers = { blocks(x: number, y: number): boolean };
+export type Blockers = {
+  blocks(x: number, y: number): boolean;
+  occupied?(x: number, y: number): boolean;
+};
 
-export function isWalkable(grid: MapGrid, x: number, y: number, blockers?: Blockers): boolean {
+/** Grown to max(w*h) seen this session; `.fill` each use. Safe: one BFS at a time. */
+let cameBuf: Int32Array | null = null;
+let seenBuf: Uint8Array | null = null;
+
+function cameScratch(n: number): Int32Array {
+  if (!cameBuf || cameBuf.length < n) cameBuf = new Int32Array(n);
+  cameBuf.fill(-1, 0, n);
+  return cameBuf;
+}
+
+function seenScratch(n: number): Uint8Array {
+  if (!seenBuf || seenBuf.length < n) seenBuf = new Uint8Array(n);
+  seenBuf.fill(0, 0, n);
+  return seenBuf;
+}
+
+/** Landscape + `blocks` (no occupancy). */
+export function isPathable(grid: MapGrid, x: number, y: number, blockers?: Blockers): boolean {
   if (!grid.inBounds(x, y)) return false;
   const t = grid.landscapeAt(x, y);
   if (isWater(t)) return false;
   return !blockers?.blocks(x, y);
+}
+
+/** Pathable and empty. Stepping / standing use this. */
+export function isWalkable(grid: MapGrid, x: number, y: number, blockers?: Blockers): boolean {
+  if (!isPathable(grid, x, y, blockers)) return false;
+  return !blockers?.occupied?.(x, y);
 }
 
 /** Path from `from` to `to`, excluding start. Empty if already there. Null if blocked. */
@@ -23,12 +50,13 @@ export function findPath(
   blockers?: Blockers,
 ): GridPos[] | null {
   if (from.x === to.x && from.y === to.y) return [];
-  if (!isWalkable(grid, to.x, to.y, blockers)) return null;
+  if (!isPathable(grid, to.x, to.y, blockers)) return null;
+  if (isAdjacent(from, to)) return [to];
 
   const w = grid.width;
+  const n = w * grid.height;
   const key = (x: number, y: number) => y * w + x;
-  const came = new Int32Array(w * grid.height);
-  came.fill(-1);
+  const came = cameScratch(n);
   const q: number[] = [key(from.x, from.y)];
   came[q[0]!] = q[0]!;
 
@@ -39,15 +67,21 @@ export function findPath(
     if (cur === goal) break;
     const x = cur % w;
     const y = (cur / w) | 0;
+    let busy: number[] | null = null;
     for (const { dx, dy } of HEX_DELTAS) {
       const nx = x + dx;
       const ny = y + dy;
-      if (!isWalkable(grid, nx, ny, blockers)) continue;
+      if (!isPathable(grid, nx, ny, blockers)) continue;
       const nk = key(nx, ny);
       if (came[nk] !== -1) continue;
       came[nk] = cur;
-      q.push(nk);
+      if (blockers?.occupied?.(nx, ny)) {
+        (busy ??= []).push(nk);
+      } else {
+        q.push(nk);
+      }
     }
+    if (busy) for (const nk of busy) q.push(nk);
   }
   if (came[goal] === -1) return null;
 
@@ -66,7 +100,7 @@ export function findPath(
 export function nearestWalkable(grid: MapGrid, seed: GridPos, blockers?: Blockers): GridPos | null {
   if (isWalkable(grid, seed.x, seed.y, blockers)) return seed;
   const w = grid.width;
-  const seen = new Uint8Array(w * grid.height);
+  const seen = seenScratch(w * grid.height);
   const q: GridPos[] = [seed];
   if (grid.inBounds(seed.x, seed.y)) seen[seed.y * w + seed.x] = 1;
   let head = 0;

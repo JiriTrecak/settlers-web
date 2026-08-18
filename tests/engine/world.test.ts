@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DIRECTIONS, deltaOf, directionFromDelta } from "../../src/shared/direction/direction";
+import { DIRECTIONS, deltaOf, directionFromDelta, hexDist } from "../../src/shared";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { findPath, isWalkable } from "../../src/sim/path/path";
 import { UNOWNED } from "../../src/sim/land/land";
@@ -42,6 +42,19 @@ describe("path", () => {
     const grid = grass(8, 8);
     grid.setLandscape(4, 4, "water8");
     expect(findPath(grid, { x: 1, y: 1 }, { x: 4, y: 4 })).toBeNull();
+  });
+
+  it("adjacent dest is a single step", () => {
+    const grid = grass(8, 8);
+    expect(findPath(grid, { x: 2, y: 2 }, { x: 3, y: 2 })).toEqual([{ x: 3, y: 2 }]);
+  });
+
+  it("paths through occupied tiles", () => {
+    const grid = grass(8, 8);
+    const occupied = (x: number, y: number) => x === 3 && y === 4;
+    const path = findPath(grid, { x: 1, y: 4 }, { x: 5, y: 4 }, { blocks: () => false, occupied });
+    expect(path).not.toBeNull();
+    expect(path!.at(-1)).toEqual({ x: 5, y: 4 });
   });
 });
 
@@ -115,5 +128,33 @@ describe("world", () => {
     expect(swords).toHaveLength(10);
     const tiles = new Set(swords.map((m) => `${m.pos.x},${m.pos.y}`));
     expect(tiles.size).toBe(10);
+  });
+
+  it("a packed swordsman blob all path and the center unsticks", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 12, y: 24 };
+    const dest = { x: 30, y: 24 };
+    const ids: number[] = [];
+    for (let i = 0; i < 19; i++) ids.push(world.spawnSettler("swordsman", at, 0).id);
+    const startDist =
+      ids.reduce((s, id) => {
+        const u = world.movable(id)!;
+        return s + hexDist(u.pos.x, u.pos.y, dest.x, dest.y);
+      }, 0) / ids.length;
+    for (const id of ids) world.dispatch({ type: "moveTo", id, to: dest, forced: true });
+    const inner = world.movable(ids[0]!)!;
+    expect(inner.headingToward(dest) || inner.walking).toBe(true);
+    for (let i = 0; i < 900; i++) world.tick();
+    const stuck = ids.filter((id) => {
+      const u = world.movable(id)!;
+      return hexDist(u.pos.x, u.pos.y, at.x, at.y) <= 2;
+    });
+    expect(stuck.length).toBeLessThan(4);
+    const endDist =
+      ids.reduce((s, id) => {
+        const u = world.movable(id)!;
+        return s + hexDist(u.pos.x, u.pos.y, dest.x, dest.y);
+      }, 0) / ids.length;
+    expect(endDist).toBeLessThan(startDist - 4);
   });
 });

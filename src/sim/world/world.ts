@@ -633,16 +633,19 @@ export class World {
     return needsPlayersGround(kind) ? player : undefined;
   }
 
-  /** Occupancy + objects + buildings. `player` set → own-land tiles only. Diggers walk their hut's footprint, stacks included. */
+  /** Objects + buildings + land. Occupancy is `occupied` — BFS walks through units. Diggers walk their hut's footprint, stacks included. */
   private blockers(ignoreId = 0, player?: number, walkHutId?: number): Blockers {
     return {
       blocks: (x, y) => {
         const onHut = walkHutId != null && this.buildings.at(x, y)?.id === walkHutId;
         if (!onHut && this.objects.blocks(x, y)) return true;
         if (!onHut && this.buildings.blocks(x, y)) return true;
-        if (this.occ.idAt(x, y) !== 0 && this.occ.idAt(x, y) !== ignoreId) return true;
         if (player != null && !this.land.owns(x, y, player)) return true;
         return false;
+      },
+      occupied: (x, y) => {
+        const id = this.occ.idAt(x, y);
+        return id !== 0 && id !== ignoreId;
       },
     };
   }

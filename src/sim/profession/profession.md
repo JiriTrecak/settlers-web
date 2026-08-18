@@ -2,7 +2,7 @@
 
 A unit *has* a workplace; the profession file assigns jobs. `tickJob` still walks / chops / drops.
 
-Shared: `readyAtHut` / `beginRest` (door → enter → rest). Outdoor gatherers (`lumberjack`, `stonecutter`) go through `acceptWork`: `workRadius` + owned + unclaimed lock tile + walkable stand. Lumberjack locks the **tree**; stonecutter locks the **stand**. Pathing is `needsPlayersGround` on the settler def (default true), not a check in each brain.
+Shared: `readyAtHut` / `beginRest` (door → enter → rest). `goDoor` uses `ensurePath`. Outdoor gatherers (`lumberjack`, `stonecutter`) go through `acceptWork`: `workRadius` + owned + unclaimed lock tile + walkable stand. Lumberjack locks the **tree**; stonecutter locks the **stand**. Pathing is `needsPlayersGround` on the settler def (default true), not a check in each brain.
 
 Lumberjack: rest **inside** the hut (`restMs`), fell the nearest adult tree that `acceptWork` allows. Stands **SE of the tree, faces nw**, carry the trunk, dump on the offer stack (capacity 8), walk home, enter, rest, repeat. Full stack or no trees → stay inside.
 

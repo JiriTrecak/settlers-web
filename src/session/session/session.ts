@@ -584,12 +584,18 @@ export class Session {
     }
   }
 
+  /** Spiral around the click; keep the center, then every 2nd walkable so the blob isn't solid. */
   private spreadDests(center: GridPos, n: number): GridPos[] {
     const world = this.world;
     if (!world || n <= 0) return [];
     const out: GridPos[] = [];
-    for (const t of tilesAround(center, Math.max(n * 16, 64))) {
+    let skip = false;
+    for (const t of tilesAround(center, Math.max(n * 32, 64))) {
       if (!world.canStand(t.x, t.y)) continue;
+      if (out.length > 0) {
+        skip = !skip;
+        if (skip) continue;
+      }
       out.push(t);
       if (out.length >= n) break;
     }

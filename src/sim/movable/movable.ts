@@ -1,9 +1,10 @@
 /**
  * One unit on the grid. Occupies the destination tile at step start; `moveProgress`
  * is 0→1 over `stepTicks` so render can lerp from `from` to `pos`. Refuses a taken
- * hex: wait, or repath beside the dest if that cell is gone.
+ * hex: sidestep a free neighbor, wait, or repath beside the dest if that cell is gone.
+ * BFS ignores occupancy — crowds are a step-time problem.
  */
-import { directionFromDelta, type Direction, type GridPos } from "../../shared";
+import { directionFromDelta, HEX_DELTAS, hexDist, type Direction, type GridPos } from "../../shared";
 import type { Goods, SettlerDef } from "../data/types";
 import { settlerDef, type SettlerKind } from "../data/settlers";
 import type { Job } from "../job/job";
@@ -18,6 +19,8 @@ export type MovableMaterial = "none" | Goods | "tree";
 
 /** Bearer step is 0.6s × 0.75 speedup = 450ms → 18 ticks at 25ms. */
 export const BEARER_STEP_MS = 450;
+/** Missed BFS: don't hammer the same dest every beat. 20 ticks = 0.5s at 25ms. */
+const PATH_FAIL_TICKS = 20;
 
 export type MovableView = {
   id: number;
@@ -70,6 +73,9 @@ export class Movable {
   private stepping = false;
   private marked: GridPos | null = null;
   private readonly marks: MarkGrid | null;
+  /** Last dest that a real BFS missed (walkable, unreachable). Occupied dest retries cheap. */
+  private pathFail: GridPos | null = null;
+  private pathRetry = 0;
 
   constructor(
     id: number,
@@ -159,6 +165,7 @@ export class Movable {
     this.flockLeft = 0;
     this.forcedUntil = null;
     this.health = def.health ?? 100;
+    this.clearPathFail();
     if (def.restMs) {
       this.restLeft = Math.max(0, Math.round(def.restMs / tickMs));
       this.enter();
@@ -183,10 +190,34 @@ export class Movable {
   /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. False if no path. */
   pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): boolean {
     this.leave();
+    if (
+      this.pathRetry > 0 &&
+      this.pathFail &&
+      this.pathFail.x === to.x &&
+      this.pathFail.y === to.y
+    ) {
+      return false;
+    }
     const path = findPath(grid, this.pos, to, blockers);
-    this.queue = path ? path.slice() : [];
+    if (!path) {
+      this.queue = [];
+      if (isWalkable(grid, to.x, to.y, blockers)) {
+        this.pathFail = { x: to.x, y: to.y };
+        this.pathRetry = PATH_FAIL_TICKS;
+      }
+      if (!this.stepping && this.action !== "work") this.startStep(grid, blockers);
+      return false;
+    }
+    this.clearPathFail();
+    this.queue = path.slice();
     if (!this.stepping && this.action !== "work") this.startStep(grid, blockers);
-    return path != null;
+    return true;
+  }
+
+  /** Path is a request: keep the live queue, else one `pathTo`. */
+  ensurePath(grid: MapGrid, to: GridPos, blockers?: Blockers): boolean {
+    if (this.headingToward(to)) return true;
+    return this.pathTo(grid, to, blockers);
   }
 
   /** Already at `to`, or the remaining queue ends there — don't BFS again. */
@@ -219,6 +250,7 @@ export class Movable {
   }
 
   tick(grid?: MapGrid, blockers?: Blockers): void {
+    if (this.pathRetry > 0) this.pathRetry -= 1;
     if (this.inside || this.action === "work") return;
     if (!this.stepping) {
       this.startStep(grid, blockers);
@@ -246,8 +278,14 @@ export class Movable {
     this.marked = null;
   }
 
+  private clearPathFail(): void {
+    this.pathFail = null;
+    this.pathRetry = 0;
+  }
+
   private startStep(grid?: MapGrid, blockers?: Blockers): void {
     this.rerouteIfBlocked(grid, blockers);
+    this.nudgeIfOccupied(grid, blockers);
     const next = this.queue[0];
     if (!next) {
       this.action = this.action === "work" ? "work" : "idle";
@@ -256,7 +294,7 @@ export class Movable {
       this.from = this.pos;
       return;
     }
-    if (blockers?.blocks(next.x, next.y)) {
+    if (grid && !isWalkable(grid, next.x, next.y, blockers)) {
       this.action = this.action === "work" ? "work" : "idle";
       this.stepping = false;
       this.moveProgress = 0;
@@ -273,10 +311,10 @@ export class Movable {
     this.stepping = true;
   }
 
-  /** Occupied next hex: wait if the dest is still free; otherwise stand beside it. */
+  /** Dest gone: stand beside it. Occupied next with dest still free is a nudge/wait, not a full BFS. */
   private rerouteIfBlocked(grid?: MapGrid, blockers?: Blockers): void {
     const next = this.queue[0];
-    if (!next || !grid || !blockers?.blocks(next.x, next.y)) return;
+    if (!next || !grid) return;
     const dest = this.queue[this.queue.length - 1] ?? next;
     if (isWalkable(grid, dest.x, dest.y, blockers)) return;
     const alt = nearestWalkable(grid, dest, blockers);
@@ -287,4 +325,36 @@ export class Movable {
     const path = findPath(grid, this.pos, alt, blockers);
     if (path) this.queue = path.slice();
   }
+
+  /** Next hex taken: splice a free neighbor, prefer one that still hits over-next. */
+  private nudgeIfOccupied(grid?: MapGrid, blockers?: Blockers): void {
+    const next = this.queue[0];
+    if (!next || !grid || !blockers?.occupied?.(next.x, next.y)) return;
+    const over = this.queue[1];
+    const dest = this.queue[this.queue.length - 1] ?? next;
+    const deltas = this.id % 2 === 0 ? HEX_DELTAS : HEX_DELTAS_REV;
+    let best: GridPos | null = null;
+    let bestScore = Infinity;
+    for (const { dx, dy } of deltas) {
+      const x = this.pos.x + dx;
+      const y = this.pos.y + dy;
+      if (x === next.x && y === next.y) continue;
+      if (!isWalkable(grid, x, y, blockers)) continue;
+      let score = hexDist(x, y, dest.x, dest.y) * 10;
+      if (over && isAdjacentHex(x, y, over.x, over.y)) score -= 100;
+      if (score < bestScore) {
+        bestScore = score;
+        best = { x, y };
+      }
+    }
+    if (!best) return;
+    if (over && isAdjacentHex(best.x, best.y, over.x, over.y)) this.queue[0] = best;
+    else this.queue.unshift(best);
+  }
+}
+
+const HEX_DELTAS_REV: readonly { dx: number; dy: number }[] = [...HEX_DELTAS].reverse();
+
+function isAdjacentHex(ax: number, ay: number, bx: number, by: number): boolean {
+  return HEX_DELTAS.some((d) => ax + d.dx === bx && ay + d.dy === by);
 }

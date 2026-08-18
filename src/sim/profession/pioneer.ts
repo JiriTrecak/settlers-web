@@ -33,8 +33,7 @@ export function tickPioneer(m: Movable, ctx: ProfessionContext): void {
 
 /** One BFS per dest. Failed / blocked dest → idle so we don't flood the map every beat. */
 function tryPath(m: Movable, ctx: ProfessionContext, to: GridPos): void {
-  if (m.headingToward(to)) return;
-  if (!m.pathTo(ctx.grid, to, ctx.blockers)) m.idle();
+  if (!m.ensurePath(ctx.grid, to, ctx.blockers)) m.idle();
 }
 
 function claimable(ctx: ProfessionContext, m: Movable, x: number, y: number): boolean {
