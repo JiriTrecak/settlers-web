@@ -392,6 +392,21 @@ body {
   gap: 4px;
 }
 
+.hud-build-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.hud-build-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hud-build-list[hidden] {
+  display: none;
+}
+
 .hud-build button {
   appearance: none;
   border: 1px solid rgba(232, 224, 208, 0.28);
@@ -414,6 +429,15 @@ body {
 .hud-build button.is-selected {
   border-color: #e8c36a;
   color: #e8c36a;
+}
+
+.hud-build-tabs button {
+  flex: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  padding: 5px 4px;
 }
 
 .screen {
@@ -528,10 +552,49 @@ body {
   opacity: 0.55;
 }
 
+.menu-setup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0 8px;
+}
+
 .menu-colors {
   display: flex;
   gap: 8px;
-  padding: 2px 0 8px;
+  padding: 0;
+}
+
+.menu-slots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.menu-slots select {
+  pointer-events: auto;
+  appearance: none;
+  min-width: 44px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.82);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.menu-slots select:hover,
+.menu-slots select:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
 }
 
 .menu-color {
@@ -555,6 +618,15 @@ body {
 .menu-color.is-selected {
   border-color: #e8c36a;
   box-shadow: 0 0 0 2px #0008, inset 0 0 0 1px #0006;
+}
+
+.menu-color.is-off {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.menu-color:disabled {
+  pointer-events: none;
 }
 
 .menu-replay {

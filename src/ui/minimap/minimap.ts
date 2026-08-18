@@ -1,10 +1,15 @@
 /**
- * Top-down terrain + viewport quad. Emits look-at in grid space; does not touch the camera.
+ * Top-down terrain + occupy rim + huts + units + viewport quad.
+ * Emits look-at in grid space; does not touch the camera.
  */
-import { landscapeInfo, worldToGrid } from "../../shared";
+import { landscapeInfo, PLAYER_COLORS, clampPlayer, playerRgb, playerRgbLite, worldToGrid } from "../../shared";
 import type { MapView } from "../../sim/map/mapView";
 import type { FogView } from "../../sim/fog/fog";
 import { FOG_VISIBLE } from "../../sim/fog/fog";
+import { UNOWNED, type LandView } from "../../sim/land/land";
+import type { BuildingView } from "../../sim/building/building";
+import { buildingDef } from "../../sim/data/buildings";
+import type { MovableView } from "../../sim/movable/movable";
 
 export type MinimapCamera = {
   panX: number;
@@ -92,6 +97,9 @@ export function minimapClientToGrid(
   return minimapPxToGrid(px.x, px.y, view.width, view.height, canvas.width, canvas.height);
 }
 
+const PLAYER_RGB: [number, number, number][] = PLAYER_COLORS.map((_, i) => playerRgb(i));
+const UNIT_RGB: [number, number, number][] = PLAYER_COLORS.map((_, i) => playerRgbLite(i));
+
 /** Top-down canvas widget. Session calls `setView` / `setCamera`. */
 export class Minimap {
   private readonly canvas: HTMLCanvasElement;
@@ -102,6 +110,13 @@ export class Minimap {
   private fog: FogView | null = null;
   private fogGen = -1;
   private fogPlayer = -2;
+  private land: LandView | null = null;
+  private buildings: readonly BuildingView[] = [];
+  private units: readonly MovableView[] = [];
+  private hutAt = new Int8Array(0);
+  private unitAt = new Int8Array(0);
+  private occupyW = 0;
+  private occupyH = 0;
   private dragging = false;
 
   constructor(host: HTMLElement, hooks: { onLookAt: (x: number, y: number) => void }) {
@@ -133,7 +148,7 @@ export class Minimap {
     this.fogGen = -1;
     this.fogPlayer = -2;
     this.paintFog();
-    this.blitTerrain();
+    this.compose();
   }
 
   setFog(fog: FogView | null): void {
@@ -143,7 +158,7 @@ export class Minimap {
       this.fogGen = -2;
       this.fogPlayer = -2;
       this.paintFog();
-      this.blitTerrain();
+      this.compose();
       return;
     }
     if (fog.player === this.fogPlayer && fog.generation === this.fogGen) return;
@@ -151,14 +166,25 @@ export class Minimap {
     this.fogGen = fog.generation;
     this.fogPlayer = fog.player;
     this.paintFog();
-    this.blitTerrain();
+    this.compose();
+  }
+
+  /** Occupy rim + hut footprints + units. Painted on compose; fog still hides unseen tiles. */
+  setMarks(
+    land: LandView | undefined,
+    buildings: readonly BuildingView[],
+    units: readonly MovableView[],
+  ): void {
+    this.land = land ?? null;
+    this.buildings = buildings;
+    this.units = units;
   }
 
   setCamera(camera: MinimapCamera, screenW: number, screenH: number): void {
     const view = this.view;
     const ctx = this.canvas.getContext("2d");
     if (!view || !ctx) return;
-    this.blitTerrain();
+    this.compose();
     const quad = viewportMinimapQuad(
       camera,
       screenW,
@@ -242,11 +268,87 @@ export class Minimap {
     dst.putImageData(image, 0, 0);
   }
 
-  private blitTerrain(): void {
+  private compose(): void {
     const ctx = this.canvas.getContext("2d");
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(this.terrain, 0, 0);
+    this.paintMarks(ctx);
+  }
+
+  private paintMarks(ctx: CanvasRenderingContext2D): void {
+    const view = this.view;
+    if (!view) return;
+    const { width, height } = view;
+    this.stampOccupy(width, height);
+    const cw = this.canvas.width;
+    const ch = this.canvas.height;
+    const image = ctx.getImageData(0, 0, cw, ch);
+    const data = image.data;
+    const fog = this.fog;
+    const land = this.land;
+    const hutAt = this.hutAt;
+    const unitAt = this.unitAt;
+    for (let py = 0; py < ch; py++) {
+      for (let px = 0; px < cw; px++) {
+        const x = Math.min(width - 1, ((px * width) / cw) | 0);
+        const y = Math.min(height - 1, ((py * height) / ch) | 0);
+        if (fog && fog.sightAt(x, y) <= 0) continue;
+        const i = (py * cw + px) * 4;
+        const ti = y * width + x;
+        const unit = unitAt[ti] ?? -1;
+        if (unit >= 0 && (!fog || fog.isClear(x, y))) {
+          const rgb = UNIT_RGB[unit]!;
+          data[i] = rgb[0];
+          data[i + 1] = rgb[1];
+          data[i + 2] = rgb[2];
+          continue;
+        }
+        const hut = hutAt[ti] ?? -1;
+        if (hut >= 0) {
+          const rgb = PLAYER_RGB[hut]!;
+          data[i] = rgb[0];
+          data[i + 1] = rgb[1];
+          data[i + 2] = rgb[2];
+          continue;
+        }
+        if (!land || !land.isBorder(x, y)) continue;
+        const owner = land.playerAt(x, y);
+        if (owner === UNOWNED) continue;
+        const rgb = PLAYER_RGB[clampPlayer(owner)]!;
+        data[i] = rgb[0];
+        data[i + 1] = rgb[1];
+        data[i + 2] = rgb[2];
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+  }
+
+  private stampOccupy(width: number, height: number): void {
+    if (this.occupyW !== width || this.occupyH !== height) {
+      this.occupyW = width;
+      this.occupyH = height;
+      this.hutAt = new Int8Array(width * height);
+      this.unitAt = new Int8Array(width * height);
+    }
+    this.hutAt.fill(-1);
+    this.unitAt.fill(-1);
+    for (const b of this.buildings) {
+      const p = b.player;
+      if (p < 0) continue;
+      for (const rel of buildingDef(b.kind).blocked) {
+        const x = b.x + rel.dx;
+        const y = b.y + rel.dy;
+        if (x < 0 || y < 0 || x >= width || y >= height) continue;
+        this.hutAt[y * width + x] = clampPlayer(p);
+      }
+    }
+    for (const m of this.units) {
+      if (m.inside || m.player < 0) continue;
+      const { x, y } = m.pos;
+      if (x < 0 || y < 0 || x >= width || y >= height) continue;
+      this.unitAt[y * width + x] = clampPlayer(m.player);
+    }
   }
 
   private emitLookAt(e: PointerEvent): void {

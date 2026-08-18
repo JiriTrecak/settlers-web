@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Camera } from "../../src/render/camera/camera";
 import { gridToWorld } from "../../src/shared";
 import { gridToMinimapPx, minimapPxToGrid, viewportMinimapQuad } from "../../src/ui/minimap/minimap";
+import { playerRgb, playerRgbLite } from "../../src/shared";
 
 function quadArea(quad: { x: number; y: number }[]): number {
   let area = 0;
@@ -40,6 +41,11 @@ describe("minimap mapping", () => {
     const expected = gridToMinimapPx(tile.x, tile.y, 64, 64, 168, 168);
     expect(c.x).toBeCloseTo(expected.x, 5);
     expect(c.y).toBeCloseTo(expected.y, 5);
+  });
+
+  it("unit tint is player mixed 50/50 with white", () => {
+    expect(playerRgb(0)).toEqual([0x28, 0x5a, 0xc8]);
+    expect(playerRgbLite(0)).toEqual([(0x28 + 255) >> 1, (0x5a + 255) >> 1, (0xc8 + 255) >> 1]);
   });
 
   it("shrinks the viewport quad when zooming in", () => {

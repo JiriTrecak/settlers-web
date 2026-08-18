@@ -55,12 +55,14 @@ export function mapPickerOptions(catalog: readonly MapCatalogEntry[]): MapOption
       name: m.name,
       group: m.group,
       detail: `${m.size} · ${m.players}p`,
+      players: Math.max(1, m.players | 0),
     })),
     ...MAPS.map((m) => ({
       id: m.id,
       name: m.name,
       group: "generated" as const,
       detail: String(m.size),
+      players: 1,
     })),
   ];
 }

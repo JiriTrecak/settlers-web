@@ -10,6 +10,8 @@ export type MapOption = {
   name: string;
   group: MapOptionGroup;
   detail?: string;
+  /** Dump player-info slots. Generated maps are 1. */
+  players: number;
 };
 
 export type MainMenuHooks = {

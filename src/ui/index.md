@@ -7,7 +7,7 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `screen/` | `GameScreen` + `ScreenHost` — one overlay at a time |
 | `menu/` | Main menu, map select, replay list, notice |
 | `hud/` | Compact fps/cursor; F3 debug dump; exit (confirm) |
-| `minimap/` | Terrain blit, view quad, drag look-at |
+| `minimap/` | Terrain blit, occupy rim + huts + units, view quad, drag look-at |
 | `speed/` | 1× / 2× / 4× / 8× under the minimap |
-| `build/` | Lumberjack / forester / stonecutter / sawmill / house / tower strip |
+| `build/` | Hut strip + debug unit dump (Buildings / Units tabs) |
 | `replay/` | Bottom-middle timeline (play / pause / scrubber / speed / player) |

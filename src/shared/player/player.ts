@@ -19,3 +19,14 @@ export function clampPlayer(n: number): number {
 export function playerCss(i: number): string {
   return `#${PLAYER_COLORS[clampPlayer(i)]!.toString(16).padStart(6, "0")}`;
 }
+
+export function playerRgb(i: number): [number, number, number] {
+  const c = PLAYER_COLORS[clampPlayer(i)]!;
+  return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
+}
+
+/** 50/50 with white — minimap units vs solid building/border. */
+export function playerRgbLite(i: number): [number, number, number] {
+  const [r, g, b] = playerRgb(i);
+  return [(r + 255) >> 1, (g + 255) >> 1, (b + 255) >> 1];
+}

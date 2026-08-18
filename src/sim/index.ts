@@ -9,6 +9,8 @@ export {
   gridFromDumpedMap,
   isDumpedMap,
   matchStarts,
+  mapStartCap,
+  clampMatchPlayers,
   startForPlayer,
   startsFromDumpedMap,
   type DumpedMap,

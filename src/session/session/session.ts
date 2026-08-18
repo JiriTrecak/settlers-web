@@ -15,6 +15,8 @@ import {
   scatterTrees,
   seedRng,
   matchStarts,
+  mapStartCap,
+  clampMatchPlayers,
   emptyTickTimings,
   isControllable,
   KIT_SWORDSMEN_ME,
@@ -22,14 +24,13 @@ import {
   type MapView,
   type MapDecoration,
   type MapStart,
-  type BuildingKind,
   type ViewSnapshot,
 } from "../../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, BuildMenu, ReplayTimeline, debugFrom, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, BuildMenu, ReplayTimeline, debugFrom, type GameSpeed, type HudState, type PlaceTool } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { tilesAround, type ScreenPt } from "../input/boxSelect";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
@@ -53,7 +54,7 @@ export type SessionConfig = {
   catalog: readonly MapCatalogEntry[];
   /** Local slot (lobby clothing + view). Clamped to 0..players-1 when the match has 2+. */
   player: number;
-  /** Colonies to stamp. Default: 2 when the map has 2+ starts, else 1. */
+  /** Colonies to stamp. Clamped to the dump's starts (and 8 tints). Default: 2 when the map allows. */
   players?: number;
   /** Watch this file instead of playing. No commands, no opponent script. */
   replay?: ReplayFile;
@@ -103,7 +104,7 @@ export class Session {
   private worldSeed = DEFAULT_WORLD_SEED;
   private waves: MapDecoration[] = [];
   private pristine: { grid: ReturnType<typeof generateMap>; objects: ObjectGrid } | null = null;
-  private buildKind: BuildingKind | null = null;
+  private placeTool: PlaceTool | null = null;
   private hover: GridPos | null = null;
   private fps = 60;
   private showPaths = false;
@@ -150,9 +151,9 @@ export class Session {
         },
       });
       this.buildMenu = new BuildMenu(this.overlay, {
-        onKind: (kind) => {
-          this.buildKind = kind;
-          if (kind && this.claiming) {
+        onTool: (tool) => {
+          this.placeTool = tool;
+          if (tool && this.claiming) {
             this.claiming = false;
             this.renderer?.previewOccupy(null);
             this.config.hooks.onClaiming?.(false);
@@ -202,7 +203,9 @@ export class Session {
         { players: replayPlayers(file), player: this.me },
       );
     } else {
-      const n = this.config.players ?? (starts.length >= 2 ? 2 : 1);
+      const listed = this.config.catalog.find((m) => m.id === this.mapId)?.players ?? 1;
+      const cap = mapStartCap(starts.length, listed);
+      const n = clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
       const slots = matchStarts(starts, n, grid);
       this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
       if (n <= 1) {
@@ -231,7 +234,7 @@ export class Session {
     this.lookAt(look.x, look.y);
     const snap = world.view(this.me);
     this.renderer.draw(snap, 0);
-    this.minimap.setFog(this.showFog ? snap.fog : null);
+    this.syncMinimap(snap, false);
     this.syncTimeline();
     this.pushHud(snap, 16.67, 0, false, {
       simMs: 0,
@@ -264,7 +267,7 @@ export class Session {
       if (!this.watching) {
         this.maybeRecord();
         for (const opp of this.opponents) {
-          if (world.outcome?.winner != null || world.outcome?.defeated.includes(opp.player)) continue;
+          if (world.outcome || !world.hasHq(opp.player)) continue;
           opp.onTick(world);
         }
       }
@@ -284,10 +287,7 @@ export class Session {
     this.input?.tick(dtMs);
     const drawMs = performance.now() - tDraw;
     const tMini = performance.now();
-    if (this.view && this.minimap) {
-      this.minimap.setFog(this.showFog ? snap.fog : null);
-      this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
-    }
+    this.syncMinimap(snap);
     const miniMs = performance.now() - tMini;
     this.syncTimeline();
     this.pushHud(snap, dtMs, n, n >= cap, { simMs, snapMs, drawMs, miniMs, phases });
@@ -309,15 +309,14 @@ export class Session {
   setShowFog(on: boolean): void {
     this.showFog = on;
     this.renderer?.setShowFog(on);
-    const world = this.world;
-    if (this.minimap && world) this.minimap.setFog(on ? world.view(this.me).fog : null);
+    if (this.world) this.syncMinimap(this.world.view(this.me), false);
   }
 
   /** Esc: drop the build ghost, then the claim tool, then the unit, then the hut highlight. */
   deselect(): void {
-    if (this.buildKind) {
-      this.buildKind = null;
-      this.buildMenu?.setKind(null);
+    if (this.placeTool) {
+      this.placeTool = null;
+      this.buildMenu?.setTool(null);
       this.syncGhost();
       return;
     }
@@ -376,8 +375,8 @@ export class Session {
     if (this.watching) return;
     this.claiming = on;
     if (on) {
-      this.buildKind = null;
-      this.buildMenu?.setKind(null);
+      this.placeTool = null;
+      this.buildMenu?.setTool(null);
     }
     this.syncGhost();
     this.renderer?.previewOccupy(on ? this.hover : null, this.me);
@@ -435,7 +434,7 @@ export class Session {
         zoom: renderer.camera.zoom,
         mapW: view.width,
         mapH: view.height,
-        tool: this.buildKind,
+        tool: this.toolLabel(),
         selected: this.selected,
         simMs: cost.simMs,
         snapMs: cost.snapMs,
@@ -479,14 +478,24 @@ export class Session {
       if (this.canCommand() && pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
       return;
     }
-    const kind = this.buildKind;
-    if (kind && pos && this.canCommand() && this.world.canPlaceBuilding(kind, pos, this.me)) {
+    const tool = this.placeTool;
+    if (tool?.type === "unit" && pos && this.canCommand()) {
+      this.world.enqueue({
+        type: "spawnUnit",
+        kind: tool.kind,
+        at: pos,
+        player: this.me,
+        count: tool.count,
+      });
+      return;
+    }
+    if (tool?.type === "building" && pos && this.canCommand() && this.world.canPlaceBuilding(tool.kind, pos, this.me)) {
       this.selected = pos;
       this.selectedUnitIds = [];
       this.syncSelectionVisual();
-      this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.me });
-      this.buildKind = null;
-      this.buildMenu?.setKind(null);
+      this.world.enqueue({ type: "placeBuilding", kind: tool.kind, at: pos, player: this.me });
+      this.placeTool = null;
+      this.buildMenu?.setTool(null);
       this.syncGhost();
       return;
     }
@@ -611,6 +620,15 @@ export class Session {
     else renderer.highlight(this.selected);
   }
 
+  private syncMinimap(snap: ViewSnapshot, camera = true): void {
+    const mini = this.minimap;
+    const renderer = this.renderer;
+    if (!mini || !this.view) return;
+    mini.setMarks(snap.land, snap.buildings, snap.movables);
+    mini.setFog(this.showFog ? snap.fog : null);
+    if (camera && renderer) mini.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
+  }
+
   private syncCamera(): void {
     const renderer = this.renderer;
     if (!renderer) return;
@@ -631,14 +649,21 @@ export class Session {
   private syncGhost(): void {
     const renderer = this.renderer;
     const world = this.world;
-    const kind = this.buildKind;
+    const tool = this.placeTool;
     const pos = this.hover;
     if (!renderer) return;
-    if (this.claiming || !kind || !pos || !world || world.buildings.at(pos.x, pos.y)) {
+    if (this.claiming || tool?.type !== "building" || !pos || !world || world.buildings.at(pos.x, pos.y)) {
       renderer.ghost(null, null, false);
       return;
     }
-    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.me) && world.plotLevel(kind, pos));
+    renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos));
+  }
+
+  private toolLabel(): string | null {
+    const tool = this.placeTool;
+    if (!tool) return null;
+    if (tool.type === "building") return tool.kind;
+    return tool.count === 1 ? "swordsman" : `swordsman×${tool.count}`;
   }
 
   private startLook(): GridPos {
@@ -706,10 +731,7 @@ export class Session {
     renderer.setSelected(this.selectedUnitIds);
     renderer.draw(snap, 0);
     this.paintHutSelect();
-    if (this.view && this.minimap) {
-      this.minimap.setFog(this.showFog ? snap.fog : null);
-      this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
-    }
+    this.syncMinimap(snap);
     this.pushHud(snap, 16.67, 0, false, {
       simMs: 0,
       snapMs: 0,

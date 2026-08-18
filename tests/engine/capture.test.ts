@@ -88,6 +88,22 @@ describe("tower assault", () => {
     expect(world.outcome).toEqual({ winner: null, defeated: [0] });
   });
 
+  it("a 3p match keeps going after the first HQ dies", () => {
+    const world = new World(grass(200, 80));
+    const hq0 = world.placeBuilding("tower", { x: 16, y: 16 }, 0)!;
+    const hq1 = world.placeBuilding("tower", { x: 90, y: 16 }, 1)!;
+    const hq2 = world.placeBuilding("tower", { x: 164, y: 16 }, 2)!;
+    world.setHq(hq0);
+    world.setHq(hq1);
+    world.setHq(hq2);
+    expect(world.destroyBuilding(hq1.pos)).toBe(true);
+    expect(world.outcome).toBeNull();
+    expect(world.hasHq(0)).toBe(true);
+    expect(world.hasHq(2)).toBe(true);
+    expect(world.destroyBuilding(hq2.pos)).toBe(true);
+    expect(world.outcome).toEqual({ winner: 0, defeated: [1, 2] });
+  });
+
   it("destroying an extra T1 does not end the match", () => {
     const world = new World(grass(80, 80));
     const hq = world.placeBuilding("tower", { x: 16, y: 16 }, 0)!;

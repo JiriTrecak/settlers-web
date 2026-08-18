@@ -1,5 +1,5 @@
 /**
- * Map list. Picking one asks the lobby to start a session with the chosen player tint.
+ * Map list. Picking one asks the lobby to start a session with the chosen slot count and tint.
  */
 import { PLAYER_COLORS, clampPlayer, playerCss } from "../../shared";
 import { GameScreen } from "../screen/screen";
@@ -18,18 +18,28 @@ const GROUP_ORDER: MapOptionGroup[] = ["tutorial", "single", "multi", "generated
 
 export class MapSelect extends GameScreen {
   private player: number;
+  private slots: number;
+  private readonly maxSlots: number;
 
   constructor(
     maps: readonly MapOption[],
     hooks: {
       onBack: () => void;
-      onPick: (id: string, player: number) => void;
+      onPick: (id: string, player: number, players: number) => void;
       onReplays: () => void;
       player?: number;
+      players?: number;
     },
   ) {
     super("screen menu");
+    this.maxSlots = Math.min(
+      PLAYER_COLORS.length,
+      Math.max(1, ...maps.map((m) => m.players), 1),
+    );
+    this.slots = Math.min(Math.max(1, hooks.players ?? Math.min(2, this.maxSlots)), this.maxSlots);
     this.player = clampPlayer(hooks.player ?? 0);
+    if (this.slots >= 2) this.player = Math.min(this.player, this.slots - 1);
+
     const panel = document.createElement("div");
     panel.className = "menu-panel menu-panel-wide";
 
@@ -53,6 +63,9 @@ export class MapSelect extends GameScreen {
     title.textContent = "Single player";
     head.append(nav, title);
 
+    const setup = document.createElement("div");
+    setup.className = "menu-setup";
+
     const colors = document.createElement("div");
     colors.className = "menu-colors";
     const swatches: HTMLButtonElement[] = [];
@@ -63,13 +76,35 @@ export class MapSelect extends GameScreen {
       swatch.style.background = playerCss(i);
       swatch.setAttribute("aria-label", `Player color ${i + 1}`);
       swatch.addEventListener("click", () => {
+        if (this.slots >= 2 && i >= this.slots) return;
         this.player = i;
-        for (const s of swatches) s.classList.toggle("is-selected", s === swatch);
+        this.syncSwatches(swatches);
       });
-      if (i === this.player) swatch.classList.add("is-selected");
       swatches.push(swatch);
       colors.append(swatch);
     }
+
+    const slotsWrap = document.createElement("label");
+    slotsWrap.className = "menu-slots";
+    slotsWrap.textContent = "Players";
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "Number of players");
+    for (let n = 1; n <= this.maxSlots; n++) {
+      const opt = document.createElement("option");
+      opt.value = String(n);
+      opt.textContent = String(n);
+      select.append(opt);
+    }
+    select.value = String(this.slots);
+    select.addEventListener("change", () => {
+      this.slots = Math.min(this.maxSlots, Math.max(1, Number(select.value) | 0));
+      if (this.slots >= 2 && this.player >= this.slots) this.player = this.slots - 1;
+      this.syncSwatches(swatches);
+    });
+    slotsWrap.append(select);
+
+    setup.append(colors, slotsWrap);
+    this.syncSwatches(swatches);
 
     const list = document.createElement("div");
     list.className = "menu-list";
@@ -86,7 +121,11 @@ export class MapSelect extends GameScreen {
         item.type = "button";
         item.className = "menu-btn menu-btn-row";
         item.textContent = map.detail ? `${map.name}  ·  ${map.detail}` : map.name;
-        item.addEventListener("click", () => hooks.onPick(map.id, this.player));
+        item.addEventListener("click", () => {
+          const n = Math.min(this.slots, Math.max(1, map.players));
+          const me = n >= 2 ? Math.min(this.player, n - 1) : this.player;
+          hooks.onPick(map.id, me, n);
+        });
         list.append(item);
       }
     }
@@ -103,8 +142,18 @@ export class MapSelect extends GameScreen {
       list.append(hint);
     }
 
-    panel.append(head, colors, list);
+    panel.append(head, setup, list);
     this.root.append(panel);
     this.onEscape(hooks.onBack);
+  }
+
+  private syncSwatches(swatches: readonly HTMLButtonElement[]): void {
+    for (let i = 0; i < swatches.length; i++) {
+      const el = swatches[i]!;
+      const open = this.slots < 2 || i < this.slots;
+      el.disabled = !open;
+      el.classList.toggle("is-selected", i === this.player);
+      el.classList.toggle("is-off", !open);
+    }
   }
 }

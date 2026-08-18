@@ -1,5 +1,5 @@
 /**
- * Other slot: delay-enqueue the same Actions a human would click.
+ * Other slots: delay-enqueue the same Actions a human would click.
  * Not a brain — no construction finder, no extra fog.
  */
 import { hexDist, type GridPos } from "../../shared";

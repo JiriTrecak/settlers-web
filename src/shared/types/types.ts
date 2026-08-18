@@ -15,4 +15,6 @@ export type Action =
   | { type: "occupy"; at: GridPos; player?: number }
   | { type: "destroyBuilding"; at: GridPos }
   | { type: "pioneerWork"; id: number; to: GridPos }
-  | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" };
+  | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" }
+  /** Debug dump from the Units strip. Not a barracks. */
+  | { type: "spawnUnit"; kind: "swordsman"; at: GridPos; player?: number; count?: number };

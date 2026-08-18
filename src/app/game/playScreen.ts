@@ -18,6 +18,7 @@ export class PlayScreen extends GameScreen {
     hooks: {
       onLeave: () => void;
       player: number;
+      players?: number;
       replay?: ReplayFile;
       onReplay?: (file: ReplayFile) => void;
     },
@@ -37,6 +38,7 @@ export class PlayScreen extends GameScreen {
       mapId,
       catalog,
       player: hooks.player,
+      players: hooks.players,
       replay: hooks.replay,
       hooks: {
         onHud: (state) => this.hud.update(state),

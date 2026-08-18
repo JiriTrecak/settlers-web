@@ -64,7 +64,7 @@ Military huts (`garrison`): idle swordsmen walk to the door and enter. Land stam
 
 Enemy infantry break the **door** (50 HP, same 1 s / 10 dmg swing). At 0 the soldier inside is kicked out to fight. If the garrison is gone, the hut changes owner, land transfers if it was held, and the attacker walks in. Door regenerates 1 HP/s while nobody is assaulting, cap 50.
 
-The colony start tower is `hq`. Capture or destroy it and that player is defeated. Extra T1s are just towers.
+The colony start tower is `hq`. Capture or destroy it and that player is out. The match ends when one HQ remains (or none). Extra T1s are just towers.
 
 Bricklayers on the scaffold do **not** count as occupying.
 

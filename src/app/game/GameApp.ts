@@ -22,6 +22,7 @@ export class GameApp {
   private screens: ScreenHost | null = null;
   private catalog: MapCatalogEntry[] = [];
   private player = 0;
+  private slots = 2;
   private readonly replays = new ReplayStore();
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
@@ -81,10 +82,12 @@ export class GameApp {
     this.screens?.show(
       new MapSelect(mapPickerOptions(this.catalog), {
         player: this.player,
+        players: this.slots,
         onBack: () => this.showMenu(),
         onReplays: () => this.showReplays(),
-        onPick: (id, player) => {
+        onPick: (id, player, players) => {
           this.player = player;
+          this.slots = players;
           void this.play(id);
         },
       }),
@@ -124,6 +127,7 @@ export class GameApp {
     const gen = ++this.playGen;
     const play = new PlayScreen(this.pixi, this.catalog, id, {
       player: this.player,
+      players: this.slots,
       onLeave: () => this.showMapSelect(),
       onReplay: (file) => this.replays.save(file),
     });

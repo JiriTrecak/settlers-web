@@ -1,7 +1,7 @@
 /**
  * Converted map dump. The engine never sees .map / DAT — ingest JSON only.
  */
-import type { GridPos, LandscapeType } from "../../shared";
+import { PLAYER_COLORS, type GridPos, type LandscapeType } from "../../shared";
 import { MapGrid } from "./mapGrid";
 import { treeSheetAt, type MapDecoration } from "../decorations/decorations";
 
@@ -52,13 +52,14 @@ export function startForPlayer(starts: readonly MapStart[] | undefined, player: 
 /**
  * Starts for a match. Uses dump slots as-is; missing slot 0 is map center,
  * later missing slots are map-opposite of slot 0 (not a second HQ on the same tile).
+ * Call `clampMatchPlayers` first — do not invent a third synthetic start on the same opposite tile.
  */
 export function matchStarts(
   starts: readonly MapStart[],
   players: number,
   size: { width: number; height: number },
 ): MapStart[] {
-  const n = Math.max(1, players | 0);
+  const n = clampMatchPlayers(players, starts.length > 0 ? starts.length : players);
   const out: MapStart[] = [];
   for (let i = 0; i < n; i++) {
     const given = starts[i];
@@ -74,6 +75,18 @@ export function matchStarts(
     out.push({ x: size.width - 1 - a.x, y: size.height - 1 - a.y });
   }
   return out;
+}
+
+/** How many colonies a dump can host. Empty `starts` still allows a 2p opposite pair. */
+export function mapStartCap(startCount: number, catalogPlayers: number): number {
+  if (startCount > 0) return startCount;
+  return Math.min(Math.max(1, catalogPlayers | 0), 2);
+}
+
+/** Slot count: at least 1, at most the map cap and the 8 tints. */
+export function clampMatchPlayers(want: number, cap: number): number {
+  const max = Math.min(PLAYER_COLORS.length, Math.max(1, cap | 0));
+  return Math.min(Math.max(1, want | 0), max);
 }
 
 export function startsFromDumpedMap(map: DumpedMap): MapStart[] {

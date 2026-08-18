@@ -12,7 +12,7 @@ export {
   type CircleRect,
 } from "./shape/mapCircle";
 export { DIRECTIONS, approxDirection, deltaOf, directionFromDelta, neighborDir, type Direction } from "./direction/direction";
-export { PLAYER_COLORS, clampPlayer, playerCss } from "./player/player";
+export { PLAYER_COLORS, clampPlayer, playerCss, playerRgb, playerRgbLite } from "./player/player";
 export {
   HEIGHT_X,
   HEIGHT_Y,

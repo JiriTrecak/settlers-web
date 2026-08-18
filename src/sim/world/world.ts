@@ -122,10 +122,14 @@ export class World {
     return this.spawnSettler("bearer", at, player);
   }
 
-  /** Colony start tower. Capture or destroy ends that player. */
+  /** Colony start tower. Capture or destroy knocks that slot out; match ends when one HQ remains. */
   setHq(hut: Building): void {
     hut.hq = true;
     this.hqPlayers.add(hut.player);
+  }
+
+  hasHq(player: number): boolean {
+    return this.buildings.all().some((b) => b.hq && b.player === player);
   }
 
   spawnSettler(kind: SettlerKind, at?: GridPos, player = 0, workplaceId: number | null = null): Movable {
@@ -431,7 +435,12 @@ export class World {
   }
 
   private actionPlayer(action: Action): number {
-    if (action.type === "placeColony" || action.type === "placeBuilding" || action.type === "occupy") {
+    if (
+      action.type === "placeColony" ||
+      action.type === "placeBuilding" ||
+      action.type === "occupy" ||
+      action.type === "spawnUnit"
+    ) {
       return action.player ?? 0;
     }
     if (action.type === "destroyBuilding") {
@@ -457,6 +466,12 @@ export class World {
     }
     if (action.type === "destroyBuilding") {
       this.destroyBuilding(action.at);
+      return;
+    }
+    if (action.type === "spawnUnit") {
+      const n = Math.min(100, Math.max(1, action.count ?? 1));
+      const player = action.player ?? 0;
+      for (let i = 0; i < n; i++) this.spawnSettler(action.kind, action.at, player);
       return;
     }
     const m = this.units.find((u) => u.id === action.id);
@@ -742,12 +757,10 @@ export class World {
 
   private checkOutcome(): void {
     if (this.outcome || this.hqPlayers.size === 0) return;
-    const defeated: number[] = [];
-    for (const p of this.hqPlayers) {
-      if (!this.buildings.all().some((b) => b.hq && b.player === p)) defeated.push(p);
-    }
+    const defeated = [...this.hqPlayers].filter((p) => !this.hasHq(p));
     if (defeated.length === 0) return;
     const alive = [...this.hqPlayers].filter((p) => !defeated.includes(p));
+    if (alive.length > 1) return;
     this.outcome = { winner: alive.length === 1 ? alive[0]! : null, defeated };
   }
 

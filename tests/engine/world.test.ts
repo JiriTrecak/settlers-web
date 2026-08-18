@@ -107,4 +107,13 @@ describe("world", () => {
     expect(world.land.playerAt(30, 10)).toBe(UNOWNED);
     expect(world.view().movables[0]).toMatchObject({ pos: { x: 10, y: 10 }, path: [] });
   });
+
+  it("spawnUnit dumps N swordsmen around the click", () => {
+    const world = new World(grass(40, 40));
+    world.dispatch({ type: "spawnUnit", kind: "swordsman", at: { x: 20, y: 20 }, player: 0, count: 10 });
+    const swords = world.view().movables.filter((m) => m.type === "swordsman" && m.player === 0);
+    expect(swords).toHaveLength(10);
+    const tiles = new Set(swords.map((m) => `${m.pos.x},${m.pos.y}`));
+    expect(tiles.size).toBe(10);
+  });
 });
