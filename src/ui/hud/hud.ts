@@ -217,10 +217,14 @@ export class Hud {
   private paint(): void {
     const s = this.last;
     const fps = `${this.fpsShown} fps`;
+    const load =
+      s.debug && (s.debug.simMs >= 1 || s.debug.simPerFrame > 1)
+        ? `   sim ${s.debug.simMs.toFixed(0)}ms ${s.debug.simPerFrame}t`
+        : "";
     const tile = s.cursor
       ? `${s.cursor.x}, ${s.cursor.y}   ${s.landscape ?? "—"}   h=${s.height ?? 0}`
       : "—";
-    this.stats.textContent = `${fps}   ${tile}\n${s.zoom.toFixed(2)}×`;
+    this.stats.textContent = `${fps}${load}   ${tile}\n${s.zoom.toFixed(2)}×`;
     if (this.open && s.debug) this.dump.textContent = formatDebug(s.debug);
   }
 }

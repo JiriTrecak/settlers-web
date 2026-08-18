@@ -75,4 +75,4 @@ Waves are not objects. They stamp on a 4-hex lattice where all six neighbors are
 
 Playable maps come from dumped JSON (`heights`, `landscape`, `trees`, `stones`, `starts`) or a procedural island preset. Original `.map` files are not parsed at runtime.
 
-Match start uses `starts[0]` as the HQ cell (player clothing color is chosen in the lobby and is independent of slot).
+Match start places a colony at `starts[i]` for each slot (2 when the dump has 2+ starts). Local clothing/view is the lobby slot, clamped into that range. Missing dump slots use map center, then map-opposite — never two HQs on the same tile.

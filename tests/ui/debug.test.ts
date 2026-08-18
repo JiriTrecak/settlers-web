@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { debugFrom, formatDebug } from "../../src/ui/hud/debug";
+import { emptyTickTimings } from "../../src/sim/clock/profile";
 import type { FogView } from "../../src/sim/fog/fog";
 import type { ViewSnapshot } from "../../src/sim/world/world";
 
@@ -28,6 +29,11 @@ const frame = {
   mapH: 32,
   tool: null,
   selected: null,
+  simMs: 4.2,
+  snapMs: 0.1,
+  drawMs: 2.0,
+  miniMs: 0.4,
+  phases: { ...emptyTickTimings(), flock: 2.4, fog: 1.1 },
 };
 
 describe("debug overlay", () => {
@@ -99,6 +105,9 @@ describe("debug overlay", () => {
     expect(formatDebug(d)).toContain("lumberjack 1");
     expect(formatDebug(d)).toContain("sawmill 1 plan");
     expect(formatDebug(d)).toContain("plank 2/8");
+    expect(formatDebug(d)).toContain("flock 2.4ms");
+    expect(formatDebug(d)).toContain("fog 1.1ms");
+    expect(formatDebug(d)).toContain("sim 4.2ms");
   });
 
   it("formats an empty snapshot without throwing", () => {

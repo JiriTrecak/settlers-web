@@ -6,7 +6,7 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 |---|---|
 | `map/` | Grid, view, dumped-map ingest, procedural islands |
 | `decorations/` | Trees/stones from dumps + wave lattice |
-| `clock/` | 25ms ticks |
+| `clock/` | 25ms ticks + optional phase timings (F3) |
 | `rng/` | Seeded RNG, never `Math.random` |
 | `building/` | Instant-built huts, footprint blockers, flatten math, door/roof flags |
 | `data/` | One-file defs for buildings and settlers |

@@ -6,7 +6,7 @@ Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`
 
 ## Colony kit
 
-On match start (`placeColony` action), at player-slot 0:
+On match start (`placeColony` action), at each player slot's `starts[i]`:
 
 - Tower (finished, objects on the footprint cleared)
 - Small house nearby (finished)

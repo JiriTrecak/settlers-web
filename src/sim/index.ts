@@ -1,5 +1,6 @@
 /** Public sim surface. No Pixi. */
 export { Clock } from "./clock/clock";
+export { emptyTickTimings, TICK_PHASES, TickTimer, type TickPhase, type TickTimings } from "./clock/profile";
 export { seedRng, type Rng } from "./rng/rng";
 export { MapGrid } from "./map/mapGrid";
 export { generateIsland, generateMap, mapById, MAPS, type MapDef, type MapId } from "./map/generateIsland";
@@ -7,6 +8,7 @@ export {
   decorationsFromDumpedMap,
   gridFromDumpedMap,
   isDumpedMap,
+  matchStarts,
   startForPlayer,
   startsFromDumpedMap,
   type DumpedMap,

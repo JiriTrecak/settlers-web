@@ -13,7 +13,8 @@ import {
   ObjectGrid,
   scatterTrees,
   seedRng,
-  startForPlayer,
+  matchStarts,
+  emptyTickTimings,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -27,6 +28,7 @@ import type { SettlerSheets } from "../../render/settler/settlerSheets";
 import { Minimap, SpeedControl, BuildMenu, debugFrom, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
+import { Opponent } from "../opponent/opponent";
 
 export type SessionHooks = {
   onHud(state: HudState): void;
@@ -36,7 +38,10 @@ export type SessionHooks = {
 export type SessionConfig = {
   mapId: string;
   catalog: readonly MapCatalogEntry[];
+  /** Local slot (lobby clothing + view). Clamped to 0..players-1 when the match has 2+. */
   player: number;
+  /** Colonies to stamp. Default: 2 when the map has 2+ starts, else 1. */
+  players?: number;
   hooks: SessionHooks;
 };
 
@@ -83,6 +88,8 @@ export class Session {
   private showOwnership = false;
   private showFog = true;
   private claiming = false;
+  private me: number;
+  private readonly opponents: Opponent[] = [];
 
   constructor(
     private readonly pixi: Application,
@@ -90,6 +97,7 @@ export class Session {
     private readonly config: SessionConfig,
   ) {
     this.mapId = config.mapId;
+    this.me = config.player;
   }
 
   async start(): Promise<void> {
@@ -140,18 +148,35 @@ export class Session {
     if (!this.renderer) return;
     const world = new World(grid, objects);
     this.world = world;
-    const start = startForPlayer(starts, 0) ?? { x: (grid.width / 2) | 0, y: (grid.height / 2) | 0 };
-    world.dispatch({ type: "placeColony", at: start, player: this.config.player });
+    const n = this.config.players ?? (starts.length >= 2 ? 2 : 1);
+    const slots = matchStarts(starts, n, grid);
+    this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
+    if (n <= 1) {
+      world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me });
+    } else {
+      for (let i = 0; i < n; i++) world.dispatch({ type: "placeColony", at: slots[i]!, player: i });
+      for (let i = 0; i < n; i++) {
+        if (i === this.me) continue;
+        this.opponents.push(new Opponent(i, slots[i]!, slots[this.me]!));
+      }
+    }
     this.view = mapViewFromGrid(grid);
     this.renderer.setView(this.view, waves, false);
     this.minimap.setView(this.view);
-    // Native 1× on the first HQ. Space still fits the whole map.
+    // Native 1× on the local HQ. Space still fits the whole map.
     this.renderer.camera.zoom = 1;
-    this.lookAt(start.x, start.y);
-    const snap = world.view(this.config.player);
+    const look = n <= 1 ? slots[0]! : slots[this.me]!;
+    this.lookAt(look.x, look.y);
+    const snap = world.view(this.me);
     this.renderer.draw(snap, 0);
     this.minimap.setFog(this.showFog ? snap.fog : null);
-    this.pushHud(snap, 16.67, 0, false);
+    this.pushHud(snap, 16.67, 0, false, {
+      simMs: 0,
+      snapMs: 0,
+      drawMs: 0,
+      miniMs: 0,
+      phases: emptyTickTimings(),
+    });
   }
 
   tick(dtMs: number, nowMs: number): void {
@@ -162,23 +187,33 @@ export class Session {
     const step = world.clock.tickMs;
     // 8 ticks/frame at 1×, scaled so 8× can still catch a hitch without spiraling.
     const cap = 8 * this.speed;
+    const phases = emptyTickTimings();
+    const tSim = performance.now();
     let n = 0;
     while (this.acc >= step && n < cap) {
       this.acc -= step;
-      world.tick();
+      world.tick(phases);
+      for (const opp of this.opponents) opp.onTick(world);
       n++;
     }
+    const simMs = performance.now() - tSim;
     if (n >= cap) this.acc = 0;
-    const snap = world.view(this.config.player);
+    const tSnap = performance.now();
+    const snap = world.view(this.me);
+    const snapMs = performance.now() - tSnap;
+    const tDraw = performance.now();
     renderer.draw(snap, this.acc / step);
     this.syncUnitHighlight();
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
-    this.pushHud(snap, dtMs, n, n >= cap);
+    const drawMs = performance.now() - tDraw;
+    const tMini = performance.now();
     if (this.view && this.minimap) {
       this.minimap.setFog(this.showFog ? snap.fog : null);
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
+    const miniMs = performance.now() - tMini;
+    this.pushHud(snap, dtMs, n, n >= cap, { simMs, snapMs, drawMs, miniMs, phases });
   }
 
   /** Debug overlay toggle. Sticky after F3 closes; renderer may not exist yet. */
@@ -191,14 +226,14 @@ export class Session {
     this.showOwnership = on;
     this.renderer?.setShowOwnership(on);
     if (!on) this.renderer?.previewOccupy(null);
-    else if (this.claiming) this.renderer?.previewOccupy(this.hover, this.config.player);
+    else if (this.claiming) this.renderer?.previewOccupy(this.hover, this.me);
   }
 
   setShowFog(on: boolean): void {
     this.showFog = on;
     this.renderer?.setShowFog(on);
     const world = this.world;
-    if (this.minimap && world) this.minimap.setFog(on ? world.view(this.config.player).fog : null);
+    if (this.minimap && world) this.minimap.setFog(on ? world.view(this.me).fog : null);
   }
 
   /** Esc: drop the build ghost, then the claim tool, then the unit, then the hut highlight. */
@@ -230,7 +265,7 @@ export class Session {
     const world = this.world;
     if (!world || this.selectedUnitId == null) return;
     const unit = world.movable(this.selectedUnitId);
-    if (!unit || unit.player !== this.config.player) return;
+    if (!unit || unit.player !== this.me) return;
     if (unit.type === "bearer") world.enqueue({ type: "convert", id: unit.id, to: "pioneer" });
     else if (unit.type === "pioneer") world.enqueue({ type: "convert", id: unit.id, to: "bearer" });
   }
@@ -252,7 +287,7 @@ export class Session {
       this.buildMenu?.setKind(null);
     }
     this.syncGhost();
-    this.renderer?.previewOccupy(on ? this.hover : null, this.config.player);
+    this.renderer?.previewOccupy(on ? this.hover : null, this.me);
   }
 
   stop(): void {
@@ -267,6 +302,7 @@ export class Session {
     this.buildMenu = null;
     this.renderer = null;
     this.world = null;
+    this.opponents.length = 0;
     this.view = null;
     this.acc = 0;
     this.hover = null;
@@ -274,7 +310,13 @@ export class Session {
     this.selectedUnitId = null;
   }
 
-  private pushHud(snap: ViewSnapshot, dtMs: number, simPerFrame: number, simCapped: boolean): void {
+  private pushHud(
+    snap: ViewSnapshot,
+    dtMs: number,
+    simPerFrame: number,
+    simCapped: boolean,
+    cost: { simMs: number; snapMs: number; drawMs: number; miniMs: number; phases: ReturnType<typeof emptyTickTimings> },
+  ): void {
     const renderer = this.renderer;
     const view = this.view;
     if (!renderer || !view) return;
@@ -298,6 +340,11 @@ export class Session {
         mapH: view.height,
         tool: this.buildKind,
         selected: this.selected,
+        simMs: cost.simMs,
+        snapMs: cost.snapMs,
+        drawMs: cost.drawMs,
+        miniMs: cost.miniMs,
+        phases: cost.phases,
       }),
     });
   }
@@ -321,7 +368,7 @@ export class Session {
     this.hover = pos;
     renderer.highlight(pos, "hover");
     this.syncGhost();
-    if (this.claiming) renderer.previewOccupy(pos, this.config.player);
+    if (this.claiming) renderer.previewOccupy(pos, this.me);
     this.config.hooks.onHud({
       cursor: pos,
       landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
@@ -333,22 +380,22 @@ export class Session {
   private setSelect(pos: GridPos | null, _shift = false): void {
     if (!this.renderer || !this.world || !pos) return;
     if (this.claiming) {
-      this.world.enqueue({ type: "occupy", at: pos, player: this.config.player });
+      this.world.enqueue({ type: "occupy", at: pos, player: this.me });
       return;
     }
     const kind = this.buildKind;
-    if (kind && this.world.canPlaceBuilding(kind, pos, this.config.player)) {
+    if (kind && this.world.canPlaceBuilding(kind, pos, this.me)) {
       this.selected = pos;
       this.selectedUnitId = null;
       this.renderer.highlight(pos, "select");
-      this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.config.player });
+      this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.me });
       this.buildKind = null;
       this.buildMenu?.setKind(null);
       this.syncGhost();
       return;
     }
     const unit = this.world.unitAt(pos.x, pos.y);
-    if (unit && unit.player === this.config.player && (unit.type === "pioneer" || unit.type === "bearer")) {
+    if (unit && unit.player === this.me && (unit.type === "pioneer" || unit.type === "bearer")) {
       this.selectedUnitId = unit.id;
       this.selected = null;
       this.renderer.highlight(unit.pos, "select");
@@ -374,7 +421,7 @@ export class Session {
     const world = this.world;
     if (!world || !pos || this.selectedUnitId == null) return;
     const unit = world.movable(this.selectedUnitId);
-    if (!unit || unit.player !== this.config.player) {
+    if (!unit || unit.player !== this.me) {
       this.selectedUnitId = null;
       this.renderer?.highlight(null, "select");
       return;
@@ -424,7 +471,7 @@ export class Session {
       renderer.ghost(null, null, false);
       return;
     }
-    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.config.player) && world.plotLevel(kind, pos));
+    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.me) && world.plotLevel(kind, pos));
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */

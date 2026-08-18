@@ -1,7 +1,9 @@
 /**
- * Flatten a sim snapshot into debug overlay numbers. Session owns the frame extras (fps, speed).
+ * Flatten a sim snapshot into debug overlay numbers.
+ * Session owns the frame extras (fps, speed, wall-clock buckets).
  */
 import type { GridPos } from "../../shared";
+import { TICK_PHASES, type TickTimings } from "../../sim/clock/profile";
 import type { ViewSnapshot } from "../../sim/world/world";
 import type { BuildingKind } from "../../sim/data/buildings";
 import type { SettlerKind } from "../../sim/data/settlers";
@@ -27,6 +29,12 @@ export type DebugFrame = {
   mapH: number;
   tool: string | null;
   selected: GridPos | null;
+  /** Wall-clock this frame. Session fills these. */
+  simMs: number;
+  snapMs: number;
+  drawMs: number;
+  miniMs: number;
+  phases: TickTimings;
 };
 
 export type DebugStats = DebugFrame & {
@@ -93,9 +101,13 @@ export function debugFrom(snap: ViewSnapshot, frame: DebugFrame): DebugStats {
 }
 
 export function formatDebug(d: DebugStats): string {
+  const n = d.simPerFrame;
+  const per = n > 0 ? d.simMs / n : 0;
   const lines = [
     `${d.fps.toFixed(0)} fps   ${d.dtMs.toFixed(1)} ms   ${d.speed}×${d.simCapped ? "   CAPPED" : ""}`,
-    `sim   tick ${d.tick}   ${d.simPerFrame}/frame   acc ${d.accMs.toFixed(0)} ms`,
+    `frame  ${fmtMs(d.dtMs)}   sim ${fmtMs(d.simMs)}   draw ${fmtMs(d.drawMs)}   snap ${fmtMs(d.snapMs)}   mini ${fmtMs(d.miniMs)}`,
+    `sim   tick ${d.tick}   ${n}/frame   ${fmtMs(per)}/t   acc ${d.accMs.toFixed(0)} ms`,
+    `  ${fmtPhases(d.phases)}`,
     "",
     `settlers  ${d.settlerTotal}   inside ${d.inside}`,
     `  ${pairs(SETTLERS.map((k) => [k, d.settlers[k]]))}`,
@@ -141,4 +153,18 @@ function fmtStack(material: string, s: { piles: number; items: number } | undefi
 
 function fmtPos(pos: GridPos | null): string {
   return pos ? `${pos.x}, ${pos.y}` : "—";
+}
+
+function fmtMs(ms: number): string {
+  if (ms < 0.05) return "0";
+  if (ms < 10) return `${ms.toFixed(1)}ms`;
+  return `${ms.toFixed(0)}ms`;
+}
+
+function fmtPhases(phases: TickTimings): string {
+  const bits = TICK_PHASES.map((k) => [k, phases[k]] as const)
+    .filter(([, ms]) => ms >= 0.05)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, ms]) => `${k} ${fmtMs(ms)}`);
+  return bits.length > 0 ? bits.join("   ") : "—";
 }

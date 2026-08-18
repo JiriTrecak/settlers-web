@@ -49,6 +49,33 @@ export function startForPlayer(starts: readonly MapStart[] | undefined, player: 
   return starts[player] ?? starts[0];
 }
 
+/**
+ * Starts for a match. Uses dump slots as-is; missing slot 0 is map center,
+ * later missing slots are map-opposite of slot 0 (not a second HQ on the same tile).
+ */
+export function matchStarts(
+  starts: readonly MapStart[],
+  players: number,
+  size: { width: number; height: number },
+): MapStart[] {
+  const n = Math.max(1, players | 0);
+  const out: MapStart[] = [];
+  for (let i = 0; i < n; i++) {
+    const given = starts[i];
+    if (given) {
+      out.push(given);
+      continue;
+    }
+    if (i === 0) {
+      out.push({ x: (size.width / 2) | 0, y: (size.height / 2) | 0 });
+      continue;
+    }
+    const a = out[0]!;
+    out.push({ x: size.width - 1 - a.x, y: size.height - 1 - a.y });
+  }
+  return out;
+}
+
 export function startsFromDumpedMap(map: DumpedMap): MapStart[] {
   if (!Array.isArray(map.starts)) return [];
   return map.starts.filter((s) => s && typeof s.x === "number" && typeof s.y === "number");

@@ -13,7 +13,7 @@ Two masks, both relative to origin:
 - **blocked** — unwalkable walls. Settlers path around these.
 - **protected** — blocked plus a skirt. No second hut may overlap. Units *can* stand on skirt tiles.
 
-Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot. Once any occupy disk exists, every protected tile must also be owned by the placing player.
+Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot. Once any occupy disk exists, every protected tile must also be owned by the placing player — except that player's **first** occupying hut, which may stamp a fully unowned plot (second HQ). Extra towers still need owned land.
 
 Lumberjack has `flatten: true`. Target height is the integer mean of `protected`, frozen on the plan. Diggers (`ceil(n/15)`, 1s kneel, ±1) must finish before bricklayers. Already-level grass skips — constructs as before. Ghost is red on a slope; click still drops the plan. Mark > 127 refuses place. Other huts still ignore height. Dirt-as-a-good is later.
 

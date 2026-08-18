@@ -28,7 +28,7 @@ Order matters — later systems see this tick’s assignments.
 12. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
 13. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
-Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony`). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`.
+Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony` per slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may enqueue for the next beat (convert, pioneer, tower plan).
 
 ## Determinism
 
@@ -43,7 +43,7 @@ App ticker calls `session.tick(dtMs, nowMs)`.
 - Decorations / flags wave on `nowMs` (visual only)
 - WASD / pan / zoom are camera, not sim
 
-At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At 8× the cap is 64 ticks/frame.
+At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At 8× the cap is 64 ticks/frame. F3 shows where that time went (`sim` vs `draw`, then flock/fog/…).
 
 ## Player input (play loop)
 
@@ -60,13 +60,13 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | RMB / LMB empty with a unit selected | Pioneer: claim toward that tile. Bearer: `moveTo` |
 | Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
-| F3 | Debug overlay (fog / paths / ownership / claim) |
+| F3 | Debug overlay (frame cost + sim phases, fog / paths / ownership / claim) |
 | Escape | Deselect: build ghost, then claim tool, then unit, then hut |
 | Exit | Confirm, then leave to map select |
 
 F3 **claim** enqueues `occupy` (tower-radius disk cheat). Pioneers flip one unenforced tile at a time.
 
-Match start looks at player-slot 0’s HQ at zoom 1, not a fit of the whole map.
+Match start looks at the local slot's HQ at zoom 1, not a fit of the whole map.
 
 ## Screens
 

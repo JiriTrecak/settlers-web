@@ -4,6 +4,7 @@
  */
 import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
+import { TickTimer, type TickTimings } from "../clock/profile";
 import { BuildingGrid, buildingFlag, canPlace, type Building, type BuildingView } from "../building/building";
 import { averageHeight, flattenTooSteep, footprint, plotLevel as heightsMatch } from "../building/flatten";
 import { buildingDef, type BuildingKind } from "../data/buildings";
@@ -292,12 +293,17 @@ export class World {
     return h >>> 0;
   }
 
-  tick(): void {
+  tick(acc?: TickTimings): void {
+    const t = new TickTimer(acc);
     this.clock.tick();
     this.applyDue(this.clock.tickIndex);
+    t.mark("apply");
     tickTrees(this.objects, this.clock.tickMs);
+    t.mark("trees");
     for (const m of this.units) m.tick();
+    t.mark("step");
     this.tickHouses();
+    t.mark("houses");
     for (const m of this.units) {
       tickProfession(m, {
         grid: this.grid,
@@ -311,6 +317,7 @@ export class World {
         marks: this.marks,
       });
     }
+    t.mark("profession");
     tickConstruction({
       units: this.units,
       buildings: this.buildings,
@@ -321,7 +328,9 @@ export class World {
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
     });
+    t.mark("construction");
     tickMatcher(this.units, this.buildings, this.objects, this.land);
+    t.mark("matcher");
     for (const m of this.units) {
       tickFlock(m, {
         grid: this.grid,
@@ -333,13 +342,18 @@ export class World {
         land: this.land,
       });
     }
+    t.mark("flock");
     for (const m of this.units) {
       tickJob(m, this.jobCtx(m));
     }
+    t.mark("jobs");
     this.syncLandClaims();
+    t.mark("land");
     this.syncFog();
     this.fog.tickDim(this.clock.tickMs, this.fogWorld());
+    t.mark("fog");
     this.syncOcc();
+    t.mark("occ");
   }
 
   private applyDue(tick: number): void {
@@ -543,7 +557,11 @@ export class World {
 
   private landAllows(kind: BuildingKind, at: GridPos, player: number): boolean {
     if (!this.land.hasLand()) return true;
-    return this.land.ownsFootprint(buildingDef(kind).protected, at, player);
+    const def = buildingDef(kind);
+    if (this.land.ownsFootprint(def.protected, at, player)) return true;
+    // First occupying hut of a player may stamp virgin land (second HQ). Extra towers still need owned.
+    if (!("occupies" in def) || !def.occupies) return false;
+    return !this.land.hasPlayer(player) && this.land.unownedFootprint(def.protected, at);
   }
 
   private landscapeBlocked(x: number, y: number): boolean {

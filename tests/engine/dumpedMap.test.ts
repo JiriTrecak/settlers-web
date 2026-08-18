@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LandscapeType } from "../../src/shared/landscape/landscape";
-import { isDumpedMap, startForPlayer, startsFromDumpedMap } from "../../src/sim/map/dumpedMap";
+import { isDumpedMap, matchStarts, startForPlayer, startsFromDumpedMap } from "../../src/sim/map/dumpedMap";
 
 describe("startForPlayer", () => {
   it("uses the matching slot, else slot 0", () => {
@@ -12,6 +12,19 @@ describe("startForPlayer", () => {
     expect(startForPlayer(starts, 7)).toEqual({ x: 10, y: 11 });
     expect(startForPlayer([], 0)).toBeUndefined();
     expect(startForPlayer(undefined, 0)).toBeUndefined();
+  });
+});
+
+describe("matchStarts", () => {
+  it("keeps dump slots and synthesizes missing ones opposite, not stacked", () => {
+    expect(matchStarts([{ x: 10, y: 11 }, { x: 20, y: 21 }], 2, { width: 100, height: 80 })).toEqual([
+      { x: 10, y: 11 },
+      { x: 20, y: 21 },
+    ]);
+    expect(matchStarts([], 2, { width: 100, height: 80 })).toEqual([
+      { x: 50, y: 40 },
+      { x: 49, y: 39 },
+    ]);
   });
 });
 

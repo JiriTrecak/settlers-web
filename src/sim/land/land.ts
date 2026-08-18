@@ -70,8 +70,22 @@ export class LandGrid {
     return this.occupies.length > 0;
   }
 
+  /** This player already has at least one occupy disk (not pioneer tiles). */
+  hasPlayer(player: number): boolean {
+    return this.occupies.some((o) => o.player === player);
+  }
+
   ownsFootprint(rels: readonly { dx: number; dy: number }[], at: { x: number; y: number }, player: number): boolean {
     return rels.every((r) => this.playerAt(at.x + r.dx, at.y + r.dy) === player);
+  }
+
+  /** Plot is in-bounds and nobody owns it — fair game for a player's first HQ. */
+  unownedFootprint(rels: readonly { dx: number; dy: number }[], at: { x: number; y: number }): boolean {
+    return rels.every((r) => {
+      const x = at.x + r.dx;
+      const y = at.y + r.dy;
+      return this.inBounds(x, y) && this.playerAt(x, y) === UNOWNED;
+    });
   }
 
   towerCountAt(x: number, y: number): number {

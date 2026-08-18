@@ -10,7 +10,7 @@ Headless game. No Pixi. No DOM. Deterministic.
 
 - `tick()` — increment clock, apply due actions, then one 25 ms beat (see gameloop).
 - `enqueue(action, tick?)` — play-loop mutation. Default tick is `tickIndex + 1`. Due-or-past applies immediately.
-- `dispatch(action)` — test helper: enqueue for *now*. Session uses this only for `placeColony` at start.
+- `dispatch(action)` — test helper: enqueue for *now*. Session uses this for `placeColony` per slot at start.
 - `checksum()` / `log()` / `replay(log)` — lockstep shape. Fog is not in the mix.
 - `view(player)` — snapshot for render (fog is that player's).
 
