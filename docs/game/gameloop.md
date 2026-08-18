@@ -29,7 +29,7 @@ Order matters — later systems see this tick’s assignments.
 13. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
 14. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
-Play-loop input `send`s through Lockstep; Session `enqueue`s from the Room `commit` at `tickIndex + D` (8 ticks in live play). `dispatch` applies immediately (tests, match-start `placeColony` per `MatchConfig` slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may `send` for the next confirm (convert, pioneer, tower plan, enlist).
+Play-loop input `send`s through Lockstep; Session `enqueue`s from the Room `commit` at `tickIndex + D` (SP: 1 tick). `dispatch` applies immediately (tests, match-start `placeColony` per `MatchConfig` slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may `send` for the next confirm (convert, pioneer, tower plan, enlist).
 
 ## Determinism
 

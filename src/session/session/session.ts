@@ -20,6 +20,7 @@ import {
   clampMatchPlayers,
   emptyTickTimings,
   isControllable,
+  buildingDef,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -116,6 +117,9 @@ export class Session {
   private readonly opponents: Opponent[] = [];
   private readonly channels: MemoryChannel[] = [];
   private readonly locksteps = new Map<number, Lockstep>();
+  /** Local place clicks, drawn until the Room commit lands (or `until`). Not sim. */
+  private readonly pendingPlans: { id: number; kind: BuildingKind; at: GridPos; until: number }[] = [];
+  private nextPendingId = -1;
 
   constructor(
     private readonly pixi: Application,
@@ -239,7 +243,7 @@ export class Session {
     this.renderer.camera.zoom = 1;
     const look = this.startLook();
     this.lookAt(look.x, look.y);
-    const snap = world.view(this.me);
+    const snap = this.look(world);
     this.renderer.draw(snap, 0);
     this.syncMinimap(snap, false);
     this.syncTimeline();
@@ -264,6 +268,60 @@ export class Session {
       this.channels.push(ch);
       this.locksteps.set(slot.player, new Lockstep(ch, slot.player, match.delay));
     }
+  }
+
+  /** Fence on click. World still applies at tick+D; this is render-only. */
+  private pinPlan(kind: BuildingKind, at: GridPos): void {
+    const delay = this.locksteps.get(this.me)?.delay ?? 1;
+    const tick = this.world?.clock.tickIndex ?? 0;
+    this.pendingPlans.push({ id: this.nextPendingId--, kind, at, until: tick + delay + 2 });
+  }
+
+  private prunePending(world: World): void {
+    for (let i = this.pendingPlans.length - 1; i >= 0; i--) {
+      const p = this.pendingPlans[i]!;
+      if (world.buildings.at(p.at.x, p.at.y) || world.clock.tickIndex > p.until) {
+        this.pendingPlans.splice(i, 1);
+      }
+    }
+  }
+
+  private pendingAt(x: number, y: number): boolean {
+    return this.pendingPlans.some((p) => p.at.x === x && p.at.y === y);
+  }
+
+  /** True if this plot's protected tiles overlap a still-pending local plan. */
+  private pendingOverlap(kind: BuildingKind, at: GridPos): boolean {
+    const a = protectedTiles(kind, at);
+    for (const p of this.pendingPlans) {
+      const b = protectedTiles(p.kind, p.at);
+      for (const t of a) {
+        if (b.some((u) => u.x === t.x && u.y === t.y)) return true;
+      }
+    }
+    return false;
+  }
+
+  private look(world: World): ViewSnapshot {
+    this.prunePending(world);
+    const snap = world.view(this.me);
+    if (this.pendingPlans.length === 0) return snap;
+    return {
+      ...snap,
+      buildings: [
+        ...snap.buildings,
+        ...this.pendingPlans.map((p) => ({
+          id: p.id,
+          kind: p.kind,
+          x: p.at.x,
+          y: p.at.y,
+          player: this.me,
+          state: "plan" as const,
+          buildProgress: 0,
+          flag: buildingDef(p.kind).worker ? null : ("door" as const),
+        })),
+      ],
+    };
   }
 
   tick(dtMs: number, nowMs: number): void {
@@ -308,7 +366,7 @@ export class Session {
     const simMs = performance.now() - tSim;
     if (n >= cap) this.acc = 0;
     const tSnap = performance.now();
-    const snap = world.view(this.me);
+    const snap = this.look(world);
     const snapMs = performance.now() - tSnap;
     const tDraw = performance.now();
     this.pruneSelection();
@@ -342,7 +400,7 @@ export class Session {
   setShowFog(on: boolean): void {
     this.showFog = on;
     this.renderer?.setShowFog(on);
-    if (this.world) this.syncMinimap(this.world.view(this.me), false);
+    if (this.world) this.syncMinimap(this.look(this.world), false);
   }
 
   /** Esc: drop the build ghost, then the claim tool, then the unit, then the hut highlight. */
@@ -433,6 +491,7 @@ export class Session {
     for (const ch of this.channels) ch.destroy();
     this.channels.length = 0;
     this.locksteps.clear();
+    this.pendingPlans.length = 0;
     this.pristine = null;
     this.view = null;
     this.acc = 0;
@@ -525,14 +584,16 @@ export class Session {
       });
       return;
     }
-    if (tool?.type === "building" && pos && this.canCommand() && this.world.canPlaceBuilding(tool.kind, pos, this.me)) {
+    if (tool?.type === "building" && pos && this.canCommand() && this.world.canPlaceBuilding(tool.kind, pos, this.me) && !this.pendingOverlap(tool.kind, pos)) {
       this.selected = pos;
       this.selectedUnitIds = [];
       this.syncSelectionVisual();
       this.send({ type: "placeBuilding", kind: tool.kind, at: pos, player: this.me });
+      this.pinPlan(tool.kind, pos);
       this.placeTool = null;
       this.buildMenu?.setTool(null);
       this.syncGhost();
+      this.paintNow();
       return;
     }
     const hitId = screen ? this.renderer.pickUnit(screen) : null;
@@ -700,9 +761,9 @@ export class Session {
       renderer.setConstructionMarks(null);
       return;
     }
-    if (!pos || world.buildings.at(pos.x, pos.y)) renderer.ghost(null, null, false);
+    if (!pos || world.buildings.at(pos.x, pos.y) || this.pendingAt(pos.x, pos.y)) renderer.ghost(null, null, false);
     else {
-      renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos));
+      renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos) && !this.pendingOverlap(tool.kind, pos));
     }
     this.syncConstructionMarks();
   }
@@ -718,10 +779,12 @@ export class Session {
       renderer.setConstructionMarks(null);
       return;
     }
-    const key = `${tool.kind}:${world.land.generation}:${world.grid.revision}:${world.objects.revision}:${world.buildings.revision}`;
+    const key = `${tool.kind}:${world.land.generation}:${world.grid.revision}:${world.objects.revision}:${world.buildings.revision}:${this.pendingPlans.map((p) => `${p.at.x},${p.at.y}`).join(";")}`;
     if (key === this.markKey) return;
     this.markKey = key;
-    const marks = world.constructionMarks(tool.kind, this.me) ?? this.viewportMarks(tool.kind);
+    const marks = (world.constructionMarks(tool.kind, this.me) ?? this.viewportMarks(tool.kind)).filter(
+      (m) => !this.pendingOverlap(tool.kind, m),
+    );
     renderer.setConstructionMarks(marks);
   }
 
@@ -811,7 +874,7 @@ export class Session {
     const renderer = this.renderer;
     const world = this.world;
     if (!renderer || !world) return;
-    const snap = world.view(this.me);
+    const snap = this.look(world);
     renderer.setSelected(this.selectedUnitIds);
     renderer.draw(snap, 0);
     this.paintHutSelect();
@@ -895,4 +958,8 @@ export class Session {
       starts: dumped.starts,
     };
   }
+}
+
+function protectedTiles(kind: BuildingKind, at: GridPos): { x: number; y: number }[] {
+  return buildingDef(kind).protected.map((r) => ({ x: at.x + r.dx, y: at.y + r.dy }));
 }

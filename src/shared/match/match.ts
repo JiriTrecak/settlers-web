@@ -1,8 +1,9 @@
 /**
  * Frozen match start. Same object on every peer; no process-wide statics.
- * Delay D is ticks. Default 8 (200 ms). Tests may use 1.
+ * D is ticks ahead of `tickIndex`. SP (MemoryChannel) uses 1.
+ * MP default 2 (50 ms) — enough for ~25 ms RTT. Raise from RTT, don't start at 8.
  */
-export const COMMAND_DELAY = 8;
+export const COMMAND_DELAY = 2;
 export const CHECKSUM_EVERY = 8;
 export const TICK_MS = 25;
 
@@ -50,7 +51,7 @@ export function localMatch(args: {
     mapId: args.mapId,
     mapRevision: args.mapRevision,
     seed: args.seed,
-    delay: args.delay ?? COMMAND_DELAY,
+    delay: args.delay ?? 1,
     checksumEvery: CHECKSUM_EVERY,
     tickMs: TICK_MS,
     slots,

@@ -153,7 +153,7 @@ type MatchConfig = {
   mapId: string;
   mapRevision: string;     // hash of dumped map as the catalog knows it
   seed: number;
-  delay: number;           // D, ticks. Default 8 (200 ms). Tests: 1.
+  delay: number;           // D, ticks. SP: 1. MP default 2 (50 ms). Not 8.
   checksumEvery: number;   // default 8
   tickMs: 25;              // must match Clock.tickMs
   slots: Slot[];
@@ -246,7 +246,7 @@ MP speed is **1×**. Pause = clients stop sending `through` (everyone stalls). N
 
 ## Lockstep (client Session)
 
-Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + D`. Same D in SP — the play loop does not know if the Channel is memory or WebSocket. Today’s `enqueue(+1)` from the click is the cheat; it goes away with Lockstep, not only when EC2 is up.
+Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + D`. Same path in SP — MemoryChannel vs WebSocket is the Channel, not a second enqueue. SP uses D=1 (RTT 0). MP starts at 2 (50 ms) and should track RTT, not 8.
 
 ```
 acc += dtMs                 // MP: speed = 1
