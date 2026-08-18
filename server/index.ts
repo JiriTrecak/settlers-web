@@ -1,6 +1,6 @@
 /**
  * MatchHost HTTP + WebSocket. Mailbox only — no Pixi, no World.
- * Local: `npm run server` on :8787. Vite proxies `/api` and `/match`.
+ * Binds 0.0.0.0:8787. Clients use MATCH_HOST (EC2), not a Vite proxy.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { WebSocketServer } from "ws";
@@ -8,7 +8,13 @@ import { MatchHost } from "../src/net/host";
 import type { CreateRoom, JoinRoom } from "../src/shared";
 
 const PORT = Number(process.env.PORT ?? 8787);
+const BIND = process.env.BIND ?? "0.0.0.0";
 const VERSION = "0.1.0";
+const CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "content-type, authorization",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+};
 
 const host = new MatchHost();
 
@@ -46,11 +52,16 @@ server.on("upgrade", (req, socket, head) => {
   });
 });
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`matchhost ${VERSION} :${PORT}`);
+server.listen(PORT, BIND, () => {
+  console.log(`matchhost ${VERSION} ${BIND}:${PORT}`);
 });
 
 async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, CORS);
+    res.end();
+    return;
+  }
   const url = new URL(req.url ?? "/", "http://match");
   const path = url.pathname;
   try {
@@ -135,7 +146,7 @@ function bearer(req: IncomingMessage): string | null {
 
 function send(res: ServerResponse, status: number, body: unknown): void {
   const data = JSON.stringify(body);
-  res.writeHead(status, { "content-type": "application/json" });
+  res.writeHead(status, { "content-type": "application/json", ...CORS });
   res.end(data);
 }
 

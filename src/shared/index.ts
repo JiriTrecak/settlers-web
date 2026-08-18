@@ -9,6 +9,7 @@ export {
   type Slot,
   type SlotKind,
 } from "./match/match";
+export { MATCH_HOST, matchHttp, matchWs } from "./net/endpoint";
 export type {
   Bundle,
   ClientIdentity,

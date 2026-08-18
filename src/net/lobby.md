@@ -1,3 +1,3 @@
 # lobby
 
-HTTP helpers for `/api/rooms`. Vite proxies to `:8787`. Lockstep stays on the Channel.
+HTTP helpers against `MATCH_HOST` (EC2 `:8787`). List / create / join / leave / start. Lockstep stays on the Channel.

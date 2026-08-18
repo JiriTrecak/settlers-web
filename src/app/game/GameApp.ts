@@ -13,8 +13,8 @@ import {
   type MapCatalogEntry,
   type ReplayFile,
 } from "../../session";
-import { createRoom, joinRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
-import type { MatchConfig, ServerMsg } from "../../shared";
+import { createRoom, fetchRooms, joinRoom, leaveRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
+import type { MatchConfig, RoomView, ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
 import { PlayScreen } from "./playScreen";
 
@@ -26,6 +26,7 @@ export class GameApp {
   private catalog: MapCatalogEntry[] = [];
   private player = 0;
   private slots = 2;
+  private guestName = readGuest();
   private readonly replays = new ReplayStore();
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
@@ -114,61 +115,123 @@ export class GameApp {
     );
   }
 
-  private showMultiplayer(): void {
+  private showMultiplayer(error?: string): void {
     this.playGen++;
-    const maps = mapPickerOptions(this.catalog).map((m) => ({ id: m.id, name: m.name }));
-    this.screens?.show(
-      new MultiplayerScreen({
-        maps: maps.length ? maps : [{ id: defaultMapId(this.catalog), name: "map" }],
-        onBack: () => this.showMenu(),
-        onHost: (name, mapId, slotCount) => void this.hostRoom(name, mapId, slotCount),
-        onJoin: (roomId, name) => void this.enterRoom(roomId, name),
-      }),
-    );
+    const screen = new MultiplayerScreen({
+      maps: this.mpMaps(),
+      mapName: (id) => this.mapLabel(id),
+      name: this.guestName === "player" ? "" : this.guestName,
+      error,
+      onBack: () => this.showMenu(),
+      onRefresh: () => void this.refreshJoinList(),
+      onHost: (name, mapId, slotCount) => void this.hostRoom(name, mapId, slotCount),
+      onJoin: (roomId, name) => void this.enterRoom(roomId, name),
+    });
+    this.screens?.show(screen);
+    void this.refreshJoinList();
+  }
+
+  private mpMaps(): { id: string; name: string; players: number }[] {
+    const maps = mapPickerOptions(this.catalog).map((m) => ({ id: m.id, name: m.name, players: m.players }));
+    return maps.length ? maps : [{ id: defaultMapId(this.catalog), name: "map", players: 2 }];
+  }
+
+  private mapLabel(id: string): string {
+    return this.catalog.find((m) => m.id === id)?.name ?? id;
+  }
+
+  private rememberName(name: string): void {
+    this.guestName = name.trim() || "player";
+    try {
+      localStorage.setItem("settlers.guest", this.guestName);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  private async refreshJoinList(): Promise<void> {
+    const screen = this.screens?.screen;
+    if (!(screen instanceof MultiplayerScreen)) return;
+    try {
+      screen.setRooms(await fetchRooms());
+    } catch (err) {
+      screen.setError(err instanceof Error ? err.message : "Can't reach MatchHost");
+    }
   }
 
   private async hostRoom(name: string, mapId: string, slotCount: number): Promise<void> {
-    const entry = this.catalog.find((m) => m.id === mapId);
-    const created = await createRoom({
-      name: `${name}'s room`,
-      mapId,
-      mapRevision: entry?.file ?? mapId,
-      slotCount,
-      guestName: name,
-    });
-    this.playGen++;
-    this.screens?.show(
-      new RoomWaitScreen(created.room.id, {
-        host: true,
-        onBack: () => this.showMultiplayer(),
-        onStart: () => void this.startHosted(created.room.id, created.token, created.you.player ?? 0),
-      }),
-    );
-  }
-
-  private async startHosted(roomId: string, token: string, player: number): Promise<void> {
-    await startRoom(roomId, token);
-    await this.connectMatch(roomId, token, player);
+    this.rememberName(name);
+    try {
+      const entry = this.catalog.find((m) => m.id === mapId);
+      const created = await createRoom({
+        name: `${this.guestName}'s room`,
+        mapId,
+        mapRevision: entry?.file ?? mapId,
+        slotCount,
+        guestName: this.guestName,
+      });
+      this.enterLobby(created.room, created.token, created.you.player ?? 0, true);
+    } catch (err) {
+      const screen = this.screens?.screen;
+      if (screen instanceof MultiplayerScreen) {
+        screen.setError(err instanceof Error ? err.message : "Host failed");
+        return;
+      }
+      this.showMultiplayer(err instanceof Error ? err.message : "Host failed");
+    }
   }
 
   private async enterRoom(roomId: string, name: string): Promise<void> {
-    const joined = await joinRoom(roomId, { guestName: name, role: "player" });
-    this.playGen++;
-    this.screens?.show(
-      new RoomWaitScreen(joined.room.id, {
-        host: false,
-        onBack: () => this.showMultiplayer(),
-        onStart: () => {},
-      }),
-    );
-    await this.connectMatch(joined.room.id, joined.token, joined.you.player ?? 0);
+    this.rememberName(name);
+    try {
+      const joined = await joinRoom(roomId, { guestName: this.guestName, role: "player" });
+      this.enterLobby(joined.room, joined.token, joined.you.player ?? 0, false);
+    } catch (err) {
+      const screen = this.screens?.screen;
+      if (screen instanceof MultiplayerScreen) {
+        await this.refreshJoinList();
+        screen.setError(err instanceof Error ? err.message : "Join failed");
+        return;
+      }
+      this.showMultiplayer(err instanceof Error ? err.message : "Join failed");
+    }
   }
 
-  private async connectMatch(roomId: string, token: string, player: number): Promise<void> {
-    const channel = new WebSocketChannel(matchUrl(roomId, token));
-    const start = await waitStart(channel);
-    this.player = start.you.player ?? player;
-    await this.playRemote(start.config, channel, this.player);
+  private enterLobby(room: RoomView, token: string, player: number, host: boolean): void {
+    const gen = ++this.playGen;
+    const channel = new WebSocketChannel(matchUrl(room.id, token));
+    const wait = new RoomWaitScreen(room, {
+      host,
+      mapName: this.mapLabel(room.mapId),
+      onBack: () => {
+        channel.destroy();
+        void leaveRoom(room.id, token);
+        this.showMultiplayer();
+      },
+      onStart: () => {
+        void startRoom(room.id, token).catch((err) => {
+          channel.destroy();
+          this.showMultiplayer(err instanceof Error ? err.message : "Start failed");
+        });
+      },
+    });
+    this.screens?.show(wait);
+    void (async () => {
+      try {
+        const start = await waitStart(channel, (view) => {
+          if (this.screens?.screen === wait) wait.setView(view);
+        });
+        if (gen !== this.playGen) {
+          channel.destroy();
+          return;
+        }
+        this.player = start.you.player ?? player;
+        await this.playRemote(start.config, channel, this.player);
+      } catch (err) {
+        channel.destroy();
+        if (gen === this.playGen) this.showMultiplayer(err instanceof Error ? err.message : "Match failed");
+      }
+    })();
   }
 
   private async playRemote(match: MatchConfig, channel: WebSocketChannel, player: number): Promise<void> {
@@ -235,9 +298,22 @@ export class GameApp {
   }
 }
 
-function waitStart(channel: WebSocketChannel): Promise<Extract<ServerMsg, { type: "start" }>> {
+function readGuest(): string {
+  try {
+    const n = localStorage.getItem("settlers.guest");
+    return n && n !== "player" ? n : "";
+  } catch {
+    return "";
+  }
+}
+
+function waitStart(
+  channel: WebSocketChannel,
+  onRoom?: (room: RoomView) => void,
+): Promise<Extract<ServerMsg, { type: "start" }>> {
   return new Promise((resolve, reject) => {
     channel.onMessage((msg) => {
+      if (msg.type === "welcome" || msg.type === "room") onRoom?.(msg.room);
       if (msg.type === "start") resolve(msg);
       if (msg.type === "error") reject(new Error(msg.message));
     });

@@ -11,10 +11,6 @@ export default defineConfig(({ command }) => ({
   server: {
     port: 5173,
     strictPort: true,
-    proxy: {
-      "/api": "http://127.0.0.1:8787",
-      "/match": { target: "ws://127.0.0.1:8787", ws: true },
-    },
     watch: {
       ignored: ["**/src-tauri/**"],
     },

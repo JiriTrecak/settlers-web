@@ -513,10 +513,10 @@ body {
   cursor: pointer;
 }
 
-.menu-btn:hover,
-.menu-btn:focus {
-  border-color: #c4a35a;
-  outline: none;
+.menu-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
 }
 
 .menu-btn-row {
@@ -672,6 +672,51 @@ body {
 .menu-replay-del:focus {
   border-color: rgba(196, 80, 64, 0.55);
   outline: none;
+}
+
+.menu-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-field-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.menu-input {
+  cursor: text;
+}
+
+.menu-input:hover,
+.menu-input:focus {
+  border-color: #c4a35a;
+  outline: none;
+}
+
+.menu-lobby-list {
+  min-height: 88px;
+  max-height: 36vh;
+  border: 1px solid rgba(232, 224, 208, 0.18);
+  background: rgba(8, 14, 28, 0.45);
+  padding: 8px;
+}
+
+.menu-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.menu-actions .menu-btn {
+  text-align: center;
+}
+
+.menu-btn-row.is-selected {
+  border-color: #e8c36a;
+  color: #e8c36a;
 }
 
 .menu-empty {

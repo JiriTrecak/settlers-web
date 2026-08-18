@@ -1,0 +1,9 @@
+{
+  "name": "settlers-matchhost",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "tsx": "^4.20.0",
+    "ws": "^8.21.3"
+  }
+}

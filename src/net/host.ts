@@ -40,7 +40,7 @@ export class HostedMatch {
   private config: MatchConfig | null = null;
   private replayId: string | null = null;
 
-  constructor(draft: CreateRoom, id = crypto.randomUUID()) {
+  constructor(draft: CreateRoom, id: string = crypto.randomUUID()) {
     this.id = id;
     this.name = draft.name;
     this.mapId = draft.mapId;
@@ -160,6 +160,8 @@ export class HostedMatch {
     send({ type: "welcome", you, room: this.view() });
     if (this.state === "playing" && this.config) {
       send({ type: "start", config: this.config, you });
+      const need = this.config.slots.length;
+      if (need > 0 && this.ready.size >= need) send({ type: "go", tick: 1 });
     }
     return { you, room: this.view() };
   }
@@ -239,9 +241,10 @@ export class HostedMatch {
 
 export class MatchHost {
   private readonly rooms = new Map<string, HostedMatch>();
+  private nextId = 1;
 
   create(draft: CreateRoom): { token: string; room: RoomView; you: ClientIdentity } {
-    const match = new HostedMatch(draft);
+    const match = new HostedMatch(draft, String(this.nextId++));
     this.rooms.set(match.id, match);
     const you = match.you(match.hostToken)!;
     return { token: match.hostToken, room: match.view(), you };

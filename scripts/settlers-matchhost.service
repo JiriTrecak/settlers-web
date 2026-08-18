@@ -1,0 +1,16 @@
+[Unit]
+Description=Settlers MatchHost
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/settlers-match
+Environment=BIND=0.0.0.0
+Environment=PORT=8787
+ExecStart=/home/ubuntu/settlers-match/node_modules/.bin/tsx server/index.ts
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

@@ -124,8 +124,6 @@ export class Session {
   /** Local place clicks, drawn until the Room commit lands (or `until`). Not sim. */
   private readonly pendingPlans: { id: number; kind: BuildingKind; at: GridPos; until: number }[] = [];
   private nextPendingId = -1;
-  /** Remote: wait for `go` before confirming. SP is live immediately. */
-  private gone = true;
   private desynced = false;
   private checksumEvery = 8;
 
@@ -303,13 +301,11 @@ export class Session {
   }
 
   private bindRemote(match: MatchConfig, channel: Channel): void {
-    this.gone = false;
     this.checksumEvery = match.checksumEvery;
     const wrapped: Channel = {
       send: (msg) => channel.send(msg),
       onMessage: (fn) => {
         channel.onMessage((msg) => {
-          if (msg.type === "go") this.gone = true;
           if (msg.type === "desync") {
             this.desynced = true;
             this.paused = true;
@@ -393,7 +389,7 @@ export class Session {
         break;
       }
       if (!this.watching) {
-        if (this.config.channel && (!this.gone || this.desynced)) break;
+        if (this.config.channel && this.desynced) break;
         const next = world.clock.tickIndex + 1;
         for (const ls of this.locksteps.values()) ls.confirm(next);
         const commit = this.locksteps.get(this.me)?.take(next);

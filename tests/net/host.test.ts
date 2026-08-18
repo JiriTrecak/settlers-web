@@ -14,6 +14,19 @@ function draft(slotCount = 2) {
 }
 
 describe("MatchHost", () => {
+  it("assigns sequential room ids", () => {
+    const host = new MatchHost();
+    expect(host.create(draft()).room.id).toBe("1");
+    expect(host.create(draft()).room.id).toBe("2");
+  });
+
+  it("lists waiting rooms", () => {
+    const host = new MatchHost();
+    expect(host.list()).toEqual([]);
+    const created = host.create(draft());
+    expect(host.list().map((r) => r.id)).toEqual([created.room.id]);
+  });
+
   it("start → ready → go, then a commit when both slots confirm", () => {
     const host = new MatchHost();
     const created = host.create(draft());
@@ -58,6 +71,21 @@ describe("MatchHost", () => {
     room.unbind(joined.token);
     a.length = 0;
     room.ingest(created.token, { type: "turn", through: 1, bundles: [] });
+    expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
+  });
+
+  it("commits turns without waiting for ready/go", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const joined = room.join("p2", "player") as { token: string };
+    const a: ServerMsg[] = [];
+    room.bind(created.token, (m) => a.push(m));
+    room.bind(joined.token, () => {});
+    room.start(created.token);
+    room.ingest(created.token, { type: "turn", through: 1, bundles: [] });
+    expect(a.some((m) => m.type === "commit")).toBe(false);
+    room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 

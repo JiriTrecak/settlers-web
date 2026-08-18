@@ -10,5 +10,5 @@ Types and math both sim and render need. No Pixi, no DOM, no dump formats.
 | `landscape/` | Landscape type union, colors, hex neighbors |
 | `types/` | `GridPos`, `Action` |
 | `match/` | `MatchConfig`, `localMatch`, command delay |
-| `net/` | Wire `ClientMsg` / `ServerMsg` / `commit` |
+| `net/` | Wire `ClientMsg` / `ServerMsg` / `commit`, `MATCH_HOST` |
 | `shape/` | Tower occupy disk (`TOWER_RADIUS`, axial distance) |

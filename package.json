@@ -11,7 +11,8 @@
     "tauri": "tauri",
     "preview": "vite preview",
     "test": "vitest run",
-    "server": "vite-node server/index.ts",
+    "server": "tsx server/index.ts",
+    "server:deploy": "bash scripts/deploy.sh",
     "dump:graphics": "vite-node original_conv/dump-graphics.ts",
     "dump:stacks": "vite-node original_conv/dump-stacks.ts",
     "dump:flags": "vite-node original_conv/dump-flags.ts",
@@ -29,6 +30,7 @@
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-node": "^6.0.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "tsx": "^4.20.0"
   }
 }

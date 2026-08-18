@@ -4,23 +4,26 @@ Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate
 
 ## Status (what is code vs contract)
 
-**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts`. `npm run server` on `:8787`. Vite proxies `/api` and `/match`.
+**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts`. MP talks to EC2 `MATCH_HOST` (`18.134.138.1:8787`). `scripts/deploy.sh` installs systemd `settlers-matchhost`.
 
 | Piece | Where | Notes |
 |---|---|---|
 | `MatchConfig`, `localMatch` | `src/shared/match/` | SP `delay: 1`. `COMMAND_DELAY = 2` is the MP starting guess. |
 | Wire types | `src/shared/net/wire.ts` | **This is the contract.** SP Session sends `turn`. MP also `ready` / `hash` / `ended`. |
+| `MATCH_HOST` | `src/shared/net/endpoint.ts` | `18.134.138.1:8787`. Lobby HTTP + WS. Not localhost, not a Vite proxy. |
 | `Channel`, `Room`, `MemoryChannel`, `Lockstep` | `src/net/` | `Room.confirm` + broadcast `commit`. No listen port. |
 | Session play loop | `src/session/session/session.ts` | Confirm all local slots `through: next` **before** take. `enqueue(action, next, { player, seq })`. Kits = `dispatch(placeColony)` per `config.slots` at tick 0. Seed = `seedRng(MatchConfig.seed)` (`DEFAULT_WORLD_SEED` in SP). |
 | Envelope reject | `World.enqueue` | Foreign unit/hut/`action.player`; `placeColony` after tick 0. Tests may omit envelope. |
 | Opponent | `src/session/opponent/` | Bundle producer on its own `Lockstep` / `MemoryChannel`. Must confirm every beat. |
 | Building plop | Session `pendingPlans` | **Render-only** predicted fence until commit. Not sim prediction, not on the wire. |
 | `mapRevision` | SP | Catalog `file` path today, not a dump hash. |
-| Channel ownership | App (MP) / Session (SP) | SP: Session `new Room` + MemoryChannel. MP: App `WebSocketChannel`, hands it to Session. |
+| Channel ownership | App (MP) / Session (SP) | SP: Session `new Room` + MemoryChannel. MP: App `WebSocketChannel` to `MATCH_HOST` in the lobby, hands it to Session on `start`. |
+| Lobby UI | `src/ui/menu/multiplayer.ts` | One screen: Name, lobby list, Host / Join. Wait roster via WS `room`. |
+| MatchHost process | `server/` on EC2 | Bind `0.0.0.0:8787`. CORS open. `scripts/connect.sh` / `scripts/deploy.sh`. |
 
-**Not built.** Spectate as live commit stream (watch is still a replay file). EC2. Desync persist. Steam. Lobby is Host/Join by room id, not a room list UI.
+**Not built.** Spectate as live commit stream (watch is still a replay file). Desync persist. Steam. nginx/TLS.
 
-A reviewer treating EC2 / spectate / Steam as shipped will hallucinate. Those are land order 4+. Mailbox + 3 local tabs is real (`npm run server`, Multiplayer in the menu).
+A reviewer treating spectate / Steam as shipped will hallucinate. Those are land order 4+. Mailbox + lobby list on EC2 is real (Multiplayer screen).
 
 Same map + same `MatchConfig` + same committed action log ⇒ same checksum. That is already the engine. Replays are that log. Spectators are a Session with `watching: true` on the same commit stream.
 
@@ -142,7 +145,7 @@ waiting  →  playing  →  ended
 1. Stamps `seed` (CSPRNG u32). Clients do not pick the seed.
 2. Broadcasts `start { config, you }`.
 3. Each player Session: load dump for `mapId`, refuse if local catalog identity ≠ `config.mapRevision`, `new World(..., seedRng(seed))`, `dispatch` `placeColony` per **config.slots** at tick 0 (not on the wire), then WS `ready`.
-4. When all playing slots have `ready`, server broadcasts `go`. Lockstep starts at tick **1**.
+4. When all playing slots have `ready`, server broadcasts `go` (loading cue). Clients **confirm without waiting for `go`** — Room already stalls until every slot's `through`. Missing `go` must not freeze the sim.
 
 Starts on the map come from the dump (`starts[slot]`). Server does **not** ship the grid. `mapRevision` is the catalog identity (file path today; dump hash later) — mismatch is the classic desync.
 
@@ -374,16 +377,14 @@ Host process crash: in-flight matches are gone until we persist commits (later).
 
 ## Deploy (EC2, from the beginning)
 
-- Node LTS, `server/` (`node dist/index.js`).
-- systemd, restart on crash.
-- Bind `127.0.0.1` + nginx/Caddy: `https://…/api`, `wss://…/match`.
-- Env: `PORT`, `DATA_DIR`, `MAX_ROOMS`, later `AUTH_SECRET`.
+- Node LTS, `server/` (`tsx server/index.ts`).
+- systemd `settlers-matchhost`, restart on crash. `scripts/deploy.sh`.
+- Bind `0.0.0.0:8787`. CORS `*`. `MATCH_HOST = 18.134.138.1:8787`.
+- Env: `PORT`, `BIND`, later `DATA_DIR`, `MAX_ROOMS`, `AUTH_SECRET`.
 - Maps are **not** served from MatchHost. Clients already have dumps. `mapRevision` keeps them honest.
-- Security group: 80/443 only.
+- Security group: TCP 8787 (and 22). nginx/443 later.
 
-Local: `npm run server` on `:8787`, Vite proxies `/api` and `/match`.
-
-Friends: EC2 URL in the lobby. That’s the playtest invite.
+SSH: `scripts/connect.sh`. Friends: Multiplayer menu hits `MATCH_HOST`. That’s the playtest invite.
 
 ---
 
@@ -420,8 +421,8 @@ Architecture tests: `sim` must not import `net`. `server` must not import `rende
 
 1. **Sim hygiene** — D, envelope, reject, MatchConfig, seed. **Done.**
 2. **`src/net` + MemoryChannel** — two/three in-process Worlds, same checksum at tick N. CI. Session always on Lockstep (SP included). Opponent sends through it. **Done.**
-3. **`server/` mailbox** — create room, 3 local tabs, empty confirms, hash. No Steam. No host `World`. **In.**
-4. **Lobby list + spectate** — `watching` Session on `commit` stream. EC2 deploy.
+3. **`server/` mailbox** — create room, empty confirms, hash. No Steam. No host `World`. **In.** MP clients hit EC2, not localhost.
+4. **Spectate** — `watching` Session on `commit` stream. nginx/TLS. **Lobby list is in.**
 5. Later: host `World`, AI slots, drop-in, persisted replays HTTP, Steam.
 
 Do not skip 1–2 because EC2 is already paid for.
@@ -431,8 +432,8 @@ Do not skip 1–2 because EC2 is already paid for.
 | Layer | Done when |
 |---|---|
 | Lockstep | N `World`s, MemoryChannel, same `MatchConfig`, same checksums at tick N. CI. |
-| Local WS | 3 tabs, one Node, same checksums. |
-| EC2 | Friends join/spectate from the room list. That’s the game. |
+| Local WS | (dropped — MP is EC2 only) |
+| EC2 | Friends host/join on `18.134.138.1:8787`. Same checksums. Room list + spectate still later. |
 
 Desync dumps a replay. Same as step 1, over the wire.
 

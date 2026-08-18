@@ -1,20 +1,20 @@
 /**
- * Browser Channel over `WebSocket`. Buffers until `onMessage` is set so App can wait for `start`.
+ * Browser Channel over `WebSocket`. Buffers until a listener exists. Multiple `onMessage` handlers (App wait + Lockstep).
  */
 import type { ClientMsg, ServerMsg } from "../shared";
 import type { Channel } from "./channel";
 
 export class WebSocketChannel implements Channel {
   private readonly ws: WebSocket;
-  private fn: ((msg: ServerMsg) => void) | null = null;
+  private readonly fns: Array<(msg: ServerMsg) => void> = [];
   private readonly buf: ServerMsg[] = [];
 
   constructor(url: string) {
     this.ws = new WebSocket(url);
     this.ws.addEventListener("message", (ev) => {
       const msg = JSON.parse(String(ev.data)) as ServerMsg;
-      if (this.fn) this.fn(msg);
-      else this.buf.push(msg);
+      if (this.fns.length === 0) this.buf.push(msg);
+      else for (const fn of this.fns) fn(msg);
     });
   }
 
@@ -26,13 +26,13 @@ export class WebSocketChannel implements Channel {
   }
 
   onMessage(fn: (msg: ServerMsg) => void): void {
-    this.fn = fn;
+    this.fns.push(fn);
     const pending = this.buf.splice(0);
     for (const msg of pending) fn(msg);
   }
 
   destroy(): void {
-    this.fn = null;
+    this.fns.length = 0;
     this.ws.close();
   }
 }

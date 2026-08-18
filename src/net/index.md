@@ -9,6 +9,6 @@ Client lockstep. No Pixi, no `World.tick`. Session translates `commit` → `enqu
 | `memory.ts` | `MemoryChannel` bound to one slot on a `Room` |
 | `host.ts` | `MatchHost` / `HostedMatch` — lobby + ready/go + drop + hash |
 | `ws.ts` | `WebSocketChannel` |
-| `lobby.ts` | HTTP helpers (`/api/rooms`) |
+| `lobby.ts` | HTTP helpers against `MATCH_HOST` |
 
 SP: one `Room`, one `MemoryChannel` per slot (human + `Opponent`). MP: App constructs `WebSocketChannel`, Session waits for `go`. Confirm every beat even with no orders.
