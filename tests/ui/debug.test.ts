@@ -14,7 +14,7 @@ const fog: FogView = {
   isClear: () => true,
 };
 
-const empty: ViewSnapshot = { tick: 12, movables: [], objects: [], buildings: [], fog };
+const empty: ViewSnapshot = { tick: 12, terrainGen: 0, movables: [], objects: [], buildings: [], fog };
 
 const frame = {
   fps: 60,
@@ -34,6 +34,7 @@ describe("debug overlay", () => {
   it("counts settlers, jobs, buildings, and stacks", () => {
     const snap: ViewSnapshot = {
       tick: 99,
+      terrainGen: 0,
       movables: [
         {
           id: 1,

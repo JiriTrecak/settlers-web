@@ -3,6 +3,7 @@ import { DEFAULT_UNIT_VIEW_DISTANCE } from "../../fog/constants";
 import type { SettlerDef } from "../types";
 import { bearer } from "./bearer";
 import { bricklayer } from "./bricklayer";
+import { digger } from "./digger";
 import { forester } from "./forester";
 import { lumberjack } from "./lumberjack";
 import { pioneer } from "./pioneer";
@@ -12,6 +13,7 @@ import { stonecutter } from "./stonecutter";
 export const settlers = {
   bearer,
   bricklayer,
+  digger,
   forester,
   lumberjack,
   pioneer,

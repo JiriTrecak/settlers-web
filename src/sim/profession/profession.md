@@ -14,4 +14,6 @@ Forester: rest inside 4s, walk out holding a sapling, kneel-plant on the tile so
 
 Bricklayer: temporary. Construction assigns a `build` job; on arrival they `become("bricklayer")` and hammer 1s loops. Each swing calls `tryTakeMaterial` (progress bump, pile pop every 12). When the hut leaves `building` they revert to bearer. Cap 2 even if the def lists more spots.
 
+Digger: temporary. Construction assigns `flatten` on a plan whose protected heights are off the frozen mean. Walk onto the cell (hut footprint is walkable for them, stacks included), kneel 1s, ±1 height. `ceil(protected/15)` at once. Revert when the plot is level or the hut leaves `plan`.
+
 Pioneer: no workplace. Job `pioneer` is the click. Walk there, then claim unenforced foreign tiles (hex 1–6 toward the target, else 30). Kneel 1.2s, `land.claim`. Tower-covered tiles stay put.

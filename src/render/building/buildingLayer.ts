@@ -1,7 +1,7 @@
 /**
- * Huts. Scaffold while `plan` / `building`; the finished sprite grows from the
- * bottom over the scaffold while bricklayers hammer (saw-edge mask, 10 teeth).
- * Depth is `isoDepth` on the shared iso container.
+ * Huts. Plan is fence posts (no sprite). Bricklayers grow the scaffold
+ * through the first half of `buildProgress`, then the finished hut through
+ * the second — saw-edge mask, 10 teeth. Depth is `isoDepth` on the shared iso container.
  *
  * Flags sit at `def.flag`, parented to the hut so the roof flag draws on top of
  * the building sprite (door flags stick out south and were already visible).
@@ -15,6 +15,7 @@ import type { BuildingState, BuildingView } from "../../sim/building/building";
 import type { FogView } from "../../sim/fog/fog";
 import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { BuildingSheet, BuildingSheets } from "./buildingSheets";
+import { constructionVisual } from "./constructionVisual";
 import type { PropFrame } from "../graphics/textures";
 
 /** Same as the original construction mask: 10 triangles, 5% of sprite height. */
@@ -28,6 +29,10 @@ type Drawn = {
   built: Sprite;
   mask: Graphics;
   shadow: Sprite;
+  sign: Sprite;
+  signShadow: Sprite;
+  posts: Sprite[];
+  postShadows: Sprite[];
   flagShadow: Sprite;
   flagBody: Sprite;
   flagTorso: Sprite;
@@ -63,13 +68,17 @@ export class BuildingLayer {
       if (!existing) {
         const placed = this.spawn(b, view, sheets);
         if (placed) this.drawn.set(b.id, placed);
-      } else {
+      } else if (existing.state === b.state && existing.progress === b.buildProgress) {
         existing.building = b;
-        if (existing.state === b.state && existing.progress === b.buildProgress) {
-          this.paintFlag(existing, b, view, sheets, this.animationStep);
-        } else {
-          this.apply(existing, b, view, sheets);
+        const world = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
+        existing.root.position.set(world.x, world.y);
+        existing.root.zIndex = isoDepth(world.x, world.y, ISO_DEPTH_BUILDING);
+        if (constructionVisual(b.buildProgress).fence) {
+          this.paintFence(existing, b, view, sheets, true, world);
         }
+        this.paintFlag(existing, b, view, sheets, this.animationStep);
+      } else {
+        this.apply(existing, b, view, sheets);
       }
       const drawn = this.drawn.get(b.id);
       if (drawn) this.tintFog(drawn, fog?.sightAt(b.x, b.y) ?? FOG_VISIBLE);
@@ -107,13 +116,27 @@ export class BuildingLayer {
     built.eventMode = "none";
     const mask = new Graphics();
     mask.eventMode = "none";
+    const sign = new Sprite();
+    sign.eventMode = "none";
+    const signShadow = new Sprite();
+    signShadow.eventMode = "none";
+    const posts: Sprite[] = [];
+    const postShadows: Sprite[] = [];
+    for (let i = 0; i < buildingDef(b.kind).buildMarks.length; i++) {
+      const post = new Sprite();
+      post.eventMode = "none";
+      posts.push(post);
+      const postShadow = new Sprite();
+      postShadow.eventMode = "none";
+      postShadows.push(postShadow);
+    }
     const flagShadow = new Sprite();
     flagShadow.eventMode = "none";
     const flagBody = new Sprite();
     flagBody.eventMode = "none";
     const flagTorso = new Sprite();
     flagTorso.eventMode = "none";
-    root.addChild(shadow, scaffold, built, mask, flagShadow, flagBody, flagTorso);
+    root.addChild(shadow, signShadow, ...postShadows, scaffold, built, mask, sign, ...posts, flagShadow, flagBody, flagTorso);
 
     const drawn: Drawn = {
       id: b.id,
@@ -122,6 +145,10 @@ export class BuildingLayer {
       built,
       mask,
       shadow,
+      sign,
+      signShadow,
+      posts,
+      postShadows,
       flagShadow,
       flagBody,
       flagTorso,
@@ -129,7 +156,7 @@ export class BuildingLayer {
       progress: b.buildProgress,
       building: b,
     };
-    this.paint(drawn, sheet, world, z, b);
+    this.paint(drawn, sheet, world, z, b, view, sheets);
     this.paintFlag(drawn, b, view, sheets, this.animationStep);
     return drawn;
   }
@@ -146,37 +173,85 @@ export class BuildingLayer {
     d.progress = b.buildProgress;
     d.building = b;
     const world = gridToWorld(b.x, b.y, view.heightAt(b.x, b.y));
-    this.paint(d, sheet, world, isoDepth(world.x, world.y, ISO_DEPTH_BUILDING), b);
+    this.paint(d, sheet, world, isoDepth(world.x, world.y, ISO_DEPTH_BUILDING), b, view, sheets);
     this.paintFlag(d, b, view, sheets, this.animationStep);
   }
 
-  private paint(d: Drawn, sheet: BuildingSheet, world: { x: number; y: number }, z: number, b: BuildingView): void {
+  private paint(
+    d: Drawn,
+    sheet: BuildingSheet,
+    world: { x: number; y: number },
+    z: number,
+    b: BuildingView,
+    view: MapView,
+    sheets: BuildingSheets,
+  ): void {
     d.root.zIndex = z;
     d.root.position.set(world.x, world.y);
     placeSprite(d.scaffold, sheet.scaffold);
     placeSprite(d.built, sheet.built);
 
-    const finished = b.state === "built" || b.buildProgress >= 1;
-    const growing = b.state === "building" && !finished;
-    d.scaffold.visible = !finished;
-    d.built.visible = finished || growing;
-    if (growing) {
-      paintGrowMask(d.mask, sheet.built, b.buildProgress);
-      d.built.mask = d.mask;
-      d.mask.visible = true;
-    } else {
+    const vis = constructionVisual(b.buildProgress);
+    paintLayer(d.scaffold, d.mask, sheet.scaffold, vis.scaffold);
+    paintLayer(d.built, d.mask, sheet.built, vis.built);
+    const growing = (vis.scaffold > 0 && vis.scaffold < 1) || (vis.built > 0 && vis.built < 1);
+    d.mask.visible = growing;
+    if (!growing) {
+      d.scaffold.mask = null;
       d.built.mask = null;
       d.mask.clear();
-      d.mask.visible = false;
     }
+    this.paintFence(d, b, view, sheets, vis.fence, world);
 
-    const shadowFrame = finished ? sheet.built.shadow : sheet.scaffold.shadow;
-    if (shadowFrame) {
+    const shadowFrame = vis.built >= 1 ? sheet.built.shadow : vis.scaffold > 0 ? sheet.scaffold.shadow : undefined;
+    if (shadowFrame && !vis.fence) {
       d.shadow.visible = true;
       d.shadow.texture = shadowFrame.texture;
       d.shadow.position.set(shadowFrame.offsetX, shadowFrame.offsetY);
     } else {
       d.shadow.visible = false;
+    }
+  }
+
+  private paintFence(
+    d: Drawn,
+    b: BuildingView,
+    view: MapView,
+    sheets: BuildingSheets,
+    on: boolean,
+    hutWorld: { x: number; y: number },
+  ): void {
+    const post = sheets.sitePost;
+    const sign = sheets.siteSign;
+    if (!on || !post) {
+      d.sign.visible = false;
+      d.signShadow.visible = false;
+      for (const s of d.posts) s.visible = false;
+      for (const s of d.postShadows) s.visible = false;
+      return;
+    }
+    const marks = buildingDef(b.kind).buildMarks;
+    for (let i = 0; i < d.posts.length; i++) {
+      const mark = marks[i];
+      const body = d.posts[i]!;
+      const shadow = d.postShadows[i]!;
+      if (!mark) {
+        body.visible = false;
+        shadow.visible = false;
+        continue;
+      }
+      const at = { x: b.x + mark.dx, y: b.y + mark.dy };
+      placeRelative(body, post, hutWorld, view, at);
+      if (post.shadow) placeRelative(shadow, post.shadow, hutWorld, view, at);
+      else shadow.visible = false;
+    }
+    if (sign) {
+      placeRelative(d.sign, sign, hutWorld, view, b);
+      if (sign.shadow) placeRelative(d.signShadow, sign.shadow, hutWorld, view, b);
+      else d.signShadow.visible = false;
+    } else {
+      d.sign.visible = false;
+      d.signShadow.visible = false;
     }
   }
 
@@ -222,7 +297,36 @@ function placeSprite(sprite: Sprite, frame: PropFrame): void {
   sprite.position.set(frame.offsetX, frame.offsetY);
 }
 
-/** Bottom-up clip plus a saw edge — `drawWithConstructionMask`. */
+function placeRelative(
+  sprite: Sprite,
+  frame: { texture: Sprite["texture"]; offsetX: number; offsetY: number },
+  hutWorld: { x: number; y: number },
+  view: MapView,
+  at: { x: number; y: number },
+): void {
+  const world = gridToWorld(at.x, at.y, view.heightAt(at.x, at.y));
+  sprite.visible = true;
+  sprite.texture = frame.texture;
+  sprite.position.set(world.x - hutWorld.x + frame.offsetX, world.y - hutWorld.y + frame.offsetY);
+}
+
+function paintLayer(sprite: Sprite, mask: Graphics, frame: PropFrame, amount: number): void {
+  if (amount <= 0) {
+    sprite.visible = false;
+    if (sprite.mask === mask) sprite.mask = null;
+    return;
+  }
+  sprite.visible = true;
+  if (amount >= 1) {
+    if (sprite.mask === mask) sprite.mask = null;
+    return;
+  }
+  paintGrowMask(mask, frame, amount);
+  sprite.mask = mask;
+  mask.visible = true;
+}
+
+/** Bottom-up clip plus a saw edge. */
 function paintGrowMask(g: Graphics, frame: PropFrame, progress: number): void {
   g.clear();
   const w = frame.texture.width;

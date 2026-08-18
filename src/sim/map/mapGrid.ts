@@ -11,6 +11,8 @@ export class MapGrid {
   readonly height: number;
   readonly landscape: Uint8Array;
   readonly heightmap: Int8Array;
+  /** Bumps when height or landscape type changes. Renderer patches dirty cells. */
+  revision = 0;
 
   constructor(width: number, height: number) {
     if (width < 2 || height < 2) {
@@ -36,7 +38,11 @@ export class MapGrid {
   }
 
   setLandscape(x: number, y: number, type: LandscapeType): void {
-    this.landscape[this.index(x, y)] = landscapeIndex[type];
+    const i = this.index(x, y);
+    const next = landscapeIndex[type];
+    if (this.landscape[i] === next) return;
+    this.landscape[i] = next;
+    this.revision += 1;
   }
 
   heightAt(x: number, y: number): number {
@@ -45,7 +51,11 @@ export class MapGrid {
   }
 
   setHeight(x: number, y: number, value: number): void {
-    this.heightmap[this.index(x, y)] = Math.max(-128, Math.min(127, Math.round(value)));
+    const i = this.index(x, y);
+    const next = Math.max(-128, Math.min(127, Math.round(value)));
+    if (this.heightmap[i] === next) return;
+    this.heightmap[i] = next;
+    this.revision += 1;
   }
 
   hasNeighbor(x: number, y: number, pred: (t: LandscapeType) => boolean): boolean {

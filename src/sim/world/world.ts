@@ -5,6 +5,7 @@
 import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { BuildingGrid, buildingFlag, canPlace, type Building, type BuildingView } from "../building/building";
+import { averageHeight, flattenTooSteep, footprint, plotLevel as heightsMatch } from "../building/flatten";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import { settlers, settlerDef, needsPlayersGround, unitViewDistance, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
@@ -25,6 +26,7 @@ import { placeColony } from "../economy/startKit";
 
 export type ViewSnapshot = {
   tick: number;
+  terrainGen: number;
   movables: readonly MovableView[];
   objects: readonly MapObjectView[];
   buildings: readonly BuildingView[];
@@ -143,6 +145,8 @@ export class World {
     const hut = this.buildings.place(kind, at, player, this.grid, this.objects);
     if (!hut) return undefined;
     hut.state = "plan";
+    const def = buildingDef(kind);
+    if ("flatten" in def && def.flatten) hut.flattenHeight = averageHeight(this.grid, footprint(def.protected, at));
     return hut;
   }
 
@@ -176,8 +180,17 @@ export class World {
   }
 
   canPlaceBuilding(kind: BuildingKind, at: GridPos, player = 0): boolean {
-    if (!canPlace(this.buildings, buildingDef(kind), at, this.grid, this.objects)) return false;
+    const def = buildingDef(kind);
+    if (!canPlace(this.buildings, def, at, this.grid, this.objects)) return false;
+    if ("flatten" in def && def.flatten && flattenTooSteep(this.grid, footprint(def.protected, at))) return false;
     return this.landAllows(kind, at, player);
+  }
+
+  /** True when the hut needs no diggers (no `flatten`, or protected heights already match). */
+  plotLevel(kind: BuildingKind, at: GridPos): boolean {
+    const def = buildingDef(kind);
+    if (!("flatten" in def) || !def.flatten) return true;
+    return heightsMatch(this.grid, footprint(def.protected, at));
   }
 
   /** Actions applied so far, in apply order. */
@@ -255,11 +268,17 @@ export class World {
       mixStr(b.state);
       mix((b.constructionProgress * 1000) | 0);
       mix(b.player);
+      mix(b.flattenHeight);
     }
     mix(this.land.width);
     mix(this.land.height);
     for (let y = 0; y < this.land.height; y++) {
       for (let x = 0; x < this.land.width; x++) mix(this.land.playerAt(x, y));
+    }
+    mix(this.grid.revision);
+    for (let i = 0; i < this.grid.heightmap.length; i++) {
+      mix(this.grid.heightmap[i]!);
+      mix(this.grid.landscape[i]!);
     }
     const objs = this.objects.all().sort((a, b) => a.y - b.y || a.x - b.x);
     mix(objs.length);
@@ -297,6 +316,8 @@ export class World {
       buildings: this.buildings,
       objects: this.objects,
       grid: this.grid,
+      marks: this.marks,
+      rng: this.rng,
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
     });
@@ -427,6 +448,7 @@ export class World {
   view(player = 0): ViewSnapshot {
     return {
       tick: this.clock.tickIndex,
+      terrainGen: this.grid.revision,
       movables: this.units.map((u) => u.view()),
       objects: this.objects.view(),
       buildings: this.buildings.view(this.units),
@@ -487,21 +509,27 @@ export class World {
   }
 
   private unitBlockers(m: Movable): Blockers {
-    return this.blockers(m.id, this.groundPlayer(m.type, m.player));
+    let walkHut: number | undefined;
+    if (m.type === "digger" && m.workplaceId != null) walkHut = m.workplaceId;
+    if (m.job?.type === "flatten") walkHut = m.job.hutId;
+    return this.blockers(m.id, this.groundPlayer(m.type, m.player), walkHut);
   }
 
   private groundPlayer(kind: SettlerKind, player: number): number | undefined {
     return needsPlayersGround(kind) ? player : undefined;
   }
 
-  /** Occupancy + objects + buildings. `player` set → own-land tiles only. */
-  private blockers(ignoreId = 0, player?: number): Blockers {
+  /** Occupancy + objects + buildings. `player` set → own-land tiles only. Diggers walk their hut's footprint, stacks included. */
+  private blockers(ignoreId = 0, player?: number, walkHutId?: number): Blockers {
     return {
-      blocks: (x, y) =>
-        this.objects.blocks(x, y) ||
-        this.buildings.blocks(x, y) ||
-        (this.occ.idAt(x, y) !== 0 && this.occ.idAt(x, y) !== ignoreId) ||
-        (player != null && !this.land.owns(x, y, player)),
+      blocks: (x, y) => {
+        const onHut = walkHutId != null && this.buildings.at(x, y)?.id === walkHutId;
+        if (!onHut && this.objects.blocks(x, y)) return true;
+        if (!onHut && this.buildings.blocks(x, y)) return true;
+        if (this.occ.idAt(x, y) !== 0 && this.occ.idAt(x, y) !== ignoreId) return true;
+        if (player != null && !this.land.owns(x, y, player)) return true;
+        return false;
+      },
     };
   }
 

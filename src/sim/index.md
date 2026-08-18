@@ -8,13 +8,13 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `decorations/` | Trees/stones from dumps + wave lattice |
 | `clock/` | 25ms ticks |
 | `rng/` | Seeded RNG, never `Math.random` |
-| `building/` | Instant-built huts, footprint blockers, door/roof flags |
+| `building/` | Instant-built huts, footprint blockers, flatten math, door/roof flags |
 | `data/` | One-file defs for buildings and settlers |
 | `object/` | Trees/stones/stacks on tiles, chop `stateProgress`, sapling growth |
-| `job/` | Unit assignments (`chop`, `cut`, `pickup`, `drop`, `build`, `plant`, `occupy`). `tickJob` runs the verb. |
-| `profession/` | Workplace brains that *assign* jobs (lumberjack, stonecutter, sawmiller, bricklayer, forester) |
-| `economy/` | Start kit + matcher + construction (plan → bricklayers → occupy) |
-| `mark/` | Work-claim bits (chop/plant lock a resource tile) |
+| `job/` | Unit assignments (`chop`, `cut`, `pickup`, `drop`, `build`, `plant`, `occupy`, `flatten`). `tickJob` runs the verb. |
+| `profession/` | Workplace brains that *assign* jobs (lumberjack, stonecutter, sawmiller, bricklayer, forester, digger) |
+| `economy/` | Start kit + matcher + construction (plan → flatten → bricklayers → occupy) |
+| `mark/` | Work-claim bits (chop/plant/flatten lock a tile) |
 | `path/` | Walkable BFS (land + objects) |
 | `land/` | Player occupy disks + rim (tower radius, HQ, debug claim) |
 | `fog/` | Per-player sight 0–100, padded view circles, explored floor, snapshots |

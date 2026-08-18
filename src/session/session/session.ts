@@ -424,7 +424,7 @@ export class Session {
       renderer.ghost(null, null, false);
       return;
     }
-    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.config.player));
+    renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.config.player) && world.plotLevel(kind, pos));
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */

@@ -1,7 +1,7 @@
 /**
  * Buildings on the map. Footprint from the def: `blocked` is unwalkable,
- * `protected` forbids overlapping another hut. `plan` waits for hauled goods,
- * `building` is bricklayers on the scaffold, `built` is finished.
+ * `protected` forbids overlapping another hut. `plan` is fence posts while
+ * goods (and flatten) arrive, `building` grows scaffold then hut, `built` is finished.
  *
  * Flags: workerless huts fly `door` from placement. Worker huts fly `roof` only
  * while their own worker has `workplaceId` — bricklayers on the scaffold do not count.
@@ -55,6 +55,8 @@ export class Building {
   landClaimed = false;
   /** Last view-circle radius stamped into fog. */
   fogDistance = 0;
+  /** Integer mean of protected heights, frozen when the plan drops. Unused if the def has no `flatten`. */
+  flattenHeight = 0;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {
     this.id = id;

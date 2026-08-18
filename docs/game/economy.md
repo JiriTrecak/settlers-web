@@ -39,6 +39,8 @@ Each tick, closest idle empty-handed bearer of player P → closest offer P may 
 
 Inbound `deliver` jobs count against room so two bearers don’t overfill. `building` construction piles are already on the plot; leftover piles are deleted when the hut finishes.
 
+Lumberjack plans also wait for flatten: `ceil(protected/15)` diggers, 1 s kneel, ±1 toward the frozen integer mean. Level grass skips. Other huts still ignore height.
+
 Pickup / drop is 200 ms each end of a deliver.
 
 ## Wood chain

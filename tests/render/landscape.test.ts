@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { TEXTURE_SIZE } from "../../src/render/landscape/atlasPositions";
-import { buildLandscapeGeometry, landscapeTriangleCount } from "../../src/render/landscape/landscapeGeometry";
+import { buildLandscapeGeometry, landscapeTriangleCount, patchLandscapeTiles } from "../../src/render/landscape/landscapeGeometry";
 import { realModulo, triangleTexture } from "../../src/render/landscape/landscapeUv";
 import { Camera } from "../../src/render/camera/camera";
 import { pickGrid } from "../../src/shared/iso/iso";
@@ -18,6 +18,23 @@ describe("landscape geometry", () => {
     expect(data.uvs.length / 2).toBe(tris * 3);
     expect(data.fogs.length).toBe(tris * 3);
     expect(data.cells.length).toBe(tris * 3);
+  });
+
+  it("patches a local height/type edit to match a full rebuild", () => {
+    const grid = new MapGrid(8, 6);
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 8; x++) grid.setLandscape(x, y, "grass");
+    }
+    const view = mapViewFromGrid(grid);
+    const patched = buildLandscapeGeometry(view);
+    grid.setHeight(3, 2, 4);
+    grid.setLandscape(3, 2, "flattened");
+    patchLandscapeTiles(patched, view, undefined, [{ x: 3, y: 2 }]);
+    const full = buildLandscapeGeometry(view);
+    expect(patched.positions).toEqual(full.positions);
+    expect(patched.uvs).toEqual(full.uvs);
+    expect(patched.shades).toEqual(full.shades);
+    expect(patched.colors).toEqual(full.colors);
   });
 
   it("maps a solid grass cell onto the grass atlas slot", () => {

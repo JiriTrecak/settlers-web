@@ -130,4 +130,17 @@ describe("world fog", () => {
     expect(fog.isHidden(20, 40)).toBe(true);
     expect(world.view(0).buildings).toHaveLength(0);
   });
+
+  it("freezes height when a tile drops through 50", () => {
+    const grid = grass(80, 80);
+    grid.setHeight(40, 40, 4);
+    const fog = new FogGrid(80, 80);
+    const world = fogWorld(grid);
+    fog.resizeCircle({ x: 40, y: 40 }, 0, 0, 38);
+    snap(fog, world);
+    fog.resizeCircle({ x: 40, y: 40 }, 0, 38, 0);
+    snap(fog, world);
+    grid.setHeight(40, 40, 9);
+    expect(fog.view(0).hiddenAt(40, 40)?.height).toBe(4);
+  });
 });

@@ -3,7 +3,7 @@
  * Reads `MapView`; never writes sim. Debug path / ownership / fog overlays are HUD toggles.
  */
 import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
-import { gridToWorld, pickCell, type GridPos } from "../../shared";
+import { gridToWorld, landscapeIndex, pickCell, type GridPos } from "../../shared";
 import type { BuildingKind } from "../../sim/data/buildings";
 import type { BuildingView } from "../../sim/building/building";
 import type { MapDecoration } from "../../sim/decorations/decorations";
@@ -19,7 +19,7 @@ import type { BuildingSheets } from "../building/buildingSheets";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
 import type { DecorationSheets } from "../decoration/decorationSheets";
-import { buildLandscapeGeometry } from "../landscape/landscapeGeometry";
+import { buildLandscapeGeometry, patchLandscapeTiles, type LandscapeGeometryData } from "../landscape/landscapeGeometry";
 import { createLandscapeMesh } from "../landscape/landscapeMesh";
 import { PathLayer } from "../debug/pathLayer";
 import { LandLayer } from "../debug/landLayer";
@@ -48,6 +48,10 @@ export class Renderer {
   private fogGen = -1;
   private fog: FogView | null = null;
   private fogOn = true;
+  private terrainGen = -1;
+  private meshData: LandscapeGeometryData | null = null;
+  private lastHeight = new Int8Array(0);
+  private lastLand = new Uint8Array(0);
   private readonly hover = new Graphics();
   private readonly select = new Graphics();
 
@@ -89,16 +93,8 @@ export class Renderer {
   setView(view: MapView, waves: readonly MapDecoration[] = this.waves, fit = true): void {
     this.view = view;
     this.waves = waves;
-    const data = buildLandscapeGeometry(view);
-    const mesh = createLandscapeMesh(data, this.atlas);
-    mesh.eventMode = "none";
-    mesh.zIndex = -1;
-    this.mesh = mesh;
-    this.cells = data.cells;
-    this.mapWidth = data.width;
-    this.fogGen = -1;
-    this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.terrainGen = -1;
+    this.rebuildMesh(CLEAR_FOG);
     this.decorations.setWaves(view, waves);
     this.buildings.setView(view);
     this.settlers.setView(view);
@@ -145,6 +141,10 @@ export class Renderer {
   draw(snapshot: ViewSnapshot, alpha: number): void {
     const fog = this.fogOn ? snapshot.fog : CLEAR_FOG;
     this.fog = this.fogOn ? snapshot.fog : null;
+    if (this.terrainGen !== snapshot.terrainGen) {
+      this.patchTerrain(fog);
+      this.terrainGen = snapshot.terrainGen;
+    }
     this.applyLandscapeFog(fog);
     this.decorations.setFog(this.fog);
     this.decorations.syncObjects(visibleObjects(snapshot, fog));
@@ -223,21 +223,115 @@ export class Renderer {
     this.land.setPreview(pos, player);
   }
 
-  /** Per-vert sight/100. Positions still use live height — snapshots are objects/huts only until flatten. */
+  /** Per-vert sight/100. Grey verts use snapshot height so flatten in fog does not jump. */
   private applyLandscapeFog(fog: FogView): void {
     const mesh = this.mesh;
     const cells = this.cells;
-    if (!mesh || !cells || this.fogGen === fog.generation) return;
+    const view = this.view;
+    if (!mesh || !cells || !view || this.fogGen === fog.generation) return;
     this.fogGen = fog.generation;
-    const attr = mesh.geometry.attributes.aFog;
-    if (!attr) return;
-    const data = attr.buffer.data as Float32Array;
+    const fogAttr = mesh.geometry.attributes.aFog;
+    const posAttr = mesh.geometry.attributes.aPosition;
+    if (!fogAttr || !posAttr) return;
+    const fogData = fogAttr.buffer.data as Float32Array;
+    const posData = posAttr.buffer.data as Float32Array;
     const w = this.mapWidth;
     for (let i = 0; i < cells.length; i++) {
       const cell = cells[i] ?? 0;
-      data[i] = fog.sightAt(cell % w, (cell / w) | 0) / FOG_VISIBLE;
+      const x = cell % w;
+      const y = (cell / w) | 0;
+      fogData[i] = fog.sightAt(x, y) / FOG_VISIBLE;
+      const hidden = fog.isHidden(x, y) ? fog.hiddenAt(x, y) : undefined;
+      const h = hidden?.height ?? view.heightAt(x, y);
+      const p = gridToWorld(x, y, h);
+      posData[i * 2] = p.x;
+      posData[i * 2 + 1] = p.y;
     }
-    attr.buffer.update();
+    fogAttr.buffer.update();
+    posAttr.buffer.update();
+  }
+
+  /** Height / type changed: rewrite the few cells around dirty tiles. Full rebuild only on setView. */
+  private patchTerrain(fog: FogView): void {
+    const view = this.view;
+    const data = this.meshData;
+    if (!view || !data || !this.mesh) {
+      this.rebuildMesh(fog);
+      return;
+    }
+    const dirty = this.drainTerrainDirty(view);
+    if (dirty.length === 0) return;
+    patchLandscapeTiles(data, view, this.fogOn ? fog : undefined, dirty);
+    const geom = this.mesh.geometry;
+    geom.attributes.aPosition?.buffer.update();
+    geom.attributes.aColor?.buffer.update();
+    geom.attributes.aUv?.buffer.update();
+    geom.attributes.aShade?.buffer.update();
+    geom.attributes.aFog?.buffer.update();
+  }
+
+  private drainTerrainDirty(view: MapView): GridPos[] {
+    const n = view.width * view.height;
+    if (this.lastHeight.length !== n) {
+      this.captureTerrain(view);
+      return [];
+    }
+    const dirty: GridPos[] = [];
+    const w = view.width;
+    for (let i = 0; i < n; i++) {
+      const x = i % w;
+      const y = (i / w) | 0;
+      const h = view.heightAt(x, y);
+      const land = landscapeIndex[view.landscapeAt(x, y)] ?? 0;
+      if (h === this.lastHeight[i] && land === this.lastLand[i]) continue;
+      this.lastHeight[i] = h;
+      this.lastLand[i] = land;
+      dirty.push({ x, y });
+    }
+    return dirty;
+  }
+
+  private captureTerrain(view: MapView): void {
+    const n = view.width * view.height;
+    if (this.lastHeight.length !== n) {
+      this.lastHeight = new Int8Array(n);
+      this.lastLand = new Uint8Array(n);
+    }
+    const w = view.width;
+    for (let i = 0; i < n; i++) {
+      const x = i % w;
+      const y = (i / w) | 0;
+      this.lastHeight[i] = view.heightAt(x, y);
+      this.lastLand[i] = landscapeIndex[view.landscapeAt(x, y)] ?? 0;
+    }
+  }
+
+  private rebuildMesh(fog: FogView): void {
+    const view = this.view;
+    if (!view) return;
+    const data = buildLandscapeGeometry(view, this.fogOn ? fog : undefined);
+    const mesh = createLandscapeMesh(data, this.atlas);
+    mesh.eventMode = "none";
+    mesh.zIndex = -1;
+    this.mesh?.destroy();
+    this.mesh = mesh;
+    const geom = mesh.geometry;
+    this.meshData = {
+      positions: geom.attributes.aPosition?.buffer.data as Float32Array,
+      colors: geom.attributes.aColor?.buffer.data as Float32Array,
+      uvs: geom.attributes.aUv?.buffer.data as Float32Array,
+      shades: geom.attributes.aShade?.buffer.data as Float32Array,
+      fogs: geom.attributes.aFog?.buffer.data as Float32Array,
+      cells: data.cells,
+      indices: data.indices,
+      width: data.width,
+    };
+    this.cells = data.cells;
+    this.mapWidth = data.width;
+    this.captureTerrain(view);
+    this.fogGen = -1;
+    this.world.removeChildren();
+    this.world.addChild(mesh, this.iso, this.select, this.hover, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   destroy(): void {

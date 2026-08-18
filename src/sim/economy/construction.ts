@@ -1,17 +1,21 @@
 /**
- * Plan → haul `constructionStacks` → `building` (bricklayers hammer) → `built`.
+ * Plan → haul `constructionStacks` → `building` (scaffold then hut grow) → `built`.
+ * Flatten defs also wait until protected heights hit the frozen mean.
  * Each 1s swing bumps progress by `1 / (12 × materials)` and pops a pile every 12 swings.
- * Two bricklayers → twice the bumps. Then a jobless bearer occupies. No flatten.
- * Bricklayers and occupy recruits are the hut's player only.
+ * Two bricklayers → twice the bumps. Then a jobless bearer occupies.
+ * Diggers / bricklayers / occupy recruits are the hut's player only.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
+import { diggerCount, flattenReady, footprint, nextFlattenTile } from "../building/flatten";
 import { buildingDef } from "../data/buildings";
 import { settlers, type SettlerKind } from "../data/settlers";
 import type { MapGrid } from "../map/mapGrid";
+import type { MarkGrid } from "../mark/mark";
 import type { Movable } from "../movable/movable";
 import type { ObjectGrid } from "../object/object";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
+import type { Rng } from "../rng/rng";
 
 /** S3 default: two bricklayers even if the def lists more spots. */
 export const BRICKLAYERS_MAX = 2;
@@ -24,6 +28,8 @@ export type ConstructionContext = {
   buildings: BuildingGrid;
   objects: ObjectGrid;
   grid: MapGrid;
+  marks: MarkGrid;
+  rng: Rng;
   blockers: (ignoreId?: number) => Blockers;
   tickMs: number;
 };
@@ -36,7 +42,10 @@ type TakeContext = {
 
 export function tickConstruction(ctx: ConstructionContext): void {
   for (const b of ctx.buildings.all()) {
-    if (b.state === "plan" && goodsReady(b, ctx.objects)) begin(b);
+    if (b.state === "plan") {
+      if (!flattenReadyFor(b, ctx)) recruitDiggers(b, ctx);
+      else if (goodsReady(b, ctx.objects)) begin(b, ctx);
+    }
     if (b.state === "building") recruitBricklayers(b, ctx);
     if (b.state === "built") recruit(b, ctx);
   }
@@ -59,6 +68,32 @@ export function tryTakeMaterial(b: Building, ctx: TakeContext): boolean {
   return false;
 }
 
+function flattenReadyFor(b: Building, ctx: ConstructionContext): boolean {
+  const def = buildingDef(b.kind);
+  if (!("flatten" in def) || !def.flatten) return true;
+  return flattenReady(ctx.grid, footprint(def.protected, b.pos), b.flattenHeight);
+}
+
+function recruitDiggers(b: Building, ctx: ConstructionContext): void {
+  const def = buildingDef(b.kind);
+  if (!("flatten" in def) || !def.flatten) return;
+  const tiles = footprint(def.protected, b.pos);
+  const want = diggerCount(tiles.length);
+  let have = 0;
+  for (const m of ctx.units) {
+    if (m.type === "digger" && m.workplaceId === b.id) have += 1;
+    else if (m.job?.type === "flatten" && m.job.hutId === b.id) have += 1;
+  }
+  while (have < want) {
+    const at = nextFlattenTile(ctx.grid, ctx.marks, tiles, b.flattenHeight, ctx.rng);
+    if (!at) return;
+    const bearer = closestIdleBearer(ctx.units, at, b.player);
+    if (!bearer) return;
+    bearer.assignJob({ type: "flatten", at, hutId: b.id });
+    have += 1;
+  }
+}
+
 function goodsReady(b: Building, objects: ObjectGrid): boolean {
   const def = buildingDef(b.kind);
   for (const slot of def.constructionStacks) {
@@ -68,7 +103,14 @@ function goodsReady(b: Building, objects: ObjectGrid): boolean {
   return true;
 }
 
-function begin(b: Building): void {
+function begin(b: Building, ctx: ConstructionContext): void {
+  for (const m of ctx.units) {
+    if (m.type === "digger" && m.workplaceId === b.id) m.become("bearer", null, ctx.tickMs);
+    if (m.job?.type === "flatten" && m.job.hutId === b.id) {
+      m.idle();
+      if (m.type === "digger") m.become("bearer", null, ctx.tickMs);
+    }
+  }
   b.state = "building";
   b.constructionProgress = 0;
   b.remainingMaterialActions = 0;

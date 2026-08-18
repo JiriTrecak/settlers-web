@@ -14,6 +14,7 @@ import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type S
 import { cutStand } from "../object/stone";
 import { isPlantSearch, plantTree, chopStand } from "../object/tree";
 import { isWalkable, standBeside, type Blockers } from "../path/path";
+import { changeHeightTowards } from "../building/flatten";
 
 export type Job =
   | { type: "chop"; at: GridPos }
@@ -25,7 +26,8 @@ export type Job =
   | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind }
   | { type: "build"; at: GridPos; hutId: number; direction: Direction }
   | { type: "plant"; at: GridPos }
-  | { type: "pioneer"; at: GridPos; arrived: boolean };
+  | { type: "pioneer"; at: GridPos; arrived: boolean }
+  | { type: "flatten"; at: GridPos; hutId: number };
 
 /** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
 export function markOf(job: Job | null): GridPos | null {
@@ -33,6 +35,7 @@ export function markOf(job: Job | null): GridPos | null {
   if (job.type === "chop") return job.at;
   if (job.type === "cut") return cutStand(job.at);
   if (job.type === "plant") return { x: job.at.x, y: job.at.y + 1 };
+  if (job.type === "flatten") return job.at;
   return null;
 }
 
@@ -82,6 +85,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("pioneer").chopMs;
     return Math.max(1, Math.round((ms ?? 1200) / 25));
   }
+  if (job?.type === "flatten") {
+    const ms = settlerDef("digger").chopMs;
+    return Math.max(1, Math.round((ms ?? 1000) / 25));
+  }
   if (job?.type === "cut") {
     const ms = settlerDef("stonecutter").chopMs;
     return Math.max(1, Math.round((ms ?? 4500) / 25));
@@ -108,6 +115,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "build") tickBuild(m, job, ctx);
   else if (job.type === "plant") tickPlant(m, job, ctx);
   else if (job.type === "pioneer") tickPioneerWork(m, ctx);
+  else if (job.type === "flatten") tickFlatten(m, job, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
 }
 
@@ -334,6 +342,34 @@ function tickPioneerWork(m: Movable, ctx: JobContext): void {
   m.action = "idle";
   m.workElapsed = 0;
   m.from = m.pos;
+}
+
+/** Walk onto the cell, kneel 1s, step height ±1 toward the hut's frozen mean. */
+function tickFlatten(m: Movable, job: Extract<Job, { type: "flatten" }>, ctx: JobContext): void {
+  const hut = ctx.buildings.get(job.hutId);
+  if (!hut || hut.state !== "plan") {
+    m.idle();
+    return;
+  }
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    if (m.walking) return;
+    m.pathTo(ctx.grid, job.at, ctx.blockers);
+    return;
+  }
+  if (m.walking) return;
+  if (m.type !== "digger") {
+    m.become("digger", job.hutId, ctx.tickMs);
+    m.assignJob(job);
+  }
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  changeHeightTowards(ctx.grid, job.at.x, job.at.y, hut.flattenHeight);
+  m.idle();
 }
 
 /** Stonecutter: NE of the rock, face sw. */

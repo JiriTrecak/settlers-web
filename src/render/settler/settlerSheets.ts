@@ -25,6 +25,7 @@ export type SettlerSheets = Record<MovableType, UnitClips>;
 const CARRY: Record<MovableType, readonly CarryKind[]> = {
   bearer: ["trunk", "plank", "stone"],
   bricklayer: [],
+  digger: [],
   forester: ["tree"],
   lumberjack: ["trunk"],
   pioneer: [],
@@ -41,10 +42,11 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const lumberjack = (await loadUnit(sprites, "lumberjack", CARRY.lumberjack)) ?? bearer;
     const sawmiller = (await loadUnit(sprites, "sawmiller", CARRY.sawmiller)) ?? bearer;
     const bricklayer = (await loadUnit(sprites, "bricklayer", CARRY.bricklayer)) ?? bearer;
+    const digger = (await loadUnit(sprites, "digger", CARRY.digger)) ?? bearer;
     const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
     const stonecutter = (await loadUnit(sprites, "stonecutter", CARRY.stonecutter)) ?? bearer;
     const pioneer = (await loadUnit(sprites, "pioneer", CARRY.pioneer)) ?? bearer;
-    return { bearer, lumberjack, sawmiller, bricklayer, forester, stonecutter, pioneer };
+    return { bearer, lumberjack, sawmiller, bricklayer, digger, forester, stonecutter, pioneer };
   } catch {
     return null;
   }

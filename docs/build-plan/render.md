@@ -27,7 +27,7 @@ heightY    = 2   // per height unit
 
 Not one sprite per tile. Duplicated verts for per-triangle UVs. Fog is a vertex attribute, not vertex color. Unseen starts at 0.
 
-Until flatten exists, mesh height is live even in grey (snapshots still freeze objects/huts). Flatten **must** sample `FogView.hiddenAt` for grey verts.
+Grey fog tiles sample `FogView.hiddenAt` for height/type. Visible verts follow live `MapView`. `grid.revision` (`terrainGen` on the snapshot) patches UVs/height on the cells around the dirty tiles — do not rebuild the mesh per digger swing.
 
 Frustum culling can wait; maps are small enough.
 

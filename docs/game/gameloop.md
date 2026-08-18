@@ -19,8 +19,8 @@ Order matters — later systems see this tick’s assignments.
 3. Trees grow
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
-6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / pioneer search)
-7. Construction: plan → scaffold, recruit bricklayers, occupy finished worker huts
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / digger / pioneer search)
+7. Construction: plan → flatten (if the def asks) → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)
 10. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
@@ -53,7 +53,7 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Space | Fit whole map |
 | Minimap drag | Look-at that cell |
 | Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
-| Click empty valid owned land with a tool | Place a **plan** (scaffold), drop the tool |
+| Click empty valid owned land with a tool | Place a **plan** (fence), drop the tool |
 | Click an existing hut | Select it (highlight origin) |
 | Click own pioneer / bearer | Select the unit (highlight follows) |
 | C with a bearer / pioneer selected | Convert bearer → pioneer, or pioneer → bearer (own land, empty hands) |

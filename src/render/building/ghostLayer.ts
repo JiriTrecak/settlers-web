@@ -1,12 +1,13 @@
 /**
- * Placement preview while a build tool is selected: scaffold sprite + blocked fill + mark strokes.
- * Hidden when hovering an existing hut (session decides). Red tint when the plot is illegal.
+ * Placement preview: fence posts + blocked fill. Hidden when hovering an
+ * existing hut (session decides). Red tint when the plot is illegal.
  */
 import { Container, Graphics, Sprite } from "pixi.js";
 import { gridToWorld, type GridPos } from "../../shared";
 import { buildingDef, type BuildingKind } from "../../sim/data/buildings";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingSheets } from "./buildingSheets";
+import type { PropFrame } from "../graphics/textures";
 
 const GHOST_Z = 999_000;
 const FILL = 0xe8c36a;
@@ -18,16 +19,17 @@ export class GhostLayer {
   private sheets: BuildingSheets | null = null;
   private view: MapView | null = null;
   private zoom = 1;
-  private readonly body = new Sprite();
   private readonly plot = new Graphics();
+  private readonly posts: Sprite[] = [];
+  private readonly sign = new Sprite();
 
   constructor() {
     this.root.eventMode = "none";
     this.root.zIndex = GHOST_Z;
-    this.body.eventMode = "none";
-    this.body.alpha = 0.55;
     this.plot.eventMode = "none";
-    this.root.addChild(this.plot, this.body);
+    this.sign.eventMode = "none";
+    this.sign.alpha = 0.85;
+    this.root.addChild(this.plot, this.sign);
     this.hide();
   }
 
@@ -51,38 +53,63 @@ export class GhostLayer {
     }
     this.root.visible = true;
     const def = buildingDef(kind);
-    const tint = ok ? 0xffffff : BAD;
     const fill = ok ? FILL : BAD;
     const stroke = ok ? MARK : BAD;
+    const tint = ok ? 0xffffff : BAD;
     const width = 1.25 / this.zoom;
+    const post = this.sheets?.sitePost ?? null;
+    const sign = this.sheets?.siteSign ?? null;
 
     this.plot.clear();
     for (const r of def.blocked) {
       const quad = cellQuad(view, pos.x + r.dx, pos.y + r.dy);
       if (quad) this.plot.poly(quad).fill({ color: fill, alpha: 0.14 });
     }
-    for (const r of def.buildMarks) {
-      const quad = cellQuad(view, pos.x + r.dx, pos.y + r.dy);
-      if (quad) this.plot.poly(quad).stroke({ color: stroke, width, alignment: 0.5 });
+    if (!post) {
+      for (const r of def.buildMarks) {
+        const quad = cellQuad(view, pos.x + r.dx, pos.y + r.dy);
+        if (quad) this.plot.poly(quad).stroke({ color: stroke, width, alignment: 0.5 });
+      }
     }
 
-    const frame = this.sheets?.[kind]?.scaffold;
-    if (!frame) {
-      this.body.visible = false;
-      return;
+    this.ensurePosts(def.buildMarks.length);
+    for (let i = 0; i < this.posts.length; i++) {
+      const sprite = this.posts[i]!;
+      const mark = def.buildMarks[i];
+      if (!post || !mark) {
+        sprite.visible = false;
+        continue;
+      }
+      placeAt(sprite, post, view, pos.x + mark.dx, pos.y + mark.dy, tint);
     }
-    const world = gridToWorld(pos.x, pos.y, view.heightAt(pos.x, pos.y));
-    this.body.visible = true;
-    this.body.texture = frame.texture;
-    this.body.tint = tint;
-    this.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
+    if (sign) placeAt(this.sign, sign, view, pos.x, pos.y, tint);
+    else this.sign.visible = false;
   }
 
   hide(): void {
     this.root.visible = false;
-    this.body.visible = false;
+    this.sign.visible = false;
+    for (const p of this.posts) p.visible = false;
     this.plot.clear();
   }
+
+  private ensurePosts(n: number): void {
+    while (this.posts.length < n) {
+      const s = new Sprite();
+      s.eventMode = "none";
+      s.alpha = 0.85;
+      this.root.addChild(s);
+      this.posts.push(s);
+    }
+  }
+}
+
+function placeAt(sprite: Sprite, frame: PropFrame, view: MapView, x: number, y: number, tint: number): void {
+  const world = gridToWorld(x, y, view.heightAt(x, y));
+  sprite.visible = true;
+  sprite.texture = frame.texture;
+  sprite.tint = tint;
+  sprite.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
 }
 
 function cellQuad(view: MapView, x: number, y: number): { x: number; y: number }[] | null {

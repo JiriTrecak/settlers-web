@@ -15,11 +15,11 @@ Two masks, both relative to origin:
 
 Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot. Once any occupy disk exists, every protected tile must also be owned by the placing player.
 
-Flatten / diggers are skipped: if the land is legal types, it places, heights unchanged.
+Lumberjack has `flatten: true`. Target height is the integer mean of `protected`, frozen on the plan. Diggers (`ceil(n/15)`, 1s kneel, ±1) must finish before bricklayers. Already-level grass skips — constructs as before. Ghost is red on a slope; click still drops the plan. Mark > 127 refuses place. Other huts still ignore height. Dirt-as-a-good is later.
 
 ## Placement
 
-Build-strip click on empty valid **owned** land `enqueue`s a **plan** (scaffold) and drops the tool. Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
+Build-strip click on empty valid **owned** land `enqueue`s a **plan** (fence posts, no hut sprite) and drops the tool. Hover shows a ghost: posts + blocked-tile fill. Red if illegal (including off-land) or a flatten hut sits on uneven height — click still places if `canPlace`. Hidden while hovering an existing hut.
 
 `placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk — HQ at match start, and each T1 you construct from the strip. The play loop never uses `placeBuilding` for the strip.
 
@@ -31,11 +31,11 @@ plan  →  building  →  built
 
 | State | What you see | What happens |
 |---|---|---|
-| `plan` | Scaffold | Bearers haul `constructionStacks` up to each slot’s `required` |
-| `building` | Scaffold + finished sprite growing from the bottom | Bricklayers hammer. Matcher ignores this hut. |
+| `plan` | Fence posts + sign | Bearers haul `constructionStacks`. Flatten defs also wait for diggers. |
+| `building` | Scaffold grows 0–½, then the hut ½–1 | Bricklayers hammer. Matcher ignores this hut. |
 | `built` | Finished sprite | Worker occupy (if any). House starts spawning. Matcher uses `requestStacks`. |
 
-Grow mask is a 10-tooth saw edge, 5% of sprite height — progress is discrete hammer bumps, not a lerp.
+Grow mask is a 10-tooth saw edge, 5% of sprite height — scaffold first half, hut second. Discrete hammer bumps, not a lerp.
 
 ## Construction math
 
@@ -101,4 +101,4 @@ Click a hut, then **Delete** / **Backspace**. Instant: footprint gone, worker du
 
 ## Not yet
 
-Deconstruct-with-goods, other civilizations in a match, flatten before build, lookout / big tower, stock, temples, farms.
+Deconstruct-with-goods, other civilizations in a match, lookout / big tower, stock, temples, farms.

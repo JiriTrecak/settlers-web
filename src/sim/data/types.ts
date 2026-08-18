@@ -45,6 +45,11 @@ export type BuildingDef = {
   produceMs?: number;
   /** Finished building stamps a tower-radius occupy disk (HQ / military). */
   occupies?: boolean;
+  /**
+   * Diggers level `protected` to the integer mean height before bricklayers.
+   * Already-level plots skip. Omit → heights ignored (this slice: lumberjack only).
+   */
+  flatten?: boolean;
 };
 
 export type SettlerDef = {

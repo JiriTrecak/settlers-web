@@ -1,6 +1,7 @@
 /**
  * Hut sprites from catalog groups `buildings/{civ}/{kind}`.
- * `built` is the finished hut; `scaffold` is the plan (falls back to built).
+ * `built` is the finished hut; `scaffold` is the growing frame (falls back to built).
+ * Plan uses `props/site-post` + `props/site-sign` (file 1 seq 92/93).
  * Flags are `props/flag-door` / `props/flag-roof` (waving, torso = player tint).
  */
 import { buildings, type BuildingKind } from "../../sim/data/buildings";
@@ -13,13 +14,15 @@ export type BuildingSheet = {
 
 export type BuildingSheets = Partial<Record<BuildingKind, BuildingSheet>> & {
   flags: { door: PropFrame[]; roof: PropFrame[] };
+  sitePost: PropFrame | null;
+  siteSign: PropFrame | null;
 };
 
 export async function loadBuildingSheets(): Promise<BuildingSheets | null> {
   const sprites = await fetchCatalogSprites();
   if (!sprites) return null;
   try {
-    const out: BuildingSheets = { flags: { door: [], roof: [] } };
+    const out: BuildingSheets = { flags: { door: [], roof: [] }, sitePost: null, siteSign: null };
     for (const def of Object.values(buildings)) {
       const built = await loadGroup(sprites, def.sheet, "built");
       if (!built[0]) continue;
@@ -30,6 +33,14 @@ export async function loadBuildingSheets(): Promise<BuildingSheets | null> {
       door: await loadGroup(sprites, "props/flag-door"),
       roof: await loadGroup(sprites, "props/flag-roof"),
     };
+    out.sitePost =
+      (await loadGroup(sprites, "props/site-post"))[0] ??
+      (await loadGroup(sprites, "uncatalogued/settler/01/092"))[0] ??
+      null;
+    out.siteSign =
+      (await loadGroup(sprites, "props/site-sign"))[0] ??
+      (await loadGroup(sprites, "uncatalogued/settler/01/093"))[0] ??
+      null;
     return out;
   } catch {
     return null;

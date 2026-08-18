@@ -6,7 +6,8 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 
 | Type | Step | Notes |
 |---|---:|---|
-| Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / worker. |
+| Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / digger / worker. |
+| Digger | 450 ms | Temporary. 1s kneel, ±1 height toward the plan's frozen mean. Reverts. |
 | Pioneer | 450 ms | Controllable. `needsPlayersGround: false`. Kneel 1.2 s, take one unenforced tile. Convert from a bearer (C). Distinct walk/kneel clips. |
 | Lumberjack | 450 ms | Workplace. See [economy.md](economy.md). |
 | Forester | 450 ms | Workplace. |
@@ -43,7 +44,9 @@ A unit *has* a job; it does not implement the verb. Profession / matcher / const
 | `plant` | Forester | Stand, face nw, kneel 3 s, sapling on `y+1` |
 | `saw` | Sawmiller | Work-spot, 4.5 s, trunk → plank |
 | `build` | Bricklayer | Spot + facing from the def, 1 s swings |
+| `occupy` | Bearer | Walk to the door, become the worker |
 | `pioneer` | Pioneer | Walk to the click, then kneel 1.2 s per unenforced tile toward that target |
+| `flatten` | Digger | Walk onto the cell, kneel 1 s, ±1 toward the hut mean |
 
 Pickup / drop / deliver all share the bend clip.
 

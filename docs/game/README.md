@@ -14,8 +14,8 @@ Read these when you need the rules, timings, and “what does the player actuall
 
 ## In play now
 
-Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Pioneers claim unenforced tiles. Trees grow. HQ occupies a radius-40 disk; extra T1 towers extend it. You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). No flatten, no combat.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Pioneers claim unenforced tiles. Lumberjack plots flatten before bricklayers. Trees grow. HQ occupies a radius-40 disk; extra T1 towers extend it. You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). No combat.
 
 ## Not yet
 
-Flatten / diggers, goods priorities, other professions, soldiers, box select. F3 **claim** still stamps extra occupy disks.
+Goods priorities, other professions, soldiers, box select. Other huts do not flatten yet. F3 **claim** still stamps extra occupy disks.
