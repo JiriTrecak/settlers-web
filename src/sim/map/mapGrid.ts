@@ -25,6 +25,15 @@ export class MapGrid {
     this.heightmap = new Int8Array(n);
   }
 
+  /** Independent copy so replay seek can rebuild from the dump without mutating this one. */
+  clone(): MapGrid {
+    const copy = new MapGrid(this.width, this.height);
+    copy.landscape.set(this.landscape);
+    copy.heightmap.set(this.heightmap);
+    copy.revision = this.revision;
+    return copy;
+  }
+
   index(x: number, y: number): number {
     return y * this.width + x;
   }

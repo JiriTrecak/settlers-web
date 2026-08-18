@@ -43,6 +43,7 @@ export type HiddenTile = {
 export type FogView = {
   width: number;
   height: number;
+  player: number;
   generation: number;
   sightAt(x: number, y: number): number;
   isHidden(x: number, y: number): boolean;
@@ -106,6 +107,7 @@ export class FogGrid {
       return {
         width: w,
         height: h,
+        player,
         generation: 0,
         sightAt: () => 0,
         isHidden: () => false,
@@ -117,6 +119,7 @@ export class FogGrid {
     return {
       width: w,
       height: h,
+      player,
       generation: layer.generation,
       sightAt: (x, y) => (this.inBounds(x, y) ? (layer.sight[y * w + x] ?? 0) : 0),
       isHidden: (x, y) => this.inBounds(x, y) && layer.hidden[y * w + x] === 1,

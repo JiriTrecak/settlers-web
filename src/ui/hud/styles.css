@@ -278,6 +278,109 @@ body {
   color: #e8c36a;
 }
 
+.hud-replay {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(560px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.88);
+  box-shadow: 0 4px 18px #0008;
+}
+
+.hud-replay-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-replay-play {
+  appearance: none;
+  min-width: 64px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.55);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.hud-replay-play:hover,
+.hud-replay-play:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
+}
+
+.hud-replay-time {
+  flex: 1;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-replay-player {
+  appearance: none;
+  min-width: 96px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.55);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.hud-replay-player:hover,
+.hud-replay-player:focus {
+  outline: none;
+}
+
+.hud-replay-speeds {
+  display: flex;
+  gap: 4px;
+}
+
+.hud-replay-speeds button {
+  appearance: none;
+  min-width: 32px;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.55);
+  color: #e8e0d0;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+.hud-replay-speeds button:hover,
+.hud-replay-speeds button:focus {
+  border-color: rgba(232, 224, 208, 0.55);
+  outline: none;
+}
+
+.hud-replay-speeds button.is-selected {
+  border-color: #e8c36a;
+  color: #e8c36a;
+}
+
+.hud-replay-scrub {
+  width: 100%;
+  margin: 0;
+  accent-color: #e8c36a;
+  cursor: pointer;
+}
+
 .hud-build {
   pointer-events: auto;
   position: absolute;
@@ -343,6 +446,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.menu-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .menu-title {
@@ -446,4 +555,51 @@ body {
 .menu-color.is-selected {
   border-color: #e8c36a;
   box-shadow: 0 0 0 2px #0008, inset 0 0 0 1px #0006;
+}
+
+.menu-replay {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.menu-replay-pick {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.menu-replay-when {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+}
+
+.menu-replay-del {
+  pointer-events: auto;
+  appearance: none;
+  flex-shrink: 0;
+  border: 1px solid rgba(232, 224, 208, 0.28);
+  background: rgba(8, 14, 28, 0.82);
+  color: #e8b4a8;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.menu-replay-del:hover,
+.menu-replay-del:focus {
+  border-color: rgba(196, 80, 64, 0.55);
+  outline: none;
+}
+
+.menu-empty {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+  padding: 8px 0;
 }

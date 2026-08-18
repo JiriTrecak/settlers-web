@@ -21,7 +21,12 @@ export class MapSelect extends GameScreen {
 
   constructor(
     maps: readonly MapOption[],
-    hooks: { onBack: () => void; onPick: (id: string, player: number) => void; player?: number },
+    hooks: {
+      onBack: () => void;
+      onPick: (id: string, player: number) => void;
+      onReplays: () => void;
+      player?: number;
+    },
   ) {
     super("screen menu");
     this.player = clampPlayer(hooks.player ?? 0);
@@ -30,15 +35,23 @@ export class MapSelect extends GameScreen {
 
     const head = document.createElement("div");
     head.className = "menu-head";
+    const nav = document.createElement("div");
+    nav.className = "menu-head-row";
     const back = document.createElement("button");
     back.type = "button";
     back.className = "menu-back";
     back.textContent = "Back";
     back.addEventListener("click", hooks.onBack);
+    const replays = document.createElement("button");
+    replays.type = "button";
+    replays.className = "menu-back";
+    replays.textContent = "Replays";
+    replays.addEventListener("click", hooks.onReplays);
+    nav.append(back, replays);
     const title = document.createElement("h1");
     title.className = "menu-title";
     title.textContent = "Single player";
-    head.append(back, title);
+    head.append(nav, title);
 
     const colors = document.createElement("div");
     colors.className = "menu-colors";

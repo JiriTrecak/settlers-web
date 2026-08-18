@@ -10,11 +10,12 @@ alwaysApply: true
 `Session` exists only while a match is running, inside `PlayScreen`. `ScreenHost` shows exactly one `GameScreen`. `play(mapId)` shows a `PlayScreen`; Exit (confirm) replaces it.
 
 ```
-app/      Pixi boot, ScreenHost, ticker. Creates Session on demand.
-session/  One match: that map, input, widget subscriptions.
-sim/      Deterministic world. No Pixi, fetch, or DOM.
+app/      Pixi boot, ScreenHost, ticker. Creates Session on demand. Constructs Channel.
+session/  One match: that map, input, widget subscriptions. Talks to Lockstep, never a socket.
+sim/      Deterministic world. No Pixi, fetch, DOM, or net.
 render/   Pixi drawing. Reads views, does not mutate sim.
 ui/       DOM widgets and GameScreens. Own their DOM and input.
+net/      Channel + lockstep mailbox. No Pixi, no rules, no World.tick.
 ```
 
 ```ts

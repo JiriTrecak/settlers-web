@@ -46,6 +46,7 @@ export class Renderer {
   private cells: Uint32Array | null = null;
   private mapWidth = 0;
   private fogGen = -1;
+  private fogPlayer = -2;
   private fog: FogView | null = null;
   private fogOn = true;
   private terrainGen = -1;
@@ -227,6 +228,7 @@ export class Renderer {
   setShowFog(on: boolean): void {
     this.fogOn = on;
     this.fogGen = -1;
+    this.fogPlayer = -2;
   }
 
   /** Claim-tool hover: rim of the disk that a click would stamp. */
@@ -239,7 +241,8 @@ export class Renderer {
     const mesh = this.mesh;
     const cells = this.cells;
     const view = this.view;
-    if (!mesh || !cells || !view || this.fogGen === fog.generation) return;
+    if (!mesh || !cells || !view || (this.fogPlayer === fog.player && this.fogGen === fog.generation)) return;
+    this.fogPlayer = fog.player;
     this.fogGen = fog.generation;
     const fogAttr = mesh.geometry.attributes.aFog;
     const posAttr = mesh.geometry.attributes.aPosition;
@@ -341,6 +344,7 @@ export class Renderer {
     this.mapWidth = data.width;
     this.captureTerrain(view);
     this.fogGen = -1;
+    this.fogPlayer = -2;
     this.world.removeChildren();
     this.world.addChild(mesh, this.iso, this.select, this.ghostPlot.root, this.land.root, this.paths.root);
   }
@@ -383,6 +387,7 @@ function visibleMovables(movables: readonly MovableView[], fog: FogView): Movabl
 const CLEAR_FOG: FogView = {
   width: 0,
   height: 0,
+  player: -1,
   generation: 0,
   sightAt: () => FOG_VISIBLE,
   isHidden: () => false,

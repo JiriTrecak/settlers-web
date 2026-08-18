@@ -3,6 +3,16 @@ export { Session, type SessionConfig, type SessionHooks } from "./session/sessio
 export { Opponent, OPPONENT_CONVERT_TICK, OPPONENT_ENLIST_TICK, OPPONENT_TOWER_TICK } from "./opponent/opponent";
 export { MapInput } from "./input/mapInput";
 export {
+  DEFAULT_WORLD_SEED,
+  makeReplayFile,
+  parseReplayFile,
+  replayInfo,
+  replayPlayers,
+  type ReplayFile,
+  type ReplayInfo,
+} from "./replay/replay";
+export { ReplayStore } from "./replay/store";
+export {
   defaultMapId,
   FALLBACK_MAP_ID,
   fetchDumpedMap,

@@ -258,12 +258,13 @@ export class World {
 
   /**
    * Replay a log onto an empty world. Applies tick-0 actions, then ticks until
-   * the last logged beat (and no further).
+   * `untilTick` (or the last logged beat if omitted). Later actions stay pending.
    */
-  replay(entries: readonly LoggedAction[]): void {
+  replay(entries: readonly LoggedAction[], untilTick?: number): void {
     for (const e of entries) this.enqueue(e.action, e.tick);
     this.applyDue(this.clock.tickIndex);
-    const end = entries.reduce((m, e) => Math.max(m, e.tick), this.clock.tickIndex);
+    const last = entries.reduce((m, e) => Math.max(m, e.tick), this.clock.tickIndex);
+    const end = untilTick ?? last;
     while (this.clock.tickIndex < end) this.tick();
   }
 

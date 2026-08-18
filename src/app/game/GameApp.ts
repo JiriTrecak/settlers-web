@@ -3,8 +3,15 @@
  * Match state lives in `PlayScreen` → `Session`, not here.
  */
 import { Application } from "pixi.js";
-import { MainMenu, MapSelect, NoticeScreen, ScreenHost } from "../../ui";
-import { fetchMapCatalog, mapPickerOptions, type MapCatalogEntry } from "../../session";
+import { MainMenu, MapSelect, NoticeScreen, ReplaySelect, ScreenHost } from "../../ui";
+import {
+  fetchMapCatalog,
+  mapPickerOptions,
+  replayInfo,
+  ReplayStore,
+  type MapCatalogEntry,
+  type ReplayFile,
+} from "../../session";
 import { parseBootIntent } from "./bootIntent";
 import { PlayScreen } from "./playScreen";
 
@@ -15,6 +22,7 @@ export class GameApp {
   private screens: ScreenHost | null = null;
   private catalog: MapCatalogEntry[] = [];
   private player = 0;
+  private readonly replays = new ReplayStore();
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
 
@@ -74,9 +82,27 @@ export class GameApp {
       new MapSelect(mapPickerOptions(this.catalog), {
         player: this.player,
         onBack: () => this.showMenu(),
+        onReplays: () => this.showReplays(),
         onPick: (id, player) => {
           this.player = player;
           void this.play(id);
+        },
+      }),
+    );
+  }
+
+  private showReplays(): void {
+    this.playGen++;
+    this.screens?.show(
+      new ReplaySelect(this.replays.list().map(replayInfo), {
+        onBack: () => this.showMapSelect(),
+        onPick: (id) => {
+          const file = this.replays.get(id);
+          if (file) void this.playReplay(file);
+        },
+        onDelete: (id) => {
+          this.replays.remove(id);
+          this.showReplays();
         },
       }),
     );
@@ -94,11 +120,12 @@ export class GameApp {
   private async play(id: string): Promise<void> {
     if (!this.pixi || !this.screens) return;
     const current = this.screens.screen;
-    if (current instanceof PlayScreen && current.mapId === id) return;
+    if (current instanceof PlayScreen && current.mapId === id && current.replayId == null) return;
     const gen = ++this.playGen;
     const play = new PlayScreen(this.pixi, this.catalog, id, {
       player: this.player,
       onLeave: () => this.showMapSelect(),
+      onReplay: (file) => this.replays.save(file),
     });
     this.screens.show(play);
     try {
@@ -108,6 +135,24 @@ export class GameApp {
     } catch (err) {
       console.error(err);
       if (gen === this.playGen) this.showMapSelect();
+    }
+  }
+
+  private async playReplay(file: ReplayFile): Promise<void> {
+    if (!this.pixi || !this.screens) return;
+    const gen = ++this.playGen;
+    const play = new PlayScreen(this.pixi, this.catalog, file.mapId, {
+      player: file.me,
+      replay: file,
+      onLeave: () => this.showReplays(),
+    });
+    this.screens.show(play);
+    try {
+      await play.start();
+      if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+    } catch (err) {
+      console.error(err);
+      if (gen === this.playGen) this.showReplays();
     }
   }
 }

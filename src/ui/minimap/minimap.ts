@@ -101,6 +101,7 @@ export class Minimap {
   private view: MapView | null = null;
   private fog: FogView | null = null;
   private fogGen = -1;
+  private fogPlayer = -2;
   private dragging = false;
 
   constructor(host: HTMLElement, hooks: { onLookAt: (x: number, y: number) => void }) {
@@ -130,6 +131,7 @@ export class Minimap {
     }
     this.paintTerrain(view);
     this.fogGen = -1;
+    this.fogPlayer = -2;
     this.paintFog();
     this.blitTerrain();
   }
@@ -139,13 +141,15 @@ export class Minimap {
       if (this.fog === null && this.fogGen === -2) return;
       this.fog = null;
       this.fogGen = -2;
+      this.fogPlayer = -2;
       this.paintFog();
       this.blitTerrain();
       return;
     }
-    if (fog.generation === this.fogGen) return;
+    if (fog.player === this.fogPlayer && fog.generation === this.fogGen) return;
     this.fog = fog;
     this.fogGen = fog.generation;
+    this.fogPlayer = fog.player;
     this.paintFog();
     this.blitTerrain();
   }

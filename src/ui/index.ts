@@ -6,6 +6,8 @@ export { GameScreen, ScreenHost } from "./screen/screen";
 export { MainMenu, type MapOption, type MapOptionGroup } from "./menu/menu";
 export { MapSelect } from "./menu/mapSelect";
 export { NoticeScreen } from "./menu/notice";
+export { ReplaySelect, type ReplayOption } from "./menu/replaySelect";
+export { ReplayTimeline } from "./replay/timeline";
 export {
   Minimap,
   gridToMinimapPx,

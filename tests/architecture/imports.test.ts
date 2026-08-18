@@ -54,9 +54,9 @@ describe("architecture", () => {
 
   it("layer imports stay one-way", async () => {
     const bans: Record<string, string[]> = {
-      sim: ["pixi", "app", "session", "ui", "render"],
-      ui: ["pixi", "app", "session", "render"],
-      render: ["app", "session", "ui"],
+      sim: ["pixi", "app", "session", "ui", "render", "net"],
+      ui: ["pixi", "app", "session", "render", "net"],
+      render: ["app", "session", "ui", "net"],
       session: ["app"],
       app: ["sim", "render"],
     };

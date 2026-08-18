@@ -19,6 +19,8 @@ export type MapInputHooks = {
   onCommand(pos: GridPos | null, shift: boolean): void;
   onCameraChanged(): void;
   onFit(): void;
+  /** If set, Space calls this instead of fit (replay play/pause). */
+  onSpace?: () => void;
   onEscape(): void;
   onDelete(): void;
   onConvert(): void;
@@ -153,7 +155,8 @@ export class MapInput {
     this.keys.add(e.key.toLowerCase());
     if (e.key === " ") {
       e.preventDefault();
-      this.hooks.onFit();
+      if (this.hooks.onSpace) this.hooks.onSpace();
+      else this.hooks.onFit();
     }
     if (e.key === "Escape") {
       e.preventDefault();

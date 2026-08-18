@@ -16,6 +16,7 @@ This folder is **constraints + the next work**. How the match *behaves today* li
 | [ui.md](ui.md) | HTML chrome |
 | [assets.md](assets.md) | Dumped graphics, `original_conv` |
 | [testing.md](testing.md) | Vitest, architecture tests, replay |
+| [net.md](net.md) | Lockstep, Channel, MatchConfig. Read before sockets. |
 
 Session is documented under [`src/session/`](../../src/session/index.md), not here.
 
@@ -23,23 +24,23 @@ Session is documented under [`src/session/`](../../src/session/index.md), not he
 
 ```
 ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  render
-                   ▲                         ▲
-                   │                         │
-                 app (boot, ticker)       dumped graphics
+                   ▲  │
+                   │  └──► net (mailbox) ──► peer
+                 app (boot, Channel, ticker)    dumped graphics
 ```
 
-- `sim` never imports `pixi.js`. Enforced by test.
+- `sim` never imports `pixi.js` or `net`. Enforced by test.
 - `render` never mutates sim. It reads `ViewSnapshot`.
-- `session` is one match, inside `PlayScreen`. Lobby is a different screen.
+- `session` is one match, inside `PlayScreen`. Lobby is a different screen. Talks to Lockstep, never a socket.
 - `app` boots Pixi and pumps `session.tick`. No feature code.
 - Original `.dat` / `.map` stay in `original_conv`. `src` never imports it.
 - `ui` is HTML/CSS. Pixi draws the map only.
 
 ## Where we are
 
-Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten (lumberjack), land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat.
+Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten (lumberjack), land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat, match replay (store + scrubber).
 
-Not a game yet: no netcode. Other huts still ignore height.
+Not a game yet: no netcode. Architecture is locked in [net.md](net.md). Other huts still ignore height.
 
 Forward plan: **[P2.md](P2.md)**. Not more huts, not water, not sound.
 

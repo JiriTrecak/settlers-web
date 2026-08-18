@@ -1,6 +1,7 @@
 /**
  * One match: load map, subscribe widgets, tick renderer/input.
  * Lives inside `PlayScreen`. `stop()` tears down Pixi world + DOM widgets.
+ * Replay mode rebuilds World from the recorded log; Space is play/pause.
  */
 import type { Application, Texture } from "pixi.js";
 import { gridToWorld, type GridPos } from "../../shared";
@@ -28,15 +29,23 @@ import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets,
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, BuildMenu, debugFrom, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, BuildMenu, ReplayTimeline, debugFrom, type GameSpeed, type HudState } from "../../ui";
 import { MapInput } from "../input/mapInput";
 import { tilesAround, type ScreenPt } from "../input/boxSelect";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 import { Opponent } from "../opponent/opponent";
+import {
+  DEFAULT_WORLD_SEED,
+  makeReplayFile,
+  replayPlayers,
+  type ReplayFile,
+} from "../replay/replay";
 
 export type SessionHooks = {
   onHud(state: HudState): void;
   onClaiming?(on: boolean): void;
+  /** Live match: first Victory/Defeat. Not called in watch mode. */
+  onReplay?(file: ReplayFile): void;
 };
 
 export type SessionConfig = {
@@ -46,6 +55,8 @@ export type SessionConfig = {
   player: number;
   /** Colonies to stamp. Default: 2 when the map has 2+ starts, else 1. */
   players?: number;
+  /** Watch this file instead of playing. No commands, no opponent script. */
+  replay?: ReplayFile;
   hooks: SessionHooks;
 };
 
@@ -82,9 +93,16 @@ export class Session {
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
   private buildMenu: BuildMenu | null = null;
+  private timeline: ReplayTimeline | null = null;
   private input: MapInput | null = null;
   private acc = 0;
   private speed: GameSpeed = 1;
+  private paused = false;
+  private recorded = false;
+  private duration = 0;
+  private worldSeed = DEFAULT_WORLD_SEED;
+  private waves: MapDecoration[] = [];
+  private pristine: { grid: ReturnType<typeof generateMap>; objects: ObjectGrid } | null = null;
   private buildKind: BuildingKind | null = null;
   private hover: GridPos | null = null;
   private fps = 60;
@@ -104,6 +122,10 @@ export class Session {
     this.me = config.player;
   }
 
+  private get watching(): boolean {
+    return this.config.replay != null;
+  }
+
   async start(): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
@@ -120,22 +142,25 @@ export class Session {
     this.minimap = new Minimap(this.overlay, {
       onLookAt: (x, y) => this.lookAt(x, y),
     });
-    this.speedControl = new SpeedControl(this.overlay, {
-      onSpeed: (speed) => {
-        this.speed = speed;
-      },
-    });
-    this.buildMenu = new BuildMenu(this.overlay, {
-      onKind: (kind) => {
-        this.buildKind = kind;
-        if (kind && this.claiming) {
-          this.claiming = false;
-          this.renderer?.previewOccupy(null);
-          this.config.hooks.onClaiming?.(false);
-        }
-        this.syncGhost();
-      },
-    });
+    const watching = this.watching;
+    if (!watching) {
+      this.speedControl = new SpeedControl(this.overlay, {
+        onSpeed: (speed) => {
+          this.speed = speed;
+        },
+      });
+      this.buildMenu = new BuildMenu(this.overlay, {
+        onKind: (kind) => {
+          this.buildKind = kind;
+          if (kind && this.claiming) {
+            this.claiming = false;
+            this.renderer?.previewOccupy(null);
+            this.config.hooks.onClaiming?.(false);
+          }
+          this.syncGhost();
+        },
+      });
+    }
     this.input = new MapInput(this.pixi.canvas, renderer.camera, {
       pick: (screen) => renderer.pick(screen),
       onHover: (pos) => this.setHover(pos),
@@ -144,6 +169,7 @@ export class Session {
       onCommand: (pos, shift) => this.commandSelected(pos, shift),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
+      onSpace: watching ? () => this.setPlaying(this.paused) : undefined,
       onEscape: () => this.deselect(),
       onDelete: () => this.deleteSelected(),
       onConvert: () => this.convertSelected(),
@@ -152,37 +178,61 @@ export class Session {
 
     const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
     if (!this.renderer) return;
-    const world = new World(grid, objects);
+    this.waves = waves;
+    const file = this.config.replay;
+    this.worldSeed = file?.seed ?? DEFAULT_WORLD_SEED;
+    const world = new World(grid, objects, seedRng(this.worldSeed));
     this.world = world;
-    const n = this.config.players ?? (starts.length >= 2 ? 2 : 1);
-    const slots = matchStarts(starts, n, grid);
-    this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
-    if (n <= 1) {
-      world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me, swordsmen: KIT_SWORDSMEN_ME });
+    if (file) {
+      this.pristine = { grid: grid.clone(), objects: objects.clone() };
+      this.duration = file.duration;
+      this.me = file.me;
+      world.replay(file.log, 0);
+      this.timeline = new ReplayTimeline(
+        this.overlay,
+        {
+          onPlay: (playing) => this.setPlaying(playing),
+          onSeek: (tick) => this.seek(tick),
+          onSpeed: (speed) => {
+            this.speed = speed;
+            this.syncTimeline();
+          },
+          onPlayer: (player) => this.setViewPlayer(player),
+        },
+        { players: replayPlayers(file), player: this.me },
+      );
     } else {
-      for (let i = 0; i < n; i++) {
-        world.dispatch({
-          type: "placeColony",
-          at: slots[i]!,
-          player: i,
-          swordsmen: i === this.me ? KIT_SWORDSMEN_ME : KIT_SWORDSMEN_THEM,
-        });
-      }
-      for (let i = 0; i < n; i++) {
-        if (i === this.me) continue;
-        this.opponents.push(new Opponent(i, slots[i]!, slots[this.me]!));
+      const n = this.config.players ?? (starts.length >= 2 ? 2 : 1);
+      const slots = matchStarts(starts, n, grid);
+      this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
+      if (n <= 1) {
+        world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me, swordsmen: KIT_SWORDSMEN_ME });
+      } else {
+        for (let i = 0; i < n; i++) {
+          world.dispatch({
+            type: "placeColony",
+            at: slots[i]!,
+            player: i,
+            swordsmen: i === this.me ? KIT_SWORDSMEN_ME : KIT_SWORDSMEN_THEM,
+          });
+        }
+        for (let i = 0; i < n; i++) {
+          if (i === this.me) continue;
+          this.opponents.push(new Opponent(i, slots[i]!, slots[this.me]!));
+        }
       }
     }
-    this.view = mapViewFromGrid(grid);
+    this.view = mapViewFromGrid(world.grid);
     this.renderer.setView(this.view, waves, false);
     this.minimap.setView(this.view);
-    // Native 1× on the local HQ. Space still fits the whole map.
+    // Native 1× on the local HQ. Space still fits the whole map (live); replay uses Space for pause.
     this.renderer.camera.zoom = 1;
-    const look = n <= 1 ? slots[0]! : slots[this.me]!;
+    const look = this.startLook();
     this.lookAt(look.x, look.y);
     const snap = world.view(this.me);
     this.renderer.draw(snap, 0);
     this.minimap.setFog(this.showFog ? snap.fog : null);
+    this.syncTimeline();
     this.pushHud(snap, 16.67, 0, false, {
       simMs: 0,
       snapMs: 0,
@@ -196,19 +246,27 @@ export class Session {
     const renderer = this.renderer;
     const world = this.world;
     if (!renderer || !world) return;
-    this.acc += dtMs * this.speed;
+    if (!this.paused) this.acc += dtMs * this.speed;
     const step = world.clock.tickMs;
     // 8 ticks/frame at 1×, scaled so 8× can still catch a hitch without spiraling.
     const cap = 8 * this.speed;
     const phases = emptyTickTimings();
     const tSim = performance.now();
     let n = 0;
-    while (this.acc >= step && n < cap) {
+    while (!this.paused && this.acc >= step && n < cap) {
+      if (this.watching && world.clock.tickIndex >= this.duration) {
+        this.paused = true;
+        this.acc = 0;
+        break;
+      }
       this.acc -= step;
       world.tick(phases);
-      for (const opp of this.opponents) {
-        if (world.outcome?.winner != null || world.outcome?.defeated.includes(opp.player)) continue;
-        opp.onTick(world);
+      if (!this.watching) {
+        this.maybeRecord();
+        for (const opp of this.opponents) {
+          if (world.outcome?.winner != null || world.outcome?.defeated.includes(opp.player)) continue;
+          opp.onTick(world);
+        }
       }
       n++;
     }
@@ -231,6 +289,7 @@ export class Session {
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
     const miniMs = performance.now() - tMini;
+    this.syncTimeline();
     this.pushHud(snap, dtMs, n, n >= cap, { simMs, snapMs, drawMs, miniMs, phases });
   }
 
@@ -281,7 +340,7 @@ export class Session {
   /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). Every selected unit. */
   convertSelected(): void {
     const world = this.world;
-    if (!world || this.endedForMe()) return;
+    if (!world || !this.canCommand()) return;
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
@@ -293,7 +352,7 @@ export class Session {
   /** X: empty-handed bearer → L1 swordsman. Barracks later. Every selected bearer. */
   enlistSelected(): void {
     const world = this.world;
-    if (!world || this.endedForMe()) return;
+    if (!world || !this.canCommand()) return;
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
@@ -305,7 +364,7 @@ export class Session {
   /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
   deleteSelected(): void {
     const world = this.world;
-    if (!world || !this.selected || this.endedForMe()) return;
+    if (!world || !this.selected || !this.canCommand()) return;
     const hut = world.buildings.at(this.selected.x, this.selected.y);
     if (!hut || hut.player !== this.me) return;
     world.enqueue({ type: "destroyBuilding", at: this.selected });
@@ -314,6 +373,7 @@ export class Session {
   }
 
   setClaiming(on: boolean): void {
+    if (this.watching) return;
     this.claiming = on;
     if (on) {
       this.buildKind = null;
@@ -328,14 +388,17 @@ export class Session {
     this.minimap?.destroy();
     this.speedControl?.destroy();
     this.buildMenu?.destroy();
+    this.timeline?.destroy();
     this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
     this.speedControl = null;
     this.buildMenu = null;
+    this.timeline = null;
     this.renderer = null;
     this.world = null;
     this.opponents.length = 0;
+    this.pristine = null;
     this.view = null;
     this.acc = 0;
     this.hover = null;
@@ -411,13 +474,13 @@ export class Session {
   }
 
   private setSelect(pos: GridPos | null, add = false, screen?: ScreenPt): void {
-    if (!this.renderer || !this.world || this.endedForMe()) return;
+    if (!this.renderer || !this.world) return;
     if (this.claiming) {
-      if (pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
+      if (this.canCommand() && pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
       return;
     }
     const kind = this.buildKind;
-    if (kind && pos && this.world.canPlaceBuilding(kind, pos, this.me)) {
+    if (kind && pos && this.canCommand() && this.world.canPlaceBuilding(kind, pos, this.me)) {
       this.selected = pos;
       this.selectedUnitIds = [];
       this.syncSelectionVisual();
@@ -467,7 +530,7 @@ export class Session {
   private boxSelect(a: ScreenPt, b: ScreenPt): void {
     const world = this.world;
     const renderer = this.renderer;
-    if (!world || !renderer || this.endedForMe()) return;
+    if (!world || !renderer) return;
     this.selected = null;
     this.selectedUnitIds = renderer.unitsInBox(a, b).filter((id) => {
       const u = world.movable(id);
@@ -483,6 +546,10 @@ export class Session {
     return o.winner === this.me || o.defeated.includes(this.me);
   }
 
+  private canCommand(): boolean {
+    return !this.watching && !this.endedForMe();
+  }
+
   private hudOutcome(snap: ViewSnapshot): "victory" | "defeat" | null {
     const o = snap.outcome;
     if (!o) return null;
@@ -494,7 +561,7 @@ export class Session {
   /** RMB. Pioneers claim toward the tile; everyone else walks. Shift = forced. Group walk spreads onto nearby tiles. */
   private commandSelected(pos: GridPos | null, forced = false): void {
     const world = this.world;
-    if (!world || !pos || this.selectedUnitIds.length === 0 || this.endedForMe()) return;
+    if (!world || !pos || this.selectedUnitIds.length === 0 || !this.canCommand()) return;
     const walkers: number[] = [];
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
@@ -572,6 +639,113 @@ export class Session {
       return;
     }
     renderer.ghost(kind, pos, world.canPlaceBuilding(kind, pos, this.me) && world.plotLevel(kind, pos));
+  }
+
+  private startLook(): GridPos {
+    const file = this.config.replay;
+    if (file) {
+      for (const e of file.log) {
+        if (e.action.type === "placeColony" && (e.action.player ?? e.player) === this.me) return e.action.at;
+      }
+    }
+    const huts = this.world?.buildings.all() ?? [];
+    const hq = huts.find((b) => b.player === this.me && b.hq) ?? huts.find((b) => b.player === this.me);
+    return hq?.pos ?? { x: 0, y: 0 };
+  }
+
+  private setPlaying(playing: boolean): void {
+    if (!this.watching) return;
+    const world = this.world;
+    if (playing && world && world.clock.tickIndex >= this.duration) this.seek(0, false);
+    this.paused = !playing;
+    this.syncTimeline();
+  }
+
+  /** Jump to a beat. Backward rebuilds from the dump clone; forward ticks. Scrub pauses. */
+  private seek(tick: number, pause = true): void {
+    const world = this.world;
+    const file = this.config.replay;
+    const pristine = this.pristine;
+    const renderer = this.renderer;
+    if (!world || !file || !pristine || !renderer) return;
+    const to = Math.min(this.duration, Math.max(0, tick | 0));
+    if (pause) this.paused = true;
+    this.acc = 0;
+    if (to < world.clock.tickIndex) {
+      const next = new World(pristine.grid.clone(), pristine.objects.clone(), seedRng(this.worldSeed));
+      next.replay(file.log, to);
+      this.world = next;
+      this.view = mapViewFromGrid(next.grid);
+      renderer.setView(this.view, this.waves, false);
+      this.minimap?.setView(this.view);
+    } else {
+      while (world.clock.tickIndex < to) world.tick();
+    }
+    this.syncTimeline();
+    this.paintNow();
+  }
+
+  /** Fog, HUD, selection — everything that keys off the local slot. */
+  private setViewPlayer(player: number): void {
+    if (!this.watching || player === this.me) return;
+    this.me = player;
+    this.selected = null;
+    this.selectedUnitIds = [];
+    this.syncSelectionVisual();
+    this.syncTimeline();
+    const look = this.startLook();
+    this.lookAt(look.x, look.y);
+    this.paintNow();
+  }
+
+  private paintNow(): void {
+    const renderer = this.renderer;
+    const world = this.world;
+    if (!renderer || !world) return;
+    const snap = world.view(this.me);
+    renderer.setSelected(this.selectedUnitIds);
+    renderer.draw(snap, 0);
+    this.paintHutSelect();
+    if (this.view && this.minimap) {
+      this.minimap.setFog(this.showFog ? snap.fog : null);
+      this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
+    }
+    this.pushHud(snap, 16.67, 0, false, {
+      simMs: 0,
+      snapMs: 0,
+      drawMs: 0,
+      miniMs: 0,
+      phases: emptyTickTimings(),
+    });
+  }
+
+  private syncTimeline(): void {
+    const world = this.world;
+    if (!this.timeline || !world) return;
+    this.timeline.setPlayback(world.clock.tickIndex, this.duration, !this.paused, this.speed, this.me);
+  }
+
+  private maybeRecord(): void {
+    if (this.watching || this.recorded) return;
+    const world = this.world;
+    if (!world?.outcome) return;
+    this.recorded = true;
+    const file = makeReplayFile({
+      mapId: this.mapId,
+      mapName: this.mapLabel(),
+      seed: this.worldSeed,
+      me: this.me,
+      world,
+    });
+    if (file) this.config.hooks.onReplay?.(file);
+  }
+
+  private mapLabel(): string {
+    return (
+      this.config.catalog.find((m) => m.id === this.mapId)?.name ??
+      MAPS.find((m) => m.id === this.mapId)?.name ??
+      this.mapId
+    );
   }
 
   /** Procedural `MAPS` first; otherwise a dumped JSON from `/maps`. */

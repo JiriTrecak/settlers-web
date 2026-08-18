@@ -7,6 +7,7 @@ import type { ViewSnapshot } from "../../src/sim/world/world";
 const fog: FogView = {
   width: 1,
   height: 1,
+  player: 0,
   generation: 0,
   sightAt: () => 100,
   isHidden: () => false,

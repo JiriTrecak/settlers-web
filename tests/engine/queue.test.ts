@@ -66,8 +66,7 @@ describe("checksum", () => {
     a.enqueue({ type: "placeBuilding", kind: "lumberjack", at: { x: 20, y: 40 }, player: 0 }, 20);
     run(a, 80);
     const b = kit();
-    b.replay(a.log());
-    while (b.clock.tickIndex < a.clock.tickIndex) b.tick();
+    b.replay(a.log(), a.clock.tickIndex);
     expect(b.checksum()).toBe(a.checksum());
   });
 });

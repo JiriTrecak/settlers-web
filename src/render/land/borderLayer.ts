@@ -24,6 +24,7 @@ export class BorderLayer {
   private view: MapView | null = null;
   private painted = -1;
   private fogPainted = -1;
+  private fogPlayer = -2;
   private readonly posts = new Map<string, Post>();
 
   constructor(private readonly parent: Container) {}
@@ -36,6 +37,7 @@ export class BorderLayer {
     this.view = view;
     this.painted = -1;
     this.fogPainted = -1;
+    this.fogPlayer = -2;
   }
 
   draw(land: LandView | undefined, fog?: FogView): void {
@@ -46,9 +48,11 @@ export class BorderLayer {
       return;
     }
     const fogGen = fog?.generation ?? -1;
-    if (this.painted === land.generation && this.fogPainted === fogGen) return;
+    const fogPlayer = fog?.player ?? -2;
+    if (this.painted === land.generation && this.fogPainted === fogGen && this.fogPlayer === fogPlayer) return;
     this.painted = land.generation;
     this.fogPainted = fogGen;
+    this.fogPlayer = fogPlayer;
     const want = new Set<string>();
     const w = land.width;
     const h = land.height;
@@ -127,5 +131,6 @@ export class BorderLayer {
     this.posts.clear();
     this.painted = -1;
     this.fogPainted = -1;
+    this.fogPlayer = -2;
   }
 }

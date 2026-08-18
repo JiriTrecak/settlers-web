@@ -9,9 +9,10 @@ Headless game. No Pixi. No DOM. Deterministic.
 `World` is the match: clock, grid, objects, buildings, land, fog, marks, movables, seeded RNG.
 
 - `tick()` — increment clock, apply due actions, then one 25 ms beat (see gameloop).
-- `enqueue(action, tick?)` — play-loop mutation. Default tick is `tickIndex + 1`. Due-or-past applies immediately.
-- `dispatch(action)` — test helper: enqueue for *now*. Session uses this for `placeColony` per slot at start.
-- `checksum()` / `log()` / `replay(log)` — lockstep shape. Fog is not in the mix.
+- `enqueue(action, tick?)` — play-loop mutation. Default tick is `tickIndex + 1` until Lockstep lands, then `tickIndex + D`. Due-or-past applies immediately. Envelope `player` + `seq` once net hygiene lands; reject commands on foreign units.
+- `dispatch(action)` — test helper: enqueue for *now*. Session uses this for tick-0 `placeColony` per `MatchConfig` slot, not as a wire message.
+- `checksum()` / `log()` — lockstep mix. Fog is not in it. Seed comes from `MatchConfig`, not a hardcoded `1` in the play loop.
+- `replay(log, untilTick?)` — re-enqueue onto an empty world, then tick until `untilTick` (default: last logged beat). Duration is what playback needs; last action is not the end of the match.
 - `view(player)` — snapshot for render (fog is that player's).
 
 `Action` is a discriminated union in `shared`. Grow it; don't add parallel back doors.
@@ -42,3 +43,4 @@ Already in: per-player matcher, construction, occupy disks, per-player fog (snap
 - Making the bearer-job system "simpler." Same rules, clean implementation.
 - Behavior-tree packages. Professions are functions that assign jobs; `tickJob` runs the verb.
 - A* until BFS is the bottleneck (it isn't).
+- Sockets, `fetch`, or waiting on a Channel inside `World.tick()`. The gate lives in Session. See [net.md](net.md).

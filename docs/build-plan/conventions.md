@@ -31,11 +31,13 @@ Domain words: `Movable`, `Bearer`, `Pioneer`, `Landscape`, fog, land. Keep them.
 | `GridPos` | `{ readonly x: number; readonly y: number }` |
 | `LandscapeType` | String union |
 | `Direction` | 6 hex dirs. Deltas in `shared`. |
-| `MatchConfig` | Injected. No process-wide statics. |
+| `MatchConfig` | Injected (`mapId`, `seed`, `delay`, `slots`). No process-wide statics. See [net.md](net.md). |
+| `Bundle` | `{ tick, player, actions }` for one slot on one beat. Empty `actions` is a confirm. |
 
 ## Constants
 
 - Tick: `25` ms (`Clock.tickMs`)
+- Command delay: `8` ticks (`200` ms). Same in SP once Lockstep exists. Tests may use `1`.
 - Iso: `tileWidth = 16`, `tileHeight = 9`; height displacement `2` px per step
 - Landscape atlas: `1024`, grid `32`
 - FOW: visible `100`, explored `50`, dim `30` / s
@@ -52,10 +54,11 @@ Original `.map` bytes and DAT indices are ordered tables. **Never** use TS enum 
 
 ```
 sim      → shared
+net      → shared
 render   → shared, sim (views/types), pixi.js
 ui       → shared, sim (views/types)
-session  → sim, render, ui, shared, pixi.js
-app      → session, ui, pixi.js
+session  → sim, render, ui, shared, net, pixi.js
+app      → session, ui, net, pixi.js
 original_conv → may import src types; src never imports original_conv
 ```
 

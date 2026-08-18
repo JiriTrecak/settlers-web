@@ -26,16 +26,17 @@ npm run build
 
 ## Architecture (enforced)
 
-- `src/sim` must not import `pixi.js` / `app` / `session` / `ui` / `render`
+- `src/sim` must not import `pixi.js` / `app` / `session` / `ui` / `render` / `net`
+- `src/net` must not import `pixi.js` / `app` / `session` / `ui` / `render` / `sim` (when the folder exists)
 - `src` must not import `original_conv`
-- `ui` must not import pixi / `app` / `session` / `render`
-- `render` must not import `app` / `session` / `ui`
+- `ui` must not import pixi / `app` / `session` / `render` / `net`
+- `render` must not import `app` / `session` / `ui` / `net`
 - `session` must not import `app`
 - Sources must not name a foreign engine
 
 ## P2
 
-Replay / checksum tests live under `tests/engine/` (`queue.test.ts`). Same seed + same action log ⇒ same `World.checksum()` at tick N.
+Replay / checksum tests live under `tests/engine/` (`queue.test.ts`, `replay.test.ts`). Same seed + same action log + duration ⇒ same `World.checksum()` at tick N. Lockstep CI (two Worlds, `LocalChannel`) lands with `src/net`, not before. See [net.md](net.md).
 
 ## What not to test
 

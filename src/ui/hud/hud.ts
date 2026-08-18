@@ -20,6 +20,8 @@ export type HudHooks = {
   onShowOwnership?: (on: boolean) => void;
   onShowFog?: (on: boolean) => void;
   onClaim?: (on: boolean) => void;
+  /** Watch mode: no claim cheat. */
+  replay?: boolean;
 };
 
 export class Hud {
@@ -83,7 +85,8 @@ export class Hud {
     this.claimToggle = optButton("claim", "Click a cell to stamp a tower-radius occupy disk", () => {
       this.setClaiming(!this.claiming);
     });
-    opts.append(this.fogToggle, this.pathToggle, this.ownershipToggle, this.claimToggle);
+    if (hooks.replay) opts.append(this.fogToggle, this.pathToggle, this.ownershipToggle);
+    else opts.append(this.fogToggle, this.pathToggle, this.ownershipToggle, this.claimToggle);
 
     this.dump = document.createElement("pre");
     this.dump.className = "hud-debug-dump";

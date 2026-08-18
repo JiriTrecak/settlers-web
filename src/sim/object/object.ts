@@ -41,6 +41,13 @@ export class ObjectGrid {
     this.at = new Int32Array(width * height);
   }
 
+  /** Independent copy. Replay seek rebuilds World from this snapshot, then ticks forward. */
+  clone(): ObjectGrid {
+    const copy = new ObjectGrid(this.width, this.height);
+    for (const obj of this.all()) copy.place({ ...obj });
+    return copy;
+  }
+
   private index(x: number, y: number): number {
     return y * this.width + x;
   }

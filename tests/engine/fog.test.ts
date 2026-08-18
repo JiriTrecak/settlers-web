@@ -107,6 +107,21 @@ describe("world fog", () => {
     expect(world.view(0).fog.sightAt(90, 40)).toBe(100);
   });
 
+  it("two snapped colonies share generation so views key by player", () => {
+    const world = new World(grass(160, 80));
+    world.dispatch({ type: "placeColony", at: { x: 16, y: 20 }, player: 0 });
+    world.dispatch({ type: "placeColony", at: { x: 90, y: 20 }, player: 1 });
+    const a = world.view(0).fog;
+    const b = world.view(1).fog;
+    expect(a.player).toBe(0);
+    expect(b.player).toBe(1);
+    expect(a.generation).toBe(b.generation);
+    expect(a.sightAt(16, 20)).toBe(100);
+    expect(a.sightAt(90, 20)).toBe(0);
+    expect(b.sightAt(90, 20)).toBe(100);
+    expect(b.sightAt(16, 20)).toBe(0);
+  });
+
   it("units light a disk of 8 even with no hut", () => {
     const world = new World(grass(80, 80));
     world.spawnBearer({ x: 40, y: 40 });
