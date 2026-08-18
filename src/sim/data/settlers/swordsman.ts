@@ -1,6 +1,6 @@
 /**
  * Roman L1 swordsman. Walks off own land, auto-aggro 30, melee 1 hex / 1s.
- * Kit has none; enlist a bearer (X). Barracks later.
+ * Local kit 8, opponent 3. Barracks later.
  */
 import type { SettlerDef } from "../types";
 

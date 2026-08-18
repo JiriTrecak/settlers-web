@@ -16,6 +16,8 @@ import {
   matchStarts,
   emptyTickTimings,
   isControllable,
+  KIT_SWORDSMEN_ME,
+  KIT_SWORDSMEN_THEM,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -156,9 +158,16 @@ export class Session {
     const slots = matchStarts(starts, n, grid);
     this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
     if (n <= 1) {
-      world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me });
+      world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me, swordsmen: KIT_SWORDSMEN_ME });
     } else {
-      for (let i = 0; i < n; i++) world.dispatch({ type: "placeColony", at: slots[i]!, player: i });
+      for (let i = 0; i < n; i++) {
+        world.dispatch({
+          type: "placeColony",
+          at: slots[i]!,
+          player: i,
+          swordsmen: i === this.me ? KIT_SWORDSMEN_ME : KIT_SWORDSMEN_THEM,
+        });
+      }
       for (let i = 0; i < n; i++) {
         if (i === this.me) continue;
         this.opponents.push(new Opponent(i, slots[i]!, slots[this.me]!));

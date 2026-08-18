@@ -443,7 +443,7 @@ export class World {
   private applyAction(action: Action): void {
     if (action.type === "noop") return;
     if (action.type === "placeColony") {
-      placeColony(this, action.at, action.player ?? 0);
+      placeColony(this, action.at, action.player ?? 0, action.swordsmen);
       return;
     }
     if (action.type === "placeBuilding") {

@@ -12,7 +12,7 @@ On match start (`placeColony` action), at each player slot's `starts[i]`:
 - Small house nearby (finished)
 - Low-goods piles in a spiral around HQ, skipping protected tiles
 - **16** jobless bearers in that same spiral
-- **5** more L1 swordsmen in that spiral (6 infantry total). They occupy extra towers.
+- **7** more L1 swordsmen in that spiral for the local slot (**8** infantry total). The script opponent gets **2** extra (**3** total). They occupy extra towers.
 
 Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kneel-claim). **C** again on own land → bearer. **X** enlists a bearer as L1.
 

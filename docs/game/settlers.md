@@ -9,7 +9,7 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 | Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / digger / worker / pioneer / swordsman. Not selectable. Not a combat target. |
 | Digger | 450 ms | Temporary. 1s kneel, ±1 height toward the plan's frozen mean. Reverts. |
 | Pioneer | 450 ms | Controllable. `needsPlayersGround: false`. Kneel 1.2 s, take one unenforced tile. Convert from a bearer (C). Attackable, strength 0. Distinct walk/kneel clips. |
-| Swordsman | 338 ms | L1. Controllable. Walks off own land. Auto-aggro hex 30, melee 1 / 1s / 10 dmg / 100 hp. Occupies T1 (1 slot). Enlist a bearer (X). Kit has 6. |
+| Swordsman | 338 ms | L1. Controllable. Walks off own land. Auto-aggro hex 30, melee 1 / 1s / 10 dmg / 100 hp. Occupies T1 (1 slot). Enlist a bearer (X). You get 8, opponent 3. |
 | Lumberjack | 450 ms | Workplace. See [economy.md](economy.md). |
 | Forester | 450 ms | Workplace. |
 | Stonecutter | 450 ms | Workplace. |
