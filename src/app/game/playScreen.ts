@@ -22,6 +22,7 @@ export class PlayScreen extends GameScreen {
       onLeave: hooks.onLeave,
       onShowPaths: (on) => this.session.setShowPaths(on),
       onShowOwnership: (on) => this.session.setShowOwnership(on),
+      onShowFog: (on) => this.session.setShowFog(on),
       onClaim: (on) => this.session.setClaiming(on),
     });
     this.session = new Session(pixi, this.root, {

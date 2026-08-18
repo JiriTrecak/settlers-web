@@ -1,6 +1,6 @@
 /**
  * Pixi world: landscape mesh, decorations, buildings, placement ghost, hover/select, camera.
- * Reads `MapView`; never writes sim. Debug path / ownership overlays are HUD toggles.
+ * Reads `MapView`; never writes sim. Debug path / ownership / fog overlays are HUD toggles.
  */
 import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
 import { gridToWorld, pickCell, type GridPos } from "../../shared";
@@ -47,6 +47,7 @@ export class Renderer {
   private mapWidth = 0;
   private fogGen = -1;
   private fog: FogView | null = null;
+  private fogOn = true;
   private readonly hover = new Graphics();
   private readonly select = new Graphics();
 
@@ -142,15 +143,16 @@ export class Renderer {
 
   /** Movables + map objects from the last sim snapshot. `alpha` is leftover ms into the next tick. */
   draw(snapshot: ViewSnapshot, alpha: number): void {
-    this.fog = snapshot.fog;
-    this.applyLandscapeFog(snapshot.fog);
-    this.decorations.setFog(snapshot.fog);
-    this.decorations.syncObjects(visibleObjects(snapshot));
-    this.buildings.sync(visibleBuildings(snapshot), snapshot.fog);
-    this.settlers.draw(visibleMovables(snapshot.movables, snapshot.fog), alpha, snapshot.fog);
+    const fog = this.fogOn ? snapshot.fog : CLEAR_FOG;
+    this.fog = this.fogOn ? snapshot.fog : null;
+    this.applyLandscapeFog(fog);
+    this.decorations.setFog(this.fog);
+    this.decorations.syncObjects(visibleObjects(snapshot, fog));
+    this.buildings.sync(visibleBuildings(snapshot, fog), fog);
+    this.settlers.draw(visibleMovables(snapshot.movables, fog), alpha, fog);
     this.paths.draw(snapshot.movables, alpha);
     this.land.draw(snapshot.land);
-    this.borders.draw(snapshot.land, snapshot.fog);
+    this.borders.draw(snapshot.land, this.fogOn ? fog : undefined);
   }
 
   applyCamera(): void {
@@ -210,6 +212,12 @@ export class Renderer {
     this.land.setOn(on);
   }
 
+  /** Fog of war. Off = full sight. Sticky like paths. Default on. */
+  setShowFog(on: boolean): void {
+    this.fogOn = on;
+    this.fogGen = -1;
+  }
+
   /** Claim-tool hover: rim of the disk that a click would stamp. */
   previewOccupy(pos: GridPos | null, player = 0): void {
     this.land.setPreview(pos, player);
@@ -238,8 +246,7 @@ export class Renderer {
   }
 }
 
-function visibleObjects(snapshot: ViewSnapshot): MapObjectView[] {
-  const fog = snapshot.fog;
+function visibleObjects(snapshot: ViewSnapshot, fog: FogView): MapObjectView[] {
   const out: MapObjectView[] = [];
   for (const o of snapshot.objects) {
     if (fog.sightAt(o.x, o.y) === 0 || fog.isHidden(o.x, o.y)) continue;
@@ -251,8 +258,7 @@ function visibleObjects(snapshot: ViewSnapshot): MapObjectView[] {
   return out;
 }
 
-function visibleBuildings(snapshot: ViewSnapshot): BuildingView[] {
-  const fog = snapshot.fog;
+function visibleBuildings(snapshot: ViewSnapshot, fog: FogView): BuildingView[] {
   const out: BuildingView[] = [];
   for (const b of snapshot.buildings) {
     if (fog.sightAt(b.x, b.y) === 0 || fog.isHidden(b.x, b.y)) continue;
@@ -267,3 +273,15 @@ function visibleBuildings(snapshot: ViewSnapshot): BuildingView[] {
 function visibleMovables(movables: readonly MovableView[], fog: FogView): MovableView[] {
   return movables.filter((m) => fog.isClear(m.pos.x, m.pos.y));
 }
+
+/** Debug cheat: every tile fully lit, no snapshots. */
+const CLEAR_FOG: FogView = {
+  width: 0,
+  height: 0,
+  generation: 0,
+  sightAt: () => FOG_VISIBLE,
+  isHidden: () => false,
+  hiddenAt: () => undefined,
+  forEachHidden: () => undefined,
+  isClear: () => true,
+};

@@ -135,8 +135,16 @@ export class Minimap {
   }
 
   setFog(fog: FogView | null): void {
+    if (!fog) {
+      if (this.fog === null && this.fogGen === -2) return;
+      this.fog = null;
+      this.fogGen = -2;
+      this.paintFog();
+      this.blitTerrain();
+      return;
+    }
+    if (fog.generation === this.fogGen) return;
     this.fog = fog;
-    if (!fog || fog.generation === this.fogGen) return;
     this.fogGen = fog.generation;
     this.paintFog();
     this.blitTerrain();

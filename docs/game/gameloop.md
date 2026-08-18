@@ -56,7 +56,7 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Click an existing hut | Select it (highlight origin) |
 | Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
-| F3 | Debug overlay (paths / ownership / claim) |
+| F3 | Debug overlay (fog / paths / ownership / claim) |
 | Escape | Deselect: build ghost, then claim tool, then hut |
 | Exit | Confirm, then leave to map select |
 

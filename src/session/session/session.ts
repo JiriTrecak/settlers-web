@@ -81,6 +81,7 @@ export class Session {
   private fps = 60;
   private showPaths = false;
   private showOwnership = false;
+  private showFog = true;
   private claiming = false;
 
   constructor(
@@ -101,6 +102,7 @@ export class Session {
     renderer.setSettlerSheets(settlers);
     renderer.setShowPaths(this.showPaths);
     renderer.setShowOwnership(this.showOwnership);
+    renderer.setShowFog(this.showFog);
 
     // Widgets own their input; we only subscribe.
     this.minimap = new Minimap(this.overlay, {
@@ -146,7 +148,7 @@ export class Session {
     this.lookAt(start.x, start.y);
     const snap = world.view(this.config.player);
     this.renderer.draw(snap, 0);
-    this.minimap.setFog(snap.fog);
+    this.minimap.setFog(this.showFog ? snap.fog : null);
     this.pushHud(snap, 16.67, 0, false);
   }
 
@@ -171,7 +173,7 @@ export class Session {
     this.input?.tick(dtMs);
     this.pushHud(snap, dtMs, n, n >= cap);
     if (this.view && this.minimap) {
-      this.minimap.setFog(snap.fog);
+      this.minimap.setFog(this.showFog ? snap.fog : null);
       this.minimap.setCamera(renderer.camera, this.pixi.renderer.width, this.pixi.renderer.height);
     }
   }
@@ -187,6 +189,13 @@ export class Session {
     this.renderer?.setShowOwnership(on);
     if (!on) this.renderer?.previewOccupy(null);
     else if (this.claiming) this.renderer?.previewOccupy(this.hover, this.config.player);
+  }
+
+  setShowFog(on: boolean): void {
+    this.showFog = on;
+    this.renderer?.setShowFog(on);
+    const world = this.world;
+    if (this.minimap && world) this.minimap.setFog(on ? world.view(this.config.player).fog : null);
   }
 
   /** Esc: drop the build ghost, then the claim tool, then the hut highlight. */

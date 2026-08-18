@@ -1,5 +1,5 @@
 /**
- * Walkability + BFS on the diamond grid. Phase 4 pathing — A* comes later.
+ * Walkability + BFS on the diamond grid.
  * Trees/stones block via `ObjectGrid`.
  */
 import { HEX_DELTAS, isRiver, isWater, type GridPos } from "../../shared";

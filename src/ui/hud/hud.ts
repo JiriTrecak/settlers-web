@@ -17,6 +17,7 @@ export type HudHooks = {
   onLeave: () => void;
   onShowPaths?: (on: boolean) => void;
   onShowOwnership?: (on: boolean) => void;
+  onShowFog?: (on: boolean) => void;
   onClaim?: (on: boolean) => void;
 };
 
@@ -28,14 +29,15 @@ export class Hud {
   private readonly dump: HTMLPreElement;
   private readonly pathToggle: HTMLButtonElement;
   private readonly ownershipToggle: HTMLButtonElement;
+  private readonly fogToggle: HTMLButtonElement;
   private readonly claimToggle: HTMLButtonElement;
-  private readonly help: HTMLDivElement;
   private readonly exit: HTMLButtonElement;
   private confirm: HTMLDivElement | null = null;
   private readonly hooks: HudHooks;
   private open = false;
   private showPaths = false;
   private showOwnership = false;
+  private showFog = true;
   private claiming = false;
   private last: HudState = { cursor: null, landscape: null, height: null, zoom: 1 };
   private fpsShown = 60;
@@ -61,6 +63,11 @@ export class Hud {
 
     const opts = document.createElement("div");
     opts.className = "hud-debug-opts";
+    this.fogToggle = optButton("fog", "Fog of war (off = see everything)", () => {
+      this.showFog = !this.showFog;
+      this.syncOpts();
+      hooks.onShowFog?.(this.showFog);
+    });
     this.pathToggle = optButton("paths", "Draw remaining walk queues", () => {
       this.showPaths = !this.showPaths;
       this.syncOpts();
@@ -74,16 +81,11 @@ export class Hud {
     this.claimToggle = optButton("claim", "Click a cell to stamp a tower-radius occupy disk", () => {
       this.setClaiming(!this.claiming);
     });
-    opts.append(this.pathToggle, this.ownershipToggle, this.claimToggle);
+    opts.append(this.fogToggle, this.pathToggle, this.ownershipToggle, this.claimToggle);
 
     this.dump = document.createElement("pre");
     this.dump.className = "hud-debug-dump";
     this.panel.append(opts, this.dump);
-
-    this.help = document.createElement("div");
-    this.help.className = "hud-help";
-    this.help.textContent =
-      "pick a hut, click to place  ·  click hut, del to destroy  ·  drag / WASD  ·  wheel zoom  ·  space fit  ·  esc deselect  ·  F3 debug";
 
     this.exit = document.createElement("button");
     this.exit.type = "button";
@@ -92,7 +94,7 @@ export class Hud {
     this.exit.title = "Leave this match";
     this.exit.addEventListener("click", () => this.askLeave());
 
-    host.append(this.stats, this.toggle, this.panel, this.help, this.exit);
+    host.append(this.stats, this.toggle, this.panel, this.exit);
     window.addEventListener("keydown", this.onKey);
     this.syncOpts();
   }
@@ -130,7 +132,6 @@ export class Hud {
     this.stats.remove();
     this.toggle.remove();
     this.panel.remove();
-    this.help.remove();
     this.exit.remove();
   }
 
@@ -207,6 +208,7 @@ export class Hud {
   }
 
   private syncOpts(): void {
+    this.fogToggle.classList.toggle("is-selected", this.showFog);
     this.pathToggle.classList.toggle("is-selected", this.showPaths);
     this.ownershipToggle.classList.toggle("is-selected", this.showOwnership);
     this.claimToggle.classList.toggle("is-selected", this.claiming);

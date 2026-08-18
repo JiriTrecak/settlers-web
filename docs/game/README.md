@@ -1,6 +1,6 @@
 # Game
 
-How the match *behaves* as implemented. Not the build plan (`docs/build-plan/`) and not the per-folder code notes (`src/**/*.md`).
+How the match *behaves* as implemented. Not the build plan (`docs/build-plan/` — next work is [`P2.md`](../build-plan/P2.md)) and not the per-folder code notes (`src/**/*.md`).
 
 Read these when you need the rules, timings, and “what does the player actually get.”
 
