@@ -1,8 +1,8 @@
 /**
- * Other slots: every ~5s enqueue the same Actions a human would click.
+ * Other slots: every ~5s send the same Actions a human would click.
  * Economy first (lumberjack → sawmill → stonecutter), then extra towers toward the local HQ.
  */
-import { hexDist, type GridPos } from "../../shared";
+import { hexDist, type Action, type GridPos } from "../../shared";
 import type { BuildingKind, World } from "../../sim";
 
 /** First think (~2s at 25ms). */
@@ -19,9 +19,10 @@ export class Opponent {
     readonly player: number,
     private readonly home: GridPos,
     private readonly toward: GridPos,
+    private readonly send: (action: Action) => void,
   ) {}
 
-  /** Call after `world.tick()`. Enqueues for the next beat. */
+  /** Call after `world.tick()`. Sends for this slot's next confirm (tick + D). */
   onTick(world: World): void {
     const t = world.clock.tickIndex;
     if (t < OPPONENT_START_TICK) return;
@@ -50,15 +51,15 @@ export class Opponent {
     if (snap.movables.some((m) => m.player === this.player && m.type === "pioneer")) return false;
     const id = this.idleBearerId(world);
     if (id == null) return false;
-    world.enqueue({ type: "convert", id, to: "pioneer" });
-    world.enqueue({ type: "pioneerWork", id, to: this.toward });
+    this.send({ type: "convert", id, to: "pioneer" });
+    this.send({ type: "pioneerWork", id, to: this.toward });
     return true;
   }
 
   private nudgePioneer(world: World): void {
     for (const v of world.view(this.player).movables) {
       if (v.player !== this.player || v.type !== "pioneer" || v.job) continue;
-      world.enqueue({ type: "pioneerWork", id: v.id, to: this.toward });
+      this.send({ type: "pioneerWork", id: v.id, to: this.toward });
     }
   }
 
@@ -66,7 +67,7 @@ export class Opponent {
     const at = this.seedFor(world, kind);
     const pos = findPlace(world, kind, at, this.player) ?? findPlace(world, kind, this.home, this.player);
     if (!pos) return;
-    world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.player });
+    this.send({ type: "placeBuilding", kind, at: pos, player: this.player });
   }
 
   private seedFor(world: World, kind: BuildingKind): GridPos {

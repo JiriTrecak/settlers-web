@@ -1,0 +1,65 @@
+/**
+ * In-process MatchHost room: collect `through` from every playing slot, emit `commit`.
+ * MemoryChannel is this Room with no listen port. Node later binds the same class to WS.
+ */
+import type { Action, Bundle, MatchConfig, ServerMsg } from "../shared";
+
+export class Room {
+  private readonly through = new Map<number, number>();
+  private readonly held = new Map<number, Map<number, Action[]>>();
+  private committed = 0;
+  private readonly listeners: Array<(msg: ServerMsg) => void> = [];
+
+  constructor(readonly config: MatchConfig) {
+    for (const slot of config.slots) {
+      this.through.set(slot.player, 0);
+      this.held.set(slot.player, new Map());
+    }
+  }
+
+  subscribe(fn: (msg: ServerMsg) => void): () => void {
+    this.listeners.push(fn);
+    return () => {
+      const i = this.listeners.indexOf(fn);
+      if (i >= 0) this.listeners.splice(i, 1);
+    };
+  }
+
+  /** Slot confirms it will send no more actions with tick <= `through`. Bundles may be for through+D. */
+  confirm(player: number, through: number, bundles: readonly Bundle[]): void {
+    if (!this.through.has(player)) return;
+    this.through.set(player, Math.max(this.through.get(player) ?? 0, through));
+    const held = this.held.get(player);
+    if (!held) return;
+    for (const b of bundles) {
+      if (b.tick <= this.committed) continue;
+      const prev = held.get(b.tick) ?? [];
+      held.set(b.tick, prev.concat(b.actions));
+    }
+    this.flush();
+  }
+
+  private flush(): void {
+    while (this.ready(this.committed + 1)) {
+      const tick = this.committed + 1;
+      const slots = this.config.slots
+        .map((s) => s.player)
+        .sort((a, b) => a - b)
+        .map((player) => ({
+          player,
+          actions: this.held.get(player)?.get(tick) ?? [],
+        }));
+      for (const held of this.held.values()) held.delete(tick);
+      this.committed = tick;
+      const msg: ServerMsg = { type: "commit", tick, slots };
+      for (const fn of this.listeners) fn(msg);
+    }
+  }
+
+  private ready(tick: number): boolean {
+    for (const slot of this.config.slots) {
+      if ((this.through.get(slot.player) ?? 0) < tick) return false;
+    }
+    return true;
+  }
+}

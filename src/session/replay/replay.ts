@@ -6,7 +6,7 @@ import type { Action } from "../../shared";
 import type { LoggedAction, MatchOutcome, World } from "../../sim";
 
 export const REPLAY_VERSION = 1;
-/** World RNG until MatchConfig injects a seed. Recorded so reconstruct doesn't guess. */
+/** World RNG; live play copies this into `MatchConfig.seed`. Recorded so reconstruct doesn't guess. */
 export const DEFAULT_WORLD_SEED = 1;
 
 export type ReplayFile = {

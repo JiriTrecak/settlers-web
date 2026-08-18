@@ -29,13 +29,13 @@ Order matters — later systems see this tick’s assignments.
 13. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
 14. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
-Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony` per slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may enqueue for the next beat (convert, pioneer, tower plan, enlist).
+Play-loop input `send`s through Lockstep; Session `enqueue`s from the Room `commit` at `tickIndex + D` (8 ticks in live play). `dispatch` applies immediately (tests, match-start `placeColony` per `MatchConfig` slot). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`. After each sim step the session `Opponent` may `send` for the next confirm (convert, pioneer, tower plan, enlist).
 
 ## Determinism
 
-World RNG is seeded (`seedRng(1)` unless a test passes another). Play loop will take seed from `MatchConfig`. No `Math.random` in sim. Same map + same action log → same checksum at tick N. Victory/Defeat (and **Save replay**) shelves that log; watch mode `replay(log, duration)` and does not re-run the opponent script.
+World RNG is seeded (`seedRng(MatchConfig.seed)`; tests often pass `seedRng(1)`). No `Math.random` in sim. Same map + same action log → same checksum at tick N. Victory/Defeat (and **Save replay**) shelves that log; watch mode `replay(log, duration)` and does not re-run the opponent script.
 
-Lockstep (not wired): Session only calls `world.tick()` when it has a MatchHost `commit` for that beat. Play-loop input will go through a mailbox at `tickIndex + D`, not `world.enqueue` from the click. See [`docs/build-plan/net.md`](../build-plan/net.md).
+Lockstep: Session only calls `world.tick()` when it has a MatchHost `commit` for `tickIndex + 1`. Clicks go through the mailbox at `tickIndex + D`, not `world.enqueue` from the click. See [`docs/build-plan/net.md`](../build-plan/net.md).
 
 ## Frame vs sim
 
@@ -70,7 +70,7 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Escape | Deselect: build ghost, then claim tool, then unit, then hut |
 | Exit | Confirm, then leave to map select |
 
-F3 **claim** enqueues `occupy` (tower-radius disk cheat). Pioneers flip one unenforced tile at a time.
+F3 **claim** sends `occupy` (tower-radius disk cheat). Pioneers flip one unenforced tile at a time.
 
 Match start looks at the local slot's HQ at zoom 1, not a fit of the whole map.
 

@@ -9,9 +9,9 @@ Headless game. No Pixi. No DOM. Deterministic.
 `World` is the match: clock, grid, objects, buildings, land, fog, marks, movables, seeded RNG.
 
 - `tick()` — increment clock, apply due actions, then one 25 ms beat (see gameloop).
-- `enqueue(action, tick?)` — play-loop mutation. Default tick is `tickIndex + 1` until Lockstep lands, then `tickIndex + D`. Due-or-past applies immediately. Envelope `player` + `seq` once net hygiene lands; reject commands on foreign units.
+- `enqueue(action, tick?, envelope?)` — play-loop mutation from a Room `commit`. Default tick is `tickIndex + 1` (tests). Play loop always passes `tick` + `{ player, seq }`. Envelope rejects foreign unit / hut / `action.player` commands. `placeColony` after tick 0 is dropped.
 - `dispatch(action)` — test helper: enqueue for *now*. Session uses this for tick-0 `placeColony` per `MatchConfig` slot, not as a wire message.
-- `checksum()` / `log()` — lockstep mix. Fog is not in it. Seed comes from `MatchConfig`, not a hardcoded `1` in the play loop.
+- `checksum()` / `log()` — lockstep mix. Fog is not in it. Seed comes from `MatchConfig` (`seedRng(seed)` in the play loop).
 - `replay(log, untilTick?)` — re-enqueue onto an empty world, then tick until `untilTick` (default: last logged beat). Duration is what playback needs; last action is not the end of the match.
 - `view(player)` — snapshot for render (fog is that player's).
 

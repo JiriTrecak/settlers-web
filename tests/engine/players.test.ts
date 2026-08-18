@@ -123,7 +123,9 @@ function drive(world: World, opp: Opponent, ticks: number): void {
 describe("opponent script", () => {
   it("converts a pioneer, then plans a lumberjack, and waits until it is built", () => {
     const world = twoColonies();
-    const opp = new Opponent(1, P1, P0);
+    const opp = new Opponent(1, P1, P0, (action) =>
+      world.enqueue(action, world.clock.tickIndex + 1, { player: 1 }),
+    );
     drive(world, opp, OPPONENT_START_TICK + 1);
     expect(world.log().some((a) => a.action.type === "convert" && a.player === 1)).toBe(true);
     expect(world.view().movables.some((m) => m.player === 1 && m.type === "pioneer")).toBe(true);
@@ -143,7 +145,9 @@ describe("opponent script", () => {
       expect(at).not.toBeNull();
       expect(world.placeBuilding(kind, at!, 1)).toBeDefined();
     }
-    const opp = new Opponent(1, P1, P0);
+    const opp = new Opponent(1, P1, P0, (action) =>
+      world.enqueue(action, world.clock.tickIndex + 1, { player: 1 }),
+    );
     drive(world, opp, OPPONENT_START_TICK + 1);
     drive(world, opp, OPPONENT_THINK_TICKS + 1);
     const towerPlan = world.log().find((a) => a.action.type === "placeBuilding" && a.action.kind === "tower");

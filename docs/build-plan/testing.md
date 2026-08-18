@@ -8,6 +8,7 @@ Render/Pixi: few tests. Visuals get eyeballed. Pure camera / iso / minimap math 
 
 ```
 tests/engine/          # sim + shared
+tests/net/             # Lockstep + MemoryChannel
 tests/render/
 tests/camera/
 tests/ui/
@@ -36,7 +37,7 @@ npm run build
 
 ## P2
 
-Replay / checksum tests live under `tests/engine/` (`queue.test.ts`, `replay.test.ts`). Same seed + same action log + duration ⇒ same `World.checksum()` at tick N. Lockstep CI (N Worlds, MemoryChannel) lands with `src/net`, not before. See [net.md](net.md).
+Replay / checksum tests live under `tests/engine/` (`queue.test.ts`, `replay.test.ts`, `hygiene.test.ts`). Lockstep CI (N Worlds, MemoryChannel) is `tests/net/lockstep.test.ts`. See [net.md](net.md).
 
 ## What not to test
 

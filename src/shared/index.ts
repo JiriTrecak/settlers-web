@@ -1,6 +1,16 @@
 /** Shared grid math and landscape types. No Pixi, no DOM. */
 export type { Action, GridPos } from "./types/types";
 export {
+  CHECKSUM_EVERY,
+  COMMAND_DELAY,
+  TICK_MS,
+  localMatch,
+  type MatchConfig,
+  type Slot,
+  type SlotKind,
+} from "./match/match";
+export type { Bundle, ClientMsg, Commit, CommitSlot, ServerMsg } from "./net/wire";
+export {
   TOWER_RADIUS,
   Y_SCALE,
   circleBounds,

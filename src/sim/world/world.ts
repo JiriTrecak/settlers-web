@@ -1,6 +1,6 @@
 /**
  * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables.
- * Session ticks this and enqueues Actions; render reads `view()`.
+ * Play loop applies commits via `enqueue(action, tick, envelope)`; render reads `view()`.
  */
 import { HEX_DELTAS, TOWER_RADIUS, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
@@ -49,6 +49,12 @@ export type LoggedAction = {
 };
 
 type QueuedAction = LoggedAction & { seq: number };
+
+/** Play-loop identity. Envelope `player` wins; `seq` is the slot's bundle index. */
+export type ActionEnvelope = {
+  player: number;
+  seq?: number;
+};
 
 class Occupancy {
   private readonly at: Int32Array;
@@ -274,15 +280,19 @@ export class World {
 
   /**
    * Schedule `action` for a sim beat. Default is the *next* beat (`tickIndex + 1`)
-   * so session input never lands mid-tick. Due-or-past ticks apply immediately.
+   * so tests never land mid-tick. Play loop always passes `tick` + envelope from a commit.
+   * Envelope rejects foreign commands (no-op). `placeColony` after tick 0 is dropped.
    */
-  enqueue(action: Action, atTick = this.clock.tickIndex + 1): void {
+  enqueue(action: Action, atTick = this.clock.tickIndex + 1, envelope?: ActionEnvelope): void {
     if (action.type === "noop") return;
+    if (action.type === "placeColony" && (atTick > 0 || this.clock.tickIndex > 0)) return;
+    const player = envelope?.player ?? this.actionPlayer(action);
+    if (envelope && !this.ownedBy(action, player)) return;
     const item: QueuedAction = {
       tick: atTick,
-      player: this.actionPlayer(action),
+      player,
       action,
-      seq: this.nextSeq++,
+      seq: envelope?.seq ?? this.nextSeq++,
     };
     if (atTick <= this.clock.tickIndex) {
       this.applyItems([item]);
@@ -301,7 +311,7 @@ export class World {
    * `untilTick` (or the last logged beat if omitted). Later actions stay pending.
    */
   replay(entries: readonly LoggedAction[], untilTick?: number): void {
-    for (const e of entries) this.enqueue(e.action, e.tick);
+    for (const e of entries) this.enqueue(e.action, e.tick, { player: e.player });
     this.applyDue(this.clock.tickIndex);
     const last = entries.reduce((m, e) => Math.max(m, e.tick), this.clock.tickIndex);
     const end = untilTick ?? last;
@@ -465,9 +475,29 @@ export class World {
   private applyItems(items: QueuedAction[]): void {
     items.sort((a, b) => a.player - b.player || a.seq - b.seq);
     for (const item of items) {
-      this.applyAction(item.action);
+      this.applyAction(item);
       this.applied.push({ tick: item.tick, player: item.player, action: item.action });
     }
+  }
+
+  /** Envelope (or inferred owner) must match the unit / hut / action.player. */
+  private ownedBy(action: Action, player: number): boolean {
+    if (
+      action.type === "placeColony" ||
+      action.type === "placeBuilding" ||
+      action.type === "occupy" ||
+      action.type === "spawnUnit"
+    ) {
+      return action.player == null || action.player === player;
+    }
+    if (action.type === "destroyBuilding") {
+      const hut = this.buildings.at(action.at.x, action.at.y);
+      if (!hut) return false;
+      return hut.player === player;
+    }
+    if (!("id" in action)) return false;
+    const m = this.units.find((u) => u.id === action.id);
+    return !!m && m.player === player;
   }
 
   private actionPlayer(action: Action): number {
@@ -486,18 +516,20 @@ export class World {
     return this.units.find((u) => u.id === action.id)?.player ?? 0;
   }
 
-  private applyAction(action: Action): void {
+  private applyAction(item: QueuedAction): void {
+    const action = item.action;
+    const player = item.player;
     if (action.type === "noop") return;
     if (action.type === "placeColony") {
-      placeColony(this, action.at, action.player ?? 0);
+      placeColony(this, action.at, player);
       return;
     }
     if (action.type === "placeBuilding") {
-      this.placePlan(action.kind, action.at, action.player ?? 0);
+      this.placePlan(action.kind, action.at, player);
       return;
     }
     if (action.type === "occupy") {
-      this.claimAt(action.at, action.player ?? 0);
+      this.claimAt(action.at, player);
       return;
     }
     if (action.type === "destroyBuilding") {
@@ -506,12 +538,11 @@ export class World {
     }
     if (action.type === "spawnUnit") {
       const n = Math.min(100, Math.max(1, action.count ?? 1));
-      const player = action.player ?? 0;
       for (let i = 0; i < n; i++) this.spawnSettler(action.kind, action.at, player);
       return;
     }
     const m = this.units.find((u) => u.id === action.id);
-    if (!m) return;
+    if (!m || m.player !== player) return;
     if (action.type === "moveTo") {
       const blockers = this.unitBlockers(m);
       const occId = this.occ.idAt(action.to.x, action.to.y);

@@ -4,7 +4,8 @@
  * Replay mode rebuilds World from the recorded log; Space is play/pause.
  */
 import type { Application, Texture } from "pixi.js";
-import { gridToWorld, type GridPos } from "../../shared";
+import { gridToWorld, localMatch, type Action, type GridPos, type MatchConfig } from "../../shared";
+import { Lockstep, MemoryChannel, Room } from "../../net";
 import {
   MAPS,
   generateMap,
@@ -113,6 +114,8 @@ export class Session {
   private claiming = false;
   private me: number;
   private readonly opponents: Opponent[] = [];
+  private readonly channels: MemoryChannel[] = [];
+  private readonly locksteps = new Map<number, Lockstep>();
 
   constructor(
     private readonly pixi: Application,
@@ -206,22 +209,27 @@ export class Session {
       const listed = this.config.catalog.find((m) => m.id === this.mapId)?.players ?? 1;
       const cap = mapStartCap(starts.length, listed);
       const n = clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
-      const slots = matchStarts(starts, n, grid);
+      const startsAt = matchStarts(starts, n, grid);
       this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
-      if (n <= 1) {
-        world.dispatch({ type: "placeColony", at: slots[0]!, player: this.me });
-      } else {
-        for (let i = 0; i < n; i++) {
-          world.dispatch({
-            type: "placeColony",
-            at: slots[i]!,
-            player: i,
-          });
-        }
-        for (let i = 0; i < n; i++) {
-          if (i === this.me) continue;
-          this.opponents.push(new Opponent(i, slots[i]!, slots[this.me]!));
-        }
+      const entry = this.config.catalog.find((m) => m.id === this.mapId);
+      const match = localMatch({
+        mapId: this.mapId,
+        mapRevision: entry?.file ?? this.mapId,
+        seed: this.worldSeed,
+        slotCount: n,
+        me: this.me,
+      });
+      this.bindLockstep(match);
+      for (const slot of match.slots) {
+        const at = n <= 1 ? startsAt[0]! : startsAt[slot.player]!;
+        world.dispatch({ type: "placeColony", at, player: slot.player });
+      }
+      for (const slot of match.slots) {
+        if (slot.player === this.me) continue;
+        const home = startsAt[slot.player]!;
+        this.opponents.push(
+          new Opponent(slot.player, home, startsAt[this.me] ?? home, (action) => this.send(action, slot.player)),
+        );
       }
     }
     this.view = mapViewFromGrid(world.grid);
@@ -244,6 +252,20 @@ export class Session {
     });
   }
 
+  /** Click → Lockstep. Envelope player is the producing slot. */
+  private send(action: Action, player = this.me): void {
+    this.locksteps.get(player)?.send(action);
+  }
+
+  private bindLockstep(match: MatchConfig): void {
+    const room = new Room(match);
+    for (const slot of match.slots) {
+      const ch = new MemoryChannel(room, slot.player);
+      this.channels.push(ch);
+      this.locksteps.set(slot.player, new Lockstep(ch, slot.player, match.delay));
+    }
+  }
+
   tick(dtMs: number, nowMs: number): void {
     const renderer = this.renderer;
     const world = this.world;
@@ -260,6 +282,17 @@ export class Session {
         this.paused = true;
         this.acc = 0;
         break;
+      }
+      if (!this.watching) {
+        const next = world.clock.tickIndex + 1;
+        for (const ls of this.locksteps.values()) ls.confirm(next);
+        const commit = this.locksteps.get(this.me)?.take(next);
+        if (!commit) break;
+        for (const slot of commit.slots) {
+          for (let i = 0; i < slot.actions.length; i++) {
+            world.enqueue(slot.actions[i]!, next, { player: slot.player, seq: i });
+          }
+        }
       }
       this.acc -= step;
       world.tick(phases);
@@ -343,8 +376,8 @@ export class Session {
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
-      if (unit.type === "bearer") world.enqueue({ type: "convert", id: unit.id, to: "pioneer" });
-      else if (unit.type === "pioneer") world.enqueue({ type: "convert", id: unit.id, to: "bearer" });
+      if (unit.type === "bearer") this.send({ type: "convert", id: unit.id, to: "pioneer" });
+      else if (unit.type === "pioneer") this.send({ type: "convert", id: unit.id, to: "bearer" });
     }
   }
 
@@ -356,7 +389,7 @@ export class Session {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
       if (unit.type !== "bearer" || unit.material !== "none") continue;
-      world.enqueue({ type: "convert", id: unit.id, to: "swordsman" });
+      this.send({ type: "convert", id: unit.id, to: "swordsman" });
     }
   }
 
@@ -366,7 +399,7 @@ export class Session {
     if (!world || !this.selected || !this.canCommand()) return;
     const hut = world.buildings.at(this.selected.x, this.selected.y);
     if (!hut || hut.player !== this.me) return;
-    world.enqueue({ type: "destroyBuilding", at: this.selected });
+    this.send({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
     this.renderer?.highlight(null);
   }
@@ -397,6 +430,9 @@ export class Session {
     this.renderer = null;
     this.world = null;
     this.opponents.length = 0;
+    for (const ch of this.channels) ch.destroy();
+    this.channels.length = 0;
+    this.locksteps.clear();
     this.pristine = null;
     this.view = null;
     this.acc = 0;
@@ -475,12 +511,12 @@ export class Session {
   private setSelect(pos: GridPos | null, add = false, screen?: ScreenPt): void {
     if (!this.renderer || !this.world) return;
     if (this.claiming) {
-      if (this.canCommand() && pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
+      if (this.canCommand() && pos) this.send({ type: "occupy", at: pos, player: this.me });
       return;
     }
     const tool = this.placeTool;
     if (tool?.type === "unit" && pos && this.canCommand()) {
-      this.world.enqueue({
+      this.send({
         type: "spawnUnit",
         kind: tool.kind,
         at: pos,
@@ -493,7 +529,7 @@ export class Session {
       this.selected = pos;
       this.selectedUnitIds = [];
       this.syncSelectionVisual();
-      this.world.enqueue({ type: "placeBuilding", kind: tool.kind, at: pos, player: this.me });
+      this.send({ type: "placeBuilding", kind: tool.kind, at: pos, player: this.me });
       this.placeTool = null;
       this.buildMenu?.setTool(null);
       this.syncGhost();
@@ -575,12 +611,12 @@ export class Session {
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
-      if (unit.type === "pioneer") world.enqueue({ type: "pioneerWork", id: unit.id, to: pos });
+      if (unit.type === "pioneer") this.send({ type: "pioneerWork", id: unit.id, to: pos });
       else walkers.push(unit.id);
     }
     const dests = this.spreadDests(pos, walkers.length);
     for (let i = 0; i < walkers.length; i++) {
-      world.enqueue({ type: "moveTo", id: walkers[i]!, to: dests[i] ?? pos, forced });
+      this.send({ type: "moveTo", id: walkers[i]!, to: dests[i] ?? pos, forced });
     }
   }
 

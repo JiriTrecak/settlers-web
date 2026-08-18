@@ -38,7 +38,7 @@ Domain words: `Movable`, `Bearer`, `Pioneer`, `Landscape`, fog, land. Keep them.
 ## Constants
 
 - Tick: `25` ms (`Clock.tickMs`)
-- Command delay: `8` ticks (`200` ms). Same in SP once Lockstep exists. Tests may use `1`.
+- Command delay: `8` ticks (`200` ms). Same in SP. Tests may use `1`.
 - Iso: `tileWidth = 16`, `tileHeight = 9`; height displacement `2` px per step
 - Landscape atlas: `1024`, grid `32`
 - FOW: visible `100`, explored `50`, dim `30` / s

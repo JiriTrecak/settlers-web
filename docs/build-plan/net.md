@@ -21,6 +21,18 @@ ui  → session.send(action)              HTTP  /rooms  (list, create, join)
 
 `World.tick()` never waits on IO. Session only ticks when it has `commit` for `tickIndex + 1`.
 
+## One play loop
+
+Singleplayer is not a shortcut. There is one command path:
+
+```
+click → Session.send → Lockstep → Channel → Room commit → enqueue(envelope) → world.tick
+```
+
+SP: Channel is memory, Room is in-process, other slots are `Opponent` bundle producers. MP: Channel is WebSocket, Room is Node, other slots are humans (or host AI later). Session, D, envelope, rejects, checksum — identical.
+
+If SP can `world.enqueue` from the click, MP is a second game. Hygiene is step 1 because it **is** the play loop, not because EC2 is next.
+
 ## Why a server from day one
 
 3–8 humans, coop later, spectate, a list of rooms on EC2. A browser mesh dies at that. Steam invite is a UI on this room, not a different protocol.
@@ -240,17 +252,17 @@ Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + D`. Same D
 acc += dtMs                 // MP: speed = 1
 while acc >= 25 and n < cap:
   next = world.clock.tickIndex + 1
+  confirm every local slot through: next   // bundles for next+D; empty confirm still
   if no commit(next): break   // do not consume acc
   for slot in commit.slots:   // player order
     for i, action of slot.actions:
       world.enqueue(action, next, { player: slot.player, seq: i })
   acc -= 25
   world.tick()
-  send turn { through: next, bundles: orders for next+D if any }
   if next % checksumEvery == 0: send hash
 ```
 
-Stall leaves `acc` alone. Catch-up still capped. Burning `acc` while waiting would skip beats.
+Confirm **before** take. `through: next` is the beat about to apply (`tickIndex + 1`), so the first beat can commit without a prior tick. Sending `through: next` *after* `tick()` (when `tickIndex === next`) deadlocks waiting for `next+1`. Stall leaves `acc` alone. Catch-up still capped. Burning `acc` while waiting would skip beats.
 
 Apply order: **player**, then **seq**. `seq` is the index in that slot’s `commit` array for that tick — not `World.nextSeq` from two processes.
 
@@ -379,17 +391,17 @@ Architecture tests: `sim` must not import `net`. `server` must not import `rende
 
 ## What sim must change (before sockets)
 
-1. `World` takes seed from MatchConfig (`seedRng(seed)`), not a hardcoded `1` in the play loop.
-2. Command delay D. Play loop (SP included) uses Lockstep; no `enqueue(+1)` from the click.
-3. Envelope `player` + `seq` on enqueue; reject foreign commands.
-4. Tick-0 kits from config slots, not `i === this.me`.
+1. `World` takes seed from MatchConfig (`seedRng(seed)`), not a hardcoded `1` in the play loop. **Done.**
+2. Command delay D. Play loop (SP included) uses Lockstep; no `enqueue(+1)` from the click. **Done.**
+3. Envelope `player` + `seq` on enqueue; reject foreign commands. **Done.**
+4. Tick-0 kits from config slots, not `i === this.me`. **Done.**
 
 ---
 
 ## Land order
 
-1. **Sim hygiene** — D, envelope, reject, MatchConfig, seed.
-2. **`src/net` + MemoryChannel** — two/three in-process Worlds, same checksum at tick N. CI. Session always on Lockstep (SP included). Opponent sends through it.
+1. **Sim hygiene** — D, envelope, reject, MatchConfig, seed. **Done.**
+2. **`src/net` + MemoryChannel** — two/three in-process Worlds, same checksum at tick N. CI. Session always on Lockstep (SP included). Opponent sends through it. **Done.**
 3. **`server/` mailbox** — create room, 3 local tabs, empty confirms, hash. No Steam. No host `World`.
 4. **Lobby list + spectate** — `watching` Session on `commit` stream. EC2 deploy.
 5. Later: host `World`, AI slots, drop-in, persisted replays HTTP, Steam.
