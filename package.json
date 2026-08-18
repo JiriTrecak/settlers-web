@@ -11,6 +11,7 @@
     "tauri": "tauri",
     "preview": "vite preview",
     "test": "vitest run",
+    "server": "vite-node server/index.ts",
     "dump:graphics": "vite-node original_conv/dump-graphics.ts",
     "dump:stacks": "vite-node original_conv/dump-stacks.ts",
     "dump:flags": "vite-node original_conv/dump-flags.ts",
@@ -18,14 +19,16 @@
     "dump:maps": "vite-node original_conv/dump-maps.ts"
   },
   "dependencies": {
-    "pixi.js": "^8.19.0"
+    "pixi.js": "^8.19.0",
+    "ws": "^8.21.3"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2",
     "@types/node": "^26.2.0",
+    "@types/ws": "^8.18.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-node": "^6.0.0",
-    "vitest": "^4.1.10",
-    "@tauri-apps/cli": "^2"
+    "vitest": "^4.1.10"
   }
 }

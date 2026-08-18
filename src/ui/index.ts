@@ -5,6 +5,7 @@ export { debugFrom, formatDebug, type DebugFrame, type DebugStats } from "./hud/
 export { GameScreen, ScreenHost } from "./screen/screen";
 export { MainMenu, type MapOption, type MapOptionGroup } from "./menu/menu";
 export { MapSelect } from "./menu/mapSelect";
+export { MultiplayerScreen, RoomWaitScreen } from "./menu/multiplayer";
 export { NoticeScreen } from "./menu/notice";
 export { ReplaySelect, type ReplayOption } from "./menu/replaySelect";
 export { ReplayTimeline } from "./replay/timeline";

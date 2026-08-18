@@ -7,7 +7,12 @@ import type { Action, Bundle, MatchConfig, ServerMsg } from "../shared";
 export class Room {
   private readonly through = new Map<number, number>();
   private readonly held = new Map<number, Map<number, Action[]>>();
+  /** Last committed tick (0 before the first `commit`). */
+  get tick(): number {
+    return this.committed;
+  }
   private committed = 0;
+  private readonly dropped = new Set<number>();
   private readonly listeners: Array<(msg: ServerMsg) => void> = [];
 
   constructor(readonly config: MatchConfig) {
@@ -39,6 +44,13 @@ export class Room {
     this.flush();
   }
 
+  /** Slot gone: do not wait on their `through`. Still listed in `commit` (empty). */
+  drop(player: number): void {
+    if (!this.through.has(player)) return;
+    this.dropped.add(player);
+    this.flush();
+  }
+
   private flush(): void {
     while (this.ready(this.committed + 1)) {
       const tick = this.committed + 1;
@@ -58,8 +70,9 @@ export class Room {
 
   private ready(tick: number): boolean {
     for (const slot of this.config.slots) {
+      if (this.dropped.has(slot.player)) continue;
       if ((this.through.get(slot.player) ?? 0) < tick) return false;
     }
-    return true;
+    return this.config.slots.some((s) => !this.dropped.has(s.player));
   }
 }

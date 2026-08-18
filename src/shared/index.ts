@@ -9,7 +9,19 @@ export {
   type Slot,
   type SlotKind,
 } from "./match/match";
-export type { Bundle, ClientMsg, Commit, CommitSlot, ServerMsg } from "./net/wire";
+export type {
+  Bundle,
+  ClientIdentity,
+  ClientMsg,
+  Commit,
+  CommitSlot,
+  CreateRoom,
+  JoinRoom,
+  RoomState,
+  RoomView,
+  ServerMsg,
+  WireOutcome,
+} from "./net/wire";
 export {
   TOWER_RADIUS,
   Y_SCALE,

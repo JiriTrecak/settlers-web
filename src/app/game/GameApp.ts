@@ -3,8 +3,9 @@
  * Match state lives in `PlayScreen` → `Session`, not here.
  */
 import { Application } from "pixi.js";
-import { MainMenu, MapSelect, NoticeScreen, ReplaySelect, ScreenHost } from "../../ui";
+import { MainMenu, MapSelect, MultiplayerScreen, ReplaySelect, RoomWaitScreen, ScreenHost } from "../../ui";
 import {
+  defaultMapId,
   fetchMapCatalog,
   mapPickerOptions,
   replayInfo,
@@ -12,6 +13,8 @@ import {
   type MapCatalogEntry,
   type ReplayFile,
 } from "../../session";
+import { createRoom, joinRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
+import type { MatchConfig, ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
 import { PlayScreen } from "./playScreen";
 
@@ -113,11 +116,82 @@ export class GameApp {
 
   private showMultiplayer(): void {
     this.playGen++;
+    const maps = mapPickerOptions(this.catalog).map((m) => ({ id: m.id, name: m.name }));
     this.screens?.show(
-      new NoticeScreen("Multiplayer", "Not yet.", {
+      new MultiplayerScreen({
+        maps: maps.length ? maps : [{ id: defaultMapId(this.catalog), name: "map" }],
         onBack: () => this.showMenu(),
+        onHost: (name, mapId, slotCount) => void this.hostRoom(name, mapId, slotCount),
+        onJoin: (roomId, name) => void this.enterRoom(roomId, name),
       }),
     );
+  }
+
+  private async hostRoom(name: string, mapId: string, slotCount: number): Promise<void> {
+    const entry = this.catalog.find((m) => m.id === mapId);
+    const created = await createRoom({
+      name: `${name}'s room`,
+      mapId,
+      mapRevision: entry?.file ?? mapId,
+      slotCount,
+      guestName: name,
+    });
+    this.playGen++;
+    this.screens?.show(
+      new RoomWaitScreen(created.room.id, {
+        host: true,
+        onBack: () => this.showMultiplayer(),
+        onStart: () => void this.startHosted(created.room.id, created.token, created.you.player ?? 0),
+      }),
+    );
+  }
+
+  private async startHosted(roomId: string, token: string, player: number): Promise<void> {
+    await startRoom(roomId, token);
+    await this.connectMatch(roomId, token, player);
+  }
+
+  private async enterRoom(roomId: string, name: string): Promise<void> {
+    const joined = await joinRoom(roomId, { guestName: name, role: "player" });
+    this.playGen++;
+    this.screens?.show(
+      new RoomWaitScreen(joined.room.id, {
+        host: false,
+        onBack: () => this.showMultiplayer(),
+        onStart: () => {},
+      }),
+    );
+    await this.connectMatch(joined.room.id, joined.token, joined.you.player ?? 0);
+  }
+
+  private async connectMatch(roomId: string, token: string, player: number): Promise<void> {
+    const channel = new WebSocketChannel(matchUrl(roomId, token));
+    const start = await waitStart(channel);
+    this.player = start.you.player ?? player;
+    await this.playRemote(start.config, channel, this.player);
+  }
+
+  private async playRemote(match: MatchConfig, channel: WebSocketChannel, player: number): Promise<void> {
+    if (!this.pixi || !this.screens) return;
+    const gen = ++this.playGen;
+    const play = new PlayScreen(this.pixi, this.catalog, match.mapId, {
+      player,
+      channel,
+      match,
+      onLeave: () => {
+        channel.destroy();
+        this.showMultiplayer();
+      },
+    });
+    this.screens.show(play);
+    try {
+      await play.start();
+      if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+    } catch (err) {
+      console.error(err);
+      channel.destroy();
+      if (gen === this.playGen) this.showMultiplayer();
+    }
   }
 
   private async play(id: string): Promise<void> {
@@ -159,4 +233,13 @@ export class GameApp {
       if (gen === this.playGen) this.showReplays();
     }
   }
+}
+
+function waitStart(channel: WebSocketChannel): Promise<Extract<ServerMsg, { type: "start" }>> {
+  return new Promise((resolve, reject) => {
+    channel.onMessage((msg) => {
+      if (msg.type === "start") resolve(msg);
+      if (msg.type === "error") reject(new Error(msg.message));
+    });
+  });
 }

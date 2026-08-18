@@ -4,23 +4,23 @@ Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate
 
 ## Status (what is code vs contract)
 
-**In the repo (land order 1–2).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` (2 Worlds, one `Room`, same checksum). Architecture test: `sim` ↛ `net` ↛ `sim`.
+**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts`. `npm run server` on `:8787`. Vite proxies `/api` and `/match`.
 
 | Piece | Where | Notes |
 |---|---|---|
 | `MatchConfig`, `localMatch` | `src/shared/match/` | SP `delay: 1`. `COMMAND_DELAY = 2` is the MP starting guess. |
-| Wire types | `src/shared/net/wire.ts` | Subset: `hello` / `ready` / `turn` / `hash` / `ended` + `start` / `go` / `commit` / `desync` / `error`. **Not sent yet:** `ready`, `go`, `hash`. Field names differ from the lobby block below (`hash.value` vs `checksum`). |
+| Wire types | `src/shared/net/wire.ts` | **This is the contract.** SP Session sends `turn`. MP also `ready` / `hash` / `ended`. |
 | `Channel`, `Room`, `MemoryChannel`, `Lockstep` | `src/net/` | `Room.confirm` + broadcast `commit`. No listen port. |
 | Session play loop | `src/session/session/session.ts` | Confirm all local slots `through: next` **before** take. `enqueue(action, next, { player, seq })`. Kits = `dispatch(placeColony)` per `config.slots` at tick 0. Seed = `seedRng(MatchConfig.seed)` (`DEFAULT_WORLD_SEED` in SP). |
 | Envelope reject | `World.enqueue` | Foreign unit/hut/`action.player`; `placeColony` after tick 0. Tests may omit envelope. |
 | Opponent | `src/session/opponent/` | Bundle producer on its own `Lockstep` / `MemoryChannel`. Must confirm every beat. |
 | Building plop | Session `pendingPlans` | **Render-only** predicted fence until commit. Not sim prediction, not on the wire. |
 | `mapRevision` | SP | Catalog `file` path today, not a dump hash. |
-| Channel ownership | Session | Session `new Room` + `MemoryChannel` per slot. **App does not construct Channel yet.** |
+| Channel ownership | App (MP) / Session (SP) | SP: Session `new Room` + MemoryChannel. MP: App `WebSocketChannel`, hands it to Session. |
 
-**Not built.** `server/` (no folder, no `npm run server`). WebSocketChannel. HTTP lobby. `ready` / `go` handshake. Checksum on the wire. Drop-in empty confirms. Spectate-as-commit-stream (watch mode is still a replay log). EC2. `App` handing a Channel into Session.
+**Not built.** Spectate as live commit stream (watch is still a replay file). EC2. Desync persist. Steam. Lobby is Host/Join by room id, not a room list UI.
 
-A reviewer treating the HTTP/WS sections as implemented will hallucinate. Those sections are the **contract for land order 3+**. The play loop, envelope, Room, MemoryChannel, D, and CI bar are real.
+A reviewer treating EC2 / spectate / Steam as shipped will hallucinate. Those are land order 4+. Mailbox + 3 local tabs is real (`npm run server`, Multiplayer in the menu).
 
 Same map + same `MatchConfig` + same committed action log ⇒ same checksum. That is already the engine. Replays are that log. Spectators are a Session with `watching: true` on the same commit stream.
 
@@ -141,10 +141,10 @@ waiting  →  playing  →  ended
 
 1. Stamps `seed` (CSPRNG u32). Clients do not pick the seed.
 2. Broadcasts `start { config, you }`.
-3. Each player Session: load dump for `mapId`, refuse if catalog hash ≠ `config.mapRevision`, `new World(..., seedRng(seed))`, `dispatch` `placeColony` per **config.slots** at tick 0 (not on the wire), then WS `ready`.
+3. Each player Session: load dump for `mapId`, refuse if local catalog identity ≠ `config.mapRevision`, `new World(..., seedRng(seed))`, `dispatch` `placeColony` per **config.slots** at tick 0 (not on the wire), then WS `ready`.
 4. When all playing slots have `ready`, server broadcasts `go`. Lockstep starts at tick **1**.
 
-Starts on the map come from the dump (`starts[slot]`). Server does **not** ship the grid. `mapRevision` keeps dumps honest — mismatched maps are the classic desync.
+Starts on the map come from the dump (`starts[slot]`). Server does **not** ship the grid. `mapRevision` is the catalog identity (file path today; dump hash later) — mismatch is the classic desync.
 
 `placeColony` is **not** a play-loop wire message. After `go`, reject it on the Channel.
 
@@ -171,7 +171,7 @@ type MatchConfig = {
   v: 1;
   roomId: string;
   mapId: string;
-  mapRevision: string;     // hash of dumped map as the catalog knows it
+  mapRevision: string;     // opaque dump id. SP: catalog `file`. MP: same until we hash dumps.
   seed: number;
   delay: number;           // D, ticks. SP: 1. MP default 2 (50 ms). Not 8.
   checksumEvery: number;   // default 8
@@ -188,9 +188,7 @@ Replay file stays `{ mapId, seed, me, duration, checksum, outcome, log, … }`. 
 
 ## Wire (WebSocket)
 
-**Contract for `server/`.** Implemented-now types live in `src/shared/net/wire.ts` and are a smaller set (no `welcome` / `room` / `hashOk`; `go` has no `tick`; `hash` uses `value` not `checksum`; `ended` has `replayId` not `{ tick, checksum }`). Align these when Node lands — do not implement both.
-
-All messages: `{ type: string, ... }`. Unknown `type` → ignore (forward compat).
+Types live in `src/shared/net/wire.ts`. Copy below is the same contract. Unknown `type` → ignore (forward compat).
 
 `commit` is the only thing that advances the sim. It is broadcast to players and spectators.
 
@@ -281,7 +279,7 @@ while acc >= 25 and n < cap:
       world.enqueue(action, next, { player: slot.player, seq: i })
   acc -= 25
   world.tick()
-  if next % checksumEvery == 0: send hash   // contract; Session does not send hash yet
+  if next % checksumEvery == 0: send hash   // MP only; SP MemoryChannel ignores it
 ```
 
 Confirm **before** take. `through: next` is the beat about to apply (`tickIndex + 1`), so the first beat can commit without a prior tick. Sending `through: next` *after* `tick()` (when `tickIndex === next`) deadlocks waiting for `next+1`. Stall leaves `acc` alone. Catch-up still capped. Burning `acc` while waiting would skip beats.
@@ -422,7 +420,7 @@ Architecture tests: `sim` must not import `net`. `server` must not import `rende
 
 1. **Sim hygiene** — D, envelope, reject, MatchConfig, seed. **Done.**
 2. **`src/net` + MemoryChannel** — two/three in-process Worlds, same checksum at tick N. CI. Session always on Lockstep (SP included). Opponent sends through it. **Done.**
-3. **`server/` mailbox** — create room, 3 local tabs, empty confirms, hash. No Steam. No host `World`.
+3. **`server/` mailbox** — create room, 3 local tabs, empty confirms, hash. No Steam. No host `World`. **In.**
 4. **Lobby list + spectate** — `watching` Session on `commit` stream. EC2 deploy.
 5. Later: host `World`, AI slots, drop-in, persisted replays HTTP, Steam.
 

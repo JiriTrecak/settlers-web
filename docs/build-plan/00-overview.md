@@ -38,9 +38,9 @@ ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  
 
 ## Where we are
 
-Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten, land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat, match replay (store + scrubber), SP lockstep (MemoryChannel, D=1).
+Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten, land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat, match replay (store + scrubber), SP lockstep (MemoryChannel, D=1), MatchHost mailbox (`npm run server`).
 
-Not a game yet: no sockets / MatchHost process. Next is `server/` — [net.md](net.md).
+Not a game yet: no EC2 room list / spectate. Next is land order 4 — [net.md](net.md).
 
 Forward plan: **[P2.md](P2.md)**. Not more huts, not water, not sound.
 

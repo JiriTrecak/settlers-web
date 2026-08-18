@@ -4,6 +4,8 @@
 import type { Application } from "pixi.js";
 import { Hud, GameScreen } from "../../ui";
 import { Session, type MapCatalogEntry, type ReplayFile } from "../../session";
+import type { Channel } from "../../net";
+import type { MatchConfig } from "../../shared";
 
 export class PlayScreen extends GameScreen {
   readonly mapId: string;
@@ -20,6 +22,8 @@ export class PlayScreen extends GameScreen {
       player: number;
       players?: number;
       replay?: ReplayFile;
+      channel?: Channel;
+      match?: MatchConfig;
       onReplay?: (file: ReplayFile) => void;
     },
   ) {
@@ -41,6 +45,8 @@ export class PlayScreen extends GameScreen {
       player: hooks.player,
       players: hooks.players,
       replay: hooks.replay,
+      channel: hooks.channel,
+      match: hooks.match,
       hooks: {
         onHud: (state) => this.hud.update(state),
         onClaiming: (on) => this.hud.setClaiming(on, false),

@@ -5,7 +5,7 @@
  */
 import type { Application, Texture } from "pixi.js";
 import { gridToWorld, localMatch, type Action, type GridPos, type MatchConfig } from "../../shared";
-import { Lockstep, MemoryChannel, Room } from "../../net";
+import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
 import {
   MAPS,
   generateMap,
@@ -57,6 +57,10 @@ export type SessionConfig = {
   player: number;
   /** Colonies to stamp. Clamped to the dump's starts (and 8 tints). Default: 2 when the map allows. */
   players?: number;
+  /** Remote mailbox. App constructs this; Session never `new WebSocket`. */
+  channel?: Channel;
+  /** Frozen config from MatchHost `start`. Implies no local Opponent. */
+  match?: MatchConfig;
   /** Watch this file instead of playing. No commands, no opponent script. */
   replay?: ReplayFile;
   hooks: SessionHooks;
@@ -120,6 +124,10 @@ export class Session {
   /** Local place clicks, drawn until the Room commit lands (or `until`). Not sim. */
   private readonly pendingPlans: { id: number; kind: BuildingKind; at: GridPos; until: number }[] = [];
   private nextPendingId = -1;
+  /** Remote: wait for `go` before confirming. SP is live immediately. */
+  private gone = true;
+  private desynced = false;
+  private checksumEvery = 8;
 
   constructor(
     private readonly pixi: Application,
@@ -151,12 +159,15 @@ export class Session {
       onLookAt: (x, y) => this.lookAt(x, y),
     });
     const watching = this.watching;
+    const remote = this.config.channel != null;
     if (!watching) {
-      this.speedControl = new SpeedControl(this.overlay, {
-        onSpeed: (speed) => {
-          this.speed = speed;
-        },
-      });
+      if (!remote) {
+        this.speedControl = new SpeedControl(this.overlay, {
+          onSpeed: (speed) => {
+            this.speed = speed;
+          },
+        });
+      }
       this.buildMenu = new BuildMenu(this.overlay, {
         onTool: (tool) => {
           this.placeTool = tool;
@@ -188,7 +199,7 @@ export class Session {
     if (!this.renderer) return;
     this.waves = waves;
     const file = this.config.replay;
-    this.worldSeed = file?.seed ?? DEFAULT_WORLD_SEED;
+    this.worldSeed = file?.seed ?? this.config.match?.seed ?? DEFAULT_WORLD_SEED;
     const world = new World(grid, objects, seedRng(this.worldSeed));
     this.world = world;
     if (file) {
@@ -212,28 +223,49 @@ export class Session {
     } else {
       const listed = this.config.catalog.find((m) => m.id === this.mapId)?.players ?? 1;
       const cap = mapStartCap(starts.length, listed);
-      const n = clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
+      const remoteMatch = this.config.match;
+      const n = remoteMatch
+        ? remoteMatch.slots.length
+        : clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
       const startsAt = matchStarts(starts, n, grid);
-      this.me = n <= 1 ? this.config.player : Math.min(Math.max(0, this.config.player), n - 1);
+      this.me = remoteMatch
+        ? this.config.player
+        : n <= 1
+          ? this.config.player
+          : Math.min(Math.max(0, this.config.player), n - 1);
       const entry = this.config.catalog.find((m) => m.id === this.mapId);
-      const match = localMatch({
-        mapId: this.mapId,
-        mapRevision: entry?.file ?? this.mapId,
-        seed: this.worldSeed,
-        slotCount: n,
-        me: this.me,
-      });
-      this.bindLockstep(match);
+      const mapRevision = entry?.file ?? this.mapId;
+      if (remoteMatch && remoteMatch.mapRevision !== mapRevision && remoteMatch.mapRevision !== this.mapId) {
+        throw new Error(`mapRevision ${remoteMatch.mapRevision} ≠ ${mapRevision}`);
+      }
+      const match =
+        remoteMatch ??
+        localMatch({
+          mapId: this.mapId,
+          mapRevision,
+          seed: this.worldSeed,
+          slotCount: n,
+          me: this.me,
+        });
+      if (remoteMatch) {
+        this.bindRemote(match, this.config.channel!);
+      } else {
+        this.bindLockstep(match);
+      }
       for (const slot of match.slots) {
         const at = n <= 1 ? startsAt[0]! : startsAt[slot.player]!;
         world.dispatch({ type: "placeColony", at, player: slot.player });
       }
-      for (const slot of match.slots) {
-        if (slot.player === this.me) continue;
-        const home = startsAt[slot.player]!;
-        this.opponents.push(
-          new Opponent(slot.player, home, startsAt[this.me] ?? home, (action) => this.send(action, slot.player)),
-        );
+      if (!remoteMatch) {
+        for (const slot of match.slots) {
+          if (slot.player === this.me) continue;
+          const home = startsAt[slot.player]!;
+          this.opponents.push(
+            new Opponent(slot.player, home, startsAt[this.me] ?? home, (action) => this.send(action, slot.player)),
+          );
+        }
+      } else {
+        this.config.channel!.send({ type: "ready" });
       }
     }
     this.view = mapViewFromGrid(world.grid);
@@ -268,6 +300,25 @@ export class Session {
       this.channels.push(ch);
       this.locksteps.set(slot.player, new Lockstep(ch, slot.player, match.delay));
     }
+  }
+
+  private bindRemote(match: MatchConfig, channel: Channel): void {
+    this.gone = false;
+    this.checksumEvery = match.checksumEvery;
+    const wrapped: Channel = {
+      send: (msg) => channel.send(msg),
+      onMessage: (fn) => {
+        channel.onMessage((msg) => {
+          if (msg.type === "go") this.gone = true;
+          if (msg.type === "desync") {
+            this.desynced = true;
+            this.paused = true;
+          }
+          fn(msg);
+        });
+      },
+    };
+    this.locksteps.set(this.me, new Lockstep(wrapped, this.me, match.delay));
   }
 
   /** Fence on click. World still applies at tick+D; this is render-only. */
@@ -342,6 +393,7 @@ export class Session {
         break;
       }
       if (!this.watching) {
+        if (this.config.channel && (!this.gone || this.desynced)) break;
         const next = world.clock.tickIndex + 1;
         for (const ls of this.locksteps.values()) ls.confirm(next);
         const commit = this.locksteps.get(this.me)?.take(next);
@@ -351,15 +403,20 @@ export class Session {
             world.enqueue(slot.actions[i]!, next, { player: slot.player, seq: i });
           }
         }
-      }
-      this.acc -= step;
-      world.tick(phases);
-      if (!this.watching) {
+        this.acc -= step;
+        world.tick(phases);
         this.maybeRecord();
+        const ch = this.config.channel;
+        if (ch && next % this.checksumEvery === 0) {
+          ch.send({ type: "hash", tick: next, checksum: world.checksum() });
+        }
         for (const opp of this.opponents) {
           if (world.outcome || !world.hasHq(opp.player)) continue;
           opp.onTick(world);
         }
+      } else {
+        this.acc -= step;
+        world.tick(phases);
       }
       n++;
     }
@@ -899,6 +956,15 @@ export class Session {
     const world = this.world;
     if (!world?.outcome) return;
     this.recorded = true;
+    const ch = this.config.channel;
+    if (ch && world.outcome) {
+      ch.send({
+        type: "ended",
+        outcome: { winner: world.outcome.winner, defeated: [...world.outcome.defeated] },
+        tick: world.clock.tickIndex,
+        checksum: world.checksum(),
+      });
+    }
     this.config.hooks.onReplay?.(
       makeReplayFile({
         mapId: this.mapId,

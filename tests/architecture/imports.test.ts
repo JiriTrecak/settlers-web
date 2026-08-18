@@ -61,6 +61,16 @@ describe("architecture", () => {
       session: ["app"],
       app: ["sim", "render"],
     };
+    const extra = join(repoRoot, "server");
+    const extraFiles = await walkTs(extra).catch(() => [] as string[]);
+    for (const file of extraFiles) {
+      const specs = importSpecs(await readFile(file, "utf8"));
+      for (const spec of specs) {
+        for (const area of ["pixi", "app", "session", "ui", "render"]) {
+          expect(importsArea(spec, area), `${relative(repoRoot, file)} → ${spec}`).toBe(false);
+        }
+      }
+    }
     for (const [layer, forbidden] of Object.entries(bans)) {
       const files = await walkTs(join(repoRoot, "src", layer));
       expect(files.length).toBeGreaterThan(0);

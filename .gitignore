@@ -1,6 +1,7 @@
 node_modules
 dist
 /build/
+/keys/
 /Settlers.app
 /settlers-macos.zip
 settlers-play.zip
