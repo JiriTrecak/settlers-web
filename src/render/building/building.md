@@ -4,4 +4,4 @@ Built sprites from `buildings/{civ}/{kind}` variant `built`; scaffold from `scaf
 
 Flags wave at `def.flag`, parented to the hut (after the built sprite) so a roof flag isn't buried under the building. Torso × `PLAYER_COLORS[player]`. Missing catalog groups → no flags.
 
-`GhostLayer` is the placement preview: fence posts + blocked-tile fill. Red if the plot is illegal.
+`GhostLayer` is the placement preview: fence posts + blocked-tile fill. Red if the plot is illegal. `ConstructionMarkLayer` is the screen-wide pip grid while that tool is out (same sprites as the health sequence).

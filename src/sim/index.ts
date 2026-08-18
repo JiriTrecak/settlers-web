@@ -32,6 +32,7 @@ export {
 } from "./fog/fog";
 export { MarkGrid } from "./mark/mark";
 export { Building, BuildingGrid, canPlace, TOWER_DOOR_HP, type BuildingState, type BuildingView } from "./building/building";
+export { constructionMarkValue, constructionMarkFrame, CONSTRUCTION_MARK_MAX, flattenTooSteep, needsFlatten } from "./building/flatten";
 export { buildings, buildingDef, type BuildingKind } from "./data/buildings";
 export { settlers, settlerDef, needsPlayersGround, unitViewDistance, isAttackable, isControllable, isSoldier, type SettlerKind } from "./data/settlers";
 export {

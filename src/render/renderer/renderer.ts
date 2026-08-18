@@ -1,5 +1,5 @@
 /**
- * Pixi world: landscape mesh, decorations, buildings, placement ghost, hut select, camera.
+ * Pixi world: landscape mesh, decorations, buildings, placement ghost, construction marks, hut select, camera.
  * Reads `MapView`; never writes sim. Debug path / ownership / fog overlays are HUD toggles.
  */
 import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
@@ -15,6 +15,7 @@ import type { MovableView } from "../../sim/movable/movable";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { BuildingLayer } from "../building/buildingLayer";
 import { GhostLayer } from "../building/ghostLayer";
+import { ConstructionMarkLayer, type ConstructionMark } from "../building/constructionMarkLayer";
 import type { BuildingSheets } from "../building/buildingSheets";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
@@ -36,6 +37,7 @@ export class Renderer {
   private readonly settlers: SettlerLayer;
   private readonly borders: BorderLayer;
   private readonly ghostPlot = new GhostLayer();
+  private readonly marks = new ConstructionMarkLayer();
   private readonly paths = new PathLayer();
   private readonly land = new LandLayer();
 
@@ -66,7 +68,8 @@ export class Renderer {
     this.borders = new BorderLayer(this.iso);
     this.select.eventMode = "none";
     this.select.zIndex = 1_000_001;
-    this.world.addChild(this.iso, this.select, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.marks.root.zIndex = 998_000;
+    this.world.addChild(this.iso, this.select, this.marks.root, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -86,6 +89,7 @@ export class Renderer {
 
   setSettlerSheets(sheets: SettlerSheets | null): void {
     this.settlers.setSheets(sheets);
+    this.marks.setFrames(sheets?.health ?? []);
   }
 
   /** Selection marks on those unit ids. Empty hides them. */
@@ -102,6 +106,7 @@ export class Renderer {
     this.buildings.setView(view);
     this.settlers.setView(view);
     this.ghostPlot.setView(view);
+    this.marks.setView(view);
     this.paths.setView(view);
     this.land.setView(view);
     this.borders.setView(view);
@@ -212,6 +217,19 @@ export class Renderer {
     }
     this.ghostPlot.setZoom(this.camera.zoom);
     this.ghostPlot.show(kind, pos, ok);
+  }
+
+  /** Placeable-origin pips. `null` hides the grid. */
+  setConstructionMarks(marks: readonly ConstructionMark[] | null): void {
+    if (!marks || marks.length === 0) this.marks.hide();
+    else this.marks.show(marks);
+  }
+
+  /** Grid AABB + stride for the current camera. */
+  visibleGrid(): { x0: number; y0: number; x1: number; y1: number; stride: number } | null {
+    const view = this.view;
+    if (!view) return null;
+    return this.camera.visibleGrid(this.app.renderer.width, this.app.renderer.height, view.width, view.height);
   }
 
   /** Remaining walk queues. Sticky until toggled off — F3 does not have to stay open. */
@@ -346,7 +364,7 @@ export class Renderer {
     this.fogGen = -1;
     this.fogPlayer = -2;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.world.addChild(mesh, this.iso, this.select, this.marks.root, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   destroy(): void {

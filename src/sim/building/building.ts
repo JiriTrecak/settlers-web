@@ -63,7 +63,7 @@ export class Building {
   landClaimed = false;
   /** Last view-circle radius stamped into fog. */
   fogDistance = 0;
-  /** Integer mean of protected heights, frozen when the plan drops. Unused if the def has no `flatten`. */
+  /** Integer mean of protected heights, frozen when the plan drops. Unused if `flatten: false`. */
   flattenHeight = 0;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {

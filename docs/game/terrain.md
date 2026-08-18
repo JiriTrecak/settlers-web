@@ -57,7 +57,7 @@ Finished huts and units stamp a padded disk (`radius + 1.5×10`). Inner `radius 
 | 1–50 | dimmed (frozen snapshot if the tile left 51+) | hidden | hidden |
 | 51–100 | dim→full | drawn, tinted | drawn |
 
-Snapshots freeze landscape, height, object, and hut origin when sight crosses down through 50. Clear when it goes back above 50. Until flatten exists, the terrain mesh still uses live height — objects and huts are the part you actually notice.
+Snapshots freeze landscape, height, object, and hut origin when sight crosses down through 50. Clear when it goes back above 50. Grey fog samples `hiddenAt` so flatten in the dark does not jump the mesh.
 
 View distance is an attribute on the def: plan/scaffold **0**, empty worker hut **5**, occupied or workerless = `def.viewDistance` (tower **38**, most work huts **0**). Units default **8**. Tweaking the number is enough; the circles, dimmer, and snapshots are already wired.
 

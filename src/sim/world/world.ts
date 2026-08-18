@@ -6,7 +6,7 @@ import { HEX_DELTAS, TOWER_RADIUS, isWater, type Action, type GridPos } from "..
 import { Clock } from "../clock/clock";
 import { TickTimer, type TickTimings } from "../clock/profile";
 import { BuildingGrid, buildingFlag, canPlace, TOWER_DOOR_HP, type Building, type BuildingView } from "../building/building";
-import { averageHeight, flattenTooSteep, footprint, plotLevel as heightsMatch } from "../building/flatten";
+import { averageHeight, constructionMarkValue, flattenTooSteep, footprint, needsFlatten, plotLevel as heightsMatch } from "../building/flatten";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import { settlers, settlerDef, needsPlayersGround, unitViewDistance, isSoldier, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
@@ -181,7 +181,7 @@ export class World {
     if (!hut) return undefined;
     hut.state = "plan";
     const def = buildingDef(kind);
-    if ("flatten" in def && def.flatten) hut.flattenHeight = averageHeight(this.grid, footprint(def.protected, at));
+    if (needsFlatten(def)) hut.flattenHeight = averageHeight(this.grid, footprint(def.protected, at));
     return hut;
   }
 
@@ -220,15 +220,27 @@ export class World {
   canPlaceBuilding(kind: BuildingKind, at: GridPos, player = 0): boolean {
     const def = buildingDef(kind);
     if (!canPlace(this.buildings, def, at, this.grid, this.objects)) return false;
-    if ("flatten" in def && def.flatten && flattenTooSteep(this.grid, footprint(def.protected, at))) return false;
+    if (needsFlatten(def) && flattenTooSteep(this.grid, footprint(def.protected, at))) return false;
     return this.landAllows(kind, at, player);
   }
 
-  /** True when the hut needs no diggers (no `flatten`, or protected heights already match). */
+  /** True when the hut needs no diggers (`flatten: false`, or protected heights already match). */
   plotLevel(kind: BuildingKind, at: GridPos): boolean {
     const def = buildingDef(kind);
-    if (!("flatten" in def) || !def.flatten) return true;
+    if (!needsFlatten(def)) return true;
     return heightsMatch(this.grid, footprint(def.protected, at));
+  }
+
+  /**
+   * Construction-mark byte for placing `kind` here. `null` if illegal.
+   * 0 = level (or the hut does not flatten). Higher = more digging, cap 127.
+   */
+  constructionMark(kind: BuildingKind, at: GridPos, player = 0): number | null {
+    if (!this.canPlaceBuilding(kind, at, player)) return null;
+    const def = buildingDef(kind);
+    if (!needsFlatten(def)) return 0;
+    const v = constructionMarkValue(this.grid, footprint(def.protected, at));
+    return v < 0 ? null : v;
   }
 
   /** Actions applied so far, in apply order. */

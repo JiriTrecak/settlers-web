@@ -1,13 +1,13 @@
 /**
  * Plan → haul `constructionStacks` → `building` (scaffold then hut grow) → `built`.
- * Flatten defs also wait until protected heights hit the frozen mean.
+ * Flatten huts also wait until protected heights hit the frozen mean.
  * Each 1s swing bumps progress by `1 / (12 × materials)` and pops a pile every 12 swings.
  * Two bricklayers → twice the bumps. Then a jobless bearer occupies.
  * Diggers / bricklayers / occupy recruits are the hut's player only.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
-import { diggerCount, flattenReady, footprint, nextFlattenTile } from "../building/flatten";
+import { diggerCount, flattenReady, footprint, needsFlatten, nextFlattenTile } from "../building/flatten";
 import { buildingDef } from "../data/buildings";
 import { settlers, type SettlerKind } from "../data/settlers";
 import type { MapGrid } from "../map/mapGrid";
@@ -70,13 +70,13 @@ export function tryTakeMaterial(b: Building, ctx: TakeContext): boolean {
 
 function flattenReadyFor(b: Building, ctx: ConstructionContext): boolean {
   const def = buildingDef(b.kind);
-  if (!("flatten" in def) || !def.flatten) return true;
+  if (!needsFlatten(def)) return true;
   return flattenReady(ctx.grid, footprint(def.protected, b.pos), b.flattenHeight);
 }
 
 function recruitDiggers(b: Building, ctx: ConstructionContext): void {
   const def = buildingDef(b.kind);
-  if (!("flatten" in def) || !def.flatten) return;
+  if (!needsFlatten(def)) return;
   const tiles = footprint(def.protected, b.pos);
   const want = diggerCount(tiles.length);
   let have = 0;

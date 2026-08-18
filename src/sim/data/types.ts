@@ -49,7 +49,7 @@ export type BuildingDef = {
   garrison?: number;
   /**
    * Diggers level `protected` to the integer mean height before bricklayers.
-   * Already-level plots skip. Omit → heights ignored (this slice: lumberjack only).
+   * Already-level plots skip. Omit → flatten. `false` skips (mines).
    */
   flatten?: boolean;
 };

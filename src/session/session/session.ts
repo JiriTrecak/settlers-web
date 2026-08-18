@@ -283,6 +283,7 @@ export class Session {
     renderer.setSelected(this.selectedUnitIds);
     renderer.draw(snap, this.acc / step);
     this.paintHutSelect();
+    this.syncGhost();
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
     const drawMs = performance.now() - tDraw;
@@ -658,11 +659,31 @@ export class Session {
     const tool = this.placeTool;
     const pos = this.hover;
     if (!renderer) return;
-    if (this.claiming || tool?.type !== "building" || !pos || !world || world.buildings.at(pos.x, pos.y)) {
+    if (this.claiming || tool?.type !== "building" || !world) {
       renderer.ghost(null, null, false);
+      renderer.setConstructionMarks(null);
       return;
     }
-    renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos));
+    if (!pos || world.buildings.at(pos.x, pos.y)) renderer.ghost(null, null, false);
+    else {
+      renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos));
+    }
+    const vis = renderer.visibleGrid();
+    if (!vis) {
+      renderer.setConstructionMarks(null);
+      return;
+    }
+    const fog = this.showFog ? world.fog.view(this.me) : null;
+    const marks: { x: number; y: number; value: number }[] = [];
+    for (let y = vis.y0; y <= vis.y1; y += vis.stride) {
+      for (let x = vis.x0; x <= vis.x1; x += vis.stride) {
+        if (fog && fog.sightAt(x, y) === 0) continue;
+        const value = world.constructionMark(tool.kind, { x, y }, this.me);
+        if (value == null) continue;
+        marks.push({ x, y, value });
+      }
+    }
+    renderer.setConstructionMarks(marks);
   }
 
   private toolLabel(): string | null {

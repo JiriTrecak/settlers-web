@@ -1,6 +1,5 @@
 /**
  * Roman lumberjack hut. Trunk offer, work radius 30.
- * `flatten`: diggers level protected tiles to the integer mean before bricklayers.
  */
 import type { BuildingDef } from "../types";
 
@@ -11,7 +10,6 @@ export const lumberjack = {
   worker: "lumberjack",
   workRadius: 30,
   viewDistance: 0,
-  flatten: true,
   ground: ["grass", "earth", "flattened"],
   blocked: [
     { dx: -3, dy: 2 },

@@ -20,7 +20,7 @@ Order matters — later systems see this tick’s assignments.
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
 6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / digger / pioneer search / swordsman aggro or garrison)
-7. Construction: plan → flatten (if the def asks) → scaffold, recruit bricklayers, occupy finished worker huts
+7. Construction: plan → flatten (unless `flatten: false`) → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)
 10. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
