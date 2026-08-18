@@ -180,12 +180,20 @@ export class Movable {
     }
   }
 
-  /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. */
-  pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): void {
+  /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. False if no path. */
+  pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): boolean {
     this.leave();
     const path = findPath(grid, this.pos, to, blockers);
     this.queue = path ? path.slice() : [];
     if (!this.stepping && this.action !== "work") this.startStep(grid, blockers);
+    return path != null;
+  }
+
+  /** Already at `to`, or the remaining queue ends there — don't BFS again. */
+  headingToward(to: GridPos): boolean {
+    if (this.pos.x === to.x && this.pos.y === to.y) return true;
+    const last = this.queue[this.queue.length - 1];
+    return last != null && last.x === to.x && last.y === to.y;
   }
 
   face(toward: GridPos): void {

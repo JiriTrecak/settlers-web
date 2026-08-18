@@ -1,7 +1,7 @@
 /**
  * Pioneer brain. Job `pioneer` is the RMB target. Walk there first, then claim
  * unenforced foreign tiles: hex ring 1–6 toward the target, else search 30.
- * The kneel + tile flip is `tickJob`.
+ * The kneel + tile flip is `tickJob`. Failed BFS idles — never repath every beat.
  */
 import { hexDist, type GridPos } from "../../shared";
 import { isWalkable } from "../path/path";
@@ -18,7 +18,7 @@ export function tickPioneer(m: Movable, ctx: ProfessionContext): void {
   if (!job.arrived) {
     if (m.pos.x === job.at.x && m.pos.y === job.at.y) job.arrived = true;
     else {
-      m.pathTo(ctx.grid, job.at, ctx.blockers);
+      tryPath(m, ctx, job.at);
       return;
     }
   }
@@ -28,7 +28,13 @@ export function tickPioneer(m: Movable, ctx: ProfessionContext): void {
     m.idle();
     return;
   }
-  m.pathTo(ctx.grid, next, ctx.blockers);
+  tryPath(m, ctx, next);
+}
+
+/** One BFS per dest. Failed / blocked dest → idle so we don't flood the map every beat. */
+function tryPath(m: Movable, ctx: ProfessionContext, to: GridPos): void {
+  if (m.headingToward(to)) return;
+  if (!m.pathTo(ctx.grid, to, ctx.blockers)) m.idle();
 }
 
 function claimable(ctx: ProfessionContext, m: Movable, x: number, y: number): boolean {

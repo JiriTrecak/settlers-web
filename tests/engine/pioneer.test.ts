@@ -68,4 +68,17 @@ describe("pioneer", () => {
     world.dispatch({ type: "convert", id: home.id, to: "bearer" });
     expect(home.type).toBe("bearer");
   });
+
+  it("idles when the target is walkable but unreachable, instead of pathing every tick", () => {
+    const grid = grass(80, 40);
+    for (let y = 0; y < 40; y++) grid.setLandscape(40, y, "water8");
+    const world = new World(grid);
+    const pioneer = world.spawnSettler("pioneer", { x: 10, y: 20 }, 0);
+    world.dispatch({ type: "pioneerWork", id: pioneer.id, to: { x: 70, y: 20 } });
+    world.tick();
+    expect(pioneer.job).toBeNull();
+    expect(pioneer.view().path).toEqual([]);
+    world.tick();
+    expect(pioneer.job).toBeNull();
+  });
 });
