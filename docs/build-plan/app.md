@@ -8,7 +8,7 @@ Boot. Creates Pixi, shows one `GameScreen`, pumps the ticker. No feature code.
 
 rAF → `session.tick(dtMs, nowMs)`:
 
-1. `acc += dtMs * speed`; drain 25 ms sim ticks (cap `8 * speed`). Lockstep: do not drain a beat until every slot confirmed it; do not burn `acc` while waiting. MP is 1× ([net.md](net.md)).
+1. `acc += dtMs * speed`; drain 25 ms sim ticks (cap `8 * speed`). Lockstep: do not drain a beat until MatchHost `commit` for it; do not burn `acc` while waiting. MP is 1× ([net.md](net.md)).
 2. `snapshot = world.view(player)`
 3. `renderer.draw(snapshot, leftover)`
 

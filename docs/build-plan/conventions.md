@@ -31,8 +31,9 @@ Domain words: `Movable`, `Bearer`, `Pioneer`, `Landscape`, fog, land. Keep them.
 | `GridPos` | `{ readonly x: number; readonly y: number }` |
 | `LandscapeType` | String union |
 | `Direction` | 6 hex dirs. Deltas in `shared`. |
-| `MatchConfig` | Injected (`mapId`, `seed`, `delay`, `slots`). No process-wide statics. See [net.md](net.md). |
-| `Bundle` | `{ tick, player, actions }` for one slot on one beat. Empty `actions` is a confirm. |
+| `MatchConfig` | Frozen at room Start (`mapId`, `mapRevision`, `seed`, `delay`, `slots`). No process-wide statics. See [net.md](net.md). |
+| `Bundle` | Client→server: `{ tick, actions }` for this slot. Empty `actions` + `through` is a confirm. |
+| `commit` | Server→all: `{ tick, slots: { player, actions }[] }`. The only thing that advances sim. |
 
 ## Constants
 

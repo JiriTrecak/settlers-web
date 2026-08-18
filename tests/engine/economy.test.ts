@@ -34,7 +34,7 @@ describe("colony", () => {
     expect(kinds).toContain("small_livinghouse");
     const bearers = world.view().movables.filter((m) => m.type === "bearer");
     expect(bearers.length).toBeGreaterThanOrEqual(16);
-    expect(world.view().movables.filter((m) => m.type === "swordsman")).toHaveLength(8);
+    expect(world.view().movables.filter((m) => m.type === "swordsman")).toHaveLength(1);
     expect(world.view().movables.some((m) => m.type === "swordsman" && m.inside)).toBe(true);
     expect(world.view().movables.filter((m) => m.type === "pioneer")).toHaveLength(0);
     const stacks = world.view().objects.filter((o) => o.kind === "stack");
@@ -46,10 +46,10 @@ describe("colony", () => {
     expect(world.view(0).fog.sightAt(32, 32)).toBe(100);
   });
 
-  it("can stamp a thin infantry kit", () => {
+  it("garrisons one L1 so the occupy disk exists", () => {
     const world = new World(grass(64, 64));
-    placeColony(world, { x: 32, y: 32 }, 1, 3);
-    expect(world.view().movables.filter((m) => m.type === "swordsman")).toHaveLength(3);
+    placeColony(world, { x: 32, y: 32 }, 1);
+    expect(world.view().movables.filter((m) => m.type === "swordsman")).toHaveLength(1);
     expect(world.view().movables.some((m) => m.type === "swordsman" && m.inside)).toBe(true);
   });
 });

@@ -6,7 +6,7 @@ export type GridPos = {
 
 export type Action =
   | { type: "noop" }
-  | { type: "placeColony"; at: GridPos; player?: number; swordsmen?: number }
+  | { type: "placeColony"; at: GridPos; player?: number }
   | { type: "moveTo"; id: number; to: GridPos; forced?: boolean }
   | { type: "chop"; id: number; at: GridPos }
   | { type: "pickup"; id: number; at: GridPos }

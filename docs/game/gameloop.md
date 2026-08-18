@@ -35,7 +35,7 @@ Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (
 
 World RNG is seeded (`seedRng(1)` unless a test passes another). Play loop will take seed from `MatchConfig`. No `Math.random` in sim. Same map + same action log → same checksum at tick N. Victory/Defeat (and **Save replay**) shelves that log; watch mode `replay(log, duration)` and does not re-run the opponent script.
 
-Lockstep (not wired): Session only calls `world.tick()` when every slot confirmed that beat. Play-loop input will go through a mailbox at `tickIndex + D`, not `world.enqueue` from the click. See [`docs/build-plan/net.md`](../build-plan/net.md).
+Lockstep (not wired): Session only calls `world.tick()` when it has a MatchHost `commit` for that beat. Play-loop input will go through a mailbox at `tickIndex + D`, not `world.enqueue` from the click. See [`docs/build-plan/net.md`](../build-plan/net.md).
 
 ## Frame vs sim
 

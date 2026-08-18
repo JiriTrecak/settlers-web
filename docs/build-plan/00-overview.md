@@ -16,7 +16,7 @@ This folder is **constraints + the next work**. How the match *behaves today* li
 | [ui.md](ui.md) | HTML chrome |
 | [assets.md](assets.md) | Dumped graphics, `original_conv` |
 | [testing.md](testing.md) | Vitest, architecture tests, replay |
-| [net.md](net.md) | Lockstep, Channel, MatchConfig. Read before sockets. |
+| [net.md](net.md) | MatchHost lockstep. Read before sockets. |
 
 Session is documented under [`src/session/`](../../src/session/index.md), not here.
 
@@ -25,7 +25,7 @@ Session is documented under [`src/session/`](../../src/session/index.md), not he
 ```
 ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  render
                    ▲  │
-                   │  └──► net (mailbox) ──► peer
+                   │  └──► net (Lockstep) ──► MatchHost (Node)
                  app (boot, Channel, ticker)    dumped graphics
 ```
 
@@ -40,7 +40,7 @@ ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  
 
 Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten, land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat, match replay (store + scrubber).
 
-Not a game yet: no netcode. Architecture is locked in [net.md](net.md).
+Not a game yet: no netcode. Architecture is locked in [net.md](net.md) (MatchHost, not a peer mesh).
 
 Forward plan: **[P2.md](P2.md)**. Not more huts, not water, not sound.
 

@@ -1,197 +1,419 @@
 # Net
 
-Lockstep over a dumb pipe. No sockets until this file is the contract.
+Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate Node app**: lobby + room + command mailbox. It does not draw. Steam is later. Camera, fog, selection, HUD stay local.
 
-The sim is already lockstep-shaped (`enqueue` / `log` / `checksum` / `replay`). Netcode is a **gate + a mailbox**, not a second World. Fog, camera, selection, HUD stay local.
+Same map + same `MatchConfig` + same committed action log ⇒ same checksum. That is already the engine. Replays are that log. Spectators are a Session with `watching: true` on the same commit stream.
 
-## Shape
-
-```
-app/       Pixi, ScreenHost. Lobby constructs Channel + MatchConfig, then Session.
-session/   One match. Owns World. Talks to Lockstep, never to a socket.
-net/       NEW. Channel + Lockstep mailbox. No Pixi, no DOM, no rules.
-sim/       Unchanged beat. Delay D. Envelope player. Reject foreign commands.
-render/    Unchanged.
-ui/        Lobby host/join later. Widgets still don't see World.
-```
+The server is **not** an FPS authority. It does not send unit positions. It **commits ticks**: when every playing slot has confirmed through `T`, it broadcasts the full command set for `T`. Every client (and optional headless `World` later) applies that set and ticks once.
 
 ```
-click ──► Session.send(action)
+Browser / Tauri                         EC2 Node (MatchHost)
+─────────────────                       ────────────────────
+ui  → session.send(action)              HTTP  /rooms  (list, create, join)
+         │                              WS    /match/:id  (lockstep)
+         ▼
+    Lockstep  ── WebSocket Channel ──►  Room
+         ▲                                 │
+         │         commit { tick, slots }  │
+         └─────────────────────────────────┘
+    enqueue envelope → world.tick()
+```
+
+`World.tick()` never waits on IO. Session only ticks when it has `commit` for `tickIndex + 1`.
+
+## Why a server from day one
+
+3–8 humans, coop later, spectate, a list of rooms on EC2. A browser mesh dies at that. Steam invite is a UI on this room, not a different protocol.
+
+## Repos / processes
+
+| Process | Lives | Owns |
+|---|---|---|
+| Game | this repo `src/` | Pixi, Session, World, render, HUD |
+| MatchHost | this repo `server/` | HTTP lobby, WS rooms, logs. Node. |
+| Shared types | `src/shared` (imported by both) | `Action`, `GridPos`, wire types |
+
+`server/` does **not** import `pixi.js`, `src/render`, `src/ui`, `src/session`. v1 does **not** import `src/sim` (mailbox only). Headless referee `World` is a later flag on the same process.
+
+CI / SP do not require a listen port: the same Room logic runs in-process behind a `MemoryChannel` (vitest + singleplayer). The Node app is that Room bound to HTTP+WS.
+
+```
+MatchHost  ← same class
+    ├─ MemoryChannel     SP + vitest (N Worlds, no port)
+    └─ WebSocketChannel  tabs / EC2
+```
+
+## Roles in a room
+
+| Role | Sends `turn` | Receives `commit` | Runs `World` |
+|---|---|---|---|
+| Player (slot 0..n-1) | yes, that slot only | yes | yes |
+| Spectator | no | yes | yes (`watching`) |
+| MatchHost | no (v1) | n/a | no (v1). Later: yes, for hash referee + AI slots |
+
+Playing slots = `config.slots` that are `kind: "human"` and still connected (or host-injected empty confirms after drop). Spectators never gate the clock.
+
+Max **8** playing slots. Spectators uncapped for v1 (cap later if EC2 cries).
+
+---
+
+## Services (Node)
+
+One process, two listeners (or one port: HTTP + WS upgrade).
+
+### 1. Lobby HTTP (`/api`)
+
+JSON. No sim.
+
+| Method | Path | Who | What |
+|---|---|---|---|
+| GET | `/health` | anyone | `{ ok, version }` |
+| GET | `/rooms` | anyone | list: searching + in_progress (ended optional, last N) |
+| POST | `/rooms` | guest | create; caller is host; body = draft config |
+| POST | `/rooms/:id/join` | guest | claim a free playing slot **or** `role: "spectator"` |
+| POST | `/rooms/:id/leave` | member | leave; host leave while `waiting` cancels the room |
+| POST | `/rooms/:id/start` | host | freeze `MatchConfig`, `waiting` → `playing`, WS clients get `start` |
+| GET | `/rooms/:id` | anyone | snapshot for the lobby UI |
+
+Auth v1: **guest**. Join body `{ name: string }` → server issues `token` (random, HMAC later). Token is sent as `Authorization: Bearer` and as WS query `?token=`. Steam tickets replace this later without changing Room/Lockstep.
+
+No accounts, no passwords, no email. Display name is cosmetic (not in checksum).
+
+### 2. Match WebSocket (`/match/:id?token=`)
+
+One connection per client. Text frames, JSON `Wire` messages below.
+
+Server binds the socket to `(roomId, token → slot | spectator)`.
+
+### 3. Replay store (v1: disk on the box)
+
+On `ended` or desync, write the same shape as `ReplayFile` (plus `config`). Path `data/replays/{roomId}.json`. HTTP GET later. Local `ReplayStore` in the browser stays for SP.
+
+### 4. Not now
+
+Steam, TLS in Node (Caddy/nginx in front on EC2), matchmaking MMR, dedicated sim farm, NAT punch, WebRTC.
+
+---
+
+## Room lifecycle
+
+```
+waiting  →  playing  →  ended
               │
-              ▼
-         Lockstep ──Channel──► peer Lockstep
-              │                      │
-              ▼                      ▼
-     ready(next)? both have a bundle (maybe empty)
-              │
-              ▼
-     Session: enqueue envelope, then world.tick()
+              └──► desynced (terminal; dump log)
 ```
 
-`World.tick()` stays “always run one 25 ms beat.” It does not wait on the network. Session only calls it when `lockstep.ready(tickIndex + 1)`.
+**waiting.** Host created the room. Players join slots. Host can change map / slot count until Start. No `World` yet. v1 lobby is HTTP polling (or a light `room` WS event).
 
-## Why lockstep, not rollback
+**Start** (host only), server:
 
-Same map + same action log ⇒ same checksum. That is already the engine. Rollback wants a different clock and a different checksum story. Dedicated-server sim would make `src/sim` the server and the client a puppet — not this game.
+1. Stamps `seed` (CSPRNG u32). Clients do not pick the seed.
+2. Broadcasts `start { config, you }`.
+3. Each player Session: load dump for `mapId`, refuse if catalog hash ≠ `config.mapRevision`, `new World(..., seedRng(seed))`, `dispatch` `placeColony` per **config.slots** at tick 0 (not on the wire), then WS `ready`.
+4. When all playing slots have `ready`, server broadcasts `go`. Lockstep starts at tick **1**.
 
-Both peers run `World`. A relay, if any, is a mailbox. It does not tick.
+Starts on the map come from the dump (`starts[slot]`). Server does **not** ship the grid. `mapRevision` keeps dumps honest — mismatched maps are the classic desync.
+
+`placeColony` is **not** a play-loop wire message. After `go`, reject it on the Channel.
+
+**playing.** Clients send `turn`. Server broadcasts `commit`. Outcome: any client may send `ended { outcome }` after `World.outcome` fires; server verifies hashes still matched, marks room `ended`, stores replay.
+
+**desynced.** First hash mismatch: broadcast `desync`, freeze, persist dump. No silent resync.
+
+---
 
 ## MatchConfig
 
-Injected. Host authors it; join copies it; SP builds it locally. No process-wide statics.
+Frozen at Start. Copied to every client. No process-wide statics.
 
 ```ts
+type SlotKind = "human" | "ai"; // ai unused in v1 except SP in-process
+
+type Slot = {
+  player: number;          // 0..7, index in this array
+  kind: SlotKind;
+  name?: string;           // display only
+};
+
 type MatchConfig = {
+  v: 1;
+  roomId: string;
   mapId: string;
+  mapRevision: string;     // hash of dumped map as the catalog knows it
   seed: number;
-  delay: number;          // D, ticks. Default 8 (200 ms). Tests may use 1.
-  checksumEvery: number;  // default 8
-  slots: { player: number; swordsmen: number }[];
+  delay: number;           // D, ticks. Default 8 (200 ms). Tests: 1.
+  checksumEvery: number;   // default 8
+  tickMs: 25;              // must match Clock.tickMs
+  slots: Slot[];
 };
 ```
 
-Both peers:
+SP: App builds the same `MatchConfig` locally (one human + ai slots), MemoryChannel, in-process Room. Same Session path.
 
-1. Load the same dump from `mapId`.
-2. `new World(grid, objects, seedRng(seed))`.
-3. `dispatch` `placeColony` per slot from **config**, tick 0, identical `at` / `swordsmen`.
-4. Signal ready. Lockstep starts at tick 1.
+Replay file stays `{ mapId, seed, me, duration, checksum, outcome, log, … }`. Host persist adds `config`. Seed and map id live in the file.
 
-`placeColony` is not a play-loop wire message. After ready, reject it.
+---
 
-Kit handicap (8 vs 3) is a slot field, not `me` vs “the AI.” Script opponent in SP still uses `KIT_SWORDSMEN_THEM` in that slot’s config row.
+## Wire (WebSocket)
 
-Replay file = `{ mapId, seed, me, duration, checksum, outcome, log }`. Persisted on Victory/Defeat (`ReplayStore`). Same payload lockstep will ship. Seed and map id live in the file (later: `MatchConfig`).
+All messages: `{ type: string, ... }`. Unknown `type` → ignore (forward compat).
 
-## Wire
+`commit` is the only thing that advances the sim. It is broadcast to players and spectators.
+
+### Client → server
 
 ```ts
-type Bundle = { tick: number; player: number; actions: Action[] };
-
-type Wire =
-  | { type: "hello"; config: MatchConfig }
-  | { type: "ready" }
-  | { type: "turn"; player: number; through: number; bundles: Bundle[] }
+type ClientMsg =
+  | { type: "hello"; token: string }           // if not in query; optional
+  | { type: "ready" }                          // World built, tick 0 kits done
+  | {
+      type: "turn";
+      through: number;                         // no more actions with tick <= through
+      bundles: Bundle[];                       // only ticks that had orders
+    }
   | { type: "hash"; tick: number; checksum: number }
-  | { type: "desync"; tick: number; checksum: number };
+  | { type: "ended"; outcome: MatchOutcome; tick: number; checksum: number };
+
+type Bundle = {
+  tick: number;
+  actions: Action[];       // this connection's slot only. No player field.
+};
 ```
 
-**Empty confirm is mandatory.** Silence ≠ “no orders.” `through: T` means this player will send no more actions with `tick <= T`. Bundles in that message are only the ticks that had orders. Peers may confirm several ticks at once.
+**Empty confirm is mandatory.** Silence ≠ “no orders.” A playing slot must send `through: T` even when `bundles: []`.
 
-Do not send `noop`. World already drops it. Do not send a bundle every 25 ms forever.
+Do not send `noop`. Do not send a `turn` every 25 ms unless `through` advanced. Typical cadence: one `turn` per local sim beat just confirmed, or coalesced (`through` jumped) after a hitch.
 
-Checksum every `checksumEvery` ticks. Mismatch: freeze both Worlds, dump `{ config, log, checksums }`. No silent resync.
+`Action` is the existing shared union. Envelope **player** is the socket’s slot, assigned by the server — not `action.player`. Clients may still put `player` on place/occupy for the log; World ignores it if it disagrees.
 
-## Delay D
+Reject at server (drop the action, still accept `through`):
 
-Local click for beat `tickIndex` schedules at `tickIndex + D`. Same D in single-player once Lockstep exists, so the feel matches MP.
+- spectator sent `turn`
+- `tick` < 1 or `tick` > `through`
+- `tick` > lastCommitted + D + slack
+- `placeColony` / `noop`
+- foreign unit / hut (Session must reject; server can be lazy in v1 and let World no-op)
 
-Until Lockstep lands, enqueue stays `+1` (today). Do not ship sockets on `+1`.
+### Server → client
 
-## Session tick gate
+```ts
+type ServerMsg =
+  | { type: "welcome"; you: ClientIdentity; room: RoomView }
+  | { type: "room"; room: RoomView }             // lobby membership changed
+  | { type: "start"; config: MatchConfig; you: ClientIdentity }
+  | { type: "go"; tick: 1 }
+  | { type: "commit"; tick: number; slots: CommitSlot[] }
+  | { type: "hashOk"; tick: number }
+  | { type: "desync"; tick: number; hashes: { player: number; checksum: number }[] }
+  | { type: "ended"; outcome: MatchOutcome; replayId: string }
+  | { type: "error"; code: string; message: string };
+
+type ClientIdentity = {
+  role: "player" | "spectator";
+  player?: number;         // set if role === "player"
+  name: string;
+};
+
+type CommitSlot = {
+  player: number;
+  actions: Action[];       // may be []. seq = index in this array on every peer
+};
+```
+
+`ready(next)` on the client = “I have `commit` for `next`.” The mailbox is the server.
+
+`slots` in `commit` is ordered by `player` ascending. Missing player is a server bug. Empty `actions` is a valid confirm.
+
+### What is never on the wire
+
+Camera, pan/zoom, hover, selection, fog, HUD, construction-mark mesh, F3 overlays, SpeedControl, decorations, `ViewSnapshot`.
+
+MP speed is **1×**. Pause = clients stop sending `through` (everyone stalls). Not a sim flag. Defeat lives in `World.outcome`; don’t network the banner. Exit still tears the Session down.
+
+---
+
+## Lockstep (client Session)
+
+Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + D`. Same D in SP — the play loop does not know if the Channel is memory or WebSocket. Today’s `enqueue(+1)` from the click is the cheat; it goes away with Lockstep, not only when EC2 is up.
 
 ```
-acc += dtMs * speed          // MP: speed is 1
+acc += dtMs                 // MP: speed = 1
 while acc >= 25 and n < cap:
   next = world.clock.tickIndex + 1
-  if !lockstep.ready(next): break    // do not consume acc
-  for bundle in lockstep.take(next):
-    world.enqueue(action, next, { player, seq })   // seq = index in that bundle
+  if no commit(next): break   // do not consume acc
+  for slot in commit.slots:   // player order
+    for i, action of slot.actions:
+      world.enqueue(action, next, { player: slot.player, seq: i })
   acc -= 25
   world.tick()
-  lockstep.confirm(next)     // local slot: through = next, plus any queued orders at next+D
+  send turn { through: next, bundles: orders for next+D if any }
+  if next % checksumEvery == 0: send hash
 ```
 
 Stall leaves `acc` alone. Catch-up still capped. Burning `acc` while waiting would skip beats.
 
-Apply order is already `player`, then `seq`. `seq` is the index in **that player’s bundle for that tick**, assigned by Session when ingesting — not `World.nextSeq` from two different processes. Two actions from the same player on the same tick must have the same seq on every peer.
+Apply order: **player**, then **seq**. `seq` is the index in that slot’s `commit` array for that tick — not `World.nextSeq` from two processes.
 
-## Envelope
+### Envelope (World hygiene)
 
-`enqueue(action, tick, player)` — the envelope player wins. `action.player` on place/occupy is redundant; keep it in the log if present, ignore it when it disagrees.
+SP and MP are the same command path. Session never `world.enqueue`s from a click. Click → Lockstep → Channel → Room `commit` → Session `enqueue(action, tick, player)`. MemoryChannel is an in-process Room; WebSocket is that Room on the network. `Opponent` is a bundle producer for another slot on the same path.
 
-Reject (no-op, do not apply):
+`enqueue(action, tick, player)` — envelope wins.
+
+Reject (no-op):
 
 - unit command (`moveTo`, `convert`, `pioneerWork`, …) whose `id` is not that player’s
-- `destroyBuilding` on a hut that player does not own
-- `placeBuilding` / `occupy` / `placeColony` stamped for a different player
+- `destroyBuilding` on a hut they do not own
+- `placeBuilding` / `occupy` / `placeColony` for a different player
 - `placeColony` after tick 0
 
-Today `actionPlayer` infers from the unit. That is a cheat. Two humans would command each other’s swordsmen. Hygiene lands **before** a real Channel.
+Today `actionPlayer` infers from the unit and Session writes `World` directly. That is a cheat in SP too — you can already command the script opponent’s swordsmen. Hygiene is the play loop, not an MP extra. Tests may still `world.dispatch` / `world.enqueue` — engine API, not the play loop. `dispatch` stays a test + tick-0 kit helper.
 
-## One send path
+`src/net` imports `shared` only. It does not import `sim`. It never calls `world.tick`. Session translates `commit` → `enqueue`. App constructs the Channel and hands it to Session. Session never `new WebSocket`.
 
-Every mutation Session currently `world.enqueue`s (RMB, C, Delete, build strip, F3 occupy) goes `Session → lockstep.send → mailbox → world.enqueue`.
-
-`Opponent` is a bundle producer for another slot, not a second writer into `World`. In MP the remote Session is that producer. Tests may still `world.dispatch` / `world.enqueue` — that is the engine API, not the play loop.
-
-`dispatch` stays a test + tick-0 kit helper.
+---
 
 ## Channel
 
 ```ts
 interface Channel {
-  send(msg: Wire): void;
-  onMessage(fn: (msg: Wire) => void): void;
+  send(msg: ClientMsg): void;
+  onMessage(fn: (msg: ServerMsg) => void): void;
 }
 ```
 
-Implementations, in order:
+In-process MemoryChannel uses the same Room as the Node app (no listen). WebSocketChannel is that Room over the wire. No BroadcastChannel product path. No WebRTC.
 
-| Channel | When |
-|---|---|
-| `LocalChannel` | SP + CI. Loopback. Session always sits on Lockstep, even alone. |
-| `BroadcastChannel` | Two tabs, same origin. First visual MP. |
-| WebSocket room | Two browsers. Dumb relay. P2 bar. |
+---
 
-No WebRTC, no NAT punch, no host-authoritative sim.
+## Lobby HTTP shapes
 
-`src/net` imports `shared` only. It does not import `sim`. It never calls `world.tick`. Session translates `Bundle` → `enqueue`.
+```ts
+type RoomState = "waiting" | "playing" | "ended" | "desynced";
 
-App constructs the Channel and hands it to Session. Session never `new WebSocket`.
+type RoomView = {
+  id: string;
+  state: RoomState;
+  name: string;
+  mapId: string;
+  host: string;            // display name
+  slots: { player: number; name: string | null }[];  // null = empty
+  spectators: number;
+  tick?: number;           // if playing
+};
 
-## Speed, pause, outcome
+// POST /rooms
+type CreateRoom = {
+  name: string;
+  mapId: string;
+  slotCount: number;       // 2..8
+  guestName: string;
+};
 
-MP is 1×. SpeedControl is local today — do not put 2/4/8× on the wire in v1. Hide or no-op it.
+// POST /rooms/:id/join
+type JoinRoom = {
+  guestName: string;
+  role: "player" | "spectator";
+};
+// → { token, room, you }
+```
 
-Pause = stop confirming (everyone stalls). Not a sim flag.
+`GET /rooms` returns `waiting` + `playing` so friends can join or spectate. Share the site URL. No Steam.
 
-Defeat already lives in `World.outcome`. Input freeze stays session-local. Exit still tears the Session down. Don’t network the banner.
+---
+
+## Checksums and desync
+
+Every `checksumEvery` ticks, each **player** sends `hash`. Spectators may send; server can ignore.
+
+v1 (no headless World): **all hashes must match**. Any outlier → `desync` to everyone, persist `{ config, log, hashes }`. No silent resync.
+
+When host runs `World` later: host hash is the referee.
+
+Checksum still **excludes fog**. Same mix as `World.checksum()` today.
+
+---
+
+## Dropped players
+
+v1: if a playing socket dies, server **injects empty confirms** for that slot so the match continues. No AI takeover yet (that needs host `World` + Opponent bundles). Timeout ~ a few seconds of missing `through`.
+
+Host process crash: in-flight matches are gone until we persist commits (later).
+
+---
+
+## Deploy (EC2, from the beginning)
+
+- Node LTS, `server/` (`node dist/index.js`).
+- systemd, restart on crash.
+- Bind `127.0.0.1` + nginx/Caddy: `https://…/api`, `wss://…/match`.
+- Env: `PORT`, `DATA_DIR`, `MAX_ROOMS`, later `AUTH_SECRET`.
+- Maps are **not** served from MatchHost. Clients already have dumps. `mapRevision` keeps them honest.
+- Security group: 80/443 only.
+
+Local: `npm run server` on `:8787`, Vite proxies `/api` and `/match`.
+
+Friends: EC2 URL in the lobby. That’s the playtest invite.
+
+---
+
+## Steam (later)
+
+Steam lobby metadata = `roomId` + MatchHost URL. Overlay invite hits **our** HTTP `join`, then the same WS. `src/net` unchanged. Auth: Steam session ticket → our token. Do not call Steam from the lockstep path except “ticket in, token out.”
+
+---
+
+## Code map
+
+| Folder | Imports | Owns |
+|---|---|---|
+| `src/shared` | nothing heavy | `Action`, wire types |
+| `src/net` | `shared` only | `Channel`, `Lockstep` (commit mailbox), MemoryChannel |
+| `src/session` | `net`, `sim` | send/gate/tick. Never `new WebSocket` |
+| `src/app` | `net` | constructs Channel from `MatchConfig` / URL |
+| `server/` | `shared` (later `sim`) | HTTP + WS + Room |
+
+Architecture tests: `sim` must not import `net`. `server` must not import `render` / `ui`.
+
+---
 
 ## What sim must change (before sockets)
 
-1. `World` takes seed from MatchConfig (`seedRng(seed)`), not hardcoded `1` in the play loop.
-2. Command delay D, including SP once Lockstep exists.
+1. `World` takes seed from MatchConfig (`seedRng(seed)`), not a hardcoded `1` in the play loop.
+2. Command delay D. Play loop (SP included) uses Lockstep; no `enqueue(+1)` from the click.
 3. Envelope `player` + `seq` on enqueue; reject foreign commands.
 4. Tick-0 kits from config slots, not `i === this.me`.
 
-Checksum still excludes fog.
+---
 
-## What we do not do
+## Land order
 
-- Sockets in `sim/` or `World.tick()` waiting on IO
-- Session reaching into a WebSocket
-- Rollback, prediction (beyond D), interpolation of other players’ commands
-- Syncing camera, selection, fog, HUD, decorations
-- Live speed as an Action
-- Sending `placeColony` as a play-loop command
-- Treating missing packets as empty turns
+1. **Sim hygiene** — D, envelope, reject, MatchConfig, seed.
+2. **`src/net` + MemoryChannel** — two/three in-process Worlds, same checksum at tick N. CI. Session always on Lockstep (SP included). Opponent sends through it.
+3. **`server/` mailbox** — create room, 3 local tabs, empty confirms, hash. No Steam. No host `World`.
+4. **Lobby list + spectate** — `watching` Session on `commit` stream. EC2 deploy.
+5. Later: host `World`, AI slots, drop-in, persisted replays HTTP, Steam.
+
+Do not skip 1–2 because EC2 is already paid for.
 
 ## Bar
 
 | Layer | Done when |
 |---|---|
-| Lockstep | Two `World`s, `LocalChannel`, same `MatchConfig`, same checksums at tick N. CI. |
-| Tabs | Two tabs, one map, same checksums. |
-| P2 | Two browsers, WebSocket room, same checksums. That’s the game. |
+| Lockstep | N `World`s, MemoryChannel, same `MatchConfig`, same checksums at tick N. CI. |
+| Local WS | 3 tabs, one Node, same checksums. |
+| EC2 | Friends join/spectate from the room list. That’s the game. |
 
 Desync dumps a replay. Same as step 1, over the wire.
 
-## Land in this order
+## Explicitly not this architecture
 
-1. Sim hygiene (D, envelope, reject, MatchConfig, seed).
-2. `net/`: Channel + Lockstep + LocalChannel. Session always uses it. Opponent sends through it.
-3. BroadcastChannel (two tabs).
-4. WebSocket room (two browsers).
-
-Do not skip 1–2 for a socket.
+- Rollback / prediction of the sim
+- Snapshot sync of settlers
+- Session opening sockets
+- `World.tick()` blocking on WS
+- BroadcastChannel / peer mesh as a product path
+- Treating missing packets as empty turns
+- Live speed on the wire
+- `placeColony` as a mid-match message
+- Puppet clients (server owns positions; clients interpolate)

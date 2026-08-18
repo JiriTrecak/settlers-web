@@ -36,7 +36,7 @@ npm run build
 
 ## P2
 
-Replay / checksum tests live under `tests/engine/` (`queue.test.ts`, `replay.test.ts`). Same seed + same action log + duration ⇒ same `World.checksum()` at tick N. Lockstep CI (two Worlds, `LocalChannel`) lands with `src/net`, not before. See [net.md](net.md).
+Replay / checksum tests live under `tests/engine/` (`queue.test.ts`, `replay.test.ts`). Same seed + same action log + duration ⇒ same `World.checksum()` at tick N. Lockstep CI (N Worlds, MemoryChannel) lands with `src/net`, not before. See [net.md](net.md).
 
 ## What not to test
 
