@@ -80,6 +80,31 @@ describe("matcher", () => {
     expect(world.objects.get(offer.x, offer.y)?.capacity).toBe(3);
     expect(world.objects.get(request.x, request.y)?.capacity).toBe(STACK_SIZE);
   });
+
+  it("does not haul another player's trunks", () => {
+    const world = new World(grass(48, 48));
+    const p0Hut = { x: 10, y: 10 };
+    const p1Hut = { x: 10, y: 28 };
+    const millAt = { x: 28, y: 12 };
+    expect(world.placeBuilding("lumberjack", p0Hut, 0)).toBeDefined();
+    expect(world.placeBuilding("lumberjack", p1Hut, 1)).toBeDefined();
+    expect(world.placeBuilding("sawmill", millAt, 0)).toBeDefined();
+    const p0Offer = { x: p0Hut.x + hutDef.offerStacks[0]!.dx, y: p0Hut.y + hutDef.offerStacks[0]!.dy };
+    const p1Offer = { x: p1Hut.x + hutDef.offerStacks[0]!.dx, y: p1Hut.y + hutDef.offerStacks[0]!.dy };
+    const request = { x: millAt.x + millDef.requestStacks[0]!.dx, y: millAt.y + millDef.requestStacks[0]!.dy };
+    world.objects.place(goodsStack(p0Offer, "trunk", 1));
+    world.objects.place(goodsStack(p1Offer, "trunk", 1));
+    world.spawnBearer({ x: p0Offer.x + 2, y: p0Offer.y }, 0);
+    world.spawnBearer({ x: millAt.x, y: millAt.y + 1 }, 1);
+
+    const n = tickUntil(world, () => (world.objects.get(request.x, request.y)?.capacity ?? 0) >= 1);
+    expect(n).toBeGreaterThan(0);
+    expect(n).toBeLessThan(6000);
+    expect(world.objects.get(request.x, request.y)).toMatchObject({ kind: "stack", material: "trunk", capacity: 1 });
+    expect(world.objects.get(p0Offer.x, p0Offer.y)).toBeUndefined();
+    expect(world.objects.get(p1Offer.x, p1Offer.y)).toMatchObject({ kind: "stack", material: "trunk", capacity: 1 });
+    expect(world.view().movables.filter((m) => m.player === 1 && m.job === "deliver")).toEqual([]);
+  });
 });
 
 describe("house", () => {

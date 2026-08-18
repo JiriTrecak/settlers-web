@@ -1,5 +1,6 @@
 /**
- * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables. Session ticks this; render reads `view()`.
+ * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables.
+ * Session ticks this and enqueues Actions; render reads `view()`.
  */
 import { HEX_DELTAS, TOWER_RADIUS, isRiver, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
@@ -20,6 +21,7 @@ import { seedRng, type Rng } from "../rng/rng";
 import { LandGrid, type LandView } from "../land/land";
 import { FogGrid, buildingViewDistance, type FogView, type FogWorld } from "../fog/fog";
 import { MarkGrid } from "../mark/mark";
+import { placeColony } from "../economy/startKit";
 
 export type ViewSnapshot = {
   tick: number;
@@ -29,6 +31,15 @@ export type ViewSnapshot = {
   land?: LandView;
   fog: FogView;
 };
+
+/** Applied action. Log is append-only at apply time, not enqueue. */
+export type LoggedAction = {
+  tick: number;
+  player: number;
+  action: Action;
+};
+
+type QueuedAction = LoggedAction & { seq: number };
 
 class Occupancy {
   private readonly at: Int32Array;
@@ -65,6 +76,9 @@ export class World {
   private readonly units: Movable[] = [];
   private readonly fogAt = new Map<number, GridPos>();
   private nextId = 1;
+  private nextSeq = 0;
+  private readonly pending: QueuedAction[] = [];
+  private readonly applied: LoggedAction[] = [];
 
   constructor(grid: MapGrid, objects: ObjectGrid = new ObjectGrid(grid.width, grid.height), rng: Rng = seedRng(1)) {
     this.grid = grid;
@@ -157,8 +171,184 @@ export class World {
     return this.landAllows(kind, at, player);
   }
 
-  dispatch(action: Action): void {
+  /** Actions applied so far, in apply order. */
+  log(): readonly LoggedAction[] {
+    return this.applied;
+  }
+
+  /**
+   * Schedule `action` for a sim beat. Default is the *next* beat (`tickIndex + 1`)
+   * so session input never lands mid-tick. Due-or-past ticks apply immediately.
+   */
+  enqueue(action: Action, atTick = this.clock.tickIndex + 1): void {
     if (action.type === "noop") return;
+    const item: QueuedAction = {
+      tick: atTick,
+      player: this.actionPlayer(action),
+      action,
+      seq: this.nextSeq++,
+    };
+    if (atTick <= this.clock.tickIndex) {
+      this.applyItems([item]);
+      return;
+    }
+    this.pending.push(item);
+  }
+
+  /** Test helper: enqueue for *now* and apply immediately. */
+  dispatch(action: Action): void {
+    this.enqueue(action, this.clock.tickIndex);
+  }
+
+  /**
+   * Replay a log onto an empty world. Applies tick-0 actions, then ticks until
+   * the last logged beat (and no further).
+   */
+  replay(entries: readonly LoggedAction[]): void {
+    for (const e of entries) this.enqueue(e.action, e.tick);
+    this.applyDue(this.clock.tickIndex);
+    const end = entries.reduce((m, e) => Math.max(m, e.tick), this.clock.tickIndex);
+    while (this.clock.tickIndex < end) this.tick();
+  }
+
+  /** Integer mix of tick, RNG, units, huts, land owners, objects. Fog is not in it. */
+  checksum(): number {
+    let h = 2166136261 | 0;
+    const mix = (v: number): void => {
+      h = Math.imul(h ^ (v | 0), 0x9e3779b1) | 0;
+    };
+    const mixStr = (s: string): void => {
+      mix(s.length);
+      for (let i = 0; i < s.length; i++) mix(s.charCodeAt(i));
+    };
+    mix(this.clock.tickIndex);
+    mix(this.rng.state());
+    const units = this.units.slice().sort((a, b) => a.id - b.id);
+    mix(units.length);
+    for (const m of units) {
+      mix(m.id);
+      mix(m.pos.x);
+      mix(m.pos.y);
+      mixStr(m.type);
+      mix(m.player);
+      mixStr(m.job?.type ?? "");
+      mixStr(m.material);
+      mix(m.inside ? 1 : 0);
+      mix(m.workplaceId ?? 0);
+    }
+    const huts = this.buildings.all().slice().sort((a, b) => a.id - b.id);
+    mix(huts.length);
+    for (const b of huts) {
+      mix(b.id);
+      mixStr(b.kind);
+      mix(b.pos.x);
+      mix(b.pos.y);
+      mixStr(b.state);
+      mix((b.constructionProgress * 1000) | 0);
+      mix(b.player);
+    }
+    mix(this.land.width);
+    mix(this.land.height);
+    for (let y = 0; y < this.land.height; y++) {
+      for (let x = 0; x < this.land.width; x++) mix(this.land.playerAt(x, y));
+    }
+    const objs = this.objects.all().sort((a, b) => a.y - b.y || a.x - b.x);
+    mix(objs.length);
+    for (const o of objs) {
+      mixStr(o.kind);
+      mix(o.x);
+      mix(o.y);
+      mix(o.capacity);
+      mix((o.stateProgress * 1000) | 0);
+    }
+    return h >>> 0;
+  }
+
+  tick(): void {
+    this.clock.tick();
+    this.applyDue(this.clock.tickIndex);
+    tickTrees(this.objects, this.clock.tickMs);
+    for (const m of this.units) m.tick();
+    this.tickHouses();
+    for (const m of this.units) {
+      tickProfession(m, {
+        grid: this.grid,
+        objects: this.objects,
+        buildings: this.buildings,
+        blockers: this.unitBlockers(m),
+        tickMs: this.clock.tickMs,
+        units: this.units,
+        rng: this.rng,
+        land: this.land,
+        marks: this.marks,
+      });
+    }
+    tickConstruction({
+      units: this.units,
+      buildings: this.buildings,
+      objects: this.objects,
+      grid: this.grid,
+      blockers: (ignoreId) => this.blockers(ignoreId),
+      tickMs: this.clock.tickMs,
+    });
+    tickMatcher(this.units, this.buildings, this.objects, this.land);
+    for (const m of this.units) {
+      tickFlock(m, {
+        grid: this.grid,
+        objects: this.objects,
+        buildings: this.buildings,
+        units: this.units,
+        rng: this.rng,
+        tickMs: this.clock.tickMs,
+        land: this.land,
+      });
+    }
+    for (const m of this.units) {
+      tickJob(m, this.jobCtx(m));
+    }
+    this.syncLandClaims();
+    this.syncFog();
+    this.fog.tickDim(this.clock.tickMs, this.fogWorld());
+    this.syncOcc();
+  }
+
+  private applyDue(tick: number): void {
+    const due: QueuedAction[] = [];
+    const rest: QueuedAction[] = [];
+    for (const item of this.pending) {
+      if (item.tick <= tick) due.push(item);
+      else rest.push(item);
+    }
+    this.pending.length = 0;
+    this.pending.push(...rest);
+    this.applyItems(due);
+  }
+
+  private applyItems(items: QueuedAction[]): void {
+    items.sort((a, b) => a.player - b.player || a.seq - b.seq);
+    for (const item of items) {
+      this.applyAction(item.action);
+      this.applied.push({ tick: item.tick, player: item.player, action: item.action });
+    }
+  }
+
+  private actionPlayer(action: Action): number {
+    if (action.type === "placeColony" || action.type === "placeBuilding" || action.type === "occupy") {
+      return action.player ?? 0;
+    }
+    if (action.type === "destroyBuilding") {
+      return this.buildings.at(action.at.x, action.at.y)?.player ?? 0;
+    }
+    if (action.type === "noop") return 0;
+    return this.units.find((u) => u.id === action.id)?.player ?? 0;
+  }
+
+  private applyAction(action: Action): void {
+    if (action.type === "noop") return;
+    if (action.type === "placeColony") {
+      placeColony(this, action.at, action.player ?? 0);
+      return;
+    }
     if (action.type === "placeBuilding") {
       this.placePlan(action.kind, action.at, action.player ?? 0);
       return;
@@ -203,53 +393,6 @@ export class World {
       tickJob(m, this.jobCtx(m));
       this.syncOcc();
     }
-  }
-
-  tick(): void {
-    this.clock.tick();
-    tickTrees(this.objects, this.clock.tickMs);
-    for (const m of this.units) m.tick();
-    this.tickHouses();
-    for (const m of this.units) {
-      tickProfession(m, {
-        grid: this.grid,
-        objects: this.objects,
-        buildings: this.buildings,
-        blockers: this.unitBlockers(m),
-        tickMs: this.clock.tickMs,
-        units: this.units,
-        rng: this.rng,
-        land: this.land,
-        marks: this.marks,
-      });
-    }
-    tickConstruction({
-      units: this.units,
-      buildings: this.buildings,
-      objects: this.objects,
-      grid: this.grid,
-      blockers: (ignoreId) => this.blockers(ignoreId),
-      tickMs: this.clock.tickMs,
-    });
-    tickMatcher(this.units, this.buildings, this.objects);
-    for (const m of this.units) {
-      tickFlock(m, {
-        grid: this.grid,
-        objects: this.objects,
-        buildings: this.buildings,
-        units: this.units,
-        rng: this.rng,
-        tickMs: this.clock.tickMs,
-        land: this.land,
-      });
-    }
-    for (const m of this.units) {
-      tickJob(m, this.jobCtx(m));
-    }
-    this.syncLandClaims();
-    this.syncFog();
-    this.fog.tickDim(this.clock.tickMs, this.fogWorld());
-    this.syncOcc();
   }
 
   view(player = 0): ViewSnapshot {

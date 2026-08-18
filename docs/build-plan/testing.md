@@ -35,7 +35,7 @@ npm run build
 
 ## P2
 
-Replay / checksum tests live under `tests/engine/` until a `tests/replay/` folder earns its keep. Same seed + same action log ⇒ same `World.checksum()` at tick N. See [P2.md](P2.md) step 1.
+Replay / checksum tests live under `tests/engine/` (`queue.test.ts`). Same seed + same action log ⇒ same `World.checksum()` at tick N.
 
 ## What not to test
 

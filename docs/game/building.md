@@ -19,7 +19,7 @@ Flatten / diggers are skipped: if the land is legal types, it places, heights un
 
 ## Placement
 
-Build-strip click on empty valid **owned** land dispatches a **plan** (scaffold) and drops the tool. Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
+Build-strip click on empty valid **owned** land `enqueue`s a **plan** (scaffold) and drops the tool. Hover shows a ghost: scaffold sprite ~0.55 alpha, blocked-tile fill, `buildMarks` strokes. Red if illegal (including off-land). Hidden while hovering an existing hut.
 
 `placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower (`occupies`) stamps the radius-40 disk — HQ at match start, and each T1 you construct from the strip. The play loop never uses `placeBuilding` for the strip.
 

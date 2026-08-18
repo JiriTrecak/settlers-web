@@ -8,8 +8,10 @@ Headless game. No Pixi. No DOM. Deterministic.
 
 `World` is the match: clock, grid, objects, buildings, land, fog, marks, movables, seeded RNG.
 
-- `tick()` — one 25 ms beat, fixed order (see gameloop).
-- `dispatch(action)` — outside mutation. **P2.1** turns this into a per-tick queue; session must not call `placeBuilding` / `placeColony` / `snapFog` as methods.
+- `tick()` — increment clock, apply due actions, then one 25 ms beat (see gameloop).
+- `enqueue(action, tick?)` — play-loop mutation. Default tick is `tickIndex + 1`. Due-or-past applies immediately.
+- `dispatch(action)` — test helper: enqueue for *now*. Session uses this only for `placeColony` at start.
+- `checksum()` / `log()` / `replay(log)` — lockstep shape. Fog is not in the mix.
 - `view(player)` — snapshot for render (fog is that player's).
 
 `Action` is a discriminated union in `shared`. Grow it; don't add parallel back doors.
@@ -32,7 +34,7 @@ Engine loads dumped JSON (`DumpedMap`): landscape names, heights, trees, stones,
 
 ## Economy / land / fog
 
-Already in: global matcher, construction, occupy disks, per-player fog (snapshots). Matcher must become **per-player** before a second colony is real — [P2.md](P2.md) step 2. Do not invent a new hauling model.
+Already in: per-player matcher, construction, occupy disks, per-player fog (snapshots). Do not invent a new hauling model. Partitions-as-islands are later.
 
 ## Refusals
 

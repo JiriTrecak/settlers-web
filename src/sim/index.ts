@@ -16,7 +16,7 @@ export {
 } from "./map/dumpedMap";
 export { allDecorations, treeSheetAt, waveDecorations, type MapDecoration } from "./decorations/decorations";
 export { mapViewFromGrid, type MapView } from "./map/mapView";
-export { World, type ViewSnapshot } from "./world/world";
+export { World, type LoggedAction, type ViewSnapshot } from "./world/world";
 export { LandGrid, UNOWNED, type LandView } from "./land/land";
 export {
   FogGrid,

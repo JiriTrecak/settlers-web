@@ -8,6 +8,7 @@ describe("rng", () => {
     const seqA = Array.from({ length: 16 }, () => a.nextFloat());
     const seqB = Array.from({ length: 16 }, () => b.nextFloat());
     expect(seqA).toEqual(seqB);
+    expect(a.state()).toBe(b.state());
   });
 
   it("does not call Math.random", () => {

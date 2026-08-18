@@ -2,6 +2,7 @@
  * Plan → haul `constructionStacks` → `building` (bricklayers hammer) → `built`.
  * Each 1s swing bumps progress by `1 / (12 × materials)` and pops a pile every 12 swings.
  * Two bricklayers → twice the bumps. Then a jobless bearer occupies. No flatten.
+ * Bricklayers and occupy recruits are the hut's player only.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
@@ -123,7 +124,7 @@ function recruitBricklayers(b: Building, ctx: ConstructionContext): void {
       ? seed
       : nearestWalkable(ctx.grid, seed, ctx.blockers());
     if (!at || claimed(ctx.units, b.id, at)) continue;
-    const bearer = closestIdleBearer(ctx.units, at);
+    const bearer = closestIdleBearer(ctx.units, at, b.player);
     if (!bearer) return;
     bearer.assignJob({ type: "build", at, hutId: b.id, direction: spot.direction });
   }
@@ -151,7 +152,7 @@ function recruit(b: Building, ctx: ConstructionContext): void {
     ? door
     : nearestWalkable(ctx.grid, door, ctx.blockers());
   if (!stand) return;
-  const bearer = closestIdleBearer(ctx.units, stand);
+  const bearer = closestIdleBearer(ctx.units, stand, b.player);
   if (!bearer) return;
   bearer.assignJob({ type: "occupy", at: stand, hutId: b.id, worker: worker as SettlerKind });
 }
@@ -161,10 +162,11 @@ function doorOf(b: Building): GridPos {
   return { x: b.pos.x + d.dx, y: b.pos.y + d.dy };
 }
 
-function closestIdleBearer(units: readonly Movable[], at: GridPos): Movable | null {
+function closestIdleBearer(units: readonly Movable[], at: GridPos, player: number): Movable | null {
   let best: Movable | null = null;
   let bestD = Infinity;
   for (const m of units) {
+    if (m.player !== player) continue;
     if (m.type !== "bearer" || m.job || m.walking || m.material !== "none" || m.inside) continue;
     const d = hexDist(m.pos.x, m.pos.y, at.x, at.y);
     if (d < bestD) {

@@ -1,12 +1,12 @@
 # Economy
 
-No partitions, no priorities, no player land. One global matcher. Goods live on ground stacks (max **8**) or in a settler’s hands.
+No partitions, no priorities. Matcher is per-player. Goods live on ground stacks (max **8**) or in a settler’s hands.
 
 Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`. A sapling in hand is `tree` — not a stack good.
 
 ## Colony kit
 
-On match start, at player-slot 0:
+On match start (`placeColony` action), at player-slot 0:
 
 - Tower (finished, objects on the footprint cleared)
 - Small house nearby (finished)
@@ -27,11 +27,13 @@ House then drips more bearers (10 beds, 2 s). See [building.md](building.md).
 
 ## Matcher
 
-Each tick, closest idle empty-handed bearer → closest offer of a requested material.
+Each tick, closest idle empty-handed bearer of player P → closest offer P may take.
 
 - **Plan** huts request `constructionStacks` (stop at `required`)
 - **Built** huts request `requestStacks` (fill to stack cap 8)
 - **Building** (scaffold hammering) requests nothing
+- A pile is P's if it sits on P's hut offer tile; otherwise `land.owns` (no-occupy test maps treat every tile as owned). Request tiles are never offers.
+- Only P's bearers haul for P's huts. Bricklayers / occupy same rule.
 
 Inbound `deliver` jobs count against room so two bearers don’t overfill. `building` construction piles are already on the plot; leftover piles are deleted when the hut finishes.
 

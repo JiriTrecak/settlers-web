@@ -117,4 +117,20 @@ describe("construction", () => {
     expect(world.objects.get(aPlank.x, aPlank.y)).toMatchObject({ material: "plank", capacity: 2 });
     expect(world.objects.get(bPlank.x, bPlank.y)).toBeUndefined();
   });
+
+  it("does not recruit another player's bearer", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 16, y: 16 };
+    expect(world.placePlan("lumberjack", at, 0)).toBeDefined();
+    for (const slot of hutDef.constructionStacks) {
+      world.objects.place(goodsStack({ x: at.x + slot.dx, y: at.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    const enemy = world.spawnBearer({ x: at.x + 2, y: at.y + 2 }, 1);
+    world.spawnBearer({ x: 32, y: 32 }, 0);
+    const n = tickUntil(world, () => world.view().movables.some((m) => m.type === "bricklayer" || m.job === "build"), 2000);
+    expect(n).toBeGreaterThan(0);
+    expect(world.view().movables.find((m) => m.id === enemy.id)).toMatchObject({ player: 1, type: "bearer" });
+    expect(world.view().movables.filter((m) => m.player === 1 && (m.type === "bricklayer" || m.job === "build"))).toEqual([]);
+    expect(world.view().movables.some((m) => m.player === 0 && (m.type === "bricklayer" || m.job === "build"))).toBe(true);
+  });
 });

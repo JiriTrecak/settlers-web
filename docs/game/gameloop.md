@@ -15,23 +15,24 @@ Render interpolation uses the leftover fraction (`acc / 25`) so walkers lerp bet
 Order matters — later systems see this tick’s assignments.
 
 1. Clock `tickIndex++`
-2. Trees grow
-3. Units finish the current walk step
-4. Houses maybe spawn a bearer
-5. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert)
-6. Construction: plan → scaffold, recruit bricklayers, occupy finished worker huts
-7. Matcher assigns `deliver` to idle bearers
-8. Idle flock (skipped if a job was just assigned)
-9. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
-10. Newly finished occupying buildings stamp a tower-radius disk
-11. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
-12. Occupancy grid rebuild (units with `inside` do not occupy a tile)
+2. Apply every action scheduled for this beat (player, then enqueue seq)
+3. Trees grow
+4. Units finish the current walk step
+5. Houses maybe spawn a bearer
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert)
+7. Construction: plan → scaffold, recruit bricklayers, occupy finished worker huts
+8. Matcher assigns `deliver` to idle bearers of that hut's player
+9. Idle flock (skipped if a job was just assigned)
+10. `tickJob` walks / swings / plants / occupies (bricklayers may finish a hut here)
+11. Newly finished occupying buildings stamp a tower-radius disk
+12. Fog: resize hut/unit view circles, then dim sight toward the ref target (30/s)
+13. Occupancy grid rebuild (units with `inside` do not occupy a tile)
 
-`dispatch` is the only mutation from outside the tick (place a plan, tests that click-chop, etc.).
+Play-loop input `enqueue`s for the *next* beat. `dispatch` applies immediately (tests, match-start `placeColony`). Tick 0 is never applied by `tick()` — only by `dispatch` / late enqueue / `replay`.
 
 ## Determinism
 
-World RNG is seeded (`seedRng(1)` unless a test passes another). No `Math.random` in sim. Same map + same actions → same ticks.
+World RNG is seeded (`seedRng(1)` unless a test passes another). No `Math.random` in sim. Same map + same action log → same checksum at tick N.
 
 ## Frame vs sim
 
@@ -60,7 +61,7 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Escape | Deselect: build ghost, then claim tool, then hut |
 | Exit | Confirm, then leave to map select |
 
-No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests. F3 **claim** is the occupy click (tower-radius disk).
+No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests. F3 **claim** enqueues `occupy` (tower-radius disk).
 
 Match start looks at player-slot 0’s HQ at zoom 1, not a fit of the whole map.
 

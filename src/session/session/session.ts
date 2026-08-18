@@ -14,7 +14,6 @@ import {
   scatterTrees,
   seedRng,
   startForPlayer,
-  placeColony,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -139,7 +138,7 @@ export class Session {
     const world = new World(grid, objects);
     this.world = world;
     const start = startForPlayer(starts, 0) ?? { x: (grid.width / 2) | 0, y: (grid.height / 2) | 0 };
-    placeColony(world, start, this.config.player);
+    world.dispatch({ type: "placeColony", at: start, player: this.config.player });
     this.view = mapViewFromGrid(grid);
     this.renderer.setView(this.view, waves, false);
     this.minimap.setView(this.view);
@@ -222,7 +221,7 @@ export class Session {
     const world = this.world;
     if (!world || !this.selected) return;
     if (!world.buildings.at(this.selected.x, this.selected.y)) return;
-    world.dispatch({ type: "destroyBuilding", at: this.selected });
+    world.enqueue({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
     this.renderer?.highlight(null, "select");
   }
@@ -314,7 +313,7 @@ export class Session {
   private setSelect(pos: GridPos | null, _shift = false): void {
     if (!this.renderer || !this.world || !pos) return;
     if (this.claiming) {
-      this.world.dispatch({ type: "occupy", at: pos, player: this.config.player });
+      this.world.enqueue({ type: "occupy", at: pos, player: this.config.player });
       return;
     }
     const hut = this.world.buildings.at(pos.x, pos.y);
@@ -328,7 +327,7 @@ export class Session {
     if (!kind || !this.world.canPlaceBuilding(kind, pos, this.config.player)) return;
     this.selected = pos;
     this.renderer.highlight(pos, "select");
-    this.world.dispatch({ type: "placeBuilding", kind, at: pos, player: this.config.player });
+    this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.config.player });
     this.buildKind = null;
     this.buildMenu?.setKind(null);
     this.syncGhost();

@@ -4,6 +4,8 @@
 export type Rng = {
   nextFloat(): number;
   nextInt(max: number): number;
+  /** Mulberry32 word. Checksums read this; do not use as a game value. */
+  state(): number;
 };
 
 export function seedRng(seed: number): Rng {
@@ -21,5 +23,6 @@ export function seedRng(seed: number): Rng {
     nextInt(max: number): number {
       return Math.floor(nextFloat() * max);
     },
+    state: () => a >>> 0,
   };
 }
