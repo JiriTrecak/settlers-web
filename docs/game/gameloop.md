@@ -19,7 +19,7 @@ Order matters — later systems see this tick’s assignments.
 3. Trees grow
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
-6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert)
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / pioneer search)
 7. Construction: plan → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)
@@ -55,13 +55,16 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
 | Click empty valid owned land with a tool | Place a **plan** (scaffold), drop the tool |
 | Click an existing hut | Select it (highlight origin) |
+| Click own pioneer / bearer | Select the unit (highlight follows) |
+| C with a bearer / pioneer selected | Convert bearer → pioneer, or pioneer → bearer (own land, empty hands) |
+| RMB / LMB empty with a unit selected | Pioneer: claim toward that tile. Bearer: `moveTo` |
 | Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
 | F3 | Debug overlay (fog / paths / ownership / claim) |
-| Escape | Deselect: build ghost, then claim tool, then hut |
+| Escape | Deselect: build ghost, then claim tool, then unit, then hut |
 | Exit | Confirm, then leave to map select |
 
-No click-to-move, no click-to-chop in the play loop. Those actions exist on `World.dispatch` for tests. F3 **claim** enqueues `occupy` (tower-radius disk).
+F3 **claim** enqueues `occupy` (tower-radius disk cheat). Pioneers flip one unenforced tile at a time.
 
 Match start looks at player-slot 0’s HQ at zoom 1, not a fit of the whole map.
 

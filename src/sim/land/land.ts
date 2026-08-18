@@ -1,7 +1,8 @@
 /**
  * Player land. Finished occupying buildings and debug clicks stamp a
- * radius-40 disk. Tiles already enforced by another player's occupy
- * are left alone except the click/ground cell, which is always taken.
+ * radius-40 disk. Pioneers flip **one** unenforced tile (`towerCount == 0`);
+ * they do not steal tower-covered ground. Tiles already enforced by another
+ * player's occupy are left alone except the tower ground cell, which is always taken.
  *
  * No goods partitions — owner + tower-count only. Overlapping same-player
  * disks increment the counter so a later release can restore the rest.
@@ -78,6 +79,13 @@ export class LandGrid {
     return this.towers[y * this.width + x] ?? 0;
   }
 
+  /** Unenforced and not already this player's. Buildings/water are the caller's problem. */
+  canClaim(x: number, y: number, player: number): boolean {
+    if (!this.inBounds(x, y)) return false;
+    if (this.towerCountAt(x, y) > 0) return false;
+    return this.playerAt(x, y) !== player;
+  }
+
   view(): LandView {
     return {
       width: this.width,
@@ -111,9 +119,23 @@ export class LandGrid {
   }
 
   /**
-   * Drop one occupy disk at `at` (first match). Remaining disks are replayed
-   * so overlapping same-player land stays and the rest goes back to unowned.
+   * Pioneer: take one unenforced tile. `towerCount > 0` stays put (no ground-cell
+   * steal — that exception is tower occupy only). Does not bump tower counts.
    */
+  claim(
+    at: { x: number; y: number },
+    player: number,
+    blocked: (x: number, y: number) => boolean = () => false,
+  ): boolean {
+    if (!this.inBounds(at.x, at.y)) return false;
+    const i = at.y * this.width + at.x;
+    if ((this.towers[i] ?? 0) > 0) return false;
+    if (this.owner[i] === player) return false;
+    this.owner[i] = player;
+    this.rebuildBorders(blocked);
+    this.generation += 1;
+    return true;
+  }
   release(
     at: { x: number; y: number },
     blocked: (x: number, y: number) => boolean = () => false,

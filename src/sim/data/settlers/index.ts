@@ -5,6 +5,7 @@ import { bearer } from "./bearer";
 import { bricklayer } from "./bricklayer";
 import { forester } from "./forester";
 import { lumberjack } from "./lumberjack";
+import { pioneer } from "./pioneer";
 import { sawmiller } from "./sawmiller";
 import { stonecutter } from "./stonecutter";
 
@@ -13,6 +14,7 @@ export const settlers = {
   bricklayer,
   forester,
   lumberjack,
+  pioneer,
   sawmiller,
   stonecutter,
 } as const;

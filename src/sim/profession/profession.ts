@@ -17,6 +17,7 @@ import { isWalkable, nearestWalkable } from "../path/path";
 import { tickBricklayer } from "./bricklayer";
 import { tickForester } from "./forester";
 import { tickLumberjack } from "./lumberjack";
+import { tickPioneer } from "./pioneer";
 import { tickSawmiller } from "./sawmiller";
 import { tickStonecutter } from "./stonecutter";
 
@@ -33,6 +34,7 @@ export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   else if (m.type === "bricklayer") tickBricklayer(m, ctx);
   else if (m.type === "forester") tickForester(m, ctx);
   else if (m.type === "stonecutter") tickStonecutter(m, ctx);
+  else if (m.type === "pioneer") tickPioneer(m, ctx);
 }
 
 export function doorOf(hut: Building): GridPos {

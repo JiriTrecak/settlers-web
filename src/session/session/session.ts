@@ -69,6 +69,7 @@ export class Session {
   private world: World | null = null;
   private view: MapView | null = null;
   private selected: GridPos | null = null;
+  private selectedUnitId: number | null = null;
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
   private buildMenu: BuildMenu | null = null;
@@ -127,10 +128,12 @@ export class Session {
       pick: (screen) => renderer.pick(screen),
       onHover: (pos) => this.setHover(pos),
       onSelect: (pos, shift) => this.setSelect(pos, shift),
+      onCommand: (pos) => this.commandSelected(pos),
       onCameraChanged: () => this.syncCamera(),
       onFit: () => this.fit(),
       onEscape: () => this.deselect(),
       onDelete: () => this.deleteSelected(),
+      onConvert: () => this.convertSelected(),
     });
 
     const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
@@ -168,6 +171,7 @@ export class Session {
     if (n >= cap) this.acc = 0;
     const snap = world.view(this.config.player);
     renderer.draw(snap, this.acc / step);
+    this.syncUnitHighlight();
     renderer.tick(nowMs);
     this.input?.tick(dtMs);
     this.pushHud(snap, dtMs, n, n >= cap);
@@ -197,7 +201,7 @@ export class Session {
     if (this.minimap && world) this.minimap.setFog(on ? world.view(this.config.player).fog : null);
   }
 
-  /** Esc: drop the build ghost, then the claim tool, then the hut highlight. */
+  /** Esc: drop the build ghost, then the claim tool, then the unit, then the hut highlight. */
   deselect(): void {
     if (this.buildKind) {
       this.buildKind = null;
@@ -210,10 +214,25 @@ export class Session {
       this.config.hooks.onClaiming?.(false);
       return;
     }
+    if (this.selectedUnitId != null) {
+      this.selectedUnitId = null;
+      this.renderer?.highlight(null, "select");
+      return;
+    }
     if (this.selected) {
       this.selected = null;
       this.renderer?.highlight(null, "select");
     }
+  }
+
+  /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). */
+  convertSelected(): void {
+    const world = this.world;
+    if (!world || this.selectedUnitId == null) return;
+    const unit = world.movable(this.selectedUnitId);
+    if (!unit || unit.player !== this.config.player) return;
+    if (unit.type === "bearer") world.enqueue({ type: "convert", id: unit.id, to: "pioneer" });
+    else if (unit.type === "pioneer") world.enqueue({ type: "convert", id: unit.id, to: "bearer" });
   }
 
   /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
@@ -252,6 +271,7 @@ export class Session {
     this.acc = 0;
     this.hover = null;
     this.claiming = false;
+    this.selectedUnitId = null;
   }
 
   private pushHud(snap: ViewSnapshot, dtMs: number, simPerFrame: number, simCapped: boolean): void {
@@ -316,28 +336,72 @@ export class Session {
       this.world.enqueue({ type: "occupy", at: pos, player: this.config.player });
       return;
     }
+    const kind = this.buildKind;
+    if (kind && this.world.canPlaceBuilding(kind, pos, this.config.player)) {
+      this.selected = pos;
+      this.selectedUnitId = null;
+      this.renderer.highlight(pos, "select");
+      this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.config.player });
+      this.buildKind = null;
+      this.buildMenu?.setKind(null);
+      this.syncGhost();
+      return;
+    }
+    const unit = this.world.unitAt(pos.x, pos.y);
+    if (unit && unit.player === this.config.player && (unit.type === "pioneer" || unit.type === "bearer")) {
+      this.selectedUnitId = unit.id;
+      this.selected = null;
+      this.renderer.highlight(unit.pos, "select");
+      this.syncGhost();
+      return;
+    }
     const hut = this.world.buildings.at(pos.x, pos.y);
     if (hut) {
+      this.selectedUnitId = null;
       this.selected = { x: hut.pos.x, y: hut.pos.y };
       this.renderer.highlight(this.selected, "select");
       this.syncGhost();
       return;
     }
-    const kind = this.buildKind;
-    if (!kind || !this.world.canPlaceBuilding(kind, pos, this.config.player)) return;
-    this.selected = pos;
-    this.renderer.highlight(pos, "select");
-    this.world.enqueue({ type: "placeBuilding", kind, at: pos, player: this.config.player });
-    this.buildKind = null;
-    this.buildMenu?.setKind(null);
-    this.syncGhost();
+    if (this.selectedUnitId != null) {
+      this.commandSelected(pos);
+      return;
+    }
+  }
+
+  /** RMB, or LMB on empty land with a unit selected. Pioneer works; bearer just walks. */
+  private commandSelected(pos: GridPos | null): void {
+    const world = this.world;
+    if (!world || !pos || this.selectedUnitId == null) return;
+    const unit = world.movable(this.selectedUnitId);
+    if (!unit || unit.player !== this.config.player) {
+      this.selectedUnitId = null;
+      this.renderer?.highlight(null, "select");
+      return;
+    }
+    if (unit.type === "pioneer") world.enqueue({ type: "pioneerWork", id: unit.id, to: pos });
+    else world.enqueue({ type: "moveTo", id: unit.id, to: pos });
+  }
+
+  private syncUnitHighlight(): void {
+    const world = this.world;
+    const renderer = this.renderer;
+    if (!world || !renderer || this.selectedUnitId == null) return;
+    const unit = world.movable(this.selectedUnitId);
+    if (!unit || unit.inside) {
+      this.selectedUnitId = null;
+      renderer.highlight(null, "select");
+      return;
+    }
+    renderer.highlight(unit.pos, "select");
   }
 
   private syncCamera(): void {
     const renderer = this.renderer;
     if (!renderer) return;
     renderer.applyCamera();
-    renderer.highlight(this.selected, "select");
+    if (this.selectedUnitId != null) this.syncUnitHighlight();
+    else renderer.highlight(this.selected, "select");
     this.syncGhost();
   }
 
@@ -345,6 +409,7 @@ export class Session {
     if (!this.view || !this.renderer) return;
     this.renderer.fitCamera();
     this.selected = null;
+    this.selectedUnitId = null;
     this.renderer.highlight(null, "select");
     this.syncGhost();
   }

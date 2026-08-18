@@ -27,6 +27,7 @@ const CARRY: Record<MovableType, readonly CarryKind[]> = {
   bricklayer: [],
   forester: ["tree"],
   lumberjack: ["trunk"],
+  pioneer: [],
   sawmiller: ["trunk", "plank"],
   stonecutter: ["stone"],
 };
@@ -42,7 +43,8 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const bricklayer = (await loadUnit(sprites, "bricklayer", CARRY.bricklayer)) ?? bearer;
     const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
     const stonecutter = (await loadUnit(sprites, "stonecutter", CARRY.stonecutter)) ?? bearer;
-    return { bearer, lumberjack, sawmiller, bricklayer, forester, stonecutter };
+    const pioneer = (await loadUnit(sprites, "pioneer", CARRY.pioneer)) ?? bearer;
+    return { bearer, lumberjack, sawmiller, bricklayer, forester, stonecutter, pioneer };
   } catch {
     return null;
   }

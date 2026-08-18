@@ -110,6 +110,15 @@ export class World {
     return m;
   }
 
+  movable(id: number): Movable | undefined {
+    return this.units.find((u) => u.id === id);
+  }
+
+  /** Standing unit on this tile. `inside` units are in a hut. */
+  unitAt(x: number, y: number): Movable | undefined {
+    return this.units.find((u) => !u.inside && u.pos.x === x && u.pos.y === y);
+  }
+
   placeBuilding(kind: BuildingKind, at: GridPos, player = 0, clear = false) {
     if (!clear && !this.canPlaceBuilding(kind, at, player)) return undefined;
     if (clear && !this.landAllows(kind, at, player)) return undefined;
@@ -365,6 +374,26 @@ export class World {
     if (!m) return;
     if (action.type === "moveTo") {
       m.goTo(this.grid, action.to, this.unitBlockers(m));
+      this.syncOcc();
+      return;
+    }
+    if (action.type === "convert") {
+      if (action.to === "pioneer") {
+        if (m.type !== "bearer" || m.material !== "none") return;
+        m.become("pioneer", null, this.clock.tickMs);
+      } else {
+        if (m.type !== "pioneer") return;
+        if (this.land.playerAt(m.pos.x, m.pos.y) !== m.player) return;
+        m.become("bearer", null, this.clock.tickMs);
+      }
+      this.syncOcc();
+      return;
+    }
+    if (action.type === "pioneerWork") {
+      if (m.type !== "pioneer") return;
+      const to = nearestWalkable(this.grid, action.to, this.unitBlockers(m)) ?? action.to;
+      m.assignJob({ type: "pioneer", at: to, arrived: false });
+      tickJob(m, this.jobCtx(m));
       this.syncOcc();
       return;
     }

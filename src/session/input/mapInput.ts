@@ -1,6 +1,7 @@
 /**
  * Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it to the world.
  * Escape deselects; Delete / Backspace destroys the selected hut.
+ * C converts a selected bearer ↔ pioneer. LMB click selects; RMB commands.
  */
 import type { GridPos } from "../../shared";
 import type { Camera } from "../../render/camera/camera";
@@ -11,10 +12,12 @@ export type MapInputHooks = {
   pick(screen: { x: number; y: number }): GridPos | null;
   onHover(pos: GridPos | null): void;
   onSelect(pos: GridPos | null, shift: boolean): void;
+  onCommand(pos: GridPos | null, shift: boolean): void;
   onCameraChanged(): void;
   onFit(): void;
   onEscape(): void;
   onDelete(): void;
+  onConvert(): void;
 };
 
 export class MapInput {
@@ -31,6 +34,7 @@ export class MapInput {
     canvas.addEventListener("pointerdown", this.onPointerDown);
     window.addEventListener("pointermove", this.onPointerMove);
     canvas.addEventListener("pointerup", this.onPointerUp);
+    canvas.addEventListener("contextmenu", this.onContextMenu);
     canvas.addEventListener("wheel", this.onWheel, { passive: false });
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
@@ -55,12 +59,21 @@ export class MapInput {
     this.canvas.removeEventListener("pointerdown", this.onPointerDown);
     window.removeEventListener("pointermove", this.onPointerMove);
     this.canvas.removeEventListener("pointerup", this.onPointerUp);
+    this.canvas.removeEventListener("contextmenu", this.onContextMenu);
     this.canvas.removeEventListener("wheel", this.onWheel);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
   }
 
+  private readonly onContextMenu = (e: Event): void => {
+    e.preventDefault();
+  };
+
   private readonly onPointerDown = (e: PointerEvent): void => {
+    if (e.button === 2) {
+      e.preventDefault();
+      return;
+    }
     if (e.button !== 0) return;
     this.dragging = true;
     this.dragMoved = false;
@@ -78,6 +91,10 @@ export class MapInput {
   };
 
   private readonly onPointerUp = (e: PointerEvent): void => {
+    if (e.button === 2) {
+      this.hooks.onCommand(this.hooks.pick({ x: e.clientX, y: e.clientY }), e.shiftKey);
+      return;
+    }
     if (e.button !== 0) return;
     this.dragging = false;
     this.canvas.style.cursor = "grab";
@@ -105,6 +122,10 @@ export class MapInput {
     if (e.key === "Delete" || e.key === "Backspace") {
       e.preventDefault();
       this.hooks.onDelete();
+    }
+    if (e.key.toLowerCase() === "c" && !e.repeat) {
+      e.preventDefault();
+      this.hooks.onConvert();
     }
   };
 

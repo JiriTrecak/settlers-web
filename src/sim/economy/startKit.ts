@@ -1,6 +1,7 @@
 /**
  * Match-start kit: tower, small house, goods piles, jobless bearers.
  * Spiral around the HQ, skipping protected tiles — same layout as the original skirmish low-goods set.
+ * No pioneers: convert a bearer (C with one selected).
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";

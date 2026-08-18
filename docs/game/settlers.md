@@ -7,6 +7,7 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 | Type | Step | Notes |
 |---|---:|---|
 | Bearer | 450 ms | Hauls. Matcher food. Can become bricklayer / worker. |
+| Pioneer | 450 ms | Controllable. `needsPlayersGround: false`. Kneel 1.2 s, take one unenforced tile. Convert from a bearer (C). Distinct walk/kneel clips. |
 | Lumberjack | 450 ms | Workplace. See [economy.md](economy.md). |
 | Forester | 450 ms | Workplace. |
 | Stonecutter | 450 ms | Workplace. |
@@ -27,7 +28,7 @@ A step **occupies the destination immediately**; `moveProgress` is visual lerp o
 
 BFS, 6 hex directions. Settlers with `needsPlayersGround` (default: every civilian) only walk tiles they own once any occupy disk exists. Pioneer / thief / soldier set the flag `false`. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
 
-Click-to-move exists on `dispatch({ type: "moveTo" })` but the play loop does not call it.
+Click a pioneer or bearer to select. RMB (or LMB on empty land) commands: pioneer `pioneerWork` (walk there, then keep claiming), bearer `moveTo`. **C** converts bearer → pioneer, or pioneer → bearer (must stand on own land, empty-handed). Esc peels unit selection after the build ghost and claim tool.
 
 ## Jobs
 
@@ -42,13 +43,13 @@ A unit *has* a job; it does not implement the verb. Profession / matcher / const
 | `plant` | Forester | Stand, face nw, kneel 3 s, sapling on `y+1` |
 | `saw` | Sawmiller | Work-spot, 4.5 s, trunk → plank |
 | `build` | Bricklayer | Spot + facing from the def, 1 s swings |
-| `occupy` | Bearer | Walk to door, become the worker |
+| `pioneer` | Pioneer | Walk to the click, then kneel 1.2 s per unenforced tile toward that target |
 
 Pickup / drop / deliver all share the bend clip.
 
 ## Idle flock
 
-Jobless, not walking, not inside. After a house dump they would otherwise stand on the door forever.
+Jobless, not walking, not inside, and `needsPlayersGround` (civilians). Pioneers stand.
 
 Repulsion from occupied tiles and the map edge in hex rings 1–2, then **one** step. Crowded → walk every step (delay down to 500 ms). Spread → wait 500–1000 ms. Default delay 700 ms.
 

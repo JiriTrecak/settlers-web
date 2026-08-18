@@ -111,4 +111,17 @@ describe("land", () => {
     expect(land.playerAt(50, 100)).toBe(UNOWNED);
     expect(land.hasLand()).toBe(false);
   });
+
+  it("claim takes one unenforced tile and does not steal tower cover", () => {
+    const land = new LandGrid(200, 200);
+    land.occupy({ x: 50, y: 100 }, 0);
+    expect(land.claim({ x: 91, y: 100 }, 0)).toBe(true);
+    expect(land.playerAt(91, 100)).toBe(0);
+    expect(land.towerCountAt(91, 100)).toBe(0);
+    expect(land.isBorder(91, 100)).toBe(true);
+    land.occupy({ x: 130, y: 100 }, 1);
+    expect(land.towerCountAt(130, 100)).toBeGreaterThan(0);
+    expect(land.claim({ x: 130, y: 100 }, 0)).toBe(false);
+    expect(land.playerAt(130, 100)).toBe(1);
+  });
 });

@@ -8,11 +8,11 @@ import type { SettlerKind } from "../../sim/data/settlers";
 import type { Goods } from "../../sim/data/types";
 import type { MovableMaterial } from "../../sim/movable/movable";
 
-const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "forester", "lumberjack", "sawmiller", "stonecutter"];
+const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "forester", "lumberjack", "pioneer", "sawmiller", "stonecutter"];
 const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter"];
 const GOODS: Goods[] = ["trunk", "plank", "stone", "axe", "hammer", "blade", "pick", "saw"];
 const ACTIONS = ["idle", "walk", "work"] as const;
-const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant"] as const;
+const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant", "pioneer"] as const;
 const CARRY: MovableMaterial[] = [...GOODS, "tree", "none"];
 
 export type DebugFrame = {

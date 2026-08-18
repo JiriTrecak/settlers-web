@@ -13,6 +13,8 @@ On match start (`placeColony` action), at player-slot 0:
 - Low-goods piles in a spiral around HQ, skipping protected tiles
 - **16** jobless bearers in that same spiral
 
+Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kneel-claim). **C** again on own land → bearer.
+
 | Good | Piles |
 |---|---|
 | Plank | 6 + 6 |

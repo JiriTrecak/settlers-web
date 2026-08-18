@@ -1,7 +1,7 @@
 /**
  * A unit's assignment. Movable only walks/works; `tickJob` is the verb.
  */
-import type { Direction, GridPos } from "../../shared";
+import { isRiver, isWater, type Direction, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
 import type { BuildingGrid } from "../building/building";
 import { settlerDef, type SettlerKind } from "../data/settlers";
@@ -24,7 +24,8 @@ export type Job =
   | { type: "saw"; at: GridPos }
   | { type: "occupy"; at: GridPos; hutId: number; worker: SettlerKind }
   | { type: "build"; at: GridPos; hutId: number; direction: Direction }
-  | { type: "plant"; at: GridPos };
+  | { type: "plant"; at: GridPos }
+  | { type: "pioneer"; at: GridPos; arrived: boolean };
 
 /** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
 export function markOf(job: Job | null): GridPos | null {
@@ -77,6 +78,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("forester").chopMs;
     return Math.max(1, Math.round((ms ?? 3000) / 25));
   }
+  if (job?.type === "pioneer") {
+    const ms = settlerDef("pioneer").chopMs;
+    return Math.max(1, Math.round((ms ?? 1200) / 25));
+  }
   if (job?.type === "cut") {
     const ms = settlerDef("stonecutter").chopMs;
     return Math.max(1, Math.round((ms ?? 4500) / 25));
@@ -102,6 +107,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "occupy") tickOccupy(m, job, ctx);
   else if (job.type === "build") tickBuild(m, job, ctx);
   else if (job.type === "plant") tickPlant(m, job, ctx);
+  else if (job.type === "pioneer") tickPioneerWork(m, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
 }
 
@@ -305,6 +311,29 @@ function tickPlant(m: Movable, job: Extract<Job, { type: "plant" }>, ctx: JobCon
   }
   m.material = "none";
   m.idle();
+}
+
+/** Kneel on an unenforced tile, then take it. Search for the next tile is the profession. */
+function tickPioneerWork(m: Movable, ctx: JobContext): void {
+  const job = m.job;
+  if (!job || job.type !== "pioneer") return;
+  if (m.walking || !job.arrived) return;
+  if (!ctx.land.canClaim(m.pos.x, m.pos.y, m.player) || ctx.buildings.blocks(m.pos.x, m.pos.y)) return;
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  ctx.land.claim(m.pos, m.player, (x, y) => {
+    if (!ctx.grid.inBounds(x, y)) return true;
+    const t = ctx.grid.landscapeAt(x, y);
+    return isWater(t) || isRiver(t);
+  });
+  m.action = "idle";
+  m.workElapsed = 0;
+  m.from = m.pos;
 }
 
 /** Stonecutter: NE of the rock, face sw. */

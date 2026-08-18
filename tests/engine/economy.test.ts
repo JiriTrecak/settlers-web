@@ -34,6 +34,7 @@ describe("colony", () => {
     expect(kinds).toContain("small_livinghouse");
     const bearers = world.view().movables.filter((m) => m.type === "bearer");
     expect(bearers.length).toBeGreaterThanOrEqual(16);
+    expect(world.view().movables.filter((m) => m.type === "pioneer")).toHaveLength(0);
     const stacks = world.view().objects.filter((o) => o.kind === "stack");
     expect(stacks.some((s) => s.material === "plank")).toBe(true);
     expect(stacks.some((s) => s.material === "stone")).toBe(true);

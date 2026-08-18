@@ -13,4 +13,6 @@ export type Action =
   | { type: "drop"; id: number; at: GridPos }
   | { type: "placeBuilding"; kind: "lumberjack" | "forester" | "stonecutter" | "tower" | "sawmill" | "small_livinghouse"; at: GridPos; player?: number }
   | { type: "occupy"; at: GridPos; player?: number }
-  | { type: "destroyBuilding"; at: GridPos };
+  | { type: "destroyBuilding"; at: GridPos }
+  | { type: "pioneerWork"; id: number; to: GridPos }
+  | { type: "convert"; id: number; to: "pioneer" | "bearer" };
