@@ -60,7 +60,11 @@ No work while waiting for the next plank/stone — a swing that cannot take mate
 
 Worker huts (`def.worker` set): after `built`, a jobless empty-handed bearer walks to the door and `become`s the worker (`workplaceId` = hut id). They enter and rest.
 
-Military huts (`garrison`): idle swordsmen walk to the door and enter. Land stamps while at least one is inside; emptying the garrison releases the disk. T1 has **1** infantry slot.
+Military huts (`garrison`): idle swordsmen walk to the door and enter. Land stamps while at least one is inside; emptying the garrison releases the disk (not while the hut is under assault). T1 has **1** infantry slot.
+
+Enemy infantry break the **door** (50 HP, same 1 s / 10 dmg swing). At 0 the soldier inside is kicked out to fight. If the garrison is gone, the hut changes owner, land transfers if it was held, and the attacker walks in. Door regenerates 1 HP/s while nobody is assaulting, cap 50.
+
+The colony start tower is `hq`. Capture or destroy it and that player is defeated. Extra T1s are just towers.
 
 Bricklayers on the scaffold do **not** count as occupying.
 
@@ -99,7 +103,7 @@ Door, flag, bricklayer spots, construction piles, work spot (sawmill) are all re
 
 ## Destroy
 
-Click a hut, then **Delete** / **Backspace**. Instant: footprint gone, worker dumped as a bearer, occupy disk released (overlap with another tower stays). Fog circle resizes to 0 — that area fades to grey (50), not black. Units still light their own disk of 8.
+Click a hut **you own**, then **Delete** / **Backspace**. Instant: footprint gone, worker dumped as a bearer, occupy disk released (overlap with another tower stays). Fog circle resizes to 0 — that area fades to grey (50), not black. Units still light their own disk of 8. Destroying the colony HQ ends that player.
 
 ## Not yet
 

@@ -10,6 +10,7 @@ export type HudState = {
   landscape: LandscapeType | null;
   height: number | null;
   zoom: number;
+  outcome?: "victory" | "defeat" | null;
   debug?: DebugStats;
 };
 
@@ -32,6 +33,7 @@ export class Hud {
   private readonly fogToggle: HTMLButtonElement;
   private readonly claimToggle: HTMLButtonElement;
   private readonly exit: HTMLButtonElement;
+  private readonly banner: HTMLDivElement;
   private confirm: HTMLDivElement | null = null;
   private readonly hooks: HudHooks;
   private open = false;
@@ -94,7 +96,11 @@ export class Hud {
     this.exit.title = "Leave this match";
     this.exit.addEventListener("click", () => this.askLeave());
 
-    host.append(this.stats, this.toggle, this.panel, this.exit);
+    this.banner = document.createElement("div");
+    this.banner.className = "hud-outcome";
+    this.banner.hidden = true;
+
+    host.append(this.stats, this.toggle, this.panel, this.exit, this.banner);
     window.addEventListener("keydown", this.onKey);
     this.syncOpts();
   }
@@ -133,6 +139,7 @@ export class Hud {
     this.toggle.remove();
     this.panel.remove();
     this.exit.remove();
+    this.banner.remove();
   }
 
   private askLeave(): void {
@@ -226,6 +233,16 @@ export class Hud {
       : "—";
     this.stats.textContent = `${fps}${load}   ${tile}\n${s.zoom.toFixed(2)}×`;
     if (this.open && s.debug) this.dump.textContent = formatDebug(s.debug);
+    if (s.outcome === "victory") {
+      this.banner.hidden = false;
+      this.banner.textContent = "Victory";
+    } else if (s.outcome === "defeat") {
+      this.banner.hidden = false;
+      this.banner.textContent = "Defeat";
+    } else {
+      this.banner.hidden = true;
+      this.banner.textContent = "";
+    }
   }
 }
 

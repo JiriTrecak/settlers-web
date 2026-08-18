@@ -1,7 +1,8 @@
 /**
  * Swordsman brain. Aggro disk 30; melee is `tickJob` `attack`.
- * Empty towers pull idle infantry (land only stamps while garrisoned).
- * Forced walk (shift-RMB) skips both until the current path ends.
+ * Enemy towers are `assault` (door, then garrison, then flip).
+ * Empty own towers pull idle infantry (land only stamps while garrisoned).
+ * Forced walk (shift-RMB) skips all three until the current path ends.
  */
 import { hexDist } from "../../shared";
 import { buildingDef } from "../data/buildings";
@@ -18,10 +19,15 @@ export function tickSoldier(m: Movable, ctx: ProfessionContext): void {
     if (m.walking) return;
     m.forcedUntil = null;
   }
-  if (m.job?.type === "attack" || m.job?.type === "occupy") return;
+  if (m.job?.type === "attack" || m.job?.type === "occupy" || m.job?.type === "assault") return;
   const enemy = closestEnemy(m, ctx);
   if (enemy) {
     m.assignJob({ type: "attack", targetId: enemy.id });
+    return;
+  }
+  const tower = enemyTower(m, ctx);
+  if (tower) {
+    m.assignJob({ type: "assault", hutId: tower.id });
     return;
   }
   const hut = emptyTower(m, ctx);
@@ -47,6 +53,25 @@ function closestEnemy(m: Movable, ctx: ProfessionContext): Movable | null {
     if (d < bestD) {
       bestD = d;
       best = u;
+    }
+  }
+  return best;
+}
+
+function enemyTower(m: Movable, ctx: ProfessionContext): Building | null {
+  const radius = settlerDef(m.type).searchRadius ?? 30;
+  let best: Building | null = null;
+  let bestD = Infinity;
+  for (const hut of ctx.buildings.all()) {
+    if (hut.player === m.player || hut.state !== "built") continue;
+    const def = buildingDef(hut.kind);
+    if (!("occupies" in def) || !def.occupies || (def.garrison ?? 0) < 1) continue;
+    const door = doorOf(hut);
+    const d = hexDist(m.pos.x, m.pos.y, door.x, door.y);
+    if (d > radius) continue;
+    if (d < bestD) {
+      bestD = d;
+      best = hut;
     }
   }
   return best;

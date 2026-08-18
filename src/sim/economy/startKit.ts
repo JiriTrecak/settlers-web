@@ -29,7 +29,8 @@ const STACKS: { material: Goods; capacity: number }[] = [
 
 /** Stamp HQ + house + piles + bearers + spare swordsmen at `at`, then snap fog so the first frame is fully lit. */
 export function placeColony(world: World, at: GridPos, player = 0): void {
-  world.placeBuilding("tower", at, player, true);
+  const hq = world.placeBuilding("tower", at, player, true);
+  if (hq) world.setHq(hq);
   const houseAt = findPlace(world, "small_livinghouse", at, player);
   if (houseAt) world.placeBuilding("small_livinghouse", houseAt, player, true);
   const jobs: Array<{ kind: "stack"; material: Goods; capacity: number } | { kind: "bearer" } | { kind: "swordsman" }> = [

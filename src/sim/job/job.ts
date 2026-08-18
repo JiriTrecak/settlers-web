@@ -3,9 +3,9 @@
  */
 import { hexDist, isWater, type Direction, type GridPos } from "../../shared";
 import type { Goods, SettlerDef } from "../data/types";
-import type { BuildingGrid } from "../building/building";
+import type { Building, BuildingGrid } from "../building/building";
 import { buildingDef } from "../data/buildings";
-import { isAttackable, settlerDef, type SettlerKind } from "../data/settlers";
+import { isAttackable, isSoldier, settlerDef, type SettlerKind } from "../data/settlers";
 import { tryTakeMaterial } from "../economy/construction";
 import type { LandGrid } from "../land/land";
 import type { MarkGrid } from "../mark/mark";
@@ -14,7 +14,7 @@ import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
 import { cutStand } from "../object/stone";
 import { isPlantSearch, plantTree, chopStand } from "../object/tree";
-import { isWalkable, standBeside, type Blockers } from "../path/path";
+import { isWalkable, nearestWalkable, standBeside, type Blockers } from "../path/path";
 import { changeHeightTowards } from "../building/flatten";
 
 export type Job =
@@ -29,7 +29,8 @@ export type Job =
   | { type: "plant"; at: GridPos }
   | { type: "pioneer"; at: GridPos; arrived: boolean }
   | { type: "flatten"; at: GridPos; hutId: number }
-  | { type: "attack"; targetId: number };
+  | { type: "attack"; targetId: number }
+  | { type: "assault"; hutId: number };
 
 /** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
 export function markOf(job: Job | null): GridPos | null {
@@ -61,6 +62,8 @@ export type JobContext = {
   units: Movable[];
   land: LandGrid;
   marks: MarkGrid;
+  captureTower?: (hut: Building, attacker: Movable) => void;
+  kickGarrison?: (hut: Building) => Movable | null;
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {
@@ -91,7 +94,7 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("digger").chopMs;
     return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
-  if (job?.type === "attack") {
+  if (job?.type === "attack" || job?.type === "assault") {
     const ms = settlerDef("swordsman").chopMs;
     return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
@@ -124,6 +127,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "flatten") tickFlatten(m, job, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
   else if (job.type === "attack") tickAttack(m, job, ctx);
+  else if (job.type === "assault") tickAssault(m, job, ctx);
 }
 
 function tickChop(m: Movable, target: GridPos, ctx: JobContext): void {
@@ -270,7 +274,7 @@ function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobC
   }
   if (m.walking) return;
   const hut = ctx.buildings.get(job.hutId);
-  if (!hut || hut.state !== "built") {
+  if (!hut || hut.state !== "built" || hut.player !== m.player) {
     m.idle();
     return;
   }
@@ -400,6 +404,82 @@ function tickAttack(m: Movable, job: Extract<Job, { type: "attack" }>, ctx: JobC
     return;
   }
   m.pathTo(ctx.grid, stand, ctx.blockers);
+}
+
+/** Hit the door until it breaks, then the garrison, then the hut changes owner. */
+function tickAssault(m: Movable, job: Extract<Job, { type: "assault" }>, ctx: JobContext): void {
+  const hut = ctx.buildings.get(job.hutId);
+  if (!hut || hut.state !== "built" || hut.player === m.player) {
+    m.idle();
+    return;
+  }
+  const door = doorTile(hut);
+  const def: SettlerDef = settlerDef(m.type);
+  const range = def.attackRange ?? 1;
+  const d = hexDist(m.pos.x, m.pos.y, door.x, door.y);
+  if (d > range) {
+    if (m.walking) return;
+    if (m.action === "work") {
+      m.action = "idle";
+      m.workElapsed = 0;
+      m.from = m.pos;
+    }
+    const stand = standBeside(ctx.grid, door, m.pos, ctx.blockers);
+    if (!stand) {
+      m.idle();
+      return;
+    }
+    m.pathTo(ctx.grid, stand, ctx.blockers);
+    return;
+  }
+  if (m.walking) return;
+
+  if (hut.doorHealth > 0) {
+    m.face(door);
+    const ticks = workTicksOf(m.job, m.type);
+    if (m.action !== "work") {
+      m.beginWork();
+      m.workElapsed = 0;
+    }
+    m.workElapsed += 1;
+    if (m.workElapsed < ticks) return;
+    const dmg = def.strength ?? 0;
+    hut.doorHealth = Math.max(0, hut.doorHealth - dmg);
+    m.workElapsed = 0;
+    m.action = "idle";
+    m.from = m.pos;
+    if (hut.doorHealth > 0) return;
+    const defender = ctx.kickGarrison?.(hut);
+    if (defender) m.assignJob({ type: "attack", targetId: defender.id });
+    return;
+  }
+
+  const pulled = ctx.kickGarrison?.(hut);
+  if (pulled) {
+    m.assignJob({ type: "attack", targetId: pulled.id });
+    return;
+  }
+  const outdoor = ctx.units.find(
+    (u) => u.workplaceId === hut.id && !u.inside && u.health > 0 && isSoldier(u.type) && u.player === hut.player,
+  );
+  if (outdoor) {
+    m.assignJob({ type: "attack", targetId: outdoor.id });
+    return;
+  }
+  ctx.captureTower?.(hut, m);
+  const stand = isWalkable(ctx.grid, door.x, door.y, ctx.blockers)
+    ? door
+    : nearestWalkable(ctx.grid, door, ctx.blockers);
+  if (!stand) {
+    m.idle();
+    return;
+  }
+  m.assignJob({ type: "occupy", at: stand, hutId: hut.id, worker: "swordsman" });
+}
+
+function doorTile(hut: Building): GridPos {
+  const d = buildingDef(hut.kind).door;
+  return { x: hut.pos.x + d.dx, y: hut.pos.y + d.dy };
 }
 
 /** Walk onto the cell, kneel 1s, step height ±1 toward the hut's frozen mean. */

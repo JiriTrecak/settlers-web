@@ -13,6 +13,9 @@ import type { ObjectGrid } from "../object/object";
 
 export type BuildingState = "plan" | "building" | "built";
 
+/** Hits to break a closed door. L1 deals 10, so 5s of swings. */
+export const TOWER_DOOR_HP = 50;
+
 /** `door` = no-worker hut. `roof` = worker hut with its worker inside/assigned. */
 export type BuildingFlag = "door" | "roof";
 
@@ -42,7 +45,12 @@ export class Building {
   readonly id: number;
   readonly kind: BuildingKind;
   readonly pos: GridPos;
-  readonly player: number;
+  player: number;
+  /** Colony start tower. Capture/destroy clears this and can end the match. */
+  hq = false;
+  /** Closed-door HP. 0 means the garrison must come out or the hut flips. */
+  doorHealth = TOWER_DOOR_HP;
+  doorRegen = 0;
   state: BuildingState = "built";
 
   produceWait = 0;

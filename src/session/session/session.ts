@@ -197,7 +197,10 @@ export class Session {
     while (this.acc >= step && n < cap) {
       this.acc -= step;
       world.tick(phases);
-      for (const opp of this.opponents) opp.onTick(world);
+      for (const opp of this.opponents) {
+        if (world.outcome?.winner != null || world.outcome?.defeated.includes(opp.player)) continue;
+        opp.onTick(world);
+      }
       n++;
     }
     const simMs = performance.now() - tSim;
@@ -269,7 +272,7 @@ export class Session {
   /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). Every selected unit. */
   convertSelected(): void {
     const world = this.world;
-    if (!world) return;
+    if (!world || this.endedForMe()) return;
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
@@ -281,7 +284,7 @@ export class Session {
   /** X: empty-handed bearer → L1 swordsman. Barracks later. Every selected bearer. */
   enlistSelected(): void {
     const world = this.world;
-    if (!world) return;
+    if (!world || this.endedForMe()) return;
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
@@ -293,8 +296,9 @@ export class Session {
   /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
   deleteSelected(): void {
     const world = this.world;
-    if (!world || !this.selected) return;
-    if (!world.buildings.at(this.selected.x, this.selected.y)) return;
+    if (!world || !this.selected || this.endedForMe()) return;
+    const hut = world.buildings.at(this.selected.x, this.selected.y);
+    if (!hut || hut.player !== this.me) return;
     world.enqueue({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
     this.renderer?.highlight(null);
@@ -348,6 +352,7 @@ export class Session {
       landscape: pos ? view.landscapeAt(pos.x, pos.y) : null,
       height: pos ? view.heightAt(pos.x, pos.y) : null,
       zoom: renderer.camera.zoom,
+      outcome: this.hudOutcome(snap),
       debug: debugFrom(snap, {
         fps: this.fps,
         dtMs,
@@ -397,7 +402,7 @@ export class Session {
   }
 
   private setSelect(pos: GridPos | null, add = false, screen?: ScreenPt): void {
-    if (!this.renderer || !this.world) return;
+    if (!this.renderer || !this.world || this.endedForMe()) return;
     if (this.claiming) {
       if (pos) this.world.enqueue({ type: "occupy", at: pos, player: this.me });
       return;
@@ -453,7 +458,7 @@ export class Session {
   private boxSelect(a: ScreenPt, b: ScreenPt): void {
     const world = this.world;
     const renderer = this.renderer;
-    if (!world || !renderer) return;
+    if (!world || !renderer || this.endedForMe()) return;
     this.selected = null;
     this.selectedUnitIds = renderer.unitsInBox(a, b).filter((id) => {
       const u = world.movable(id);
@@ -463,10 +468,24 @@ export class Session {
     this.syncGhost();
   }
 
+  private endedForMe(): boolean {
+    const o = this.world?.outcome;
+    if (!o) return false;
+    return o.winner === this.me || o.defeated.includes(this.me);
+  }
+
+  private hudOutcome(snap: ViewSnapshot): "victory" | "defeat" | null {
+    const o = snap.outcome;
+    if (!o) return null;
+    if (o.winner === this.me) return "victory";
+    if (o.defeated.includes(this.me)) return "defeat";
+    return null;
+  }
+
   /** RMB. Pioneers claim toward the tile; everyone else walks. Shift = forced. Group walk spreads onto nearby tiles. */
   private commandSelected(pos: GridPos | null, forced = false): void {
     const world = this.world;
-    if (!world || !pos || this.selectedUnitIds.length === 0) return;
+    if (!world || !pos || this.selectedUnitIds.length === 0 || this.endedForMe()) return;
     const walkers: number[] = [];
     for (const id of this.selectedUnitIds) {
       const unit = world.movable(id);

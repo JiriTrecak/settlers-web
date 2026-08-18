@@ -5,10 +5,10 @@
 import { HEX_DELTAS, TOWER_RADIUS, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { TickTimer, type TickTimings } from "../clock/profile";
-import { BuildingGrid, buildingFlag, canPlace, type Building, type BuildingView } from "../building/building";
+import { BuildingGrid, buildingFlag, canPlace, TOWER_DOOR_HP, type Building, type BuildingView } from "../building/building";
 import { averageHeight, flattenTooSteep, footprint, plotLevel as heightsMatch } from "../building/flatten";
 import { buildingDef, type BuildingKind } from "../data/buildings";
-import { settlers, settlerDef, needsPlayersGround, unitViewDistance, type SettlerKind } from "../data/settlers";
+import { settlers, settlerDef, needsPlayersGround, unitViewDistance, isSoldier, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
 import { tickConstruction } from "../economy/construction";
@@ -25,6 +25,11 @@ import { FogGrid, buildingViewDistance, type FogView, type FogWorld } from "../f
 import { MarkGrid } from "../mark/mark";
 import { placeColony } from "../economy/startKit";
 
+export type MatchOutcome = {
+  winner: number | null;
+  defeated: readonly number[];
+};
+
 export type ViewSnapshot = {
   tick: number;
   terrainGen: number;
@@ -33,6 +38,7 @@ export type ViewSnapshot = {
   buildings: readonly BuildingView[];
   land?: LandView;
   fog: FogView;
+  outcome: MatchOutcome | null;
 };
 
 /** Applied action. Log is append-only at apply time, not enqueue. */
@@ -97,6 +103,9 @@ export class World {
   private nextSeq = 0;
   private readonly pending: QueuedAction[] = [];
   private readonly applied: LoggedAction[] = [];
+  private readonly hqPlayers = new Set<number>();
+  /** Set once a colony HQ is gone. */
+  outcome: MatchOutcome | null = null;
 
   constructor(grid: MapGrid, objects: ObjectGrid = new ObjectGrid(grid.width, grid.height), rng: Rng = seedRng(1)) {
     this.grid = grid;
@@ -111,6 +120,12 @@ export class World {
 
   spawnBearer(at?: GridPos, player = 0): Movable {
     return this.spawnSettler("bearer", at, player);
+  }
+
+  /** Colony start tower. Capture or destroy ends that player. */
+  setHq(hut: Building): void {
+    hut.hq = true;
+    this.hqPlayers.add(hut.player);
   }
 
   spawnSettler(kind: SettlerKind, at?: GridPos, player = 0, workplaceId: number | null = null): Movable {
@@ -194,6 +209,7 @@ export class World {
     this.buildings.remove(hut.id);
     this.syncOcc();
     this.fog.tickDim(this.clock.tickMs, this.fogWorld());
+    this.checkOutcome();
     return true;
   }
 
@@ -288,7 +304,12 @@ export class World {
       mix((b.constructionProgress * 1000) | 0);
       mix(b.player);
       mix(b.flattenHeight);
+      mix(b.hq ? 1 : 0);
+      mix(b.doorHealth | 0);
     }
+    mix(this.outcome?.winner ?? -1);
+    mix(this.outcome?.defeated.length ?? 0);
+    if (this.outcome) for (const p of this.outcome.defeated) mix(p);
     mix(this.land.width);
     mix(this.land.height);
     for (let y = 0; y < this.land.height; y++) {
@@ -377,6 +398,7 @@ export class World {
       this.commitMove(m, () => tickJob(m, this.jobCtx(m)));
     }
     t.mark("jobs");
+    this.tickDoors();
     this.reapDead();
     this.syncLandClaims();
     t.mark("land");
@@ -509,6 +531,7 @@ export class World {
       buildings: this.buildings.view(this.units),
       land: this.land.view(),
       fog: this.fog.view(player),
+      outcome: this.outcome,
     };
   }
 
@@ -578,6 +601,8 @@ export class World {
       units: this.units,
       land: this.land,
       marks: this.marks,
+      captureTower: (hut: Building, attacker: Movable) => this.captureTower(hut, attacker),
+      kickGarrison: (hut: Building) => this.kickGarrison(hut),
     };
   }
 
@@ -647,14 +672,82 @@ export class World {
       const def = buildingDef(b.kind);
       if (!("occupies" in def) || !def.occupies) continue;
       const manned = b.state === "built" && garrisonCount(b, this.units) > 0;
+      const incoming = this.units.some(
+        (u) => u.job?.type === "occupy" && u.job.hutId === b.id && u.player === b.player,
+      );
+      const contested =
+        incoming ||
+        this.units.some((u) => u.job?.type === "assault" && u.job.hutId === b.id) ||
+        this.units.some(
+          (u) => u.workplaceId === b.id && !u.inside && u.health > 0 && isSoldier(u.type),
+        );
       if (manned && !b.landClaimed) {
         this.claimAt(b.pos, b.player);
         b.landClaimed = true;
-      } else if (!manned && b.landClaimed) {
+      } else if (!manned && b.landClaimed && !contested) {
         this.land.release(b.pos, (x, y) => this.landscapeBlocked(x, y));
         b.landClaimed = false;
       }
     }
+  }
+
+  private kickGarrison(hut: Building): Movable | null {
+    for (const u of this.units) {
+      if (u.workplaceId !== hut.id || !u.inside || u.health <= 0 || !isSoldier(u.type)) continue;
+      u.leave();
+      return u;
+    }
+    return null;
+  }
+
+  private captureTower(hut: Building, attacker: Movable): void {
+    const old = hut.player;
+    if (old === attacker.player) return;
+    if (hut.fogDistance > 0) {
+      this.fog.resizeCircle(hut.pos, old, hut.fogDistance, 0);
+      hut.fogDistance = 0;
+    }
+    const held = hut.landClaimed;
+    if (held) {
+      this.land.release(hut.pos, (x, y) => this.landscapeBlocked(x, y));
+      hut.landClaimed = false;
+    }
+    hut.player = attacker.player;
+    hut.hq = false;
+    hut.doorHealth = 5;
+    hut.doorRegen = 0;
+    for (const u of this.units) {
+      if (u.job?.type === "occupy" && u.job.hutId === hut.id && u.player !== hut.player) u.idle();
+      if (u.workplaceId === hut.id && u.player === old) u.workplaceId = null;
+    }
+    if (held) {
+      this.claimAt(hut.pos, hut.player);
+      hut.landClaimed = true;
+    }
+    this.checkOutcome();
+  }
+
+  private tickDoors(): void {
+    for (const b of this.buildings.all()) {
+      const def = buildingDef(b.kind);
+      if (!("occupies" in def) || !def.occupies || b.state !== "built" || b.doorHealth >= TOWER_DOOR_HP) continue;
+      if (this.units.some((u) => u.job?.type === "assault" && u.job.hutId === b.id)) continue;
+      b.doorRegen += 1;
+      if (b.doorRegen < 40) continue;
+      b.doorRegen = 0;
+      b.doorHealth += 1;
+    }
+  }
+
+  private checkOutcome(): void {
+    if (this.outcome || this.hqPlayers.size === 0) return;
+    const defeated: number[] = [];
+    for (const p of this.hqPlayers) {
+      if (!this.buildings.all().some((b) => b.hq && b.player === p)) defeated.push(p);
+    }
+    if (defeated.length === 0) return;
+    const alive = [...this.hqPlayers].filter((p) => !defeated.includes(p));
+    this.outcome = { winner: alive.length === 1 ? alive[0]! : null, defeated };
   }
 
   /** Resize hut/unit view circles when state or tile changes. */

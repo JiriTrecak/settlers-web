@@ -18,4 +18,4 @@ Digger: temporary. Construction assigns `flatten` on a plan whose protected heig
 
 Pioneer: no workplace. Job `pioneer` is the click. Walk there, then claim unenforced foreign tiles (hex 1–6 toward the target, else 30). Kneel 1.2s, `land.claim`. Tower-covered tiles stay put.
 
-Swordsman: no workplace until they garrison. Closest attackable enemy in hex 30 gets an `attack` job (peels a DEFAULT walk). Else an empty tower with a free infantry slot gets `occupy` (enter, land stamps). Forced walk (shift-RMB) skips both until they stop. Bearers / workers are not attackable. Inside a tower they stay put.
+Swordsman: no workplace until they garrison. Closest attackable enemy in hex 30 gets an `attack` job (peels a DEFAULT walk). Else the closest enemy military hut in that disk is `assault`. Else an empty own tower with a free infantry slot gets `occupy` (enter, land stamps). Forced walk (shift-RMB) skips all three until they stop. Bearers / workers are not attackable. Inside a tower they stay put until the door breaks.

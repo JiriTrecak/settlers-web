@@ -15,7 +15,7 @@ const fog: FogView = {
   isClear: () => true,
 };
 
-const empty: ViewSnapshot = { tick: 12, terrainGen: 0, movables: [], objects: [], buildings: [], fog };
+const empty: ViewSnapshot = { tick: 12, terrainGen: 0, movables: [], objects: [], buildings: [], fog, outcome: null };
 
 const frame = {
   fps: 60,
@@ -91,6 +91,7 @@ describe("debug overlay", () => {
         { id: 2, kind: "sawmill", x: 12, y: 8, player: 0, state: "plan", buildProgress: 0, flag: null },
       ],
       fog,
+      outcome: null,
     };
     const d = debugFrom(snap, frame);
     expect(d.settlerTotal).toBe(2);

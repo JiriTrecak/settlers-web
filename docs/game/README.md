@@ -14,7 +14,7 @@ Read these when you need the rules, timings, and “what does the player actuall
 
 ## In play now
 
-Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Pioneers claim unenforced tiles. Lumberjack plots flatten before bricklayers. Trees grow. HQ occupies a radius-40 disk once garrisoned (kit seats one L1 inside; 5 more in the spiral). Extra T1 towers extend it when a spare swordsman walks in. Two colonies on 2-start maps (script opponent converts a pioneer, plans a tower, enlists an L1). You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). L1 swordsmen auto-aggro and melee.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Pioneers claim unenforced tiles. Lumberjack plots flatten before bricklayers. Trees grow. HQ occupies a radius-40 disk once garrisoned (kit seats one L1 inside; 5 more in the spiral). Extra T1 towers extend it when a spare swordsman walks in. Infantry assault enemy tower doors; empty broken doors flip owner. Colony HQ gone is the match. Two colonies on 2-start maps (script opponent converts a pioneer, plans a tower, enlists an L1). You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). L1 swordsmen auto-aggro and melee.
 
 ## Not yet
 

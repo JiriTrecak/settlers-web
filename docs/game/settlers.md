@@ -49,6 +49,7 @@ A unit *has* a job; it does not implement the verb. Profession / matcher / const
 | `pioneer` | Pioneer | Walk to the click, then kneel 1.2 s per unenforced tile toward that target |
 | `flatten` | Digger | Walk onto the cell, kneel 1 s, ±1 toward the hut mean |
 | `attack` | Swordsman | Face, 1 s swing, subtract strength. Chase to an adjacent stand |
+| `assault` | Swordsman | Hit an enemy tower door (50 HP). At 0 the garrison comes out; empty hut flips owner |
 
 Pickup / drop / deliver all share the bend clip.
 

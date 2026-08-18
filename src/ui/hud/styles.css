@@ -162,6 +162,21 @@ body {
   outline: none;
 }
 
+.hud-outcome {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e8e0d0;
+  text-shadow: 0 2px 12px #000;
+  pointer-events: none;
+}
+
 .hud-confirm {
   pointer-events: auto;
   position: absolute;
