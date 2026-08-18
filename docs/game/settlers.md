@@ -22,7 +22,7 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 
 At most one standing unit per tile. `inside` units are in their hut: no sprite, no occupancy, no flock. They still exist in the sim (F3 counts them).
 
-A step **occupies the destination immediately**; `moveProgress` is visual lerp only. Pathing treats other units as blockers (self ignored).
+A step **occupies the destination immediately**; `moveProgress` is visual lerp only. Pathing treats other units as blockers (self ignored). Occupancy commits after each unit in a tick, so two walkers cannot enter the same hex on the same beat. If the next hex is taken, wait while the dest is still free; if the dest is taken, repath to the nearest free stand.
 
 `chop` / `cut` / `plant` also **mark** a tile (`MarkGrid`) until the job ends, so a second worker will not pick the same tree, stand, or plant cell. Not occupancy — they still walk.
 
@@ -54,7 +54,7 @@ Pickup / drop / deliver all share the bend clip.
 
 ## Idle flock
 
-Jobless, not walking, not inside, and `needsPlayersGround` (civilians). Pioneers stand.
+Jobless, not walking, not inside, and `needsPlayersGround` (civilians). Pioneers and soldiers stand, except they peel off a hex another unit is already on.
 
 Repulsion from occupied tiles and the map edge in hex rings 1–2, then **one** step. Crowded → walk every step (delay down to 500 ms). Spread → wait 500–1000 ms. Default delay 700 ms.
 

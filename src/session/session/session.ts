@@ -484,12 +484,11 @@ export class Session {
     const world = this.world;
     if (!world || n <= 0) return [];
     const out: GridPos[] = [];
-    for (const t of tilesAround(center, Math.max(n * 8, 16))) {
+    for (const t of tilesAround(center, Math.max(n * 16, 64))) {
       if (!world.canStand(t.x, t.y)) continue;
       out.push(t);
       if (out.length >= n) break;
     }
-    while (out.length < n) out.push(center);
     return out;
   }
 

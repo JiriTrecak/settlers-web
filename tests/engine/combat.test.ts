@@ -1,5 +1,6 @@
 /**
  * L1 swordsman melee: auto-aggro 30, 1s swing, 10 dmg, death unstamps fog.
+ * One standing unit per hex — group walk and fight stands must spread.
  */
 import { describe, expect, it } from "vitest";
 import { hexDist } from "../../src/shared";
@@ -61,6 +62,35 @@ describe("combat", () => {
     expect(a.walking).toBe(true);
     expect(a.job?.type).not.toBe("attack");
     expect(a.pos.y).toBeGreaterThan(20);
+  });
+
+  it("two swordsmen walking to the same hex end on different tiles", () => {
+    const world = new World(grass(64, 64));
+    const a = world.spawnSettler("swordsman", { x: 10, y: 20 }, 0);
+    const b = world.spawnSettler("swordsman", { x: 10, y: 22 }, 0);
+    world.dispatch({ type: "moveTo", id: a.id, to: { x: 30, y: 20 } });
+    world.dispatch({ type: "moveTo", id: b.id, to: { x: 30, y: 20 } });
+    const n = tickUntil(world, () => !a.walking && !b.walking && !a.job && !b.job, 2500);
+    expect(n).toBeLessThan(2500);
+    expect(`${a.pos.x},${a.pos.y}`).not.toBe(`${b.pos.x},${b.pos.y}`);
+  });
+
+  it("never shares a hex while two L1s close on a fight", () => {
+    const world = new World(grass(64, 64));
+    const a = world.spawnSettler("swordsman", { x: 16, y: 20 }, 0);
+    const b = world.spawnSettler("swordsman", { x: 16, y: 22 }, 0);
+    world.spawnSettler("swordsman", { x: 28, y: 21 }, 1);
+    for (let i = 0; i < 2000; i++) {
+      world.tick();
+      const seen = new Set<string>();
+      for (const m of world.view().movables) {
+        if (m.inside) continue;
+        const k = `${m.pos.x},${m.pos.y}`;
+        expect(seen.has(k), `stack at ${k} tick ${i}`).toBe(false);
+        seen.add(k);
+      }
+      if (world.view().movables.length <= 2) break;
+    }
   });
 
   it("closes from hex 20 and fights", () => {

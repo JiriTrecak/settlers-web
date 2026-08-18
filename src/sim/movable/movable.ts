@@ -1,6 +1,7 @@
 /**
  * One unit on the grid. Occupies the destination tile at step start; `moveProgress`
- * is 0→1 over `stepTicks` so render can lerp from `from` to `pos`.
+ * is 0→1 over `stepTicks` so render can lerp from `from` to `pos`. Refuses a taken
+ * hex: wait, or repath beside the dest if that cell is gone.
  */
 import { directionFromDelta, type Direction, type GridPos } from "../../shared";
 import type { Goods, SettlerDef } from "../data/types";
@@ -9,7 +10,7 @@ import type { Job } from "../job/job";
 import { markOf, workTicksOf } from "../job/job";
 import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
-import { findPath, type Blockers } from "../path/path";
+import { findPath, isWalkable, nearestWalkable, type Blockers } from "../path/path";
 
 export type MovableType = SettlerKind;
 export type MovableAction = "idle" | "walk" | "work";
@@ -184,7 +185,7 @@ export class Movable {
     this.leave();
     const path = findPath(grid, this.pos, to, blockers);
     this.queue = path ? path.slice() : [];
-    if (!this.stepping && this.action !== "work") this.startStep();
+    if (!this.stepping && this.action !== "work") this.startStep(grid, blockers);
   }
 
   face(toward: GridPos): void {
@@ -209,10 +210,10 @@ export class Movable {
     this.from = this.pos;
   }
 
-  tick(): void {
+  tick(grid?: MapGrid, blockers?: Blockers): void {
     if (this.inside || this.action === "work") return;
     if (!this.stepping) {
-      this.startStep();
+      this.startStep(grid, blockers);
       return;
     }
     this.stepElapsed += 1;
@@ -222,7 +223,7 @@ export class Movable {
     this.stepping = false;
     this.from = this.pos;
     this.moveProgress = 0;
-    this.startStep();
+    this.startStep(grid, blockers);
   }
 
   private clearJob(): void {
@@ -237,8 +238,9 @@ export class Movable {
     this.marked = null;
   }
 
-  private startStep(): void {
-    const next = this.queue.shift();
+  private startStep(grid?: MapGrid, blockers?: Blockers): void {
+    this.rerouteIfBlocked(grid, blockers);
+    const next = this.queue[0];
     if (!next) {
       this.action = this.action === "work" ? "work" : "idle";
       this.stepping = false;
@@ -246,6 +248,14 @@ export class Movable {
       this.from = this.pos;
       return;
     }
+    if (blockers?.blocks(next.x, next.y)) {
+      this.action = this.action === "work" ? "work" : "idle";
+      this.stepping = false;
+      this.moveProgress = 0;
+      this.from = this.pos;
+      return;
+    }
+    this.queue.shift();
     this.direction = directionFromDelta(next.x - this.pos.x, next.y - this.pos.y);
     this.from = this.pos;
     this.pos = next;
@@ -253,5 +263,20 @@ export class Movable {
     this.stepElapsed = 0;
     this.moveProgress = 0;
     this.stepping = true;
+  }
+
+  /** Occupied next hex: wait if the dest is still free; otherwise stand beside it. */
+  private rerouteIfBlocked(grid?: MapGrid, blockers?: Blockers): void {
+    const next = this.queue[0];
+    if (!next || !grid || !blockers?.blocks(next.x, next.y)) return;
+    const dest = this.queue[this.queue.length - 1] ?? next;
+    if (isWalkable(grid, dest.x, dest.y, blockers)) return;
+    const alt = nearestWalkable(grid, dest, blockers);
+    if (!alt || (alt.x === this.pos.x && alt.y === this.pos.y)) {
+      this.queue = [];
+      return;
+    }
+    const path = findPath(grid, this.pos, alt, blockers);
+    if (path) this.queue = path.slice();
   }
 }

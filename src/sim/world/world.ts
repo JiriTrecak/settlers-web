@@ -47,22 +47,37 @@ type QueuedAction = LoggedAction & { seq: number };
 class Occupancy {
   private readonly at: Int32Array;
   private readonly width: number;
+  private readonly height: number;
 
   constructor(width: number, height: number) {
     this.width = width;
+    this.height = height;
     this.at = new Int32Array(width * height);
   }
 
   idAt(x: number, y: number): number {
+    if (!this.inBounds(x, y)) return 0;
     return this.at[y * this.width + x] ?? 0;
   }
 
   occupy(id: number, x: number, y: number): void {
+    if (!this.inBounds(x, y)) return;
     this.at[y * this.width + x] = id;
+  }
+
+  /** Clear only if this id still owns the cell — someone else may have stepped in. */
+  leave(id: number, x: number, y: number): void {
+    if (!this.inBounds(x, y)) return;
+    const i = y * this.width + x;
+    if (this.at[i] === id) this.at[i] = 0;
   }
 
   clear(): void {
     this.at.fill(0);
+  }
+
+  private inBounds(x: number, y: number): boolean {
+    return x >= 0 && y >= 0 && x < this.width && y < this.height;
   }
 }
 
@@ -305,24 +320,27 @@ export class World {
     t.mark("trees");
     for (const m of this.units) {
       if (m.health <= 0) continue;
-      m.tick();
+      this.commitMove(m, () => m.tick(this.grid, this.unitBlockers(m)));
     }
     t.mark("step");
     this.tickHouses();
+    this.syncOcc();
     t.mark("houses");
     for (const m of this.units) {
       if (m.health <= 0) continue;
-      tickProfession(m, {
-        grid: this.grid,
-        objects: this.objects,
-        buildings: this.buildings,
-        blockers: this.unitBlockers(m),
-        tickMs: this.clock.tickMs,
-        units: this.units,
-        rng: this.rng,
-        land: this.land,
-        marks: this.marks,
-      });
+      this.commitMove(m, () =>
+        tickProfession(m, {
+          grid: this.grid,
+          objects: this.objects,
+          buildings: this.buildings,
+          blockers: this.unitBlockers(m),
+          tickMs: this.clock.tickMs,
+          units: this.units,
+          rng: this.rng,
+          land: this.land,
+          marks: this.marks,
+        }),
+      );
     }
     t.mark("profession");
     tickConstruction({
@@ -335,24 +353,28 @@ export class World {
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
     });
+    this.syncOcc();
     t.mark("construction");
     tickMatcher(this.units, this.buildings, this.objects, this.land);
+    this.syncOcc();
     t.mark("matcher");
     for (const m of this.units) {
       if (m.health <= 0) continue;
-      tickFlock(m, {
-        grid: this.grid,
-        objects: this.objects,
-        buildings: this.buildings,
-        units: this.units,
-        rng: this.rng,
-        tickMs: this.clock.tickMs,
-        land: this.land,
-      });
+      this.commitMove(m, () =>
+        tickFlock(m, {
+          grid: this.grid,
+          objects: this.objects,
+          buildings: this.buildings,
+          units: this.units,
+          rng: this.rng,
+          tickMs: this.clock.tickMs,
+          land: this.land,
+        }),
+      );
     }
     t.mark("flock");
     for (const m of this.units) {
-      tickJob(m, this.jobCtx(m));
+      this.commitMove(m, () => tickJob(m, this.jobCtx(m)));
     }
     t.mark("jobs");
     this.reapDead();
@@ -417,8 +439,14 @@ export class World {
     const m = this.units.find((u) => u.id === action.id);
     if (!m) return;
     if (action.type === "moveTo") {
-      m.forcedUntil = action.forced ? action.to : null;
-      m.goTo(this.grid, action.to, this.unitBlockers(m));
+      const blockers = this.unitBlockers(m);
+      const occId = this.occ.idAt(action.to.x, action.to.y);
+      const to =
+        occId !== 0 && occId !== m.id
+          ? (nearestWalkable(this.grid, action.to, blockers) ?? action.to)
+          : action.to;
+      m.forcedUntil = action.forced ? to : null;
+      m.goTo(this.grid, to, blockers);
       this.syncOcc();
       return;
     }
@@ -576,6 +604,14 @@ export class World {
         return false;
       },
     };
+  }
+
+  /** Pathing occupancy is live: commit after each unit so the next one sees the new tile. */
+  private commitMove(m: Movable, fn: () => void): void {
+    const prev = m.pos;
+    fn();
+    this.occ.leave(m.id, prev.x, prev.y);
+    if (!m.inside) this.occ.occupy(m.id, m.pos.x, m.pos.y);
   }
 
   private syncOcc(): void {
