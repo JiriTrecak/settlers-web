@@ -6,7 +6,7 @@ PixiJS drawing. Consumes `MapView` + dumped graphics. Does not own game state.
 |---|---|
 | `renderer/` | Stage, camera apply, tile pick, hut-select overlay |
 | `landscape/` | Terrain mesh + atlas UVs |
-| `shader/` | GLSL (`.vert` / `.frag`). One subfolder per program. |
+| `shader/` | GLSL (`.vert` / `.frag`). One subfolder per program (landscape, construction-mark). |
 | `building/` | Hut sprites + waving player-tinted flags |
 | `decoration/` | Tree / stone / stack / wave sprites |
 | `settler/` | Per-profession walk/idle/carry + work/bend |

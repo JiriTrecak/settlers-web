@@ -90,6 +90,8 @@ export class Building {
 export class BuildingGrid {
   readonly width: number;
   readonly height: number;
+  /** Bumps on place/remove. Construction marks cache this. */
+  revision = 0;
   private readonly blockedAt: Int32Array;
   private readonly protectedAt: Int32Array;
   private readonly items: (Building | null)[] = [null];
@@ -167,6 +169,7 @@ export class BuildingGrid {
     this.items.push(building);
     for (const t of tiles(def.protected, at)) this.protectedAt[this.index(t.x, t.y)] = id;
     for (const t of tiles(def.blocked, at)) this.blockedAt[this.index(t.x, t.y)] = id;
+    this.revision += 1;
     return building;
   }
 
@@ -184,6 +187,7 @@ export class BuildingGrid {
       if (this.blockedAt[i] === id) this.blockedAt[i] = 0;
     }
     this.items[id] = null;
+    this.revision += 1;
     return b;
   }
 }

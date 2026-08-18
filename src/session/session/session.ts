@@ -25,6 +25,7 @@ import {
   type MapDecoration,
   type MapStart,
   type ViewSnapshot,
+  type BuildingKind,
 } from "../../sim";
 import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
@@ -105,6 +106,7 @@ export class Session {
   private waves: MapDecoration[] = [];
   private pristine: { grid: ReturnType<typeof generateMap>; objects: ObjectGrid } | null = null;
   private placeTool: PlaceTool | null = null;
+  private markKey = "";
   private hover: GridPos | null = null;
   private fps = 60;
   private showPaths = false;
@@ -660,6 +662,7 @@ export class Session {
     const pos = this.hover;
     if (!renderer) return;
     if (this.claiming || tool?.type !== "building" || !world) {
+      this.markKey = "";
       renderer.ghost(null, null, false);
       renderer.setConstructionMarks(null);
       return;
@@ -668,22 +671,43 @@ export class Session {
     else {
       renderer.ghost(tool.kind, pos, world.canPlaceBuilding(tool.kind, pos, this.me) && world.plotLevel(tool.kind, pos));
     }
-    const vis = renderer.visibleGrid();
-    if (!vis) {
+    this.syncConstructionMarks();
+  }
+
+  /** Owned-land pip mesh. Rebuilds when land / terrain / objects / huts / tool change — not every pan. */
+  private syncConstructionMarks(): void {
+    const renderer = this.renderer;
+    const world = this.world;
+    const tool = this.placeTool;
+    if (!renderer) return;
+    if (this.claiming || tool?.type !== "building" || !world) {
+      this.markKey = "";
       renderer.setConstructionMarks(null);
       return;
     }
-    const fog = this.showFog ? world.fog.view(this.me) : null;
+    const key = `${tool.kind}:${world.land.generation}:${world.grid.revision}:${world.objects.revision}:${world.buildings.revision}`;
+    if (key === this.markKey) return;
+    this.markKey = key;
+    const marks = world.constructionMarks(tool.kind, this.me) ?? this.viewportMarks(tool.kind);
+    renderer.setConstructionMarks(marks);
+  }
+
+  /** No occupy disk yet — scan the screen AABB instead of the whole map. */
+  private viewportMarks(kind: BuildingKind): { x: number; y: number; value: number }[] {
+    const renderer = this.renderer;
+    const world = this.world;
+    if (!renderer || !world) return [];
+    const vis = renderer.visibleGrid(4);
+    if (!vis) return [];
     const marks: { x: number; y: number; value: number }[] = [];
     for (let y = vis.y0; y <= vis.y1; y += vis.stride) {
       for (let x = vis.x0; x <= vis.x1; x += vis.stride) {
-        if (fog && fog.sightAt(x, y) === 0) continue;
-        const value = world.constructionMark(tool.kind, { x, y }, this.me);
+        const value = world.constructionMark(kind, { x, y }, this.me);
         if (value == null) continue;
         marks.push({ x, y, value });
       }
     }
-    renderer.setConstructionMarks(marks);
+    return marks;
   }
 
   private toolLabel(): string | null {

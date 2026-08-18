@@ -243,6 +243,30 @@ export class World {
     return v < 0 ? null : v;
   }
 
+  /**
+   * Every placeable origin on this player's land. `null` if they have no occupy
+   * disk yet (session falls back to the viewport). Owned-land scan is the play path.
+   */
+  constructionMarks(kind: BuildingKind, player = 0): { x: number; y: number; value: number }[] | null {
+    if (!this.land.hasPlayer(player)) return null;
+    const def = buildingDef(kind);
+    const out: { x: number; y: number; value: number }[] = [];
+    const w = this.grid.width;
+    const h = this.grid.height;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (this.land.playerAt(x, y) !== player) continue;
+        if (this.buildings.protects(x, y) || this.objects.blocks(x, y)) continue;
+        const land = this.grid.landscapeAt(x, y);
+        if (!def.ground.some((g) => g === land)) continue;
+        const value = this.constructionMark(kind, { x, y }, player);
+        if (value == null) continue;
+        out.push({ x, y, value });
+      }
+    }
+    return out;
+  }
+
   /** Actions applied so far, in apply order. */
   log(): readonly LoggedAction[] {
     return this.applied;

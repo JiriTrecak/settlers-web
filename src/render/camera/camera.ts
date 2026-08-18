@@ -47,7 +47,7 @@ export class Camera {
 
   /**
    * Grid AABB covering the screen. `pad` extra cells for height-lifted tiles.
-   * `stride` skips cells when zoomed out so the mark layer stays cheap.
+   * `stride` skips cells when zoomed out (viewport-scan fallback only).
    */
   visibleGrid(
     screenW: number,

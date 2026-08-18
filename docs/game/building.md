@@ -19,7 +19,7 @@ Every hut flattens unless `flatten: false` (mines, later). Target height is the 
 
 ## Placement
 
-Build-strip click on empty valid **owned** land `enqueue`s a **plan** (fence posts, no hut sprite) and drops the tool. While a hut is selected, every placeable origin on screen gets the original construction pip (green = level, red = steep). Hover still shows a ghost: posts + blocked-tile fill. Red if illegal (including off-land) or the plot is uneven — click still places if `canPlace`. Hidden while hovering an existing hut.
+Build-strip click on empty valid **owned** land `enqueue`s a **plan** (fence posts, no hut sprite) and drops the tool. While a hut is selected, every owned placeable origin gets the original construction pip (green = level, red = steep). Hover still shows a ghost: posts + blocked-tile fill. Red if illegal (including off-land) or the plot is uneven — click still places if `canPlace`. Hidden while hovering an existing hut.
 
 `placeBuilding` (colony, tests) stamps **finished** and staffs the worker immediately. A finished tower needs a soldier inside before it stamps the radius-40 disk — HQ at match start already garrisons one infantry. Extra T1s from the strip wait until a spare swordsman walks in. The play loop never uses `placeBuilding` for the strip.
 

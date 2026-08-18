@@ -31,6 +31,8 @@ export type MapObjectView = {
 export class ObjectGrid {
   readonly width: number;
   readonly height: number;
+  /** Bumps when an object is placed or removed (not stack count). Construction marks cache this. */
+  revision = 0;
   /** 0 = empty, else 1-based index into `items`. */
   private readonly at: Int32Array;
   private readonly items: (MapObjectView | null)[] = [null];
@@ -45,6 +47,7 @@ export class ObjectGrid {
   clone(): ObjectGrid {
     const copy = new ObjectGrid(this.width, this.height);
     for (const obj of this.all()) copy.place({ ...obj });
+    copy.revision = this.revision;
     return copy;
   }
 
@@ -73,6 +76,7 @@ export class ObjectGrid {
     const stored: MapObjectView = { ...obj };
     this.items.push(stored);
     this.at[this.index(obj.x, obj.y)] = id;
+    this.revision += 1;
     return stored;
   }
 
@@ -84,6 +88,7 @@ export class ObjectGrid {
     const obj = this.items[id];
     this.items[id] = null;
     this.at[i] = 0;
+    this.revision += 1;
     return obj ?? undefined;
   }
 

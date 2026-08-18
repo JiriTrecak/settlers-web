@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { lumberjack as hutDef } from "../../src/sim/data/buildings/lumberjack";
 import { tower as towerDef } from "../../src/sim/data/buildings/tower";
 import { averageHeight, constructionMarkFrame, constructionMarkValue, flattenReady, footprint } from "../../src/sim/building/flatten";
+import { placeColony } from "../../src/sim/economy/startKit";
 import { MapGrid } from "../../src/sim/map/mapGrid";
 import { goodsStack } from "../../src/sim/object/object";
 import { World } from "../../src/sim/world/world";
@@ -125,5 +126,18 @@ describe("flatten", () => {
     const world = new World(grid);
     expect(world.constructionMark("lumberjack", at, 0)).toBe(v);
     expect(world.constructionMark("tower", at, 0)).not.toBeNull();
+  });
+
+  it("lists every owned placeable origin after a colony stamps land", () => {
+    const world = new World(grass(64, 64));
+    expect(world.constructionMarks("lumberjack", 0)).toBeNull();
+    placeColony(world, { x: 32, y: 32 }, 0);
+    const marks = world.constructionMarks("lumberjack", 0);
+    expect(marks).not.toBeNull();
+    expect(marks!.length).toBeGreaterThan(0);
+    for (const m of marks!) {
+      expect(world.land.playerAt(m.x, m.y)).toBe(0);
+      expect(world.constructionMark("lumberjack", { x: m.x, y: m.y }, 0)).toBe(m.value);
+    }
   });
 });

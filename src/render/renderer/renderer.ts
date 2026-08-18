@@ -1,5 +1,5 @@
 /**
- * Pixi world: landscape mesh, decorations, buildings, placement ghost, construction marks, hut select, camera.
+ * Pixi world: landscape mesh, decorations, buildings, placement ghost, construction-mark mesh, hut select, camera.
  * Reads `MapView`; never writes sim. Debug path / ownership / fog overlays are HUD toggles.
  */
 import { Application, Container, Geometry, Graphics, Mesh, Shader, type Texture } from "pixi.js";
@@ -158,6 +158,7 @@ export class Renderer {
     this.decorations.syncObjects(visibleObjects(snapshot, fog));
     this.buildings.sync(visibleBuildings(snapshot, fog), fog);
     this.settlers.draw(visibleMovables(snapshot.movables, fog), alpha, fog);
+    this.marks.syncFog(this.fog);
     this.paths.draw(snapshot.movables, alpha);
     this.land.draw(snapshot.land);
     this.borders.draw(snapshot.land, this.fogOn ? fog : undefined);
@@ -225,11 +226,11 @@ export class Renderer {
     else this.marks.show(marks);
   }
 
-  /** Grid AABB + stride for the current camera. */
-  visibleGrid(): { x0: number; y0: number; x1: number; y1: number; stride: number } | null {
+  /** Grid AABB + stride. `pad` extra cells for height-lifted tiles. */
+  visibleGrid(pad?: number): { x0: number; y0: number; x1: number; y1: number; stride: number } | null {
     const view = this.view;
     if (!view) return null;
-    return this.camera.visibleGrid(this.app.renderer.width, this.app.renderer.height, view.width, view.height);
+    return this.camera.visibleGrid(this.app.renderer.width, this.app.renderer.height, view.width, view.height, pad);
   }
 
   /** Remaining walk queues. Sticky until toggled off — F3 does not have to stay open. */

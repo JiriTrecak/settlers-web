@@ -17,8 +17,8 @@ import type { Rng } from "../rng/rng";
 export const TILES_PER_DIGGER = 15;
 
 /** Omit `flatten` or `true` → diggers. `false` skips (mines). */
-export function needsFlatten(def: { flatten?: boolean }): boolean {
-  return def.flatten !== false;
+export function needsFlatten(def: { flatten?: boolean } | object): boolean {
+  return !("flatten" in def && (def as { flatten?: boolean }).flatten === false);
 }
 
 const MARK_SCALE = 2.5;
