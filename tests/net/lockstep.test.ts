@@ -77,4 +77,21 @@ describe("lockstep MemoryChannel", () => {
     ls0.confirm(1);
     expect(ls0.take(1)).toBeUndefined();
   });
+
+  it("does not resend an empty confirm for the same through", () => {
+    let n = 0;
+    const ch = {
+      send: (): void => {
+        n++;
+      },
+      onMessage: (): void => {},
+    };
+    const ls = new Lockstep(ch, 0, 1);
+    ls.confirm(1);
+    ls.confirm(1);
+    expect(n).toBe(1);
+    ls.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 });
+    ls.confirm(1);
+    expect(n).toBe(2);
+  });
 });

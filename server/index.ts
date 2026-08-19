@@ -44,6 +44,7 @@ server.on("upgrade", (req, socket, head) => {
     ws.on("message", (raw) => {
       try {
         room.ingest(token, JSON.parse(String(raw)));
+        if (room.view().state === "ended") host.discard(room.id);
       } catch {
         ws.send(JSON.stringify({ type: "error", code: "bad_json", message: "bad json" }));
       }
@@ -129,6 +130,18 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       const room = host.get(decodeURIComponent(leave[1]!));
       const token = bearer(req);
       if (room && token) room.leave(token);
+      send(res, 200, { ok: true });
+      return;
+    }
+    const end = /^\/api\/rooms\/([^/]+)\/end$/.exec(path);
+    if (req.method === "POST" && end) {
+      const room = host.get(decodeURIComponent(end[1]!));
+      const token = bearer(req);
+      if (!room || !token || !room.you(token)) {
+        send(res, 404, { error: "not_found" });
+        return;
+      }
+      host.discard(room.id);
       send(res, 200, { ok: true });
       return;
     }

@@ -126,6 +126,9 @@ export class Session {
   private nextPendingId = -1;
   private desynced = false;
   private checksumEvery = 8;
+  /** Wall-clock origin for MP confirms. Pixi rAF sleeps in an unfocused tab; this must not. */
+  private matchStartMs = 0;
+  private confirmTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly pixi: Application,
@@ -315,6 +318,25 @@ export class Session {
       },
     };
     this.locksteps.set(this.me, new Lockstep(wrapped, this.me, match.delay));
+    this.matchStartMs = performance.now();
+    this.confirmTimer = setInterval(() => this.pulseConfirm(), match.tickMs);
+    this.pulseConfirm();
+  }
+
+  /**
+   * Empty `through` on a timer, not only on Pixi frames. An unfocused tab's rAF pauses;
+   * without this the other slot waits forever at tick 0. `through` tracks wall clock and D
+   * so one RTT yields a burst of commits instead of 1 tick.
+   */
+  private pulseConfirm(): void {
+    const world = this.world;
+    if (!world || this.watching || this.desynced) return;
+    const next = world.clock.tickIndex + 1;
+    const elapsed = Math.max(0, Math.floor((performance.now() - this.matchStartMs) / world.clock.tickMs));
+    for (const ls of this.locksteps.values()) {
+      const through = Math.max(next, elapsed + 1, world.clock.tickIndex + ls.delay);
+      ls.confirm(through, next + ls.delay);
+    }
   }
 
   /** Fence on click. World still applies at tick+D; this is render-only. */
@@ -389,9 +411,11 @@ export class Session {
         break;
       }
       if (!this.watching) {
+        // Don't wait for `go`. Room already stalls until every slot confirms.
         if (this.config.channel && this.desynced) break;
         const next = world.clock.tickIndex + 1;
-        for (const ls of this.locksteps.values()) ls.confirm(next);
+        if (this.config.channel) this.pulseConfirm();
+        else for (const ls of this.locksteps.values()) ls.confirm(next);
         const commit = this.locksteps.get(this.me)?.take(next);
         if (!commit) break;
         for (const slot of commit.slots) {
@@ -527,6 +551,10 @@ export class Session {
   }
 
   stop(): void {
+    if (this.confirmTimer != null) {
+      clearInterval(this.confirmTimer);
+      this.confirmTimer = null;
+    }
     this.input?.destroy();
     this.minimap?.destroy();
     this.speedControl?.destroy();

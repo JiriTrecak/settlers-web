@@ -1,9 +1,10 @@
 /**
  * Frozen match start. Same object on every peer; no process-wide statics.
  * D is ticks ahead of `tickIndex`. SP (MemoryChannel) uses 1.
- * MP default 2 (50 ms) — enough for ~25 ms RTT. Raise from RTT, don't start at 8.
+ * MP `COMMAND_DELAY` is ticks of pipeline + input delay. MATCH_HOST is London;
+ * west-coast RTT is ~150 ms → 8 ticks. Confirm `through` this far ahead of `tickIndex`.
  */
-export const COMMAND_DELAY = 2;
+export const COMMAND_DELAY = 8;
 export const CHECKSUM_EVERY = 8;
 export const TICK_MS = 25;
 

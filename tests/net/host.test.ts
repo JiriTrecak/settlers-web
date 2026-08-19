@@ -89,6 +89,15 @@ describe("MatchHost", () => {
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 
+  it("discard ends the room and drops it from the list", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    expect(host.list()).toHaveLength(1);
+    expect(host.discard(created.room.id)).toBe(true);
+    expect(host.list()).toEqual([]);
+    expect(host.get(created.room.id)).toBeUndefined();
+  });
+
   it("hash mismatch desyncs", () => {
     const host = new MatchHost();
     const created = host.create(draft());

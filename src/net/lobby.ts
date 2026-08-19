@@ -69,6 +69,15 @@ export async function leaveRoom(id: string, token: string): Promise<void> {
   });
 }
 
+/** Kill a room (tests + host abort). Gone from `/api/rooms`. */
+export async function endRoom(id: string, token: string): Promise<void> {
+  const res = await fetch(matchHttp(`/api/rooms/${encodeURIComponent(id)}/end`), {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok && res.status !== 404) throw new Error(await res.text());
+}
+
 export function matchUrl(roomId: string, token: string): string {
   return matchWs(`/match/${encodeURIComponent(roomId)}?token=${encodeURIComponent(token)}`);
 }

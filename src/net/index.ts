@@ -8,6 +8,7 @@ export { WebSocketChannel } from "./ws";
 export { MATCH_HOST } from "../shared";
 export {
   createRoom,
+  endRoom,
   fetchHealth,
   fetchRoom,
   fetchRooms,

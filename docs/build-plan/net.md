@@ -4,11 +4,11 @@ Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate
 
 ## Status (what is code vs contract)
 
-**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts`. MP talks to EC2 `MATCH_HOST` (`18.134.138.1:8787`). `scripts/deploy.sh` installs systemd `settlers-matchhost`.
+**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts` + `tests/net/live.test.ts` (spawns rooms on EC2, `endRoom` kills them). MP talks to EC2 `MATCH_HOST` (`18.134.138.1:8787`). `scripts/deploy.sh` installs systemd `settlers-matchhost`.
 
 | Piece | Where | Notes |
 |---|---|---|
-| `MatchConfig`, `localMatch` | `src/shared/match/` | SP `delay: 1`. `COMMAND_DELAY = 2` is the MP starting guess. |
+| `MatchConfig`, `localMatch` | `src/shared/match/` | SP `delay: 1`. `COMMAND_DELAY = 8` (200 ms) for MATCH_HOST London RTT. |
 | Wire types | `src/shared/net/wire.ts` | **This is the contract.** SP Session sends `turn`. MP also `ready` / `hash` / `ended`. |
 | `MATCH_HOST` | `src/shared/net/endpoint.ts` | `18.134.138.1:8787`. Lobby HTTP + WS. Not localhost, not a Vite proxy. |
 | `Channel`, `Room`, `MemoryChannel`, `Lockstep` | `src/net/` | `Room.confirm` + broadcast `commit`. No listen port. |
@@ -107,6 +107,7 @@ JSON. No sim.
 | POST | `/rooms` | guest | create; caller is host; body = draft config |
 | POST | `/rooms/:id/join` | guest | claim a free playing slot **or** `role: "spectator"` |
 | POST | `/rooms/:id/leave` | member | leave; host leave while `waiting` cancels the room |
+| POST | `/rooms/:id/end` | member | kill room; `MatchHost.discard`. Live tests use this. |
 | POST | `/rooms/:id/start` | host | freeze `MatchConfig`, `waiting` → `playing`, WS clients get `start` |
 | GET | `/rooms/:id` | anyone | snapshot for the lobby UI |
 
@@ -176,7 +177,7 @@ type MatchConfig = {
   mapId: string;
   mapRevision: string;     // opaque dump id. SP: catalog `file`. MP: same until we hash dumps.
   seed: number;
-  delay: number;           // D, ticks. SP: 1. MP default 2 (50 ms). Not 8.
+  delay: number;           // D, ticks. SP: 1. MP: COMMAND_DELAY (8 / 200 ms, London RTT).
   checksumEvery: number;   // default 8
   tickMs: 25;              // must match Clock.tickMs
   slots: Slot[];
@@ -269,13 +270,16 @@ MP speed is **1×**. Pause = clients stop sending `through` (everyone stalls). N
 
 ## Lockstep (client Session)
 
-Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + D`. Same path in SP — MemoryChannel vs WebSocket is the Channel, not a second enqueue. SP uses D=1 (RTT 0). MP starts at 2 (50 ms) and should track RTT, not 8.
+Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + 1 + D`. Same path in SP — MemoryChannel vs WebSocket is the Channel, not a second enqueue. SP uses D=1 (RTT 0). MP `COMMAND_DELAY = 8` (200 ms) for MATCH_HOST London.
+
+MP confirms on `setInterval(tickMs)` as well as the Pixi frame. An unfocused tab's rAF sleeps; silence is not a confirm, so without the timer everyone stays at tick 0. `through` is `max(tickIndex+1, elapsedTicks+1, tickIndex+D)` so one RTT yields a burst of commits, not 1 tick.
 
 ```
 acc += dtMs                 // MP: speed = 1
+pulseConfirm()              // MP only; SP confirms in the loop
 while acc >= 25 and n < cap:
   next = world.clock.tickIndex + 1
-  confirm every local slot through: next   // bundles for next+D; empty confirm still
+  confirm every local slot through: next   // SP. MP: pulse already raised through by D
   if no commit(next): break   // do not consume acc
   for slot in commit.slots:   // player order
     for i, action of slot.actions:

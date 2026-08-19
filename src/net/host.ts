@@ -1,6 +1,6 @@
 /**
  * One MatchHost room: lobby until Start, then the lockstep Room.
- * HTTP/WS bind `ingest` / `bind`. Tests call the same methods with fake sends.
+ * HTTP/WS bind `ingest` / `bind`. `discard` kills a room (tests + `/end`). Tests call the same methods with fake sends.
  */
 import {
   COMMAND_DELAY,
@@ -14,6 +14,7 @@ import {
   type RoomView,
   type ServerMsg,
   type Slot,
+  type WireOutcome,
 } from "../shared";
 import { Room } from "./room";
 
@@ -212,10 +213,18 @@ export class HostedMatch {
     }
     if (msg.type === "ended") {
       if (this.state !== "playing") return;
-      this.state = "ended";
-      this.replayId = crypto.randomUUID();
-      this.fanout({ type: "ended", outcome: msg.outcome, replayId: this.replayId });
+      this.shutdown(msg.outcome);
     }
+  }
+
+  /** Terminal: fanout `ended`, drop send callbacks. MatchHost.discard deletes the row. */
+  shutdown(outcome: WireOutcome = { winner: null, defeated: [] }): void {
+    if (this.state !== "ended") {
+      this.state = "ended";
+      this.replayId ??= crypto.randomUUID();
+      this.fanout({ type: "ended", outcome, replayId: this.replayId });
+    }
+    for (const m of this.members.values()) m.send = null;
   }
 
   private membersStill(player: number): boolean {
@@ -258,6 +267,15 @@ export class MatchHost {
     return [...this.rooms.values()]
       .map((r) => r.view())
       .filter((v) => v.state === "waiting" || v.state === "playing");
+  }
+
+  /** Drop a finished / test room so the process does not leak HostedMatch forever. */
+  discard(id: string): boolean {
+    const room = this.rooms.get(id);
+    if (!room) return false;
+    room.shutdown();
+    this.rooms.delete(id);
+    return true;
   }
 }
 
