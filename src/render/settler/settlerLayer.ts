@@ -13,7 +13,7 @@ import type { FogView } from "../../sim/fog/fog"
 import { FOG_VISIBLE } from "../../sim/fog/fog"
 import { isAttackable, isControllable, settlerDef } from "../../sim/data/settlers"
 import type { SettlerDef } from "../../sim/data/types"
-import type { PropFrame } from "../graphics/textures"
+import { placeLayer, type PropFrame } from "../graphics/textures"
 import { PLAYER_COLORS, clampPlayer } from "../../shared"
 import type { SettlerSheets } from "./settlerSheets"
 import { aabbOverlap, localHits } from "./spriteHit"
@@ -113,20 +113,17 @@ export class SettlerLayer {
       if (frame) {
         drawn.fallback.visible = false
         drawn.body.visible = true
-        drawn.body.texture = frame.texture
-        drawn.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY)
+        placeLayer(drawn.body, frame, world.x, world.y)
         if (frame.torso) {
           drawn.torso.visible = true
-          drawn.torso.texture = frame.torso.texture
           drawn.torso.tint = PLAYER_COLORS[clampPlayer(m.player)]
-          drawn.torso.position.set(world.x + frame.torso.offsetX, world.y + frame.torso.offsetY)
+          placeLayer(drawn.torso, frame.torso, world.x, world.y)
         } else {
           drawn.torso.visible = false
         }
         if (frame.shadow) {
           drawn.shadow.visible = true
-          drawn.shadow.texture = frame.shadow.texture
-          drawn.shadow.position.set(world.x + frame.shadow.offsetX, world.y + frame.shadow.offsetY)
+          placeLayer(drawn.shadow, frame.shadow, world.x, world.y)
         } else {
           drawn.shadow.visible = false
         }
@@ -177,8 +174,7 @@ export class SettlerLayer {
     const show = !!frame && this.selected.has(m.id)
     drawn.mark.visible = show
     if (!show || !frame) return
-    drawn.mark.texture = frame.texture
-    drawn.mark.position.set(wx + frame.offsetX, wy + MARK_Y + frame.offsetY)
+    placeLayer(drawn.mark, frame, wx, wy + MARK_Y)
   }
 
   private paintHealth(drawn: Drawn, m: MovableView, wx: number, wy: number): void {
@@ -189,8 +185,7 @@ export class SettlerLayer {
     const def: SettlerDef = settlerDef(m.type)
     const max = def.health ?? 100
     const frame = bars[healthFrameIndex(m.health, max, bars.length)]!
-    drawn.health.texture = frame.texture
-    drawn.health.position.set(wx + frame.offsetX, wy + HEALTH_Y + frame.offsetY)
+    placeLayer(drawn.health, frame, wx, wy + HEALTH_Y)
   }
 
   private drawnHits(d: Drawn, wx: number, wy: number): boolean {
@@ -263,7 +258,9 @@ function visualProgress(m: MovableView, alpha: number): number {
 function spritePixelHits(sprite: Sprite, wx: number, wy: number): boolean {
   const tex = sprite.texture
   if (!tex || tex.width === 0 || tex.height === 0) return false
-  return localHits(wx - sprite.position.x, wy - sprite.position.y, tex.width, tex.height, alphaOf(tex))
+  const sx = sprite.scale.x || 1
+  const sy = sprite.scale.y || 1
+  return localHits((wx - sprite.position.x) / sx, (wy - sprite.position.y) / sy, tex.width, tex.height, alphaOf(tex))
 }
 
 function spriteBoxHits(
@@ -277,7 +274,7 @@ function spriteBoxHits(
   const tex = sprite.texture
   if (!tex || tex.width === 0 || tex.height === 0) return false
   const p0 = toScreen(sprite.position.x, sprite.position.y)
-  const p1 = toScreen(sprite.position.x + tex.width, sprite.position.y + tex.height)
+  const p1 = toScreen(sprite.position.x + tex.width * sprite.scale.x, sprite.position.y + tex.height * sprite.scale.y)
   return aabbOverlap(p0.x, p0.y, p1.x, p1.y, ax, ay, bx, by)
 }
 

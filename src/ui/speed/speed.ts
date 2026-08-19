@@ -1,5 +1,5 @@
 /**
- * Playback speed under the minimap. Session owns the multiplier; this only emits it.
+ * Playback speed, top-right. Session owns the multiplier; this only emits it.
  */
 export const GAME_SPEEDS = [1, 2, 4, 8] as const;
 export type GameSpeed = (typeof GAME_SPEEDS)[number];

@@ -11,6 +11,7 @@ import type { MapObjectView } from "../../sim/object/object";
 import type { FogView } from "../../sim/fog/fog";
 import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { DecorationSheets, PropFrame } from "./decorationSheets";
+import { placeLayer } from "../graphics/textures";
 
 type Placed = {
   deco: MapDecoration;
@@ -125,15 +126,11 @@ export class DecorationLayer {
     const treeProgress = p.deco.kind === "tree" ? (p.deco.stateProgress ?? 1) : 1;
     const chopping = p.deco.kind === "tree" && treeProgress < 1 && !growing && !this.fallOf(p.deco, sheets);
     const scale = growing ? growScale(treeProgress) : chopping ? 0.35 + 0.65 * treeProgress : 1;
-    p.body.texture = frame.texture;
-    p.body.position.set(world.x + frame.offsetX * scale, world.y + frame.offsetY * scale);
-    p.body.scale.set(scale);
+    placeLayer(p.body, frame, world.x, world.y, scale);
     p.body.zIndex = isoDepth(world.x, world.y, p.deco.kind === "wave" ? ISO_DEPTH_WAVE : ISO_DEPTH_PROP);
     if (p.shadow && frame.shadow) {
-      p.shadow.texture = frame.shadow.texture;
-      p.shadow.position.set(world.x + frame.shadow.offsetX * scale, world.y + frame.shadow.offsetY * scale);
+      placeLayer(p.shadow, frame.shadow, world.x, world.y, scale);
       p.shadow.zIndex = p.body.zIndex;
-      p.shadow.scale.set(scale);
     }
     const sight = this.fog?.sightAt(p.deco.x, p.deco.y) ?? FOG_VISIBLE;
     const seen = sight > 0;

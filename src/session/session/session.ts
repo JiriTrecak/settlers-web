@@ -31,7 +31,10 @@ import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets,
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, BuildMenu, ReplayTimeline, debugFrom, type GameSpeed, type HudState, type PlaceTool } from "../../ui";
+import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, debugFrom, type GameSpeed, type HudState } from "../../ui";
+import { CommandBoard } from "../command/board";
+import { loadCatalogPaths } from "../command/catalog";
+import type { BoardContext, PlaceTool } from "../command/types";
 import { MapInput } from "../input/mapInput";
 import { tilesAround, type ScreenPt } from "../input/boxSelect";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
@@ -98,7 +101,9 @@ export class Session {
   private selectedUnitIds: number[] = [];
   private minimap: Minimap | null = null;
   private speedControl: SpeedControl | null = null;
-  private buildMenu: BuildMenu | null = null;
+  private panel: GameControlPanel | null = null;
+  private board: CommandBoard | null = null;
+  private boardPaint = "";
   private timeline: ReplayTimeline | null = null;
   private input: MapInput | null = null;
   private acc = 0;
@@ -146,7 +151,7 @@ export class Session {
   async start(): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
-    const { atlas, sheets, buildings, settlers } = await loadGraphics();
+    const [{ atlas, sheets, buildings, settlers }] = await Promise.all([loadGraphics(), loadCatalogPaths()]);
     renderer.setAtlas(atlas);
     renderer.setSheets(sheets);
     renderer.setBuildingSheets(buildings);
@@ -156,28 +161,24 @@ export class Session {
     renderer.setShowFog(this.showFog);
 
     // Widgets own their input; we only subscribe.
-    this.minimap = new Minimap(this.overlay, {
+    this.board = new CommandBoard({
+      armPlace: (tool) => this.armPlace(tool),
+    });
+    this.panel = new GameControlPanel(this.overlay, {
+      onCommand: (id) => {
+        this.board?.invoke(id);
+        this.syncBoard();
+      },
+    });
+    this.minimap = new Minimap(this.panel.minimapHost, {
       onLookAt: (x, y) => this.lookAt(x, y),
     });
     const watching = this.watching;
     const remote = this.config.channel != null;
-    if (!watching) {
-      if (!remote) {
-        this.speedControl = new SpeedControl(this.overlay, {
-          onSpeed: (speed) => {
-            this.speed = speed;
-          },
-        });
-      }
-      this.buildMenu = new BuildMenu(this.overlay, {
-        onTool: (tool) => {
-          this.placeTool = tool;
-          if (tool && this.claiming) {
-            this.claiming = false;
-            this.renderer?.previewOccupy(null);
-            this.config.hooks.onClaiming?.(false);
-          }
-          this.syncGhost();
+    if (!watching && !remote) {
+      this.speedControl = new SpeedControl(this.overlay, {
+        onSpeed: (speed) => {
+          this.speed = speed;
         },
       });
     }
@@ -280,6 +281,7 @@ export class Session {
     this.renderer.draw(snap, 0);
     this.syncMinimap(snap, false);
     this.syncTimeline();
+    this.syncBoard();
     this.pushHud(snap, 16.67, 0, false, {
       simMs: 0,
       snapMs: 0,
@@ -458,6 +460,7 @@ export class Session {
     this.syncMinimap(snap);
     const miniMs = performance.now() - tMini;
     this.syncTimeline();
+    this.syncBoard();
     this.pushHud(snap, dtMs, n, n >= cap, { simMs, snapMs, drawMs, miniMs, phases });
   }
 
@@ -480,12 +483,14 @@ export class Session {
     if (this.world) this.syncMinimap(this.look(this.world), false);
   }
 
-  /** Esc: drop the build ghost, then the claim tool, then the unit, then the hut highlight. */
+  /** Esc: drop the build ghost, then the build page, then the claim tool, then the unit, then the hut highlight. */
   deselect(): void {
     if (this.placeTool) {
-      this.placeTool = null;
-      this.buildMenu?.setTool(null);
-      this.syncGhost();
+      this.armPlace(null);
+      return;
+    }
+    if (this.board?.pop()) {
+      this.syncBoard();
       return;
     }
     if (this.claiming) {
@@ -501,6 +506,7 @@ export class Session {
     if (this.selected) {
       this.selected = null;
       this.renderer?.highlight(null);
+      this.syncBoard();
     }
   }
 
@@ -537,17 +543,16 @@ export class Session {
     this.send({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
     this.renderer?.highlight(null);
+    this.syncBoard();
   }
 
   setClaiming(on: boolean): void {
     if (this.watching) return;
     this.claiming = on;
-    if (on) {
-      this.placeTool = null;
-      this.buildMenu?.setTool(null);
-    }
+    if (on) this.placeTool = null;
     this.syncGhost();
     this.renderer?.previewOccupy(on ? this.hover : null, this.me);
+    this.syncBoard();
   }
 
   stop(): void {
@@ -558,13 +563,15 @@ export class Session {
     this.input?.destroy();
     this.minimap?.destroy();
     this.speedControl?.destroy();
-    this.buildMenu?.destroy();
+    this.panel?.destroy();
     this.timeline?.destroy();
     this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
     this.speedControl = null;
-    this.buildMenu = null;
+    this.panel = null;
+    this.board = null;
+    this.boardPaint = "";
     this.timeline = null;
     this.renderer = null;
     this.world = null;
@@ -666,14 +673,9 @@ export class Session {
       return;
     }
     if (tool?.type === "building" && pos && this.canCommand() && this.world.canPlaceBuilding(tool.kind, pos, this.me) && !this.pendingOverlap(tool.kind, pos)) {
-      this.selected = pos;
-      this.selectedUnitIds = [];
-      this.syncSelectionVisual();
       this.send({ type: "placeBuilding", kind: tool.kind, at: pos, player: this.me });
       this.pinPlan(tool.kind, pos);
-      this.placeTool = null;
-      this.buildMenu?.setTool(null);
-      this.syncGhost();
+      this.armPlace(null);
       this.paintNow();
       return;
     }
@@ -792,9 +794,93 @@ export class Session {
     });
   }
 
+  /** Place-tool from the command grid. Session owns the ghost; the widget only emitted an id. */
+  private armPlace(tool: PlaceTool | null): void {
+    this.placeTool = tool;
+    if (tool && this.claiming) {
+      this.claiming = false;
+      this.renderer?.previewOccupy(null);
+      this.config.hooks.onClaiming?.(false);
+    }
+    this.syncGhost();
+    this.syncBoard();
+  }
+
+  private buildingCounts(): BoardContext["counts"] {
+    const out: BoardContext["counts"] = {};
+    const world = this.world;
+    if (world) {
+      for (const b of world.buildings.all()) {
+        if (b.player !== this.me) continue;
+        out[b.kind] = (out[b.kind] ?? 0) + 1;
+      }
+    }
+    for (const p of this.pendingPlans) {
+      if (world?.buildings.at(p.at.x, p.at.y)) continue;
+      out[p.kind] = (out[p.kind] ?? 0) + 1;
+    }
+    return out;
+  }
+
+  private unitCounts(): Record<string, number> {
+    const out: Record<string, number> = {};
+    const world = this.world;
+    if (!world) return out;
+    for (const m of world.view(this.me).movables) {
+      if (m.player !== this.me) continue;
+      out[m.type] = (out[m.type] ?? 0) + 1;
+    }
+    return out;
+  }
+
+  private boardContext(): BoardContext {
+    const world = this.world;
+    const canCommand = this.canCommand();
+    const counts = this.buildingCounts();
+    const units = this.unitCounts();
+    const placeTool = this.placeTool;
+    if (!world) return { selection: { type: "none" }, counts, units, canCommand, placeTool };
+    if (this.selectedUnitIds.length > 0) {
+      const types: string[] = [];
+      for (const id of this.selectedUnitIds) {
+        const u = world.movable(id);
+        if (u) types.push(u.type);
+      }
+      return { selection: { type: "units", types }, counts, units, canCommand, placeTool };
+    }
+    if (this.selected) {
+      const hut = world.buildings.at(this.selected.x, this.selected.y);
+      if (hut) {
+        return {
+          selection: { type: "building", kind: hut.kind, state: hut.state },
+          counts,
+          units,
+          canCommand,
+          placeTool,
+        };
+      }
+    }
+    return { selection: { type: "none" }, counts, units, canCommand, placeTool };
+  }
+
+  private syncBoard(): void {
+    const board = this.board;
+    const panel = this.panel;
+    if (!board || !panel) return;
+    board.sync(this.boardContext());
+    const page = board.page;
+    const sel = board.selectionView;
+    const key = JSON.stringify({ page, sel });
+    if (key === this.boardPaint) return;
+    this.boardPaint = key;
+    panel.setPage(page);
+    panel.setSelection(sel);
+  }
+
   private syncSelectionVisual(): void {
     this.renderer?.setSelected(this.selectedUnitIds);
     this.paintHutSelect();
+    this.syncBoard();
   }
 
   private paintHutSelect(): void {
@@ -960,6 +1046,7 @@ export class Session {
     renderer.draw(snap, 0);
     this.paintHutSelect();
     this.syncMinimap(snap);
+    this.syncBoard();
     this.pushHud(snap, 16.67, 0, false, {
       simMs: 0,
       snapMs: 0,

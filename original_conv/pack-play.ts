@@ -30,8 +30,9 @@ type CatalogSprite = {
   frame?: number;
   offsetX: number;
   offsetY: number;
-  torso?: { path: string; offsetX: number; offsetY: number };
-  shadow?: { path: string; offsetX: number; offsetY: number };
+  px?: number;
+  torso?: { path: string; offsetX: number; offsetY: number; px?: number };
+  shadow?: { path: string; offsetX: number; offsetY: number; px?: number };
 };
 
 function keepPrefixes(): string[] {
@@ -52,6 +53,7 @@ function slim(s: CatalogSprite): CatalogSprite {
   if (s.frame != null) out.frame = s.frame;
   if (s.torso) out.torso = s.torso;
   if (s.shadow) out.shadow = s.shadow;
+  if (s.px != null && s.px !== 1) out.px = s.px;
   return out;
 }
 

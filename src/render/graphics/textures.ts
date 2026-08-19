@@ -1,16 +1,24 @@
 /**
  * Catalog PNG loader. Shared by decoration and settler sheets.
+ * `px` is texels per world pixel (HD). Offsets stay dump/world pixels.
+ * Overlay keys in `px.json`: path, `group:variant`, or group. Path wins.
  */
-import { Texture } from "pixi.js";
+import { Sprite, Texture } from "pixi.js";
+import hd from "./px.json";
 
 const BASE = `${import.meta.env.BASE_URL}graphics/`;
 
-export type PropFrame = {
+export type FrameLayer = {
   texture: Texture;
   offsetX: number;
   offsetY: number;
-  torso?: { texture: Texture; offsetX: number; offsetY: number };
-  shadow?: { texture: Texture; offsetX: number; offsetY: number };
+  /** Texels per world pixel. 1 = dump native. */
+  px: number;
+};
+
+export type PropFrame = FrameLayer & {
+  torso?: FrameLayer;
+  shadow?: FrameLayer;
 };
 
 export type CatalogSprite = {
@@ -20,9 +28,38 @@ export type CatalogSprite = {
   frame?: number;
   offsetX: number;
   offsetY: number;
-  torso?: { path: string; offsetX: number; offsetY: number };
-  shadow?: { path: string; offsetX: number; offsetY: number };
+  /** Texels per world pixel. Overlay `px.json` wins if both are set. */
+  px?: number;
+  torso?: { path: string; offsetX: number; offsetY: number; px?: number };
+  shadow?: { path: string; offsetX: number; offsetY: number; px?: number };
 };
+
+type PxKey = { path: string; group?: string; variant?: string; px?: number };
+
+/** Path, then `group:variant`, then group, then the sprite's own `px`. */
+export function catalogPx(s: PxKey): number {
+  const table = hd as Record<string, number>;
+  const n =
+    table[s.path] ??
+    (s.group != null && s.variant != null ? table[`${s.group}:${s.variant}`] : undefined) ??
+    (s.group != null ? table[s.group] : undefined) ??
+    s.px ??
+    1;
+  return n >= 1 ? n : 1;
+}
+
+export function frameWorldSize(frame: FrameLayer): { w: number; h: number } {
+  const px = frame.px >= 1 ? frame.px : 1;
+  return { w: frame.texture.width / px, h: frame.texture.height / px };
+}
+
+/** Place a catalog layer. `extraScale` is sapling/chop, not HD. */
+export function placeLayer(sprite: Sprite, layer: FrameLayer, wx: number, wy: number, extraScale = 1): void {
+  const px = layer.px >= 1 ? layer.px : 1;
+  sprite.texture = layer.texture;
+  sprite.scale.set(extraScale / px);
+  sprite.position.set(wx + layer.offsetX * extraScale, wy + layer.offsetY * extraScale);
+}
 
 export async function fetchCatalogSprites(): Promise<CatalogSprite[] | null> {
   try {
@@ -47,17 +84,27 @@ export async function loadGroup(
     frames.map(async (s): Promise<PropFrame | null> => {
       const texture = await loadTexture(s.path);
       if (!texture) return null;
-      const frame: PropFrame = { texture, offsetX: s.offsetX, offsetY: s.offsetY };
+      const frame: PropFrame = { texture, offsetX: s.offsetX, offsetY: s.offsetY, px: catalogPx(s) };
       if (s.torso) {
         const torsoTex = await loadTexture(s.torso.path);
         if (torsoTex) {
-          frame.torso = { texture: torsoTex, offsetX: s.torso.offsetX, offsetY: s.torso.offsetY };
+          frame.torso = {
+            texture: torsoTex,
+            offsetX: s.torso.offsetX,
+            offsetY: s.torso.offsetY,
+            px: catalogPx({ path: s.torso.path, px: s.torso.px }),
+          };
         }
       }
       if (s.shadow) {
         const shadowTex = await loadTexture(s.shadow.path);
         if (shadowTex) {
-          frame.shadow = { texture: shadowTex, offsetX: s.shadow.offsetX, offsetY: s.shadow.offsetY };
+          frame.shadow = {
+            texture: shadowTex,
+            offsetX: s.shadow.offsetX,
+            offsetY: s.shadow.offsetY,
+            px: catalogPx({ path: s.shadow.path, px: s.shadow.px }),
+          };
         }
       }
       return frame;

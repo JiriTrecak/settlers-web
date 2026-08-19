@@ -16,7 +16,7 @@ import type { FogView } from "../../sim/fog/fog";
 import { FOG_VISIBLE } from "../../sim/fog/fog";
 import type { BuildingSheet, BuildingSheets } from "./buildingSheets";
 import { constructionVisual } from "./constructionVisual";
-import type { PropFrame } from "../graphics/textures";
+import { frameWorldSize, placeLayer, type PropFrame } from "../graphics/textures";
 
 /** Same as the original construction mask: 10 triangles, 5% of sprite height. */
 const GROW_TILES = 10;
@@ -188,8 +188,8 @@ export class BuildingLayer {
   ): void {
     d.root.zIndex = z;
     d.root.position.set(world.x, world.y);
-    placeSprite(d.scaffold, sheet.scaffold);
-    placeSprite(d.built, sheet.built);
+    placeLayer(d.scaffold, sheet.scaffold, 0, 0);
+    placeLayer(d.built, sheet.built, 0, 0);
 
     const vis = constructionVisual(b.buildProgress);
     paintLayer(d.scaffold, d.mask, sheet.scaffold, vis.scaffold);
@@ -206,8 +206,7 @@ export class BuildingLayer {
     const shadowFrame = vis.built >= 1 ? sheet.built.shadow : vis.scaffold > 0 ? sheet.scaffold.shadow : undefined;
     if (shadowFrame && !vis.fence) {
       d.shadow.visible = true;
-      d.shadow.texture = shadowFrame.texture;
-      d.shadow.position.set(shadowFrame.offsetX, shadowFrame.offsetY);
+      placeLayer(d.shadow, shadowFrame, 0, 0);
     } else {
       d.shadow.visible = false;
     }
@@ -272,42 +271,33 @@ export class BuildingLayer {
     const oy = flagWorld.y - hutWorld.y;
     const frame = frames[step % frames.length]!;
     d.flagBody.visible = true;
-    d.flagBody.texture = frame.texture;
-    d.flagBody.position.set(ox + frame.offsetX, oy + frame.offsetY);
+    placeLayer(d.flagBody, frame, ox, oy);
     if (frame.torso) {
       d.flagTorso.visible = true;
-      d.flagTorso.texture = frame.torso.texture;
       d.flagTorso.tint = PLAYER_COLORS[clampPlayer(b.player)];
-      d.flagTorso.position.set(ox + frame.torso.offsetX, oy + frame.torso.offsetY);
+      placeLayer(d.flagTorso, frame.torso, ox, oy);
     } else {
       d.flagTorso.visible = false;
     }
     if (frame.shadow) {
       d.flagShadow.visible = true;
-      d.flagShadow.texture = frame.shadow.texture;
-      d.flagShadow.position.set(ox + frame.shadow.offsetX, oy + frame.shadow.offsetY);
+      placeLayer(d.flagShadow, frame.shadow, ox, oy);
     } else {
       d.flagShadow.visible = false;
     }
   }
 }
 
-function placeSprite(sprite: Sprite, frame: PropFrame): void {
-  sprite.texture = frame.texture;
-  sprite.position.set(frame.offsetX, frame.offsetY);
-}
-
 function placeRelative(
   sprite: Sprite,
-  frame: { texture: Sprite["texture"]; offsetX: number; offsetY: number },
+  frame: { texture: Sprite["texture"]; offsetX: number; offsetY: number; px: number },
   hutWorld: { x: number; y: number },
   view: MapView,
   at: { x: number; y: number },
 ): void {
   const world = gridToWorld(at.x, at.y, view.heightAt(at.x, at.y));
   sprite.visible = true;
-  sprite.texture = frame.texture;
-  sprite.position.set(world.x - hutWorld.x + frame.offsetX, world.y - hutWorld.y + frame.offsetY);
+  placeLayer(sprite, frame, world.x - hutWorld.x, world.y - hutWorld.y);
 }
 
 function paintLayer(sprite: Sprite, mask: Graphics, frame: PropFrame, amount: number): void {
@@ -329,8 +319,7 @@ function paintLayer(sprite: Sprite, mask: Graphics, frame: PropFrame, amount: nu
 /** Bottom-up clip plus a saw edge. */
 function paintGrowMask(g: Graphics, frame: PropFrame, progress: number): void {
   g.clear();
-  const w = frame.texture.width;
-  const h = frame.texture.height;
+  const { w, h } = frameWorldSize(frame);
   if (progress <= 0 || w <= 0 || h <= 0) return;
   const p = Math.min(1, progress);
   const x = frame.offsetX;

@@ -8,7 +8,7 @@ import { PLAYER_COLORS, clampPlayer, gridToWorld, isoDepth, ISO_DEPTH_WAVE } fro
 import type { MapView } from "../../sim/map/mapView";
 import { UNOWNED, type LandView } from "../../sim/land/land";
 import type { FogView } from "../../sim/fog/fog";
-import type { PropFrame } from "../graphics/textures";
+import { placeLayer, type PropFrame } from "../graphics/textures";
 
 type Post = {
   key: string;
@@ -97,15 +97,13 @@ export class BorderLayer {
   private place(post: Post, view: MapView, frame: PropFrame, x: number, y: number, player: number): void {
     const world = gridToWorld(x, y, view.heightAt(x, y));
     const z = isoDepth(world.x, world.y, ISO_DEPTH_WAVE);
-    post.body.texture = frame.texture;
-    post.body.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
+    placeLayer(post.body, frame, world.x, world.y);
     post.body.zIndex = z;
     const color = PLAYER_COLORS[clampPlayer(player)];
     if (frame.torso) {
       post.torso.visible = true;
-      post.torso.texture = frame.torso.texture;
       post.torso.tint = color;
-      post.torso.position.set(world.x + frame.torso.offsetX, world.y + frame.torso.offsetY);
+      placeLayer(post.torso, frame.torso, world.x, world.y);
       post.torso.zIndex = z;
       post.body.tint = 0xffffff;
     } else {
@@ -114,8 +112,7 @@ export class BorderLayer {
     }
     if (frame.shadow) {
       post.shadow.visible = true;
-      post.shadow.texture = frame.shadow.texture;
-      post.shadow.position.set(world.x + frame.shadow.offsetX, world.y + frame.shadow.offsetY);
+      placeLayer(post.shadow, frame.shadow, world.x, world.y);
       post.shadow.zIndex = z;
     } else {
       post.shadow.visible = false;

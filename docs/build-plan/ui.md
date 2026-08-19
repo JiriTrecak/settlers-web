@@ -9,7 +9,7 @@ HTML/CSS overlay. Not Pixi.
 - Compact fps + cursor (fps sampled 1 Hz)
 - F3: dump + toggles (fog default on, paths, ownership, claim)
 - Minimap (top-down, fog-tinted, player-colored rim/huts, pale units)
-- Speed 1/2/4/8×, build strip (Buildings / debug Units), Exit confirm
+- Speed 1/2/4/8× (top-right), `GameControlPanel` (minimap + selection + 4×3), Exit confirm
 - Map picker + player color + player count in the lobby
 - Replays: saved on Victory/Defeat or **Save replay**, listed from Single player, timeline scrubber while watching
 

@@ -203,8 +203,8 @@ function atlasFromFrames(frames: readonly PropFrame[]): { texture: Texture; rect
       v1: h / atlasH,
       ox: frame.offsetX,
       oy: frame.offsetY,
-      w,
-      h,
+      w: w / (frame.px >= 1 ? frame.px : 1),
+      h: h / (frame.px >= 1 ? frame.px : 1),
     });
     x += w + 1;
   }

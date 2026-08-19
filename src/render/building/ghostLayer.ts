@@ -7,7 +7,7 @@ import { gridToWorld, type GridPos } from "../../shared";
 import { buildingDef, type BuildingKind } from "../../sim/data/buildings";
 import type { MapView } from "../../sim/map/mapView";
 import type { BuildingSheets } from "./buildingSheets";
-import type { PropFrame } from "../graphics/textures";
+import { placeLayer, type PropFrame } from "../graphics/textures";
 
 const GHOST_Z = 999_000;
 const FILL = 0xe8c36a;
@@ -107,9 +107,8 @@ export class GhostLayer {
 function placeAt(sprite: Sprite, frame: PropFrame, view: MapView, x: number, y: number, tint: number): void {
   const world = gridToWorld(x, y, view.heightAt(x, y));
   sprite.visible = true;
-  sprite.texture = frame.texture;
   sprite.tint = tint;
-  sprite.position.set(world.x + frame.offsetX, world.y + frame.offsetY);
+  placeLayer(sprite, frame, world.x, world.y);
 }
 
 function cellQuad(view: MapView, x: number, y: number): { x: number; y: number }[] | null {

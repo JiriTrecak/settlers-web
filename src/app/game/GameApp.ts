@@ -16,6 +16,7 @@ import {
 import { createRoom, fetchRooms, joinRoom, leaveRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
 import type { MatchConfig, RoomView, ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
+import { BackgroundTicker } from "./backgroundTicker";
 import { PlayScreen } from "./playScreen";
 
 const ASSETS_HREF = "/original_conv/viewer/index.html";
@@ -30,6 +31,7 @@ export class GameApp {
   private readonly replays = new ReplayStore();
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
+  private backgroundTicker: BackgroundTicker | null = null;
 
   constructor(
     private readonly gameRoot: HTMLElement,
@@ -52,6 +54,8 @@ export class GameApp {
     pixi.ticker.add((ticker) => {
       this.screens?.tick(ticker.deltaMS, performance.now());
     });
+    this.backgroundTicker = new BackgroundTicker(pixi);
+    this.backgroundTicker.start();
 
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
@@ -62,6 +66,8 @@ export class GameApp {
 
   stop(): void {
     this.playGen++;
+    this.backgroundTicker?.destroy();
+    this.backgroundTicker = null;
     this.screens?.clear();
     this.screens = null;
     this.pixi?.destroy(true);

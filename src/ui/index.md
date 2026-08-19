@@ -8,6 +8,6 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `menu/` | Main menu, map select, replay list, notice |
 | `hud/` | Compact fps/cursor; F3 debug dump; exit (confirm) |
 | `minimap/` | Terrain blit, occupy rim + huts + units, view quad, drag look-at |
-| `speed/` | 1× / 2× / 4× / 8× under the minimap |
-| `build/` | Hut strip + debug unit dump (Buildings / Units tabs) |
+| `speed/` | 1× / 2× / 4× / 8×, top-right |
+| `control/` | Bottom chrome: minimap well, selection, 4×3 command grid |
 | `replay/` | Bottom-middle timeline (play / pause / scrubber / speed / player) |
