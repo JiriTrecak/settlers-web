@@ -1,8 +1,8 @@
 /**
- * In-match screen: HUD + session, all under one root. Destroy stops the session.
+ * In-match screen: HUD + load overlay + session, all under one root. Destroy stops the session.
  */
 import type { Application } from "pixi.js";
-import { Hud, GameScreen } from "../../ui";
+import { Hud, GameScreen, LoadStatus } from "../../ui";
 import { Session, type MapCatalogEntry, type ReplayFile, type SaveFile, type SaveStore } from "../../session";
 import type { Channel } from "../../net";
 import type { MatchConfig } from "../../shared";
@@ -12,6 +12,7 @@ export class PlayScreen extends GameScreen {
   readonly replayId: string | null;
   readonly saveId: string | null;
   private readonly hud: Hud;
+  private readonly loader: LoadStatus;
   private readonly session: Session;
 
   constructor(
@@ -48,6 +49,7 @@ export class PlayScreen extends GameScreen {
       onShowFog: (on) => this.session.setShowFog(on),
       onClaim: (on) => this.session.setClaiming(on),
     });
+    this.loader = new LoadStatus(this.root);
     this.session = new Session(pixi, this.root, {
       mapId,
       catalog,
@@ -67,12 +69,17 @@ export class PlayScreen extends GameScreen {
         onLoad: hooks.onLoad,
         onEnd: hooks.onEnd ?? hooks.onLeave,
         onRestart: hooks.onRestart,
+        onLoadProgress: (view) => this.loader.set(view),
       },
     });
   }
 
   async start(): Promise<void> {
-    await this.session.start();
+    try {
+      await this.session.start();
+    } finally {
+      this.loader.destroy();
+    }
   }
 
   override tick(dtMs: number, nowMs: number): void {
@@ -82,6 +89,7 @@ export class PlayScreen extends GameScreen {
   override destroy(): void {
     this.session.stop();
     this.hud.destroy();
+    this.loader.destroy();
     super.destroy();
   }
 }

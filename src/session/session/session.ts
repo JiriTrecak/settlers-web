@@ -33,14 +33,14 @@ import {
   type ViewSnapshot,
   type BuildingKind,
 } from "../../sim";
-import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets } from "../../render";
+import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets, fetchCatalogSprites, LoadWatch, loadNote } from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, PauseMenu, debugFrom, DEFAULT_GAME_SPEED, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, PauseMenu, debugFrom, DEFAULT_GAME_SPEED, type GameSpeed, type HudState, type LoadView } from "../../ui";
 import { CommandBoard } from "../command/board";
 import { hutGoods } from "../command/goods";
-import { loadCatalogPaths } from "../command/catalog";
+import { ingestCatalogPaths, loadCatalogPaths } from "../command/catalog";
 import type { BoardContext, CountPair, PlaceTool } from "../command/types";
 import { MapInput } from "../input/mapInput";
 import { tilesAround, type ScreenPt } from "../input/boxSelect";
@@ -65,6 +65,8 @@ export type SessionHooks = {
   onEnd?(): void;
   onRestart?(): void;
   onLoad?(file: SaveFile): void;
+  /** Match-start overlay. Texture counts come from `loadTexture`. */
+  onLoadProgress?(view: LoadView): void;
 };
 
 export type SessionConfig = {
@@ -103,12 +105,17 @@ function loadGraphics(): Promise<{
   buildings: BuildingSheets | null;
   settlers: SettlerSheets | null;
 }> {
-  graphics ??= Promise.all([
-    loadLandscapeAtlas(),
-    loadDecorationSheets(),
-    loadBuildingSheets(),
-    loadSettlerSheets(),
-  ]).then(([atlas, sheets, buildings, settlers]) => ({ atlas, sheets, buildings, settlers }));
+  graphics ??= (async () => {
+    loadNote("catalog.json");
+    const sprites = await fetchCatalogSprites();
+    if (sprites) ingestCatalogPaths(sprites);
+    else await loadCatalogPaths();
+    const atlas = await loadLandscapeAtlas();
+    const sheets = await loadDecorationSheets(sprites);
+    const buildings = await loadBuildingSheets(sprites);
+    const settlers = await loadSettlerSheets(sprites);
+    return { atlas, sheets, buildings, settlers };
+  })();
   return graphics;
 }
 
@@ -176,9 +183,18 @@ export class Session {
   }
 
   async start(): Promise<void> {
+    const watch = new LoadWatch((view) => this.config.hooks.onLoadProgress?.(view));
+    await watch.run(async () => {
+      await this.bootMatch(watch);
+    });
+  }
+
+  private async bootMatch(watch: LoadWatch): Promise<void> {
     const renderer = new Renderer(this.pixi);
     this.renderer = renderer;
-    const [{ atlas, sheets, buildings, settlers }] = await Promise.all([loadGraphics(), loadCatalogPaths()]);
+    watch.setStage("Graphics");
+    const { atlas, sheets, buildings, settlers } = await loadGraphics();
+    if (!this.renderer) return;
     renderer.setAtlas(atlas);
     renderer.setSheets(sheets);
     renderer.setBuildingSheets(buildings);
@@ -236,8 +252,12 @@ export class Session {
     });
     if (!watching) this.bindPause();
 
+    watch.setStage("Map", this.mapLabel());
+    await watch.yield();
     const loaded = await this.loadGrid(this.mapId);
     if (!this.renderer) return;
+    watch.setStage("World");
+    await watch.yield();
     this.waves = loaded.waves;
     const file = this.config.replay;
     const save = this.config.save;

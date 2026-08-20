@@ -4,6 +4,7 @@
  * Overlay keys in `px.json`: path, `group:variant`, or group. Path wins.
  */
 import { Sprite, Texture } from "pixi.js";
+import { currentLoadWatch } from "./loadWatch";
 import hd from "./px.json";
 
 const BASE = `${import.meta.env.BASE_URL}graphics/`;
@@ -113,7 +114,19 @@ export async function loadGroup(
   return loaded.filter((f): f is PropFrame => f !== null);
 }
 
+const textures = new Map<string, Promise<Texture | null>>();
+
+/** Decode a catalog PNG. Same path is reused across sheets. */
 export async function loadTexture(rel: string): Promise<Texture | null> {
+  const hit = textures.get(rel);
+  if (hit) return hit;
+  currentLoadWatch()?.expectPath(rel);
+  const p = decodeTexture(rel);
+  textures.set(rel, p);
+  return p;
+}
+
+async function decodeTexture(rel: string): Promise<Texture | null> {
   try {
     const img = new Image();
     img.decoding = "async";
@@ -122,8 +135,10 @@ export async function loadTexture(rel: string): Promise<Texture | null> {
     const texture = Texture.from(img);
     texture.source.autoGenerateMipmaps = false;
     texture.source.scaleMode = "nearest";
+    currentLoadWatch()?.tick(rel);
     return texture;
   } catch {
+    currentLoadWatch()?.tick(rel);
     return null;
   }
 }

@@ -5,6 +5,7 @@
 import { DIRECTIONS, type Direction } from "../../shared";
 import type { MovableMaterial, MovableType } from "../../sim/movable/movable";
 import { fetchCatalogSprites, loadGroup, type CatalogSprite, type PropFrame } from "../graphics/textures";
+import { loadNote, loadYield } from "../graphics/loadWatch";
 
 export type DirClips = Record<Direction, PropFrame[]>;
 
@@ -50,8 +51,8 @@ const CARRY: Record<MovableType, readonly CarryKind[]> = {
   waterworker: ["water"],
 };
 
-export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
-  const sprites = await fetchCatalogSprites();
+export async function loadSettlerSheets(sprites?: CatalogSprite[] | null): Promise<SettlerSheets | null> {
+  sprites ??= await fetchCatalogSprites();
   if (!sprites) return null;
   try {
     const bearer = await loadUnit(sprites, "bearer", CARRY.bearer);
@@ -73,6 +74,7 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const slaughterer = (await loadUnit(sprites, "slaughterer", CARRY.slaughterer)) ?? bearer;
     const waterworker = (await loadUnit(sprites, "waterworker", CARRY.waterworker)) ?? bearer;
     const swordsman = (await loadUnit(sprites, "swordsman-l1", CARRY.swordsman)) ?? bearer;
+    loadNote("settlers · health");
     const named = await loadGroup(sprites, "props/health");
     const health = named.length > 0 ? named : await loadGroup(sprites, "uncatalogued/settler/04/006");
     const markNamed = await loadGroup(sprites, "props/select-mark");
@@ -105,6 +107,7 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
 }
 
 async function loadUnit(sprites: CatalogSprite[], profession: string, goods: readonly CarryKind[]): Promise<UnitClips | null> {
+  loadNote(`settlers · ${profession}`);
   const walk = {} as DirClips;
   const idle = {} as DirClips;
   const chop = {} as DirClips;
@@ -143,5 +146,6 @@ async function loadUnit(sprites: CatalogSprite[], profession: string, goods: rea
     }
     if (any) carry[g] = { walk: cw, idle: ci };
   }
+  await loadYield();
   return { walk, idle, chop, plant, pickup, carry };
 }

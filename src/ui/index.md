@@ -11,4 +11,5 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `minimap/` | Terrain blit, occupy rim + huts + units, view quad, drag look-at |
 | `speed/` | 1× / 2× / 4× / 8×, top-right |
 | `control/` | Bottom chrome: minimap well, selection, 4×3 command grid |
+| `load/` | Match-start overlay: stage + `done / total` textures |
 | `replay/` | Bottom-middle timeline (play / pause / scrubber / speed / player) |

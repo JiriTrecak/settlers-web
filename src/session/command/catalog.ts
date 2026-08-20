@@ -13,24 +13,30 @@ function keyOf(group: string, variant?: string): string {
 }
 
 export async function loadCatalogPaths(): Promise<void> {
-  first.clear();
+  if (first.size > 0) return;
   try {
     const res = await fetch(`${BASE}catalog.json`);
     if (!res.ok) return;
     const data = (await res.json()) as { sprites?: CatSprite[] };
-    const best = new Map<string, number>();
-    for (const s of data.sprites ?? []) {
-      if (!s.group || !s.path) continue;
-      const key = keyOf(s.group, s.variant);
-      const frame = s.frame ?? 0;
-      const prev = best.get(key);
-      if (prev == null || frame < prev) {
-        best.set(key, frame);
-        first.set(key, s.path);
-      }
-    }
+    ingestCatalogPaths(data.sprites ?? []);
   } catch {
     /* dump missing — callers use fallbacks */
+  }
+}
+
+/** Fill HUD icon paths from a catalog already fetched for sheets. */
+export function ingestCatalogPaths(sprites: readonly CatSprite[]): void {
+  first.clear();
+  const best = new Map<string, number>();
+  for (const s of sprites) {
+    if (!s.group || !s.path) continue;
+    const key = keyOf(s.group, s.variant);
+    const frame = s.frame ?? 0;
+    const prev = best.get(key);
+    if (prev == null || frame < prev) {
+      best.set(key, frame);
+      first.set(key, s.path);
+    }
   }
 }
 

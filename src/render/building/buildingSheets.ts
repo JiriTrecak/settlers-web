@@ -6,7 +6,8 @@
  * Flags are `props/flag-door` / `props/flag-roof` (waving, torso = player tint).
  */
 import { buildings, type BuildingKind } from "../../sim/data/buildings";
-import { fetchCatalogSprites, loadGroup, type PropFrame } from "../graphics/textures";
+import { fetchCatalogSprites, loadGroup, type CatalogSprite, type PropFrame } from "../graphics/textures";
+import { loadNote, loadYield } from "../graphics/loadWatch";
 
 export type BuildingSheet = {
   built: PropFrame;
@@ -21,21 +22,25 @@ export type BuildingSheets = Partial<Record<BuildingKind, BuildingSheet>> & {
   workArea: PropFrame[];
 };
 
-export async function loadBuildingSheets(): Promise<BuildingSheets | null> {
-  const sprites = await fetchCatalogSprites();
+export async function loadBuildingSheets(sprites?: CatalogSprite[] | null): Promise<BuildingSheets | null> {
+  sprites ??= await fetchCatalogSprites();
   if (!sprites) return null;
   try {
     const out: BuildingSheets = { flags: { door: [], roof: [] }, sitePost: null, siteSign: null, workArea: [] };
     for (const def of Object.values(buildings)) {
+      loadNote(`buildings · ${def.kind}`);
       const built = await loadGroup(sprites, def.sheet, "built");
       if (!built[0]) continue;
       const scaffold = await loadGroup(sprites, def.sheet, "scaffold");
       out[def.kind as BuildingKind] = { built: built[0], scaffold: scaffold[0] ?? built[0] };
+      await loadYield();
     }
+    loadNote("buildings · flags");
     out.flags = {
       door: await loadGroup(sprites, "props/flag-door"),
       roof: await loadGroup(sprites, "props/flag-roof"),
     };
+    loadNote("buildings · site");
     out.sitePost =
       (await loadGroup(sprites, "props/site-post"))[0] ??
       (await loadGroup(sprites, "uncatalogued/settler/01/092"))[0] ??
