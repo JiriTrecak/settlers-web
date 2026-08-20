@@ -3,9 +3,10 @@
  */
 import { buildingDef, type BuildingKind } from "../../sim/data/buildings";
 import { settlerDef } from "../../sim/data/settlers";
+import type { SettlerDef } from "../../sim/data/types";
 import { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS, type CommandPage, type CommandSlot } from "../../ui/control/types";
 import { catalogPath } from "./catalog";
-import type { BoardContext, CountPair } from "./types";
+import type { BoardContext, CountPair, RecruitKind } from "./types";
 
 export const PLACEABLE: { kind: BuildingKind; label: string; hotkey: string }[] = [
   { kind: "lumberjack", label: "Lumberjack", hotkey: "l" },
@@ -16,7 +17,24 @@ export const PLACEABLE: { kind: BuildingKind; label: string; hotkey: string }[] 
   { kind: "tower", label: "Tower", hotkey: "t" },
 ];
 
-const LABELS = Object.fromEntries(PLACEABLE.map((p) => [p.kind, p.label])) as Record<string, string>;
+export const INDUSTRY: { kind: BuildingKind; label: string; hotkey: string }[] = [
+  { kind: "ironmine", label: "Iron mine", hotkey: "i" },
+  { kind: "goldmine", label: "Gold mine", hotkey: "g" },
+];
+
+export const FOOD: { kind: BuildingKind; label: string; hotkey: string }[] = [
+  { kind: "farm", label: "Farm", hotkey: "a" },
+  { kind: "mill", label: "Mill", hotkey: "m" },
+  { kind: "baker", label: "Baker", hotkey: "k" },
+  { kind: "fisher", label: "Fisher", hotkey: "i" },
+  { kind: "pig_farm", label: "Pig farm", hotkey: "p" },
+  { kind: "slaughterhouse", label: "Slaughter", hotkey: "s" },
+  { kind: "waterworks", label: "Waterworks", hotkey: "w" },
+];
+
+const ALL_PLACEABLE = [...PLACEABLE, ...INDUSTRY, ...FOOD];
+
+const LABELS = Object.fromEntries(ALL_PLACEABLE.map((p) => [p.kind, p.label])) as Record<string, string>;
 
 export function buildingLabel(kind: string): string {
   return LABELS[kind] ?? kind;
@@ -37,8 +55,10 @@ function navCorner(label: string): CommandSlot {
   return { id: "page.back", label, enabled: true, kind: "page" };
 }
 
-export const RECRUITABLE: { kind: "swordsman"; label: string; count: number }[] = [
+export const RECRUITABLE: { kind: RecruitKind; label: string; count: number; hotkey?: string }[] = [
   { kind: "swordsman", label: "Swordsman", count: 1 },
+  { kind: "pioneer", label: "Pioneer", count: 1, hotkey: "c" },
+  { kind: "geologist", label: "Geologist", count: 1, hotkey: "g" },
 ];
 
 /** First idle SE frame — same file the renderer loads. */
@@ -143,23 +163,80 @@ export function buildPage(ctx: BoardContext): CommandPage {
       hotkey,
     };
   }
+  slots[PLACEABLE.length] = {
+    id: "page.industry",
+    label: "Industry",
+    icon: buildingIcon("ironmine"),
+    enabled: ctx.canCommand,
+    kind: "page",
+    hotkey: "i",
+  };
+  slots[PLACEABLE.length + 1] = {
+    id: "page.food",
+    label: "Food",
+    icon: buildingIcon("farm"),
+    enabled: ctx.canCommand,
+    kind: "page",
+    hotkey: "o",
+  };
   slots[COMMAND_CORNER] = navCorner("Back");
   return { id: "build", slots };
+}
+
+export function industryPage(ctx: BoardContext): CommandPage {
+  const slots = emptySlots();
+  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
+  for (let i = 0; i < INDUSTRY.length; i++) {
+    const { kind, label, hotkey } = INDUSTRY[i]!;
+    slots[i] = {
+      id: `build.${kind}`,
+      label,
+      icon: buildingIcon(kind),
+      ...badge(ctx.counts[kind]),
+      enabled: ctx.canCommand,
+      kind: "do",
+      armed: armed === kind,
+      hotkey,
+    };
+  }
+  slots[COMMAND_CORNER] = navCorner("Back");
+  return { id: "industry", slots };
+}
+
+export function foodPage(ctx: BoardContext): CommandPage {
+  const slots = emptySlots();
+  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
+  for (let i = 0; i < FOOD.length; i++) {
+    const { kind, label, hotkey } = FOOD[i]!;
+    slots[i] = {
+      id: `build.${kind}`,
+      label,
+      icon: buildingIcon(kind),
+      ...badge(ctx.counts[kind]),
+      enabled: ctx.canCommand,
+      kind: "do",
+      armed: armed === kind,
+      hotkey,
+    };
+  }
+  slots[COMMAND_CORNER] = navCorner("Back");
+  return { id: "food", slots };
 }
 
 export function recruitPage(ctx: BoardContext): CommandPage {
   const slots = emptySlots();
   const armed = ctx.placeTool?.type === "unit" ? ctx.placeTool : null;
   for (let i = 0; i < RECRUITABLE.length; i++) {
-    const { kind, label, count } = RECRUITABLE[i]!;
+    const { kind, label, count, hotkey } = RECRUITABLE[i]!;
     slots[i] = {
       id: `recruit.${kind}`,
       label,
-      icon: settlerIcon(settlerDef(kind).sheet ?? kind),
+      icon: settlerIcon((settlerDef(kind) as SettlerDef).sheet ?? kind),
       ...badge(ctx.units[kind]),
       enabled: ctx.canCommand,
       kind: "do",
       armed: armed?.kind === kind && armed.count === count,
+      hotkey,
     };
   }
   slots[COMMAND_CORNER] = navCorner("Back");

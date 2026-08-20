@@ -3,11 +3,33 @@
  * Stacks are `props/stack-{material}`; missing material falls back to trunk.
  */
 import type { Goods } from "../../sim/data/types";
+import type { SignKind } from "../../sim/map/resource";
+import { SIGN_KINDS } from "../../sim/map/resource";
 import { fetchCatalogSprites, loadGroup, type PropFrame } from "../graphics/textures";
 
 export type { PropFrame };
 
-const STACK_GOODS: Goods[] = ["trunk", "plank", "stone", "axe", "hammer", "blade", "pick", "saw"];
+const STACK_GOODS: Goods[] = [
+  "trunk",
+  "plank",
+  "stone",
+  "axe",
+  "hammer",
+  "blade",
+  "pick",
+  "saw",
+  "ironore",
+  "goldore",
+  "crop",
+  "flour",
+  "bread",
+  "fish",
+  "meat",
+  "pig",
+  "water",
+  "scythe",
+  "fishingrod",
+];
 
 export type DecorationSheets = {
   trees: PropFrame[][];
@@ -15,7 +37,9 @@ export type DecorationSheets = {
   stones: PropFrame[];
   waves: PropFrame[];
   stacks: Partial<Record<Goods, PropFrame[]>>;
+  signs: Partial<Record<SignKind, PropFrame[]>>;
   border: PropFrame[];
+  crops: PropFrame[];
 };
 
 export async function loadDecorationSheets(): Promise<DecorationSheets | null> {
@@ -36,8 +60,16 @@ export async function loadDecorationSheets(): Promise<DecorationSheets | null> {
       if (legacy.length > 0) stacks.trunk = legacy;
     }
     if (trees.some((t) => t.length === 0) || stones.length === 0 || waves.length === 0) return null;
+    const site = await loadGroup(sprites, "props/site-sign");
+    const signs: DecorationSheets["signs"] = {};
+    for (const k of SIGN_KINDS) {
+      const frames = await loadGroup(sprites, `props/found-${k}`);
+      if (frames.length > 0) signs[k] = frames;
+      else if (site.length > 0) signs[k] = site;
+    }
     const border = await loadGroup(sprites, "props/border");
-    return { trees, falls, stones, waves, stacks, border };
+    const crops = await loadGroup(sprites, "props/corn");
+    return { trees, falls, stones, waves, stacks, signs, border, crops };
   } catch {
     return null;
   }

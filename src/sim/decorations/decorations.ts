@@ -4,6 +4,7 @@
  */
 import { HEX_DELTAS, isWater } from "../../shared";
 import type { Goods } from "../data/types";
+import type { SignKind } from "../map/resource";
 import type { MapView } from "../map/mapView";
 
 export const TREE_SHEETS = 7;
@@ -12,7 +13,9 @@ export type MapDecoration =
   | { kind: "tree"; x: number; y: number; sheet: number; stateProgress?: number; growing?: boolean }
   | { kind: "stone"; x: number; y: number; capacity: number }
   | { kind: "stack"; x: number; y: number; capacity: number; material?: Goods }
-  | { kind: "wave"; x: number; y: number };
+  | { kind: "sign"; x: number; y: number; sign: SignKind; stateProgress: number }
+  | { kind: "wave"; x: number; y: number }
+  | { kind: "crop"; x: number; y: number; stateProgress?: number; growing?: boolean };
 
 /** Assign one of `TREE_SHEETS` looks from tile coords. Used when converting maps that don't store a sheet. */
 export function treeSheetAt(x: number, y: number): number {

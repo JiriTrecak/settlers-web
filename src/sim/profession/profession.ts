@@ -15,14 +15,23 @@ import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
 import type { Rng } from "../rng/rng";
 import { isWalkable, nearestWalkable } from "../path/path";
+import { tickBaker } from "./baker";
 import { tickBricklayer } from "./bricklayer";
 import { tickDigger } from "./digger";
+import { tickFarmer } from "./farmer";
+import { tickFisherman } from "./fisherman";
 import { tickForester } from "./forester";
+import { tickGeologist } from "./geologist";
 import { tickLumberjack } from "./lumberjack";
+import { tickMiller } from "./miller";
+import { tickMiner } from "./miner";
+import { tickPigFarmer } from "./pigfarmer";
 import { tickPioneer } from "./pioneer";
 import { tickSawmiller } from "./sawmiller";
+import { tickSlaughterer } from "./slaughterer";
 import { tickSoldier } from "./soldier";
 import { tickStonecutter } from "./stonecutter";
+import { tickWaterworker } from "./waterworker";
 
 export type ProfessionContext = JobContext & {
   buildings: BuildingGrid;
@@ -37,7 +46,16 @@ export function tickProfession(m: Movable, ctx: ProfessionContext): void {
   else if (m.type === "bricklayer") tickBricklayer(m, ctx);
   else if (m.type === "forester") tickForester(m, ctx);
   else if (m.type === "stonecutter") tickStonecutter(m, ctx);
+  else if (m.type === "miner") tickMiner(m, ctx);
+  else if (m.type === "farmer") tickFarmer(m, ctx);
+  else if (m.type === "miller") tickMiller(m, ctx);
+  else if (m.type === "baker") tickBaker(m, ctx);
+  else if (m.type === "fisherman") tickFisherman(m, ctx);
+  else if (m.type === "pig_farmer") tickPigFarmer(m, ctx);
+  else if (m.type === "slaughterer") tickSlaughterer(m, ctx);
+  else if (m.type === "waterworker") tickWaterworker(m, ctx);
   else if (m.type === "pioneer") tickPioneer(m, ctx);
+  else if (m.type === "geologist") tickGeologist(m, ctx);
   else if (m.type === "digger") tickDigger(m, ctx);
   else if (m.type === "swordsman") tickSoldier(m, ctx);
 }

@@ -11,12 +11,16 @@ import { tryTakeMaterial } from "../economy/construction";
 import type { LandGrid } from "../land/land";
 import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
+import type { ResourceKind } from "../map/resource";
 import type { Movable, MovableType } from "../movable/movable";
 import { addToStack, canDeposit, isAdjacent, trunkStack, type ObjectGrid, type StackMaterial } from "../object/object";
+import { isAdultCrop, isCropPlantable, plantCrop } from "../object/crop";
 import { cutStand } from "../object/stone";
 import { isPlantSearch, plantTree, chopStand } from "../object/tree";
+import type { Rng } from "../rng/rng";
 import { isWalkable, nearestWalkable, standBeside, type Blockers } from "../path/path";
 import { changeHeightTowards } from "../building/flatten";
+import { canPlantSign, placeResourceSign } from "../object/sign";
 
 export type Job =
   | { type: "chop"; at: GridPos }
@@ -29,10 +33,15 @@ export type Job =
   | { type: "build"; at: GridPos; hutId: number; direction: Direction }
   | { type: "plant"; at: GridPos }
   | { type: "pioneer"; at: GridPos; arrived: boolean }
+  | { type: "geologist"; at: GridPos; arrived: boolean; current: GridPos; work: GridPos | null }
   | { type: "flatten"; at: GridPos; hutId: number }
   | { type: "equip"; at: GridPos; tool: Goods; become: SettlerKind; hutId?: number }
   | { type: "attack"; targetId: number }
-  | { type: "assault"; hutId: number };
+  | { type: "assault"; hutId: number }
+  | { type: "plantCrop"; at: GridPos }
+  | { type: "harvest"; at: GridPos }
+  | { type: "gather"; at: GridPos; target: GridPos; output: Goods; resource?: ResourceKind }
+  | { type: "craft"; at: GridPos; output: Goods; consume: { x: number; y: number; material: Goods }[] };
 
 /** Resource tile this job claims, or null if it doesn't exclusive-lock a cell. */
 export function markOf(job: Job | null): GridPos | null {
@@ -40,7 +49,9 @@ export function markOf(job: Job | null): GridPos | null {
   if (job.type === "chop") return job.at;
   if (job.type === "cut") return cutStand(job.at);
   if (job.type === "plant") return { x: job.at.x, y: job.at.y + 1 };
+  if (job.type === "plantCrop" || job.type === "harvest" || job.type === "gather") return job.at;
   if (job.type === "flatten") return job.at;
+  if (job.type === "geologist") return job.work;
   return null;
 }
 
@@ -66,6 +77,7 @@ export type JobContext = {
   marks: MarkGrid;
   captureTower?: (hut: Building, attacker: Movable) => void;
   kickGarrison?: (hut: Building) => Movable | null;
+  rng: Rng;
 };
 
 export function workTicksOf(job: Job | null, type: MovableType = "bearer"): number {
@@ -77,8 +89,14 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     return CHOP_TICKS;
   }
   if (job?.type === "saw") {
-    const ms = settlerDef("sawmiller").chopMs;
-    return Math.max(1, Math.round(ms / 25));
+    const def: SettlerDef = settlerDef(type);
+    const ms = def.chopMs;
+    return Math.max(1, Math.round((ms ?? 1000) / 25));
+  }
+  if (job?.type === "plantCrop" || job?.type === "harvest" || job?.type === "gather" || job?.type === "craft") {
+    const def: SettlerDef = settlerDef(type);
+    const ms = def.chopMs;
+    return Math.max(1, Math.round((ms ?? 1000) / 25));
   }
   if (job?.type === "build") {
     const ms = settlerDef("bricklayer").chopMs;
@@ -91,6 +109,10 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
   if (job?.type === "pioneer") {
     const ms = settlerDef("pioneer").chopMs;
     return Math.max(1, Math.round((ms ?? 1200) / 25));
+  }
+  if (job?.type === "geologist") {
+    const ms = settlerDef("geologist").chopMs;
+    return Math.max(1, Math.round((ms ?? 2900) / 25));
   }
   if (job?.type === "flatten") {
     const ms = settlerDef("digger").chopMs;
@@ -128,9 +150,14 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "build") tickBuild(m, job, ctx);
   else if (job.type === "plant") tickPlant(m, job, ctx);
   else if (job.type === "pioneer") tickPioneerWork(m, ctx);
+  else if (job.type === "geologist") tickGeologistWork(m, ctx);
   else if (job.type === "flatten") tickFlatten(m, job, ctx);
   else if (job.type === "equip") tickEquip(m, job, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
+  else if (job.type === "plantCrop") tickPlantCrop(m, job, ctx);
+  else if (job.type === "harvest") tickHarvest(m, job, ctx);
+  else if (job.type === "gather") tickGather(m, job, ctx);
+  else if (job.type === "craft") tickCraft(m, job, ctx);
   else if (job.type === "attack") tickAttack(m, job, ctx);
   else if (job.type === "assault") tickAssault(m, job, ctx);
 }
@@ -250,7 +277,8 @@ function tickDeliver(m: Movable, job: Extract<Job, { type: "deliver" }>, ctx: Jo
 }
 
 function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
-  if (m.material !== "trunk") {
+  const craft = CONVERT[m.type];
+  if (!craft || m.material !== craft.from) {
     m.idle();
     return;
   }
@@ -265,9 +293,117 @@ function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
   }
   m.workElapsed += 1;
   if (m.workElapsed >= ticks) {
-    m.material = "plank";
+    m.material = craft.to;
     m.idle();
   }
+}
+
+const CONVERT: Partial<Record<MovableType, { from: Goods; to: Goods }>> = {
+  sawmiller: { from: "trunk", to: "plank" },
+  miller: { from: "crop", to: "flour" },
+  slaughterer: { from: "pig", to: "meat" },
+};
+
+/** Walk onto the field tile, plant growing crop. */
+function tickPlantCrop(m: Movable, job: Extract<Job, { type: "plantCrop" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    walkTo(m, job.at, ctx);
+    return;
+  }
+  if (m.walking) return;
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    if (!isCropPlantable(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y, ctx.land, m.player)) {
+      m.idle();
+      return;
+    }
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  if (isCropPlantable(ctx.grid, ctx.buildings, ctx.objects, job.at.x, job.at.y, ctx.land, m.player)) {
+    plantCrop(ctx.objects, job.at);
+  }
+  m.idle();
+}
+
+/** Walk onto adult crop, scythe, take crop in hand. */
+function tickHarvest(m: Movable, job: Extract<Job, { type: "harvest" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    walkTo(m, job.at, ctx);
+    return;
+  }
+  if (m.walking) return;
+  const crop = ctx.objects.get(job.at.x, job.at.y);
+  if (!isAdultCrop(crop)) {
+    m.idle();
+    return;
+  }
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  ctx.objects.remove(job.at.x, job.at.y);
+  m.material = "crop";
+  m.idle();
+}
+
+/** Stand on land, face water, pull a fish or fill a bucket. */
+function tickGather(m: Movable, job: Extract<Job, { type: "gather" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    walkTo(m, job.at, ctx);
+    return;
+  }
+  if (m.walking) return;
+  m.face(job.target);
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  if (job.resource && !ctx.grid.takeResource(job.target.x, job.target.y, job.resource)) {
+    m.idle();
+    return;
+  }
+  m.material = job.output;
+  m.idle();
+}
+
+/** Consume request stacks at the work tile, produce `output`. */
+function tickCraft(m: Movable, job: Extract<Job, { type: "craft" }>, ctx: JobContext): void {
+  if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
+    walkTo(m, job.at, ctx);
+    return;
+  }
+  if (m.walking) return;
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    if (job.consume.some((c) => stackCount(ctx.objects, c, c.material) <= 0)) {
+      m.idle();
+      return;
+    }
+    for (const c of job.consume) popStack(ctx.objects, c, c.material);
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  m.material = job.output;
+  m.idle();
+}
+
+function popStack(objects: ObjectGrid, at: GridPos, material: Goods): boolean {
+  const stack = objects.get(at.x, at.y);
+  if (!stack || stack.kind !== "stack" || stack.material !== material || stack.capacity <= 0) return false;
+  if (stack.capacity <= 1) objects.remove(at.x, at.y);
+  else stack.capacity -= 1;
+  return true;
 }
 
 function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobContext): void {
@@ -369,6 +505,32 @@ function tickPioneerWork(m: Movable, ctx: JobContext): void {
     const t = ctx.grid.landscapeAt(x, y);
     return isWater(t);
   });
+  m.action = "idle";
+  m.workElapsed = 0;
+  m.from = m.pos;
+}
+
+/** Kneel on a signable mountain tile, then plant a resource sign. Search is the profession. */
+function tickGeologistWork(m: Movable, ctx: JobContext): void {
+  const job = m.job;
+  if (!job || job.type !== "geologist" || !job.work) return;
+  if (m.walking || !job.arrived) return;
+  if (m.pos.x !== job.work.x || m.pos.y !== job.work.y) return;
+  if (!canPlantSign(ctx.grid, ctx.buildings, ctx.objects, m.pos.x, m.pos.y, ctx.blockers)) {
+    job.work = null;
+    m.action = "idle";
+    m.workElapsed = 0;
+    return;
+  }
+  const ticks = workTicksOf(m.job, m.type);
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < ticks) return;
+  placeResourceSign(ctx.objects, ctx.grid, m.pos, ctx.rng, ctx.tickMs);
+  job.work = null;
   m.action = "idle";
   m.workElapsed = 0;
   m.from = m.pos;
@@ -509,6 +671,8 @@ function tickEquip(m: Movable, job: Extract<Job, { type: "equip" }>, ctx: JobCon
   if (stack.capacity <= 1) ctx.objects.remove(job.at.x, job.at.y);
   else stack.capacity -= 1;
   m.become(job.become, job.hutId ?? null, ctx.tickMs);
+  // Equip at a tool pile with a workplace: stay visible and walk home. `become` would hide them.
+  if (job.hutId != null) m.leave();
 }
 
 /** Walk onto the cell, kneel 1s, step height ±1 toward the hut's frozen mean. */

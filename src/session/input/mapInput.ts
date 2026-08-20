@@ -2,7 +2,9 @@
  * Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it.
  * Escape deselects; Delete / Backspace destroys the selected hut.
  * Letter keys go to `onHotkey` (command page); a hit is not WASD pan.
- * C converts a selected pioneer → bearer. X enlists a selected bearer as L1 swordsman.
+ * C converts a selected pioneer → bearer. G converts a selected geologist → bearer.
+ * On the Recruit page those letters arm Pioneer / Geologist instead.
+ * X enlists a selected bearer as L1 swordsman.
  * LMB click selects. Shift+LMB drag is a marquee. RMB commands (shift = forced walk).
  * Plain LMB drag pans.
  */
@@ -26,6 +28,7 @@ export type MapInputHooks = {
   onDelete(): void;
   onConvert(): void;
   onEnlist(): void;
+  onGeologist(): void;
   /** Current command-page hotkey. True = consumed (do not pan). */
   onHotkey(key: string): boolean;
 };
@@ -182,6 +185,10 @@ export class MapInput {
     if (e.key.toLowerCase() === "x" && !e.repeat) {
       e.preventDefault();
       this.hooks.onEnlist();
+    }
+    if (e.key.toLowerCase() === "g" && !e.repeat) {
+      e.preventDefault();
+      this.hooks.onGeologist();
     }
   };
 

@@ -3,8 +3,9 @@
  * Spiral around the HQ, skipping protected tiles. Piles keep a 2-tile gap so
  * two planks or blade+hammer are not neighbors; bearers fill leftover cells.
  * Instant-finish HQ already garrisons one infantry so the land disk exists on frame 1.
- * Extra swordsmen are the Units strip (`spawnUnit`), not the kit. No pioneers: convert a bearer (C).
+ * Extra swordsmen are the Units strip (`spawnUnit`), not the kit. No pioneers / geologists: Recruit converts a bearer.
  * Blade piles (5) are the digger tool; hammers (6) are bricklayers.
+ * Picks (2) are miners. Scythes (2) are farmers. Fishing rods (2) are fishermen.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
@@ -27,6 +28,8 @@ const STACKS: { material: Goods; capacity: number }[] = [
   { material: "axe", capacity: 3 },
   { material: "pick", capacity: 2 },
   { material: "saw", capacity: 1 },
+  { material: "scythe", capacity: 2 },
+  { material: "fishingrod", capacity: 2 },
 ];
 
 /** Stamp HQ + house + piles + bearers at `at`, then snap fog so the first frame is fully lit. */

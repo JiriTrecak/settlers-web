@@ -111,6 +111,8 @@ export type WorldSnapshot = {
   objectRevision: number;
   landscape: string;
   heightmap: string;
+  resourceType: string;
+  resourceAmount: string;
   objects: MapObjectView[];
   buildings: BuildingSnap[];
   units: MovableSnap[];
@@ -142,10 +144,15 @@ const JOB_TYPES = new Set<Job["type"]>([
   "build",
   "plant",
   "pioneer",
+  "geologist",
   "flatten",
   "equip",
   "attack",
   "assault",
+  "plantCrop",
+  "harvest",
+  "gather",
+  "craft",
 ]);
 
 const BUILDING_KINDS = new Set<string>(Object.keys(buildings));
@@ -323,6 +330,7 @@ export function parseWorldSnapshot(raw: unknown): WorldSnapshot | null {
     return null;
   }
   if (typeof o.landscape !== "string" || typeof o.heightmap !== "string") return null;
+  if (typeof o.resourceType !== "string" || typeof o.resourceAmount !== "string") return null;
   if (!Array.isArray(o.objects) || !Array.isArray(o.buildings) || !Array.isArray(o.units)) return null;
   if (!Array.isArray(o.marks) || !Array.isArray(o.fog) || !Array.isArray(o.fogAt)) return null;
   if (!Array.isArray(o.hqPlayers) || !Array.isArray(o.diggerRatios) || !Array.isArray(o.bricklayerRatios)) return null;
@@ -392,6 +400,8 @@ export function parseWorldSnapshot(raw: unknown): WorldSnapshot | null {
     objectRevision: o.objectRevision,
     landscape: o.landscape,
     heightmap: o.heightmap,
+    resourceType: o.resourceType,
+    resourceAmount: o.resourceAmount,
     objects: o.objects as MapObjectView[],
     buildings: buildingsSnap,
     units,

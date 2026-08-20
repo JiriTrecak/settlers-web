@@ -1,7 +1,7 @@
 /**
  * Idle flock: jobless units step away from neighbors (and the map edge).
  * House spawn only clears the door; this is what actually spreads the crowd.
- * Soldiers/pioneers skip mill, but they still peel off a shared hex when idle
+ * Soldiers/pioneers/geologists skip mill, but they still peel off a shared hex when idle
  * (a live walk queue is not replaced with one random step).
  */
 import { approxDirection, deltaOf, DIRECTIONS, hexDist, neighborDir, type Direction } from "../../shared";

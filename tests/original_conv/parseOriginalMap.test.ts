@@ -40,6 +40,7 @@ describe("parse T1.MAP", () => {
     expect(s.y).toBeLessThan(map.width);
     const kinds = new Set(dumped.landscape.filter((_, i) => i % (map.width * 8) === 0));
     expect([...kinds].some((k) => k.startsWith("water") || k === "grass" || k === "sand")).toBe(true);
+    expect(dumped.resources).toBeDefined();
   });
 });
 
@@ -58,10 +59,30 @@ describe("toDumpedMap", () => {
       landscape: new Uint8Array(4),
       heights: new Uint8Array(4),
       objects: new Uint8Array(4),
+      resources: new Uint8Array(4),
     };
     expect(toDumpedMap(parsed).starts).toEqual([
       { x: 12, y: 34 },
       { x: 56, y: 78 },
+    ]);
+  });
+
+  it("decodes packed resource cells into dump entries", () => {
+    const parsed: ParsedOriginalMap = {
+      checksum: 0,
+      version: 0x0a,
+      width: 2,
+      singlePlayer: true,
+      players: [],
+      quest: "",
+      landscape: new Uint8Array(4),
+      heights: new Uint8Array(4),
+      objects: new Uint8Array(4),
+      resources: new Uint8Array([0x1f, 0, 0, 0x21]),
+    };
+    expect(toDumpedMap(parsed).resources).toEqual([
+      { x: 0, y: 0, type: "coal", amount: 50 },
+      { x: 1, y: 1, type: "iron", amount: 8 },
     ]);
   });
 });

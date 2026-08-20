@@ -2,7 +2,7 @@
 
 No partitions, no priorities. Matcher is per-player. Goods live on ground stacks (max **8**) or in a settler’s hands.
 
-Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`. A sapling in hand is `tree` — not a stack good.
+Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`, `ironore`, `goldore`. A sapling in hand is `tree` — not a stack good.
 
 ## Colony kit
 
@@ -109,6 +109,18 @@ Growth **7 minutes** at 1× (`TREE_GROW_MS`). Render: static (no wind), scale 0.
 
 Rest **1 s** inside. Needs a trunk on the request and room on the plank offer. Pickup trunk, walk to `workSpot`, face the spot’s direction (**nw**), saw **4.5 s**, trunk → plank, drop on offer. Full offer or empty request → stay inside.
 
+## Mine chain
+
+```
+blocked-tile deposit ──ironore / goldore──► mine offer
+```
+
+Mines do **not** flatten. Ground may be mountain (and grass/earth on the skirt). The miner is indoor: rest **3 s** inside, then take **1** of the hut's `mine` resource from a **random blocked** tile. Hit → walk to the offer, drop, home. Miss → rest again. Full offer (8) → stay inside. Original spent food (meat/bread/fish) for work packages; bakeries aren't in yet so mines run without food.
+
+Occupy consumes a **pick**. Kit has 2. No pick → empty mine. Placing the hut strips geologist signs on the protected tiles.
+
+Iron mine: 4 plank + 1 stone. Gold mine: 5 plank + 1 stone.
+
 ## Timings cheat sheet
 
 All at 1×. Clock is 25 ms.
@@ -127,6 +139,7 @@ All at 1×. Clock is 25 ms.
 | Forester kneel | 3 s |
 | Tree growth | 7 min |
 | Sawmiller rest | 1 s |
+| Miner rest | 3 s |
 | Saw | 4.5 s |
 | Bricklayer swing | 1 s |
 | Construction | 12 s of swinging per plank/stone item |

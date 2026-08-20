@@ -6,7 +6,7 @@ import type { Action } from "../types/types";
 import { COMMAND_DELAY, localMatch, type MatchConfig, type Slot } from "../match/match";
 import type { Commit } from "../net/wire";
 
-export const SAVE_FORMAT_VERSION = 1;
+export const SAVE_FORMAT_VERSION = 2;
 
 export type PipelineSnap = {
   /** Room's last committed tick. May be ahead of the World by D. */

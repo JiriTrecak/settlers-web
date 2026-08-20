@@ -9,7 +9,26 @@ export type Rel = { dx: number; dy: number };
 export type DirRel = Rel & { direction: Direction };
 
 /** Goods that sit on stacks. Grow this union as defs need it. */
-export type Goods = "trunk" | "plank" | "stone" | "axe" | "hammer" | "blade" | "pick" | "saw";
+export type Goods =
+  | "trunk"
+  | "plank"
+  | "stone"
+  | "axe"
+  | "hammer"
+  | "blade"
+  | "pick"
+  | "saw"
+  | "ironore"
+  | "goldore"
+  | "crop"
+  | "flour"
+  | "bread"
+  | "fish"
+  | "meat"
+  | "pig"
+  | "water"
+  | "scythe"
+  | "fishingrod";
 
 export type StackSlot = Rel & {
   material: Goods;
@@ -39,6 +58,8 @@ export type BuildingDef = {
   buildMarks: readonly Rel[];
   /** Sawmiller (and similar) stand here to work. */
   workSpot?: DirRel;
+  /** Outdoor search origin offset from the hut. Omit → hut origin. */
+  workCenter?: Rel;
   /** Livinghouse: max bearers this hut produces. */
   beds?: number;
   /** Livinghouse: ms between spawns. */
@@ -52,6 +73,11 @@ export type BuildingDef = {
    * Already-level plots skip. Omit → flatten. `false` skips (mines).
    */
   flatten?: boolean;
+  /**
+   * Mine: pull this deposit from a random blocked tile each cycle.
+   * `flatten` is false. Food work-packages wait (mines still run without food).
+   */
+  mine?: "coal" | "iron" | "gold" | "gems" | "brimstone";
 };
 
 export type SettlerDef = {
@@ -87,4 +113,6 @@ export type SettlerDef = {
   attackRange?: number;
   /** Catalog folder under `settlers/{civ}/`. Omit → `kind`. */
   sheet?: string;
+  /** Workplace occupy consumes this tool first (miner ← pick). Omit → just walk to the door. */
+  tool?: Goods;
 };

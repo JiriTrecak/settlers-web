@@ -5,15 +5,15 @@
  * to blades / hammers). Flatten fills the oldest plan first, then the next;
  * scaffold grabs idle bricklayers.
  * Each 1s swing bumps progress by `1 / (12 × materials)` and pops a pile every 12 swings.
- * Two bricklayers → twice the bumps. Then a jobless bearer occupies.
+ * Two masons → twice the bumps. Then a jobless bearer occupies (or equips the worker's `tool` first — miner ← pick).
  * Diggers / bricklayers / occupy recruits are the hut's player only.
  */
 import { HEX_DELTAS, hexDist, PLAYER_COLORS, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
 import { diggerCount, flattenReady, footprint, needsFlatten, nextFlattenTile } from "../building/flatten";
 import { buildingDef } from "../data/buildings";
-import { settlers, type SettlerKind } from "../data/settlers";
-import type { DirRel, Goods } from "../data/types";
+import { settlerDef, settlers, type SettlerKind } from "../data/settlers";
+import type { DirRel, Goods, SettlerDef } from "../data/types";
 import type { LandGrid } from "../land/land";
 import type { MapGrid } from "../map/mapGrid";
 import type { MarkGrid } from "../mark/mark";
@@ -425,14 +425,25 @@ function recruit(b: Building, ctx: ConstructionContext): void {
   if (!worker || !(worker in settlers)) return;
   if (ctx.units.some((m) => m.workplaceId === b.id)) return;
   if (ctx.units.some((m) => m.job?.type === "occupy" && m.job.hutId === b.id)) return;
+  if (ctx.units.some((m) => m.job?.type === "equip" && m.job.hutId === b.id)) return;
   const door = doorOf(b);
   const stand = isWalkable(ctx.grid, door.x, door.y, ctx.blockers())
     ? door
     : nearestWalkable(ctx.grid, door, ctx.blockers());
   if (!stand) return;
+  const kind = worker as SettlerKind;
+  const tool = (settlerDef(kind) as SettlerDef).tool;
+  if (tool) {
+    const pile = closestFreeTool(ctx, stand, b.player, tool);
+    if (!pile) return;
+    const bearer = closestJoblessBearer(ctx.units, pile, b.player);
+    if (!bearer) return;
+    bearer.assignJob({ type: "equip", at: pile, tool, become: kind, hutId: b.id });
+    return;
+  }
   const bearer = closestIdleBearer(ctx.units, stand, b.player);
   if (!bearer) return;
-  bearer.assignJob({ type: "occupy", at: stand, hutId: b.id, worker: worker as SettlerKind });
+  bearer.assignJob({ type: "occupy", at: stand, hutId: b.id, worker: kind });
 }
 
 function doorOf(b: Building): GridPos {

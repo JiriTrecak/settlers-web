@@ -25,7 +25,7 @@ function tickUntil(world: World, pred: () => boolean, cap = 8000): number {
   return n;
 }
 
-function doorOf(hut: { pos: { x: number; y: number }; kind: "tower" }): { x: number; y: number } {
+function doorOf(hut: { pos: { x: number; y: number } }): { x: number; y: number } {
   const d = buildingDef("tower").door;
   return { x: hut.pos.x + d.dx, y: hut.pos.y + d.dy };
 }

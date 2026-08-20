@@ -1,6 +1,6 @@
 # Terrain
 
-The map is a square grid (`width × width` for original dumps). Each cell has a landscape type and a height.
+The map is a square grid (`width × width` for original dumps). Each cell has a landscape type, a height, and an optional underground deposit (coal / iron / gold / gems / brimstone / fish, amount 0–50).
 
 ## Landscape
 
@@ -73,6 +73,6 @@ Waves are not objects. They stamp on a 4-hex lattice where all six neighbors are
 
 ## Maps
 
-Playable maps come from dumped JSON (`heights`, `landscape`, `trees`, `stones`, `starts`) or a procedural island preset. Original `.map` files are not parsed at runtime.
+Playable maps come from dumped JSON (`heights`, `landscape`, `trees`, `stones`, `starts`, optional `resources`) or a procedural island preset. Original `.map` files are not parsed at runtime. Older dumps omit `resources` (empty). Re-run `dump:maps` to pick up ore.
 
 Match start places a colony at `starts[i]` for each slot (2 when the dump has 2+ starts). Local clothing/view is the lobby slot, clamped into that range. Missing dump slots use map center, then map-opposite — never two HQs on the same tile.

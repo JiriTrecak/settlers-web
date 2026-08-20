@@ -10,11 +10,31 @@ import type { SettlerKind } from "../../sim/data/settlers";
 import type { Goods } from "../../sim/data/types";
 import type { MovableMaterial } from "../../sim/movable/movable";
 
-const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "digger", "forester", "lumberjack", "pioneer", "sawmiller", "stonecutter", "swordsman"];
-const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter"];
-const GOODS: Goods[] = ["trunk", "plank", "stone", "axe", "hammer", "blade", "pick", "saw"];
+const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "digger", "forester", "geologist", "lumberjack", "miner", "pioneer", "sawmiller", "stonecutter", "swordsman"];
+const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter", "ironmine", "goldmine"];
+const GOODS: Goods[] = [
+  "trunk",
+  "plank",
+  "stone",
+  "axe",
+  "hammer",
+  "blade",
+  "pick",
+  "saw",
+  "ironore",
+  "goldore",
+  "crop",
+  "flour",
+  "bread",
+  "fish",
+  "meat",
+  "pig",
+  "water",
+  "scythe",
+  "fishingrod",
+];
 const ACTIONS = ["idle", "walk", "work"] as const;
-const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant", "pioneer", "flatten", "equip", "attack", "assault"] as const;
+const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant", "pioneer", "geologist", "flatten", "equip", "attack", "assault"] as const;
 const CARRY: MovableMaterial[] = [...GOODS, "tree", "none"];
 
 export type DebugFrame = {
@@ -47,7 +67,7 @@ export type DebugStats = DebugFrame & {
   carry: Record<MovableMaterial, number>;
   buildings: Record<BuildingKind, { plan: number; building: number; built: number }>;
   buildingTotal: number;
-  objects: { tree: number; stone: number; stack: number };
+  objects: { tree: number; stone: number; stack: number; sign: number };
   stacks: Record<Goods, { piles: number; items: number }>;
 };
 
@@ -74,7 +94,7 @@ export function debugFrom(snap: ViewSnapshot, frame: DebugFrame): DebugStats {
     else slot.built += 1;
   }
 
-  const objects = { tree: 0, stone: 0, stack: 0 };
+  const objects = { tree: 0, stone: 0, stack: 0, sign: 0 };
   const stacks = Object.fromEntries(GOODS.map((g) => [g, { piles: 0, items: 0 }])) as DebugStats["stacks"];
   for (const o of snap.objects) {
     objects[o.kind] += 1;
@@ -118,7 +138,7 @@ export function formatDebug(d: DebugStats): string {
     `buildings  ${d.buildingTotal}`,
     `  ${BUILDINGS.map((k) => fmtHut(k, d.buildings[k])).filter(Boolean).join("   ") || "—"}`,
     "",
-    `objects  tree ${d.objects.tree}   stone ${d.objects.stone}   stack ${d.objects.stack}`,
+    `objects  tree ${d.objects.tree}   stone ${d.objects.stone}   stack ${d.objects.stack}   sign ${d.objects.sign}`,
     `  ${GOODS.map((g) => fmtStack(g, d.stacks[g])).filter(Boolean).join("   ") || "—"}`,
     "",
     `map  ${d.mapW}×${d.mapH}   zoom ${d.zoom.toFixed(2)}`,

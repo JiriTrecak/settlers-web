@@ -150,4 +150,14 @@ describe("world snapshot", () => {
     expect(restored?.work).toEqual({ x: 28, y: 36 });
     expect(b.checksum()).toBe(a.checksum());
   });
+
+  it("preserves underground resources", () => {
+    const a = kit();
+    a.grid.setResource(10, 12, "coal", 40);
+    a.grid.setResource(11, 12, "iron", 12);
+    const b = roundtrip(a);
+    expect(b.grid.resourceAt(10, 12)).toEqual({ kind: "coal", amount: 40 });
+    expect(b.grid.resourceAt(11, 12)).toEqual({ kind: "iron", amount: 12 });
+    expect(b.checksum()).toBe(a.checksum());
+  });
 });

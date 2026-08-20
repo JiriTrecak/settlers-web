@@ -5,7 +5,7 @@
  * Save mode restores a snapshot; F10 is save / load / restart / end.
  */
 import type { Application, Texture } from "pixi.js";
-import { gridToWorld, localMatch, type Action, type GridPos, type MatchConfig } from "../../shared";
+import { gridToWorld, hexDist, localMatch, type Action, type GridPos, type MatchConfig } from "../../shared";
 import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
 import {
   MAPS,
@@ -226,6 +226,7 @@ export class Session {
       onDelete: () => this.deleteSelected(),
       onConvert: () => this.convertSelected(),
       onEnlist: () => this.enlistSelected(),
+      onGeologist: () => this.convertGeologistSelected(),
       onHotkey: (key) => {
         const hit = this.board?.key(key) ?? false;
         if (hit) this.syncBoard();
@@ -725,6 +726,18 @@ export class Session {
     }
   }
 
+  /** G: bearer → geologist, or geologist → bearer (own land). Every selected unit. */
+  convertGeologistSelected(): void {
+    const world = this.world;
+    if (!world || !this.canCommand()) return;
+    for (const id of this.selectedUnitIds) {
+      const unit = world.movable(id);
+      if (!unit || unit.player !== this.me) continue;
+      if (unit.type === "bearer") this.send({ type: "convert", id: unit.id, to: "geologist" });
+      else if (unit.type === "geologist") this.send({ type: "convert", id: unit.id, to: "bearer" });
+    }
+  }
+
   /** X: empty-handed bearer → L1 swordsman. Barracks later. Every selected bearer. */
   enlistSelected(): void {
     const world = this.world;
@@ -735,6 +748,20 @@ export class Session {
       if (unit.type !== "bearer" || unit.material !== "none") continue;
       this.send({ type: "convert", id: unit.id, to: "swordsman" });
     }
+  }
+
+  /**
+   * Recruit Pioneer / Geologist: convert the closest idle empty-handed bearer
+   * and send them toward the click. Bearers are not selectable — this is the play path.
+   */
+  private recruitSpecialist(kind: "pioneer" | "geologist", to: GridPos): void {
+    const world = this.world;
+    if (!world) return;
+    const id = closestIdleBearer(world, this.me, to);
+    if (id == null) return;
+    this.send({ type: "convert", id, to: kind });
+    if (kind === "pioneer") this.send({ type: "pioneerWork", id, to });
+    else this.send({ type: "geologistWork", id, to });
   }
 
   /** Delete / Backspace: remove the highlighted hut. Fog circle and occupy disk go with it. */
@@ -885,13 +912,17 @@ export class Session {
       return;
     }
     if (tool?.type === "unit" && pos && this.canCommand()) {
-      this.send({
-        type: "spawnUnit",
-        kind: tool.kind,
-        at: pos,
-        player: this.me,
-        count: tool.count,
-      });
+      if (tool.kind === "swordsman") {
+        this.send({
+          type: "spawnUnit",
+          kind: "swordsman",
+          at: pos,
+          player: this.me,
+          count: tool.count,
+        });
+        return;
+      }
+      this.recruitSpecialist(tool.kind, pos);
       return;
     }
     if (tool?.type === "building" && pos && this.canCommand() && this.world.canPlaceBuilding(tool.kind, pos, this.me) && !this.pendingOverlap(tool.kind, pos)) {
@@ -969,7 +1000,7 @@ export class Session {
     return null;
   }
 
-  /** RMB. Pioneers claim toward the tile; everyone else walks. Shift = forced. Group walk spreads onto nearby tiles. */
+  /** RMB. Pioneers claim toward the tile; geologists probe (shift = walk). Everyone else walks. */
   private commandSelected(pos: GridPos | null, forced = false): void {
     const world = this.world;
     if (!world || !pos || this.selectedUnitIds.length === 0 || !this.canCommand()) return;
@@ -978,6 +1009,7 @@ export class Session {
       const unit = world.movable(id);
       if (!unit || unit.player !== this.me) continue;
       if (unit.type === "pioneer") this.send({ type: "pioneerWork", id: unit.id, to: pos });
+      else if (unit.type === "geologist" && !forced) this.send({ type: "geologistWork", id: unit.id, to: pos });
       else walkers.push(unit.id);
     }
     const dests = this.spreadDests(pos, walkers.length);
@@ -1572,4 +1604,19 @@ export class Session {
 
 function protectedTiles(kind: BuildingKind, at: GridPos): { x: number; y: number }[] {
   return buildingDef(kind).protected.map((r) => ({ x: at.x + r.dx, y: at.y + r.dy }));
+}
+
+/** Closest jobless empty-handed bearer of `player`. Convert food for recruit specialist. */
+function closestIdleBearer(world: World, player: number, at: GridPos): number | null {
+  let best: number | null = null;
+  let bestD = Infinity;
+  for (const v of world.view(player).movables) {
+    if (v.player !== player || v.type !== "bearer" || v.inside || v.material !== "none" || v.job) continue;
+    const d = hexDist(v.pos.x, v.pos.y, at.x, at.y);
+    if (d < bestD) {
+      bestD = d;
+      best = v.id;
+    }
+  }
+  return best;
 }

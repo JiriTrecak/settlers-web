@@ -11,11 +11,12 @@ export type Action =
   | { type: "chop"; id: number; at: GridPos }
   | { type: "pickup"; id: number; at: GridPos }
   | { type: "drop"; id: number; at: GridPos }
-  | { type: "placeBuilding"; kind: "lumberjack" | "forester" | "stonecutter" | "tower" | "sawmill" | "small_livinghouse"; at: GridPos; player?: number }
+  | { type: "placeBuilding"; kind: "lumberjack" | "forester" | "stonecutter" | "tower" | "sawmill" | "small_livinghouse" | "ironmine" | "goldmine" | "farm" | "mill" | "baker" | "fisher" | "pig_farm" | "slaughterhouse" | "waterworks"; at: GridPos; player?: number }
   | { type: "occupy"; at: GridPos; player?: number }
   | { type: "destroyBuilding"; at: GridPos }
   | { type: "pioneerWork"; id: number; to: GridPos }
-  | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" }
+  | { type: "geologistWork"; id: number; to: GridPos }
+  | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" | "geologist" }
   /** Debug dump from the Units strip. Not a barracks. */
   | { type: "spawnUnit"; kind: "swordsman"; at: GridPos; player?: number; count?: number }
   | { type: "setDiggerRatio"; ratio: number; player?: number }

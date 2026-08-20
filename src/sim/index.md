@@ -10,9 +10,9 @@ Deterministic world. No `pixi.js`, no `original_conv`.
 | `rng/` | Seeded RNG, never `Math.random` |
 | `building/` | Instant-built huts, footprint blockers, flatten math, door/roof flags |
 | `data/` | One-file defs for buildings and settlers |
-| `object/` | Trees/stones/stacks on tiles, chop `stateProgress`, sapling growth |
-| `job/` | Unit assignments (`chop`, `cut`, `pickup`, `drop`, `build`, `plant`, `occupy`, `equip`, `flatten`, `attack`, `assault`). `tickJob` runs the verb. |
-| `profession/` | Workplace brains that *assign* jobs (lumberjack, stonecutter, sawmiller, bricklayer, forester, digger) |
+| `object/` | Trees/stones/stacks/signs on tiles, chop `stateProgress`, sapling growth, sign expiry |
+| `job/` | Unit assignments (`chop`, `cut`, `pickup`, `drop`, `build`, `plant`, `occupy`, `equip`, `flatten`, `attack`, `assault`, `pioneer`, `geologist`). `tickJob` runs the verb. |
+| `profession/` | Workplace brains that *assign* jobs (lumberjack, stonecutter, sawmiller, miner, bricklayer, forester, digger, pioneer, geologist, swordsman) |
 | `economy/` | Start kit + matcher + construction (plan → flatten → bricklayers → occupy) |
 | `mark/` | Work-claim bits (chop/plant/flatten lock a tile) |
 | `path/` | Pathable BFS (land + objects; occupancy is step-time) |

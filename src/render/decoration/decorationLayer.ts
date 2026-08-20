@@ -1,7 +1,7 @@
 /**
- * Trees, stones, stacks, waves as sprites. Depth is `isoDepth` on the shared iso container
+ * Trees, stones, stacks, signs, waves as sprites. Depth is `isoDepth` on the shared iso container
  * so props and settlers interleave (south in front, stones cover units).
- * Waves are static; trees/stones/stacks sync from the sim snapshot each draw.
+ * Waves are static; trees/stones/stacks/signs sync from the sim snapshot each draw.
  */
 import { Container, Sprite } from "pixi.js";
 import { gridToWorld, isoDepth, ISO_DEPTH_PROP, ISO_DEPTH_WAVE } from "../../shared";
@@ -56,7 +56,7 @@ export class DecorationLayer {
     }
   }
 
-  /** Diff trees/stones/stacks against the last snapshot. Waves stay put. */
+  /** Diff trees/stones/stacks/signs against the last snapshot. Waves stay put. */
   syncObjects(objects: readonly MapObjectView[]): void {
     const view = this.view;
     const sheets = this.sheets;
@@ -166,6 +166,18 @@ export class DecorationLayer {
       if (n === 0) return 0;
       return Math.max(0, Math.min(n - 1, deco.capacity - 1));
     }
+    if (deco.kind === "sign") {
+      const frames = sheets.signs[deco.sign] ?? [];
+      const n = frames.length;
+      if (n === 0) return 0;
+      return Math.min(n - 1, (deco.stateProgress * n) | 0);
+    }
+    if (deco.kind === "crop") {
+      const n = sheets.crops.length;
+      if (n === 0) return 0;
+      const p = deco.stateProgress ?? 1;
+      return Math.min(n - 1, (p * n) | 0);
+    }
     const n = sheets.stones.length;
     if (n === 0) return 0;
     return Math.max(0, Math.min(n - 1, n - deco.capacity - 1));
@@ -188,6 +200,11 @@ export class DecorationLayer {
       const frames = stackFrames(deco, sheets);
       return frames[index] ?? frames[0] ?? null;
     }
+    if (deco.kind === "sign") {
+      const frames = sheets.signs[deco.sign] ?? [];
+      return frames[index] ?? frames[0] ?? null;
+    }
+    if (deco.kind === "crop") return sheets.crops[index] ?? sheets.crops[0] ?? null;
     return sheets.stones[index] ?? null;
   }
 
@@ -204,6 +221,12 @@ function objectToDeco(obj: MapObjectView): MapDecoration {
   }
   if (obj.kind === "stack") {
     return { kind: "stack", x: obj.x, y: obj.y, capacity: obj.capacity, material: obj.material };
+  }
+  if (obj.kind === "sign") {
+    return { kind: "sign", x: obj.x, y: obj.y, sign: obj.sign ?? "nothing", stateProgress: obj.stateProgress };
+  }
+  if (obj.kind === "crop") {
+    return { kind: "crop", x: obj.x, y: obj.y, stateProgress: obj.stateProgress, growing: obj.growing };
   }
   return { kind: "stone", x: obj.x, y: obj.y, capacity: obj.capacity };
 }

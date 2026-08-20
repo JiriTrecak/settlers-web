@@ -28,15 +28,24 @@ export type SettlerSheets = Record<MovableType, UnitClips> & {
 };
 
 const CARRY: Record<MovableType, readonly CarryKind[]> = {
-  bearer: ["trunk", "plank", "stone"],
+  baker: ["flour", "water", "bread"],
+  bearer: ["trunk", "plank", "stone", "ironore", "goldore", "crop", "flour", "bread", "fish", "meat", "pig", "water", "scythe", "fishingrod"],
   bricklayer: [],
   digger: [],
+  farmer: ["crop"],
+  fisherman: ["fish"],
   forester: ["tree"],
   lumberjack: ["trunk"],
+  miller: ["crop", "flour"],
+  miner: ["ironore", "goldore"],
+  pig_farmer: ["crop", "water", "pig"],
   pioneer: [],
+  geologist: [],
   sawmiller: ["trunk", "plank"],
+  slaughterer: ["pig", "meat"],
   stonecutter: ["stone"],
   swordsman: [],
+  waterworker: ["water"],
 };
 
 export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
@@ -52,12 +61,42 @@ export async function loadSettlerSheets(): Promise<SettlerSheets | null> {
     const forester = (await loadUnit(sprites, "forester", CARRY.forester)) ?? bearer;
     const stonecutter = (await loadUnit(sprites, "stonecutter", CARRY.stonecutter)) ?? bearer;
     const pioneer = (await loadUnit(sprites, "pioneer", CARRY.pioneer)) ?? bearer;
+    const geologist = (await loadUnit(sprites, "geologist", CARRY.geologist)) ?? bearer;
+    const miner = (await loadUnit(sprites, "miner", CARRY.miner)) ?? bearer;
+    const farmer = (await loadUnit(sprites, "farmer", CARRY.farmer)) ?? bearer;
+    const miller = (await loadUnit(sprites, "miller", CARRY.miller)) ?? bearer;
+    const bakerClips = (await loadUnit(sprites, "baker", CARRY.baker)) ?? bearer;
+    const fisherman = (await loadUnit(sprites, "fisherman", CARRY.fisherman)) ?? bearer;
+    const pigFarmer = (await loadUnit(sprites, "pig-farmer", CARRY.pig_farmer)) ?? bearer;
+    const slaughterer = (await loadUnit(sprites, "slaughterer", CARRY.slaughterer)) ?? bearer;
+    const waterworker = (await loadUnit(sprites, "waterworker", CARRY.waterworker)) ?? bearer;
     const swordsman = (await loadUnit(sprites, "swordsman-l1", CARRY.swordsman)) ?? bearer;
     const named = await loadGroup(sprites, "props/health");
     const health = named.length > 0 ? named : await loadGroup(sprites, "uncatalogued/settler/04/006");
     const markNamed = await loadGroup(sprites, "props/select-mark");
     const mark = (markNamed[0] ?? (await loadGroup(sprites, "uncatalogued/settler/04/007"))[0]) ?? null;
-    return { bearer, lumberjack, sawmiller, bricklayer, digger, forester, stonecutter, pioneer, swordsman, health, mark };
+    return {
+      bearer,
+      lumberjack,
+      sawmiller,
+      bricklayer,
+      digger,
+      forester,
+      stonecutter,
+      pioneer,
+      geologist,
+      miner,
+      farmer,
+      miller,
+      baker: bakerClips,
+      fisherman,
+      pig_farmer: pigFarmer,
+      slaughterer,
+      waterworker,
+      swordsman,
+      health,
+      mark,
+    };
   } catch {
     return null;
   }

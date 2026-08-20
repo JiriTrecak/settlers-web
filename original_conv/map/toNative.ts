@@ -1,6 +1,7 @@
 /** Parsed .map → engine JSON. Landscape ids / heights / objects decoded; player starts kept. */
 import { treeSheetAt } from "../../src/sim/decorations/decorations";
 import type { DumpedMap } from "../../src/sim/map/dumpedMap";
+import { fromOriginalResource } from "../../src/sim/map/resource";
 import { ORIGINAL_HEIGHT_SCALE, originalLandscapeType } from "./landscape";
 import { isTreeObject, stoneCapacity } from "./objects";
 import type { ParsedOriginalMap } from "./parseOriginalMap";
@@ -12,11 +13,14 @@ export function toDumpedMap(map: ParsedOriginalMap): DumpedMap {
   const heights: number[] = new Array(n);
   const trees: DumpedMap["trees"] = [];
   const stones: DumpedMap["stones"] = [];
+  const resources: NonNullable<DumpedMap["resources"]> = [];
   for (let i = 0; i < n; i++) {
     const x = i % width;
     const y = (i / width) | 0;
     landscape[i] = originalLandscapeType(map.landscape[i]!);
     heights[i] = Math.round((map.heights[i] ?? 0) * ORIGINAL_HEIGHT_SCALE);
+    const res = fromOriginalResource(map.resources[i] ?? 0);
+    if (res) resources.push({ x, y, type: res.kind, amount: res.amount });
     const id = objects[i]!;
     if (id === 0) continue;
     if (isTreeObject(id)) trees.push({ x, y, sheet: treeSheetAt(x, y) });
@@ -32,5 +36,6 @@ export function toDumpedMap(map: ParsedOriginalMap): DumpedMap {
     trees,
     stones,
     starts: map.players.map((p) => ({ x: p.startX, y: p.startY })),
+    resources,
   };
 }

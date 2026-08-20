@@ -251,6 +251,15 @@ export class Movable {
     }
   }
 
+  /** Switch the exclusive lock without dropping the job. Geologist hops tile to tile. */
+  claimTile(at: GridPos): void {
+    this.releaseMark();
+    if (this.marks) {
+      this.marks.claim(at);
+      this.marked = at;
+    }
+  }
+
   /** Queue a path without touching `job`. Current step still finishes. Pops out of the hut. False if no path. */
   pathTo(grid: MapGrid, to: GridPos, blockers?: Blockers): boolean {
     this.leave();

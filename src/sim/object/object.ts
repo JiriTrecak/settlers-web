@@ -1,15 +1,17 @@
 /**
- * One object per tile: trees, stones, stacks. Blocks walking; `stateProgress` is chop/grow.
- * Stones shrink via `capacity` (remaining cuts).
+ * One object per tile: trees, stones, stacks, signs, crops. Trees/stones/stacks
+ * block walking; signs and crops do not. `stateProgress` is chop/grow (trees, crops)
+ * or deposit fill (signs).
  */
 import { HEX_DELTAS, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
 import type { MapGrid } from "../map/mapGrid";
+import type { SignKind } from "../map/resource";
 import { treeSheetAt } from "../decorations/decorations";
 import type { DumpedMap } from "../map/dumpedMap";
 import type { Rng } from "../rng/rng";
 
-export type MapObjectKind = "tree" | "stone" | "stack";
+export type MapObjectKind = "tree" | "stone" | "stack" | "sign" | "crop";
 export type StackMaterial = Goods;
 
 /** Ground / building stacks hold this many of one material. */
@@ -21,11 +23,13 @@ export type MapObjectView = {
   y: number;
   sheet: number;
   capacity: number;
-  /** 1 = intact adult, 0 = gone. Growing trees climb 0→1; chopping falls 1→0. */
+  /** 1 = intact adult, 0 = gone. Growing trees climb 0→1; chopping falls 1→0. Signs: deposit fill. */
   stateProgress: number;
   material?: StackMaterial;
   /** Sapling. Lumberjacks skip these; render uses staged scale, not the fall clip. */
   growing?: boolean;
+  /** Resource sign graphic. `capacity` is remaining ticks until the sign expires. */
+  sign?: SignKind;
 };
 
 export class ObjectGrid {
@@ -66,7 +70,8 @@ export class ObjectGrid {
   }
 
   blocks(x: number, y: number): boolean {
-    return this.get(x, y) !== undefined;
+    const obj = this.get(x, y);
+    return obj !== undefined && obj.kind !== "sign" && obj.kind !== "crop";
   }
 
   /** Place on an empty in-bounds tile. No-op if occupied or out of bounds. */

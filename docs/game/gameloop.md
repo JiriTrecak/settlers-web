@@ -16,10 +16,10 @@ Order matters — later systems see this tick’s assignments.
 
 1. Clock `tickIndex++`
 2. Apply every action scheduled for this beat (player, then enqueue seq)
-3. Trees grow
+3. Trees grow; resource signs tick toward expiry
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
-6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer / digger / pioneer search / swordsman aggro or garrison)
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / miner / forester / bricklayer / digger / pioneer search / geologist search / swordsman aggro or garrison)
 7. Construction: plan → flatten (unless `flatten: false`) → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)

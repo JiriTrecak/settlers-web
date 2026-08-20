@@ -37,6 +37,13 @@ export { constructionMarkValue, constructionMarkFrame, CONSTRUCTION_MARK_MAX, fl
 export { buildings, buildingDef, hasWorkArea, type BuildingKind } from "./data/buildings";
 export { settlers, settlerDef, needsPlayersGround, unitViewDistance, isAttackable, isControllable, isSoldier, type SettlerKind } from "./data/settlers";
 export {
+  MAX_RESOURCE,
+  fromOriginalResource,
+  type ResourceKind,
+  type SignKind,
+  type TileResource,
+} from "./map/resource";
+export {
   ObjectGrid,
   STACK_SIZE,
   addToStack,
@@ -50,6 +57,8 @@ export {
   type MapObjectView,
   type StackMaterial,
 } from "./object/object";
+export { placeResourceSign, tickSigns } from "./object/sign";
+export { CROP_GROW_MS, tickCrops, plantCrop } from "./object/crop";
 export {
   BEARER_STEP_MS,
   Movable,

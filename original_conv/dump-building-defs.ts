@@ -13,6 +13,31 @@ const GROUND: Record<string, string> = {
   GRASS: "grass",
   EARTH: "earth",
   FLATTENED: "flattened",
+  MOUNTAIN: "mountain",
+  MOUNTAINBORDER: "mountainBorder",
+  MOUNTAINBORDEROUTER: "mountainBorderOuter",
+};
+
+/** Known stack goods. Skip materials that have no Goods member yet. */
+const GOODS: Record<string, string> = {
+  PLANK: "plank",
+  STONE: "stone",
+  TRUNK: "trunk",
+  IRONORE: "ironore",
+  GOLDORE: "goldore",
+  CROP: "crop",
+  FLOUR: "flour",
+  BREAD: "bread",
+  FISH: "fish",
+  MEAT: "meat",
+  PIG: "pig",
+  WATER: "water",
+};
+
+const MINE_RESOURCE: Record<string, string> = {
+  ironmine: "iron",
+  goldmine: "gold",
+  coalmine: "coal",
 };
 
 const DIR: Record<string, string> = {
@@ -24,7 +49,11 @@ const DIR: Record<string, string> = {
   NORTH_WEST: "nw",
 };
 
-const ONLY = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ["lumberjack", "tower", "sawmill", "small_livinghouse", "forester", "stonecutter"]);
+const ONLY = new Set(
+  process.argv.slice(2).length
+    ? process.argv.slice(2)
+    : ["farm", "mill", "baker", "fisher", "pig_farm", "slaughterhouse", "waterworks"],
+);
 
 function attrs(tag: string): Record<string, string> {
   const out: Record<string, string> = {};
@@ -57,6 +86,7 @@ function parse(kind: string, xml: string): string {
   const brick: string[] = [];
   const marks: string[] = [];
   let workSpot = "";
+  let workCenter = "";
 
   const tagRe = /<(\w+)([^>]*)\/?>/g;
   let m: RegExpExecArray | null;
@@ -76,20 +106,25 @@ function parse(kind: string, xml: string): string {
     } else if (name === "door") door = rel(a);
     else if (name === "flag") flag = rel(a);
     else if (name === "constructionStack") {
-      construction.push(
-        `{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${(a.material ?? "").toLowerCase()}", required: ${Number(a.buildrequired)} }`,
-      );
+      const mat = GOODS[a.material ?? ""];
+      if (mat) {
+        construction.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}", required: ${Number(a.buildrequired)} }`);
+      }
     } else if (name === "requestStack") {
-      request.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${(a.material ?? "").toLowerCase()}" }`);
+      const mat = GOODS[a.material ?? ""];
+      if (mat) request.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}" }`);
     } else if (name === "offerStack") {
-      offer.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${(a.material ?? "").toLowerCase()}" }`);
+      const mat = GOODS[a.material ?? ""];
+      if (mat) offer.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}" }`);
     } else if (name === "bricklayer") {
       const d = DIR[a.direction ?? ""] ?? "e";
       brick.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, direction: "${d}" }`);
     } else if (name === "buildmark") marks.push(rel(a));
-    else if (name === "sawmillerWorkPosition") {
+    else if (name === "sawmillerWorkPosition" || name === "ovenPosition" || name === "pigFeedPosition") {
       const d = DIR[a.direction ?? ""] ?? "e";
       workSpot = `{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, direction: "${d}" }`;
+    } else if (name === "workcenter") {
+      workCenter = rel(a);
     }
   }
 
@@ -105,10 +140,22 @@ function parse(kind: string, xml: string): string {
     small_livinghouse: "Roman small house. Spawns 10 bearers.",
     forester: "Roman forester hut. Plants trees in work radius 18.",
     stonecutter: "Roman stonecutter hut. Stone offer, work radius 20.",
+    ironmine: "Roman iron mine. No flatten. Miner pulls iron from blocked tiles.",
+    goldmine: "Roman gold mine. No flatten. Miner pulls gold from blocked tiles.",
+    farm: "Roman farm. Farmer plants and harvests crop in work radius 6.",
+    mill: "Roman mill. Requests crop, offers flour.",
+    baker: "Roman bakery. Requests flour and water, offers bread.",
+    fisher: "Roman fisher hut. Fisherman pulls fish from nearby water.",
+    pig_farm: "Roman pig farm. Requests crop and water, offers pigs.",
+    slaughterhouse: "Roman slaughterhouse. Requests pigs, offers meat.",
+    waterworks: "Roman waterworks. Waterworker fills buckets from nearby water.",
   };
   const extra: Record<string, string> = {
     small_livinghouse: "  beds: 10,\n  produceMs: 2000,\n",
   };
+  if (a0.mine === "true") {
+    extra[kind] = `  flatten: false,\n  mine: "${MINE_RESOURCE[kind] ?? kind}",\n`;
+  }
 
   return `/**
  * ${titles[kind] ?? `Roman ${kind}.`}
@@ -137,7 +184,7 @@ export const ${kind.replace(/-/g, "_")} = {
   bricklayers: [${brick.map((s) => `\n    ${s}`).join(",")}${brick.length ? "\n  " : ""}],
   buildMarks: [
     ${marks.join(",\n    ")}
-  ],${workSpot ? `\n  workSpot: ${workSpot},` : ""}
+  ],${workSpot ? `\n  workSpot: ${workSpot},` : ""}${workCenter ? `\n  workCenter: ${workCenter},` : ""}
 ${extra[kind] ?? ""}} as const satisfies BuildingDef;
 `;
 }

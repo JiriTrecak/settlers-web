@@ -32,6 +32,8 @@ export type ParsedOriginalMap = {
   heights: Uint8Array;
   /** Original map-object ids (0 = empty). */
   objects: Uint8Array;
+  /** Packed original resource byte: high nibble type, low nibble amount 0–15. */
+  resources: Uint8Array;
 };
 
 export function parseOriginalMap(source: ArrayBuffer | Uint8Array): ParsedOriginalMap {
@@ -84,12 +86,14 @@ export function parseOriginalMap(source: ArrayBuffer | Uint8Array): ParsedOrigin
   const landscape = new Uint8Array(n);
   const heights = new Uint8Array(n);
   const objects = new Uint8Array(n);
+  const resources = new Uint8Array(n);
   pos = area.offset + 4;
   for (let i = 0; i < n; i++) {
     heights[i] = data[pos++]!;
     landscape[i] = data[pos++]!;
     objects[i] = data[pos++]!;
-    pos += 3; // owner, accessible, resources
+    pos += 2; // owner, accessible
+    resources[i] = data[pos++]!;
   }
 
   return {
@@ -102,6 +106,7 @@ export function parseOriginalMap(source: ArrayBuffer | Uint8Array): ParsedOrigin
     landscape,
     heights,
     objects,
+    resources,
   };
 }
 

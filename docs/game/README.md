@@ -10,11 +10,11 @@ Read these when you need the rules, timings, and “what does the player actuall
 | [terrain.md](terrain.md) | Grid, landscape, height, iso, walkability, maps, waves, ownership |
 | [building.md](building.md) | Footprints, place → construct → occupy, flags, houses |
 | [settlers.md](settlers.md) | Units, pathing, occupancy, idle flock, jobs |
-| [economy.md](economy.md) | Colony kit, stacks, bearer hauling, wood + stone |
+| [economy.md](economy.md) | Colony kit, stacks, bearer hauling, wood + stone + mines |
 
 ## In play now
 
-Roman lumberjack / forester / stonecutter / sawmill / small house / tower. Bearers haul. Pioneers claim unenforced tiles. Plots flatten before bricklayers. Trees grow. Outdoor huts have a movable work circle (**Area**). HQ occupies a radius-40 disk once garrisoned (kit seats one L1 inside; extra infantry is the Units strip). Extra T1 towers extend it when a spare swordsman walks in. Infantry assault enemy tower doors; empty broken doors flip owner. Colony HQ gone is the match. Two colonies on 2-start maps (script opponent: pioneer, lumberjack / sawmill / stonecutter, then extra towers toward you). You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). L1 swordsmen auto-aggro and melee.
+Roman lumberjack / forester / stonecutter / sawmill / small house / tower / iron mine / gold mine. Bearers haul. Pioneers claim unenforced tiles. Geologists probe mountain and plant resource signs. Miners pull ironore / goldore from the mine footprint (pick first; no flatten). Plots flatten before bricklayers (mines skip). Trees grow. Outdoor huts have a movable work circle (**Area**). HQ occupies a radius-40 disk once garrisoned (kit seats one L1 inside; extra infantry is the Units strip). Extra T1 towers extend it when a spare swordsman walks in. Infantry assault enemy tower doors; empty broken doors flip owner. Colony HQ gone is the match. Two colonies on 2-start maps (script opponent: pioneer, lumberjack / sawmill / stonecutter, then extra towers toward you). You build only on owned land. Border posts on the rim. Fog of war (sight 0–100, snapshots at 50). L1 swordsmen auto-aggro and melee.
 
 ## Not yet
 

@@ -16,6 +16,8 @@ import { clampRatio, DEFAULT_BRICKLAYER_RATIO, DEFAULT_DIGGER_RATIO } from "../p
 import { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
 import { tickTrees } from "../object/tree";
+import { tickCrops } from "../object/crop";
+import { tickSigns } from "../object/sign";
 import { Movable, type MovableView } from "../movable/movable";
 import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
@@ -144,6 +146,8 @@ export class World {
       objectRevision: this.objects.revision,
       landscape: encodeU8(this.grid.landscape),
       heightmap: encodeI8(this.grid.heightmap),
+      resourceType: encodeU8(this.grid.resourceType),
+      resourceAmount: encodeU8(this.grid.resourceAmount),
       objects: this.objects.view(),
       buildings: this.buildings.all().map((b) => b.capture()),
       units: this.units.map((m) => m.capture()),
@@ -167,10 +171,14 @@ export class World {
     const n = snap.width * snap.height;
     const landscape = decodeU8(snap.landscape, n);
     const heightmap = decodeI8(snap.heightmap, n);
-    if (!landscape || !heightmap) return null;
+    const resourceType = decodeU8(snap.resourceType, n);
+    const resourceAmount = decodeU8(snap.resourceAmount, n);
+    if (!landscape || !heightmap || !resourceType || !resourceAmount) return null;
     const grid = new MapGrid(snap.width, snap.height);
     grid.landscape.set(landscape);
     grid.heightmap.set(heightmap);
+    grid.resourceType.set(resourceType);
+    grid.resourceAmount.set(resourceAmount);
     grid.revision = snap.gridRevision;
     const objects = new ObjectGrid(snap.width, snap.height);
     objects.restore(snap.objects, snap.objectRevision);
@@ -485,6 +493,8 @@ export class World {
     for (let i = 0; i < this.grid.heightmap.length; i++) {
       mix(this.grid.heightmap[i]!);
       mix(this.grid.landscape[i]!);
+      mix(this.grid.resourceType[i]!);
+      mix(this.grid.resourceAmount[i]!);
     }
     const objs = this.objects.all().sort((a, b) => a.y - b.y || a.x - b.x);
     mix(objs.length);
@@ -494,6 +504,8 @@ export class World {
       mix(o.y);
       mix(o.capacity);
       mix((o.stateProgress * 1000) | 0);
+      mixStr(o.sign ?? "");
+      mixStr(o.material ?? "");
     }
     return h >>> 0;
   }
@@ -504,6 +516,8 @@ export class World {
     this.applyDue(this.clock.tickIndex);
     t.mark("apply");
     tickTrees(this.objects, this.clock.tickMs);
+    tickCrops(this.objects, this.clock.tickMs);
+    tickSigns(this.objects);
     t.mark("trees");
     for (const m of this.units) {
       if (m.health <= 0) continue;
@@ -695,11 +709,14 @@ export class World {
       if (action.to === "pioneer") {
         if (m.type !== "bearer" || m.material !== "none") return;
         m.become("pioneer", null, this.clock.tickMs);
+      } else if (action.to === "geologist") {
+        if (m.type !== "bearer" || m.material !== "none") return;
+        m.become("geologist", null, this.clock.tickMs);
       } else if (action.to === "swordsman") {
         if (m.type !== "bearer" || m.material !== "none") return;
         m.become("swordsman", null, this.clock.tickMs);
       } else {
-        if (m.type !== "pioneer") return;
+        if (m.type !== "pioneer" && m.type !== "geologist") return;
         if (this.land.playerAt(m.pos.x, m.pos.y) !== m.player) return;
         m.become("bearer", null, this.clock.tickMs);
       }
@@ -710,6 +727,14 @@ export class World {
       if (m.type !== "pioneer") return;
       const to = nearestWalkable(this.grid, action.to, this.unitBlockers(m)) ?? action.to;
       m.assignJob({ type: "pioneer", at: to, arrived: false });
+      tickJob(m, this.jobCtx(m));
+      this.syncOcc();
+      return;
+    }
+    if (action.type === "geologistWork") {
+      if (m.type !== "geologist") return;
+      const to = nearestWalkable(this.grid, action.to, this.unitBlockers(m)) ?? action.to;
+      m.assignJob({ type: "geologist", at: to, arrived: false, current: to, work: null });
       tickJob(m, this.jobCtx(m));
       this.syncOcc();
       return;
@@ -820,6 +845,7 @@ export class World {
       units: this.units,
       land: this.land,
       marks: this.marks,
+      rng: this.rng,
       captureTower: (hut: Building, attacker: Movable) => this.captureTower(hut, attacker),
       kickGarrison: (hut: Building) => this.kickGarrison(hut),
     };

@@ -3,9 +3,11 @@
  */
 import type { BuildingKind } from "../../sim/data/buildings";
 
+export type RecruitKind = "swordsman" | "pioneer" | "geologist";
+
 export type PlaceTool =
   | { type: "building"; kind: BuildingKind }
-  | { type: "unit"; kind: "swordsman"; count: number }
+  | { type: "unit"; kind: RecruitKind; count: number }
   | { type: "workArea" };
 
 export type BoardSelection =

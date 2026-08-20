@@ -62,7 +62,7 @@ function closestEnemy(m: Movable, ctx: ProfessionContext): Movable | null {
 }
 
 function enemyTower(m: Movable, ctx: ProfessionContext): Building | null {
-  const radius = settlerDef(m.type).searchRadius ?? 30;
+  const radius = (settlerDef(m.type) as SettlerDef).searchRadius ?? 30;
   let best: Building | null = null;
   let bestD = Infinity;
   for (const hut of ctx.buildings.all()) {

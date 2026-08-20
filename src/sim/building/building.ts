@@ -77,7 +77,8 @@ export class Building {
     this.kind = kind;
     this.pos = pos;
     this.player = player;
-    this.work = { x: pos.x, y: pos.y };
+    const wc = buildingDef(kind).workCenter;
+    this.work = wc ? { x: pos.x + wc.dx, y: pos.y + wc.dy } : { x: pos.x, y: pos.y };
   }
 
   view(flag: BuildingFlag | null = null): BuildingView {
@@ -209,6 +210,11 @@ export class BuildingGrid {
     if (!footprintInBounds(this, def.protected, at)) return undefined;
     if (clear) {
       for (const t of tiles(def.protected, at)) objects.remove(t.x, t.y);
+    } else {
+      for (const t of tiles(def.protected, at)) {
+        const obj = objects.get(t.x, t.y);
+        if (obj?.kind === "sign") objects.remove(t.x, t.y);
+      }
     }
     if (!canPlace(this, def, at, land, objects)) return undefined;
     const id = this.items.length;

@@ -22,6 +22,17 @@ const STACKS: { material: string; seq: number }[] = [
   { material: "pick", seq: 53 },
   { material: "saw", seq: 54 },
   { material: "blade", seq: 55 },
+  { material: "ironore", seq: 39 },
+  { material: "goldore", seq: 36 },
+  { material: "crop", seq: 50 },
+  { material: "flour", seq: 48 },
+  { material: "bread", seq: 49 },
+  { material: "fish", seq: 47 },
+  { material: "meat", seq: 52 },
+  { material: "pig", seq: 73 },
+  { material: "water", seq: 77 },
+  { material: "scythe", seq: 56 },
+  { material: "fishingrod", seq: 66 },
 ];
 
 function pad(n: number, w = 3): string {

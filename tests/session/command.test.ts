@@ -95,9 +95,9 @@ describe("command board", () => {
     expect(armed.at(-1)).toBeNull();
   });
 
-  it("Recruit opens Swordsman and arms the spawn tool", () => {
+  it("Recruit opens Swordsman, Pioneer, Geologist and arms the spawn tool", () => {
     const { b, armed } = board();
-    b.sync(ctx({ units: { swordsman: n(8) } }));
+    b.sync(ctx({ units: { swordsman: n(8), pioneer: n(1) } }));
     b.invoke("page.recruit");
     const page = b.page;
     expect(page.id).toBe("recruit");
@@ -108,11 +108,27 @@ describe("command board", () => {
       armed: false,
     });
     expect(page.slots[0]?.icon).toMatch(/swordsman-l1\/idle\/none\/se\/0+\.png$/);
+    expect(page.slots[1]).toMatchObject({ id: "recruit.pioneer", label: "Pioneer", hotkey: "c", count: 1 });
+    expect(page.slots[2]).toMatchObject({ id: "recruit.geologist", label: "Geologist", hotkey: "g" });
     b.invoke("recruit.swordsman");
     expect(armed.at(-1)).toEqual({ type: "unit", kind: "swordsman", count: 1 });
     b.sync(ctx({ placeTool: { type: "unit", kind: "swordsman", count: 1 }, units: { swordsman: n(8) } }));
     expect(b.page.slots[0]?.armed).toBe(true);
     b.invoke("recruit.swordsman");
+    expect(armed.at(-1)).toBeNull();
+  });
+
+  it("Recruit C/G arms pioneer / geologist", () => {
+    const { b, armed } = board();
+    b.sync(ctx());
+    b.invoke("page.recruit");
+    expect(b.key("c")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "unit", kind: "pioneer", count: 1 });
+    expect(b.key("g")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "unit", kind: "geologist", count: 1 });
+    b.sync(ctx({ placeTool: { type: "unit", kind: "geologist", count: 1 } }));
+    expect(b.page.slots[2]?.armed).toBe(true);
+    expect(b.key("g")).toBe(true);
     expect(armed.at(-1)).toBeNull();
   });
 
@@ -247,6 +263,30 @@ describe("command board", () => {
     b.sync(ctx({ selection: { type: "building", kind: "tower", state: "built", owned: true, workArea: false } }));
     expect(b.key("b")).toBe(false);
     expect(b.key("t")).toBe(false);
+  });
+
+  it("Build has an Industry card that drills to iron and gold mines", () => {
+    const { b, armed } = board();
+    b.sync(ctx({ counts: { ironmine: n(1) } }));
+    b.invoke("page.build");
+    expect(b.page.slots[PLACEABLE.length]).toMatchObject({
+      id: "page.industry",
+      label: "Industry",
+      kind: "page",
+      hotkey: "i",
+    });
+    expect(b.key("i")).toBe(true);
+    expect(b.page.id).toBe("industry");
+    expect(b.page.slots[0]).toMatchObject({ id: "build.ironmine", label: "Iron mine", hotkey: "i", count: 1 });
+    expect(b.page.slots[1]).toMatchObject({ id: "build.goldmine", label: "Gold mine", hotkey: "g" });
+    expect(b.key("i")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "ironmine" });
+    expect(b.key("g")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "goldmine" });
+    expect(b.pop()).toBe(true);
+    expect(b.page.id).toBe("build");
+    expect(b.pop()).toBe(true);
+    expect(b.page.id).toBe("idle");
   });
 
   it("disabled slots do not eat the hotkey", () => {

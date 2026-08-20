@@ -3,6 +3,7 @@
  */
 import { PLAYER_COLORS, type GridPos, type LandscapeType } from "../../shared";
 import { MapGrid } from "./mapGrid";
+import { isResourceKind, type ResourceKind } from "./resource";
 import { treeSheetAt, type MapDecoration } from "../decorations/decorations";
 
 /** HQ / first-tower tile from the original player-info block. */
@@ -17,6 +18,8 @@ export type DumpedMap = {
   stones: { x: number; y: number; capacity: number }[];
   /** One entry per original player slot. Older dumps omit this. */
   starts?: MapStart[];
+  /** Non-empty underground deposits. Older dumps omit this. */
+  resources?: { x: number; y: number; type: ResourceKind; amount: number }[];
 };
 
 export type MapGroup = "tutorial" | "single" | "multi";
@@ -102,6 +105,12 @@ export function gridFromDumpedMap(map: DumpedMap): MapGrid {
     const y = (i / map.width) | 0;
     grid.setLandscape(x, y, map.landscape[i]!);
     grid.setHeight(x, y, map.heights[i] ?? 0);
+  }
+  if (Array.isArray(map.resources)) {
+    for (const r of map.resources) {
+      if (!r || !isResourceKind(r.type) || typeof r.x !== "number" || typeof r.y !== "number") continue;
+      grid.setResource(r.x, r.y, r.type, r.amount);
+    }
   }
   return grid;
 }
