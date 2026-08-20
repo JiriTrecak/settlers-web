@@ -10,7 +10,7 @@ import type { FogView } from "../../sim/fog/fog";
 import type { LandView } from "../../sim/land/land";
 import type { MapView } from "../../sim/map/mapView";
 import { createConstructionMarkShader } from "../shader/shader";
-import type { PropFrame } from "../graphics/textures";
+import { blitTexture, type PropFrame } from "../graphics/textures";
 
 type AtlasRect = { u0: number; v0: number; u1: number; v1: number; ox: number; oy: number; w: number; h: number };
 type PackedFrame = { body: AtlasRect; shadow?: AtlasRect };
@@ -317,7 +317,7 @@ function atlasFromFrames(frames: readonly PropFrame[]): { texture: Texture; fram
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i]!;
     const { w, h } = sizes[i]!;
-    blit(ctx, layer.tex, x, 0);
+    blitTexture(ctx, layer.tex, x, 0);
     const px = layer.px >= 1 ? layer.px : 1;
     rects.push({
       u0: x / atlasW,
@@ -341,15 +341,4 @@ function atlasFromFrames(frames: readonly PropFrame[]): { texture: Texture; fram
       shadow: i.shadow != null ? rects[i.shadow] : undefined,
     })),
   };
-}
-
-function blit(ctx: CanvasRenderingContext2D, texture: Texture, dx: number, dy: number): void {
-  const res = texture.source.resource;
-  if (
-    res instanceof HTMLImageElement ||
-    (typeof ImageBitmap !== "undefined" && res instanceof ImageBitmap) ||
-    (typeof HTMLCanvasElement !== "undefined" && res instanceof HTMLCanvasElement)
-  ) {
-    ctx.drawImage(res, dx, dy);
-  }
 }

@@ -1,9 +1,11 @@
 /**
  * Catalog PNG loader. Shared by decoration and settler sheets.
+ * Atlas frames first (`loadAtlases`); loose PNG if that path is not packed.
  * `px` is texels per world pixel (HD). Offsets stay dump/world pixels.
  * Overlay keys in `px.json`: path, `group:variant`, or group. Path wins.
  */
 import { Sprite, Texture } from "pixi.js";
+import { atlasTexture } from "./atlas";
 import { currentLoadWatch } from "./loadWatch";
 import hd from "./px.json";
 
@@ -62,6 +64,22 @@ export function placeLayer(sprite: Sprite, layer: FrameLayer, wx: number, wy: nu
   sprite.position.set(wx + layer.offsetX * extraScale, wy + layer.offsetY * extraScale);
 }
 
+/** Blit a texture's frame (atlas sub-rect or whole PNG) onto a 2D canvas. */
+export function blitTexture(ctx: CanvasRenderingContext2D, texture: Texture, dx: number, dy: number): void {
+  const res = texture.source.resource;
+  if (
+    !(
+      res instanceof HTMLImageElement ||
+      (typeof ImageBitmap !== "undefined" && res instanceof ImageBitmap) ||
+      (typeof HTMLCanvasElement !== "undefined" && res instanceof HTMLCanvasElement)
+    )
+  ) {
+    return;
+  }
+  const f = texture.frame;
+  ctx.drawImage(res, f.x, f.y, f.width, f.height, dx, dy, f.width, f.height);
+}
+
 export async function fetchCatalogSprites(): Promise<CatalogSprite[] | null> {
   try {
     const res = await fetch(`${BASE}catalog.json`);
@@ -116,10 +134,16 @@ export async function loadGroup(
 
 const textures = new Map<string, Promise<Texture | null>>();
 
-/** Decode a catalog PNG. Same path is reused across sheets. */
+/** Decode a catalog PNG. Atlas frame if packed; else a loose file. Same path is reused. */
 export async function loadTexture(rel: string): Promise<Texture | null> {
   const hit = textures.get(rel);
   if (hit) return hit;
+  const packed = atlasTexture(rel);
+  if (packed) {
+    const p = Promise.resolve(packed);
+    textures.set(rel, p);
+    return packed;
+  }
   currentLoadWatch()?.expectPath(rel);
   const p = decodeTexture(rel);
   textures.set(rel, p);

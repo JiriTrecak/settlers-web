@@ -9,6 +9,7 @@ Never commit `GFX/`, `SND/`, or original `MAP/` binaries. `src` never imports `o
 ## Now
 
 - Landscape atlas + UV table (`landscape-atlas.png`, `atlasPositions.ts`)
+- Civ-paged sprite atlases (`npm run pack:atlases` → `graphics/atlases/`). 2048², packs `props` / `buildings-{civ}` / `settlers-{civ}`. Same catalog paths.
 - Catalog JSON → decoration / building / settler sheets
 - Maps as dumped JSON (`heights`, `landscape`, `trees`, `stones`, `starts`)
 

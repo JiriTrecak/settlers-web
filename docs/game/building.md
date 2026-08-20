@@ -62,7 +62,9 @@ Rule: **12 hammer swings per item**, 1 s per swing. Progress bump is `1 / (12 ×
 
 Cap **2** bricklayers even if the def lists more spots. They come from the player's **pool** (bearer → hammer, default 25% of civilians; Tools ±1). Idle masons walk onto `bricklayers[]` tiles, face the listed direction, hammer until the hut leaves `building`, then stay bricklayers. No hammers → the scaffold waits. Leftover construction piles vanish on finish.
 
-No work while waiting for the next plank/stone — a swing that cannot take material idles the mason.
+Construction piles stay locked while the hut is a plan or scaffold — bearers never pull them off. Delete the hut to get remaining plank + stone back as free piles at the origin.
+
+No work while waiting for the next plank/stone — a swing that cannot take material idles the mason. Empty piles do **not** complete the hut until the hammers have actually finished.
 
 ## Occupy
 

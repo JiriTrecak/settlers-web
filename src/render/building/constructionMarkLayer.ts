@@ -10,7 +10,7 @@ import { constructionMarkFrame } from "../../sim/building/flatten";
 import type { FogView } from "../../sim/fog/fog";
 import type { MapView } from "../../sim/map/mapView";
 import { createConstructionMarkShader } from "../shader/shader";
-import type { PropFrame } from "../graphics/textures";
+import { blitTexture, type PropFrame } from "../graphics/textures";
 
 export type ConstructionMark = { x: number; y: number; value: number };
 
@@ -195,7 +195,7 @@ function atlasFromFrames(frames: readonly PropFrame[]): { texture: Texture; rect
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i]!;
     const { w, h } = sizes[i]!;
-    blit(ctx, frame.texture, x, 0);
+    blitTexture(ctx, frame.texture, x, 0);
     rects.push({
       u0: x / atlasW,
       v0: 0,
@@ -212,15 +212,4 @@ function atlasFromFrames(frames: readonly PropFrame[]): { texture: Texture; rect
   texture.source.autoGenerateMipmaps = false;
   texture.source.scaleMode = "nearest";
   return { texture, rects };
-}
-
-function blit(ctx: CanvasRenderingContext2D, texture: Texture, dx: number, dy: number): void {
-  const res = texture.source.resource;
-  if (
-    res instanceof HTMLImageElement ||
-    (typeof ImageBitmap !== "undefined" && res instanceof ImageBitmap) ||
-    (typeof HTMLCanvasElement !== "undefined" && res instanceof HTMLCanvasElement)
-  ) {
-    ctx.drawImage(res, dx, dy);
-  }
 }

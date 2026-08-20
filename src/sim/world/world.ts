@@ -11,7 +11,7 @@ import { buildingDef, hasWorkArea, type BuildingKind } from "../data/buildings";
 import { settlers, settlerDef, needsPlayersGround, unitViewDistance, isSoldier, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
-import { tickConstruction } from "../economy/construction";
+import { tickConstruction, refundConstruction } from "../economy/construction";
 import { clampRatio, DEFAULT_BRICKLAYER_RATIO, DEFAULT_DIGGER_RATIO } from "../profession/limit";
 import { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
@@ -335,6 +335,7 @@ export class World {
         m.idle();
       }
     }
+    refundConstruction(hut, this.objects, this.grid, this.units);
     this.buildings.remove(hut.id);
     this.syncOcc();
     this.fog.tickDim(this.clock.tickMs, this.fogWorld());

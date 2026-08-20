@@ -37,6 +37,7 @@ Each tick, closest idle empty-handed bearer of player P → closest offer P may 
 - **Plan** huts request `constructionStacks` (stop at `required`)
 - **Built** huts request `requestStacks` (fill to stack cap 8)
 - **Building** (scaffold hammering) requests nothing
+- Construction piles on a plan or scaffold are **never offers**. Bearers cannot pull boards off a hut in progress. Delete the hut to get remaining plank + stone back as free piles at the origin.
 - A pile is P's if it sits on P's hut offer tile; otherwise `land.owns` (no-occupy test maps treat every tile as owned). Request tiles are never offers.
 - Only P's bearers haul for P's huts. Bricklayers / occupy same rule.
 

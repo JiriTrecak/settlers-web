@@ -22,6 +22,7 @@
     "dump:miner": "vite-node original_conv/dump-miner.ts",
     "dump:food-settlers": "vite-node original_conv/dump-miner.ts FARMER MILLER BAKER FISHERMAN PIG_FARMER SLAUGHTERER WATERWORKER",
     "dump:landscape-atlas": "vite-node original_conv/dump-landscape-atlas.ts",
+    "pack:atlases": "vite-node original_conv/pack-atlases.ts",
     "dump:maps": "vite-node original_conv/dump-maps.ts"
   },
   "dependencies": {

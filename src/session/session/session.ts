@@ -33,7 +33,18 @@ import {
   type ViewSnapshot,
   type BuildingKind,
 } from "../../sim";
-import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets, loadSettlerSheets, fetchCatalogSprites, LoadWatch, loadNote } from "../../render";
+import {
+  Renderer,
+  loadLandscapeAtlas,
+  loadDecorationSheets,
+  loadBuildingSheets,
+  loadSettlerSheets,
+  fetchCatalogSprites,
+  loadAtlases,
+  atlasPacksForCivs,
+  LoadWatch,
+  loadNote,
+} from "../../render";
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
@@ -65,7 +76,7 @@ export type SessionHooks = {
   onEnd?(): void;
   onRestart?(): void;
   onLoad?(file: SaveFile): void;
-  /** Match-start overlay. Texture counts come from `loadTexture`. */
+  /** Match-start overlay. Texture counts come from atlas pages + leftover loose PNGs. */
   onLoadProgress?(view: LoadView): void;
 };
 
@@ -110,10 +121,14 @@ function loadGraphics(): Promise<{
     const sprites = await fetchCatalogSprites();
     if (sprites) ingestCatalogPaths(sprites);
     else await loadCatalogPaths();
-    const atlas = await loadLandscapeAtlas();
-    const sheets = await loadDecorationSheets(sprites);
-    const buildings = await loadBuildingSheets(sprites);
-    const settlers = await loadSettlerSheets(sprites);
+    loadNote("atlases");
+    await loadAtlases(atlasPacksForCivs(["roman"]));
+    const [atlas, sheets, buildings, settlers] = await Promise.all([
+      loadLandscapeAtlas(),
+      loadDecorationSheets(sprites),
+      loadBuildingSheets(sprites),
+      loadSettlerSheets(sprites),
+    ]);
     return { atlas, sheets, buildings, settlers };
   })();
   return graphics;

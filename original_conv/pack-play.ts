@@ -1,6 +1,7 @@
 /**
  * Production slice: vite-build the game + only in-play graphics/maps.
  * Full dump is ~1 GB; this is the roman loop that's actually loaded.
+ * Prefers civ-paged atlases when `atlases/manifest.json` exists.
  *
  *   npm run pack          web zip → settlers-play.zip
  *   npm run pack:app      Tauri mac + win → build/macosx, build/win
@@ -12,6 +13,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildings } from "../src/sim/data/buildings";
 import { settlers } from "../src/sim/data/settlers";
+import { packsForCivs } from "./atlas/groups";
+import type { AtlasManifest } from "./atlas/manifest";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const GFX = join(ROOT, "assets/graphics");
@@ -57,6 +60,33 @@ function slim(s: CatalogSprite): CatalogSprite {
   return out;
 }
 
+/** DOM `<img>` icons — first built / stack / idle-SE frame. */
+function hudIcon(s: CatalogSprite): boolean {
+  if ((s.frame ?? 0) !== 0) return false;
+  if (s.variant === "built") return true;
+  const g = s.group ?? "";
+  if (g.startsWith("props/stack-")) return true;
+  return /^settlers\/roman\/[^/]+\/idle\/none\/se$/.test(g);
+}
+
+function slimAtlas(man: AtlasManifest, packs: ReadonlySet<string>): AtlasManifest {
+  const oldToNew = new Map<number, number>();
+  const pages: AtlasManifest["pages"] = [];
+  for (let i = 0; i < man.pages.length; i++) {
+    const page = man.pages[i]!;
+    if (!packs.has(page.pack)) continue;
+    oldToNew.set(i, pages.length);
+    pages.push(page);
+  }
+  const frames: AtlasManifest["frames"] = {};
+  for (const [path, f] of Object.entries(man.frames)) {
+    const n = oldToNew.get(f.page);
+    if (n == null) continue;
+    frames[path] = { ...f, page: n };
+  }
+  return { size: man.size, pad: man.pad, pages, frames };
+}
+
 async function copyIf(src: string, dest: string): Promise<boolean> {
   if (!existsSync(src)) {
     console.warn(`missing ${src}`);
@@ -81,19 +111,43 @@ const gfxOut = join(DIST, "graphics");
 await mkdir(gfxOut, { recursive: true });
 
 await copyIf(join(GFX, "landscape-atlas.png"), join(gfxOut, "landscape-atlas.png"));
-await copyIf(join(GFX, "props"), join(gfxOut, "props"));
 
-for (const kind of Object.keys(settlers)) {
-  await copyIf(join(GFX, "settlers", CIV, kind), join(gfxOut, "settlers", CIV, kind));
-}
-for (const def of Object.values(buildings)) {
-  await copyIf(join(GFX, def.sheet), join(gfxOut, def.sheet));
+const atlasManPath = join(GFX, "atlases", "manifest.json");
+const useAtlases = existsSync(atlasManPath);
+if (useAtlases) {
+  const man = JSON.parse(await readFile(atlasManPath, "utf8")) as AtlasManifest;
+  const packs = new Set(packsForCivs([CIV]));
+  const slimMan = slimAtlas(man, packs);
+  const atlasOut = join(gfxOut, "atlases");
+  await mkdir(atlasOut, { recursive: true });
+  await writeFile(join(atlasOut, "manifest.json"), JSON.stringify(slimMan));
+  for (const p of slimMan.pages) {
+    await copyIf(join(GFX, "atlases", p.file), join(atlasOut, p.file));
+  }
+  console.log(`atlases ${man.pages.length} → ${slimMan.pages.length} pages`);
+} else {
+  await copyIf(join(GFX, "props"), join(gfxOut, "props"));
+  for (const kind of Object.keys(settlers)) {
+    await copyIf(join(GFX, "settlers", CIV, kind), join(gfxOut, "settlers", CIV, kind));
+  }
+  for (const def of Object.values(buildings)) {
+    await copyIf(join(GFX, def.sheet), join(gfxOut, def.sheet));
+  }
 }
 
 const raw = JSON.parse(await readFile(join(GFX, "catalog.json"), "utf8")) as Catalog;
 const sprites = (raw.sprites ?? []).filter((s) => kept(s.path, prefixes)).map(slim);
 await writeFile(join(gfxOut, "catalog.json"), JSON.stringify({ sprites }));
 console.log(`catalog ${raw.sprites.length} → ${sprites.length} sprites`);
+
+if (useAtlases) {
+  let icons = 0;
+  for (const s of sprites) {
+    if (!hudIcon(s)) continue;
+    if (await copyIf(join(GFX, s.path), join(gfxOut, s.path))) icons += 1;
+  }
+  console.log(`hud icons ${icons}`);
+}
 
 const mapsOut = join(DIST, "maps");
 await mkdir(join(mapsOut, "tutorial"), { recursive: true });

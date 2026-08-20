@@ -81,18 +81,20 @@ export function diggerCount(tileCount: number): number {
   return Math.ceil(tileCount / TILES_PER_DIGGER);
 }
 
-/** Unmarked protected tile still off the target. Random start so diggers fan out. */
+/** Unmarked protected tile still off the target. Random start so diggers fan out. `skip` is unreachable this pass. */
 export function nextFlattenTile(
   grid: MapGrid,
   marks: MarkGrid,
   tiles: readonly GridPos[],
   target: number,
   rng: Rng,
+  skip?: ReadonlySet<string>,
 ): GridPos | null {
   if (tiles.length === 0) return null;
   const offset = rng.nextInt(tiles.length);
   for (let i = 0; i < tiles.length; i++) {
     const t = tiles[(i + offset) % tiles.length]!;
+    if (skip?.has(`${t.x},${t.y}`)) continue;
     if (marks.claimed(t.x, t.y)) continue;
     if (grid.heightAt(t.x, t.y) === target) continue;
     return t;

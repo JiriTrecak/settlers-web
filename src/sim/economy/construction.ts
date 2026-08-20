@@ -18,7 +18,7 @@ import type { LandGrid } from "../land/land";
 import type { MapGrid } from "../map/mapGrid";
 import type { MarkGrid } from "../mark/mark";
 import type { Movable } from "../movable/movable";
-import { addToStack, canDeposit, type ObjectGrid } from "../object/object";
+import { addToStack, canDeposit, goodsStack, STACK_SIZE, type ObjectGrid } from "../object/object";
 import { findPath, isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { canConvertTool, BRICKLAYER_TOOL, DIGGER_TOOL, remainingToolSlots, type ToolKind } from "../profession/limit";
 import type { Rng } from "../rng/rng";
@@ -74,15 +74,16 @@ export function tickConstruction(ctx: ConstructionContext): void {
 export function tryTakeMaterial(b: Building, ctx: TakeContext): boolean {
   if (b.state !== "building") return false;
   const n = Math.max(1, constructionMaterials(b));
+  if (b.remainingMaterialActions <= 0) {
+    if (!popConstructionItem(b, ctx.objects)) {
+      if (b.constructionProgress >= 1 - 1e-9) finish(b, ctx);
+      return false;
+    }
+    b.remainingMaterialActions = BRICKLAYER_ACTIONS_PER_MATERIAL;
+  }
   b.remainingMaterialActions -= 1;
   b.constructionProgress += 1 / (BRICKLAYER_ACTIONS_PER_MATERIAL * n);
-  if (b.remainingMaterialActions > 0) return true;
-  if (popConstructionItem(b, ctx.objects)) {
-    b.remainingMaterialActions = BRICKLAYER_ACTIONS_PER_MATERIAL;
-    return true;
-  }
-  finish(b, ctx);
-  return false;
+  return true;
 }
 
 function flattenReadyFor(b: Building, ctx: ConstructionContext): boolean {
@@ -104,11 +105,16 @@ function recruitDiggers(ctx: ConstructionContext): void {
     const tiles = footprint(def.protected, hut.pos);
     const want = diggerCount(tiles.length);
     let have = assignedToHut(ctx.units, hut.id);
+    const skip = new Set<string>();
     while (have < want) {
-      const at = nextFlattenTile(ctx.grid, ctx.marks, tiles, hut.flattenHeight, ctx.rng);
+      const at = nextFlattenTile(ctx.grid, ctx.marks, tiles, hut.flattenHeight, ctx.rng, skip);
       if (!at) break;
       const digger = closestIdleDigger(ctx, at, player, hut.id, true);
-      if (!digger) break;
+      if (!digger) {
+        if (!hasIdleDigger(ctx, player)) break;
+        skip.add(`${at.x},${at.y}`);
+        continue;
+      }
       digger.workplaceId = hut.id;
       digger.assignJob({ type: "flatten", at, hutId: hut.id });
       have += 1;
@@ -161,6 +167,13 @@ function closestIdleDigger(
     }
   }
   return best;
+}
+
+function hasIdleDigger(ctx: ConstructionContext, player: number): boolean {
+  for (const m of ctx.units) {
+    if (m.player === player && m.type === "digger" && !m.job && !m.inside) return true;
+  }
+  return false;
 }
 
 /** Flatten hut + a blocked cell they're standing on (leave a finished scaffold). */
@@ -333,6 +346,63 @@ function stackAt(objects: ObjectGrid, at: GridPos, material: string): number {
   const cur = objects.get(at.x, at.y);
   if (!cur || cur.kind !== "stack" || cur.material !== material) return 0;
   return cur.capacity;
+}
+
+/**
+ * Delete a plan/scaffold: remaining boards become free piles at the origin
+ * (plank pile + stone pile). Finished huts already ate their stacks.
+ */
+export function refundConstruction(b: Building, objects: ObjectGrid, grid: MapGrid, units: readonly Movable[] = []): void {
+  if (b.state === "built") return;
+  const def = buildingDef(b.kind);
+  const slots = new Set(def.constructionStacks.map((s) => `${b.pos.x + s.dx},${b.pos.y + s.dy}`));
+  const qty = new Map<Goods, number>();
+  for (const m of units) {
+    if (m.job?.type !== "deliver") continue;
+    const from = m.job.from;
+    const to = m.job.to;
+    if (!slots.has(`${from.x},${from.y}`) && !slots.has(`${to.x},${to.y}`)) continue;
+    if (m.material !== "none" && m.material !== "tree") {
+      qty.set(m.material, (qty.get(m.material) ?? 0) + 1);
+      m.material = "none";
+    }
+    m.idle();
+  }
+  for (const slot of def.constructionStacks) {
+    const at = { x: b.pos.x + slot.dx, y: b.pos.y + slot.dy };
+    const n = stackAt(objects, at, slot.material);
+    if (n > 0) qty.set(slot.material, (qty.get(slot.material) ?? 0) + n);
+    objects.remove(at.x, at.y);
+  }
+  const spots = refundSpots(grid, objects, b.pos);
+  let i = 0;
+  for (const [material, n] of qty) {
+    let left = n;
+    while (left > 0 && i < spots.length) {
+      const put = Math.min(left, STACK_SIZE);
+      const at = spots[i++]!;
+      if (!objects.place(goodsStack(at, material, put))) break;
+      left -= put;
+    }
+  }
+}
+
+function refundSpots(grid: MapGrid, objects: ObjectGrid, origin: GridPos): GridPos[] {
+  const out: GridPos[] = [];
+  const seen = new Set<string>([`${origin.x},${origin.y}`]);
+  const q: GridPos[] = [origin];
+  for (let head = 0; head < q.length && out.length < 8; head++) {
+    const p = q[head]!;
+    if (grid.inBounds(p.x, p.y) && !objects.get(p.x, p.y)) out.push(p);
+    for (const d of HEX_DELTAS) {
+      const n = { x: p.x + d.dx, y: p.y + d.dy };
+      const k = `${n.x},${n.y}`;
+      if (seen.has(k) || !grid.inBounds(n.x, n.y)) continue;
+      seen.add(k);
+      q.push(n);
+    }
+  }
+  return out;
 }
 
 function recruitBricklayers(b: Building, ctx: ConstructionContext): void {

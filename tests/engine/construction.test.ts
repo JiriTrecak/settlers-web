@@ -204,4 +204,66 @@ describe("construction", () => {
     expect(world.view().movables.filter((m) => m.type === "bricklayer")).toHaveLength(0);
     expect(hammersOf(world)).toBe(6);
   });
+
+  it("does not haul construction piles off a scaffold onto another plan", () => {
+    const world = new World(grass(48, 48));
+    const a = { x: 12, y: 12 };
+    const b = { x: 28, y: 12 };
+    expect(world.placePlan("lumberjack", a, 0)).toBeDefined();
+    expect(world.placePlan("lumberjack", b, 0)).toBeDefined();
+    for (const slot of hutDef.constructionStacks) {
+      world.objects.place(goodsStack({ x: a.x + slot.dx, y: a.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    const aPlank = {
+      x: a.x + hutDef.constructionStacks[1]!.dx,
+      y: a.y + hutDef.constructionStacks[1]!.dy,
+    };
+    const bPlank = {
+      x: b.x + hutDef.constructionStacks[1]!.dx,
+      y: b.y + hutDef.constructionStacks[1]!.dy,
+    };
+    tickUntil(world, () => world.buildings.at(a.x, a.y)?.state === "building", 200);
+    expect(world.buildings.at(a.x, a.y)?.state).toBe("building");
+    world.spawnBearer({ x: 20, y: 12 }, 0);
+    for (let i = 0; i < 400; i++) world.tick();
+    expect(world.objects.get(aPlank.x, aPlank.y)).toMatchObject({ material: "plank", capacity: 2 });
+    expect(world.objects.get(bPlank.x, bPlank.y)).toBeUndefined();
+    expect(world.buildings.at(a.x, a.y)?.state).toBe("building");
+  });
+
+  it("does not finish a scaffold because someone emptied the piles", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 16, y: 16 };
+    expect(world.placePlan("lumberjack", at, 0)).toBeDefined();
+    for (const slot of hutDef.constructionStacks) {
+      world.objects.place(goodsStack({ x: at.x + slot.dx, y: at.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    placeHammers(world, at, 1);
+    world.spawnBearer({ x: 22, y: 16 }, 0);
+    world.dispatch({ type: "setBricklayerRatio", ratio: 1, player: 0 });
+    tickUntil(world, () => world.view().buildings[0]?.state === "building", 2000);
+    for (const slot of hutDef.constructionStacks) {
+      world.objects.remove(at.x + slot.dx, at.y + slot.dy);
+    }
+    for (let i = 0; i < 800; i++) world.tick();
+    expect(world.view().buildings[0]?.state).toBe("building");
+  });
+
+  it("refunds remaining boards as free piles when a plan is deleted", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 16, y: 16 };
+    expect(world.placePlan("lumberjack", at, 0)).toBeDefined();
+    for (const slot of hutDef.constructionStacks) {
+      world.objects.place(goodsStack({ x: at.x + slot.dx, y: at.y + slot.dy }, slot.material, slot.required ?? 1));
+    }
+    expect(world.destroyBuilding(at)).toBe(true);
+    const piles = world.view().objects.filter((o) => o.kind === "stack");
+    const plank = piles.filter((o) => o.material === "plank").reduce((n, o) => n + o.capacity, 0);
+    const stone = piles.filter((o) => o.material === "stone").reduce((n, o) => n + o.capacity, 0);
+    expect(plank).toBe(2);
+    expect(stone).toBe(2);
+    for (const slot of hutDef.constructionStacks) {
+      expect(world.objects.get(at.x + slot.dx, at.y + slot.dy)).toBeUndefined();
+    }
+  });
 });
