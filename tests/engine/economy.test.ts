@@ -51,7 +51,7 @@ describe("colony", () => {
     const world = new World(grass(64, 64));
     placeColony(world, { x: 32, y: 32 }, 0);
     const piles = world.view().objects.filter((o) => o.kind === "stack");
-    expect(piles).toHaveLength(9);
+    expect(piles).toHaveLength(11);
     for (let i = 0; i < piles.length; i++) {
       for (let j = i + 1; j < piles.length; j++) {
         const a = piles[i]!;

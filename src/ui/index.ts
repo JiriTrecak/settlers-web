@@ -22,5 +22,5 @@ export { GAME_SPEEDS, DEFAULT_GAME_SPEED, SpeedControl, isGameSpeed, type GameSp
 export { GameControlPanel } from "./control/control";
 export { PauseMenu, type PauseFileRow, type PauseMenuHooks } from "./pause/pause";
 export { CLOSED_PAUSE, confirmCopy, type PauseConfirm, type PauseMode, type PauseScreen, type PauseView } from "./pause/types";
-export type { CommandId, CommandPage, CommandSlot, SelectionView } from "./control/types";
+export type { CommandId, CommandPage, CommandSlot, SelectionView, GoodsLine } from "./control/types";
 export { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS } from "./control/types";

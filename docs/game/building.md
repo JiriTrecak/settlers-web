@@ -2,7 +2,7 @@
 
 A building is an origin cell plus a footprint from its def. All currently playable huts are Roman.
 
-Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house, tower (T1 occupy). **Industry** (I) → iron mine, gold mine. Lookout / big tower are not in play.
+Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house, tower (T1 occupy). **Industry** (I) → iron mine, gold mine. **Food** (O) → farm, mill, baker, fisher, pig farm, slaughterhouse, waterworks. Lookout / big tower are not in play.
 
 `viewDistance` on the def is the fog look radius once finished (tower 38, work huts 0). Empty worker huts still get 5; plans get 0. Units add their own disk (default 8).
 
@@ -50,7 +50,13 @@ Each hut lists plank/stone piles and how many items each pile needs:
 | Tower | 2 | 3 | 5 | 60 s | 30 s |
 | Sawmill | 3 | 4 | 7 | 84 s | 42 s |
 | Iron mine | 4 | 1 | 5 | 60 s | 30 s |
-| Gold mine | 5 | 1 | 6 | 72 s | 36 s |
+| Farm | 6 | 6 | 12 | 144 s | 72 s |
+| Mill | 3 | 3 | 6 | 72 s | 36 s |
+| Baker | 4 | 5 | 9 | 108 s | 54 s |
+| Fisher | 3 | 2 | 5 | 60 s | 30 s |
+| Pig farm | 6 | 6 | 12 | 144 s | 72 s |
+| Slaughterhouse | 4 | 4 | 8 | 96 s | 48 s |
+| Waterworks | 3 | 4 | 7 | 84 s | 42 s |
 
 Rule: **12 hammer swings per item**, 1 s per swing. Progress bump is `1 / (12 × items)` each swing. A pile loses one item every 12 swings. Two bricklayers → twice the bumps.
 
@@ -60,7 +66,7 @@ No work while waiting for the next plank/stone — a swing that cannot take mate
 
 ## Occupy
 
-Worker huts (`def.worker` set): after `built`, a jobless empty-handed bearer walks to the door and `become`s the worker (`workplaceId` = hut id). They enter and rest. Miner (and later tool professions) walk to a **pick** pile first (`equip`); no pick → the hut stays empty.
+Worker huts (`def.worker` set): after `built`, a jobless empty-handed bearer walks to the door and `become`s the worker (`workplaceId` = hut id). They enter and rest. Miner (and later tool professions) walk to a **pick** pile first (`equip`); no pick → the hut stays empty. Farmer ← scythe. Fisherman ← fishing rod. Slaughterer ← axe.
 
 Military huts (`garrison`): idle swordsmen walk to the door and enter. Land stamps while at least one is inside; emptying the garrison releases the disk (not while the hut is under assault). T1 has **1** infantry slot.
 

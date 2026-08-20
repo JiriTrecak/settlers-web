@@ -226,7 +226,9 @@ export class SettlerLayer {
         : m.action === "work"
           ? m.job === "pickup" || m.job === "drop" || m.job === "deliver"
             ? sheets.pickup[m.direction]
-            : sheets.chop[m.direction]
+            : m.job === "plantCrop"
+              ? sheets.plant[m.direction]
+              : sheets.chop[m.direction]
           : held
             ? held.idle[m.direction]
             : sheets.idle[m.direction]

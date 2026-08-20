@@ -16,6 +16,13 @@ One unit, one tile. Profession is `type`. Clothing is `player` (torso × the eig
 | Stonecutter | 450 ms | Workplace. |
 | Sawmiller | 450 ms | Workplace. |
 | Miner | 450 ms | Workplace. Iron / gold mine. Pick first. |
+| Farmer | 450 ms | Workplace. Farm. Scythe first. Plant / harvest crop. |
+| Miller | 450 ms | Workplace. Mill. Crop → flour. |
+| Baker | 450 ms | Workplace. Bakery. Flour + water → bread. |
+| Fisherman | 450 ms | Workplace. Fisher hut. Fishing rod first. |
+| Pig farmer | 450 ms | Workplace. Pig farm. Crop + water → pig. |
+| Slaughterer | 450 ms | Workplace. Slaughterhouse. Axe first. Pig → meat. |
+| Waterworker | 450 ms | Workplace. Waterworks. Fills water from nearby water. |
 | Bricklayer | 450 ms | Temporary. Reverts to bearer when the hut finishes. |
 
 `become` swaps type, workplace, step time, and clears the current job / carried goods. Professions with `restMs` enter the hut on become.

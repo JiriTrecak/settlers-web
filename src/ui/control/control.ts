@@ -7,6 +7,7 @@ import {
   type CommandId,
   type CommandPage,
   type CommandSlot,
+  type GoodsLine,
   type SelectionView,
 } from "./types";
 
@@ -28,6 +29,7 @@ export class GameControlPanel {
   private readonly facts: HTMLDivElement;
   private readonly titleEl: HTMLDivElement;
   private readonly subEl: HTMLDivElement;
+  private readonly goodsEl: HTMLDivElement;
   private readonly cells: Cell[];
 
   constructor(
@@ -76,7 +78,9 @@ export class GameControlPanel {
     this.titleEl.className = "gcp-title";
     this.subEl = document.createElement("div");
     this.subEl.className = "gcp-sub";
-    this.facts.append(this.titleEl, this.subEl);
+    this.goodsEl = document.createElement("div");
+    this.goodsEl.className = "gcp-goods";
+    this.facts.append(this.titleEl, this.subEl, this.goodsEl);
     mid.append(this.portrait, this.facts);
 
     const grid = document.createElement("div");
@@ -103,6 +107,7 @@ export class GameControlPanel {
       this.portraitImg.removeAttribute("src");
       this.titleEl.textContent = "";
       this.subEl.textContent = "";
+      this.paintGoods([], []);
       return;
     }
     if (view.type === "units") {
@@ -110,6 +115,7 @@ export class GameControlPanel {
       this.portraitImg.removeAttribute("src");
       this.titleEl.textContent = view.title;
       this.subEl.textContent = view.kinds.map((k) => `${k.count} ${k.kind}`).join(" · ");
+      this.paintGoods([], []);
       return;
     }
     if (view.icon) {
@@ -121,11 +127,49 @@ export class GameControlPanel {
     }
     this.titleEl.textContent = view.title;
     this.subEl.textContent = view.state;
+    this.paintGoods(view.needs, view.produces);
+  }
+
+  private paintGoods(needs: GoodsLine[], produces: GoodsLine[]): void {
+    this.goodsEl.replaceChildren();
+    const need = goodsGroup("Needs", needs);
+    const prod = goodsGroup("Produces", produces);
+    if (need) this.goodsEl.append(need);
+    if (prod) this.goodsEl.append(prod);
+    this.goodsEl.hidden = !need && !prod;
   }
 
   destroy(): void {
     this.root.remove();
   }
+}
+
+function goodsGroup(title: string, lines: GoodsLine[]): HTMLElement | null {
+  if (lines.length === 0) return null;
+  const col = document.createElement("div");
+  col.className = "gcp-goods-col";
+  const head = document.createElement("div");
+  head.className = "gcp-goods-head";
+  head.textContent = title;
+  col.append(head);
+  for (const line of lines) {
+    const row = document.createElement("div");
+    row.className = "gcp-goods-row";
+    if (line.icon) {
+      const img = document.createElement("img");
+      img.alt = line.material;
+      img.src = GRAPHICS + line.icon;
+      img.addEventListener("error", () => {
+        img.hidden = true;
+      });
+      row.append(img);
+    }
+    const qty = document.createElement("span");
+    qty.textContent = `${line.have} / ${line.max}`;
+    row.append(qty);
+    col.append(row);
+  }
+  return col;
 }
 
 /** One hole in the 4×3. Empty stays a hole. */

@@ -83,7 +83,7 @@ describe("action envelope", () => {
     const world = two();
     const u0 = world.view(0).movables.find((m) => m.player === 0 && !m.inside);
     expect(u0).toBeDefined();
-    world.enqueue({ type: "moveTo", id: u0!.id, to: { x: 28, y: 28 } }, 1, { player: 0, seq: 0 });
+    world.enqueue({ type: "moveTo", id: u0!.id, to: { x: 10, y: 10 } }, 1, { player: 0, seq: 0 });
     world.tick();
     expect(world.log().some((e) => e.action.type === "moveTo" && e.player === 0)).toBe(true);
     expect(world.view(0).movables.find((m) => m.id === u0!.id)?.path.length).toBeGreaterThan(0);

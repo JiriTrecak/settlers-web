@@ -39,6 +39,7 @@ import type { DecorationSheets } from "../../render/decoration/decorationSheets"
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
 import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, PauseMenu, debugFrom, DEFAULT_GAME_SPEED, type GameSpeed, type HudState } from "../../ui";
 import { CommandBoard } from "../command/board";
+import { hutGoods } from "../command/goods";
 import { loadCatalogPaths } from "../command/catalog";
 import type { BoardContext, CountPair, PlaceTool } from "../command/types";
 import { MapInput } from "../input/mapInput";
@@ -1128,7 +1129,14 @@ export class Session {
       const hut = world.buildings.at(this.selected.x, this.selected.y);
       if (hut) {
         return {
-          selection: { type: "building", kind: hut.kind, state: hut.state, owned: hut.player === this.me, workArea: hasWorkArea(hut.kind) },
+          selection: {
+            type: "building",
+            kind: hut.kind,
+            state: hut.state,
+            owned: hut.player === this.me,
+            workArea: hasWorkArea(hut.kind),
+            ...hutGoods(hut, world.objects),
+          },
           ...base,
         };
       }

@@ -36,4 +36,22 @@ export type CommandPage = {
 export type SelectionView =
   | { type: "none" }
   | { type: "units"; title: string; kinds: { kind: string; count: number }[] }
-  | { type: "building"; title: string; kind: string; state: string; icon?: string };
+  | {
+      type: "building";
+      title: string;
+      kind: string;
+      state: string;
+      icon?: string;
+      /** Request / construction piles. */
+      needs: GoodsLine[];
+      /** Offer piles. */
+      produces: GoodsLine[];
+    };
+
+/** One goods row on the hut selection pane. `icon` is a path under `/graphics/`. */
+export type GoodsLine = {
+  material: string;
+  have: number;
+  max: number;
+  icon?: string;
+};

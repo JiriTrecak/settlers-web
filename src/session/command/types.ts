@@ -2,6 +2,7 @@
  * Session-side command board context. The widget never sees this — only `CommandPage`.
  */
 import type { BuildingKind } from "../../sim/data/buildings";
+import type { GoodsLine } from "../../ui/control/types";
 
 export type RecruitKind = "swordsman" | "pioneer" | "geologist";
 
@@ -13,7 +14,7 @@ export type PlaceTool =
 export type BoardSelection =
   | { type: "none" }
   | { type: "units"; types: string[] }
-  | { type: "building"; kind: BuildingKind; state: string; owned: boolean; workArea: boolean };
+  | { type: "building"; kind: BuildingKind; state: string; owned: boolean; workArea: boolean; needs?: GoodsLine[]; produces?: GoodsLine[] };
 
 export type CountPair = {
   /** Finished / actually that profession. */

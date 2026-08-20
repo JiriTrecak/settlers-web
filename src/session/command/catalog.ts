@@ -37,3 +37,9 @@ export async function loadCatalogPaths(): Promise<void> {
 export function catalogPath(group: string, variant?: string): string | undefined {
   return first.get(keyOf(group, variant));
 }
+
+/** First stack frame. Missing dump → `000.png` anyway. */
+export function stackIcon(material: string): string {
+  const group = `props/stack-${material}`;
+  return catalogPath(group) ?? `${group}/000.png`;
+}

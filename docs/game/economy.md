@@ -2,7 +2,7 @@
 
 No partitions, no priorities. Matcher is per-player. Goods live on ground stacks (max **8**) or in a settler’s hands.
 
-Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`, `ironore`, `goldore`. A sapling in hand is `tree` — not a stack good.
+Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`, `ironore`, `goldore`, `crop`, `flour`, `bread`, `fish`, `meat`, `pig`, `water`, `scythe`, `fishingrod`. A sapling in hand is `tree` — not a stack good.
 
 ## Colony kit
 
@@ -25,6 +25,8 @@ Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kne
 | Axe | 3 |
 | Pick | 2 |
 | Saw | 1 |
+| Scythe | 2 |
+| Fishing rod | 2 |
 
 House then drips more bearers (10 beds, 2 s). See [building.md](building.md).
 
@@ -120,6 +122,21 @@ Mines do **not** flatten. Ground may be mountain (and grass/earth on the skirt).
 Occupy consumes a **pick**. Kit has 2. No pick → empty mine. Placing the hut strips geologist signs on the protected tiles.
 
 Iron mine: 4 plank + 1 stone. Gold mine: 5 plank + 1 stone.
+
+## Food chain
+
+```
+farm crop ──► mill flour ──► bakery (+ water) ──► bread
+         └──► pig farm (+ water) ──► slaughterhouse ──► meat
+waterworks water ──► bakery, pig farm
+fisher fish (from water deposits)
+```
+
+Farm work origin is `workCenter` (not the hut). Farmer plants crop in radius 6, harvests when grown (10 min), dumps crop. Plant uses the plant clip; scythe is harvest only. Occupy consumes a **scythe**.
+
+Miller: crop → flour (7 s). Baker: flour + water → bread (9 s). Pig farm: crop + water → pig (2 s). Slaughterer: pig → meat (5.7 s); occupy consumes an **axe**. Fisherman: stand next to a fish deposit, 1.5 s, take 1 fish; occupy consumes a **fishing rod**. Waterworker: stand next to water, 1 s, infinite water.
+
+Crops do not block walking. Mines still run without food packages.
 
 ## Timings cheat sheet
 

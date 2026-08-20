@@ -16,6 +16,8 @@ export type UnitClips = {
   walk: DirClips;
   idle: DirClips;
   chop: DirClips;
+  /** Farmer plant (ACTION2). Falls back to chop. */
+  plant: DirClips;
   pickup: DirClips;
   carry: Partial<Record<CarryKind, CarryClips>>;
 };
@@ -106,6 +108,7 @@ async function loadUnit(sprites: CatalogSprite[], profession: string, goods: rea
   const walk = {} as DirClips;
   const idle = {} as DirClips;
   const chop = {} as DirClips;
+  const plant = {} as DirClips;
   const pickup = {} as DirClips;
   const carry: UnitClips["carry"] = {};
   const root = `settlers/roman/${profession}`;
@@ -116,6 +119,8 @@ async function loadUnit(sprites: CatalogSprite[], profession: string, goods: rea
     if (idle[dir].length === 0) idle[dir] = walk[dir].slice(0, 1);
     chop[dir] = await loadGroup(sprites, `${root}/action1/none/${dir}`);
     if (chop[dir].length === 0) chop[dir] = idle[dir];
+    plant[dir] = await loadGroup(sprites, `${root}/action2/none/${dir}`);
+    if (plant[dir].length === 0) plant[dir] = chop[dir];
     pickup[dir] = [];
     for (const g of goods) {
       pickup[dir] = await loadGroup(sprites, `${root}/bend/${g}/${dir}`);
@@ -138,5 +143,5 @@ async function loadUnit(sprites: CatalogSprite[], profession: string, goods: rea
     }
     if (any) carry[g] = { walk: cw, idle: ci };
   }
-  return { walk, idle, chop, pickup, carry };
+  return { walk, idle, chop, plant, pickup, carry };
 }

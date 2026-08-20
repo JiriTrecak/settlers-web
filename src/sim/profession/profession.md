@@ -20,6 +20,10 @@ Pioneer: no workplace. Job `pioneer` is the click. Walk there, then claim unenfo
 
 Geologist: no workplace. Job `geologist` is the click. Walk there, then probe even-even mountain (not hut-protected, no existing sign): hex **ring 2** around the last tile (closest to the click), else a walk-search of radius 30. Mark, walk, kneel 2.9s, plant a sign (coal/iron/gold/gems/brimstone/nothing from the tile deposit; fill = amount/50). Signs last 4–9 min and do not block walking. `findPath` miss → idle.
 
-Miner: rest **inside** 3s. If the offer isn't full, take 1 of `def.mine` from a random blocked tile (the footprint is the vein). Hit → walk out carrying ironore/goldore, dump on the offer, home, rest. Miss → rest again. No food yet (original spent meat/bread/fish for work packages). Occupy walks to a **pick** first; no pick → the mine stays empty. Placing a mine strips signs on the protected tiles. `flatten: false`.
+Miner: rest **inside** 3s. If the offer isn't full, take 1 of `def.mine` from a random blocked tile (the footprint is the vein). Hit → walk out carrying ironore/goldore, dump on the offer, home, rest. Miss → rest again. No food packages yet. Occupy walks to a **pick** first; no pick → the mine stays empty. Placing a mine strips signs on the protected tiles. `flatten: false`.
+
+Farmer: rest 8s. Harvest adult crop in the work circle (scythe / ACTION1), else plant (ACTION2). Dump crop on the offer. Occupy ← scythe.
+
+Miller: indoor crop → flour (saw job, 7s). Baker / pig farmer: consume both request stacks at the door (`craft`), dump bread / pig. Slaughterer: pig → meat. Fisherman / waterworker: `gather` beside water (fish takes a deposit; water is infinite). Occupy: fisherman ← fishing rod, slaughterer ← axe.
 
 Swordsman: no workplace until they garrison. Closest attackable enemy in hex 30 gets an `attack` job (peels a DEFAULT walk). Else the closest enemy military hut in that disk is `assault`. Else an idle soldier walks into an empty own tower (`occupy`). A live RMB path is not occupy-food — only idle. Forced walk (shift-RMB) skips all three until the path ends (`hasPath` / `headingToward`, not `walking`). Bearers / workers are not attackable. Inside a tower they stay put until the door breaks.

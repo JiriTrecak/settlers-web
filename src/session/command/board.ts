@@ -187,6 +187,8 @@ export class CommandBoard {
         kind: sel.kind,
         state: sel.state,
         icon: buildingIcon(sel.kind),
+        needs: sel.needs ?? [],
+        produces: sel.produces ?? [],
       };
     }
     return { type: "none" };

@@ -289,6 +289,59 @@ describe("command board", () => {
     expect(b.page.id).toBe("idle");
   });
 
+  it("Build has a Food card that drills to the food chain", () => {
+    const { b, armed } = board();
+    b.sync(ctx({ counts: { farm: n(1) } }));
+    b.invoke("page.build");
+    expect(b.page.slots[PLACEABLE.length + 1]).toMatchObject({
+      id: "page.food",
+      label: "Food",
+      kind: "page",
+      hotkey: "o",
+    });
+    expect(b.key("o")).toBe(true);
+    expect(b.page.id).toBe("food");
+    expect(b.page.slots[0]).toMatchObject({ id: "build.farm", label: "Farm", hotkey: "a", count: 1 });
+    expect(b.page.slots[1]).toMatchObject({ id: "build.mill", label: "Mill", hotkey: "m" });
+    expect(b.page.slots[2]).toMatchObject({ id: "build.baker", label: "Baker", hotkey: "k" });
+    expect(b.page.slots[3]).toMatchObject({ id: "build.fisher", label: "Fisher", hotkey: "i" });
+    expect(b.page.slots[4]).toMatchObject({ id: "build.pig_farm", label: "Pig farm", hotkey: "p" });
+    expect(b.page.slots[5]).toMatchObject({ id: "build.slaughterhouse", label: "Slaughter", hotkey: "s" });
+    expect(b.page.slots[6]).toMatchObject({ id: "build.waterworks", label: "Waterworks", hotkey: "w" });
+    expect(b.key("a")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "farm" });
+    expect(b.key("m")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "mill" });
+    expect(b.pop()).toBe(true);
+    expect(b.page.id).toBe("build");
+    expect(b.pop()).toBe(true);
+    expect(b.page.id).toBe("idle");
+  });
+
+  it("selectionView copies hut needs and produces", () => {
+    const { b } = board();
+    b.sync(
+      ctx({
+        selection: {
+          type: "building",
+          kind: "mill",
+          state: "built",
+          owned: true,
+          workArea: false,
+          needs: [{ material: "crop", have: 2, max: 8, icon: "props/stack-crop/000.png" }],
+          produces: [{ material: "flour", have: 0, max: 8, icon: "props/stack-flour/000.png" }],
+        },
+      }),
+    );
+    expect(b.selectionView).toMatchObject({
+      type: "building",
+      title: "Mill",
+      state: "built",
+      needs: [{ material: "crop", have: 2, max: 8 }],
+      produces: [{ material: "flour", have: 0, max: 8 }],
+    });
+  });
+
   it("disabled slots do not eat the hotkey", () => {
     const { b } = board();
     b.sync(ctx({ canCommand: false }));
