@@ -99,6 +99,8 @@ describe("buildings", () => {
     world.spawnBearer({ x: at.x + 6, y: at.y }, 0);
     world.spawnBearer({ x: at.x + 6, y: at.y + 2 }, 0);
     world.spawnSettler("swordsman", { x: at.x + 6, y: at.y + 4 }, 0);
+    world.objects.place(goodsStack({ x: at.x + 4, y: at.y + 6 }, "hammer", 2));
+    world.dispatch({ type: "setBricklayerRatio", ratio: 1, player: 0 });
 
     let n = 0;
     while (world.land.playerAt(far.x, far.y) !== 0 && n < 8000) {
@@ -122,6 +124,8 @@ describe("buildings", () => {
     }
     world.spawnBearer({ x: at.x + 6, y: at.y }, 0);
     world.spawnBearer({ x: at.x + 6, y: at.y + 2 }, 0);
+    world.objects.place(goodsStack({ x: at.x + 4, y: at.y + 6 }, "hammer", 2));
+    world.dispatch({ type: "setBricklayerRatio", ratio: 1, player: 0 });
     let n = 0;
     while (world.view().buildings.find((b) => b.x === at.x)?.state !== "built" && n < 8000) {
       world.tick();
@@ -163,5 +167,22 @@ describe("buildings", () => {
     expect(world.view().movables[0]).toMatchObject({ type: "lumberjack", workplaceId: hut.id, inside: true });
     expect(world.destroyBuilding(hut.pos)).toBe(true);
     expect(world.view().movables[0]).toMatchObject({ type: "bearer", workplaceId: null, inside: false });
+  });
+
+  it("swordsmen path around a tower, not through the blocked footprint", () => {
+    const world = new World(grass(48, 48));
+    const at = { x: 24, y: 24 };
+    world.placeBuilding("tower", at, 0);
+    const s = world.spawnSettler("swordsman", { x: 16, y: 24 }, 0);
+    world.dispatch({ type: "moveTo", id: s.id, to: { x: 32, y: 24 }, forced: true });
+    const blocked = (x: number, y: number) => world.buildings.blocks(x, y);
+    expect(blocked(s.pos.x, s.pos.y)).toBe(false);
+    for (const p of s.view().path) expect(blocked(p.x, p.y)).toBe(false);
+    for (let i = 0; i < 2000; i++) {
+      world.tick();
+      expect(blocked(s.pos.x, s.pos.y), `${s.pos.x},${s.pos.y}`).toBe(false);
+      if (s.pos.x === 32 && s.pos.y === 24 && !s.walking) break;
+    }
+    expect(s.pos).toEqual({ x: 32, y: 24 });
   });
 });

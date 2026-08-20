@@ -1,22 +1,20 @@
 /**
  * Bricklayer: hammer on a construction spot until the hut leaves `building`.
- * Construction recruits them; this just keeps the hammer looping and reverts if the hut is gone.
+ * Pool member — plot gone / finished → idle, keep the profession.
  */
 import { buildingDef } from "../data/buildings";
 import type { Movable } from "../movable/movable";
 import type { ProfessionContext } from "./profession";
 
 export function tickBricklayer(m: Movable, ctx: ProfessionContext): void {
+  if (m.job || m.walking) return;
   const hut = m.workplaceId != null ? ctx.buildings.get(m.workplaceId) : undefined;
   if (!hut || hut.state !== "building") {
-    m.become("bearer", null, ctx.tickMs);
+    m.workplaceId = null;
     return;
   }
-  if (m.job || m.walking) return;
   const def = buildingDef(hut.kind);
-  const spot =
-    def.bricklayers.find((s) => hut.pos.x + s.dx === m.pos.x && hut.pos.y + s.dy === m.pos.y) ??
-    def.bricklayers[0];
+  const spot = def.bricklayers.find((s) => hut.pos.x + s.dx === m.pos.x && hut.pos.y + s.dy === m.pos.y);
   if (!spot) return;
   m.assignJob({
     type: "build",

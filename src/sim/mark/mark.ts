@@ -16,6 +16,21 @@ export class MarkGrid {
     this.at = new Uint8Array(width * height);
   }
 
+  capture(): { x: number; y: number }[] {
+    const out: { x: number; y: number }[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        if (this.at[y * this.width + x] === 1) out.push({ x, y });
+      }
+    }
+    return out;
+  }
+
+  restore(cells: readonly { x: number; y: number }[]): void {
+    this.at.fill(0);
+    for (const c of cells) this.claim(c);
+  }
+
   claimed(x: number, y: number): boolean {
     if (!this.inBounds(x, y)) return false;
     return this.at[y * this.width + x] === 1;

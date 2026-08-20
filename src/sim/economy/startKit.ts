@@ -1,8 +1,10 @@
 /**
  * Match-start kit: tower, small house, goods piles, jobless bearers.
- * Spiral around the HQ, skipping protected tiles — same layout as the original skirmish low-goods set.
+ * Spiral around the HQ, skipping protected tiles. Piles keep a 2-tile gap so
+ * two planks or blade+hammer are not neighbors; bearers fill leftover cells.
  * Instant-finish HQ already garrisons one infantry so the land disk exists on frame 1.
  * Extra swordsmen are the Units strip (`spawnUnit`), not the kit. No pioneers: convert a bearer (C).
+ * Blade piles (5) are the digger tool; hammers (6) are bricklayers.
  */
 import { hexDist, type GridPos } from "../../shared";
 import type { Goods } from "../data/types";
@@ -12,6 +14,8 @@ import { isWalkable } from "../path/path";
 import type { World } from "../world/world";
 
 const BEARERS = 16;
+/** Min hexDist between kit piles. 1 = neighbors. */
+const STACK_GAP = 2;
 
 const STACKS: { material: Goods; capacity: number }[] = [
   { material: "plank", capacity: 6 },
@@ -31,29 +35,41 @@ export function placeColony(world: World, at: GridPos, player = 0): void {
   if (hq) world.setHq(hq);
   const houseAt = findPlace(world, "small_livinghouse", at, player);
   if (houseAt) world.placeBuilding("small_livinghouse", houseAt, player, true);
-  const jobs: Array<{ kind: "stack"; material: Goods; capacity: number } | { kind: "bearer" }> = [
-    ...STACKS.map((s) => ({ kind: "stack" as const, ...s })),
-    ...Array.from({ length: BEARERS }, () => ({ kind: "bearer" as const })),
-  ];
-  let rel = { dx: -3, dy: 3 };
-  let placed = 0;
-  let guard = 0;
-  while (placed < jobs.length && guard++ < 800) {
-    rel = nextSpiral(rel);
-    const pos = { x: at.x + rel.dx, y: at.y + rel.dy };
-    if (!world.grid.inBounds(pos.x, pos.y)) continue;
-    if (world.buildings.protects(pos.x, pos.y)) continue;
-    if (world.objects.blocks(pos.x, pos.y)) continue;
-    if (!isWalkable(world.grid, pos.x, pos.y)) continue;
-    const job = jobs[placed]!;
-    if (job.kind === "stack") {
-      world.objects.place(goodsStack(pos, job.material, job.capacity));
-    } else {
-      world.spawnBearer(pos, player);
-    }
-    placed += 1;
-  }
+  const piles: GridPos[] = [];
+  walkSpiral(at, (pos) => {
+    if (piles.length >= STACKS.length) return false;
+    if (!kitTile(world, pos)) return true;
+    if (piles.some((p) => hexDist(p.x, p.y, pos.x, pos.y) < STACK_GAP)) return true;
+    const job = STACKS[piles.length]!;
+    world.objects.place(goodsStack(pos, job.material, job.capacity));
+    piles.push(pos);
+    return true;
+  });
+  let bearers = 0;
+  walkSpiral(at, (pos) => {
+    if (bearers >= BEARERS) return false;
+    if (!kitTile(world, pos)) return true;
+    world.spawnBearer(pos, player);
+    bearers += 1;
+    return true;
+  });
   world.snapFog();
+}
+
+function kitTile(world: World, pos: GridPos): boolean {
+  if (!world.grid.inBounds(pos.x, pos.y)) return false;
+  if (world.buildings.protects(pos.x, pos.y)) return false;
+  if (world.objects.blocks(pos.x, pos.y)) return false;
+  return isWalkable(world.grid, pos.x, pos.y);
+}
+
+/** Walk the kit spiral. `visit` false stops. */
+function walkSpiral(at: GridPos, visit: (pos: GridPos) => boolean): void {
+  let rel = { dx: -3, dy: 3 };
+  for (let n = 0; n < 800; n++) {
+    rel = nextSpiral(rel);
+    if (!visit({ x: at.x + rel.dx, y: at.y + rel.dy })) return;
+  }
 }
 
 function findPlace(world: World, kind: BuildingKind, around: GridPos, player: number): GridPos | null {

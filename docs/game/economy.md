@@ -10,7 +10,7 @@ On match start (`placeColony` action), at each player slot's `starts[i]`:
 
 - Tower (finished, objects on the footprint cleared). One L1 already inside, so the occupy disk exists on frame 1.
 - Small house nearby (finished)
-- Low-goods piles in a spiral around HQ, skipping protected tiles
+- Low-goods piles in a spiral around HQ, skipping protected tiles, **≥ 2 tiles apart** (bearers fill the gaps)
 - **16** jobless bearers in that same spiral
 - One L1 already inside the HQ (occupy disk). Extra infantry is the Units strip (`spawnUnit`), not the kit.
 
@@ -20,7 +20,7 @@ Pioneers are not in the kit. Select a bearer, **C** → pioneer (own sprite, kne
 |---|---|
 | Plank | 6 + 6 |
 | Stone | 6 + 6 |
-| Blade | 5 |
+| Blade | 5 (digger tool) |
 | Hammer | 6 |
 | Axe | 3 |
 | Pick | 2 |
@@ -40,7 +40,7 @@ Each tick, closest idle empty-handed bearer of player P → closest offer P may 
 
 Inbound `deliver` jobs count against room so two bearers don’t overfill. `building` construction piles are already on the plot; leftover piles are deleted when the hut finishes.
 
-Plans wait for flatten: `ceil(protected/15)` diggers, 1 s kneel, ±1 toward the frozen integer mean. Level grass skips. `flatten: false` (mines) skips digging.
+Plans wait for flatten: the hut wants `ceil(protected/15)` diggers from a **pool**. Oldest unfinished plan takes the whole pool; later queues wait. Diggers and bricklayers each fill on their own: bearers walk to blades / hammers up to **25%** of civilians (4 of 16 kit bearers). **Tools** Fewer/More is ±1 per profession. Idle extras stay that profession; lowering the cap drops the tool. Level grass skips. `flatten: false` (mines) skips digging. Scaffold takes idle bricklayers from the pool (2 per hut). Kit has 5 blades + 6 hammers.
 
 Pickup / drop is 200 ms each end of a deliver.
 
@@ -71,7 +71,7 @@ lumberjack fells adult tree ──trunk──► lumberjack offer
 
 Rest **3 s** inside. If the offer stack is full (8), stay inside.
 
-Else nearest adult tree in radius **30** on the player's land whose **SE** tile is walkable and not marked. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
+Else nearest adult tree in the hut's **work circle** (radius **30**, origin `hut.work`, default the hut) on the player's land whose **SE** tile is walkable and not marked. Stands on that SE tile, faces **nw** (axe clip is aimed at the trunk). **6 s** of swings; the tree falls over the last **1.5 s**. Carries the trunk (no ground pile at the stump). Drops on the hut offer. Home, enter, rest.
 
 Another lumberjack already chopping that tree (tile marked) → skip. Saplings / still-growing → skip.
 
@@ -91,7 +91,7 @@ stonecutter picks rock ──stone──► stonecutter offer
 
 Rest **3 s** inside. If the offer stack is full (8), stay inside.
 
-Else nearest stone with `capacity > 0` in radius **20** whose **stand** (`cutStand` = stone + (1, −1), i.e. NE of the rock) is owned, unclaimed, and walkable. The rock itself does **not** need to be owned — a border pile is cuttable if you can stand on your land.
+Else nearest stone with `capacity > 0` in the **work circle** (radius **20**) whose **stand** (`cutStand` = stone + (1, −1), i.e. NE of the rock) is owned, unclaimed, and walkable. The rock itself does **not** need to be owned — a border pile is cuttable if you can stand on your land.
 
 Stands on that tile, faces **sw**. **4.5 s** of picks (6 × 750 ms). Decrements `capacity`; at 0 the pile is removed (no leftover rubble). Carries the stone (no ground pile at the rock). Drops on the hut offer. Home, enter, rest.
 
@@ -99,7 +99,7 @@ Another stonecutter already cutting that stand (tile marked) → skip. `capacity
 
 ### Forester
 
-Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18**): 100 polar samples from hut origin, radius biased `u^3.9` toward the hut (more plants near home). Stand tile is walkable; plant is **south** of the stand (`y+1`) and on the worker's land.
+Rest **4 s** inside. Walks out holding a sapling. Plants in the work circle (radius **18** around `hut.work`): 100 polar samples from the work origin, radius biased `u^3.9` toward the center (more plants near the aim point). Stand tile is walkable; plant is **south** of the stand (`y+1`) and on the worker's land.
 
 Plant tile: grass, owned, not protected, no blocked neighbor, no protected neighbor. Face nw, kneel **3 s**. Home.
 
@@ -133,4 +133,4 @@ All at 1×. Clock is 25 ms.
 
 ## Not yet
 
-Distribution priorities, storehouse, mines, farms, tool production, soldier goods, trading. Bearers will haul tools if something requested them — nothing in play requests tools yet except future construction defs.
+Distribution priorities, storehouse, mines, farms, tool production, soldier goods, trading. Raising the digger cap still needs extra blades on the ground — nothing produces them yet.

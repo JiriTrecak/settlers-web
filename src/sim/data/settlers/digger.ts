@@ -1,6 +1,6 @@
 /**
- * Roman digger. Temporary: construction recruits a bearer onto a plan that
- * still has height work. Kneel 1s, ±1 toward the hut's frozen mean, revert.
+ * Roman digger. Pool profession: a bearer picks up a blade and stays a digger.
+ * Kneel 1s, ±1 toward the hut's frozen mean. Idle between plots — does not revert.
  */
 import type { SettlerDef } from "../types";
 

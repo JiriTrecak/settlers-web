@@ -16,6 +16,7 @@ import type { ViewSnapshot } from "../../sim/world/world";
 import { BuildingLayer } from "../building/buildingLayer";
 import { GhostLayer } from "../building/ghostLayer";
 import { ConstructionMarkLayer, type ConstructionMark } from "../building/constructionMarkLayer";
+import { WorkAreaLayer } from "../building/workAreaLayer";
 import type { BuildingSheets } from "../building/buildingSheets";
 import { Camera } from "../camera/camera";
 import { DecorationLayer } from "../decoration/decorationLayer";
@@ -38,6 +39,7 @@ export class Renderer {
   private readonly borders: BorderLayer;
   private readonly ghostPlot = new GhostLayer();
   private readonly marks = new ConstructionMarkLayer();
+  private readonly workArea = new WorkAreaLayer();
   private readonly paths = new PathLayer();
   private readonly land = new LandLayer();
 
@@ -69,7 +71,8 @@ export class Renderer {
     this.select.eventMode = "none";
     this.select.zIndex = 1_000_001;
     this.marks.root.zIndex = 998_000;
-    this.world.addChild(this.iso, this.select, this.marks.root, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.workArea.root.zIndex = 999_000;
+    this.world.addChild(this.iso, this.select, this.marks.root, this.workArea.root, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   setAtlas(atlas: Texture | null): void {
@@ -85,6 +88,7 @@ export class Renderer {
   setBuildingSheets(sheets: BuildingSheets | null): void {
     this.buildings.setSheets(sheets);
     this.ghostPlot.setSheets(sheets);
+    this.workArea.setFrames(sheets?.workArea ?? []);
   }
 
   setSettlerSheets(sheets: SettlerSheets | null): void {
@@ -107,6 +111,7 @@ export class Renderer {
     this.settlers.setView(view);
     this.ghostPlot.setView(view);
     this.marks.setView(view);
+    this.workArea.setView(view);
     this.paths.setView(view);
     this.land.setView(view);
     this.borders.setView(view);
@@ -159,6 +164,8 @@ export class Renderer {
     this.buildings.sync(visibleBuildings(snapshot, fog), fog);
     this.settlers.draw(visibleMovables(snapshot.movables, fog), alpha, fog);
     this.marks.syncFog(this.fog);
+    this.workArea.setLand(snapshot.land ?? null);
+    this.workArea.syncFog(this.fog);
     this.paths.draw(snapshot.movables, alpha);
     this.land.draw(snapshot.land);
     this.borders.draw(snapshot.land, this.fogOn ? fog : undefined);
@@ -168,6 +175,7 @@ export class Renderer {
     this.world.position.set(this.camera.panX, this.camera.panY);
     this.world.scale.set(this.camera.zoom);
     this.ghostPlot.setZoom(this.camera.zoom);
+    this.workArea.setZoom(this.camera.zoom);
     this.paths.setZoom(this.camera.zoom);
     this.land.setZoom(this.camera.zoom);
   }
@@ -218,6 +226,12 @@ export class Renderer {
     }
     this.ghostPlot.setZoom(this.camera.zoom);
     this.ghostPlot.show(kind, pos, ok);
+  }
+
+  /** Four concentric work-area rims around `center`. `center` null hides it. */
+  setWorkArea(center: GridPos | null, radius: number, player = 0): void {
+    if (!center || radius <= 0) this.workArea.hide();
+    else this.workArea.show(center, radius, player);
   }
 
   /** Placeable-origin pips. `null` hides the grid. */
@@ -365,7 +379,7 @@ export class Renderer {
     this.fogGen = -1;
     this.fogPlayer = -2;
     this.world.removeChildren();
-    this.world.addChild(mesh, this.iso, this.select, this.marks.root, this.ghostPlot.root, this.land.root, this.paths.root);
+    this.world.addChild(mesh, this.iso, this.select, this.marks.root, this.workArea.root, this.ghostPlot.root, this.land.root, this.paths.root);
   }
 
   destroy(): void {

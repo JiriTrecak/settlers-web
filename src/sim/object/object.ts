@@ -92,6 +92,16 @@ export class ObjectGrid {
     return obj ?? undefined;
   }
 
+  /** Replace contents from a save. Internal slot ids are not preserved (nothing points at them). */
+  restore(objects: readonly MapObjectView[], revision: number): void {
+    this.at.fill(0);
+    this.items.length = 1;
+    this.items[0] = null;
+    this.revision = 0;
+    for (const obj of objects) this.place({ ...obj });
+    this.revision = revision;
+  }
+
   view(): MapObjectView[] {
     const out: MapObjectView[] = [];
     for (const obj of this.items) {

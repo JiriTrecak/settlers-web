@@ -3,11 +3,15 @@
  */
 import type { BuildingKind } from "../../sim/data/buildings";
 import type { CommandId, CommandPage, SelectionView } from "../../ui/control/types";
-import { blankPage, buildPage, buildingIcon, buildingLabel, idlePage, PLACEABLE, recruitPage, RECRUITABLE } from "./pages";
+import { blankPage, buildPage, buildingIcon, buildingLabel, hutPage, idlePage, PLACEABLE, recruitPage, RECRUITABLE, toolsPage } from "./pages";
 import type { BoardContext, PlaceTool } from "./types";
 
 export type CommandBoardHooks = {
   armPlace(tool: PlaceTool | null): void;
+  bumpDiggerRatio(delta: number): void;
+  bumpBricklayerRatio(delta: number): void;
+  destroySelected(): void;
+  clearSelection(): void;
 };
 
 function rootOf(sel: BoardContext["selection"]): "idle" | "units" | "hut" {
@@ -30,7 +34,7 @@ function labelType(type: string): string {
 }
 
 export class CommandBoard {
-  private drill: "build" | "recruit" | null = null;
+  private drill: "build" | "recruit" | "tools" | null = null;
   private root: "idle" | "units" | "hut" = "idle";
   private ctx: BoardContext = {
     selection: { type: "none" },
@@ -38,6 +42,10 @@ export class CommandBoard {
     units: {},
     canCommand: false,
     placeTool: null,
+    diggerRatio: 0.25,
+    diggerCap: 0,
+    bricklayerRatio: 0.25,
+    bricklayerCap: 0,
   };
 
   constructor(private readonly hooks: CommandBoardHooks) {}
@@ -58,6 +66,19 @@ export class CommandBoard {
     return true;
   }
 
+  /**
+   * Fire the enabled slot on the current page whose `hotkey` is `raw`.
+   * Page-local — idle B is Build; L/F/S/W/H/T only exist on the build page.
+   */
+  key(raw: string): boolean {
+    const k = raw.length === 1 ? raw.toLowerCase() : "";
+    if (!k) return false;
+    const slot = this.page.slots.find((s) => s?.enabled && s.hotkey === k);
+    if (!slot) return false;
+    this.invoke(slot.id);
+    return true;
+  }
+
   invoke(id: CommandId): void {
     if (id === "page.build") {
       if (this.root === "idle") this.drill = "build";
@@ -67,8 +88,39 @@ export class CommandBoard {
       if (this.root === "idle") this.drill = "recruit";
       return;
     }
+    if (id === "page.tools") {
+      if (this.root === "idle") this.drill = "tools";
+      return;
+    }
     if (id === "page.back") {
-      this.pop();
+      if (!this.pop()) this.hooks.clearSelection();
+      return;
+    }
+    if (id === "hut.destroy") {
+      const sel = this.ctx.selection;
+      if (this.ctx.canCommand && sel.type === "building" && sel.owned) this.hooks.destroySelected();
+      return;
+    }
+    if (id === "hut.area") {
+      const sel = this.ctx.selection;
+      if (!this.ctx.canCommand || sel.type !== "building" || !sel.owned || !sel.workArea) return;
+      this.hooks.armPlace(this.ctx.placeTool?.type === "workArea" ? null : { type: "workArea" });
+      return;
+    }
+    if (id === "tools.digger.dec") {
+      if (this.ctx.canCommand) this.hooks.bumpDiggerRatio(-1);
+      return;
+    }
+    if (id === "tools.digger.inc") {
+      if (this.ctx.canCommand) this.hooks.bumpDiggerRatio(1);
+      return;
+    }
+    if (id === "tools.bricklayer.dec") {
+      if (this.ctx.canCommand) this.hooks.bumpBricklayerRatio(-1);
+      return;
+    }
+    if (id === "tools.bricklayer.inc") {
+      if (this.ctx.canCommand) this.hooks.bumpBricklayerRatio(1);
       return;
     }
     const kind = parseBuild(id);
@@ -96,8 +148,10 @@ export class CommandBoard {
     if (this.root === "idle") {
       if (this.drill === "build") return buildPage(this.ctx);
       if (this.drill === "recruit") return recruitPage(this.ctx);
-      return idlePage(this.ctx.canCommand);
+      if (this.drill === "tools") return toolsPage(this.ctx);
+      return idlePage(this.ctx);
     }
+    if (this.root === "hut") return hutPage(this.ctx);
     return blankPage(this.root);
   }
 

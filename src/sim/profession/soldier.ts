@@ -2,7 +2,9 @@
  * Swordsman brain. Aggro disk 30; melee is `tickJob` `attack`.
  * Enemy towers are `assault` (door, then garrison, then flip).
  * Empty own towers pull idle infantry (land only stamps while garrisoned).
- * Forced walk (shift-RMB) skips all three until the current path ends.
+ * Forced walk (shift-RMB) skips all three until the queued path ends.
+ * Occupy only when idle — a DEFAULT RMB walk is not yanked to the nearest
+ * empty tower after one step.
  */
 import { hexDist } from "../../shared";
 import { buildingDef } from "../data/buildings";
@@ -16,7 +18,7 @@ import { doorOf, garrisonCount, type ProfessionContext } from "./profession";
 export function tickSoldier(m: Movable, ctx: ProfessionContext): void {
   if (m.inside) return;
   if (m.forcedUntil) {
-    if (m.walking) return;
+    if (m.hasPath || m.headingToward(m.forcedUntil)) return;
     m.forcedUntil = null;
   }
   if (m.job?.type === "attack" || m.job?.type === "occupy" || m.job?.type === "assault") return;
@@ -30,6 +32,7 @@ export function tickSoldier(m: Movable, ctx: ProfessionContext): void {
     m.assignJob({ type: "assault", hutId: tower.id });
     return;
   }
+  if (m.hasPath) return;
   const hut = emptyTower(m, ctx);
   if (!hut) return;
   const door = doorOf(hut);

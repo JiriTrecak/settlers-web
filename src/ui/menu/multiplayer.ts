@@ -24,6 +24,7 @@ export class MultiplayerScreen extends GameScreen {
     onRefresh: () => void;
     onHost: (name: string, mapId: string, slotCount: number) => void;
     onJoin: (roomId: string, name: string) => void;
+    onLoadSaves: (name: string) => void;
     maps: readonly MpMap[];
     mapName: (id: string) => string;
     name: string;
@@ -38,7 +39,23 @@ export class MultiplayerScreen extends GameScreen {
 
     const head = document.createElement("div");
     head.className = "menu-head";
-    head.append(back(hooks.onBack), title("Multiplayer"));
+    const nav = document.createElement("div");
+    nav.className = "menu-head-row";
+    const load = document.createElement("button");
+    load.type = "button";
+    load.className = "menu-back";
+    load.textContent = "Load";
+    load.addEventListener("click", () => {
+      const name = this.name.value.trim();
+      if (!name) {
+        this.setError("Enter a name");
+        this.name.focus();
+        return;
+      }
+      hooks.onLoadSaves(name);
+    });
+    nav.append(back(hooks.onBack), load);
+    head.append(nav, title("Multiplayer"));
 
     this.name = document.createElement("input");
     this.name.className = "menu-btn menu-input";
@@ -194,15 +211,25 @@ export class MultiplayerScreen extends GameScreen {
 export class RoomWaitScreen extends GameScreen {
   private readonly roster: HTMLElement;
   private readonly meta: HTMLElement;
+  private readonly status: HTMLElement;
   private readonly startBtn: HTMLButtonElement | null;
   private readonly mapName: string;
+  private readonly requireFull: boolean;
 
   constructor(
     room: RoomView,
-    hooks: { onStart: () => void; onBack: () => void; host: boolean; mapName: string },
+    hooks: {
+      onStart: () => void;
+      onBack: () => void;
+      host: boolean;
+      mapName: string;
+      /** Host is loading a save — wait for a full roster, button says Load. */
+      load?: boolean;
+    },
   ) {
     super("screen menu");
     this.mapName = hooks.mapName;
+    this.requireFull = hooks.load === true;
     const panel = document.createElement("div");
     panel.className = "menu-panel";
     const head = document.createElement("div");
@@ -210,10 +237,12 @@ export class RoomWaitScreen extends GameScreen {
     head.append(back(hooks.onBack), title(hooks.host ? "Lobby" : "Waiting"));
     this.meta = document.createElement("p");
     this.meta.className = "menu-body";
+    this.status = document.createElement("p");
+    this.status.className = "menu-body";
     this.roster = document.createElement("div");
     this.roster.className = "menu-list";
-    panel.append(head, this.meta, this.roster);
-    this.startBtn = hooks.host ? button("Start", hooks.onStart) : null;
+    panel.append(head, this.meta, this.roster, this.status);
+    this.startBtn = hooks.host ? button(hooks.load ? "Load" : "Start", hooks.onStart) : null;
     if (this.startBtn) panel.append(this.startBtn);
     this.root.append(panel);
     this.onEscape(hooks.onBack);
@@ -222,7 +251,9 @@ export class RoomWaitScreen extends GameScreen {
 
   setView(room: RoomView): void {
     const filled = room.slots.filter((s) => s.name).length;
-    this.meta.textContent = `${this.mapName}  ·  ${filled}/${room.slots.length}`;
+    this.meta.textContent = this.requireFull
+      ? `${this.mapName}  ·  ${filled}/${room.slots.length}  ·  load when full`
+      : `${this.mapName}  ·  ${filled}/${room.slots.length}`;
     this.roster.replaceChildren();
     for (const slot of room.slots) {
       const row = document.createElement("div");
@@ -230,7 +261,13 @@ export class RoomWaitScreen extends GameScreen {
       row.textContent = slot.name ? `P${slot.player + 1}  ${slot.name}` : `P${slot.player + 1}  empty`;
       this.roster.append(row);
     }
-    if (this.startBtn) this.startBtn.disabled = room.state !== "waiting";
+    if (this.startBtn) {
+      this.startBtn.disabled = room.state !== "waiting" || (this.requireFull && filled < room.slots.length);
+    }
+  }
+
+  setError(message: string): void {
+    this.status.textContent = message;
   }
 }
 

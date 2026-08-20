@@ -2,7 +2,7 @@
  * In-process MatchHost room: collect `through` from every playing slot, emit `commit`.
  * MemoryChannel is this Room with no listen port. Node later binds the same class to WS.
  */
-import type { Action, Bundle, MatchConfig, ServerMsg } from "../shared";
+import type { Action, Bundle, MatchConfig, PipelineSnap, ServerMsg } from "../shared";
 
 export class Room {
   private readonly through = new Map<number, number>();
@@ -28,6 +28,33 @@ export class Room {
       const i = this.listeners.indexOf(fn);
       if (i >= 0) this.listeners.splice(i, 1);
     };
+  }
+
+  /** Freeze mailbox for a save. `commits` / `sentThrough` come from Lockstep. */
+  snapshot(): Omit<PipelineSnap, "commits" | "sentThrough"> {
+    const through: PipelineSnap["through"] = [];
+    for (const [player, value] of this.through) through.push({ player, through: value });
+    const held: PipelineSnap["held"] = [];
+    for (const [player, map] of this.held) {
+      for (const [tick, actions] of map) held.push({ player, tick, actions: actions.slice() });
+    }
+    return { committed: this.committed, through, held };
+  }
+
+  /** Resume after load. Does not re-emit already-committed ticks. */
+  resume(snap: Pick<PipelineSnap, "committed" | "through" | "held">): void {
+    this.committed = snap.committed;
+    this.through.clear();
+    for (const slot of this.config.slots) this.through.set(slot.player, 0);
+    for (const t of snap.through) this.through.set(t.player, t.through);
+    this.held.clear();
+    for (const slot of this.config.slots) this.held.set(slot.player, new Map());
+    for (const h of snap.held) {
+      const map = this.held.get(h.player) ?? new Map();
+      this.held.set(h.player, map);
+      map.set(h.tick, h.actions.slice());
+    }
+    this.dropped.clear();
   }
 
   /** Slot confirms it will send no more actions with tick <= `through`. Bundles may be for through+D. */

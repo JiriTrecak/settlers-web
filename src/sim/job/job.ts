@@ -30,6 +30,7 @@ export type Job =
   | { type: "plant"; at: GridPos }
   | { type: "pioneer"; at: GridPos; arrived: boolean }
   | { type: "flatten"; at: GridPos; hutId: number }
+  | { type: "equip"; at: GridPos; tool: Goods; become: SettlerKind; hutId?: number }
   | { type: "attack"; targetId: number }
   | { type: "assault"; hutId: number };
 
@@ -103,7 +104,9 @@ export function workTicksOf(job: Job | null, type: MovableType = "bearer"): numb
     const ms = settlerDef("stonecutter").chopMs;
     return Math.max(1, Math.round((ms ?? 4500) / 25));
   }
-  if (job?.type === "pickup" || job?.type === "drop" || job?.type === "deliver") return BEND_TICKS;
+  if (job?.type === "pickup" || job?.type === "drop" || job?.type === "deliver" || job?.type === "equip") {
+    return BEND_TICKS;
+  }
   return 1;
 }
 
@@ -126,6 +129,7 @@ export function tickJob(m: Movable, ctx: JobContext): void {
   else if (job.type === "plant") tickPlant(m, job, ctx);
   else if (job.type === "pioneer") tickPioneerWork(m, ctx);
   else if (job.type === "flatten") tickFlatten(m, job, ctx);
+  else if (job.type === "equip") tickEquip(m, job, ctx);
   else if (job.type === "saw") tickSaw(m, job.at, ctx);
   else if (job.type === "attack") tickAttack(m, job, ctx);
   else if (job.type === "assault") tickAssault(m, job, ctx);
@@ -267,6 +271,15 @@ function tickSaw(m: Movable, target: GridPos, ctx: JobContext): void {
 }
 
 function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobContext): void {
+  // Pool masons can idle onto the door after occupy was assigned; retarget.
+  if (!isWalkable(ctx.grid, job.at.x, job.at.y, ctx.blockers)) {
+    const stand = nearestWalkable(ctx.grid, job.at, ctx.blockers);
+    if (!stand) {
+      m.idle();
+      return;
+    }
+    job.at = stand;
+  }
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
     walkTo(m, job.at, ctx);
     return;
@@ -284,7 +297,7 @@ function tickOccupy(m: Movable, job: Extract<Job, { type: "occupy" }>, ctx: JobC
   if (m.job) m.idle();
 }
 
-/** Walk onto the bricklayer spot, become, hammer one 1s swing. Progress bumps at swing start. */
+/** Walk onto the bricklayer spot, hammer one 1s swing. Progress bumps at swing start. */
 function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobContext): void {
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
     walkTo(m, job.at, ctx);
@@ -292,8 +305,8 @@ function tickBuild(m: Movable, job: Extract<Job, { type: "build" }>, ctx: JobCon
   }
   if (m.walking) return;
   if (m.type !== "bricklayer") {
-    m.become("bricklayer", job.hutId, ctx.tickMs);
-    m.assignJob(job);
+    m.idle();
+    return;
   }
   m.direction = job.direction;
   const ticks = workTicksOf(m.job, m.type);
@@ -479,6 +492,25 @@ function doorTile(hut: Building): GridPos {
   return { x: hut.pos.x + d.dx, y: hut.pos.y + d.dy };
 }
 
+/** Walk to a tool pile, bend, consume it into the profession (nothing in hand). */
+function tickEquip(m: Movable, job: Extract<Job, { type: "equip" }>, ctx: JobContext): void {
+  const stack = ctx.objects.get(job.at.x, job.at.y);
+  if (!stack || stack.kind !== "stack" || stack.material !== job.tool || stack.capacity < 1) {
+    m.idle();
+    return;
+  }
+  if (!readyToWork(m, job.at, ctx)) return;
+  if (m.action !== "work") {
+    m.beginWork();
+    m.workElapsed = 0;
+  }
+  m.workElapsed += 1;
+  if (m.workElapsed < BEND_TICKS) return;
+  if (stack.capacity <= 1) ctx.objects.remove(job.at.x, job.at.y);
+  else stack.capacity -= 1;
+  m.become(job.become, job.hutId ?? null, ctx.tickMs);
+}
+
 /** Walk onto the cell, kneel 1s, step height ±1 toward the hut's frozen mean. */
 function tickFlatten(m: Movable, job: Extract<Job, { type: "flatten" }>, ctx: JobContext): void {
   const hut = ctx.buildings.get(job.hutId);
@@ -487,13 +519,14 @@ function tickFlatten(m: Movable, job: Extract<Job, { type: "flatten" }>, ctx: Jo
     return;
   }
   if (m.pos.x !== job.at.x || m.pos.y !== job.at.y) {
-    walkTo(m, job.at, ctx);
+    if (walkTo(m, job.at, ctx)) return;
+    if (!m.walking) m.idle();
     return;
   }
   if (m.walking) return;
   if (m.type !== "digger") {
-    m.become("digger", job.hutId, ctx.tickMs);
-    m.assignJob(job);
+    m.idle();
+    return;
   }
   const ticks = workTicksOf(m.job, m.type);
   if (m.action !== "work") {

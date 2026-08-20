@@ -62,6 +62,23 @@ export async function startRoom(id: string, token: string): Promise<void> {
   if (!res.ok) throw new Error(await res.text());
 }
 
+export async function loadRoom(id: string, token: string, save: unknown): Promise<void> {
+  const res = await fetch(matchHttp(`/api/rooms/${encodeURIComponent(id)}/load`), {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify(save),
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+export async function restartRoom(id: string, token: string): Promise<void> {
+  const res = await fetch(matchHttp(`/api/rooms/${encodeURIComponent(id)}/restart`), {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 export async function leaveRoom(id: string, token: string): Promise<void> {
   await fetch(matchHttp(`/api/rooms/${encodeURIComponent(id)}/leave`), {
     method: "POST",

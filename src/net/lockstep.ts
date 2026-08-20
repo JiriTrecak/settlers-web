@@ -46,4 +46,20 @@ export class Lockstep {
     if (commit) this.commits.delete(next);
     return commit;
   }
+
+  /** Unapplied commits in tick order. Save these; World has not `tick()`d them yet. */
+  peek(): Commit[] {
+    return [...this.commits.values()].sort((a, b) => a.tick - b.tick);
+  }
+
+  sent(): number {
+    return this.sentThrough;
+  }
+
+  restore(commits: readonly Commit[], sentThrough: number): void {
+    this.commits.clear();
+    for (const c of commits) this.commits.set(c.tick, c);
+    this.sentThrough = sentThrough;
+    this.pending = [];
+  }
 }

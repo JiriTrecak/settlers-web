@@ -21,9 +21,9 @@ Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate
 | Lobby UI | `src/ui/menu/multiplayer.ts` | One screen: Name, lobby list, Host / Join. Wait roster via WS `room`. |
 | MatchHost process | `server/` on EC2 | Bind `0.0.0.0:8787`. CORS open. `scripts/connect.sh` / `scripts/deploy.sh`. |
 
-**Not built.** Spectate as live commit stream (watch is still a replay file). Desync persist. Steam. nginx/TLS.
+**Not built.** Live commit-stream spectate from tick 0 (catch-up is a save: `start` + last save on bind). Desync persist. Steam. nginx/TLS.
 
-A reviewer treating spectate / Steam as shipped will hallucinate. Those are land order 4+. Mailbox + lobby list on EC2 is real (Multiplayer screen).
+A reviewer treating Steam as shipped will hallucinate. Mailbox + lobby list on EC2 is real (Multiplayer screen). Host load/restart and spectator join-while-playing are real; the spectator Session still needs a save blob, not a commit tail.
 
 Same map + same `MatchConfig` + same committed action log ⇒ same checksum. That is already the engine. Replays are that log. Spectators are a Session with `watching: true` on the same commit stream.
 

@@ -27,6 +27,7 @@ export class MapSelect extends GameScreen {
       onBack: () => void;
       onPick: (id: string, player: number, players: number) => void;
       onReplays: () => void;
+      onSaves: () => void;
       player?: number;
       players?: number;
     },
@@ -57,7 +58,12 @@ export class MapSelect extends GameScreen {
     replays.className = "menu-back";
     replays.textContent = "Replays";
     replays.addEventListener("click", hooks.onReplays);
-    nav.append(back, replays);
+    const saves = document.createElement("button");
+    saves.type = "button";
+    saves.className = "menu-back";
+    saves.textContent = "Load";
+    saves.addEventListener("click", hooks.onSaves);
+    nav.append(back, replays, saves);
     const title = document.createElement("h1");
     title.className = "menu-title";
     title.textContent = "Single player";

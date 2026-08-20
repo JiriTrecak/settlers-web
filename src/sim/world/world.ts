@@ -2,28 +2,31 @@
  * One match's sim: clock, grid, objects, buildings, land, fog, marks, movables.
  * Play loop applies commits via `enqueue(action, tick, envelope)`; render reads `view()`.
  */
-import { HEX_DELTAS, TOWER_RADIUS, isWater, type Action, type GridPos } from "../../shared";
+import { HEX_DELTAS, PLAYER_COLORS, TOWER_RADIUS, isWater, type Action, type GridPos } from "../../shared";
 import { Clock } from "../clock/clock";
 import { TickTimer, type TickTimings } from "../clock/profile";
 import { BuildingGrid, buildingFlag, canPlace, TOWER_DOOR_HP, type Building, type BuildingView } from "../building/building";
 import { averageHeight, constructionMarkValue, flattenTooSteep, footprint, needsFlatten, plotLevel as heightsMatch } from "../building/flatten";
-import { buildingDef, type BuildingKind } from "../data/buildings";
+import { buildingDef, hasWorkArea, type BuildingKind } from "../data/buildings";
 import { settlers, settlerDef, needsPlayersGround, unitViewDistance, isSoldier, type SettlerKind } from "../data/settlers";
 import { tickJob } from "../job/job";
 import { tickMatcher } from "../economy/matcher";
 import { tickConstruction } from "../economy/construction";
-import type { MapGrid } from "../map/mapGrid";
+import { clampRatio, DEFAULT_BRICKLAYER_RATIO, DEFAULT_DIGGER_RATIO } from "../profession/limit";
+import { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
 import { tickTrees } from "../object/tree";
 import { Movable, type MovableView } from "../movable/movable";
 import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
 import { tickProfession, garrisonCount } from "../profession/profession";
-import { seedRng, type Rng } from "../rng/rng";
+import { seedRng, rngFromState, type Rng } from "../rng/rng";
 import { LandGrid, type LandView } from "../land/land";
 import { FogGrid, buildingViewDistance, type FogView, type FogWorld } from "../fog/fog";
 import { MarkGrid } from "../mark/mark";
 import { placeColony } from "../economy/startKit";
+import { decodeI8, decodeU8, encodeI8, encodeU8 } from "./bytes";
+import { parseWorldSnapshot, type WorldSnapshot } from "./snapshot";
 
 export type MatchOutcome = {
   winner: number | null;
@@ -110,6 +113,9 @@ export class World {
   private readonly pending: QueuedAction[] = [];
   private readonly applied: LoggedAction[] = [];
   private readonly hqPlayers = new Set<number>();
+  /** Per-player digger / bricklayer caps as a fraction of civilian workers. */
+  private readonly diggerRatios = new Float32Array(PLAYER_COLORS.length).fill(DEFAULT_DIGGER_RATIO);
+  private readonly bricklayerRatios = new Float32Array(PLAYER_COLORS.length).fill(DEFAULT_BRICKLAYER_RATIO);
   /** Set once a colony HQ is gone. */
   outcome: MatchOutcome | null = null;
 
@@ -124,8 +130,98 @@ export class World {
     this.rng = rng;
   }
 
+  /** Full sim blob. Restore with `fromSnapshot` — does not replay the log. */
+  snapshot(): WorldSnapshot {
+    return {
+      width: this.grid.width,
+      height: this.grid.height,
+      tickIndex: this.clock.tickIndex,
+      rng: this.rng.state(),
+      nextId: this.nextId,
+      nextSeq: this.nextSeq,
+      gridRevision: this.grid.revision,
+      buildingRevision: this.buildings.revision,
+      objectRevision: this.objects.revision,
+      landscape: encodeU8(this.grid.landscape),
+      heightmap: encodeI8(this.grid.heightmap),
+      objects: this.objects.view(),
+      buildings: this.buildings.all().map((b) => b.capture()),
+      units: this.units.map((m) => m.capture()),
+      marks: this.marks.capture(),
+      land: this.land.capture(),
+      fog: this.fog.capture(),
+      fogAt: [...this.fogAt.entries()].map(([id, p]) => ({ id, x: p.x, y: p.y })),
+      hqPlayers: [...this.hqPlayers],
+      diggerRatios: [...this.diggerRatios],
+      bricklayerRatios: [...this.bricklayerRatios],
+      outcome: this.outcome ? { winner: this.outcome.winner, defeated: [...this.outcome.defeated] } : null,
+      pending: this.pending.map((e) => ({ tick: e.tick, player: e.player, action: e.action, seq: e.seq })),
+      applied: this.applied.map((e) => ({ tick: e.tick, player: e.player, action: e.action })),
+    };
+  }
+
+  /** Rebuild a World from `snapshot()`. Null if buffers don't match the map size. */
+  static fromSnapshot(raw: WorldSnapshot): World | null {
+    const snap = parseWorldSnapshot(raw);
+    if (!snap) return null;
+    const n = snap.width * snap.height;
+    const landscape = decodeU8(snap.landscape, n);
+    const heightmap = decodeI8(snap.heightmap, n);
+    if (!landscape || !heightmap) return null;
+    const grid = new MapGrid(snap.width, snap.height);
+    grid.landscape.set(landscape);
+    grid.heightmap.set(heightmap);
+    grid.revision = snap.gridRevision;
+    const objects = new ObjectGrid(snap.width, snap.height);
+    objects.restore(snap.objects, snap.objectRevision);
+    const world = new World(grid, objects, rngFromState(snap.rng));
+    if (!world.loadSnapshot(snap)) return null;
+    return world;
+  }
+
+  private loadSnapshot(snap: WorldSnapshot): boolean {
+    this.clock.tickIndex = snap.tickIndex;
+    this.nextId = snap.nextId;
+    this.nextSeq = snap.nextSeq;
+    this.buildings.restore(snap.buildings, snap.buildingRevision);
+    this.marks.restore(snap.marks);
+    if (!this.land.restore(snap.land, (x, y) => this.landscapeBlocked(x, y))) return false;
+    if (!this.fog.restore(snap.fog)) return false;
+    this.units.length = 0;
+    for (const u of snap.units) this.units.push(Movable.fromSnap(u, this.clock.tickMs, this.marks));
+    this.fogAt.clear();
+    for (const f of snap.fogAt) this.fogAt.set(f.id, { x: f.x, y: f.y });
+    this.hqPlayers.clear();
+    for (const p of snap.hqPlayers) this.hqPlayers.add(p);
+    this.diggerRatios.fill(DEFAULT_DIGGER_RATIO);
+    this.bricklayerRatios.fill(DEFAULT_BRICKLAYER_RATIO);
+    for (let i = 0; i < snap.diggerRatios.length && i < this.diggerRatios.length; i++) {
+      this.diggerRatios[i] = snap.diggerRatios[i]!;
+    }
+    for (let i = 0; i < snap.bricklayerRatios.length && i < this.bricklayerRatios.length; i++) {
+      this.bricklayerRatios[i] = snap.bricklayerRatios[i]!;
+    }
+    this.outcome = snap.outcome ? { winner: snap.outcome.winner, defeated: [...snap.outcome.defeated] } : null;
+    this.pending.length = 0;
+    for (const e of snap.pending) this.pending.push({ tick: e.tick, player: e.player, action: e.action, seq: e.seq });
+    this.applied.length = 0;
+    for (const e of snap.applied) this.applied.push({ tick: e.tick, player: e.player, action: e.action });
+    this.syncOcc();
+    return true;
+  }
+
   spawnBearer(at?: GridPos, player = 0): Movable {
     return this.spawnSettler("bearer", at, player);
+  }
+
+  /** Fraction of civilian workers allowed to be diggers. Default 0.25. */
+  diggerRatio(player: number): number {
+    return this.diggerRatios[player] ?? DEFAULT_DIGGER_RATIO;
+  }
+
+  /** Fraction of civilian workers allowed to be bricklayers. Default 0.25. */
+  bricklayerRatio(player: number): number {
+    return this.bricklayerRatios[player] ?? DEFAULT_BRICKLAYER_RATIO;
   }
 
   /** Colony start tower. Capture or destroy knocks that slot out; match ends when one HQ remains. */
@@ -192,6 +288,18 @@ export class World {
   }
 
   /**
+   * Move the outdoor search circle. Radius stays `def.workRadius`. No-op on
+   * indoor huts (`workRadius` 0) and out-of-bounds centers.
+   */
+  setWorkArea(at: GridPos, center: GridPos): boolean {
+    const hut = this.buildings.at(at.x, at.y);
+    if (!hut || !hasWorkArea(hut.kind)) return false;
+    if (!this.grid.inBounds(center.x, center.y)) return false;
+    hut.work = { x: center.x, y: center.y };
+    return true;
+  }
+
+  /**
    * Instant remove. Unstamps fog + occupy land, kicks the worker out as a
    * bearer, cancels jobs aimed at this hut. Sight dims toward 50 on the next ticks.
    */
@@ -210,7 +318,10 @@ export class World {
       if (m.workplaceId === hut.id) {
         m.leave();
         const worker = buildingDef(hut.kind).worker;
-        if (worker && m.type === worker) m.become("bearer", null, this.clock.tickMs);
+        if (m.type === "bricklayer") {
+          m.workplaceId = null;
+          m.idle();
+        } else if (worker && m.type === worker) m.become("bearer", null, this.clock.tickMs);
         else m.workplaceId = null;
       } else if (m.job && "hutId" in m.job && m.job.hutId === hut.id) {
         m.idle();
@@ -357,6 +468,8 @@ export class World {
       mix(b.flattenHeight);
       mix(b.hq ? 1 : 0);
       mix(b.doorHealth | 0);
+      mix(b.work.x);
+      mix(b.work.y);
     }
     mix(this.outcome?.winner ?? -1);
     mix(this.outcome?.defeated.length ?? 0);
@@ -367,6 +480,8 @@ export class World {
       for (let x = 0; x < this.land.width; x++) mix(this.land.playerAt(x, y));
     }
     mix(this.grid.revision);
+    for (let i = 0; i < this.diggerRatios.length; i++) mix(Math.round(this.diggerRatios[i]! * 100));
+    for (let i = 0; i < this.bricklayerRatios.length; i++) mix(Math.round(this.bricklayerRatios[i]! * 100));
     for (let i = 0; i < this.grid.heightmap.length; i++) {
       mix(this.grid.heightmap[i]!);
       mix(this.grid.landscape[i]!);
@@ -420,10 +535,13 @@ export class World {
       buildings: this.buildings,
       objects: this.objects,
       grid: this.grid,
+      land: this.land,
       marks: this.marks,
       rng: this.rng,
       blockers: (ignoreId) => this.blockers(ignoreId),
       tickMs: this.clock.tickMs,
+      diggerRatio: (p) => this.diggerRatio(p),
+      bricklayerRatio: (p) => this.bricklayerRatio(p),
     });
     this.syncOcc();
     t.mark("construction");
@@ -486,11 +604,13 @@ export class World {
       action.type === "placeColony" ||
       action.type === "placeBuilding" ||
       action.type === "occupy" ||
-      action.type === "spawnUnit"
+      action.type === "spawnUnit" ||
+      action.type === "setDiggerRatio" ||
+      action.type === "setBricklayerRatio"
     ) {
       return action.player == null || action.player === player;
     }
-    if (action.type === "destroyBuilding") {
+    if (action.type === "destroyBuilding" || action.type === "setWorkArea") {
       const hut = this.buildings.at(action.at.x, action.at.y);
       if (!hut) return false;
       return hut.player === player;
@@ -505,11 +625,13 @@ export class World {
       action.type === "placeColony" ||
       action.type === "placeBuilding" ||
       action.type === "occupy" ||
-      action.type === "spawnUnit"
+      action.type === "spawnUnit" ||
+      action.type === "setDiggerRatio" ||
+      action.type === "setBricklayerRatio"
     ) {
       return action.player ?? 0;
     }
-    if (action.type === "destroyBuilding") {
+    if (action.type === "destroyBuilding" || action.type === "setWorkArea") {
       return this.buildings.at(action.at.x, action.at.y)?.player ?? 0;
     }
     if (action.type === "noop") return 0;
@@ -536,9 +658,23 @@ export class World {
       this.destroyBuilding(action.at);
       return;
     }
+    if (action.type === "setWorkArea") {
+      this.setWorkArea(action.at, action.center);
+      return;
+    }
     if (action.type === "spawnUnit") {
       const n = Math.min(100, Math.max(1, action.count ?? 1));
       for (let i = 0; i < n; i++) this.spawnSettler(action.kind, action.at, player);
+      return;
+    }
+    if (action.type === "setDiggerRatio") {
+      if (player < 0 || player >= this.diggerRatios.length) return;
+      this.diggerRatios[player] = clampRatio(action.ratio);
+      return;
+    }
+    if (action.type === "setBricklayerRatio") {
+      if (player < 0 || player >= this.bricklayerRatios.length) return;
+      this.bricklayerRatios[player] = clampRatio(action.ratio);
       return;
     }
     const m = this.units.find((u) => u.id === action.id);
@@ -690,21 +826,27 @@ export class World {
   }
 
   private unitBlockers(m: Movable): Blockers {
-    let walkHut: number | undefined;
-    if (m.type === "digger" && m.workplaceId != null) walkHut = m.workplaceId;
-    if (m.job?.type === "flatten") walkHut = m.job.hutId;
-    return this.blockers(m.id, this.groundPlayer(m.type, m.player), walkHut);
+    const walkHuts: number[] = [];
+    if (m.type === "digger" && m.workplaceId != null) walkHuts.push(m.workplaceId);
+    if (m.job?.type === "flatten") walkHuts.push(m.job.hutId);
+    // Protected skirt is walkable for everyone — only a blocked cell needs an exit path.
+    if (this.buildings.blocks(m.pos.x, m.pos.y)) {
+      const here = this.buildings.at(m.pos.x, m.pos.y);
+      if (here) walkHuts.push(here.id);
+    }
+    return this.blockers(m.id, this.groundPlayer(m.type, m.player), walkHuts);
   }
 
   private groundPlayer(kind: SettlerKind, player: number): number | undefined {
     return needsPlayersGround(kind) ? player : undefined;
   }
 
-  /** Objects + buildings + land. Occupancy is `occupied` — BFS walks through units. Diggers walk their hut's footprint, stacks included. */
-  private blockers(ignoreId = 0, player?: number, walkHutId?: number): Blockers {
+  /** Objects + buildings + land. Occupancy is `occupied` — BFS walks through units. Diggers walk their flatten hut; anyone already on a blocked cell can walk that hut to leave. */
+  private blockers(ignoreId = 0, player?: number, walkHutIds: readonly number[] = []): Blockers {
     return {
       blocks: (x, y) => {
-        const onHut = walkHutId != null && this.buildings.at(x, y)?.id === walkHutId;
+        const hut = this.buildings.at(x, y);
+        const onHut = hut != null && walkHutIds.includes(hut.id);
         if (!onHut && this.objects.blocks(x, y)) return true;
         if (!onHut && this.buildings.blocks(x, y)) return true;
         if (player != null && !this.land.owns(x, y, player)) return true;

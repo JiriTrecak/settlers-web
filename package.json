@@ -16,6 +16,7 @@
     "dump:graphics": "vite-node original_conv/dump-graphics.ts",
     "dump:stacks": "vite-node original_conv/dump-stacks.ts",
     "dump:flags": "vite-node original_conv/dump-flags.ts",
+    "dump:work-area": "vite-node original_conv/dump-work-area.ts",
     "dump:landscape-atlas": "vite-node original_conv/dump-landscape-atlas.ts",
     "dump:maps": "vite-node original_conv/dump-maps.ts"
   },

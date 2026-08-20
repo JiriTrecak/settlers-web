@@ -1,7 +1,8 @@
 /**
  * Idle flock: jobless units step away from neighbors (and the map edge).
  * House spawn only clears the door; this is what actually spreads the crowd.
- * Soldiers/pioneers skip mill, but they still peel off a shared hex.
+ * Soldiers/pioneers skip mill, but they still peel off a shared hex when idle
+ * (a live walk queue is not replaced with one random step).
  */
 import { approxDirection, deltaOf, DIRECTIONS, hexDist, neighborDir, type Direction } from "../../shared";
 import type { BuildingGrid } from "../building/building";
@@ -28,7 +29,7 @@ const FLOCK_DELAY_MIN = 500;
 const FLOCK_DELAY_MAX = 1000;
 
 export function tickFlock(m: Movable, ctx: FlockContext): void {
-  if (m.job || m.walking || m.inside || m.health <= 0) return;
+  if (m.job || m.hasPath || m.inside || m.health <= 0) return;
   if (stackedOn(m, ctx)) {
     stepRandomFree(m, ctx);
     return;

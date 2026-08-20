@@ -12,6 +12,7 @@ import { markOf, workTicksOf } from "../job/job";
 import type { MarkGrid } from "../mark/mark";
 import type { MapGrid } from "../map/mapGrid";
 import { findPath, isWalkable, nearestWalkable, type Blockers } from "../path/path";
+import type { MovableSnap } from "../world/snapshot";
 
 export type MovableType = SettlerKind;
 export type MovableAction = "idle" | "walk" | "work";
@@ -99,6 +100,64 @@ export class Movable {
     this.health = start.health ?? 100;
   }
 
+  /** Full unit blob. Private walk/job fields so restore continues the same step. */
+  capture(): MovableSnap {
+    return {
+      id: this.id,
+      type: this.type,
+      workplaceId: this.workplaceId,
+      pos: { x: this.pos.x, y: this.pos.y },
+      from: { x: this.from.x, y: this.from.y },
+      direction: this.direction,
+      action: this.action,
+      moveProgress: this.moveProgress,
+      stepTicks: this.stepTicks,
+      player: this.player,
+      job: this.job ? structuredClone(this.job) : null,
+      workElapsed: this.workElapsed,
+      material: this.material,
+      restLeft: this.restLeft,
+      inside: this.inside,
+      flockDelayMs: this.flockDelayMs,
+      flockLeft: this.flockLeft,
+      health: this.health,
+      forcedUntil: this.forcedUntil ? { x: this.forcedUntil.x, y: this.forcedUntil.y } : null,
+      queue: this.queue.map((p) => ({ x: p.x, y: p.y })),
+      stepElapsed: this.stepElapsed,
+      stepping: this.stepping,
+      marked: this.marked ? { x: this.marked.x, y: this.marked.y } : null,
+      pathFail: this.pathFail ? { x: this.pathFail.x, y: this.pathFail.y } : null,
+      pathRetry: this.pathRetry,
+    };
+  }
+
+  /** Rebuild from a snapshot. Marks are restored on the grid separately — do not re-claim. */
+  static fromSnap(s: MovableSnap, tickMs: number, marks: MarkGrid | null): Movable {
+    const def = settlerDef(s.type);
+    const m = new Movable(s.id, s.type, { x: s.pos.x, y: s.pos.y }, def.stepMs, tickMs, s.player, s.workplaceId, marks);
+    m.from = { x: s.from.x, y: s.from.y };
+    m.direction = s.direction;
+    m.action = s.action;
+    m.moveProgress = s.moveProgress;
+    m.stepTicks = s.stepTicks;
+    m.job = s.job ? structuredClone(s.job) : null;
+    m.workElapsed = s.workElapsed;
+    m.material = s.material;
+    m.restLeft = s.restLeft;
+    m.inside = s.inside;
+    m.flockDelayMs = s.flockDelayMs;
+    m.flockLeft = s.flockLeft;
+    m.health = s.health;
+    m.forcedUntil = s.forcedUntil ? { x: s.forcedUntil.x, y: s.forcedUntil.y } : null;
+    m.queue = s.queue.map((p) => ({ x: p.x, y: p.y }));
+    m.stepElapsed = s.stepElapsed;
+    m.stepping = s.stepping;
+    m.marked = s.marked ? { x: s.marked.x, y: s.marked.y } : null;
+    m.pathFail = s.pathFail ? { x: s.pathFail.x, y: s.pathFail.y } : null;
+    m.pathRetry = s.pathRetry;
+    return m;
+  }
+
   view(): MovableView {
     const workTicks = workTicksOf(this.job, this.type);
     return {
@@ -126,6 +185,11 @@ export class Movable {
     return this.stepping;
   }
 
+  /** In-flight step or remaining waypoints. `walking` is false between steps when the next hex is busy. */
+  get hasPath(): boolean {
+    return this.stepping || this.queue.length > 0;
+  }
+
   /** Replace the remaining path. The current tile-step always finishes. Drops the job. */
   goTo(grid: MapGrid, to: GridPos, blockers?: Blockers): void {
     this.clearJob();
@@ -146,7 +210,7 @@ export class Movable {
     this.inside = false;
   }
 
-  /** Profession swap. `workplaceId` is null when reverting bricklayer → bearer. Enters if `restMs`. */
+  /** Profession swap. Cap extras go bearer and drop the tool. Enters if `restMs`. */
   become(kind: SettlerKind, workplaceId: number | null, tickMs: number): void {
     this.type = kind;
     this.workplaceId = workplaceId;

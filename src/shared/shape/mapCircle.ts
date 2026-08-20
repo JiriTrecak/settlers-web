@@ -1,9 +1,10 @@
 /**
- * Occupying-building influence disk. Axial distance so the six neighbors of
- * the center sit at ~1; radius 40 is a finished tower.
+ * Occupying-building influence disk and outdoor work circle. Axial distance so
+ * the six neighbors of the center sit at ~1; radius 40 is a finished tower.
  *
  * `forEachTile` is the fill used to stamp land. `contains` is the closed disk
  * (squared distance). They can disagree by a tile on the rim — occupy uses fill.
+ * Work-area overlay uses four concentric borders (`forEachWorkAreaMark`).
  */
 export const TOWER_RADIUS = 40;
 
@@ -58,6 +59,31 @@ export function forEachCircleTile(cx: number, cy: number, radius: number, visit:
       xOff = -half;
     }
   }
+}
+
+/** Work-area overlay: four concentric rims, inner→outer. Progress 0..1 picks the mark frame. */
+export const WORK_AREA_RINGS = 4;
+
+/**
+ * Visit every rim tile of the four work-area circles. Outer wins when rims share a
+ * tile. Center is never included — these are borders, not a fill.
+ */
+export function forEachWorkAreaMark(
+  cx: number,
+  cy: number,
+  radius: number,
+  visit: (x: number, y: number, progress: number) => void,
+): void {
+  const r = Math.fround(radius);
+  if (!(r > 0)) return;
+    const last = new Map<string, { x: number; y: number; progress: number }>();
+    for (let circle = 1; circle <= WORK_AREA_RINGS; circle++) {
+      const progress = (circle - 1) / (WORK_AREA_RINGS - 1);
+      forEachCircleBorder(cx, cy, r * (circle / WORK_AREA_RINGS), (x, y) => {
+        last.set(`${x},${y}`, { x, y, progress });
+      });
+    }
+  for (const m of last.values()) visit(m.x, m.y, m.progress);
 }
 
 /** Rim tiles: in the disk, not in radius-1. */

@@ -20,3 +20,8 @@ export type BuildingKind = keyof typeof buildings;
 export function buildingDef<K extends BuildingKind>(kind: K): (typeof buildings)[K] {
   return buildings[kind];
 }
+
+/** Outdoor gatherers / planters (lumberjack, stonecutter, forester, later fisherman / grain). */
+export function hasWorkArea(kind: BuildingKind): boolean {
+  return buildingDef(kind).workRadius > 0;
+}

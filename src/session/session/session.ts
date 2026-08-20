@@ -2,6 +2,7 @@
  * One match: load map, subscribe widgets, tick renderer/input.
  * Lives inside `PlayScreen`. `stop()` tears down Pixi world + DOM widgets.
  * Replay mode rebuilds World from the recorded log; Space is play/pause.
+ * Save mode restores a snapshot; F10 is save / load / restart / end.
  */
 import type { Application, Texture } from "pixi.js";
 import { gridToWorld, localMatch, type Action, type GridPos, type MatchConfig } from "../../shared";
@@ -21,6 +22,11 @@ import {
   emptyTickTimings,
   isControllable,
   buildingDef,
+  hasWorkArea,
+  DEFAULT_BRICKLAYER_RATIO,
+  DEFAULT_DIGGER_RATIO,
+  diggerCap,
+  workerCount,
   type MapView,
   type MapDecoration,
   type MapStart,
@@ -31,14 +37,17 @@ import { Renderer, loadLandscapeAtlas, loadDecorationSheets, loadBuildingSheets,
 import type { BuildingSheets } from "../../render/building/buildingSheets";
 import type { DecorationSheets } from "../../render/decoration/decorationSheets";
 import type { SettlerSheets } from "../../render/settler/settlerSheets";
-import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, debugFrom, type GameSpeed, type HudState } from "../../ui";
+import { Minimap, SpeedControl, GameControlPanel, ReplayTimeline, PauseMenu, debugFrom, DEFAULT_GAME_SPEED, type GameSpeed, type HudState } from "../../ui";
 import { CommandBoard } from "../command/board";
 import { loadCatalogPaths } from "../command/catalog";
-import type { BoardContext, PlaceTool } from "../command/types";
+import type { BoardContext, CountPair, PlaceTool } from "../command/types";
 import { MapInput } from "../input/mapInput";
 import { tilesAround, type ScreenPt } from "../input/boxSelect";
 import { fetchDumpedMap, type MapCatalogEntry } from "../maps/maps";
 import { Opponent } from "../opponent/opponent";
+import { capturePipeline, makeSaveFile, parseSaveFile, restoreWorld, saveInfo, savesForMode, type SaveFile } from "../save/save";
+import type { SaveStore } from "../save/store";
+import { PauseBoard, type PauseCommand } from "../pause/board";
 import {
   DEFAULT_WORLD_SEED,
   makeReplayFile,
@@ -51,6 +60,10 @@ export type SessionHooks = {
   onClaiming?(on: boolean): void;
   /** Live match: first Victory/Defeat. Not called in watch mode. */
   onReplay?(file: ReplayFile): void;
+  onSave?(file: SaveFile): void;
+  onEnd?(): void;
+  onRestart?(): void;
+  onLoad?(file: SaveFile): void;
 };
 
 export type SessionConfig = {
@@ -66,6 +79,12 @@ export type SessionConfig = {
   match?: MatchConfig;
   /** Watch this file instead of playing. No commands, no opponent script. */
   replay?: ReplayFile;
+  /** Restore this snapshot instead of stamping kits. */
+  save?: SaveFile;
+  /** Local shelf. Pause menu lists these; `onSave` persists a new file. */
+  saves?: SaveStore;
+  /** Host seat (player 0). MP load/restart only fire from this client. */
+  host?: boolean;
   hooks: SessionHooks;
 };
 
@@ -105,9 +124,12 @@ export class Session {
   private board: CommandBoard | null = null;
   private boardPaint = "";
   private timeline: ReplayTimeline | null = null;
+  private pauseMenu: PauseMenu | null = null;
+  private readonly pause = new PauseBoard();
+  private menuPaused = false;
   private input: MapInput | null = null;
   private acc = 0;
-  private speed: GameSpeed = 1;
+  private speed: GameSpeed = DEFAULT_GAME_SPEED;
   private paused = false;
   private recorded = false;
   private duration = 0;
@@ -126,9 +148,13 @@ export class Session {
   private readonly opponents: Opponent[] = [];
   private readonly channels: MemoryChannel[] = [];
   private readonly locksteps = new Map<number, Lockstep>();
+  private room: Room | null = null;
+  private match: MatchConfig | null = null;
   /** Local place clicks, drawn until the Room commit lands (or `until`). Not sim. */
   private readonly pendingPlans: { id: number; kind: BuildingKind; at: GridPos; until: number }[] = [];
   private nextPendingId = -1;
+  /** Local work-area click, drawn until the commit lands. */
+  private pendingWork: { at: GridPos; center: GridPos } | null = null;
   private desynced = false;
   private checksumEvery = 8;
   /** Wall-clock origin for MP confirms. Pixi rAF sleeps in an unfocused tab; this must not. */
@@ -163,6 +189,10 @@ export class Session {
     // Widgets own their input; we only subscribe.
     this.board = new CommandBoard({
       armPlace: (tool) => this.armPlace(tool),
+      bumpDiggerRatio: (dir) => this.bumpDiggerRatio(dir),
+      bumpBricklayerRatio: (dir) => this.bumpBricklayerRatio(dir),
+      destroySelected: () => this.deleteSelected(),
+      clearSelection: () => this.clearBoardSelection(),
     });
     this.panel = new GameControlPanel(this.overlay, {
       onCommand: (id) => {
@@ -177,6 +207,7 @@ export class Session {
     const remote = this.config.channel != null;
     if (!watching && !remote) {
       this.speedControl = new SpeedControl(this.overlay, {
+        speed: this.speed,
         onSpeed: (speed) => {
           this.speed = speed;
         },
@@ -195,17 +226,25 @@ export class Session {
       onDelete: () => this.deleteSelected(),
       onConvert: () => this.convertSelected(),
       onEnlist: () => this.enlistSelected(),
+      onHotkey: (key) => {
+        const hit = this.board?.key(key) ?? false;
+        if (hit) this.syncBoard();
+        return hit;
+      },
     });
+    if (!watching) this.bindPause();
 
-    const { grid, objects, waves, starts } = await this.loadGrid(this.mapId);
+    const loaded = await this.loadGrid(this.mapId);
     if (!this.renderer) return;
-    this.waves = waves;
+    this.waves = loaded.waves;
     const file = this.config.replay;
-    this.worldSeed = file?.seed ?? this.config.match?.seed ?? DEFAULT_WORLD_SEED;
-    const world = new World(grid, objects, seedRng(this.worldSeed));
-    this.world = world;
+    const save = this.config.save;
+    this.worldSeed = file?.seed ?? save?.seed ?? this.config.match?.seed ?? DEFAULT_WORLD_SEED;
+    let world: World;
     if (file) {
-      this.pristine = { grid: grid.clone(), objects: objects.clone() };
+      world = new World(loaded.grid, loaded.objects, seedRng(this.worldSeed));
+      this.world = world;
+      this.pristine = { grid: loaded.grid.clone(), objects: loaded.objects.clone() };
       this.duration = file.duration;
       this.me = file.me;
       world.replay(file.log, 0);
@@ -222,56 +261,20 @@ export class Session {
         },
         { players: replayPlayers(file), player: this.me },
       );
+    } else if (save) {
+      const restored = restoreWorld(save);
+      if (!restored) throw new Error("bad save");
+      world = restored;
+      this.world = world;
+      this.waves = waveDecorations(mapViewFromGrid(world.grid));
+      await this.beginLive(loaded.starts, loaded.grid, save);
     } else {
-      const listed = this.config.catalog.find((m) => m.id === this.mapId)?.players ?? 1;
-      const cap = mapStartCap(starts.length, listed);
-      const remoteMatch = this.config.match;
-      const n = remoteMatch
-        ? remoteMatch.slots.length
-        : clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
-      const startsAt = matchStarts(starts, n, grid);
-      this.me = remoteMatch
-        ? this.config.player
-        : n <= 1
-          ? this.config.player
-          : Math.min(Math.max(0, this.config.player), n - 1);
-      const entry = this.config.catalog.find((m) => m.id === this.mapId);
-      const mapRevision = entry?.file ?? this.mapId;
-      if (remoteMatch && remoteMatch.mapRevision !== mapRevision && remoteMatch.mapRevision !== this.mapId) {
-        throw new Error(`mapRevision ${remoteMatch.mapRevision} ≠ ${mapRevision}`);
-      }
-      const match =
-        remoteMatch ??
-        localMatch({
-          mapId: this.mapId,
-          mapRevision,
-          seed: this.worldSeed,
-          slotCount: n,
-          me: this.me,
-        });
-      if (remoteMatch) {
-        this.bindRemote(match, this.config.channel!);
-      } else {
-        this.bindLockstep(match);
-      }
-      for (const slot of match.slots) {
-        const at = n <= 1 ? startsAt[0]! : startsAt[slot.player]!;
-        world.dispatch({ type: "placeColony", at, player: slot.player });
-      }
-      if (!remoteMatch) {
-        for (const slot of match.slots) {
-          if (slot.player === this.me) continue;
-          const home = startsAt[slot.player]!;
-          this.opponents.push(
-            new Opponent(slot.player, home, startsAt[this.me] ?? home, (action) => this.send(action, slot.player)),
-          );
-        }
-      } else {
-        this.config.channel!.send({ type: "ready" });
-      }
+      world = new World(loaded.grid, loaded.objects, seedRng(this.worldSeed));
+      this.world = world;
+      this.beginLive(loaded.starts, loaded.grid);
     }
     this.view = mapViewFromGrid(world.grid);
-    this.renderer.setView(this.view, waves, false);
+    this.renderer.setView(this.view, this.waves, false);
     this.minimap.setView(this.view);
     // Native 1× on the local HQ. Space still fits the whole map (live); replay uses Space for pause.
     this.renderer.camera.zoom = 1;
@@ -296,8 +299,68 @@ export class Session {
     this.locksteps.get(player)?.send(action);
   }
 
+  /** Stamp kits or restore a save, then bind lockstep / opponents. */
+  private beginLive(starts: MapStart[], grid: ReturnType<typeof generateMap>, save?: SaveFile): void {
+    const world = this.world;
+    if (!world) return;
+    const listed = this.config.catalog.find((m) => m.id === this.mapId)?.players ?? 1;
+    const cap = mapStartCap(starts.length, listed);
+    const remoteMatch = this.config.match ?? save?.match;
+    const n = remoteMatch
+      ? remoteMatch.slots.length
+      : clampMatchPlayers(this.config.players ?? (cap >= 2 ? 2 : 1), cap);
+    const startsAt = matchStarts(starts, n, grid);
+    this.me = remoteMatch
+      ? this.config.player
+      : n <= 1
+        ? this.config.player
+        : Math.min(Math.max(0, this.config.player), n - 1);
+    const entry = this.config.catalog.find((m) => m.id === this.mapId);
+    const mapRevision = entry?.file ?? this.mapId;
+    if (remoteMatch && remoteMatch.mapRevision !== mapRevision && remoteMatch.mapRevision !== this.mapId) {
+      throw new Error(`mapRevision ${remoteMatch.mapRevision} ≠ ${mapRevision}`);
+    }
+    const match =
+      remoteMatch ??
+      localMatch({
+        mapId: this.mapId,
+        mapRevision,
+        seed: this.worldSeed,
+        slotCount: n,
+        me: this.me,
+      });
+    this.match = match;
+    if (this.config.channel) {
+      this.bindRemote(match, this.config.channel);
+    } else {
+      this.bindLockstep(match);
+    }
+    if (save) {
+      this.installPipeline(save);
+    } else {
+      for (const slot of match.slots) {
+        const at = n <= 1 ? startsAt[0]! : startsAt[slot.player]!;
+        world.dispatch({ type: "placeColony", at, player: slot.player });
+      }
+    }
+    if (!this.config.channel) {
+      this.opponents.length = 0;
+      for (const slot of match.slots) {
+        if (slot.player === this.me) continue;
+        const home = this.hqOf(slot.player) ?? startsAt[slot.player]!;
+        const target = this.hqOf(this.me) ?? startsAt[this.me] ?? home;
+        this.opponents.push(new Opponent(slot.player, home, target, (action) => this.send(action, slot.player)));
+      }
+    } else {
+      this.config.channel.send({ type: "ready" });
+      this.armConfirms(match);
+    }
+  }
+
   private bindLockstep(match: MatchConfig): void {
     const room = new Room(match);
+    this.room = room;
+    this.match = match;
     for (const slot of match.slots) {
       const ch = new MemoryChannel(room, slot.player);
       this.channels.push(ch);
@@ -307,6 +370,7 @@ export class Session {
 
   private bindRemote(match: MatchConfig, channel: Channel): void {
     this.checksumEvery = match.checksumEvery;
+    this.match = match;
     const wrapped: Channel = {
       send: (msg) => channel.send(msg),
       onMessage: (fn) => {
@@ -315,14 +379,139 @@ export class Session {
             this.desynced = true;
             this.paused = true;
           }
+          if (msg.type === "load" || (msg.type === "start" && msg.save != null)) {
+            const file = parseSaveFile(msg.save);
+            if (file) this.applySave(file);
+            else {
+              this.desynced = true;
+              this.paused = true;
+            }
+          }
+          if (msg.type === "restart") this.applyRestart(msg.config);
           fn(msg);
         });
       },
     };
     this.locksteps.set(this.me, new Lockstep(wrapped, this.me, match.delay));
+  }
+
+  /** MP confirms on a timer. Call after pipeline restore so we do not confirm from tick 0. */
+  private armConfirms(match: MatchConfig): void {
+    if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.matchStartMs = performance.now();
     this.confirmTimer = setInterval(() => this.pulseConfirm(), match.tickMs);
     this.pulseConfirm();
+  }
+
+  private bindPause(): void {
+    this.pauseMenu = new PauseMenu(this.overlay, {
+      onToggle: () => this.togglePause(),
+      onBack: () => {
+        this.pause.back();
+        this.syncPause();
+      },
+      onSave: () => {
+        this.pause.openSave(this.mapLabel());
+        this.syncPause();
+      },
+      onLoad: () => {
+        this.pause.openLoad();
+        this.syncPause();
+      },
+      onEnd: () => {
+        this.pause.askEnd();
+        this.syncPause();
+      },
+      onRestart: () => {
+        this.pause.askRestart();
+        this.syncPause();
+      },
+      onPick: (id) => {
+        const file = this.config.saves?.get(id);
+        if (!file) return;
+        this.pause.pick(id, file.name);
+        this.syncPause();
+      },
+      onName: (name) => this.pause.setName(name),
+      onSubmitSave: () => this.runPause(this.pause.submitSave(this.saveNameTaken(this.pause.current.name))),
+      onConfirm: () => this.runPause(this.pause.confirm()),
+      onCancel: () => {
+        this.pause.cancelConfirm();
+        this.syncPause();
+      },
+    });
+  }
+
+  private togglePause(): void {
+    if (this.watching) return;
+    this.pause.toggle();
+    this.syncPause();
+  }
+
+  private saveNameTaken(name: string): boolean {
+    const n = name.trim().toLowerCase();
+    if (!n) return false;
+    return this.modeSaves().some((f) => f.name.trim().toLowerCase() === n);
+  }
+
+  private hostSeat(): boolean {
+    return this.config.channel == null || this.config.host === true;
+  }
+
+  private remoteSave(): boolean {
+    return this.config.channel != null;
+  }
+
+  private modeSaves(): SaveFile[] {
+    return savesForMode(this.config.saves?.list() ?? [], this.remoteSave());
+  }
+
+  private syncPause(): void {
+    if (!this.desynced && !this.config.channel && !this.watching) {
+      if (this.pause.open) {
+        if (!this.paused) this.menuPaused = true;
+        this.paused = true;
+      } else if (this.menuPaused) {
+        this.paused = false;
+        this.menuPaused = false;
+      }
+    }
+    this.pauseMenu?.setView(this.pause.current, {
+      files: this.modeSaves().map(saveInfo),
+      canLoad: this.hostSeat(),
+      canRestart: this.hostSeat(),
+      remote: this.remoteSave(),
+    });
+  }
+
+  private runPause(cmd: PauseCommand): void {
+    this.syncPause();
+    if (cmd.type === "idle") return;
+    if (cmd.type === "save") {
+      this.saveGame(cmd.name);
+      this.pause.close();
+      this.syncPause();
+      return;
+    }
+    if (cmd.type === "load") {
+      const file = this.config.saves?.get(cmd.id);
+      if (file && file.remote === this.remoteSave()) this.requestLoad(file);
+      return;
+    }
+    if (cmd.type === "end") this.requestEnd();
+    if (cmd.type === "restart") this.requestRestart();
+  }
+
+  private installPipeline(save: SaveFile): void {
+    this.room?.resume(save.pipeline);
+    for (const ls of this.locksteps.values()) {
+      const through = save.pipeline.through.find((t) => t.player === ls.player)?.through ?? save.pipeline.sentThrough;
+      ls.restore(save.pipeline.commits, through);
+    }
+  }
+
+  private hqOf(player: number): GridPos | undefined {
+    return this.world?.buildings.all().find((b) => b.player === player && b.hq)?.pos;
   }
 
   /**
@@ -483,8 +672,13 @@ export class Session {
     if (this.world) this.syncMinimap(this.look(this.world), false);
   }
 
-  /** Esc: drop the build ghost, then the build page, then the claim tool, then the unit, then the hut highlight. */
+  /** Esc: pause stack, then build ghost, then page, then claim, then unit, then hut. */
   deselect(): void {
+    if (this.pause.open) {
+      this.pause.back();
+      this.syncPause();
+      return;
+    }
     if (this.placeTool) {
       this.armPlace(null);
       return;
@@ -508,6 +702,15 @@ export class Session {
       this.renderer?.highlight(null);
       this.syncBoard();
     }
+  }
+
+  /** Panel Cancel: drop unit / hut selection. Not the Esc peel (ghost, drill, claim). */
+  private clearBoardSelection(): void {
+    if (this.placeTool?.type === "workArea") this.armPlace(null);
+    if (this.selectedUnitIds.length === 0 && !this.selected) return;
+    this.selectedUnitIds = [];
+    this.selected = null;
+    this.syncSelectionVisual();
   }
 
   /** C: bearer → pioneer, or pioneer → bearer (own land, empty-handed). Every selected unit. */
@@ -542,7 +745,9 @@ export class Session {
     if (!hut || hut.player !== this.me) return;
     this.send({ type: "destroyBuilding", at: this.selected });
     this.selected = null;
+    this.pendingWork = null;
     this.renderer?.highlight(null);
+    this.renderer?.setWorkArea(null, 0);
     this.syncBoard();
   }
 
@@ -563,12 +768,16 @@ export class Session {
     this.input?.destroy();
     this.minimap?.destroy();
     this.speedControl?.destroy();
+    this.pauseMenu?.destroy();
     this.panel?.destroy();
     this.timeline?.destroy();
     this.renderer?.destroy();
     this.input = null;
     this.minimap = null;
     this.speedControl = null;
+    this.pauseMenu = null;
+    this.pause.close();
+    this.menuPaused = false;
     this.panel = null;
     this.board = null;
     this.boardPaint = "";
@@ -579,7 +788,10 @@ export class Session {
     for (const ch of this.channels) ch.destroy();
     this.channels.length = 0;
     this.locksteps.clear();
+    this.room = null;
+    this.match = null;
     this.pendingPlans.length = 0;
+    this.pendingWork = null;
     this.pristine = null;
     this.view = null;
     this.acc = 0;
@@ -646,6 +858,7 @@ export class Session {
     if (!renderer || !view) return;
     this.hover = pos;
     this.syncGhost();
+    this.syncWorkArea();
     if (this.claiming) renderer.previewOccupy(pos, this.me);
     this.config.hooks.onHud({
       cursor: pos,
@@ -662,6 +875,15 @@ export class Session {
       return;
     }
     const tool = this.placeTool;
+    if (tool?.type === "workArea") {
+      if (this.canCommand() && pos && this.selected) {
+        this.send({ type: "setWorkArea", at: this.selected, center: pos });
+        this.pendingWork = { at: this.selected, center: pos };
+        this.armPlace(null);
+        this.syncWorkArea();
+      }
+      return;
+    }
     if (tool?.type === "unit" && pos && this.canCommand()) {
       this.send({
         type: "spawnUnit",
@@ -808,27 +1030,43 @@ export class Session {
 
   private buildingCounts(): BoardContext["counts"] {
     const out: BoardContext["counts"] = {};
+    const pair = (kind: BuildingKind): CountPair => (out[kind] ??= { have: 0, queued: 0 });
     const world = this.world;
     if (world) {
+      const staffed = new Set<number>();
+      for (const v of world.view(this.me).movables) {
+        if (v.player !== this.me || v.workplaceId == null) continue;
+        const hut = world.buildings.get(v.workplaceId);
+        if (hut && buildingDef(hut.kind).worker === v.type) staffed.add(hut.id);
+      }
       for (const b of world.buildings.all()) {
         if (b.player !== this.me) continue;
-        out[b.kind] = (out[b.kind] ?? 0) + 1;
+        const slot = pair(b.kind);
+        slot.queued += 1;
+        const worker = buildingDef(b.kind).worker;
+        if (b.state === "built" && (worker == null || staffed.has(b.id))) slot.have += 1;
       }
     }
     for (const p of this.pendingPlans) {
       if (world?.buildings.at(p.at.x, p.at.y)) continue;
-      out[p.kind] = (out[p.kind] ?? 0) + 1;
+      pair(p.kind).queued += 1;
     }
     return out;
   }
 
-  private unitCounts(): Record<string, number> {
-    const out: Record<string, number> = {};
+  private unitCounts(): BoardContext["units"] {
+    const out: BoardContext["units"] = {};
     const world = this.world;
     if (!world) return out;
-    for (const m of world.view(this.me).movables) {
-      if (m.player !== this.me) continue;
-      out[m.type] = (out[m.type] ?? 0) + 1;
+    const pair = (kind: string): CountPair => (out[kind] ??= { have: 0, queued: 0 });
+    for (const v of world.view(this.me).movables) {
+      if (v.player !== this.me) continue;
+      const slot = pair(v.type);
+      slot.have += 1;
+      slot.queued += 1;
+      const job = world.movable(v.id)?.job;
+      if (job?.type === "equip") pair(job.become).queued += 1;
+      else if (job?.type === "occupy") pair(job.worker).queued += 1;
     }
     return out;
   }
@@ -839,28 +1077,66 @@ export class Session {
     const counts = this.buildingCounts();
     const units = this.unitCounts();
     const placeTool = this.placeTool;
-    if (!world) return { selection: { type: "none" }, counts, units, canCommand, placeTool };
+    const diggerRatio = world?.diggerRatio(this.me) ?? DEFAULT_DIGGER_RATIO;
+    const bricklayerRatio = world?.bricklayerRatio(this.me) ?? DEFAULT_BRICKLAYER_RATIO;
+    const civilians = this.civilianCount();
+    const cap = diggerCap(civilians, diggerRatio);
+    const bricklayerCap = diggerCap(civilians, bricklayerRatio);
+    const base = { counts, units, canCommand, placeTool, diggerRatio, diggerCap: cap, bricklayerRatio, bricklayerCap };
+    if (!world) return { selection: { type: "none" }, ...base };
     if (this.selectedUnitIds.length > 0) {
       const types: string[] = [];
       for (const id of this.selectedUnitIds) {
         const u = world.movable(id);
         if (u) types.push(u.type);
       }
-      return { selection: { type: "units", types }, counts, units, canCommand, placeTool };
+      return { selection: { type: "units", types }, ...base };
     }
     if (this.selected) {
       const hut = world.buildings.at(this.selected.x, this.selected.y);
       if (hut) {
         return {
-          selection: { type: "building", kind: hut.kind, state: hut.state },
-          counts,
-          units,
-          canCommand,
-          placeTool,
+          selection: { type: "building", kind: hut.kind, state: hut.state, owned: hut.player === this.me, workArea: hasWorkArea(hut.kind) },
+          ...base,
         };
       }
     }
-    return { selection: { type: "none" }, counts, units, canCommand, placeTool };
+    return { selection: { type: "none" }, ...base };
+  }
+
+  /** Tools page ±1 digger. Stored as a fraction of civilians so later house-spawns scale. */
+  private bumpDiggerRatio(dir: number): void {
+    const world = this.world;
+    if (!world || !this.canCommand()) return;
+    const workers = this.civilianCount();
+    if (workers <= 0) return;
+    const cap = diggerCap(workers, world.diggerRatio(this.me));
+    const nextCap = Math.min(workers, Math.max(0, cap + dir));
+    if (nextCap === cap) return;
+    this.send({ type: "setDiggerRatio", ratio: nextCap / workers, player: this.me });
+  }
+
+  /** Tools page ±1 bricklayer. Same storage as diggers. */
+  private bumpBricklayerRatio(dir: number): void {
+    const world = this.world;
+    if (!world || !this.canCommand()) return;
+    const workers = this.civilianCount();
+    if (workers <= 0) return;
+    const cap = diggerCap(workers, world.bricklayerRatio(this.me));
+    const nextCap = Math.min(workers, Math.max(0, cap + dir));
+    if (nextCap === cap) return;
+    this.send({ type: "setBricklayerRatio", ratio: nextCap / workers, player: this.me });
+  }
+
+  private civilianCount(): number {
+    const world = this.world;
+    if (!world) return 0;
+    const mine = [];
+    for (const v of world.view(this.me).movables) {
+      const m = world.movable(v.id);
+      if (m) mine.push(m);
+    }
+    return workerCount(mine, this.me);
   }
 
   private syncBoard(): void {
@@ -888,6 +1164,28 @@ export class Session {
     if (!renderer) return;
     if (this.selectedUnitIds.length > 0) renderer.highlight(null);
     else renderer.highlight(this.selected);
+    this.syncWorkArea();
+  }
+
+  private syncWorkArea(): void {
+    const renderer = this.renderer;
+    const world = this.world;
+    if (!renderer) return;
+    const hut = this.selected && world ? world.buildings.at(this.selected.x, this.selected.y) : undefined;
+    if (!hut || this.selectedUnitIds.length > 0 || !hasWorkArea(hut.kind)) {
+      if (this.pendingWork && (!hut || hut.pos.x !== this.pendingWork.at.x || hut.pos.y !== this.pendingWork.at.y)) {
+        this.pendingWork = null;
+      }
+      renderer.setWorkArea(null, 0);
+      return;
+    }
+    const radius = buildingDef(hut.kind).workRadius;
+    if (this.pendingWork && this.pendingWork.at.x === hut.pos.x && this.pendingWork.at.y === hut.pos.y) {
+      if (hut.work.x === this.pendingWork.center.x && hut.work.y === this.pendingWork.center.y) this.pendingWork = null;
+    }
+    const hover = this.placeTool?.type === "workArea" ? this.hover : null;
+    const center = hover ?? this.pendingWork?.center ?? hut.work;
+    renderer.setWorkArea(center, radius, hut.player);
   }
 
   private syncMinimap(snap: ViewSnapshot, camera = true): void {
@@ -922,6 +1220,7 @@ export class Session {
     const tool = this.placeTool;
     const pos = this.hover;
     if (!renderer) return;
+    if (this.claiming || tool?.type === "building") renderer.setWorkArea(null, 0);
     if (this.claiming || tool?.type !== "building" || !world) {
       this.markKey = "";
       renderer.ghost(null, null, false);
@@ -977,6 +1276,7 @@ export class Session {
     const tool = this.placeTool;
     if (!tool) return null;
     if (tool.type === "building") return tool.kind;
+    if (tool.type === "workArea") return "area";
     return tool.count === 1 ? "swordsman" : `swordsman×${tool.count}`;
   }
 
@@ -1099,6 +1399,139 @@ export class Session {
         world: this.world,
       }),
     );
+  }
+
+  /** Full save (snapshot + log + pipeline). */
+  saveGame(name: string): SaveFile | null {
+    const world = this.world;
+    const match = this.match;
+    if (this.watching || !world || !match) return null;
+    const ls = this.locksteps.get(this.me);
+    const pipeline = this.room && ls ? capturePipeline(this.room, ls) : this.remotePipeline(match, ls);
+    const file = makeSaveFile({
+      name,
+      mapName: this.mapLabel(),
+      me: this.me,
+      remote: this.config.channel != null,
+      match,
+      world,
+      pipeline,
+    });
+    const prev = this.modeSaves().find((f) => f.name.trim().toLowerCase() === name.trim().toLowerCase());
+    if (prev) file.id = prev.id;
+    this.config.hooks.onSave?.(file);
+    return file;
+  }
+
+  loadGame(file: SaveFile): void {
+    this.applySave(file);
+  }
+
+  requestLoad(file: SaveFile): void {
+    if (file.remote !== this.remoteSave()) return;
+    const ch = this.config.channel;
+    if (ch && this.config.host) {
+      ch.send({ type: "loadSave", save: file });
+      return;
+    }
+    if (ch) return;
+    this.config.hooks.onLoad?.(file);
+  }
+
+  requestRestart(): void {
+    const ch = this.config.channel;
+    if (ch && this.config.host) {
+      ch.send({ type: "restart" });
+      return;
+    }
+    if (ch) return;
+    this.config.hooks.onRestart?.();
+  }
+
+  requestEnd(): void {
+    this.config.hooks.onEnd?.();
+  }
+
+  private remotePipeline(match: MatchConfig, ls: Lockstep | undefined) {
+    const commits = ls?.peek() ?? [];
+    const tick = this.world?.clock.tickIndex ?? 0;
+    const committed = commits.reduce((m, c) => Math.max(m, c.tick), tick);
+    const sent = ls?.sent() ?? committed;
+    return {
+      committed,
+      through: match.slots.map((s) => ({ player: s.player, through: sent })),
+      held: [] as { player: number; tick: number; actions: never[] }[],
+      commits,
+      sentThrough: sent,
+    };
+  }
+
+  private applySave(file: SaveFile): void {
+    const restored = restoreWorld(file);
+    const renderer = this.renderer;
+    if (!restored || !renderer) {
+      this.desynced = true;
+      this.paused = true;
+      return;
+    }
+    this.world = restored;
+    this.worldSeed = file.seed;
+    this.waves = waveDecorations(mapViewFromGrid(restored.grid));
+    this.view = mapViewFromGrid(restored.grid);
+    renderer.setView(this.view, this.waves, false);
+    this.minimap?.setView(this.view);
+    this.installPipeline(file);
+    this.pendingPlans.length = 0;
+    this.pendingWork = null;
+    this.acc = 0;
+    this.matchStartMs = performance.now();
+    this.desynced = false;
+    if (this.config.channel) this.config.channel.send({ type: "ready" });
+    const look = this.startLook();
+    this.lookAt(look.x, look.y);
+    this.paintNow();
+  }
+
+  /** Host restarted the room. Rebuild kits from the dump; mailbox is already a fresh Room. */
+  private applyRestart(config: MatchConfig): void {
+    void this.rebuildLive(config);
+  }
+
+  private async rebuildLive(config: MatchConfig): Promise<void> {
+    const loaded = await this.loadGrid(config.mapId);
+    const renderer = this.renderer;
+    if (!renderer) return;
+    this.match = config;
+    this.worldSeed = config.seed;
+    this.checksumEvery = config.checksumEvery;
+    const world = new World(loaded.grid, loaded.objects, seedRng(config.seed));
+    this.world = world;
+    this.waves = loaded.waves;
+    this.view = mapViewFromGrid(world.grid);
+    renderer.setView(this.view, this.waves, false);
+    this.minimap?.setView(this.view);
+    for (const ls of this.locksteps.values()) ls.restore([], 0);
+    const listed = this.config.catalog.find((m) => m.id === config.mapId)?.players ?? 1;
+    const cap = mapStartCap(loaded.starts.length, listed);
+    const n = config.slots.length;
+    const startsAt = matchStarts(loaded.starts, clampMatchPlayers(n, cap) || n, loaded.grid);
+    for (const slot of config.slots) {
+      const at = startsAt[slot.player] ?? startsAt[0];
+      if (at) world.dispatch({ type: "placeColony", at, player: slot.player });
+    }
+    this.pendingPlans.length = 0;
+    this.pendingWork = null;
+    this.selected = null;
+    this.selectedUnitIds = [];
+    this.acc = 0;
+    this.desynced = false;
+    if (this.config.channel) {
+      this.config.channel.send({ type: "ready" });
+      this.armConfirms(config);
+    }
+    const look = this.startLook();
+    this.lookAt(look.x, look.y);
+    this.paintNow();
   }
 
   private mapLabel(): string {

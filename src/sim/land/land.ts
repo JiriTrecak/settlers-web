@@ -14,6 +14,8 @@ import {
   forEachCircleTile,
 } from "../../shared/shape/mapCircle";
 import { HEX_DELTAS } from "../../shared";
+import { decodeI8, encodeI8 } from "../world/bytes";
+import type { LandOccupySnap } from "../world/snapshot";
 
 export const UNOWNED = -1;
 
@@ -47,6 +49,32 @@ export class LandGrid {
     this.owner = new Int8Array(width * height).fill(UNOWNED);
     this.towers = new Int8Array(width * height);
     this.borders = new Uint8Array(width * height);
+  }
+
+  capture(): { generation: number; owner: string; towers: string; occupies: LandOccupySnap[] } {
+    return {
+      generation: this.generation,
+      owner: encodeI8(this.owner),
+      towers: encodeI8(this.towers),
+      occupies: this.occupies.map((o) => ({ player: o.player, x: o.x, y: o.y, radius: o.radius })),
+    };
+  }
+
+  restore(
+    snap: { generation: number; owner: string; towers: string; occupies: LandOccupySnap[] },
+    blocked: (x: number, y: number) => boolean,
+  ): boolean {
+    const n = this.width * this.height;
+    const owner = decodeI8(snap.owner, n);
+    const towers = decodeI8(snap.towers, n);
+    if (!owner || !towers) return false;
+    this.owner.set(owner);
+    this.towers.set(towers);
+    this.occupies.length = 0;
+    for (const o of snap.occupies) this.occupies.push({ player: o.player, x: o.x, y: o.y, radius: o.radius });
+    this.generation = snap.generation;
+    this.rebuildBorders(blocked);
+    return true;
   }
 
   playerAt(x: number, y: number): number {

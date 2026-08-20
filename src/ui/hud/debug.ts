@@ -14,7 +14,7 @@ const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "digger", "forester", "
 const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter"];
 const GOODS: Goods[] = ["trunk", "plank", "stone", "axe", "hammer", "blade", "pick", "saw"];
 const ACTIONS = ["idle", "walk", "work"] as const;
-const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant", "pioneer", "flatten", "attack"] as const;
+const JOBS = ["chop", "cut", "pickup", "drop", "deliver", "saw", "occupy", "build", "plant", "pioneer", "flatten", "equip", "attack", "assault"] as const;
 const CARRY: MovableMaterial[] = [...GOODS, "tree", "none"];
 
 export type DebugFrame = {

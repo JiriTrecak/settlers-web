@@ -125,6 +125,39 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       send(res, 200, { ok: true, config: out.config });
       return;
     }
+    const load = /^\/api\/rooms\/([^/]+)\/load$/.exec(path);
+    if (req.method === "POST" && load) {
+      const room = host.get(decodeURIComponent(load[1]!));
+      const token = bearer(req);
+      if (!room || !token) {
+        send(res, 404, { error: "not_found" });
+        return;
+      }
+      const body = await readJson(req);
+      const out = room.load(token, body);
+      if ("error" in out) {
+        send(res, 400, out);
+        return;
+      }
+      send(res, 200, { ok: true, config: out.config });
+      return;
+    }
+    const restart = /^\/api\/rooms\/([^/]+)\/restart$/.exec(path);
+    if (req.method === "POST" && restart) {
+      const room = host.get(decodeURIComponent(restart[1]!));
+      const token = bearer(req);
+      if (!room || !token) {
+        send(res, 404, { error: "not_found" });
+        return;
+      }
+      const out = room.restart(token);
+      if ("error" in out) {
+        send(res, 400, out);
+        return;
+      }
+      send(res, 200, { ok: true, config: out.config });
+      return;
+    }
     const leave = /^\/api\/rooms\/([^/]+)\/leave$/.exec(path);
     if (req.method === "POST" && leave) {
       const room = host.get(decodeURIComponent(leave[1]!));

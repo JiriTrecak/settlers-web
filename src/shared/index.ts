@@ -9,6 +9,16 @@ export {
   type Slot,
   type SlotKind,
 } from "./match/match";
+export {
+  SAVE_FORMAT_VERSION,
+  emptyPipeline,
+  namedMatch,
+  parsePipeline,
+  parseMatchConfig,
+  parseSaveForHost,
+  type PipelineSnap,
+  type SaveMeta,
+} from "./save/save";
 export { MATCH_HOST, matchHttp, matchWs } from "./net/endpoint";
 export type {
   Bundle,
@@ -29,8 +39,10 @@ export {
   circleBounds,
   circleContains,
   distanceSquared,
+  WORK_AREA_RINGS,
   forEachCircleBorder,
   forEachCircleTile,
+  forEachWorkAreaMark,
   squaredDistance,
   type CircleRect,
 } from "./shape/mapCircle";

@@ -3,17 +3,22 @@
  * Match state lives in `PlayScreen` → `Session`, not here.
  */
 import { Application } from "pixi.js";
-import { MainMenu, MapSelect, MultiplayerScreen, ReplaySelect, RoomWaitScreen, ScreenHost } from "../../ui";
+import { MainMenu, MapSelect, MultiplayerScreen, ReplaySelect, RoomWaitScreen, SaveSelect, ScreenHost } from "../../ui";
 import {
   defaultMapId,
   fetchMapCatalog,
   mapPickerOptions,
+  parseSaveFile,
   replayInfo,
   ReplayStore,
+  saveInfo,
+  savesForMode,
+  SaveStore,
   type MapCatalogEntry,
   type ReplayFile,
+  type SaveFile,
 } from "../../session";
-import { createRoom, fetchRooms, joinRoom, leaveRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
+import { createRoom, fetchRooms, joinRoom, leaveRoom, loadRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
 import type { MatchConfig, RoomView, ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
 import { BackgroundTicker } from "./backgroundTicker";
@@ -29,6 +34,7 @@ export class GameApp {
   private slots = 2;
   private guestName = readGuest();
   private readonly replays = new ReplayStore();
+  private readonly saves = new SaveStore();
   /** Bumped on every screen change so a late `play()` load cannot resurrect a discarded match. */
   private playGen = 0;
   private backgroundTicker: BackgroundTicker | null = null;
@@ -95,10 +101,31 @@ export class GameApp {
         players: this.slots,
         onBack: () => this.showMenu(),
         onReplays: () => this.showReplays(),
+        onSaves: () => this.showSaves(false),
         onPick: (id, player, players) => {
           this.player = player;
           this.slots = players;
           void this.play(id);
+        },
+      }),
+    );
+  }
+
+  private showSaves(remote: boolean): void {
+    this.playGen++;
+    this.screens?.show(
+      new SaveSelect(savesForMode(this.saves.list(), remote).map(saveInfo), {
+        remote,
+        onBack: () => (remote ? this.showMultiplayer() : this.showMapSelect()),
+        onPick: (id) => {
+          const file = this.saves.get(id);
+          if (!file || file.remote !== remote) return;
+          if (remote) void this.hostFromSave(file);
+          else void this.playSave(file, () => this.showSaves(false));
+        },
+        onDelete: (id) => {
+          this.saves.remove(id);
+          this.showSaves(remote);
         },
       }),
     );
@@ -132,6 +159,10 @@ export class GameApp {
       onRefresh: () => void this.refreshJoinList(),
       onHost: (name, mapId, slotCount) => void this.hostRoom(name, mapId, slotCount),
       onJoin: (roomId, name) => void this.enterRoom(roomId, name),
+      onLoadSaves: (name) => {
+        this.rememberName(name);
+        this.showSaves(true);
+      },
     });
     this.screens?.show(screen);
     void this.refreshJoinList();
@@ -187,6 +218,22 @@ export class GameApp {
     }
   }
 
+  private async hostFromSave(file: SaveFile): Promise<void> {
+    if (!file.remote) return;
+    try {
+      const created = await createRoom({
+        name: `${this.guestName}'s room`,
+        mapId: file.mapId,
+        mapRevision: file.mapRevision,
+        slotCount: file.match.slots.length,
+        guestName: this.guestName,
+      });
+      this.enterLobby(created.room, created.token, created.you.player ?? 0, true, file);
+    } catch (err) {
+      this.showMultiplayer(err instanceof Error ? err.message : "Host failed");
+    }
+  }
+
   private async enterRoom(roomId: string, name: string): Promise<void> {
     this.rememberName(name);
     try {
@@ -203,21 +250,28 @@ export class GameApp {
     }
   }
 
-  private enterLobby(room: RoomView, token: string, player: number, host: boolean): void {
+  private enterLobby(room: RoomView, token: string, player: number, host: boolean, pendingSave?: SaveFile): void {
     const gen = ++this.playGen;
     const channel = new WebSocketChannel(matchUrl(room.id, token));
     const wait = new RoomWaitScreen(room, {
       host,
-      mapName: this.mapLabel(room.mapId),
+      load: pendingSave != null,
+      mapName: this.mapLabel(pendingSave?.mapId ?? room.mapId),
       onBack: () => {
         channel.destroy();
         void leaveRoom(room.id, token);
         this.showMultiplayer();
       },
       onStart: () => {
-        void startRoom(room.id, token).catch((err) => {
+        const run = pendingSave ? loadRoom(room.id, token, pendingSave) : startRoom(room.id, token);
+        void run.catch((err) => {
+          const message = err instanceof Error ? err.message : pendingSave ? "Load failed" : "Start failed";
+          if (pendingSave && this.screens?.screen === wait) {
+            wait.setError(message);
+            return;
+          }
           channel.destroy();
-          this.showMultiplayer(err instanceof Error ? err.message : "Start failed");
+          this.showMultiplayer(message);
         });
       },
     });
@@ -232,7 +286,9 @@ export class GameApp {
           return;
         }
         this.player = start.you.player ?? player;
-        await this.playRemote(start.config, channel, this.player);
+        const save = start.save ? parseSaveFile(start.save) : undefined;
+        if (start.save && !save) throw new Error("bad save");
+        await this.playRemote(start.config, channel, this.player, host, save ?? undefined);
       } catch (err) {
         channel.destroy();
         if (gen === this.playGen) this.showMultiplayer(err instanceof Error ? err.message : "Match failed");
@@ -240,14 +296,30 @@ export class GameApp {
     })();
   }
 
-  private async playRemote(match: MatchConfig, channel: WebSocketChannel, player: number): Promise<void> {
+  private async playRemote(
+    match: MatchConfig,
+    channel: WebSocketChannel,
+    player: number,
+    host: boolean,
+    save?: SaveFile,
+  ): Promise<void> {
     if (!this.pixi || !this.screens) return;
     const gen = ++this.playGen;
     const play = new PlayScreen(this.pixi, this.catalog, match.mapId, {
       player,
       channel,
       match,
+      save,
+      saves: this.saves,
+      host,
       onLeave: () => {
+        channel.destroy();
+        this.showMultiplayer();
+      },
+      onReplay: (file) => this.replays.save(file),
+      onSave: (file) => this.saves.save(file),
+      onLoad: (file) => channel.send({ type: "loadSave", save: file }),
+      onEnd: () => {
         channel.destroy();
         this.showMultiplayer();
       },
@@ -263,16 +335,24 @@ export class GameApp {
     }
   }
 
-  private async play(id: string): Promise<void> {
+  private async play(id: string, force = false): Promise<void> {
     if (!this.pixi || !this.screens) return;
     const current = this.screens.screen;
-    if (current instanceof PlayScreen && current.mapId === id && current.replayId == null) return;
+    if (!force && current instanceof PlayScreen && current.mapId === id && current.replayId == null && current.saveId == null) {
+      return;
+    }
     const gen = ++this.playGen;
     const play = new PlayScreen(this.pixi, this.catalog, id, {
       player: this.player,
       players: this.slots,
+      saves: this.saves,
+      host: true,
       onLeave: () => this.showMapSelect(),
       onReplay: (file) => this.replays.save(file),
+      onSave: (file) => this.saves.save(file),
+      onLoad: (file) => void this.playSave(file),
+      onEnd: () => this.showMapSelect(),
+      onRestart: () => void this.play(id, true),
     });
     this.screens.show(play);
     try {
@@ -282,6 +362,33 @@ export class GameApp {
     } catch (err) {
       console.error(err);
       if (gen === this.playGen) this.showMapSelect();
+    }
+  }
+
+  private async playSave(file: SaveFile, onLeave?: () => void): Promise<void> {
+    if (!this.pixi || !this.screens) return;
+    const leave = onLeave ?? (() => this.showMapSelect());
+    const gen = ++this.playGen;
+    const play = new PlayScreen(this.pixi, this.catalog, file.mapId, {
+      player: file.remote ? this.player : file.me,
+      save: file,
+      saves: this.saves,
+      host: true,
+      match: file.remote ? file.match : undefined,
+      onLeave: leave,
+      onReplay: (f) => this.replays.save(f),
+      onSave: (f) => this.saves.save(f),
+      onLoad: (next) => void this.playSave(next, onLeave),
+      onEnd: leave,
+      onRestart: () => void this.play(file.mapId, true),
+    });
+    this.screens.show(play);
+    try {
+      await play.start();
+      if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+    } catch (err) {
+      console.error(err);
+      if (gen === this.playGen) leave();
     }
   }
 

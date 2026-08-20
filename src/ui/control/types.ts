@@ -7,6 +7,8 @@ export const COMMAND_SLOTS = 12;
 export const COMMAND_CORNER = 11;
 /** Left of Build on the bottom row. */
 export const COMMAND_NEAR_CORNER = 10;
+/** Left of Recruit — Tools. */
+export const COMMAND_TOOLS = 9;
 
 export type CommandId = string;
 
@@ -15,8 +17,11 @@ export type CommandSlot = {
   label: string;
   /** Path under `/graphics/`. */
   icon?: string;
-  /** Owned-count badge, top-right. */
+  /** Owned-count badge, top-left. With `queued` > `count`, paints `count → queued`. */
   count?: number;
+  /** Have + in-flight (plan, scaffold, occupy, equip). Omit when equal to `count`. */
+  queued?: number;
+  /** Lowercase letter. Current page only — `CommandBoard.key` matches this. */
   hotkey?: string;
   enabled: boolean;
   kind: "do" | "page" | "toggle";

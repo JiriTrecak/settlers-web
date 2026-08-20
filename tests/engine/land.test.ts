@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   TOWER_RADIUS,
+  WORK_AREA_RINGS,
   Y_SCALE,
   circleBounds,
   forEachCircleTile,
+  forEachWorkAreaMark,
   squaredDistance,
 } from "../../src/shared/shape/mapCircle";
 import { LandGrid, UNOWNED } from "../../src/sim/land/land";
@@ -38,6 +40,20 @@ describe("mapCircle", () => {
       expect(y).toBeGreaterThanOrEqual(b.yMin);
       expect(y).toBeLessThanOrEqual(b.yMax);
     });
+  });
+
+  it("work-area marks are four concentric borders around the origin, not a filled hex", () => {
+    const marks: { x: number; y: number; progress: number }[] = [];
+    forEachWorkAreaMark(0, 0, 8, (x, y, progress) => marks.push({ x, y, progress }));
+    expect(marks.some((m) => m.x === 0 && m.y === 0)).toBe(false);
+    expect(marks.some((m) => m.x === 8 && m.y === 0)).toBe(true);
+    expect(marks.some((m) => m.x === -8 && m.y === 0)).toBe(true);
+    const rings = [...new Set(marks.map((m) => m.progress))].sort((a, b) => a - b);
+    expect(rings).toHaveLength(WORK_AREA_RINGS);
+    expect(rings[0]).toBe(0);
+    expect(rings[WORK_AREA_RINGS - 1]).toBe(1);
+    const east = marks.filter((m) => m.y === 0 && m.x > 0).sort((a, b) => a.x - b.x);
+    expect(east[0]!.progress).toBeLessThan(east[east.length - 1]!.progress);
   });
 });
 

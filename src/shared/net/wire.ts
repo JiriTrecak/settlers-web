@@ -62,15 +62,19 @@ export type ClientMsg =
   | { type: "ready" }
   | { type: "turn"; through: number; bundles: Bundle[] }
   | { type: "hash"; tick: number; checksum: number }
-  | { type: "ended"; outcome: WireOutcome; tick: number; checksum: number };
+  | { type: "ended"; outcome: WireOutcome; tick: number; checksum: number }
+  | { type: "loadSave"; save: unknown }
+  | { type: "restart" };
 
 export type ServerMsg =
   | { type: "welcome"; you: ClientIdentity; room: RoomView }
   | { type: "room"; room: RoomView }
-  | { type: "start"; config: MatchConfig; you: ClientIdentity }
-  | { type: "go"; tick: 1 }
+  | { type: "start"; config: MatchConfig; you: ClientIdentity; save?: unknown }
+  | { type: "restart"; config: MatchConfig; you: ClientIdentity }
+  | { type: "go"; tick: number }
   | { type: "commit"; tick: number; slots: CommitSlot[] }
   | { type: "hashOk"; tick: number }
   | { type: "desync"; tick: number; hashes: { player: number; checksum: number }[] }
   | { type: "ended"; outcome: WireOutcome; replayId: string }
+  | { type: "load"; save: unknown; you: ClientIdentity }
   | { type: "error"; code: string; message: string };

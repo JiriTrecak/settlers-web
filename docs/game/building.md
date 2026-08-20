@@ -15,7 +15,7 @@ Two masks, both relative to origin:
 
 Ground must be in the def’s `ground` list (grass / earth / flattened). Water, existing objects, and other protected tiles refuse the plot. Once any occupy disk exists, every protected tile must also be owned by the placing player — except that player's **first** occupying hut, which may stamp a fully unowned plot (second HQ). Extra towers still need owned land.
 
-Every hut flattens unless `flatten: false` (mines, later). Target height is the integer mean of `protected`, frozen on the plan. Diggers (`ceil(n/15)`, 1s kneel, ±1) must finish before bricklayers. Already-level grass skips — constructs as before. Ghost is red on a slope; click still drops the plan. Mark > 127 refuses place. Dirt-as-a-good is later.
+Every hut flattens unless `flatten: false` (mines, later). Target height is the integer mean of `protected`, frozen on the plan. Diggers (pool, blade, 25% civilian cap; a hut wants `ceil(n/15)`, oldest plan first then the next; 1s kneel, ±1) must finish before bricklayers. Already-level grass skips — constructs as before. Ghost is red on a slope; click still drops the plan. Mark > 127 refuses place. Dirt-as-a-good is later.
 
 ## Placement
 
@@ -52,7 +52,7 @@ Each hut lists plank/stone piles and how many items each pile needs:
 
 Rule: **12 hammer swings per item**, 1 s per swing. Progress bump is `1 / (12 × items)` each swing. A pile loses one item every 12 swings. Two bricklayers → twice the bumps.
 
-Cap **2** bricklayers even if the def lists more spots. Idle bearers walk onto `bricklayers[]` tiles, face the listed direction, `become` bricklayer, hammer until the hut leaves `building`, then revert to bearer. Leftover construction piles vanish on finish.
+Cap **2** bricklayers even if the def lists more spots. They come from the player's **pool** (bearer → hammer, default 25% of civilians; Tools ±1). Idle masons walk onto `bricklayers[]` tiles, face the listed direction, hammer until the hut leaves `building`, then stay bricklayers. No hammers → the scaffold waits. Leftover construction piles vanish on finish.
 
 No work while waiting for the next plank/stone — a swing that cannot take material idles the mason.
 
@@ -90,7 +90,7 @@ Idle bearers then flock (see [settlers.md](settlers.md)) — the house does not 
 
 ## Worker huts
 
-The hut is a workplace + stack slots + a work radius. The **cycle** lives on the profession, not the building — [economy.md](economy.md).
+The hut is a workplace + stack slots + a work radius. The **cycle** lives on the profession, not the building — [economy.md](economy.md). Outdoor search is an axial circle around `hut.work` (click **Area** on the hut, then the map). Radius is `def.workRadius` (lumberjack 30, stonecutter 20, forester 18). Indoor huts (sawmill, house, tower) have radius 0 — no Area button. Fisherman / grain / weed will aim the same circle at water or fields.
 
 | Hut | Worker | Radius | Offers | Requests |
 |---|---|---:|---|---|

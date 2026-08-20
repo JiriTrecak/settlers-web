@@ -3,6 +3,7 @@
  */
 export const GAME_SPEEDS = [1, 2, 4, 8] as const;
 export type GameSpeed = (typeof GAME_SPEEDS)[number];
+export const DEFAULT_GAME_SPEED: GameSpeed = 2;
 
 export function isGameSpeed(n: number): n is GameSpeed {
   return (GAME_SPEEDS as readonly number[]).includes(n);
@@ -11,10 +12,10 @@ export function isGameSpeed(n: number): n is GameSpeed {
 export class SpeedControl {
   private readonly root: HTMLDivElement;
   private readonly buttons = new Map<GameSpeed, HTMLButtonElement>();
-  private speed: GameSpeed = 1;
+  private speed: GameSpeed = DEFAULT_GAME_SPEED;
 
   constructor(host: HTMLElement, hooks: { onSpeed: (speed: GameSpeed) => void; speed?: GameSpeed }) {
-    this.speed = hooks.speed ?? 1;
+    this.speed = hooks.speed ?? DEFAULT_GAME_SPEED;
     this.root = document.createElement("div");
     this.root.className = "hud-speed";
     this.root.setAttribute("role", "group");

@@ -35,6 +35,20 @@ describe("action queue", () => {
     expect(world.clock.tickIndex).toBe(1);
     expect(world.buildings.at(32, 32)).toBeUndefined();
   });
+
+  it("applies same-tick actions by player then seq, even if enqueued out of order", () => {
+    const world = kit();
+    world.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    world.dispatch({ type: "placeColony", at: { x: 48, y: 48 }, player: 1 });
+    world.enqueue({ type: "placeBuilding", kind: "lumberjack", at: { x: 20, y: 40 }, player: 1 }, 1, { player: 1, seq: 0 });
+    world.enqueue({ type: "placeBuilding", kind: "stonecutter", at: { x: 22, y: 40 }, player: 0 }, 1, { player: 0, seq: 0 });
+    world.tick();
+    const kinds = world
+      .log()
+      .filter((e) => e.tick === 1 && e.action.type === "placeBuilding")
+      .map((e) => (e.action.type === "placeBuilding" ? e.action.kind : ""));
+    expect(kinds).toEqual(["stonecutter", "lumberjack"]);
+  });
 });
 
 describe("checksum", () => {
@@ -68,5 +82,27 @@ describe("checksum", () => {
     const b = kit();
     b.replay(a.log(), a.clock.tickIndex);
     expect(b.checksum()).toBe(a.checksum());
+  });
+
+  it("does not mix fog into checksum, so two peers can dim independently", () => {
+    const a = kit();
+    const b = kit();
+    a.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    b.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    expect(a.checksum()).toBe(b.checksum());
+    a.fog.resizeCircle({ x: 32, y: 32 }, 0, 38, 0);
+    expect(JSON.stringify(a.snapshot().fog)).not.toBe(JSON.stringify(b.snapshot().fog));
+    expect(a.checksum()).toBe(b.checksum());
+  });
+
+  it("mixes digger and bricklayer ratios so a Tools click desyncs a peer who missed it", () => {
+    const a = kit();
+    const b = kit();
+    a.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    b.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
+    a.dispatch({ type: "setDiggerRatio", ratio: 0.5, player: 0 });
+    expect(a.checksum()).not.toBe(b.checksum());
+    b.dispatch({ type: "setDiggerRatio", ratio: 0.5, player: 0 });
+    expect(a.checksum()).toBe(b.checksum());
   });
 });

@@ -13,6 +13,16 @@ export {
 } from "./replay/replay";
 export { ReplayStore } from "./replay/store";
 export {
+  makeSaveFile,
+  parseSaveFile,
+  saveInfo,
+  savesForMode,
+  saveToReplay,
+  type SaveFile,
+  type SaveInfo,
+} from "./save/save";
+export { SaveStore } from "./save/store";
+export {
   defaultMapId,
   FALLBACK_MAP_ID,
   fetchDumpedMap,

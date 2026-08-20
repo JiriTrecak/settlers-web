@@ -8,6 +8,7 @@ export { MapSelect } from "./menu/mapSelect";
 export { MultiplayerScreen, RoomWaitScreen } from "./menu/multiplayer";
 export { NoticeScreen } from "./menu/notice";
 export { ReplaySelect, type ReplayOption } from "./menu/replaySelect";
+export { SaveSelect, type SaveOption } from "./menu/saveSelect";
 export { ReplayTimeline } from "./replay/timeline";
 export {
   Minimap,
@@ -17,7 +18,9 @@ export {
   viewportMinimapQuad,
   type MinimapCamera,
 } from "./minimap/minimap";
-export { GAME_SPEEDS, SpeedControl, isGameSpeed, type GameSpeed } from "./speed/speed";
+export { GAME_SPEEDS, DEFAULT_GAME_SPEED, SpeedControl, isGameSpeed, type GameSpeed } from "./speed/speed";
 export { GameControlPanel } from "./control/control";
+export { PauseMenu, type PauseFileRow, type PauseMenuHooks } from "./pause/pause";
+export { CLOSED_PAUSE, confirmCopy, type PauseConfirm, type PauseMode, type PauseScreen, type PauseView } from "./pause/types";
 export type { CommandId, CommandPage, CommandSlot, SelectionView } from "./control/types";
-export { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS } from "./control/types";
+export { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS } from "./control/types";

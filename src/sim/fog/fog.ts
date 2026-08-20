@@ -20,6 +20,8 @@ import {
   UNCONSTRUCTED_VIEW_DISTANCE,
   UNOCCUPIED_VIEW_DISTANCE,
 } from "./constants";
+import { decodeU8, encodeU8 } from "../world/bytes";
+import type { FogLayerSnap } from "../world/snapshot";
 
 export {
   DEFAULT_UNIT_VIEW_DISTANCE,
@@ -97,6 +99,71 @@ export class FogGrid {
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
+  }
+
+  capture(): FogLayerSnap[] {
+    const n = this.width * this.height;
+    const out: FogLayerSnap[] = [];
+    for (const [player, layer] of this.layers) {
+      const refs: { i: number; v: number[] }[] = [];
+      for (let i = 0; i < n; i++) {
+        const arr = layer.refs[i];
+        if (arr && arr.length) refs.push({ i, v: [...arr] });
+      }
+      const tiles: FogLayerSnap["tiles"] = [];
+      for (const i of layer.hiddenIdx) {
+        tiles.push({
+          i,
+          landscape: layer.hiddenLandscape[i] ?? 0,
+          height: layer.hiddenHeight[i] ?? 0,
+          object: layer.hiddenObject[i] ? { ...layer.hiddenObject[i]! } : undefined,
+          building: layer.hiddenBuilding[i] ? { ...layer.hiddenBuilding[i]! } : undefined,
+        });
+      }
+      out.push({
+        player,
+        generation: layer.generation,
+        sight: encodeU8(layer.sight),
+        hidden: encodeU8(layer.hidden),
+        dirty: encodeU8(layer.dirty),
+        refs,
+        tiles,
+      });
+    }
+    return out.sort((a, b) => a.player - b.player);
+  }
+
+  restore(layers: readonly FogLayerSnap[]): boolean {
+    const n = this.width * this.height;
+    this.layers.clear();
+    for (const snap of layers) {
+      const sight = decodeU8(snap.sight, n);
+      const hidden = decodeU8(snap.hidden, n);
+      const dirty = decodeU8(snap.dirty, n);
+      if (!sight || !hidden || !dirty) return false;
+      const layer = this.layer(snap.player);
+      layer.sight.set(sight);
+      layer.hidden.set(hidden);
+      layer.dirty.set(dirty);
+      layer.generation = snap.generation;
+      layer.refs = new Array(n);
+      for (const r of snap.refs) {
+        if (r.i < 0 || r.i >= n) continue;
+        layer.refs[r.i] = Int16Array.from(r.v);
+      }
+      layer.hiddenIdx.clear();
+      layer.hiddenObject.fill(undefined);
+      layer.hiddenBuilding.fill(undefined);
+      for (const t of snap.tiles) {
+        if (t.i < 0 || t.i >= n) continue;
+        layer.hiddenIdx.add(t.i);
+        layer.hiddenLandscape[t.i] = t.landscape;
+        layer.hiddenHeight[t.i] = t.height;
+        layer.hiddenObject[t.i] = t.object ? { ...t.object } : undefined;
+        layer.hiddenBuilding[t.i] = t.building ? { ...t.building } : undefined;
+      }
+    }
+    return true;
   }
 
   view(player: number): FogView {

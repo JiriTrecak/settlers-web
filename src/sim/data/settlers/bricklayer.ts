@@ -1,5 +1,5 @@
 /**
- * Roman bricklayer. Temporary: a bearer walks to a construction spot, hammers, then reverts.
+ * Roman bricklayer. Pool: pick up a hammer, stay a bricklayer. Tools ±1.
  */
 import type { SettlerDef } from "../types";
 

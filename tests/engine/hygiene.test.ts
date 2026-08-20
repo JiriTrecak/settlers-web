@@ -55,6 +55,30 @@ describe("action envelope", () => {
     expect(world.buildings.at(16, 16)).toBeUndefined();
   });
 
+  it("drops a foreign setDiggerRatio", () => {
+    const world = two();
+    world.enqueue({ type: "setDiggerRatio", ratio: 1, player: 1 }, 1, { player: 0 });
+    world.tick();
+    expect(world.diggerRatio(1)).toBe(0.25);
+    expect(world.log().some((e) => e.action.type === "setDiggerRatio")).toBe(false);
+  });
+
+  it("drops a foreign setBricklayerRatio", () => {
+    const world = two();
+    world.enqueue({ type: "setBricklayerRatio", ratio: 1, player: 1 }, 1, { player: 0 });
+    world.tick();
+    expect(world.bricklayerRatio(1)).toBe(0.25);
+    expect(world.log().some((e) => e.action.type === "setBricklayerRatio")).toBe(false);
+  });
+
+  it("applies an owned setBricklayerRatio", () => {
+    const world = two();
+    world.enqueue({ type: "setBricklayerRatio", ratio: 0.5, player: 0 }, 1, { player: 0 });
+    world.tick();
+    expect(world.bricklayerRatio(0)).toBe(0.5);
+    expect(world.bricklayerRatio(1)).toBe(0.25);
+  });
+
   it("applies an owned command with envelope player + seq", () => {
     const world = two();
     const u0 = world.view(0).movables.find((m) => m.player === 0 && !m.inside);
@@ -63,5 +87,26 @@ describe("action envelope", () => {
     world.tick();
     expect(world.log().some((e) => e.action.type === "moveTo" && e.player === 0)).toBe(true);
     expect(world.view(0).movables.find((m) => m.id === u0!.id)?.path.length).toBeGreaterThan(0);
+  });
+
+  it("applies same-player seq 0 before seq 1 even if enqueued backwards", () => {
+    const world = two();
+    world.enqueue({ type: "setDiggerRatio", ratio: 0, player: 0 }, 1, { player: 0, seq: 1 });
+    world.enqueue({ type: "setDiggerRatio", ratio: 0.5, player: 0 }, 1, { player: 0, seq: 0 });
+    world.tick();
+    expect(world.diggerRatio(0)).toBe(0);
+    expect(world.log().filter((e) => e.action.type === "setDiggerRatio").map((e) => e.action)).toEqual([
+      { type: "setDiggerRatio", ratio: 0.5, player: 0 },
+      { type: "setDiggerRatio", ratio: 0, player: 0 },
+    ]);
+  });
+
+  it("drops a foreign setWorkArea", () => {
+    const world = new World(grass(64, 64));
+    const hut = world.placeBuilding("lumberjack", { x: 16, y: 16 }, 0)!;
+    world.enqueue({ type: "setWorkArea", at: hut.pos, center: { x: 24, y: 16 } }, 1, { player: 1 });
+    world.tick();
+    expect(hut.work).toEqual({ x: 16, y: 16 });
+    expect(world.log().some((e) => e.action.type === "setWorkArea")).toBe(false);
   });
 });

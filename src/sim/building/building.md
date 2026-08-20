@@ -9,3 +9,5 @@ Enemy infantry `assault` the door (50 HP). At 0 the garrison is kicked out to fi
 `fogDistance` is the last view-circle radius stamped into fog. `def.viewDistance` is the look radius once built (tower 38, work huts 0); empty worker huts use 5, plans 0.
 
 `flag` on the view: `door` from placement on workerless huts (house, tower). `roof` on worker huts only while a unit of `def.worker` has that `workplaceId`. Bricklayers do not count.
+
+Outdoor huts (`workRadius` > 0) search an axial circle around `hut.work` (defaults to the origin). `setWorkArea` moves the center; radius stays the def. Fisherman / grain / weed reuse this.

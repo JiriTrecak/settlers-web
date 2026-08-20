@@ -30,7 +30,7 @@ A step **occupies the destination immediately**; `moveProgress` is visual lerp o
 
 BFS, 6 hex directions. Settlers with `needsPlayersGround` (default: every civilian) only walk tiles they own once any occupy disk exists. Pioneer / thief / soldier set the flag `false`. `goTo` drops the job, keeps carried material. `pathTo` is used by jobs and does not drop the job.
 
-Click the **sprite** of a pioneer or swordsman to select (opaque body/torso pixels, not the tile). Bearers and workers are click-through. Shift-click toggles; shift-drag marquees sprite AABBs. RMB commands the group: pioneer `pioneerWork`, swordsman `moveTo` (spread onto nearby tiles, every 2nd so the landing isn't solid). Shift-RMB is a forced walk (soldiers ignore aggro until they stop). Empty LMB clears the group. **C** converts a selected pioneer → bearer (own land, empty-handed). **X** enlists selected empty bearers as L1 swordsmen (needs a selected bearer — barracks later). Esc peels unit selection after the build ghost and claim tool.
+Click the **sprite** of a pioneer or swordsman to select (opaque body/torso pixels, not the tile). Bearers and workers are click-through. Shift-click toggles; shift-drag marquees sprite AABBs. RMB commands the group: pioneer `pioneerWork`, swordsman `moveTo` (spread onto nearby tiles, every 2nd so the landing isn't solid). Shift-RMB is a forced walk (soldiers ignore aggro until they stop). Occupy is idle-only — RMB is not yanked to an empty tower one tile at a time. Empty LMB clears the group. **C** converts a selected pioneer → bearer (own land, empty-handed). **X** enlists selected empty bearers as L1 swordsmen (needs a selected bearer — barracks later). Esc peels unit selection after the build ghost and claim tool.
 
 ## Jobs
 

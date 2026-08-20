@@ -19,7 +19,7 @@ Order matters — later systems see this tick’s assignments.
 3. Trees grow
 4. Units finish the current walk step
 5. Houses maybe spawn a bearer
-6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer revert / digger / pioneer search / swordsman aggro or garrison)
+6. Professions assign jobs (lumberjack / stonecutter / sawmiller / forester / bricklayer / digger / pioneer search / swordsman aggro or garrison)
 7. Construction: plan → flatten (unless `flatten: false`) → scaffold, recruit bricklayers, occupy finished worker huts
 8. Matcher assigns `deliver` to idle bearers of that hut's player
 9. Idle flock (skipped if a job was just assigned)
@@ -33,7 +33,7 @@ Play-loop input `send`s through Lockstep; Session `enqueue`s from the Room `comm
 
 ## Determinism
 
-World RNG is seeded (`seedRng(MatchConfig.seed)`; tests often pass `seedRng(1)`). No `Math.random` in sim. Same map + same action log → same checksum at tick N. Victory/Defeat (and **Save replay**) shelves that log; watch mode `replay(log, duration)` and does not re-run the opponent script.
+World RNG is seeded (`seedRng(MatchConfig.seed)`; tests often pass `seedRng(1)`). No `Math.random` in sim. Same map + same action log → same checksum at tick N. Victory/Defeat (and **Save replay**) shelves that log; watch mode `replay(log, duration)` and does not re-run the opponent script. **F10 Save** writes a snapshot + that log + the lockstep pipeline (`SAVE_FORMAT_VERSION`); load restores the snapshot so the match does not re-sim.
 
 Lockstep: Session only calls `world.tick()` when it has a MatchHost `commit` for `tickIndex + 1`. Clicks go through the mailbox at `tickIndex + D`, not `world.enqueue` from the click. See [`docs/build-plan/net.md`](../build-plan/net.md).
 
@@ -56,15 +56,18 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Space | Fit whole map |
 | Minimap drag | Look-at that cell |
 | Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
+| B (idle) | Open Build. Then L / F / S / W / H / T arm those huts. Keys follow the visible page |
 | Click empty valid owned land with a tool | Place a **plan** (fence), drop the tool |
-| Click an existing hut | Select it (highlight origin) |
+| Click an existing hut | Select it (highlight origin). Outdoor huts also show their work-area rims |
+| Selected outdoor hut: Area, then click land | Move the search circle (`setWorkArea`). Radius stays the def |
 | Click own pioneer / swordsman | Select that unit (click the sprite, not the tile). Shift-click toggles. Bearers / workers ignore clicks |
 | Shift-drag | Marquee: all own controllable units in the rect |
 | C with a pioneer selected | Convert pioneer → bearer (own land, empty hands) |
 | X with empty bearers selected | Enlist as L1 swordsman (no selected bearers until barracks) |
 | RMB with units selected | Pioneer: claim toward that tile. Swordsman: `moveTo` (spread). Shift = forced walk |
 | Click empty land | Clear unit / hut selection |
-| Delete / Backspace | Destroy the selected hut (fog + occupy unstamp) |
+| Delete / Backspace | Destroy the selected hut (fog + occupy unstamp). Same as panel Delete |
+| Selected hut: Cancel | Deselect (same corner as Back on drill pages) |
 | Speed buttons | 1 / 2 / 4 / 8 × |
 | F3 | Debug overlay (frame cost + sim phases, fog / paths / ownership / claim) |
 | Escape | Deselect: build ghost, then claim tool, then unit, then hut |

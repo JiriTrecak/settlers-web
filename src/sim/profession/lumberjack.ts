@@ -7,13 +7,14 @@ import { buildingDef } from "../data/buildings";
 import type { Movable } from "../movable/movable";
 import { canDeposit } from "../object/object";
 import { chopStand } from "../object/tree";
-import { acceptWork, beginRest, goHome, readyAtHut, type ProfessionContext } from "./profession";
+import { acceptWork, beginRest, goHome, readyAtHut, workArea, type ProfessionContext } from "./profession";
 
 export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
   if (m.job || m.walking) return;
   const hut = m.workplaceId != null ? ctx.buildings.get(m.workplaceId) : undefined;
   if (!hut) return;
   const def = buildingDef(hut.kind);
+  const area = workArea(hut);
   const offerRel = def.offerStacks[0];
   if (!offerRel) return;
   const offer = { x: hut.pos.x + offerRel.dx, y: hut.pos.y + offerRel.dy };
@@ -31,7 +32,7 @@ export function tickLumberjack(m: Movable, ctx: ProfessionContext): void {
   if (!readyAtHut(m, hut, ctx)) return;
   if (!canDeposit(ctx.objects, offer, "trunk")) return;
 
-  const tree = nearestTree(hut.pos, def.workRadius, hut.player, ctx);
+  const tree = nearestTree(area.center, area.radius, hut.player, ctx);
   if (!tree) return;
   m.assignJob({ type: "chop", at: tree });
 }

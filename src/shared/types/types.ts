@@ -17,4 +17,8 @@ export type Action =
   | { type: "pioneerWork"; id: number; to: GridPos }
   | { type: "convert"; id: number; to: "pioneer" | "bearer" | "swordsman" }
   /** Debug dump from the Units strip. Not a barracks. */
-  | { type: "spawnUnit"; kind: "swordsman"; at: GridPos; player?: number; count?: number };
+  | { type: "spawnUnit"; kind: "swordsman"; at: GridPos; player?: number; count?: number }
+  | { type: "setDiggerRatio"; ratio: number; player?: number }
+  | { type: "setBricklayerRatio"; ratio: number; player?: number }
+  /** Move an outdoor hut's search circle. `at` is the hut origin; `center` is the new work origin. Radius stays `def.workRadius`. */
+  | { type: "setWorkArea"; at: GridPos; center: GridPos };

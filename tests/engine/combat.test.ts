@@ -64,6 +64,28 @@ describe("combat", () => {
     expect(a.pos.y).toBeGreaterThan(20);
   });
 
+  it("RMB walk is not eaten by an empty tower after one tile", () => {
+    const world = new World(grass(80, 80));
+    const hq = world.placeBuilding("tower", { x: 16, y: 16 }, 0)!;
+    const guard = world.view().movables.find((m) => m.inside && m.workplaceId === hq.id);
+    expect(guard).toBeDefined();
+    world.movable(guard!.id)!.health = 0;
+    world.tick();
+    expect(world.view().movables.some((m) => m.inside)).toBe(false);
+
+    const s = world.spawnSettler("swordsman", { x: 24, y: 24 }, 0);
+    const dest = { x: 50, y: 50 };
+    world.dispatch({ type: "moveTo", id: s.id, to: dest });
+    expect(s.view().path.length).toBeGreaterThan(5);
+    for (let i = 0; i < s.stepTicks + 2; i++) world.tick();
+    expect(s.job?.type).not.toBe("occupy");
+    expect(s.hasPath).toBe(true);
+    expect(hexDist(s.pos.x, s.pos.y, dest.x, dest.y)).toBeLessThan(hexDist(24, 24, dest.x, dest.y));
+    const n = tickUntil(world, () => s.pos.x === dest.x && s.pos.y === dest.y, 2500);
+    expect(n).toBeLessThan(2500);
+    expect(n).toBeGreaterThan(s.stepTicks);
+  });
+
   it("two swordsmen walking to the same hex end on different tiles", () => {
     const world = new World(grass(64, 64));
     const a = world.spawnSettler("swordsman", { x: 10, y: 20 }, 0);

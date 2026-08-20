@@ -6,6 +6,8 @@ import {
   COMMAND_DELAY,
   CHECKSUM_EVERY,
   TICK_MS,
+  namedMatch,
+  parseSaveForHost,
   type ClientIdentity,
   type ClientMsg,
   type CreateRoom,
@@ -40,6 +42,7 @@ export class HostedMatch {
   private mailbox: Room | null = null;
   private config: MatchConfig | null = null;
   private replayId: string | null = null;
+  private lastSave: unknown = null;
 
   constructor(draft: CreateRoom, id: string = crypto.randomUUID()) {
     this.id = id;
@@ -82,13 +85,13 @@ export class HostedMatch {
   }
 
   join(guestName: string, role: "player" | "spectator"): { token: string; you: ClientIdentity } | { error: string } {
-    if (this.state !== "waiting") return { error: "not_waiting" };
-    if (role === "spectator") {
+    if (role === "spectator" && (this.state === "waiting" || this.state === "playing")) {
       const t = token();
       this.members.set(t, { token: t, name: guestName, role: "spectator", send: null });
       this.fanout({ type: "room", room: this.view() });
       return { token: t, you: { role: "spectator", name: guestName } };
     }
+    if (this.state !== "waiting") return { error: "not_waiting" };
     const taken = new Set(
       [...this.members.values()].filter((m) => m.role === "player").map((m) => m.player),
     );
@@ -153,6 +156,63 @@ export class HostedMatch {
     return { config };
   }
 
+  /**
+   * Host loads a **multiplayer** save (`remote: true`). Lobby: `start+save`; live: `load`.
+   * Mailbox resumes at the saved committed tick — clients restore the snapshot.
+   */
+  load(auth: string, save: unknown): { error: string } | { config: MatchConfig } {
+    if (auth !== this.hostToken) return { error: "not_host" };
+    if (this.state === "ended") return { error: "ended" };
+    const parsed = parseSaveForHost(save);
+    if (!parsed) return { error: "bad_save" };
+    if (parsed.match.slots.length < 1) return { error: "empty" };
+    if (!parsed.remote) return { error: "sp_save" };
+    const players = [...this.members.values()].filter((m) => m.role === "player" && m.player != null);
+    if (this.state === "waiting" && players.length !== parsed.match.slots.length) return { error: "slots" };
+    const live = this.state === "playing";
+    const names = new Map<number, string>();
+    for (const m of this.members.values()) {
+      if (m.role === "player" && m.player != null) names.set(m.player, m.name);
+    }
+    const config = namedMatch({ ...parsed.match, roomId: this.id }, names);
+    this.config = config;
+    this.lastSave = save;
+    this.mailbox = new Room(config);
+    this.mailbox.subscribe((msg) => this.fanout(msg));
+    this.mailbox.resume(parsed.pipeline);
+    this.state = "playing";
+    this.ready.clear();
+    this.hashes.clear();
+    for (const m of this.members.values()) {
+      const you = this.you(m.token);
+      if (!you) continue;
+      if (live) m.send?.({ type: "load", save, you });
+      else m.send?.({ type: "start", config, you, save });
+    }
+    return { config };
+  }
+
+  /**
+   * Same map/slots, new seed, empty mailbox. Clients rebuild kits from the dump.
+   * Host F10 Restart. Does not reload a save.
+   */
+  restart(auth: string): { error: string } | { config: MatchConfig } {
+    if (auth !== this.hostToken) return { error: "not_host" };
+    if (this.state !== "playing" || !this.config) return { error: "not_playing" };
+    const config: MatchConfig = { ...this.config, seed: seedU32() };
+    this.config = config;
+    this.lastSave = null;
+    this.hashes.clear();
+    this.ready.clear();
+    this.mailbox = new Room(config);
+    this.mailbox.subscribe((msg) => this.fanout(msg));
+    for (const m of this.members.values()) {
+      const you = this.you(m.token);
+      if (you) m.send?.({ type: "restart", config, you });
+    }
+    return { config };
+  }
+
   bind(auth: string, send: (msg: ServerMsg) => void): { error: string } | { you: ClientIdentity; room: RoomView } {
     const m = this.members.get(auth);
     if (!m) return { error: "bad_token" };
@@ -160,9 +220,10 @@ export class HostedMatch {
     const you = this.you(auth)!;
     send({ type: "welcome", you, room: this.view() });
     if (this.state === "playing" && this.config) {
-      send({ type: "start", config: this.config, you });
+      send({ type: "start", config: this.config, you, save: this.lastSave ?? undefined });
       const need = this.config.slots.length;
-      if (need > 0 && this.ready.size >= need) send({ type: "go", tick: 1 });
+      const goTick = (this.mailbox?.tick ?? 0) + 1;
+      if (need > 0 && this.ready.size >= need) send({ type: "go", tick: goTick });
     }
     return { you, room: this.view() };
   }
@@ -180,11 +241,21 @@ export class HostedMatch {
     const m = this.members.get(auth);
     if (!m) return;
     if (msg.type === "hello") return;
+    if (msg.type === "loadSave") {
+      if (m.token !== this.hostToken) return;
+      this.load(auth, msg.save);
+      return;
+    }
+    if (msg.type === "restart") {
+      if (m.token !== this.hostToken) return;
+      this.restart(auth);
+      return;
+    }
     if (msg.type === "ready") {
       if (this.state !== "playing" || m.role !== "player" || m.player == null) return;
       this.ready.add(m.player);
       const need = this.config?.slots.length ?? 0;
-      if (need > 0 && this.ready.size >= need) this.fanout({ type: "go", tick: 1 });
+      if (need > 0 && this.ready.size >= need) this.fanout({ type: "go", tick: (this.mailbox?.tick ?? 0) + 1 });
       return;
     }
     if (msg.type === "turn") {

@@ -1,6 +1,7 @@
 /**
  * Canvas pan / zoom / WASD / pick. Mutates `camera`; session applies it.
  * Escape deselects; Delete / Backspace destroys the selected hut.
+ * Letter keys go to `onHotkey` (command page); a hit is not WASD pan.
  * C converts a selected pioneer → bearer. X enlists a selected bearer as L1 swordsman.
  * LMB click selects. Shift+LMB drag is a marquee. RMB commands (shift = forced walk).
  * Plain LMB drag pans.
@@ -25,6 +26,8 @@ export type MapInputHooks = {
   onDelete(): void;
   onConvert(): void;
   onEnlist(): void;
+  /** Current command-page hotkey. True = consumed (do not pan). */
+  onHotkey(key: string): boolean;
 };
 
 export class MapInput {
@@ -152,6 +155,12 @@ export class MapInput {
   };
 
   private readonly onKeyDown = (e: KeyboardEvent): void => {
+    if (isTyping(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
+    const letter = e.key.length === 1 ? e.key.toLowerCase() : "";
+    if (letter && !e.repeat && this.hooks.onHotkey(letter)) {
+      e.preventDefault();
+      return;
+    }
     this.keys.add(e.key.toLowerCase());
     if (e.key === " ") {
       e.preventDefault();
@@ -205,4 +214,10 @@ export class MapInput {
   private canvasPt(e: { clientX: number; clientY: number }): ScreenPt {
     return this.toCanvas({ x: e.clientX, y: e.clientY });
   }
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }

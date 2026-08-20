@@ -1,12 +1,11 @@
 /**
  * Forester cycle: rest inside, walk out with a sapling, kneel-plant south of the stand tile, go home.
  */
-import { buildingDef } from "../data/buildings";
 import type { Movable } from "../movable/movable";
 import { isPlantSearch } from "../object/tree";
 import { isWalkable } from "../path/path";
 import type { Rng } from "../rng/rng";
-import { beginRest, readyAtHut, type ProfessionContext } from "./profession";
+import { beginRest, readyAtHut, workArea, type ProfessionContext } from "./profession";
 
 /** In-area samples per search. Radius is biased toward the work center with u^3.9. */
 const PLANT_SAMPLES = 100;
@@ -19,7 +18,8 @@ export function tickForester(m: Movable, ctx: ProfessionContext): void {
 
   if (!readyAtHut(m, hut, ctx)) return;
 
-  const stand = plantStandInArea(hut.pos, buildingDef(hut.kind).workRadius, hut.player, ctx);
+  const area = workArea(hut);
+  const stand = plantStandInArea(area.center, area.radius, hut.player, ctx);
   if (!stand) return;
   beginRest(m, ctx.tickMs);
   m.material = "tree";
@@ -28,7 +28,7 @@ export function tickForester(m: Movable, ctx: ProfessionContext): void {
 
 /**
  * Random stand tile in the work circle. Tree goes at `y+1`.
- * Samples polar `(angle, u^3.9 * radius)` from the hut origin (default work center).
+ * Samples polar `(angle, u^3.9 * radius)` from the work origin (`hut.work`).
  */
 function plantStandInArea(
   center: { x: number; y: number },

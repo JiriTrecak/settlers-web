@@ -4,4 +4,4 @@ Built sprites from `buildings/{civ}/{kind}` variant `built`; scaffold from `scaf
 
 Flags wave at `def.flag`, parented to the hut (after the built sprite) so a roof flag isn't buried under the building. Torso × `PLAYER_COLORS[player]`. Missing catalog groups → no flags.
 
-`GhostLayer` is the placement preview: fence posts + blocked-tile fill. Red if the plot is illegal. `ConstructionMarkLayer` is one mesh of original health pips for every owned placeable origin while that tool is out.
+`GhostLayer` is the placement preview: fence posts + blocked-tile fill. Red if the plot is illegal. `ConstructionMarkLayer` is one mesh of original health pips for every owned placeable origin while that tool is out. `WorkAreaLayer` is four concentric axial-circle rims of original work-area marks (file 1 seq 91) around `hut.work`, clipped to owned land.

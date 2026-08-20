@@ -14,6 +14,8 @@ export {
   fetchRooms,
   joinRoom,
   leaveRoom,
+  loadRoom,
   matchUrl,
+  restartRoom,
   startRoom,
 } from "./lobby";

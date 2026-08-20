@@ -10,6 +10,7 @@ import type { GridPos, LandscapeType } from "../../shared";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
+import type { BuildingSnap } from "../world/snapshot";
 
 export type BuildingState = "plan" | "building" | "built";
 
@@ -65,12 +66,18 @@ export class Building {
   fogDistance = 0;
   /** Integer mean of protected heights, frozen when the plan drops. Unused if `flatten: false`. */
   flattenHeight = 0;
+  /**
+   * Outdoor search origin. Defaults to the hut. Radius is `def.workRadius`.
+   * Fisherman / grain / weed will aim this at water or fields.
+   */
+  work: GridPos;
 
   constructor(id: number, kind: BuildingKind, pos: GridPos, player: number) {
     this.id = id;
     this.kind = kind;
     this.pos = pos;
     this.player = player;
+    this.work = { x: pos.x, y: pos.y };
   }
 
   view(flag: BuildingFlag | null = null): BuildingView {
@@ -84,6 +91,46 @@ export class Building {
       buildProgress: this.state === "built" ? 1 : this.constructionProgress,
       flag,
     };
+  }
+
+  capture(): BuildingSnap {
+    return {
+      id: this.id,
+      kind: this.kind,
+      x: this.pos.x,
+      y: this.pos.y,
+      player: this.player,
+      hq: this.hq,
+      doorHealth: this.doorHealth,
+      doorRegen: this.doorRegen,
+      state: this.state,
+      produceWait: this.produceWait,
+      produced: this.produced,
+      constructionProgress: this.constructionProgress,
+      remainingMaterialActions: this.remainingMaterialActions,
+      landClaimed: this.landClaimed,
+      fogDistance: this.fogDistance,
+      flattenHeight: this.flattenHeight,
+      workX: this.work.x,
+      workY: this.work.y,
+    };
+  }
+
+  static fromSnap(s: BuildingSnap): Building {
+    const b = new Building(s.id, s.kind, { x: s.x, y: s.y }, s.player);
+    b.hq = s.hq;
+    b.work = { x: s.workX, y: s.workY };
+    b.doorHealth = s.doorHealth;
+    b.doorRegen = s.doorRegen;
+    b.state = s.state;
+    b.produceWait = s.produceWait;
+    b.produced = s.produced;
+    b.constructionProgress = s.constructionProgress;
+    b.remainingMaterialActions = s.remainingMaterialActions;
+    b.landClaimed = s.landClaimed;
+    b.fogDistance = s.fogDistance;
+    b.flattenHeight = s.flattenHeight;
+    return b;
   }
 }
 
@@ -189,6 +236,29 @@ export class BuildingGrid {
     this.items[id] = null;
     this.revision += 1;
     return b;
+  }
+
+  /** Force-stamp saved huts (ids and holes). Skips canPlace — the match already existed. */
+  restore(snaps: readonly BuildingSnap[], revision: number): void {
+    this.blockedAt.fill(0);
+    this.protectedAt.fill(0);
+    this.items.length = 1;
+    this.items[0] = null;
+    let maxId = 0;
+    for (const s of snaps) if (s.id > maxId) maxId = s.id;
+    while (this.items.length <= maxId) this.items.push(null);
+    for (const s of snaps) {
+      const b = Building.fromSnap(s);
+      this.items[s.id] = b;
+      const def = buildingDef(b.kind);
+      for (const t of tiles(def.protected, b.pos)) {
+        if (this.inBounds(t.x, t.y)) this.protectedAt[this.index(t.x, t.y)] = s.id;
+      }
+      for (const t of tiles(def.blocked, b.pos)) {
+        if (this.inBounds(t.x, t.y)) this.blockedAt[this.index(t.x, t.y)] = s.id;
+      }
+    }
+    this.revision = revision;
   }
 }
 

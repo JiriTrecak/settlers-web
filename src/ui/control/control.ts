@@ -1,6 +1,6 @@
 /**
  * Bottom match chrome: minimap well, selection facts, 4×3 command grid.
- * Paints `CommandPage` / `SelectionView`. Clicks only emit ids.
+ * Paints `CommandPage` / `SelectionView`. Clicks only emit ids. Hotkeys are on the slots.
  */
 import {
   COMMAND_SLOTS,
@@ -134,6 +134,7 @@ class Cell {
   private readonly count: HTMLSpanElement;
   private readonly img: HTMLImageElement;
   private readonly label: HTMLSpanElement;
+  private readonly hotkey: HTMLSpanElement;
   private id: CommandId | null = null;
 
   constructor(host: HTMLElement, onCommand: (id: CommandId) => void) {
@@ -153,7 +154,10 @@ class Cell {
     });
     this.label = document.createElement("span");
     this.label.className = "gcp-label";
-    this.btn.append(this.count, this.img, this.label);
+    this.hotkey = document.createElement("span");
+    this.hotkey.className = "gcp-hotkey";
+    this.hotkey.hidden = true;
+    this.btn.append(this.count, this.img, this.label, this.hotkey);
     this.btn.addEventListener("click", () => {
       if (this.id) onCommand(this.id);
     });
@@ -167,9 +171,16 @@ class Cell {
     this.btn.classList.toggle("is-armed", !!slot?.armed);
     this.btn.classList.toggle("is-page", slot?.kind === "page");
     this.btn.tabIndex = slot && slot.enabled ? 0 : -1;
-    this.btn.title = slot?.label ?? "";
+    this.btn.title = slot ? (slot.hotkey ? `${slot.label} (${slot.hotkey.toUpperCase()})` : slot.label) : "";
     this.btn.setAttribute("aria-hidden", slot ? "false" : "true");
     this.label.textContent = slot?.label ?? "";
+    if (slot?.hotkey) {
+      this.hotkey.hidden = false;
+      this.hotkey.textContent = slot.hotkey.toUpperCase();
+    } else {
+      this.hotkey.hidden = true;
+      this.hotkey.textContent = "";
+    }
     if (slot?.icon) {
       this.img.hidden = false;
       this.img.src = GRAPHICS + slot.icon;
@@ -179,7 +190,8 @@ class Cell {
     }
     if (slot && slot.count != null) {
       this.count.hidden = false;
-      this.count.textContent = String(slot.count);
+      this.count.textContent =
+        slot.queued != null && slot.queued !== slot.count ? `${slot.count} → ${slot.queued}` : String(slot.count);
     } else {
       this.count.hidden = true;
       this.count.textContent = "";

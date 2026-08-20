@@ -41,9 +41,49 @@ describe("colony", () => {
     expect(stacks.some((s) => s.material === "plank")).toBe(true);
     expect(stacks.some((s) => s.material === "stone")).toBe(true);
     expect(stacks.some((s) => s.material === "axe")).toBe(true);
+    expect(stacks.some((s) => s.material === "blade" && s.capacity === 5)).toBe(true);
     expect(world.land.playerAt(32, 32)).toBe(0);
     expect(world.land.hasLand()).toBe(true);
     expect(world.view(0).fog.sightAt(32, 32)).toBe(100);
+  });
+
+  it("keeps kit piles at least 2 tiles apart", () => {
+    const world = new World(grass(64, 64));
+    placeColony(world, { x: 32, y: 32 }, 0);
+    const piles = world.view().objects.filter((o) => o.kind === "stack");
+    expect(piles).toHaveLength(9);
+    for (let i = 0; i < piles.length; i++) {
+      for (let j = i + 1; j < piles.length; j++) {
+        const a = piles[i]!;
+        const b = piles[j]!;
+        expect(hexDist(a.x, a.y, b.x, b.y)).toBeGreaterThanOrEqual(2);
+      }
+    }
+  });
+
+  it("sends bearers to blades up to the 25% cap", () => {
+    const world = new World(grass(64, 64));
+    placeColony(world, { x: 32, y: 32 }, 0);
+    const n = tickUntil(
+      world,
+      () =>
+        world.view().movables.filter((m) => m.type === "digger").length >= 4 &&
+        world.view().movables.filter((m) => m.type === "bricklayer").length >= 4,
+      2000,
+    );
+    expect(n).toBeGreaterThan(0);
+    expect(world.view().movables.filter((m) => m.type === "digger")).toHaveLength(4);
+    const blades = world
+      .view()
+      .objects.filter((o) => o.kind === "stack" && o.material === "blade")
+      .reduce((c, o) => c + o.capacity, 0);
+    expect(blades).toBe(1);
+    expect(world.view().movables.filter((m) => m.type === "bricklayer")).toHaveLength(4);
+    const hammers = world
+      .view()
+      .objects.filter((o) => o.kind === "stack" && o.material === "hammer")
+      .reduce((c, o) => c + o.capacity, 0);
+    expect(hammers).toBe(2);
   });
 
   it("garrisons one L1 so the occupy disk exists", () => {

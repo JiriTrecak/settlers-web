@@ -89,6 +89,62 @@ describe("MatchHost", () => {
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 
+  it("strips placeColony and noop out of a turn before commit", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const joined = room.join("p2", "player") as { token: string };
+    const a: ServerMsg[] = [];
+    room.bind(created.token, (m) => a.push(m));
+    room.bind(joined.token, () => {});
+    room.start(created.token);
+    room.ingest(created.token, {
+      type: "turn",
+      through: 1,
+      bundles: [
+        {
+          tick: 1,
+          actions: [
+            { type: "noop" },
+            { type: "placeColony", at: { x: 8, y: 8 }, player: 0 },
+            { type: "placeBuilding", kind: "lumberjack", at: { x: 4, y: 4 }, player: 0 },
+          ],
+        },
+      ],
+    });
+    room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
+    const commit = a.find((m) => m.type === "commit" && m.tick === 1);
+    expect(commit?.type === "commit" && commit.slots[0]!.actions.map((x) => x.type)).toEqual(["placeBuilding"]);
+  });
+
+  it("strips placeColony and noop out of a turn before commit", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const joined = room.join("p2", "player") as { token: string };
+    const a: ServerMsg[] = [];
+    room.bind(created.token, (m) => a.push(m));
+    room.bind(joined.token, () => {});
+    room.start(created.token);
+    room.ingest(created.token, {
+      type: "turn",
+      through: 1,
+      bundles: [
+        {
+          tick: 1,
+          actions: [
+            { type: "noop" },
+            { type: "placeColony", at: { x: 8, y: 8 }, player: 0 },
+            { type: "placeBuilding", kind: "lumberjack", at: { x: 4, y: 4 }, player: 0 },
+          ],
+        },
+      ],
+    });
+    room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
+    const commit = a.find((m) => m.type === "commit" && m.tick === 1);
+    expect(commit?.type === "commit" && commit.slots[0]!.actions.map((x) => x.type)).toEqual(["placeBuilding"]);
+  });
+
   it("discard ends the room and drops it from the list", () => {
     const host = new MatchHost();
     const created = host.create(draft());
@@ -112,5 +168,76 @@ describe("MatchHost", () => {
     room.ingest(created.token, { type: "hash", tick: 8, checksum: 1 });
     room.ingest(joined.token, { type: "hash", tick: 8, checksum: 2 });
     expect(a.some((m) => m.type === "desync" && m.tick === 8)).toBe(true);
+  });
+
+  it("hashOk when both checksums match", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const joined = room.join("p2", "player") as { token: string };
+    const a: ServerMsg[] = [];
+    room.bind(created.token, (m) => a.push(m));
+    room.bind(joined.token, () => {});
+    room.start(created.token);
+    room.ingest(created.token, { type: "ready" });
+    room.ingest(joined.token, { type: "ready" });
+    room.ingest(created.token, { type: "hash", tick: 8, checksum: 7 });
+    room.ingest(joined.token, { type: "hash", tick: 8, checksum: 7 });
+    expect(a.some((m) => m.type === "hashOk" && m.tick === 8)).toBe(true);
+    expect(a.some((m) => m.type === "desync")).toBe(false);
+  });
+
+  it("start from a guest is not_host", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const joined = room.join("p2", "player") as { token: string };
+    expect(room.start(joined.token)).toEqual({ error: "not_host" });
+    expect(room.view().state).toBe("waiting");
+  });
+
+  it("join as player is full once every seat is taken", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    expect(room.join("p2", "player")).toMatchObject({ you: { role: "player", player: 1 } });
+    expect(room.join("p3", "player")).toEqual({ error: "full" });
+  });
+
+  it("spectator can sit in the lobby before start", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    const spec = room.join("eve", "spectator") as { you: { role: string } };
+    expect(spec.you.role).toBe("spectator");
+    expect(room.view().spectators).toBe(1);
+    expect(room.view().state).toBe("waiting");
+    expect(room.join("p2", "player")).toMatchObject({ you: { player: 1 } });
+  });
+
+  it("restart while waiting is not_playing", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    expect(room.restart(created.token)).toEqual({ error: "not_playing" });
+  });
+
+  it("player join after start is not_waiting", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    room.join("p2", "player");
+    room.start(created.token);
+    expect(room.join("late", "player")).toEqual({ error: "not_waiting" });
+    expect(room.join("eve", "spectator")).toMatchObject({ you: { role: "spectator" } });
+  });
+
+  it("load after shutdown is ended", () => {
+    const host = new MatchHost();
+    const created = host.create(draft());
+    const room = host.get(created.room.id)!;
+    room.shutdown();
+    expect(room.load(created.token, { v: 1, remote: true })).toEqual({ error: "ended" });
+    expect(room.view().state).toBe("ended");
   });
 });

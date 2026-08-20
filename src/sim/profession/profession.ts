@@ -7,9 +7,9 @@
  * `needsPlayersGround` on the settler def, not a per-profession check.
  * `goDoor` asks `ensurePath` — not a fresh BFS every rest cycle beat.
  */
-import { hexDist, type GridPos } from "../../shared";
+import { circleContains, type GridPos } from "../../shared";
 import type { Building, BuildingGrid } from "../building/building";
-import { buildingDef } from "../data/buildings";
+import { buildingDef, type BuildingKind } from "../data/buildings";
 import { isSoldier, settlerDef } from "../data/settlers";
 import type { JobContext } from "../job/job";
 import type { Movable } from "../movable/movable";
@@ -74,8 +74,13 @@ export function beginRest(m: Movable, tickMs: number): void {
 /** Which tile `acceptWork` owns and marks. Lumberjack: the tree. Stonecutter: the stand. */
 export type WorkLock = "resource" | "stand";
 
+/** Outdoor gatherers / planters. Radius is `def.workRadius` around `hut.work`. */
+export function workArea(hut: { kind: BuildingKind; work: GridPos }): { center: GridPos; radius: number } {
+  return { center: hut.work, radius: buildingDef(hut.kind).workRadius };
+}
+
 /**
- * Outdoor gatherer gate: resource in `workRadius`, lock tile owned and unclaimed, stand walkable.
+ * Outdoor gatherer gate: resource in the work circle, lock tile owned and unclaimed, stand walkable.
  * Callers only name the two tiles and which one is exclusive.
  */
 export function acceptWork(
@@ -87,8 +92,8 @@ export function acceptWork(
   stand: GridPos,
   lock: WorkLock = "resource",
 ): boolean {
-  const d = hexDist(center.x, center.y, resource.x, resource.y);
-  if (d > radius || d === 0) return false;
+  const d0 = resource.x === center.x && resource.y === center.y;
+  if (d0 || !circleContains(center.x, center.y, radius, resource.x, resource.y)) return false;
   const at = lock === "stand" ? stand : resource;
   if (ctx.marks.claimed(at.x, at.y)) return false;
   if (!ctx.land.owns(at.x, at.y, player)) return false;
