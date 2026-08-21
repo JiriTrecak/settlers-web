@@ -3,12 +3,18 @@
  * 12 slots, row-major, slot 11 = bottom-right of the 4×3.
  */
 export const COMMAND_SLOTS = 12;
-/** Bottom-right cell of a 4×3. */
+/** Bottom-right cell of a 4×3. Idle Military / drill Back / hut Cancel. */
 export const COMMAND_CORNER = 11;
-/** Left of Build on the bottom row. */
-export const COMMAND_NEAR_CORNER = 10;
-/** Left of Recruit — Tools. */
-export const COMMAND_TOOLS = 9;
+/** Idle Military. */
+export const COMMAND_MILITARY = 11;
+/** Idle Food. */
+export const COMMAND_FOOD = 10;
+/** Idle Production. */
+export const COMMAND_PRODUCTION = 9;
+/** Idle Tools — left of Production. */
+export const COMMAND_TOOLS = 8;
+/** Idle Recruit — above Military. */
+export const COMMAND_NEAR_CORNER = 7;
 
 export type CommandId = string;
 

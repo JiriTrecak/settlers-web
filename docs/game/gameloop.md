@@ -55,8 +55,8 @@ At 60 fps 1× that’s ~0.67 sim ticks per frame, so most frames interpolate. At
 | Drag / WASD / wheel | Camera pan / zoom (zoom-at-cursor) |
 | Space | Fit whole map |
 | Minimap drag | Look-at that cell |
-| Build strip | Select lumberjack / forester / stonecutter / sawmill / house / tower |
-| B (idle) | Open Build. Then L / F / S / W / H / T arm those huts. Keys follow the visible page |
+| Build strip | Production / Food / Military. Unimplemented huts are visible and locked |
+| P / F / M (idle) | Open those pages. B is Production. Then page-local keys (L W F, A M K, T, …) |
 | Click empty valid owned land with a tool | Place a **plan** (fence), drop the tool |
 | Click an existing hut | Select it (highlight origin). Outdoor huts also show their work-area rims |
 | Selected outdoor hut: Area, then click land | Move the search circle (`setWorkArea`). Radius stays the def |

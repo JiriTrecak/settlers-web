@@ -24,4 +24,12 @@ export { LoadStatus, type LoadView } from "./load/load";
 export { PauseMenu, type PauseFileRow, type PauseMenuHooks } from "./pause/pause";
 export { CLOSED_PAUSE, confirmCopy, type PauseConfirm, type PauseMode, type PauseScreen, type PauseView } from "./pause/types";
 export type { CommandId, CommandPage, CommandSlot, SelectionView, GoodsLine } from "./control/types";
-export { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS } from "./control/types";
+export {
+  COMMAND_CORNER,
+  COMMAND_FOOD,
+  COMMAND_MILITARY,
+  COMMAND_NEAR_CORNER,
+  COMMAND_PRODUCTION,
+  COMMAND_SLOTS,
+  COMMAND_TOOLS,
+} from "./control/types";

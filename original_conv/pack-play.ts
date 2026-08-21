@@ -13,6 +13,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildings } from "../src/sim/data/buildings";
 import { settlers } from "../src/sim/data/settlers";
+import { FOOD, MILITARY, PRODUCTION } from "../src/session/command/pages";
 import { packsForCivs } from "./atlas/groups";
 import type { AtlasManifest } from "./atlas/manifest";
 
@@ -42,6 +43,7 @@ function keepPrefixes(): string[] {
   const out = ["props/"];
   for (const kind of Object.keys(settlers)) out.push(`settlers/${CIV}/${kind}/`);
   for (const def of Object.values(buildings)) out.push(`${def.sheet}/`);
+  for (const c of [...PRODUCTION, ...FOOD, ...MILITARY]) out.push(`${c.sheet}/`);
   return out;
 }
 

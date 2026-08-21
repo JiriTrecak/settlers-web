@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { CommandBoard } from "../../src/session/command/board";
-import { PLACEABLE } from "../../src/session/command/pages";
-import { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS } from "../../src/ui/control/types";
+import { FOOD, MILITARY, PRODUCTION } from "../../src/session/command/pages";
+import {
+  COMMAND_CORNER,
+  COMMAND_FOOD,
+  COMMAND_MILITARY,
+  COMMAND_NEAR_CORNER,
+  COMMAND_PRODUCTION,
+  COMMAND_SLOTS,
+  COMMAND_TOOLS,
+} from "../../src/ui/control/types";
 import type { BoardContext, CountPair, PlaceTool } from "../../src/session/command/types";
 
 function board() {
@@ -50,44 +58,47 @@ function ctx(partial: Partial<BoardContext> = {}): BoardContext {
 }
 
 describe("command board", () => {
-  it("idle is Tools + Recruit + Build on the bottom row", () => {
+  it("idle is Tools + Recruit + Production / Food / Military", () => {
     const { b } = board();
     b.sync(ctx({ units: { digger: n(4) } }));
     const page = b.page;
     expect(page.id).toBe("idle");
     expect(page.slots).toHaveLength(COMMAND_SLOTS);
-    expect(page.slots.filter(Boolean)).toHaveLength(3);
+    expect(page.slots.filter(Boolean)).toHaveLength(5);
     expect(page.slots[COMMAND_TOOLS]).toMatchObject({ id: "page.tools" });
     expect(page.slots[COMMAND_TOOLS]?.count).toBeUndefined();
     expect(page.slots[COMMAND_NEAR_CORNER]?.id).toBe("page.recruit");
-    expect(page.slots[COMMAND_CORNER]?.id).toBe("page.build");
-    expect(page.slots[COMMAND_CORNER]?.hotkey).toBe("b");
+    expect(page.slots[COMMAND_PRODUCTION]).toMatchObject({ id: "page.production", hotkey: "p" });
+    expect(page.slots[COMMAND_FOOD]).toMatchObject({ id: "page.food", hotkey: "f" });
+    expect(page.slots[COMMAND_MILITARY]).toMatchObject({ id: "page.military", hotkey: "m" });
   });
 
-  it("Build opens placeable huts with owned counts", () => {
+  it("Production lists wood / mines / smelters; unimplemented stay visible and locked", () => {
     const { b } = board();
     b.sync(ctx({ counts: { lumberjack: n(2), tower: n(1) } }));
-    b.invoke("page.build");
+    b.invoke("page.production");
     const page = b.page;
-    expect(page.id).toBe("build");
-    for (let i = 0; i < PLACEABLE.length; i++) {
-      const slot = page.slots[i]!;
-      expect(slot.id).toBe(`build.${PLACEABLE[i]!.kind}`);
-      expect(slot.icon).toMatch(/\/built(\/00)?\.png$/);
-      if (PLACEABLE[i]!.kind === "lumberjack") expect(slot).toMatchObject({ count: 2 });
-      else if (PLACEABLE[i]!.kind === "tower") expect(slot).toMatchObject({ count: 1 });
-      else {
-        expect(slot.count).toBeUndefined();
-        expect(slot.queued).toBeUndefined();
-      }
-    }
+    expect(page.id).toBe("production");
+    expect(page.slots[0]).toMatchObject({ id: "build.lumberjack", label: "Lumberjack", count: 2, enabled: true });
+    expect(page.slots[1]).toMatchObject({ id: "locked.buildings/roman/stock", label: "Store", enabled: false });
+    expect(page.slots[1]?.icon).toMatch(/stock\/built/);
+    expect(page.slots[2]).toMatchObject({ id: "build.sawmill", enabled: true });
+    expect(page.slots[3]).toMatchObject({ id: "build.forester", enabled: true });
+    expect(page.slots[4]).toMatchObject({ id: "locked.buildings/roman/coalmine", enabled: false });
+    expect(page.slots[5]).toMatchObject({ id: "build.ironmine", enabled: true });
+    expect(page.slots[6]).toMatchObject({ id: "build.goldmine", enabled: true });
+    expect(page.slots[7]).toMatchObject({ id: "build.stonecutter", enabled: true });
+    expect(page.slots[8]).toMatchObject({ id: "locked.buildings/roman/ironmelt", enabled: false });
+    expect(page.slots[9]).toMatchObject({ id: "locked.buildings/roman/goldmelt", enabled: false });
+    expect(page.slots[10]).toMatchObject({ id: "locked.buildings/roman/toolsmith", enabled: false });
     expect(page.slots[COMMAND_CORNER]?.id).toBe("page.back");
+    expect(PRODUCTION).toHaveLength(11);
   });
 
   it("build id arms and toggles the place tool", () => {
     const { b, armed } = board();
     b.sync(ctx());
-    b.invoke("page.build");
+    b.invoke("page.production");
     b.invoke("build.lumberjack");
     expect(armed.at(-1)).toEqual({ type: "building", kind: "lumberjack" });
     b.sync(ctx({ placeTool: { type: "building", kind: "lumberjack" } }));
@@ -135,10 +146,10 @@ describe("command board", () => {
   it("pop leaves the build page; unit select clears the drill", () => {
     const { b } = board();
     b.sync(ctx());
-    b.invoke("page.build");
+    b.invoke("page.production");
     expect(b.pop()).toBe(true);
     expect(b.page.id).toBe("idle");
-    b.invoke("page.build");
+    b.invoke("page.production");
     b.sync(ctx({ selection: { type: "units", types: ["swordsman"] } }));
     expect(b.page.id).toBe("units");
     expect(b.page.slots.every((s) => s == null)).toBe(true);
@@ -188,7 +199,7 @@ describe("command board", () => {
   it("Back on a drill does not clear selection", () => {
     const { b, cleared } = board();
     b.sync(ctx());
-    b.invoke("page.build");
+    b.invoke("page.production");
     b.invoke("page.back");
     expect(b.page.id).toBe("idle");
     expect(cleared).toEqual([]);
@@ -231,7 +242,7 @@ describe("command board", () => {
   it("in-flight counts pass through as count + queued", () => {
     const { b } = board();
     b.sync(ctx({ counts: { lumberjack: n(0, 1) }, units: { digger: n(0, 1), swordsman: n(2, 3) } }));
-    b.invoke("page.build");
+    b.invoke("page.production");
     expect(b.page.slots[0]).toMatchObject({ id: "build.lumberjack", count: 0, queued: 1 });
     b.pop();
     b.invoke("page.tools");
@@ -241,79 +252,55 @@ describe("command board", () => {
     expect(b.page.slots[0]).toMatchObject({ id: "recruit.swordsman", count: 2, queued: 3 });
   });
 
-  it("hotkeys follow the current page: B then L/F/S/W/H/T", () => {
+  it("hotkeys follow the current page: P/B then L/W/F/S", () => {
     const { b, armed } = board();
     b.sync(ctx());
     expect(b.key("l")).toBe(false);
-    expect(b.key("b")).toBe(true);
-    expect(b.page.id).toBe("build");
+    expect(b.key("p")).toBe(true);
+    expect(b.page.id).toBe("production");
     expect(b.page.slots[0]).toMatchObject({ id: "build.lumberjack", hotkey: "l" });
-    expect(b.page.slots[1]).toMatchObject({ hotkey: "f" });
-    expect(b.page.slots[2]).toMatchObject({ hotkey: "s" });
-    expect(b.page.slots[3]).toMatchObject({ hotkey: "w" });
-    expect(b.page.slots[4]).toMatchObject({ hotkey: "h" });
-    expect(b.page.slots[5]).toMatchObject({ hotkey: "t" });
+    expect(b.page.slots[2]).toMatchObject({ id: "build.sawmill", hotkey: "w" });
+    expect(b.page.slots[3]).toMatchObject({ id: "build.forester", hotkey: "f" });
+    expect(b.page.slots[7]).toMatchObject({ id: "build.stonecutter", hotkey: "s" });
     expect(b.key("L")).toBe(true);
     expect(armed.at(-1)).toEqual({ type: "building", kind: "lumberjack" });
     expect(b.key("w")).toBe(true);
     expect(armed.at(-1)).toEqual({ type: "building", kind: "sawmill" });
-    expect(b.key("h")).toBe(true);
-    expect(armed.at(-1)).toEqual({ type: "building", kind: "small_livinghouse" });
     expect(b.key("b")).toBe(false);
+    b.pop();
+    expect(b.key("b")).toBe(true);
+    expect(b.page.id).toBe("production");
     b.sync(ctx({ selection: { type: "building", kind: "tower", state: "built", owned: true, workArea: false } }));
     expect(b.key("b")).toBe(false);
     expect(b.key("t")).toBe(false);
   });
 
-  it("Build has an Industry card that drills to iron and gold mines", () => {
+  it("idle F/M open Food and Military; locked cards do not arm", () => {
     const { b, armed } = board();
-    b.sync(ctx({ counts: { ironmine: n(1) } }));
-    b.invoke("page.build");
-    expect(b.page.slots[PLACEABLE.length]).toMatchObject({
-      id: "page.industry",
-      label: "Industry",
-      kind: "page",
-      hotkey: "i",
-    });
-    expect(b.key("i")).toBe(true);
-    expect(b.page.id).toBe("industry");
-    expect(b.page.slots[0]).toMatchObject({ id: "build.ironmine", label: "Iron mine", hotkey: "i", count: 1 });
-    expect(b.page.slots[1]).toMatchObject({ id: "build.goldmine", label: "Gold mine", hotkey: "g" });
-    expect(b.key("i")).toBe(true);
-    expect(armed.at(-1)).toEqual({ type: "building", kind: "ironmine" });
-    expect(b.key("g")).toBe(true);
-    expect(armed.at(-1)).toEqual({ type: "building", kind: "goldmine" });
-    expect(b.pop()).toBe(true);
-    expect(b.page.id).toBe("build");
-    expect(b.pop()).toBe(true);
-    expect(b.page.id).toBe("idle");
-  });
-
-  it("Build has a Food card that drills to the food chain", () => {
-    const { b, armed } = board();
-    b.sync(ctx({ counts: { farm: n(1) } }));
-    b.invoke("page.build");
-    expect(b.page.slots[PLACEABLE.length + 1]).toMatchObject({
-      id: "page.food",
-      label: "Food",
-      kind: "page",
-      hotkey: "o",
-    });
-    expect(b.key("o")).toBe(true);
+    b.sync(ctx({ counts: { farm: n(1), tower: n(1) } }));
+    expect(b.key("f")).toBe(true);
     expect(b.page.id).toBe("food");
-    expect(b.page.slots[0]).toMatchObject({ id: "build.farm", label: "Farm", hotkey: "a", count: 1 });
-    expect(b.page.slots[1]).toMatchObject({ id: "build.mill", label: "Mill", hotkey: "m" });
-    expect(b.page.slots[2]).toMatchObject({ id: "build.baker", label: "Baker", hotkey: "k" });
-    expect(b.page.slots[3]).toMatchObject({ id: "build.fisher", label: "Fisher", hotkey: "i" });
-    expect(b.page.slots[4]).toMatchObject({ id: "build.pig_farm", label: "Pig farm", hotkey: "p" });
-    expect(b.page.slots[5]).toMatchObject({ id: "build.slaughterhouse", label: "Slaughter", hotkey: "s" });
-    expect(b.page.slots[6]).toMatchObject({ id: "build.waterworks", label: "Waterworks", hotkey: "w" });
+    expect(FOOD).toHaveLength(11);
+    expect(b.page.slots[0]).toMatchObject({ id: "build.farm", label: "Farm", hotkey: "a", count: 1, enabled: true });
+    expect(b.page.slots[3]).toMatchObject({ id: "build.waterworks", enabled: true });
+    expect(b.page.slots[7]).toMatchObject({ id: "locked.buildings/roman/winegrower", enabled: false });
+    expect(b.page.slots[9]).toMatchObject({ id: "build.small_livinghouse", enabled: true });
     expect(b.key("a")).toBe(true);
     expect(armed.at(-1)).toEqual({ type: "building", kind: "farm" });
+    b.pop();
     expect(b.key("m")).toBe(true);
-    expect(armed.at(-1)).toEqual({ type: "building", kind: "mill" });
-    expect(b.pop()).toBe(true);
-    expect(b.page.id).toBe("build");
+    expect(b.page.id).toBe("military");
+    expect(MILITARY).toHaveLength(11);
+    expect(b.page.slots[0]).toMatchObject({ id: "build.tower", label: "Tower", hotkey: "t", count: 1, enabled: true });
+    expect(b.page.slots[1]).toMatchObject({ id: "locked.buildings/roman/lookout_tower", enabled: false });
+    expect(b.page.slots[4]).toMatchObject({ id: "locked.buildings/roman/barrack", enabled: false });
+    b.invoke("locked.buildings/roman/lookout_tower");
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "farm" });
+    expect(b.key("t")).toBe(true);
+    expect(armed.at(-1)).toEqual({ type: "building", kind: "tower" });
+    b.sync(ctx({ placeTool: { type: "building", kind: "tower" }, counts: { farm: n(1), tower: n(1) } }));
+    expect(b.key("t")).toBe(true);
+    expect(armed.at(-1)).toBeNull();
     expect(b.pop()).toBe(true);
     expect(b.page.id).toBe("idle");
   });
@@ -345,7 +332,9 @@ describe("command board", () => {
   it("disabled slots do not eat the hotkey", () => {
     const { b } = board();
     b.sync(ctx({ canCommand: false }));
-    expect(b.page.slots[COMMAND_CORNER]).toMatchObject({ id: "page.build", hotkey: "b", enabled: false });
+    expect(b.page.slots[COMMAND_PRODUCTION]).toMatchObject({ id: "page.production", hotkey: "p", enabled: false });
+    expect(b.key("p")).toBe(false);
+    expect(b.key("b")).toBe(false);
     expect(b.key("b")).toBe(false);
     expect(b.page.id).toBe("idle");
   });

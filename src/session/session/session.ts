@@ -389,6 +389,7 @@ export class Session {
         this.opponents.push(new Opponent(slot.player, home, target, (action) => this.send(action, slot.player)));
       }
     } else {
+      this.speed = 1;
       this.config.channel.send({ type: "ready" });
       this.armConfirms(match);
     }
@@ -553,8 +554,9 @@ export class Session {
 
   /**
    * Empty `through` on a timer, not only on Pixi frames. An unfocused tab's rAF pauses;
-   * without this the other slot waits forever at tick 0. `through` tracks wall clock and D
-   * so one RTT yields a burst of commits instead of 1 tick.
+   * without this the other slot waits forever at tick 0. `through` follows wall clock + D
+   * so the Room can commit in realtime (one RTT of ticks, not 1 tick per RTT). Session
+   * still draws one beat per 25ms — extra commits sit in the mailbox as a jitter buffer.
    */
   private pulseConfirm(): void {
     const world = this.world;
@@ -625,13 +627,17 @@ export class Session {
     const renderer = this.renderer;
     const world = this.world;
     if (!renderer || !world) return;
-    if (!this.paused) this.acc += dtMs * this.speed;
+    const remote = this.config.channel != null;
+    // MP clock is 1× (speed widget is hidden; default 2× must not pump acc).
+    const rate = remote ? 1 : this.speed;
+    if (!this.paused) this.acc += dtMs * rate;
     const step = world.clock.tickMs;
-    // 8 ticks/frame at 1×, scaled so 8× can still catch a hitch without spiraling.
-    const cap = 8 * this.speed;
+    // SP: catch a hitch. MP: never dump an RTT of commits in one draw.
+    const cap = remote ? 2 : 8 * this.speed;
     const phases = emptyTickTimings();
     const tSim = performance.now();
     let n = 0;
+    if (remote && !this.watching && !this.desynced) this.pulseConfirm();
     while (!this.paused && this.acc >= step && n < cap) {
       if (this.watching && world.clock.tickIndex >= this.duration) {
         this.paused = true;
@@ -640,12 +646,15 @@ export class Session {
       }
       if (!this.watching) {
         // Don't wait for `go`. Room already stalls until every slot confirms.
-        if (this.config.channel && this.desynced) break;
+        if (remote && this.desynced) break;
         const next = world.clock.tickIndex + 1;
-        if (this.config.channel) this.pulseConfirm();
-        else for (const ls of this.locksteps.values()) ls.confirm(next);
+        if (!remote) for (const ls of this.locksteps.values()) ls.confirm(next);
         const commit = this.locksteps.get(this.me)?.take(next);
-        if (!commit) break;
+        if (!commit) {
+          // Stall does not bank wall time. Spending it on the next burst is the slideshow.
+          if (remote) this.acc = Math.min(this.acc, step);
+          break;
+        }
         for (const slot of commit.slots) {
           for (let i = 0; i < slot.actions.length; i++) {
             world.enqueue(slot.actions[i]!, next, { player: slot.player, seq: i });
@@ -669,7 +678,7 @@ export class Session {
       n++;
     }
     const simMs = performance.now() - tSim;
-    if (n >= cap) this.acc = 0;
+    if (n >= cap && !remote) this.acc = 0;
     const tSnap = performance.now();
     const snap = this.look(world);
     const snapMs = performance.now() - tSnap;
@@ -1601,6 +1610,7 @@ export class Session {
     this.acc = 0;
     this.desynced = false;
     if (this.config.channel) {
+      this.speed = 1;
       this.config.channel.send({ type: "ready" });
       this.armConfirms(config);
     }

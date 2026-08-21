@@ -2,7 +2,7 @@
 
 A building is an origin cell plus a footprint from its def. All currently playable huts are Roman.
 
-Placeable from the strip: lumberjack, forester, stonecutter, sawmill, small house, tower (T1 occupy). **Industry** (I) → iron mine, gold mine. **Food** (O) → farm, mill, baker, fisher, pig farm, slaughterhouse, waterworks. Lookout / big tower are not in play.
+Placeable from the strip: **Production** (lumberjack, sawmill, forester, iron mine, gold mine, stonecutter; store / coal / smelters / toolmaker shown locked), **Food** (farm, mill, baker, waterworks, pig farm, slaughter, fisher, house; winery / donkey / medium house locked), **Military** (tower; the rest locked). Lookout / big tower / castle are icons only.
 
 `viewDistance` on the def is the fog look radius once finished (tower 38, work huts 0). Empty worker huts still get 5; plans get 0. Units add their own disk (default 8).
 

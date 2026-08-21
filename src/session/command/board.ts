@@ -3,7 +3,20 @@
  */
 import type { BuildingKind } from "../../sim/data/buildings";
 import type { CommandId, CommandPage, SelectionView } from "../../ui/control/types";
-import { blankPage, buildPage, buildingIcon, buildingLabel, foodPage, hutPage, idlePage, industryPage, FOOD, INDUSTRY, PLACEABLE, recruitPage, RECRUITABLE, toolsPage } from "./pages";
+import {
+  blankPage,
+  buildingIcon,
+  buildingLabel,
+  foodPage,
+  hutPage,
+  idlePage,
+  militaryPage,
+  PLACEABLE,
+  productionPage,
+  recruitPage,
+  RECRUITABLE,
+  toolsPage,
+} from "./pages";
 import type { BoardContext, PlaceTool } from "./types";
 
 export type CommandBoardHooks = {
@@ -33,8 +46,10 @@ function labelType(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
+type Drill = "production" | "food" | "military" | "recruit" | "tools";
+
 export class CommandBoard {
-  private drill: "build" | "recruit" | "tools" | "industry" | "food" | null = null;
+  private drill: Drill | null = null;
   private root: "idle" | "units" | "hut" = "idle";
   private ctx: BoardContext = {
     selection: { type: "none" },
@@ -62,21 +77,23 @@ export class CommandBoard {
   /** Leave a drill page. True if the stack actually moved. */
   pop(): boolean {
     if (this.drill == null) return false;
-    if (this.drill === "industry" || this.drill === "food") {
-      this.drill = "build";
-      return true;
-    }
     this.drill = null;
     return true;
   }
 
   /**
    * Fire the enabled slot on the current page whose `hotkey` is `raw`.
-   * Page-local — idle B is Build; L/F/S/W/H/T only exist on the build page.
+   * Idle P/F/M open the three build pages; B is Production. Hut keys are page-local.
    */
   key(raw: string): boolean {
     const k = raw.length === 1 ? raw.toLowerCase() : "";
     if (!k) return false;
+    if (this.page.id === "idle" && k === "b") {
+      const prod = this.page.slots.find((s) => s?.id === "page.production");
+      if (!prod?.enabled) return false;
+      this.invoke("page.production");
+      return true;
+    }
     const slot = this.page.slots.find((s) => s?.enabled && s.hotkey === k);
     if (!slot) return false;
     this.invoke(slot.id);
@@ -84,16 +101,16 @@ export class CommandBoard {
   }
 
   invoke(id: CommandId): void {
-    if (id === "page.build") {
-      if (this.root === "idle") this.drill = "build";
-      return;
-    }
-    if (id === "page.industry") {
-      if (this.root === "idle" && (this.drill === "build" || this.drill === "industry")) this.drill = "industry";
+    if (id === "page.production") {
+      if (this.root === "idle") this.drill = "production";
       return;
     }
     if (id === "page.food") {
-      if (this.root === "idle" && (this.drill === "build" || this.drill === "food")) this.drill = "food";
+      if (this.root === "idle") this.drill = "food";
+      return;
+    }
+    if (id === "page.military") {
+      if (this.root === "idle") this.drill = "military";
       return;
     }
     if (id === "page.recruit") {
@@ -158,9 +175,9 @@ export class CommandBoard {
 
   get page(): CommandPage {
     if (this.root === "idle") {
-      if (this.drill === "build") return buildPage(this.ctx);
-      if (this.drill === "industry") return industryPage(this.ctx);
+      if (this.drill === "production") return productionPage(this.ctx);
       if (this.drill === "food") return foodPage(this.ctx);
+      if (this.drill === "military") return militaryPage(this.ctx);
       if (this.drill === "recruit") return recruitPage(this.ctx);
       if (this.drill === "tools") return toolsPage(this.ctx);
       return idlePage(this.ctx);
@@ -198,9 +215,7 @@ export class CommandBoard {
 function parseBuild(id: CommandId): BuildingKind | null {
   if (!id.startsWith("build.")) return null;
   const kind = id.slice("build.".length);
-  return PLACEABLE.some((p) => p.kind === kind) || INDUSTRY.some((p) => p.kind === kind) || FOOD.some((p) => p.kind === kind)
-    ? (kind as BuildingKind)
-    : null;
+  return PLACEABLE.includes(kind as BuildingKind) ? (kind as BuildingKind) : null;
 }
 
 function parseRecruit(id: CommandId): (typeof RECRUITABLE)[number] | null {

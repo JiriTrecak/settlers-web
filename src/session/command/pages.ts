@@ -1,48 +1,93 @@
 /**
  * Command tables. New buttons go here, not in the grid widget.
+ * Idle is Tools / Recruit plus Production / Food / Military. Cards without
+ * `kind` are catalog-only — shown at 50% and not placeable.
  */
-import { buildingDef, type BuildingKind } from "../../sim/data/buildings";
+import { buildingDef, buildings, type BuildingKind } from "../../sim/data/buildings";
 import { settlerDef } from "../../sim/data/settlers";
 import type { SettlerDef } from "../../sim/data/types";
-import { COMMAND_CORNER, COMMAND_NEAR_CORNER, COMMAND_SLOTS, COMMAND_TOOLS, type CommandPage, type CommandSlot } from "../../ui/control/types";
+import { COMMAND_CORNER, COMMAND_FOOD, COMMAND_MILITARY, COMMAND_NEAR_CORNER, COMMAND_PRODUCTION, COMMAND_SLOTS, COMMAND_TOOLS, type CommandPage, type CommandSlot } from "../../ui/control/types";
 import { catalogPath } from "./catalog";
 import type { BoardContext, CountPair, RecruitKind } from "./types";
 
-export const PLACEABLE: { kind: BuildingKind; label: string; hotkey: string }[] = [
-  { kind: "lumberjack", label: "Lumberjack", hotkey: "l" },
-  { kind: "forester", label: "Forester", hotkey: "f" },
-  { kind: "stonecutter", label: "Stonecutter", hotkey: "s" },
-  { kind: "sawmill", label: "Sawmill", hotkey: "w" },
-  { kind: "small_livinghouse", label: "House", hotkey: "h" },
-  { kind: "tower", label: "Tower", hotkey: "t" },
-];
+const ROMAN = "buildings/roman";
 
-export const INDUSTRY: { kind: BuildingKind; label: string; hotkey: string }[] = [
-  { kind: "ironmine", label: "Iron mine", hotkey: "i" },
-  { kind: "goldmine", label: "Gold mine", hotkey: "g" },
-];
+/** One strip cell. `kind` set ⇒ sim can place it. */
+export type BuildCard = {
+  sheet: string;
+  label: string;
+  kind?: BuildingKind;
+  hotkey?: string;
+};
 
-export const FOOD: { kind: BuildingKind; label: string; hotkey: string }[] = [
-  { kind: "farm", label: "Farm", hotkey: "a" },
-  { kind: "mill", label: "Mill", hotkey: "m" },
-  { kind: "baker", label: "Baker", hotkey: "k" },
-  { kind: "fisher", label: "Fisher", hotkey: "i" },
-  { kind: "pig_farm", label: "Pig farm", hotkey: "p" },
-  { kind: "slaughterhouse", label: "Slaughter", hotkey: "s" },
-  { kind: "waterworks", label: "Waterworks", hotkey: "w" },
-];
-
-const ALL_PLACEABLE = [...PLACEABLE, ...INDUSTRY, ...FOOD];
-
-const LABELS = Object.fromEntries(ALL_PLACEABLE.map((p) => [p.kind, p.label])) as Record<string, string>;
-
-export function buildingLabel(kind: string): string {
-  return LABELS[kind] ?? kind;
+function card(folder: string, label: string, kind?: BuildingKind, hotkey?: string): BuildCard {
+  return { sheet: `${ROMAN}/${folder}`, label, kind, hotkey };
 }
 
-/** First `built` frame. One-frame dumps are `built.png`; tower is `built/00.png`. */
-export function buildingIcon(kind: BuildingKind): string {
-  const sheet = buildingDef(kind).sheet;
+/** Row: wood/store, mines + charcoal (Romans have no sulfur mine), smelters. Stonecutter rides with mines. */
+export const PRODUCTION: BuildCard[] = [
+  card("lumberjack", "Lumberjack", "lumberjack", "l"),
+  card("stock", "Store"),
+  card("sawmill", "Sawmill", "sawmill", "w"),
+  card("forester", "Forester", "forester", "f"),
+  card("coalmine", "Coal mine"),
+  card("ironmine", "Iron mine", "ironmine", "i"),
+  card("goldmine", "Gold mine", "goldmine", "g"),
+  card("stonecutter", "Stonecutter", "stonecutter", "s"),
+  card("ironmelt", "Iron smelter"),
+  card("goldmelt", "Gold smelter"),
+  card("toolsmith", "Toolmaker"),
+];
+
+/** Grain → bread, meat/fish, wine/donkeys, residences. */
+export const FOOD: BuildCard[] = [
+  card("farm", "Farm", "farm", "a"),
+  card("mill", "Mill", "mill", "m"),
+  card("baker", "Baker", "baker", "k"),
+  card("waterworks", "Waterworks", "waterworks", "w"),
+  card("pig_farm", "Pig farm", "pig_farm", "p"),
+  card("slaughterhouse", "Slaughter", "slaughterhouse", "s"),
+  card("fisher", "Fisher", "fisher", "i"),
+  card("winegrower", "Winery"),
+  card("donkey_farm", "Donkey farm"),
+  card("small_livinghouse", "House", "small_livinghouse", "h"),
+  card("medium_livinghouse", "Medium house"),
+];
+
+/** Towers, then barracks / smith / temples, then hospital + ships. */
+export const MILITARY: BuildCard[] = [
+  card("tower", "Tower", "tower", "t"),
+  card("lookout_tower", "Lookout"),
+  card("big_tower", "Big tower"),
+  card("castle", "Castle"),
+  card("barrack", "Barracks"),
+  card("weaponsmith", "Weapon smith"),
+  card("temple", "Temple"),
+  card("big_temple", "Big temple"),
+  card("hospital", "Hospital"),
+  card("harbor", "Harbor"),
+  card("dockyard", "Dockyard"),
+];
+
+const ALL_CARDS = [...PRODUCTION, ...FOOD, ...MILITARY];
+
+/** Implemented huts that `build.*` may arm. */
+export const PLACEABLE: BuildingKind[] = ALL_CARDS.map((c) => c.kind).filter((k): k is BuildingKind => k != null);
+
+const LABELS: Record<string, string> = {};
+for (const c of ALL_CARDS) {
+  LABELS[c.sheet] = c.label;
+  if (c.kind) LABELS[c.kind] = c.label;
+}
+
+export function buildingLabel(kind: string): string {
+  return LABELS[kind] ?? kind.replace(/_/g, " ");
+}
+
+/** First `built` frame. Accepts a `BuildingKind` or a catalog sheet path. */
+export function buildingIcon(kindOrSheet: string): string {
+  const sheet =
+    kindOrSheet in buildings ? buildingDef(kindOrSheet as BuildingKind).sheet : kindOrSheet;
   return catalogPath(sheet, "built") ?? `${sheet}/built.png`;
 }
 
@@ -114,27 +159,63 @@ function toolRow(
   };
 }
 
+function fillBuild(slots: (CommandSlot | null)[], cards: readonly BuildCard[], ctx: BoardContext): void {
+  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
+  for (let i = 0; i < cards.length; i++) {
+    const c = cards[i]!;
+    const live = c.kind != null;
+    slots[i] = {
+      id: live ? `build.${c.kind}` : `locked.${c.sheet}`,
+      label: c.label,
+      icon: buildingIcon(c.sheet),
+      ...(live ? badge(ctx.counts[c.kind]) : {}),
+      enabled: live && ctx.canCommand,
+      kind: "do",
+      armed: live && armed === c.kind,
+      hotkey: live ? c.hotkey : undefined,
+    };
+  }
+}
+
 export function idlePage(ctx: BoardContext): CommandPage {
   const slots = emptySlots();
+  const can = ctx.canCommand;
   slots[COMMAND_TOOLS] = {
     id: "page.tools",
     label: "Tools",
     icon: settlerIcon("digger"),
-    enabled: ctx.canCommand,
+    enabled: can,
     kind: "page",
   };
   slots[COMMAND_NEAR_CORNER] = {
     id: "page.recruit",
     label: "Recruit",
-    enabled: ctx.canCommand,
+    enabled: can,
     kind: "page",
   };
-  slots[COMMAND_CORNER] = {
-    id: "page.build",
-    label: "Build",
-    enabled: ctx.canCommand,
+  slots[COMMAND_PRODUCTION] = {
+    id: "page.production",
+    label: "Production",
+    icon: buildingIcon("lumberjack"),
+    enabled: can,
     kind: "page",
-    hotkey: "b",
+    hotkey: "p",
+  };
+  slots[COMMAND_FOOD] = {
+    id: "page.food",
+    label: "Food",
+    icon: buildingIcon("farm"),
+    enabled: can,
+    kind: "page",
+    hotkey: "f",
+  };
+  slots[COMMAND_MILITARY] = {
+    id: "page.military",
+    label: "Military",
+    icon: buildingIcon("tower"),
+    enabled: can,
+    kind: "page",
+    hotkey: "m",
   };
   return { id: "idle", slots };
 }
@@ -147,80 +228,25 @@ export function toolsPage(ctx: BoardContext): CommandPage {
   return { id: "tools", slots };
 }
 
-export function buildPage(ctx: BoardContext): CommandPage {
+export function productionPage(ctx: BoardContext): CommandPage {
   const slots = emptySlots();
-  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
-  for (let i = 0; i < PLACEABLE.length; i++) {
-    const { kind, label, hotkey } = PLACEABLE[i]!;
-    slots[i] = {
-      id: `build.${kind}`,
-      label,
-      icon: buildingIcon(kind),
-      ...badge(ctx.counts[kind]),
-      enabled: ctx.canCommand,
-      kind: "do",
-      armed: armed === kind,
-      hotkey,
-    };
-  }
-  slots[PLACEABLE.length] = {
-    id: "page.industry",
-    label: "Industry",
-    icon: buildingIcon("ironmine"),
-    enabled: ctx.canCommand,
-    kind: "page",
-    hotkey: "i",
-  };
-  slots[PLACEABLE.length + 1] = {
-    id: "page.food",
-    label: "Food",
-    icon: buildingIcon("farm"),
-    enabled: ctx.canCommand,
-    kind: "page",
-    hotkey: "o",
-  };
+  fillBuild(slots, PRODUCTION, ctx);
   slots[COMMAND_CORNER] = navCorner("Back");
-  return { id: "build", slots };
-}
-
-export function industryPage(ctx: BoardContext): CommandPage {
-  const slots = emptySlots();
-  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
-  for (let i = 0; i < INDUSTRY.length; i++) {
-    const { kind, label, hotkey } = INDUSTRY[i]!;
-    slots[i] = {
-      id: `build.${kind}`,
-      label,
-      icon: buildingIcon(kind),
-      ...badge(ctx.counts[kind]),
-      enabled: ctx.canCommand,
-      kind: "do",
-      armed: armed === kind,
-      hotkey,
-    };
-  }
-  slots[COMMAND_CORNER] = navCorner("Back");
-  return { id: "industry", slots };
+  return { id: "production", slots };
 }
 
 export function foodPage(ctx: BoardContext): CommandPage {
   const slots = emptySlots();
-  const armed = ctx.placeTool?.type === "building" ? ctx.placeTool.kind : null;
-  for (let i = 0; i < FOOD.length; i++) {
-    const { kind, label, hotkey } = FOOD[i]!;
-    slots[i] = {
-      id: `build.${kind}`,
-      label,
-      icon: buildingIcon(kind),
-      ...badge(ctx.counts[kind]),
-      enabled: ctx.canCommand,
-      kind: "do",
-      armed: armed === kind,
-      hotkey,
-    };
-  }
+  fillBuild(slots, FOOD, ctx);
   slots[COMMAND_CORNER] = navCorner("Back");
   return { id: "food", slots };
+}
+
+export function militaryPage(ctx: BoardContext): CommandPage {
+  const slots = emptySlots();
+  fillBuild(slots, MILITARY, ctx);
+  slots[COMMAND_CORNER] = navCorner("Back");
+  return { id: "military", slots };
 }
 
 export function recruitPage(ctx: BoardContext): CommandPage {
