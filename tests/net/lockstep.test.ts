@@ -86,7 +86,7 @@ describe("lockstep MemoryChannel", () => {
     expect(ls0.take(1)).toBeUndefined();
   });
 
-  it("clamps a click onto through+D when display next+D is already committed", () => {
+  it("clamps a late click to sentThrough+1, not through+D", () => {
     let sent: ClientMsg | undefined;
     const ch = {
       send: (msg: ClientMsg): void => {
@@ -100,8 +100,8 @@ describe("lockstep MemoryChannel", () => {
     ls.confirm(100, 50);
     expect(sent).toEqual({
       type: "turn",
-      through: 100,
-      bundles: [{ tick: 108, actions: [{ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 }] }],
+      through: 101,
+      bundles: [{ tick: 101, actions: [{ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 }] }],
     });
   });
 

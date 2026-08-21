@@ -22,6 +22,7 @@ import {
   emptyTickTimings,
   isControllable,
   buildingDef,
+  settlerDef,
   hasWorkArea,
   DEFAULT_BRICKLAYER_RATIO,
   DEFAULT_DIGGER_RATIO,
@@ -32,6 +33,8 @@ import {
   type MapStart,
   type ViewSnapshot,
   type BuildingKind,
+  type MovableView,
+  type SettlerKind,
 } from "../../sim";
 import {
   Renderer,
@@ -175,6 +178,8 @@ export class Session {
   private match: MatchConfig | null = null;
   /** Local place clicks, drawn until the Room commit lands (or `until`). Not sim. */
   private readonly pendingPlans: { id: number; kind: BuildingKind; at: GridPos; until: number }[] = [];
+  /** Local spawn clicks, same idea — render-only until the swordsman commit lands. */
+  private readonly pendingSpawns: { id: number; kind: SettlerKind; at: GridPos; until: number }[] = [];
   private nextPendingId = -1;
   /** Local work-area click, drawn until the commit lands. */
   private pendingWork: { at: GridPos; center: GridPos } | null = null;
@@ -331,9 +336,10 @@ export class Session {
     });
   }
 
-  /** Click → Lockstep. Envelope player is the producing slot. */
+  /** Click → Lockstep. Envelope player is the producing slot. MP flushes now, not on the 25ms timer. */
   private send(action: Action, player = this.me): void {
     this.locksteps.get(player)?.send(action);
+    if (this.config.channel) this.pulseConfirm();
   }
 
   /** Stamp kits or restore a save, then bind lockstep / opponents. */
@@ -569,13 +575,21 @@ export class Session {
     }
   }
 
-  /** Fence on click. World still applies at through+D; this is render-only. */
+  /** Fence on click. World still applies at the bundle tick; this is render-only. */
   private pinPlan(kind: BuildingKind, at: GridPos): void {
     const ls = this.locksteps.get(this.me);
-    const delay = ls?.delay ?? 1;
     const tick = this.world?.clock.tickIndex ?? 0;
-    const until = Math.max(tick, ls?.sent() ?? tick) + delay + 2;
+    const until = Math.max(tick, ls?.sent() ?? tick) + 4;
     this.pendingPlans.push({ id: this.nextPendingId--, kind, at, until });
+  }
+
+  private pinSpawn(kind: SettlerKind, at: GridPos, count: number): void {
+    const ls = this.locksteps.get(this.me);
+    const tick = this.world?.clock.tickIndex ?? 0;
+    const until = Math.max(tick, ls?.sent() ?? tick) + 4;
+    for (let i = 0; i < count; i++) {
+      this.pendingSpawns.push({ id: this.nextPendingId--, kind, at, until });
+    }
   }
 
   private prunePending(world: World): void {
@@ -606,22 +620,36 @@ export class Session {
   private look(world: World): ViewSnapshot {
     this.prunePending(world);
     const snap = world.view(this.me);
-    if (this.pendingPlans.length === 0) return snap;
+    for (let i = this.pendingSpawns.length - 1; i >= 0; i--) {
+      const p = this.pendingSpawns[i]!;
+      const landed = snap.movables.some(
+        (u) => u.id > 0 && u.player === this.me && u.type === p.kind && !u.inside && u.pos.x === p.at.x && u.pos.y === p.at.y,
+      );
+      if (landed || world.clock.tickIndex > p.until) this.pendingSpawns.splice(i, 1);
+    }
+    if (this.pendingPlans.length === 0 && this.pendingSpawns.length === 0) return snap;
     return {
       ...snap,
-      buildings: [
-        ...snap.buildings,
-        ...this.pendingPlans.map((p) => ({
-          id: p.id,
-          kind: p.kind,
-          x: p.at.x,
-          y: p.at.y,
-          player: this.me,
-          state: "plan" as const,
-          buildProgress: 0,
-          flag: buildingDef(p.kind).worker ? null : ("door" as const),
-        })),
-      ],
+      buildings:
+        this.pendingPlans.length === 0
+          ? snap.buildings
+          : [
+              ...snap.buildings,
+              ...this.pendingPlans.map((p) => ({
+                id: p.id,
+                kind: p.kind,
+                x: p.at.x,
+                y: p.at.y,
+                player: this.me,
+                state: "plan" as const,
+                buildProgress: 0,
+                flag: buildingDef(p.kind).worker ? null : ("door" as const),
+              })),
+            ],
+      movables:
+        this.pendingSpawns.length === 0
+          ? snap.movables
+          : [...snap.movables, ...this.pendingSpawns.map((p) => ghostSettler(p, this.me, world.clock.tickMs))],
     };
   }
 
@@ -865,6 +893,7 @@ export class Session {
     this.room = null;
     this.match = null;
     this.pendingPlans.length = 0;
+    this.pendingSpawns.length = 0;
     this.pendingWork = null;
     this.pristine = null;
     this.view = null;
@@ -967,6 +996,8 @@ export class Session {
           player: this.me,
           count: tool.count,
         });
+        this.pinSpawn("swordsman", pos, tool.count);
+        this.paintNow();
         return;
       }
       this.recruitSpecialist(tool.kind, pos);
@@ -1568,6 +1599,7 @@ export class Session {
     this.minimap?.setView(this.view);
     this.installPipeline(file);
     this.pendingPlans.length = 0;
+    this.pendingSpawns.length = 0;
     this.pendingWork = null;
     this.acc = 0;
     this.matchStartMs = performance.now();
@@ -1606,6 +1638,7 @@ export class Session {
       if (at) world.dispatch({ type: "placeColony", at, player: slot.player });
     }
     this.pendingPlans.length = 0;
+    this.pendingSpawns.length = 0;
     this.pendingWork = null;
     this.selected = null;
     this.selectedUnitIds = [];
@@ -1659,6 +1692,34 @@ export class Session {
 
 function protectedTiles(kind: BuildingKind, at: GridPos): { x: number; y: number }[] {
   return buildingDef(kind).protected.map((r) => ({ x: at.x + r.dx, y: at.y + r.dy }));
+}
+
+/** Render-only swordsman (or other recruit) until the spawn commit lands. */
+function ghostSettler(
+  p: { id: number; kind: SettlerKind; at: GridPos },
+  player: number,
+  tickMs: number,
+): MovableView {
+  const def = settlerDef(p.kind);
+  return {
+    id: p.id,
+    type: p.kind,
+    pos: p.at,
+    from: p.at,
+    direction: "se",
+    action: "idle",
+    moveProgress: 0,
+    stepTicks: Math.max(1, Math.round(def.stepMs / tickMs)),
+    workProgress: 0,
+    workTicks: 1,
+    player,
+    material: "none",
+    job: null,
+    workplaceId: null,
+    health: def.health ?? 100,
+    inside: false,
+    path: [],
+  };
 }
 
 /** Closest jobless empty-handed bearer of `player`. Convert food for recruit specialist. */
