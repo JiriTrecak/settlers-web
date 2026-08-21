@@ -30,12 +30,17 @@ export class Lockstep {
 
   /**
    * Confirm this slot through `through`. Pending actions land at `bundleTick`
-   * (default `through + delay`). No packet if `through` did not rise and the outbox is empty.
+   * (default `through + delay`). If that tick is already covered by `sentThrough`
+   * (Room will have committed it), bump to `sentThrough + delay` — MP display
+   * `tickIndex` lags wall-clock through, and Room drops `tick <= committed`.
+   * No packet if `through` did not rise and the outbox is empty.
    */
   confirm(through: number, bundleTick = through + this.delay): void {
     const actions = this.pending;
     this.pending = [];
-    const bundles = actions.length ? [{ tick: bundleTick, actions }] : [];
+    let at = bundleTick;
+    if (actions.length && at <= this.sentThrough) at = this.sentThrough + this.delay;
+    const bundles = actions.length ? [{ tick: at, actions }] : [];
     if (through <= this.sentThrough && bundles.length === 0) return;
     this.sentThrough = Math.max(this.sentThrough, through);
     this.channel.send({ type: "turn", through: this.sentThrough, bundles });

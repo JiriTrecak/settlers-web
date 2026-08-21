@@ -565,15 +565,17 @@ export class Session {
     const elapsed = Math.max(0, Math.floor((performance.now() - this.matchStartMs) / world.clock.tickMs));
     for (const ls of this.locksteps.values()) {
       const through = Math.max(next, elapsed + 1, world.clock.tickIndex + ls.delay);
-      ls.confirm(through, next + ls.delay);
+      ls.confirm(through);
     }
   }
 
-  /** Fence on click. World still applies at tick+D; this is render-only. */
+  /** Fence on click. World still applies at through+D; this is render-only. */
   private pinPlan(kind: BuildingKind, at: GridPos): void {
-    const delay = this.locksteps.get(this.me)?.delay ?? 1;
+    const ls = this.locksteps.get(this.me);
+    const delay = ls?.delay ?? 1;
     const tick = this.world?.clock.tickIndex ?? 0;
-    this.pendingPlans.push({ id: this.nextPendingId--, kind, at, until: tick + delay + 2 });
+    const until = Math.max(tick, ls?.sent() ?? tick) + delay + 2;
+    this.pendingPlans.push({ id: this.nextPendingId--, kind, at, until });
   }
 
   private prunePending(world: World): void {
