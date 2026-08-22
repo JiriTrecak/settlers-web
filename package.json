@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:tools": "vite --config tooling/vite.config.ts",
     "build": "tsc --noEmit && vite build",
+    "build:tools": "vite build --config tooling/vite.config.ts",
+    "tauri:tools": "vite-node tooling/tauri.mjs dev",
+    "pack:tools": "vite-node tooling/tauri.mjs build",
     "pack": "vite-node original_conv/pack-play.ts",
     "pack:web": "vite-node original_conv/pack-play.ts --no-zip",
     "pack:app": "vite-node original_conv/pack-app.ts",

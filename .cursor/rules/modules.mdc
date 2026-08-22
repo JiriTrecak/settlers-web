@@ -16,6 +16,7 @@ sim/      Deterministic world. No Pixi, fetch, DOM, or net.
 render/   Pixi drawing. Reads views, does not mutate sim.
 ui/       DOM widgets and GameScreens. Own their DOM and input.
 net/      Channel + lockstep mailbox. No Pixi, no rules, no World.tick.
+tooling/  Separate Vite + Pixi + Tauri app (`npm run dev:tools`). May import render/sim later. No Session, no net.
 ```
 
 ```ts
