@@ -25,6 +25,7 @@ const GOODS: Record<string, string> = {
   TRUNK: "trunk",
   IRONORE: "ironore",
   GOLDORE: "goldore",
+  COAL: "coal",
   CROP: "crop",
   FLOUR: "flour",
   BREAD: "bread",
@@ -112,7 +113,8 @@ function parse(kind: string, xml: string): string {
       }
     } else if (name === "requestStack") {
       const mat = GOODS[a.material ?? ""];
-      if (mat) request.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}" }`);
+      // Miner food packages aren't consumed yet — don't haul bread/meat/fish to an empty mine.
+      if (mat && a0.mine !== "true") request.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}" }`);
     } else if (name === "offerStack") {
       const mat = GOODS[a.material ?? ""];
       if (mat) offer.push(`{ dx: ${Number(a.dx)}, dy: ${Number(a.dy)}, material: "${mat}" }`);
@@ -142,6 +144,7 @@ function parse(kind: string, xml: string): string {
     stonecutter: "Roman stonecutter hut. Stone offer, work radius 20.",
     ironmine: "Roman iron mine. No flatten. Miner pulls iron from blocked tiles.",
     goldmine: "Roman gold mine. No flatten. Miner pulls gold from blocked tiles.",
+    coalmine: "Roman coal mine. No flatten. Miner pulls coal from blocked tiles.",
     farm: "Roman farm. Farmer plants and harvests crop in work radius 6.",
     mill: "Roman mill. Requests crop, offers flour.",
     baker: "Roman bakery. Requests flour and water, offers bread.",

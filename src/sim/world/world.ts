@@ -17,7 +17,7 @@ import { MapGrid } from "../map/mapGrid";
 import { ObjectGrid, type MapObjectView } from "../object/object";
 import { tickTrees } from "../object/tree";
 import { tickCrops } from "../object/crop";
-import { tickSigns } from "../object/sign";
+import { isSignLattice, tickSigns } from "../object/sign";
 import { Movable, type MovableView } from "../movable/movable";
 import { tickFlock } from "../movable/flock";
 import { isWalkable, nearestWalkable, type Blockers } from "../path/path";
@@ -385,6 +385,7 @@ export class World {
         if (this.buildings.protects(x, y) || this.objects.blocks(x, y)) continue;
         const land = this.grid.landscapeAt(x, y);
         if (!def.ground.some((g) => g === land)) continue;
+        if (def.mine && !isSignLattice(this.grid, x, y)) continue;
         const value = this.constructionMark(kind, { x, y }, player);
         if (value == null) continue;
         out.push({ x, y, value });

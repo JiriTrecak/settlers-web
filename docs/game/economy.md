@@ -2,7 +2,7 @@
 
 No partitions, no priorities. Matcher is per-player. Goods live on ground stacks (max **8**) or in a settler’s hands.
 
-Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`, `ironore`, `goldore`, `crop`, `flour`, `bread`, `fish`, `meat`, `pig`, `water`, `scythe`, `fishingrod`. A sapling in hand is `tree` — not a stack good.
+Materials on stacks: `trunk`, `plank`, `stone`, `axe`, `hammer`, `blade`, `pick`, `saw`, `coal`, `ironore`, `goldore`, `crop`, `flour`, `bread`, `fish`, `meat`, `pig`, `water`, `scythe`, `fishingrod`. A sapling in hand is `tree` — not a stack good.
 
 ## Colony kit
 
@@ -115,14 +115,14 @@ Rest **1 s** inside. Needs a trunk on the request and room on the plank offer. P
 ## Mine chain
 
 ```
-blocked-tile deposit ──ironore / goldore──► mine offer
+blocked-tile deposit ──coal / ironore / goldore──► mine offer
 ```
 
-Mines do **not** flatten. Ground may be mountain (and grass/earth on the skirt). The miner is indoor: rest **3 s** inside, then take **1** of the hut's `mine` resource from a **random blocked** tile. Hit → walk to the offer, drop, home. Miss → rest again. Full offer (8) → stay inside. Original spent food (meat/bread/fish) for work packages; bakeries aren't in yet so mines run without food.
+Mines do **not** flatten. Origin must be even-even **mountain** (geologist sign lattice); grass/earth is only legal on the skirt. The miner is indoor: rest **3 s** inside, then take **1** of the hut's `mine` resource from a **random blocked** tile. Hit → walk to the offer, drop, home. Miss → rest again. Full offer (8) → stay inside. Original spent food (meat/bread/fish) for work packages; bakeries aren't in yet so mines run without food.
 
 Occupy consumes a **pick**. Kit has 2. No pick → empty mine. Placing the hut strips geologist signs on the protected tiles.
 
-Iron mine: 4 plank + 1 stone. Gold mine: 5 plank + 1 stone.
+Coal mine: 4 plank + 1 stone. Iron mine: 4 plank + 1 stone. Gold mine: 5 plank + 1 stone.
 
 ## Food chain
 
@@ -164,4 +164,4 @@ All at 1×. Clock is 25 ms.
 
 ## Not yet
 
-Distribution priorities, storehouse, mines, farms, tool production, soldier goods, trading. Raising the digger cap still needs extra blades on the ground — nothing produces them yet.
+Distribution priorities, storehouse, smelters, tool production, soldier goods, trading. Raising the digger cap still needs extra blades on the ground — nothing produces them yet.

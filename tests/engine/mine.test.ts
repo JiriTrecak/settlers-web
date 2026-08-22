@@ -1,5 +1,6 @@
-/** Iron / gold mines: no flatten, miner + pick, pull ore from blocked tiles. */
+/** Coal / iron / gold mines: no flatten, miner + pick, pull from blocked tiles. */
 import { describe, expect, it } from "vitest";
+import { coalmine as coalDef } from "../../src/sim/data/buildings/coalmine";
 import { ironmine as ironDef } from "../../src/sim/data/buildings/ironmine";
 import { goldmine as goldDef } from "../../src/sim/data/buildings/goldmine";
 import { MapGrid } from "../../src/sim/map/mapGrid";
@@ -25,12 +26,13 @@ function tickUntil(world: World, pred: () => boolean, cap = 8000): number {
   return n;
 }
 
-function fillBlocked(grid: MapGrid, at: { x: number; y: number }, blocked: readonly { dx: number; dy: number }[], kind: "iron" | "gold", amount: number): void {
+function fillBlocked(grid: MapGrid, at: { x: number; y: number }, blocked: readonly { dx: number; dy: number }[], kind: "coal" | "iron" | "gold", amount: number): void {
   for (const t of blocked) grid.setResource(at.x + t.dx, at.y + t.dy, kind, amount);
 }
 
 describe("mines", () => {
   it("does not flatten", () => {
+    expect(needsFlatten(coalDef)).toBe(false);
     expect(needsFlatten(ironDef)).toBe(false);
     expect(needsFlatten(goldDef)).toBe(false);
   });
@@ -44,6 +46,35 @@ describe("mines", () => {
     expect(world.canPlaceBuilding("ironmine", at, 0)).toBe(true);
     expect(world.plotLevel("ironmine", at)).toBe(true);
     expect(world.placePlan("ironmine", at, 0)?.state).toBe("plan");
+  });
+
+  it("refuses grass — origin must be the geologist even-even mountain lattice", () => {
+    const grid = new MapGrid(40, 40);
+    for (let y = 0; y < 40; y++) {
+      for (let x = 0; x < 40; x++) grid.setLandscape(x, y, "grass");
+    }
+    const world = new World(grid);
+    expect(world.canPlaceBuilding("coalmine", { x: 16, y: 16 }, 0)).toBe(false);
+    expect(world.canPlaceBuilding("ironmine", { x: 16, y: 16 }, 0)).toBe(false);
+    expect(world.canPlaceBuilding("goldmine", { x: 16, y: 16 }, 0)).toBe(false);
+  });
+
+  it("refuses odd mountain tiles where a geologist cannot plant a sign", () => {
+    const grid = mountain(40, 40);
+    const world = new World(grid);
+    expect(world.canPlaceBuilding("ironmine", { x: 17, y: 16 }, 0)).toBe(false);
+    expect(world.canPlaceBuilding("ironmine", { x: 16, y: 17 }, 0)).toBe(false);
+    expect(world.canPlaceBuilding("coalmine", { x: 16, y: 16 }, 0)).toBe(true);
+  });
+
+  it("allows a grass skirt if the origin is sign lattice", () => {
+    const grid = mountain(40, 40);
+    for (const t of ironDef.protected) {
+      if (t.dx === 0 && t.dy === 0) continue;
+      grid.setLandscape(16 + t.dx, 16 + t.dy, "grass");
+    }
+    const world = new World(grid);
+    expect(world.canPlaceBuilding("ironmine", { x: 16, y: 16 }, 0)).toBe(true);
   });
 
   it("pulls ironore onto the offer stack", () => {
@@ -71,6 +102,18 @@ describe("mines", () => {
     const n = tickUntil(world, () => world.objects.get(offer.x, offer.y)?.material === "goldore");
     expect(n).toBeGreaterThan(0);
     expect(world.objects.get(offer.x, offer.y)).toMatchObject({ material: "goldore" });
+  });
+
+  it("pulls coal from a coal mine", () => {
+    const at = { x: 16, y: 16 };
+    const grid = mountain(48, 48);
+    fillBlocked(grid, at, coalDef.blocked, "coal", 50);
+    const world = new World(grid, undefined, seedRng(6));
+    const hut = world.placeBuilding("coalmine", at, 0)!;
+    const offer = { x: hut.pos.x + coalDef.offerStacks[0]!.dx, y: hut.pos.y + coalDef.offerStacks[0]!.dy };
+    const n = tickUntil(world, () => world.objects.get(offer.x, offer.y)?.material === "coal");
+    expect(n).toBeGreaterThan(0);
+    expect(world.objects.get(offer.x, offer.y)).toMatchObject({ kind: "stack", material: "coal" });
   });
 
   it("stays idle when the footprint has no matching ore", () => {

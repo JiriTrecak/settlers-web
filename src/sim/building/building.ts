@@ -10,6 +10,7 @@ import type { GridPos, LandscapeType } from "../../shared";
 import { buildingDef, type BuildingKind } from "../data/buildings";
 import type { MapGrid } from "../map/mapGrid";
 import type { ObjectGrid } from "../object/object";
+import { isSignLattice } from "../object/sign";
 import type { BuildingSnap } from "../world/snapshot";
 
 export type BuildingState = "plan" | "building" | "built";
@@ -270,12 +271,18 @@ export class BuildingGrid {
 
 export function canPlace(
   buildings: BuildingGrid,
-  def: { ground: readonly LandscapeType[]; blocked: readonly { dx: number; dy: number }[]; protected: readonly { dx: number; dy: number }[] },
+  def: {
+    ground: readonly LandscapeType[];
+    blocked: readonly { dx: number; dy: number }[];
+    protected: readonly { dx: number; dy: number }[];
+    mine?: string;
+  },
   at: GridPos,
   land: MapGrid,
   objects: ObjectGrid,
 ): boolean {
   if (!footprintInBounds(buildings, def.protected, at)) return false;
+  if (def.mine && !isSignLattice(land, at.x, at.y)) return false;
   for (const t of tiles(def.protected, at)) {
     if (buildings.protects(t.x, t.y) || buildings.blocks(t.x, t.y)) return false;
     if (objects.blocks(t.x, t.y)) return false;

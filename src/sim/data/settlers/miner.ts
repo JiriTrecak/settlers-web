@@ -1,5 +1,5 @@
 /**
- * Roman miner. Occupies an iron or gold mine after picking up a pick.
+ * Roman miner. Occupies a coal / iron / gold mine after picking up a pick.
  * Sleeps 3s inside, pulls one ore from a random blocked tile, dumps it on the offer.
  */
 import type { SettlerDef } from "../types";

@@ -18,6 +18,7 @@ export type Goods =
   | "blade"
   | "pick"
   | "saw"
+  | "coal"
   | "ironore"
   | "goldore"
   | "crop"
@@ -75,7 +76,8 @@ export type BuildingDef = {
   flatten?: boolean;
   /**
    * Mine: pull this deposit from a random blocked tile each cycle.
-   * `flatten` is false. Food work-packages wait (mines still run without food).
+   * Origin must be even-even mountain (geologist lattice). `flatten` is false.
+   * Food work-packages wait (mines still run without food).
    */
   mine?: "coal" | "iron" | "gold" | "gems" | "brimstone";
 };

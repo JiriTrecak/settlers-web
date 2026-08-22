@@ -32,7 +32,7 @@ export type SettlerSheets = Record<MovableType, UnitClips> & {
 
 const CARRY: Record<MovableType, readonly CarryKind[]> = {
   baker: ["flour", "water", "bread"],
-  bearer: ["trunk", "plank", "stone", "ironore", "goldore", "crop", "flour", "bread", "fish", "meat", "pig", "water", "scythe", "fishingrod"],
+  bearer: ["trunk", "plank", "stone", "coal", "ironore", "goldore", "crop", "flour", "bread", "fish", "meat", "pig", "water", "scythe", "fishingrod"],
   bricklayer: [],
   digger: [],
   farmer: ["crop"],
@@ -40,7 +40,7 @@ const CARRY: Record<MovableType, readonly CarryKind[]> = {
   forester: ["tree"],
   lumberjack: ["trunk"],
   miller: ["crop", "flour"],
-  miner: ["ironore", "goldore"],
+  miner: ["coal", "ironore", "goldore"],
   pig_farmer: ["crop", "water", "pig"],
   pioneer: [],
   geologist: [],

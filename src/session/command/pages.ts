@@ -30,7 +30,7 @@ export const PRODUCTION: BuildCard[] = [
   card("stock", "Store"),
   card("sawmill", "Sawmill", "sawmill", "w"),
   card("forester", "Forester", "forester", "f"),
-  card("coalmine", "Coal mine"),
+  card("coalmine", "Coal mine", "coalmine", "c"),
   card("ironmine", "Iron mine", "ironmine", "i"),
   card("goldmine", "Gold mine", "goldmine", "g"),
   card("stonecutter", "Stonecutter", "stonecutter", "s"),

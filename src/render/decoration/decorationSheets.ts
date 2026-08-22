@@ -19,6 +19,7 @@ const STACK_GOODS: Goods[] = [
   "blade",
   "pick",
   "saw",
+  "coal",
   "ironore",
   "goldore",
   "crop",

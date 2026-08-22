@@ -1,5 +1,6 @@
 /** Building defs. One file per hut; this file is the registry. */
 import { baker } from "./baker";
+import { coalmine } from "./coalmine";
 import { farm } from "./farm";
 import { fisher } from "./fisher";
 import { forester } from "./forester";
@@ -17,6 +18,7 @@ import { waterworks } from "./waterworks";
 
 export const buildings = {
   baker,
+  coalmine,
   farm,
   fisher,
   forester,

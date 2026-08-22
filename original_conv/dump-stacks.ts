@@ -24,6 +24,7 @@ const STACKS: { material: string; seq: number }[] = [
   { material: "blade", seq: 55 },
   { material: "ironore", seq: 39 },
   { material: "goldore", seq: 36 },
+  { material: "coal", seq: 34 },
   { material: "crop", seq: 50 },
   { material: "flour", seq: 48 },
   { material: "bread", seq: 49 },

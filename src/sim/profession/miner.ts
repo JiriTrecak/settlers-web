@@ -1,5 +1,5 @@
 /**
- * Miner cycle: rest inside the mine, pull one ore from a random blocked tile,
+ * Miner cycle: rest inside the mine, pull one coal/ore from a random blocked tile,
  * walk out and dump it on the offer. Empty deposit → rest again (no basket walk).
  * Food work-packages wait on bakeries.
  */

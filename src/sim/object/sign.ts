@@ -20,6 +20,15 @@ export function isSign(obj: MapObjectView | undefined): obj is MapObjectView & {
 }
 
 /**
+ * Even-even mountain — geologist signs and mine origins share this lattice.
+ */
+export function isSignLattice(grid: MapGrid, x: number, y: number): boolean {
+  if ((x & 1) !== 0 || (y & 1) !== 0) return false;
+  if (!grid.inBounds(x, y)) return false;
+  return grid.landscapeAt(x, y) === "mountain";
+}
+
+/**
  * Even-even mountain, not a hut, not already signed, pathable.
  * Search also requires the tile unmarked.
  */
@@ -31,9 +40,7 @@ export function canPlantSign(
   y: number,
   blockers?: Blockers,
 ): boolean {
-  if ((x & 1) !== 0 || (y & 1) !== 0) return false;
-  if (!grid.inBounds(x, y)) return false;
-  if (grid.landscapeAt(x, y) !== "mountain") return false;
+  if (!isSignLattice(grid, x, y)) return false;
   if (buildings.protects(x, y)) return false;
   if (isSign(objects.get(x, y))) return false;
   if (blockers ? !isPathable(grid, x, y, blockers) : objects.blocks(x, y)) return false;

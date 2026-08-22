@@ -11,7 +11,7 @@ import type { Goods } from "../../sim/data/types";
 import type { MovableMaterial } from "../../sim/movable/movable";
 
 const SETTLERS: SettlerKind[] = ["bearer", "bricklayer", "digger", "forester", "geologist", "lumberjack", "miner", "pioneer", "sawmiller", "stonecutter", "swordsman"];
-const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter", "ironmine", "goldmine"];
+const BUILDINGS: BuildingKind[] = ["tower", "small_livinghouse", "lumberjack", "forester", "sawmill", "stonecutter", "coalmine", "ironmine", "goldmine"];
 const GOODS: Goods[] = [
   "trunk",
   "plank",
@@ -21,6 +21,7 @@ const GOODS: Goods[] = [
   "blade",
   "pick",
   "saw",
+  "coal",
   "ironore",
   "goldore",
   "crop",

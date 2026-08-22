@@ -84,7 +84,7 @@ describe("command board", () => {
     expect(page.slots[1]?.icon).toMatch(/stock\/built/);
     expect(page.slots[2]).toMatchObject({ id: "build.sawmill", enabled: true });
     expect(page.slots[3]).toMatchObject({ id: "build.forester", enabled: true });
-    expect(page.slots[4]).toMatchObject({ id: "locked.buildings/roman/coalmine", enabled: false });
+    expect(page.slots[4]).toMatchObject({ id: "build.coalmine", enabled: true });
     expect(page.slots[5]).toMatchObject({ id: "build.ironmine", enabled: true });
     expect(page.slots[6]).toMatchObject({ id: "build.goldmine", enabled: true });
     expect(page.slots[7]).toMatchObject({ id: "build.stonecutter", enabled: true });

@@ -174,6 +174,7 @@ const props: Array<{ title: string; file: number; seq: number }> = [
   { title: "stack blade", file: 1, seq: 55 },
   { title: "stack ironore", file: 1, seq: 39 },
   { title: "stack goldore", file: 1, seq: 36 },
+  { title: "stack coal", file: 1, seq: 34 },
   { title: "stack crop", file: 1, seq: 50 },
   { title: "stack flour", file: 1, seq: 48 },
   { title: "stack bread", file: 1, seq: 49 },

@@ -11,7 +11,7 @@ export type Action =
   | { type: "chop"; id: number; at: GridPos }
   | { type: "pickup"; id: number; at: GridPos }
   | { type: "drop"; id: number; at: GridPos }
-  | { type: "placeBuilding"; kind: "lumberjack" | "forester" | "stonecutter" | "tower" | "sawmill" | "small_livinghouse" | "ironmine" | "goldmine" | "farm" | "mill" | "baker" | "fisher" | "pig_farm" | "slaughterhouse" | "waterworks"; at: GridPos; player?: number }
+  | { type: "placeBuilding"; kind: "lumberjack" | "forester" | "stonecutter" | "tower" | "sawmill" | "small_livinghouse" | "coalmine" | "ironmine" | "goldmine" | "farm" | "mill" | "baker" | "fisher" | "pig_farm" | "slaughterhouse" | "waterworks"; at: GridPos; player?: number }
   | { type: "occupy"; at: GridPos; player?: number }
   | { type: "destroyBuilding"; at: GridPos }
   | { type: "pioneerWork"; id: number; to: GridPos }
