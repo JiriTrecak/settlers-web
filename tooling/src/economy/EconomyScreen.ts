@@ -1,13 +1,14 @@
 /**
  * Economy editor: per-civ list on the left, mode panels on the right.
- * Building mode paints iso occupancy (`blocked` / `protected`) and fence
- * posts (`buildMarks`). Save/Load writes `assets/game_data/buildings.json`.
+ * Building mode paints occupancy and sticks. Function mode authors the
+ * machine + door/flag/stacks. Save/Load writes `assets/game_data/buildings.json`.
  */
 import type { Application } from "pixi.js";
 import { ToolScreen } from "../ui/screen";
 import { assetsForCiv, gfxUrl, loadEconomyCatalog, stackGfx, thumbOf, type BuildingAsset } from "./catalog";
 import { CIVS, CIV_LABEL } from "./format";
-import { IsoPreview, type PaintLayer } from "./IsoPreview";
+import { IsoPreview, type OccupancyLayer } from "./IsoPreview";
+import { FunctionPane } from "./FunctionPane";
 import { BUILDINGS_PATH } from "./disk";
 import { BuildingStore } from "./store";
 
@@ -35,10 +36,11 @@ const MODE_TITLE: Record<EditMode, string> = {
 export class EconomyScreen extends ToolScreen {
   private readonly store = new BuildingStore();
   private readonly preview: IsoPreview;
+  private readonly fnPane: FunctionPane;
   private assets = new Map<string, BuildingAsset>();
   private pickerSlot: "built" | "scaffold" | null = null;
   private mode: EditMode = "building";
-  private paintLayer: PaintLayer = "blocked";
+  private paintLayer: OccupancyLayer = "blocked";
   private dead = false;
 
   private readonly listEl: HTMLElement;
@@ -70,6 +72,11 @@ export class EconomyScreen extends ToolScreen {
     super("screen ed-screen");
     this.preview = new IsoPreview(pixi, (text) => {
       this.snapEl.textContent = text;
+    });
+    this.fnPane = new FunctionPane(this.store, this.preview, () => {
+      this.paintIo();
+      this.fnPane.paint();
+      this.syncSites();
     });
 
     const shell = el("div", "ed");
@@ -216,10 +223,7 @@ export class EconomyScreen extends ToolScreen {
     op.append(this.opacityInput);
     building.append(op);
 
-    const fn = el("div", "ed-pane");
-    const tbd = el("p", "ed-hint");
-    tbd.textContent = "Behaviors later — convert, gather, mine, spawn, garrison.";
-    fn.append(tbd);
+    const fn = this.fnPane.root;
 
     const textures = el("div", "ed-pane");
     textures.append(
@@ -333,7 +337,7 @@ export class EconomyScreen extends ToolScreen {
     this.paintMode();
   }
 
-  private setPaintLayer(layer: PaintLayer): void {
+  private setPaintLayer(layer: OccupancyLayer): void {
     this.paintLayer = layer;
     this.applyMode();
     this.paintMode();
@@ -357,6 +361,8 @@ export class EconomyScreen extends ToolScreen {
         this.paintIo();
       });
       this.applyOpacity();
+    } else if (this.mode === "function") {
+      this.fnPane.bindPreview();
     } else {
       this.preview.setPaint(null, null);
       this.preview.setHutAlpha(0.88);
@@ -381,6 +387,7 @@ export class EconomyScreen extends ToolScreen {
     this.paintCounts();
     this.paintMode();
     this.paintIo();
+    this.fnPane.paint();
     if (this.pickerSlot) this.paintPicker();
   }
 
@@ -507,7 +514,20 @@ export class EconomyScreen extends ToolScreen {
   private async syncHut(): Promise<void> {
     const b = this.store.selected();
     this.preview.setPlot(b?.blocked ?? [], b?.protected ?? [], b?.buildMarks ?? []);
+    this.syncSites();
     await this.preview.show(this.store.civ, b?.built ?? "", b?.scaffold ?? "");
+  }
+
+  private syncSites(): void {
+    const b = this.store.selected();
+    this.preview.setSites({
+      door: b?.door ?? { dx: 0, dy: 0 },
+      flag: b?.flag ?? { dx: 0, dy: 0 },
+      workSpot: b?.workSpot ?? null,
+      workCenter: b?.workCenter ?? null,
+      request: b?.requestStacks ?? [],
+      offer: b?.offerStacks ?? [],
+    });
   }
 
   private refreshCostIcons(): void {
@@ -557,7 +577,7 @@ function btn(label: string, className: string): HTMLButtonElement {
   return node;
 }
 
-function paintBtn(label: string, layer: PaintLayer, onClick: () => void): HTMLButtonElement {
+function paintBtn(label: string, layer: OccupancyLayer, onClick: () => void): HTMLButtonElement {
   const node = btn(label, "ed-btn ed-btn-sm");
   node.dataset.paint = layer;
   node.addEventListener("click", onClick);

@@ -1,17 +1,19 @@
 /**
- * First-stab library: every dump hut, plus plank/stone from the current TS
- * defs when that kind exists (copied across civs — lumberjack is lumberjack).
+ * First-stab library: every dump hut, plus costs / plots / job from the current
+ * TS defs when that kind exists (copied across civs — lumberjack is lumberjack).
  */
 import { buildings as catalog } from "../../../original_conv/catalog/index";
 import { buildings as simBuildings, type BuildingKind } from "../../../src/sim/data/buildings";
 import { copyRels, emptyBuildingsFile, prettyName, type BuildingsFile, type Rel } from "./format";
 import { needsFlatten } from "../../../src/sim/building/flatten";
+import { jobOf, sitesOf } from "./job";
 
 export function seedBuildings(): BuildingsFile {
   const file = emptyBuildingsFile();
   for (const entry of catalog) {
     const cost = costOf(entry.building);
     const plot = plotOf(entry.building);
+    const sites = sitesOf(entry.building);
     const group = `buildings/${entry.civ}/${entry.building}`;
     file.buildings.push({
       id: entry.building,
@@ -25,6 +27,18 @@ export function seedBuildings(): BuildingsFile {
       protected: plot.protected,
       buildMarks: marksOf(entry.building),
       flatten: flattenOf(entry.building),
+      worker: sites.worker,
+      viewDistance: sites.viewDistance,
+      ground: sites.ground,
+      door: sites.door,
+      flag: sites.flag,
+      workSpot: sites.workSpot
+        ? { dx: sites.workSpot.dx, dy: sites.workSpot.dy, direction: asDir(sites.workSpot.direction) }
+        : null,
+      workCenter: sites.workCenter,
+      requestStacks: sites.request,
+      offerStacks: sites.offer,
+      job: jobOf(entry.building),
     });
   }
   return file;
@@ -56,4 +70,9 @@ function costOf(kind: string): { plank: number; stone: number } {
     if (slot.material === "stone") stone += slot.required ?? 0;
   }
   return { plank, stone };
+}
+
+function asDir(value: string): "ne" | "e" | "se" | "sw" | "w" | "nw" {
+  if (value === "ne" || value === "e" || value === "se" || value === "sw" || value === "w" || value === "nw") return value;
+  return "ne";
 }

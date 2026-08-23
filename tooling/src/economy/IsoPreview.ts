@@ -1,14 +1,14 @@
 /**
  * Iso grid + hut preview for the economy editor.
  * Origin cell is the snap point; sprites sit on `gridToWorld(origin)` like the game.
- * Building mode paints `blocked` / `protected` / `buildMarks` relative to that origin.
+ * Building mode paints occupancy; Function mode paints door / flag / stacks.
  */
 import { Application, Container, Graphics, Sprite } from "pixi.js";
 import { Camera } from "../../../src/render/camera/camera";
 import { atlasPacksForCivs, loadAtlases } from "../../../src/render/graphics/atlas";
 import { loadGroup, placeLayer, type CatalogSprite, type PropFrame } from "../../../src/render/graphics/textures";
-import { gridToWorld, pickCell } from "../../../src/shared";
-import { hasRel, type Rel } from "./format";
+import { deltaOf, gridToWorld, pickCell } from "../../../src/shared";
+import { hasRel, type DirRel, type Rel, type StackSlot } from "./format";
 
 const GRID = 24;
 const ORIGIN = 12;
@@ -18,7 +18,18 @@ const CHROME_LEFT = 280;
 const CHROME_RIGHT = 348;
 
 export type HutVariant = "built" | "scaffold";
-export type PaintLayer = "blocked" | "protected" | "buildMarks";
+export type OccupancyLayer = "blocked" | "protected" | "buildMarks";
+export type SiteLayer = "door" | "flag" | "workSpot" | "workCenter" | "request" | "offer";
+export type PaintLayer = OccupancyLayer | SiteLayer;
+
+export type SiteState = {
+  door: Rel;
+  flag: Rel;
+  workSpot: DirRel | null;
+  workCenter: Rel | null;
+  request: StackSlot[];
+  offer: StackSlot[];
+};
 
 export class IsoPreview {
   readonly camera = new Camera();
@@ -32,6 +43,14 @@ export class IsoPreview {
   private blocked: Rel[] = [];
   private protectedCells: Rel[] = [];
   private marks: Rel[] = [];
+  private sites: SiteState = {
+    door: { dx: 0, dy: 0 },
+    flag: { dx: 0, dy: 0 },
+    workSpot: null,
+    workCenter: null,
+    request: [],
+    offer: [],
+  };
   private postFrame: PropFrame | null = null;
   private sprites: CatalogSprite[] | null = null;
   private loadGen = 0;
@@ -125,6 +144,18 @@ export class IsoPreview {
     this.paintPosts();
   }
 
+  setSites(sites: SiteState): void {
+    this.sites = {
+      door: { ...sites.door },
+      flag: { ...sites.flag },
+      workSpot: sites.workSpot ? { ...sites.workSpot } : null,
+      workCenter: sites.workCenter ? { ...sites.workCenter } : null,
+      request: sites.request.slice(),
+      offer: sites.offer.slice(),
+    };
+    this.paintPlot();
+  }
+
   /** `layer` null = pan with LMB. Else LMB paints, RMB erases, Alt+LMB pans. */
   setPaint(layer: PaintLayer | null, onPaint: ((dx: number, dy: number, on: boolean) => void) | null): void {
     this.paintLayer = layer;
@@ -177,6 +208,32 @@ export class IsoPreview {
         alpha: 0.95,
         alignment: 0.5,
       });
+    }
+    for (const r of this.sites.request) {
+      fillCell(g, r, 0xb388ff, 0.28);
+    }
+    for (const r of this.sites.offer) {
+      fillCell(g, r, 0x7dffb3, 0.28);
+    }
+    fillCell(g, this.sites.door, 0xffffff, 0.22);
+    fillCell(g, this.sites.flag, 0xff6b5a, 0.28);
+    if (this.sites.workCenter) {
+      g.poly(cellQuad(ORIGIN + this.sites.workCenter.dx, ORIGIN + this.sites.workCenter.dy)).stroke({
+        color: 0x7dffb3,
+        width: width * 1.4,
+        alpha: 0.95,
+        alignment: 0.5,
+      });
+    }
+    if (this.sites.workSpot) {
+      const spot = this.sites.workSpot;
+      fillCell(g, spot, 0xe07aff, 0.32);
+      const from = gridToWorld(ORIGIN + spot.dx + 0.5, ORIGIN + spot.dy + 0.5);
+      const d = deltaOf(spot.direction);
+      const to = gridToWorld(ORIGIN + spot.dx + 0.5 + d.dx * 0.45, ORIGIN + spot.dy + 0.5 + d.dy * 0.45);
+      g.moveTo(from.x, from.y);
+      g.lineTo(to.x, to.y);
+      g.stroke({ color: 0xfff3c4, width: width * 1.6, alpha: 1 });
     }
   }
 
@@ -380,13 +437,25 @@ export class IsoPreview {
     if (!layer) return false;
     if (layer === "blocked") return hasRel(this.blocked, dx, dy);
     if (layer === "protected") return hasRel(this.protectedCells, dx, dy);
-    return hasRel(this.marks, dx, dy);
+    if (layer === "buildMarks") return hasRel(this.marks, dx, dy);
+    if (layer === "door") return this.sites.door.dx === dx && this.sites.door.dy === dy;
+    if (layer === "flag") return this.sites.flag.dx === dx && this.sites.flag.dy === dy;
+    if (layer === "workCenter") return this.sites.workCenter?.dx === dx && this.sites.workCenter?.dy === dy;
+    if (layer === "workSpot") return this.sites.workSpot?.dx === dx && this.sites.workSpot?.dy === dy;
+    if (layer === "request") return this.sites.request.some((r) => r.dx === dx && r.dy === dy);
+    return this.sites.offer.some((r) => r.dx === dx && r.dy === dy);
   }
 
   private strokeCell(cell: { x: number; y: number }): void {
     const dx = cell.x - ORIGIN;
     const dy = cell.y - ORIGIN;
-    if (this.layerAt(dx, dy) === this.paintOn) return;
+    const singleton =
+      this.paintLayer === "door" ||
+      this.paintLayer === "flag" ||
+      this.paintLayer === "workSpot" ||
+      this.paintLayer === "workCenter";
+    if (!singleton && this.layerAt(dx, dy) === this.paintOn) return;
+    if (singleton && this.paintOn && this.layerAt(dx, dy) && this.paintLayer !== "workSpot") return;
     this.onPaint?.(dx, dy, this.paintOn);
     if (this.paintLayer === "blocked") {
       this.blocked = applyRel(this.blocked, dx, dy, this.paintOn);
@@ -396,6 +465,20 @@ export class IsoPreview {
       if (!this.paintOn) this.blocked = applyRel(this.blocked, dx, dy, false);
     } else if (this.paintLayer === "buildMarks") {
       this.marks = applyRel(this.marks, dx, dy, this.paintOn);
+    } else if (this.paintLayer === "door") {
+      this.sites.door = this.paintOn ? { dx, dy } : { dx: 0, dy: 0 };
+    } else if (this.paintLayer === "flag") {
+      this.sites.flag = this.paintOn ? { dx, dy } : { dx: 0, dy: 0 };
+    } else if (this.paintLayer === "workCenter") {
+      this.sites.workCenter = this.paintOn ? { dx, dy } : null;
+    } else if (this.paintLayer === "workSpot") {
+      this.sites.workSpot = this.paintOn
+        ? { dx, dy, direction: this.sites.workSpot?.direction ?? "ne" }
+        : null;
+    } else if (this.paintLayer === "request") {
+      this.sites.request = applyStack(this.sites.request, dx, dy, this.paintOn);
+    } else if (this.paintLayer === "offer") {
+      this.sites.offer = applyStack(this.sites.offer, dx, dy, this.paintOn);
     }
     this.paintPlot();
     this.paintPosts();
@@ -420,7 +503,8 @@ export class IsoPreview {
     const dy = cell.y - ORIGIN;
     const occ = hasRel(this.blocked, dx, dy) ? "occupied" : hasRel(this.protectedCells, dx, dy) ? "plot" : "empty";
     const stick = hasRel(this.marks, dx, dy) ? "  stick" : "";
-    this.onSnap(`${fmtDelta(dx)}, ${fmtDelta(dy)}  ${occ}${stick}`);
+    const site = siteLabel(this.sites, dx, dy);
+    this.onSnap(`${fmtDelta(dx)}, ${fmtDelta(dy)}  ${occ}${stick}${site}`);
   }
 }
 
@@ -428,6 +512,30 @@ function applyRel(rs: Rel[], dx: number, dy: number, on: boolean): Rel[] {
   const next = rs.filter((r) => r.dx !== dx || r.dy !== dy);
   if (on) next.push({ dx, dy });
   return next;
+}
+
+function applyStack(rs: StackSlot[], dx: number, dy: number, on: boolean): StackSlot[] {
+  const hit = rs.find((r) => r.dx === dx && r.dy === dy);
+  const next = rs.filter((r) => r.dx !== dx || r.dy !== dy);
+  if (on) next.push({ dx, dy, material: hit?.material ?? "?" });
+  return next;
+}
+
+function fillCell(g: Graphics, r: Rel, color: number, alpha: number): void {
+  g.poly(cellQuad(ORIGIN + r.dx, ORIGIN + r.dy)).fill({ color, alpha });
+}
+
+function siteLabel(sites: SiteState, dx: number, dy: number): string {
+  const bits: string[] = [];
+  if (sites.door.dx === dx && sites.door.dy === dy) bits.push("door");
+  if (sites.flag.dx === dx && sites.flag.dy === dy) bits.push("flag");
+  if (sites.workSpot?.dx === dx && sites.workSpot?.dy === dy) bits.push(`spot ${sites.workSpot.direction}`);
+  if (sites.workCenter?.dx === dx && sites.workCenter?.dy === dy) bits.push("center");
+  const req = sites.request.find((r) => r.dx === dx && r.dy === dy);
+  if (req) bits.push(`in ${req.material}`);
+  const off = sites.offer.find((r) => r.dx === dx && r.dy === dy);
+  if (off) bits.push(`out ${off.material}`);
+  return bits.length ? `  ${bits.join(" · ")}` : "";
 }
 
 function cellQuad(x: number, y: number): { x: number; y: number }[] {

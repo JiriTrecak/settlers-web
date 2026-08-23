@@ -3,6 +3,9 @@
  * `assets/game_data/buildings.json` (tools Save/Load). World does not ingest
  * this yet. Construction wood is stored as `plank`; the UI labels it Lumber.
  */
+import { DIRECTIONS, type Direction } from "../../../src/shared";
+import { isWorker, jobOf, parseJob, type Job } from "./job";
+
 export const BUILDINGS_FORMAT = "forest-empire.buildings";
 export const BUILDINGS_VERSION = 1;
 
@@ -17,6 +20,8 @@ export const CIV_LABEL: Record<Civ, string> = {
 };
 
 export type Rel = { dx: number; dy: number };
+export type DirRel = Rel & { direction: Direction };
+export type StackSlot = Rel & { material: string; required?: number };
 
 export type BuildingDraft = {
   /** Stable slug, unique within `civ`. Same id across civs is the same hut. */
@@ -37,6 +42,17 @@ export type BuildingDraft = {
   buildMarks: Rel[];
   /** Diggers level the plot. `false` for mines. Omit in old saves → true. */
   flatten: boolean;
+  /** Occupying profession. Null for house / military / store. */
+  worker: string | null;
+  viewDistance: number;
+  ground: string[];
+  door: Rel;
+  flag: Rel;
+  workSpot: DirRel | null;
+  workCenter: Rel | null;
+  requestStacks: StackSlot[];
+  offerStacks: StackSlot[];
+  job: Job;
 };
 
 export type BuildingsFile = {
@@ -62,6 +78,16 @@ export function emptyDraft(civ: Civ, id: string): BuildingDraft {
     protected: [],
     buildMarks: [],
     flatten: true,
+    worker: null,
+    viewDistance: 0,
+    ground: ["grass", "earth", "flattened"],
+    door: { dx: 0, dy: 0 },
+    flag: { dx: 0, dy: 0 },
+    workSpot: null,
+    workCenter: null,
+    requestStacks: [],
+    offerStacks: [],
+    job: jobOf(id),
   };
 }
 
@@ -109,6 +135,12 @@ export function setRel(rs: readonly Rel[], dx: number, dy: number, on: boolean):
   return next;
 }
 
+export function setStack(rs: readonly StackSlot[], dx: number, dy: number, on: boolean, material: string): StackSlot[] {
+  const next = rs.filter((r) => r.dx !== dx || r.dy !== dy);
+  if (on) next.push({ dx, dy, material });
+  return next;
+}
+
 export function parseBuildingsFile(raw: unknown): BuildingsFile | null {
   if (typeof raw !== "object" || raw == null) return null;
   const o = raw as Record<string, unknown>;
@@ -124,10 +156,27 @@ export function parseBuildingsFile(raw: unknown): BuildingsFile | null {
   return { format: BUILDINGS_FORMAT, version: BUILDINGS_VERSION, buildings };
 }
 
-/** Pretty file, but each `{dx,dy}` stays on one line so occupancy diffs stay readable. */
+/** Pretty file, but each cell object stays on one line so occupancy diffs stay readable. */
 export function serializeBuildingsFile(file: BuildingsFile): string {
   const json = JSON.stringify({ ...file, format: BUILDINGS_FORMAT, version: BUILDINGS_VERSION }, null, 2);
-  return `${json.replace(/\{\s*"dx": (-?\d+),\s*"dy": (-?\d+)\s*\}/g, '{"dx": $1, "dy": $2}')}\n`;
+  return `${compactCells(json)}\n`;
+}
+
+function compactCells(json: string): string {
+  return json
+    .replace(
+      /\{\s*"dx": (-?\d+),\s*"dy": (-?\d+),\s*"material": "([^"]+)",\s*"required": (\d+)\s*\}/g,
+      '{"dx": $1, "dy": $2, "material": "$3", "required": $4}',
+    )
+    .replace(
+      /\{\s*"dx": (-?\d+),\s*"dy": (-?\d+),\s*"material": "([^"]+)"\s*\}/g,
+      '{"dx": $1, "dy": $2, "material": "$3"}',
+    )
+    .replace(
+      /\{\s*"dx": (-?\d+),\s*"dy": (-?\d+),\s*"direction": "([a-z]+)"\s*\}/g,
+      '{"dx": $1, "dy": $2, "direction": "$3"}',
+    )
+    .replace(/\{\s*"dx": (-?\d+),\s*"dy": (-?\d+)\s*\}/g, '{"dx": $1, "dy": $2}');
 }
 
 function parseDraft(raw: unknown): BuildingDraft | null {
@@ -153,6 +202,16 @@ function parseDraft(raw: unknown): BuildingDraft | null {
     protected: asRels(o.protected),
     buildMarks: asRels(o.buildMarks),
     flatten: o.flatten === false ? false : true,
+    worker: typeof o.worker === "string" && isWorker(o.worker) ? o.worker : typeof o.worker === "string" && o.worker ? o.worker : null,
+    viewDistance: asCount(o.viewDistance) ?? 0,
+    ground: asGrounds(o.ground),
+    door: asRel(o.door) ?? { dx: 0, dy: 0 },
+    flag: asRel(o.flag) ?? { dx: 0, dy: 0 },
+    workSpot: asDirRel(o.workSpot),
+    workCenter: asRel(o.workCenter),
+    requestStacks: asStacks(o.requestStacks),
+    offerStacks: asStacks(o.offerStacks),
+    job: parseJob(o.job) ?? jobOf(o.id),
   };
 }
 
@@ -173,6 +232,56 @@ function asRels(value: unknown): Rel[] {
     out.push(rel);
   }
   return out;
+}
+
+function asRel(value: unknown): Rel | null {
+  if (typeof value !== "object" || value == null) return null;
+  const r = value as Record<string, unknown>;
+  if (typeof r.dx !== "number" || typeof r.dy !== "number") return null;
+  if (!Number.isFinite(r.dx) || !Number.isFinite(r.dy)) return null;
+  return { dx: Math.trunc(r.dx), dy: Math.trunc(r.dy) };
+}
+
+function asDirRel(value: unknown): DirRel | null {
+  const rel = asRel(value);
+  if (!rel || typeof value !== "object" || value == null) return null;
+  const dir = (value as Record<string, unknown>).direction;
+  if (typeof dir !== "string" || !isDirection(dir)) return { ...rel, direction: "ne" };
+  return { ...rel, direction: dir };
+}
+
+function asStacks(value: unknown): StackSlot[] {
+  if (value == null || !Array.isArray(value)) return [];
+  const out: StackSlot[] = [];
+  const seen = new Set<string>();
+  for (const item of value) {
+    const rel = asRel(item);
+    if (!rel) continue;
+    const material = typeof item === "object" && item != null ? (item as Record<string, unknown>).material : null;
+    if (typeof material !== "string" || !material) continue;
+    const k = relKey(rel);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    const required =
+      typeof item === "object" && item != null ? (item as Record<string, unknown>).required : undefined;
+    const slot: StackSlot = { ...rel, material };
+    if (typeof required === "number" && Number.isFinite(required) && required > 0) slot.required = Math.floor(required);
+    out.push(slot);
+  }
+  return out;
+}
+
+function asGrounds(value: unknown): string[] {
+  if (!Array.isArray(value) || value.length === 0) return ["grass", "earth", "flattened"];
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item === "string" && item && !out.includes(item)) out.push(item);
+  }
+  return out.length > 0 ? out : ["grass", "earth", "flattened"];
+}
+
+function isDirection(value: string): value is Direction {
+  return (DIRECTIONS as readonly string[]).includes(value);
 }
 
 function asCount(value: unknown): number | null {

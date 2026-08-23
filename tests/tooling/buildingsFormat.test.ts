@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { parseBuildingsFile, serializeBuildingsFile, uniqueId, type BuildingsFile } from "../../tooling/src/economy/format";
+import { emptyDraft, parseBuildingsFile, serializeBuildingsFile, uniqueId, type BuildingsFile } from "../../tooling/src/economy/format";
 import { seedBuildings } from "../../tooling/src/economy/seed";
 
 describe("buildings format", () => {
@@ -25,8 +25,18 @@ describe("buildings format", () => {
     expect(roman?.protected.length).toBeGreaterThan(roman?.blocked.length ?? 0);
     expect(roman?.flatten).toBe(true);
     expect(roman?.buildMarks.length).toBe(6);
+    expect(roman?.job).toEqual({ type: "gather", target: "tree", radius: 30 });
+    expect(roman?.worker).toBe("lumberjack");
+    expect(roman?.offerStacks[0]).toMatchObject({ material: "trunk" });
+    const baker = file.buildings.find((b) => b.civ === "roman" && b.id === "baker");
+    expect(baker?.job).toMatchObject({ type: "convert", mode: "craft", output: "bread" });
+    const house = file.buildings.find((b) => b.civ === "roman" && b.id === "small_livinghouse");
+    expect(house?.job).toMatchObject({ type: "house", beds: 10 });
+    const tower = file.buildings.find((b) => b.civ === "roman" && b.id === "tower");
+    expect(tower?.job).toMatchObject({ type: "military", garrison: 1, occupies: true });
     const mine = file.buildings.find((b) => b.civ === "roman" && b.id === "coalmine");
     expect(mine?.flatten).toBe(false);
+    expect(mine?.job).toEqual({ type: "mine", deposit: "coal" });
     const egyptian = file.buildings.find((b) => b.civ === "egyptian" && b.id === "lumberjack");
     expect(egyptian?.plank).toBe(2);
     expect(egyptian?.stone).toBe(2);
@@ -74,10 +84,7 @@ describe("buildings format", () => {
     const file: BuildingsFile = {
       format: "forest-empire.buildings",
       version: 1,
-      buildings: [
-        { id: "hut", civ: "roman", name: "Hut", built: "", scaffold: "", plank: 0, stone: 0, blocked: [], protected: [], buildMarks: [], flatten: true },
-        { id: "hut", civ: "egyptian", name: "Hut", built: "", scaffold: "", plank: 0, stone: 0, blocked: [], protected: [], buildMarks: [], flatten: true },
-      ],
+      buildings: [emptyDraft("roman", "hut"), emptyDraft("egyptian", "hut")],
     };
     expect(uniqueId(file.buildings, "roman", "hut")).toBe("hut_2");
     expect(uniqueId(file.buildings, "asian", "hut")).toBe("hut");
@@ -87,6 +94,8 @@ describe("buildings format", () => {
     const raw = JSON.parse(readFileSync(new URL("../../assets/game_data/buildings.json", import.meta.url), "utf8")) as unknown;
     const parsed = parseBuildingsFile(raw);
     expect(parsed?.buildings.length).toBeGreaterThan(50);
-    expect(parsed?.buildings.some((b) => b.id === "lumberjack" && b.buildMarks.length === 6)).toBe(true);
+    const lumberjack = parsed?.buildings.find((b) => b.civ === "roman" && b.id === "lumberjack");
+    expect(lumberjack?.buildMarks.length).toBe(6);
+    expect(lumberjack?.job.type).toBe("gather");
   });
 });

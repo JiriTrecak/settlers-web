@@ -404,11 +404,19 @@ body {
   opacity: 0.7;
 }
 
-.ed-hint {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.4;
-  opacity: 0.6;
+.ed-fn-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.ed-fn-fields .ed-label:first-child {
+  margin-top: 4px;
+}
+
+select.ed-input {
+  cursor: pointer;
 }
 
 .ed-asset-body {
