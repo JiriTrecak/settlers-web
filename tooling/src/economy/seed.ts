@@ -4,12 +4,14 @@
  */
 import { buildings as catalog } from "../../../original_conv/catalog/index";
 import { buildings as simBuildings, type BuildingKind } from "../../../src/sim/data/buildings";
-import { emptyBuildingsFile, prettyName, type BuildingsFile } from "./format";
+import { copyRels, emptyBuildingsFile, prettyName, type BuildingsFile, type Rel } from "./format";
+import { needsFlatten } from "../../../src/sim/building/flatten";
 
 export function seedBuildings(): BuildingsFile {
   const file = emptyBuildingsFile();
   for (const entry of catalog) {
     const cost = costOf(entry.building);
+    const plot = plotOf(entry.building);
     const group = `buildings/${entry.civ}/${entry.building}`;
     file.buildings.push({
       id: entry.building,
@@ -19,9 +21,29 @@ export function seedBuildings(): BuildingsFile {
       scaffold: group,
       plank: cost.plank,
       stone: cost.stone,
+      blocked: plot.blocked,
+      protected: plot.protected,
+      buildMarks: marksOf(entry.building),
+      flatten: flattenOf(entry.building),
     });
   }
   return file;
+}
+
+export function plotOf(kind: string): { blocked: Rel[]; protected: Rel[] } {
+  if (!(kind in simBuildings)) return { blocked: [], protected: [] };
+  const def = simBuildings[kind as BuildingKind];
+  return { blocked: copyRels(def.blocked), protected: copyRels(def.protected) };
+}
+
+export function marksOf(kind: string): Rel[] {
+  if (!(kind in simBuildings)) return [];
+  return copyRels(simBuildings[kind as BuildingKind].buildMarks);
+}
+
+function flattenOf(kind: string): boolean {
+  if (!(kind in simBuildings)) return true;
+  return needsFlatten(simBuildings[kind as BuildingKind]);
 }
 
 function costOf(kind: string): { plank: number; stone: number } {

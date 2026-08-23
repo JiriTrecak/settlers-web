@@ -1,36 +1,50 @@
 /**
  * Iso grid + hut preview for the economy editor.
  * Origin cell is the snap point; sprites sit on `gridToWorld(origin)` like the game.
+ * Building mode paints `blocked` / `protected` / `buildMarks` relative to that origin.
  */
 import { Application, Container, Graphics, Sprite } from "pixi.js";
 import { Camera } from "../../../src/render/camera/camera";
 import { atlasPacksForCivs, loadAtlases } from "../../../src/render/graphics/atlas";
 import { loadGroup, placeLayer, type CatalogSprite, type PropFrame } from "../../../src/render/graphics/textures";
 import { gridToWorld, pickCell } from "../../../src/shared";
+import { hasRel, type Rel } from "./format";
 
 const GRID = 24;
 const ORIGIN = 12;
 const WASD = 900;
+/** Match `.ed-left` / `.ed-right` so the hut sits in the remaining gap. */
+const CHROME_LEFT = 280;
+const CHROME_RIGHT = 348;
 
 export type HutVariant = "built" | "scaffold";
+export type PaintLayer = "blocked" | "protected" | "buildMarks";
 
 export class IsoPreview {
   readonly camera = new Camera();
   private readonly world = new Container();
   private readonly grid = new Graphics();
+  private readonly plot = new Graphics();
   private readonly hover = new Graphics();
-  private readonly pin = new Graphics();
-  private readonly shadow = new Sprite();
   private readonly hut = new Sprite();
+  private readonly postLayer = new Container();
+  private readonly posts: Sprite[] = [];
+  private blocked: Rel[] = [];
+  private protectedCells: Rel[] = [];
+  private marks: Rel[] = [];
+  private postFrame: PropFrame | null = null;
   private sprites: CatalogSprite[] | null = null;
   private loadGen = 0;
   private variant: HutVariant = "built";
   private builtFrame: PropFrame | null = null;
   private scaffoldFrame: PropFrame | null = null;
   private hovering: { x: number; y: number } | null = null;
-  private pinned: { x: number; y: number } | null = null;
   private dragging = false;
   private dragMoved = false;
+  private painting = false;
+  private paintOn = true;
+  private paintLayer: PaintLayer | null = null;
+  private onPaint: ((dx: number, dy: number, on: boolean) => void) | null = null;
   private last: { x: number; y: number } | null = null;
   private readonly keys = new Set<string>();
   private readonly onSnap: (text: string) => void;
@@ -41,22 +55,30 @@ export class IsoPreview {
     onSnap: (text: string) => void,
   ) {
     this.onSnap = onSnap;
-    this.camera.zoom = 4;
+    this.camera.zoom = 2.5;
     this.camera.minZoom = 1;
     this.camera.maxZoom = 12;
     this.world.eventMode = "none";
     this.grid.eventMode = "none";
+    this.plot.eventMode = "none";
     this.hover.eventMode = "none";
-    this.pin.eventMode = "none";
-    this.shadow.eventMode = "none";
     this.hut.eventMode = "none";
-    this.world.addChild(this.grid, this.hover, this.pin, this.shadow, this.hut);
+    this.postLayer.eventMode = "none";
+    this.hut.alpha = 0.88;
+    this.world.addChild(this.grid, this.plot, this.hut, this.postLayer, this.hover);
     this.app.canvas.style.cursor = "grab";
   }
 
   async start(sprites: CatalogSprite[] | null): Promise<void> {
     this.sprites = sprites;
     this.app.stage.addChild(this.world);
+    if (sprites) {
+      await loadAtlases(atlasPacksForCivs(["roman"]));
+      this.postFrame =
+        (await loadGroup(sprites, "props/site-post"))[0] ??
+        (await loadGroup(sprites, "uncatalogued/settler/01/092"))[0] ??
+        null;
+    }
     this.drawGrid();
     this.lookAtOrigin();
     this.bind();
@@ -91,6 +113,25 @@ export class IsoPreview {
     this.paintHut();
   }
 
+  setHutAlpha(alpha: number): void {
+    this.hut.alpha = Math.min(1, Math.max(0, alpha));
+  }
+
+  setPlot(blocked: readonly Rel[], protectedCells: readonly Rel[], marks: readonly Rel[] = []): void {
+    this.blocked = blocked.slice();
+    this.protectedCells = protectedCells.slice();
+    this.marks = marks.slice();
+    this.paintPlot();
+    this.paintPosts();
+  }
+
+  /** `layer` null = pan with LMB. Else LMB paints, RMB erases, Alt+LMB pans. */
+  setPaint(layer: PaintLayer | null, onPaint: ((dx: number, dy: number, on: boolean) => void) | null): void {
+    this.paintLayer = layer;
+    this.onPaint = onPaint;
+    this.app.canvas.style.cursor = layer ? "cell" : "grab";
+  }
+
   async show(civ: string, built: string, scaffold: string): Promise<void> {
     const gen = ++this.loadGen;
     if (this.sprites) await loadAtlases(atlasPacksForCivs([civ]));
@@ -113,16 +154,54 @@ export class IsoPreview {
     const origin = gridToWorld(ORIGIN, ORIGIN);
     if (!frame) {
       this.hut.visible = false;
-      this.shadow.visible = false;
       return;
     }
     this.hut.visible = true;
     placeLayer(this.hut, frame, origin.x, origin.y);
-    if (frame.shadow) {
-      this.shadow.visible = true;
-      placeLayer(this.shadow, frame.shadow, origin.x, origin.y);
-    } else {
-      this.shadow.visible = false;
+  }
+
+  private paintPlot(): void {
+    const g = this.plot;
+    g.clear();
+    const width = 1.4 / this.camera.zoom;
+    for (const r of this.protectedCells) {
+      g.poly(cellQuad(ORIGIN + r.dx, ORIGIN + r.dy)).fill({ color: 0x7ec8e3, alpha: 0.18 });
+    }
+    for (const r of this.blocked) {
+      g.poly(cellQuad(ORIGIN + r.dx, ORIGIN + r.dy)).fill({ color: 0xe8c36a, alpha: 0.38 });
+    }
+    for (const r of this.marks) {
+      g.poly(cellQuad(ORIGIN + r.dx, ORIGIN + r.dy)).stroke({
+        color: 0xd08a58,
+        width,
+        alpha: 0.95,
+        alignment: 0.5,
+      });
+    }
+  }
+
+  private paintPosts(): void {
+    const frame = this.postFrame;
+    this.ensurePosts(this.marks.length);
+    for (let i = 0; i < this.posts.length; i++) {
+      const sprite = this.posts[i]!;
+      const mark = this.marks[i];
+      if (!frame || !mark) {
+        sprite.visible = false;
+        continue;
+      }
+      const at = gridToWorld(ORIGIN + mark.dx, ORIGIN + mark.dy);
+      sprite.visible = true;
+      placeLayer(sprite, frame, at.x, at.y);
+    }
+  }
+
+  private ensurePosts(n: number): void {
+    while (this.posts.length < n) {
+      const s = new Sprite();
+      s.eventMode = "none";
+      this.postLayer.addChild(s);
+      this.posts.push(s);
     }
   }
 
@@ -130,7 +209,7 @@ export class IsoPreview {
     const o = gridToWorld(ORIGIN, ORIGIN);
     const r = this.app.renderer;
     this.camera.lookAt(o.x, o.y, r.width, r.height);
-    this.camera.pan(-160, 0);
+    this.camera.pan((CHROME_LEFT - CHROME_RIGHT) / 2, 0);
     this.applyCamera(true);
   }
 
@@ -139,6 +218,8 @@ export class IsoPreview {
     this.world.scale.set(this.camera.zoom);
     if (redrawGrid) {
       this.drawGrid();
+      this.paintPlot();
+      this.paintPosts();
       this.paintMarks();
     }
   }
@@ -151,7 +232,6 @@ export class IsoPreview {
       for (let x = 0; x < GRID - 1; x++) {
         const quad = cellQuad(x, y);
         const origin = x === ORIGIN && y === ORIGIN;
-        if (origin) g.poly(quad).fill({ color: 0xe8c36a, alpha: 0.28 });
         g.poly(quad).stroke({
           color: origin ? 0xe8c36a : 0x3a4a62,
           width,
@@ -165,25 +245,14 @@ export class IsoPreview {
   }
 
   private paintMarks(): void {
-    const width = 1.25 / this.camera.zoom;
     this.hover.clear();
-    this.pin.clear();
-    if (this.hovering) {
-      this.hover.poly(cellQuad(this.hovering.x, this.hovering.y)).stroke({
-        color: 0xffffff,
-        width,
-        alpha: 0.8,
-        alignment: 0.5,
-      });
-    }
-    if (this.pinned) {
-      this.pin.poly(cellQuad(this.pinned.x, this.pinned.y)).stroke({
-        color: 0x7ec8e3,
-        width,
-        alpha: 0.95,
-        alignment: 0.5,
-      });
-    }
+    if (!this.hovering) return;
+    this.hover.poly(cellQuad(this.hovering.x, this.hovering.y)).stroke({
+      color: 0xffffff,
+      width: 1.25 / this.camera.zoom,
+      alpha: 0.85,
+      alignment: 0.5,
+    });
   }
 
   private bind(): void {
@@ -192,6 +261,7 @@ export class IsoPreview {
     window.addEventListener("pointermove", this.onPointerMove);
     window.addEventListener("pointerup", this.onPointerUp);
     canvas.addEventListener("wheel", this.onWheel, { passive: false });
+    canvas.addEventListener("contextmenu", this.onContextMenu);
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
     window.addEventListener("resize", this.onResize);
@@ -203,21 +273,41 @@ export class IsoPreview {
     window.removeEventListener("pointermove", this.onPointerMove);
     window.removeEventListener("pointerup", this.onPointerUp);
     canvas.removeEventListener("wheel", this.onWheel);
+    canvas.removeEventListener("contextmenu", this.onContextMenu);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
     window.removeEventListener("resize", this.onResize);
   }
 
+  private readonly onContextMenu = (e: Event): void => {
+    if (this.paintLayer) e.preventDefault();
+  };
+
   private readonly onPointerDown = (e: PointerEvent): void => {
-    if (e.button !== 0) return;
-    this.dragging = true;
-    this.dragMoved = false;
-    this.last = { x: e.clientX, y: e.clientY };
-    this.app.canvas.style.cursor = "grabbing";
+    const pan = e.button === 1 || (e.button === 0 && (e.altKey || !this.paintLayer));
+    if (pan) {
+      this.dragging = true;
+      this.dragMoved = false;
+      this.last = { x: e.clientX, y: e.clientY };
+      this.app.canvas.style.cursor = "grabbing";
+      this.app.canvas.setPointerCapture(e.pointerId);
+      return;
+    }
+    if (!this.paintLayer || (e.button !== 0 && e.button !== 2)) return;
+    const cell = this.cellAt(e);
+    if (!cell) return;
+    this.painting = true;
+    this.paintOn = e.button === 2 ? false : !this.layerAt(cell.x - ORIGIN, cell.y - ORIGIN);
+    this.strokeCell(cell);
     this.app.canvas.setPointerCapture(e.pointerId);
   };
 
   private readonly onPointerMove = (e: PointerEvent): void => {
+    if (this.painting) {
+      const cell = this.cellAt(e);
+      if (cell) this.strokeCell(cell);
+      return;
+    }
     if (this.dragging && this.last) {
       const dx = e.clientX - this.last.x;
       const dy = e.clientY - this.last.y;
@@ -245,22 +335,16 @@ export class IsoPreview {
   };
 
   private readonly onPointerUp = (e: PointerEvent): void => {
-    if (!this.dragging) return;
-    this.dragging = false;
-    this.last = null;
-    this.app.canvas.style.cursor = "grab";
+    this.painting = false;
     try {
       this.app.canvas.releasePointerCapture(e.pointerId);
     } catch {
       /* already released */
     }
-    if (e.button !== 0 || this.dragMoved) return;
-    const cell = this.cellAt(e);
-    if (!cell) return;
-    if (this.pinned?.x === cell.x && this.pinned.y === cell.y) this.pinned = null;
-    else this.pinned = cell;
-    this.paintMarks();
-    this.emitSnap();
+    if (!this.dragging) return;
+    this.dragging = false;
+    this.last = null;
+    this.app.canvas.style.cursor = this.paintLayer ? "cell" : "grab";
   };
 
   private readonly onWheel = (e: WheelEvent): void => {
@@ -291,24 +375,59 @@ export class IsoPreview {
     this.applyCamera();
   };
 
+  private layerAt(dx: number, dy: number): boolean {
+    const layer = this.paintLayer;
+    if (!layer) return false;
+    if (layer === "blocked") return hasRel(this.blocked, dx, dy);
+    if (layer === "protected") return hasRel(this.protectedCells, dx, dy);
+    return hasRel(this.marks, dx, dy);
+  }
+
+  private strokeCell(cell: { x: number; y: number }): void {
+    const dx = cell.x - ORIGIN;
+    const dy = cell.y - ORIGIN;
+    if (this.layerAt(dx, dy) === this.paintOn) return;
+    this.onPaint?.(dx, dy, this.paintOn);
+    if (this.paintLayer === "blocked") {
+      this.blocked = applyRel(this.blocked, dx, dy, this.paintOn);
+      if (this.paintOn) this.protectedCells = applyRel(this.protectedCells, dx, dy, true);
+    } else if (this.paintLayer === "protected") {
+      this.protectedCells = applyRel(this.protectedCells, dx, dy, this.paintOn);
+      if (!this.paintOn) this.blocked = applyRel(this.blocked, dx, dy, false);
+    } else if (this.paintLayer === "buildMarks") {
+      this.marks = applyRel(this.marks, dx, dy, this.paintOn);
+    }
+    this.paintPlot();
+    this.paintPosts();
+    this.hovering = cell;
+    this.paintMarks();
+    this.emitSnap();
+  }
+
   private cellAt(e: PointerEvent): { x: number; y: number } | null {
     const rect = this.app.canvas.getBoundingClientRect();
     const world = this.camera.screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
-    // Diamond containment (game pick). pickGrid is the north corner, not the cell.
     return pickCell(world.x, world.y, GRID, GRID, () => 0);
   }
 
   private emitSnap(): void {
-    const cell = this.pinned ?? this.hovering;
+    const cell = this.hovering;
     if (!cell) {
-      this.onSnap("origin 0, 0 · click a tile to pin");
+      this.onSnap(this.paintLayer ? "paint · LMB add / RMB erase · Alt-drag pan" : "origin 0, 0");
       return;
     }
     const dx = cell.x - ORIGIN;
     const dy = cell.y - ORIGIN;
-    const pin = this.pinned ? "pinned" : "hover";
-    this.onSnap(`${pin}  ${fmtDelta(dx)}, ${fmtDelta(dy)}  from origin`);
+    const occ = hasRel(this.blocked, dx, dy) ? "occupied" : hasRel(this.protectedCells, dx, dy) ? "plot" : "empty";
+    const stick = hasRel(this.marks, dx, dy) ? "  stick" : "";
+    this.onSnap(`${fmtDelta(dx)}, ${fmtDelta(dy)}  ${occ}${stick}`);
   }
+}
+
+function applyRel(rs: Rel[], dx: number, dy: number, on: boolean): Rel[] {
+  const next = rs.filter((r) => r.dx !== dx || r.dy !== dy);
+  if (on) next.push({ dx, dy });
+  return next;
 }
 
 function cellQuad(x: number, y: number): { x: number; y: number }[] {

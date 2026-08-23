@@ -1,27 +1,60 @@
 /**
- * Economy editor: per-civ building list, construction costs, catalog assets,
- * iso preview. Saves to localStorage; export/import the JSON file.
+ * Economy editor: per-civ list on the left, mode panels on the right.
+ * Building mode paints iso occupancy (`blocked` / `protected`) and fence
+ * posts (`buildMarks`). Save/Load writes `assets/game_data/buildings.json`.
  */
 import type { Application } from "pixi.js";
 import { ToolScreen } from "../ui/screen";
 import { assetsForCiv, gfxUrl, loadEconomyCatalog, stackGfx, thumbOf, type BuildingAsset } from "./catalog";
-import { CIVS, CIV_LABEL, parseBuildingsFile } from "./format";
-import { IsoPreview } from "./IsoPreview";
+import { CIVS, CIV_LABEL } from "./format";
+import { IsoPreview, type PaintLayer } from "./IsoPreview";
+import { BUILDINGS_PATH } from "./disk";
 import { BuildingStore } from "./store";
+
+type EditMode = "meta" | "building" | "function" | "textures";
+
+const ICON_META = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.5h10M3 8h10M3 12.5h6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>`;
+const ICON_BUILDING = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 2 7v7h5V10h2v4h5V7z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="miter"/></svg>`;
+const ICON_FUNCTION = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 2.2v1.8M8 12v1.8M2.2 8h1.8M12 8h1.8M4 4l1.3 1.3M10.7 10.7 12 12M12 4l-1.3 1.3M5.3 10.7 4 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="square"/></svg>`;
+const ICON_TEXTURES = `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="9" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 11.2 6 8l2.2 2 2-2.4 3.3 3.6" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="6.2" cy="6.2" r="1" fill="currentColor"/></svg>`;
+
+const MODES: { id: EditMode; label: string; icon: string }[] = [
+  { id: "meta", label: "Meta", icon: ICON_META },
+  { id: "building", label: "Building", icon: ICON_BUILDING },
+  { id: "function", label: "Function", icon: ICON_FUNCTION },
+  { id: "textures", label: "Textures", icon: ICON_TEXTURES },
+];
+
+const MODE_TITLE: Record<EditMode, string> = {
+  meta: "Meta",
+  building: "Building",
+  function: "Function",
+  textures: "Textures",
+};
 
 export class EconomyScreen extends ToolScreen {
   private readonly store = new BuildingStore();
   private readonly preview: IsoPreview;
   private assets = new Map<string, BuildingAsset>();
   private pickerSlot: "built" | "scaffold" | null = null;
+  private mode: EditMode = "building";
+  private paintLayer: PaintLayer = "blocked";
   private dead = false;
 
   private readonly listEl: HTMLElement;
   private readonly civEl: HTMLElement;
+  private readonly modeTitle: HTMLElement;
+  private readonly modeRail: HTMLElement;
+  private readonly panes: Record<EditMode, HTMLElement>;
   private readonly nameInput: HTMLInputElement;
   private readonly idInput: HTMLInputElement;
   private readonly plankInput: HTMLInputElement;
   private readonly stoneInput: HTMLInputElement;
+  private readonly opacityInput: HTMLInputElement;
+  private readonly occCount: HTMLElement;
+  private readonly plotCount: HTMLElement;
+  private readonly stickCount: HTMLElement;
+  private readonly ioStatus: HTMLElement;
   private readonly builtThumb: HTMLImageElement;
   private readonly builtLabel: HTMLElement;
   private readonly scaffoldThumb: HTMLImageElement;
@@ -30,8 +63,8 @@ export class EconomyScreen extends ToolScreen {
   private readonly pickerGrid: HTMLElement;
   private readonly pickerFilter: HTMLInputElement;
   private readonly snapEl: HTMLElement;
-  private readonly formEl: HTMLElement;
   private readonly missEl: HTMLElement;
+  private readonly propsEl: HTMLElement;
 
   constructor(pixi: Application, private readonly onBack: () => void) {
     super("screen ed-screen");
@@ -40,7 +73,7 @@ export class EconomyScreen extends ToolScreen {
     });
 
     const shell = el("div", "ed");
-    const side = el("aside", "ed-side");
+    const left = el("aside", "ed-left");
 
     const head = el("header", "ed-head");
     const titles = el("div", "");
@@ -71,6 +104,7 @@ export class EconomyScreen extends ToolScreen {
     const add = btn("New", "ed-btn ed-btn-sm");
     add.addEventListener("click", () => {
       this.store.add();
+      this.mode = "meta";
       this.paint();
       void this.syncHut();
       this.nameInput.focus();
@@ -79,25 +113,125 @@ export class EconomyScreen extends ToolScreen {
     listHead.append(add);
 
     this.listEl = el("div", "ed-list");
-    this.formEl = el("form", "ed-form");
-    this.formEl.addEventListener("submit", (e) => e.preventDefault());
 
-    this.nameInput = field(this.formEl, "Name");
+    const io = el("div", "ed-io");
+    const save = btn("Save", "ed-btn ed-btn-sm");
+    save.addEventListener("click", () => void this.saveProject());
+    const load = btn("Load", "ed-btn ed-btn-sm");
+    load.addEventListener("click", () => void this.loadProject());
+    const reset = btn("Reset seed", "ed-btn ed-btn-sm");
+    reset.addEventListener("click", () => {
+      if (!confirm("Replace the library with dump huts + current TS costs/plots/sticks?")) return;
+      this.store.resetToSeed();
+      this.paint();
+      void this.syncHut();
+    });
+    this.ioStatus = el("div", "ed-io-status");
+    io.append(save, load, reset, this.ioStatus);
+
+    this.missEl = el("div", "ed-miss");
+    this.missEl.hidden = true;
+    this.missEl.textContent = "No graphics dump at /graphics — thumbs and the hut preview stay empty.";
+
+    left.append(head, this.civEl, listHead, this.listEl, io, this.missEl);
+
+    const right = el("div", "ed-right");
+    this.propsEl = el("aside", "ed-props");
+    this.modeTitle = el("div", "ed-mode-title");
+    this.modeTitle.textContent = MODE_TITLE.building;
+
+    const meta = el("div", "ed-pane");
+    this.nameInput = field(meta, "Name");
     this.nameInput.addEventListener("input", () => {
       this.store.update({ name: this.nameInput.value });
       this.paintList();
+      this.paintIo();
     });
-    this.idInput = field(this.formEl, "Id");
+    this.idInput = field(meta, "Id");
     this.idInput.addEventListener("change", () => {
       this.store.update({ id: this.idInput.value.trim() });
       this.paint();
     });
+    const del = btn("Delete", "ed-btn ed-btn-danger");
+    del.addEventListener("click", () => {
+      const cur = this.store.selected();
+      if (!cur) return;
+      if (!confirm(`Delete ${cur.name}?`)) return;
+      this.store.remove();
+      this.paint();
+      void this.syncHut();
+    });
+    meta.append(del);
 
-    this.formEl.append(assetRow("Built", (this.builtThumb = img("ed-asset-img")), (this.builtLabel = span("", "ed-asset-path")), () => this.openPicker("built")));
-    this.formEl.append(
-      assetRow("Scaffold", (this.scaffoldThumb = img("ed-asset-img")), (this.scaffoldLabel = span("", "ed-asset-path")), () => this.openPicker("scaffold")),
+    const building = el("div", "ed-pane");
+    this.plankInput = costRow(building, "Lumber", "plank");
+    this.stoneInput = costRow(building, "Stone", "stone");
+    this.plankInput.addEventListener("input", () => {
+      this.store.update({ plank: num(this.plankInput.value) });
+      this.paintIo();
+    });
+    this.stoneInput.addEventListener("input", () => {
+      this.store.update({ stone: num(this.stoneInput.value) });
+      this.paintIo();
+    });
+
+    building.append(span("Flatten", "ed-label"));
+    const flattenRow = el("div", "ed-paint");
+    flattenRow.append(
+      flagBtn("Yes", "true", () => this.setFlatten(true)),
+      flagBtn("No", "false", () => this.setFlatten(false)),
     );
+    building.append(flattenRow);
+    const flattenHint = el("p", "ed-hint");
+    flattenHint.textContent = "Diggers level the plot to one height. Off for mines.";
+    building.append(flattenHint);
 
+    building.append(span("Iso occupancy", "ed-label"));
+    const paintRow = el("div", "ed-paint");
+    paintRow.append(
+      paintBtn("Occupied", "blocked", () => this.setPaintLayer("blocked")),
+      paintBtn("Plot", "protected", () => this.setPaintLayer("protected")),
+      paintBtn("Sticks", "buildMarks", () => this.setPaintLayer("buildMarks")),
+    );
+    building.append(paintRow);
+    const counts = el("div", "ed-counts");
+    this.occCount = span("0 occupied", "");
+    this.plotCount = span("0 plot", "");
+    this.stickCount = span("0 sticks", "");
+    counts.append(this.occCount, this.plotCount, this.stickCount);
+    building.append(counts);
+    const hint = el("p", "ed-hint");
+    hint.textContent = "Gold = walk-blocked. Cyan = plot. Orange = fence posts. LMB paint, RMB erase, Alt-drag pan.";
+    building.append(hint);
+
+    const op = el("label", "ed-field");
+    op.append(span("Texture opacity", "ed-label"));
+    this.opacityInput = document.createElement("input");
+    this.opacityInput.className = "ed-range";
+    this.opacityInput.type = "range";
+    this.opacityInput.min = "0";
+    this.opacityInput.max = "100";
+    this.opacityInput.value = "35";
+    this.opacityInput.addEventListener("input", () => this.applyOpacity());
+    op.append(this.opacityInput);
+    building.append(op);
+
+    const fn = el("div", "ed-pane");
+    const tbd = el("p", "ed-hint");
+    tbd.textContent = "Behaviors later — convert, gather, mine, spawn, garrison.";
+    fn.append(tbd);
+
+    const textures = el("div", "ed-pane");
+    textures.append(
+      assetRow("Built", (this.builtThumb = img("ed-asset-img")), (this.builtLabel = span("", "ed-asset-path")), () =>
+        this.openPicker("built"),
+      ),
+    );
+    textures.append(
+      assetRow("Scaffold", (this.scaffoldThumb = img("ed-asset-img")), (this.scaffoldLabel = span("", "ed-asset-path")), () =>
+        this.openPicker("scaffold"),
+      ),
+    );
     const previewRow = el("div", "ed-preview");
     previewRow.append(span("Preview", "ed-label"));
     for (const v of ["built", "scaffold"] as const) {
@@ -108,61 +242,32 @@ export class EconomyScreen extends ToolScreen {
       r.name = "ed-variant";
       r.value = v;
       r.checked = v === "built";
-      r.addEventListener("change", () => {
-        this.preview.setVariant(v);
-      });
+      r.addEventListener("change", () => this.preview.setVariant(v));
       lab.append(r, document.createTextNode(v === "built" ? "Built" : "Scaffold"));
       previewRow.append(lab);
     }
-    this.formEl.append(previewRow);
+    textures.append(previewRow);
 
-    this.plankInput = costRow(this.formEl, "Lumber", "plank");
-    this.stoneInput = costRow(this.formEl, "Stone", "stone");
-    this.plankInput.addEventListener("input", () => this.store.update({ plank: num(this.plankInput.value) }));
-    this.stoneInput.addEventListener("input", () => this.store.update({ stone: num(this.stoneInput.value) }));
-
-    const del = btn("Delete", "ed-btn ed-btn-danger");
-    del.addEventListener("click", () => {
-      const cur = this.store.selected();
-      if (!cur) return;
-      if (!confirm(`Delete ${cur.name}?`)) return;
-      this.store.remove();
-      this.paint();
-      void this.syncHut();
-    });
-    this.formEl.append(del);
-
-    const io = el("div", "ed-io");
-    const exp = btn("Export", "ed-btn ed-btn-sm");
-    exp.addEventListener("click", () => downloadJson(this.store.exportText()));
-    const file = document.createElement("input");
-    file.type = "file";
-    file.accept = "application/json,.json";
-    file.hidden = true;
-    file.addEventListener("change", () => {
-      const f = file.files?.[0];
-      file.value = "";
-      if (f) void this.importFile(f);
-    });
-    const imp = btn("Import", "ed-btn ed-btn-sm");
-    imp.addEventListener("click", () => file.click());
-    const reset = btn("Reset seed", "ed-btn ed-btn-sm");
-    reset.addEventListener("click", () => {
-      if (!confirm("Replace the library with dump huts + current TS costs?")) return;
-      this.store.resetToSeed();
-      this.paint();
-      void this.syncHut();
-    });
-    io.append(exp, imp, reset, file);
-
-    this.missEl = el("div", "ed-miss");
-    this.missEl.hidden = true;
-    this.missEl.textContent = "No graphics dump at /graphics — thumbs and the hut preview stay empty.";
+    this.panes = { meta, building, function: fn, textures };
+    meta.hidden = true;
+    fn.hidden = true;
+    textures.hidden = true;
 
     this.snapEl = el("div", "ed-snap");
     this.snapEl.textContent = "origin 0, 0";
+    this.propsEl.append(this.modeTitle, meta, building, fn, textures, this.snapEl);
 
-    side.append(head, this.civEl, listHead, this.listEl, this.formEl, io, this.missEl, this.snapEl);
+    this.modeRail = el("div", "ed-modes");
+    for (const m of MODES) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "ed-mode";
+      b.title = m.label;
+      b.dataset.mode = m.id;
+      b.innerHTML = m.icon;
+      b.addEventListener("click", () => this.setMode(m.id));
+      this.modeRail.append(b);
+    }
 
     this.picker = el("div", "ed-picker");
     this.picker.hidden = true;
@@ -177,7 +282,9 @@ export class EconomyScreen extends ToolScreen {
     this.pickerGrid = el("div", "ed-picker-grid");
     this.picker.append(pickerHead, this.pickerGrid);
 
-    shell.append(side, this.picker);
+    right.append(this.picker, this.propsEl, this.modeRail);
+
+    shell.append(left, right);
     this.root.append(shell);
     this.onEscape(() => this.leave());
     this.paint();
@@ -204,6 +311,9 @@ export class EconomyScreen extends ToolScreen {
   }
 
   private async boot(): Promise<void> {
+    await this.store.bootFromDisk();
+    if (this.dead) return;
+    this.paint();
     const cat = await loadEconomyCatalog();
     if (this.dead) return;
     this.assets = cat.assets;
@@ -213,7 +323,54 @@ export class EconomyScreen extends ToolScreen {
     this.paintAssets();
     await this.preview.start(cat.sprites);
     if (this.dead) return;
+    this.applyMode();
     await this.syncHut();
+  }
+
+  private setMode(mode: EditMode): void {
+    this.mode = mode;
+    this.applyMode();
+    this.paintMode();
+  }
+
+  private setPaintLayer(layer: PaintLayer): void {
+    this.paintLayer = layer;
+    this.applyMode();
+    this.paintMode();
+  }
+
+  private setFlatten(on: boolean): void {
+    this.store.update({ flatten: on });
+    this.paintFlatten();
+    this.paintIo();
+  }
+
+  private applyMode(): void {
+    this.modeTitle.textContent = MODE_TITLE[this.mode];
+    for (const id of Object.keys(this.panes) as EditMode[]) {
+      this.panes[id].hidden = id !== this.mode;
+    }
+    if (this.mode === "building") {
+      this.preview.setPaint(this.paintLayer, (dx, dy, on) => {
+        this.store.paintCell(this.paintLayer, dx, dy, on);
+        this.paintCounts();
+        this.paintIo();
+      });
+      this.applyOpacity();
+    } else {
+      this.preview.setPaint(null, null);
+      this.preview.setHutAlpha(0.88);
+    }
+    for (const b of this.modeRail.querySelectorAll<HTMLButtonElement>(".ed-mode")) {
+      b.classList.toggle("is-on", b.dataset.mode === this.mode);
+    }
+    for (const b of this.propsEl.querySelectorAll<HTMLButtonElement>("[data-paint]")) {
+      b.classList.toggle("is-on", b.dataset.paint === this.paintLayer);
+    }
+  }
+
+  private applyOpacity(): void {
+    this.preview.setHutAlpha(Number(this.opacityInput.value) / 100);
   }
 
   private paint(): void {
@@ -221,7 +378,14 @@ export class EconomyScreen extends ToolScreen {
     this.paintList();
     this.paintForm();
     this.paintAssets();
+    this.paintCounts();
+    this.paintMode();
+    this.paintIo();
     if (this.pickerSlot) this.paintPicker();
+  }
+
+  private paintMode(): void {
+    this.applyMode();
   }
 
   private paintCivs(): void {
@@ -256,7 +420,7 @@ export class EconomyScreen extends ToolScreen {
   private paintForm(): void {
     const b = this.store.selected();
     const on = b != null;
-    this.formEl.classList.toggle("is-empty", !on);
+    this.propsEl.classList.toggle("is-empty", !on);
     this.nameInput.value = b?.name ?? "";
     this.idInput.value = b?.id ?? "";
     this.plankInput.value = b ? String(b.plank) : "0";
@@ -265,6 +429,26 @@ export class EconomyScreen extends ToolScreen {
     this.idInput.disabled = !on;
     this.plankInput.disabled = !on;
     this.stoneInput.disabled = !on;
+    this.opacityInput.disabled = !on;
+    this.paintFlatten();
+  }
+
+  private paintFlatten(): void {
+    const on = this.store.selected()?.flatten !== false;
+    for (const b of this.propsEl.querySelectorAll<HTMLButtonElement>("[data-flatten]")) {
+      b.classList.toggle("is-on", b.dataset.flatten === (on ? "true" : "false"));
+    }
+  }
+
+  private paintCounts(): void {
+    const b = this.store.selected();
+    this.occCount.textContent = `${b?.blocked.length ?? 0} occupied`;
+    this.plotCount.textContent = `${b?.protected.length ?? 0} plot`;
+    this.stickCount.textContent = `${b?.buildMarks.length ?? 0} sticks`;
+  }
+
+  private paintIo(): void {
+    this.ioStatus.textContent = this.store.diskHint();
   }
 
   private paintAssets(): void {
@@ -322,30 +506,33 @@ export class EconomyScreen extends ToolScreen {
 
   private async syncHut(): Promise<void> {
     const b = this.store.selected();
+    this.preview.setPlot(b?.blocked ?? [], b?.protected ?? [], b?.buildMarks ?? []);
     await this.preview.show(this.store.civ, b?.built ?? "", b?.scaffold ?? "");
   }
 
   private refreshCostIcons(): void {
     for (const material of ["plank", "stone"] as const) {
-      const icon = this.formEl.querySelector<HTMLImageElement>(`img[data-good="${material}"]`);
+      const icon = this.propsEl.querySelector<HTMLImageElement>(`img[data-good="${material}"]`);
       if (!icon) continue;
       icon.src = stackGfx(material);
     }
   }
 
-  private async importFile(file: File): Promise<void> {
-    try {
-      const parsed = parseBuildingsFile(JSON.parse(await file.text()) as unknown);
-      if (!parsed) {
-        alert("Not a forest-empire.buildings file.");
-        return;
-      }
-      this.store.replace(parsed);
-      this.paint();
-      await this.syncHut();
-    } catch {
-      alert("Could not read that JSON.");
+  private async saveProject(): Promise<void> {
+    const err = await this.store.saveToProject();
+    if (err) alert(err);
+    this.paintIo();
+  }
+
+  private async loadProject(): Promise<void> {
+    if (this.store.dirty() && !confirm(`Discard unsaved edits and load ${BUILDINGS_PATH}?`)) return;
+    const err = await this.store.loadFromProject();
+    if (err) {
+      alert(err);
+      return;
     }
+    this.paint();
+    await this.syncHut();
   }
 }
 
@@ -357,7 +544,7 @@ function el(tag: string, className: string): HTMLElement {
 
 function span(text: string, className: string): HTMLSpanElement {
   const node = document.createElement("span");
-  node.className = className;
+  if (className) node.className = className;
   node.textContent = text;
   return node;
 }
@@ -367,6 +554,20 @@ function btn(label: string, className: string): HTMLButtonElement {
   node.type = "button";
   node.className = className;
   node.textContent = label;
+  return node;
+}
+
+function paintBtn(label: string, layer: PaintLayer, onClick: () => void): HTMLButtonElement {
+  const node = btn(label, "ed-btn ed-btn-sm");
+  node.dataset.paint = layer;
+  node.addEventListener("click", onClick);
+  return node;
+}
+
+function flagBtn(label: string, value: string, onClick: () => void): HTMLButtonElement {
+  const node = btn(label, "ed-btn ed-btn-sm");
+  node.dataset.flatten = value;
+  node.addEventListener("click", onClick);
   return node;
 }
 
@@ -399,7 +600,6 @@ function costRow(form: HTMLElement, label: string, material: "plank" | "stone"):
   const wrap = el("label", "ed-cost");
   const icon = img("ed-good-icon");
   icon.dataset.good = material;
-  icon.alt = "";
   wrap.append(icon, span(label, "ed-label"));
   const input = document.createElement("input");
   input.className = "ed-input ed-input-num";
@@ -447,14 +647,4 @@ function prettyKind(kind: string): string {
 function num(value: string): number {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
-}
-
-function downloadJson(text: string): void {
-  const blob = new Blob([text], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "forest-empire-buildings.json";
-  a.click();
-  URL.revokeObjectURL(url);
 }
