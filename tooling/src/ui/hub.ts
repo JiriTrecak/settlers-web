@@ -5,7 +5,7 @@ import { ToolScreen } from "./screen";
 
 export const TOOLS = [
   { id: "map", label: "Map editor", blurb: "Terrain, deposits, starts." },
-  { id: "economy", label: "Economy editor", blurb: "Buildings, goods, professions." },
+  { id: "economy", label: "Economy editor", blurb: "Buildings per race, costs, assets." },
 ] as const;
 
 export type ToolId = (typeof TOOLS)[number]["id"];

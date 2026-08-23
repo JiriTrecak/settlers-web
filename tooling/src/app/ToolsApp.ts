@@ -3,6 +3,7 @@
  * Individual tools get their own screens later; they may pull `src/render` in.
  */
 import { Application } from "pixi.js";
+import { EconomyScreen } from "../economy/EconomyScreen";
 import { HubScreen, TOOLS, type ToolId } from "../ui/hub";
 import { ScreenHost } from "../ui/screen";
 import { WipScreen } from "../ui/wip";
@@ -45,6 +46,10 @@ export class ToolsApp {
   }
 
   private openTool(id: ToolId): void {
+    if (id === "economy") {
+      this.screens?.show(new EconomyScreen(this.pixi!, () => this.showHub()));
+      return;
+    }
     const label = TOOLS.find((t) => t.id === id)?.label ?? id;
     this.screens?.show(new WipScreen(label, () => this.showHub()));
   }
