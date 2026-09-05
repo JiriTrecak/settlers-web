@@ -49,6 +49,7 @@ export class FunctionPane {
   private readonly goodRow: HTMLElement;
   private readonly counts: HTMLElement;
   private readonly extra: HTMLSelectElement;
+  private lastFields = "";
 
   constructor(
     private readonly store: BuildingStore,
@@ -57,7 +58,7 @@ export class FunctionPane {
   ) {
     this.root = el("div", "ed-pane");
     this.root.append(span("Machine", "ed-label"));
-    this.machine = select(MACHINES.map((id) => [id, MACHINE_LABEL[id]]));
+    this.machine = select(MACHINES.map((id): [string, string] => [id, MACHINE_LABEL[id]]));
     this.machine.addEventListener("change", () => {
       this.store.setMachine(this.machine.value as Machine);
       this.onChange();
@@ -65,7 +66,7 @@ export class FunctionPane {
     this.root.append(this.machine);
 
     this.root.append(span("Worker", "ed-label"));
-    this.worker = select([["", "— none"], ...WORKERS.map((w) => [w, w.replace(/_/g, " ")])]);
+    this.worker = select([["", "— none"], ...WORKERS.map((w): [string, string] => [w, w.replace(/_/g, " ")])]);
     this.worker.addEventListener("change", () => {
       this.store.update({ worker: this.worker.value || null });
       this.onChange();
@@ -79,7 +80,7 @@ export class FunctionPane {
     this.view.type = "number";
     this.view.min = "0";
     this.view.step = "1";
-    this.view.addEventListener("input", () => {
+    this.view.addEventListener("change", () => {
       this.store.update({ viewDistance: num(this.view.value) });
       this.onChange();
     });
@@ -117,7 +118,7 @@ export class FunctionPane {
 
     this.facingRow = el("div", "ed-field");
     this.facingRow.append(span("Spot facing", "ed-label"));
-    const face = select(DIRECTIONS.map((d) => [d, d.toUpperCase()]));
+    const face = select(DIRECTIONS.map((d): [string, string] => [d, d.toUpperCase()]));
     face.addEventListener("change", () => {
       this.facing = face.value as DirRel["direction"];
       const cur = this.store.selected();
@@ -132,7 +133,7 @@ export class FunctionPane {
 
     this.goodRow = el("div", "ed-field");
     this.goodRow.append(span("Stack good", "ed-label"));
-    const goods = select(GOODS.map((g) => [g, g]));
+    const goods = select(GOODS.map((g): [string, string] => [g, g]));
     goods.addEventListener("change", () => {
       this.good = goods.value as GoodId;
     });
@@ -142,7 +143,8 @@ export class FunctionPane {
     this.counts = el("div", "ed-counts");
     this.root.append(this.counts);
     const hint = el("p", "ed-hint");
-    hint.textContent = "White door, red flag, purple request, green offer, magenta work spot. LMB paint, RMB erase.";
+    hint.textContent =
+      "White door, red flag cell + waving sprite, purple request, green offer, magenta work spot. LMB paint, RMB erase.";
     this.root.append(hint);
   }
 
@@ -179,6 +181,9 @@ export class FunctionPane {
   }
 
   private paintFields(b: BuildingDraft): void {
+    const key = `${b.civ}:${b.id}:${JSON.stringify(b.job)}`;
+    if (key === this.lastFields) return;
+    this.lastFields = key;
     const job = b.job;
     this.fields.replaceChildren();
     this.fields.append(span(MACHINE_LABEL[job.type], "ed-label"));
@@ -246,7 +251,7 @@ export class FunctionPane {
   private rowSelect(label: string, values: readonly string[], current: string, onPick: (v: string) => void): HTMLElement {
     const wrap = el("label", "ed-field");
     wrap.append(span(label, "ed-label"));
-    const s = select(values.map((v) => [v, v]));
+    const s = select(values.map((v): [string, string] => [v, v]));
     s.value = current;
     s.addEventListener("change", () => onPick(s.value));
     wrap.append(s);

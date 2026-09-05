@@ -4,8 +4,8 @@
  */
 import { buildings as catalog } from "../../../original_conv/catalog/index";
 import { buildings as simBuildings, type BuildingKind } from "../../../src/sim/data/buildings";
-import { copyRels, emptyBuildingsFile, prettyName, type BuildingsFile, type Rel } from "./format";
 import { needsFlatten } from "../../../src/sim/building/flatten";
+import { copyRels, emptyBuildingsFile, prettyName, type BuildingsFile, type Rel } from "./format";
 import { jobOf, sitesOf } from "./job";
 
 export function seedBuildings(): BuildingsFile {

@@ -7,7 +7,7 @@ import { Application, Container, Graphics, Sprite } from "pixi.js";
 import { Camera } from "../../../src/render/camera/camera";
 import { atlasPacksForCivs, loadAtlases } from "../../../src/render/graphics/atlas";
 import { loadGroup, placeLayer, type CatalogSprite, type PropFrame } from "../../../src/render/graphics/textures";
-import { deltaOf, gridToWorld, pickCell } from "../../../src/shared";
+import { deltaOf, gridToWorld, pickCell, PLAYER_COLORS } from "../../../src/shared";
 import { hasRel, type DirRel, type Rel, type StackSlot } from "./format";
 
 const GRID = 24;
@@ -29,6 +29,8 @@ export type SiteState = {
   workCenter: Rel | null;
   request: StackSlot[];
   offer: StackSlot[];
+  /** Picks roof vs door flag sheet. Null → door (houses / towers). */
+  worker?: string | null;
 };
 
 export class IsoPreview {
@@ -40,6 +42,9 @@ export class IsoPreview {
   private readonly hut = new Sprite();
   private readonly postLayer = new Container();
   private readonly posts: Sprite[] = [];
+  private readonly flagShadow = new Sprite();
+  private readonly flagBody = new Sprite();
+  private readonly flagTorso = new Sprite();
   private blocked: Rel[] = [];
   private protectedCells: Rel[] = [];
   private marks: Rel[] = [];
@@ -50,8 +55,13 @@ export class IsoPreview {
     workCenter: null,
     request: [],
     offer: [],
+    worker: null,
   };
   private postFrame: PropFrame | null = null;
+  private flagDoor: PropFrame[] = [];
+  private flagRoof: PropFrame[] = [];
+  private flagMs = 0;
+  private flagStep = 0;
   private sprites: CatalogSprite[] | null = null;
   private loadGen = 0;
   private variant: HutVariant = "built";
@@ -83,8 +93,12 @@ export class IsoPreview {
     this.hover.eventMode = "none";
     this.hut.eventMode = "none";
     this.postLayer.eventMode = "none";
+    this.flagShadow.eventMode = "none";
+    this.flagBody.eventMode = "none";
+    this.flagTorso.eventMode = "none";
     this.hut.alpha = 0.88;
-    this.world.addChild(this.grid, this.plot, this.hut, this.postLayer, this.hover);
+    this.flagTorso.tint = PLAYER_COLORS[0];
+    this.world.addChild(this.grid, this.plot, this.hut, this.postLayer, this.flagShadow, this.flagBody, this.flagTorso, this.hover);
     this.app.canvas.style.cursor = "grab";
   }
 
@@ -97,6 +111,8 @@ export class IsoPreview {
         (await loadGroup(sprites, "props/site-post"))[0] ??
         (await loadGroup(sprites, "uncatalogued/settler/01/092"))[0] ??
         null;
+      this.flagDoor = await loadGroup(sprites, "props/flag-door");
+      this.flagRoof = await loadGroup(sprites, "props/flag-roof");
     }
     this.drawGrid();
     this.lookAtOrigin();
@@ -114,14 +130,20 @@ export class IsoPreview {
   }
 
   tick(dtMs: number): void {
+    this.flagMs += dtMs;
+    const step = (this.flagMs / 100) | 0;
+    if (step !== this.flagStep) {
+      this.flagStep = step;
+      this.paintFlag();
+    }
     if (this.keys.size === 0) return;
-    const step = WASD * (dtMs / 1000);
+    const pan = WASD * (dtMs / 1000);
     let dx = 0;
     let dy = 0;
-    if (this.keys.has("a") || this.keys.has("arrowleft")) dx += step;
-    if (this.keys.has("d") || this.keys.has("arrowright")) dx -= step;
-    if (this.keys.has("w") || this.keys.has("arrowup")) dy += step;
-    if (this.keys.has("s") || this.keys.has("arrowdown")) dy -= step;
+    if (this.keys.has("a") || this.keys.has("arrowleft")) dx += pan;
+    if (this.keys.has("d") || this.keys.has("arrowright")) dx -= pan;
+    if (this.keys.has("w") || this.keys.has("arrowup")) dy += pan;
+    if (this.keys.has("s") || this.keys.has("arrowdown")) dy -= pan;
     if (!dx && !dy) return;
     this.camera.pan(dx, dy);
     this.applyCamera();
@@ -152,8 +174,10 @@ export class IsoPreview {
       workCenter: sites.workCenter ? { ...sites.workCenter } : null,
       request: sites.request.slice(),
       offer: sites.offer.slice(),
+      worker: sites.worker ?? null,
     };
     this.paintPlot();
+    this.paintFlag();
   }
 
   /** `layer` null = pan with LMB. Else LMB paints, RMB erases, Alt+LMB pans. */
@@ -253,6 +277,32 @@ export class IsoPreview {
     }
   }
 
+  private paintFlag(): void {
+    const frames = this.sites.worker ? this.flagRoof : this.flagDoor;
+    const frame = frames.length > 0 ? frames[this.flagStep % frames.length]! : null;
+    if (!frame) {
+      this.flagShadow.visible = false;
+      this.flagBody.visible = false;
+      this.flagTorso.visible = false;
+      return;
+    }
+    const at = gridToWorld(ORIGIN + this.sites.flag.dx, ORIGIN + this.sites.flag.dy);
+    this.flagBody.visible = true;
+    placeLayer(this.flagBody, frame, at.x, at.y);
+    if (frame.torso) {
+      this.flagTorso.visible = true;
+      placeLayer(this.flagTorso, frame.torso, at.x, at.y);
+    } else {
+      this.flagTorso.visible = false;
+    }
+    if (frame.shadow) {
+      this.flagShadow.visible = true;
+      placeLayer(this.flagShadow, frame.shadow, at.x, at.y);
+    } else {
+      this.flagShadow.visible = false;
+    }
+  }
+
   private ensurePosts(n: number): void {
     while (this.posts.length < n) {
       const s = new Sprite();
@@ -277,6 +327,7 @@ export class IsoPreview {
       this.drawGrid();
       this.paintPlot();
       this.paintPosts();
+      this.paintFlag();
       this.paintMarks();
     }
   }
@@ -482,6 +533,7 @@ export class IsoPreview {
     }
     this.paintPlot();
     this.paintPosts();
+    this.paintFlag();
     this.hovering = cell;
     this.paintMarks();
     this.emitSnap();

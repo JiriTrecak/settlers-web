@@ -1,10 +1,13 @@
 /**
  * Function-tab machines. Authoring only — World still switches on worker kind.
  * One hut, one job. Stacks / door / flag are separate cells on the draft.
+ *
+ * Reads sim `BuildingDef` field names and writes the authoring draft shape
+ * (`door` / `flag` / `viewDistance` / `requestStacks`).
  */
 import { buildings as simBuildings, type BuildingKind } from "../../../src/sim/data/buildings";
 import { settlers, type SettlerKind } from "../../../src/sim/data/settlers";
-import type { BuildingDef } from "../../../src/sim/data/types";
+import type { BuildingDef, SettlerDef } from "../../../src/sim/data/types";
 
 export const MACHINES = [
   "house",
@@ -45,7 +48,7 @@ export type SpawnKind = (typeof SPAWNS)[number];
 export const CONVERT_MODES = ["saw", "craft"] as const;
 export type ConvertMode = (typeof CONVERT_MODES)[number];
 
-/** Sim goods plus a few authoring-only names (ingots, wine) until World grows them. */
+/** Sim goods plus a few authoring-only names (ingots, wine, aliases) until World grows them. */
 export const GOODS = [
   "trunk",
   "plank",
@@ -228,7 +231,7 @@ export function sitesOf(kind: string): {
     offer: [] as { dx: number; dy: number; material: string }[],
   };
   if (!(kind in simBuildings)) return empty;
-  const def = simBuildings[kind as BuildingKind];
+  const def: BuildingDef = simBuildings[kind as BuildingKind];
   return {
     worker: def.worker,
     viewDistance: def.viewDistance,
@@ -258,8 +261,7 @@ function jobFromDef(def: BuildingDef): Job {
   if (def.requestStacks.length > 0) {
     const inputs = uniqueGoods(def.requestStacks.map((s) => s.material));
     const output = def.offerStacks[0]?.material;
-    const worker = def.worker;
-    const durationMs = durationOf(worker);
+    const durationMs = durationOf(def.worker);
     const mode: ConvertMode = def.requestStacks.length > 1 ? "craft" : "saw";
     return {
       type: "convert",
@@ -276,7 +278,7 @@ function jobFromKind(kind: string): Job {
   switch (kind) {
     case "small_livinghouse":
     case "medium_livinghouse":
-    case "large_livinghouse":
+    case "big_livinghouse":
       return { type: "house", spawn: "bearer", beds: kind === "small_livinghouse" ? 10 : 20, produceMs: 2000 };
     case "donkey_farm":
       return { type: "house", spawn: "donkey", beds: 6, produceMs: 4000 };
@@ -290,8 +292,7 @@ function jobFromKind(kind: string): Job {
         occupies: kind !== "lookout_tower",
       };
     case "stock":
-    case "store":
-    case "warehouse":
+    case "marketplace":
     case "harbor":
       return { type: "store" };
     case "barrack":
@@ -302,8 +303,8 @@ function jobFromKind(kind: string): Job {
     case "temple":
     case "big_temple":
       return { type: "temple" };
-    case "dockyard":
     case "shipyard":
+    case "dockyard":
       return { type: "ship" };
     case "coalmine":
       return { type: "mine", deposit: "coal" };
@@ -351,8 +352,8 @@ function gatherTargetOf(kind: string, worker: string | null): GatherTarget {
 
 function durationOf(worker: string | null): number {
   if (!worker || !(worker in settlers)) return 7000;
-  const ms = settlers[worker as SettlerKind].chopMs;
-  return ms ?? 7000;
+  const def: SettlerDef = settlers[worker as SettlerKind];
+  return def.chopMs ?? 7000;
 }
 
 function uniqueGoods(values: readonly string[]): GoodId[] {

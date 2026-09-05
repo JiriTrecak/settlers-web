@@ -100,7 +100,35 @@
         {"dx": -2, "dy": 0},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "baker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "ne"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 3, "dy": 4, "material": "flour"},
+        {"dx": 4, "dy": 2, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 2, "material": "bread"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "flour",
+          "water"
+        ],
+        "output": "bread",
+        "durationMs": 9000
+      }
     },
     {
       "id": "barrack",
@@ -113,7 +141,28 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "recruit",
+        "from": "bearer",
+        "to": "swordsman",
+        "consume": [
+          "blade"
+        ]
+      }
     },
     {
       "id": "big_livinghouse",
@@ -123,162 +172,29 @@
       "scaffold": "buildings/roman/big_livinghouse",
       "plank": 0,
       "stone": 0,
-      "blocked": [
-        {"dx": -4, "dy": -1},
-        {"dx": -3, "dy": 0},
-        {"dx": -2, "dy": 1},
-        {"dx": 0, "dy": 3},
-        {"dx": 2, "dy": 4},
-        {"dx": 3, "dy": 2},
-        {"dx": 3, "dy": 3},
-        {"dx": 4, "dy": 3},
-        {"dx": 4, "dy": 1},
-        {"dx": 5, "dy": 0},
-        {"dx": 4, "dy": 0},
-        {"dx": 4, "dy": 2},
-        {"dx": 3, "dy": 0},
-        {"dx": 2, "dy": 0},
-        {"dx": 2, "dy": 1},
-        {"dx": 3, "dy": 1},
-        {"dx": 2, "dy": 2},
-        {"dx": 2, "dy": 3},
-        {"dx": 1, "dy": 3},
-        {"dx": 1, "dy": 1},
-        {"dx": 1, "dy": 0},
-        {"dx": 0, "dy": 0},
-        {"dx": 0, "dy": 1},
-        {"dx": 1, "dy": 2},
-        {"dx": 0, "dy": 2},
-        {"dx": -1, "dy": 0},
-        {"dx": -1, "dy": 1},
-        {"dx": -2, "dy": 0},
-        {"dx": -2, "dy": -2},
-        {"dx": -3, "dy": -1},
-        {"dx": -2, "dy": -1},
-        {"dx": 0, "dy": -1},
-        {"dx": 1, "dy": -1},
-        {"dx": -3, "dy": -2},
-        {"dx": -2, "dy": -3},
-        {"dx": 4, "dy": -1},
-        {"dx": 3, "dy": -1},
-        {"dx": 3, "dy": -2},
-        {"dx": 2, "dy": -3},
-        {"dx": 1, "dy": -4},
-        {"dx": 0, "dy": -5},
-        {"dx": 3, "dy": 4},
-        {"dx": -1, "dy": -1},
-        {"dx": -1, "dy": -2},
-        {"dx": 0, "dy": -2},
-        {"dx": 1, "dy": -2},
-        {"dx": 2, "dy": -2},
-        {"dx": 2, "dy": -1},
-        {"dx": 1, "dy": -3},
-        {"dx": 0, "dy": -3},
-        {"dx": -1, "dy": -3},
-        {"dx": 0, "dy": -4},
-        {"dx": -1, "dy": -4}
+      "blocked": [],
+      "protected": [],
+      "buildMarks": [],
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
       ],
-      "protected": [
-        {"dx": -4, "dy": -1},
-        {"dx": -3, "dy": 0},
-        {"dx": -2, "dy": 1},
-        {"dx": -1, "dy": 2},
-        {"dx": 0, "dy": 3},
-        {"dx": 1, "dy": 4},
-        {"dx": 2, "dy": 4},
-        {"dx": 3, "dy": 2},
-        {"dx": 3, "dy": 3},
-        {"dx": 4, "dy": 3},
-        {"dx": 4, "dy": 1},
-        {"dx": 5, "dy": 0},
-        {"dx": 4, "dy": 0},
-        {"dx": 4, "dy": 2},
-        {"dx": 3, "dy": 0},
-        {"dx": 2, "dy": 0},
-        {"dx": 2, "dy": 1},
-        {"dx": 3, "dy": 1},
-        {"dx": 2, "dy": 2},
-        {"dx": 2, "dy": 3},
-        {"dx": 1, "dy": 3},
-        {"dx": 1, "dy": 1},
-        {"dx": 1, "dy": 0},
-        {"dx": 0, "dy": 0},
-        {"dx": 0, "dy": 1},
-        {"dx": 1, "dy": 2},
-        {"dx": 0, "dy": 2},
-        {"dx": -1, "dy": 0},
-        {"dx": -1, "dy": 1},
-        {"dx": -2, "dy": 0},
-        {"dx": -2, "dy": -2},
-        {"dx": -3, "dy": -1},
-        {"dx": -2, "dy": -1},
-        {"dx": 0, "dy": -1},
-        {"dx": 1, "dy": -1},
-        {"dx": 4, "dy": 4},
-        {"dx": 4, "dy": 5},
-        {"dx": 5, "dy": 3},
-        {"dx": 5, "dy": 4},
-        {"dx": 5, "dy": 2},
-        {"dx": 5, "dy": 1},
-        {"dx": 6, "dy": 0},
-        {"dx": 1, "dy": 5},
-        {"dx": 0, "dy": 4},
-        {"dx": -1, "dy": 3},
-        {"dx": -2, "dy": 2},
-        {"dx": -3, "dy": 1},
-        {"dx": -4, "dy": 0},
-        {"dx": -5, "dy": -1},
-        {"dx": -3, "dy": -2},
-        {"dx": -2, "dy": -3},
-        {"dx": 4, "dy": -1},
-        {"dx": 3, "dy": -1},
-        {"dx": 3, "dy": -2},
-        {"dx": 2, "dy": -3},
-        {"dx": 1, "dy": -4},
-        {"dx": 0, "dy": -5},
-        {"dx": 3, "dy": 4},
-        {"dx": 3, "dy": 5},
-        {"dx": 2, "dy": 5},
-        {"dx": -1, "dy": -1},
-        {"dx": -1, "dy": -2},
-        {"dx": 0, "dy": -2},
-        {"dx": 1, "dy": -2},
-        {"dx": 2, "dy": -2},
-        {"dx": 2, "dy": -1},
-        {"dx": 1, "dy": -3},
-        {"dx": 0, "dy": -3},
-        {"dx": -1, "dy": -3},
-        {"dx": 0, "dy": -4},
-        {"dx": -1, "dy": -4},
-        {"dx": -4, "dy": -2},
-        {"dx": -3, "dy": -3},
-        {"dx": -3, "dy": -4},
-        {"dx": -4, "dy": -3},
-        {"dx": -5, "dy": -2},
-        {"dx": -2, "dy": -4},
-        {"dx": -2, "dy": -5},
-        {"dx": -1, "dy": -5},
-        {"dx": -1, "dy": -6},
-        {"dx": 0, "dy": -6},
-        {"dx": 1, "dy": -5},
-        {"dx": 2, "dy": -4},
-        {"dx": 3, "dy": -3},
-        {"dx": 4, "dy": -2},
-        {"dx": 5, "dy": -1},
-        {"dx": 6, "dy": 1}
-      ],
-      "buildMarks": [
-        {"dx": -4, "dy": -1},
-        {"dx": -2, "dy": -3},
-        {"dx": 0, "dy": -5},
-        {"dx": 3, "dy": -2},
-        {"dx": 6, "dy": 1},
-        {"dx": 5, "dy": 2},
-        {"dx": 4, "dy": 4},
-        {"dx": -1, "dy": 2},
-        {"dx": 1, "dy": 4}
-      ],
-      "flatten": true
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "big_temple",
@@ -291,7 +207,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "big_tower",
@@ -304,7 +236,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 3,
+        "occupies": true
+      }
     },
     {
       "id": "castle",
@@ -317,7 +267,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 8,
+        "occupies": true
+      }
     },
     {
       "id": "charcoal_burner",
@@ -330,7 +298,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "coalmine",
@@ -415,7 +401,29 @@
         {"dx": -2, "dy": -4},
         {"dx": -3, "dy": -1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "coal"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "coal"
+      }
     },
     {
       "id": "dockyard",
@@ -428,7 +436,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "ship"
+      }
     },
     {
       "id": "donkey_farm",
@@ -441,7 +465,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "donkey",
+        "beds": 6,
+        "produceMs": 4000
+      }
     },
     {
       "id": "farm",
@@ -644,7 +687,27 @@
         {"dx": 6, "dy": 3},
         {"dx": 5, "dy": 6}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 4},
+      "flag": {"dx": -4, "dy": -1},
+      "workSpot": null,
+      "workCenter": {"dx": 2, "dy": 10},
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 6, "material": "crop"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "crop",
+        "radius": 6
+      }
     },
     {
       "id": "fisher",
@@ -722,7 +785,27 @@
         {"dx": 2, "dy": 0},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "fisherman",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "fish"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "fish",
+        "radius": 30
+      }
     },
     {
       "id": "forester",
@@ -828,7 +911,25 @@
         {"dx": 0, "dy": 2},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "forester",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "plant",
+        "radius": 18
+      }
     },
     {
       "id": "goldmelt",
@@ -841,7 +942,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "goldore",
+          "coal"
+        ],
+        "output": "goldbar",
+        "durationMs": 7000
+      }
     },
     {
       "id": "goldmine",
@@ -931,7 +1055,29 @@
         {"dx": -2, "dy": 1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -1, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "goldore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "gold"
+      }
     },
     {
       "id": "harbor",
@@ -944,7 +1090,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "hospital",
@@ -957,7 +1119,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "heal"
+      }
     },
     {
       "id": "ironmelt",
@@ -970,7 +1148,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "ironore",
+          "coal"
+        ],
+        "output": "iron",
+        "durationMs": 7000
+      }
     },
     {
       "id": "ironmine",
@@ -1055,7 +1256,29 @@
         {"dx": 1, "dy": 0},
         {"dx": 3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 4, "material": "ironore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "iron"
+      }
     },
     {
       "id": "lookout_tower",
@@ -1068,7 +1291,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 0,
+        "occupies": false
+      }
     },
     {
       "id": "lumberjack",
@@ -1187,7 +1428,27 @@
         {"dx": -1, "dy": -3},
         {"dx": -3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "lumberjack",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 3, "material": "trunk"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 30
+      }
     },
     {
       "id": "market_place",
@@ -1200,7 +1461,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "medium_livinghouse",
@@ -1213,7 +1492,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "mill",
@@ -1286,7 +1584,33 @@
         {"dx": -2, "dy": -1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "miller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -2, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 2, "material": "crop"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 1, "material": "flour"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "crop"
+        ],
+        "output": "flour",
+        "durationMs": 7000
+      }
     },
     {
       "id": "pig_farm",
@@ -1466,7 +1790,35 @@
         {"dx": -2, "dy": -5},
         {"dx": -3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "pig_farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 1},
+      "flag": {"dx": -1, "dy": -2},
+      "workSpot": {"dx": 2, "dy": 3, "direction": "e"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 5, "dy": 5, "material": "crop"},
+        {"dx": 3, "dy": 6, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -1, "dy": 4, "material": "pig"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "crop",
+          "water"
+        ],
+        "output": "pig",
+        "durationMs": 2000
+      }
     },
     {
       "id": "sawmill",
@@ -1612,7 +1964,33 @@
         {"dx": 3, "dy": 4},
         {"dx": 5, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "sawmiller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 5, "dy": 4},
+      "flag": {"dx": 2, "dy": -1},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "nw"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 6, "material": "trunk"}
+      ],
+      "offerStacks": [
+        {"dx": 6, "dy": 2, "material": "plank"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "trunk"
+        ],
+        "output": "plank",
+        "durationMs": 4500
+      }
     },
     {
       "id": "slaughterhouse",
@@ -1766,7 +2144,33 @@
         {"dx": 7, "dy": 6},
         {"dx": 5, "dy": 2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "slaughterer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -4, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 4, "dy": 3, "material": "pig"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 3, "material": "meat"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "pig"
+        ],
+        "output": "meat",
+        "durationMs": 5700
+      }
     },
     {
       "id": "small_livinghouse",
@@ -1861,7 +2265,26 @@
         {"dx": -1, "dy": -3},
         {"dx": 3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 4},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 10,
+        "produceMs": 2000
+      }
     },
     {
       "id": "stock",
@@ -1874,7 +2297,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "stonecutter",
@@ -1980,7 +2419,27 @@
         {"dx": -3, "dy": -2},
         {"dx": -1, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "stonecutter",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "stone"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "stone",
+        "radius": 20
+      }
     },
     {
       "id": "temple",
@@ -1993,7 +2452,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "toolsmith",
@@ -2006,7 +2481,29 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron"
+        ],
+        "output": "pick",
+        "durationMs": 7000
+      }
     },
     {
       "id": "tower",
@@ -2076,7 +2573,25 @@
         {"dx": -1, "dy": -2},
         {"dx": 0, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 38,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 3, "dy": 2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 1,
+        "occupies": true
+      }
     },
     {
       "id": "waterworks",
@@ -2175,7 +2690,27 @@
         {"dx": 3, "dy": 2},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "waterworker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 3},
+      "flag": {"dx": 0, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 5, "material": "water"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "water",
+        "radius": 20
+      }
     },
     {
       "id": "weaponsmith",
@@ -2188,7 +2723,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron",
+          "coal"
+        ],
+        "output": "blade",
+        "durationMs": 7000
+      }
     },
     {
       "id": "winegrower",
@@ -2201,7 +2759,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "grape",
+        "radius": 8
+      }
     },
     {
       "id": "baker",
@@ -2301,7 +2877,35 @@
         {"dx": -2, "dy": 0},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "baker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "ne"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 3, "dy": 4, "material": "flour"},
+        {"dx": 4, "dy": 2, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 2, "material": "bread"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "flour",
+          "water"
+        ],
+        "output": "bread",
+        "durationMs": 9000
+      }
     },
     {
       "id": "barrack",
@@ -2314,7 +2918,28 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "recruit",
+        "from": "bearer",
+        "to": "swordsman",
+        "consume": [
+          "blade"
+        ]
+      }
     },
     {
       "id": "big_livinghouse",
@@ -2327,7 +2952,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "big_temple",
@@ -2340,7 +2984,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "big_tower",
@@ -2353,7 +3013,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 3,
+        "occupies": true
+      }
     },
     {
       "id": "brewery",
@@ -2366,7 +3044,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "castle",
@@ -2379,7 +3075,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 8,
+        "occupies": true
+      }
     },
     {
       "id": "coalmine",
@@ -2464,7 +3178,29 @@
         {"dx": -2, "dy": -4},
         {"dx": -3, "dy": -1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "coal"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "coal"
+      }
     },
     {
       "id": "dockyard",
@@ -2477,7 +3213,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "ship"
+      }
     },
     {
       "id": "donkey_farm",
@@ -2490,7 +3242,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "donkey",
+        "beds": 6,
+        "produceMs": 4000
+      }
     },
     {
       "id": "farm",
@@ -2693,7 +3464,27 @@
         {"dx": 6, "dy": 3},
         {"dx": 5, "dy": 6}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 4},
+      "flag": {"dx": -4, "dy": -1},
+      "workSpot": null,
+      "workCenter": {"dx": 2, "dy": 10},
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 6, "material": "crop"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "crop",
+        "radius": 6
+      }
     },
     {
       "id": "fisher",
@@ -2771,7 +3562,27 @@
         {"dx": 2, "dy": 0},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "fisherman",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "fish"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "fish",
+        "radius": 30
+      }
     },
     {
       "id": "forester",
@@ -2877,7 +3688,25 @@
         {"dx": 0, "dy": 2},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "forester",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "plant",
+        "radius": 18
+      }
     },
     {
       "id": "gemsmine",
@@ -2890,7 +3719,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "goldmelt",
@@ -2903,7 +3750,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "goldore",
+          "coal"
+        ],
+        "output": "goldbar",
+        "durationMs": 7000
+      }
     },
     {
       "id": "goldmine",
@@ -2993,7 +3863,29 @@
         {"dx": -2, "dy": 1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -1, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "goldore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "gold"
+      }
     },
     {
       "id": "harbor",
@@ -3006,7 +3898,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "hospital",
@@ -3019,7 +3927,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "heal"
+      }
     },
     {
       "id": "ironmelt",
@@ -3032,7 +3956,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "ironore",
+          "coal"
+        ],
+        "output": "iron",
+        "durationMs": 7000
+      }
     },
     {
       "id": "ironmine",
@@ -3117,7 +4064,29 @@
         {"dx": 1, "dy": 0},
         {"dx": 3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 4, "material": "ironore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "iron"
+      }
     },
     {
       "id": "lookout_tower",
@@ -3130,7 +4099,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 0,
+        "occupies": false
+      }
     },
     {
       "id": "lumberjack",
@@ -3249,7 +4236,27 @@
         {"dx": -1, "dy": -3},
         {"dx": -3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "lumberjack",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 3, "material": "trunk"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 30
+      }
     },
     {
       "id": "market_place",
@@ -3262,7 +4269,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "medium_livinghouse",
@@ -3275,7 +4300,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "mill",
@@ -3348,7 +4392,33 @@
         {"dx": -2, "dy": -1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "miller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -2, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 2, "material": "crop"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 1, "material": "flour"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "crop"
+        ],
+        "output": "flour",
+        "durationMs": 7000
+      }
     },
     {
       "id": "pig_farm",
@@ -3528,7 +4598,35 @@
         {"dx": -2, "dy": -5},
         {"dx": -3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "pig_farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 1},
+      "flag": {"dx": -1, "dy": -2},
+      "workSpot": {"dx": 2, "dy": 3, "direction": "e"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 5, "dy": 5, "material": "crop"},
+        {"dx": 3, "dy": 6, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -1, "dy": 4, "material": "pig"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "crop",
+          "water"
+        ],
+        "output": "pig",
+        "durationMs": 2000
+      }
     },
     {
       "id": "sawmill",
@@ -3674,7 +4772,33 @@
         {"dx": 3, "dy": 4},
         {"dx": 5, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "sawmiller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 5, "dy": 4},
+      "flag": {"dx": 2, "dy": -1},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "nw"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 6, "material": "trunk"}
+      ],
+      "offerStacks": [
+        {"dx": 6, "dy": 2, "material": "plank"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "trunk"
+        ],
+        "output": "plank",
+        "durationMs": 4500
+      }
     },
     {
       "id": "slaughterhouse",
@@ -3828,7 +4952,33 @@
         {"dx": 7, "dy": 6},
         {"dx": 5, "dy": 2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "slaughterer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -4, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 4, "dy": 3, "material": "pig"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 3, "material": "meat"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "pig"
+        ],
+        "output": "meat",
+        "durationMs": 5700
+      }
     },
     {
       "id": "small_livinghouse",
@@ -3923,7 +5073,26 @@
         {"dx": -1, "dy": -3},
         {"dx": 3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 4},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 10,
+        "produceMs": 2000
+      }
     },
     {
       "id": "stock",
@@ -3936,7 +5105,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "stonecutter",
@@ -4042,7 +5227,27 @@
         {"dx": -3, "dy": -2},
         {"dx": -1, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "stonecutter",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "stone"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "stone",
+        "radius": 20
+      }
     },
     {
       "id": "temple",
@@ -4055,7 +5260,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "toolsmith",
@@ -4068,7 +5289,29 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron"
+        ],
+        "output": "pick",
+        "durationMs": 7000
+      }
     },
     {
       "id": "tower",
@@ -4138,7 +5381,25 @@
         {"dx": -1, "dy": -2},
         {"dx": 0, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 38,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 3, "dy": 2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 1,
+        "occupies": true
+      }
     },
     {
       "id": "waterworks",
@@ -4237,7 +5498,27 @@
         {"dx": 3, "dy": 2},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "waterworker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 3},
+      "flag": {"dx": 0, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 5, "material": "water"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "water",
+        "radius": 20
+      }
     },
     {
       "id": "weaponsmith",
@@ -4250,7 +5531,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron",
+          "coal"
+        ],
+        "output": "blade",
+        "durationMs": 7000
+      }
     },
     {
       "id": "baker",
@@ -4350,7 +5654,35 @@
         {"dx": -2, "dy": 0},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "baker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "ne"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 3, "dy": 4, "material": "flour"},
+        {"dx": 4, "dy": 2, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 2, "material": "bread"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "flour",
+          "water"
+        ],
+        "output": "bread",
+        "durationMs": 9000
+      }
     },
     {
       "id": "barrack",
@@ -4363,7 +5695,28 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "recruit",
+        "from": "bearer",
+        "to": "swordsman",
+        "consume": [
+          "blade"
+        ]
+      }
     },
     {
       "id": "big_livinghouse",
@@ -4376,7 +5729,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "big_temple",
@@ -4389,7 +5761,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "big_tower",
@@ -4402,7 +5790,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 3,
+        "occupies": true
+      }
     },
     {
       "id": "castle",
@@ -4415,7 +5821,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 8,
+        "occupies": true
+      }
     },
     {
       "id": "coalmine",
@@ -4500,7 +5924,29 @@
         {"dx": -2, "dy": -4},
         {"dx": -3, "dy": -1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "coal"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "coal"
+      }
     },
     {
       "id": "distillery",
@@ -4513,7 +5959,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "dockyard",
@@ -4526,7 +5990,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "ship"
+      }
     },
     {
       "id": "donkey_farm",
@@ -4539,7 +6019,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "donkey",
+        "beds": 6,
+        "produceMs": 4000
+      }
     },
     {
       "id": "farm",
@@ -4742,7 +6241,27 @@
         {"dx": 6, "dy": 3},
         {"dx": 5, "dy": 6}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 4},
+      "flag": {"dx": -4, "dy": -1},
+      "workSpot": null,
+      "workCenter": {"dx": 2, "dy": 10},
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 6, "material": "crop"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "crop",
+        "radius": 6
+      }
     },
     {
       "id": "fisher",
@@ -4820,7 +6339,27 @@
         {"dx": 2, "dy": 0},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "fisherman",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "fish"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "fish",
+        "radius": 30
+      }
     },
     {
       "id": "forester",
@@ -4926,7 +6465,25 @@
         {"dx": 0, "dy": 2},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "forester",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "plant",
+        "radius": 18
+      }
     },
     {
       "id": "goldmelt",
@@ -4939,7 +6496,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "goldore",
+          "coal"
+        ],
+        "output": "goldbar",
+        "durationMs": 7000
+      }
     },
     {
       "id": "goldmine",
@@ -5029,7 +6609,29 @@
         {"dx": -2, "dy": 1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -1, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "goldore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "gold"
+      }
     },
     {
       "id": "harbor",
@@ -5042,7 +6644,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "hospital",
@@ -5055,7 +6673,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "heal"
+      }
     },
     {
       "id": "ironmelt",
@@ -5068,7 +6702,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "ironore",
+          "coal"
+        ],
+        "output": "iron",
+        "durationMs": 7000
+      }
     },
     {
       "id": "ironmine",
@@ -5153,7 +6810,29 @@
         {"dx": 1, "dy": 0},
         {"dx": 3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 4, "material": "ironore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "iron"
+      }
     },
     {
       "id": "lookout_tower",
@@ -5166,7 +6845,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 0,
+        "occupies": false
+      }
     },
     {
       "id": "lumberjack",
@@ -5285,7 +6982,27 @@
         {"dx": -1, "dy": -3},
         {"dx": -3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "lumberjack",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 3, "material": "trunk"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 30
+      }
     },
     {
       "id": "market_place",
@@ -5298,7 +7015,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "medium_livinghouse",
@@ -5311,7 +7046,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "mill",
@@ -5384,7 +7138,33 @@
         {"dx": -2, "dy": -1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "miller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -2, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 2, "material": "crop"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 1, "material": "flour"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "crop"
+        ],
+        "output": "flour",
+        "durationMs": 7000
+      }
     },
     {
       "id": "pig_farm",
@@ -5564,7 +7344,35 @@
         {"dx": -2, "dy": -5},
         {"dx": -3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "pig_farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 1},
+      "flag": {"dx": -1, "dy": -2},
+      "workSpot": {"dx": 2, "dy": 3, "direction": "e"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 5, "dy": 5, "material": "crop"},
+        {"dx": 3, "dy": 6, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -1, "dy": 4, "material": "pig"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "crop",
+          "water"
+        ],
+        "output": "pig",
+        "durationMs": 2000
+      }
     },
     {
       "id": "rice_farm",
@@ -5577,7 +7385,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "sawmill",
@@ -5723,7 +7549,33 @@
         {"dx": 3, "dy": 4},
         {"dx": 5, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "sawmiller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 5, "dy": 4},
+      "flag": {"dx": 2, "dy": -1},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "nw"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 6, "material": "trunk"}
+      ],
+      "offerStacks": [
+        {"dx": 6, "dy": 2, "material": "plank"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "trunk"
+        ],
+        "output": "plank",
+        "durationMs": 4500
+      }
     },
     {
       "id": "slaughterhouse",
@@ -5877,7 +7729,33 @@
         {"dx": 7, "dy": 6},
         {"dx": 5, "dy": 2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "slaughterer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -4, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 4, "dy": 3, "material": "pig"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 3, "material": "meat"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "pig"
+        ],
+        "output": "meat",
+        "durationMs": 5700
+      }
     },
     {
       "id": "small_livinghouse",
@@ -5972,7 +7850,26 @@
         {"dx": -1, "dy": -3},
         {"dx": 3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 4},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 10,
+        "produceMs": 2000
+      }
     },
     {
       "id": "stock",
@@ -5985,7 +7882,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "stonecutter",
@@ -6091,7 +8004,27 @@
         {"dx": -3, "dy": -2},
         {"dx": -1, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "stonecutter",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "stone"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "stone",
+        "radius": 20
+      }
     },
     {
       "id": "sulfurmine",
@@ -6104,7 +8037,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "temple",
@@ -6117,7 +8068,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "toolsmith",
@@ -6130,7 +8097,29 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron"
+        ],
+        "output": "pick",
+        "durationMs": 7000
+      }
     },
     {
       "id": "tower",
@@ -6200,7 +8189,25 @@
         {"dx": -1, "dy": -2},
         {"dx": 0, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 38,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 3, "dy": 2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 1,
+        "occupies": true
+      }
     },
     {
       "id": "waterworks",
@@ -6299,7 +8306,27 @@
         {"dx": 3, "dy": 2},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "waterworker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 3},
+      "flag": {"dx": 0, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 5, "material": "water"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "water",
+        "radius": 20
+      }
     },
     {
       "id": "weaponsmith",
@@ -6312,7 +8339,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron",
+          "coal"
+        ],
+        "output": "blade",
+        "durationMs": 7000
+      }
     },
     {
       "id": "baker",
@@ -6412,7 +8462,35 @@
         {"dx": -2, "dy": 0},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "baker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "ne"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 3, "dy": 4, "material": "flour"},
+        {"dx": 4, "dy": 2, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 2, "material": "bread"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "flour",
+          "water"
+        ],
+        "output": "bread",
+        "durationMs": 9000
+      }
     },
     {
       "id": "barrack",
@@ -6425,7 +8503,28 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "recruit",
+        "from": "bearer",
+        "to": "swordsman",
+        "consume": [
+          "blade"
+        ]
+      }
     },
     {
       "id": "beekeeping",
@@ -6438,7 +8537,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "big_livinghouse",
@@ -6451,7 +8568,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "big_temple",
@@ -6464,7 +8600,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "big_tower",
@@ -6477,7 +8629,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 3,
+        "occupies": true
+      }
     },
     {
       "id": "castle",
@@ -6490,7 +8660,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 8,
+        "occupies": true
+      }
     },
     {
       "id": "coalmine",
@@ -6575,7 +8763,29 @@
         {"dx": -2, "dy": -4},
         {"dx": -3, "dy": -1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "coal"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "coal"
+      }
     },
     {
       "id": "dockyard",
@@ -6588,7 +8798,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "ship"
+      }
     },
     {
       "id": "donkey_farm",
@@ -6601,7 +8827,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "donkey",
+        "beds": 6,
+        "produceMs": 4000
+      }
     },
     {
       "id": "farm",
@@ -6804,7 +9049,27 @@
         {"dx": 6, "dy": 3},
         {"dx": 5, "dy": 6}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 4},
+      "flag": {"dx": -4, "dy": -1},
+      "workSpot": null,
+      "workCenter": {"dx": 2, "dy": 10},
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 6, "material": "crop"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "crop",
+        "radius": 6
+      }
     },
     {
       "id": "fisher",
@@ -6882,7 +9147,27 @@
         {"dx": 2, "dy": 0},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "fisherman",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 1, "dy": -2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "fish"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "fish",
+        "radius": 30
+      }
     },
     {
       "id": "forester",
@@ -6988,7 +9273,25 @@
         {"dx": 0, "dy": 2},
         {"dx": 2, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "forester",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "plant",
+        "radius": 18
+      }
     },
     {
       "id": "gemsmine",
@@ -7001,7 +9304,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "goldmelt",
@@ -7014,7 +9335,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "goldore",
+          "coal"
+        ],
+        "output": "goldbar",
+        "durationMs": 7000
+      }
     },
     {
       "id": "goldmine",
@@ -7104,7 +9448,29 @@
         {"dx": -2, "dy": 1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -1, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": -1, "dy": 3, "material": "goldore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "gold"
+      }
     },
     {
       "id": "harbor",
@@ -7117,7 +9483,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "hospital",
@@ -7130,7 +9512,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "heal"
+      }
     },
     {
       "id": "ironmelt",
@@ -7143,7 +9541,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "ironore",
+          "coal"
+        ],
+        "output": "iron",
+        "durationMs": 7000
+      }
     },
     {
       "id": "ironmine",
@@ -7228,7 +9649,29 @@
         {"dx": 1, "dy": 0},
         {"dx": 3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": false,
+      "worker": "miner",
+      "viewDistance": 0,
+      "ground": [
+        "mountain",
+        "mountainBorder",
+        "mountainBorderOuter",
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 4, "material": "ironore"}
+      ],
+      "job": {
+        "type": "mine",
+        "deposit": "iron"
+      }
     },
     {
       "id": "laboratory",
@@ -7241,7 +9684,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "lookout_tower",
@@ -7254,7 +9715,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 0,
+        "occupies": false
+      }
     },
     {
       "id": "lumberjack",
@@ -7373,7 +9852,27 @@
         {"dx": -1, "dy": -3},
         {"dx": -3, "dy": 1}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "lumberjack",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -3, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 0, "dy": 3, "material": "trunk"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 30
+      }
     },
     {
       "id": "market_place",
@@ -7386,7 +9885,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "mead_brewery",
@@ -7399,7 +9916,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "medium_livinghouse",
@@ -7412,7 +9947,26 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 20,
+        "produceMs": 2000
+      }
     },
     {
       "id": "mill",
@@ -7485,7 +10039,33 @@
         {"dx": -2, "dy": -1},
         {"dx": -2, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "miller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 1},
+      "flag": {"dx": -2, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 2, "material": "crop"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 1, "material": "flour"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "crop"
+        ],
+        "output": "flour",
+        "durationMs": 7000
+      }
     },
     {
       "id": "pig_farm",
@@ -7665,7 +10245,35 @@
         {"dx": -2, "dy": -5},
         {"dx": -3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "pig_farmer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 1},
+      "flag": {"dx": -1, "dy": -2},
+      "workSpot": {"dx": 2, "dy": 3, "direction": "e"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 5, "dy": 5, "material": "crop"},
+        {"dx": 3, "dy": 6, "material": "water"}
+      ],
+      "offerStacks": [
+        {"dx": -1, "dy": 4, "material": "pig"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "crop",
+          "water"
+        ],
+        "output": "pig",
+        "durationMs": 2000
+      }
     },
     {
       "id": "sawmill",
@@ -7811,7 +10419,33 @@
         {"dx": 3, "dy": 4},
         {"dx": 5, "dy": 3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "sawmiller",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 5, "dy": 4},
+      "flag": {"dx": 2, "dy": -1},
+      "workSpot": {"dx": 0, "dy": 4, "direction": "nw"},
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 2, "dy": 6, "material": "trunk"}
+      ],
+      "offerStacks": [
+        {"dx": 6, "dy": 2, "material": "plank"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "trunk"
+        ],
+        "output": "plank",
+        "durationMs": 4500
+      }
     },
     {
       "id": "slaughterhouse",
@@ -7965,7 +10599,33 @@
         {"dx": 7, "dy": 6},
         {"dx": 5, "dy": 2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "slaughterer",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": -1, "dy": 2},
+      "flag": {"dx": -4, "dy": -5},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [
+        {"dx": 4, "dy": 3, "material": "pig"}
+      ],
+      "offerStacks": [
+        {"dx": -2, "dy": 3, "material": "meat"}
+      ],
+      "job": {
+        "type": "convert",
+        "mode": "saw",
+        "inputs": [
+          "pig"
+        ],
+        "output": "meat",
+        "durationMs": 5700
+      }
     },
     {
       "id": "small_livinghouse",
@@ -8060,7 +10720,26 @@
         {"dx": -1, "dy": -3},
         {"dx": 3, "dy": 0}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 2},
+      "flag": {"dx": 0, "dy": 4},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "house",
+        "spawn": "bearer",
+        "beds": 10,
+        "produceMs": 2000
+      }
     },
     {
       "id": "stock",
@@ -8073,7 +10752,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "store"
+      }
     },
     {
       "id": "stonecutter",
@@ -8179,7 +10874,27 @@
         {"dx": -3, "dy": -2},
         {"dx": -1, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "stonecutter",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 2},
+      "flag": {"dx": 1, "dy": -1},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 4, "material": "stone"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "stone",
+        "radius": 20
+      }
     },
     {
       "id": "sulfurmine",
@@ -8192,7 +10907,25 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "gather",
+        "target": "tree",
+        "radius": 0
+      }
     },
     {
       "id": "temple",
@@ -8205,7 +10938,23 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "temple"
+      }
     },
     {
       "id": "toolsmith",
@@ -8218,7 +10967,29 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron"
+        ],
+        "output": "pick",
+        "durationMs": 7000
+      }
     },
     {
       "id": "tower",
@@ -8288,7 +11059,25 @@
         {"dx": -1, "dy": -2},
         {"dx": 0, "dy": -2}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 38,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 2, "dy": 1},
+      "flag": {"dx": 3, "dy": 2},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "military",
+        "garrison": 1,
+        "occupies": true
+      }
     },
     {
       "id": "waterworks",
@@ -8387,7 +11176,27 @@
         {"dx": 3, "dy": 2},
         {"dx": -2, "dy": -3}
       ],
-      "flatten": true
+      "flatten": true,
+      "worker": "waterworker",
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 3, "dy": 3},
+      "flag": {"dx": 0, "dy": -3},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [
+        {"dx": 3, "dy": 5, "material": "water"}
+      ],
+      "job": {
+        "type": "gather",
+        "target": "water",
+        "radius": 20
+      }
     },
     {
       "id": "weaponsmith",
@@ -8400,7 +11209,30 @@
       "blocked": [],
       "protected": [],
       "buildMarks": [],
-      "flatten": true
+      "flatten": true,
+      "worker": null,
+      "viewDistance": 0,
+      "ground": [
+        "grass",
+        "earth",
+        "flattened"
+      ],
+      "door": {"dx": 0, "dy": 0},
+      "flag": {"dx": 0, "dy": 0},
+      "workSpot": null,
+      "workCenter": null,
+      "requestStacks": [],
+      "offerStacks": [],
+      "job": {
+        "type": "convert",
+        "mode": "craft",
+        "inputs": [
+          "iron",
+          "coal"
+        ],
+        "output": "blade",
+        "durationMs": 7000
+      }
     }
   ]
 }

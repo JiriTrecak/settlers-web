@@ -527,6 +527,7 @@ export class EconomyScreen extends ToolScreen {
       workCenter: b?.workCenter ?? null,
       request: b?.requestStacks ?? [],
       offer: b?.offerStacks ?? [],
+      worker: b?.worker ?? null,
     });
   }
 

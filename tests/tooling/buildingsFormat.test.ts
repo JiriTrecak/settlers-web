@@ -50,6 +50,7 @@ describe("buildings format", () => {
       buildings: [{ id: "hut", civ: "roman", name: "Hut", built: "", scaffold: "", plank: 0, stone: 0 }],
     });
     expect(parsed?.buildings[0]).toMatchObject({ blocked: [], protected: [], buildMarks: [], flatten: true });
+    expect(parsed?.buildings[0]?.job.type).toBe("gather");
   });
 
   it("keeps authored fence posts", () => {
