@@ -6,6 +6,7 @@ Types and math both sim and render need. No Three.js, no Pixi, no DOM, no dump f
 |---|---|
 | `types/` | `GridPos`, `Action` |
 | `map/` | `MAP_ID`, `MAP_SIZE`, `.utcmap` document |
+| `asset/` | Catalogue JSON (`catalog.json`) |
 | `match/` | `MatchConfig`, `localMatch`, command delay |
 | `net/` | Wire `ClientMsg` / `ServerMsg` / `commit`, `MATCH_HOST` |
 | `player/` | Eight clothing tints |

@@ -7,6 +7,6 @@ No `Session`, no lockstep, no `World.tick`.
 | Folder | Owns |
 |---|---|
 | `world/` | `WorldEditor` — view + current `UtcMap` |
-| `chrome/` | Docks + asset browser. Tool lists in `tools.ts` |
+| `chrome/` | Docks, catalogue modal, name field |
 | `file/` | `.utcmap` save / load |
-| `assets/` | Catalog glob over `assets/props/` |
+| `assets/` | `CatalogueStore` — `assets/catalog.json` by default |

@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "name": "Under the Canopy",
+  "assets": [
+    {
+      "id": "pine",
+      "name": "Pine",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/pine.gltf"
+    }
+  ]
+}

@@ -2,11 +2,11 @@
 
 No dump pipeline. No S3 textures. Destination art is glTF + PBR — [`art.md`](../game/art.md). Author in the [world editor](editor.md).
 
-Live folder: `assets/props/`. Drop a `.gltf` / `.glb`, it appears in the editor browser.
+Catalogue file: [`assets/catalog.json`](../../assets/catalog.json). Default the editor opens. Each entry has `name`, `category`, `type` (`prop` for now), and a `file` relative to the catalogue.
 
 ## Now
 
-`pine` — chunky box tree. Stamp it in the world editor.
+`pine` (foliage) — chunky box tree. Catalogue modal to pick / create. Stamp places the selection.
 
 ## First wave
 

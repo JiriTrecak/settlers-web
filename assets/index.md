@@ -1,16 +1,18 @@
 # assets
 
-Project art. Drop a `.gltf` / `.glb` in `props/` and it shows up in the editor browser.
+Project catalogue: [`catalog.json`](catalog.json). Mesh files live next to it (`props/pine.gltf`). `file` paths are relative to this folder.
 
-First wave — landscape only, readable from iso. No units or buildings yet.
+The editor opens this file by default. Open another `.json` to point at a different pack.
 
-| Id | Why |
-|---|---|
-| `pine` | Forest mass. The atmosphere *is* trees. **In.** |
-| oak | Deciduous contrast against the needles |
-| boulder | Chunky occupy-a-cell rock |
-| fern | Understory scale |
-| mushroom | Insect-world flavor |
-| log | Fallen timber, breaks the grid |
-| berry | Future resource, still just a prop for now |
-| burrow | Race landmark later (hive / stump) |
+First wave — landscape only. Readable from iso. No units or buildings yet.
+
+| Id | Category | Why |
+|---|---|---|
+| `pine` | foliage | Forest mass. **In.** |
+| oak | foliage | Deciduous contrast |
+| boulder | terrain | Occupy-a-cell rock |
+| fern | foliage | Understory |
+| mushroom | landmark | Insect-world flavor |
+| log | terrain | Breaks the grid |
+| berry | resource | Future resource, still a prop |
+| burrow | landmark | Race landmark later |

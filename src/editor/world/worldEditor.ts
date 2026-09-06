@@ -3,19 +3,18 @@
  */
 import { DEFAULT_MAP_NAME, emptyUtcMap, MAP_SIZE, type UtcMap } from "../../shared";
 import { MapInput, Renderer } from "../../render";
-import { catalog, catalogUrls } from "../assets/catalog";
 
 export class WorldEditor {
-  readonly assets = catalog;
   map: UtcMap = emptyUtcMap();
   tool: "stamp" | null = "stamp";
-  asset: string | null = catalog[0]?.id ?? null;
+  asset: string | null = null;
+  private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly hooks: { onChange?: () => void } = {},
+    private readonly hooks: { onChange?: () => void; onNeedAsset?: () => void } = {},
   ) {}
 
   replace(map: UtcMap): void {
@@ -31,6 +30,12 @@ export class WorldEditor {
     this.hooks.onChange?.();
   }
 
+  setLibrary(urls: ReadonlyMap<string, string>): void {
+    this.urls = new Map(urls);
+    this.renderer?.setAssets(this.urls);
+    this.paint();
+  }
+
   setTool(tool: "stamp" | null): void {
     this.tool = tool;
   }
@@ -41,7 +46,7 @@ export class WorldEditor {
   }
 
   start(): void {
-    const renderer = new Renderer(this.canvas, catalogUrls);
+    const renderer = new Renderer(this.canvas, this.urls);
     this.renderer = renderer;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
     this.input = new MapInput(this.canvas, renderer.camera, {
@@ -64,7 +69,12 @@ export class WorldEditor {
   }
 
   private click(clientX: number, clientY: number): void {
-    if (this.tool !== "stamp" || !this.asset || !this.renderer) return;
+    if (this.tool !== "stamp") return;
+    if (!this.asset) {
+      this.hooks.onNeedAsset?.();
+      return;
+    }
+    if (!this.renderer) return;
     const hit = this.renderer.pickGround(clientX, clientY);
     if (!hit) return;
     const x = Math.floor(hit.x);

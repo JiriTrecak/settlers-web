@@ -11,5 +11,18 @@
   --color-canopy: #e8e0d0;
   --color-moss: #3d5340;
   --color-ink: #020814;
+  --color-sheet: #14161c;
+  --color-plate: #2c2c2c;
   --font-dock: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Not full preflight — just kill UA button bevels. HUD / menu set their own borders. */
+@layer base {
+  button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+  }
 }

@@ -13,8 +13,12 @@ export class PropField {
 
   constructor(
     private readonly scene: Scene,
-    private readonly urls: ReadonlyMap<string, string>,
+    private urls: ReadonlyMap<string, string>,
   ) {}
+
+  setUrls(urls: ReadonlyMap<string, string>): void {
+    this.urls = urls;
+  }
 
   sync(stamps: readonly MapStamp[]): void {
     const gen = ++this.gen;

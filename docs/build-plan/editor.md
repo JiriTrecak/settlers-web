@@ -8,9 +8,9 @@ Why first after the skeleton: every new mesh needs a place to drop it on the 256
 
 ## Owns (when built)
 
-Authored map + stamps. File format is `.utcmap` (JSON, `v` + `name` + `stamps`). Catalog is `assets/props/*.{gltf,glb}`.
+Authored map + stamps. File format is `.utcmap` (JSON, `v` + `name` + `stamps`). Catalogue is `assets/catalog.json` (pointable).
 
-Chrome: name + file dock, left tools (stamp), right asset browser. Dirty maps confirm before leave / load / new. Ctrl/Cmd+S saves. Add a tool in `src/editor/chrome/tools.ts`. Drop a glTF in `assets/props/` to get a card.
+Chrome: name + file dock, left tools (stamp / catalogue). Catalogue modal to pick and create assets. Stamp with no selection opens the modal; Use / double-click arms the stamp tool.
 
 ## Refusals
 

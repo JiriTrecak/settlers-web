@@ -1,25 +1,35 @@
 /**
  * In-game world editor: docks + WorldEditor on the game canvas.
- * Owns dirty state, save shortcuts, and leave/load/new confirms.
+ * Owns dirty state, save shortcuts, catalogue modal, and leave/load/new confirms.
  */
 import { Confirm, GameScreen } from "../../ui";
 import { emptyUtcMap, stringifyUtcMap } from "../../shared";
 import { EditorChrome, MapStore, WorldEditor } from "../../editor";
+import { CatalogueStore } from "../../editor/assets/store";
+import { CatalogModal } from "../../editor/chrome/catalogModal";
 
 export class EditorScreen extends GameScreen {
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
+  private readonly library = new CatalogueStore();
   private readonly chrome: EditorChrome;
   private readonly onLeave: () => void;
   private saved = stringifyUtcMap(emptyUtcMap());
   private dialog: Confirm | null = null;
+  private modal: CatalogModal | null = null;
   private readonly onKey: (e: KeyboardEvent) => void;
   private readonly onUnload: (e: BeforeUnloadEvent) => void;
 
   constructor(canvas: HTMLCanvasElement, hooks: { onLeave: () => void }) {
     super("screen");
     this.onLeave = hooks.onLeave;
-    this.editor = new WorldEditor(canvas, { onChange: () => this.syncDoc() });
+    this.editor = new WorldEditor(canvas, {
+      onChange: () => this.syncDoc(),
+      onNeedAsset: () => this.openCatalogue(),
+    });
+    this.editor.setLibrary(this.library.urls());
+    const first = this.library.doc.assets[0];
+    if (first) this.editor.setAsset(first.id);
     this.files = new MapStore();
     this.chrome = new EditorChrome(this.root, {
       onNew: () => void this.askNew(),
@@ -27,18 +37,17 @@ export class EditorScreen extends GameScreen {
       onSaveAs: () => void this.save(true),
       onLoad: () => void this.askLoad(),
       onLeave: () => void this.askLeave(),
-      onStamp: () => this.pickTool("stamp"),
-      assets: this.editor.assets,
-      onAsset: (id) => this.pickAsset(id),
+      onStamp: () => this.stamp(),
+      onCatalogue: () => this.openCatalogue(),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
-    this.chrome.setAsset(this.editor.asset);
+    this.syncAsset();
     this.syncDoc();
     this.onEscape(() => void this.askLeave());
     this.onKey = (e) => this.shortcut(e);
     this.onUnload = (e) => {
-      if (!this.dirty()) return;
+      if (!this.dirty() && !this.library.dirty) return;
       e.preventDefault();
       e.returnValue = "";
     };
@@ -57,10 +66,48 @@ export class EditorScreen extends GameScreen {
   override destroy(): void {
     window.removeEventListener("keydown", this.onKey);
     window.removeEventListener("beforeunload", this.onUnload);
+    this.modal?.close();
     this.dialog?.cancel();
     this.chrome.destroy();
     this.editor.stop();
     super.destroy();
+  }
+
+  private stamp(): void {
+    if (!this.editor.asset) this.openCatalogue();
+    else {
+      this.editor.setTool("stamp");
+      this.chrome.setTool("stamp");
+    }
+  }
+
+  private openCatalogue(): void {
+    if (this.modal) return;
+    this.modal = new CatalogModal(this.root, {
+      store: this.library,
+      selected: this.editor.asset,
+      onPick: (id) => {
+        this.pickAsset(id);
+        this.modal?.close();
+      },
+      onClose: () => {
+        this.modal = null;
+      },
+      onLibrary: () => {
+        this.editor.setLibrary(this.library.urls());
+        this.syncAsset();
+      },
+    });
+  }
+
+  private pickAsset(id: string): void {
+    this.editor.setAsset(id);
+    this.chrome.setTool("stamp");
+    this.syncAsset();
+  }
+
+  private syncAsset(): void {
+    this.chrome.setAsset(this.editor.asset ? (this.library.entry(this.editor.asset) ?? null) : null);
   }
 
   private dirty(): boolean {
@@ -95,7 +142,18 @@ export class EditorScreen extends GameScreen {
   }
 
   private async askLeave(): Promise<void> {
-    if (await this.ifClean("Save this map before leaving?")) this.onLeave();
+    if (this.modal) return;
+    if (!(await this.ifClean("Save this map before leaving?"))) return;
+    if (this.library.dirty) {
+      const choice = await this.confirm("Unsaved catalogue", "Save the catalogue before leaving?", [
+        { id: "cancel", label: "Cancel" },
+        { id: "discard", label: "Discard", kind: "danger" },
+        { id: "save", label: "Save", kind: "primary" },
+      ]);
+      if (choice === "save" && (await this.library.save()) !== "ok") return;
+      if (choice !== "discard" && choice !== "save") return;
+    }
+    this.onLeave();
   }
 
   private async askNew(): Promise<void> {
@@ -143,16 +201,5 @@ export class EditorScreen extends GameScreen {
 
   private async alert(title: string, body: string): Promise<void> {
     await this.confirm(title, body, [{ id: "ok", label: "OK", kind: "primary" }]);
-  }
-
-  private pickTool(tool: "stamp"): void {
-    this.editor.setTool(tool);
-    this.chrome.setTool(tool);
-  }
-
-  private pickAsset(id: string): void {
-    this.editor.setAsset(id);
-    this.chrome.setAsset(id);
-    this.chrome.setTool("stamp");
   }
 }

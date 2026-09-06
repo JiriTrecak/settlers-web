@@ -2,6 +2,20 @@
 export type { Action, GridPos } from "./types/types";
 export { MAP_ID, MAP_SIZE } from "./map/map";
 export {
+  ASSET_CATEGORIES,
+  ASSET_TYPES,
+  CATALOGUE_VERSION,
+  PROJECT_CATALOG_PATH,
+  assetIdFromName,
+  emptyCatalogue,
+  parseCatalogue,
+  stringifyCatalogue,
+  type AssetCategory,
+  type AssetType,
+  type CatalogEntry,
+  type Catalogue,
+} from "./asset/catalog";
+export {
   DEFAULT_MAP_NAME,
   emptyUtcMap,
   mapFileName,

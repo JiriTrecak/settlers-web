@@ -2,6 +2,7 @@
  * Floating icon toolbar. `items` is the extension point — append an action or a `sep`.
  */
 import { createElement, type IconNode } from "lucide";
+import { sheet } from "../skin/skin";
 
 export type IconAction = {
   id: string;
@@ -13,9 +14,6 @@ export type IconAction = {
 export type IconItem = IconAction | { kind: "sep" };
 
 export type IconBarPlace = "top" | "left" | "inline";
-
-const SHELL =
-  "pointer-events-auto flex min-h-14 min-w-14 gap-1 rounded-3xl border border-white/15 bg-black/40 p-2 text-canopy shadow-2xl shadow-black/50 backdrop-blur-xl";
 
 const PLACE: Record<IconBarPlace, string> = {
   top: "absolute left-1/2 top-4 -translate-x-1/2 flex-row",
@@ -29,13 +27,14 @@ export class IconBar {
 
   constructor(
     host: HTMLElement,
-    spec: { place: IconBarPlace; items: readonly IconItem[]; label: string },
+    spec: { place: IconBarPlace; items: readonly IconItem[]; label: string; surface?: "sheet" | "plain" },
   ) {
     this.root = document.createElement("div");
-    this.root.className = `${SHELL} ${PLACE[spec.place]}`;
+    const chrome = spec.surface === "plain" ? "pointer-events-auto flex gap-0.5" : `pointer-events-auto flex gap-0.5 rounded-2xl p-1.5 ${sheet}`;
+    this.root.className = `${chrome} ${PLACE[spec.place]}`;
     this.root.setAttribute("role", "toolbar");
     this.root.setAttribute("aria-label", spec.label);
-    const row = spec.place === "top";
+    const row = spec.place === "top" || spec.place === "inline";
     for (const item of spec.items) {
       if ("kind" in item) {
         this.root.append(sep(row));
@@ -51,7 +50,7 @@ export class IconBar {
   setActive(id: string | null): void {
     for (const [key, el] of this.buttons) {
       const on = key === id;
-      el.classList.toggle("bg-white/15", on);
+      el.classList.toggle("bg-white/[0.08]", on);
       el.classList.toggle("text-canopy", on);
     }
   }
@@ -66,18 +65,18 @@ function button(tool: IconAction): HTMLButtonElement {
   el.type = "button";
   el.setAttribute("aria-label", tool.label);
   el.className =
-    "group flex min-w-16 appearance-none flex-col items-center justify-center gap-1 rounded-2xl border-0 bg-transparent px-2.5 py-2 font-dock text-canopy/90 hover:bg-white/10 hover:text-canopy focus-visible:outline focus-visible:outline-white/30";
+    "group flex min-w-11 appearance-none flex-col items-center justify-center gap-1 rounded-lg border-0 bg-transparent px-2 py-1.5 font-dock text-canopy/80 hover:bg-white/[0.06] hover:text-canopy focus-visible:outline focus-visible:outline-white/25";
   el.append(
     createElement(tool.icon, {
-      width: 22,
-      height: 22,
+      width: 18,
+      height: 18,
       "stroke-width": 1.75,
       class: "pointer-events-none",
     }),
   );
   const caption = document.createElement("span");
   caption.className =
-    "pointer-events-none text-[11px] font-medium leading-none tracking-[0.08em] text-canopy/55 group-hover:text-canopy/90";
+    "pointer-events-none text-[10px] font-medium leading-none tracking-wide text-canopy/45 group-hover:text-canopy/80";
   caption.textContent = tool.label;
   el.append(caption);
   el.addEventListener("click", tool.run);
@@ -87,6 +86,6 @@ function button(tool: IconAction): HTMLButtonElement {
 function sep(row: boolean): HTMLElement {
   const el = document.createElement("div");
   el.setAttribute("role", "separator");
-  el.className = row ? "mx-1.5 w-px self-stretch bg-white/15" : "my-1.5 h-px self-stretch bg-white/15";
+  el.className = row ? "mx-1 w-px self-stretch bg-white/[0.08]" : "my-1 h-px self-stretch bg-white/[0.08]";
   return el;
 }

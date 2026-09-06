@@ -1,6 +1,8 @@
 /**
  * Glass confirm. Resolves a choice id, or `undefined` if dismissed.
  */
+import { btn, btnDanger, btnPrimary, scrim, sheet } from "../skin/skin";
+
 export type ConfirmChoice = {
   id: string;
   label: string;
@@ -18,32 +20,30 @@ export class Confirm {
     spec: { title: string; body?: string; choices: readonly ConfirmChoice[] },
   ) {
     this.root = document.createElement("div");
-    this.root.className =
-      "pointer-events-auto absolute inset-0 z-20 flex items-center justify-center bg-ink/55 backdrop-blur-sm";
+    this.root.className = scrim;
     this.root.setAttribute("role", "dialog");
     this.root.setAttribute("aria-modal", "true");
     const panel = document.createElement("div");
-    panel.className =
-      "flex w-80 flex-col gap-3 rounded-3xl border border-white/15 bg-black/55 p-5 text-canopy shadow-2xl shadow-black/50";
+    panel.className = `flex w-80 flex-col gap-3 rounded-2xl p-5 ${sheet}`;
     const title = document.createElement("h2");
-    title.className = "m-0 font-dock text-base font-semibold tracking-wide";
+    title.className = "m-0 font-dock text-[15px] font-semibold tracking-tight";
     title.textContent = spec.title;
     panel.append(title);
     if (spec.body) {
       const body = document.createElement("p");
-      body.className = "m-0 font-dock text-[13px] leading-relaxed text-canopy/55";
+      body.className = "m-0 font-dock text-[13px] leading-relaxed text-canopy/50";
       body.textContent = spec.body;
       panel.append(body);
     }
     const row = document.createElement("div");
-    row.className = "mt-1 flex gap-2";
+    row.className = "mt-1 flex justify-end gap-1";
     for (const choice of spec.choices) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = buttonClass(choice.kind);
-      btn.textContent = choice.label;
-      btn.addEventListener("click", () => this.finish(choice.id));
-      row.append(btn);
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = buttonClass(choice.kind);
+      el.textContent = choice.label;
+      el.addEventListener("click", () => this.finish(choice.id));
+      row.append(el);
     }
     panel.append(row);
     this.root.append(panel);
@@ -78,9 +78,7 @@ export class Confirm {
 }
 
 function buttonClass(kind: ConfirmChoice["kind"]): string {
-  const base =
-    "flex-1 appearance-none rounded-2xl border px-3 py-2 font-dock text-[13px] tracking-wide";
-  if (kind === "danger") return `${base} border-red-400/40 bg-transparent text-red-200 hover:bg-red-400/10`;
-  if (kind === "primary") return `${base} border-canopy/35 bg-canopy/15 text-canopy hover:bg-canopy/25`;
-  return `${base} border-white/15 bg-transparent text-canopy/80 hover:bg-white/10`;
+  if (kind === "danger") return btnDanger;
+  if (kind === "primary") return btnPrimary;
+  return btn;
 }

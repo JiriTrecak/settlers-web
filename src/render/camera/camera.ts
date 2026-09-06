@@ -4,8 +4,9 @@
  */
 import { OrthographicCamera, Vector3 } from "three";
 
-const YAW = Math.PI / 4;
-const PITCH = Math.atan(1 / Math.sqrt(2));
+/** True-iso yaw / pitch. Preview snapshots use the same pair. */
+export const ISO_YAW = Math.PI / 4;
+export const ISO_PITCH = Math.atan(1 / Math.sqrt(2));
 const DIST = 80;
 
 export class Camera {
@@ -23,20 +24,20 @@ export class Camera {
   /** Screen-pixel drag → XZ. `screenH` converts pixels to world units. */
   panScreen(dx: number, dy: number, screenH: number): void {
     const scale = (2 * this.zoom) / Math.max(1, screenH);
-    const rx = Math.cos(YAW);
-    const rz = -Math.sin(YAW);
-    const fx = Math.sin(YAW);
-    const fz = Math.cos(YAW);
+    const rx = Math.cos(ISO_YAW);
+    const rz = -Math.sin(ISO_YAW);
+    const fx = Math.sin(ISO_YAW);
+    const fz = Math.cos(ISO_YAW);
     this.targetX -= dx * scale * rx - dy * scale * fx;
     this.targetZ -= dx * scale * rz - dy * scale * fz;
   }
 
   /** WASD / arrows in camera-forward / camera-right on XZ. */
   panWorld(right: number, forward: number): void {
-    const rx = Math.cos(YAW);
-    const rz = -Math.sin(YAW);
-    const fx = Math.sin(YAW);
-    const fz = Math.cos(YAW);
+    const rx = Math.cos(ISO_YAW);
+    const rz = -Math.sin(ISO_YAW);
+    const fx = Math.sin(ISO_YAW);
+    const fz = Math.cos(ISO_YAW);
     this.targetX += right * rx + forward * fx;
     this.targetZ += right * rz + forward * fz;
   }
@@ -46,11 +47,11 @@ export class Camera {
   }
 
   applyTo(cam: OrthographicCamera, width: number, height: number): void {
-    const cosP = Math.cos(PITCH);
+    const cosP = Math.cos(ISO_PITCH);
     cam.position.set(
-      this.targetX + Math.sin(YAW) * cosP * DIST,
-      Math.sin(PITCH) * DIST,
-      this.targetZ + Math.cos(YAW) * cosP * DIST,
+      this.targetX + Math.sin(ISO_YAW) * cosP * DIST,
+      Math.sin(ISO_PITCH) * DIST,
+      this.targetZ + Math.cos(ISO_YAW) * cosP * DIST,
     );
     cam.lookAt(new Vector3(this.targetX, 0, this.targetZ));
     const aspect = Math.max(1, width) / Math.max(1, height);

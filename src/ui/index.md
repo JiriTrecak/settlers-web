@@ -9,5 +9,5 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `hud/` | Fps / zoom; exit (confirm) |
 | `tw.css` | Tailwind theme + utilities (no preflight). Editor chrome. |
 | `bar/` | `IconBar` — Lucide docks |
-| `browser/` | `AssetBrowser` — catalog cards |
 | `dialog/` | `Confirm` — glass modal |
+| `skin/` | Shared class tokens for editor chrome |

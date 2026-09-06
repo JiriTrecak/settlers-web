@@ -12,5 +12,6 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `camera/` | Iso ortho pan / zoom |
 | `input/` | `MapInput` — pan / zoom / WASD. Shared by play and the editor. |
 | `prop/` | Catalog glTF clones on stamp cells |
+| `preview/` | Offscreen iso snapshots for the catalogue |
 
 Public entry: `index.ts`.

@@ -29,6 +29,10 @@ export class Renderer {
     this.props = new PropField(this.scene, assets);
   }
 
+  setAssets(assets: ReadonlyMap<string, string>): void {
+    this.props.setUrls(assets);
+  }
+
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
     if (this.size !== snapshot.size) {
       this.size = snapshot.size;
