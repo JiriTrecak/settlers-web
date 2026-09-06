@@ -1,23 +1,11 @@
 /**
- * Boot screen: single player / multiplayer / asset browser.
+ * Boot screen: single player / multiplayer.
  */
 import { GameScreen } from "../screen/screen";
-
-export type MapOptionGroup = "tutorial" | "single" | "multi" | "generated";
-
-export type MapOption = {
-  id: string;
-  name: string;
-  group: MapOptionGroup;
-  detail?: string;
-  /** Dump player-info slots. Generated maps are 1. */
-  players: number;
-};
 
 export type MainMenuHooks = {
   onSinglePlayer(): void;
   onMultiplayer(): void;
-  onAssets(): void;
 };
 
 export class MainMenu extends GameScreen {
@@ -27,13 +15,8 @@ export class MainMenu extends GameScreen {
     panel.className = "menu-panel";
     const title = document.createElement("h1");
     title.className = "menu-title";
-    title.textContent = "Settlers";
-    panel.append(
-      title,
-      button("Single player", hooks.onSinglePlayer),
-      button("Multiplayer", hooks.onMultiplayer),
-      button("Asset browser", hooks.onAssets),
-    );
+    title.textContent = "Under the Canopy";
+    panel.append(title, button("Single player", hooks.onSinglePlayer), button("Multiplayer", hooks.onMultiplayer));
     this.root.append(panel);
   }
 }

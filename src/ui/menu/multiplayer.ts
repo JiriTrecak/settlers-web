@@ -24,7 +24,6 @@ export class MultiplayerScreen extends GameScreen {
     onRefresh: () => void;
     onHost: (name: string, mapId: string, slotCount: number) => void;
     onJoin: (roomId: string, name: string) => void;
-    onLoadSaves: (name: string) => void;
     maps: readonly MpMap[];
     mapName: (id: string) => string;
     name: string;
@@ -41,20 +40,7 @@ export class MultiplayerScreen extends GameScreen {
     head.className = "menu-head";
     const nav = document.createElement("div");
     nav.className = "menu-head-row";
-    const load = document.createElement("button");
-    load.type = "button";
-    load.className = "menu-back";
-    load.textContent = "Load";
-    load.addEventListener("click", () => {
-      const name = this.name.value.trim();
-      if (!name) {
-        this.setError("Enter a name");
-        this.name.focus();
-        return;
-      }
-      hooks.onLoadSaves(name);
-    });
-    nav.append(back(hooks.onBack), load);
+    nav.append(back(hooks.onBack));
     head.append(nav, title("Multiplayer"));
 
     this.name = document.createElement("input");

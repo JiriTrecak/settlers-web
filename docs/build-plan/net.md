@@ -1,10 +1,10 @@
 # Net
 
-Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate Node app**: lobby + room + command mailbox. It does not draw. Steam is later. Camera, fog, selection, HUD stay local.
+Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate Node app**: lobby + room + command mailbox. It does not draw. Camera and HUD stay local. Players are `MatchConfig.slots` → `Player` entities (not `placeColony`).
 
 ## Status (what is code vs contract)
 
-**In the repo (land order 1–3).** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts` + `tests/net/live.test.ts` (spawns rooms on EC2, `endRoom` kills them). MP talks to EC2 `MATCH_HOST` (`18.134.138.1:8787`). `scripts/deploy.sh` installs systemd `settlers-matchhost`.
+**In the repo.** Play loop is lockstep. CI: `tests/net/lockstep.test.ts` + `tests/net/host.test.ts`. MP talks to EC2 `MATCH_HOST` (`18.134.138.1:8787`). `scripts/deploy.sh` installs systemd `settlers-matchhost`.
 
 | Piece | Where | Notes |
 |---|---|---|
@@ -12,11 +12,9 @@ Lockstep over **our MatchHost**. Clients run `World`. The server is a **separate
 | Wire types | `src/shared/net/wire.ts` | **This is the contract.** SP Session sends `turn`. MP also `ready` / `hash` / `ended`. |
 | `MATCH_HOST` | `src/shared/net/endpoint.ts` | `18.134.138.1:8787`. Lobby HTTP + WS. Not localhost, not a Vite proxy. |
 | `Channel`, `Room`, `MemoryChannel`, `Lockstep` | `src/net/` | `Room.confirm` + broadcast `commit`. No listen port. |
-| Session play loop | `src/session/session/session.ts` | Confirm all local slots `through: next` **before** take. `enqueue(action, next, { player, seq })`. Kits = `dispatch(placeColony)` per `config.slots` at tick 0. Seed = `seedRng(MatchConfig.seed)` (`DEFAULT_WORLD_SEED` in SP). |
-| Envelope reject | `World.enqueue` | Foreign unit/hut/`action.player`; `placeColony` after tick 0. Tests may omit envelope. |
-| Opponent | `src/session/opponent/` | Bundle producer on its own `Lockstep` / `MemoryChannel`. Must confirm every beat. |
-| Building plop | Session `pendingPlans` | **Render-only** predicted fence until commit. Not sim prediction, not on the wire. |
-| `mapRevision` | SP | Catalog `file` path today, not a dump hash. |
+| Session play loop | `src/session/session/session.ts` | Confirm all local slots `through: next` **before** take. `enqueue(action, next, { player, seq })`. `World` is constructed from `config.slots`. |
+| Envelope | `World.enqueue` | Slot identity on the action. `noop` is dropped. |
+| `mapRevision` | SP / MP | `grid` — in-code map. |
 | Channel ownership | App (MP) / Session (SP) | SP: Session `new Room` + MemoryChannel. MP: App `WebSocketChannel` to `MATCH_HOST` in the lobby, hands it to Session on `start`. |
 | Lobby UI | `src/ui/menu/multiplayer.ts` | One screen: Name, lobby list, Host / Join. Wait roster via WS `room`. |
 | MatchHost process | `server/` on EC2 | Bind `0.0.0.0:8787`. CORS open. `scripts/connect.sh` / `scripts/deploy.sh`. |
@@ -64,7 +62,7 @@ If SP can `world.enqueue` from the click, MP is a second game. Hygiene is step 1
 
 | Process | Lives | Owns |
 |---|---|---|
-| Game | this repo `src/` | Pixi, Session, World, render, HUD |
+| Game | this repo `src/` | Three.js, Session, World, render, HUD |
 | MatchHost | this repo `server/` | HTTP lobby, WS rooms, logs. Node. |
 | Shared types | `src/shared` (imported by both) | `Action`, `GridPos`, wire types |
 
@@ -272,7 +270,7 @@ MP speed is **1×**. Pause = clients stop sending `through` (everyone stalls). N
 
 Delay **D**: local click at `tickIndex` is scheduled for `tickIndex + 1 + D`. Same path in SP — MemoryChannel vs WebSocket is the Channel, not a second enqueue. SP uses D=1 (RTT 0). MP `COMMAND_DELAY = 8` (200 ms) for MATCH_HOST London.
 
-MP confirms on `setInterval(tickMs)` as well as the Pixi frame. An unfocused tab's rAF sleeps; silence is not a confirm, so without the timer everyone stays at tick 0. `through` is `max(tickIndex+1, elapsedTicks+1, tickIndex+D)` so one RTT yields a burst of commits, not 1 tick.
+MP confirms on `setInterval(tickMs)` as well as the rAF frame. An unfocused tab's rAF sleeps; silence is not a confirm, so without the timer everyone stays at tick 0. `through` is `max(tickIndex+1, elapsedTicks+1, tickIndex+D)` so one RTT yields a burst of commits, not 1 tick.
 
 ```
 acc += dtMs                 // MP: speed = 1

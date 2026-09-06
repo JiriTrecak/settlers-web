@@ -2,7 +2,7 @@
  * Client lockstep: clicks go in an outbox; confirm() ships `through` + bundles.
  * Session only ticks when a `commit` for that beat is in the mailbox.
  * Empty resends of the same `through` are dropped — silence on the wire is not a confirm,
- * but a 60 Hz Pixi ticker is not a new turn either.
+ * but a 60 Hz rAF ticker is not a new turn either.
  */
 import type { Action, Commit } from "../shared";
 import type { Channel } from "./channel";
@@ -24,7 +24,7 @@ export class Lockstep {
 
   /** Queue a click for this slot. Not an enqueue — Room assigns the tick at confirm. */
   send(action: Action): void {
-    if (action.type === "noop" || action.type === "placeColony") return;
+    if (action.type === "noop") return;
     this.pending.push(action);
   }
 

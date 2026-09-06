@@ -264,7 +264,7 @@ export class HostedMatch {
       const bundles = msg.bundles
         .map((b) => ({
           tick: b.tick,
-          actions: b.actions.filter((a) => a.type !== "placeColony" && a.type !== "noop"),
+          actions: b.actions.filter((a) => a.type !== "noop"),
         }))
         .filter((b) => b.tick >= 1 && b.tick <= msg.through + delay + 2);
       this.mailbox.confirm(m.player, msg.through, bundles);

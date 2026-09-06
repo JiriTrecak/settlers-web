@@ -1,0 +1,14 @@
+---
+description: Visual target — readable stylized 3D RTS, PBR meshes
+alwaysApply: true
+---
+
+# Art
+
+**Under the Canopy** is a readable stylized 3D RTS (stylized realism / isometric diorama). Reference: AoE4. Chunky silhouettes, slightly toy proportions, painted-but-PBR materials, warm directional light, real shadows. Not photoreal, not cartoon, not low-poly.
+
+One iso plane. Forest is atmosphere (trees as objects), not layered sim.
+
+**Destination:** real meshes (glTF) + PBR (`MeshStandardMaterial`) + a sun + real shadows. Iterate assets in the world editor (`tooling/`).
+
+Canon: [`docs/game/art.md`](docs/game/art.md). Editor: [`docs/build-plan/editor.md`](docs/build-plan/editor.md).

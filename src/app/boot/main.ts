@@ -1,5 +1,5 @@
 /**
- * Vite entry. `#game` is the Pixi canvas host, `#hud` is the screen overlay.
+ * Vite entry. `#game` is the WebGL canvas host, `#hud` is the screen overlay.
  */
 import { GameApp } from "../game/GameApp";
 

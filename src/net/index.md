@@ -1,6 +1,6 @@
 # net
 
-Client lockstep. No Pixi, no `World.tick`. Session translates `commit` → `enqueue`.
+Client lockstep. No Three.js, no `World.tick`. Session translates `commit` → `enqueue`.
 
 | File | Owns |
 |---|---|

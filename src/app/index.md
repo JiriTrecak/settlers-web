@@ -1,6 +1,6 @@
 # app
 
-Boot. Pixi + `ScreenHost` on `#hud`. Screens own their contents.
+Boot. Canvas + `ScreenHost` on `#hud`. Screens own their contents.
 
 | Folder | Owns |
 |---|---|

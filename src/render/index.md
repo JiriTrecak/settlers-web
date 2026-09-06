@@ -1,18 +1,14 @@
 # render
 
-PixiJS drawing. Consumes `MapView` + dumped graphics. Does not own game state.
+Three.js drawing. Consumes `ViewSnapshot`. Does not own game state.
+
+Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art.md).
 
 | Folder | Owns |
 |---|---|
-| `renderer/` | Stage, camera apply, tile pick, hut-select overlay |
-| `landscape/` | Terrain mesh + atlas UVs |
-| `shader/` | GLSL (`.vert` / `.frag`). One subfolder per program (landscape, construction-mark). |
-| `building/` | Hut sprites + waving player-tinted flags |
-| `decoration/` | Tree / stone / stack / wave sprites |
-| `settler/` | Per-profession walk/idle/carry + work/bend |
-| `land/` | Occupy rim posts (player-tinted; hidden at sight ≤50) |
-| `debug/` | Walk-path polylines + owned-cell fill (HUD F3 toggles) |
-| `graphics/` | Catalog PNG load, civ-paged sprite atlases |
-| `camera/` | Pan / zoom / screen↔world |
+| `renderer/` | Scene, cubes from players, camera apply |
+| `display/` | `WebGLRenderer` + shadows + canvas resize |
+| `grid/` | Ground plane + grid lines + sun |
+| `camera/` | Iso ortho pan / zoom |
 
 Public entry: `index.ts`.

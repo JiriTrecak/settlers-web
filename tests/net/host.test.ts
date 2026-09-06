@@ -89,7 +89,7 @@ describe("MatchHost", () => {
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 
-  it("strips placeColony and noop out of a turn before commit", () => {
+  it("strips noop out of a turn before commit", () => {
     const host = new MatchHost();
     const created = host.create(draft());
     const room = host.get(created.room.id)!;
@@ -104,45 +104,13 @@ describe("MatchHost", () => {
       bundles: [
         {
           tick: 1,
-          actions: [
-            { type: "noop" },
-            { type: "placeColony", at: { x: 8, y: 8 }, player: 0 },
-            { type: "placeBuilding", kind: "lumberjack", at: { x: 4, y: 4 }, player: 0 },
-          ],
+          actions: [{ type: "noop" }, { type: "ping" }],
         },
       ],
     });
     room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
     const commit = a.find((m) => m.type === "commit" && m.tick === 1);
-    expect(commit?.type === "commit" && commit.slots[0]!.actions.map((x) => x.type)).toEqual(["placeBuilding"]);
-  });
-
-  it("strips placeColony and noop out of a turn before commit", () => {
-    const host = new MatchHost();
-    const created = host.create(draft());
-    const room = host.get(created.room.id)!;
-    const joined = room.join("p2", "player") as { token: string };
-    const a: ServerMsg[] = [];
-    room.bind(created.token, (m) => a.push(m));
-    room.bind(joined.token, () => {});
-    room.start(created.token);
-    room.ingest(created.token, {
-      type: "turn",
-      through: 1,
-      bundles: [
-        {
-          tick: 1,
-          actions: [
-            { type: "noop" },
-            { type: "placeColony", at: { x: 8, y: 8 }, player: 0 },
-            { type: "placeBuilding", kind: "lumberjack", at: { x: 4, y: 4 }, player: 0 },
-          ],
-        },
-      ],
-    });
-    room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
-    const commit = a.find((m) => m.type === "commit" && m.tick === 1);
-    expect(commit?.type === "commit" && commit.slots[0]!.actions.map((x) => x.type)).toEqual(["placeBuilding"]);
+    expect(commit?.type === "commit" && commit.slots[0]!.actions.map((x) => x.type)).toEqual(["ping"]);
   });
 
   it("discard ends the room and drops it from the list", () => {

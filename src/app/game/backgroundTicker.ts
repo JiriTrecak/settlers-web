@@ -2,11 +2,9 @@
  * Chrome parks rAF in an unfocused window (still visible — two-monitor MP).
  * Hidden tabs also get 1s timer throttling. A dedicated Worker is not on that
  * rAF budget; a near-silent AudioContext keeps the tab out of the deepest sleep.
- * When the window is not focused, Pixi's rAF ticker is stopped and we pump it
- * from the Worker so Session still ticks at ~40 Hz.
+ * When the window is not focused, rAF is stopped and we pump Session from the
+ * Worker so the match still ticks at ~40 Hz.
  */
-import type { Application } from "pixi.js";
-
 const WORKER_MS = 25;
 
 const WORKER_SRC = `
@@ -22,6 +20,12 @@ onmessage = (e) => {
   if (e.data === "stop") clearInterval(id);
 };
 `;
+
+export type TickLoop = {
+  startRaf(): void;
+  stopRaf(): void;
+  pump(): void;
+};
 
 export class BackgroundTicker {
   private worker: Worker | null = null;
@@ -40,7 +44,7 @@ export class BackgroundTicker {
     void this.audio?.resume();
   };
 
-  constructor(private readonly pixi: Application) {}
+  constructor(private readonly loop: TickLoop) {}
 
   start(): void {
     const url = URL.createObjectURL(new Blob([WORKER_SRC], { type: "text/javascript" }));
@@ -49,7 +53,7 @@ export class BackgroundTicker {
     this.worker = worker;
     worker.onmessage = () => {
       if (!this.background) return;
-      this.pixi.ticker.update();
+      this.loop.pump();
     };
     worker.postMessage("start");
     window.addEventListener("focus", this.onFocus);
@@ -74,15 +78,15 @@ export class BackgroundTicker {
     this.osc = null;
     void this.audio?.close();
     this.audio = null;
-    this.pixi.ticker.start();
+    this.loop.startRaf();
   }
 
-  /** Unfocused or hidden: Worker pumps Pixi. Focused: rAF as usual. */
+  /** Unfocused or hidden: Worker pumps Session. Focused: rAF as usual. */
   private sync(): void {
     const background = document.hidden || !document.hasFocus();
     this.background = background;
-    if (background) this.pixi.ticker.stop();
-    else this.pixi.ticker.start();
+    if (background) this.loop.stopRaf();
+    else this.loop.startRaf();
     void this.audio?.resume();
   }
 

@@ -30,16 +30,19 @@ function importSpecs(text: string): string[] {
 
 function importsArea(spec: string, area: string): boolean {
   if (area === "pixi") return spec === "pixi.js" || spec.startsWith("pixi.js/");
+  if (area === "three") return spec === "three" || spec.startsWith("three/");
   return spec.split("/").includes(area);
 }
 
 describe("architecture", () => {
-  it("sim does not import pixi.js", async () => {
-    const files = await walkTs(join(repoRoot, "src/sim"));
-    expect(files.length).toBeGreaterThan(0);
-    for (const file of files) {
-      const text = await readFile(file, "utf8");
-      expect(text, file).not.toMatch(/pixi\.js/);
+  it("src game layers do not import pixi.js", async () => {
+    for (const layer of ["sim", "net", "ui", "render", "session", "app"]) {
+      const files = await walkTs(join(repoRoot, "src", layer));
+      expect(files.length).toBeGreaterThan(0);
+      for (const file of files) {
+        const text = await readFile(file, "utf8");
+        expect(text, file).not.toMatch(/pixi\.js/);
+      }
     }
   });
 
@@ -54,12 +57,12 @@ describe("architecture", () => {
 
   it("layer imports stay one-way", async () => {
     const bans: Record<string, string[]> = {
-      sim: ["pixi", "app", "session", "ui", "render", "net"],
-      net: ["pixi", "app", "session", "ui", "render", "sim"],
-      ui: ["pixi", "app", "session", "render", "net"],
-      render: ["app", "session", "ui", "net"],
-      session: ["app"],
-      app: ["sim", "render"],
+      sim: ["pixi", "three", "app", "session", "ui", "render", "net"],
+      net: ["pixi", "three", "app", "session", "ui", "render", "sim"],
+      ui: ["pixi", "three", "app", "session", "render", "net"],
+      render: ["pixi", "app", "session", "ui", "net"],
+      session: ["pixi", "app"],
+      app: ["pixi", "sim", "render"],
     };
     const extra = join(repoRoot, "server");
     const extraFiles = await walkTs(extra).catch(() => [] as string[]);

@@ -1,8 +1,8 @@
 /**
- * Eight S3 player tints. Torso grayscale × this RGB. Shared by menu swatches and sprites.
+ * Eight player tints. Menu swatches and the player cube share this table.
  */
 export const PLAYER_COLORS = [
-  0x285ac8, // 40, 90, 200
+  0x285ac8,
   0xc82828,
   0xdcb428,
   0x28a046,
@@ -25,7 +25,7 @@ export function playerRgb(i: number): [number, number, number] {
   return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
 }
 
-/** 50/50 with white — minimap units vs solid building/border. */
+/** 50/50 with white. */
 export function playerRgbLite(i: number): [number, number, number] {
   const [r, g, b] = playerRgb(i);
   return [(r + 255) >> 1, (g + 255) >> 1, (b + 255) >> 1];

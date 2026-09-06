@@ -1,84 +1,67 @@
 /**
- * 2D pan/zoom in screen pixels. World is scaled around `panX/panY`.
- * `lookAt` / `fit` are called by Session; MapInput only `pan` / `zoomAt`.
+ * True iso ortho. Look-at sits on the XZ plane; pan moves that point.
+ * Wheel changes frustum size. Not the old 16×9 S3 projector.
  */
-import { worldToGrid } from "../../shared";
+import { OrthographicCamera, Vector3 } from "three";
+
+const YAW = Math.PI / 4;
+const PITCH = Math.atan(1 / Math.sqrt(2));
+const DIST = 80;
 
 export class Camera {
-  panX = 0;
-  panY = 0;
-  zoom = 1;
-  minZoom = 0.35;
-  maxZoom = 8;
+  targetX = 0;
+  targetZ = 0;
+  zoom = 28;
+  minZoom = 6;
+  maxZoom = 90;
 
-  worldToScreen(wx: number, wy: number): { x: number; y: number } {
-    return { x: wx * this.zoom + this.panX, y: wy * this.zoom + this.panY };
+  lookAt(x: number, z: number): void {
+    this.targetX = x;
+    this.targetZ = z;
   }
 
-  screenToWorld(sx: number, sy: number): { x: number; y: number } {
-    return { x: (sx - this.panX) / this.zoom, y: (sy - this.panY) / this.zoom };
+  /** Screen-pixel drag → XZ. `screenH` converts pixels to world units. */
+  panScreen(dx: number, dy: number, screenH: number): void {
+    const scale = (2 * this.zoom) / Math.max(1, screenH);
+    const rx = Math.cos(YAW);
+    const rz = -Math.sin(YAW);
+    const fx = Math.sin(YAW);
+    const fz = Math.cos(YAW);
+    this.targetX -= dx * scale * rx - dy * scale * fx;
+    this.targetZ -= dx * scale * rz - dy * scale * fz;
   }
 
-  pan(dx: number, dy: number): void {
-    this.panX += dx;
-    this.panY += dy;
+  /** WASD / arrows in camera-forward / camera-right on XZ. */
+  panWorld(right: number, forward: number): void {
+    const rx = Math.cos(YAW);
+    const rz = -Math.sin(YAW);
+    const fx = Math.sin(YAW);
+    const fz = Math.cos(YAW);
+    this.targetX += right * rx + forward * fx;
+    this.targetZ += right * rz + forward * fz;
   }
 
-  /** Zoom keeping the world point under `(sx, sy)` fixed on screen. */
-  zoomAt(sx: number, sy: number, factor: number): void {
-    const world = this.screenToWorld(sx, sy);
+  zoomBy(factor: number): void {
     this.zoom = Math.min(this.maxZoom, Math.max(this.minZoom, this.zoom * factor));
-    this.panX = sx - world.x * this.zoom;
-    this.panY = sy - world.y * this.zoom;
   }
 
-  lookAt(wx: number, wy: number, screenW: number, screenH: number): void {
-    this.panX = screenW / 2 - wx * this.zoom;
-    this.panY = screenH / 2 - wy * this.zoom;
-  }
-
-  fit(bounds: { minX: number; minY: number; maxX: number; maxY: number }, screenW: number, screenH: number, pad = 0.88): void {
-    const bw = Math.max(1, bounds.maxX - bounds.minX);
-    const bh = Math.max(1, bounds.maxY - bounds.minY);
-    this.zoom = Math.min(screenW / bw, screenH / bh) * pad;
-    this.panX = screenW / 2 - ((bounds.minX + bounds.maxX) / 2) * this.zoom;
-    this.panY = screenH / 2 - ((bounds.minY + bounds.maxY) / 2) * this.zoom;
-  }
-
-  /**
-   * Grid AABB covering the screen. `pad` extra cells for height-lifted tiles.
-   * `stride` skips cells when zoomed out (viewport-scan fallback only).
-   */
-  visibleGrid(
-    screenW: number,
-    screenH: number,
-    mapW: number,
-    mapH: number,
-    pad = 24,
-  ): { x0: number; y0: number; x1: number; y1: number; stride: number } {
-    const corners = [
-      this.screenToWorld(0, 0),
-      this.screenToWorld(screenW, 0),
-      this.screenToWorld(screenW, screenH),
-      this.screenToWorld(0, screenH),
-    ];
-    let x0 = Infinity;
-    let y0 = Infinity;
-    let x1 = -Infinity;
-    let y1 = -Infinity;
-    for (const c of corners) {
-      const g = worldToGrid(c.x, c.y);
-      x0 = Math.min(x0, g.x);
-      y0 = Math.min(y0, g.y);
-      x1 = Math.max(x1, g.x);
-      y1 = Math.max(y1, g.y);
-    }
-    return {
-      x0: Math.max(0, Math.floor(x0) - 2),
-      y0: Math.max(0, Math.floor(y0) - 2),
-      x1: Math.min(mapW - 1, Math.ceil(x1) + pad),
-      y1: Math.min(mapH - 1, Math.ceil(y1) + pad),
-      stride: Math.max(1, Math.round(1 / this.zoom)),
-    };
+  applyTo(cam: OrthographicCamera, width: number, height: number): void {
+    const cosP = Math.cos(PITCH);
+    cam.position.set(
+      this.targetX + Math.sin(YAW) * cosP * DIST,
+      Math.sin(PITCH) * DIST,
+      this.targetZ + Math.cos(YAW) * cosP * DIST,
+    );
+    cam.lookAt(new Vector3(this.targetX, 0, this.targetZ));
+    const aspect = Math.max(1, width) / Math.max(1, height);
+    const halfH = this.zoom;
+    const halfW = this.zoom * aspect;
+    cam.left = -halfW;
+    cam.right = halfW;
+    cam.top = halfH;
+    cam.bottom = -halfH;
+    cam.near = 0.1;
+    cam.far = 400;
+    cam.updateProjectionMatrix();
   }
 }

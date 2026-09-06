@@ -1,5 +1,5 @@
 /**
- * Tools Vite entry. `#game` is the Pixi canvas host, `#hud` is the screen overlay.
+ * Tools Vite entry. DOM only.
  */
 import { ToolsApp } from "../app/ToolsApp";
 
@@ -10,4 +10,4 @@ if (!gameRoot || !hudRoot) {
 }
 
 const app = new ToolsApp(gameRoot, hudRoot);
-void app.start();
+app.start();

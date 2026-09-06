@@ -1,24 +1,22 @@
 # Overview
 
-Web remake of *The Settlers III*. TypeScript + PixiJS v8.
+**Under the Canopy.** TypeScript + Three.js. Lockstep RTS skeleton.
 
-This folder is **constraints + the next work**. How the match *behaves today* lives in [`docs/game/`](../game/README.md). How a folder is wired lives in `src/**/*.md`.
+This folder is **constraints + the next work**. How the match *behaves today* lives in [`docs/game/`](../game/README.md). How it should *look*: [`docs/game/art.md`](../game/art.md).
 
 ## Areas
 
 | File | Owns |
 |---|---|
-| [P2.md](P2.md) | **Next systems.** Read this before adding a feature. |
+| [editor.md](editor.md) | **World editor.** Next content + look track. |
 | [conventions.md](conventions.md) | Naming, TS style, numbers |
-| [app.md](app.md) | Pixi boot, ScreenHost, ticker |
-| [sim.md](sim.md) | Headless engine: no Pixi, no DOM |
-| [render.md](render.md) | Pixi drawing, no rules |
+| [app.md](app.md) | Canvas boot, ScreenHost, ticker |
+| [sim.md](sim.md) | Headless engine: no Three.js, no DOM |
+| [render.md](render.md) | Three.js drawing, no rules |
 | [ui.md](ui.md) | HTML chrome |
-| [assets.md](assets.md) | Dumped graphics, `original_conv` |
-| [testing.md](testing.md) | Vitest, architecture tests, replay |
+| [assets.md](assets.md) | glTF later. No dump pipeline. |
+| [testing.md](testing.md) | Vitest, architecture tests |
 | [net.md](net.md) | MatchHost lockstep. Read before sockets. |
-
-Session is documented under [`src/session/`](../../src/session/index.md), not here.
 
 ## Architecture
 
@@ -26,22 +24,17 @@ Session is documented under [`src/session/`](../../src/session/index.md), not he
 ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  render
                    ▲  │
                    │  └──► net (Lockstep) ──► MatchHost (Node)
-                 app (boot, Channel, ticker)    dumped graphics
+                 app (boot, Channel, ticker)
 ```
 
-- `sim` never imports `pixi.js` or `net`. Enforced by test.
+- `sim` never imports `three`, `pixi.js`, or `net`. Enforced by test.
 - `render` never mutates sim. It reads `ViewSnapshot`.
-- `session` is one match, inside `PlayScreen`. Lobby is a different screen. Talks to Lockstep, never a socket.
-- `app` boots Pixi and pumps `session.tick`. No feature code.
-- Original `.dat` / `.map` stay in `original_conv`. `src` never imports it.
-- `ui` is HTML/CSS. Pixi draws the map only.
+- `session` is one match, inside `PlayScreen`.
+- `app` owns the canvas + rAF and pumps `session.tick`.
+- `ui` is HTML/CSS. Three.js draws the map. World editor lives in `tooling/`.
 
 ## Where we are
 
-Playable: dumped maps, iso camera, Roman wood/stone colony, construction, flatten, land occupy, fog of war (snapshots), action queue + checksum, per-player matcher, pioneer select + claim, two colonies + script opponent, L1 swordsman melee, tower assault/capture, HQ defeat, match replay (store + scrubber), SP lockstep (MemoryChannel, D=1), MatchHost on EC2 (`MATCH_HOST`, Multiplayer menu).
+Lit 256² iso grid. Player entities from `MatchConfig.slots`. One cube per player. SP is one slot. Lockstep + MatchHost still work.
 
-Not a game yet: no spectate. Next is land order 4 — [net.md](net.md).
-
-Forward plan: **[P2.md](P2.md)**. Not more huts, not water, not sound.
-
-Never commit `GFX/`, `SND/`, or `MAP/` from the original game.
+Next: [world editor](editor.md).

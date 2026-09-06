@@ -1,32 +1,19 @@
-/** N Worlds, one Room: same commits ⇒ same checksum. Stall without every slot's confirm. Resume keeps held bundles. */
+/** N Worlds, one Room: same commits ⇒ same checksum. Stall without every slot's confirm. */
 import { describe, expect, it } from "vitest";
-import { localMatch, type ClientMsg, type Commit } from "../../src/shared";
+import { localMatch, MAP_SIZE, type ClientMsg, type Commit } from "../../src/shared";
 import { Lockstep, MemoryChannel, Room } from "../../src/net";
-import { MapGrid } from "../../src/sim/map/mapGrid";
 import { World } from "../../src/sim/world/world";
-import { seedRng } from "../../src/sim/rng/rng";
 
-function grass(w: number, h: number): MapGrid {
-  const grid = new MapGrid(w, h);
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) grid.setLandscape(x, y, "grass");
-  }
-  return grid;
-}
-
-function kit(seed: number): World {
-  const world = new World(grass(64, 64), undefined, seedRng(seed));
-  world.dispatch({ type: "placeColony", at: { x: 32, y: 32 }, player: 0 });
-  world.dispatch({ type: "placeColony", at: { x: 48, y: 48 }, player: 1 });
-  return world;
-}
-
-function kit3(seed: number): World {
-  const world = new World(grass(200, 200), undefined, seedRng(seed));
-  world.dispatch({ type: "placeColony", at: { x: 24, y: 24 }, player: 0 });
-  world.dispatch({ type: "placeColony", at: { x: 160, y: 24 }, player: 1 });
-  world.dispatch({ type: "placeColony", at: { x: 24, y: 160 }, player: 2 });
-  return world;
+function kit(seed: number, slotCount: number): World {
+  const config = localMatch({
+    mapId: "test",
+    mapRevision: "test",
+    seed,
+    slotCount,
+    me: 0,
+    delay: 1,
+  });
+  return new World({ size: MAP_SIZE, slots: config.slots, seed });
 }
 
 function apply(world: World, commit: Commit): void {
@@ -50,11 +37,13 @@ describe("lockstep MemoryChannel", () => {
     const room = new Room(config);
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
-    const a = kit(config.seed);
-    const b = kit(config.seed);
+    const a = kit(config.seed, 2);
+    const b = kit(config.seed, 2);
     expect(a.checksum()).toBe(b.checksum());
+    expect(a.players).toHaveLength(2);
+    expect(b.players).toHaveLength(2);
 
-    ls0.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 20, y: 40 }, player: 0 });
+    ls0.send({ type: "ping" });
     for (let t = 1; t <= 40; t++) {
       ls0.confirm(t);
       ls1.confirm(t);
@@ -66,7 +55,6 @@ describe("lockstep MemoryChannel", () => {
       b.tick();
     }
     expect(a.checksum()).toBe(b.checksum());
-    expect(a.buildings.at(20, 40)?.kind).toBe("lumberjack");
     expect(a.clock.tickIndex).toBe(40);
   });
 
@@ -96,12 +84,12 @@ describe("lockstep MemoryChannel", () => {
     };
     const ls = new Lockstep(ch, 0, 8);
     ls.confirm(100);
-    ls.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 });
+    ls.send({ type: "ping" });
     ls.confirm(100, 50);
     expect(sent).toEqual({
       type: "turn",
       through: 101,
-      bundles: [{ tick: 101, actions: [{ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 }] }],
+      bundles: [{ tick: 101, actions: [{ type: "ping" }] }],
     });
   });
 
@@ -117,23 +105,22 @@ describe("lockstep MemoryChannel", () => {
     ls.confirm(1);
     ls.confirm(1);
     expect(n).toBe(1);
-    ls.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 });
+    ls.send({ type: "ping" });
     ls.confirm(1);
     expect(n).toBe(2);
   });
 
-  it("drops placeColony and noop so they never hit the Room", () => {
+  it("drops noop so it never hits the Room", () => {
     const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 1 });
     const room = new Room(config);
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
     ls0.send({ type: "noop" });
-    ls0.send({ type: "placeColony", at: { x: 8, y: 8 }, player: 0 });
-    ls0.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 20, y: 40 }, player: 0 });
+    ls0.send({ type: "ping" });
     ls0.confirm(1, 1);
     ls1.confirm(1, 1);
     const commit = ls0.take(1)!;
-    expect(commit.slots[0]!.actions.map((a) => a.type)).toEqual(["placeBuilding"]);
+    expect(commit.slots[0]!.actions.map((a) => a.type)).toEqual(["ping"]);
     expect(commit.slots[1]!.actions).toEqual([]);
   });
 
@@ -143,11 +130,11 @@ describe("lockstep MemoryChannel", () => {
       onMessage: (): void => {},
     };
     const ls = new Lockstep(ch, 0, 1);
-    ls.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 });
+    ls.send({ type: "ping" });
     const saved: Commit = {
       tick: 4,
       slots: [
-        { player: 0, actions: [{ type: "placeBuilding", kind: "stonecutter", at: { x: 2, y: 2 }, player: 0 }] },
+        { player: 0, actions: [{ type: "ping" }] },
         { player: 1, actions: [] },
       ],
     };
@@ -165,7 +152,7 @@ describe("lockstep MemoryChannel", () => {
       onMessage: (): void => {},
     };
     const ls2 = new Lockstep(ch2, 0, 1);
-    ls2.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 });
+    ls2.send({ type: "ping" });
     ls2.restore([], 5);
     ls2.confirm(6);
     expect(sent).toEqual({ through: 6, bundles: [] });
@@ -182,22 +169,20 @@ describe("lockstep MemoryChannel", () => {
     });
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
-    ls1.send({ type: "placeBuilding", kind: "lumberjack", at: { x: 20, y: 40 }, player: 1 });
-    ls0.send({ type: "placeBuilding", kind: "stonecutter", at: { x: 22, y: 40 }, player: 0 });
+    ls1.send({ type: "ping" });
+    ls0.send({ type: "ping" });
     ls1.confirm(1, 1);
     ls0.confirm(1, 1);
     const commit = ls0.take(1)!;
     expect(commit.slots.map((s) => s.player)).toEqual([0, 1]);
-    expect(commit.slots[0]!.actions[0]).toMatchObject({ type: "placeBuilding", kind: "stonecutter" });
-    expect(commit.slots[1]!.actions[0]).toMatchObject({ type: "placeBuilding", kind: "lumberjack" });
-    const a = kit(config.seed);
+    const a = kit(config.seed, 2);
     apply(a, commit);
     a.tick();
-    const kinds = a
+    const players = a
       .log()
-      .filter((e) => e.tick === 1 && e.action.type === "placeBuilding")
-      .map((e) => (e.action.type === "placeBuilding" ? e.action.kind : ""));
-    expect(kinds).toEqual(["stonecutter", "lumberjack"]);
+      .filter((e) => e.tick === 1 && e.action.type === "ping")
+      .map((e) => e.player);
+    expect(players).toEqual([0, 1]);
   });
 
   it("three worlds on one Room share checksums after the same commits", () => {
@@ -206,11 +191,11 @@ describe("lockstep MemoryChannel", () => {
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
     const ls2 = new Lockstep(new MemoryChannel(room, 2), 2, config.delay);
-    const worlds = [kit3(config.seed), kit3(config.seed), kit3(config.seed)];
+    const worlds = [kit(config.seed, 3), kit(config.seed, 3), kit(config.seed, 3)];
     expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     expect(worlds[1]!.checksum()).toBe(worlds[2]!.checksum());
-    ls0.send({ type: "setDiggerRatio", ratio: 0.5, player: 0 });
-    ls2.send({ type: "setBricklayerRatio", ratio: 0.5, player: 2 });
+    ls0.send({ type: "ping" });
+    ls2.send({ type: "ping" });
     for (let t = 1; t <= 20; t++) {
       ls0.confirm(t);
       ls1.confirm(t);
@@ -225,9 +210,7 @@ describe("lockstep MemoryChannel", () => {
     }
     expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     expect(worlds[1]!.checksum()).toBe(worlds[2]!.checksum());
-    expect(worlds[0]!.diggerRatio(0)).toBe(0.5);
-    expect(worlds[0]!.bricklayerRatio(2)).toBe(0.5);
-    expect(worlds[0]!.diggerRatio(1)).toBe(worlds[0]!.diggerRatio(2));
+    expect(worlds[0]!.players).toHaveLength(3);
   });
 });
 
@@ -256,7 +239,7 @@ describe("Room mailbox", () => {
   it("held bundles past committed survive resume and land later", () => {
     const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 8 });
     const room = new Room(config);
-    const action = { type: "placeBuilding" as const, kind: "lumberjack" as const, at: { x: 20, y: 40 }, player: 0 };
+    const action = { type: "ping" as const };
     room.confirm(0, 5, [{ tick: 8, actions: [action] }]);
     room.confirm(1, 5, []);
     expect(room.tick).toBe(5);
@@ -283,7 +266,7 @@ describe("Room mailbox", () => {
     room.subscribe((m) => {
       if (m.type === "commit") ticks.push(m.tick);
     });
-    room.confirm(0, 3, [{ tick: 2, actions: [{ type: "placeBuilding", kind: "lumberjack", at: { x: 1, y: 1 }, player: 0 }] }]);
+    room.confirm(0, 3, [{ tick: 2, actions: [{ type: "ping" }] }]);
     room.confirm(1, 3, []);
     expect(ticks).toEqual([3]);
     expect(room.tick).toBe(3);

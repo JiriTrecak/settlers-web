@@ -9,38 +9,25 @@
     "build:tools": "vite build --config tooling/vite.config.ts",
     "tauri:tools": "vite-node tooling/tauri.mjs dev",
     "pack:tools": "vite-node tooling/tauri.mjs build",
-    "pack": "vite-node original_conv/pack-play.ts",
-    "pack:web": "vite-node original_conv/pack-play.ts --no-zip",
-    "pack:app": "vite-node original_conv/pack-app.ts",
     "tauri": "tauri",
     "preview": "vite preview",
     "test": "vitest run",
     "server": "tsx server/index.ts",
-    "server:deploy": "bash scripts/deploy.sh",
-    "dump:graphics": "vite-node original_conv/dump-graphics.ts",
-    "dump:stacks": "vite-node original_conv/dump-stacks.ts",
-    "dump:flags": "vite-node original_conv/dump-flags.ts",
-    "dump:work-area": "vite-node original_conv/dump-work-area.ts",
-    "dump:signs": "vite-node original_conv/dump-signs.ts",
-    "dump:huts": "vite-node original_conv/dump-huts.ts",
-    "dump:miner": "vite-node original_conv/dump-miner.ts",
-    "dump:food-settlers": "vite-node original_conv/dump-miner.ts FARMER MILLER BAKER FISHERMAN PIG_FARMER SLAUGHTERER WATERWORKER",
-    "dump:landscape-atlas": "vite-node original_conv/dump-landscape-atlas.ts",
-    "pack:atlases": "vite-node original_conv/pack-atlases.ts",
-    "dump:maps": "vite-node original_conv/dump-maps.ts"
+    "server:deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
-    "pixi.js": "^8.19.0",
+    "three": "^0.185.1",
     "ws": "^8.21.3"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
     "@types/node": "^26.2.0",
+    "@types/three": "^0.185.4",
     "@types/ws": "^8.18.1",
+    "tsx": "^4.20.0",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-node": "^6.0.0",
-    "vitest": "^4.1.10",
-    "tsx": "^4.20.0"
+    "vitest": "^4.1.10"
   }
 }

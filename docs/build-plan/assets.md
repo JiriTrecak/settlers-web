@@ -1,27 +1,18 @@
 # Assets
 
-Loads pictures (and later sounds). The engine never sees original `.dat` / `.map`.
-
-Dumped graphics answer: given a catalog key, give me a Pixi `Texture` + offset. Conversion lives in `original_conv/`. Shipping uses our atlas. Same keys.
-
-Never commit `GFX/`, `SND/`, or original `MAP/` binaries. `src` never imports `original_conv`.
+No dump pipeline. No S3 textures. Destination art is glTF + PBR — [`art.md`](../game/art.md). Author in the [world editor](editor.md).
 
 ## Now
 
-- Landscape atlas + UV table (`landscape-atlas.png`, `atlasPositions.ts`)
-- Civ-paged sprite atlases (`npm run pack:atlases` → `graphics/atlases/`). 2048², packs `props` / `buildings-{civ}` / `settlers-{civ}`. Same catalog paths.
-- Catalog JSON → decoration / building / settler sheets
-- Maps as dumped JSON (`heights`, `landscape`, `trees`, `stones`, `starts`)
-
-Decoder, DAT pointer tables, dump scripts: `original_conv/`. Tests there use **hand-authored** mini buffers, not ripped game files.
+Nothing on disk. The grid and cubes are generated in Three.js.
 
 ## Later
 
-- GUI PNGs for HTML (don't draw GUI in Pixi)
-- `SND/` / music (Web Audio). Separate from this pipeline. Not P2.
+- glTF meshes + PBR materials (world editor first)
+- GUI PNGs for HTML
+- Sound (Web Audio)
 
 ## Refusals
 
-- Shipping original pixels in git or a public build.
-- CPU-blitting DAT every frame. Decode once → GPU texture.
-- A new addressing scheme that doesn't round-trip the existing atlas / catalog keys.
+- Shipping original S3 pixels.
+- A second dump catalog.
