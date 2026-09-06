@@ -1,5 +1,5 @@
 /**
- * Converts Synty POLYGON Nature FBX (cm, vertex colors + leaf atlases) into
+ * Converts Synty POLYGON Nature FBX (cm, HSV vertex tints + leaf atlases) into
  * catalog glTFs. Skips skybox / river planes. Re-run overwrites assets/synty.
  */
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
@@ -39,6 +39,7 @@ type MatSpec = {
   color: [number, number, number, number];
   tex?: string;
   cutout: boolean;
+  authored: boolean;
 };
 
 type Prim = {
@@ -148,12 +149,14 @@ function writeGltf(out: string, stem: string, root: Object3D, texIndex: Map<stri
       const src = list[g.materialIndex] ?? list[0];
       if (!src) continue;
       const spec = materialOf(src, stem, texIndex);
-      // Unity slot is usually PolygonNature_01; the FBX often ships gray Lambert + UVs, no map.
-      if (!spec.tex && uv && !col) {
-        spec.tex = texIndex.get("polygonnature_01.png");
+      // FBX rarely embeds the Unity atlas. UVs still point at PolygonNature / leaf sheets.
+      if (!spec.tex && uv) {
+        spec.tex = fallbackTex(src.name ?? "", stem, texIndex) ?? texIndex.get("polygonnature_01.png");
         spec.color = [1, 1, 1, 1];
       }
-      if (col) spec.color = [1, 1, 1, 1];
+      // Synty paints hue in R and sat in B (G ≈ 0). Raw RGB looks magenta; decode to linear RGB.
+      const tint = col ? { data: decodeSyntyColor(col.data, col.size), size: col.size } : undefined;
+      if (tint) spec.color = [1, 1, 1, 1];
       if (spec.tex) used.add(spec.tex.split(/[\\/]/).pop() ?? spec.tex);
       let mi = mats.findIndex((m) => sameMat(m, spec));
       if (mi < 0) {
@@ -164,8 +167,8 @@ function writeGltf(out: string, stem: string, root: Object3D, texIndex: Map<stri
         position: pos,
         normal: nor,
         uv,
-        color: col?.data,
-        colorSize: col?.size ?? 0,
+        color: tint?.data,
+        colorSize: tint?.size ?? 0,
         indices: idx.subarray(g.start, g.start + g.count),
         material: mi,
       });
@@ -179,8 +182,7 @@ function writeGltf(out: string, stem: string, root: Object3D, texIndex: Map<stri
 function materialOf(mat: Material, stem: string, texIndex: Map<string, string>): MatSpec {
   const any = mat as Material & { color?: Color; opacity?: number; map?: Texture | null; name?: string };
   const fromFbx = any.map?.userData.sourceFile as string | undefined;
-  // Only guess an atlas when the FBX actually referenced a map we failed to resolve.
-  const named = fromFbx ?? (any.map ? fallbackTex(any.name ?? "", stem, texIndex) : undefined);
+  const named = fromFbx ?? fallbackTex(any.name ?? "", stem, texIndex);
   const cutout = isCutout(any.name ?? "", named);
   const c = any.color ?? new Color(1, 1, 1);
   return {
@@ -188,19 +190,22 @@ function materialOf(mat: Material, stem: string, texIndex: Map<string, string>):
     color: [c.r, c.g, c.b, any.opacity ?? 1],
     tex: named,
     cutout,
+    authored: Boolean(fromFbx),
   };
 }
 
 function fallbackTex(matName: string, stem: string, texIndex: Map<string, string>): string | undefined {
   const n = `${matName} ${stem}`.toLowerCase();
   if (/fern/.test(n)) return texIndex.get("fern_texture.png");
-  if (/willow/.test(n)) return texIndex.get("leaves_willow_texture.png");
-  if (/pine/.test(n) && /leave/.test(n)) return texIndex.get("leaves_pine_texture.png");
+  if (/willow/.test(n) && /leave|leaf/.test(n)) return texIndex.get("leaves_willow_texture.png");
+  if (/pine/.test(n) && /leave|leaf/.test(n)) return texIndex.get("leaves_pine_texture.png");
+  if (/dead/.test(n) && /leave|leaf|branch/.test(n)) return texIndex.get("tree_dead_branch.png");
+  if (/birch/.test(n) && /trunk/.test(n)) return texIndex.get("birch_trunk_texture.png");
   if (/flowerbush|flower_bush/.test(n)) return texIndex.get("flowerbush_texture.png");
   if (/undergrowth/.test(n)) return texIndex.get("undergrowth_texture.png");
-  if (/leave|leaf/.test(n)) return texIndex.get("leaves_generic_texture.png");
   if (/reed/.test(n)) return texIndex.get("reeds.png");
-  return undefined;
+  if (/leave|leaf/.test(n)) return texIndex.get("leaves_generic_texture.png");
+  return texIndex.get("polygonnature_01.png");
 }
 
 function isCutout(matName: string, tex?: string): boolean {
@@ -209,7 +214,13 @@ function isCutout(matName: string, tex?: string): boolean {
 }
 
 function sameMat(a: MatSpec, b: MatSpec): boolean {
-  return a.name === b.name && a.tex === b.tex && a.cutout === b.cutout && a.color.every((v, i) => v === b.color[i]);
+  return (
+    a.name === b.name &&
+    a.tex === b.tex &&
+    a.cutout === b.cutout &&
+    a.authored === b.authored &&
+    a.color.every((v, i) => v === b.color[i])
+  );
 }
 
 function packGltf(name: string, prims: Prim[], mats: MatSpec[]): object {
@@ -346,6 +357,53 @@ function float2(attr: BufferAttribute | InterleavedBufferAttribute | undefined):
     out[i * 2 + 1] = attr.getY(i);
   }
   return out;
+}
+
+/** Synty POLYGON: (R, 0, B) is HSV(h=R, s=B, v=1), not an RGB tint. */
+function decodeSyntyColor(data: Float32Array, size: number): Float32Array {
+  let gMax = 0;
+  const n = data.length / size;
+  for (let i = 0; i < n; i++) gMax = Math.max(gMax, data[i * size + 1]!);
+  if (gMax > 0.04) return data;
+  const out = new Float32Array(data.length);
+  for (let i = 0; i < n; i++) {
+    const [r, g, b] = hsvToRgb(data[i * size]!, clamp01(data[i * size + 2]!), 1);
+    out[i * size] = srgbToLinear(r);
+    out[i * size + 1] = srgbToLinear(g);
+    out[i * size + 2] = srgbToLinear(b);
+    if (size === 4) out[i * size + 3] = data[i * size + 3]!;
+  }
+  return out;
+}
+
+function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+    case 0:
+      return [v, t, p];
+    case 1:
+      return [q, v, p];
+    case 2:
+      return [p, v, t];
+    case 3:
+      return [p, q, v];
+    case 4:
+      return [t, p, v];
+    default:
+      return [v, p, q];
+  }
+}
+
+function srgbToLinear(c: number): number {
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+
+function clamp01(n: number): number {
+  return Math.min(1, Math.max(0, n));
 }
 
 function floatColor(attr: BufferAttribute | InterleavedBufferAttribute | undefined): { data: Float32Array; size: number } | undefined {
