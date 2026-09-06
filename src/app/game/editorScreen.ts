@@ -52,6 +52,7 @@ export class EditorScreen extends GameScreen {
       onRadius: (n) => this.editor.setBrushRadius(n),
       onDensity: (n) => this.editor.setBrushDensity(n),
       onApply: () => this.editor.applyBrush(),
+      onNewPreset: () => this.newPreset(),
       onAddSlot: () => this.openCatalogue("brush"),
       onRemoveSlot: (id) => {
         this.editor.kit.remove(id);
@@ -117,10 +118,6 @@ export class EditorScreen extends GameScreen {
   }
 
   private armBrush(): void {
-    if (!this.editor.kit.slots.length) {
-      if (this.editor.asset) this.editor.kit.add(this.editor.asset);
-      else this.openCatalogue("brush");
-    }
     this.editor.setTool("brush");
     this.chrome.setTool("brush");
     this.chrome.setGridMenu(this.editor.gridMenu);
@@ -143,6 +140,15 @@ export class EditorScreen extends GameScreen {
       active: this.presets.active,
       presetName: this.presetName,
     });
+  }
+
+  private newPreset(): void {
+    this.presets.active = null;
+    this.presetName = "";
+    this.editor.kit.clear();
+    this.editor.setBrushRadius(4);
+    this.editor.setBrushDensity(0.45);
+    this.syncBrush();
   }
 
   private savePreset(name: string): void {

@@ -29,6 +29,27 @@
       "category": "terrain",
       "type": "prop",
       "file": "props/boulder.gltf"
+    },
+    {
+      "id": "rock",
+      "name": "Rock",
+      "category": "terrain",
+      "type": "prop",
+      "file": "props/rock.gltf"
+    },
+    {
+      "id": "rock-cleft",
+      "name": "Rock cleft",
+      "category": "terrain",
+      "type": "prop",
+      "file": "props/rock-cleft.gltf"
+    },
+    {
+      "id": "rock-slab",
+      "name": "Rock slab",
+      "category": "terrain",
+      "type": "prop",
+      "file": "props/rock-slab.gltf"
     }
   ]
 }

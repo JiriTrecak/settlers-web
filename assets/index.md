@@ -13,6 +13,9 @@ First wave — landscape only. Readable from iso. No units or buildings yet.
 | `pine-umber` | foliage | Brown-olive. **In.** |
 | oak | foliage | Deciduous contrast |
 | `boulder` | terrain | Occupy-a-cell rock. **In.** |
+| `rock` | terrain | Block-sized mound (~16 cells). **In.** |
+| `rock-cleft` | terrain | Split pair, same span. **In.** |
+| `rock-slab` | terrain | Flat table rock, same span. **In.** |
 | fern | foliage | Understory |
 | mushroom | landmark | Insect-world flavor |
 | log | terrain | Breaks the grid |

@@ -25,10 +25,11 @@ export type BrushDockHooks = {
   onRadius(n: number): void;
   onDensity(n: number): void;
   onApply(): void;
+  onNewPreset(): void;
   onAddSlot(): void;
-  onRemoveSlot(asset: string): void;
-  onSlotPct(asset: string, pct: number): void;
-  onSlotScale(asset: string, scale: number): void;
+  onRemoveSlot(id: string): void;
+  onSlotPct(id: string, pct: number): void;
+  onSlotScale(id: string, scale: number): void;
   onSavePreset(name: string): void;
   onDeletePreset(): void;
   onLoadPreset(id: string): void;
@@ -52,17 +53,27 @@ export class BrushDock {
     private readonly hooks: BrushDockHooks,
   ) {
     this.root = document.createElement("div");
-    this.root.className = `pointer-events-auto flex w-56 flex-col gap-2.5 rounded-2xl p-2.5 font-dock ${sheet}`;
+    this.root.className = `pointer-events-auto flex w-64 min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl p-2.5 font-dock ${sheet}`;
     this.root.setAttribute("aria-label", "Brush");
+    const head = document.createElement("div");
+    head.className = "flex min-w-0 items-center justify-between gap-2";
     const title = document.createElement("span");
     title.className = "text-[11px] font-medium tracking-[0.14em] text-canopy/40 uppercase";
     title.textContent = "Brush";
+    const fresh = document.createElement("button");
+    fresh.type = "button";
+    fresh.className = `${btn} min-h-0 px-1.5 py-1 text-canopy/55`;
+    fresh.setAttribute("aria-label", "New brush");
+    fresh.title = "New empty brush";
+    fresh.append(createElement(Plus, { width: 14, height: 14, "stroke-width": 1.75, class: "pointer-events-none" }));
+    fresh.addEventListener("click", () => this.hooks.onNewPreset());
+    head.append(title, fresh);
     this.name = document.createElement("input");
     this.name.type = "text";
     this.name.placeholder = "Preset name";
-    this.name.className = `${field} w-full px-2 py-1.5 text-[12px]`;
+    this.name.className = `${field} min-w-0 w-full overflow-hidden px-2 py-1.5 text-[12px]`;
     this.pick = document.createElement("select");
-    this.pick.className = `${field} w-full px-2 py-1.5 text-[12px]`;
+    this.pick.className = `${field} min-w-0 w-full px-2 py-1.5 text-[12px]`;
     this.pick.addEventListener("change", () => {
       if (this.pick.value) this.hooks.onLoadPreset(this.pick.value);
     });
@@ -102,7 +113,7 @@ export class BrushDock {
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
     hint.textContent = "Space+drag pan · Shift erase · Shift+wheel size · Ctrl+wheel density";
-    this.root.append(title, this.name, this.pick, presetBtns, cap("Items"), this.items, sizeRow, densRow, this.apply, hint);
+    this.root.append(head, this.name, this.pick, presetBtns, cap("Items"), this.items, sizeRow, densRow, this.apply, hint);
     this.root.classList.add("hidden");
     host.append(this.root);
   }
@@ -119,16 +130,16 @@ export class BrushDock {
     this.apply.disabled = !state.ready;
     if (this.name !== document.activeElement) this.name.value = state.presetName;
     this.fillPresets(state.presets, state.active);
-    const sig = state.slots.map((s) => s.asset).join("|");
+    const sig = state.slots.map((s) => s.id).join("|");
     if (sig !== this.sig) {
       this.sig = sig;
       this.fillSlots(state.slots);
       return;
     }
     for (const slot of state.slots) {
-      const pct = this.items.querySelector<HTMLInputElement>(`[data-pct="${slot.asset}"]`);
+      const pct = this.items.querySelector<HTMLInputElement>(`[data-pct="${slot.id}"]`);
       if (pct && pct !== document.activeElement) pct.value = String(slot.pct);
-      const scale = this.items.querySelector<HTMLInputElement>(`[data-scale="${slot.asset}"]`);
+      const scale = this.items.querySelector<HTMLInputElement>(`[data-scale="${slot.id}"]`);
       if (scale && scale !== document.activeElement) scale.value = String(slot.scale);
     }
   }
@@ -174,25 +185,25 @@ export class BrushDock {
     drop.className = `${btn} absolute right-0.5 top-0.5 min-h-0 px-1 py-0.5 text-[10px] text-canopy/70`;
     drop.setAttribute("aria-label", `Remove ${slot.name}`);
     drop.textContent = "×";
-    drop.addEventListener("click", () => this.hooks.onRemoveSlot(slot.asset));
+    drop.addEventListener("click", () => this.hooks.onRemoveSlot(slot.id));
     face.append(drop);
     const pct = document.createElement("input");
     pct.type = "number";
     pct.min = "1";
     pct.max = "100";
     pct.value = String(slot.pct);
-    pct.dataset.pct = slot.asset;
-    pct.className = `${field} w-full px-1.5 py-1 text-center text-[11px] tabular-nums`;
-    pct.addEventListener("change", () => this.hooks.onSlotPct(slot.asset, Number(pct.value)));
+    pct.dataset.pct = slot.id;
+    pct.className = `${field} spin-none min-w-0 w-full px-1 py-1 text-center text-[11px] tabular-nums`;
+    pct.addEventListener("change", () => this.hooks.onSlotPct(slot.id, Number(pct.value)));
     const scale = document.createElement("input");
     scale.type = "number";
     scale.min = String(BRUSH_SCALE_MIN);
     scale.max = String(BRUSH_SCALE_MAX);
     scale.step = "0.1";
     scale.value = String(slot.scale);
-    scale.dataset.scale = slot.asset;
-    scale.className = `${field} min-w-0 flex-1 px-1 py-1 text-center text-[11px] tabular-nums`;
-    scale.addEventListener("change", () => this.hooks.onSlotScale(slot.asset, Number(scale.value)));
+    scale.dataset.scale = slot.id;
+    scale.className = `${field} spin-none min-w-0 w-full px-1 py-1 text-center text-[11px] tabular-nums`;
+    scale.addEventListener("change", () => this.hooks.onSlotScale(slot.id, Number(scale.value)));
     const row = document.createElement("div");
     row.className = "flex items-center gap-1";
     row.append(num(pct, "%"), num(scale, "×"));

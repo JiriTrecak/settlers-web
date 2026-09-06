@@ -1,7 +1,7 @@
 /**
  * Named brush kits in localStorage. Save / load / delete from the brush dock.
  */
-import type { BrushSlot } from "./kit";
+import { mintSlotId, type BrushSlot } from "./kit";
 
 export const BRUSH_PRESET_KEY = "utc.brush-presets";
 
@@ -29,7 +29,7 @@ export class BrushPresetStore {
       name: title,
       radius: spec.radius,
       density: spec.density,
-      slots: spec.slots.map((s) => ({ asset: s.asset, pct: s.pct, scale: s.scale })),
+      slots: spec.slots.map((s) => ({ id: s.id, asset: s.asset, pct: s.pct, scale: s.scale })),
     };
     this.list = existing ? this.list.map((p) => (p.id === existing.id ? next : p)) : [...this.list, next];
     this.active = next.id;
@@ -97,7 +97,8 @@ function parseOne(raw: unknown): BrushPreset | null {
     if (typeof slot.asset !== "string" || typeof slot.pct !== "number") return null;
     const scale = slot.scale;
     if (scale !== undefined && (typeof scale !== "number" || !Number.isFinite(scale))) return null;
-    slots.push({ asset: slot.asset, pct: slot.pct, scale: typeof scale === "number" ? scale : 1 });
+    const id = typeof slot.id === "string" && slot.id ? slot.id : mintSlotId();
+    slots.push({ id, asset: slot.asset, pct: slot.pct, scale: typeof scale === "number" ? scale : 1 });
   }
   return { id: o.id, name: o.name.trim(), radius: o.radius, density: o.density, slots };
 }

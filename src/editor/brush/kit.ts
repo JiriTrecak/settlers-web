@@ -1,7 +1,9 @@
 /**
  * Weighted asset set the foliage brush scatters from.
+ * Slots are addressed by id — same asset can appear twice at different scales.
  */
 export type BrushSlot = {
+  readonly id: string;
   readonly asset: string;
   /** Relative chance. Normalized at pick time. */
   readonly pct: number;
@@ -15,28 +17,32 @@ export class BrushKit {
   slots: BrushSlot[] = [];
 
   add(asset: string): void {
-    if (this.slots.some((s) => s.asset === asset)) return;
-    this.slots = [...this.slots, { asset, pct: 100, scale: 1 }];
+    this.slots = [...this.slots, { id: mintSlotId(), asset, pct: 100, scale: 1 }];
   }
 
-  remove(asset: string): void {
-    this.slots = this.slots.filter((s) => s.asset !== asset);
+  remove(id: string): void {
+    this.slots = this.slots.filter((s) => s.id !== id);
   }
 
-  setPct(asset: string, pct: number): void {
+  clear(): void {
+    this.slots = [];
+  }
+
+  setPct(id: string, pct: number): void {
     const n = Math.min(100, Math.max(1, Math.round(pct)));
-    this.slots = this.slots.map((s) => (s.asset === asset ? { ...s, pct: n } : s));
+    this.slots = this.slots.map((s) => (s.id === id ? { ...s, pct: n } : s));
   }
 
-  setScale(asset: string, scale: number): void {
+  setScale(id: string, scale: number): void {
     const n = clampScale(scale);
-    this.slots = this.slots.map((s) => (s.asset === asset ? { ...s, scale: n } : s));
+    this.slots = this.slots.map((s) => (s.id === id ? { ...s, scale: n } : s));
   }
 
   load(slots: readonly BrushSlot[]): void {
     this.slots = slots
       .filter((s) => s.asset && Number.isFinite(s.pct))
       .map((s) => ({
+        id: s.id || mintSlotId(),
         asset: s.asset,
         pct: Math.min(100, Math.max(1, Math.round(s.pct))),
         scale: clampScale(s.scale ?? 1),
@@ -59,6 +65,10 @@ export function pickSlot(slots: readonly BrushSlot[], rng: () => number): BrushS
     if (n <= 0) return s;
   }
   return slots[slots.length - 1] ?? null;
+}
+
+export function mintSlotId(): string {
+  return crypto.randomUUID();
 }
 
 function clampScale(n: number): number {

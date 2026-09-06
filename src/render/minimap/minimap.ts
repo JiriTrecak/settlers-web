@@ -162,6 +162,9 @@ function tint(id: string): string {
   if (id === "pine-dark") return "#3a6a2a";
   if (id === "pine-umber") return "#6a5428";
   if (id === "boulder") return "#c7b86b";
+  if (id === "rock") return "#b8a878";
+  if (id === "rock-cleft") return "#8e8674";
+  if (id === "rock-slab") return "#c4a66a";
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
   const r = 90 + ((h >>> 16) & 127);

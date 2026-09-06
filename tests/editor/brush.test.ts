@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BrushMask } from "../../src/editor/brush/brush";
-import { pickSlot } from "../../src/editor/brush/kit";
+import { BrushKit, pickSlot } from "../../src/editor/brush/kit";
 import { BrushPresetStore, parsePresets, stringifyPresets } from "../../src/editor/brush/presets";
 import { scatterBrush } from "../../src/editor/brush/scatter";
 
@@ -30,7 +30,7 @@ describe("brush mask", () => {
     mask.radius = 4;
     mask.density = 1.2;
     mask.dab(20, 20, false);
-    const poses = scatterBrush(mask, [], [{ asset: "pine", pct: 100, scale: 1.4 }], rng(7));
+    const poses = scatterBrush(mask, [], [{ id: "s1", asset: "pine", pct: 100, scale: 1.4 }], rng(7));
     expect(poses.length).toBeGreaterThan(2);
     for (const p of poses) {
       expect(mask.sample(p.x + 0.5, p.y + 0.5)).toBeGreaterThan(0.1);
@@ -42,8 +42,8 @@ describe("brush mask", () => {
 
   it("pickSlot follows weights", () => {
     const slots = [
-      { asset: "a", pct: 80, scale: 1 },
-      { asset: "b", pct: 20, scale: 0.5 },
+      { id: "a", asset: "a", pct: 80, scale: 1 },
+      { id: "b", asset: "b", pct: 20, scale: 0.5 },
     ];
     let a = 0;
     const r = rng(3);
@@ -65,8 +65,8 @@ describe("brush mask", () => {
       radius: 4,
       density: 0.5,
       slots: [
-        { asset: "pine", pct: 70, scale: 1 },
-        { asset: "pine-dark", pct: 30, scale: 0.6 },
+        { id: "s1", asset: "pine", pct: 70, scale: 1 },
+        { id: "s2", asset: "pine-dark", pct: 30, scale: 0.6 },
       ],
     });
     const raw = stringifyPresets(a.list);
@@ -76,5 +76,29 @@ describe("brush mask", () => {
     expect(list[0]?.slots[1]?.scale).toBe(0.6);
     const b = new BrushPresetStore(store);
     expect(b.list[0]?.name).toBe("Grove");
+  });
+
+  it("lets the same asset sit in two slots", () => {
+    const kit = new BrushKit();
+    kit.add("pine");
+    kit.add("pine");
+    kit.setScale(kit.slots[1]!.id, 0.8);
+    expect(kit.slots).toHaveLength(2);
+    expect(kit.slots[0]?.asset).toBe("pine");
+    expect(kit.slots[1]?.asset).toBe("pine");
+    expect(kit.slots[0]?.scale).toBe(1);
+    expect(kit.slots[1]?.scale).toBe(0.8);
+    expect(kit.slots[0]?.id).not.toBe(kit.slots[1]?.id);
+  });
+
+  it("reads old presets that have no slot id", () => {
+    const list = parsePresets(
+      JSON.stringify([
+        { id: "p", name: "Old", radius: 4, density: 0.4, slots: [{ asset: "pine", pct: 100 }] },
+      ]),
+    );
+    expect(list[0]?.slots[0]?.asset).toBe("pine");
+    expect(list[0]?.slots[0]?.id).toBeTruthy();
+    expect(list[0]?.slots[0]?.scale).toBe(1);
   });
 });

@@ -1,1 +1,1 @@
-Soft weight mask the foliage brush paints. `BrushKit` is the weighted asset set. Apply runs `scatterBrush` into `MapStamp`s. Named kits live in `BrushPresetStore` (localStorage).
+Soft weight mask the foliage brush paints. `BrushKit` is the weighted asset set — slots have their own id, so the same mesh can sit twice at different scales. Apply runs `scatterBrush` into `MapStamp`s. Named kits live in `BrushPresetStore` (localStorage).

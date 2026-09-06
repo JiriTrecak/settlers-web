@@ -29,5 +29,8 @@ describe("catalogue", () => {
     expect(doc.assets.some((a) => a.id === "pine-dark" && a.category === "foliage")).toBe(true);
     expect(doc.assets.some((a) => a.id === "pine-umber" && a.category === "foliage")).toBe(true);
     expect(doc.assets.some((a) => a.id === "boulder" && a.category === "terrain")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "rock" && a.category === "terrain")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "rock-cleft" && a.category === "terrain")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "rock-slab" && a.category === "terrain")).toBe(true);
   });
 });
