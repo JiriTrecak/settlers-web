@@ -1,3 +1,3 @@
 # grid
 
-Dark plate. Hairline gray cells, fat white every 8, fat red playable, fat blue halo. Ribbons — WebGL lines stay 1px.
+Plate only to the blue halo. Fringe past that is void + grid. Tiles mode (default) is the 16-cell lines (thin). Full adds 50% hairline cells + white eights. Fat red playable, fat blue halo. Ribbons — WebGL lines stay 1px.

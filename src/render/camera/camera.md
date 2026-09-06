@@ -1,3 +1,1 @@
-# camera
-
-Orthographic iso: yaw 45°, pitch arctan(1/√2). `targetX/Z` is the look-at. Pan moves that point on the ground. Zoom is frustum half-height, not a 16×9 pixel scale.
+Orthographic look-at on XZ. Play stays locked true-iso (yaw 45°, pitch arctan(1/√2)). Editor unlocks yaw/pitch and orbits around the look-at. Zoom is frustum half-height. Camera sits `zoom/tan(pitch) + slack` along the view axis so the near plane never slices the ground. `rev` bumps on every mutation — minimap and anything else keys off that, not a field list.

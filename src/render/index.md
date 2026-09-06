@@ -9,8 +9,8 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `renderer/` | Scene, cubes from players, camera apply |
 | `display/` | `WebGLRenderer` + shadows + canvas resize |
 | `grid/` | Ground plane + grid lines + sun |
-| `camera/` | Iso ortho pan / zoom |
-| `input/` | `MapInput` — pan / zoom / WASD. Shared by play and the editor. |
+| `camera/` | Ortho look-at. Play locked iso; editor can orbit |
+| `input/` | `MapInput` — pan / zoom / WASD. Editor also orbits. |
 | `prop/` | Catalog glTF clones on stamp cells |
 | `preview/` | Offscreen iso snapshots for the catalogue |
 | `minimap/` | Iso diamond (2D). Stamps + drag-to-look. Play and editor. |

@@ -1,7 +1,9 @@
 /**
  * Editor docks. Add an object to a list to put a tool on that bar.
+ * `modes` on an action opens a sibling vertical — Grid is the first of those.
  */
-import { FilePlus, FolderOpen, Grid3x3, Library, LogOut, Save, SaveAll, TreePine } from "lucide";
+import { FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, RotateCcw, Save, SaveAll, TreePine } from "lucide";
+import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
 
 export type FileToolHooks = {
@@ -16,6 +18,8 @@ export type GameToolHooks = {
   onStamp(): void;
   onCatalogue(): void;
   onGrid(): void;
+  onGridMode(mode: GridMode): void;
+  onIso(): void;
 };
 
 export function fileTools(hooks: FileToolHooks): IconItem[] {
@@ -34,6 +38,17 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
     { id: "stamp", label: "Stamp", icon: TreePine, run: hooks.onStamp },
     { id: "catalogue", label: "Catalogue", icon: Library, run: hooks.onCatalogue },
     { kind: "sep" },
-    { id: "grid", label: "Grid", icon: Grid3x3, run: hooks.onGrid, latch: true },
+    {
+      id: "grid",
+      label: "Grid",
+      icon: Grid3x3,
+      run: hooks.onGrid,
+      latch: true,
+      modes: [
+        { id: "tiles", label: "Tiles", icon: LayoutGrid, run: () => hooks.onGridMode("tiles") },
+        { id: "full", label: "Full", icon: Grid3x3, run: () => hooks.onGridMode("full") },
+      ],
+    },
+    { id: "iso", label: "Iso", icon: RotateCcw, run: hooks.onIso },
   ];
 }

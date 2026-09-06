@@ -10,7 +10,7 @@ Why first after the skeleton: every new mesh needs a place to drop it on the 256
 
 Authored map + stamps. File format is `.utcmap` (JSON, `v` + `name` + `stamps`). Catalogue is `assets/catalog.json` (pointable).
 
-Chrome: name + file dock, left tools (stamp / catalogue). Catalogue modal to pick and create assets. Stamp with no selection opens the modal; Use / double-click arms the stamp tool.
+Chrome: name + file dock, left tools (stamp / catalogue / grid / iso). Catalogue modal to pick and create assets. Stamp with no selection opens the modal; Use / double-click arms the stamp tool. Camera orbits (Alt-LMB / MMB / RMB); play stays locked iso.
 
 ## Refusals
 

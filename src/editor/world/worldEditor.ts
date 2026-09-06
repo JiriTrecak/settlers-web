@@ -1,7 +1,7 @@
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
-import { DEFAULT_MAP_NAME, emptyUtcMap, MAP_SIZE, type UtcMap } from "../../shared";
+import { DEFAULT_MAP_NAME, emptyUtcMap, inStamp, MAP_SIZE, type GridMode, type UtcMap } from "../../shared";
 import { MapInput, Minimap, Renderer } from "../../render";
 
 export class WorldEditor {
@@ -9,6 +9,7 @@ export class WorldEditor {
   tool: "stamp" | null = "stamp";
   asset: string | null = null;
   gridOn = true;
+  gridMode: GridMode = "tiles";
   private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
@@ -53,11 +54,24 @@ export class WorldEditor {
     this.draw();
   }
 
+  setGridMode(mode: GridMode): void {
+    this.gridMode = mode;
+    this.renderer?.setGridMode(mode);
+    this.draw();
+  }
+
+  resetView(): void {
+    this.renderer?.camera.resetView();
+    this.draw();
+  }
+
   start(): void {
     const renderer = new Renderer(this.canvas, this.urls);
     this.renderer = renderer;
+    renderer.camera.locked = false;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
     this.input = new MapInput(this.canvas, renderer.camera, {
+      orbit: true,
       onChanged: () => this.draw(),
       onClick: (x, y) => this.click(x, y),
     });
@@ -69,6 +83,8 @@ export class WorldEditor {
         this.draw();
       },
     });
+    renderer.setGrid(this.gridOn);
+    renderer.setGridMode(this.gridMode);
     this.paint();
   }
 
@@ -97,7 +113,7 @@ export class WorldEditor {
     if (!hit) return;
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
-    if (x < 0 || y < 0 || x >= MAP_SIZE || y >= MAP_SIZE) return;
+    if (!inStamp(x, y)) return;
     this.map = {
       ...this.map,
       stamps: [...this.map.stamps, { id: crypto.randomUUID(), asset: this.asset, x, y }],

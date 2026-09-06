@@ -2,11 +2,13 @@
  * Iso diamond minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
  */
 import { MAP_SIZE, type MapStamp } from "../../shared";
-import { ISO_PITCH, ISO_YAW, type Camera } from "../camera/camera";
+import type { Camera } from "../camera/camera";
 
 const PX = 264;
 const LAND = "#24282c";
 const VIEW = "#f2eee0";
+const SHEET = "#14161c";
+const RING = 2;
 
 /** Iso diamond. Y is flipped so screen-up matches the camera (away from +X+Z). */
 export function worldToNdc(x: number, z: number, size: number): [number, number] {
@@ -27,9 +29,8 @@ export class Minimap {
   private readonly ctx: CanvasRenderingContext2D;
   private dots: { x: number; z: number; fill: string }[] = [];
   private dirty = true;
-  private lastX = NaN;
-  private lastZ = NaN;
-  private lastZoom = NaN;
+  private lastRev = -1;
+  private lastAspect = NaN;
   private dragging = false;
   private readonly onDown: (e: PointerEvent) => void;
   private readonly onMove: (e: PointerEvent) => void;
@@ -46,12 +47,14 @@ export class Minimap {
   ) {
     this.root = document.createElement("div");
     this.root.className =
-      "pointer-events-auto absolute top-4 right-4 z-10 h-[264px] w-[264px] cursor-grab touch-none bg-sheet p-[2px] [clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]";
+      "pointer-events-auto absolute top-4 right-4 z-10 h-[264px] w-[264px] cursor-grab touch-none [clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]";
     this.root.setAttribute("aria-label", "Minimap");
     this.canvas = document.createElement("canvas");
-    this.canvas.className = "block h-full w-full";
+    this.canvas.className = "absolute inset-0 block h-full w-full";
     this.canvas.width = PX;
     this.canvas.height = PX;
+    this.canvas.style.width = "100%";
+    this.canvas.style.height = "100%";
     const ctx = this.canvas.getContext("2d");
     if (!ctx) throw new Error("minimap: 2d unavailable");
     this.ctx = ctx;
@@ -86,12 +89,11 @@ export class Minimap {
 
   paint(): void {
     const cam = this.spec.camera;
-    if (!this.dirty && cam.targetX === this.lastX && cam.targetZ === this.lastZ && cam.zoom === this.lastZoom) return;
     const aspect = this.spec.aspect();
+    if (!this.dirty && cam.rev === this.lastRev && aspect === this.lastAspect) return;
     this.dirty = false;
-    this.lastX = cam.targetX;
-    this.lastZ = cam.targetZ;
-    this.lastZoom = cam.zoom;
+    this.lastRev = cam.rev;
+    this.lastAspect = aspect;
     const size = this.spec.size ?? MAP_SIZE;
     const ctx = this.ctx;
     const w = this.canvas.width;
@@ -113,6 +115,17 @@ export class Minimap {
     ctx.closePath();
     ctx.strokeStyle = VIEW;
     ctx.lineWidth = 1;
+    ctx.stroke();
+    const o = RING / 2;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5, o);
+    ctx.lineTo(w - o, h * 0.5);
+    ctx.lineTo(w * 0.5, h - o);
+    ctx.lineTo(o, h * 0.5);
+    ctx.closePath();
+    ctx.strokeStyle = SHEET;
+    ctx.lineWidth = RING;
+    ctx.lineJoin = "miter";
     ctx.stroke();
   }
 
@@ -142,26 +155,12 @@ export class Minimap {
 }
 
 function viewQuad(cam: Camera, aspect: number): [number, number][] {
-  const halfH = cam.zoom;
-  const halfW = cam.zoom * Math.max(0.2, aspect);
-  const rx = Math.cos(ISO_YAW);
-  const rz = -Math.sin(ISO_YAW);
-  const fx = Math.sin(ISO_YAW);
-  const fz = Math.cos(ISO_YAW);
-  const lift = 1 / Math.cos(ISO_PITCH);
-  const out: [number, number][] = [];
-  for (const [sx, sy] of [
-    [-1, -1],
-    [1, -1],
-    [1, 1],
-    [-1, 1],
-  ] as const) {
-    out.push([
-      cam.targetX + rx * halfW * sx + fx * halfH * sy * lift,
-      cam.targetZ + rz * halfW * sx + fz * halfH * sy * lift,
-    ]);
-  }
-  return out;
+  return [
+    cam.groundAt(-1, -1, aspect),
+    cam.groundAt(1, -1, aspect),
+    cam.groundAt(1, 1, aspect),
+    cam.groundAt(-1, 1, aspect),
+  ];
 }
 
 function tint(id: string): string {

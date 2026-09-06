@@ -1,6 +1,6 @@
 /** Shared types and math. No Three.js, no DOM. */
 export type { Action, GridPos } from "./types/types";
-export { MAP_FRINGE, MAP_HALO, MAP_ID, MAP_SIZE, MAP_TILE } from "./map/map";
+export { inStamp, MAP_BLOCK, MAP_FRINGE, MAP_HALO, MAP_ID, MAP_SIZE, MAP_TILE, type GridMode } from "./map/map";
 export {
   ASSET_CATEGORIES,
   ASSET_TYPES,

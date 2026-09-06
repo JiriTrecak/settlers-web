@@ -1,23 +1,26 @@
 /**
- * Canvas pan / zoom / WASD. Mutates `camera`. Used by Session and the editor.
+ * Canvas pan / zoom / WASD. Editor also orbits (Alt-LMB, MMB, RMB).
+ * Play leaves `orbit` off so the match stays true-iso.
  */
 import type { Camera } from "../camera/camera";
 
 const WASD_SPEED = 28;
+const CLICK_PX = 5;
 
 export type MapInputHooks = {
   onChanged(): void;
   onClick?(clientX: number, clientY: number): void;
 };
 
-const CLICK_PX = 5;
+type Drag = "pan" | "orbit";
 
 export class MapInput {
   private readonly keys = new Set<string>();
-  private dragging = false;
+  private drag: Drag | null = null;
   private moved = 0;
   private lastX = 0;
   private lastY = 0;
+  private readonly orbit: boolean;
   private readonly onKeyDown: (e: KeyboardEvent) => void;
   private readonly onKeyUp: (e: KeyboardEvent) => void;
   private readonly onPointerDown: (e: PointerEvent) => void;
@@ -29,9 +32,17 @@ export class MapInput {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly camera: Camera,
-    private readonly hooks: MapInputHooks,
+    private readonly hooks: MapInputHooks & { orbit?: boolean },
   ) {
+    this.orbit = hooks.orbit === true;
     this.onKeyDown = (e) => {
+      if (typing(e)) return;
+      if (this.orbit && e.key === "Home") {
+        e.preventDefault();
+        this.camera.resetView();
+        this.hooks.onChanged();
+        return;
+      }
       this.keys.add(e.key.toLowerCase());
     };
     this.onKeyUp = (e) => {
@@ -39,29 +50,31 @@ export class MapInput {
     };
     this.onPointerDown = (e) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
-      this.dragging = true;
+      this.drag = this.orbit && (e.button === 1 || e.button === 2 || e.altKey) ? "orbit" : "pan";
       this.moved = 0;
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.canvas.setPointerCapture(e.pointerId);
     };
     this.onPointerMove = (e) => {
-      if (!this.dragging) return;
+      if (!this.drag) return;
       const dx = e.clientX - this.lastX;
       const dy = e.clientY - this.lastY;
       this.moved += Math.hypot(dx, dy);
-      this.camera.panScreen(dx, dy, this.canvas.clientHeight);
+      if (this.drag === "orbit") this.camera.orbitScreen(dx, dy);
+      else this.camera.panScreen(dx, dy, this.canvas.clientHeight);
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.hooks.onChanged();
     };
     this.onPointerUp = (e) => {
-      this.dragging = false;
+      const clicked = this.drag === "pan" && e.button === 0 && this.moved < CLICK_PX;
+      this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
-      if (e.button === 0 && this.moved < CLICK_PX) this.hooks.onClick?.(e.clientX, e.clientY);
+      if (clicked) this.hooks.onClick?.(e.clientX, e.clientY);
     };
     this.onPointerCancel = (e) => {
-      this.dragging = false;
+      this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
     };
     this.onWheel = (e) => {
@@ -101,4 +114,9 @@ export class MapInput {
     this.canvas.removeEventListener("pointercancel", this.onPointerCancel);
     this.canvas.removeEventListener("wheel", this.onWheel);
   }
+}
+
+function typing(e: KeyboardEvent): boolean {
+  const t = e.target;
+  return t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement;
 }

@@ -1,12 +1,12 @@
 /**
  * Lit iso scene: ground grid + player cubes + catalog stamps.
  */
-import { BoxGeometry, Color, Mesh, MeshStandardMaterial, OrthographicCamera, Plane, Raycaster, Scene, Vector2, Vector3 } from "three";
-import { PLAYER_COLORS, clampPlayer, type MapStamp } from "../../shared";
+import { BoxGeometry, Color, Group, Mesh, MeshStandardMaterial, OrthographicCamera, Plane, Raycaster, Scene, Vector2, Vector3 } from "three";
+import { PLAYER_COLORS, clampPlayer, type GridMode, type MapStamp } from "../../shared";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { Camera } from "../camera/camera";
 import { Display } from "../display/display";
-import { addSunAndGrid } from "../grid/grid";
+import { addSunAndGrid, putGrid } from "../grid/grid";
 import { PropField } from "../prop/propField";
 
 const CUBE = 0.9;
@@ -23,12 +23,15 @@ export class Renderer {
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
   private size = 0;
-  private grid: Mesh | null = null;
+  private readonly lines = new Group();
   gridOn = true;
+  gridMode: GridMode = "tiles";
 
   constructor(canvas: HTMLCanvasElement, assets: ReadonlyMap<string, string> = new Map()) {
     this.display = new Display(canvas, () => this.present());
     this.props = new PropField(this.scene, assets);
+    this.lines.name = "grid-lines";
+    this.scene.add(this.lines);
   }
 
   setAssets(assets: ReadonlyMap<string, string>): void {
@@ -37,14 +40,23 @@ export class Renderer {
 
   setGrid(on: boolean): void {
     this.gridOn = on;
-    if (this.grid) this.grid.visible = on;
+    this.lines.visible = on;
+  }
+
+  setGridMode(mode: GridMode): void {
+    if (this.gridMode === mode) return;
+    this.gridMode = mode;
+    if (!this.size) return;
+    putGrid(this.lines, this.size, mode);
+    this.lines.visible = this.gridOn;
   }
 
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
     if (this.size !== snapshot.size) {
       this.size = snapshot.size;
-      this.grid = addSunAndGrid(this.scene, snapshot.size);
-      this.grid.visible = this.gridOn;
+      this.lines.clear();
+      addSunAndGrid(this.scene, snapshot.size, this.lines, this.gridMode);
+      this.lines.visible = this.gridOn;
     }
     const seen = new Set<number>();
     for (const p of snapshot.players) {

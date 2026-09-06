@@ -3,7 +3,7 @@
  * Owns dirty state, save shortcuts, catalogue modal, and leave/load/new confirms.
  */
 import { Confirm, GameScreen } from "../../ui";
-import { emptyUtcMap, stringifyUtcMap } from "../../shared";
+import { emptyUtcMap, stringifyUtcMap, type GridMode } from "../../shared";
 import { EditorChrome, MapStore, WorldEditor } from "../../editor";
 import { CatalogueStore } from "../../editor/assets/store";
 import { CatalogModal } from "../../editor/chrome/catalogModal";
@@ -41,10 +41,13 @@ export class EditorScreen extends GameScreen {
       onStamp: () => this.stamp(),
       onCatalogue: () => this.openCatalogue(),
       onGrid: () => this.toggleGrid(),
+      onGridMode: (mode) => this.setGridMode(mode),
+      onIso: () => this.editor.resetView(),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
     this.chrome.setGrid(this.editor.gridOn);
+    this.chrome.setGridMode(this.editor.gridMode);
     this.syncAsset();
     this.syncDoc();
     this.onEscape(() => void this.askLeave());
@@ -87,6 +90,11 @@ export class EditorScreen extends GameScreen {
   private toggleGrid(): void {
     this.editor.toggleGrid();
     this.chrome.setGrid(this.editor.gridOn);
+  }
+
+  private setGridMode(mode: GridMode): void {
+    this.editor.setGridMode(mode);
+    this.chrome.setGridMode(this.editor.gridMode);
   }
 
   private openCatalogue(): void {

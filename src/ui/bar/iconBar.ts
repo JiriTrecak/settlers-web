@@ -11,22 +11,26 @@ export type IconAction = {
   run: () => void;
   /** Independent of `setActive` — for on/off tools like the grid. */
   latch?: boolean;
+  /** Sibling mode dock when this tool is on. Same shape as the parent bar. */
+  modes?: readonly IconItem[];
 };
 
 export type IconItem = IconAction | { kind: "sep" };
 
-export type IconBarPlace = "top" | "left" | "inline";
+export type IconBarPlace = "top" | "left" | "inline" | "col";
 
 const PLACE: Record<IconBarPlace, string> = {
   top: "absolute left-1/2 top-4 -translate-x-1/2 flex-row",
   left: "absolute left-4 top-1/2 -translate-y-1/2 flex-col",
   inline: "relative flex-row",
+  col: "relative flex-col",
 };
 
 export class IconBar {
   readonly root: HTMLElement;
   private readonly buttons = new Map<string, HTMLButtonElement>();
   private readonly latch = new Set<string>();
+  private readonly modeItems = new Map<string, readonly IconItem[]>();
 
   constructor(
     host: HTMLElement,
@@ -46,6 +50,7 @@ export class IconBar {
       const el = button(item);
       this.buttons.set(item.id, el);
       if (item.latch) this.latch.add(item.id);
+      if (item.modes) this.modeItems.set(item.id, item.modes);
       this.root.append(el);
     }
     host.append(this.root);
@@ -65,6 +70,14 @@ export class IconBar {
     if (!el) return;
     el.classList.toggle("bg-white/[0.08]", on);
     el.classList.toggle("text-canopy", on);
+  }
+
+  setOpen(on: boolean): void {
+    this.root.classList.toggle("hidden", !on);
+  }
+
+  modesOf(id: string): readonly IconItem[] {
+    return this.modeItems.get(id) ?? [];
   }
 
   destroy(): void {

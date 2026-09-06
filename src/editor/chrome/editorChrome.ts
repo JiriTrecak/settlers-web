@@ -1,8 +1,8 @@
 /**
- * Editor overlay docks. Name + file on top, tools left, selected asset chip.
+ * Editor overlay docks. Name + file on top, tools left, mode flyout beside a latched tool.
  */
 import { IconBar, sheet } from "../../ui";
-import type { CatalogEntry } from "../../shared";
+import type { CatalogEntry, GridMode } from "../../shared";
 import { AssetChip } from "./assetChip";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
@@ -14,9 +14,11 @@ export type EditorChromeHooks = FileToolHooks &
 
 export class EditorChrome {
   private readonly top: HTMLElement;
+  private readonly rail: HTMLElement;
   private readonly title: DocTitle;
   private readonly file: IconBar;
   private readonly game: IconBar;
+  private readonly modes: IconBar;
   private readonly chip: AssetChip;
 
   constructor(host: HTMLElement, hooks: EditorChromeHooks) {
@@ -29,7 +31,11 @@ export class EditorChrome {
     rule.className = "mx-0.5 h-7 w-px bg-white/[0.08]";
     this.top.append(rule);
     this.file = new IconBar(this.top, { place: "inline", label: "File", items: fileTools(hooks), surface: "plain" });
-    this.game = new IconBar(host, { place: "left", label: "Tools", items: gameTools(hooks) });
+    this.rail = document.createElement("div");
+    this.rail.className = "pointer-events-none absolute left-4 top-1/2 z-10 flex -translate-y-1/2 flex-row items-center gap-1.5";
+    host.append(this.rail);
+    this.game = new IconBar(this.rail, { place: "col", label: "Tools", items: gameTools(hooks) });
+    this.modes = new IconBar(this.rail, { place: "col", label: "Modes", items: this.game.modesOf("grid") });
     this.chip = new AssetChip(host, { onOpen: hooks.onCatalogue });
   }
 
@@ -39,6 +45,11 @@ export class EditorChrome {
 
   setGrid(on: boolean): void {
     this.game.setLatch("grid", on);
+    this.modes.setOpen(on);
+  }
+
+  setGridMode(mode: GridMode): void {
+    this.modes.setActive(mode);
   }
 
   setAsset(asset: CatalogEntry | null): void {
@@ -57,7 +68,9 @@ export class EditorChrome {
     this.title.destroy();
     this.file.destroy();
     this.game.destroy();
+    this.modes.destroy();
     this.chip.destroy();
     this.top.remove();
+    this.rail.remove();
   }
 }
