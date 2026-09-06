@@ -10,7 +10,7 @@ Why first after the skeleton: every new mesh needs a place to drop it on the 256
 
 Authored map + stamps. File format is `.utcmap` (JSON, `v` + `name` + `stamps`). Catalogue is `assets/catalog.json` (pointable).
 
-Chrome: name + file dock, left tools (stamp / catalogue / grid / iso). Catalogue modal to pick and create assets. Stamp with no selection opens the modal; Use / double-click arms the stamp tool. Camera orbits (Alt-LMB / MMB / RMB); play stays locked iso.
+Chrome: name + file dock, left tools (stamp / brush / catalogue / grid / Gamecam). Brush paints a red mask; Apply scatters a weighted asset set. Named presets persist. Shift erases; Shift+wheel size; Ctrl+wheel density. Catalogue modal to pick and create assets. Stamp with no selection opens the modal; Use / double-click arms the stamp tool. Camera orbits (Alt-LMB / MMB / RMB) unless Gamecam is on — then WC3 perspective, fixed zoom, pan to half a block past the red. Play is the same Gamecam.
 
 ## Refusals
 

@@ -59,10 +59,11 @@ export class Session {
     this.renderer = renderer;
     const self = this.world.players.find((p) => p.id === this.me) ?? this.world.players[0];
     if (self) renderer.camera.lookAt(self.pos.x + 0.5, self.pos.y + 0.5);
+    renderer.camera.setGame(true);
     this.input = new MapInput(this.canvas, renderer.camera, { onChanged: () => this.present() });
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
-      aspect: () => this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight),
+      viewport: () => ({ w: this.canvas.clientWidth, h: this.canvas.clientHeight }),
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
         this.present();
@@ -125,7 +126,7 @@ export class Session {
       this.fpsFrames = 0;
       this.fpsMs = 0;
     }
-    this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.zoom });
+      this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.distance });
   }
 
   stop(): void {

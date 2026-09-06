@@ -9,10 +9,11 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `renderer/` | Scene, cubes from players, camera apply |
 | `display/` | `WebGLRenderer` + shadows + canvas resize |
 | `grid/` | Ground plane + grid lines + sun |
-| `camera/` | Ortho look-at. Play locked iso; editor can orbit |
+| `camera/` | Editor ortho orbit. Play / Gamecam is WC3 perspective |
 | `input/` | `MapInput` — pan / zoom / WASD. Editor also orbits. |
 | `prop/` | Catalog glTF clones on stamp cells |
+| `brush/` | Red splat + ring cursor for the foliage brush |
 | `preview/` | Offscreen iso snapshots for the catalogue |
-| `minimap/` | Iso diamond (2D). Stamps + drag-to-look. Play and editor. |
+| `minimap/` | Iso diamond. Perspective view trap from `camera.viewGround`. |
 
 Public entry: `index.ts`.

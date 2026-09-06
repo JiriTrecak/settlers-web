@@ -26,6 +26,8 @@ describe("catalogue", () => {
   it("ships pine in the project catalogue", () => {
     const doc = projectCatalogue();
     expect(doc.assets.some((a) => a.id === "pine" && a.category === "foliage")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "pine-dark" && a.category === "foliage")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "pine-umber" && a.category === "foliage")).toBe(true);
     expect(doc.assets.some((a) => a.id === "boulder" && a.category === "terrain")).toBe(true);
   });
 });

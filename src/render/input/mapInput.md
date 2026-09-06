@@ -1,1 +1,1 @@
-`MapInput` — canvas drag pan, wheel zoom, WASD. Editor passes `orbit` so Alt-LMB / MMB / RMB rotate the view (Home / Iso resets). Play does not.
+`MapInput` — canvas drag pan, wheel zoom, WASD. Editor passes `orbit` so Alt-LMB / MMB / RMB rotate the view. Home / Gamecam is `onHome`. Brush mode (`paint`) steals LMB for the mask; Space+drag pans; Shift+wheel / Ctrl+wheel tweak the brush. Play does not orbit.

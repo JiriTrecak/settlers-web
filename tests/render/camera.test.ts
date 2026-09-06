@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { OrthographicCamera, Vector3 } from "three";
-import { Camera, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
+import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
+import { MAP_BLOCK, MAP_SIZE } from "../../src/shared";
+import { Camera, GAME_FOV, GAME_PITCH, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 
 describe("iso camera", () => {
   it("lookAt then applyTo does not throw and sets a projection", () => {
@@ -76,5 +77,66 @@ describe("iso camera", () => {
     const [x, z] = cam.groundAt(0, -1, 1280 / 720);
     expect(x).toBeCloseTo(hit.x, 4);
     expect(z).toBeCloseTo(hit.z, 4);
+  });
+
+  it("setGame locks WC3 perspective, frames two blocks, and ignores zoom/orbit", () => {
+    const cam = new Camera();
+    cam.locked = false;
+    cam.lookAt(128, 128);
+    cam.orbitScreen(80, 0);
+    cam.setGame(true);
+    expect(cam.game).toBe(true);
+    expect(cam.locked).toBe(true);
+    expect(cam.yaw).toBe(ISO_YAW);
+    expect(cam.pitch).toBe(GAME_PITCH);
+    const three = new PerspectiveCamera();
+    cam.applyTo(three, 1024, 1024);
+    expect(three.fov).toBe(GAME_FOV);
+    const a = cam.groundAt(0, -1, 1);
+    const b = cam.groundAt(0, 1, 1);
+    expect(Math.hypot(b[0] - a[0], b[1] - a[1])).toBeCloseTo(MAP_BLOCK * 2, 1);
+    const dist = cam.distance;
+    const yaw = cam.yaw;
+    cam.zoomBy(1.5);
+    cam.orbitScreen(80, 40);
+    expect(cam.distance).toBe(dist);
+    expect(cam.yaw).toBe(yaw);
+  });
+
+  it("setGame clamps the perspective footprint to half a block past the red", () => {
+    const pad = MAP_BLOCK / 2;
+    const cam = new Camera();
+    cam.lookAt(-80, -80);
+    cam.setGame(true);
+    cam.applyTo(new PerspectiveCamera(), 1280, 720);
+    let minX = Infinity;
+    let minZ = Infinity;
+    for (const ndc of [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1],
+    ] as const) {
+      const [x, z] = cam.groundAt(ndc[0], ndc[1], 1280 / 720);
+      minX = Math.min(minX, x);
+      minZ = Math.min(minZ, z);
+      expect(x).toBeGreaterThanOrEqual(-pad - 0.05);
+      expect(z).toBeGreaterThanOrEqual(-pad - 0.05);
+      expect(x).toBeLessThanOrEqual(MAP_SIZE + pad + 0.05);
+      expect(z).toBeLessThanOrEqual(MAP_SIZE + pad + 0.05);
+    }
+    expect(minX).toBeLessThan(-1);
+    expect(minZ).toBeLessThan(-1);
+  });
+
+  it("setGame(false) unlocks and stops clamping", () => {
+    const cam = new Camera();
+    cam.setGame(true);
+    cam.setGame(false);
+    expect(cam.game).toBe(false);
+    expect(cam.locked).toBe(false);
+    cam.lookAt(-10, -10);
+    expect(cam.targetX).toBe(-10);
+    expect(cam.targetZ).toBe(-10);
   });
 });

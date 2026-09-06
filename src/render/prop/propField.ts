@@ -27,7 +27,7 @@ export class PropField {
       seen.add(stamp.id);
       const existing = this.placed.get(stamp.id);
       if (existing) {
-        existing.position.set(stamp.x + 0.5, 0, stamp.y + 0.5);
+        place(existing, stamp);
         continue;
       }
       void this.spawn(stamp, gen);
@@ -49,7 +49,7 @@ export class PropField {
     const proto = await this.proto(stamp.asset);
     if (gen !== this.gen || !proto || this.placed.has(stamp.id)) return;
     const mesh = proto.clone();
-    mesh.position.set(stamp.x + 0.5, 0, stamp.y + 0.5);
+    place(mesh, stamp);
     this.scene.add(mesh);
     this.placed.set(stamp.id, mesh);
   }
@@ -75,4 +75,11 @@ export class PropField {
       return null;
     }
   }
+}
+
+function place(mesh: Object3D, stamp: MapStamp): void {
+  const s = stamp.scale ?? 1;
+  mesh.position.set(stamp.x + 0.5, 0, stamp.y + 0.5);
+  mesh.rotation.y = stamp.yaw ?? 0;
+  mesh.scale.setScalar(s);
 }

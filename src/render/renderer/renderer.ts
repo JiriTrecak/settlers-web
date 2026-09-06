@@ -1,12 +1,26 @@
 /**
  * Lit iso scene: ground grid + player cubes + catalog stamps.
  */
-import { BoxGeometry, Color, Group, Mesh, MeshStandardMaterial, OrthographicCamera, Plane, Raycaster, Scene, Vector2, Vector3 } from "three";
+import {
+  BoxGeometry,
+  Color,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Plane,
+  Raycaster,
+  Scene,
+  Vector2,
+  Vector3,
+} from "three";
 import { PLAYER_COLORS, clampPlayer, type GridMode, type MapStamp } from "../../shared";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { Camera } from "../camera/camera";
 import { Display } from "../display/display";
 import { addSunAndGrid, putGrid } from "../grid/grid";
+import { BrushLayer } from "../brush/brushLayer";
 import { PropField } from "../prop/propField";
 
 const CUBE = 0.9;
@@ -16,9 +30,11 @@ export class Renderer {
   readonly camera = new Camera();
   private readonly display: Display;
   private readonly scene = new Scene();
-  private readonly threeCam = new OrthographicCamera();
+  private readonly ortho = new OrthographicCamera();
+  private readonly persp = new PerspectiveCamera();
   private readonly cubes = new Map<number, Mesh>();
   private readonly props: PropField;
+  readonly brush: BrushLayer;
   private readonly ray = new Raycaster();
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
@@ -30,6 +46,7 @@ export class Renderer {
   constructor(canvas: HTMLCanvasElement, assets: ReadonlyMap<string, string> = new Map()) {
     this.display = new Display(canvas, () => this.present());
     this.props = new PropField(this.scene, assets);
+    this.brush = new BrushLayer(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
   }
@@ -44,11 +61,11 @@ export class Renderer {
   }
 
   setGridMode(mode: GridMode): void {
-    if (this.gridMode === mode) return;
     this.gridMode = mode;
-    if (!this.size) return;
-    putGrid(this.lines, this.size, mode);
+    this.gridOn = mode !== "none";
     this.lines.visible = this.gridOn;
+    if (!this.gridOn || !this.size) return;
+    putGrid(this.lines, this.size, mode);
   }
 
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
@@ -91,19 +108,26 @@ export class Renderer {
   pickGround(clientX: number, clientY: number): { x: number; z: number } | null {
     const rect = this.display.canvas.getBoundingClientRect();
     if (rect.width < 1 || rect.height < 1) return null;
-    this.camera.applyTo(this.threeCam, this.display.width, this.display.height);
+    const cam = this.threeCam();
+    this.camera.applyTo(cam, this.display.width, this.display.height);
     this.ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -(((clientY - rect.top) / rect.height) * 2 - 1));
-    this.ray.setFromCamera(this.ndc, this.threeCam);
+    this.ray.setFromCamera(this.ndc, cam);
     if (!this.ray.ray.intersectPlane(GROUND, this.hit)) return null;
     return { x: this.hit.x, z: this.hit.z };
   }
 
   present(): void {
-    this.camera.applyTo(this.threeCam, this.display.width, this.display.height);
-    this.display.render(this.scene, this.threeCam);
+    const cam = this.threeCam();
+    this.camera.applyTo(cam, this.display.width, this.display.height);
+    this.display.render(this.scene, cam);
+  }
+
+  private threeCam(): OrthographicCamera | PerspectiveCamera {
+    return this.camera.game ? this.persp : this.ortho;
   }
 
   destroy(): void {
+    this.brush.destroy(this.scene);
     this.props.destroy();
     this.display.destroy();
   }

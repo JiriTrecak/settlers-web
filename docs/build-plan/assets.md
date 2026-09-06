@@ -6,7 +6,7 @@ Catalogue file: [`assets/catalog.json`](../../assets/catalog.json). Default the 
 
 ## Now
 
-`pine` (foliage) + `boulder` (terrain). Catalogue modal to pick / create. Stamp places the selection.
+`pine` / `pine-dark` / `pine-umber` (foliage) + `boulder` (terrain). Catalogue modal to pick / create. Stamp places the selection.
 
 ## First wave
 

@@ -73,6 +73,7 @@ export function putGrid(lines: Object3D, size: number, mode: GridMode): void {
   const lo = visLo - MAP_FRINGE;
   const hi = visHi + MAP_FRINGE;
   while (lines.children.length) lines.remove(lines.children[0]!);
+  if (mode === "none") return;
   const { solid, fine } = buildGrid(size, lo, hi, visLo, visHi, mode);
   lines.add(solid);
   if (fine) lines.add(fine);

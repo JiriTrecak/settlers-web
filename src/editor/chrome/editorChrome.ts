@@ -4,11 +4,14 @@
 import { IconBar, sheet } from "../../ui";
 import type { CatalogEntry, GridMode } from "../../shared";
 import { AssetChip } from "./assetChip";
+import { BrushDock, type BrushDockHooks, type BrushDockState } from "./brushDock";
+import { CameraHint } from "./cameraHint";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
 
 export type EditorChromeHooks = FileToolHooks &
-  GameToolHooks & {
+  GameToolHooks &
+  BrushDockHooks & {
     onName(name: string): void;
   };
 
@@ -19,7 +22,9 @@ export class EditorChrome {
   private readonly file: IconBar;
   private readonly game: IconBar;
   private readonly modes: IconBar;
+  private readonly brush: BrushDock;
   private readonly chip: AssetChip;
+  private readonly hint: CameraHint;
 
   constructor(host: HTMLElement, hooks: EditorChromeHooks) {
     this.top = document.createElement("div");
@@ -36,20 +41,36 @@ export class EditorChrome {
     host.append(this.rail);
     this.game = new IconBar(this.rail, { place: "col", label: "Tools", items: gameTools(hooks) });
     this.modes = new IconBar(this.rail, { place: "col", label: "Modes", items: this.game.modesOf("grid") });
+    this.brush = new BrushDock(this.rail, hooks);
     this.chip = new AssetChip(host, { onOpen: hooks.onCatalogue });
+    this.hint = new CameraHint(host);
   }
 
   setTool(id: string | null): void {
     this.game.setActive(id);
   }
 
-  setGrid(on: boolean): void {
+  /** Grid latch = submenu open, not line visibility. */
+  setGridMenu(on: boolean): void {
     this.game.setLatch("grid", on);
     this.modes.setOpen(on);
   }
 
   setGridMode(mode: GridMode): void {
-    this.modes.setActive(mode);
+    this.modes.setActive(mode === "none" ? null : mode);
+  }
+
+  setGameCam(on: boolean): void {
+    this.game.setLatch("gamecam", on);
+    this.hint.setGame(on);
+  }
+
+  setBrushOpen(on: boolean): void {
+    this.brush.setOpen(on);
+  }
+
+  setBrush(state: BrushDockState): void {
+    this.brush.set(state);
   }
 
   setAsset(asset: CatalogEntry | null): void {
@@ -69,7 +90,9 @@ export class EditorChrome {
     this.file.destroy();
     this.game.destroy();
     this.modes.destroy();
+    this.brush.destroy();
     this.chip.destroy();
+    this.hint.destroy();
     this.top.remove();
     this.rail.remove();
   }

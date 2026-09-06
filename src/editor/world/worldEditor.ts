@@ -3,13 +3,19 @@
  */
 import { DEFAULT_MAP_NAME, emptyUtcMap, inStamp, MAP_SIZE, type GridMode, type UtcMap } from "../../shared";
 import { MapInput, Minimap, Renderer } from "../../render";
+import { BrushMask } from "../brush/brush";
+import { BrushKit } from "../brush/kit";
+import { scatterBrush } from "../brush/scatter";
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
-  tool: "stamp" | null = "stamp";
+  tool: "stamp" | "brush" | null = "stamp";
   asset: string | null = null;
-  gridOn = true;
+  gridMenu = false;
   gridMode: GridMode = "tiles";
+  gameCam = false;
+  readonly brush = new BrushMask();
+  readonly kit = new BrushKit();
   private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
@@ -17,7 +23,13 @@ export class WorldEditor {
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly hooks: { host: HTMLElement; onChange?: () => void; onNeedAsset?: () => void },
+    private readonly hooks: {
+      host: HTMLElement;
+      onChange?: () => void;
+      onNeedAsset?: () => void;
+      onView?: () => void;
+      onBrush?: () => void;
+    },
   ) {}
 
   replace(map: UtcMap): void {
@@ -39,30 +51,77 @@ export class WorldEditor {
     this.paint();
   }
 
-  setTool(tool: "stamp" | null): void {
+  setTool(tool: "stamp" | "brush" | null): void {
     this.tool = tool;
+    if (tool === "brush") this.gridMenu = false;
+    this.renderer?.brush.setOpen(tool === "brush");
+    this.syncBrushView();
   }
 
   setAsset(id: string): void {
     this.asset = id;
-    this.tool = "stamp";
+    if (this.tool === null) this.tool = "stamp";
   }
 
-  toggleGrid(): void {
-    this.gridOn = !this.gridOn;
-    this.renderer?.setGrid(this.gridOn);
-    this.draw();
+  toggleGridMenu(): void {
+    this.gridMenu = !this.gridMenu;
+    if (this.gridMenu && this.tool === "brush") this.setTool("stamp");
   }
 
   setGridMode(mode: GridMode): void {
     this.gridMode = mode;
+    if (mode === "none") this.gridMenu = false;
     this.renderer?.setGridMode(mode);
     this.draw();
   }
 
-  resetView(): void {
-    this.renderer?.camera.resetView();
+  toggleGameCam(): void {
+    this.setGameCam(!this.gameCam);
+  }
+
+  setGameCam(on: boolean): void {
+    this.gameCam = on;
+    this.renderer?.camera.setGame(on);
     this.draw();
+    this.hooks.onView?.();
+  }
+
+  setBrushRadius(n: number): void {
+    this.brush.setRadius(n);
+    this.hooks.onBrush?.();
+  }
+
+  setBrushDensity(n: number): void {
+    this.brush.setDensity(n);
+    this.hooks.onBrush?.();
+  }
+
+  applyBrush(): void {
+    if (!this.kit.slots.length) {
+      this.hooks.onNeedAsset?.();
+      return;
+    }
+    const poses = scatterBrush(this.brush, this.map.stamps, this.kit.slots);
+    if (!poses.length) return;
+    this.map = {
+      ...this.map,
+      stamps: [
+        ...this.map.stamps,
+        ...poses.map((p) => ({
+          id: crypto.randomUUID(),
+          asset: p.asset,
+          x: p.x,
+          y: p.y,
+          yaw: p.yaw,
+          ...(p.scale !== 1 ? { scale: p.scale } : {}),
+        })),
+      ],
+    };
+    this.brush.clear();
+    this.syncBrushView();
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onBrush?.();
   }
 
   start(): void {
@@ -70,22 +129,39 @@ export class WorldEditor {
     this.renderer = renderer;
     renderer.camera.locked = false;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
+    if (this.gameCam) renderer.camera.setGame(true);
     this.input = new MapInput(this.canvas, renderer.camera, {
       orbit: true,
       onChanged: () => this.draw(),
       onClick: (x, y) => this.click(x, y),
+      onHome: () => this.toggleGameCam(),
+      paint: {
+        on: () => this.tool === "brush",
+        hover: (x, y) => this.hover(x, y),
+        stroke: (x, y, erase) => this.stroke(x, y, erase),
+        beginStroke: () => this.brush.beginStroke(),
+        sizeBy: (steps) => {
+          this.brush.sizeBy(steps);
+          this.hooks.onBrush?.();
+        },
+        densityBy: (steps) => {
+          this.brush.densityBy(steps);
+          this.hooks.onBrush?.();
+        },
+      },
     });
     this.mini = new Minimap(this.hooks.host, {
       camera: renderer.camera,
-      aspect: () => this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight),
+      viewport: () => ({ w: this.canvas.clientWidth, h: this.canvas.clientHeight }),
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
         this.draw();
       },
     });
-    renderer.setGrid(this.gridOn);
     renderer.setGridMode(this.gridMode);
+    renderer.brush.setOpen(this.tool === "brush");
     this.paint();
+    this.syncBrushView();
   }
 
   tick(dtMs: number): void {
@@ -100,6 +176,32 @@ export class WorldEditor {
     this.mini = null;
     this.renderer?.destroy();
     this.renderer = null;
+  }
+
+  private hover(clientX: number, clientY: number): void {
+    const hit = this.renderer?.pickGround(clientX, clientY);
+    if (!hit) {
+      this.renderer?.brush.setCursor(0, 0, this.brush.radius, false);
+      return;
+    }
+    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true);
+  }
+
+  private stroke(clientX: number, clientY: number, erase: boolean): void {
+    const hit = this.renderer?.pickGround(clientX, clientY);
+    if (!hit) return;
+    this.brush.stroke(hit.x, hit.z, erase);
+    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true);
+    this.syncBrushView();
+    this.hooks.onBrush?.();
+  }
+
+  private syncBrushView(): void {
+    const layer = this.renderer?.brush;
+    if (!layer) return;
+    layer.sync(this.brush.weights, this.brush.origin, this.brush.span);
+    layer.setOpen(this.tool === "brush");
+    this.brush.dirty = false;
   }
 
   private click(clientX: number, clientY: number): void {

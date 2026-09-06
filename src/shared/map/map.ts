@@ -8,7 +8,7 @@ export const MAP_TILE = 8;
 export const MAP_BLOCK = MAP_TILE * 2;
 /** Visible + stampable (foliage). Not playable. Two major tiles each side. */
 export const MAP_HALO = MAP_BLOCK;
-export type GridMode = "tiles" | "full";
+export type GridMode = "tiles" | "full" | "none";
 /** Grid-only past the blue — orientation, no plate, no stamps. */
 export const MAP_FRINGE = MAP_TILE * 2;
 

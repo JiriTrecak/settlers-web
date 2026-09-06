@@ -10,6 +10,20 @@
       "file": "props/pine.gltf"
     },
     {
+      "id": "pine-dark",
+      "name": "Pine dark",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/pine-dark.gltf"
+    },
+    {
+      "id": "pine-umber",
+      "name": "Pine umber",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/pine-umber.gltf"
+    },
+    {
       "id": "boulder",
       "name": "Boulder",
       "category": "terrain",

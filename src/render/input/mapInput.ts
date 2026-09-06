@@ -1,6 +1,6 @@
 /**
  * Canvas pan / zoom / WASD. Editor also orbits (Alt-LMB, MMB, RMB).
- * Play leaves `orbit` off so the match stays true-iso.
+ * Play leaves `orbit` off so the match stays true-iso. Home / Gamecam is an editor hook.
  */
 import type { Camera } from "../camera/camera";
 
@@ -10,9 +10,19 @@ const CLICK_PX = 5;
 export type MapInputHooks = {
   onChanged(): void;
   onClick?(clientX: number, clientY: number): void;
+  onHome?: () => void;
+  /** Editor foliage brush. LMB paints; Shift erases; Shift/Ctrl+wheel tweak the brush. */
+  paint?: {
+    on(): boolean;
+    hover(clientX: number, clientY: number): void;
+    stroke(clientX: number, clientY: number, erase: boolean): void;
+    beginStroke(): void;
+    sizeBy(steps: number): void;
+    densityBy(steps: number): void;
+  };
 };
 
-type Drag = "pan" | "orbit";
+type Drag = "pan" | "orbit" | "stroke";
 
 export class MapInput {
   private readonly keys = new Set<string>();
@@ -37,31 +47,56 @@ export class MapInput {
     this.orbit = hooks.orbit === true;
     this.onKeyDown = (e) => {
       if (typing(e)) return;
-      if (this.orbit && e.key === "Home") {
+      if (e.code === "Space") {
         e.preventDefault();
-        this.camera.resetView();
-        this.hooks.onChanged();
+        this.keys.add(" ");
+        return;
+      }
+      if (e.key === "Home" && (this.orbit || this.hooks.onHome)) {
+        e.preventDefault();
+        if (this.hooks.onHome) this.hooks.onHome();
+        else {
+          this.camera.resetView();
+          this.hooks.onChanged();
+        }
         return;
       }
       this.keys.add(e.key.toLowerCase());
     };
     this.onKeyUp = (e) => {
+      if (e.code === "Space") this.keys.delete(" ");
       this.keys.delete(e.key.toLowerCase());
     };
     this.onPointerDown = (e) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
-      this.drag = this.orbit && (e.button === 1 || e.button === 2 || e.altKey) ? "orbit" : "pan";
+      const paint = this.hooks.paint;
+      if (paint?.on() && e.button === 0 && !e.altKey && !this.keys.has(" ")) {
+        this.drag = "stroke";
+        this.moved = 0;
+        this.lastX = e.clientX;
+        this.lastY = e.clientY;
+        paint.beginStroke();
+        paint.stroke(e.clientX, e.clientY, e.shiftKey);
+        this.canvas.setPointerCapture(e.pointerId);
+        this.hooks.onChanged();
+        return;
+      }
+      this.drag = this.orbit && !this.camera.locked && (e.button === 1 || e.button === 2 || e.altKey) ? "orbit" : "pan";
       this.moved = 0;
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.canvas.setPointerCapture(e.pointerId);
     };
     this.onPointerMove = (e) => {
-      if (!this.drag) return;
+      if (!this.drag) {
+        if (this.hooks.paint?.on()) this.hooks.paint.hover(e.clientX, e.clientY);
+        return;
+      }
       const dx = e.clientX - this.lastX;
       const dy = e.clientY - this.lastY;
       this.moved += Math.hypot(dx, dy);
-      if (this.drag === "orbit") this.camera.orbitScreen(dx, dy);
+      if (this.drag === "stroke") this.hooks.paint?.stroke(e.clientX, e.clientY, e.shiftKey);
+      else if (this.drag === "orbit") this.camera.orbitScreen(dx, dy);
       else this.camera.panScreen(dx, dy, this.canvas.clientHeight);
       this.lastX = e.clientX;
       this.lastY = e.clientY;
@@ -79,6 +114,18 @@ export class MapInput {
     };
     this.onWheel = (e) => {
       e.preventDefault();
+      const paint = this.hooks.paint;
+      const steps = e.deltaY > 0 ? -1 : 1;
+      if (paint?.on() && e.shiftKey) {
+        paint.sizeBy(steps);
+        this.hooks.onChanged();
+        return;
+      }
+      if (paint?.on() && (e.ctrlKey || e.metaKey)) {
+        paint.densityBy(steps);
+        this.hooks.onChanged();
+        return;
+      }
       this.camera.zoomBy(e.deltaY > 0 ? 1.1 : 1 / 1.1);
       this.hooks.onChanged();
     };

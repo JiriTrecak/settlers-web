@@ -6,12 +6,15 @@ import { Confirm, GameScreen } from "../../ui";
 import { emptyUtcMap, stringifyUtcMap, type GridMode } from "../../shared";
 import { EditorChrome, MapStore, WorldEditor } from "../../editor";
 import { CatalogueStore } from "../../editor/assets/store";
+import { BrushPresetStore } from "../../editor/brush/presets";
 import { CatalogModal } from "../../editor/chrome/catalogModal";
 
 export class EditorScreen extends GameScreen {
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
+  private readonly presets = new BrushPresetStore();
+  private presetName = "";
   private readonly chrome: EditorChrome;
   private readonly onLeave: () => void;
   private saved = stringifyUtcMap(emptyUtcMap());
@@ -27,6 +30,8 @@ export class EditorScreen extends GameScreen {
       host: this.root,
       onChange: () => this.syncDoc(),
       onNeedAsset: () => this.openCatalogue(),
+      onView: () => this.chrome.setGameCam(this.editor.gameCam),
+      onBrush: () => this.syncBrush(),
     });
     this.editor.setLibrary(this.library.urls());
     const first = this.library.doc.assets[0];
@@ -39,15 +44,37 @@ export class EditorScreen extends GameScreen {
       onLoad: () => void this.askLoad(),
       onLeave: () => void this.askLeave(),
       onStamp: () => this.stamp(),
+      onBrush: () => this.armBrush(),
       onCatalogue: () => this.openCatalogue(),
-      onGrid: () => this.toggleGrid(),
+      onGrid: () => this.toggleGridMenu(),
       onGridMode: (mode) => this.setGridMode(mode),
-      onIso: () => this.editor.resetView(),
+      onGameCam: () => this.editor.toggleGameCam(),
+      onRadius: (n) => this.editor.setBrushRadius(n),
+      onDensity: (n) => this.editor.setBrushDensity(n),
+      onApply: () => this.editor.applyBrush(),
+      onAddSlot: () => this.openCatalogue("brush"),
+      onRemoveSlot: (id) => {
+        this.editor.kit.remove(id);
+        this.syncBrush();
+      },
+      onSlotPct: (id, pct) => {
+        this.editor.kit.setPct(id, pct);
+        this.syncBrush();
+      },
+      onSlotScale: (id, scale) => {
+        this.editor.kit.setScale(id, scale);
+        this.syncBrush();
+      },
+      onSavePreset: (name) => this.savePreset(name),
+      onDeletePreset: () => void this.askDeletePreset(),
+      onLoadPreset: (id) => this.loadPreset(id),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
-    this.chrome.setGrid(this.editor.gridOn);
+    this.chrome.setGridMenu(this.editor.gridMenu);
     this.chrome.setGridMode(this.editor.gridMode);
+    this.chrome.setGameCam(this.editor.gameCam);
+    this.syncBrush();
     this.syncAsset();
     this.syncDoc();
     this.onEscape(() => void this.askLeave());
@@ -84,27 +111,103 @@ export class EditorScreen extends GameScreen {
     else {
       this.editor.setTool("stamp");
       this.chrome.setTool("stamp");
+      this.chrome.setGridMenu(this.editor.gridMenu);
+      this.syncBrush();
     }
   }
 
-  private toggleGrid(): void {
-    this.editor.toggleGrid();
-    this.chrome.setGrid(this.editor.gridOn);
+  private armBrush(): void {
+    if (!this.editor.kit.slots.length) {
+      if (this.editor.asset) this.editor.kit.add(this.editor.asset);
+      else this.openCatalogue("brush");
+    }
+    this.editor.setTool("brush");
+    this.chrome.setTool("brush");
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.syncBrush();
+  }
+
+  private syncBrush(): void {
+    const urls = this.library.urls();
+    this.chrome.setBrushOpen(this.editor.tool === "brush");
+    this.chrome.setBrush({
+      radius: this.editor.brush.radius,
+      density: this.editor.brush.density,
+      ready: this.editor.brush.any() && this.editor.kit.slots.length > 0,
+      slots: this.editor.kit.slots.map((s) => ({
+        ...s,
+        name: this.library.entry(s.asset)?.name ?? s.asset,
+        url: urls.get(s.asset),
+      })),
+      presets: this.presets.list,
+      active: this.presets.active,
+      presetName: this.presetName,
+    });
+  }
+
+  private savePreset(name: string): void {
+    const next = this.presets.save(name, {
+      radius: this.editor.brush.radius,
+      density: this.editor.brush.density,
+      slots: this.editor.kit.slots,
+    });
+    this.presetName = next.name;
+    this.syncBrush();
+  }
+
+  private loadPreset(id: string): void {
+    const p = this.presets.get(id);
+    if (!p) return;
+    this.presets.active = id;
+    this.presetName = p.name;
+    this.editor.kit.load(p.slots);
+    this.editor.setBrushRadius(p.radius);
+    this.editor.setBrushDensity(p.density);
+    this.syncBrush();
+  }
+
+  private async askDeletePreset(): Promise<void> {
+    if (!this.presets.active) return;
+    const p = this.presets.get(this.presets.active);
+    const choice = await this.confirm("Delete preset", `Remove “${p?.name ?? "this preset"}”?`, [
+      { id: "cancel", label: "Cancel" },
+      { id: "delete", label: "Delete", kind: "danger" },
+    ]);
+    if (choice !== "delete") return;
+    this.presets.remove(this.presets.active);
+    const still = this.presets.active ? this.presets.get(this.presets.active) : undefined;
+    this.presetName = still?.name ?? "";
+    if (still) {
+      this.editor.kit.load(still.slots);
+      this.editor.setBrushRadius(still.radius);
+      this.editor.setBrushDensity(still.density);
+    }
+    this.syncBrush();
+  }
+
+  private toggleGridMenu(): void {
+    this.editor.toggleGridMenu();
+    this.chrome.setTool(this.editor.tool);
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.syncBrush();
   }
 
   private setGridMode(mode: GridMode): void {
     this.editor.setGridMode(mode);
+    this.chrome.setGridMenu(this.editor.gridMenu);
     this.chrome.setGridMode(this.editor.gridMode);
   }
 
-  private openCatalogue(): void {
+  private openCatalogue(forTool: "stamp" | "brush" = this.editor.tool === "brush" ? "brush" : "stamp"): void {
     if (this.modal) return;
     this.modal = new CatalogModal(this.root, {
       store: this.library,
-      selected: this.editor.asset,
+      selected: forTool === "brush" ? (this.editor.kit.slots.at(-1)?.asset ?? this.editor.asset) : this.editor.asset,
       onPick: (id) => {
-        this.pickAsset(id);
+        if (forTool === "brush") this.editor.kit.add(id);
+        else this.pickAsset(id);
         this.modal?.close();
+        this.syncBrush();
       },
       onClose: () => {
         this.modal = null;
@@ -118,7 +221,8 @@ export class EditorScreen extends GameScreen {
 
   private pickAsset(id: string): void {
     this.editor.setAsset(id);
-    this.chrome.setTool("stamp");
+    this.chrome.setTool(this.editor.tool);
+    this.syncBrush();
     this.syncAsset();
   }
 

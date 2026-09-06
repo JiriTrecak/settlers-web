@@ -8,7 +8,9 @@ First wave — landscape only. Readable from iso. No units or buildings yet.
 
 | Id | Category | Why |
 |---|---|---|
-| `pine` | foliage | Forest mass. **In.** |
+| `pine` | foliage | Forest mass, green. **In.** |
+| `pine-dark` | foliage | Darker needles. **In.** |
+| `pine-umber` | foliage | Brown-olive. **In.** |
 | oak | foliage | Deciduous contrast |
 | `boulder` | terrain | Occupy-a-cell rock. **In.** |
 | fern | foliage | Understory |

@@ -7,6 +7,7 @@ No `Session`, no lockstep, no `World.tick`.
 | Folder | Owns |
 |---|---|
 | `world/` | `WorldEditor` — view + current `UtcMap` |
+| `brush/` | Foliage mask + scatter → stamps |
 | `chrome/` | Docks, catalogue modal, name field |
 | `file/` | `.utcmap` save / load |
 | `assets/` | `CatalogueStore` — `assets/catalog.json` by default |

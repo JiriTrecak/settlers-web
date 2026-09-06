@@ -18,7 +18,7 @@ describe("utcmap", () => {
     const map = {
       v: 1 as const,
       name: "Forest Edge",
-      stamps: [{ id: "a", asset: "pine", x: 3, y: 4 }],
+      stamps: [{ id: "a", asset: "pine", x: 3, y: 4, yaw: 0.4, scale: 1.2 }],
     };
     expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))).toEqual(map);
   });

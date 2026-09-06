@@ -16,6 +16,6 @@ Insects are the races. Scale and silhouette do the title; they are still RTS pie
 
 ## Renderer
 
-Real meshes, PBR (`MeshStandardMaterial` / glTF), directional sun, real shadows. Terrain is a height mesh in world meters. Camera is a true ortho iso (45° yaw, ~35° pitch).
+Real meshes, PBR (`MeshStandardMaterial` / glTF), directional sun, real shadows. Terrain is a height mesh in world meters. Play camera is WC3-style perspective (70° FoV, 56° pitch, 45° yaw). Editor free-cam is ortho iso.
 
 New props, buildings, and units land as meshes in the world editor, then the match renderer. Plan: [`docs/build-plan/editor.md`](../build-plan/editor.md).

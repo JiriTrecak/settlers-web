@@ -1,5 +1,6 @@
 /**
  * Iso diamond minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
+ * View quad is a perspective frustum ∩ ground, so the far edge is wider.
  */
 import { MAP_SIZE, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
@@ -10,7 +11,7 @@ const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
 
-/** Iso diamond. Y is flipped so screen-up matches the camera (away from +X+Z). */
+/** Iso diamond. Y is flipped so screen-up is −X−Z (away from the default cam). */
 export function worldToNdc(x: number, z: number, size: number): [number, number] {
   const nx = (x / size) * 2 - 1;
   const nz = (z / size) * 2 - 1;
@@ -30,7 +31,8 @@ export class Minimap {
   private dots: { x: number; z: number; fill: string }[] = [];
   private dirty = true;
   private lastRev = -1;
-  private lastAspect = NaN;
+  private lastW = 0;
+  private lastH = 0;
   private dragging = false;
   private readonly onDown: (e: PointerEvent) => void;
   private readonly onMove: (e: PointerEvent) => void;
@@ -41,7 +43,7 @@ export class Minimap {
     private readonly spec: {
       camera: Camera;
       size?: number;
-      aspect: () => number;
+      viewport: () => { w: number; h: number };
       onLookAt: (x: number, z: number) => void;
     },
   ) {
@@ -89,11 +91,12 @@ export class Minimap {
 
   paint(): void {
     const cam = this.spec.camera;
-    const aspect = this.spec.aspect();
-    if (!this.dirty && cam.rev === this.lastRev && aspect === this.lastAspect) return;
+    const { w: vw, h: vh } = this.spec.viewport();
+    if (!this.dirty && cam.rev === this.lastRev && vw === this.lastW && vh === this.lastH) return;
     this.dirty = false;
     this.lastRev = cam.rev;
-    this.lastAspect = aspect;
+    this.lastW = vw;
+    this.lastH = vh;
     const size = this.spec.size ?? MAP_SIZE;
     const ctx = this.ctx;
     const w = this.canvas.width;
@@ -105,7 +108,7 @@ export class Minimap {
       ctx.fillStyle = d.fill;
       ctx.fillRect(px - 1, py - 1, 3, 3);
     }
-    const quad = viewQuad(cam, aspect);
+    const quad = cam.viewGround(vw, vh);
     ctx.beginPath();
     for (let i = 0; i < quad.length; i++) {
       const [px, py] = this.project(quad[i]![0], quad[i]![1], size, w, h);
@@ -154,17 +157,10 @@ export class Minimap {
   }
 }
 
-function viewQuad(cam: Camera, aspect: number): [number, number][] {
-  return [
-    cam.groundAt(-1, -1, aspect),
-    cam.groundAt(1, -1, aspect),
-    cam.groundAt(1, 1, aspect),
-    cam.groundAt(-1, 1, aspect),
-  ];
-}
-
 function tint(id: string): string {
   if (id === "pine") return "#6bc729";
+  if (id === "pine-dark") return "#3a6a2a";
+  if (id === "pine-umber") return "#6a5428";
   if (id === "boulder") return "#c7b86b";
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
