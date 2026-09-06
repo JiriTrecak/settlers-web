@@ -7,6 +7,7 @@ import { AssetChip } from "./assetChip";
 import { BrushDock, type BrushDockHooks, type BrushDockState } from "./brushDock";
 import { CameraHint } from "./cameraHint";
 import { CleanDock, type CleanDockHooks, type CleanDockState } from "./cleanDock";
+import { SelectDock, type SelectDockHooks, type SelectDockState } from "./selectDock";
 import { SculptDock, type SculptDockHooks, type SculptDockState } from "./sculptDock";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
@@ -15,6 +16,7 @@ export type EditorChromeHooks = FileToolHooks &
   GameToolHooks &
   BrushDockHooks &
   CleanDockHooks &
+  SelectDockHooks &
   SculptDockHooks & {
     onName(name: string): void;
   };
@@ -28,6 +30,7 @@ export class EditorChrome {
   private readonly modes: IconBar;
   private readonly brush: BrushDock;
   private readonly clean: CleanDock;
+  private readonly select: SelectDock;
   private readonly sculpt: SculptDock;
   private readonly chip: AssetChip;
   private readonly hint: CameraHint;
@@ -47,6 +50,7 @@ export class EditorChrome {
     host.append(this.rail);
     this.game = new IconBar(this.rail, { place: "col", label: "Tools", items: gameTools(hooks) });
     this.modes = new IconBar(this.rail, { place: "col", label: "Modes", items: this.game.modesOf("grid") });
+    this.select = new SelectDock(this.rail, hooks);
     this.brush = new BrushDock(this.rail, hooks);
     this.clean = new CleanDock(this.rail, hooks);
     this.sculpt = new SculptDock(this.rail, hooks);
@@ -71,6 +75,14 @@ export class EditorChrome {
   setGameCam(on: boolean): void {
     this.game.setLatch("gamecam", on);
     this.hint.setGame(on);
+  }
+
+  setSelectOpen(on: boolean): void {
+    this.select.setOpen(on);
+  }
+
+  setSelect(state: SelectDockState): void {
+    this.select.set(state);
   }
 
   setBrushOpen(on: boolean): void {
@@ -114,6 +126,7 @@ export class EditorChrome {
     this.file.destroy();
     this.game.destroy();
     this.modes.destroy();
+    this.select.destroy();
     this.brush.destroy();
     this.clean.destroy();
     this.sculpt.destroy();

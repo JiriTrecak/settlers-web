@@ -187,6 +187,7 @@ function tint(id: string): string {
   if (id === "lily") return "#e07a96";
   if (id === "lily-white") return "#f0ece4";
   if (id === "lily-gold") return "#e0b84a";
+  if (id === "bridge-8" || id === "bridge-16" || id === "bridge-32") return "#8a6a40";
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
   const r = 90 + ((h >>> 16) & 127);

@@ -21,9 +21,17 @@ export type MapInputHooks = {
     sizeBy(steps: number): void;
     densityBy(steps: number): void;
   };
+  /** Select tool. LMB on a stamp grabs; Shift-drag / Shift+wheel yaws. */
+  grab?: {
+    on(): boolean;
+    down(clientX: number, clientY: number, shift: boolean): boolean;
+    move(clientX: number, clientY: number): void;
+    up(): void;
+    rotateBy(steps: number): void;
+  };
 };
 
-type Drag = "pan" | "orbit" | "stroke";
+type Drag = "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
   private readonly keys = new Set<string>();
@@ -71,6 +79,7 @@ export class MapInput {
     this.onPointerDown = (e) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
       const paint = this.hooks.paint;
+      const grab = this.hooks.grab;
       if (paint?.on() && e.button === 0 && !e.altKey && !this.keys.has(" ")) {
         this.drag = "stroke";
         this.moved = 0;
@@ -81,6 +90,17 @@ export class MapInput {
         this.canvas.setPointerCapture(e.pointerId);
         this.hooks.onChanged();
         return;
+      }
+      if (grab?.on() && e.button === 0 && !e.altKey && !this.keys.has(" ")) {
+        this.moved = 0;
+        this.lastX = e.clientX;
+        this.lastY = e.clientY;
+        if (grab.down(e.clientX, e.clientY, e.shiftKey)) {
+          this.drag = "grab";
+          this.canvas.setPointerCapture(e.pointerId);
+          this.hooks.onChanged();
+          return;
+        }
       }
       this.drag = this.orbit && !this.camera.locked && (e.button === 1 || e.button === 2 || e.altKey) ? "orbit" : "pan";
       this.moved = 0;
@@ -97,6 +117,7 @@ export class MapInput {
       const dy = e.clientY - this.lastY;
       this.moved += Math.hypot(dx, dy);
       if (this.drag === "stroke") this.hooks.paint?.stroke(e.clientX, e.clientY, e.shiftKey);
+      else if (this.drag === "grab") this.hooks.grab?.move(e.clientX, e.clientY);
       else if (this.drag === "orbit") this.camera.orbitScreen(dx, dy);
       else this.camera.panScreen(dx, dy, this.canvas.clientHeight);
       this.lastX = e.clientX;
@@ -105,22 +126,31 @@ export class MapInput {
     };
     this.onPointerUp = (e) => {
       const stroking = this.drag === "stroke";
+      const grabbing = this.drag === "grab";
       const clicked = this.drag === "pan" && e.button === 0 && this.moved < CLICK_PX;
       this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
       if (stroking) this.hooks.paint?.endStroke?.();
+      if (grabbing) this.hooks.grab?.up();
       if (clicked) this.hooks.onClick?.(e.clientX, e.clientY);
     };
     this.onPointerCancel = (e) => {
       const stroking = this.drag === "stroke";
+      const grabbing = this.drag === "grab";
       this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
       if (stroking) this.hooks.paint?.endStroke?.();
+      if (grabbing) this.hooks.grab?.up();
     };
     this.onWheel = (e) => {
       e.preventDefault();
       const paint = this.hooks.paint;
       const steps = e.deltaY > 0 ? -1 : 1;
+      if (this.hooks.grab?.on() && e.shiftKey) {
+        this.hooks.grab.rotateBy(steps);
+        this.hooks.onChanged();
+        return;
+      }
       if (paint?.on() && e.shiftKey) {
         paint.sizeBy(steps);
         this.hooks.onChanged();

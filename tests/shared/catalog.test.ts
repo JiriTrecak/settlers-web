@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assetIdFromName, parseCatalogue, stringifyCatalogue } from "../../src/shared";
+import { assetIdFromName, parseCatalogue, sitAllowed, stringifyCatalogue } from "../../src/shared";
 import { projectCatalogue } from "../../src/editor/assets/project";
 
 describe("catalogue", () => {
@@ -36,6 +36,24 @@ describe("catalogue", () => {
     expect(doc.assets.some((a) => a.id === "lily" && a.type === "water" && a.category === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "lily-white" && a.type === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "lily-gold" && a.type === "water")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "bridge-8" && a.type === "span")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "bridge-16" && a.type === "span")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "bridge-32" && a.type === "span")).toBe(true);
+    const synty = doc.assets.filter((a) => a.id.startsWith("synty-"));
+    expect(synty.length).toBe(197);
+    expect(doc.assets.some((a) => a.id === "synty-plant-lillypad-large-01" && a.type === "water")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "synty-plant-reeds-01" && a.type === "water")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "synty-prop-bridge-curved-01" && a.type === "span")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "synty-tree-pine-01" && a.type === "prop" && a.category === "foliage")).toBe(true);
+  });
+
+  it("sits water on wet and props on dry", () => {
+    expect(sitAllowed("water", true)).toBe(true);
+    expect(sitAllowed("water", false)).toBe(false);
+    expect(sitAllowed("prop", false)).toBe(true);
+    expect(sitAllowed("prop", true)).toBe(false);
+    expect(sitAllowed("span", true)).toBe(true);
+    expect(sitAllowed("span", false)).toBe(true);
   });
 
   it("accepts a water listing", () => {

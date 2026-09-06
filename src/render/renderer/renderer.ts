@@ -60,9 +60,13 @@ export class Renderer {
     this.props.setUrls(assets);
   }
 
+  setSelected(id: string | null): void {
+    this.props.setSelected(id);
+  }
+
   setKinds(kinds: ReadonlyMap<string, AssetType>): void {
     const float = new Set<string>();
-    for (const [id, type] of kinds) if (type === "water") float.add(id);
+    for (const [id, type] of kinds) if (type === "water" || type === "span") float.add(id);
     this.props.setFloat(float, this.height?.waterLevel ?? 0);
   }
 
@@ -86,11 +90,13 @@ export class Renderer {
     drape = true,
   ): void {
     this.height = field;
-    this.props.setHeight(field ? (x, z) => field.sample(x, z) : null);
+    const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
+    this.props.setHeight(sample);
     this.props.setWaterY(field?.waterLevel ?? 0);
+    this.brush.setHeight(sample, dirty);
     if (!this.terrain || !field) return;
     this.terrain.setFrom(field, dirty);
-    this.water?.setLevel(field.waterLevel);
+    this.water?.setFrom(field);
     if (drape) this.refreshGrid();
   }
 
@@ -105,7 +111,7 @@ export class Renderer {
       this.water = new WaterLayer(this.scene, snapshot.size);
       if (this.height) {
         this.terrain.setFrom(this.height);
-        this.water.setLevel(this.height.waterLevel);
+        this.water.setFrom(this.height);
       }
       this.lines.visible = this.gridOn;
       this.refreshGrid();
@@ -141,14 +147,14 @@ export class Renderer {
     this.present();
   }
 
+  pickStamp(clientX: number, clientY: number): string | null {
+    if (!this.aim(clientX, clientY)) return null;
+    return this.props.pick(this.ray);
+  }
+
   /** Ground under a canvas-relative client point. Y is the mesh hit when height exists. */
   pickGround(clientX: number, clientY: number): { x: number; z: number; y: number } | null {
-    const rect = this.display.canvas.getBoundingClientRect();
-    if (rect.width < 1 || rect.height < 1) return null;
-    const cam = this.threeCam();
-    this.camera.applyTo(cam, this.display.width, this.display.height);
-    this.ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -(((clientY - rect.top) / rect.height) * 2 - 1));
-    this.ray.setFromCamera(this.ndc, cam);
+    if (!this.aim(clientX, clientY)) return null;
     if (this.terrain) {
       const hits = this.ray.intersectObject(this.terrain.mesh, false);
       const p = hits[0]?.point;
@@ -156,6 +162,16 @@ export class Renderer {
     }
     if (!this.ray.ray.intersectPlane(GROUND, this.hit)) return null;
     return { x: this.hit.x, z: this.hit.z, y: 0 };
+  }
+
+  private aim(clientX: number, clientY: number): boolean {
+    const rect = this.display.canvas.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return false;
+    const cam = this.threeCam();
+    this.camera.applyTo(cam, this.display.width, this.display.height);
+    this.ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -(((clientY - rect.top) / rect.height) * 2 - 1));
+    this.ray.setFromCamera(this.ndc, cam);
+    return true;
   }
 
   present(): void {

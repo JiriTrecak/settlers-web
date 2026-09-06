@@ -34,6 +34,7 @@ export class EditorScreen extends GameScreen {
       onBrush: () => this.syncBrush(),
       onClean: () => this.syncClean(),
       onSculpt: () => this.syncSculpt(),
+      onSelect: () => this.syncSelect(),
     });
     this.editor.setLibrary(this.library.urls(), this.library.types());
     const first = this.library.doc.assets[0];
@@ -45,6 +46,7 @@ export class EditorScreen extends GameScreen {
       onSaveAs: () => void this.save(true),
       onLoad: () => void this.askLoad(),
       onLeave: () => void this.askLeave(),
+      onSelect: () => this.armSelect(),
       onStamp: () => this.stamp(),
       onBrush: () => this.armBrush(),
       onClean: () => this.armClean(),
@@ -79,6 +81,7 @@ export class EditorScreen extends GameScreen {
       onSculptStrength: (n) => this.editor.setSculptStrength(n),
       onSculptMode: (mode) => this.editor.setSculptMode(mode),
       onApplySculpt: () => this.editor.applySculpt(),
+      onYaw: (rad) => this.editor.setSelectedYaw(rad),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
@@ -88,7 +91,14 @@ export class EditorScreen extends GameScreen {
     this.syncBrush();
     this.syncAsset();
     this.syncDoc();
-    this.onEscape(() => void this.askLeave());
+    this.onEscape(() => {
+      if (this.editor.tool === "select" && this.editor.select.id) {
+        this.editor.select.clear();
+        this.editor.setTool("select");
+        return;
+      }
+      void this.askLeave();
+    });
     this.onKey = (e) => this.shortcut(e);
     this.onUnload = (e) => {
       if (!this.dirty() && !this.library.dirty) return;
@@ -115,6 +125,14 @@ export class EditorScreen extends GameScreen {
     this.chrome.destroy();
     this.editor.stop();
     super.destroy();
+  }
+
+  private armSelect(): void {
+    this.editor.setTool("select");
+    this.chrome.setTool("select");
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.syncBrush();
+    this.syncSelect();
   }
 
   private stamp(): void {
@@ -166,6 +184,16 @@ export class EditorScreen extends GameScreen {
     });
     this.syncClean();
     this.syncSculpt();
+    this.syncSelect();
+  }
+
+  private syncSelect(): void {
+    const stamp = this.editor.selectedStamp();
+    this.chrome.setSelectOpen(this.editor.tool === "select");
+    this.chrome.setSelect({
+      name: stamp ? (this.library.entry(stamp.asset)?.name ?? stamp.asset) : null,
+      yaw: stamp?.yaw ?? 0,
+    });
   }
 
   private syncClean(): void {
@@ -295,9 +323,38 @@ export class EditorScreen extends GameScreen {
   }
 
   private shortcut(e: KeyboardEvent): void {
-    if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "s") return;
-    e.preventDefault();
-    void this.save(e.shiftKey);
+    if (e.metaKey || e.ctrlKey || e.altKey) {
+      if (e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        void this.save(e.shiftKey);
+      }
+      return;
+    }
+    if (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement) return;
+    const k = e.key.toLowerCase();
+    if (k === "r" && (this.editor.tool === "stamp" || this.editor.tool === "select")) {
+      e.preventDefault();
+      this.editor.rotateStamp();
+      this.syncSelect();
+      return;
+    }
+    if (this.editor.tool === "select" && this.editor.select.id) {
+      if (k === "q") {
+        e.preventDefault();
+        this.editor.nudgeSelected(-Math.PI / 12);
+        return;
+      }
+      if (k === "e") {
+        e.preventDefault();
+        this.editor.nudgeSelected(Math.PI / 12);
+        return;
+      }
+      if (e.key === "Delete" || e.key === "Backspace") {
+        e.preventDefault();
+        this.editor.deleteSelected();
+        return;
+      }
+    }
   }
 
   private async save(asNew = false): Promise<boolean> {

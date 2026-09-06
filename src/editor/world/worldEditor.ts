@@ -9,8 +9,10 @@ import {
   HeightField,
   inStamp,
   MAP_SIZE,
+  sitAllowed,
   type AssetType,
   type GridMode,
+  type MapStamp,
   type UtcMap,
 } from "../../shared";
 import { MapInput, Minimap, Renderer } from "../../render";
@@ -18,14 +20,16 @@ import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
 import { CleanTool } from "../clean/clean";
+import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
-export type EditorTool = "stamp" | "brush" | "clean" | "sculpt";
+export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt";
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   tool: EditorTool | null = "stamp";
   asset: string | null = null;
+  stampYaw = 0;
   gridMenu = false;
   gridMode: GridMode = "tiles";
   gameCam = false;
@@ -34,6 +38,7 @@ export class WorldEditor {
   readonly clean = new CleanTool();
   readonly height = new HeightField();
   readonly sculpt = new SculptTool();
+  readonly select = new SelectTool();
   private urls = new Map<string, string>();
   private kinds = new Map<string, AssetType>();
   private renderer: Renderer | null = null;
@@ -50,15 +55,18 @@ export class WorldEditor {
       onBrush?: () => void;
       onClean?: () => void;
       onSculpt?: () => void;
+      onSelect?: () => void;
     },
   ) {}
 
   replace(map: UtcMap): void {
     this.map = map;
+    this.select.clear();
     this.loadHeight(map);
     this.renderer?.setTerrain(this.height);
     this.paint();
     this.hooks.onChange?.();
+    this.hooks.onSelect?.();
   }
 
   rename(name: string): void {
@@ -78,13 +86,51 @@ export class WorldEditor {
 
   setTool(tool: EditorTool | null): void {
     this.tool = tool;
+    if (tool !== "select") this.select.clear();
     if (tool === "brush" || tool === "clean" || tool === "sculpt") this.gridMenu = false;
     this.syncPaintView();
+    this.paint();
+    this.hooks.onSelect?.();
   }
 
   setAsset(id: string): void {
     this.asset = id;
     if (this.tool === null) this.tool = "stamp";
+  }
+
+  rotateStamp(steps = 1): void {
+    if (this.tool === "select" && this.select.id) {
+      this.nudgeSelected(steps * (Math.PI / 2));
+      return;
+    }
+    this.stampYaw = ((Math.round(this.stampYaw / (Math.PI / 2)) + steps) % 4) * (Math.PI / 2);
+  }
+
+  nudgeSelected(delta: number): void {
+    const stamp = this.selectedStamp();
+    if (!stamp) return;
+    this.applyPose(stamp, stamp.x, stamp.y, (stamp.yaw ?? 0) + delta);
+  }
+
+  setSelectedYaw(rad: number): void {
+    const stamp = this.selectedStamp();
+    if (!stamp) return;
+    this.applyPose(stamp, stamp.x, stamp.y, rad);
+  }
+
+  deleteSelected(): void {
+    const id = this.select.id;
+    if (!id) return;
+    this.map = { ...this.map, stamps: this.map.stamps.filter((s) => s.id !== id) };
+    this.select.clear();
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSelect?.();
+  }
+
+  selectedStamp(): MapStamp | null {
+    const id = this.select.id;
+    return id ? (this.map.stamps.find((s) => s.id === id) ?? null) : null;
   }
 
   toggleGridMenu(): void {
@@ -165,7 +211,7 @@ export class WorldEditor {
     }
     const poses = scatterBrush(this.brush, this.map.stamps, this.kit.slots, Math.random, {
       wet: (x, z) => this.height.wet(x, z),
-      waterAsset: (id) => this.kinds.get(id) === "water",
+      kind: (id) => this.kinds.get(id),
     });
     if (!poses.length) return;
     this.map = {
@@ -201,6 +247,13 @@ export class WorldEditor {
       onChanged: () => this.draw(),
       onClick: (x, y) => this.click(x, y),
       onHome: () => this.toggleGameCam(),
+      grab: {
+        on: () => this.tool === "select",
+        down: (x, y, shift) => this.grabDown(x, y, shift),
+        move: (x, y) => this.grabMove(x, y),
+        up: () => this.select.end(),
+        rotateBy: (steps) => this.nudgeSelected(steps * YAW_STEP),
+      },
       paint: {
         on: () => this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt",
         hover: (x, y) => this.hover(x, y),
@@ -329,6 +382,49 @@ export class WorldEditor {
     layer.setOpen(false);
   }
 
+  private grabDown(clientX: number, clientY: number, rotate: boolean): boolean {
+    const stamp = this.hitStamp(clientX, clientY);
+    if (!stamp) {
+      this.select.clear();
+      this.paint();
+      this.hooks.onSelect?.();
+      return false;
+    }
+    const hit = this.renderer?.pickGround(clientX, clientY);
+    if (!hit) return false;
+    this.select.begin(stamp, hit, rotate);
+    this.paint();
+    this.hooks.onSelect?.();
+    return true;
+  }
+
+  private grabMove(clientX: number, clientY: number): void {
+    const stamp = this.selectedStamp();
+    const hit = this.renderer?.pickGround(clientX, clientY);
+    if (!stamp || !hit) return;
+    const pose = this.select.drag(hit);
+    if (!pose) return;
+    this.applyPose(stamp, pose.x, pose.y, pose.yaw);
+  }
+
+  private hitStamp(clientX: number, clientY: number): MapStamp | null {
+    const id = this.renderer?.pickStamp(clientX, clientY);
+    if (id) return this.map.stamps.find((s) => s.id === id) ?? null;
+    const hit = this.renderer?.pickGround(clientX, clientY);
+    if (!hit) return null;
+    return nearestStamp(this.map.stamps, hit.x, hit.z);
+  }
+
+  private applyPose(stamp: MapStamp, x: number, y: number, yaw: number): void {
+    if (!sitAllowed(this.kinds.get(stamp.asset), this.height.wet(x + 0.5, y + 0.5))) return;
+    const next = withPose(stamp, x, y, yaw);
+    if (!next) return;
+    this.map = { ...this.map, stamps: this.map.stamps.map((s) => (s.id === stamp.id ? next : s)) };
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSelect?.();
+  }
+
   private click(clientX: number, clientY: number): void {
     if (this.tool !== "stamp") return;
     if (!this.asset) {
@@ -341,16 +437,27 @@ export class WorldEditor {
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
     if (!inStamp(x, y)) return;
-    if (this.kinds.get(this.asset) === "water" && !this.height.wet(hit.x, hit.z)) return;
+    if (!sitAllowed(this.kinds.get(this.asset), this.height.wet(hit.x, hit.z))) return;
     this.map = {
       ...this.map,
-      stamps: [...this.map.stamps, { id: crypto.randomUUID(), asset: this.asset, x, y }],
+      stamps: [
+        ...this.map.stamps,
+        {
+          id: crypto.randomUUID(),
+          asset: this.asset,
+          x,
+          y,
+          ...(this.stampYaw ? { yaw: this.stampYaw } : {}),
+        },
+      ],
     };
     this.paint();
     this.hooks.onChange?.();
   }
 
   private paint(): void {
+    if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id)) this.select.clear();
+    this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
     this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
     this.mini?.setHeight(this.height);
     this.mini?.setStamps(this.map.stamps);

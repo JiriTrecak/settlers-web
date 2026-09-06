@@ -5,7 +5,7 @@ import { HEIGHT_MIN, HEIGHT_ORIGIN, HEIGHT_VERTS, unionDirty, type HeightDirty, 
 import { BrushMask } from "../brush/brush";
 
 export const SCULPT_RADIUS_MIN = 1;
-export const SCULPT_RADIUS_MAX = 16;
+export const SCULPT_RADIUS_MAX = 32;
 export const SCULPT_STRENGTH_MIN = 0.02;
 export const SCULPT_STRENGTH_MAX = 1.2;
 

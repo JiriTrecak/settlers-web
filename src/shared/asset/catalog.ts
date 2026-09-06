@@ -4,7 +4,7 @@
 export const CATALOGUE_VERSION = 1;
 export const PROJECT_CATALOG_PATH = "assets/catalog.json";
 
-export const ASSET_TYPES = ["prop", "water"] as const;
+export const ASSET_TYPES = ["prop", "water", "span"] as const;
 export type AssetType = (typeof ASSET_TYPES)[number];
 
 export const ASSET_CATEGORIES = ["foliage", "terrain", "water", "landmark", "resource", "other"] as const;
@@ -47,6 +47,13 @@ export function parseCatalogue(raw: unknown): Catalogue | null {
 
 export function stringifyCatalogue(doc: Catalogue): string {
   return `${JSON.stringify({ v: doc.v, name: doc.name, assets: doc.assets }, null, 2)}\n`;
+}
+
+/** Water only on wet, land props only on dry, span (bridges) anywhere. */
+export function sitAllowed(type: AssetType | undefined, wet: boolean): boolean {
+  if (type === "water") return wet;
+  if (type === "span") return true;
+  return !wet;
 }
 
 export function assetIdFromName(name: string, taken: ReadonlySet<string>): string {

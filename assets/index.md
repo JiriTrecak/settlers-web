@@ -6,6 +6,8 @@ The editor opens this file by default. Open another `.json` to point at a differ
 
 First wave — landscape only. Readable from iso. No units or buildings yet.
 
+Synty POLYGON Nature is imported as `synty-*` (`assets/synty/`). Building blocks, restyle later. Re-run `npm run import:synty`.
+
 | Id | Category | Why |
 |---|---|---|
 | `pine` | foliage | Forest mass, green. **In.** |
@@ -19,6 +21,9 @@ First wave — landscape only. Readable from iso. No units or buildings yet.
 | `lily` | water | Pond flower, pink. Type `water` — wet cells only. **In.** |
 | `lily-white` | water | Same pad, white blossom. **In.** |
 | `lily-gold` | water | Same pad, gold blossom. **In.** |
+| `bridge-8` | landmark | Wood/stone span, 8×4. Type `span`. **In.** |
+| `bridge-16` | landmark | Same, 16×4. **In.** |
+| `bridge-32` | landmark | Same, 32×4. **In.** |
 | fern | foliage | Understory |
 | mushroom | landmark | Insect-world flavor |
 | log | terrain | Breaks the grid |

@@ -2,7 +2,7 @@
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
  */
-import { Object3D, type Scene } from "three";
+import { BoxHelper, Object3D, type Raycaster, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
 
@@ -14,6 +14,8 @@ export class PropField {
   private float = new Set<string>();
   private waterY = 0;
   private gen = 0;
+  private picked: string | null = null;
+  private mark: BoxHelper | null = null;
 
   constructor(
     private readonly scene: Scene,
@@ -57,12 +59,35 @@ export class PropField {
       this.scene.remove(mesh);
       this.placed.delete(id);
     }
+    this.syncMark();
+  }
+
+  setSelected(id: string | null): void {
+    this.picked = id;
+    this.syncMark();
+  }
+
+  pick(ray: Raycaster): string | null {
+    const hits = ray.intersectObjects([...this.placed.values()], true);
+    for (const hit of hits) {
+      let n: Object3D | null = hit.object;
+      while (n) {
+        if (typeof n.userData.stamp === "string") return n.userData.stamp;
+        n = n.parent;
+      }
+    }
+    return null;
   }
 
   destroy(): void {
     this.gen++;
     for (const mesh of this.placed.values()) this.scene.remove(mesh);
     this.placed.clear();
+    if (this.mark) {
+      this.scene.remove(this.mark);
+      this.mark.geometry.dispose();
+      this.mark = null;
+    }
   }
 
   private async spawn(stamp: MapStamp, gen: number): Promise<void> {
@@ -72,6 +97,7 @@ export class PropField {
     this.place(mesh, stamp);
     this.scene.add(mesh);
     this.placed.set(stamp.id, mesh);
+    if (stamp.id === this.picked) this.syncMark();
   }
 
   private proto(asset: string): Promise<Object3D | null> {
@@ -101,6 +127,7 @@ export class PropField {
     const x = stamp.x + 0.5;
     const z = stamp.y + 0.5;
     mesh.userData.asset = stamp.asset;
+    mesh.userData.stamp = stamp.id;
     mesh.position.set(x, this.sitY(stamp.asset, x, z), z);
     mesh.rotation.y = stamp.yaw ?? 0;
     mesh.scale.setScalar(s);
@@ -116,5 +143,27 @@ export class PropField {
       const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
       mesh.position.y = this.sitY(asset, mesh.position.x, mesh.position.z);
     }
+    this.syncMark();
+  }
+
+  private syncMark(): void {
+    const mesh = this.picked ? this.placed.get(this.picked) : undefined;
+    if (!mesh) {
+      if (this.mark) this.mark.visible = false;
+      return;
+    }
+    if (this.mark && this.mark.userData.stamp === this.picked) {
+      this.mark.update();
+      this.mark.visible = true;
+      return;
+    }
+    if (this.mark) {
+      this.scene.remove(this.mark);
+      this.mark.geometry.dispose();
+    }
+    const mark = new BoxHelper(mesh, 0xe8e0d0);
+    mark.userData.stamp = this.picked;
+    this.scene.add(mark);
+    this.mark = mark;
   }
 }

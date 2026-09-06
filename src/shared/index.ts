@@ -7,6 +7,7 @@ export {
   CATALOGUE_VERSION,
   PROJECT_CATALOG_PATH,
   assetIdFromName,
+  sitAllowed,
   emptyCatalogue,
   parseCatalogue,
   stringifyCatalogue,

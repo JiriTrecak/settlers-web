@@ -8,7 +8,7 @@ Visual target: [`docs/game/art.md`](../game/art.md).
 
 - Canvas `WebGLRenderer` (`Display`) with shadows
 - Play / Gamecam: WC3 perspective (pan). Editor free-cam: ortho orbit.
-- Height mesh + water plane + grid lines + directional sun
+- Height mesh + water plane (silt edge → blue basin) + grid lines + directional sun
 - One PBR cube per `ViewSnapshot.player`
 
 ## Camera

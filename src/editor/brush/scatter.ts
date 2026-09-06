@@ -1,7 +1,7 @@
 /**
  * Turn a painted brush mask into stamp poses. Density is expected hits per painted cell.
  */
-import { inStamp } from "../../shared";
+import { inStamp, sitAllowed, type AssetType } from "../../shared";
 import type { BrushMask } from "./brush";
 import { pickSlot, type BrushSlot } from "./kit";
 
@@ -10,9 +10,8 @@ export type BrushPose = { x: number; y: number; yaw: number; asset: string; scal
 const MIN_DIST = 0.85;
 
 export type ScatterRules = {
-  /** World-cell wet test. Water-type assets need this true. */
   wet?: (x: number, z: number) => boolean;
-  waterAsset?: (id: string) => boolean;
+  kind?: (id: string) => AssetType | undefined;
 };
 
 export function scatterBrush(
@@ -39,7 +38,7 @@ export function scatterBrush(
       if (tooClose(x, y, spots)) continue;
       const slot = pickSlot(slots, rng);
       if (!slot) continue;
-      if (rules.waterAsset?.(slot.asset) && !rules.wet?.(x, y)) continue;
+      if (rules.wet && !sitAllowed(rules.kind?.(slot.asset), rules.wet(x, y))) continue;
       const pose = { x: x - 0.5, y: y - 0.5, yaw: rng() * Math.PI * 2, asset: slot.asset, scale: slot.scale };
       out.push(pose);
       spots.push({ x, y });

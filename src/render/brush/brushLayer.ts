@@ -1,7 +1,9 @@
 /**
- * Ground splat + cursor for the foliage brush. Red trail sits on the plate, behind trunks.
+ * Ground splat + cursor for the foliage brush. Red trail drapes on the height
+ * field so a mountain stroke sits on the slope, behind trunks.
  */
 import {
+  BufferAttribute,
   CircleGeometry,
   DataTexture,
   Mesh,
@@ -12,8 +14,10 @@ import {
   UnsignedByteType,
   type Scene,
 } from "three";
+import type { HeightDirty } from "../../shared";
 
 const RED = 0xff2a2a;
+const LIFT = 0.06;
 
 export class BrushLayer {
   private readonly splat: Mesh;
@@ -21,6 +25,8 @@ export class BrushLayer {
   private readonly glow: Mesh;
   private tex: DataTexture | null = null;
   private span = 0;
+  private origin = 0;
+  private height: ((x: number, z: number) => number) | null = null;
 
   constructor(scene: Scene) {
     const splatMat = new MeshBasicMaterial({
@@ -28,10 +34,13 @@ export class BrushLayer {
       transparent: true,
       depthWrite: false,
       opacity: 1,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -2,
     });
     this.splat = new Mesh(new PlaneGeometry(1, 1), splatMat);
     this.splat.rotation.x = -Math.PI / 2;
-    this.splat.position.y = 0.04;
+    this.splat.position.y = 0;
     this.splat.renderOrder = 2;
     this.splat.visible = false;
     this.ring = new Mesh(
@@ -51,6 +60,11 @@ export class BrushLayer {
     this.ring.visible = false;
     this.glow.visible = false;
     scene.add(this.splat, this.ring, this.glow);
+  }
+
+  setHeight(sample: ((x: number, z: number) => number) | null, dirty?: HeightDirty | null): void {
+    this.height = sample;
+    this.drape(dirty);
   }
 
   setOpen(on: boolean): void {
@@ -76,7 +90,7 @@ export class BrushLayer {
   }
 
   sync(weights: Float32Array, origin: number, span: number): void {
-    if (this.span !== span) this.rebuild(origin, span);
+    if (this.span !== span || this.origin !== origin) this.rebuild(origin, span);
     const tex = this.tex;
     if (!tex) return;
     const pix = tex.image.data as Uint8Array;
@@ -108,6 +122,7 @@ export class BrushLayer {
 
   private rebuild(origin: number, span: number): void {
     this.tex?.dispose();
+    this.origin = origin;
     this.span = span;
     const tex = new DataTexture(new Uint8Array(span * span * 4), span, span, RGBAFormat, UnsignedByteType);
     tex.flipY = false;
@@ -118,9 +133,32 @@ export class BrushLayer {
     mat.transparent = true;
     mat.needsUpdate = true;
     this.splat.geometry.dispose();
-    this.splat.geometry = new PlaneGeometry(span, span);
+    // One quad per cell so Y can follow the height verts.
+    this.splat.geometry = new PlaneGeometry(span, span, span, span);
     this.splat.rotation.x = -Math.PI / 2;
     const mid = origin + span / 2;
-    this.splat.position.set(mid, 0.04, mid);
+    this.splat.position.set(mid, 0, mid);
+    this.drape();
+  }
+
+  private drape(dirty?: HeightDirty | null): void {
+    if (!this.span) return;
+    const pos = this.splat.geometry.getAttribute("position") as BufferAttribute;
+    const verts = this.span + 1;
+    if (pos.count !== verts * verts) return;
+    const sample = this.height;
+    const origin = this.origin;
+    const loX = dirty ? Math.max(0, dirty.loX) : 0;
+    const hiX = dirty ? Math.min(verts - 1, dirty.hiX) : verts - 1;
+    const loZ = dirty ? Math.max(0, dirty.loZ) : 0;
+    const hiZ = dirty ? Math.min(verts - 1, dirty.hiZ) : verts - 1;
+    for (let iz = loZ; iz <= hiZ; iz++) {
+      for (let ix = loX; ix <= hiX; ix++) {
+        const y = sample ? sample(origin + ix, origin + iz) + LIFT : LIFT;
+        pos.setZ(iz * verts + ix, y);
+      }
+    }
+    pos.needsUpdate = true;
+    this.splat.geometry.computeBoundingSphere();
   }
 }

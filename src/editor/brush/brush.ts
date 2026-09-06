@@ -4,7 +4,7 @@
 import { inStamp, MAP_HALO, MAP_SIZE } from "../../shared";
 
 export const BRUSH_RADIUS_MIN = 1;
-export const BRUSH_RADIUS_MAX = 16;
+export const BRUSH_RADIUS_MAX = 32;
 export const BRUSH_DENSITY_MIN = 0.05;
 export const BRUSH_DENSITY_MAX = 2.5;
 

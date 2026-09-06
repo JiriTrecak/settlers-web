@@ -1,5 +1,6 @@
 /**
  * Full catalogue modal. Browse by category, create assets, pick one for the stamp tool.
+ * Mesh snapshots paint when a card scrolls into view — the Synty pack is ~200 cards.
  */
 import { PreviewCache } from "../../render";
 import { ASSET_CATEGORIES, type CatalogEntry } from "../../shared";
@@ -18,6 +19,7 @@ export class CatalogModal {
   private form: AssetForm | null = null;
   private dialog: Confirm | null = null;
   private readonly previews = new PreviewCache();
+  private readonly previewIo: IntersectionObserver;
   private readonly cards = new Map<string, HTMLButtonElement>();
   private filter: string | "all" = "all";
   private highlighted: string | null;
@@ -43,6 +45,18 @@ export class CatalogModal {
     this.grid = panel.querySelector("[data-grid]")!;
     this.cats = panel.querySelector("[data-cats]")!;
     this.useBtn = panel.querySelector("[data-use]")!;
+    this.previewIo = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const url = (e.target as HTMLElement).dataset.preview;
+          const img = e.target.querySelector("img");
+          if (url && img instanceof HTMLImageElement) this.previews.paint(url, img);
+          this.previewIo.unobserve(e.target);
+        }
+      },
+      { root: this.grid, rootMargin: "160px" },
+    );
     this.root.append(panel);
     this.root.addEventListener("click", (e) => {
       if (e.target === this.root) this.close();
@@ -62,6 +76,7 @@ export class CatalogModal {
   close(): void {
     this.dialog?.cancel();
     this.form?.destroy();
+    this.previewIo.disconnect();
     this.previews.destroy();
     window.removeEventListener("keydown", this.onKey, true);
     this.root.remove();
@@ -144,6 +159,7 @@ export class CatalogModal {
     }
     const shown = this.spec.store.doc.assets.filter((a) => this.filter === "all" || a.category === this.filter);
     this.cards.clear();
+    this.previewIo.disconnect();
     this.grid.replaceChildren();
     if (shown.length === 0) {
       const empty = document.createElement("p");
@@ -195,7 +211,10 @@ export class CatalogModal {
     shot.alt = "";
     shot.className = "h-full w-full object-contain";
     const url = this.spec.store.urls().get(asset.id);
-    if (url) this.previews.paint(url, shot);
+    if (url) {
+      el.dataset.preview = url;
+      this.previewIo.observe(el);
+    }
     frame.append(shot);
     const cap = document.createElement("div");
     cap.className = "flex flex-col gap-0.5 px-2.5 py-2";

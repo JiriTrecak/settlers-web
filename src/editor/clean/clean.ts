@@ -4,7 +4,7 @@
 import type { MapStamp } from "../../shared";
 
 export const CLEAN_RADIUS_MIN = 1;
-export const CLEAN_RADIUS_MAX = 16;
+export const CLEAN_RADIUS_MAX = 32;
 
 export type CleanType = "objects" | "foliage";
 

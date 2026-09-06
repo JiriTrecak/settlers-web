@@ -10,7 +10,7 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `display/` | `WebGLRenderer` + shadows + canvas resize |
 | `grid/` | Sun + draped grid lines |
 | `height/` | Dirt height mesh |
-| `water/` | Flat water plane |
+| `water/` | Depth-tinted water plane |
 | `camera/` | Editor ortho orbit. Play / Gamecam is WC3 perspective |
 | `input/` | `MapInput` — pan / zoom / WASD. Editor also orbits. |
 | `prop/` | Catalog glTF clones on stamp cells |

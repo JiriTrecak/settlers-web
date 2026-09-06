@@ -16,7 +16,7 @@ import {
   type HeightField,
 } from "../../shared";
 
-const DIRT = 0x353330;
+export const DIRT = 0x353330;
 
 export class HeightMesh {
   readonly mesh: Mesh;

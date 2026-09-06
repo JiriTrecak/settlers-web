@@ -8,6 +8,7 @@ No `Session`, no lockstep, no `World.tick`.
 |---|---|
 | `world/` | `WorldEditor` — view + current `UtcMap` |
 | `brush/` | Foliage mask + scatter → stamps |
+| `select/` | Pick / move / rotate stamps |
 | `sculpt/` | Height raise / lower |
 | `chrome/` | Docks, catalogue modal, name field |
 | `file/` | `.utcmap` save / load |
