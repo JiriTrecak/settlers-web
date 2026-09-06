@@ -17,4 +17,11 @@ describe("minimap iso", () => {
       expect(bz).toBeCloseTo(z);
     }
   });
+
+  it("puts the far corner (0,0) at the top — same as the iso view", () => {
+    const [, ny] = worldToNdc(0, 0, 256);
+    expect(ny).toBeGreaterThan(0);
+    const [, fy] = worldToNdc(256, 256, 256);
+    expect(fy).toBeLessThan(0);
+  });
 });

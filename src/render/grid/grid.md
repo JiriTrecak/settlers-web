@@ -1,3 +1,3 @@
 # grid
 
-Ground plane + `GridHelper` + directional sun. One cell is one world unit. Shadows land on the plane.
+Dark plate. Hairline gray cells, fat white every 8, fat red playable, fat blue halo. Ribbons — WebGL lines stay 1px.

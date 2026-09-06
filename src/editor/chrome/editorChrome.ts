@@ -37,6 +37,10 @@ export class EditorChrome {
     this.game.setActive(id);
   }
 
+  setGrid(on: boolean): void {
+    this.game.setLatch("grid", on);
+  }
+
   setAsset(asset: CatalogEntry | null): void {
     this.chip.set(asset);
   }

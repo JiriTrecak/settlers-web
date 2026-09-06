@@ -8,6 +8,7 @@ export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   tool: "stamp" | null = "stamp";
   asset: string | null = null;
+  gridOn = true;
   private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
@@ -46,12 +47,18 @@ export class WorldEditor {
     this.tool = "stamp";
   }
 
+  toggleGrid(): void {
+    this.gridOn = !this.gridOn;
+    this.renderer?.setGrid(this.gridOn);
+    this.draw();
+  }
+
   start(): void {
     const renderer = new Renderer(this.canvas, this.urls);
     this.renderer = renderer;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
     this.input = new MapInput(this.canvas, renderer.camera, {
-      onChanged: () => this.present(),
+      onChanged: () => this.draw(),
       onClick: (x, y) => this.click(x, y),
     });
     this.mini = new Minimap(this.hooks.host, {
@@ -59,7 +66,7 @@ export class WorldEditor {
       aspect: () => this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight),
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
-        this.present();
+        this.draw();
       },
     });
     this.paint();
@@ -67,7 +74,7 @@ export class WorldEditor {
 
   tick(dtMs: number): void {
     this.input?.tick(dtMs);
-    this.present();
+    this.draw();
   }
 
   stop(): void {
@@ -105,7 +112,7 @@ export class WorldEditor {
     this.mini?.paint();
   }
 
-  private present(): void {
+  private draw(): void {
     this.renderer?.present();
     this.mini?.paint();
   }

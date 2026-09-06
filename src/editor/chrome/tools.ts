@@ -1,7 +1,7 @@
 /**
  * Editor docks. Add an object to a list to put a tool on that bar.
  */
-import { FilePlus, FolderOpen, Library, LogOut, Save, SaveAll, TreePine } from "lucide";
+import { FilePlus, FolderOpen, Grid3x3, Library, LogOut, Save, SaveAll, TreePine } from "lucide";
 import type { IconItem } from "../../ui";
 
 export type FileToolHooks = {
@@ -15,6 +15,7 @@ export type FileToolHooks = {
 export type GameToolHooks = {
   onStamp(): void;
   onCatalogue(): void;
+  onGrid(): void;
 };
 
 export function fileTools(hooks: FileToolHooks): IconItem[] {
@@ -32,5 +33,7 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
   return [
     { id: "stamp", label: "Stamp", icon: TreePine, run: hooks.onStamp },
     { id: "catalogue", label: "Catalogue", icon: Library, run: hooks.onCatalogue },
+    { kind: "sep" },
+    { id: "grid", label: "Grid", icon: Grid3x3, run: hooks.onGrid, latch: true },
   ];
 }

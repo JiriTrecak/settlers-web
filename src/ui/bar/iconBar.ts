@@ -9,6 +9,8 @@ export type IconAction = {
   label: string;
   icon: IconNode;
   run: () => void;
+  /** Independent of `setActive` — for on/off tools like the grid. */
+  latch?: boolean;
 };
 
 export type IconItem = IconAction | { kind: "sep" };
@@ -24,6 +26,7 @@ const PLACE: Record<IconBarPlace, string> = {
 export class IconBar {
   readonly root: HTMLElement;
   private readonly buttons = new Map<string, HTMLButtonElement>();
+  private readonly latch = new Set<string>();
 
   constructor(
     host: HTMLElement,
@@ -42,6 +45,7 @@ export class IconBar {
       }
       const el = button(item);
       this.buttons.set(item.id, el);
+      if (item.latch) this.latch.add(item.id);
       this.root.append(el);
     }
     host.append(this.root);
@@ -49,10 +53,18 @@ export class IconBar {
 
   setActive(id: string | null): void {
     for (const [key, el] of this.buttons) {
+      if (this.latch.has(key)) continue;
       const on = key === id;
       el.classList.toggle("bg-white/[0.08]", on);
       el.classList.toggle("text-canopy", on);
     }
+  }
+
+  setLatch(id: string, on: boolean): void {
+    const el = this.buttons.get(id);
+    if (!el) return;
+    el.classList.toggle("bg-white/[0.08]", on);
+    el.classList.toggle("text-canopy", on);
   }
 
   destroy(): void {

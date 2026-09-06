@@ -28,8 +28,8 @@ export class Camera {
     const rz = -Math.sin(ISO_YAW);
     const fx = Math.sin(ISO_YAW);
     const fz = Math.cos(ISO_YAW);
-    this.targetX -= dx * scale * rx - dy * scale * fx;
-    this.targetZ -= dx * scale * rz - dy * scale * fz;
+    this.targetX -= dx * scale * rx + dy * scale * fx;
+    this.targetZ -= dx * scale * rz + dy * scale * fz;
   }
 
   /** WASD / arrows in camera-forward / camera-right on XZ. */
@@ -62,7 +62,7 @@ export class Camera {
     cam.top = halfH;
     cam.bottom = -halfH;
     cam.near = 0.1;
-    cam.far = 400;
+    cam.far = 600;
     cam.updateProjectionMatrix();
   }
 }

@@ -40,9 +40,11 @@ export class EditorScreen extends GameScreen {
       onLeave: () => void this.askLeave(),
       onStamp: () => this.stamp(),
       onCatalogue: () => this.openCatalogue(),
+      onGrid: () => this.toggleGrid(),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
+    this.chrome.setGrid(this.editor.gridOn);
     this.syncAsset();
     this.syncDoc();
     this.onEscape(() => void this.askLeave());
@@ -80,6 +82,11 @@ export class EditorScreen extends GameScreen {
       this.editor.setTool("stamp");
       this.chrome.setTool("stamp");
     }
+  }
+
+  private toggleGrid(): void {
+    this.editor.toggleGrid();
+    this.chrome.setGrid(this.editor.gridOn);
   }
 
   private openCatalogue(): void {

@@ -23,6 +23,8 @@ export class Renderer {
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
   private size = 0;
+  private grid: Mesh | null = null;
+  gridOn = true;
 
   constructor(canvas: HTMLCanvasElement, assets: ReadonlyMap<string, string> = new Map()) {
     this.display = new Display(canvas, () => this.present());
@@ -33,10 +35,16 @@ export class Renderer {
     this.props.setUrls(assets);
   }
 
+  setGrid(on: boolean): void {
+    this.gridOn = on;
+    if (this.grid) this.grid.visible = on;
+  }
+
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
     if (this.size !== snapshot.size) {
       this.size = snapshot.size;
-      addSunAndGrid(this.scene, snapshot.size);
+      this.grid = addSunAndGrid(this.scene, snapshot.size);
+      this.grid.visible = this.gridOn;
     }
     const seen = new Set<number>();
     for (const p of snapshot.players) {

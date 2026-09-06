@@ -36,7 +36,7 @@ Comments: non-obvious math, why a call into another class exists, races, a block
 
 - Tick: `25` ms (`Clock.tickMs`)
 - Command delay: `2` ticks MP default. SP MemoryChannel uses `1`.
-- Map: `MAP_SIZE = 256`, cell = 1 world unit
+- Map: `MAP_SIZE = 256` playable, cell = 1 world unit. Halo 16, fringe 16, major tile 8.
 
 Integer grid coords stay integers.
 
