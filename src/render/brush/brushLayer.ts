@@ -61,14 +61,16 @@ export class BrushLayer {
     }
   }
 
-  setCursor(x: number, z: number, radius: number, on: boolean): void {
+  setCursor(x: number, z: number, radius: number, on: boolean, y = 0): void {
     this.ring.visible = on;
     this.glow.visible = on;
     if (!on) return;
     this.ring.position.x = x;
+    this.ring.position.y = y + 0.05;
     this.ring.position.z = z;
     this.ring.scale.set(radius, radius, 1);
     this.glow.position.x = x;
+    this.glow.position.y = y + 0.045;
     this.glow.position.z = z;
     this.glow.scale.set(radius * 0.45, radius * 0.45, 1);
   }

@@ -27,6 +27,19 @@ export {
   type UtcMap,
 } from "./map/utcmap";
 export {
+  HEIGHT_MAX,
+  HEIGHT_MIN,
+  HEIGHT_ORIGIN,
+  HEIGHT_SPAN,
+  HEIGHT_VERTS,
+  HeightField,
+  decodeHeight,
+  encodeHeight,
+  sampleHeight,
+  unionDirty,
+  type HeightDirty,
+} from "./map/height";
+export {
   CHECKSUM_EVERY,
   COMMAND_DELAY,
   TICK_MS,

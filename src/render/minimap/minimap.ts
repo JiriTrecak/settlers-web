@@ -2,11 +2,12 @@
  * Iso diamond minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
  * View quad is a perspective frustum ∩ ground, so the far edge is wider.
  */
-import { MAP_SIZE, type MapStamp } from "../../shared";
+import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
 
 const PX = 264;
 const LAND = "#24282c";
+const WATER = "#3d6e72";
 const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
@@ -29,6 +30,7 @@ export class Minimap {
   private readonly canvas: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
   private dots: { x: number; z: number; fill: string }[] = [];
+  private height: HeightField | null = null;
   private dirty = true;
   private lastRev = -1;
   private lastW = 0;
@@ -89,6 +91,11 @@ export class Minimap {
     this.dirty = true;
   }
 
+  setHeight(field: HeightField | null): void {
+    this.height = field;
+    this.dirty = true;
+  }
+
   paint(): void {
     const cam = this.spec.camera;
     const { w: vw, h: vh } = this.spec.viewport();
@@ -103,6 +110,18 @@ export class Minimap {
     const h = this.canvas.height;
     ctx.fillStyle = LAND;
     ctx.fillRect(0, 0, w, h);
+    const field = this.height;
+    if (field) {
+      ctx.fillStyle = WATER;
+      const step = 2;
+      for (let z = 0; z < size; z += step) {
+        for (let x = 0; x < size; x += step) {
+          if (field.sample(x + 0.5, z + 0.5) >= field.waterLevel) continue;
+          const [px, py] = this.project(x + step * 0.5, z + step * 0.5, size, w, h);
+          ctx.fillRect(px - 1, py - 1, 3, 3);
+        }
+      }
+    }
     for (const d of this.dots) {
       const [px, py] = this.project(d.x, d.z, size, w, h);
       ctx.fillStyle = d.fill;

@@ -1,7 +1,9 @@
 /**
  * Authored map file. `.utcmap` is JSON; `v` is the schema.
  * `name` is the document title. `stamps` are placed catalog assets (cell coords, optional yaw).
+ * Optional `height` is base64 Int16 cm; `waterLevel` is meters (omit = 0 / flat).
  */
+import { decodeHeight, encodeHeight } from "./height";
 export const UTCMAP_EXT = ".utcmap";
 export const UTCMAP_VERSION = 1;
 export const DEFAULT_MAP_NAME = "Untitled";
@@ -21,6 +23,8 @@ export type UtcMap = {
   readonly v: typeof UTCMAP_VERSION;
   readonly name: string;
   readonly stamps: readonly MapStamp[];
+  readonly waterLevel?: number;
+  readonly height?: string;
 };
 
 export function emptyUtcMap(): UtcMap {
@@ -34,11 +38,33 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
   const name = parseName(o.name);
   const stamps = parseStamps(o.stamps);
   if (!name || !stamps) return null;
-  return { v: UTCMAP_VERSION, name, stamps };
+  const waterLevel = parseWaterLevel(o.waterLevel);
+  if (waterLevel === false) return null;
+  const height = parseHeight(o.height);
+  if (height === false) return null;
+  return {
+    v: UTCMAP_VERSION,
+    name,
+    stamps,
+    ...(waterLevel !== undefined ? { waterLevel } : {}),
+    ...(height !== undefined ? { height } : {}),
+  };
 }
 
 export function stringifyUtcMap(map: UtcMap): string {
-  return `${JSON.stringify({ v: map.v, name: map.name, stamps: map.stamps }, null, 2)}\n`;
+  const height = map.height ? encodeHeight(decodeHeight(map.height) ?? []) : undefined;
+  const waterLevel = map.waterLevel && map.waterLevel !== 0 ? map.waterLevel : undefined;
+  return `${JSON.stringify(
+    {
+      v: map.v,
+      name: map.name,
+      stamps: map.stamps,
+      ...(waterLevel !== undefined ? { waterLevel } : {}),
+      ...(height ? { height } : {}),
+    },
+    null,
+    2,
+  )}\n`;
 }
 
 /** Suggested `.utcmap` filename from the document title. */
@@ -49,6 +75,21 @@ export function mapFileName(name: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return `${slug || "untitled"}${UTCMAP_EXT}`;
+}
+
+function parseWaterLevel(raw: unknown): number | undefined | false {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "number" || !Number.isFinite(raw)) return false;
+  return raw;
+}
+
+function parseHeight(raw: unknown): string | undefined | false {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "string" || !raw) return false;
+  const samples = decodeHeight(raw);
+  if (!samples) return false;
+  const packed = encodeHeight(samples);
+  return packed ?? undefined;
 }
 
 function parseName(raw: unknown): string | null {

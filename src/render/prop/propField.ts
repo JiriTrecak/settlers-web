@@ -9,6 +9,7 @@ export class PropField {
   private readonly loader = new GLTFLoader();
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
+  private height: ((x: number, z: number) => number) | null = null;
   private gen = 0;
 
   constructor(
@@ -20,6 +21,13 @@ export class PropField {
     this.urls = urls;
   }
 
+  setHeight(sample: ((x: number, z: number) => number) | null): void {
+    this.height = sample;
+    for (const mesh of this.placed.values()) {
+      mesh.position.y = sample ? sample(mesh.position.x, mesh.position.z) : 0;
+    }
+  }
+
   sync(stamps: readonly MapStamp[]): void {
     const gen = ++this.gen;
     const seen = new Set<string>();
@@ -27,7 +35,7 @@ export class PropField {
       seen.add(stamp.id);
       const existing = this.placed.get(stamp.id);
       if (existing) {
-        place(existing, stamp);
+        this.place(existing, stamp);
         continue;
       }
       void this.spawn(stamp, gen);
@@ -49,7 +57,7 @@ export class PropField {
     const proto = await this.proto(stamp.asset);
     if (gen !== this.gen || !proto || this.placed.has(stamp.id)) return;
     const mesh = proto.clone();
-    place(mesh, stamp);
+    this.place(mesh, stamp);
     this.scene.add(mesh);
     this.placed.set(stamp.id, mesh);
   }
@@ -75,11 +83,14 @@ export class PropField {
       return null;
     }
   }
-}
 
-function place(mesh: Object3D, stamp: MapStamp): void {
-  const s = stamp.scale ?? 1;
-  mesh.position.set(stamp.x + 0.5, 0, stamp.y + 0.5);
-  mesh.rotation.y = stamp.yaw ?? 0;
-  mesh.scale.setScalar(s);
+  private place(mesh: Object3D, stamp: MapStamp): void {
+    const s = stamp.scale ?? 1;
+    const x = stamp.x + 0.5;
+    const z = stamp.y + 0.5;
+    const y = this.height ? this.height(x, z) : 0;
+    mesh.position.set(x, y, z);
+    mesh.rotation.y = stamp.yaw ?? 0;
+    mesh.scale.setScalar(s);
+  }
 }

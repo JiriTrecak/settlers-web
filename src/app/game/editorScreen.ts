@@ -32,6 +32,7 @@ export class EditorScreen extends GameScreen {
       onNeedAsset: () => this.openCatalogue(),
       onView: () => this.chrome.setGameCam(this.editor.gameCam),
       onBrush: () => this.syncBrush(),
+      onClean: () => this.syncClean(),
     });
     this.editor.setLibrary(this.library.urls());
     const first = this.library.doc.assets[0];
@@ -45,6 +46,7 @@ export class EditorScreen extends GameScreen {
       onLeave: () => void this.askLeave(),
       onStamp: () => this.stamp(),
       onBrush: () => this.armBrush(),
+      onClean: () => this.armClean(),
       onCatalogue: () => this.openCatalogue(),
       onGrid: () => this.toggleGridMenu(),
       onGridMode: (mode) => this.setGridMode(mode),
@@ -69,6 +71,8 @@ export class EditorScreen extends GameScreen {
       onSavePreset: (name) => this.savePreset(name),
       onDeletePreset: () => void this.askDeletePreset(),
       onLoadPreset: (id) => this.loadPreset(id),
+      onCleanRadius: (n) => this.editor.setCleanRadius(n),
+      onCleanType: (type) => this.editor.setCleanType(type),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
@@ -124,6 +128,13 @@ export class EditorScreen extends GameScreen {
     this.syncBrush();
   }
 
+  private armClean(): void {
+    this.editor.setTool("clean");
+    this.chrome.setTool("clean");
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.syncBrush();
+  }
+
   private syncBrush(): void {
     const urls = this.library.urls();
     this.chrome.setBrushOpen(this.editor.tool === "brush");
@@ -139,6 +150,15 @@ export class EditorScreen extends GameScreen {
       presets: this.presets.list,
       active: this.presets.active,
       presetName: this.presetName,
+    });
+    this.syncClean();
+  }
+
+  private syncClean(): void {
+    this.chrome.setCleanOpen(this.editor.tool === "clean");
+    this.chrome.setClean({
+      radius: this.editor.clean.radius,
+      type: this.editor.clean.type,
     });
   }
 

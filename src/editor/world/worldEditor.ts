@@ -1,21 +1,38 @@
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
-import { DEFAULT_MAP_NAME, emptyUtcMap, inStamp, MAP_SIZE, type GridMode, type UtcMap } from "../../shared";
+import {
+  DEFAULT_MAP_NAME,
+  decodeHeight,
+  emptyUtcMap,
+  encodeHeight,
+  HeightField,
+  inStamp,
+  MAP_SIZE,
+  type GridMode,
+  type UtcMap,
+} from "../../shared";
 import { MapInput, Minimap, Renderer } from "../../render";
 import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
+import { CleanTool } from "../clean/clean";
+import { SculptTool } from "../sculpt/sculpt";
+
+export type EditorTool = "stamp" | "brush" | "clean" | "sculpt";
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
-  tool: "stamp" | "brush" | null = "stamp";
+  tool: EditorTool | null = "stamp";
   asset: string | null = null;
   gridMenu = false;
   gridMode: GridMode = "tiles";
   gameCam = false;
   readonly brush = new BrushMask();
   readonly kit = new BrushKit();
+  readonly clean = new CleanTool();
+  readonly height = new HeightField();
+  readonly sculpt = new SculptTool();
   private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
@@ -29,6 +46,7 @@ export class WorldEditor {
       onNeedAsset?: () => void;
       onView?: () => void;
       onBrush?: () => void;
+      onClean?: () => void;
     },
   ) {}
 
@@ -51,9 +69,9 @@ export class WorldEditor {
     this.paint();
   }
 
-  setTool(tool: "stamp" | "brush" | null): void {
+  setTool(tool: EditorTool | null): void {
     this.tool = tool;
-    if (tool === "brush") this.gridMenu = false;
+    if (tool === "brush" || tool === "clean") this.gridMenu = false;
     this.renderer?.brush.setOpen(tool === "brush");
     this.syncBrushView();
   }
@@ -65,7 +83,7 @@ export class WorldEditor {
 
   toggleGridMenu(): void {
     this.gridMenu = !this.gridMenu;
-    if (this.gridMenu && this.tool === "brush") this.setTool("stamp");
+    if (this.gridMenu && (this.tool === "brush" || this.tool === "clean")) this.setTool("stamp");
   }
 
   setGridMode(mode: GridMode): void {
@@ -94,6 +112,16 @@ export class WorldEditor {
   setBrushDensity(n: number): void {
     this.brush.setDensity(n);
     this.hooks.onBrush?.();
+  }
+
+  setCleanRadius(n: number): void {
+    this.clean.setRadius(n);
+    this.hooks.onClean?.();
+  }
+
+  setCleanType(type: CleanTool["type"]): void {
+    this.clean.setType(type);
+    this.hooks.onClean?.();
   }
 
   applyBrush(): void {
@@ -136,15 +164,24 @@ export class WorldEditor {
       onClick: (x, y) => this.click(x, y),
       onHome: () => this.toggleGameCam(),
       paint: {
-        on: () => this.tool === "brush",
+        on: () => this.tool === "brush" || this.tool === "clean",
         hover: (x, y) => this.hover(x, y),
         stroke: (x, y, erase) => this.stroke(x, y, erase),
-        beginStroke: () => this.brush.beginStroke(),
+        beginStroke: () => {
+          if (this.tool === "clean") this.clean.beginStroke();
+          else this.brush.beginStroke();
+        },
         sizeBy: (steps) => {
+          if (this.tool === "clean") {
+            this.clean.sizeBy(steps);
+            this.hooks.onClean?.();
+            return;
+          }
           this.brush.sizeBy(steps);
           this.hooks.onBrush?.();
         },
         densityBy: (steps) => {
+          if (this.tool !== "brush") return;
           this.brush.densityBy(steps);
           this.hooks.onBrush?.();
         },
@@ -180,16 +217,26 @@ export class WorldEditor {
 
   private hover(clientX: number, clientY: number): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
+    const r = this.tool === "clean" ? this.clean.radius : this.brush.radius;
     if (!hit) {
-      this.renderer?.brush.setCursor(0, 0, this.brush.radius, false);
+      this.renderer?.brush.setCursor(0, 0, r, false);
       return;
     }
-    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true);
+    this.renderer?.brush.setCursor(hit.x, hit.z, r, true);
   }
 
   private stroke(clientX: number, clientY: number, erase: boolean): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return;
+    if (this.tool === "clean") {
+      this.renderer?.brush.setCursor(hit.x, hit.z, this.clean.radius, true);
+      const next = this.clean.stroke(hit.x, hit.z, this.map.stamps);
+      if (!next) return;
+      this.map = { ...this.map, stamps: next };
+      this.paint();
+      this.hooks.onChange?.();
+      return;
+    }
     this.brush.stroke(hit.x, hit.z, erase);
     this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true);
     this.syncBrushView();

@@ -1,6 +1,7 @@
 /**
- * Dark plate to the blue halo. Fringe past that is void + grid (orientation only).
- * Tiles = 16-cell lines. Full = every cell + white eights.
+ * Sun + grid lines to the blue halo. Fringe past that is void + grid (orientation only).
+ * Dirt plate is HeightMesh. Tiles = 16-cell lines. Full = every cell + white eights.
+ * Ribbons drape when `heightAt` is passed.
  */
 import {
   AmbientLight,
@@ -11,8 +12,6 @@ import {
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
-  MeshStandardMaterial,
-  PlaneGeometry,
   type Object3D,
   type Scene,
 } from "three";
@@ -32,8 +31,6 @@ export function addSunAndGrid(scene: Scene, size: number, lines: Object3D = scen
   const visHi = size + MAP_HALO;
   const lo = visLo - MAP_FRINGE;
   const hi = visHi + MAP_FRINGE;
-  const visSpan = visHi - visLo;
-  const visMid = (visLo + visHi) / 2;
   const span = hi - lo;
 
   scene.background = new Color(0x2a2a2a);
@@ -55,26 +52,23 @@ export function addSunAndGrid(scene: Scene, size: number, lines: Object3D = scen
   scene.add(sun.target);
   sun.target.position.set(size / 2, 0, size / 2);
 
-  const ground = new Mesh(
-    new PlaneGeometry(visSpan, visSpan),
-    new MeshStandardMaterial({ color: 0x353330, roughness: 0.95, metalness: 0 }),
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(visMid, 0, visMid);
-  ground.receiveShadow = true;
-  scene.add(ground);
   putGrid(lines, size, mode);
 }
 
-/** Rebuild the line mesh only — lights and plate stay. */
-export function putGrid(lines: Object3D, size: number, mode: GridMode): void {
+/** Rebuild the line mesh only — lights stay. */
+export function putGrid(
+  lines: Object3D,
+  size: number,
+  mode: GridMode,
+  heightAt?: (x: number, z: number) => number,
+): void {
   const visLo = -MAP_HALO;
   const visHi = size + MAP_HALO;
   const lo = visLo - MAP_FRINGE;
   const hi = visHi + MAP_FRINGE;
   while (lines.children.length) lines.remove(lines.children[0]!);
   if (mode === "none") return;
-  const { solid, fine } = buildGrid(size, lo, hi, visLo, visHi, mode);
+  const { solid, fine } = buildGrid(size, lo, hi, visLo, visHi, mode, heightAt);
   lines.add(solid);
   if (fine) lines.add(fine);
 }
@@ -86,26 +80,28 @@ function buildGrid(
   visLo: number,
   visHi: number,
   mode: GridMode,
+  heightAt?: (x: number, z: number) => number,
 ): { solid: Mesh; fine: Mesh | null } {
   const solid = buffers();
   const hair = buffers();
   const tiles = mode === "tiles";
+  const lift = heightAt ?? (() => 0);
   for (let i = lo; i <= hi; i++) {
     const block = i % MAP_BLOCK === 0;
     if (tiles && !block) continue;
     if (block) {
-      ribbon(solid, i, lo, i, hi, BLOCK_W, 0.035, MAJOR);
-      ribbon(solid, lo, i, hi, i, BLOCK_W, 0.035, MAJOR);
+      run(solid, i, lo, i, hi, BLOCK_W, 0.035, MAJOR, lift);
+      run(solid, lo, i, hi, i, BLOCK_W, 0.035, MAJOR, lift);
     } else if (i % MAP_TILE === 0) {
-      ribbon(solid, i, lo, i, hi, MAJOR_W, 0.035, MAJOR);
-      ribbon(solid, lo, i, hi, i, MAJOR_W, 0.035, MAJOR);
+      run(solid, i, lo, i, hi, MAJOR_W, 0.035, MAJOR, lift);
+      run(solid, lo, i, hi, i, MAJOR_W, 0.035, MAJOR, lift);
     } else {
-      ribbon(hair, i, lo, i, hi, FINE_W, 0.02, FINE);
-      ribbon(hair, lo, i, hi, i, FINE_W, 0.02, FINE);
+      run(hair, i, lo, i, hi, FINE_W, 0.02, FINE, lift);
+      run(hair, lo, i, hi, i, FINE_W, 0.02, FINE, lift);
     }
   }
-  ring(solid, 0, size, EDGE_W, 0.05, PLAY);
-  ring(solid, visLo, visHi, EDGE_W, 0.055, VIS);
+  ring(solid, 0, size, EDGE_W, 0.05, PLAY, lift);
+  ring(solid, visLo, visHi, EDGE_W, 0.055, VIS, lift);
   return { solid: mesh(solid, 1), fine: hair.idx.length ? mesh(hair, 0.5) : null };
 }
 
@@ -133,28 +129,74 @@ function mesh(buf: Buf, opacity: number): Mesh {
   );
 }
 
-function ring(buf: Buf, a: number, b: number, w: number, y: number, color: number): void {
-  ribbon(buf, a, a, b, a, w, y, color);
-  ribbon(buf, a, b, b, b, w, y, color);
-  ribbon(buf, a, a, a, b, w, y, color);
-  ribbon(buf, b, a, b, b, w, y, color);
+function ring(
+  buf: Buf,
+  a: number,
+  b: number,
+  w: number,
+  pad: number,
+  color: number,
+  lift: (x: number, z: number) => number,
+): void {
+  run(buf, a, a, b, a, w, pad, color, lift);
+  run(buf, a, b, b, b, w, pad, color, lift);
+  run(buf, a, a, a, b, w, pad, color, lift);
+  run(buf, b, a, b, b, w, pad, color, lift);
+}
+
+/** Split a grid line into unit segments so it drapes the height mesh. */
+function run(
+  buf: Buf,
+  x0: number,
+  z0: number,
+  x1: number,
+  z1: number,
+  w: number,
+  pad: number,
+  color: number,
+  lift: (x: number, z: number) => number,
+): void {
+  const alongX = Math.abs(x1 - x0) >= Math.abs(z1 - z0);
+  if (alongX) {
+    const lo = Math.min(x0, x1);
+    const hi = Math.max(x0, x1);
+    const z = z0;
+    for (let x = lo; x < hi; x++) ribbon(buf, x, z, x + 1, z, w, pad, color, lift);
+  } else {
+    const lo = Math.min(z0, z1);
+    const hi = Math.max(z0, z1);
+    const x = x0;
+    for (let z = lo; z < hi; z++) ribbon(buf, x, z, x, z + 1, w, pad, color, lift);
+  }
 }
 
 /** Flat XZ quad along a segment so width actually shows (WebGL lines stay 1px). */
-function ribbon(buf: Buf, x0: number, z0: number, x1: number, z1: number, w: number, y: number, color: number): void {
+function ribbon(
+  buf: Buf,
+  x0: number,
+  z0: number,
+  x1: number,
+  z1: number,
+  w: number,
+  pad: number,
+  color: number,
+  lift: (x: number, z: number) => number,
+): void {
   const alongX = Math.abs(x1 - x0) >= Math.abs(z1 - z0);
   const hw = w / 2;
+  const y0 = lift(x0, z0) + pad;
+  const y1 = lift(x1, z1) + pad;
   const b = buf.pos.length / 3;
   if (alongX) {
-    vert(buf, x0, y, z0 - hw, color);
-    vert(buf, x1, y, z0 - hw, color);
-    vert(buf, x1, y, z0 + hw, color);
-    vert(buf, x0, y, z0 + hw, color);
+    vert(buf, x0, y0, z0 - hw, color);
+    vert(buf, x1, y1, z0 - hw, color);
+    vert(buf, x1, y1, z0 + hw, color);
+    vert(buf, x0, y0, z0 + hw, color);
   } else {
-    vert(buf, x0 - hw, y, z0, color);
-    vert(buf, x0 + hw, y, z0, color);
-    vert(buf, x0 + hw, y, z1, color);
-    vert(buf, x0 - hw, y, z1, color);
+    vert(buf, x0 - hw, y0, z0, color);
+    vert(buf, x0 + hw, y0, z0, color);
+    vert(buf, x0 + hw, y1, z1, color);
+    vert(buf, x0 - hw, y1, z1, color);
   }
   buf.idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
 }

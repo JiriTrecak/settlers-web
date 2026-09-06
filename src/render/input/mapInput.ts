@@ -11,7 +11,7 @@ export type MapInputHooks = {
   onChanged(): void;
   onClick?(clientX: number, clientY: number): void;
   onHome?: () => void;
-  /** Editor foliage brush. LMB paints; Shift erases; Shift/Ctrl+wheel tweak the brush. */
+  /** Editor brush / clean. LMB paints or wipes; Shift erases the mask; Shift/Ctrl+wheel tweak. */
   paint?: {
     on(): boolean;
     hover(clientX: number, clientY: number): void;

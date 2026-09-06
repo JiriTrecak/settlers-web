@@ -1,5 +1,5 @@
 /**
- * Sibling dock for the foliage brush: kit squares, % weights, named presets, apply.
+ * Sibling dock for the foliage brush: kit rows, % / scale, named presets, apply.
  */
 import { createElement, Plus, Trash2 } from "lucide";
 import { PreviewCache } from "../../render";
@@ -46,55 +46,55 @@ export class BrushDock {
   private readonly pick: HTMLSelectElement;
   private readonly items: HTMLElement;
   private readonly previews = new PreviewCache();
-  private sig = "";
+  private sig: string | null = null;
 
   constructor(
     host: HTMLElement,
     private readonly hooks: BrushDockHooks,
   ) {
     this.root = document.createElement("div");
-    this.root.className = `pointer-events-auto flex w-64 min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl p-2.5 font-dock ${sheet}`;
+    this.root.className = `pointer-events-auto flex w-64 min-w-0 flex-col gap-1.5 overflow-hidden rounded-2xl p-2 font-dock ${sheet}`;
     this.root.setAttribute("aria-label", "Brush");
     const head = document.createElement("div");
-    head.className = "flex min-w-0 items-center justify-between gap-2";
+    head.className = "flex min-w-0 items-center gap-1.5";
     const title = document.createElement("span");
-    title.className = "text-[11px] font-medium tracking-[0.14em] text-canopy/40 uppercase";
+    title.className = "shrink-0 text-[11px] font-medium tracking-[0.14em] text-canopy/40 uppercase";
     title.textContent = "Brush";
+    this.name = document.createElement("input");
+    this.name.type = "text";
+    this.name.placeholder = "Name";
+    this.name.className = `${field} min-w-0 flex-1 overflow-hidden px-1.5 py-1 text-[12px]`;
     const fresh = document.createElement("button");
     fresh.type = "button";
-    fresh.className = `${btn} min-h-0 px-1.5 py-1 text-canopy/55`;
+    fresh.className = `${btn} shrink-0 px-1.5 py-1 text-canopy/55`;
     fresh.setAttribute("aria-label", "New brush");
     fresh.title = "New empty brush";
     fresh.append(createElement(Plus, { width: 14, height: 14, "stroke-width": 1.75, class: "pointer-events-none" }));
     fresh.addEventListener("click", () => this.hooks.onNewPreset());
-    head.append(title, fresh);
-    this.name = document.createElement("input");
-    this.name.type = "text";
-    this.name.placeholder = "Preset name";
-    this.name.className = `${field} min-w-0 w-full overflow-hidden px-2 py-1.5 text-[12px]`;
+    head.append(title, this.name, fresh);
+    const presetRow = document.createElement("div");
+    presetRow.className = "flex min-w-0 items-center gap-1";
     this.pick = document.createElement("select");
-    this.pick.className = `${field} min-w-0 w-full px-2 py-1.5 text-[12px]`;
+    this.pick.className = `${field} min-w-0 flex-1 px-1.5 py-1 text-[12px]`;
     this.pick.addEventListener("change", () => {
       if (this.pick.value) this.hooks.onLoadPreset(this.pick.value);
     });
-    const presetBtns = document.createElement("div");
-    presetBtns.className = "flex gap-1";
     const save = document.createElement("button");
     save.type = "button";
-    save.className = `${btnPrimary} flex-1 px-2 py-1 text-[12px]`;
+    save.className = `${btnPrimary} shrink-0 px-2 py-1 text-[12px]`;
     save.textContent = "Save";
     save.addEventListener("click", () => this.hooks.onSavePreset(this.name.value));
     const del = document.createElement("button");
     del.type = "button";
-    del.className = `${btnDanger} px-2 py-1`;
+    del.className = `${btnDanger} shrink-0 px-1.5 py-1`;
     del.setAttribute("aria-label", "Delete preset");
     del.append(
       createElement(Trash2, { width: 14, height: 14, "stroke-width": 1.75, class: "pointer-events-none" }),
     );
     del.addEventListener("click", () => this.hooks.onDeletePreset());
-    presetBtns.append(save, del);
+    presetRow.append(this.pick, save, del);
     this.items = document.createElement("div");
-    this.items.className = "grid grid-cols-2 gap-1.5";
+    this.items.className = "flex min-w-0 flex-col gap-1";
     const sizeRow = row("Size");
     this.size = slider(BRUSH_RADIUS_MIN, BRUSH_RADIUS_MAX, 0.5);
     this.sizeVal = value();
@@ -113,7 +113,7 @@ export class BrushDock {
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
     hint.textContent = "Space+drag pan · Shift erase · Shift+wheel size · Ctrl+wheel density";
-    this.root.append(head, this.name, this.pick, presetBtns, cap("Items"), this.items, sizeRow, densRow, this.apply, hint);
+    this.root.append(head, presetRow, cap("Items"), this.items, sizeRow, densRow, this.apply, hint);
     this.root.classList.add("hidden");
     host.append(this.root);
   }
@@ -172,21 +172,14 @@ export class BrushDock {
 
   private slotCard(slot: BrushDockSlot): HTMLElement {
     const el = document.createElement("div");
-    el.className = "flex flex-col gap-1";
+    el.className = "flex min-w-0 items-center gap-1.5";
     const face = document.createElement("div");
-    face.className = "relative aspect-square overflow-hidden rounded-lg bg-white/[0.06]";
+    face.className = "h-8 w-8 shrink-0 overflow-hidden rounded-md bg-white/[0.06]";
     const img = document.createElement("img");
     img.alt = slot.name;
     img.className = "h-full w-full object-cover";
     if (slot.url) this.previews.paint(slot.url, img);
     face.append(img);
-    const drop = document.createElement("button");
-    drop.type = "button";
-    drop.className = `${btn} absolute right-0.5 top-0.5 min-h-0 px-1 py-0.5 text-[10px] text-canopy/70`;
-    drop.setAttribute("aria-label", `Remove ${slot.name}`);
-    drop.textContent = "×";
-    drop.addEventListener("click", () => this.hooks.onRemoveSlot(slot.id));
-    face.append(drop);
     const pct = document.createElement("input");
     pct.type = "number";
     pct.min = "1";
@@ -204,10 +197,13 @@ export class BrushDock {
     scale.dataset.scale = slot.id;
     scale.className = `${field} spin-none min-w-0 w-full px-1 py-1 text-center text-[11px] tabular-nums`;
     scale.addEventListener("change", () => this.hooks.onSlotScale(slot.id, Number(scale.value)));
-    const row = document.createElement("div");
-    row.className = "flex items-center gap-1";
-    row.append(num(pct, "%"), num(scale, "×"));
-    el.append(face, row);
+    const drop = document.createElement("button");
+    drop.type = "button";
+    drop.className = `${btn} shrink-0 px-1.5 py-1 text-[13px] text-canopy/55`;
+    drop.setAttribute("aria-label", `Remove ${slot.name}`);
+    drop.textContent = "×";
+    drop.addEventListener("click", () => this.hooks.onRemoveSlot(slot.id));
+    el.append(face, num(pct, "%"), num(scale, "×"), drop);
     return el;
   }
 
@@ -215,9 +211,9 @@ export class BrushDock {
     const el = document.createElement("button");
     el.type = "button";
     el.className =
-      "flex aspect-square items-center justify-center rounded-lg bg-white/[0.04] text-canopy/45 hover:bg-white/[0.08] hover:text-canopy";
+      "flex h-8 items-center justify-center gap-1 rounded-md bg-white/[0.04] text-[11px] tracking-wide text-canopy/45 hover:bg-white/[0.08] hover:text-canopy";
     el.setAttribute("aria-label", "Add asset");
-    el.append(createElement(Plus, { width: 20, height: 20, "stroke-width": 1.75, class: "pointer-events-none" }));
+    el.append(createElement(Plus, { width: 14, height: 14, "stroke-width": 1.75, class: "pointer-events-none" }));
     el.addEventListener("click", () => this.hooks.onAddSlot());
     return el;
   }

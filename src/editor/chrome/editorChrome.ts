@@ -6,12 +6,16 @@ import type { CatalogEntry, GridMode } from "../../shared";
 import { AssetChip } from "./assetChip";
 import { BrushDock, type BrushDockHooks, type BrushDockState } from "./brushDock";
 import { CameraHint } from "./cameraHint";
+import { CleanDock, type CleanDockHooks, type CleanDockState } from "./cleanDock";
+import { SculptDock, type SculptDockHooks, type SculptDockState } from "./sculptDock";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
 
 export type EditorChromeHooks = FileToolHooks &
   GameToolHooks &
-  BrushDockHooks & {
+  BrushDockHooks &
+  CleanDockHooks &
+  SculptDockHooks & {
     onName(name: string): void;
   };
 
@@ -23,6 +27,8 @@ export class EditorChrome {
   private readonly game: IconBar;
   private readonly modes: IconBar;
   private readonly brush: BrushDock;
+  private readonly clean: CleanDock;
+  private readonly sculpt: SculptDock;
   private readonly chip: AssetChip;
   private readonly hint: CameraHint;
 
@@ -42,6 +48,8 @@ export class EditorChrome {
     this.game = new IconBar(this.rail, { place: "col", label: "Tools", items: gameTools(hooks) });
     this.modes = new IconBar(this.rail, { place: "col", label: "Modes", items: this.game.modesOf("grid") });
     this.brush = new BrushDock(this.rail, hooks);
+    this.clean = new CleanDock(this.rail, hooks);
+    this.sculpt = new SculptDock(this.rail, hooks);
     this.chip = new AssetChip(host, { onOpen: hooks.onCatalogue });
     this.hint = new CameraHint(host);
   }
@@ -73,6 +81,22 @@ export class EditorChrome {
     this.brush.set(state);
   }
 
+  setCleanOpen(on: boolean): void {
+    this.clean.setOpen(on);
+  }
+
+  setClean(state: CleanDockState): void {
+    this.clean.set(state);
+  }
+
+  setSculptOpen(on: boolean): void {
+    this.sculpt.setOpen(on);
+  }
+
+  setSculpt(state: SculptDockState): void {
+    this.sculpt.set(state);
+  }
+
   setAsset(asset: CatalogEntry | null): void {
     this.chip.set(asset);
   }
@@ -91,6 +115,8 @@ export class EditorChrome {
     this.game.destroy();
     this.modes.destroy();
     this.brush.destroy();
+    this.clean.destroy();
+    this.sculpt.destroy();
     this.chip.destroy();
     this.hint.destroy();
     this.top.remove();
