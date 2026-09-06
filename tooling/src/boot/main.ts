@@ -1,6 +1,7 @@
 /**
  * Tools Vite entry. DOM only.
  */
+import "../ui/styles.css";
 import { ToolsApp } from "../app/ToolsApp";
 
 const gameRoot = document.getElementById("game");

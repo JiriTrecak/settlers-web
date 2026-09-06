@@ -4,7 +4,8 @@ Game code.
 
 | Folder | Owns |
 |---|---|
-| `app/` | Canvas + `ScreenHost`. `PlayScreen` holds the session. |
+| `app/` | Canvas + `ScreenHost`. `PlayScreen` holds the session. `EditorScreen` holds the editor. |
+| `editor/` | World editor view. Same `Renderer` as play. No Session. |
 | `session/` | One match. Lives inside `PlayScreen`. |
 | `sim/` | Deterministic world state. No Three.js. |
 | `render/` | Three.js drawing. Reads sim views, never mutates them. |

@@ -8,7 +8,7 @@ HTML/CSS overlay. Not Three.js.
 
 - Fps + zoom
 - Exit confirm
-- Main menu + multiplayer lobby (one map: Grid)
+- Main menu (single / multiplayer / world editor) + multiplayer lobby (one map: Grid)
 
 ## Refusals
 

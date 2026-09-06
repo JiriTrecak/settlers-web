@@ -2,6 +2,17 @@
 export type { Action, GridPos } from "./types/types";
 export { MAP_ID, MAP_SIZE } from "./map/map";
 export {
+  DEFAULT_MAP_NAME,
+  emptyUtcMap,
+  mapFileName,
+  parseUtcMap,
+  stringifyUtcMap,
+  UTCMAP_EXT,
+  UTCMAP_VERSION,
+  type MapStamp,
+  type UtcMap,
+} from "./map/utcmap";
+export {
   CHECKSUM_EVERY,
   COMMAND_DELAY,
   TICK_MS,

@@ -17,7 +17,9 @@ npm run build
 - `src/net` must not import `pixi.js` / `three` / `app` / `session` / `ui` / `render` / `sim`
 - `ui` must not import pixi / three / `app` / `session` / `render` / `net`
 - `render` must not import `app` / `session` / `ui` / `net`
-- `session` must not import `app`
+- `session` must not import `app` / `editor`
+- `editor` must not import `app` / `session` / `net`
+- `app` may import `editor`; still must not import `sim` / `render`
 - Sources must not name a foreign engine
 
 ## What not to test

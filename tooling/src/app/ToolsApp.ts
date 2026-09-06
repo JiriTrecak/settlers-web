@@ -1,5 +1,5 @@
 /**
- * Tools hub. No Pixi. World editor comes next.
+ * Tools hub. No Pixi. World editor is in the game.
  */
 import { HubScreen } from "../ui/hub";
 import { ScreenHost } from "../ui/screen";

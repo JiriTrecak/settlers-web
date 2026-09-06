@@ -1,0 +1,15 @@
+/* Utilities only — preflight would nuke the hand-rolled game HUD. */
+@import "@fontsource-variable/outfit";
+
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@source "../**/*.{ts,html}";
+
+@theme {
+  --color-canopy: #e8e0d0;
+  --color-moss: #3d5340;
+  --color-ink: #020814;
+  --font-dock: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+}

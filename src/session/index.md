@@ -1,10 +1,9 @@
 # session
 
-The running match. Constructed on demand; not alive in the lobby.
+The running match. Constructed on demand; not alive in the lobby or the editor.
 
 | Folder | Owns |
 |---|---|
 | `session/` | `Session` — World, lockstep, camera, draw |
-| `input/` | `MapInput` — pan / zoom / WASD |
 
-Session talks to Lockstep, never a socket.
+Pan/zoom lives on the renderer (`MapInput`). Session talks to Lockstep, never a socket.

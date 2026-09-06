@@ -36,7 +36,7 @@ function importsArea(spec: string, area: string): boolean {
 
 describe("architecture", () => {
   it("src game layers do not import pixi.js", async () => {
-    for (const layer of ["sim", "net", "ui", "render", "session", "app"]) {
+    for (const layer of ["sim", "net", "ui", "render", "session", "app", "editor"]) {
       const files = await walkTs(join(repoRoot, "src", layer));
       expect(files.length).toBeGreaterThan(0);
       for (const file of files) {
@@ -57,11 +57,12 @@ describe("architecture", () => {
 
   it("layer imports stay one-way", async () => {
     const bans: Record<string, string[]> = {
-      sim: ["pixi", "three", "app", "session", "ui", "render", "net"],
-      net: ["pixi", "three", "app", "session", "ui", "render", "sim"],
-      ui: ["pixi", "three", "app", "session", "render", "net"],
-      render: ["pixi", "app", "session", "ui", "net"],
-      session: ["pixi", "app"],
+      sim: ["pixi", "three", "app", "session", "ui", "render", "net", "editor"],
+      net: ["pixi", "three", "app", "session", "ui", "render", "sim", "editor"],
+      ui: ["pixi", "three", "app", "session", "render", "net", "editor"],
+      render: ["pixi", "app", "session", "ui", "net", "editor"],
+      session: ["pixi", "app", "editor"],
+      editor: ["pixi", "app", "session", "net"],
       app: ["pixi", "sim", "render"],
     };
     const extra = join(repoRoot, "server");

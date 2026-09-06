@@ -8,6 +8,7 @@ import { MAP_ID, type MatchConfig, type RoomView, type ServerMsg } from "../../s
 import { parseBootIntent } from "./bootIntent";
 import { BackgroundTicker } from "./backgroundTicker";
 import { PlayScreen } from "./playScreen";
+import { EditorScreen } from "./editorScreen";
 
 const GRID = { id: MAP_ID, name: "Grid", players: 8 };
 
@@ -30,6 +31,7 @@ export class GameApp {
   start(): void {
     const canvas = document.createElement("canvas");
     this.canvas = canvas;
+    canvas.style.visibility = "hidden";
     this.gameRoot.appendChild(canvas);
     this.screens = new ScreenHost(this.hudRoot);
 
@@ -43,7 +45,8 @@ export class GameApp {
 
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
-    if (intent.kind === "play" || intent.kind === "single") this.play();
+    if (intent.kind === "play" && intent.mapId === MAP_ID) this.play();
+    else if (intent.kind === "editor") this.showEditor();
     else this.showMenu();
   }
 
@@ -87,16 +90,19 @@ export class GameApp {
 
   private showMenu(): void {
     this.playGen++;
+    this.hideCanvas();
     this.screens?.show(
       new MainMenu({
         onSinglePlayer: () => this.play(),
         onMultiplayer: () => this.showMultiplayer(),
+        onEditor: () => this.showEditor(),
       }),
     );
   }
 
   private showMultiplayer(error?: string): void {
     this.playGen++;
+    this.hideCanvas();
     const screen = new MultiplayerScreen({
       maps: [GRID],
       mapName: () => GRID.name,
@@ -207,6 +213,7 @@ export class GameApp {
   private async playRemote(match: MatchConfig, channel: WebSocketChannel, player: number): Promise<void> {
     if (!this.canvas || !this.screens) return;
     const gen = ++this.playGen;
+    this.showCanvas();
     const play = new PlayScreen(this.canvas, {
       mapId: match.mapId,
       player,
@@ -222,19 +229,49 @@ export class GameApp {
     if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
   }
 
+  private showEditor(): void {
+    if (!this.canvas || !this.screens) return;
+    if (this.screens.screen instanceof EditorScreen) return;
+    const gen = ++this.playGen;
+    this.showCanvas();
+    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu() });
+    this.screens.show(editor);
+    try {
+      editor.start();
+    } catch (err) {
+      console.error(err);
+      if (gen === this.playGen) this.showMenu();
+    }
+  }
+
   private play(): void {
     if (!this.canvas || !this.screens) return;
     const current = this.screens.screen;
     if (current instanceof PlayScreen && current.mapId === MAP_ID) return;
     const gen = ++this.playGen;
+    this.showCanvas();
     const play = new PlayScreen(this.canvas, {
       mapId: MAP_ID,
       player: this.player,
       onLeave: () => this.showMenu(),
     });
     this.screens.show(play);
-    play.start();
+    try {
+      play.start();
+    } catch (err) {
+      console.error(err);
+      if (gen === this.playGen) this.showMenu();
+      return;
+    }
     if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+  }
+
+  private hideCanvas(): void {
+    if (this.canvas) this.canvas.style.visibility = "hidden";
+  }
+
+  private showCanvas(): void {
+    if (this.canvas) this.canvas.style.visibility = "visible";
   }
 }
 

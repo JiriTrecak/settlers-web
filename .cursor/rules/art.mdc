@@ -9,6 +9,6 @@ alwaysApply: true
 
 One iso plane. Forest is atmosphere (trees as objects), not layered sim.
 
-**Destination:** real meshes (glTF) + PBR (`MeshStandardMaterial`) + a sun + real shadows. Iterate assets in the world editor (`tooling/`).
+**Destination:** real meshes (glTF) + PBR (`MeshStandardMaterial`) + a sun + real shadows. Iterate assets in the in-game world editor (menu → World editor, or `?screen=editor`).
 
 Canon: [`docs/game/art.md`](docs/game/art.md). Editor: [`docs/build-plan/editor.md`](docs/build-plan/editor.md).

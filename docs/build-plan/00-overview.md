@@ -31,7 +31,7 @@ ui  ──actions──►  session ──► sim  ──ViewSnapshot──►  
 - `render` never mutates sim. It reads `ViewSnapshot`.
 - `session` is one match, inside `PlayScreen`.
 - `app` owns the canvas + rAF and pumps `session.tick`.
-- `ui` is HTML/CSS. Three.js draws the map. World editor lives in `tooling/`.
+- `ui` is HTML/CSS. Three.js draws the map. World editor is an in-game screen (`editor/`).
 
 ## Where we are
 

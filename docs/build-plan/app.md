@@ -2,7 +2,7 @@
 
 Boot. Owns the canvas + rAF, shows one `GameScreen`, pumps the ticker. No feature code.
 
-`PlayScreen` owns Hud + Session. Single player starts a one-slot match. Folder map: [`src/app/index.md`](../../src/app/index.md).
+`PlayScreen` owns Hud + Session. `EditorScreen` owns Tailwind chrome + `WorldEditor`. Single player starts a one-slot match. Folder map: [`src/app/index.md`](../../src/app/index.md).
 
 ## Loop
 

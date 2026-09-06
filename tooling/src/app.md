@@ -1,3 +1,3 @@
 # tooling
 
-Separate Vite target. DOM hub. No Session, no lockstep, no Pixi. World editor is next: [`docs/build-plan/editor.md`](../../docs/build-plan/editor.md).
+Separate Vite target. DOM hub + Tailwind. No Session, no lockstep, no world editor — that screen is in the game (`src/editor/`).

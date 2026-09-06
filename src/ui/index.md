@@ -7,3 +7,7 @@ DOM overlay. `pointer-events: none` on the HUD root except interactive widgets.
 | `screen/` | `GameScreen` + `ScreenHost` — one overlay at a time |
 | `menu/` | Main menu, multiplayer lobby |
 | `hud/` | Fps / zoom; exit (confirm) |
+| `tw.css` | Tailwind theme + utilities (no preflight). Editor chrome. |
+| `bar/` | `IconBar` — Lucide docks |
+| `browser/` | `AssetBrowser` — catalog cards |
+| `dialog/` | `Confirm` — glass modal |

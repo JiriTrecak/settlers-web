@@ -1,13 +1,21 @@
 /**
- * Canvas pan / zoom / WASD. Mutates `camera`; session presents it.
+ * Canvas pan / zoom / WASD. Mutates `camera`. Used by Session and the editor.
  */
-import type { Camera } from "../../render/camera/camera";
+import type { Camera } from "../camera/camera";
 
 const WASD_SPEED = 28;
+
+export type MapInputHooks = {
+  onChanged(): void;
+  onClick?(clientX: number, clientY: number): void;
+};
+
+const CLICK_PX = 5;
 
 export class MapInput {
   private readonly keys = new Set<string>();
   private dragging = false;
+  private moved = 0;
   private lastX = 0;
   private lastY = 0;
   private readonly onKeyDown: (e: KeyboardEvent) => void;
@@ -15,12 +23,13 @@ export class MapInput {
   private readonly onPointerDown: (e: PointerEvent) => void;
   private readonly onPointerMove: (e: PointerEvent) => void;
   private readonly onPointerUp: (e: PointerEvent) => void;
+  private readonly onPointerCancel: (e: PointerEvent) => void;
   private readonly onWheel: (e: WheelEvent) => void;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly camera: Camera,
-    private readonly onChanged: () => void,
+    private readonly hooks: MapInputHooks,
   ) {
     this.onKeyDown = (e) => {
       this.keys.add(e.key.toLowerCase());
@@ -31,32 +40,41 @@ export class MapInput {
     this.onPointerDown = (e) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
       this.dragging = true;
+      this.moved = 0;
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.canvas.setPointerCapture(e.pointerId);
     };
     this.onPointerMove = (e) => {
       if (!this.dragging) return;
-      this.camera.panScreen(e.clientX - this.lastX, e.clientY - this.lastY, this.canvas.clientHeight);
+      const dx = e.clientX - this.lastX;
+      const dy = e.clientY - this.lastY;
+      this.moved += Math.hypot(dx, dy);
+      this.camera.panScreen(dx, dy, this.canvas.clientHeight);
       this.lastX = e.clientX;
       this.lastY = e.clientY;
-      this.onChanged();
+      this.hooks.onChanged();
     };
     this.onPointerUp = (e) => {
+      this.dragging = false;
+      if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+      if (e.button === 0 && this.moved < CLICK_PX) this.hooks.onClick?.(e.clientX, e.clientY);
+    };
+    this.onPointerCancel = (e) => {
       this.dragging = false;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
     };
     this.onWheel = (e) => {
       e.preventDefault();
       this.camera.zoomBy(e.deltaY > 0 ? 1.1 : 1 / 1.1);
-      this.onChanged();
+      this.hooks.onChanged();
     };
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
     this.canvas.addEventListener("pointerdown", this.onPointerDown);
     this.canvas.addEventListener("pointermove", this.onPointerMove);
     this.canvas.addEventListener("pointerup", this.onPointerUp);
-    this.canvas.addEventListener("pointercancel", this.onPointerUp);
+    this.canvas.addEventListener("pointercancel", this.onPointerCancel);
     this.canvas.addEventListener("wheel", this.onWheel, { passive: false });
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
   }
@@ -71,7 +89,7 @@ export class MapInput {
     if (this.keys.has("s") || this.keys.has("arrowdown")) forward -= 1;
     if (!right && !forward) return;
     this.camera.panWorld(right * step, forward * step);
-    this.onChanged();
+    this.hooks.onChanged();
   }
 
   destroy(): void {
@@ -80,7 +98,7 @@ export class MapInput {
     this.canvas.removeEventListener("pointerdown", this.onPointerDown);
     this.canvas.removeEventListener("pointermove", this.onPointerMove);
     this.canvas.removeEventListener("pointerup", this.onPointerUp);
-    this.canvas.removeEventListener("pointercancel", this.onPointerUp);
+    this.canvas.removeEventListener("pointercancel", this.onPointerCancel);
     this.canvas.removeEventListener("wheel", this.onWheel);
   }
 }

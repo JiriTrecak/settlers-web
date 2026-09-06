@@ -8,7 +8,12 @@ describe("parseBootIntent", () => {
   });
 
   it("skips to a match via ?map=", () => {
+    expect(parseBootIntent("?map=grid")).toEqual({ kind: "play", mapId: "grid" });
     expect(parseBootIntent("?map=coast")).toEqual({ kind: "play", mapId: "coast" });
+  });
+
+  it("opens the world editor via ?screen=editor", () => {
+    expect(parseBootIntent("?screen=editor")).toEqual({ kind: "editor" });
   });
 
   it("opens map select via ?screen=single", () => {
@@ -22,5 +27,6 @@ describe("parseBootIntent", () => {
 
   it("prefers ?map= over ?screen=", () => {
     expect(parseBootIntent("?screen=single&map=peak")).toEqual({ kind: "play", mapId: "peak" });
+    expect(parseBootIntent("?screen=editor&map=grid")).toEqual({ kind: "play", mapId: "grid" });
   });
 });

@@ -3,9 +3,8 @@
  */
 import { MAP_ID, MAP_SIZE, localMatch, type MatchConfig } from "../../shared";
 import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
-import { Renderer } from "../../render";
+import { MapInput, Renderer } from "../../render";
 import { World } from "../../sim/world/world";
-import { MapInput } from "../input/mapInput";
 import type { HudState } from "../../ui";
 
 export type SessionHooks = {
@@ -58,7 +57,7 @@ export class Session {
     this.renderer = renderer;
     const self = this.world.players.find((p) => p.id === this.me) ?? this.world.players[0];
     if (self) renderer.camera.lookAt(self.pos.x + 0.5, self.pos.y + 0.5);
-    this.input = new MapInput(this.canvas, renderer.camera, () => renderer.present());
+    this.input = new MapInput(this.canvas, renderer.camera, { onChanged: () => renderer.present() });
     if (this.config.channel) {
       this.bindRemote(match, this.config.channel);
       this.armConfirms(match);

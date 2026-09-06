@@ -1,6 +1,7 @@
 /**
  * Vite entry. `#game` is the WebGL canvas host, `#hud` is the screen overlay.
  */
+import "../../ui/tw.css";
 import { GameApp } from "../game/GameApp";
 
 const gameRoot = document.getElementById("game");

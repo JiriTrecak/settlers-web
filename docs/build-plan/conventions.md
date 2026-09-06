@@ -23,6 +23,8 @@ Comments: non-obvious math, why a call into another class exists, races, a block
 | `Session` | One running match |
 | `Player` | Slot entity. Render draws from `view()`. |
 | `ViewSnapshot` | Tick + size + players |
+| `UtcMap` | Authored `.utcmap` document |
+| `MapStamp` | Placed catalog asset `{ id, asset, x, y }` |
 | `Action` | `noop` \| `ping` |
 | `Clock` | 25 ms slots |
 | `GridPos` | `{ readonly x: number; readonly y: number }` |
@@ -46,7 +48,8 @@ net      → shared
 render   → shared, sim (views/types), three
 ui       → shared, sim (views/types)
 session  → sim, render, ui, shared, net
-app      → session, ui, net
+editor   → render, sim, shared, three
+app      → session, editor, ui, net
 tooling  → render, sim, shared
 ```
 

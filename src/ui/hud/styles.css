@@ -27,6 +27,10 @@ body {
   text-shadow: 0 1px 2px #000;
 }
 
+#hud:has(.menu) {
+  pointer-events: auto;
+}
+
 .hud-stats {
   position: absolute;
   top: 12px;
@@ -823,7 +827,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(2, 8, 20, 0.78);
+  background: #020814;
 }
 
 .menu-panel {
@@ -851,11 +855,12 @@ body {
 }
 
 .menu-title {
-  margin: 0;
-  font-size: 28px;
+  margin: 0 0 8px;
+  font-size: 22px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: #e8e0d0;
 }
 
 .menu-body {

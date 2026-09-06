@@ -1,11 +1,12 @@
 /**
- * Boot screen: single player / multiplayer.
+ * Boot screen: single player / multiplayer / world editor.
  */
 import { GameScreen } from "../screen/screen";
 
 export type MainMenuHooks = {
   onSinglePlayer(): void;
   onMultiplayer(): void;
+  onEditor(): void;
 };
 
 export class MainMenu extends GameScreen {
@@ -16,7 +17,12 @@ export class MainMenu extends GameScreen {
     const title = document.createElement("h1");
     title.className = "menu-title";
     title.textContent = "Under the Canopy";
-    panel.append(title, button("Single player", hooks.onSinglePlayer), button("Multiplayer", hooks.onMultiplayer));
+    panel.append(
+      title,
+      button("Single player", hooks.onSinglePlayer),
+      button("Multiplayer", hooks.onMultiplayer),
+      button("World editor", hooks.onEditor),
+    );
     this.root.append(panel);
   }
 }
