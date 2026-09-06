@@ -15,7 +15,7 @@ import {
   type MapStamp,
   type UtcMap,
 } from "../../shared";
-import { MapInput, Minimap, Renderer } from "../../render";
+import { ISO_PITCH, ISO_YAW, MapInput, Minimap, Renderer } from "../../render";
 import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
@@ -24,6 +24,37 @@ import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
 export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt";
+
+export type EditorView = {
+  x: number;
+  z: number;
+  gameCam: boolean;
+  zoom: number;
+  yaw: number;
+  pitch: number;
+};
+
+export type EditorShot = {
+  data: string;
+  mime: string;
+  width: number;
+  height: number;
+  view: EditorView;
+};
+
+export type EditorShotOpts = {
+  x?: number;
+  z?: number;
+  zoom?: number;
+  yaw?: number;
+  pitch?: number;
+  gameCam?: boolean;
+  iso?: boolean;
+  keep?: boolean;
+  maxWidth?: number;
+  format?: "png" | "jpeg";
+  quality?: number;
+};
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
@@ -233,6 +264,152 @@ export class WorldEditor {
     this.paint();
     this.hooks.onChange?.();
     this.hooks.onBrush?.();
+  }
+
+  /** Programmatic stamp. Cell coords. Rejects unknown sit / out of halo. */
+  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number): MapStamp | null {
+    const cx = Math.floor(x);
+    const cy = Math.floor(y);
+    if (!inStamp(cx, cy)) return null;
+    if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5))) return null;
+    const stamp: MapStamp = {
+      id: crypto.randomUUID(),
+      asset,
+      x: cx,
+      y: cy,
+      ...(yaw ? { yaw } : {}),
+      ...(scale !== undefined && scale !== 1 ? { scale } : {}),
+    };
+    this.map = { ...this.map, stamps: [...this.map.stamps, stamp] };
+    this.paint();
+    this.hooks.onChange?.();
+    return stamp;
+  }
+
+  lookAt(x: number, z: number): void {
+    this.renderer?.camera.lookAt(x, z);
+    this.draw();
+  }
+
+  view(): EditorView {
+    const cam = this.renderer?.camera;
+    return {
+      x: cam?.targetX ?? MAP_SIZE / 2,
+      z: cam?.targetZ ?? MAP_SIZE / 2,
+      gameCam: this.gameCam,
+      zoom: cam?.zoom ?? 28,
+      yaw: cam?.yaw ?? ISO_YAW,
+      pitch: cam?.pitch ?? ISO_PITCH,
+    };
+  }
+
+  /**
+   * Present + PNG/JPEG of the live canvas. Optional pose is applied for the shot
+   * then restored unless `keep` — WebGL has no preserveDrawingBuffer.
+   */
+  screenshot(opts: EditorShotOpts = {}): EditorShot {
+    const renderer = this.renderer;
+    if (!renderer) throw new Error("editor not started");
+    const cam = renderer.camera;
+    const snap = {
+      x: cam.targetX,
+      z: cam.targetZ,
+      zoom: cam.zoom,
+      yaw: cam.yaw,
+      pitch: cam.pitch,
+      game: this.gameCam,
+    };
+    const posed =
+      opts.x !== undefined ||
+      opts.z !== undefined ||
+      opts.zoom !== undefined ||
+      opts.yaw !== undefined ||
+      opts.pitch !== undefined ||
+      opts.gameCam !== undefined ||
+      opts.iso === true;
+    if (posed) {
+      if (opts.gameCam !== undefined) {
+        this.gameCam = opts.gameCam;
+        cam.setGame(opts.gameCam);
+      }
+      cam.pose({
+        x: opts.x,
+        z: opts.z,
+        zoom: opts.zoom,
+        yaw: opts.iso ? (opts.yaw ?? ISO_YAW) : opts.yaw,
+        pitch: opts.iso ? (opts.pitch ?? ISO_PITCH) : opts.pitch,
+      });
+    }
+    this.draw();
+    const frame = grabFrame(this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
+    const view = this.view();
+    if (posed && !opts.keep) {
+      this.gameCam = snap.game;
+      cam.setGame(snap.game);
+      cam.pose(snap);
+      this.draw();
+    } else if (posed && opts.keep) {
+      this.hooks.onView?.();
+    }
+    return { ...frame, view };
+  }
+
+  pickStamp(id: string | null): void {
+    this.setTool("select");
+    this.select.select(id && this.map.stamps.some((s) => s.id === id) ? id : null);
+    this.paint();
+    this.hooks.onSelect?.();
+  }
+
+  moveStamp(id: string, x: number, y: number, yaw?: number): boolean {
+    const stamp = this.map.stamps.find((s) => s.id === id);
+    if (!stamp) return false;
+    const prev = this.map;
+    this.applyPose(stamp, Math.floor(x), Math.floor(y), yaw ?? stamp.yaw ?? 0);
+    return this.map !== prev;
+  }
+
+  removeStamp(id: string): boolean {
+    if (!this.map.stamps.some((s) => s.id === id)) return false;
+    this.map = { ...this.map, stamps: this.map.stamps.filter((s) => s.id !== id) };
+    if (this.select.id === id) this.select.clear();
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSelect?.();
+    return true;
+  }
+
+  dabBrush(wx: number, wz: number, erase = false): void {
+    this.brush.beginStroke();
+    this.brush.stroke(wx, wz, erase);
+    this.syncPaintView();
+    this.hooks.onBrush?.();
+  }
+
+  dabClean(wx: number, wz: number): void {
+    this.clean.beginStroke();
+    const next = this.clean.stroke(wx, wz, this.map.stamps);
+    if (!next) return;
+    this.map = { ...this.map, stamps: next };
+    this.paint();
+    this.hooks.onChange?.();
+  }
+
+  dabSculpt(wx: number, wz: number, erase = false): void {
+    this.sculpt.beginStroke();
+    const dirty = this.sculpt.stroke(wx, wz, erase, this.height);
+    if (this.sculpt.mode === "water") {
+      this.syncPaintView();
+      this.hooks.onSculpt?.();
+      return;
+    }
+    if (dirty) {
+      this.commitHeight();
+      this.renderer?.setTerrain(this.height, dirty);
+      this.mini?.setHeight(this.height);
+      this.hooks.onChange?.();
+    }
+    this.hooks.onSculpt?.();
   }
 
   start(): void {
@@ -489,4 +666,36 @@ export class WorldEditor {
     this.renderer?.present();
     this.mini?.paint();
   }
+}
+
+/** Same-turn grab — Display does not preserve the drawing buffer. */
+function grabFrame(
+  src: HTMLCanvasElement,
+  maxWidth: number,
+  format: "png" | "jpeg",
+  quality: number,
+): { data: string; mime: string; width: number; height: number } {
+  const sw = src.width;
+  const sh = src.height;
+  if (sw < 1 || sh < 1) throw new Error("canvas has no pixels");
+  const cap = Math.min(2048, Math.max(256, maxWidth));
+  const scale = Math.min(1, cap / sw);
+  const w = Math.max(1, Math.round(sw * scale));
+  const h = Math.max(1, Math.round(sh * scale));
+  const mime = format === "png" ? "image/png" : "image/jpeg";
+  const q = Math.min(0.95, Math.max(0.4, quality));
+  let dataUrl: string;
+  if (w === sw && h === sh) {
+    dataUrl = format === "png" ? src.toDataURL(mime) : src.toDataURL(mime, q);
+  } else {
+    const off = document.createElement("canvas");
+    off.width = w;
+    off.height = h;
+    const ctx = off.getContext("2d");
+    if (!ctx) throw new Error("2d context failed");
+    ctx.drawImage(src, 0, 0, w, h);
+    dataUrl = format === "png" ? off.toDataURL(mime) : off.toDataURL(mime, q);
+  }
+  const comma = dataUrl.indexOf(",");
+  return { data: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl, mime, width: w, height: h };
 }

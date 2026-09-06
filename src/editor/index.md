@@ -13,3 +13,4 @@ No `Session`, no lockstep, no `World.tick`.
 | `chrome/` | Docks, catalogue modal, name field |
 | `file/` | `.utcmap` save / load |
 | `assets/` | `CatalogueStore` — `assets/catalog.json` by default |
+| `control/` | MCP op registry + WebSocket client |

@@ -8,6 +8,9 @@ import { EditorChrome, MapStore, WorldEditor } from "../../editor";
 import { CatalogueStore } from "../../editor/assets/store";
 import { BrushPresetStore } from "../../editor/brush/presets";
 import { CatalogModal } from "../../editor/chrome/catalogModal";
+import { EditorBridge } from "../../editor/control/editorBridge";
+import { EditorControl } from "../../editor/control/editorControl";
+import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
   private readonly editor: WorldEditor;
@@ -20,6 +23,9 @@ export class EditorScreen extends GameScreen {
   private saved = stringifyUtcMap(emptyUtcMap());
   private dialog: Confirm | null = null;
   private modal: CatalogModal | null = null;
+  private readonly mcpPrefs = new McpPrefsStore();
+  private mcpOpen = false;
+  private readonly bridge: EditorBridge;
   private readonly onKey: (e: KeyboardEvent) => void;
   private readonly onUnload: (e: BeforeUnloadEvent) => void;
 
@@ -55,6 +61,9 @@ export class EditorScreen extends GameScreen {
       onGrid: () => this.toggleGridMenu(),
       onGridMode: (mode) => this.setGridMode(mode),
       onGameCam: () => this.editor.toggleGameCam(),
+      onMcp: () => this.toggleMcp(),
+      onMcpEnabled: (on) => this.setMcpEnabled(on),
+      onMcpPort: (n) => this.setMcpPort(n),
       onRadius: (n) => this.editor.setBrushRadius(n),
       onDensity: (n) => this.editor.setBrushDensity(n),
       onApply: () => this.editor.applyBrush(),
@@ -91,7 +100,13 @@ export class EditorScreen extends GameScreen {
     this.syncBrush();
     this.syncAsset();
     this.syncDoc();
+    this.bridge = new EditorBridge(new EditorControl(this.editor, this.library, () => this.syncRemote()), () => this.syncMcp());
+    this.syncMcp();
     this.onEscape(() => {
+      if (this.mcpOpen) {
+        this.toggleMcp();
+        return;
+      }
       if (this.editor.tool === "select" && this.editor.select.id) {
         this.editor.select.clear();
         this.editor.setTool("select");
@@ -111,6 +126,7 @@ export class EditorScreen extends GameScreen {
 
   start(): void {
     this.editor.start();
+    this.applyMcp();
   }
 
   override tick(dtMs: number, _nowMs: number): void {
@@ -122,6 +138,7 @@ export class EditorScreen extends GameScreen {
     window.removeEventListener("beforeunload", this.onUnload);
     this.modal?.close();
     this.dialog?.cancel();
+    this.bridge.stop();
     this.chrome.destroy();
     this.editor.stop();
     super.destroy();
@@ -306,6 +323,45 @@ export class EditorScreen extends GameScreen {
 
   private syncAsset(): void {
     this.chrome.setAsset(this.editor.asset ? (this.library.entry(this.editor.asset) ?? null) : null);
+  }
+
+  private syncRemote(): void {
+    this.chrome.setTool(this.editor.tool);
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.chrome.setGameCam(this.editor.gameCam);
+    this.syncBrush();
+    this.syncAsset();
+    this.syncDoc();
+  }
+
+  private toggleMcp(): void {
+    this.mcpOpen = !this.mcpOpen;
+    this.syncMcp();
+  }
+
+  private setMcpEnabled(on: boolean): void {
+    this.mcpPrefs.setEnabled(on);
+    this.applyMcp();
+  }
+
+  private setMcpPort(n: number): void {
+    this.mcpPrefs.setPort(n);
+    this.applyMcp();
+  }
+
+  private applyMcp(): void {
+    if (this.mcpPrefs.value.enabled) this.bridge.start(this.mcpPrefs.value.port);
+    else this.bridge.stop();
+    this.syncMcp();
+  }
+
+  private syncMcp(): void {
+    this.chrome.setMcpOpen(this.mcpOpen);
+    this.chrome.setMcp({
+      enabled: this.mcpPrefs.value.enabled,
+      port: this.mcpPrefs.value.port,
+      link: this.bridge.link,
+    });
   }
 
   private dirty(): boolean {

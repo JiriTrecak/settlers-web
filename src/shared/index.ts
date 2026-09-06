@@ -59,6 +59,16 @@ export {
   type PipelineSnap,
   type SaveMeta,
 } from "./save/save";
+export {
+  EDITOR_MCP_HOST,
+  EDITOR_MCP_PORT,
+  editorMcpUrl,
+  parseRpcReq,
+  parseRpcRes,
+  type RpcReq,
+  type RpcRes,
+} from "./control/rpc";
+export { filterCatalog, parseCatalogQuery, type CatalogQuery } from "./control/catalogQuery";
 export { MATCH_HOST, matchHttp, matchWs } from "./net/endpoint";
 export type {
   Bundle,

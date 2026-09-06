@@ -2,7 +2,7 @@
  * Editor docks. Add an object to a list to put a tool on that bar.
  * `modes` on an action opens a sibling vertical — Grid is the first of those.
  */
-import { Ban, Eraser, FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, Mountain, MousePointer2, Paintbrush, Save, SaveAll, TreePine, Video } from "lucide";
+import { Ban, Cable, Eraser, FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, Mountain, MousePointer2, Paintbrush, Save, SaveAll, TreePine, Video } from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
 
@@ -24,6 +24,7 @@ export type GameToolHooks = {
   onGrid(): void;
   onGridMode(mode: GridMode): void;
   onGameCam(): void;
+  onMcp(): void;
 };
 
 export function fileTools(hooks: FileToolHooks): IconItem[] {
@@ -59,5 +60,6 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
       ],
     },
     { id: "gamecam", label: "Gamecam", icon: Video, run: hooks.onGameCam, latch: true },
+    { id: "mcp", label: "MCP", icon: Cable, run: hooks.onMcp, latch: true },
   ];
 }

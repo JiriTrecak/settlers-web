@@ -64,6 +64,17 @@ export class Camera {
     this.touch();
   }
 
+  /** One-shot look / zoom / orbit. `setGame` first if you also flip perspective. */
+  pose(next: { x?: number; z?: number; zoom?: number; yaw?: number; pitch?: number }): void {
+    if (next.x !== undefined) this.targetX = next.x;
+    if (next.z !== undefined) this.targetZ = next.z;
+    if (next.zoom !== undefined) this.zoom = clamp(next.zoom, this.minZoom, this.maxZoom);
+    if (next.yaw !== undefined) this.yaw = next.yaw;
+    if (next.pitch !== undefined) this.pitch = clamp(next.pitch, PITCH_MIN, PITCH_MAX);
+    this.clamp();
+    this.touch();
+  }
+
   resetView(): void {
     this.yaw = ISO_YAW;
     this.pitch = this.game ? GAME_PITCH : ISO_PITCH;

@@ -129,6 +129,17 @@ describe("iso camera", () => {
     expect(minZ).toBeLessThan(-1);
   });
 
+  it("pose sets look, zoom, and orbit in one shot", () => {
+    const cam = new Camera();
+    cam.locked = false;
+    cam.pose({ x: 40, z: 80, zoom: 12, yaw: 1.2, pitch: 0.5 });
+    expect(cam.targetX).toBe(40);
+    expect(cam.targetZ).toBe(80);
+    expect(cam.zoom).toBe(12);
+    expect(cam.yaw).toBe(1.2);
+    expect(cam.pitch).toBe(0.5);
+  });
+
   it("setGame(false) unlocks and stops clamping", () => {
     const cam = new Camera();
     cam.setGame(true);

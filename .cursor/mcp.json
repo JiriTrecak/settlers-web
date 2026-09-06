@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "utc-editor": {
+      "command": "npx",
+      "args": ["tsx", "mcp/editor/index.ts"]
+    }
+  }
+}

@@ -8,6 +8,7 @@ import { BrushDock, type BrushDockHooks, type BrushDockState } from "./brushDock
 import { CameraHint } from "./cameraHint";
 import { CleanDock, type CleanDockHooks, type CleanDockState } from "./cleanDock";
 import { SelectDock, type SelectDockHooks, type SelectDockState } from "./selectDock";
+import { McpDock, type McpDockHooks, type McpDockState } from "./mcpDock";
 import { SculptDock, type SculptDockHooks, type SculptDockState } from "./sculptDock";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
@@ -17,7 +18,8 @@ export type EditorChromeHooks = FileToolHooks &
   BrushDockHooks &
   CleanDockHooks &
   SelectDockHooks &
-  SculptDockHooks & {
+  SculptDockHooks &
+  McpDockHooks & {
     onName(name: string): void;
   };
 
@@ -32,6 +34,7 @@ export class EditorChrome {
   private readonly clean: CleanDock;
   private readonly select: SelectDock;
   private readonly sculpt: SculptDock;
+  private readonly mcp: McpDock;
   private readonly chip: AssetChip;
   private readonly hint: CameraHint;
 
@@ -54,6 +57,7 @@ export class EditorChrome {
     this.brush = new BrushDock(this.rail, hooks);
     this.clean = new CleanDock(this.rail, hooks);
     this.sculpt = new SculptDock(this.rail, hooks);
+    this.mcp = new McpDock(this.rail, hooks);
     this.chip = new AssetChip(host, { onOpen: hooks.onCatalogue });
     this.hint = new CameraHint(host);
   }
@@ -109,6 +113,15 @@ export class EditorChrome {
     this.sculpt.set(state);
   }
 
+  setMcpOpen(on: boolean): void {
+    this.game.setLatch("mcp", on);
+    this.mcp.setOpen(on);
+  }
+
+  setMcp(state: McpDockState): void {
+    this.mcp.set(state);
+  }
+
   setAsset(asset: CatalogEntry | null): void {
     this.chip.set(asset);
   }
@@ -130,6 +143,7 @@ export class EditorChrome {
     this.brush.destroy();
     this.clean.destroy();
     this.sculpt.destroy();
+    this.mcp.destroy();
     this.chip.destroy();
     this.hint.destroy();
     this.top.remove();

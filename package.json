@@ -12,15 +12,19 @@
     "tauri": "tauri",
     "preview": "vite preview",
     "test": "vitest run",
+    "mcp:editor": "tsx mcp/editor/index.ts",
     "import:synty": "tsx scripts/import-synty.ts",
     "server": "tsx server/index.ts",
     "server:deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",
+    "@mastra/core": "^1.64.0",
+    "@mastra/mcp": "^1.17.3",
     "lucide": "^1.41.0",
     "three": "^0.185.1",
-    "ws": "^8.21.3"
+    "ws": "^8.21.3",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
