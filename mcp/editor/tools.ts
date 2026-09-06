@@ -224,7 +224,7 @@ export function editorTools(hub: EditorHub) {
         };
         if (!data) throw new Error("screenshot returned no pixels");
         return {
-          structuredContent: framed,
+          ...framed,
           content: [
             {
               type: "text" as const,
@@ -232,7 +232,7 @@ export function editorTools(hub: EditorHub) {
             },
             { type: "image" as const, data, mimeType: mime },
           ],
-        };
+        } as unknown as typeof framed;
       },
     }),
   };

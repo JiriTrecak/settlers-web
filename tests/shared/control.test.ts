@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EDITOR_MCP_PORT, filterCatalog, parseCatalogQuery, parseRpcReq, parseRpcRes } from "../../src/shared";
+import { EDITOR_MCP_PORT, filterCatalog, parseCatalogQuery, parseRpcHello, parseRpcReq, parseRpcRes } from "../../src/shared";
 import { clampPort, parseMcpPrefs } from "../../src/editor/control/mcpPrefs";
 
 describe("editor mcp wire", () => {
@@ -8,6 +8,9 @@ describe("editor mcp wire", () => {
     expect(parseRpcReq({ id: "1", op: "status" })).toBeNull();
     expect(parseRpcRes({ id: 1, ok: true, result: { n: 1 } })).toEqual({ id: 1, ok: true, result: { n: 1 } });
     expect(parseRpcRes({ id: 2, ok: false, error: "nope" })).toEqual({ id: 2, ok: false, error: "nope" });
+    expect(parseRpcHello({ role: "tab" })).toEqual({ role: "tab" });
+    expect(parseRpcHello({ role: "mcp" })).toEqual({ role: "mcp" });
+    expect(parseRpcHello({ role: "nope" })).toBeNull();
   });
 
   it("filters catalogue", () => {

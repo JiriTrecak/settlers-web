@@ -4,6 +4,8 @@ Mastra `MCPServer` over stdio. The game tab connects to `ws://127.0.0.1:7380`.
 
 ```
 Cursor  --stdio-->  mcp/editor  --WS-->  EditorScreen / EditorControl
+
+First process binds `127.0.0.1:7380`. A second (Cursor, if you also ran `npm run mcp:editor`) joins that hub instead of dying on EADDRINUSE.
 ```
 
 Add a capability: `EditorControl.ops` + `createTool` in `tools.ts`. Same `op` string.

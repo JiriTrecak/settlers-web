@@ -40,7 +40,9 @@ export class EditorBridge {
     const sock = new WebSocket(editorMcpUrl(this.port));
     this.sock = sock;
     sock.addEventListener("open", () => {
-      if (this.sock === sock) this.setLink("connected");
+      if (this.sock !== sock) return;
+      sock.send(JSON.stringify({ role: "tab" }));
+      this.setLink("connected");
     });
     sock.addEventListener("message", (ev) => this.onMessage(sock, ev.data));
     sock.addEventListener("close", () => this.retry());

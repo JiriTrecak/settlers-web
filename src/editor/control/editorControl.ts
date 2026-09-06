@@ -260,19 +260,12 @@ export class EditorControl {
     };
   }
 
-  private camView(): ReturnType<EditorControl["camViewFrom"]> {
+  private camView() {
     return this.camViewFrom(this.editor.view());
   }
 
   private camViewFrom(v: { x: number; z: number; zoom: number; yaw: number; pitch: number; gameCam: boolean }) {
-    return {
-      x: v.x,
-      z: v.z,
-      zoom: v.zoom,
-      yaw: deg(v.yaw),
-      pitch: deg(v.pitch),
-      gameCam: v.gameCam,
-    };
+    return { x: v.x, z: v.z, zoom: v.zoom, yaw: deg(v.yaw), pitch: deg(v.pitch), gameCam: v.gameCam };
   }
 }
 

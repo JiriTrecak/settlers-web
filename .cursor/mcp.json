@@ -1,8 +1,9 @@
 {
   "mcpServers": {
     "utc-editor": {
-      "command": "npx",
-      "args": ["tsx", "mcp/editor/index.ts"]
+      "type": "stdio",
+      "command": "${workspaceFolder}/node_modules/.bin/tsx",
+      "args": ["${workspaceFolder}/mcp/editor/index.ts"]
     }
   }
 }

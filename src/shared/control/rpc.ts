@@ -15,6 +15,8 @@ export type RpcRes =
   | { readonly id: number; readonly ok: true; readonly result: unknown }
   | { readonly id: number; readonly ok: false; readonly error: string };
 
+export type RpcHello = { readonly role: "tab" | "mcp" };
+
 export function parseRpcReq(raw: unknown): RpcReq | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
@@ -29,6 +31,13 @@ export function parseRpcRes(raw: unknown): RpcRes | null {
   if (typeof o.id !== "number" || !Number.isFinite(o.id)) return null;
   if (o.ok === true) return { id: o.id, ok: true, result: o.result };
   if (o.ok === false && typeof o.error === "string") return { id: o.id, ok: false, error: o.error };
+  return null;
+}
+
+export function parseRpcHello(raw: unknown): RpcHello | null {
+  if (!raw || typeof raw !== "object") return null;
+  const role = (raw as Record<string, unknown>).role;
+  if (role === "tab" || role === "mcp") return { role };
   return null;
 }
 

@@ -63,8 +63,10 @@ export {
   EDITOR_MCP_HOST,
   EDITOR_MCP_PORT,
   editorMcpUrl,
+  parseRpcHello,
   parseRpcReq,
   parseRpcRes,
+  type RpcHello,
   type RpcReq,
   type RpcRes,
 } from "./control/rpc";
