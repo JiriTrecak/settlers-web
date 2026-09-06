@@ -147,7 +147,7 @@ body {
   pointer-events: auto;
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 200px;
   display: flex;
   gap: 6px;
 }

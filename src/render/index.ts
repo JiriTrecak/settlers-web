@@ -4,3 +4,4 @@ export { Renderer } from "./renderer/renderer";
 export { Display } from "./display/display";
 export { MapInput } from "./input/mapInput";
 export { PreviewCache } from "./preview/preview";
+export { Minimap, ndcToWorld, worldToNdc } from "./minimap/minimap";

@@ -1,3 +1,3 @@
 # worldEditor
 
-Paints the 256² grid through the game `Renderer`. Holds the current `UtcMap`. Stamp + selected catalogue asset places on click.
+Paints the 256² grid through the game `Renderer`. Holds the current `UtcMap`. Stamp + selected catalogue asset places on click. Owns the shared minimap.

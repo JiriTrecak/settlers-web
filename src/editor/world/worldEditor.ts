@@ -2,7 +2,7 @@
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
 import { DEFAULT_MAP_NAME, emptyUtcMap, MAP_SIZE, type UtcMap } from "../../shared";
-import { MapInput, Renderer } from "../../render";
+import { MapInput, Minimap, Renderer } from "../../render";
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
@@ -11,10 +11,11 @@ export class WorldEditor {
   private urls = new Map<string, string>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
+  private mini: Minimap | null = null;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly hooks: { onChange?: () => void; onNeedAsset?: () => void } = {},
+    private readonly hooks: { host: HTMLElement; onChange?: () => void; onNeedAsset?: () => void },
   ) {}
 
   replace(map: UtcMap): void {
@@ -50,20 +51,30 @@ export class WorldEditor {
     this.renderer = renderer;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
     this.input = new MapInput(this.canvas, renderer.camera, {
-      onChanged: () => renderer.present(),
+      onChanged: () => this.present(),
       onClick: (x, y) => this.click(x, y),
+    });
+    this.mini = new Minimap(this.hooks.host, {
+      camera: renderer.camera,
+      aspect: () => this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight),
+      onLookAt: (x, z) => {
+        renderer.camera.lookAt(x, z);
+        this.present();
+      },
     });
     this.paint();
   }
 
   tick(dtMs: number): void {
     this.input?.tick(dtMs);
-    this.renderer?.present();
+    this.present();
   }
 
   stop(): void {
     this.input?.destroy();
     this.input = null;
+    this.mini?.destroy();
+    this.mini = null;
     this.renderer?.destroy();
     this.renderer = null;
   }
@@ -90,5 +101,12 @@ export class WorldEditor {
 
   private paint(): void {
     this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
+    this.mini?.setStamps(this.map.stamps);
+    this.mini?.paint();
+  }
+
+  private present(): void {
+    this.renderer?.present();
+    this.mini?.paint();
   }
 }

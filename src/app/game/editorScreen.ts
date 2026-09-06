@@ -24,6 +24,7 @@ export class EditorScreen extends GameScreen {
     super("screen");
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
+      host: this.root,
       onChange: () => this.syncDoc(),
       onNeedAsset: () => this.openCatalogue(),
     });

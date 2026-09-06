@@ -26,6 +26,7 @@ export class PlayScreen extends GameScreen {
     this.hud = new Hud(this.root, { onLeave: hooks.onLeave });
     this.session = new Session(canvas, {
       player: hooks.player,
+      host: this.root,
       channel: hooks.channel,
       match: hooks.match,
       hooks: { onHud: (state) => this.hud.update(state) },
