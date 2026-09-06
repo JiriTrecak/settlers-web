@@ -23,8 +23,8 @@ export class DocTitle {
       this.input.blur();
     });
     this.dirty = document.createElement("span");
-    this.dirty.className = "hidden text-[15px] leading-none text-canopy/50";
-    this.dirty.textContent = "•";
+    this.dirty.className = "hidden font-dock text-[11px] font-medium tracking-wide text-orange-400";
+    this.dirty.textContent = "edited";
     this.dirty.title = "Unsaved changes";
     this.root.append(this.input, this.dirty);
     host.append(this.root);

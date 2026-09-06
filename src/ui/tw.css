@@ -16,6 +16,12 @@
   --font-dock: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
+@utility asset-check {
+  background-color: #2a2a2a;
+  background-image: repeating-conic-gradient(#2a2a2a 0% 25%, #3c3c3c 0% 50%);
+  background-size: 16px 16px;
+}
+
 /* Not full preflight — just kill UA button bevels. HUD / menu set their own borders. */
 @layer base {
   button {

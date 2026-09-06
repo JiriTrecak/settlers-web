@@ -4,6 +4,7 @@
 import {
   AmbientLight,
   Box3,
+  CanvasTexture,
   DirectionalLight,
   Mesh,
   OrthographicCamera,
@@ -21,15 +22,17 @@ const PAD = 1.16;
 
 export class PreviewCache {
   private readonly gl: WebGLRenderer;
+  private readonly check: CanvasTexture;
   private readonly loader = new GLTFLoader();
   private readonly shots = new Map<string, Promise<string | null>>();
   private dead = false;
 
   constructor() {
-    this.gl = new WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    this.check = checkerTex();
+    this.gl = new WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
     this.gl.setSize(SIZE, SIZE, false);
     this.gl.setPixelRatio(1);
-    this.gl.setClearColor(0x000000, 0);
+    this.gl.setClearColor(0x2a2a2a, 1);
     this.gl.outputColorSpace = SRGBColorSpace;
   }
 
@@ -47,6 +50,7 @@ export class PreviewCache {
     if (this.dead) return;
     this.dead = true;
     this.shots.clear();
+    this.check.dispose();
     this.gl.dispose();
     this.gl.forceContextLoss();
   }
@@ -65,6 +69,7 @@ export class PreviewCache {
       const cosP = Math.cos(ISO_PITCH);
       const dir = new Vector3(Math.sin(ISO_YAW) * cosP, Math.sin(ISO_PITCH), Math.cos(ISO_YAW) * cosP);
       const scene = new Scene();
+      scene.background = this.check;
       scene.add(new AmbientLight(0x8aa0b8, 0.45));
       const sun = new DirectionalLight(0xfff2d6, 2.2);
       sun.position.copy(center).addScaledVector(dir, 6).add(new Vector3(-3, 5, 1));
@@ -115,6 +120,24 @@ function fitIso(cam: OrthographicCamera, box: Box3, far: number): void {
   cam.near = 0.1;
   cam.far = Math.max(far, 4);
   cam.updateProjectionMatrix();
+}
+
+function checkerTex(): CanvasTexture {
+  const cell = 16;
+  const c = document.createElement("canvas");
+  c.width = SIZE;
+  c.height = SIZE;
+  const ctx = c.getContext("2d")!;
+  for (let y = 0; y < SIZE; y += cell) {
+    for (let x = 0; x < SIZE; x += cell) {
+      ctx.fillStyle = ((x + y) / cell) % 2 === 0 ? "#2a2a2a" : "#3c3c3c";
+      ctx.fillRect(x, y, cell, cell);
+    }
+  }
+  const tex = new CanvasTexture(c);
+  tex.colorSpace = SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
 }
 
 function disposeTree(root: Object3D): void {

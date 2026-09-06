@@ -6,7 +6,7 @@ Catalogue file: [`assets/catalog.json`](../../assets/catalog.json). Default the 
 
 ## Now
 
-`pine` (foliage) — chunky box tree. Catalogue modal to pick / create. Stamp places the selection.
+`pine` (foliage) + `boulder` (terrain). Catalogue modal to pick / create. Stamp places the selection.
 
 ## First wave
 
@@ -15,7 +15,6 @@ Landscape only. Readable from iso. No units or buildings until the diorama reads
 | Next | Why |
 |---|---|
 | oak | Deciduous contrast |
-| boulder | Occupy-a-cell rock |
 | fern | Understory |
 | mushroom | Insect-world flavor |
 | log | Breaks the grid |

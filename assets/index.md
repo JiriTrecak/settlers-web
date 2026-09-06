@@ -10,7 +10,7 @@ First wave — landscape only. Readable from iso. No units or buildings yet.
 |---|---|---|
 | `pine` | foliage | Forest mass. **In.** |
 | oak | foliage | Deciduous contrast |
-| boulder | terrain | Occupy-a-cell rock |
+| `boulder` | terrain | Occupy-a-cell rock. **In.** |
 | fern | foliage | Understory |
 | mushroom | landmark | Insect-world flavor |
 | log | terrain | Breaks the grid |

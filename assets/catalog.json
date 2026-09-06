@@ -8,6 +8,13 @@
       "category": "foliage",
       "type": "prop",
       "file": "props/pine.gltf"
+    },
+    {
+      "id": "boulder",
+      "name": "Boulder",
+      "category": "terrain",
+      "type": "prop",
+      "file": "props/boulder.gltf"
     }
   ]
 }

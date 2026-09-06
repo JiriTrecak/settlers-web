@@ -10,6 +10,7 @@ import { AssetForm } from "./assetForm";
 export class CatalogModal {
   private readonly root: HTMLElement;
   private readonly path: HTMLElement;
+  private readonly edited: HTMLElement;
   private readonly grid: HTMLElement;
   private readonly cats: HTMLElement;
   private readonly useBtn: HTMLButtonElement;
@@ -38,6 +39,7 @@ export class CatalogModal {
     panel.className = `flex h-[min(680px,86vh)] w-[min(920px,92vw)] flex-col overflow-hidden rounded-2xl ${sheet}`;
     panel.append(this.header(), rule(hairH), this.body(), rule(hairH), this.footer());
     this.path = panel.querySelector("[data-path]")!;
+    this.edited = panel.querySelector("[data-edited]")!;
     this.grid = panel.querySelector("[data-grid]")!;
     this.cats = panel.querySelector("[data-cats]")!;
     this.useBtn = panel.querySelector("[data-use]")!;
@@ -74,10 +76,17 @@ export class CatalogModal {
     const h = document.createElement("h2");
     h.className = "m-0 font-dock text-[15px] font-semibold tracking-tight";
     h.textContent = "Catalogue";
+    const row = document.createElement("div");
+    row.className = "flex min-w-0 items-center gap-1.5";
     const path = document.createElement("p");
     path.dataset.path = "1";
     path.className = "m-0 truncate font-dock text-[11px] text-canopy/40";
-    titles.append(h, path);
+    const edited = document.createElement("span");
+    edited.dataset.edited = "1";
+    edited.className = "hidden shrink-0 font-dock text-[11px] font-medium tracking-wide text-orange-400";
+    edited.textContent = "edited";
+    row.append(path, edited);
+    titles.append(h, row);
     const actions = document.createElement("div");
     actions.className = "flex items-center gap-0.5";
     actions.append(
@@ -122,7 +131,8 @@ export class CatalogModal {
   }
 
   private refresh(): void {
-    this.path.textContent = this.spec.store.dirty ? `${this.spec.store.path} •` : this.spec.store.path;
+    this.path.textContent = this.spec.store.path;
+    this.edited.classList.toggle("hidden", !this.spec.store.dirty);
     this.cats.replaceChildren();
     for (const id of ["all", ...ASSET_CATEGORIES]) {
       const count =
@@ -180,7 +190,7 @@ export class CatalogModal {
     el.className =
       "flex w-full flex-col items-stretch overflow-hidden rounded-xl bg-white/[0.035] text-left font-dock hover:bg-white/[0.06]";
     const frame = document.createElement("div");
-    frame.className = "pointer-events-none aspect-square w-full bg-plate";
+    frame.className = "asset-check pointer-events-none aspect-square w-full";
     const shot = document.createElement("img");
     shot.alt = "";
     shot.className = "h-full w-full object-contain";
