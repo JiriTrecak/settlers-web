@@ -1,24 +1,46 @@
 /**
- * Soft raise / lower brush for the height field. Shift lowers.
+ * Height sculpt. Live raise/lower, or Water: paint a mask and Apply to cut a basin.
  */
-import { unionDirty, type HeightDirty, type HeightField } from "../../shared";
+import { HEIGHT_MIN, HEIGHT_ORIGIN, HEIGHT_VERTS, unionDirty, type HeightDirty, type HeightField } from "../../shared";
+import { BrushMask } from "../brush/brush";
 
 export const SCULPT_RADIUS_MIN = 1;
 export const SCULPT_RADIUS_MAX = 16;
 export const SCULPT_STRENGTH_MIN = 0.02;
 export const SCULPT_STRENGTH_MAX = 1.2;
 
+export type SculptMode = "live" | "water";
+
+export const SCULPT_MODES: readonly { id: SculptMode; name: string }[] = [
+  { id: "live", name: "Live" },
+  { id: "water", name: "Water" },
+];
+
 export class SculptTool {
   radius = 4;
   strength = 0.25;
+  mode: SculptMode = "live";
+  readonly mask = new BrushMask();
   private last: { x: number; z: number } | null = null;
+
+  constructor() {
+    this.mask.radius = this.radius;
+  }
 
   beginStroke(): void {
     this.last = null;
+    this.mask.beginStroke();
+  }
+
+  setMode(mode: SculptMode): void {
+    if (mode === this.mode) return;
+    this.mode = mode;
+    this.mask.clear();
   }
 
   setRadius(n: number): void {
     this.radius = clamp(n, SCULPT_RADIUS_MIN, SCULPT_RADIUS_MAX);
+    this.mask.setRadius(this.radius);
   }
 
   setStrength(n: number): void {
@@ -31,6 +53,10 @@ export class SculptTool {
 
   /** Interpolated disc so a fast drag doesn't skip. */
   stroke(wx: number, wz: number, lower: boolean, field: HeightField): HeightDirty | null {
+    if (this.mode === "water") {
+      this.mask.stroke(wx, wz, lower);
+      return null;
+    }
     const hits = samples(this.last, { x: wx, z: wz }, this.radius);
     this.last = { x: wx, z: wz };
     const delta = (lower ? -1 : 1) * this.strength;
@@ -38,6 +64,42 @@ export class SculptTool {
     for (const h of hits) dirty = unionDirty(dirty, field.raise(h.x, h.z, this.radius, delta));
     return dirty;
   }
+
+  /** Pull painted verts under the sea. Strength is basin depth in meters. */
+  applyWater(field: HeightField): HeightDirty | null {
+    if (this.mode !== "water" || !this.mask.any()) return null;
+    const dirty = cutBasin(field, this.mask, this.strength);
+    this.mask.clear();
+    return dirty;
+  }
+}
+
+export function cutBasin(field: HeightField, mask: BrushMask, depth: number): HeightDirty | null {
+  const d = Math.max(0.05, depth);
+  let any = false;
+  let loX = HEIGHT_VERTS;
+  let hiX = -1;
+  let loZ = HEIGHT_VERTS;
+  let hiZ = -1;
+  for (let iz = 0; iz < HEIGHT_VERTS; iz++) {
+    const z = HEIGHT_ORIGIN + iz;
+    for (let ix = 0; ix < HEIGHT_VERTS; ix++) {
+      const x = HEIGHT_ORIGIN + ix;
+      const w = mask.sample(x, z);
+      if (w < 0.08) continue;
+      const i = iz * HEIGHT_VERTS + ix;
+      const target = -d * w;
+      const next = Math.max(HEIGHT_MIN, Math.min(field.samples[i]!, target));
+      if (next === field.samples[i]) continue;
+      field.samples[i] = next;
+      any = true;
+      if (ix < loX) loX = ix;
+      if (ix > hiX) hiX = ix;
+      if (iz < loZ) loZ = iz;
+      if (iz > hiZ) hiZ = iz;
+    }
+  }
+  return any ? { loX, hiX, loZ, hiZ } : null;
 }
 
 function samples(from: { x: number; z: number } | null, to: { x: number; z: number }, radius: number): { x: number; z: number }[] {

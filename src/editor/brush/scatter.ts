@@ -9,11 +9,18 @@ export type BrushPose = { x: number; y: number; yaw: number; asset: string; scal
 
 const MIN_DIST = 0.85;
 
+export type ScatterRules = {
+  /** World-cell wet test. Water-type assets need this true. */
+  wet?: (x: number, z: number) => boolean;
+  waterAsset?: (id: string) => boolean;
+};
+
 export function scatterBrush(
   mask: BrushMask,
   existing: readonly { x: number; y: number }[],
   slots: readonly BrushSlot[],
   rng: () => number = Math.random,
+  rules: ScatterRules = {},
 ): BrushPose[] {
   const out: BrushPose[] = [];
   const spots = existing.map((s) => ({ x: s.x + 0.5, y: s.y + 0.5 }));
@@ -32,6 +39,7 @@ export function scatterBrush(
       if (tooClose(x, y, spots)) continue;
       const slot = pickSlot(slots, rng);
       if (!slot) continue;
+      if (rules.waterAsset?.(slot.asset) && !rules.wet?.(x, y)) continue;
       const pose = { x: x - 0.5, y: y - 0.5, yaw: rng() * Math.PI * 2, asset: slot.asset, scale: slot.scale };
       out.push(pose);
       spots.push({ x, y });

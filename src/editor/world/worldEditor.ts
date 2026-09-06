@@ -9,6 +9,7 @@ import {
   HeightField,
   inStamp,
   MAP_SIZE,
+  type AssetType,
   type GridMode,
   type UtcMap,
 } from "../../shared";
@@ -17,7 +18,7 @@ import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
 import { CleanTool } from "../clean/clean";
-import { SculptTool } from "../sculpt/sculpt";
+import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
 export type EditorTool = "stamp" | "brush" | "clean" | "sculpt";
 
@@ -34,6 +35,7 @@ export class WorldEditor {
   readonly height = new HeightField();
   readonly sculpt = new SculptTool();
   private urls = new Map<string, string>();
+  private kinds = new Map<string, AssetType>();
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
@@ -47,11 +49,14 @@ export class WorldEditor {
       onView?: () => void;
       onBrush?: () => void;
       onClean?: () => void;
+      onSculpt?: () => void;
     },
   ) {}
 
   replace(map: UtcMap): void {
     this.map = map;
+    this.loadHeight(map);
+    this.renderer?.setTerrain(this.height);
     this.paint();
     this.hooks.onChange?.();
   }
@@ -63,17 +68,18 @@ export class WorldEditor {
     this.hooks.onChange?.();
   }
 
-  setLibrary(urls: ReadonlyMap<string, string>): void {
+  setLibrary(urls: ReadonlyMap<string, string>, kinds?: ReadonlyMap<string, AssetType>): void {
     this.urls = new Map(urls);
+    if (kinds) this.kinds = new Map(kinds);
     this.renderer?.setAssets(this.urls);
+    this.renderer?.setKinds(this.kinds);
     this.paint();
   }
 
   setTool(tool: EditorTool | null): void {
     this.tool = tool;
-    if (tool === "brush" || tool === "clean") this.gridMenu = false;
-    this.renderer?.brush.setOpen(tool === "brush");
-    this.syncBrushView();
+    if (tool === "brush" || tool === "clean" || tool === "sculpt") this.gridMenu = false;
+    this.syncPaintView();
   }
 
   setAsset(id: string): void {
@@ -83,7 +89,7 @@ export class WorldEditor {
 
   toggleGridMenu(): void {
     this.gridMenu = !this.gridMenu;
-    if (this.gridMenu && (this.tool === "brush" || this.tool === "clean")) this.setTool("stamp");
+    if (this.gridMenu && (this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt")) this.setTool("stamp");
   }
 
   setGridMode(mode: GridMode): void {
@@ -124,12 +130,43 @@ export class WorldEditor {
     this.hooks.onClean?.();
   }
 
+  setSculptRadius(n: number): void {
+    this.sculpt.setRadius(n);
+    this.hooks.onSculpt?.();
+  }
+
+  setSculptStrength(n: number): void {
+    this.sculpt.setStrength(n);
+    this.hooks.onSculpt?.();
+  }
+
+  setSculptMode(mode: SculptMode): void {
+    this.sculpt.setMode(mode);
+    this.syncPaintView();
+    this.hooks.onSculpt?.();
+  }
+
+  applySculpt(): void {
+    const dirty = this.sculpt.applyWater(this.height);
+    if (!dirty) return;
+    this.commitHeight();
+    this.renderer?.setTerrain(this.height, dirty);
+    this.mini?.setHeight(this.height);
+    this.syncPaintView();
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSculpt?.();
+  }
+
   applyBrush(): void {
     if (!this.kit.slots.length) {
       this.hooks.onNeedAsset?.();
       return;
     }
-    const poses = scatterBrush(this.brush, this.map.stamps, this.kit.slots);
+    const poses = scatterBrush(this.brush, this.map.stamps, this.kit.slots, Math.random, {
+      wet: (x, z) => this.height.wet(x, z),
+      waterAsset: (id) => this.kinds.get(id) === "water",
+    });
     if (!poses.length) return;
     this.map = {
       ...this.map,
@@ -146,7 +183,7 @@ export class WorldEditor {
       ],
     };
     this.brush.clear();
-    this.syncBrushView();
+    this.syncPaintView();
     this.paint();
     this.hooks.onChange?.();
     this.hooks.onBrush?.();
@@ -155,6 +192,7 @@ export class WorldEditor {
   start(): void {
     const renderer = new Renderer(this.canvas, this.urls);
     this.renderer = renderer;
+    renderer.setKinds(this.kinds);
     renderer.camera.locked = false;
     renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
     if (this.gameCam) renderer.camera.setGame(true);
@@ -164,17 +202,24 @@ export class WorldEditor {
       onClick: (x, y) => this.click(x, y),
       onHome: () => this.toggleGameCam(),
       paint: {
-        on: () => this.tool === "brush" || this.tool === "clean",
+        on: () => this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt",
         hover: (x, y) => this.hover(x, y),
         stroke: (x, y, erase) => this.stroke(x, y, erase),
         beginStroke: () => {
           if (this.tool === "clean") this.clean.beginStroke();
+          else if (this.tool === "sculpt") this.sculpt.beginStroke();
           else this.brush.beginStroke();
         },
+        endStroke: () => this.endStroke(),
         sizeBy: (steps) => {
           if (this.tool === "clean") {
             this.clean.sizeBy(steps);
             this.hooks.onClean?.();
+            return;
+          }
+          if (this.tool === "sculpt") {
+            this.sculpt.sizeBy(steps);
+            this.hooks.onSculpt?.();
             return;
           }
           this.brush.sizeBy(steps);
@@ -196,9 +241,10 @@ export class WorldEditor {
       },
     });
     renderer.setGridMode(this.gridMode);
-    renderer.brush.setOpen(this.tool === "brush");
+    this.syncPaintView();
+    renderer.setTerrain(this.height);
     this.paint();
-    this.syncBrushView();
+    this.syncPaintView();
   }
 
   tick(dtMs: number): void {
@@ -217,19 +263,31 @@ export class WorldEditor {
 
   private hover(clientX: number, clientY: number): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
-    const r = this.tool === "clean" ? this.clean.radius : this.brush.radius;
+    const r = this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
     if (!hit) {
       this.renderer?.brush.setCursor(0, 0, r, false);
       return;
     }
-    this.renderer?.brush.setCursor(hit.x, hit.z, r, true);
+    this.renderer?.brush.setCursor(hit.x, hit.z, r, true, hit.y);
   }
 
   private stroke(clientX: number, clientY: number, erase: boolean): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return;
+    if (this.tool === "sculpt") {
+      this.renderer?.brush.setCursor(hit.x, hit.z, this.sculpt.radius, true, hit.y);
+      const dirty = this.sculpt.stroke(hit.x, hit.z, erase, this.height);
+      if (this.sculpt.mode === "water") {
+        this.syncPaintView();
+        this.hooks.onSculpt?.();
+        return;
+      }
+      if (!dirty) return;
+      this.renderer?.setTerrain(this.height, dirty, false);
+      return;
+    }
     if (this.tool === "clean") {
-      this.renderer?.brush.setCursor(hit.x, hit.z, this.clean.radius, true);
+      this.renderer?.brush.setCursor(hit.x, hit.z, this.clean.radius, true, hit.y);
       const next = this.clean.stroke(hit.x, hit.z, this.map.stamps);
       if (!next) return;
       this.map = { ...this.map, stamps: next };
@@ -238,17 +296,37 @@ export class WorldEditor {
       return;
     }
     this.brush.stroke(hit.x, hit.z, erase);
-    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true);
-    this.syncBrushView();
+    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true, hit.y);
+    this.syncPaintView();
     this.hooks.onBrush?.();
   }
 
-  private syncBrushView(): void {
+  private endStroke(): void {
+    if (this.tool !== "sculpt" || this.sculpt.mode !== "live") return;
+    this.commitHeight();
+    this.renderer?.setTerrain(this.height);
+    this.mini?.setHeight(this.height);
+    this.hooks.onChange?.();
+  }
+
+  private syncPaintView(): void {
     const layer = this.renderer?.brush;
     if (!layer) return;
-    layer.sync(this.brush.weights, this.brush.origin, this.brush.span);
-    layer.setOpen(this.tool === "brush");
-    this.brush.dirty = false;
+    const water = this.tool === "sculpt" && this.sculpt.mode === "water";
+    const foliage = this.tool === "brush";
+    if (foliage) {
+      layer.sync(this.brush.weights, this.brush.origin, this.brush.span);
+      layer.setOpen(true);
+      this.brush.dirty = false;
+      return;
+    }
+    if (water) {
+      layer.sync(this.sculpt.mask.weights, this.sculpt.mask.origin, this.sculpt.mask.span);
+      layer.setOpen(true);
+      this.sculpt.mask.dirty = false;
+      return;
+    }
+    layer.setOpen(false);
   }
 
   private click(clientX: number, clientY: number): void {
@@ -263,6 +341,7 @@ export class WorldEditor {
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
     if (!inStamp(x, y)) return;
+    if (this.kinds.get(this.asset) === "water" && !this.height.wet(hit.x, hit.z)) return;
     this.map = {
       ...this.map,
       stamps: [...this.map.stamps, { id: crypto.randomUUID(), asset: this.asset, x, y }],
@@ -273,8 +352,30 @@ export class WorldEditor {
 
   private paint(): void {
     this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
+    this.mini?.setHeight(this.height);
     this.mini?.setStamps(this.map.stamps);
     this.mini?.paint();
+  }
+
+  private loadHeight(map: UtcMap): void {
+    const samples = map.height ? decodeHeight(map.height) : null;
+    if (samples) this.height.load(samples, map.waterLevel ?? 0);
+    else {
+      this.height.clear();
+      this.height.waterLevel = map.waterLevel ?? 0;
+    }
+  }
+
+  private commitHeight(): void {
+    const height = encodeHeight(this.height.samples);
+    const waterLevel = this.height.waterLevel;
+    this.map = {
+      v: this.map.v,
+      name: this.map.name,
+      stamps: this.map.stamps,
+      ...(waterLevel !== 0 ? { waterLevel } : {}),
+      ...(height ? { height } : {}),
+    };
   }
 
   private draw(): void {

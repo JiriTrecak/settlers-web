@@ -50,6 +50,27 @@
       "category": "terrain",
       "type": "prop",
       "file": "props/rock-slab.gltf"
+    },
+    {
+      "id": "lily",
+      "name": "Lily",
+      "category": "water",
+      "type": "water",
+      "file": "props/lily.gltf"
+    },
+    {
+      "id": "lily-white",
+      "name": "Lily white",
+      "category": "water",
+      "type": "water",
+      "file": "props/lily-white.gltf"
+    },
+    {
+      "id": "lily-gold",
+      "name": "Lily gold",
+      "category": "water",
+      "type": "water",
+      "file": "props/lily-gold.gltf"
     }
   ]
 }

@@ -16,6 +16,7 @@ describe("catalogue", () => {
     expect(parseCatalogue(null)).toBeNull();
     expect(parseCatalogue({ v: 1, name: "x" })).toBeNull();
     expect(parseCatalogue({ v: 1, name: "x", assets: [{ id: "a", name: "A", category: "nope", type: "prop", file: "a.gltf" }] })).toBeNull();
+    expect(parseCatalogue({ v: 1, name: "x", assets: [{ id: "a", name: "A", category: "water", type: "boat", file: "a.gltf" }] })).toBeNull();
   });
 
   it("mints unique ids", () => {
@@ -32,5 +33,17 @@ describe("catalogue", () => {
     expect(doc.assets.some((a) => a.id === "rock" && a.category === "terrain")).toBe(true);
     expect(doc.assets.some((a) => a.id === "rock-cleft" && a.category === "terrain")).toBe(true);
     expect(doc.assets.some((a) => a.id === "rock-slab" && a.category === "terrain")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "lily" && a.type === "water" && a.category === "water")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "lily-white" && a.type === "water")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "lily-gold" && a.type === "water")).toBe(true);
+  });
+
+  it("accepts a water listing", () => {
+    const doc = {
+      v: 1 as const,
+      name: "Pack",
+      assets: [{ id: "lily", name: "Lily", category: "water" as const, type: "water" as const, file: "props/lily.gltf" }],
+    };
+    expect(parseCatalogue(JSON.parse(stringifyCatalogue(doc)))).toEqual(doc);
   });
 });

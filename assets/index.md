@@ -16,6 +16,9 @@ First wave — landscape only. Readable from iso. No units or buildings yet.
 | `rock` | terrain | Block-sized mound (~16 cells). **In.** |
 | `rock-cleft` | terrain | Split pair, same span. **In.** |
 | `rock-slab` | terrain | Flat table rock, same span. **In.** |
+| `lily` | water | Pond flower, pink. Type `water` — wet cells only. **In.** |
+| `lily-white` | water | Same pad, white blossom. **In.** |
+| `lily-gold` | water | Same pad, gold blossom. **In.** |
 | fern | foliage | Understory |
 | mushroom | landmark | Insect-world flavor |
 | log | terrain | Breaks the grid |

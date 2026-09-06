@@ -1,5 +1,6 @@
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
+ * Water-type assets sit on the sea plane, not the lakebed.
  */
 import { Object3D, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -10,6 +11,8 @@ export class PropField {
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private height: ((x: number, z: number) => number) | null = null;
+  private float = new Set<string>();
+  private waterY = 0;
   private gen = 0;
 
   constructor(
@@ -23,9 +26,18 @@ export class PropField {
 
   setHeight(sample: ((x: number, z: number) => number) | null): void {
     this.height = sample;
-    for (const mesh of this.placed.values()) {
-      mesh.position.y = sample ? sample(mesh.position.x, mesh.position.z) : 0;
-    }
+    this.relift();
+  }
+
+  setFloat(ids: ReadonlySet<string>, y = 0): void {
+    this.float = new Set(ids);
+    this.waterY = y;
+    this.relift();
+  }
+
+  setWaterY(y: number): void {
+    this.waterY = y;
+    this.relift();
   }
 
   sync(stamps: readonly MapStamp[]): void {
@@ -88,9 +100,21 @@ export class PropField {
     const s = stamp.scale ?? 1;
     const x = stamp.x + 0.5;
     const z = stamp.y + 0.5;
-    const y = this.height ? this.height(x, z) : 0;
-    mesh.position.set(x, y, z);
+    mesh.userData.asset = stamp.asset;
+    mesh.position.set(x, this.sitY(stamp.asset, x, z), z);
     mesh.rotation.y = stamp.yaw ?? 0;
     mesh.scale.setScalar(s);
+  }
+
+  private sitY(asset: string, x: number, z: number): number {
+    if (this.float.has(asset)) return this.waterY;
+    return this.height ? this.height(x, z) : 0;
+  }
+
+  private relift(): void {
+    for (const mesh of this.placed.values()) {
+      const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
+      mesh.position.y = this.sitY(asset, mesh.position.x, mesh.position.z);
+    }
   }
 }

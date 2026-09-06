@@ -33,8 +33,9 @@ export class EditorScreen extends GameScreen {
       onView: () => this.chrome.setGameCam(this.editor.gameCam),
       onBrush: () => this.syncBrush(),
       onClean: () => this.syncClean(),
+      onSculpt: () => this.syncSculpt(),
     });
-    this.editor.setLibrary(this.library.urls());
+    this.editor.setLibrary(this.library.urls(), this.library.types());
     const first = this.library.doc.assets[0];
     if (first) this.editor.setAsset(first.id);
     this.files = new MapStore();
@@ -47,6 +48,7 @@ export class EditorScreen extends GameScreen {
       onStamp: () => this.stamp(),
       onBrush: () => this.armBrush(),
       onClean: () => this.armClean(),
+      onSculpt: () => this.armSculpt(),
       onCatalogue: () => this.openCatalogue(),
       onGrid: () => this.toggleGridMenu(),
       onGridMode: (mode) => this.setGridMode(mode),
@@ -73,6 +75,10 @@ export class EditorScreen extends GameScreen {
       onLoadPreset: (id) => this.loadPreset(id),
       onCleanRadius: (n) => this.editor.setCleanRadius(n),
       onCleanType: (type) => this.editor.setCleanType(type),
+      onSculptRadius: (n) => this.editor.setSculptRadius(n),
+      onSculptStrength: (n) => this.editor.setSculptStrength(n),
+      onSculptMode: (mode) => this.editor.setSculptMode(mode),
+      onApplySculpt: () => this.editor.applySculpt(),
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
@@ -135,6 +141,13 @@ export class EditorScreen extends GameScreen {
     this.syncBrush();
   }
 
+  private armSculpt(): void {
+    this.editor.setTool("sculpt");
+    this.chrome.setTool("sculpt");
+    this.chrome.setGridMenu(this.editor.gridMenu);
+    this.syncBrush();
+  }
+
   private syncBrush(): void {
     const urls = this.library.urls();
     this.chrome.setBrushOpen(this.editor.tool === "brush");
@@ -152,6 +165,7 @@ export class EditorScreen extends GameScreen {
       presetName: this.presetName,
     });
     this.syncClean();
+    this.syncSculpt();
   }
 
   private syncClean(): void {
@@ -159,6 +173,16 @@ export class EditorScreen extends GameScreen {
     this.chrome.setClean({
       radius: this.editor.clean.radius,
       type: this.editor.clean.type,
+    });
+  }
+
+  private syncSculpt(): void {
+    this.chrome.setSculptOpen(this.editor.tool === "sculpt");
+    this.chrome.setSculpt({
+      radius: this.editor.sculpt.radius,
+      strength: this.editor.sculpt.strength,
+      mode: this.editor.sculpt.mode,
+      ready: this.editor.sculpt.mask.any(),
     });
   }
 
@@ -239,7 +263,7 @@ export class EditorScreen extends GameScreen {
         this.modal = null;
       },
       onLibrary: () => {
-        this.editor.setLibrary(this.library.urls());
+        this.editor.setLibrary(this.library.urls(), this.library.types());
         this.syncAsset();
       },
     });

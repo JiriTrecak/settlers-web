@@ -15,7 +15,7 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { PLAYER_COLORS, clampPlayer, type GridMode, type HeightField, type MapStamp } from "../../shared";
+import { PLAYER_COLORS, clampPlayer, type AssetType, type GridMode, type HeightField, type MapStamp } from "../../shared";
 import type { ViewSnapshot } from "../../sim/world/world";
 import { Camera } from "../camera/camera";
 import { Display } from "../display/display";
@@ -60,6 +60,12 @@ export class Renderer {
     this.props.setUrls(assets);
   }
 
+  setKinds(kinds: ReadonlyMap<string, AssetType>): void {
+    const float = new Set<string>();
+    for (const [id, type] of kinds) if (type === "water") float.add(id);
+    this.props.setFloat(float, this.height?.waterLevel ?? 0);
+  }
+
   setGrid(on: boolean): void {
     this.gridOn = on;
     this.lines.visible = on;
@@ -73,14 +79,19 @@ export class Renderer {
     this.refreshGrid();
   }
 
-  /** Upload the authored height field. Dirty disc skips a full mesh rewrite. */
-  setTerrain(field: HeightField | null, dirty?: { loX: number; hiX: number; loZ: number; hiZ: number } | null): void {
+  /** Upload the authored height field. Dirty disc skips a full mesh rewrite. `drape` rebuilds grid lines. */
+  setTerrain(
+    field: HeightField | null,
+    dirty?: { loX: number; hiX: number; loZ: number; hiZ: number } | null,
+    drape = true,
+  ): void {
     this.height = field;
     this.props.setHeight(field ? (x, z) => field.sample(x, z) : null);
+    this.props.setWaterY(field?.waterLevel ?? 0);
     if (!this.terrain || !field) return;
     this.terrain.setFrom(field, dirty);
     this.water?.setLevel(field.waterLevel);
-    this.refreshGrid();
+    if (drape) this.refreshGrid();
   }
 
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {

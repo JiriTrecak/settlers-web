@@ -17,6 +17,7 @@ export type MapInputHooks = {
     hover(clientX: number, clientY: number): void;
     stroke(clientX: number, clientY: number, erase: boolean): void;
     beginStroke(): void;
+    endStroke?(): void;
     sizeBy(steps: number): void;
     densityBy(steps: number): void;
   };
@@ -103,14 +104,18 @@ export class MapInput {
       this.hooks.onChanged();
     };
     this.onPointerUp = (e) => {
+      const stroking = this.drag === "stroke";
       const clicked = this.drag === "pan" && e.button === 0 && this.moved < CLICK_PX;
       this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+      if (stroking) this.hooks.paint?.endStroke?.();
       if (clicked) this.hooks.onClick?.(e.clientX, e.clientY);
     };
     this.onPointerCancel = (e) => {
+      const stroking = this.drag === "stroke";
       this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+      if (stroking) this.hooks.paint?.endStroke?.();
     };
     this.onWheel = (e) => {
       e.preventDefault();

@@ -78,6 +78,39 @@ describe("brush mask", () => {
     expect(b.list[0]?.name).toBe("Grove");
   });
 
+  it("keeps water assets on wet cells only", () => {
+    const mask = new BrushMask();
+    mask.radius = 5;
+    mask.density = 2;
+    mask.dab(20, 20, false);
+    const wet = (x: number, _z: number) => x >= 20;
+    const water = scatterBrush(
+      mask,
+      [],
+      [{ id: "s1", asset: "lily", pct: 100, scale: 1 }],
+      rng(11),
+      { wet, waterAsset: (id) => id === "lily" },
+    );
+    expect(water.length).toBeGreaterThan(0);
+    for (const p of water) expect(p.x + 0.5).toBeGreaterThanOrEqual(20);
+    const dry = scatterBrush(
+      mask,
+      [],
+      [{ id: "s1", asset: "lily", pct: 100, scale: 1 }],
+      rng(11),
+      { wet: () => false, waterAsset: (id) => id === "lily" },
+    );
+    expect(dry).toHaveLength(0);
+    const land = scatterBrush(
+      mask,
+      [],
+      [{ id: "s1", asset: "pine", pct: 100, scale: 1 }],
+      rng(11),
+      { wet: () => false, waterAsset: (id) => id === "lily" },
+    );
+    expect(land.length).toBeGreaterThan(0);
+  });
+
   it("lets the same asset sit in two slots", () => {
     const kit = new BrushKit();
     kit.add("pine");

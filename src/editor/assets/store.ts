@@ -31,6 +31,10 @@ export class CatalogueStore {
     return this.doc.assets.find((a) => a.id === id);
   }
 
+  types(): Map<string, AssetType> {
+    return new Map(this.doc.assets.map((a) => [a.id, a.type]));
+  }
+
   urls(): Map<string, string> {
     const out = new Map<string, string>();
     for (const asset of this.doc.assets) {
