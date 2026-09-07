@@ -1,1 +1,1 @@
-One plane at `waterLevel − 0.03`. Depth from the height field: plate dirt at the lip, dark blue in the basin. Flat — no waves.
+One plane at `waterLevel − 0.03`. Port of `SyntyStudios_Water`: Water_01 shallow/deep, height-field depth fade, dual-panned Grass_01 normals, foam at the lip. Dry cells stay transparent.

@@ -1,6 +1,8 @@
 /**
  * Converts Synty POLYGON Nature FBX (cm, HSV vertex tints + leaf atlases) into
- * catalog glTFs. Skips skybox / river planes. Re-run overwrites assets/synty.
+ * catalog glTFs. Source FBX often collapses UVs to one atlas texel — those
+ * meshes get box-projected UVs + tiling ground/grass maps. Skips skybox /
+ * river planes. Full run wipes assets/synty except index.md.
  */
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -108,8 +110,15 @@ function idFromStem(stem: string): string {
   return `synty-${stem.replace(/^SM_/i, "").replace(/_/g, "-").toLowerCase()}`;
 }
 
+const BIRCH_NAME: Record<string, string> = {
+  SM_Tree_Birch_01: "Tree Birch Gold",
+  SM_Tree_Birch_02: "Tree Birch Autumn",
+  SM_Tree_Birch_03: "Tree Birch Crimson",
+  SM_Tree_Birch_04: "Tree Birch Lime",
+};
+
 function displayName(stem: string): string {
-  return stem.replace(/^SM_/i, "").replace(/_/g, " ");
+  return BIRCH_NAME[stem] ?? stem.replace(/^SM_/i, "").replace(/_/g, " ");
 }
 
 function classify(stem: string): { type: AssetType; category: AssetCategory } {
@@ -139,7 +148,7 @@ function writeGltf(out: string, stem: string, root: Object3D, texIndex: Map<stri
     const pos = float3(geo.getAttribute("position"));
     const nor = float3(geo.getAttribute("normal"));
     if (!pos || !nor || pos.length < 3) return;
-    const uv = float2(geo.getAttribute("uv"));
+    let uv = float2(geo.getAttribute("uv"));
     const col = floatColor(geo.getAttribute("color"));
     const idx = indicesOf(geo);
     const list = Array.isArray(node.material) ? node.material : [node.material];
@@ -149,11 +158,19 @@ function writeGltf(out: string, stem: string, root: Object3D, texIndex: Map<stri
       const src = list[g.materialIndex] ?? list[0];
       if (!src) continue;
       const spec = materialOf(src, stem, texIndex);
-      // FBX rarely embeds the Unity atlas. UVs still point at PolygonNature / leaf sheets.
-      if (!spec.tex && uv) {
-        spec.tex = fallbackTex(src.name ?? "", stem, texIndex) ?? texIndex.get("polygonnature_01.png");
-        spec.color = [1, 1, 1, 1];
+      // Source FBX often stores a single UV (rocks, swamp, grass). Atlas × that is a flat blob.
+      if (!uv || uvSpan(uv) < 0.02) {
+        uv = projectUv(pos, nor);
+        const tile = tilingTex(stem, texIndex);
+        if (tile) spec.tex = tile;
+        else spec.tex = undefined;
       }
+      // FBX rarely embeds the Unity atlas. UVs still point at PolygonNature / leaf sheets.
+      if (!spec.tex && uv && !/cloud/i.test(stem)) {
+        spec.tex = fallbackTex(src.name ?? "", stem, texIndex) ?? texIndex.get("polygonnature_01.png");
+      }
+      // Unity Lambert default is 0.6 gray. Atlas × that is mud (chest, swamp).
+      if (spec.tex) spec.color = [1, 1, 1, spec.color[3] ?? 1];
       // Synty paints hue in R and sat in B (G ≈ 0). Raw RGB looks magenta; decode to linear RGB.
       const tint = col ? { data: decodeSyntyColor(col.data, col.size), size: col.size } : undefined;
       if (tint) spec.color = [1, 1, 1, 1];
@@ -205,12 +222,70 @@ function fallbackTex(matName: string, stem: string, texIndex: Map<string, string
   if (/undergrowth/.test(n)) return texIndex.get("undergrowth_texture.png");
   if (/reed/.test(n)) return texIndex.get("reeds.png");
   if (/leave|leaf/.test(n)) return texIndex.get("leaves_generic_texture.png");
-  return texIndex.get("polygonnature_01.png");
+  return tilingTex(stem, texIndex) ?? texIndex.get("polygonnature_01.png");
+}
+
+/** Tiling ground/grass for meshes whose Source FBX has a collapsed UV. */
+function tilingTex(stem: string, texIndex: Map<string, string>): string | undefined {
+  const n = stem.toLowerCase();
+  if (/cloud/.test(n)) return undefined;
+  if (/ice|snow/.test(n)) return texIndex.get("snow.png");
+  if (/vine/.test(n)) return texIndex.get("leaves_generic_texture.png");
+  if (/reed/.test(n)) return texIndex.get("reeds.png");
+  if (/grass|hedge|wheat/.test(n)) return texIndex.get("grass.png");
+  if (/swamp_growth/.test(n)) return texIndex.get("moss.png");
+  if (/swamp_root|twig|branch|root/.test(n))
+    return texIndex.get("birch_trunk_texture.png") ?? texIndex.get("rockwall.png");
+  if (/fence/.test(n)) return texIndex.get("mud.png");
+  if (/dust|mound|dirt|mud/.test(n)) return texIndex.get("mud.png");
+  if (/pebble|rubble|sand/.test(n)) return texIndex.get("pebbles.png");
+  if (/rock|cave|boulder|mountain|cliff|stone|wall/.test(n)) return texIndex.get("rockwall.png");
+  if (/plant/.test(n)) return texIndex.get("grass.png");
+  return texIndex.get("rockwall.png");
+}
+
+function uvSpan(uv: Float32Array): number {
+  let minU = Infinity;
+  let maxU = -Infinity;
+  let minV = Infinity;
+  let maxV = -Infinity;
+  for (let i = 0; i < uv.length; i += 2) {
+    minU = Math.min(minU, uv[i]!);
+    maxU = Math.max(maxU, uv[i]!);
+    minV = Math.min(minV, uv[i + 1]!);
+    maxV = Math.max(maxV, uv[i + 1]!);
+  }
+  return Math.max(maxU - minU, maxV - minV);
+}
+
+/** Box-project UVs from object-space pos + normal. Cell is 1 m after FBX scale. */
+function projectUv(pos: Float32Array, nor: Float32Array): Float32Array {
+  const out = new Float32Array((pos.length / 3) * 2);
+  for (let i = 0, o = 0; i < pos.length; i += 3, o += 2) {
+    const nx = Math.abs(nor[i]!);
+    const ny = Math.abs(nor[i + 1]!);
+    const nz = Math.abs(nor[i + 2]!);
+    const x = pos[i]!;
+    const y = pos[i + 1]!;
+    const z = pos[i + 2]!;
+    const t = 1.4;
+    if (ny >= nx && ny >= nz) {
+      out[o] = x * t;
+      out[o + 1] = z * t;
+    } else if (nx >= nz) {
+      out[o] = z * t;
+      out[o + 1] = y * t;
+    } else {
+      out[o] = x * t;
+      out[o + 1] = y * t;
+    }
+  }
+  return out;
 }
 
 function isCutout(matName: string, tex?: string): boolean {
   const s = `${matName} ${tex ?? ""}`.toLowerCase();
-  return /leave|leaf|fern|reed|flowerbush|flowerpatch|undergrowth|grass_textures/.test(s);
+  return /leave|leaf|fern|reed|flowerbush|flowerpatch|undergrowth|grass|moss|vine/.test(s);
 }
 
 function sameMat(a: MatSpec, b: MatSpec): boolean {
@@ -239,7 +314,7 @@ function packGltf(name: string, prims: Prim[], mats: MatSpec[]): object {
         slot = images.length;
         const bytes = readFileSync(m.tex);
         images.push({ uri: `data:image/png;base64,${bytes.toString("base64")}` });
-        textures.push({ source: slot });
+        textures.push({ source: slot, sampler: 0 });
         texSlot.set(m.tex, slot);
       }
       pbr.baseColorTexture = { index: slot };
@@ -305,7 +380,7 @@ function packGltf(name: string, prims: Prim[], mats: MatSpec[]): object {
     nodes: [{ name, mesh: 0 }],
     meshes: [{ name, primitives }],
     materials,
-    ...(images.length ? { images, textures } : {}),
+    ...(images.length ? { images, textures, samplers: [{ wrapS: 10497, wrapT: 10497 }] } : {}),
     accessors,
     bufferViews,
     buffers: [{ byteLength: bin.length, uri: `data:application/octet-stream;base64,${bin.toString("base64")}` }],

@@ -410,28 +410,28 @@
     },
     {
       "id": "synty-tree-birch-01",
-      "name": "Tree Birch 01",
+      "name": "Tree Birch Gold",
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-tree-birch-01.gltf"
     },
     {
       "id": "synty-tree-birch-02",
-      "name": "Tree Birch 02",
+      "name": "Tree Birch Autumn",
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-tree-birch-02.gltf"
     },
     {
       "id": "synty-tree-birch-03",
-      "name": "Tree Birch 03",
+      "name": "Tree Birch Crimson",
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-tree-birch-03.gltf"
     },
     {
       "id": "synty-tree-birch-04",
-      "name": "Tree Birch 04",
+      "name": "Tree Birch Lime",
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-tree-birch-04.gltf"
@@ -823,7 +823,7 @@
     },
     {
       "id": "synty-tree-willow-large-01",
-      "name": "Tree Willow Large 01",
+      "name": "Tree Willow Pink",
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-tree-willow-large-01.gltf"

@@ -5,6 +5,7 @@
 import { BoxHelper, Object3D, type Raycaster, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
+import { flattenPolygon } from "./polygonLook";
 
 export class PropField {
   private readonly loader = new GLTFLoader();
@@ -101,17 +102,19 @@ export class PropField {
   }
 
   private proto(asset: string): Promise<Object3D | null> {
-    const hit = this.protos.get(asset);
+    const key = `${asset}#unity7`;
+    const hit = this.protos.get(key);
     if (hit) return hit;
     const url = this.urls.get(asset);
-    const pending = url ? this.load(url) : Promise.resolve(null);
-    this.protos.set(asset, pending);
+    const pending = url ? this.load(url, asset) : Promise.resolve(null);
+    this.protos.set(key, pending);
     return pending;
   }
 
-  private async load(url: string): Promise<Object3D | null> {
+  private async load(url: string, asset: string): Promise<Object3D | null> {
     try {
       const gltf = await this.loader.loadAsync(url);
+      if (url.includes("synty") || asset.startsWith("synty-")) flattenPolygon(gltf.scene, asset);
       gltf.scene.traverse((node) => {
         node.castShadow = true;
         node.receiveShadow = true;

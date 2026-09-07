@@ -1,9 +1,21 @@
 /**
  * Mastra tools → EditorHub ops. Add a createTool here when you add an EditorControl op.
  */
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import type { EditorHub } from "./hub";
+
+const SHOT = join(dirname(fileURLToPath(import.meta.url)), "../../tmp/editor-shot.jpg");
+
+function writeShot(data: string, mime: string): void {
+  const ext = mime.includes("png") ? "png" : "jpg";
+  const path = ext === "png" ? SHOT.replace(/\.jpg$/, ".png") : SHOT;
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, Buffer.from(data, "base64"));
+}
 
 const assetId = z.string().describe("Catalogue id, e.g. pine or synty-tree-pine-01");
 const cellX = z.number().describe("Cell X. Playable 0–255, halo −16–271");
@@ -223,6 +235,7 @@ export function editorTools(hub: EditorHub) {
           },
         };
         if (!data) throw new Error("screenshot returned no pixels");
+        writeShot(data, mime);
         return {
           ...framed,
           content: [

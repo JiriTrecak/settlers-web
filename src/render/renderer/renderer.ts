@@ -175,6 +175,7 @@ export class Renderer {
   }
 
   present(): void {
+    this.water?.tick(performance.now());
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
     this.display.render(this.scene, cam);

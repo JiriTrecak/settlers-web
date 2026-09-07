@@ -13,6 +13,6 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "tests", "server", "tooling", "mcp", "vite.config.ts", "assets/catalog.json"],
+  "include": ["src", "tests", "server", "tooling", "mcp", "vite.config.ts", "assets/catalog.json", "assets/synty/looks.json"],
   "exclude": ["node_modules", "dist", "tooling/dist", "tooling/src-tauri"]
 }
