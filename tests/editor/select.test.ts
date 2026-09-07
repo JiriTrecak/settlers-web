@@ -24,6 +24,11 @@ describe("select", () => {
     expect(rot?.yaw).toBeCloseTo(Math.PI / 2, 5);
   });
 
+  it("preserves elevation and seasonal variant while transforming a stamp",()=>{
+    const s={id:'a',asset:'willow',x:2,y:3,elevation:2.5,pitch:.15,roll:-.1,heightScale:.86,variant:'pink' as const};
+    expect(withPose(s,4,5,0)).toEqual({...s,x:4,y:5});
+  });
+
   it("keeps scale and drops zero yaw", () => {
     const s = { id: "a", asset: "pine", x: 1, y: 2, scale: 1.4, yaw: 0.4 };
     const next = withPose(s, 3, 4, 0);

@@ -101,13 +101,6 @@
       "file": "synty/synty-plant-flowerpatch-01.gltf"
     },
     {
-      "id": "synty-plant-flowers-01",
-      "name": "Plant Flowers 01",
-      "category": "foliage",
-      "type": "prop",
-      "file": "synty/synty-plant-flowers-01.gltf"
-    },
-    {
       "id": "synty-plant-mushrooms-01",
       "name": "Plant Mushrooms 01",
       "category": "foliage",
@@ -309,34 +302,6 @@
       "category": "foliage",
       "type": "prop",
       "file": "landscape/woodland-pine-3.gltf"
-    },
-    {
-      "id": "synty-plant-grass-02",
-      "name": "Plant Grass 02",
-      "category": "foliage",
-      "type": "prop",
-      "file": "synty/synty-plant-grass-02.gltf"
-    },
-    {
-      "id": "synty-plant-grass-03",
-      "name": "Plant Grass 03",
-      "category": "foliage",
-      "type": "prop",
-      "file": "synty/synty-plant-grass-03.gltf"
-    },
-    {
-      "id": "synty-plant-grass-04",
-      "name": "Plant Grass 04",
-      "category": "foliage",
-      "type": "prop",
-      "file": "synty/synty-plant-grass-04.gltf"
-    },
-    {
-      "id": "synty-plant-grass-05",
-      "name": "Plant Grass 05",
-      "category": "foliage",
-      "type": "prop",
-      "file": "synty/synty-plant-grass-05.gltf"
     },
     {
       "id": "synty-tree-birch-dead-01",
@@ -764,6 +729,76 @@
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-plant-bush-leaves-03.gltf"
+    },
+    {
+      "id": "synty-tree-large-01",
+      "name": "Tree Large 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "synty/synty-tree-large-01.gltf"
+    },
+    {
+      "id": "synty-terrain-mountain-01",
+      "name": "Terrain Mountain 01",
+      "category": "terrain",
+      "type": "prop",
+      "file": "synty/synty-terrain-mountain-01.gltf"
+    },
+    {
+      "id": "river-reeds",
+      "name": "River reeds \u00b7 repaired",
+      "category": "water",
+      "type": "water",
+      "file": "landscape/river-reeds.gltf"
+    },
+    {
+      "id": "synty-rock-02",
+      "name": "Rock 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "synty/synty-rock-02.gltf"
+    },
+    {
+      "id": "synty-rock-03",
+      "name": "Rock 03",
+      "category": "terrain",
+      "type": "ground",
+      "file": "synty/synty-rock-03.gltf"
+    },
+    {
+      "id": "synty-rock-boulder-01",
+      "name": "Rock Boulder 01",
+      "category": "terrain",
+      "type": "ground",
+      "file": "synty/synty-rock-boulder-01.gltf"
+    },
+    {
+      "id": "synty-tree-willow-large-01-full",
+      "name": "Willow \u00b7 full crown",
+      "category": "foliage",
+      "type": "prop",
+      "file": "synty/synty-tree-willow-large-01.gltf"
+    },
+    {
+      "id": "synty-plant-flowers-01",
+      "name": "Plant Flowers 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "synty/synty-plant-flowers-01.gltf"
+    },
+    {
+      "id": "synty-tree-generic-giant-01-open",
+      "name": "Ancient broadleaf \u2014 open crown",
+      "category": "foliage",
+      "type": "prop",
+      "file": "synty/synty-tree-generic-giant-01.gltf"
+    },
+    {
+      "id": "synty-plant-grass-02",
+      "name": "Plant Grass 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "synty/synty-plant-grass-02.gltf"
     }
   ]
 }

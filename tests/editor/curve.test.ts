@@ -15,7 +15,8 @@ describe('landscape curve strokes',()=>{
  });
  it('roundtrips painted layers, meadow seeds and environment alongside legacy map data',()=>{
   const landscape=emptyLandscape();landscape.strokes.push({points:[{x:12,z:24,radius:3},{x:20,z:30,radius:8}],radius:4,layer:'sand',opacity:.7});
-  landscape.cover.push({x:20,z:22,radius:12,density:3,flowers:.2,seed:42});landscape.environment={hour:22,season:'autumn',playing:true};
+  landscape.cover.push({x:20,z:22,radius:12,density:3,flowers:.2,seed:42,palette:'ochre'});landscape.environment={hour:22,season:'autumn',playing:true};
+  landscape.rivers=[{points:[{x:10,z:15,radius:2},{x:20,z:30,radius:5}],radius:4,depth:1.8}];
   const map={v:1 as const,name:'River',stamps:[{id:'snow-tree',asset:'pine',x:12,y:22,elevation:2,variant:'snow' as const}],landscape};
   expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))).toEqual(map);
   expect(parseUtcMap({v:1,name:'Legacy',stamps:[]})).toEqual({v:1,name:'Legacy',stamps:[]});

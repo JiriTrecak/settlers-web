@@ -2,7 +2,7 @@
  * Canvas + WebGLRenderer. GameApp owns the canvas for the page lifetime;
  * each match builds a Renderer on it. Shadows on. Output is sRGB.
  */
-import { PCFShadowMap, SRGBColorSpace, WebGLRenderer, type Camera, type Scene } from "three";
+import { VSMShadowMap, SRGBColorSpace, WebGLRenderer, type Camera, type Scene } from "three";
 
 export class Display {
   readonly gl: WebGLRenderer;
@@ -17,7 +17,7 @@ export class Display {
     this.gl.outputColorSpace = SRGBColorSpace;
     this.gl.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     this.gl.shadowMap.enabled = true;
-    this.gl.shadowMap.type = PCFShadowMap;
+    this.gl.shadowMap.type = VSMShadowMap;
     this.onResize = () => {
       this.syncSize();
       onResize?.();

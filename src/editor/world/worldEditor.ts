@@ -1,3 +1,5 @@
+import { DEFAULT_WATER_STYLE, type WaterStyle } from '../../shared/landscape/waterStyle';
+import { applyLandform, type Landform } from "../../shared/landscape/landform";
 import { sampleCurve, curveDistance, emptyLandscape, type CurvePoint, type TerrainLayer, type CoverPatch, type EnvironmentState } from "../../shared/landscape/curve";
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
@@ -56,15 +58,18 @@ export type EditorShotOpts = {
   format?: "png" | "jpeg";
   quality?: number;
   aspect?: number;
+  animationTime?: number;
 };
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   tool: EditorTool | null = "stamp";
   asset: string | null = null;
-  terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' = 'terrain';
+  terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' | 'hill' | 'plateau' | 'basin' = 'terrain';
   terrainLayer: TerrainLayer = 'sand';
   terrainRadius=4;
+  terrainAspect=1;
+  terrainRotation=0;
   terrainDepth=1.4;
   terrainCurve=false;
   private terrainPoints: CurvePoint[]=[];
@@ -280,9 +285,9 @@ export class WorldEditor {
   }
 
   /** Programmatic stamp. Cell coords. Rejects unknown sit / out of halo. */
-  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number, elevation?: number, variant?: MapStamp["variant"]): MapStamp | null {
-    const cx = Math.floor(x);
-    const cy = Math.floor(y);
+  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number, elevation?: number, variant?: MapStamp["variant"], snap=true): MapStamp | null {
+    const cx = snap?Math.floor(x):x;
+    const cy = snap?Math.floor(y):y;
     if (!inStamp(cx, cy)) return null;
     if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5))) return null;
     const stamp: MapStamp = {
@@ -304,7 +309,10 @@ export class WorldEditor {
   clearTerrainCurve():void {this.terrainPoints=[];this.renderer?.previewCurve([]);}
   applyTerrainCurve():void {
     if(!this.terrainPoints.length)return;
-    this.curveStroke({points:this.terrainPoints,radius:this.terrainRadius,depth:this.terrainDepth,mode:this.terrainMode,layer:this.terrainLayer});
+    if(this.terrainMode==='hill'||this.terrainMode==='plateau'||this.terrainMode==='basin'){
+      const p=this.terrainPoints[0]!;
+      this.landform({x:p.x,z:p.z,radiusX:this.terrainRadius,radiusZ:this.terrainRadius*this.terrainAspect,height:this.terrainDepth*(this.terrainMode==='basin'?-1:1),rotation:this.terrainRotation*Math.PI/180,plateau:this.terrainMode==='plateau'?.55:0,roughness:.08,seed:42});
+    }else this.curveStroke({points:this.terrainPoints,radius:this.terrainRadius,depth:this.terrainDepth,mode:this.terrainMode,layer:this.terrainLayer});
     this.clearTerrainCurve();
   }
   private addTerrainPoint(x:number,z:number):void {
@@ -316,6 +324,10 @@ export class WorldEditor {
 
   curveStroke(opts: { points: CurvePoint[]; radius: number; mode: 'river' | 'terrain' | 'foliage' | 'raise' | 'smooth' | 'flatten'; depth?: number; layer?: TerrainLayer; opacity?: number }): void {
     const samples = sampleCurve(opts.points, opts.radius);
+    if(opts.mode==='river'){
+      const landscape=this.map.landscape??emptyLandscape();
+      this.map={...this.map,landscape:{...landscape,rivers:[...(landscape.rivers??[]),{points:opts.points,radius:opts.radius,depth:opts.depth??1.4}]}};
+    }
     if (opts.mode === 'terrain') {
       const landscape = this.map.landscape ?? emptyLandscape();
       this.map = { ...this.map, landscape: { ...landscape, strokes: [...landscape.strokes, { points: opts.points, radius: opts.radius, layer: opts.layer ?? 'sand', opacity: opts.opacity ?? 1 }] } };
@@ -355,11 +367,22 @@ export class WorldEditor {
     this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
   }
 
+  waterStyle(settings:WaterStyle):void {
+    const landscape=this.map.landscape??emptyLandscape();
+    this.map={...this.map,landscape:{...landscape,water:{...DEFAULT_WATER_STYLE,...settings}}};
+    this.renderer?.setLandscape(this.map.landscape!);this.hooks.onChange?.();this.paint();
+  }
+
   environment(settings: Partial<EnvironmentState>): void {
     const landscape=this.map.landscape ?? emptyLandscape();
     const environment={...landscape.environment,...settings};
     this.map={...this.map,landscape:{...landscape,environment}};
     this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
+  }
+
+  landform(shape:Landform):void {
+    applyLandform(this.height,shape);this.commitHeight();
+    this.renderer?.setTerrain(this.height);this.paint();this.hooks.onChange?.();
   }
 
   terrainBase(height: number): void {
@@ -392,6 +415,7 @@ export class WorldEditor {
    * Present + PNG/JPEG of the live canvas. Optional pose is applied for the shot
    * then restored unless `keep` — WebGL has no preserveDrawingBuffer.
    */
+  landmarks(aspect:number,ids?:readonly string[]) {return this.renderer?.landmarks(aspect,ids)??[];}
   screenshot(opts: EditorShotOpts = {}): EditorShot {
     const renderer = this.renderer;
     if (!renderer) throw new Error("editor not started");
@@ -426,7 +450,7 @@ export class WorldEditor {
       });
     }
     this.draw();
-    const frame = grabFrame(opts.aspect ? renderer.capture(opts.maxWidth ?? 1600,opts.aspect) : this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
+    const frame = grabFrame(opts.aspect!==undefined || opts.animationTime!==undefined ? renderer.capture(opts.maxWidth ?? 1600,opts.aspect ?? this.canvas.width/Math.max(1,this.canvas.height),opts.animationTime) : this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
     const view = this.view();
     if (posed && !opts.keep) {
       this.gameCam = snap.game;
@@ -446,11 +470,13 @@ export class WorldEditor {
     this.hooks.onSelect?.();
   }
 
-  moveStamp(id: string, x: number, y: number, yaw?: number): boolean {
+  moveStamp(id: string, x: number, y: number, yaw?: number, snap=true, pitch?:number, roll?:number, heightScale?:number, widthScale?:number, depthScale?:number): boolean {
     const stamp = this.map.stamps.find((s) => s.id === id);
     if (!stamp) return false;
     const prev = this.map;
-    this.applyPose(stamp, Math.floor(x), Math.floor(y), yaw ?? stamp.yaw ?? 0);
+    if([heightScale,widthScale,depthScale].some(v=>v!==undefined&&(!Number.isFinite(v)||v<.25||v>4)))return false;
+    if([pitch,roll].some(a=>a!==undefined&&(!Number.isFinite(a)||Math.abs(a)>Math.PI/2)))return false;
+    this.applyPose({...stamp,...(pitch!==undefined?{pitch}:{}),...(roll!==undefined?{roll}:{}),...(heightScale!==undefined?{heightScale}:{}),...(widthScale!==undefined?{widthScale}:{}),...(depthScale!==undefined?{depthScale}:{})}, snap?Math.floor(x):x, snap?Math.floor(y):y, yaw ?? stamp.yaw ?? 0);
     return this.map !== prev;
   }
 

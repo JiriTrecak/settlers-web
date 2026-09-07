@@ -16,10 +16,17 @@ export type MapStamp = {
   readonly y: number;
   /** Radians. Omitted on grid-snapped stamps. */
   readonly yaw?: number;
+  /** Tree / prop lean in radians, applied around world X and Z. */
+  readonly pitch?: number;
+  readonly roll?: number;
   /** Uniform. Omitted when 1. */
   readonly scale?: number;
+  /** Vertical proportion multiplier, defaults to 1. */
+  readonly heightScale?: number;
+  readonly widthScale?: number;
+  readonly depthScale?: number;
   readonly elevation?: number;
-  readonly variant?: "snow" | "gold" | "red" | "green";
+  readonly variant?: "snow" | "gold" | "red" | "green" | "pink" | "slate";
 };
 
 export type UtcMap = {
@@ -117,17 +124,24 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     if (!Number.isFinite(s.x) || !Number.isFinite(s.y)) return null;
     const yaw = s.yaw;
     const scale = s.scale;
+    for(const axis of [s.heightScale,s.widthScale,s.depthScale])if(axis!==undefined&&(typeof axis!=="number"||!Number.isFinite(axis)||axis<.25||axis>4))return null;
+    for (const angle of [s.pitch,s.roll]) if(angle!==undefined && (typeof angle!=="number" || !Number.isFinite(angle) || Math.abs(angle)>Math.PI/2))return null;
     if (yaw !== undefined && (typeof yaw !== "number" || !Number.isFinite(yaw))) return null;
     if (scale !== undefined && (typeof scale !== "number" || !Number.isFinite(scale))) return null;
     if(s.elevation!==undefined&&(typeof s.elevation!=='number'||!Number.isFinite(s.elevation)||Math.abs(s.elevation)>32))return null;
-    if(s.variant!==undefined&&!['snow','gold','red','green'].includes(String(s.variant)))return null;
+    if(s.variant!==undefined&&!['snow','gold','red','green','pink','slate'].includes(String(s.variant)))return null;
     out.push({
       id: s.id,
       asset: s.asset,
       x: s.x,
       y: s.y,
       ...(yaw !== undefined ? { yaw } : {}),
+      ...(typeof s.pitch === "number" ? {pitch:s.pitch} : {}),
+      ...(typeof s.roll === "number" ? {roll:s.roll} : {}),
       ...(scale !== undefined && scale !== 1 ? { scale } : {}),
+      ...(typeof s.heightScale === "number" ? {heightScale:s.heightScale} : {}),
+      ...(typeof s.widthScale === "number" ? {widthScale:s.widthScale} : {}),
+      ...(typeof s.depthScale === "number" ? {depthScale:s.depthScale} : {}),
       ...(typeof s.elevation === "number" ? { elevation:s.elevation } : {}),
       ...(s.variant ? {variant:s.variant as MapStamp["variant"]} : {}),
     });

@@ -1,8 +1,9 @@
+import { prototypeGroundOffset } from './grounding';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
  */
-import { InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, type Raycaster, type Scene } from "three";
+import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, type Raycaster, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
 import { flattenPolygon } from "./polygonLook";
@@ -12,6 +13,8 @@ export class PropField {
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private batches: InstancedMesh[]=[];
+  contactRevision=0;
+  contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
   private queued=false;
   private destroyed=false;
   private lastStamps: readonly MapStamp[] | null=null;
@@ -38,23 +41,42 @@ export class PropField {
     root.traverse(n=>{
       if(!(n instanceof Mesh))return;
       for(const m of (Array.isArray(n.material)?n.material:[n.material])){
+        if(m instanceof MeshLambertMaterial && m.userData.stonePalette){
+          // Each saved variant has its own prototype/materials. Tint only stone,
+          // independently of foliage seasons and the sunlit bank-rock palette.
+          m.color.set(root.userData.variant==='slate'?0xaa9eaa:0xffffff);
+          continue;
+        }
         const base=m.userData.foliageBase as number[]|undefined;
         if(!base||!(m instanceof MeshLambertMaterial))continue;
         const c=new Color().setRGB(base[0]!,base[1]!,base[2]!);
-        if(evergreen)c.set(0x8f9870);
+        if(evergreen)c.set(/reeds/.test(String(root.userData.asset))?0xd2c589:0x8f9870);
         if(!evergreen){
           const name=String(root.userData.asset);let hash=0;for(const ch of name)hash=(hash*31+ch.charCodeAt(0))>>>0;
           if(this.season==='autumn')c.set([0xc99738,0xb45b32,0xd7b644,0xc68043][hash%4]!);
           else if(this.season==='spring')c.set(/willow/.test(name)?0xc3d897:0xb6d48b);
-          else c.set(/willow/.test(name)?0xc0c77c:0xaeb673);
+          else c.set(/willow/.test(name)?0xc5c379:0xc3b471);
         }
         const variant=root.userData.variant;
+        if(variant==='pink')c.set(/willow/.test(String(root.userData.asset))?0xffada8:0xffb1a7);
         if(variant==='snow')c.set(0xe1e0ef);
-        if(variant==='gold')c.set(0xdabc60);
+        if(variant==='gold')c.set(/willow/.test(String(root.userData.asset))?0xffbd71:0xffca0c);
         if(variant==='red')c.set(0xca7648);
         if(variant==='green')c.set(0xa7be79);
-        m.color.copy(c);m.emissive.copy(c).multiplyScalar(.085);
+        m.color.copy(c);m.emissive.copy(c);
+        if(variant==='pink')m.emissive.set(0xff6872);
+        m.emissive.multiplyScalar(variant==='pink'?.16:.035);
+        m.emissiveMap=variant==='pink'?m.map:null;
       }
+    });
+  }
+
+  landmarks(camera:Camera,ids?:readonly string[]) {
+    const uv=(p:Vector3)=>{const v=p.clone().project(camera);return {u:(v.x+1)/2,v:(1-v.y)/2};};
+    return [...this.placed].filter(([id])=>!ids||ids.includes(id)).map(([id,root])=>{
+      root.updateMatrixWorld(true);const box=new Box3().setFromObject(root),corners=[];
+      for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z])corners.push(uv(new Vector3(x,y,z)));
+      return {id,asset:root.userData.asset,anchor:uv(root.position),world:{x:root.position.x,y:root.position.y,z:root.position.z},bounds:{left:Math.min(...corners.map(p=>p.u)),right:Math.max(...corners.map(p=>p.u)),top:Math.min(...corners.map(p=>p.v)),bottom:Math.max(...corners.map(p=>p.v))}};
     });
   }
 
@@ -162,7 +184,7 @@ export class PropField {
   private async load(url: string, asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
     try {
       const gltf = await this.loader.loadAsync(url);
-      if (url.includes("synty") || asset.startsWith("synty-")) flattenPolygon(gltf.scene, asset);
+      if (url.includes("synty") || asset.startsWith("synty-") || asset === "river-reeds") flattenPolygon(gltf.scene, asset,variant);
       gltf.scene.traverse((node) => {
         node.castShadow = true;
         node.receiveShadow = true;
@@ -171,8 +193,9 @@ export class PropField {
       const box=new Box3().setFromObject(gltf.scene);
       this.bounds.set(asset,{minY:box.min.y,height:box.max.y-box.min.y});
       const root=new Object3D();
-      // Imported pivots are not a reliable ground plane; keep geometry intact and normalize the prototype.
-      if(!this.float.has(asset) && !asset.includes("pillar-arch") && Number.isFinite(box.min.y))gltf.scene.position.y-=box.min.y;
+      // Trees use zero as their soil line; negative vertices are buried roots, not a pivot error.
+      // Positive-only offsets still need normalization.
+      gltf.scene.position.y+=prototypeGroundOffset(asset,box.min.y,this.float.has(asset));
       root.userData.variant=variant;
       root.add(gltf.scene);
       return root;
@@ -190,8 +213,8 @@ export class PropField {
     mesh.userData.stamp = stamp.id;
     mesh.userData.elevation=stamp.elevation??0;
     mesh.position.set(x, this.sitY(stamp.asset, x, z)+(stamp.elevation??0), z);
-    mesh.rotation.y = stamp.yaw ?? 0;
-    mesh.scale.setScalar(s);
+    mesh.rotation.set(stamp.pitch ?? 0, stamp.yaw ?? 0, stamp.roll ?? 0, "ZXY");
+    mesh.scale.set(s*(stamp.widthScale??1),s*(stamp.heightScale??1),s*(stamp.depthScale??1));
   }
 
   private sitY(asset: string, x: number, z: number): number {
@@ -213,10 +236,17 @@ export class PropField {
     queueMicrotask(()=>{this.queued=false;if(!this.destroyed)this.rebuildBatches();});
   }
   private rebuildBatches():void {
+    this.contacts=[];this.contactRevision++;
     for(const b of this.batches){this.scene.remove(b);b.dispose();}this.batches=[];
     const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[]}>();
     for(const [id,root] of this.placed){
       root.updateMatrixWorld(true);
+      const asset=String(root.userData.asset);
+      if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
+        const box=new Box3().setFromObject(root);
+        const tree=/tree|pine/.test(asset),spread=tree?.17:.42;
+        this.contacts.push({x:root.position.x,z:root.position.z,radiusX:Math.max(.3,(box.max.x-box.min.x)*spread),radiusZ:Math.max(.3,(box.max.z-box.min.z)*spread),strength:tree?.27:.36});
+      }
       root.traverse(n=>{
         if(!(n instanceof Mesh))return;
         const mats=Array.isArray(n.material)?n.material:[n.material];
@@ -228,7 +258,7 @@ export class PropField {
     for(const g of groups.values()){
       const b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
       g.poses.forEach((p,i)=>b.setMatrixAt(i,p));b.instanceMatrix.needsUpdate=true;
-      b.castShadow=b.receiveShadow=true;b.userData.stampIds=g.ids;b.computeBoundingSphere();
+      b.castShadow=b.receiveShadow=!g.source.userData.skipCanopyShadow;b.userData.stampIds=g.ids;b.computeBoundingSphere();
       this.batches.push(b);this.scene.add(b);
     }
   }

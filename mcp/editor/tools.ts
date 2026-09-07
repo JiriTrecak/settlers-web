@@ -15,6 +15,7 @@ function writeShot(data: string, mime: string): void {
   const path = ext === "png" ? SHOT.replace(/\.jpg$/, ".png") : SHOT;
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, Buffer.from(data, "base64"));
+  writeFileSync(join(dirname(path),"editor-shot.json"),JSON.stringify({file:`editor-shot.${ext}`}));
 }
 
 const assetId = z.string().describe("Catalogue id, e.g. pine or synty-tree-pine-01");
@@ -27,15 +28,18 @@ export function editorTools(hub: EditorHub) {
   return {
     editor_landscape: createTool({
       id: 'editor_landscape',
-      description: 'Landscape authoring: curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), base (height), view (grid), export, load (map), status with renderer diagnostics. Curve radius is half-width in meters.',
+      description: 'Landscape authoring: landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.',
       inputSchema: z.object({
-        action:z.enum(['status','curve','cover','environment','base','view','export','load']),
+        action:z.enum(['status','curve','cover','environment','base','landform','view','export','load','landmarks','water']),
+        water:z.object({rippleScale:z.number().min(.01).max(1).optional(),rippleStrength:z.number().min(0).max(.5).optional(),cloudStrength:z.number().min(0).max(.2).optional(),foamStrength:z.number().min(0).max(1).optional(),causticStrength:z.number().min(0).max(1).optional(),shadowStrength:z.number().min(0).max(1).optional().describe("Directional shadow strength on water; default .6."),reflectionStrength:z.number().min(0).max(1).optional()}).optional(),
+        aspect:z.number().optional(),ids:z.array(z.string()).optional(),
         points:z.array(z.object({x:z.number(),z:z.number(),radius:z.number().optional()})).optional(),
         mode:z.enum(['terrain','river','raise','foliage','smooth','flatten']).optional(),
         layer:z.enum(['grass','sand','mud','rock','snow']).optional(),
         radius:z.number().optional(),depth:z.number().optional(),opacity:z.number().optional(),
-        x:z.number().optional(),z:z.number().optional(),density:z.number().optional(),flowers:z.number().optional(),seed:z.number().optional(),
+        x:z.number().optional(),z:z.number().optional(),density:z.number().optional(),flowers:z.number().optional(),grassScale:z.number().min(.2).max(4).optional().describe('Grass tuft size; does not scale flowers. Default 1.'),broadRatio:z.number().min(0).max(1).optional().describe('Fraction of broad bent-blade tufts versus upright thin tufts. Default .55.'),palette:z.enum(['meadow','straw','ochre','sage']).optional(),seed:z.number().optional(),
         hour:z.number().optional(),season:z.enum(['spring','summer','autumn']).optional(),playing:z.boolean().optional(),
+        radiusX:z.number().optional(),radiusZ:z.number().optional(),rotation:z.number().optional(),plateau:z.number().optional(),roughness:z.number().optional(),
         height:z.number().optional(),grid:z.boolean().optional(),map:z.unknown().optional(),
       }),
       execute: async (input) => call('landscape',input),
@@ -70,7 +74,8 @@ export function editorTools(hub: EditorHub) {
         yaw: z.number().optional().describe("Radians"),
         scale: z.number().positive().max(20).optional(),
         elevation: z.number().min(-32).max(32).optional(),
-        variant: z.enum(["snow","gold","red","green"]).optional(),
+        variant: z.enum(["snow","gold","red","green","pink","slate"]).optional(),
+        snap:z.boolean().optional().describe("False preserves fractional cell coordinates; default snaps to the grid."),
         items: z
           .array(
             z.object({
@@ -80,7 +85,8 @@ export function editorTools(hub: EditorHub) {
               yaw: z.number().optional(),
               scale: z.number().positive().max(20).optional(),
         elevation: z.number().min(-32).max(32).optional(),
-        variant: z.enum(["snow","gold","red","green"]).optional(),
+        variant: z.enum(["snow","gold","red","green","pink","slate"]).optional(),
+        snap:z.boolean().optional().describe("False preserves fractional cell coordinates; default snaps to the grid."),
             }),
           )
           .optional(),
@@ -107,12 +113,18 @@ export function editorTools(hub: EditorHub) {
 
     editor_move: createTool({
       id: "editor_move",
-      description: "Move / yaw a stamp. Same sit rules as place.",
+      description: "Move / yaw / lean a stamp. Pitch and roll are radians, -pi/2..pi/2. Set snap=false for precise fractional positioning. Same sit rules as place.",
       inputSchema: z.object({
+        snap:z.boolean().optional(),
         id: z.string(),
         x: cellX,
         y: cellY,
         yaw: z.number().optional(),
+        pitch:z.number().min(-Math.PI/2).max(Math.PI/2).optional(),
+        roll:z.number().min(-Math.PI/2).max(Math.PI/2).optional(),
+        widthScale:z.number().min(.25).max(4).optional().describe("Local X multiplier before yaw; defaults to 1."),
+        depthScale:z.number().min(.25).max(4).optional().describe("Local Z multiplier before yaw; defaults to 1."),
+        heightScale:z.number().min(.25).max(4).optional().describe("Local Y multiplier independent of uniform scale; defaults to 1."),
       }),
       execute: async (input) => call("move", input),
     }),
@@ -219,6 +231,7 @@ export function editorTools(hub: EditorHub) {
         format: z.enum(["jpeg", "jpg", "png"]).optional().describe("Default jpeg."),
         aspect: z.number().min(.5).max(3).optional().describe("Output aspect ratio for reproducible reference framing, e.g. 1.77778. Does not resize the user viewport."),
         quality: z.number().optional().describe("JPEG 0.4–0.95. Default 0.85."),
+        animationTime:z.number().min(0).max(86400).optional().describe("Fixed water and grass animation time in seconds for reproducible comparisons. Does not change the scene hour or pause live animation."),
       }),
       outputSchema: z.object({}).passthrough(),
       execute: async (input) => {
@@ -233,6 +246,7 @@ export function editorTools(hub: EditorHub) {
           width,
           height,
           mime,
+          ...(typeof o.animationTime==="number"?{animationTime:o.animationTime}:{}),
           view: {
             x: Number(view.x) || 0,
             z: Number(view.z) || 0,

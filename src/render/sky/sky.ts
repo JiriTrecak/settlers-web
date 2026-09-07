@@ -47,7 +47,7 @@ const STOPS: readonly Stop[] = [
 ];
 
 const DEG = Math.PI / 180;
-const PEAK = 62 * DEG;
+const PEAK = 78 * DEG;
 const MOON = 16 * DEG;
 const SCRUB = 9.5;
 
@@ -68,7 +68,8 @@ export class Sky {
   ) {
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(2048, 2048);
-    this.sun.shadow.radius = 3;
+    this.sun.shadow.radius = 7;
+    this.sun.shadow.blurSamples = 8;
     this.sun.shadow.bias = -0.0004;
     this.sun.shadow.normalBias = 0.025;
     this.scene.add(this.ambient, this.hemi, this.sun, this.sun.target);
@@ -136,9 +137,10 @@ export class Sky {
     this.sun.color.copy(look.sun);
     this.sun.intensity = look.sunI;
     const daylight = Math.min(1, Math.max(0, Math.sin((this.hour - 6) / 12 * Math.PI) * 3));
-    this.ambient.color.copy(look.amb).lerp(new Color(0xe1e5d6),.12 + .38 * daylight);
+    this.sun.intensity *= 1 + .45 * daylight;
+    this.ambient.color.copy(look.amb).lerp(new Color(0xded2df),.12 + .38 * daylight);
     this.ambient.intensity = 1.05 - .30 * daylight;
-    this.hemi.color.copy(look.hemi).lerp(new Color(0xd5e5ed),.35);
+    this.hemi.color.copy(look.hemi).lerp(new Color(0xdad6e8),.35);
     this.hemi.groundColor.copy(look.ground).lerp(new Color(0xa49a87),.15 + .4 * daylight);
     this.hemi.intensity = .85 + .2 * daylight;
     this.bg.copy(look.bg);
@@ -161,9 +163,9 @@ function elevation(hour: number): number {
   return Math.sin(((hour - 6) / 12) * Math.PI) * PEAK;
 }
 
-/** 06:00 east (+X), 18:00 west (−X). Offset so the iso camera still reads the shadow. */
+/** The solar arc is oriented so morning light enters the reference camera from upper left. */
 function azimuth(hour: number): number {
-  return ((hour - 6) / 12) * Math.PI + 28 * DEG;
+  return ((hour - 6) / 12) * Math.PI - 202 * DEG;
 }
 
 function sample(hour: number): {

@@ -9,7 +9,7 @@ export function showcasePicker(host: HTMLElement, open: (map: UtcMap) => void): 
   for (const [path, load] of Object.entries(maps)) {
     const button = document.createElement('button');
     button.className = btn;
-    button.textContent = path.includes('Willow') ? 'Willow Crossing' : 'Frostfall Ruins';
+    button.textContent = path.includes('Golden') ? 'Golden Standard' : path.includes('Willow') ? 'Willow Crossing' : 'Frostfall Ruins';
     button.onclick = async () => {
       button.disabled = true;
       try { const map = parseUtcMap(JSON.parse(await load())); if (map) open(map); }
@@ -17,6 +17,7 @@ export function showcasePicker(host: HTMLElement, open: (map: UtcMap) => void): 
     };
     root.append(button);
   }
+  const compare=document.createElement('a');compare.className=btn;compare.textContent='Compare reference';compare.href='./visual-compare.html';compare.target='_blank';compare.rel='noopener';root.append(compare);
   host.append(root);
   return root;
 }

@@ -68,14 +68,23 @@ export class Renderer {
     this.scene.add(this.lines);
   }
 
-  capture(width:number,aspect:number):HTMLCanvasElement {
+  landmarks(aspect:number,ids?:readonly string[]) {
+    const cam=this.threeCam().clone();this.camera.applyTo(cam,1000*aspect,1000);
+    return this.props.landmarks(cam,ids);
+  }
+  capture(width:number,aspect:number,animationTime?:number):HTMLCanvasElement {
     const w=Math.max(256,Math.min(2048,Math.round(width))),h=Math.round(w/Math.max(.5,Math.min(3,aspect)));
     const target=new WebGLRenderTarget(w,h,{samples:4});target.texture.colorSpace=SRGBColorSpace;
     const gl=this.display.gl,previous=gl.getRenderTarget();
     const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
     try{
+      if(animationTime!==undefined){this.water?.tick(animationTime*1000);this.meadow.tick(animationTime*1000);}
       const cam=this.threeCam();this.camera.applyTo(cam,w,h);gl.setRenderTarget(target);gl.render(this.scene,cam);
       const bytes=new Uint8Array(w*h*4);gl.readRenderTargetPixels(target,0,0,w,h,bytes);
+      // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
+      // alpha in an offscreen target; exporting it darkens foliage when JPEG
+      // flattens those pixels against black, despite already resolved RGB.
+      for(let i=3;i<bytes.length;i+=4)bytes[i]=255;
       const ctx=canvas.getContext('2d')!;const data=ctx.createImageData(w,h);
       for(let y=0;y<h;y++)data.data.set(bytes.subarray((h-1-y)*w*4,(h-y)*w*4),y*w*4);
       ctx.putImageData(data,0,0);return canvas;
@@ -89,6 +98,8 @@ export class Renderer {
   }
   setLandscape(landscape: Landscape): void {
     const rebuild = this.landscape.cover !== landscape.cover || this.landscape.strokes !== landscape.strokes || this.landscape.environment.season !== landscape.environment.season;
+    if(this.landscape.rivers!==landscape.rivers)this.water?.setFlow(landscape.rivers??[]);
+    this.water?.setStyle(landscape.water);
     this.landscape=landscape;
     this.sky.setHour(landscape.environment.hour); this.sky.setPlaying(landscape.environment.playing);
     this.props.setSeason(landscape.environment.season);
@@ -157,6 +168,8 @@ export class Renderer {
       this.sky.resize(snapshot.size);
       this.terrain = new HeightMesh(this.scene);
       this.water = new WaterLayer(this.scene, snapshot.size);
+      this.water.setStyle(this.landscape.water);
+      this.water.setFlow(this.landscape.rivers??[]);
       if (this.height) {
         this.terrain.setFrom(this.height);
         this.water.setFrom(this.height);
@@ -195,6 +208,7 @@ export class Renderer {
       this.cubes.delete(id);
     }
     this.props.sync(stamps);
+    (this.terrain?.mesh.material as TerrainMaterial|undefined)?.setContacts(this.props.contactRevision,this.props.contacts);
     this.present();
   }
 

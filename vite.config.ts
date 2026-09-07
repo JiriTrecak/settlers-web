@@ -7,6 +7,7 @@ export default defineConfig(({ command }) => ({
   clearScreen: false,
   plugins: [tailwindcss()],
   server: {
+    host: "127.0.0.1",
     port: 5173,
     strictPort: true,
     watch: {
@@ -15,7 +16,10 @@ export default defineConfig(({ command }) => ({
   },
   build: {
     rollupOptions: {
-      input: fileURLToPath(new URL("./index.html", import.meta.url)),
+      input: {
+        main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        comparison: fileURLToPath(new URL("./visual-compare.html", import.meta.url)),
+      },
     },
   },
 }));

@@ -1,3 +1,5 @@
+import { parseWaterStyle, type WaterStyle } from './waterStyle';
+import type { RiverStroke } from './riverFlow';
 /** Catmull–Rom brush centerline, sampled independently of pointer/event rate. */
 export type CurvePoint = { x: number; z: number; radius?: number };
 export type CurveSample = { x: number; z: number; radius: number };
@@ -31,18 +33,20 @@ export function curveDistance(x: number, z: number, curve: readonly CurveSample[
 }
 export type TerrainLayer = 'grass' | 'sand' | 'mud' | 'rock' | 'snow';
 export type TerrainStroke = { points: CurvePoint[]; radius: number; layer: TerrainLayer; opacity: number };
-export type CoverPatch = { x: number; z: number; radius: number; density: number; seed: number; flowers: number };
+export type CoverPatch = { x: number; z: number; radius: number; density: number; seed: number; flowers: number; grassScale?: number; broadRatio?: number; palette?: 'meadow' | 'straw' | 'ochre' | 'sage' };
 export type EnvironmentState = { hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
-export type Landscape = { strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
+export type Landscape = { water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
 export const emptyLandscape = (): Landscape => ({ strokes: [], cover: [], environment: { hour: 10, season: 'summer', playing: false } });
 /** Strict persisted scene validation: malformed new fields never break legacy maps. */
 export function parseLandscape(raw: unknown): Landscape | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   const o=raw as Landscape;
+  if(o.water!==undefined&&!parseWaterStyle(o.water))return undefined;
   if (!Array.isArray(o.strokes) || !Array.isArray(o.cover) || !o.environment) return undefined;
   const finite=(v: unknown) => typeof v==='number' && Number.isFinite(v);
   if (!o.strokes.every(s=>s && typeof s==='object' && ['grass','sand','mud','rock','snow'].includes(s.layer) && finite(s.radius) && s.radius>0 && s.radius<=64 && finite(s.opacity) && s.opacity>=0 && s.opacity<=1 && Array.isArray(s.points) && s.points.length>0 && s.points.length<=128 && s.points.every(p=>p && typeof p==='object' && finite(p.x)&&finite(p.z)&&(p.radius===undefined||(finite(p.radius)&&p.radius>0&&p.radius<=64))))) return undefined;
-  if (!o.cover.every(p=>p && typeof p==='object' && [p.x,p.z,p.radius,p.density,p.seed,p.flowers].every(finite)&&p.radius>0&&p.radius<=100&&p.density>=0&&p.density<=12&&p.flowers>=0&&p.flowers<=1)) return undefined;
+  if (!o.cover.every(p=>p && typeof p==='object' && [p.x,p.z,p.radius,p.density,p.seed,p.flowers].every(finite)&&p.radius>0&&p.radius<=100&&p.density>=0&&p.density<=12&&p.flowers>=0&&p.flowers<=1&&(p.grassScale===undefined||(finite(p.grassScale)&&p.grassScale>=.2&&p.grassScale<=4))&&(p.broadRatio===undefined||(finite(p.broadRatio)&&p.broadRatio>=0&&p.broadRatio<=1))&&(p.palette===undefined||['meadow','straw','ochre','sage'].includes(p.palette)))) return undefined;
+  if(o.rivers!==undefined && (!Array.isArray(o.rivers)||!o.rivers.every(r=>r&&typeof r==='object'&&finite(r.depth)&&finite(r.radius)&&r.radius>0&&r.radius<=64&&Array.isArray(r.points)&&r.points.length>0&&r.points.length<=128&&r.points.every(p=>p&&finite(p.x)&&finite(p.z)&&(p.radius===undefined||(finite(p.radius)&&p.radius>0&&p.radius<=64))))))return undefined;
   if (!finite(o.environment.hour)||!['spring','summer','autumn'].includes(o.environment.season)||typeof o.environment.playing!=='boolean') return undefined;
   return o;
 }

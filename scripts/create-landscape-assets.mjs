@@ -32,6 +32,6 @@ for(let k=0;k<3;k++){
  save(`woodland-pine-${k+1}`,parts);
 }
 const cat=JSON.parse(readFileSync('assets/catalog.json','utf8'));
-for(let k=1;k<=6;k++){const id=`river-rock-${k}`;if(!cat.assets.some(a=>a.id===id))cat.assets.push({id,name:`River rock ${k}`,category:'terrain',type:'prop',file:`landscape/${id}.gltf`});}
+for(let k=1;k<=6;k++){const id=`river-rock-${k}`;if(!cat.assets.some(a=>a.id===id))cat.assets.push({id,name:`River rock ${k}`,category:'terrain',type:'ground',file:`landscape/${id}.gltf`});}
 for(let k=1;k<=3;k++){const id=`woodland-pine-${k}`;if(!cat.assets.some(a=>a.id===id))cat.assets.push({id,name:`Woodland pine ${k}`,category:'foliage',type:'prop',file:`landscape/${id}.gltf`});}
 writeFileSync('assets/catalog.json',JSON.stringify(cat,null,2)+'\n');

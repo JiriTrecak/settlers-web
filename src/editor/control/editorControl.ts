@@ -1,3 +1,4 @@
+import { DEFAULT_WATER_STYLE, parseWaterStyle } from '../../shared/landscape/waterStyle';
 import { parseUtcMap, stringifyUtcMap } from "../../shared";
 import type { CurvePoint, TerrainLayer, EnvironmentState } from "../../shared/landscape/curve";
 /**
@@ -45,12 +46,17 @@ export class EditorControl {
 
   private landscape(raw: unknown): unknown {
     const o=obj(raw), action=str(o.action) ?? 'status';
+    if(action==='landmarks'){const aspect=num(o.aspect)??16/9;if(aspect<.5||aspect>3)throw new Error('aspect must be .5..3');const ids=Array.isArray(o.ids)?o.ids.filter((id):id is string=>typeof id==='string'):undefined;return {aspect,landmarks:this.editor.landmarks(aspect,ids)};}
     if(action==='export') return { map: JSON.parse(stringifyUtcMap(this.editor.map)) };
     if(action==='load') {
       const map=parseUtcMap(o.map); if(!map) throw new Error('Invalid map'); this.editor.replace(map);
     } else if(action==='base') {
       const height=num(o.height); if(height===undefined || height < -16 || height>24) throw new Error('height must be -16..24');
       this.editor.terrainBase(height);
+    } else if(action==='landform') {
+      const x=num(o.x),z=num(o.z),height=num(o.height),radiusX=num(o.radiusX)??12,radiusZ=num(o.radiusZ)??12,rotation=num(o.rotation)??0,plateau=num(o.plateau)??0,roughness=num(o.roughness)??.08,seed=num(o.seed)??42;
+      if(x===undefined||z===undefined||height===undefined||Math.abs(height)>16||radiusX<=0||radiusX>100||radiusZ<=0||radiusZ>100||plateau<0||plateau>.9||roughness<0||roughness>.35)throw new Error('Invalid landform: radii 0..100, height -16..16, plateau 0...9, roughness 0...35');
+      this.editor.landform({x,z,height,radiusX,radiusZ,rotation:rotation*Math.PI/180,plateau,roughness,seed});
     } else if(action==='curve') {
       const points=o.points as CurvePoint[];
       if(!Array.isArray(points)||!points.length||points.length>128||!points.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.z)&&(p.radius===undefined||(Number.isFinite(p.radius)&&p.radius>0&&p.radius<=64)))) throw new Error('Provide 1..128 finite curve points');
@@ -64,7 +70,13 @@ export class EditorControl {
     } else if(action==='cover') {
       const x=num(o.x),z=num(o.z),radius=num(o.radius)??10,density=num(o.density)??3,flowers=num(o.flowers)??.1;
       if(x===undefined||z===undefined||radius<=0||radius>100||density<0||density>12||flowers<0||flowers>1) throw new Error('Invalid cover patch');
-      this.editor.addCover({x,z,radius,density,flowers,seed:num(o.seed)??42});
+      const palette=str(o.palette);if(palette!==undefined&&!['meadow','straw','ochre','sage'].includes(palette))throw new Error('Invalid cover palette');
+      const grassScale=num(o.grassScale),broadRatio=num(o.broadRatio);
+      if((o.grassScale!==undefined&&(grassScale===undefined||grassScale<.2||grassScale>4))||(o.broadRatio!==undefined&&(broadRatio===undefined||broadRatio<0||broadRatio>1)))throw new Error('Invalid cover proportions');
+      this.editor.addCover({x,z,radius,density,flowers,grassScale,broadRatio,seed:num(o.seed)??42,palette:palette as 'meadow'|'straw'|'ochre'|'sage'|undefined});
+    } else if(action==='water') {
+      const water=parseWaterStyle({...DEFAULT_WATER_STYLE,...this.editor.map.landscape?.water,...obj(o.water)});
+      if(!water)throw new Error('Invalid water settings');this.editor.waterStyle(water);
     } else if(action==='environment') {
       const settings:Partial<EnvironmentState>={};
       if(o.hour!==undefined){const h=num(o.hour);if(h===undefined)throw new Error('Invalid hour');settings.hour=((h%24)+24)%24;}
@@ -120,7 +132,7 @@ export class EditorControl {
         skipped.push({ ...item, reason: "unknown asset" });
         continue;
       }
-      const stamp = this.editor.placeAt(item.asset, item.x, item.y, item.yaw, item.scale, item.elevation, item.variant);
+      const stamp = this.editor.placeAt(item.asset, item.x, item.y, item.yaw, item.scale, item.elevation, item.variant,item.snap);
       if (!stamp) {
         const wet = this.editor.height.wet(Math.floor(item.x) + 0.5, Math.floor(item.y) + 0.5);
         skipped.push({
@@ -159,7 +171,9 @@ export class EditorControl {
     const x = num(o.x);
     const y = num(o.y);
     if (!id || x === undefined || y === undefined) throw new Error("move needs id, x, y");
-    const ok = this.editor.moveStamp(id, x, y, num(o.yaw));
+    for(const a of [o.pitch,o.roll])if(a!==undefined&&(typeof a!=="number"||!Number.isFinite(a)||Math.abs(a)>Math.PI/2))throw new Error("pitch and roll must be radians within -pi/2..pi/2");
+    for(const key of ["heightScale","widthScale","depthScale"])if(o[key]!==undefined&&(typeof o[key]!=="number"||!Number.isFinite(o[key])||o[key]<.25||o[key]>4))throw new Error(`${key} must be .25..4`);
+    const ok = this.editor.moveStamp(id, x, y, num(o.yaw),bool(o.snap),num(o.pitch),num(o.roll),num(o.heightScale),num(o.widthScale),num(o.depthScale));
     if (!ok) throw new Error("move refused (missing, sit, or bounds)");
     return { stamp: this.editor.map.stamps.find((s) => s.id === id) ?? null };
   }
@@ -277,6 +291,7 @@ export class EditorControl {
     await this.editor.ready();
     const o = obj(raw);
     const format = str(o.format);
+    if(o.animationTime!==undefined&&(typeof o.animationTime!=="number"||!Number.isFinite(o.animationTime)||o.animationTime<0||o.animationTime>86400))throw new Error("animationTime must be seconds within 0..86400");
     const shot = this.editor.screenshot({
       x: num(o.x),
       z: num(o.z) ?? num(o.y),
@@ -290,8 +305,10 @@ export class EditorControl {
       format: format === "png" ? "png" : format === "jpeg" || format === "jpg" ? "jpeg" : undefined,
       quality: num(o.quality),
       aspect:num(o.aspect),
+      animationTime:num(o.animationTime),
     });
     return {
+      ...(o.animationTime!==undefined?{animationTime:o.animationTime}:{}),
       data: shot.data,
       mime: shot.mime,
       width: shot.width,
@@ -309,7 +326,7 @@ export class EditorControl {
   }
 }
 
-function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green" }[] {
+function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: number; snap?:boolean; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green"|"pink"|"slate" }[] {
   const o = obj(raw);
   const items = arr(o.items);
   if (items) {
@@ -322,13 +339,13 @@ function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: 
   return one ? [one] : [];
 }
 
-function onePlace(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green" } | null {
+function onePlace(raw: unknown): { asset: string; x: number; y: number; yaw?: number; snap?:boolean; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green"|"pink"|"slate" } | null {
   const o = obj(raw);
   const asset = str(o.asset);
   const x = num(o.x);
   const y = num(o.y);
   if (!asset || x === undefined || y === undefined) return null;
-  return { asset, x, y, yaw: num(o.yaw), scale: num(o.scale), elevation:num(o.elevation), variant:["snow","gold","red","green"].includes(String(o.variant))?o.variant as "snow"|"gold"|"red"|"green":undefined };
+  return { asset, x, y, snap:bool(o.snap),yaw: num(o.yaw), scale: num(o.scale), elevation:num(o.elevation), variant:["snow","gold","red","green","pink","slate"].includes(String(o.variant))?o.variant as "snow"|"gold"|"red"|"green"|"pink"|"slate":undefined };
 }
 
 function obj(raw: unknown): Record<string, unknown> {
