@@ -1,3 +1,4 @@
+import { sampleCurve, curveDistance, emptyLandscape, type CurvePoint, type TerrainLayer, type CoverPatch, type EnvironmentState } from "../../shared/landscape/curve";
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
@@ -23,7 +24,7 @@ import { CleanTool } from "../clean/clean";
 import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
-export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt";
+export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain";
 
 export type EditorView = {
   x: number;
@@ -54,12 +55,19 @@ export type EditorShotOpts = {
   maxWidth?: number;
   format?: "png" | "jpeg";
   quality?: number;
+  aspect?: number;
 };
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   tool: EditorTool | null = "stamp";
   asset: string | null = null;
+  terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' = 'terrain';
+  terrainLayer: TerrainLayer = 'sand';
+  terrainRadius=4;
+  terrainDepth=1.4;
+  terrainCurve=false;
+  private terrainPoints: CurvePoint[]=[];
   stampYaw = 0;
   gridMenu = false;
   gridMode: GridMode = "tiles";
@@ -73,6 +81,10 @@ export class WorldEditor {
   private urls = new Map<string, string>();
   private kinds = new Map<string, AssetType>();
   private renderer: Renderer | null = null;
+
+  get sky() {
+    return this.renderer?.sky ?? null;
+  }
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
 
@@ -95,6 +107,7 @@ export class WorldEditor {
     this.select.clear();
     this.loadHeight(map);
     this.renderer?.setTerrain(this.height);
+    this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
     this.paint();
     this.hooks.onChange?.();
     this.hooks.onSelect?.();
@@ -267,7 +280,7 @@ export class WorldEditor {
   }
 
   /** Programmatic stamp. Cell coords. Rejects unknown sit / out of halo. */
-  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number): MapStamp | null {
+  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number, elevation?: number, variant?: MapStamp["variant"]): MapStamp | null {
     const cx = Math.floor(x);
     const cy = Math.floor(y);
     if (!inStamp(cx, cy)) return null;
@@ -279,12 +292,84 @@ export class WorldEditor {
       y: cy,
       ...(yaw ? { yaw } : {}),
       ...(scale !== undefined && scale !== 1 ? { scale } : {}),
+      ...(elevation!==undefined?{elevation}:{}),
+      ...(variant?{variant}:{}),
     };
     this.map = { ...this.map, stamps: [...this.map.stamps, stamp] };
     this.paint();
     this.hooks.onChange?.();
     return stamp;
   }
+
+  clearTerrainCurve():void {this.terrainPoints=[];this.renderer?.previewCurve([]);}
+  applyTerrainCurve():void {
+    if(!this.terrainPoints.length)return;
+    this.curveStroke({points:this.terrainPoints,radius:this.terrainRadius,depth:this.terrainDepth,mode:this.terrainMode,layer:this.terrainLayer});
+    this.clearTerrainCurve();
+  }
+  private addTerrainPoint(x:number,z:number):void {
+    const prev=this.terrainPoints.at(-1);if(prev&&Math.hypot(x-prev.x,z-prev.z)<.5)return;
+    if(this.terrainPoints.length>=128)return;
+    this.terrainPoints.push({x,z,radius:this.terrainRadius});
+    this.renderer?.previewCurve(sampleCurve(this.terrainPoints,this.terrainRadius));
+  }
+
+  curveStroke(opts: { points: CurvePoint[]; radius: number; mode: 'river' | 'terrain' | 'foliage' | 'raise' | 'smooth' | 'flatten'; depth?: number; layer?: TerrainLayer; opacity?: number }): void {
+    const samples = sampleCurve(opts.points, opts.radius);
+    if (opts.mode === 'terrain') {
+      const landscape = this.map.landscape ?? emptyLandscape();
+      this.map = { ...this.map, landscape: { ...landscape, strokes: [...landscape.strokes, { points: opts.points, radius: opts.radius, layer: opts.layer ?? 'sand', opacity: opts.opacity ?? 1 }] } };
+    } else if (opts.mode === 'foliage') {
+      for (const p of samples) { this.brush.setRadius(p.radius); this.dabBrush(p.x,p.z); }
+      this.applyBrush();
+    } else {
+      const original=this.height.samples.slice();
+      for (let iz=0;iz<this.height.verts;iz++) for(let ix=0;ix<this.height.verts;ix++) {
+        const d=curveDistance(ix+this.height.origin,iz+this.height.origin,samples);
+        if(d>=1) continue;
+        const i=iz*this.height.verts+ix;
+        const w=(1-d*d)**2;
+        if(opts.mode==='river') {
+          // Constant riverbed depth along the centerline; overlapping dabs never dig holes.
+          const bank=Math.max(0,Math.min(1,(d-.68)/.32));
+          const blend=bank*bank*(3-2*bank);
+          const channel=this.height.waterLevel-(opts.depth ?? 1.4)*Math.max(0,1-(d/.68)**2);
+          const target=d<.68?channel:this.height.waterLevel+(original[i]!-this.height.waterLevel)*blend;
+          this.height.samples[i]=Math.min(original[i]!,target);
+        } else if(opts.mode==='smooth') {
+          let sum=0,count=0;for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){const nx=ix+dx,nz=iz+dz;if(nx>=0&&nz>=0&&nx<this.height.verts&&nz<this.height.verts){sum+=original[nz*this.height.verts+nx]!;count++;}}
+          this.height.samples[i]=original[i]!+(sum/count-original[i]!)*w;
+        } else if(opts.mode==='flatten') this.height.samples[i]=original[i]!+((opts.depth??1)-original[i]!)*w;
+        else this.height.samples[i]=Math.min(24,Math.max(-16,this.height.samples[i]!+(opts.depth ?? 1)*w));
+      }
+      this.commitHeight();
+      this.renderer?.setTerrain(this.height);
+    }
+    this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
+    this.paint(); this.hooks.onChange?.();
+  }
+
+  addCover(patch: CoverPatch): void {
+    const landscape=this.map.landscape ?? emptyLandscape();
+    this.map={...this.map,landscape:{...landscape,cover:[...landscape.cover,patch]}};
+    this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
+  }
+
+  environment(settings: Partial<EnvironmentState>): void {
+    const landscape=this.map.landscape ?? emptyLandscape();
+    const environment={...landscape.environment,...settings};
+    this.map={...this.map,landscape:{...landscape,environment}};
+    this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
+  }
+
+  terrainBase(height: number): void {
+    this.height.samples.fill(height); this.commitHeight();
+    this.renderer?.setTerrain(this.height); this.paint(); this.hooks.onChange?.();
+  }
+
+  async ready(): Promise<void> { await this.renderer?.ready(); }
+
+  diagnostics() { return this.renderer?.diagnostics(); }
 
   lookAt(x: number, z: number): void {
     this.renderer?.camera.lookAt(x, z);
@@ -341,7 +426,7 @@ export class WorldEditor {
       });
     }
     this.draw();
-    const frame = grabFrame(this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
+    const frame = grabFrame(opts.aspect ? renderer.capture(opts.maxWidth ?? 1600,opts.aspect) : this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
     const view = this.view();
     if (posed && !opts.keep) {
       this.gameCam = snap.game;
@@ -432,10 +517,11 @@ export class WorldEditor {
         rotateBy: (steps) => this.nudgeSelected(steps * YAW_STEP),
       },
       paint: {
-        on: () => this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt",
+        on: () => this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt" || (this.tool === "terrain" && !this.terrainCurve),
         hover: (x, y) => this.hover(x, y),
         stroke: (x, y, erase) => this.stroke(x, y, erase),
         beginStroke: () => {
+          if(this.tool === "terrain")this.clearTerrainCurve();
           if (this.tool === "clean") this.clean.beginStroke();
           else if (this.tool === "sculpt") this.sculpt.beginStroke();
           else this.brush.beginStroke();
@@ -473,6 +559,7 @@ export class WorldEditor {
     renderer.setGridMode(this.gridMode);
     this.syncPaintView();
     renderer.setTerrain(this.height);
+    renderer.setLandscape(this.map.landscape ?? emptyLandscape());
     this.paint();
     this.syncPaintView();
   }
@@ -493,7 +580,7 @@ export class WorldEditor {
 
   private hover(clientX: number, clientY: number): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
-    const r = this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
+    const r = this.tool === "terrain" ? this.terrainRadius : this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
     if (!hit) {
       this.renderer?.brush.setCursor(0, 0, r, false);
       return;
@@ -504,6 +591,7 @@ export class WorldEditor {
   private stroke(clientX: number, clientY: number, erase: boolean): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return;
+    if (this.tool === "terrain") {this.addTerrainPoint(hit.x,hit.z);return;}
     if (this.tool === "sculpt") {
       this.renderer?.brush.setCursor(hit.x, hit.z, this.sculpt.radius, true, hit.y);
       const dirty = this.sculpt.stroke(hit.x, hit.z, erase, this.height);
@@ -532,6 +620,7 @@ export class WorldEditor {
   }
 
   private endStroke(): void {
+    if(this.tool === "terrain" && !this.terrainCurve){this.applyTerrainCurve();return;}
     if (this.tool !== "sculpt" || this.sculpt.mode !== "live") return;
     this.commitHeight();
     this.renderer?.setTerrain(this.height);
@@ -603,6 +692,7 @@ export class WorldEditor {
   }
 
   private click(clientX: number, clientY: number): void {
+    if(this.tool === "terrain" && this.terrainCurve){const p=this.renderer?.pickGround(clientX,clientY);if(p)this.addTerrainPoint(p.x,p.z);return;}
     if (this.tool !== "stamp") return;
     if (!this.asset) {
       this.hooks.onNeedAsset?.();
@@ -654,6 +744,7 @@ export class WorldEditor {
     const height = encodeHeight(this.height.samples);
     const waterLevel = this.height.waterLevel;
     this.map = {
+      ...this.map,
       v: this.map.v,
       name: this.map.name,
       stamps: this.map.stamps,

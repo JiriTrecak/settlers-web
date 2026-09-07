@@ -10,8 +10,10 @@ import { CleanDock, type CleanDockHooks, type CleanDockState } from "./cleanDock
 import { SelectDock, type SelectDockHooks, type SelectDockState } from "./selectDock";
 import { McpDock, type McpDockHooks, type McpDockState } from "./mcpDock";
 import { SculptDock, type SculptDockHooks, type SculptDockState } from "./sculptDock";
+import { SkyDock, type SkyDockHooks } from "./skyDock";
 import { DocTitle } from "./docTitle";
 import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
+import type { SkyState } from "../../render/sky/sky";
 
 export type EditorChromeHooks = FileToolHooks &
   GameToolHooks &
@@ -19,7 +21,8 @@ export type EditorChromeHooks = FileToolHooks &
   CleanDockHooks &
   SelectDockHooks &
   SculptDockHooks &
-  McpDockHooks & {
+  McpDockHooks &
+  SkyDockHooks & {
     onName(name: string): void;
   };
 
@@ -35,6 +38,7 @@ export class EditorChrome {
   private readonly select: SelectDock;
   private readonly sculpt: SculptDock;
   private readonly mcp: McpDock;
+  private readonly sky: SkyDock;
   private readonly chip: AssetChip;
   private readonly hint: CameraHint;
 
@@ -58,6 +62,7 @@ export class EditorChrome {
     this.clean = new CleanDock(this.rail, hooks);
     this.sculpt = new SculptDock(this.rail, hooks);
     this.mcp = new McpDock(this.rail, hooks);
+    this.sky = new SkyDock(this.rail, hooks);
     this.chip = new AssetChip(host, { onOpen: hooks.onCatalogue });
     this.hint = new CameraHint(host);
   }
@@ -122,6 +127,15 @@ export class EditorChrome {
     this.mcp.set(state);
   }
 
+  setSkyOpen(on: boolean): void {
+    this.game.setLatch("sky", on);
+    this.sky.setOpen(on);
+  }
+
+  setSky(state: SkyState): void {
+    this.sky.set(state);
+  }
+
   setAsset(asset: CatalogEntry | null): void {
     this.chip.set(asset);
   }
@@ -144,6 +158,7 @@ export class EditorChrome {
     this.clean.destroy();
     this.sculpt.destroy();
     this.mcp.destroy();
+    this.sky.destroy();
     this.chip.destroy();
     this.hint.destroy();
     this.top.remove();

@@ -62,7 +62,7 @@ export class EditorBridge {
     this.onLink(link);
   }
 
-  private onMessage(sock: WebSocket, data: unknown): void {
+  private async onMessage(sock: WebSocket, data: unknown): Promise<void> {
     if (typeof data !== "string") return;
     let raw: unknown;
     try {
@@ -74,7 +74,7 @@ export class EditorBridge {
     if (!req) return;
     let res: RpcRes;
     try {
-      res = { id: req.id, ok: true, result: this.control.dispatch(req.op, req.params) };
+      res = { id: req.id, ok: true, result: await this.control.dispatch(req.op, req.params) };
     } catch (err) {
       res = { id: req.id, ok: false, error: err instanceof Error ? err.message : String(err) };
     }

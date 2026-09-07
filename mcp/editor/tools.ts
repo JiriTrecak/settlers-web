@@ -25,6 +25,21 @@ export function editorTools(hub: EditorHub) {
   const call = (op: string, params?: unknown) => hub.call(op, params);
 
   return {
+    editor_landscape: createTool({
+      id: 'editor_landscape',
+      description: 'Landscape authoring: curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), base (height), view (grid), export, load (map), status with renderer diagnostics. Curve radius is half-width in meters.',
+      inputSchema: z.object({
+        action:z.enum(['status','curve','cover','environment','base','view','export','load']),
+        points:z.array(z.object({x:z.number(),z:z.number(),radius:z.number().optional()})).optional(),
+        mode:z.enum(['terrain','river','raise','foliage','smooth','flatten']).optional(),
+        layer:z.enum(['grass','sand','mud','rock','snow']).optional(),
+        radius:z.number().optional(),depth:z.number().optional(),opacity:z.number().optional(),
+        x:z.number().optional(),z:z.number().optional(),density:z.number().optional(),flowers:z.number().optional(),seed:z.number().optional(),
+        hour:z.number().optional(),season:z.enum(['spring','summer','autumn']).optional(),playing:z.boolean().optional(),
+        height:z.number().optional(),grid:z.boolean().optional(),map:z.unknown().optional(),
+      }),
+      execute: async (input) => call('landscape',input),
+    }),
     editor_status: createTool({
       id: "editor_status",
       description: "Editor connection, map name, stamp count, current tool/asset, camera, brush kit.",
@@ -38,7 +53,7 @@ export function editorTools(hub: EditorHub) {
       inputSchema: z.object({
         q: z.string().optional().describe("Name or id substring"),
         category: z.enum(["foliage", "terrain", "water", "landmark", "resource", "other"]).optional(),
-        type: z.enum(["prop", "water", "span"]).optional(),
+        type: z.enum(["prop", "water", "span", "ground"]).optional(),
         limit: z.number().optional(),
       }),
       execute: async (input) => call("catalog", input),
@@ -53,7 +68,9 @@ export function editorTools(hub: EditorHub) {
         x: cellX.optional(),
         y: cellY.optional(),
         yaw: z.number().optional().describe("Radians"),
-        scale: z.number().optional(),
+        scale: z.number().positive().max(20).optional(),
+        elevation: z.number().min(-32).max(32).optional(),
+        variant: z.enum(["snow","gold","red","green"]).optional(),
         items: z
           .array(
             z.object({
@@ -61,7 +78,9 @@ export function editorTools(hub: EditorHub) {
               x: cellX,
               y: cellY,
               yaw: z.number().optional(),
-              scale: z.number().optional(),
+              scale: z.number().positive().max(20).optional(),
+        elevation: z.number().min(-32).max(32).optional(),
+        variant: z.enum(["snow","gold","red","green"]).optional(),
             }),
           )
           .optional(),
@@ -116,7 +135,7 @@ export function editorTools(hub: EditorHub) {
       id: "editor_set_tool",
       description: "Arm select, stamp, brush, clean, or sculpt.",
       inputSchema: z.object({
-        tool: z.enum(["select", "stamp", "brush", "clean", "sculpt"]),
+        tool: z.enum(["select", "stamp", "brush", "clean", "sculpt", "terrain"]),
       }),
       execute: async (input) => call("setTool", input),
     }),
@@ -198,21 +217,10 @@ export function editorTools(hub: EditorHub) {
         maxWidth: z.number().optional().describe("Output pixel width cap, 256–2048. Default 1280."),
         width: z.number().optional(),
         format: z.enum(["jpeg", "jpg", "png"]).optional().describe("Default jpeg."),
+        aspect: z.number().min(.5).max(3).optional().describe("Output aspect ratio for reproducible reference framing, e.g. 1.77778. Does not resize the user viewport."),
         quality: z.number().optional().describe("JPEG 0.4–0.95. Default 0.85."),
       }),
-      outputSchema: z.object({
-        width: z.number(),
-        height: z.number(),
-        mime: z.string(),
-        view: z.object({
-          x: z.number(),
-          z: z.number(),
-          zoom: z.number(),
-          yaw: z.number(),
-          pitch: z.number(),
-          gameCam: z.boolean(),
-        }),
-      }),
+      outputSchema: z.object({}).passthrough(),
       execute: async (input) => {
         const shot = await hub.call("screenshot", input, 20000);
         const o = shot && typeof shot === "object" ? (shot as Record<string, unknown>) : {};
@@ -245,7 +253,7 @@ export function editorTools(hub: EditorHub) {
             },
             { type: "image" as const, data, mimeType: mime },
           ],
-        } as unknown as typeof framed;
+        };
       },
     }),
   };

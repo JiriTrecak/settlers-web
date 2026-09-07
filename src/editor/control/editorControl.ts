@@ -1,3 +1,5 @@
+import { parseUtcMap, stringifyUtcMap } from "../../shared";
+import type { CurvePoint, TerrainLayer, EnvironmentState } from "../../shared/landscape/curve";
 /**
  * Named editor ops the MCP bridge dispatches. Add a method here when you add a tool.
  */
@@ -5,7 +7,7 @@ import { filterCatalog, parseCatalogQuery, sitAllowed } from "../../shared";
 import type { CatalogueStore } from "../assets/store";
 import type { EditorTool, WorldEditor } from "../world/worldEditor";
 
-const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt"];
+const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt", "terrain"];
 
 export class EditorControl {
   constructor(
@@ -24,6 +26,7 @@ export class EditorControl {
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     status: () => this.status(),
+    landscape: (p) => this.landscape(p),
     catalog: (p) => this.catalog(p),
     place: (p) => this.place(p),
     stamps: (p) => this.stamps(p),
@@ -39,6 +42,41 @@ export class EditorControl {
     rename: (p) => this.rename(p),
     screenshot: (p) => this.screenshot(p),
   };
+
+  private landscape(raw: unknown): unknown {
+    const o=obj(raw), action=str(o.action) ?? 'status';
+    if(action==='export') return { map: JSON.parse(stringifyUtcMap(this.editor.map)) };
+    if(action==='load') {
+      const map=parseUtcMap(o.map); if(!map) throw new Error('Invalid map'); this.editor.replace(map);
+    } else if(action==='base') {
+      const height=num(o.height); if(height===undefined || height < -16 || height>24) throw new Error('height must be -16..24');
+      this.editor.terrainBase(height);
+    } else if(action==='curve') {
+      const points=o.points as CurvePoint[];
+      if(!Array.isArray(points)||!points.length||points.length>128||!points.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.z)&&(p.radius===undefined||(Number.isFinite(p.radius)&&p.radius>0&&p.radius<=64)))) throw new Error('Provide 1..128 finite curve points');
+      const mode=str(o.mode) ?? 'terrain';
+      if(!['terrain','river','foliage','raise','smooth','flatten'].includes(mode)) throw new Error('Invalid curve mode');
+      const radius=num(o.radius) ?? 4; if(radius<=0||radius>64) throw new Error('radius must be 0..64');
+      const layer=str(o.layer) ?? 'sand'; if(!['grass','sand','mud','rock','snow'].includes(layer)) throw new Error('Invalid terrain layer');
+      const depth=num(o.depth) ?? 1.4; if(Math.abs(depth)>16) throw new Error('depth must be -16..16');
+      const opacity=num(o.opacity) ?? 1; if(opacity<0||opacity>1) throw new Error('opacity must be 0..1');
+      this.editor.curveStroke({points,radius,mode:mode as 'terrain'|'river'|'foliage'|'raise'|'smooth'|'flatten',depth,layer:layer as TerrainLayer,opacity});
+    } else if(action==='cover') {
+      const x=num(o.x),z=num(o.z),radius=num(o.radius)??10,density=num(o.density)??3,flowers=num(o.flowers)??.1;
+      if(x===undefined||z===undefined||radius<=0||radius>100||density<0||density>12||flowers<0||flowers>1) throw new Error('Invalid cover patch');
+      this.editor.addCover({x,z,radius,density,flowers,seed:num(o.seed)??42});
+    } else if(action==='environment') {
+      const settings:Partial<EnvironmentState>={};
+      if(o.hour!==undefined){const h=num(o.hour);if(h===undefined)throw new Error('Invalid hour');settings.hour=((h%24)+24)%24;}
+      if(o.season!==undefined){if(!['spring','summer','autumn'].includes(String(o.season)))throw new Error('Invalid season');settings.season=o.season as EnvironmentState['season'];}
+      if(typeof o.playing==='boolean')settings.playing=o.playing;
+      this.editor.environment(settings);
+    } else if(action==='view') {
+      if(o.grid!==undefined)this.editor.setGridMode(o.grid===true?'tiles':'none');
+      this.editor.setTool(null);
+    } else if(action!=='status') throw new Error('Unknown landscape action');
+    return { landscape:this.editor.map.landscape, diagnostics:this.editor.diagnostics() };
+  }
 
   private status(): unknown {
     const v = this.camView();
@@ -82,7 +120,7 @@ export class EditorControl {
         skipped.push({ ...item, reason: "unknown asset" });
         continue;
       }
-      const stamp = this.editor.placeAt(item.asset, item.x, item.y, item.yaw, item.scale);
+      const stamp = this.editor.placeAt(item.asset, item.x, item.y, item.yaw, item.scale, item.elevation, item.variant);
       if (!stamp) {
         const wet = this.editor.height.wet(Math.floor(item.x) + 0.5, Math.floor(item.y) + 0.5);
         skipped.push({
@@ -235,7 +273,8 @@ export class EditorControl {
     return { name: this.editor.map.name };
   }
 
-  private screenshot(raw: unknown): unknown {
+  private async screenshot(raw: unknown): Promise<unknown> {
+    await this.editor.ready();
     const o = obj(raw);
     const format = str(o.format);
     const shot = this.editor.screenshot({
@@ -250,6 +289,7 @@ export class EditorControl {
       maxWidth: num(o.maxWidth) ?? num(o.width),
       format: format === "png" ? "png" : format === "jpeg" || format === "jpg" ? "jpeg" : undefined,
       quality: num(o.quality),
+      aspect:num(o.aspect),
     });
     return {
       data: shot.data,
@@ -269,7 +309,7 @@ export class EditorControl {
   }
 }
 
-function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number }[] {
+function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green" }[] {
   const o = obj(raw);
   const items = arr(o.items);
   if (items) {
@@ -282,13 +322,13 @@ function placeItems(raw: unknown): { asset: string; x: number; y: number; yaw?: 
   return one ? [one] : [];
 }
 
-function onePlace(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number } | null {
+function onePlace(raw: unknown): { asset: string; x: number; y: number; yaw?: number; scale?: number; elevation?: number; variant?: "snow"|"gold"|"red"|"green" } | null {
   const o = obj(raw);
   const asset = str(o.asset);
   const x = num(o.x);
   const y = num(o.y);
   if (!asset || x === undefined || y === undefined) return null;
-  return { asset, x, y, yaw: num(o.yaw), scale: num(o.scale) };
+  return { asset, x, y, yaw: num(o.yaw), scale: num(o.scale), elevation:num(o.elevation), variant:["snow","gold","red","green"].includes(String(o.variant))?o.variant as "snow"|"gold"|"red"|"green":undefined };
 }
 
 function obj(raw: unknown): Record<string, unknown> {

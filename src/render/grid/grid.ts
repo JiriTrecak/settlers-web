@@ -1,14 +1,11 @@
 /**
- * Sun + grid lines to the blue halo. Fringe past that is void + grid (orientation only).
- * Dirt plate is HeightMesh. Tiles = 16-cell lines. Full = every cell + white eights.
- * Ribbons drape when `heightAt` is passed.
+ * Grid lines to the blue halo. Fringe past that is void + grid (orientation only).
+ * Dirt plate is HeightMesh. Lights live on `Sky`. Tiles = 16-cell lines. Full =
+ * every cell + white eights. Ribbons drape when `heightAt` is passed.
  */
 import {
-  AmbientLight,
   BufferAttribute,
   BufferGeometry,
-  Color,
-  DirectionalLight,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
@@ -26,32 +23,7 @@ const BLOCK_W = 0.07;
 const MAJOR_W = 0.16;
 const EDGE_W = 0.22;
 
-export function addSunAndGrid(scene: Scene, size: number, lines: Object3D = scene, mode: GridMode = "tiles"): void {
-  const visLo = -MAP_HALO;
-  const visHi = size + MAP_HALO;
-  const lo = visLo - MAP_FRINGE;
-  const hi = visHi + MAP_FRINGE;
-  const span = hi - lo;
-
-  scene.background = new Color(0x2a2a2a);
-  scene.add(new AmbientLight(0x8aa0b8, 0.45));
-
-  const sun = new DirectionalLight(0xfff2d6, 2.2);
-  sun.position.set(size * 0.35, size * 0.55, size * 0.2);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  const extent = span * 0.6;
-  sun.shadow.camera.left = -extent;
-  sun.shadow.camera.right = extent;
-  sun.shadow.camera.top = extent;
-  sun.shadow.camera.bottom = -extent;
-  sun.shadow.camera.near = 1;
-  sun.shadow.camera.far = size * 2;
-  sun.shadow.bias = -0.0004;
-  scene.add(sun);
-  scene.add(sun.target);
-  sun.target.position.set(size / 2, 0, size / 2);
-
+export function addSunAndGrid(_scene: Scene, size: number, lines: Object3D = _scene, mode: GridMode = "tiles"): void {
   putGrid(lines, size, mode);
 }
 

@@ -1,3 +1,4 @@
+import { parseLandscape, type Landscape } from "../landscape/curve";
 /**
  * Authored map file. `.utcmap` is JSON; `v` is the schema.
  * `name` is the document title. `stamps` are placed catalog assets (cell coords, optional yaw).
@@ -17,6 +18,8 @@ export type MapStamp = {
   readonly yaw?: number;
   /** Uniform. Omitted when 1. */
   readonly scale?: number;
+  readonly elevation?: number;
+  readonly variant?: "snow" | "gold" | "red" | "green";
 };
 
 export type UtcMap = {
@@ -25,6 +28,7 @@ export type UtcMap = {
   readonly stamps: readonly MapStamp[];
   readonly waterLevel?: number;
   readonly height?: string;
+  readonly landscape?: Landscape;
 };
 
 export function emptyUtcMap(): UtcMap {
@@ -46,6 +50,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     v: UTCMAP_VERSION,
     name,
     stamps,
+    ...(parseLandscape(o.landscape) ? { landscape: parseLandscape(o.landscape) } : {}),
     ...(waterLevel !== undefined ? { waterLevel } : {}),
     ...(height !== undefined ? { height } : {}),
   };
@@ -59,6 +64,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       v: map.v,
       name: map.name,
       stamps: map.stamps,
+      ...(map.landscape ? { landscape: map.landscape } : {}),
       ...(waterLevel !== undefined ? { waterLevel } : {}),
       ...(height ? { height } : {}),
     },
@@ -113,6 +119,8 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     const scale = s.scale;
     if (yaw !== undefined && (typeof yaw !== "number" || !Number.isFinite(yaw))) return null;
     if (scale !== undefined && (typeof scale !== "number" || !Number.isFinite(scale))) return null;
+    if(s.elevation!==undefined&&(typeof s.elevation!=='number'||!Number.isFinite(s.elevation)||Math.abs(s.elevation)>32))return null;
+    if(s.variant!==undefined&&!['snow','gold','red','green'].includes(String(s.variant)))return null;
     out.push({
       id: s.id,
       asset: s.asset,
@@ -120,6 +128,8 @@ function parseStamps(raw: unknown): MapStamp[] | null {
       y: s.y,
       ...(yaw !== undefined ? { yaw } : {}),
       ...(scale !== undefined && scale !== 1 ? { scale } : {}),
+      ...(typeof s.elevation === "number" ? { elevation:s.elevation } : {}),
+      ...(s.variant ? {variant:s.variant as MapStamp["variant"]} : {}),
     });
   }
   return out;

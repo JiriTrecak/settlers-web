@@ -258,8 +258,28 @@ function uvSpan(uv: Float32Array): number {
   return Math.max(maxU - minU, maxV - minV);
 }
 
-/** Box-project UVs from object-space pos + normal. Cell is 1 m after FBX scale. */
+/**
+ * Box-project UVs. World-meter tiling made Rockwall read as static on 13 m
+ * clusters — Synty paints ~one atlas of facets per prop, so we normalize
+ * the longest axis to ~1.1 UV.
+ */
 function projectUv(pos: Float32Array, nor: Float32Array): Float32Array {
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  let minZ = Infinity;
+  let maxZ = -Infinity;
+  for (let i = 0; i < pos.length; i += 3) {
+    minX = Math.min(minX, pos[i]!);
+    maxX = Math.max(maxX, pos[i]!);
+    minY = Math.min(minY, pos[i + 1]!);
+    maxY = Math.max(maxY, pos[i + 1]!);
+    minZ = Math.min(minZ, pos[i + 2]!);
+    maxZ = Math.max(maxZ, pos[i + 2]!);
+  }
+  const extent = Math.max(maxX - minX, maxY - minY, maxZ - minZ, 0.35);
+  const t = 1.1 / extent;
   const out = new Float32Array((pos.length / 3) * 2);
   for (let i = 0, o = 0; i < pos.length; i += 3, o += 2) {
     const nx = Math.abs(nor[i]!);
@@ -268,7 +288,6 @@ function projectUv(pos: Float32Array, nor: Float32Array): Float32Array {
     const x = pos[i]!;
     const y = pos[i + 1]!;
     const z = pos[i + 2]!;
-    const t = 1.4;
     if (ny >= nx && ny >= nz) {
       out[o] = x * t;
       out[o + 1] = z * t;

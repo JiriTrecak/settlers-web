@@ -28,8 +28,8 @@ import waterNormalUrl from "../../../assets/synty/tex/Water_Normal.png?url";
 const SINK = 0.03;
 
 /** Water_01.mat — Shader Graph underscored names. */
-const SHALLOW = new Vector3(0.302, 0.427, 0.42);
-const DEEP = new Vector3(0.149, 0.282, 0.294);
+const SHALLOW = new Vector3(0.32, 0.44, 0.49);
+const DEEP = new Vector3(0.12, 0.23, 0.30);
 const FOAM = new Vector3(0.86, 0.92, 0.9);
 
 type WaterUniforms = {
@@ -80,14 +80,14 @@ export class WaterLayer {
     };
     const mat = new MeshStandardMaterial({
       color: 0x4c6c6a,
-      roughness: 0.12,
+      roughness: 0.3,
       metalness: 0.02,
       transparent: true,
       opacity: 1,
       depthWrite: false,
     });
     mat.onBeforeCompile = (shader) => this.patch(shader);
-    mat.customProgramCacheKey = () => "utc-synty-water4";
+    mat.customProgramCacheKey = () => "utc-river-water-v1";
     const mesh = new Mesh(new PlaneGeometry(span, span), mat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
@@ -217,23 +217,33 @@ vec3 rippleNormal(vec2 xz) {
 const WATER_LOOK = /* glsl */ `
 {
   float depth = uWaterLevel - terrainAt(vWorldPos.xz);
-  if (depth < 0.01) {
-    diffuseColor.a = 0.0;
-  } else {
-    float waterT = clamp(pow(max(depth / 0.45, 0.0), 0.8), 0.0, 1.0);
-    float foamT = (1.0 - smoothstep(0.02, 0.55, depth)) * 0.9;
-
-    vec3 nRip = rippleNormal(vWorldPos.xz);
-    normal = normalize(mix(normal, nRip, 0.65));
-
-    vec3 col = mix(uShallow, uDeep, waterT);
-    col = mix(col, uFoam, foamT);
-    vec3 V = normalize(vViewPosition);
-    float fres = pow(1.0 - clamp(dot(normal, V), 0.0, 1.0), 3.0);
-    col = mix(col, vec3(0.72, 0.86, 0.84), fres * 0.35);
-
-    diffuseColor.rgb = col;
-    diffuseColor.a = mix(0.78, 0.92, waterT);
-  }
+  if (depth < 0.015) discard;
+  vec2 p=vWorldPos.xz;
+  float t=uTime;
+  // Small world-space slopes become view-space normals before Three's light evaluation.
+  float sx=sin(p.x*1.7+p.y*.7+t*.8)*.055 + sin(p.x*3.3-p.y*1.4-t*1.1)*.025;
+  float sz=cos(p.y*1.8+p.x*.8+t*.7)*.055 + cos(p.y*3.5-p.x*.9+t)*.025;
+  vec3 ripple=texture2D(uRipple,p*.13+vec2(t*.011,-t*.008)).xyz*2.0-1.0;
+  vec3 worldN=normalize(vec3(sx+ripple.x*.07,1.0,sz+ripple.y*.07));
+  normal=normalize(mat3(viewMatrix)*worldN);
+  float waterT=1.0-exp(-depth*.65);
+  vec3 col=mix(uShallow,uDeep,waterT);
+  float causticA=sin(p.x*3.1+sin(p.y*2.4+t*.55)+t*.35);
+  float causticB=sin(p.y*3.5+sin(p.x*2.2-t*.45)-t*.3);
+  float caustics=pow(1.0-abs(causticA*causticB),16.0);
+  float stream=sin((p.y-p.x*.55)*3.1+sin(p.x*.14+t*.15)*1.1-t*.65);
+  float streak=pow(max(0.0,stream),24.0)*(.5+.5*sin(p.x*2.8+p.y*.6));
+  col+=vec3(.065,.07,.075)*streak;
+  col+=vec3(.12,.2,.16)*caustics*exp(-depth*.8)*.4;
+  float foamWidth=.20+.09*sin(p.x*2.5+p.y*1.6+t*1.4);
+  float foam=1.0-smoothstep(.025,foamWidth,depth);
+  float shoreWave=(1.0-smoothstep(.1,.6,depth))*pow(max(0.0,sin(depth*18.0-t*1.8+p.x*.4)),12.0)*.3;
+  vec3 V=normalize(vViewPosition);
+  float fres=pow(1.0-clamp(dot(normal,V),0.0,1.0),4.0);
+  col=mix(col,vec3(.55,.78,.82),fres*.48);
+  col=mix(col,uFoam,clamp(foam+shoreWave,0.0,1.0));
+  diffuseColor.rgb=col;
+  diffuseColor.a=mix(.68,.95,waterT)+foam*.35;
+  roughnessFactor=.28;
 }
 `;

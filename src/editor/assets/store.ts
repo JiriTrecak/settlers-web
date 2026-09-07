@@ -11,6 +11,7 @@ import {
   type Catalogue,
 } from "../../shared";
 import { pickCatalogueDir, pickCatalogueFile, readDirFile, writeCatalogueDir, type DirHandle } from "./catDisk";
+import archived from "../../../assets/catalog-archive.json";
 import { projectCatalogue, projectMeshUrl } from "./project";
 
 export type CatalogSource = { kind: "project"; path: string } | { kind: "file"; path: string };
@@ -32,18 +33,24 @@ export class CatalogueStore {
   }
 
   types(): Map<string, AssetType> {
-    return new Map(this.doc.assets.map((a) => [a.id, a.type]));
+    return new Map(this.resolvedAssets().map((a) => [a.id, a.type]));
   }
 
   urls(): Map<string, string> {
     const out = new Map<string, string>();
-    for (const asset of this.doc.assets) {
+    for (const asset of this.resolvedAssets()) {
       const extra = this.extra.get(asset.id);
       const project = projectMeshUrl(asset.file);
       if (extra) out.set(asset.id, extra);
       else if (project) out.set(asset.id, project);
     }
     return out;
+  }
+
+  /** Hidden legacy assets still resolve in existing maps after catalogue curation. */
+  private resolvedAssets(): readonly CatalogEntry[] {
+    if (this.source.kind !== 'project') return this.doc.assets;
+    return [...(parseCatalogue(archived)?.assets ?? []), ...this.doc.assets];
   }
 
   async openFile(): Promise<"ok" | "cancel" | "fail"> {

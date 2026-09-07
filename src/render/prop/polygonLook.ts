@@ -1,12 +1,14 @@
 /**
  * Play back Unity Nature materials on imported Synty glTFs.
  * FBX slots are Maya leftovers (lambert1 / Leave / Trunk). The look table is
- * prefab → non-LOD .mat, keyed by catalogue id. Leaf cards stay unlit so
- * cool world ambient doesn't muddy painted albedo. Rocks / swamp / grass
- * volumes use Lambert so they don't read as flat silhouettes.
+ * prefab → non-LOD .mat, keyed by catalogue id. Wrapped Lambert foliage
+ * and faceted surfaces share the scene lighting and shadows.
  */
 import {
+  Float32BufferAttribute,
   CanvasTexture,
+  Color,
+  LinearFilter,
   Mesh,
   MeshBasicMaterial,
   MeshLambertMaterial,
@@ -38,21 +40,42 @@ export function flattenPolygon(root: Object3D, hint = ""): void {
   root.traverse((node) => {
     if (!(node instanceof Mesh)) return;
     const mats = Array.isArray(node.material) ? node.material : [node.material];
-    const kinds = mats.map((mat) => kindOfGltf(mat.name ?? ""));
-    if (kinds.some((k) => slotOf(asset, k).flipV)) flipLeafUv(node);
+    const kinds = mats.map((mat) => /plant-bush-leaves|plant-fern|plant-undergrowth/.test(hint) ? "leaf" as const : kindOfGltf(mat.name ?? ""));
+    if (kinds.some((k) => slotOf(asset, k).flipV) || /tree-pine/.test(hint)) flipLeafUv(node);
     const next = mats.map((mat, i) => asPainted(mat, slotOf(asset, kinds[i]!), kinds[i]!));
     node.material = Array.isArray(node.material) ? next : next[0]!;
+    if (/synty-prop-(bridge|fence|roadsign)/.test(hint)) {
+      for (const m of next) {
+        const wood = m as MeshLambertMaterial;
+        wood.map = null; wood.color.set(0x977564); wood.vertexColors = false;
+      }
+    }
+    // Recover clean faceted surfaces from the pack's collapsed-UV rock imports.
+    if (/synty-(rock-|terrain-(grassedge|mountain|riverside)|prop-(pillar|stonewall))/.test(hint)) {
+      const g=node.geometry;g.computeBoundingBox();
+      const p=g.getAttribute('position'),n=g.getAttribute('normal'),colors=new Float32Array(p.count*3);
+      const top=g.boundingBox!.max.y,bottom=g.boundingBox!.min.y;
+      const grassy=/grassedge|riverside|moss/.test(hint);
+      for(let i=0;i<p.count;i++){
+        const green=grassy&&n.getY(i)>.55&&p.getY(i)>bottom+(top-bottom)*.48;
+        const c=new Color(green?0x9ba979:0xc9ada9);
+        const v=.92+.06*Math.sin(Math.round(p.getX(i)*1.3)+Math.round(p.getY(i)*2.1)+Math.round(p.getZ(i)*1.4));
+        c.multiplyScalar(v);colors.set([c.r,c.g,c.b],i*3);
+      }
+      g.setAttribute('color',new Float32BufferAttribute(colors,3));
+      for(const m of next){const lit=m as MeshLambertMaterial;lit.map=null;lit.color.set(0xffffff);lit.vertexColors=true;lit.transparent=false;lit.alphaTest=0;lit.needsUpdate=true;}
+    }
   });
 }
 
-/** Leaf cards stay unlit (Unity tint). Volumes need Lambert or they read as flat decals. */
+/** Wrapped foliage normals preserve canopy readability under changing light. */
 function asPainted(mat: Material, look: SlotLook, kind: SlotKind): Material {
   const src =
     mat instanceof MeshStandardMaterial || mat instanceof MeshLambertMaterial || mat instanceof MeshBasicMaterial
       ? mat
       : null;
   const card = kind === "leaf" || kind === "vine" || kind === "dead";
-  const next = card ? new MeshBasicMaterial() : new MeshLambertMaterial();
+  const next = new MeshLambertMaterial();
   if (src) {
     next.map = src.map;
     next.transparent = src.transparent;
@@ -61,15 +84,30 @@ function asPainted(mat: Material, look: SlotLook, kind: SlotKind): Material {
     next.side = src.side;
     next.depthWrite = src.depthWrite;
   }
-  next.vertexColors = look.vertex;
-  next.color.setRGB(...paint(look));
+  next.vertexColors = card ? false : look.vertex;
+  if(card) {
+    next.onBeforeCompile = shader => {
+      shader.vertexShader = shader.vertexShader.replace('#include <beginnormal_vertex>', `#include <beginnormal_vertex>
+        objectNormal = normalize(vec3(objectNormal.x * .35, abs(objectNormal.y) * .3 + .7, objectNormal.z * .35));`);
+    };
+    next.customProgramCacheKey = () => 'canopy-wrap-v1';
+  }
+  const tint = paint(look);
+  next.color.setRGB(...tint);
+  if (card || kind === "plant") { next.userData.foliageBase = tint; next.emissive.setRGB(...tint).multiplyScalar(.025); }
   if (next.map) {
     next.map = next.map.clone();
     next.map.wrapS = RepeatWrapping;
     next.map.wrapT = RepeatWrapping;
+    // Mips of a painted wall tile sparkle into grain on big rocks.
+    if (!card) {
+      next.map.minFilter = LinearFilter;
+      next.map.magFilter = LinearFilter;
+      next.map.generateMipmaps = false;
+    }
     next.map.needsUpdate = true;
   }
-  if (look.luma && next.map) next.map = lumaOf(next.map);
+  if ((look.luma || card) && next.map) next.map = lumaOf(next.map);
   if (src) src.map = null;
   mat.dispose();
   return next;

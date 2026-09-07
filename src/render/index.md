@@ -16,6 +16,7 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `prop/` | Catalog glTF clones on stamp cells |
 | `brush/` | Red splat + ring cursor for the foliage brush |
 | `preview/` | Offscreen iso snapshots for the catalogue |
+| `sky/` | Day/night sun, ambient, background. Editor Light dock drives it. |
 | `minimap/` | Iso diamond. Perspective view trap from `camera.viewGround`. |
 
 Public entry: `index.ts`.

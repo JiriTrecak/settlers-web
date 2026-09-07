@@ -70,7 +70,8 @@ export function wrapYaw(rad: number): number {
 export function withPose(stamp: MapStamp, x: number, y: number, yaw: number): MapStamp | null {
   if (!inStamp(x, y)) return null;
   const y0 = wrapYaw(yaw);
-  const next: MapStamp = { id: stamp.id, asset: stamp.asset, x, y };
+  const { yaw: _oldYaw, ...rest } = stamp;
+  const next: MapStamp = { ...rest, x, y };
   const out = y0 < 1e-4 || Math.abs(y0 - Math.PI * 2) < 1e-4 ? next : { ...next, yaw: y0 };
   return stamp.scale !== undefined && stamp.scale !== 1 ? { ...out, scale: stamp.scale } : out;
 }

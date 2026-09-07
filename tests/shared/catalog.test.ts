@@ -29,10 +29,7 @@ describe("catalogue", () => {
     expect(doc.assets.some((a) => a.id === "pine" && a.category === "foliage")).toBe(true);
     expect(doc.assets.some((a) => a.id === "pine-dark" && a.category === "foliage")).toBe(true);
     expect(doc.assets.some((a) => a.id === "pine-umber" && a.category === "foliage")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "boulder" && a.category === "terrain")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "rock" && a.category === "terrain")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "rock-cleft" && a.category === "terrain")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "rock-slab" && a.category === "terrain")).toBe(true);
+    expect(doc.assets.some((a) => a.id === "river-rock-1" && a.category === "terrain" && a.type === "ground")).toBe(true);
     expect(doc.assets.some((a) => a.id === "lily" && a.type === "water" && a.category === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "lily-white" && a.type === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "lily-gold" && a.type === "water")).toBe(true);
@@ -40,7 +37,9 @@ describe("catalogue", () => {
     expect(doc.assets.some((a) => a.id === "bridge-16" && a.type === "span")).toBe(true);
     expect(doc.assets.some((a) => a.id === "bridge-32" && a.type === "span")).toBe(true);
     const synty = doc.assets.filter((a) => a.id.startsWith("synty-"));
-    expect(synty.length).toBe(197);
+    expect(synty.length).toBeGreaterThan(30);
+    expect(synty.length).toBeLessThan(197);
+    expect(doc.assets.some((a) => a.id.includes("cloud"))).toBe(false);
     expect(doc.assets.some((a) => a.id === "synty-plant-lillypad-large-01" && a.type === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "synty-plant-reeds-01" && a.type === "water")).toBe(true);
     expect(doc.assets.some((a) => a.id === "synty-prop-bridge-curved-01" && a.type === "span")).toBe(true);
@@ -54,6 +53,8 @@ describe("catalogue", () => {
     expect(sitAllowed("prop", true)).toBe(false);
     expect(sitAllowed("span", true)).toBe(true);
     expect(sitAllowed("span", false)).toBe(true);
+    expect(sitAllowed("ground", true)).toBe(true);
+    expect(sitAllowed("ground", false)).toBe(true);
   });
 
   it("accepts a water listing", () => {

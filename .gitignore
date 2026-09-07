@@ -26,3 +26,7 @@ assets/graphics/*
 # Original .map copies + generated catalog — never commit
 assets/maps/*
 !assets/maps/.gitkeep
+
+# Authored reference landscapes are source assets.
+!assets/maps/showcase/
+!assets/maps/showcase/*.utcmap

@@ -1,3 +1,4 @@
+import { TerrainMaterial } from "../terrain/terrainMaterial";
 /**
  * Dirt plate as a height-displaced quad mesh. Uploads Y + local normals in a dirty disc.
  */
@@ -60,7 +61,7 @@ export class HeightMesh {
     geo.computeBoundingSphere();
     const mesh = new Mesh(
       geo,
-      new MeshStandardMaterial({ color: DIRT, roughness: 0.95, metalness: 0 }),
+      new TerrainMaterial(),
     );
     mesh.receiveShadow = true;
     mesh.castShadow = true;

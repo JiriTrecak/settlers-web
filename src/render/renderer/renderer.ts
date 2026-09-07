@@ -1,7 +1,12 @@
+import { TerrainMaterial } from "../terrain/terrainMaterial";
+import { Meadow } from "../foliage/meadow";
+import { emptyLandscape, type Landscape } from "../../shared/landscape/curve";
 /**
  * Lit iso scene: height mesh + water + grid + player cubes + catalog stamps.
  */
 import {
+  WebGLRenderTarget, SRGBColorSpace,
+  BufferGeometry, Line, LineBasicMaterial,
   BoxGeometry,
   Color,
   Group,
@@ -23,6 +28,7 @@ import { addSunAndGrid, putGrid } from "../grid/grid";
 import { HeightMesh } from "../height/heightMesh";
 import { BrushLayer } from "../brush/brushLayer";
 import { PropField } from "../prop/propField";
+import { Sky } from "../sky/sky";
 import { WaterLayer } from "../water/waterLayer";
 
 const CUBE = 0.9;
@@ -45,6 +51,10 @@ export class Renderer {
   private readonly hit = new Vector3();
   private size = 0;
   private readonly lines = new Group();
+  private curvePreview: Line | null = null;
+  readonly sky: Sky;
+  private landscape: Landscape = emptyLandscape();
+  private readonly meadow: Meadow;
   gridOn = true;
   gridMode: GridMode = "tiles";
 
@@ -52,9 +62,44 @@ export class Renderer {
     this.display = new Display(canvas, () => this.present());
     this.props = new PropField(this.scene, assets);
     this.brush = new BrushLayer(this.scene);
+    this.sky = new Sky(this.scene);
+    this.meadow = new Meadow(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
   }
+
+  capture(width:number,aspect:number):HTMLCanvasElement {
+    const w=Math.max(256,Math.min(2048,Math.round(width))),h=Math.round(w/Math.max(.5,Math.min(3,aspect)));
+    const target=new WebGLRenderTarget(w,h,{samples:4});target.texture.colorSpace=SRGBColorSpace;
+    const gl=this.display.gl,previous=gl.getRenderTarget();
+    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+    try{
+      const cam=this.threeCam();this.camera.applyTo(cam,w,h);gl.setRenderTarget(target);gl.render(this.scene,cam);
+      const bytes=new Uint8Array(w*h*4);gl.readRenderTargetPixels(target,0,0,w,h,bytes);
+      const ctx=canvas.getContext('2d')!;const data=ctx.createImageData(w,h);
+      for(let y=0;y<h;y++)data.data.set(bytes.subarray((h-1-y)*w*4,(h-y)*w*4),y*w*4);
+      ctx.putImageData(data,0,0);return canvas;
+    }finally{gl.setRenderTarget(previous);target.dispose();this.present();}
+  }
+  previewCurve(points: readonly {x:number;z:number}[]):void {
+    if(this.curvePreview){this.scene.remove(this.curvePreview);this.curvePreview.geometry.dispose();(this.curvePreview.material as LineBasicMaterial).dispose();this.curvePreview=null;}
+    if(!points.length)return;
+    const geo=new BufferGeometry().setFromPoints(points.map(p=>new Vector3(p.x,(this.height?.sample(p.x,p.z)??0)+.15,p.z)));
+    this.curvePreview=new Line(geo,new LineBasicMaterial({color:0xffda8a,depthTest:false}));this.curvePreview.renderOrder=100;this.scene.add(this.curvePreview);this.present();
+  }
+  setLandscape(landscape: Landscape): void {
+    const rebuild = this.landscape.cover !== landscape.cover || this.landscape.strokes !== landscape.strokes || this.landscape.environment.season !== landscape.environment.season;
+    this.landscape=landscape;
+    this.sky.setHour(landscape.environment.hour); this.sky.setPlaying(landscape.environment.playing);
+    this.props.setSeason(landscape.environment.season);
+    if(this.terrain && this.height){
+      const mat=this.terrain.mesh.material as TerrainMaterial;
+      if(rebuild)mat.update(this.height,landscape.strokes);mat.setSeason(landscape.environment.season);
+      if(rebuild)this.meadow.rebuild(this.height,landscape);
+    }
+  }
+  async ready():Promise<void>{await this.props.ready();}
+  diagnostics() { return { drawCalls:this.display.gl.info.render.calls,triangles:this.display.gl.info.render.triangles,geometries:this.display.gl.info.memory.geometries,textures:this.display.gl.info.memory.textures,coverInstances:this.meadow.count,assets:this.props.diagnostics(),environment:this.sky.snapshot() }; }
 
   setAssets(assets: ReadonlyMap<string, string>): void {
     this.props.setUrls(assets);
@@ -97,6 +142,8 @@ export class Renderer {
     if (!this.terrain || !field) return;
     this.terrain.setFrom(field, dirty);
     this.water?.setFrom(field);
+    (this.terrain.mesh.material as TerrainMaterial).update(field,this.landscape.strokes);
+    this.meadow.rebuild(field,this.landscape);
     if (drape) this.refreshGrid();
   }
 
@@ -107,11 +154,15 @@ export class Renderer {
       this.terrain?.destroy(this.scene);
       this.water?.destroy(this.scene);
       addSunAndGrid(this.scene, snapshot.size, this.lines, this.gridMode);
+      this.sky.resize(snapshot.size);
       this.terrain = new HeightMesh(this.scene);
       this.water = new WaterLayer(this.scene, snapshot.size);
       if (this.height) {
         this.terrain.setFrom(this.height);
         this.water.setFrom(this.height);
+        (this.terrain.mesh.material as TerrainMaterial).update(this.height,this.landscape.strokes);
+        (this.terrain.mesh.material as TerrainMaterial).setSeason(this.landscape.environment.season);
+        this.meadow.rebuild(this.height,this.landscape);
       }
       this.lines.visible = this.gridOn;
       this.refreshGrid();
@@ -175,7 +226,11 @@ export class Renderer {
   }
 
   present(): void {
-    this.water?.tick(performance.now());
+    const now = performance.now();
+    this.sky.tick(now);
+    this.sky.focus(this.camera.targetX,this.camera.targetZ);
+    this.water?.tick(now);
+    this.meadow.tick(now);
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
     this.display.render(this.scene, cam);
@@ -197,6 +252,8 @@ export class Renderer {
   }
 
   destroy(): void {
+    this.previewCurve([]);
+    this.meadow.destroy();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);
