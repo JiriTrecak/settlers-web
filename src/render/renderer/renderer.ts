@@ -147,6 +147,7 @@ export class Renderer {
   ): void {
     this.height = field;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
+    this.camera.setTerrain(sample, field?.waterLevel ?? 0);
     this.props.setHeight(sample);
     this.props.setWaterY(field?.waterLevel ?? 0);
     this.brush.setHeight(sample, dirty);

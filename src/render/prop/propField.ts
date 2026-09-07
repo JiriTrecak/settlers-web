@@ -258,7 +258,7 @@ export class PropField {
     for(const g of groups.values()){
       const b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
       g.poses.forEach((p,i)=>b.setMatrixAt(i,p));b.instanceMatrix.needsUpdate=true;
-      b.castShadow=b.receiveShadow=!g.source.userData.skipCanopyShadow;b.userData.stampIds=g.ids;b.computeBoundingSphere();
+      b.castShadow=b.receiveShadow=true;b.userData.stampIds=g.ids;b.computeBoundingSphere();
       this.batches.push(b);this.scene.add(b);
     }
   }

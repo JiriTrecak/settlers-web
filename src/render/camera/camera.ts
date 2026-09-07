@@ -1,7 +1,7 @@
 /**
  * Look-at on the XZ plane.
  * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
- * 70° FoV, ~56° pitch, 45° yaw, fixed distance, pan only, view half a block past the red.
+ * 70° FoV, ~56° pitch, 45° yaw, terrain-following distance zoom, pan only, view half a block past the red.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
@@ -32,11 +32,24 @@ export class Camera {
   maxZoom = 90;
   /** Play leaves this on — orbit is a no-op. Editor clears it. */
   locked = true;
-  /** Play / Gamecam: perspective, zoom locked, view clamped half a block past the red. */
+  /** Play / Gamecam: perspective, distance zoom, view clamped half a block past the red. */
   game = false;
   /** Bumps on every view mutation. Widgets (minimap) key off this, not field lists. */
   rev = 0;
+  /** Minimum clearance above terrain directly beneath the perspective eye. */
+  readonly minTerrainClearance = 4;
+  readonly minHeightAboveWater = 12;
+  private waterLevel = 0;
+  private terrain: ((x: number, z: number) => number) | null = null;
+  private gameDistance = 80;
   private bound = 0;
+
+  setTerrain(sample: ((x: number, z: number) => number) | null, waterLevel = 0): void {
+    this.terrain = sample;
+    this.waterLevel = Number.isFinite(waterLevel) ? waterLevel : 0;
+    this.touch();
+  }
+
   private lastAspect = 16 / 9;
   private readonly probe = new OrthographicCamera();
   private readonly persp = new PerspectiveCamera();
@@ -51,7 +64,7 @@ export class Camera {
     if (on) {
       this.yaw = ISO_YAW;
       this.pitch = GAME_PITCH;
-      this.distance = this.distForSpan(MAP_BLOCK * 2);
+      this.distance = this.gameDistance = this.distForSpan(MAP_BLOCK * 2);
       this.clamp();
     }
     this.touch();
@@ -107,7 +120,13 @@ export class Camera {
   }
 
   zoomBy(factor: number): void {
-    if (this.game) return;
+    if (!Number.isFinite(factor) || factor <= 0) return;
+    if (this.game) {
+      this.distance = clamp(this.distance * factor, this.gameDistance * .5, this.gameDistance * 2);
+      this.clamp();
+      this.touch();
+      return;
+    }
     this.zoom = Math.min(this.maxZoom, Math.max(this.minZoom, this.zoom * factor));
     this.touch();
   }
@@ -136,11 +155,13 @@ export class Camera {
 
   /** Perspective distance that frames `span` cells on the ground (screen-vertical). */
   private distForSpan(span: number): number {
-    const prev = this.distance;
+    const prev = this.distance, terrain = this.terrain;
+    this.terrain = null;
     this.distance = 1;
     const a = this.groundAt(0, -1, 1);
     const b = this.groundAt(0, 1, 1);
     this.distance = prev;
+    this.terrain = terrain;
     return span / Math.max(1e-6, Math.hypot(b[0] - a[0], b[1] - a[1]));
   }
 
@@ -200,7 +221,8 @@ export class Camera {
     const a = this.rayA.set(ndcX, ndcY, -1).unproject(cam);
     const b = this.rayB.set(ndcX, ndcY, 1).unproject(cam);
     const dy = b.y - a.y;
-    const t = Math.abs(dy) < 1e-8 ? 0 : -a.y / dy;
+    const planeY = this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : 0;
+    const t = Math.abs(dy) < 1e-8 ? 0 : (planeY - a.y) / dy;
     return [a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t];
   }
 
@@ -242,7 +264,22 @@ export class Camera {
       Math.sin(this.pitch) * dist,
       this.targetZ + cosY * cosP * dist,
     );
-    cam.lookAt(this.targetX, 0, this.targetZ);
+    let targetY = 0;
+    if (this.game && this.terrain) {
+      const heightAt = (x: number, z: number) => {
+        const h = this.terrain!(x, z);
+        return Number.isFinite(h) ? Math.max(0, h) : 0;
+      };
+      targetY = heightAt(this.targetX, this.targetZ);
+      targetY = Math.max(targetY, heightAt(cam.position.x, cam.position.z) + this.minTerrainClearance - cam.position.y);
+      cam.position.y += targetY;
+    }
+    if (this.game && this.terrain) {
+      const lift = Math.max(0, this.waterLevel + this.minHeightAboveWater - cam.position.y);
+      cam.position.y += lift;
+      targetY += lift;
+    }
+    cam.lookAt(this.targetX, targetY, this.targetZ);
     return { dist, reach };
   }
 }

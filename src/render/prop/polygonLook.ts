@@ -65,7 +65,6 @@ export function flattenPolygon(root: Object3D, hint = "", variant?:string): void
       }
     }
     if(hint==='synty-tree-generic-giant-01-open' && kinds.every(k=>k==='leaf')) {
-      node.userData.skipCanopyShadow=true;
       node.position.y+=1.2;
       const p=node.geometry.getAttribute('position'),colors=new Float32Array(p.count*3);
       for(let i=0;i<p.count;i++){

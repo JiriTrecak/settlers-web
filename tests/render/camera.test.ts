@@ -79,7 +79,7 @@ describe("iso camera", () => {
     expect(z).toBeCloseTo(hit.z, 4);
   });
 
-  it("setGame locks WC3 perspective, frames two blocks, and ignores zoom/orbit", () => {
+  it("setGame locks WC3 perspective, frames two blocks, and allows distance zoom while locking orbit", () => {
     const cam = new Camera();
     cam.locked = false;
     cam.lookAt(128, 128);
@@ -99,7 +99,7 @@ describe("iso camera", () => {
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
     cam.orbitScreen(80, 40);
-    expect(cam.distance).toBe(dist);
+    expect(cam.distance).toBeCloseTo(dist * 1.5);
     expect(cam.yaw).toBe(yaw);
   });
 
@@ -150,4 +150,44 @@ describe("iso camera", () => {
     expect(cam.targetX).toBe(-10);
     expect(cam.targetZ).toBe(-10);
   });
+});
+
+describe("terrain-following game camera", () => {
+  it("zooms to twice the default span and clamps both zoom limits", () => {
+    const camera = new Camera(); camera.lookAt(128,128); camera.setGame(true);
+    const distance = camera.distance;
+    camera.zoomBy(100);
+    expect(camera.distance).toBeCloseTo(distance * 2);
+    const a=camera.groundAt(0,-1,1),b=camera.groundAt(0,1,1);
+    expect(Math.hypot(b[0]-a[0],b[1]-a[1])).toBeCloseTo(MAP_BLOCK * 4);
+    camera.zoomBy(.0001);
+    expect(camera.distance).toBeCloseTo(distance * .5);
+  });
+  it("rises and descends with terrain without changing pitch or centered framing", () => {
+    const camera=new Camera(); camera.lookAt(128,128); camera.setGame(true);
+    let height=0; camera.setTerrain(()=>height);
+    const eye=new PerspectiveCamera(); camera.applyTo(eye,1280,720); const low=eye.position.y;
+    height=12; camera.applyTo(eye,1280,720);
+    expect(eye.position.y).toBeCloseTo(low+12);
+    expect(camera.groundAt(0,0,1280/720)[0]).toBeCloseTo(128);
+    expect(camera.groundAt(0,0,1280/720)[1]).toBeCloseTo(128);
+    height=0; camera.applyTo(eye,1280,720); expect(eye.position.y).toBeCloseTo(low);
+  });
+  it("clears a hill beneath the eye even when the target is in a valley", () => {
+    const camera=new Camera(); camera.lookAt(128,128); camera.setGame(true); camera.zoomBy(.5);
+    camera.setTerrain((x,z)=>x>129&&z>129?24:0);
+    const eye=new PerspectiveCamera(); camera.applyTo(eye,1280,720);
+    expect(eye.position.y).toBeGreaterThanOrEqual(24+camera.minTerrainClearance);
+  });
+  it("does not move the editor orthographic camera with terrain", () => {
+    const camera=new Camera(); const eye=new OrthographicCamera(); camera.applyTo(eye,1280,720); const low=eye.position.y;
+    camera.setTerrain(()=>24); camera.applyTo(eye,1280,720); expect(eye.position.y).toBe(low);
+  });
+});
+
+it("never descends toward the river bed below the water-relative camera floor", () => {
+  const camera=new Camera(); camera.lookAt(128,128); camera.setGame(true); camera.zoomBy(.5);
+  camera.setTerrain(()=>-16, 3);
+  const eye=new PerspectiveCamera(); camera.applyTo(eye,1280,720);
+  expect(eye.position.y).toBeGreaterThanOrEqual(3+camera.minHeightAboveWater);
 });

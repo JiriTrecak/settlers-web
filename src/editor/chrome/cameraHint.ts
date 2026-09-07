@@ -13,6 +13,7 @@ const FREE: [string, string][] = [
 
 const GAME: [string, string][] = [
   ["LMB", "Pan"],
+  ["Wheel", "Zoom"],
   ["WASD", "Pan"],
   ["Home", "Free cam"],
 ];
