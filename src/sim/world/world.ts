@@ -84,7 +84,7 @@ export class World {
       tick,
       player: envelope.player,
       seq: envelope.seq ?? 0,
-      action: { ...action },
+      action: 'ids' in action ? {...action,ids:[...action.ids]} : { ...action },
     });
   }
 

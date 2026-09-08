@@ -91,3 +91,15 @@
 .rts-military{pointer-events:auto}
 .rts-command>.rts-military-art{position:absolute;inset:0;width:100%;height:100%;filter:none}
 .rts-portrait>.rts-military-art{width:100%;height:100%}
+
+.rts-unit-cards{display:flex;flex-wrap:wrap;gap:4px;overflow:auto;min-height:0;align-content:start;flex:1;pointer-events:auto}
+.rts-unit-cards[hidden]{display:none}
+.rts-unit-cards>button{position:relative;width:45px;height:52px;flex:none;padding:1px;border:1px solid #697c80;background:#111c1d;color:#f2edce;cursor:pointer}
+.rts-unit-cards>button:hover{border-color:#dae8bb}
+.rts-unit-cards svg,.rts-unit-cards .rts-art{display:block;width:100%;height:35px}
+.rts-unit-cards small{display:block;font:9px system-ui;text-align:center}
+.rts-unit-hp{display:block;height:3px;background:#491e18}.rts-unit-hp i{display:block;height:100%;background:#7fc757}
+.has-unit-selection .rts-selection-copy{gap:3px}
+.has-unit-selection .rts-selection-copy>p[hidden]{display:none}
+.has-unit-selection .rts-selection-copy>p:not([hidden]){font-size:10px;line-height:1.15}
+.rts-military{display:flex;gap:5px;align-items:start}

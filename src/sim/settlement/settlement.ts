@@ -1,3 +1,5 @@
+import { COMBAT_UNITS, isCombatant, neutralKindForAsset, type NeutralKind } from '../../shared/settlement/rules';
+import { formationOffset } from '../../shared/settlement/selection';
 import { SOLDIERS, RECRUIT_QUEUE_LIMIT, isSoldier, unitMaxHealth, type SoldierKind } from '../../shared/settlement/rules';
 import { resourceKindForAsset } from '../../shared/settlement/resourceAssets';
 import { Visibility, VISION_STEP, type FogView } from "../visibility/visibility";
@@ -76,6 +78,10 @@ export type WorkerJob =
   | "mill-output"
   | "plant";
 export type Worker = {
+  camp?: {x:number;z:number};
+  attackDestination: number | null;
+  pendingMove: number | null;
+  forceAttack: boolean;
   health: number;
   target: number;
   attackCooldown: number;
@@ -84,7 +90,7 @@ export type Worker = {
   x: number;
   z: number;
   role:
-    SoldierKind | "builder" | "carrier" | "lumberjack" | "stonemason" | "sawyer" | "forester";
+    NeutralKind | SoldierKind | "builder" | "carrier" | "lumberjack" | "stonemason" | "sawyer" | "forester";
   job: WorkerJob;
   building: number;
   resource: number;
@@ -198,6 +204,12 @@ export class Settlement {
       (a, b) =>
         this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= 90,
     );
+    for(const stamp of map.stamps) {
+      const kind=neutralKindForAsset(stamp.asset);if(!kind)continue;
+      const before=this.workers.length;
+      this.spawnWorker(-1,Math.round(stamp.x+.5),Math.round(stamp.y+.5),kind);
+      if(this.workers.length>before){const unit=this.workers.at(-1)!;unit.camp={x:unit.x,z:unit.z};}
+    }
     this.updateTerritory();
     this.visibility = new Visibility(this.colonies.map(c=>c.owner));
     this.visibility.update(this.buildings,this.workers,this.resources,this.territory);
@@ -238,7 +250,7 @@ export class Settlement {
       x,
       z,
       role,
-      health: unitMaxHealth(role), target: 0, attackCooldown: 0,
+      health: unitMaxHealth(role), target: 0, attackCooldown: 0, attackDestination: null, pendingMove: null, forceAttack: false,
       job: "idle",
       building: 0,
       resource: 0,
@@ -362,7 +374,36 @@ export class Settlement {
   command(owner: number, action: Action): boolean {
     if (this.outcome || !validAction(action) || !this.colony(owner))
       return false;
-    if (action.type === 'recruit' || action.type === 'cancel-recruit' || action.type === 'rally') {
+    if(action.type==='attack-units') {
+      let accepted=false;
+      for(const id of [...action.ids].sort((a,b)=>a-b))accepted=this.command(owner,{type:'attack',id,target:action.target,force:action.force})||accepted;
+      return accepted;
+    }
+    if(action.type==='move-units') {
+      const units=this.workers.filter(w=>action.ids.includes(w.id)&&w.owner===owner&&w.health>0
+        && w.job!=='training' && w.job!=='to-barracks');
+      units.sort((a,b)=>a.id-b.id);
+      const used=new Set<number>();let accepted=false;
+      for(const [index,w] of units.entries()) {
+        const offset=formationOffset(index,units.length);
+        const x=Math.max(0,Math.min(255,action.x+offset.x)),z=Math.max(0,Math.min(255,action.z+offset.z));
+        let goal:number|null=null;
+        for(let r=0;r<=8&&goal===null;r++)for(let dz=-r;dz<=r&&goal===null;dz++)for(let dx=-r;dx<=r;dx++) {
+          if(Math.max(Math.abs(dx),Math.abs(dz))!==r)continue;
+          const nx=x+dx,nz=z+dz,i=nz*256+nx;
+          if(nx<0||nz<0||nx>=256||nz>=256||used.has(i)||!this.walkable(i))continue;
+          goal=i;break; // Choose the nearest free slot; run A* once per unit below.
+        }
+        if(goal===null)continue;
+        used.add(goal);
+        if(this.command(owner,{type:'move-worker',id:w.id,x:goal%256,z:Math.floor(goal/256)})) {
+          accepted=true;
+          if(action.attackMove&&isSoldier(w.role)){w.attackDestination=goal;w.job='idle';}
+        }
+      }
+      return accepted;
+    }
+    if (action.type === 'recruit'  || action.type === 'cancel-recruit' || action.type === 'rally') {
       const b=this.buildings.find(b=>b.id===action.id && b.owner===owner && b.kind==='barracks' && b.complete && b.health>0);
       if(!b)return false;
       if(action.type==='recruit') {
@@ -381,10 +422,10 @@ export class Settlement {
     if(action.type==='attack' || action.type==='stop-unit') {
       const w=this.workers.find(w=>w.id===action.id && w.owner===owner && isSoldier(w.role));
       if(!w)return false;
-      if(action.type==='stop-unit'){this.resetWorker(w);return true;}
+      if(action.type==='stop-unit'){this.resetWorker(w);w.pendingMove=null;return true;}
       const target=this.workers.find(t=>t.id===action.target)??this.buildings.find(t=>t.id===action.target);
-      if(!target || target.owner===owner || target.health<=0 || !this.targetVisible(owner,target))return false;
-      this.resetWorker(w);w.target=target.id;w.job='attack';w.timer=0;return true;
+      if(!target || target.id===w.id || (target.owner===owner&&!action.force) || target.health<=0 || !this.targetVisible(owner,target))return false;
+      this.resetWorker(w);w.target=target.id;w.forceAttack=action.force===true;w.job='attack';w.timer=0;return true;
     }
     if (action.type === "build") {
       const error = this.canBuild(owner, action.kind, action.x, action.z);
@@ -428,10 +469,18 @@ export class Settlement {
     }
     if (action.type === "move-worker") {
       const w = this.workers.find(
-        (w) => w.id === action.id && w.owner === owner && (w.role === "carrier" || isSoldier(w.role)) && !w.shipment && !w.quantity && !w.building,
+        (w) => w.id === action.id && w.owner === owner && w.job!=="training" && w.job!=="to-barracks",
       );
       if (!w) return false;
-      w.target=0;return this.travel(w, action.z * 256 + action.x, "move");
+      const goal=action.z*256+action.x;
+      if(!this.walkable(goal))return false;
+      const path=this.navigation.path(w.z*256+w.x,goal);if(path===null)return false;
+      // Loaded carriers finish their delivery before obeying a manual move; no goods vanish.
+      if(w.shipment||w.quantity){w.pendingMove=goal;return true;}
+      w.path=path;w.job='move';w.timer=WORKER_STEP_TICKS;
+      const node=this.resources.find(n=>n.id===w.resource);if(node?.claimed===w.id)node.claimed=0;
+      w.resource=0;w.pendingMove=null;
+      w.target=0;w.forceAttack=false;w.attackDestination=null;return true;
     }
     return false;
   }
@@ -439,6 +488,7 @@ export class Settlement {
     const node = this.resources.find((n) => n.id === w.resource);
     if (node?.claimed === w.id) node.claimed = 0;
     w.target = 0;
+    w.forceAttack=false;w.attackDestination=null;
     w.shipment = null;
     w.job = "idle";
     w.building = 0;
@@ -484,7 +534,7 @@ export class Settlement {
       )
         continue;
       const w = this.workers.find(
-        (w) => w.owner === b.owner && w.role === "carrier" && !w.shipment && !w.quantity && w.job === "idle",
+        (w) => w.owner === b.owner && w.role === "carrier" && w.pendingMove===null && !w.shipment && !w.quantity && w.job === "idle",
       );
       if (w) {
         w.role =
@@ -507,7 +557,11 @@ export class Settlement {
     if(tick % VISION_STEP === 0)this.visibility.update(this.buildings,this.workers,this.resources,this.territory);
   }
   private workerTick(w: Worker) {
-    if(isSoldier(w.role)){this.soldierTick(w);return;}
+    if(w.pendingMove!==null&&!w.shipment&&!w.quantity){
+      const goal=w.pendingMove;w.pendingMove=null;
+      this.command(w.owner,{type:'move-worker',id:w.id,x:goal%256,z:Math.floor(goal/256)});
+    }
+    if(isCombatant(w.role)){this.soldierTick(w);return;}
     const assigned = this.buildings.find((b) => b.id === w.building);
     if (assigned && assigned.health <= 0) {
       const role = w.role;
@@ -876,7 +930,7 @@ export class Settlement {
     if(b.recruit && !w){b.recruit=0;b.training=0;}
     if(!b.queue.length || b.inventory.plank<SOLDIERS[b.queue[0]!].planks)return;
     if(!w) {
-      w=this.workers.find(w=>w.owner===b.owner && w.role==='carrier' && w.job==='idle' && !w.building && !w.shipment && !w.quantity
+      w=this.workers.find(w=>w.owner===b.owner && w.role==='carrier' && w.pendingMove===null && w.job==='idle' && !w.building && !w.shipment && !w.quantity
         && this.navigation.path(w.z*256+w.x,this.entrance(b))!==null);
       if(!w)return;
       this.resetWorker(w);w.building=b.id;b.recruit=w.id;
@@ -892,6 +946,8 @@ export class Settlement {
     this.revision++;this.feedback(b.owner,`${rule.name} trained`);
   }
   private targetVisible(owner:number,target:Worker|Building) {
+    if('role' in target && target.job==='training')return false;
+    if(owner===-1)return true;
     const r='kind' in target?BUILDINGS[target.kind].radius:0;
     for(let z=Math.max(0,target.z-r);z<=Math.min(255,target.z+r);z++)
       for(let x=Math.max(0,target.x-r);x<=Math.min(255,target.x+r);x++)if(this.visibility.visible(owner,x,z))return true;
@@ -902,7 +958,13 @@ export class Settlement {
     return Math.max(0,Math.abs(w.x-target.x)-r)**2+Math.max(0,Math.abs(w.z-target.z)-r)**2;
   }
   private soldierTick(w:Worker) {
-    if(!isSoldier(w.role))return;
+    if(!isCombatant(w.role))return;
+    if(w.camp && w.target){
+      const target=this.workers.find(t=>t.id===w.target)??this.buildings.find(t=>t.id===w.target);
+      if(!target || Math.hypot(target.x-w.camp.x,target.z-w.camp.z)>18 || Math.hypot(w.x-w.camp.x,w.z-w.camp.z)>18){
+        this.resetWorker(w);this.travel(w,w.camp.z*256+w.camp.x,'move');
+      }
+    }
     if(w.attackCooldown>0)w.attackCooldown--;
     if(w.timer>0){w.timer--;return;}
     const step=()=>{
@@ -916,15 +978,27 @@ export class Settlement {
       w.job='idle';
     }
     let target=this.workers.find(t=>t.id===w.target)??this.buildings.find(t=>t.id===w.target);
-    if(target && (target.health<=0 || target.owner===w.owner || !this.targetVisible(w.owner,target))){target=undefined;w.target=0;w.path=[];}
+    if(target && (target.health<=0 || (target.owner===w.owner&&!w.forceAttack) || !this.targetVisible(w.owner,target))){target=undefined;w.target=0;w.path=[];}
     if(!target) {
       target=([...this.workers,...this.buildings] as (Worker|Building)[])
-        .filter(t=>t.owner!==w.owner && t.health>0 && this.targetDistance(w,t)<=100 && this.targetVisible(w.owner,t))
+        .filter(t=>t.owner!==w.owner && t.health>0 && this.targetDistance(w,t)<=(w.role==='wolf'?8:w.role==='ogre'?10:10)**2 && (!w.camp||Math.hypot(t.x-w.camp.x,t.z-w.camp.z)<=18) && this.targetVisible(w.owner,t))
         .sort((a,b)=>this.targetDistance(w,a)-this.targetDistance(w,b)||a.id-b.id)[0];
-      w.target=target?.id??0;
+      w.target=target?.id??0;w.forceAttack=false;
+      if(target)w.path=[];
     }
-    if(!target){w.job='idle';w.timer=12;return;}
-    const rule=SOLDIERS[w.role];w.job='attack';
+    if(!target){
+      w.job='idle';
+      if(w.attackDestination!==null) {
+        if(w.z*256+w.x===w.attackDestination){w.attackDestination=null;w.path=[];}
+        else {
+          if(!w.path.length)w.path=this.navigation.path(w.z*256+w.x,w.attackDestination)??[];
+          if(w.path.length){step();return;}
+          w.attackDestination=null;
+        }
+      }
+      w.timer=12;return;
+    }
+    const rule=COMBAT_UNITS[w.role];w.job='attack';
     if(this.targetDistance(w,target)<=rule.range**2) {
       w.path=[];
       if(!w.attackCooldown) {
@@ -1084,7 +1158,7 @@ export class Settlement {
         delivered: { ...b.delivered },
         inventory: { ...b.inventory },
       })),
-      workers: this.workers.map((w) => ({ ...w, shipment: w.shipment ? {...w.shipment} : null, path: [] })),
+      workers: this.workers.map((w) => ({ ...w, ...(w.camp?{camp:{...w.camp}}:{}), shipment: w.shipment ? {...w.shipment} : null, path: [] })),
       resources: this.resources.map((n) => ({ ...n })),
       colonies: this.colonies.map((c) => ({ ...c, stock: { ...c.stock } })),
       territory: this.territory,

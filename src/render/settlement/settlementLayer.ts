@@ -1,4 +1,4 @@
-import { isSoldier, unitMaxHealth, SOLDIERS } from '../../shared/settlement/rules';
+import { isCombatant, unitMaxHealth, SOLDIERS, COMBAT_UNITS } from '../../shared/settlement/rules';
 import { applyPlayerMaterials } from './playerMaterials';
 import { TerritoryPosts } from "./territoryPosts";
 import { prepareAntMaterial } from '../prop/antMaterials';
@@ -22,6 +22,8 @@ import type { SettlementView } from "../../sim/settlement/settlement";
 import { stockpileLayout } from "../../shared/settlement/stockpile";
 import type { ItemKind, ItemStock } from "../../shared/settlement/rules";
 const urls = {
+  wolf: new URL("../../../assets/ant-colony/wolf.glb",import.meta.url).href,
+  ogre: new URL("../../../assets/ant-colony/ogre.glb",import.meta.url).href,
   barracks: new URL("../../../assets/ant-colony/barracks.glb", import.meta.url).href,
   warrior: new URL("../../../assets/ant-colony/warrior.glb", import.meta.url).href,
   archer: new URL("../../../assets/ant-colony/archer.glb", import.meta.url).href,
@@ -91,9 +93,10 @@ export class SettlementLayer {
       depthWrite: false,
     }),
   );
-  private selected: number | null = null;
-  select(id: number | null) {
-    this.selected = id;
+  private selected=new Set<number>();
+  private readonly selectionRings:Mesh[]=[];
+  select(id: number | null | readonly number[]) {
+    this.selected = new Set(id===null?[]:typeof id==='number'?[id]:id);
   }
   pick(ray: Raycaster, maxDistance = Infinity): number | null {
     const hit = ray
@@ -188,20 +191,15 @@ export class SettlementLayer {
       this.revision = state.revision;
       this.borderGeometry(state, field);
     }
-    const selected =
-      state.buildings.find((b) => b.id === this.selected) ??
-      state.workers.find((w) => w.id === this.selected);
-    this.selection.visible = !!selected;
-    if (selected) {
-      this.selection.position.set(
-        selected.x,
-        field.sample(selected.x, selected.z) + 0.12,
-        selected.z,
-      );
-      this.selection.scale.setScalar(
-        "kind" in selected ? BUILDINGS[selected.kind].radius + 1 : 1,
-      );
-    }
+    this.selection.visible=false;
+    const selected=[...state.buildings,...state.workers].filter(e=>this.selected.has(e.id)&&e.health>0);
+    while(this.selectionRings.length<selected.length){const ring=this.selection.clone();this.selectionRings.push(ring);this.root.add(ring);}
+    this.selectionRings.forEach((ring,i)=>{
+      const entity=selected[i];ring.visible=!!entity;
+      if(!entity)return;
+      ring.position.set(entity.x,field.sample(entity.x,entity.z)+.12,entity.z);
+      ring.scale.setScalar('kind' in entity?BUILDINGS[entity.kind].radius+1:1);
+    });
     const seen = new Set<number>();
     for (const b of state.buildings) {
       seen.add(b.id);
@@ -224,11 +222,11 @@ export class SettlementLayer {
         ? 1
         : 0.12 + (0.88 * b.progress) / BUILDINGS[b.kind].work;
       o.getObjectByName("Stockpile")?.scale.set(1, 1 / o.scale.y, 1);
-      this.healthBar(o,b.health,BUILDINGS[b.kind].health??250,5/o.scale.y,b.id===this.selected);
+      this.healthBar(o,b.health,BUILDINGS[b.kind].health??250,5/o.scale.y,this.selected.has(b.id));
     }
     for (const w of state.workers) {
       seen.add(w.id);
-      const o = this.make(w.id, isSoldier(w.role)?w.role:"settler", w.owner);
+      const o = this.make(w.id, isCombatant(w.role)?w.role:"settler", w.owner);
       if (!o) continue;
       const target = new Vector3(w.x, field.sample(w.x, w.z), w.z);
       if (o.userData.placed) {
@@ -242,11 +240,11 @@ export class SettlementLayer {
         o.userData.placed = true;
       }
       o.visible=w.job!=='training';
-      this.healthBar(o,w.health,unitMaxHealth(w.role),2.5,w.id===this.selected);
-      if(isSoldier(w.role) && w.target){
+      this.healthBar(o,w.health,unitMaxHealth(w.role),w.role==='ogre'?3.3:w.role==='wolf'?1.9:2.5,this.selected.has(w.id));
+      if(isCombatant(w.role) && w.target){
         const target=state.workers.find(t=>t.id===w.target)??state.buildings.find(t=>t.id===w.target);
         if(target)o.rotation.y=Math.atan2(target.x-w.x,target.z-w.z);
-        const strike=w.attackCooldown>SOLDIERS[w.role].cooldown-6;
+        const strike=w.attackCooldown>COMBAT_UNITS[w.role].cooldown-6;
         o.rotation.x=strike?.10:0;
       }else o.rotation.x=0;
       const arrow=o.getObjectByName('ArrowTrace');

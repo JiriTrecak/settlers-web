@@ -109,7 +109,7 @@ describe("settlement lockstep integration", () => {
         peers[0]!.send({type:'cancel-recruit',id,index:1});
         peers[0]!.send({type:'rally',id,x:210,z:222});
         const soldier=worlds[0]!.settlement!.workers.find(w=>w.owner===0&&w.role==='warrior')!;
-        peers[0]!.send({type:'move-worker',id:soldier.id,x:215,z:223});
+        peers[0]!.send({type:'move-units',ids:[soldier.id],x:215,z:223,attackMove:true});
       }
       peers[tick%2]!.confirm(tick);peers[1-tick%2]!.confirm(tick);
       for(let i=0;i<2;i++)apply(worlds[i]!,peers[i]!.take(tick)!);

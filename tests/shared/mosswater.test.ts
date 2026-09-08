@@ -13,6 +13,11 @@ describe('Mosswater Divide',()=>{
   const h=Array.from(decodeHeight(map.height!)!);expect(h).toEqual(h.slice().reverse());
   for(let i=0;i<map.stamps.length;i+=2){const a=map.stamps[i]!,b=map.stamps[i+1]!;expect(a.asset).toBe(b.asset);expect(a.scale).toBe(b.scale);expect(a.x+b.x).toBeCloseTo(255);expect(a.y+b.y).toBeCloseTo(255);}
  });
+ it('contains mirrored wolf packs and ogres outside the bases',()=>{
+  expect(map.stamps.filter(s=>s.asset==='neutral-wolf')).toHaveLength(6);
+  expect(map.stamps.filter(s=>s.asset==='neutral-ogre')).toHaveLength(2);
+  for(const n of map.stamps.filter(s=>s.asset.startsWith('neutral-')))for(const p of map.playerStarts!)expect(Math.hypot(n.x+.5-p.x,n.y+.5-p.z)).toBeGreaterThan(45);
+ });
  it('keeps starting construction space clear and all three crossings dry',()=>{
   const f=new HeightField();f.load(decodeHeight(map.height!)!,0);
   for(const p of map.playerStarts!){

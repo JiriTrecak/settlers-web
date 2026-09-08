@@ -15,7 +15,8 @@ describe('unassigned settlers carry goods',()=>{
       const active=s.workers.filter(w=>w.shipment).map(w=>w.id);
       const carrying=s.workers.find(w=>w.shipment && w.quantity>0);
       if(carrying && !rejectedInterruption){
-        expect(s.command(0,{type:'move-worker',id:carrying.id,x:225,z:240})).toBe(false);
+        expect(s.command(0,{type:'move-worker',id:carrying.id,x:225,z:240})).toBe(true);
+        expect(carrying.pendingMove).toBe(240*256+225);
         rejectedInterruption=true;
       }
       s.tick(t);

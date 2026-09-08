@@ -7,7 +7,7 @@ export const PROJECT_CATALOG_PATH = "assets/catalog.json";
 export const ASSET_TYPES = ["prop", "water", "span", "ground"] as const;
 export type AssetType = (typeof ASSET_TYPES)[number];
 
-export const ASSET_CATEGORIES = ["foliage", "terrain", "water", "landmark", "resource", "other"] as const;
+export const ASSET_CATEGORIES = ["units", "foliage", "terrain", "water", "landmark", "resource", "other"] as const;
 export type AssetCategory = (typeof ASSET_CATEGORIES)[number];
 
 export type CatalogEntry = {

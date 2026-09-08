@@ -7,9 +7,11 @@ export type GridPos = {
 
 /** Wire + enqueue payload. `noop` is dropped. `ping` is lockstep-only (sim ignores it). */
 export type Action =
+  | { type: 'move-units'; ids: number[]; x:number; z:number; attackMove?:boolean }
+  | { type: 'attack-units'; ids:number[]; target:number; force?:boolean }
   | { type: "recruit"; id: number; kind: SoldierKind }
   | { type: "cancel-recruit"; id: number; index: number }
-  | { type: "attack"; id: number; target: number }
+  | { type: "attack"; id: number; target: number; force?: boolean }
   | { type: "stop-unit"; id: number }
   | { type: "rally"; id: number; x: number; z: number }
   | { type: "noop" }
@@ -25,6 +27,9 @@ export function validAction(raw: unknown): raw is Action {
     typeof n === "number" && Number.isInteger(n) && n >= 0 && n < 256;
   const id = (n: unknown) =>
     typeof n === "number" && Number.isSafeInteger(n) && n > 0;
+  const ids=(value:unknown)=>Array.isArray(value)&&value.length>0&&value.length<=160&&value.every(id)&&new Set(value).size===value.length;
+  if(a.type==='move-units')return ids(a.ids)&&cell(a.x)&&cell(a.z)&&(a.attackMove===undefined||typeof a.attackMove==='boolean');
+  if(a.type==='attack-units')return ids(a.ids)&&id(a.target)&&(a.force===undefined||typeof a.force==='boolean');
   if (a.type === "noop" || a.type === "ping") return true;
   if (a.type === "build")
     return (
@@ -32,7 +37,7 @@ export function validAction(raw: unknown): raw is Action {
     );
   if (a.type === 'recruit') return id(a.id) && (a.kind === 'warrior' || a.kind === 'archer');
   if (a.type === 'cancel-recruit') return id(a.id) && Number.isInteger(a.index) && (a.index as number)>=0 && (a.index as number)<12;
-  if (a.type === 'attack') return id(a.id) && id(a.target);
+  if (a.type === 'attack') return id(a.id) && id(a.target) && (a.force===undefined || typeof a.force==='boolean');
   if (a.type === 'stop-unit') return id(a.id);
   if (a.type === 'rally') return id(a.id) && cell(a.x) && cell(a.z);
   if (a.type === "cancel-building") return id(a.id);

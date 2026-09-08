@@ -1,5 +1,5 @@
 /** Gameplay rules are shared data. Changes require a new match rules revision. */
-export const RULES_REVISION = "settlement-6";
+export const RULES_REVISION = "settlement-8";
 export type ResourceKind = "wood" | "stone";
 export type BuildingKind =
   | "barracks"
@@ -118,4 +118,12 @@ export const SOLDIERS = {
 } as const;
 export const RECRUIT_QUEUE_LIMIT = 12;
 export const isSoldier = (role: string): role is SoldierKind => role === 'warrior' || role === 'archer';
-export const unitMaxHealth = (role: string) => isSoldier(role) ? SOLDIERS[role].health : 60;
+export type NeutralKind = 'wolf' | 'ogre';
+export const COMBAT_UNITS = {
+  ...SOLDIERS,
+  wolf: {name:'Wolf',health:90,damage:10,range:1.5,cooldown:32,aggro:8},
+  ogre: {name:'Ogre',health:350,damage:24,range:2,cooldown:64,aggro:10},
+} as const;
+export const isCombatant=(role:string):role is SoldierKind|NeutralKind => isSoldier(role)||role==='wolf'||role==='ogre';
+export const neutralKindForAsset=(asset:string):NeutralKind|null => asset==='neutral-wolf'?'wolf':asset==='neutral-ogre'?'ogre':null;
+export const unitMaxHealth = (role: string) => isCombatant(role) ? COMBAT_UNITS[role].health : 60;

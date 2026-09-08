@@ -16,7 +16,7 @@ export function applyPlayerMaterial(material: MeshStandardMaterial, playerColor:
 }
 
 export function applyPlayerMaterials(root: Object3D, owner: number): void {
-  if (root.userData.materialOwner === owner) return;
+  if (owner<0 || root.userData.materialOwner === owner) return;
   const color = new Color(PLAYER_COLORS[owner % PLAYER_COLORS.length]!);
   root.traverse(child => {
     if (child instanceof Mesh) for (const material of Array.isArray(child.material) ? child.material : [child.material]) {

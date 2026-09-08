@@ -1135,6 +1135,20 @@
       "category": "resource",
       "type": "prop",
       "file": "ant-colony/rock.glb"
+    },
+    {
+      "id": "neutral-wolf",
+      "name": "Wolf",
+      "category": "units",
+      "type": "prop",
+      "file": "ant-colony/wolf.glb"
+    },
+    {
+      "id": "neutral-ogre",
+      "name": "Ogre",
+      "category": "units",
+      "type": "prop",
+      "file": "ant-colony/ogre.glb"
     }
   ]
 }

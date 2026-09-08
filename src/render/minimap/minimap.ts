@@ -159,7 +159,7 @@ export class Minimap {
         ctx.fillStyle="#"+PLAYER_COLORS[b.owner%PLAYER_COLORS.length]!.toString(16).padStart(6,"0");ctx.globalAlpha=b.remembered?.45:1;ctx.fillRect(px-2,py-2,4,4);
       }
       ctx.globalAlpha=1;
-      for(const unit of this.fogState.workers){const [px,py]=this.project(unit.x,unit.z,size,w,h);ctx.fillStyle="#"+PLAYER_COLORS[unit.owner%PLAYER_COLORS.length]!.toString(16).padStart(6,"0");ctx.fillRect(px-1,py-1,2,2);}
+      for(const unit of this.fogState.workers){const [px,py]=this.project(unit.x,unit.z,size,w,h);ctx.fillStyle="#"+(unit.owner<0?0xd7b36b:PLAYER_COLORS[unit.owner%PLAYER_COLORS.length]!).toString(16).padStart(6,"0");ctx.fillRect(px-1,py-1,2,2);}
     }
     for(const start of this.starts){
       const [px,py]=this.project(start.x,start.z,size,w,h);

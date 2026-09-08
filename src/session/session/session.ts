@@ -1,4 +1,5 @@
-import { isSoldier } from '../../shared/settlement/rules';
+import { areaSelection } from '../../shared/settlement/selection';
+import { isSoldier, neutralKindForAsset } from '../../shared/settlement/rules';
 import {perf} from '../../debug/performance';
 import { EditorBridge } from "../../shared/control/editorBridge";
 import { validAction } from "../../shared/types/types";
@@ -124,7 +125,7 @@ export class Session {
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
     renderer.setGridMode("none");
-    this.stamps = map.stamps;
+    this.stamps = map.stamps.filter(s=>!neutralKindForAsset(s.asset));
     this.renderer = renderer;
     const self =
       this.world.players.find((p) => p.id === this.me) ?? this.world.players[0];
@@ -132,7 +133,15 @@ export class Session {
     renderer.camera.setGame(true);
     this.input = new MapInput(this.canvas, renderer.camera, {
       onChanged: () => this.present(),
-      onClick: (x, y) => this.click(x, y),
+      rts: true,
+      onClick: (x, y, shift) => this.click(x, y, shift),
+      onSelectArea: (rect,shift)=>{
+        const hud=this.economyHud,state=this.world?.settlement?.view(this.me);
+        if(!hud||!state)return;
+        const inside=new Set(renderer.unitsInScreenRect(state.workers,rect));
+        const ids=areaSelection(state.workers.filter(w=>inside.has(w.id)),this.me);
+        hud.setSelection(shift?[...hud.selectedIds,...ids]:ids);
+      },
     });
     this.economyHud = new SettlementHud(this.config.host, this.me, {
       action: action => this.send(action),
@@ -287,7 +296,7 @@ export class Session {
             .filter((n) => n.amount === 0)
             .map((n) => n.stampId),
         );
-        const nextStamps = this.loadedMap!.map.stamps.filter((s) => !removed.has(s.id));
+        const nextStamps = this.loadedMap!.map.stamps.filter((s) => !removed.has(s.id)&&!neutralKindForAsset(s.asset));
         // Economy revisions also change for worker movement. Preserve scenery
         // identity until an actual resource disappears, avoiding GPU rebatches.
         if(nextStamps.length!==this.stamps.length||nextStamps.some((stamp,i)=>stamp!==this.stamps[i])){
@@ -297,7 +306,8 @@ export class Session {
       }
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(view.settlement);
-      renderer.gameSelect(this.economyHud?.selected ?? null);
+      renderer.gameSelect(this.economyHud?.selectedIds ?? []);
+      this.canvas.style.cursor=this.economyHud?.attackMode?"crosshair":"default";
     }
     perf.end('Economy HUD / minimap data',hud);
     renderer.draw(view, this.stamps);
@@ -317,7 +327,7 @@ export class Session {
   private send(action: Action) {
     this.locksteps.get(this.me)?.send(action);
   }
-  private click(clientX: number, clientY: number) {
+  private click(clientX: number, clientY: number, shift=false) {
     const sim = this.world?.settlement,
       hit = this.renderer?.pickGround(clientX, clientY),
       hud = this.economyHud;
@@ -334,40 +344,32 @@ export class Session {
       this.send({ type: "build", kind: hud.mode, x, z });
       return;
     }
-    const picked = this.renderer?.pickGameEntity(clientX, clientY);
-    const attacker=sim.workers.find(w=>w.id===hud.selected && w.owner===this.me && isSoldier(w.role));
-    const issueAttack=(id:number)=>{
-      const target=sim.workers.find(w=>w.id===id)??sim.buildings.find(b=>b.id===id);
-      if(attacker && target && target.owner!==this.me && target.health>0){this.send({type:'attack',id:attacker.id,target:id});return true;}return false;
-    };
-    if (picked != null) {
-      if(issueAttack(picked))return;
-      hud.selected = picked;
+    const known=sim.view(this.me);
+    const picked=this.renderer?.pickGameEntity(clientX,clientY);
+    let target=known.workers.find(w=>w.id===picked&&w.job!=='training')??known.buildings.find(b=>b.id===picked);
+    if(!target)target=known.workers.find(w=>w.job!=='training'&&Math.abs(w.x-hit.x)+Math.abs(w.z-hit.z)<1.6)
+      ??known.buildings.find(b=>b.health>0&&Math.abs(b.x-hit.x)<=BUILDINGS[b.kind].radius&&Math.abs(b.z-hit.z)<=BUILDINGS[b.kind].radius);
+    const army=known.workers.filter(w=>hud.selectedIds.includes(w.id)&&w.owner===this.me&&isSoldier(w.role));
+    if(hud.attackMode){
+      if(target&&army.length)this.send({type:'attack-units',ids:army.map(w=>w.id),target:target.id,force:true});
+      else if(hud.selectedIds.length)this.send({type:'move-units',ids:[...hud.selectedIds],x,z,attackMove:true});
+      hud.clearMode();return;
+    }
+    if(target){
+      if(army.length&&target.owner!==this.me&&!shift){this.send({type:'attack-units',ids:army.map(w=>w.id),target:target.id});return;}
+      if(shift&&target.owner===this.me&&'role' in target){
+        const owned=known.workers.filter(w=>w.owner===this.me&&hud.selectedIds.includes(w.id)).map(w=>w.id);
+        hud.setSelection(owned.includes(target.id)?owned.filter(id=>id!==target.id):[...owned,target.id]);
+      }else hud.selected=target.id;
       return;
     }
-    const known = sim.view(this.me);
-    const building = known.buildings.find(
-      (b) =>
-        Math.abs(b.x - hit.x) <= BUILDINGS[b.kind].radius &&
-        Math.abs(b.z - hit.z) <= BUILDINGS[b.kind].radius,
-    );
-    const worker = known.workers.find(
-      (w) => Math.abs(w.x - hit.x) + Math.abs(w.z - hit.z) < 1.6,
-    );
-    if (building || worker) {
-      if(issueAttack((building??worker)!.id))return;
-      hud.selected = (building ?? worker)!.id;
-      return;
-    }
-    const selected = sim.workers.find(
-      (w) =>
-        w.id === hud.selected && w.owner === this.me && (w.role === "carrier" || isSoldier(w.role)) && !w.shipment && !w.quantity,
-    );
-    if (selected) this.send({ type: "move-worker", id: selected.id, x, z });
-    else hud.selected = null;
+    const ids=known.workers.filter(w=>w.owner===this.me&&hud.selectedIds.includes(w.id)).map(w=>w.id);
+    if(ids.length)this.send({type:'move-units',ids,x,z});
+    else if(!shift)hud.selected=null;
   }
 
   stop(): void {
+    this.canvas.style.cursor="";
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.confirmTimer = null;
     this.canvas.removeEventListener("pointermove", this.onHover);

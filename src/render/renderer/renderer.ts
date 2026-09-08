@@ -83,7 +83,7 @@ export class Renderer {
   private settlement: SettlementLayer | null=null;
   private fog: FogOfWar | null=null;
   gamePreview(kind:BuildingKind|null,x=0,z=0,allowed=false){if(this.height)this.settlement?.preview(kind,x,z,allowed,this.height);}
-  gameSelect(id:number|null){this.settlement?.select(id);}
+  gameSelect(id:number|null|readonly number[]){this.settlement?.select(id);}
   gameReady(){return this.settlement?.ready??Promise.resolve();}
   private readonly refreshEnvironment=()=>this.sky.setGlobalLight(environmentPreset(this.landscape.environment.preset).light);
   private readonly presetStorage=(event:StorageEvent)=>{if(event.key===PRESET_KEY)this.refreshEnvironment();};
@@ -336,6 +336,14 @@ export class Renderer {
     );
   }
 
+  unitsInScreenRect(units:readonly {id:number;x:number;z:number}[],rect:{left:number;top:number;right:number;bottom:number}):number[] {
+    const bounds=this.display.canvas.getBoundingClientRect();
+    return units.filter(w=>{
+      const p=new Vector3(w.x,(this.height?.sample(w.x,w.z)??0)+1,w.z).project(this.threeCam());
+      const x=bounds.left+(p.x+1)*bounds.width/2,y=bounds.top+(1-p.y)*bounds.height/2;
+      return p.z>=-1&&p.z<=1&&x>=rect.left&&x<=rect.right&&y>=rect.top&&y<=rect.bottom;
+    }).map(w=>w.id);
+  }
   private threeCam(): OrthographicCamera | PerspectiveCamera {
     return this.camera.game ? this.persp : this.ortho;
   }

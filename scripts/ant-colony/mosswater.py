@@ -61,5 +61,7 @@ landscape=dict(rivers=[],strokes=[dict(points=[dict(x=x,z=z) for x,z in p],radiu
 for lo,hi in [(0,52),(76,116),(140,180),(204,256)]:
  landscape['rivers'].append(dict(points=[dict(x=river(z),z=z) for z in range(lo,hi+1,4)],radius=4.5,depth=2.8))
 map=dict(v=1,name='Mosswater Divide',stamps=stamps,waterLevel=0,height=base64.b64encode(struct.pack('<'+'h'*len(samples),*samples)).decode(),landscape=landscape,playerStarts=starts)
+from neutral_camps import add_camps
+add_camps(map)
 (R/'assets/maps/showcase/mosswater-divide.utcmap').write_text(json.dumps(map,separators=(',',':'))+'\n')
 print(f'Mosswater Divide: {len(stamps)} stamps, {len(cover)} moss patches, three land crossings.')
