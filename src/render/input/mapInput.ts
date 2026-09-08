@@ -6,10 +6,12 @@ import type { Camera } from "../camera/camera";
 
 const PAN_SPEED = 28;
 const CLICK_PX = 5;
+const EDGE_PX = 20; // CSS pixels: independent of render resolution / Retina scale.
 
 export type MapInputHooks = {
   onChanged(): void;
   onClick?(clientX: number, clientY: number, shift: boolean): void;
+  onRightClick?(clientX: number, clientY: number): void;
   rts?: boolean;
   onSelectArea?(rect: {left:number;top:number;right:number;bottom:number}, shift:boolean): void;
   onHome?: () => void;
@@ -33,13 +35,20 @@ export type MapInputHooks = {
   };
 };
 
-type Drag = "select" | "pan" | "orbit" | "stroke" | "grab";
+type Drag = "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
   private startX=0;
   private startY=0;
   private readonly selectionBox=document.createElement('div');
-  private readonly onBlur=()=>{this.keys.clear();this.drag=null;this.selectionBox.hidden=true;};
+  private edgePointer: { x: number; y: number } | null = null;
+  private readonly onEdgePointer = (e: PointerEvent) => {
+    this.edgePointer = e.pointerType === "touch" ? null : { x: e.clientX, y: e.clientY };
+  };
+  private readonly onPointerOut = (e: PointerEvent) => {
+    if (!e.relatedTarget) this.edgePointer = null;
+  };
+  private readonly onBlur=()=>{this.keys.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
   private readonly onContext=(e:Event)=>e.preventDefault();
   private readonly keys = new Set<string>();
   private drag: Drag | null = null;
@@ -89,6 +98,11 @@ export class MapInput {
     };
     this.onPointerDown = (e) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
+      if (this.hooks.rts && e.button === 2) {
+        this.drag = "command";
+        this.canvas.setPointerCapture(e.pointerId);
+        return;
+      }
       if(this.hooks.rts && e.button===0 && !this.keys.has(' ')){
         this.drag='select';this.startX=e.clientX;this.startY=e.clientY;this.moved=0;
         this.canvas.setPointerCapture(e.pointerId);return;
@@ -128,6 +142,7 @@ export class MapInput {
         if (this.hooks.paint?.on()) this.hooks.paint.hover(e.clientX, e.clientY);
         return;
       }
+      if (this.drag === "command") return;
       if(this.drag==='select'){
         this.moved=Math.hypot(e.clientX-this.startX,e.clientY-this.startY);
         this.selectionBox.hidden=this.moved<CLICK_PX;
@@ -146,6 +161,13 @@ export class MapInput {
       this.hooks.onChanged();
     };
     this.onPointerUp = (e) => {
+      if (this.drag === "command") {
+        if (e.button !== 2) return;
+        this.drag = null;
+        if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+        this.hooks.onRightClick?.(e.clientX, e.clientY);
+        return;
+      }
       if(this.drag==='select'){
         this.drag=null;this.selectionBox.hidden=true;
         if(this.canvas.hasPointerCapture(e.pointerId))this.canvas.releasePointerCapture(e.pointerId);
@@ -194,6 +216,11 @@ export class MapInput {
       this.hooks.onChanged();
     };
     window.addEventListener("blur",this.onBlur);
+    if (hooks.rts) {
+      // Track the whole viewport so HUD overlays do not create holes in the edge band.
+      window.addEventListener("pointermove", this.onEdgePointer);
+      window.addEventListener("pointerout", this.onPointerOut);
+    }
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
     this.canvas.addEventListener("pointerdown", this.onPointerDown);
@@ -212,6 +239,20 @@ export class MapInput {
     if (this.keys.has("arrowright")) right += 1;
     if (this.keys.has("arrowup")) forward += 1;
     if (this.keys.has("arrowdown")) forward -= 1;
+    if (this.hooks.rts && this.edgePointer) {
+      if (document.hidden || !document.hasFocus() || document.querySelector("dialog[open]")) {
+        this.edgePointer = null;
+      } else if (!this.drag || this.drag === "select") {
+        const { x, y } = this.edgePointer;
+        const bounds = this.canvas.getBoundingClientRect();
+        if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom) {
+          if (x < bounds.left + EDGE_PX) right -= 1;
+          if (x > bounds.right - EDGE_PX) right += 1;
+          if (y < bounds.top + EDGE_PX) forward += 1;
+          if (y > bounds.bottom - EDGE_PX) forward -= 1;
+        }
+      }
+    }
     if (!right && !forward) return;
     const length=Math.hypot(right,forward);
     this.camera.panWorld(right / length * step, forward / length * step);
@@ -221,6 +262,8 @@ export class MapInput {
   destroy(): void {
     this.selectionBox.remove();
     window.removeEventListener("blur",this.onBlur);
+    window.removeEventListener("pointermove", this.onEdgePointer);
+    window.removeEventListener("pointerout", this.onPointerOut);
     this.canvas.removeEventListener("contextmenu",this.onContext);
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);

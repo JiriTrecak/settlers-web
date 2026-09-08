@@ -1,5 +1,7 @@
-# map
+# Authored maps
 
-Hardcoded match map. `MAP_ID` is the only playable id. `MAP_SIZE` is playable cells (square, 1 world unit per cell). Halo (`MAP_HALO` = 16) is visible and stampable (foliage), not playable. Fringe (`MAP_FRINGE` = 16) is grid over void — orientation only, no plate, no stamps. Major tile is 8 cells. `MAP_BLOCK` is 16 — Tiles grid mode draws only those.
+`MAP_SIZE` is 256 playable cells; halo/fringe constants belong to rendering. A `.utcmap` v2 document contains name, scenery stamps, optional height/water/landscape, required player starts, explicit gameplay placements and neutral camps.
 
-`utcmap.ts` is the authored file: `.utcmap` JSON. `name` is the document title. `stamps` are placed catalog assets. Optional `height` (base64 Int16 cm) + `waterLevel`. `height.ts` is the vertex field.
+Placements reference persistent definition IDs and explicit owners. Starting setup references expand to stable authored keys; each player binds one main-fort objective. Scenery stamps never spawn gameplay units or resources. `playable.ts` validates references, starts and occupancy before a map can be launched. Revision combines canonical map and content fingerprints.
+
+`library.ts` discovers project `.utcmap` files and current-format locally saved maps. Both Editor and Singleplayer use it. New supplies required starts. No generated fallback map, resource inference or old-format loading remains. See [authoring](../../../docs/declarations/README.md).

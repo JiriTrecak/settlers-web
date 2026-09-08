@@ -119,6 +119,7 @@ const rawBehaviors = z
   .strict();
 const fields = {
   id: idSchema,
+  category: idSchema.optional(),
   kind: z.enum(["unit", "building", "item", "resource"]),
   name: z.string().min(1),
   description: z.string(),
@@ -180,6 +181,7 @@ export const actionNames = [
 ] as const;
 export const actionMetaSchema = z
   .object({
+    category: idSchema.optional(),
     name: z.string().min(1),
     description: z.string(),
     icon: idSchema,
@@ -192,11 +194,15 @@ export const actionMetaSchema = z
   .strict();
 export const actionsSchema = z
   .object({
+    categories: z.record(idSchema, actionMetaSchema.omit({ category: true }).extend({
+      parent: idSchema.optional(),
+    })).default({}),
     actions: z.record(z.enum(actionNames), actionMetaSchema),
     overrides: z.record(
       z.string(),
       z
         .object({
+          category: idSchema.nullable().optional(),
           priority: z.number().int().optional(),
           hotkey: z
             .string()

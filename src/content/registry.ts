@@ -312,14 +312,31 @@ export class ContentRegistry {
       }
     }
     const keys = new Set<string>();
-    for (const a of Object.values(this.actions.actions)) {
+    const categoryExists = (id: string | null | undefined) => {
+      if (id && !this.actions.categories[id]) throw new Error(`Unknown command category ${id}`);
+    };
+    for (const [id, category] of Object.entries(this.actions.categories)) {
+      categoryExists(category.parent);
+      const visited = new Set([id]);
+      let parent = category.parent;
+      while (parent) {
+        if (visited.has(parent)) throw new Error(`Command category cycle at ${id}`);
+        visited.add(parent);
+        parent = this.actions.categories[parent]?.parent;
+      }
+    }
+    for (const d of this.definitions) categoryExists(d.category);
+    for (const a of [...Object.values(this.actions.actions), ...Object.values(this.actions.categories)]) {
+      if ("category" in a) categoryExists(a.category);
       this.asset(a.icon);
+      if (this.asset(a.icon).atlasIndex === undefined) throw new Error(`Command icon must use an atlas: ${a.icon}`);
       if (a.hotkey) {
         if (keys.has(a.hotkey)) throw new Error(`Duplicate hotkey ${a.hotkey}`);
         keys.add(a.hotkey);
       }
     }
     for (const [binding, a] of Object.entries(this.actions.overrides)) {
+      categoryExists(a.category);
       const [name, ...target] = binding.split(":");
       if (!["build", "produce"].includes(name) || !this.find(target.join(":")))
         throw new Error(`Invalid action binding ${binding}`);

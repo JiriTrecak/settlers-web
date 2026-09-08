@@ -5,7 +5,9 @@ import {
   commandPage,
   shortcutCommand,
   queueCard,
-  COMMANDS_PER_PAGE,
+  commandMenu,
+  commandPageCount,
+  type CommandEntry,
   costs,
   type CommandBinding,
 } from "../../presentation/commands";
@@ -34,6 +36,8 @@ export class SettlementHud {
   private readonly owner: Owner;
   private current: SettlementView | null = null;
   private bindings: CommandBinding[] = [];
+  private menuEntries: CommandEntry[] = [];
+  private category: string | null = null;
   private commandSignature = "";
   private cardsSignature = "";
   private queueSignature = "";
@@ -64,6 +68,7 @@ export class SettlementHud {
   }
   setSelection(ids: readonly number[]) {
     this.selectedIds = [...new Set(ids)];
+    this.category = null;
     this.page = 0;
     this.clearMode();
     if (this.current) this.update(this.current, true);
@@ -90,7 +95,9 @@ export class SettlementHud {
     )
       return;
     if (e.key === "Escape") {
-      this.clearMode();
+      e.preventDefault();
+      if (this.targeting) this.clearMode();
+      else if (this.category) this.navigate(content.actions.categories[this.category]?.parent ?? null);
       this.tooltips.hide();
       return;
     }
@@ -99,7 +106,8 @@ export class SettlementHud {
       this.hooks.home();
       return;
     }
-    const binding = shortcutCommand(this.bindings, this.page, e.key);
+    const binding = shortcutCommand(this.menuEntries, this.page, e.key) ??
+      this.bindings.find(b => ["move", "attack", "stop"].includes(b.type) && b.hotkey === e.key.toUpperCase());
     if (binding?.enabled) {
       e.preventDefault();
       this.activate(binding);
@@ -160,8 +168,19 @@ export class SettlementHud {
   setMapName(name: string) {
     this.mapLabel.textContent = name;
   }
-  private activate(binding: CommandBinding) {
+  private navigate(category: string | null) {
+    this.category = category;
+    this.page = 0;
+    this.clearMode();
+    this.tooltips.hide();
+    if (this.current) this.update(this.current, true);
+  }
+  private activate(binding: CommandEntry) {
     if (!binding.enabled) return;
+    if ("destination" in binding) {
+      this.navigate(binding.destination);
+      return;
+    }
     if (binding.immediate) {
       this.hooks.action(binding.immediate);
       return;
@@ -185,6 +204,8 @@ export class SettlementHud {
     const filtered = this.selectedIds.filter((id) => valid.has(id));
     if (filtered.length !== this.selectedIds.length) {
       this.selectedIds = filtered;
+      this.category = null;
+      this.page = 0;
       this.clearMode();
     }
     this.root.classList.toggle(
@@ -208,19 +229,22 @@ export class SettlementHud {
       )
     )
       this.clearMode();
+    const menu = commandMenu(this.bindings, this.category, content);
+    this.category = menu.category;
+    this.menuEntries = menu.entries;
     this.page = Math.max(
       0,
       Math.min(
         this.page,
-        Math.ceil(this.bindings.length / COMMANDS_PER_PAGE) - 1,
+        commandPageCount(this.menuEntries) - 1,
       ),
     );
-    const signature = JSON.stringify([this.bindings, this.page]);
+    const signature = JSON.stringify([this.menuEntries, this.page, this.category]);
     if (signature !== this.commandSignature) {
       this.commandSignature = signature;
       this.grid.replaceChildren();
       for (const { binding: b, column, row } of commandPage(
-        this.bindings,
+        this.menuEntries,
         this.page,
       )) {
         const button = document.createElement("button");
@@ -229,6 +253,13 @@ export class SettlementHud {
         button.style.gridColumn = String(column);
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
+        if (b.type === "category") button.setAttribute("aria-haspopup", "true");
+        if (b.type === "back") {
+          const arrow = document.createElement("span");
+          arrow.className = "rts-back-arrow";
+          arrow.textContent = "↶";
+          button.append(arrow);
+        }
         const text = document.createElement("span");
         text.className = "rts-command-name";
         text.textContent = b.name;
@@ -257,7 +288,12 @@ export class SettlementHud {
         this.grid.append(button);
       }
       this.pages.replaceChildren();
-      const pages = Math.ceil(this.bindings.length / COMMANDS_PER_PAGE);
+      if (this.category) {
+        const label = document.createElement("span");
+        label.textContent = content.actions.categories[this.category].name;
+        this.pages.append(label);
+      }
+      const pages = commandPageCount(this.menuEntries);
       if (pages > 1) {
         for (const delta of [-1, 1]) {
           const button = document.createElement("button");

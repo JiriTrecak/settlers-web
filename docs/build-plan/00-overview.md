@@ -2,7 +2,7 @@
 
 **Under the Canopy.** TypeScript + Three.js. Lockstep RTS skeleton.
 
-This folder is **constraints + the next work**. How the match *behaves today* lives in [`docs/game/`](../game/README.md). How it should *look*: [`docs/game/art.md`](../game/art.md).
+This folder records the early infrastructure plan. Its empty-world/player-cube milestones are historical. Current gameplay architecture and extension contracts live in [declarations](../declarations/README.md); those take precedence for the cutover. How the match behaves lives in [game](../game/README.md). How it should look: [art](../game/art.md).
 
 ## Areas
 

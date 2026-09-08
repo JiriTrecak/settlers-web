@@ -283,7 +283,8 @@
         "name": "Build",
         "description": "Place a construction project inside owned territory.",
         "icon": "icon.action.build",
-        "priority": 60
+        "priority": 60,
+        "category": "category.build"
       },
       "produce": {
         "name": "Produce",
@@ -310,7 +311,23 @@
         "priority": 20
       }
     },
-    "overrides": {}
+    "overrides": {},
+    "categories": {
+      "category.build": {
+        "name": "Build",
+        "description": "Open economy and settlement buildings.",
+        "icon": "icon.action.build",
+        "priority": 60,
+        "hotkey": "B"
+      },
+      "category.build-advanced": {
+        "name": "Advanced Build",
+        "description": "Open military and territory buildings.",
+        "icon": "icon.ants.barracks",
+        "priority": 50,
+        "hotkey": "V"
+      }
+    }
   },
   "rules": {
     "id": "declarations-1",
@@ -575,7 +592,7 @@
       "id": "building.ants.fort",
       "kind": "building",
       "name": "Main fort",
-      "description": "Your colony’s heart and warehouse. Losing the bound main fort ends the match.",
+      "description": "Your colony\u2019s heart and warehouse. Losing the bound main fort ends the match.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
       "body": {
@@ -668,12 +685,13 @@
           "workerSlots": 0,
           "queueCapacity": 12
         }
-      }
+      },
+      "category": "category.build-advanced"
     },
     {
       "id": "building.ants.lumberjack",
       "kind": "building",
-      "name": "Lumberjack’s hut",
+      "name": "Lumberjack\u2019s hut",
       "description": "Harvests trees in owned territory. Produces logs for sawmills.",
       "asset": "asset.ants.lumberjack",
       "icon": "icon.ants.lumberjack",
@@ -833,7 +851,7 @@
     {
       "id": "building.ants.stonemason",
       "kind": "building",
-      "name": "Stonemason’s hut",
+      "name": "Stonemason\u2019s hut",
       "description": "Quarries stone deposits in owned territory.",
       "asset": "asset.ants.stonemason",
       "icon": "icon.ants.stonemason",
@@ -975,7 +993,8 @@
         "territory": {
           "radius": 38
         }
-      }
+      },
+      "category": "category.build-advanced"
     },
     {
       "id": "item.log",

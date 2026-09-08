@@ -1,4 +1,5 @@
-# minimap
+# Minimap
 
-Iso diamond. Canvas 2D. View quad is `camera.viewGround` — perspective frustum ∩ ground (wide far, narrow near). Redraws when `camera.rev` or stamps change. Drag calls `onLookAt`.
-The upper-left transparent triangle contains a sun/moon clock with a 24-hour progress ring and HH:MM. Editor and session supply the renderer sky snapshot; clock updates run even when the map canvas is clean. Pointer capture stays on the clipped diamond canvas, leaving the indicator separate from minimap navigation.
+Square Canvas2D overview of the actual square map. Combines terrain/scenery, observed gameplay entities, fog, territory and the camera's ground footprint. Drag pans the camera. Game places the minimap inside the command HUD; Editor uses the same module with authored spawn markers.
+
+Entity ownership and presentation come from definition-backed observation data. Hidden live enemy positions are not a minimap source. The separate clock indicator follows the renderer's environment state.

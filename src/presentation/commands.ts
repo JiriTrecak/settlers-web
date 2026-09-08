@@ -17,6 +17,7 @@ export type CommandBinding = {
   icon: string;
   costs: CostView[];
   priority: number;
+  category?: string;
   hotkey?: string;
   actors: number[];
   targetDefinition?: string;
@@ -24,26 +25,70 @@ export type CommandBinding = {
   reason?: string;
   immediate?: Action;
 };
+export type NavigationBinding = Omit<CommandBinding, "type" | "immediate"> & {
+  type: "category" | "back";
+  destination: string | null;
+};
+export type CommandEntry = CommandBinding | NavigationBinding;
+
+/** Local presentation navigation; these entries never become simulation commands. */
+export function commandMenu(
+  bindings: readonly CommandBinding[],
+  category: string | null,
+  registry: ContentRegistry,
+): { category: string | null; entries: CommandEntry[] } {
+  const categories = registry.actions.categories;
+  const populated = new Set<string>();
+  for (const binding of bindings) {
+    let id = binding.category;
+    while (id) {
+      populated.add(id);
+      id = categories[id]?.parent;
+    }
+  }
+  if (category && !populated.has(category)) category = null;
+  const entries: CommandEntry[] = bindings.filter(b => (b.category ?? null) === category);
+  for (const [id, meta] of Object.entries(categories)) {
+    if ((meta.parent ?? null) !== category || !populated.has(id)) continue;
+    entries.push({ ...meta, id: `category:${id}`, type: "category", destination: id,
+      costs: [], actors: [], enabled: true });
+  }
+  entries.sort((a, b) => b.priority - a.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  if (category) entries.unshift({
+    id: "navigation:back", type: "back", destination: categories[category].parent ?? null,
+    name: "Back", description: "Return to the previous command category. Escape also goes back.",
+    icon: registry.actions.actions.cancel.icon, costs: [], actors: [], priority: 0, enabled: true,
+  });
+  return { category, entries };
+}
 export const COMMANDS_PER_PAGE = 12;
-export function commandPage(bindings: readonly CommandBinding[], page: number) {
-  return bindings
-    .slice(page * COMMANDS_PER_PAGE, (page + 1) * COMMANDS_PER_PAGE)
+export function commandPage(bindings: readonly CommandEntry[], page: number) {
+  const back = bindings.find(b => b.type === "back");
+  const rest = bindings.filter(b => b.type !== "back");
+  const size = COMMANDS_PER_PAGE - (back ? 1 : 0);
+  const slots = rest.slice(page * size, (page + 1) * size)
     .map((binding, i) => ({
       binding,
       column: 4 - (i % 4),
       row: 1 + Math.floor(i / 4),
     }));
+  if (back) slots.push({ binding: back, column: 1, row: 3 });
+  return slots;
+}
+export function commandPageCount(bindings: readonly CommandEntry[]) {
+  const back = bindings.some(b => b.type === "back") ? 1 : 0;
+  return Math.max(1, Math.ceil((bindings.length - back) / (COMMANDS_PER_PAGE - back)));
 }
 export function shortcutCommand(
-  bindings: readonly CommandBinding[],
+  bindings: readonly CommandEntry[],
   page: number,
   key: string,
 ) {
-  return bindings.find(
-    (b, i) =>
+  return [...commandPage(bindings, page).map(s => s.binding), ...bindings.filter(b =>
+    ["move", "attack", "stop"].includes(b.type))].find(
+    (b) =>
       b.hotkey === key.toUpperCase() &&
-      (["move", "attack", "stop"].includes(b.type) ||
-        Math.floor(i / COMMANDS_PER_PAGE) === page),
+      b.type !== "back",
   );
 }
 /** A queue belongs to the focused workplace; inspection need not grant cancellation. */
@@ -148,6 +193,7 @@ export function commandCard(
       costs: target ? costs(registry, target.id) : [],
       priority: override?.priority ?? meta.priority,
       hotkey: override?.hotkey ?? meta.hotkey,
+      category: override?.category === null ? undefined : override?.category ?? target?.category ?? meta.category,
       actors: actors.map((e) => e.id),
       targetDefinition,
       enabled: !view.outcome,

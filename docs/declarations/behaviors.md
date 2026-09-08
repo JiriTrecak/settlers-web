@@ -6,7 +6,7 @@ Every definition has `id`, `kind`, `name`, `description`, `asset`, `icon`, and r
 
 Items declare `stackLimit`; resources declare `yield` and optionally `regrowthTicks`. `hero` is metadata on units only. No inventory/progression mechanic is implied. `selectable` controls selection; `selectionClass` selects army or worker priority for area selection.
 
-The `asset` record selects a model file, optional carry model, scale, HP-bar height, stockpile spacing, and (for batched resources) an explicit scenery catalogue asset. `icon` selects an atlas entry. Asset names never confer gameplay capabilities.
+The `asset` record selects a project-relative model file, optional carry model, scale, HP-bar height, stockpile spacing, and (for batched resources) an explicit scenery catalogue asset. `icon` selects an atlas entry. Model and icon roles are validated; build/content-save also check model files and scenery catalogue links. Resource models are batched through the scenery adapter. Asset names never confer gameplay capabilities.
 
 ## Composed capabilities
 
@@ -36,8 +36,18 @@ These are native verbs. Adding a new building that uses an existing verb is cont
 
 ## Actions and command cards
 
-Action metadata defines name, description, icon, priority and optional hotkey. Targeted build/produce bindings use the output's name, description, icon and price. Overrides keyed by `build:<definition>` or `produce:<definition>` may change priority/hotkey.
+Action metadata defines name, description, icon, priority and optional hotkey. Targeted build/produce bindings use the output's name, description, icon and price. Overrides keyed by `build:<definition>` or `produce:<definition>` may change priority/hotkey/category.
 
 Bindings sort by descending priority, then ordinal binding ID. The adapter fills top-right first, across four columns and three rows, then another page. Disabled bindings retain position. Move/Attack/Stop shortcuts are semantic; target-specific shortcuts apply to the visible page. Duplicate shortcuts fail validation.
 
-A focused building shows that building's workplace actions. Mixed units contribute only eligible actors to each binding; area selection prefers owned army units over workers. Unknown/enemy/remembered entities provide inspection data without private command cards.
+A focused building shows that building's workplace actions. Mixed units contribute only eligible actors to each binding; area selection prefers owned army units over workers. Unknown/enemy/remembered entities provide inspection data without private command cards. Queue cancellation is also a projected permission: removing playerControl leaves an owned queue inspectable but cannot leave active cancel buttons behind.
+
+## Command categories
+
+`actions.categories` declares named menus keyed by persistent IDs. Each has `name`, `description`, `icon`, `priority`, optional `hotkey`, and optional `parent` category ID. Menus appear only when eligible selected actors have commands within them (including descendants). A category does not grant a capability or unlock a building.
+
+An optional `category` on action metadata supplies the default grouping. An output definition's optional `category` overrides it for build/produce commands. A binding override's `category` takes precedence over both; explicit `null` there puts the command at the root. Ungrouped commands appear at the root. This is presentation metadata, independent of construction/production mechanics.
+
+The initial worker card uses Build (B) for economy buildings and Advanced Build (V) for Barracks and Watchtower. Build is the action default; the two advanced building definitions override it. These are sibling menus; assigning `parent` creates a submenu without changing renderer or simulation code. Registry validation rejects unknown categories, cycles, invalid icons and duplicate declared shortcuts.
+
+`commandCard` discovers executable bindings; `commandMenu` projects those into the current category and local navigation entries. Opening a category and Back never enter the multiplayer command queue. Higher priority still fills from the top-right. Each submenu page reserves bottom-left for Back, leaving eleven content slots. Empty/stale categories return to the root. Selection changes reset navigation; regular simulation updates preserve it. Escape cancels targeting first, then returns to the parent. Move/Attack/Stop shortcuts remain usable within categories; other shortcuts operate on the visible page only.

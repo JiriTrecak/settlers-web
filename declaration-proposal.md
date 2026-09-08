@@ -100,8 +100,8 @@ Existing save-envelope types and visibility snapshot methods provide pieces of p
 
 ### Source anchors reviewed
 
-- [Gameplay definitions](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/shared/settlement/rules.ts>)
-- [Simulation and jobs](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/sim/settlement/settlement.ts>)
+- Gameplay definitions: the old rules table was replaced by [content/game.json](content/game.json).
+- Simulation and jobs: the old Settlement class was replaced by [native systems](docs/declarations/systems.md).
 - [Action validation](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/shared/types/types.ts>)
 - [Tick and command ordering](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/sim/world/world.ts>)
 - [Current HUD](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/ui/settlement/settlementHud.ts>)

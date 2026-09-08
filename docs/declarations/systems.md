@@ -4,7 +4,7 @@
 
 `Game` orchestrates `GameContext`, `Spatial`, `Economy`, `Combat`, and `Observation`. The authoritative state schema is in `src/sim/game/state.ts`. Entity, work, claim, queue, and fact IDs use monotonic counters. Expanded map placements instantiate in ordinal authored-ID order. Random UUIDs are permitted while authoring maps, never during simulation.
 
-World applies committed commands, queues deterministic AI intentions for the following tick, then advances the game once. Each fixed 25 ms step runs:
+World requires a loaded map and one authored start for each participant slot. Slots are sorted metadata, not extra world entities. World applies committed commands, queues deterministic AI intentions for the following tick, then advances the game once. Each fixed 25 ms step runs:
 
 1. Assign claims, deliveries and ready work.
 2. Plan orders/pathfinding and move units with integer movement credit.
@@ -18,9 +18,11 @@ New/completed output becomes eligible on the following tick. Performance timesta
 
 An item exists in a store, a carrier's cargo, or a loose ground entity. Claims reserve quantities and capacity; they are not goods and are not refunds. Construction reserves the full bill before placing a site, delivers it physically, and consumes it on completion. Construction HP growth adds only newly supported health, preserving damage already taken. Repairs currently cost time only.
 
-Queued producers protect the head entry's complete bill before prefetched tail materials. At most two entries request input. Queue IDs remain stable when another entry is removed. Output capacity accounts for both current inventory and outstanding arrivals.
+Queued producers protect the head entry's complete bill before prefetched tail materials. At most two entries request input. While a cycle is active, its successor's prefetched goods remain protected from surplus export. Queue IDs remain stable when another entry is removed. Output capacity accounts for both current inventory and outstanding arrivals.
 
 Any available worker can carry. An employed worker between production cycles can carry its own next input. An unfinished manual craft/plant interruption discards only work progress; input is not consumed early. A worker already carrying first finishes a legal handoff before following its pending manual movement. If no store can accept the load, it retains the cargo and retries.
+
+Units occupy navigation cells. Opposing allied traffic yields deterministically: the higher-ID actor tries a legal cardinal sidestep while the lower-ID actor retains priority. Blocked routes retry rather than completing remote handoffs. A failed route for one worker cannot mark every other worker unavailable.
 
 Recruitment contains one real settler; there is no separate virtual population token. Completion atomically checks deployment space, consumes inputs, transforms that settler, and removes its queue entry. A blocked exit retains the settler and materials. Cancellation/destruction releases the settler or records a pending release until space exists. Death records inventory/cargo losses explicitly. Cancelled construction releases reservations and exposes delivered goods as loose physical stacks.
 
@@ -36,7 +38,7 @@ Knowledge has three states: unexplored, explored, visible. Terrain and scenery r
 
 ## Persistence and determinism
 
-Game snapshots contain authoritative entities, orders/routes, movement credit, employment, jobs, claims, queues, production progress, cargo, pending release/movement, growth, accounting, objective/outcome state, and every player's memories. They require current schema, simulation-build identity, canonical content fingerprint and map fingerprint. World adds clock/RNG and future AI intentions. Transport state separately preserves committed but unapplied inputs.
+Game snapshots contain authoritative entities, orders/routes, movement credit, employment, jobs, claims, queues, production progress, cargo, pending release/movement, growth, accounting, objective/outcome state, and every player's memories. They require current schema, simulation-build identity, canonical content fingerprint and map fingerprint. World adds clock/RNG, slot/team identity and future AI intentions. Transport state separately preserves committed but unapplied inputs, room-held bundles and unsent local outboxes. Singleplayer's Save/Load buttons use this complete snapshot in the same map revision.
 
 Checkpoint checksums use a streaming state digest; fog typed arrays are traversed directly rather than expanded into JSON arrays on each checkpoint. Save serialization remains ordinary JSON. Presentation views are never save files. Incompatible or invalid saves fail before committing a replacement state.
 

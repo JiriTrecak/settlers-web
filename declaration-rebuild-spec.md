@@ -1,10 +1,10 @@
 # Declaration rebuild: review specification
 
-**Status:** Design for review. No game implementation changes yet.  
+**Status:** Approved design, implemented in the declarative cutover. The [implementation reference](docs/declarations/README.md) records exact current fields and refinements (including atomic single-document JSON authoring). This document preserves the reviewed design rationale.
 **Date:** 8 September 2026.  
 **Companion:** [Production and work](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/production-and-work-spec.md>).
 
-**Scenario review:** [Findings and acceptance cases](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/declaration-scenario-review.md>). The clarifications from that review are incorporated below as proposed implementation contracts, not claims about the current engine.
+**Scenario review:** [Findings and acceptance cases](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/declaration-scenario-review.md>). Executable coverage and integration checks are listed in [validation](docs/declarations/validation.md).
 
 This specification supersedes the implementation approach in `declaration-proposal.md`. That document remains a record of the first discussion; where it differs, use this specification and its companion.
 

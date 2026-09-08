@@ -83,9 +83,6 @@ export class Session {
     this.renderer?.gamePreview(kind, x, z, !error);
     this.economyHud?.placement(error);
   };
-  private readonly onKey = (e: KeyboardEvent) => {
-    if (e.key === "Escape") this.economyHud?.clearMode();
-  };
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -146,6 +143,7 @@ export class Session {
       onChanged: () => this.present(),
       rts: true,
       onClick: (x, y, shift) => this.click(x, y, shift),
+      onRightClick: (x, y) => this.click(x, y, false, true),
       onSelectArea: (rect, shift) => {
         const hud = this.economyHud,
           state = this.world?.settlement?.view(this.me);
@@ -177,7 +175,6 @@ export class Session {
     });
     this.economyHud.setMapName(map.name);
     this.canvas.addEventListener("pointermove", this.onHover);
-    window.addEventListener("keydown", this.onKey);
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
       clock: () => renderer.sky.snapshot(),
@@ -450,10 +447,14 @@ export class Session {
   private send(action: Action) {
     this.locksteps.get(this.me)?.send(action);
   }
-  private click(clientX: number, clientY: number, shift = false) {
+  private click(clientX: number, clientY: number, shift = false, right = false) {
     const sim = this.world?.settlement,
       hit = this.renderer?.pickGround(clientX, clientY),
       hud = this.economyHud;
+    if (right && hud?.targeting) {
+      hud.clearMode();
+      return;
+    }
     if (!sim || !hit || !hud) return;
     const x = Math.round(hit.x),
       z = Math.round(hit.z);
@@ -537,7 +538,7 @@ export class Session {
     }
     if (target) {
       if (
-        army.length &&
+        right && army.length &&
         target.owner !== owner &&
         target.owner !== "none" &&
         !target.remembered &&
@@ -551,7 +552,7 @@ export class Session {
         return;
       }
       if (
-        army.length &&
+        right && army.length &&
         target.owner === "none" &&
         target.unit &&
         !target.remembered &&
@@ -564,6 +565,10 @@ export class Session {
         });
         return;
       }
+      if (right) {
+        if (selected.length) this.send({ type: "move", actors: selected.map(e => e.id), destination: position });
+        return;
+      }
       if (shift && target.owner === owner && target.unit) {
         const ids = selected.map((e) => e.id);
         hud.setSelection(
@@ -574,13 +579,13 @@ export class Session {
       } else hud.selected = target.id;
       return;
     }
-    if (selected.length)
+    if (right && selected.length)
       this.send({
         type: "move",
         actors: selected.map((e) => e.id),
         destination: position,
       });
-    else if (!shift) hud.selected = null;
+    else if (!right && !shift) hud.selected = null;
   }
 
   stop(): void {
@@ -588,7 +593,6 @@ export class Session {
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.confirmTimer = null;
     this.canvas.removeEventListener("pointermove", this.onHover);
-    window.removeEventListener("keydown", this.onKey);
     this.economyHud?.destroy();
     this.economyHud = null;
     this.input?.destroy();

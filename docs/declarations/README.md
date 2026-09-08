@@ -17,13 +17,13 @@ The implementation uses one JSON document rather than the proposed file per defi
 - `src/render/settlement/settlementLayer.ts`: observed-entity model adapter.
 - `src/editor/world/entityAuthoring.ts`: transactional map entity editing.
 
-The old Settlement simulation, gameplay rule tables, role dispatch, asset-name resource inference, and action payloads have been removed. The previous map format is rejected; retained maps are authored in the current format. Pathfinding, networking, camera, terrain and rendering infrastructure are reused.
+The old Settlement simulation, gameplay rule tables, role dispatch, asset-name resource inference, action payloads, player cubes and mapless World path have been removed. The previous map format is rejected; retained maps are authored in the current format. The old compose/mosswater/neutral-stamp generators were retired so they cannot overwrite the authored source with an incompatible format. Blender asset-generation scripts remain. Pathfinding, networking, camera, terrain and rendering infrastructure are reused.
 
 ## Author workflow
 
 1. Open Editor → Entities. Choose Units, Buildings, Items, or Resources and an owner. Click terrain to place. Neutral-defense definitions create a camp record at placement time.
 2. Use Select to drag an entity. R rotates; Delete removes it. The entity inspector edits its initial state, such as `{ "health": 35 }` or `{ "quantity": 3 }`. These values belong to the instance, not its definition.
-3. Undo/Redo in the entity inspector restores authored map records, including related camps. Setup members are moved together using the Spawn tool.
+3. Undo/Redo in the entity inspector restores entities, camps and spawn records; later terrain, scenery and lighting edits remain intact. Setup members are moved together using the Spawn tool.
 4. Entities → Edit definitions opens a separate content draft. Name, description, HP, and armor have fields; the JSON pane exposes the complete category. Apply Draft checks the full graph. Save writes `content/game.json` through the local development server after validating retained map references. A stale disk revision or invalid graph leaves the previous source intact.
 5. Content changes apply to newly loaded matches. Never hot-patch an active deterministic simulation. A changed fingerprint intentionally rejects incompatible saves/multiplayer revisions.
 
@@ -35,4 +35,4 @@ Duplicate the warrior definition, assign a new ID, change name/stats/art/price, 
 
 `tests/game/content.test.ts` exercises this end to end, including recruitment and tooltip costs. If a proposed addition needs an identity check such as `definition === 'unit.ants.new-unit'` in a system, revisit whether a genuine new capability is needed.
 
-Continue with [behavior reference](behaviors.md), [native systems](systems.md), and [validation and acceptance](validation.md).
+Continue with [behavior reference](behaviors.md), [worked JSON examples](examples.md), [native systems](systems.md), and [validation and acceptance](validation.md).

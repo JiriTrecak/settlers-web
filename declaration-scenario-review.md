@@ -1,7 +1,7 @@
 # Declaration architecture: scenario review
 
 **Date:** 8 September 2026.  
-**Scope:** Review before implementation. No game code changed and no rebuilt-runtime tests have run.  
+**Scope:** Historical review before implementation. The implementation now has executable scenario coverage and integration checks recorded in [validation](docs/declarations/validation.md). The assessments below describe what the review established, not a substitute for those test results.
 **Authoritative specifications:** [Rebuild](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/declaration-rebuild-spec.md>) and [production/work](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/production-and-work-spec.md>).
 
 ## Verdict
@@ -16,10 +16,10 @@ The material gaps were workforce deadlocks, storage prefetch, building command a
 
 I traced the declared model through opening economy, military recruitment, disruption, combat/fog, editor authoring, and multiplayer restoration. I also inspected the existing selection, military/economy, save envelope, and checksum code to check that the replacement covers real current workflows rather than only hypothetical examples:
 
-- [Military and camp behavior](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/sim/settlement/military.md>) documents the current opening, queueing, manual cargo orders, neutral leash, and free repair.
-- [Current simulation](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/sim/settlement/settlement.ts>) distinguishes routes/checksum state from its presentation view. The new save model must preserve that distinction.
+- The former military/camp notes informed opening, queueing, cargo orders, neutral leash and free repair. Their replacement is [current gameplay](docs/game/README.md).
+- The former Settlement simulation distinguished routes/checksum state from its presentation view. Its replacement is [Game](src/sim/game/game.ts), preserving that separation.
 - [Current save envelope](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/shared/save/save.ts>) includes committed but unapplied commands. Rewriting the simulation must not discard that network requirement.
-- [Selection](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/src/shared/settlement/selection.ts>) currently filters training settlers and favors soldiers. The new capability model needs both of those behaviors without role-name checks.
+- The former selection helper filtered training settlers and favored soldiers. Its replacement is [presentation commands](src/presentation/commands.ts), using capabilities rather than role-name checks.
 
 The historical `declaration-proposal.md` is now explicitly marked superseded, so its staged migration, TypeScript authoring, and portrait scope cannot be mistaken for the approved direction.
 

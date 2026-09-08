@@ -1,15 +1,13 @@
-# src
+# Source boundaries
 
-Game code.
+- `content/`: JSON schemas, immutable registry and map expansion.
+- `sim/`: authoritative systems, fixed tick, save/restore and player observation.
+- `presentation/`: renderer-neutral commands, queue controls and authored scenery projection.
+- `session/`: commits, input, World and adapters for one match.
+- `editor/`: map and content authoring through the same definitions.
+- `render/`: Three.js scene, camera, models, terrain and fog.
+- `ui/`: HTML widgets and command-HUD adapter.
+- `app/`: screen lifecycle, canvas and frame ticker.
+- `shared/`: map, transport, assets and environment types.
 
-| Folder | Owns |
-|---|---|
-| `app/` | Canvas + `ScreenHost`. `PlayScreen` holds the session. `EditorScreen` holds the editor. |
-| `editor/` | World editor view. Same `Renderer` as play. No Session. |
-| `session/` | One match. Lives inside `PlayScreen`. |
-| `sim/` | Deterministic world state. No Three.js. |
-| `render/` | Three.js drawing. Reads sim views, never mutates them. |
-| `ui/` | DOM widgets (HUD, lobby). Closed boundaries. |
-| `shared/` | Grid + match + wire types |
-
-Rule: a top-level folder's root contains only `index.ts` (public re-exports) and `index.md`. Everything else is a named subfolder with its own `*.md`.
+Use [the implementation reference](../docs/declarations/README.md) when extending gameplay. Keep the simulation independent of DOM, networking and rendering. New entity variants belong in JSON; new mechanics belong in explicit native systems.

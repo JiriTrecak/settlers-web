@@ -1,0 +1,8 @@
+*.blend1
+*.blend2
+*.log
+**/.render-*.png
+**/.render-*.glb
+**/.render-*.json
+**/.state-*.json
+**/__pycache__/

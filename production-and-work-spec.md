@@ -1,6 +1,6 @@
 # Production and work: target costs, workplace capabilities
 
-**Status:** Proposed contracts for review, not an implemented API.  
+**Status:** Approved design, implemented by the declarative cutover. Use the [behavior reference](docs/declarations/behaviors.md) and [system contracts](docs/declarations/systems.md) for exact current API fields. This document preserves the design rationale.
 **Date:** 8 September 2026.  
 **Parent:** [Declaration rebuild specification](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/declaration-rebuild-spec.md>).
 
