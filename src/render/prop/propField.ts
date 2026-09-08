@@ -1,4 +1,5 @@
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
+import { prepareAntMaterials } from './antMaterials';
 import { prototypeGroundOffset } from './grounding';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
@@ -186,6 +187,7 @@ export class PropField {
   private async load(url: string, asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
     try {
       const gltf = await this.loader.loadAsync(url);
+      if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
       if(/^(pine-chunky|tree-chunky-)/.test(asset))prepareVividFoliage(gltf.scene);
       if (url.includes("synty") || asset.startsWith("synty-") || asset === "river-reeds") flattenPolygon(gltf.scene, asset,variant);
       gltf.scene.traverse((node) => {

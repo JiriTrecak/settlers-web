@@ -1,0 +1,47 @@
+[
+  {
+    "id": "pine-1",
+    "parts": 1147,
+    "faces": 4910
+  },
+  {
+    "id": "pine-2",
+    "parts": 1147,
+    "faces": 4910
+  },
+  {
+    "id": "pine-3",
+    "parts": 1147,
+    "faces": 4910
+  },
+  {
+    "id": "fern",
+    "parts": 225,
+    "faces": 1386
+  },
+  {
+    "id": "broadleaf",
+    "parts": 16,
+    "faces": 240
+  },
+  {
+    "id": "grass",
+    "parts": 28,
+    "faces": 112
+  },
+  {
+    "id": "rock",
+    "parts": 2,
+    "faces": 81
+  },
+  {
+    "id": "lily",
+    "parts": 4,
+    "faces": 48
+  },
+  {
+    "id": "reeds",
+    "parts": 19,
+    "faces": 106
+  }
+]

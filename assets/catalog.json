@@ -903,49 +903,189 @@
       "name": "Main fort",
       "category": "landmark",
       "type": "prop",
-      "file": "props/settlement/fort.glb"
+      "file": "ant-colony/fort.glb"
     },
     {
       "id": "lumberjack-hut",
       "name": "Lumberjack hut",
       "category": "other",
       "type": "prop",
-      "file": "props/settlement/lumberjack.glb"
+      "file": "ant-colony/lumberjack.glb"
     },
     {
       "id": "sawmill",
       "name": "Sawmill",
       "category": "other",
       "type": "prop",
-      "file": "props/settlement/sawmill.glb"
+      "file": "ant-colony/sawmill.glb"
     },
     {
       "id": "forester-lodge",
       "name": "Forester lodge",
       "category": "other",
       "type": "prop",
-      "file": "props/settlement/forester.glb"
+      "file": "ant-colony/forester.glb"
     },
     {
       "id": "item-log",
       "name": "Log",
       "category": "resource",
       "type": "prop",
-      "file": "props/settlement/item-log.glb"
+      "file": "ant-colony/item-log.glb"
     },
     {
       "id": "item-plank",
       "name": "Plank",
       "category": "resource",
       "type": "prop",
-      "file": "props/settlement/item-plank.glb"
+      "file": "ant-colony/item-plank.glb"
     },
     {
       "id": "item-stone",
       "name": "Dressed stone",
       "category": "resource",
       "type": "prop",
-      "file": "props/settlement/item-stone.glb"
+      "file": "ant-colony/item-stone.glb"
+    },
+    {
+      "id": "ant-fort",
+      "name": "Ant colony \u00b7 Fort",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/fort.glb"
+    },
+    {
+      "id": "ant-lumberjack",
+      "name": "Ant colony \u00b7 Lumberjack",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/lumberjack.glb"
+    },
+    {
+      "id": "ant-sawmill",
+      "name": "Ant colony \u00b7 Sawmill",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/sawmill.glb"
+    },
+    {
+      "id": "ant-forester",
+      "name": "Ant colony \u00b7 Forester",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/forester.glb"
+    },
+    {
+      "id": "ant-worker",
+      "name": "Ant colony \u00b7 Worker",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/worker.glb"
+    },
+    {
+      "id": "ant-guard",
+      "name": "Ant colony \u00b7 Guard",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/guard.glb"
+    },
+    {
+      "id": "ant-item-log",
+      "name": "Ant colony \u00b7 Item Log",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/item-log.glb"
+    },
+    {
+      "id": "ant-item-plank",
+      "name": "Ant colony \u00b7 Item Plank",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/item-plank.glb"
+    },
+    {
+      "id": "ant-item-stone",
+      "name": "Ant colony \u00b7 Item Stone",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/item-stone.glb"
+    },
+    {
+      "id": "ant-log-stack",
+      "name": "Ant colony \u00b7 Log Stack",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/log-stack.glb"
+    },
+    {
+      "id": "ant-plank-stack",
+      "name": "Ant colony \u00b7 Plank Stack",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/plank-stack.glb"
+    },
+    {
+      "id": "ant-pine-1",
+      "name": "Ant colony \u00b7 Pine 1",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/pine-1.glb"
+    },
+    {
+      "id": "ant-pine-2",
+      "name": "Ant colony \u00b7 Pine 2",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/pine-2.glb"
+    },
+    {
+      "id": "ant-pine-3",
+      "name": "Ant colony \u00b7 Pine 3",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/pine-3.glb"
+    },
+    {
+      "id": "ant-fern",
+      "name": "Ant colony \u00b7 Fern",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/fern.glb"
+    },
+    {
+      "id": "ant-broadleaf",
+      "name": "Ant colony \u00b7 Broadleaf",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/broadleaf.glb"
+    },
+    {
+      "id": "ant-grass",
+      "name": "Ant colony \u00b7 Grass",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/grass.glb"
+    },
+    {
+      "id": "ant-rock",
+      "name": "Ant colony \u00b7 Rock",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/rock.glb"
+    },
+    {
+      "id": "ant-lily",
+      "name": "Ant colony \u00b7 Lily",
+      "category": "water",
+      "type": "water",
+      "file": "ant-colony/lily.glb"
+    },
+    {
+      "id": "ant-reeds",
+      "name": "Ant colony \u00b7 Reeds",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/reeds.glb"
     }
   ]
 }

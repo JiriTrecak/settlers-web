@@ -160,12 +160,12 @@ export class Sky {
     this.sun.color.copy(look.sun);
     this.sun.intensity = look.sunI;
     const daylight = Math.min(1, Math.max(0, Math.sin((this.hour - 6) / 12 * Math.PI) * 3));
-    this.sun.intensity *= 1 + .90 * daylight;
-    this.ambient.color.copy(look.amb).lerp(new Color(0x0094ff),.12 + .83 * daylight);
-    this.ambient.intensity = 1.05 - .20 * daylight;
-    this.hemi.color.copy(look.hemi).lerp(new Color(0x64c7ff),.2 + .5 * daylight);
-    this.hemi.groundColor.copy(look.ground).lerp(new Color(0x36877d),.15 + .4 * daylight);
-    this.hemi.intensity = .85 - .40 * daylight;
+    // Neutral sky fill lets the authored Forest palette control the scene.
+    this.ambient.color.copy(look.amb);
+    this.ambient.intensity = look.ambI;
+    this.hemi.color.copy(look.hemi);
+    this.hemi.groundColor.copy(look.ground);
+    this.hemi.intensity = .55;
     this.bg.copy(look.bg);
     this.scene.background = this.bg;
     const tint=new Color();

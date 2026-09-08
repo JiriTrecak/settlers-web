@@ -1,0 +1,57 @@
+[
+  {
+    "id": "fort",
+    "parts": 707,
+    "faces": 9666
+  },
+  {
+    "id": "lumberjack",
+    "parts": 465,
+    "faces": 5653
+  },
+  {
+    "id": "sawmill",
+    "parts": 369,
+    "faces": 4573
+  },
+  {
+    "id": "forester",
+    "parts": 233,
+    "faces": 4038
+  },
+  {
+    "id": "worker",
+    "parts": 35,
+    "faces": 1120
+  },
+  {
+    "id": "guard",
+    "parts": 37,
+    "faces": 1154
+  },
+  {
+    "id": "item-log",
+    "parts": 7,
+    "faces": 83
+  },
+  {
+    "id": "item-plank",
+    "parts": 3,
+    "faces": 38
+  },
+  {
+    "id": "item-stone",
+    "parts": 1,
+    "faces": 26
+  },
+  {
+    "id": "log-stack",
+    "parts": 63,
+    "faces": 747
+  },
+  {
+    "id": "plank-stack",
+    "parts": 36,
+    "faces": 456
+  }
+]

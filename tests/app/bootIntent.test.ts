@@ -25,8 +25,8 @@ describe("parseBootIntent", () => {
     expect(parseBootIntent("?color=99").player).toBe(7);
   });
 
-  it("prefers ?map= over ?screen=", () => {
+  it("opens an explicit editor document instead of starting a match", () => {
     expect(parseBootIntent("?screen=single&map=peak")).toEqual({ kind: "play", mapId: "peak" });
-    expect(parseBootIntent("?screen=editor&map=grid")).toEqual({ kind: "play", mapId: "grid" });
+    expect(parseBootIntent("?screen=editor&map=grid")).toEqual({ kind: "editor", mapId: "grid" });
   });
 });

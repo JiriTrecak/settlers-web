@@ -35,9 +35,9 @@ import waterNormalUrl from "../../../assets/synty/tex/Water_Normal.png?url";
 const SINK = 0.03;
 
 /** Water_01.mat — Shader Graph underscored names. */
-const SHALLOW = new Vector3(0.32, 1.10, 1.50);
-const DEEP = new Vector3(0.10, 0.62, 0.66);
-const FOAM = new Vector3(1.00, 0.98, 0.80);
+const SHALLOW = new Vector3(0.18, 0.23, 0.21);
+const DEEP = new Vector3(0.035, 0.065, 0.075);
+const FOAM = new Vector3(0.64, 0.67, 0.59);
 
 type WaterUniforms = {
   uShadowStrength:IUniform<number>;

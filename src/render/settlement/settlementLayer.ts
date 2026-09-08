@@ -1,4 +1,5 @@
 import { TerritoryPosts } from "./territoryPosts";
+import { prepareAntMaterial } from '../prop/antMaterials';
 import {
   Group,
   Object3D,
@@ -18,32 +19,32 @@ import type { SettlementView } from "../../sim/settlement/settlement";
 import { stockpileLayout } from "../../shared/settlement/stockpile";
 import type { ItemKind, ItemStock } from "../../shared/settlement/rules";
 const urls = {
-  fort: new URL("../../../assets/props/settlement/fort.glb", import.meta.url)
+  fort: new URL("../../../assets/ant-colony/fort.glb", import.meta.url)
     .href,
   sawmill: new URL(
-    "../../../assets/props/settlement/sawmill.glb",
+    "../../../assets/ant-colony/sawmill.glb",
     import.meta.url,
   ).href,
   forester: new URL(
-    "../../../assets/props/settlement/forester.glb",
+    "../../../assets/ant-colony/forester.glb",
     import.meta.url,
   ).href,
   "item-log": new URL(
-    "../../../assets/props/settlement/item-log.glb",
+    "../../../assets/ant-colony/item-log.glb",
     import.meta.url,
   ).href,
   "item-plank": new URL(
-    "../../../assets/props/settlement/item-plank.glb",
+    "../../../assets/ant-colony/item-plank.glb",
     import.meta.url,
   ).href,
   "item-stone": new URL(
-    "../../../assets/props/settlement/item-stone.glb",
+    "../../../assets/ant-colony/item-stone.glb",
     import.meta.url,
   ).href,
   tower: new URL("../../../assets/props/settlement/tower.glb", import.meta.url)
     .href,
   lumberjack: new URL(
-    "../../../assets/props/settlement/lumberjack.glb",
+    "../../../assets/ant-colony/lumberjack.glb",
     import.meta.url,
   ).href,
   stonemason: new URL(
@@ -53,7 +54,7 @@ const urls = {
   house: new URL("../../../assets/props/settlement/house.glb", import.meta.url)
     .href,
   settler: new URL(
-    "../../../assets/props/settlement/settler.glb",
+    "../../../assets/ant-colony/worker.glb",
     import.meta.url,
   ).href,
 };
@@ -130,7 +131,8 @@ export class SettlementLayer {
           : [child.material];
         const copies = materials.map((mat) => {
           const m = mat.clone();
-          if (m instanceof MeshStandardMaterial && m.name === "UTC Team color")
+          if(m instanceof MeshStandardMaterial)prepareAntMaterial(m);
+          if (m instanceof MeshStandardMaterial && (m.name === "UTC Team color" || m.name === "Ant faction red"))
             m.color.set(PLAYER_COLORS[owner % PLAYER_COLORS.length]!);
           return m;
         });

@@ -7,7 +7,7 @@ import { clampPlayer } from "../../shared";
 export type BootIntent =
   | { kind: "menu"; player?: number }
   | { kind: "single"; player?: number }
-  | { kind: "editor"; player?: number }
+  | { kind: "editor"; mapId?: string; player?: number }
   | { kind: "play"; mapId: string; player?: number };
 
 export function parseBootIntent(search = window.location.search): BootIntent {
@@ -15,8 +15,8 @@ export function parseBootIntent(search = window.location.search): BootIntent {
   const colorRaw = q.get("color");
   const player = colorRaw !== null && colorRaw !== "" ? clampPlayer(Number(colorRaw)) : undefined;
   const mapId = q.get("map")?.trim();
+  if (q.get("screen") === "editor") return {kind:'editor',...(mapId?{mapId}:{}),...(player!==undefined?{player}:{})};
   if (mapId) return player === undefined ? { kind: "play", mapId } : { kind: "play", mapId, player };
-  if (q.get("screen") === "editor") return player === undefined ? { kind: "editor" } : { kind: "editor", player };
   if (q.get("screen") === "single") return player === undefined ? { kind: "single" } : { kind: "single", player };
   return player === undefined ? { kind: "menu" } : { kind: "menu", player };
 }

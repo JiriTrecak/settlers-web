@@ -1,4 +1,5 @@
 import { FogOfWar } from "../visibility/fogOfWar";
+import { forestEnvironment } from '../sky/forestEnvironment';
 import { SettlementLayer } from '../settlement/settlementLayer';
 import type { BuildingKind } from '../../shared/settlement/rules';
 import { environmentPreset, PRESET_KEY } from '../../shared/environment/presets';
@@ -42,6 +43,7 @@ const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 export class Renderer {
   readonly camera = new Camera();
   private readonly display: Display;
+  private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
   private readonly ortho = new OrthographicCamera();
   private readonly persp = new PerspectiveCamera();
@@ -89,6 +91,9 @@ export class Renderer {
 
   constructor(canvas: HTMLCanvasElement, assets: ReadonlyMap<string, string> = new Map()) {
     this.display = new Display(canvas, () => this.present());
+    this.reflections=forestEnvironment(this.display.gl);
+    this.scene.environment=this.reflections.texture;
+    this.scene.environmentIntensity=.75;
     this.props = new PropField(this.scene, assets);
     this.brush = new BrushLayer(this.scene);
     this.sky = new Sky(this.scene);
@@ -332,6 +337,7 @@ export class Renderer {
     window.removeEventListener("utc-environment-presets",this.refreshEnvironment);
     window.removeEventListener("storage",this.presetStorage);
     this.decals.destroy(this.scene);
+    this.reflections.dispose();
     this.display.destroy();
   }
 }

@@ -5,7 +5,7 @@ export type GlobalLight = {
   hazeColor:string; hazeDistance:number; shadowSoftness:number;
 };
 export type EnvironmentPreset={id:string;name:string;light:GlobalLight};
-export const FOREST:EnvironmentPreset={id:'forest',name:'Forest',light:{sunTint:'#ffffff',sunStrength:1,sunDirection:0,sunHeight:60,ambientTint:'#ffffff',ambientStrength:1,skyTint:'#ffffff',bounceTint:'#ffffff',fillStrength:1,hazeColor:'#9bc9cd',hazeDistance:120,shadowSoftness:3}};
+export const FOREST:EnvironmentPreset={id:'forest',name:'Forest',light:{sunTint:'#ffe7bc',sunStrength:1.15,sunDirection:10,sunHeight:58,ambientTint:'#b5c3c9',ambientStrength:1.1,skyTint:'#b7c7cc',bounceTint:'#b09b72',fillStrength:1.1,hazeColor:'#8c9586',hazeDistance:260,shadowSoftness:2}};
 export const PRESET_KEY='utc.environment-presets.v1';
 export const LIGHT_RANGES={sunStrength:[0,3],sunDirection:[-180,180],sunHeight:[15,85],ambientStrength:[0,3],fillStrength:[0,3],hazeDistance:[40,600],shadowSoftness:[0,8]} as const;
 export function validLight(raw:unknown):raw is GlobalLight{

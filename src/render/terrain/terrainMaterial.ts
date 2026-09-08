@@ -13,7 +13,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
   private contactRevision=-1;
   private readonly contacts=new DataTexture(new Uint8Array(1024*1024),1024,1024,RedFormat);
   private readonly weights = new DataTexture(new Uint8Array(HEIGHT_VERTS*HEIGHT_VERTS*4),HEIGHT_VERTS,HEIGHT_VERTS);
-  private readonly seasonTint = { value: new Color(0xb4d77b) };
+  private readonly seasonTint = { value: new Color(0x707840) };
   private readonly level = { value: 0 };
   private readonly textures = [grassUrl,sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl].map(url=> {
     const t=new TextureLoader().load(url); t.wrapS=t.wrapT=RepeatWrapping; t.colorSpace=SRGBColorSpace; t.anisotropy=8; return t;
@@ -78,7 +78,8 @@ export class TerrainMaterial extends MeshStandardMaterial {
         *(1.0-smoothstep(.3,.8,length(fwidth(clumpCell))));
       g=mix(g,g*vec3(.62,.79,.48),clumpMask*clumpVisibility*.65);
       g+=uGrassTint*clumpLight*clumpVisibility*.16;
-      vec3 sand=mix(vec3(.64,.65,.48),texture2D(uSand,uv*2.5).rgb*vec3(1.8,1.85,1.65),.38);
+      vec3 sand=vec3(.48,.285,.12)*(.82+.30*n+.13*micro);
+      sand*=.90+.22*texture2D(uSand,uv*2.5).r;
       vec3 pebbleTex=texture2D(uPebbles,vTerrain.xz*.22).rgb;
       float pebble=dot(pebbleTex,vec3(.3,.59,.11));
       float pebbleMask=smoothstep(-.018,.004,pebbleTex.r-pebbleTex.g)*smoothstep(.4,.65,noiseTerrain(vTerrain.xz*.4));
@@ -165,7 +166,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       }
     }this.contacts.needsUpdate=true;
   }
-  setSeason(season:string):void { this.seasonTint.value.set(season==='autumn'?0xb9b382:season==='spring'?0x9bd56a:0xa5e078); }
+  setSeason(season:string):void { this.seasonTint.value.set(season==='autumn'?0x9c8352:season==='spring'?0x7f914b:0x737d42); }
   update(field:HeightField,strokes:readonly TerrainStroke[]):void {
     this.level.value=field.waterLevel;
     const data=this.weights.image.data as Uint8Array; data.fill(0);

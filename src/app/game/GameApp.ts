@@ -1,4 +1,4 @@
-import { playableMaps, getMap } from '../../shared/map/library';
+import { authoredMaps, playableMaps, getMap } from '../../shared/map/library';
 import { MapPicker } from '../../ui/menu/mapPicker';
 import { emptyUtcMap, type UtcMap } from '../../shared/map/utcmap';
 /**
@@ -49,7 +49,11 @@ export class GameApp {
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
     if (intent.kind === "play" && playableMaps().some(m=>m.id===intent.mapId)) this.play(intent.mapId);
-    else if (intent.kind === "editor") this.showEditor();
+    else if (intent.kind === "editor") {
+      const selected=intent.mapId?authoredMaps().find(m=>m.id===intent.mapId):undefined;
+      if(intent.mapId&&!selected)this.showMapPicker(true);
+      else this.showEditor(selected?.map);
+    }
     else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
   }
