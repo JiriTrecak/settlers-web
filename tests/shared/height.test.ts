@@ -1,3 +1,4 @@
+import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { describe, expect, it } from "vitest";
 import {
   HEIGHT_ORIGIN,
@@ -33,16 +34,18 @@ describe("height field", () => {
     expect(packed).toBeTruthy();
     const back = decodeHeight(packed!);
     expect(back).not.toBeNull();
-    expect(back![20 * HEIGHT_VERTS + 20]).toBeCloseTo(Math.round(h.samples[20 * HEIGHT_VERTS + 20]! * 100) / 100);
+    expect(back![20 * HEIGHT_VERTS + 20]).toBeCloseTo(
+      Math.round(h.samples[20 * HEIGHT_VERTS + 20]! * 100) / 100,
+    );
   });
 
-  it("keeps old maps valid and roundtrips height on utcmap", () => {
-    expect(parseUtcMap({ v: 1 })).toEqual({ v: 1, name: "Untitled", stamps: [] });
+  it("rejects old maps and roundtrips height on current utcmap", () => {
+    expect(parseUtcMap({ v: 1 })).toBeNull();
     const h = new HeightField();
     h.raise(8, 8, 2, 1);
     h.waterLevel = -0.5;
     const map = {
-      v: 1 as const,
+      ...emptyUtcMap(),
       name: "Basin",
       stamps: [],
       waterLevel: -0.5,
@@ -60,7 +63,7 @@ describe("height field", () => {
   });
 
   it("rejects a bad height blob", () => {
-    expect(parseUtcMap({ v: 1, height: "@@@@" })).toBeNull();
-    expect(parseUtcMap({ v: 1, waterLevel: "high" })).toBeNull();
+    expect(parseUtcMap({ ...emptyUtcMap(), height: "@@@@" })).toBeNull();
+    expect(parseUtcMap({ ...emptyUtcMap(), waterLevel: "high" })).toBeNull();
   });
 });

@@ -25,7 +25,7 @@ export class Lockstep {
   /** Queue a click for this slot. Not an enqueue — Room assigns the tick at confirm. */
   send(action: Action): void {
     if (action.type === "noop") return;
-    this.pending.push(action);
+    this.pending.push(structuredClone(action));
   }
 
   /**
@@ -61,10 +61,18 @@ export class Lockstep {
     return this.sentThrough;
   }
 
-  restore(commits: readonly Commit[], sentThrough: number): void {
+  outbox(): Action[] {
+    return structuredClone(this.pending);
+  }
+
+  restore(
+    commits: readonly Commit[],
+    sentThrough: number,
+    pending: readonly Action[] = [],
+  ): void {
     this.commits.clear();
     for (const c of commits) this.commits.set(c.tick, c);
     this.sentThrough = sentThrough;
-    this.pending = [];
+    this.pending = structuredClone([...pending]);
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Eight player tints. Menu swatches and the player cube share this table.
+ * Eight player tints shared by menu swatches, faction materials and map markers.
  */
 export const PLAYER_COLORS = [
   0x285ac8,

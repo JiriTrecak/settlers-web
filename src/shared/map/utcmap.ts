@@ -1,3 +1,10 @@
+import { z } from "zod";
+import {
+  placementSchema,
+  campSchema,
+  type Placement,
+  type Camp,
+} from "../../content/schema";
 import { parseLandscape, type Landscape } from "../landscape/curve";
 /**
  * Authored map file. `.utcmap` is JSON; `v` is the schema.
@@ -6,7 +13,7 @@ import { parseLandscape, type Landscape } from "../landscape/curve";
  */
 import { decodeHeight, encodeHeight } from "./height";
 export const UTCMAP_EXT = ".utcmap";
-export const UTCMAP_VERSION = 1;
+export const UTCMAP_VERSION = 2;
 export const DEFAULT_MAP_NAME = "Untitled";
 
 export type MapStamp = {
@@ -29,10 +36,21 @@ export type MapStamp = {
   readonly variant?: "snow" | "gold" | "red" | "green" | "pink" | "slate";
 };
 
-export type PlayerStart = { readonly player:number; readonly x:number; readonly z:number };
+const startSchema = z
+  .object({
+    player: z.number().int().min(1).max(8),
+    x: z.number().int().min(0).max(255),
+    z: z.number().int().min(0).max(255),
+    setup: z.string(),
+    mainFort: z.string(),
+  })
+  .strict();
+export type PlayerStart = z.infer<typeof startSchema>;
 
 export type UtcMap = {
-  readonly playerStarts?: readonly PlayerStart[];
+  readonly playerStarts: readonly PlayerStart[];
+  readonly entities: readonly Placement[];
+  readonly camps: readonly Camp[];
   readonly v: typeof UTCMAP_VERSION;
   readonly name: string;
   readonly stamps: readonly MapStamp[];
@@ -42,15 +60,51 @@ export type UtcMap = {
 };
 
 export function emptyUtcMap(): UtcMap {
-  return { v: UTCMAP_VERSION, name: DEFAULT_MAP_NAME, stamps: [], waterLevel: -1, playerStarts: [{player:1,x:218,z:218},{player:2,x:38,z:38}] };
+  return {
+    v: UTCMAP_VERSION,
+    name: DEFAULT_MAP_NAME,
+    stamps: [],
+    entities: [],
+    camps: [],
+    waterLevel: -1,
+    playerStarts: [1, 2].map((player) => ({
+      player,
+      x: player === 1 ? 218 : 38,
+      z: player === 1 ? 218 : 38,
+      setup: "setup.ants",
+      mainFort: `start.player.${player}/main-fort`,
+    })),
+  };
 }
 
 export function parseUtcMap(raw: unknown): UtcMap | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
   if (o.v !== UTCMAP_VERSION) return null;
-  const playerStarts=o.playerStarts as PlayerStart[]|undefined;
-  if(playerStarts!==undefined&&(!Array.isArray(playerStarts)||playerStarts.length>8||!playerStarts.every(p=>p&&Number.isInteger(p.player)&&p.player>=1&&p.player<=8&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&p.x>=0&&p.x<=256&&p.z>=0&&p.z<=256)||new Set(playerStarts.map(p=>p.player)).size!==playerStarts.length))return null;
+  if (
+    Object.keys(o).some(
+      (k) =>
+        ![
+          "v",
+          "name",
+          "stamps",
+          "playerStarts",
+          "entities",
+          "camps",
+          "waterLevel",
+          "height",
+          "landscape",
+        ].includes(k),
+    )
+  )
+    return null;
+  const starts = z.array(startSchema).min(2).max(8).safeParse(o.playerStarts);
+  const placements = z.array(placementSchema).safeParse(o.entities),
+    camps = z.array(campSchema).safeParse(o.camps);
+  if (!starts.success || !placements.success || !camps.success) return null;
+  const playerStarts = starts.data;
+  if (new Set(playerStarts.map((p) => p.player)).size !== playerStarts.length)
+    return null;
   const name = parseName(o.name);
   const stamps = parseStamps(o.stamps);
   if (!name || !stamps) return null;
@@ -64,7 +118,9 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     v: UTCMAP_VERSION,
     name,
     stamps,
-    ...(playerStarts?{playerStarts}:{}),
+    playerStarts,
+    entities: placements.data,
+    camps: camps.data,
     ...(landscape ? { landscape } : {}),
     ...(waterLevel !== undefined ? { waterLevel } : {}),
     ...(height !== undefined ? { height } : {}),
@@ -72,14 +128,19 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
 }
 
 export function stringifyUtcMap(map: UtcMap): string {
-  const height = map.height ? encodeHeight(decodeHeight(map.height) ?? []) : undefined;
-  const waterLevel = map.waterLevel && map.waterLevel !== 0 ? map.waterLevel : undefined;
+  const height = map.height
+    ? encodeHeight(decodeHeight(map.height) ?? [])
+    : undefined;
+  const waterLevel =
+    map.waterLevel && map.waterLevel !== 0 ? map.waterLevel : undefined;
   return `${JSON.stringify(
     {
       v: map.v,
       name: map.name,
       stamps: map.stamps,
-      ...(map.playerStarts?{playerStarts:map.playerStarts}:{}),
+      playerStarts: map.playerStarts,
+      entities: map.entities,
+      camps: map.camps,
       ...(map.landscape ? { landscape: map.landscape } : {}),
       ...(waterLevel !== undefined ? { waterLevel } : {}),
       ...(height ? { height } : {}),
@@ -133,26 +194,60 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     if (!Number.isFinite(s.x) || !Number.isFinite(s.y)) return null;
     const yaw = s.yaw;
     const scale = s.scale;
-    for(const axis of [s.heightScale,s.widthScale,s.depthScale])if(axis!==undefined&&(typeof axis!=="number"||!Number.isFinite(axis)||axis<.25||axis>4))return null;
-    for (const angle of [s.pitch,s.roll]) if(angle!==undefined && (typeof angle!=="number" || !Number.isFinite(angle) || Math.abs(angle)>Math.PI/2))return null;
-    if (yaw !== undefined && (typeof yaw !== "number" || !Number.isFinite(yaw))) return null;
-    if (scale !== undefined && (typeof scale !== "number" || !Number.isFinite(scale))) return null;
-    if(s.elevation!==undefined&&(typeof s.elevation!=='number'||!Number.isFinite(s.elevation)||Math.abs(s.elevation)>32))return null;
-    if(s.variant!==undefined&&!['snow','gold','red','green','pink','slate'].includes(String(s.variant)))return null;
+    for (const axis of [s.heightScale, s.widthScale, s.depthScale])
+      if (
+        axis !== undefined &&
+        (typeof axis !== "number" ||
+          !Number.isFinite(axis) ||
+          axis < 0.25 ||
+          axis > 4)
+      )
+        return null;
+    for (const angle of [s.pitch, s.roll])
+      if (
+        angle !== undefined &&
+        (typeof angle !== "number" ||
+          !Number.isFinite(angle) ||
+          Math.abs(angle) > Math.PI / 2)
+      )
+        return null;
+    if (yaw !== undefined && (typeof yaw !== "number" || !Number.isFinite(yaw)))
+      return null;
+    if (
+      scale !== undefined &&
+      (typeof scale !== "number" || !Number.isFinite(scale))
+    )
+      return null;
+    if (
+      s.elevation !== undefined &&
+      (typeof s.elevation !== "number" ||
+        !Number.isFinite(s.elevation) ||
+        Math.abs(s.elevation) > 32)
+    )
+      return null;
+    if (
+      s.variant !== undefined &&
+      !["snow", "gold", "red", "green", "pink", "slate"].includes(
+        String(s.variant),
+      )
+    )
+      return null;
     out.push({
       id: s.id,
       asset: s.asset,
       x: s.x,
       y: s.y,
       ...(yaw !== undefined ? { yaw } : {}),
-      ...(typeof s.pitch === "number" ? {pitch:s.pitch} : {}),
-      ...(typeof s.roll === "number" ? {roll:s.roll} : {}),
+      ...(typeof s.pitch === "number" ? { pitch: s.pitch } : {}),
+      ...(typeof s.roll === "number" ? { roll: s.roll } : {}),
       ...(scale !== undefined && scale !== 1 ? { scale } : {}),
-      ...(typeof s.heightScale === "number" ? {heightScale:s.heightScale} : {}),
-      ...(typeof s.widthScale === "number" ? {widthScale:s.widthScale} : {}),
-      ...(typeof s.depthScale === "number" ? {depthScale:s.depthScale} : {}),
-      ...(typeof s.elevation === "number" ? { elevation:s.elevation } : {}),
-      ...(s.variant ? {variant:s.variant as MapStamp["variant"]} : {}),
+      ...(typeof s.heightScale === "number"
+        ? { heightScale: s.heightScale }
+        : {}),
+      ...(typeof s.widthScale === "number" ? { widthScale: s.widthScale } : {}),
+      ...(typeof s.depthScale === "number" ? { depthScale: s.depthScale } : {}),
+      ...(typeof s.elevation === "number" ? { elevation: s.elevation } : {}),
+      ...(s.variant ? { variant: s.variant as MapStamp["variant"] } : {}),
     });
   }
   return out;

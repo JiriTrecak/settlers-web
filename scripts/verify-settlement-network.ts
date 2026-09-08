@@ -5,8 +5,14 @@ import { once } from "node:events";
 import assert from "node:assert/strict";
 import { WebSocket } from "ws";
 import { World } from "../src/sim/world/world";
-import { parseUtcMap, type MatchConfig, type ServerMsg } from "../src/shared";
-import { RULES_REVISION } from "../src/shared/settlement/rules";
+import {
+  parseUtcMap,
+  type MatchConfig,
+  type ServerMsg,
+  type Action,
+} from "../src/shared";
+import { mapRevision } from "../src/shared/map/playable";
+import { slotOwner } from "../src/content/schema";
 const port = 18787,
   base = `http://127.0.0.1:${port}`;
 const server = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
@@ -51,13 +57,10 @@ try {
       "utf8",
     ),
     map = parseUtcMap(JSON.parse(raw))!;
-  let hash = 2166136261;
-  for (let i = 0; i < raw.length; i++)
-    hash = Math.imul(hash ^ raw.charCodeAt(i), 16777619);
   const created = await post("/api/rooms", {
       name: "Settlement verification",
       mapId: "mosswater-divide",
-      mapRevision: `${RULES_REVISION}-${(hash >>> 0).toString(16)}`,
+      mapRevision: mapRevision(map),
       slotCount: 2,
       guestName: "Blue",
     }),
@@ -116,38 +119,56 @@ try {
   assert.equal((started.config as MatchConfig).slots.length, 2);
   await until(() => worlds.length === 2);
   sockets.forEach((ws) => ws.send(JSON.stringify({ type: "ready" })));
-  for (let through = 100; through <= 6000; through += 100) {
+  for (let through = 100; through <= 3000; through += 100) {
     for (const i of [
       through % 200 === 0 ? 1 : 0,
       through % 200 === 0 ? 0 : 1,
     ]) {
-      const home = i === 0 ? 210 : 46,
-        sign = i === 0 ? 1 : -1;
-      const actions =
-        through === 100
-          ? [
-              {
-                type: "build",
-                kind: "lumberjack",
-                x: home - sign * 10,
-                z: home,
-              },
-              {
-                type: "build",
-                kind: "stonemason",
-                x: home,
-                z: home + sign * 12,
-              },
-              {
-                type: "build",
-                kind: "sawmill",
-                x: home + sign * 10,
-                z: home + sign * 10,
-              },
-            ]
-          : through === 2100
-            ? [{ type: "build", kind: "house", x: home + sign * 12, z: home }]
-            : [];
+      const sim = worlds[i]!.settlement!,
+        owner = slotOwner(i);
+      const actions: Action[] = [];
+      if (through === 100) {
+        const actor = sim.entities.find(
+          (e) => e.owner === owner && e.definition === "unit.ants.settler",
+        )!.id;
+        const home = sim.entities.find(
+          (e) => e.id === sim.state.objectives[owner],
+        )!;
+        let position: { x: number; y: number } | undefined;
+        for (let y = home.y - 15; y <= home.y + 15 && !position; y++)
+          for (let x = home.x - 15; x <= home.x + 15; x++)
+            if (
+              !sim.canBuild(owner, "building.ants.barracks", { x, y }, actor)
+            ) {
+              position = { x, y };
+              break;
+            }
+        assert.ok(position, "Opening has a legal barracks site");
+        actions.push({
+          type: "build",
+          actor,
+          definition: "building.ants.barracks",
+          position,
+        });
+      } else if (through === 1800) {
+        const barracks = sim.entities.find(
+          (e) => e.owner === owner && e.definition === "building.ants.barracks",
+        );
+        assert.ok(
+          barracks && !barracks.construction,
+          "Physical construction completed",
+        );
+        actions.push({
+          type: "produce",
+          actor: barracks.id,
+          definition: "unit.ants.warrior",
+        });
+        actions.push({
+          type: "produce",
+          actor: barracks.id,
+          definition: "unit.ants.archer",
+        });
+      }
       sockets[i]!.send(
         JSON.stringify({
           type: "turn",
@@ -159,27 +180,36 @@ try {
     await until(() => worlds.every((w) => w.clock.tickIndex >= through));
     assert.equal(worlds[0]!.checksum(), worlds[1]!.checksum());
   }
-  await until(() => hashOK.every((n) => n === 30));
+  await until(() => hashOK.every((n) => n === 15));
   for (const world of worlds)
     for (const owner of [0, 1]) {
       const s = world.settlement!;
-      assert.equal(s.workers.filter((w) => w.owner === owner).length, 11);
+      const owned = s.entities.filter((e) => e.owner === slotOwner(owner));
       assert.equal(
-        s.buildings.filter((b) => b.owner === owner && b.complete).length,
-        5,
+        owned.filter((e) => e.definition === "unit.ants.settler").length,
+        6,
       );
-      assert.ok(s.colonies[owner]!.stock.wood > 20);
-      assert.ok(s.colonies[owner]!.stock.stone > 22);
+      assert.equal(
+        owned.filter((e) => e.definition === "unit.ants.warrior").length,
+        3,
+      );
+      assert.equal(
+        owned.filter((e) => e.definition === "unit.ants.archer").length,
+        1,
+      );
+      assert.equal(owned.filter((e) => e.unit).length, 10);
+      assert.equal(s.state.accounting.consumed["item.plank"], 20);
+      assert.equal(s.state.accounting.consumed["item.stone"], 8);
     }
   console.log(
     JSON.stringify(
       {
         result: "passed",
-        ticks: 6000,
+        ticks: 3000,
         clients: 2,
         hostConfirmedHashes: hashOK,
         checksum: worlds[0]!.checksum(),
-        colonies: worlds[0]!.settlement!.colonies,
+        consumed: worlds[0]!.settlement!.state.accounting.consumed,
       },
       null,
       2,

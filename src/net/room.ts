@@ -96,11 +96,7 @@ export class Room {
     if (!held) return;
     for (const b of bundles) {
       if (b.tick <= this.committed) continue;
-      if (!held.has(b.tick))
-        held.set(
-          b.tick,
-          b.actions.map((a: Action) => ({ ...a })),
-        );
+      if (!held.has(b.tick)) held.set(b.tick, structuredClone(b.actions));
     }
     this.flush();
   }

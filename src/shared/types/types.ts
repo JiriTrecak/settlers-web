@@ -1,45 +1,53 @@
-import { BUILDING_KINDS, type SoldierKind, type BuildingKind } from "../settlement/rules";
-/** Shared value types. Actions are the only way the session mutates sim. */
-export type GridPos = {
-  readonly x: number;
-  readonly y: number;
-};
-
-/** Wire + enqueue payload. `noop` is dropped. `ping` is lockstep-only (sim ignores it). */
-export type Action =
-  | { type: 'move-units'; ids: number[]; x:number; z:number; attackMove?:boolean }
-  | { type: 'attack-units'; ids:number[]; target:number; force?:boolean }
-  | { type: "recruit"; id: number; kind: SoldierKind }
-  | { type: "cancel-recruit"; id: number; index: number }
-  | { type: "attack"; id: number; target: number; force?: boolean }
-  | { type: "stop-unit"; id: number }
-  | { type: "rally"; id: number; x: number; z: number }
-  | { type: "noop" }
-  | { type: "ping" }
-  | { type: "build"; kind: BuildingKind; x: number; z: number }
-  | { type: "cancel-building"; id: number }
-  | { type: "move-worker"; id: number; x: number; z: number };
-/** Structural validation is repeated in the sim; clients cannot confer ownership. */
-export function validAction(raw: unknown): raw is Action {
-  if (!raw || typeof raw !== "object") return false;
-  const a = raw as Record<string, unknown>;
-  const cell = (n: unknown) =>
-    typeof n === "number" && Number.isInteger(n) && n >= 0 && n < 256;
-  const id = (n: unknown) =>
-    typeof n === "number" && Number.isSafeInteger(n) && n > 0;
-  const ids=(value:unknown)=>Array.isArray(value)&&value.length>0&&value.length<=160&&value.every(id)&&new Set(value).size===value.length;
-  if(a.type==='move-units')return ids(a.ids)&&cell(a.x)&&cell(a.z)&&(a.attackMove===undefined||typeof a.attackMove==='boolean');
-  if(a.type==='attack-units')return ids(a.ids)&&id(a.target)&&(a.force===undefined||typeof a.force==='boolean');
-  if (a.type === "noop" || a.type === "ping") return true;
-  if (a.type === "build")
-    return (
-      BUILDING_KINDS.includes(a.kind as BuildingKind) && cell(a.x) && cell(a.z)
-    );
-  if (a.type === 'recruit') return id(a.id) && (a.kind === 'warrior' || a.kind === 'archer');
-  if (a.type === 'cancel-recruit') return id(a.id) && Number.isInteger(a.index) && (a.index as number)>=0 && (a.index as number)<12;
-  if (a.type === 'attack') return id(a.id) && id(a.target) && (a.force===undefined || typeof a.force==='boolean');
-  if (a.type === 'stop-unit') return id(a.id);
-  if (a.type === 'rally') return id(a.id) && cell(a.x) && cell(a.z);
-  if (a.type === "cancel-building") return id(a.id);
-  return a.type === "move-worker" && id(a.id) && cell(a.x) && cell(a.z);
-}
+import { z } from "zod";
+import { idSchema, pointSchema } from "../../content/schema";
+export type GridPos = z.infer<typeof pointSchema>;
+const actor = z.number().int().positive();
+const actors = z
+  .array(actor)
+  .min(1)
+  .max(160)
+  .refine((xs) => new Set(xs).size === xs.length, "Duplicate actors");
+/** The only client-writable gameplay intentions. Costs, damage, ownership and job internals never cross here. */
+export const actionSchema = z.discriminatedUnion("type", [
+  z
+    .object({
+      type: z.literal("move"),
+      actors,
+      destination: pointSchema,
+      attackMove: z.boolean().optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("attack"),
+      actors,
+      target: actor,
+      force: z.boolean().optional(),
+    })
+    .strict(),
+  z.object({ type: z.literal("stop"), actors }).strict(),
+  z
+    .object({
+      type: z.literal("build"),
+      actor,
+      definition: idSchema,
+      position: pointSchema,
+      rotation: z.number().int().multipleOf(90).optional(),
+    })
+    .strict(),
+  z
+    .object({ type: z.literal("produce"), actor, definition: idSchema })
+    .strict(),
+  z
+    .object({ type: z.literal("cancel"), actor, queue: actor.optional() })
+    .strict(),
+  z
+    .object({ type: z.literal("rally"), actor, destination: pointSchema })
+    .strict(),
+  z.object({ type: z.literal("pause"), actor, paused: z.boolean() }).strict(),
+  z.object({ type: z.literal("noop") }).strict(),
+  z.object({ type: z.literal("ping") }).strict(),
+]);
+export type Action = z.infer<typeof actionSchema>;
+export const validAction = (value: unknown): value is Action =>
+  actionSchema.safeParse(value).success;

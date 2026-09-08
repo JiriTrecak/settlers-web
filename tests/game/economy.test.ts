@@ -1,0 +1,244 @@
+import { describe, it, expect } from "vitest";
+import { game, placed, physical, run, worker } from "./helpers";
+import { Game } from "../../src/sim/game/game";
+import { slots } from "./helpers";
+
+describe("declarative physical economy", () => {
+  it("S01 constructs a barracks with deliveries and transforms the same settler into a warrior", () => {
+    const g = game(),
+      w = worker(g),
+      before = physical(g, "item.plank");
+    expect(
+      g.command("player.1", {
+        type: "build",
+        actor: w.id,
+        definition: "building.ants.barracks",
+        position: { x: 205, y: 210 },
+      }).accepted,
+    ).toBe(true);
+    expect(physical(g, "item.plank")).toBe(before);
+    const b = g.entities.at(-1)!;
+    expect(b.construction).toBeDefined();
+    run(g, 1000);
+    expect(b.construction).toBeUndefined();
+    expect(
+      g.command("player.1", {
+        type: "produce",
+        actor: b.id,
+        definition: "unit.ants.warrior",
+      }).accepted,
+    ).toBe(true);
+    const ids = g.entities.filter((e) => e.unit).map((e) => e.id);
+    run(g, 900);
+    expect(b.production?.queue).toEqual([]);
+    expect(b.production?.produced).toBe(1);
+    expect(g.entities.filter((e) => e.unit).map((e) => e.id)).toEqual(ids);
+    expect(
+      g.entities.filter(
+        (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+      ),
+    ).toHaveLength(3);
+    const bill = g.registry
+      .get(b.definition)
+      .creation!.items.find((p) => p.item === "item.plank")!.amount;
+    const price = g.registry
+      .get("unit.ants.warrior")
+      .creation!.items.find((p) => p.item === "item.plank")!.amount;
+    expect(physical(g, "item.plank")).toBe(before - bill - price);
+  });
+  it("S02 one unassigned settler can deliver the whole bill and then construct", () => {
+    const g = game([], (s) => {
+      const r = s.rules as any;
+      r.startingSetup.units = r.startingSetup.units
+        .filter((u: any) => u.definition === "unit.ants.settler")
+        .slice(0, 1);
+    });
+    const w = worker(g);
+    expect(
+      g.command("player.1", {
+        type: "build",
+        actor: w.id,
+        definition: "building.ants.barracks",
+        position: { x: 205, y: 210 },
+      }).accepted,
+    ).toBe(true);
+    const b = g.entities.at(-1)!;
+    run(g, 1600);
+    expect(b.construction).toBeUndefined();
+    expect(g.state.jobs).toHaveLength(0);
+  });
+  it("S03 a lone assigned sawmill worker carries the next input before crafting again", () => {
+    const g = game(
+      [
+        placed("mill", "building.ants.sawmill", 205, 210, {
+          inventory: { "item.log": 1 },
+        }),
+        placed("logs", "item.log", 211, 216, { quantity: 3 }),
+      ],
+      (s) => {
+        const r = s.rules as any;
+        r.startingSetup.units = r.startingSetup.units
+          .filter((u: any) => u.definition === "unit.ants.settler")
+          .slice(0, 1);
+      },
+    );
+    const mill = g.entities.find((e) => e.placement === "mill")!;
+    run(g, 1400);
+    expect(mill.production!.produced).toBe(4);
+    expect(physical(g, "item.log")).toBe(0);
+    expect(g.state.accounting.produced["item.plank"]).toBe(4);
+  });
+  it("S04 two barracks cannot reserve one settler twice", () => {
+    const g = game(
+      [
+        placed("a", "building.ants.barracks", 205, 210, {
+          inventory: { "item.plank": 1 },
+        }),
+        placed("b", "building.ants.barracks", 230, 210, {
+          inventory: { "item.plank": 1 },
+        }),
+      ],
+      (s) => {
+        const r = s.rules as any;
+        r.startingSetup.units = r.startingSetup.units
+          .filter((u: any) => u.definition === "unit.ants.settler")
+          .slice(0, 1);
+      },
+    );
+    for (const b of g.entities.filter((e) => e.production))
+      g.command("player.1", {
+        type: "produce",
+        actor: b.id,
+        definition: "unit.ants.warrior",
+      });
+    run(g, 800);
+    expect(
+      g.entities.filter(
+        (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+      ),
+    ).toHaveLength(1);
+    expect(
+      g.entities
+        .filter((e) => e.production)
+        .reduce((n, b) => n + b.production!.queue.length, 0),
+    ).toBe(1);
+  });
+  it("S07 cancels partial construction into physical goods, never a global refund", () => {
+    const g = game(),
+      w = worker(g),
+      before = physical(g, "item.plank");
+    g.command("player.1", {
+      type: "build",
+      actor: w.id,
+      definition: "building.ants.barracks",
+      position: { x: 205, y: 210 },
+    });
+    const b = g.entities.at(-1)!;
+    run(g, 50);
+    expect(
+      g.command("player.2", { type: "cancel", actor: b.id }).accepted,
+    ).toBe(false);
+    expect(
+      g.command("player.1", { type: "cancel", actor: b.id }).accepted,
+    ).toBe(true);
+    run(g, 300);
+    expect(physical(g, "item.plank")).toBe(before);
+    expect(g.state.claims.some((c) => c.target === b.id)).toBe(false);
+  });
+  it("S09 finishes carrying a delivery before following a manual destination", () => {
+    const g = game(),
+      w = worker(g);
+    g.command("player.1", {
+      type: "build",
+      actor: w.id,
+      definition: "building.ants.barracks",
+      position: { x: 205, y: 210 },
+    });
+    let carrier;
+    for (let i = 0; i < 200 && !carrier; i++) {
+      g.tick();
+      carrier = g.entities.find((e) => e.unit?.cargo);
+    }
+    expect(carrier).toBeDefined();
+    g.command("player.1", {
+      type: "move",
+      actors: [carrier!.id],
+      destination: { x: 235, y: 235 },
+    });
+    expect(carrier!.unit!.pendingMove).toEqual({ x: 235, y: 235 });
+    run(g, 500);
+    expect(carrier!.unit!.cargo).toBeNull();
+    expect(carrier!.x).toBe(235);
+    expect(carrier!.y).toBe(235);
+  });
+  it("S10 deployment blocked retains input, queue and identity; cancellation releases exactly once", () => {
+    const g = game([
+        placed("b", "building.ants.barracks", 205, 210, {
+          inventory: { "item.plank": 1 },
+        }),
+      ]),
+      b = g.entities.find((e) => e.placement === "b")!;
+    g.command("player.1", {
+      type: "produce",
+      actor: b.id,
+      definition: "unit.ants.warrior",
+    });
+    while (
+      !b.production!.active?.worker ||
+      !g.context.get(b.production!.active.worker)?.unit?.contained
+    )
+      g.tick();
+    const id = b.production!.active!.worker!,
+      original = g.context.get(id)!,
+      nearest = g.spatial.nearest.bind(g.spatial);
+    g.spatial.nearest = () => null;
+    run(g, 500);
+    expect(original.definition).toBe("unit.ants.settler");
+    expect(b.inventory["item.plank"]).toBe(1);
+    expect(b.production!.queue).toHaveLength(1);
+    g.command("player.1", {
+      type: "cancel",
+      actor: b.id,
+      queue: b.production!.queue[0]!.id,
+    });
+    expect(original.unit!.release).not.toBeNull();
+    const save = g.snapshot(),
+      restored = new Game(g.map, slots, g.registry);
+    restored.restore(save);
+    expect(restored.checksum()).toBe(g.checksum());
+    g.spatial.nearest = nearest;
+    run(g, 4);
+    expect(original.unit!.release).toBeNull();
+    expect(g.entities.filter((e) => e.id === id)).toHaveLength(1);
+  });
+  it("S11 a house reaches its declared population contribution limit", () => {
+    const g = game([placed("house", "building.ants.house")]),
+      house = g.entities.find((e) => e.placement === "house")!,
+      limit = g.registry.get(house.definition).behaviors.production!
+        .totalLimit!;
+    run(g, 3500);
+    expect(house.production!.produced).toBe(limit);
+    const count = g.entities.filter((e) => e.unit).length;
+    run(g, 100);
+    expect(g.entities.filter((e) => e.unit)).toHaveLength(count);
+  });
+  it("S21 save during delivery and training resumes the same future simulation", () => {
+    const g = game([placed("b", "building.ants.barracks", 205, 210)]),
+      b = g.entities.find((e) => e.placement === "b")!;
+    g.command("player.1", {
+      type: "produce",
+      actor: b.id,
+      definition: "unit.ants.warrior",
+    });
+    run(g, 60);
+    const restored = new Game(g.map, slots, g.registry);
+    restored.restore(g.snapshot());
+    expect(restored.checksum()).toBe(g.checksum());
+    for (let i = 0; i < 500; i++) {
+      g.tick();
+      restored.tick();
+      if (i % 100 === 0) expect(restored.checksum()).toBe(g.checksum());
+    }
+    expect(restored.snapshot()).toEqual(g.snapshot());
+  });
+});

@@ -2,7 +2,28 @@
  * Editor docks. Add an object to a list to put a tool on that bar.
  * `modes` on an action opens a sibling vertical — Grid is the first of those.
  */
-import { Flag, Ban, Cable, Eraser, FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, Mountain, MousePointer2, Paintbrush, Save, SaveAll, Sun, TreePine, Play, Sticker } from "lucide";
+import {
+  Boxes,
+  Flag,
+  Ban,
+  Cable,
+  Eraser,
+  FilePlus,
+  FolderOpen,
+  Grid3x3,
+  LayoutGrid,
+  Library,
+  LogOut,
+  Mountain,
+  MousePointer2,
+  Paintbrush,
+  Save,
+  SaveAll,
+  Sun,
+  TreePine,
+  Play,
+  Sticker,
+} from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
 
@@ -23,6 +44,7 @@ export type GameToolHooks = {
   onTerrain(): void;
   onDecal(): void;
   onSpawn(): void;
+  onEntities(): void;
   onCatalogue(): void;
   onGrid(): void;
   onGridMode(mode: GridMode): void;
@@ -51,8 +73,14 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
     { id: "terrain", label: "Terrain", icon: Paintbrush, run: hooks.onTerrain },
     { id: "decal", label: "Decals", icon: Sticker, run: hooks.onDecal },
     { id: "sculpt", label: "Sculpt", icon: Mountain, run: hooks.onSculpt },
+    { id: "entity", label: "Entities", icon: Boxes, run: hooks.onEntities },
     { id: "spawn", label: "Spawn point", icon: Flag, run: hooks.onSpawn },
-    { id: "catalogue", label: "Catalogue", icon: Library, run: hooks.onCatalogue },
+    {
+      id: "catalogue",
+      label: "Catalogue",
+      icon: Library,
+      run: hooks.onCatalogue,
+    },
     { kind: "sep" },
     {
       id: "grid",
@@ -61,13 +89,40 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
       run: hooks.onGrid,
       latch: true,
       modes: [
-        { id: "tiles", label: "Tiles", icon: LayoutGrid, run: () => hooks.onGridMode("tiles") },
-        { id: "full", label: "Full", icon: Grid3x3, run: () => hooks.onGridMode("full") },
-        { id: "none", label: "None", icon: Ban, run: () => hooks.onGridMode("none") },
+        {
+          id: "tiles",
+          label: "Tiles",
+          icon: LayoutGrid,
+          run: () => hooks.onGridMode("tiles"),
+        },
+        {
+          id: "full",
+          label: "Full",
+          icon: Grid3x3,
+          run: () => hooks.onGridMode("full"),
+        },
+        {
+          id: "none",
+          label: "None",
+          icon: Ban,
+          run: () => hooks.onGridMode("none"),
+        },
       ],
     },
-    { id: "sky", label: "Environment", icon: Sun, run: hooks.onSky, latch: true },
+    {
+      id: "sky",
+      label: "Environment",
+      icon: Sun,
+      run: hooks.onSky,
+      latch: true,
+    },
     { id: "mcp", label: "MCP", icon: Cable, run: hooks.onMcp, latch: true },
-    { id: "play", label: "Play", icon: Play, run: hooks.onGameCam, latch: true },
+    {
+      id: "play",
+      label: "Play",
+      icon: Play,
+      run: hooks.onGameCam,
+      latch: true,
+    },
   ];
 }

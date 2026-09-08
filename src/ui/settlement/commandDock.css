@@ -103,3 +103,9 @@
 .has-unit-selection .rts-selection-copy>p[hidden]{display:none}
 .has-unit-selection .rts-selection-copy>p:not([hidden]){font-size:10px;line-height:1.15}
 .rts-military{display:flex;gap:5px;align-items:start}
+/* One declarative card; native priority order fills from the top-right. */
+.rts-command-grid.declarative-commands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:4px;height:calc(100% - 18px);padding:2px}
+.declarative-commands>.rts-command{min-width:0;width:100%;height:100%;margin:0}
+.rts-command-pages{display:flex;justify-content:center;gap:12px;font-size:10px;pointer-events:auto}
+.rts-command-pages button{cursor:pointer;color:#dde5e1;background:#192326;border:1px solid #687778;padding:0 8px}
+.rts-actions .rts-command-name{font-size:8px}

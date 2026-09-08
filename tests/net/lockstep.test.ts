@@ -1,6 +1,11 @@
 /** N Worlds, one Room: same commits ⇒ same checksum. Stall without every slot's confirm. */
 import { describe, expect, it } from "vitest";
-import { localMatch, MAP_SIZE, type ClientMsg, type Commit } from "../../src/shared";
+import {
+  localMatch,
+  emptyUtcMap,
+  type ClientMsg,
+  type Commit,
+} from "../../src/shared";
 import { Lockstep, MemoryChannel, Room } from "../../src/net";
 import { World } from "../../src/sim/world/world";
 
@@ -13,13 +18,27 @@ function kit(seed: number, slotCount: number): World {
     me: 0,
     delay: 1,
   });
-  return new World({ size: MAP_SIZE, slots: config.slots, seed });
+  const blank = emptyUtcMap(),
+    map = {
+      ...blank,
+      playerStarts: config.slots.map((s, i) => ({
+        player: s.player + 1,
+        x: i === 0 ? 218 : 38,
+        z: i === 1 ? 38 : 218,
+        setup: "setup.ants",
+        mainFort: `start.player.${s.player + 1}/main-fort`,
+      })),
+    };
+  return new World({ map, slots: config.slots, seed });
 }
 
 function apply(world: World, commit: Commit): void {
   for (const slot of commit.slots) {
     for (let i = 0; i < slot.actions.length; i++) {
-      world.enqueue(slot.actions[i]!, commit.tick, { player: slot.player, seq: i });
+      world.enqueue(slot.actions[i]!, commit.tick, {
+        player: slot.player,
+        seq: i,
+      });
     }
   }
 }
@@ -40,8 +59,8 @@ describe("lockstep MemoryChannel", () => {
     const a = kit(config.seed, 2);
     const b = kit(config.seed, 2);
     expect(a.checksum()).toBe(b.checksum());
-    expect(a.players).toHaveLength(2);
-    expect(b.players).toHaveLength(2);
+    expect(a.slots).toHaveLength(2);
+    expect(b.slots).toHaveLength(2);
 
     ls0.send({ type: "ping" });
     for (let t = 1; t <= 40; t++) {
@@ -111,7 +130,14 @@ describe("lockstep MemoryChannel", () => {
   });
 
   it("drops noop so it never hits the Room", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 1 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 2,
+      me: 0,
+      delay: 1,
+    });
     const room = new Room(config);
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
@@ -147,7 +173,8 @@ describe("lockstep MemoryChannel", () => {
     let sent: { through: number; bundles: unknown[] } | undefined;
     const ch2 = {
       send: (msg: ClientMsg): void => {
-        if (msg.type === "turn") sent = { through: msg.through, bundles: msg.bundles };
+        if (msg.type === "turn")
+          sent = { through: msg.through, bundles: msg.bundles };
       },
       onMessage: (): void => {},
     };
@@ -159,7 +186,14 @@ describe("lockstep MemoryChannel", () => {
   });
 
   it("same-tick clicks from both slots land player-sorted in the commit", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 1 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 2,
+      me: 0,
+      delay: 1,
+    });
     const room = new Room({
       ...config,
       slots: [
@@ -186,12 +220,23 @@ describe("lockstep MemoryChannel", () => {
   });
 
   it("three worlds on one Room share checksums after the same commits", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 3, me: 0, delay: 1 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 3,
+      me: 0,
+      delay: 1,
+    });
     const room = new Room(config);
     const ls0 = new Lockstep(new MemoryChannel(room, 0), 0, config.delay);
     const ls1 = new Lockstep(new MemoryChannel(room, 1), 1, config.delay);
     const ls2 = new Lockstep(new MemoryChannel(room, 2), 2, config.delay);
-    const worlds = [kit(config.seed, 3), kit(config.seed, 3), kit(config.seed, 3)];
+    const worlds = [
+      kit(config.seed, 3),
+      kit(config.seed, 3),
+      kit(config.seed, 3),
+    ];
     expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     expect(worlds[1]!.checksum()).toBe(worlds[2]!.checksum());
     ls0.send({ type: "ping" });
@@ -210,13 +255,20 @@ describe("lockstep MemoryChannel", () => {
     }
     expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     expect(worlds[1]!.checksum()).toBe(worlds[2]!.checksum());
-    expect(worlds[0]!.players).toHaveLength(3);
+    expect(worlds[0]!.slots).toHaveLength(3);
   });
 });
 
 describe("Room mailbox", () => {
   it("resume does not re-emit already-committed ticks", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 1 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 2,
+      me: 0,
+      delay: 1,
+    });
     const room = new Room(config);
     room.confirm(0, 5, []);
     room.confirm(1, 5, []);
@@ -237,13 +289,22 @@ describe("Room mailbox", () => {
   });
 
   it("held bundles past committed survive resume and land later", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 8 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 2,
+      me: 0,
+      delay: 8,
+    });
     const room = new Room(config);
     const action = { type: "ping" as const };
     room.confirm(0, 5, [{ tick: 8, actions: [action] }]);
     room.confirm(1, 5, []);
     expect(room.tick).toBe(5);
-    expect(room.snapshot().held).toEqual([{ player: 0, tick: 8, actions: [action] }]);
+    expect(room.snapshot().held).toEqual([
+      { player: 0, tick: 8, actions: [action] },
+    ]);
     const next = new Room(config);
     const commits: Commit[] = [];
     next.subscribe((m) => {
@@ -258,7 +319,14 @@ describe("Room mailbox", () => {
   });
 
   it("drops a bundle whose tick is already committed", () => {
-    const config = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay: 1 });
+    const config = localMatch({
+      mapId: "test",
+      mapRevision: "test",
+      seed: 1,
+      slotCount: 2,
+      me: 0,
+      delay: 1,
+    });
     const room = new Room(config);
     room.confirm(0, 2, []);
     room.confirm(1, 2, []);

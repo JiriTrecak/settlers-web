@@ -1,0 +1,1059 @@
+{
+  "behaviorSets": [
+    {
+      "id": "behavior-set.worker",
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "playerControl": {},
+        "work": {
+          "carryCapacity": 4,
+          "builds": [
+            "building.ants.barracks",
+            "building.ants.lumberjack",
+            "building.ants.sawmill",
+            "building.ants.forester",
+            "building.ants.stonemason",
+            "building.ants.house",
+            "building.ants.tower"
+          ]
+        }
+      }
+    },
+    {
+      "id": "behavior-set.ground-army",
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "playerControl": {}
+      }
+    },
+    {
+      "id": "behavior-set.neutral",
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "campDefense": {}
+      }
+    },
+    {
+      "id": "behavior-set.player-building",
+      "behaviors": {
+        "playerControl": {}
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "asset.ants.settler",
+      "file": "assets/ant-colony/worker.glb",
+      "healthHeight": 2.5,
+      "carryAsset": "asset.ants.worker-carry"
+    },
+    {
+      "id": "icon.ants.settler",
+      "atlasIndex": 7
+    },
+    {
+      "id": "asset.ants.warrior",
+      "file": "assets/ant-colony/warrior.glb",
+      "healthHeight": 2.5
+    },
+    {
+      "id": "icon.ants.warrior",
+      "atlasIndex": 17
+    },
+    {
+      "id": "asset.ants.archer",
+      "file": "assets/ant-colony/archer.glb",
+      "healthHeight": 2.5,
+      "projectile": true
+    },
+    {
+      "id": "icon.ants.archer",
+      "atlasIndex": 18
+    },
+    {
+      "id": "asset.neutral.wolf",
+      "file": "assets/ant-colony/wolf.glb",
+      "healthHeight": 1.9
+    },
+    {
+      "id": "icon.neutral.wolf",
+      "atlasIndex": 17
+    },
+    {
+      "id": "asset.neutral.ogre",
+      "file": "assets/ant-colony/ogre.glb",
+      "healthHeight": 3.3
+    },
+    {
+      "id": "icon.neutral.ogre",
+      "atlasIndex": 17
+    },
+    {
+      "id": "asset.ants.worker-carry",
+      "file": "assets/ant-colony/worker-carry.glb"
+    },
+    {
+      "id": "asset.ants.fort",
+      "file": "assets/ant-colony/fort.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.fort",
+      "atlasIndex": 6
+    },
+    {
+      "id": "asset.ants.barracks",
+      "file": "assets/ant-colony/barracks.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.barracks",
+      "atlasIndex": 16
+    },
+    {
+      "id": "asset.ants.lumberjack",
+      "file": "assets/ant-colony/lumberjack.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.lumberjack",
+      "atlasIndex": 0
+    },
+    {
+      "id": "asset.ants.sawmill",
+      "file": "assets/ant-colony/sawmill.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.sawmill",
+      "atlasIndex": 1
+    },
+    {
+      "id": "asset.ants.forester",
+      "file": "assets/ant-colony/forester.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.forester",
+      "atlasIndex": 2
+    },
+    {
+      "id": "asset.ants.stonemason",
+      "file": "assets/ant-colony/stonemason.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.stonemason",
+      "atlasIndex": 3
+    },
+    {
+      "id": "asset.ants.house",
+      "file": "assets/ant-colony/house.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.house",
+      "atlasIndex": 4
+    },
+    {
+      "id": "asset.ants.tower",
+      "file": "assets/ant-colony/tower.glb",
+      "healthHeight": 5
+    },
+    {
+      "id": "icon.ants.tower",
+      "atlasIndex": 5
+    },
+    {
+      "id": "asset.item.log",
+      "file": "assets/ant-colony/item-log.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.42,
+      "stackColumns": 1
+    },
+    {
+      "id": "icon.item.log",
+      "atlasIndex": 8
+    },
+    {
+      "id": "asset.item.plank",
+      "file": "assets/ant-colony/item-plank.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.19,
+      "stackColumns": 1
+    },
+    {
+      "id": "icon.item.plank",
+      "atlasIndex": 8
+    },
+    {
+      "id": "asset.item.stone",
+      "file": "assets/ant-colony/item-stone.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.58,
+      "stackColumns": 2
+    },
+    {
+      "id": "icon.item.stone",
+      "atlasIndex": 9
+    },
+    {
+      "id": "asset.resource.ant-pine-1",
+      "file": "assets/ant-colony/pine-1.glb",
+      "sceneryAsset": "ant-pine-1"
+    },
+    {
+      "id": "asset.resource.ant-pine-2",
+      "file": "assets/ant-colony/pine-2.glb",
+      "sceneryAsset": "ant-pine-2"
+    },
+    {
+      "id": "asset.resource.ant-pine-3",
+      "file": "assets/ant-colony/pine-3.glb",
+      "sceneryAsset": "ant-pine-3"
+    },
+    {
+      "id": "asset.resource.ant-stone-deposit",
+      "file": "assets/ant-colony/rock.glb",
+      "sceneryAsset": "ant-stone-deposit"
+    },
+    {
+      "id": "icon.action.move",
+      "atlasIndex": 11
+    },
+    {
+      "id": "icon.action.attack",
+      "atlasIndex": 17
+    },
+    {
+      "id": "icon.action.stop",
+      "atlasIndex": 13
+    },
+    {
+      "id": "icon.action.build",
+      "atlasIndex": 6
+    },
+    {
+      "id": "icon.action.produce",
+      "atlasIndex": 17
+    },
+    {
+      "id": "icon.action.rally",
+      "atlasIndex": 12
+    },
+    {
+      "id": "icon.action.pause",
+      "atlasIndex": 10
+    },
+    {
+      "id": "icon.action.cancel",
+      "atlasIndex": 13
+    }
+  ],
+  "actions": {
+    "actions": {
+      "move": {
+        "name": "Move",
+        "description": "Move eligible selected units to a destination.",
+        "icon": "icon.action.move",
+        "priority": 100,
+        "hotkey": "M"
+      },
+      "attack": {
+        "name": "Attack",
+        "description": "Attack-move on ground, or force attack a visible damageable target, including friendlies.",
+        "icon": "icon.action.attack",
+        "priority": 90,
+        "hotkey": "A"
+      },
+      "stop": {
+        "name": "Stop",
+        "description": "Cancel orders and return to autonomous activity. Carried goods remain physical.",
+        "icon": "icon.action.stop",
+        "priority": 80,
+        "hotkey": "S"
+      },
+      "build": {
+        "name": "Build",
+        "description": "Place a construction project inside owned territory.",
+        "icon": "icon.action.build",
+        "priority": 60
+      },
+      "produce": {
+        "name": "Produce",
+        "description": "Queue production. Materials and an eligible recruit must arrive before training.",
+        "icon": "icon.action.produce",
+        "priority": 60
+      },
+      "rally": {
+        "name": "Rally point",
+        "description": "Choose where newly produced units assemble.",
+        "icon": "icon.action.rally",
+        "priority": 40
+      },
+      "pause": {
+        "name": "Pause production",
+        "description": "Finish committed work, then release staffing. Resume to request work again.",
+        "icon": "icon.action.pause",
+        "priority": 30
+      },
+      "cancel": {
+        "name": "Cancel construction",
+        "description": "Cancel this project. Delivered goods remain as recoverable owned stacks.",
+        "icon": "icon.action.cancel",
+        "priority": 20
+      }
+    },
+    "overrides": {}
+  },
+  "rules": {
+    "id": "declarations-1",
+    "maxUnits": 160,
+    "maxBuildings": 160,
+    "constructionHpPermille": 100,
+    "repairTicks": 4,
+    "damageMultipliers": {
+      "physical": {
+        "light": 1000,
+        "structure": 1000
+      }
+    },
+    "startingSetup": {
+      "fort": "building.ants.fort",
+      "inventory": {
+        "item.plank": 40,
+        "item.stone": 30
+      },
+      "units": [
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -3,
+            "y": 7
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -1,
+            "y": 7
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 1,
+            "y": 7
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 3,
+            "y": 7
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -3,
+            "y": 9
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -1,
+            "y": 9
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 1,
+            "y": 9
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 3,
+            "y": 9
+          }
+        },
+        {
+          "definition": "unit.ants.warrior",
+          "offset": {
+            "x": -4,
+            "y": 12
+          }
+        },
+        {
+          "definition": "unit.ants.warrior",
+          "offset": {
+            "x": 4,
+            "y": 12
+          }
+        }
+      ],
+      "id": "setup.ants"
+    },
+    "ai": {
+      "buildOrder": [
+        "building.ants.lumberjack",
+        "building.ants.sawmill",
+        "building.ants.stonemason",
+        "building.ants.house",
+        "building.ants.barracks"
+      ],
+      "recruit": "unit.ants.warrior",
+      "reserveWorkers": 2
+    }
+  },
+  "definitions": [
+    {
+      "id": "unit.ants.settler",
+      "kind": "unit",
+      "name": "Settler",
+      "description": "Builds the colony and carries goods. Employed workers help deliver while idle.",
+      "asset": "asset.ants.settler",
+      "icon": "icon.ants.settler",
+      "selectionClass": "worker",
+      "body": {
+        "maxHp": 60,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.worker"
+      ],
+      "behaviors": {},
+      "creation": {
+        "method": "spawn",
+        "items": [],
+        "workTicks": 80
+      }
+    },
+    {
+      "id": "unit.ants.warrior",
+      "kind": "unit",
+      "name": "Warrior",
+      "description": "Armored ant infantry. Protects the colony and fights at close range.",
+      "asset": "asset.ants.warrior",
+      "icon": "icon.ants.warrior",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 120,
+        "armor": 2,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 12,
+          "damageType": "physical",
+          "range": 1.5,
+          "cooldownTicks": 32,
+          "aggroRange": 10
+        }
+      },
+      "creation": {
+        "method": "recruit",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 1
+          }
+        ],
+        "workTicks": 160,
+        "unitInput": "unit.ants.settler"
+      }
+    },
+    {
+      "id": "unit.ants.archer",
+      "kind": "unit",
+      "name": "Archer",
+      "description": "Ranged support. Keep enemies at a distance and protect archers with infantry.",
+      "asset": "asset.ants.archer",
+      "icon": "icon.ants.archer",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 70,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 9,
+          "damageType": "physical",
+          "range": 7,
+          "cooldownTicks": 48,
+          "aggroRange": 10
+        }
+      },
+      "creation": {
+        "method": "recruit",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 1
+          }
+        ],
+        "workTicks": 240,
+        "unitInput": "unit.ants.settler"
+      }
+    },
+    {
+      "id": "unit.neutral.wolf",
+      "kind": "unit",
+      "name": "Wolf",
+      "description": "A territorial forest predator. Defends its camp and pursues nearby intruders.",
+      "asset": "asset.neutral.wolf",
+      "icon": "icon.neutral.wolf",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 90,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 10,
+          "damageType": "physical",
+          "range": 1.5,
+          "cooldownTicks": 32,
+          "aggroRange": 8
+        }
+      }
+    },
+    {
+      "id": "unit.neutral.ogre",
+      "kind": "unit",
+      "name": "Ogre",
+      "description": "A hulking neutral brute. Slow, strong, and dangerous in close combat.",
+      "asset": "asset.neutral.ogre",
+      "icon": "icon.neutral.ogre",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 350,
+        "armor": 4,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 24,
+          "damageType": "physical",
+          "range": 2,
+          "cooldownTicks": 64,
+          "aggroRange": 10
+        }
+      }
+    },
+    {
+      "id": "building.ants.fort",
+      "kind": "building",
+      "name": "Main fort",
+      "description": "Your colony’s heart and warehouse. Losing the bound main fort ends the match.",
+      "asset": "asset.ants.fort",
+      "icon": "icon.ants.fort",
+      "body": {
+        "maxHp": 1000,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 9,
+        "depth": 9
+      },
+      "entrance": {
+        "x": 0,
+        "y": 5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [],
+        "workTicks": 1
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "territory": {
+          "radius": 38
+        },
+        "storage": {
+          "capacity": 192,
+          "accepts": [
+            "item.log",
+            "item.plank",
+            "item.stone"
+          ]
+        }
+      }
+    },
+    {
+      "id": "building.ants.barracks",
+      "kind": "building",
+      "name": "Barracks",
+      "description": "Recruits available settlers after materials arrive.",
+      "asset": "asset.ants.barracks",
+      "icon": "icon.ants.barracks",
+      "body": {
+        "maxHp": 450,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 8
+          },
+          {
+            "item": "item.stone",
+            "amount": 4
+          }
+        ],
+        "workTicks": 240
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 16,
+          "accepts": [
+            "item.plank"
+          ]
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.ants.warrior",
+            "unit.ants.archer"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 12
+        }
+      }
+    },
+    {
+      "id": "building.ants.lumberjack",
+      "kind": "building",
+      "name": "Lumberjack’s hut",
+      "description": "Harvests trees in owned territory. Produces logs for sawmills.",
+      "asset": "asset.ants.lumberjack",
+      "icon": "icon.ants.lumberjack",
+      "body": {
+        "maxHp": 250,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 6
+          },
+          {
+            "item": "item.stone",
+            "amount": 2
+          }
+        ],
+        "workTicks": 200
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 16,
+          "accepts": []
+        },
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "item.log"
+          ],
+          "workerSlots": 1,
+          "workRadius": 28,
+          "jobName": "Lumberjack"
+        }
+      }
+    },
+    {
+      "id": "building.ants.sawmill",
+      "kind": "building",
+      "name": "Sawmill",
+      "description": "Turns delivered logs into planks for construction and recruitment.",
+      "asset": "asset.ants.sawmill",
+      "icon": "icon.ants.sawmill",
+      "body": {
+        "maxHp": 300,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 9,
+        "depth": 9
+      },
+      "entrance": {
+        "x": 0,
+        "y": 5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 8
+          },
+          {
+            "item": "item.stone",
+            "amount": 4
+          }
+        ],
+        "workTicks": 280
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 16,
+          "accepts": [
+            "item.log"
+          ]
+        },
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "item.plank"
+          ],
+          "workerSlots": 1,
+          "workRadius": 28,
+          "jobName": "Sawyer"
+        }
+      }
+    },
+    {
+      "id": "building.ants.forester",
+      "kind": "building",
+      "name": "Forester lodge",
+      "description": "Restores exhausted tree sites. Young trees need time to mature.",
+      "asset": "asset.ants.forester",
+      "icon": "icon.ants.forester",
+      "body": {
+        "maxHp": 250,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 6
+          },
+          {
+            "item": "item.stone",
+            "amount": 2
+          }
+        ],
+        "workTicks": 220
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "resource.forest.tree"
+          ],
+          "workerSlots": 1,
+          "workRadius": 28,
+          "jobName": "Forester"
+        }
+      }
+    },
+    {
+      "id": "building.ants.stonemason",
+      "kind": "building",
+      "name": "Stonemason’s hut",
+      "description": "Quarries stone deposits in owned territory.",
+      "asset": "asset.ants.stonemason",
+      "icon": "icon.ants.stonemason",
+      "body": {
+        "maxHp": 250,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 5,
+        "depth": 5
+      },
+      "entrance": {
+        "x": 0,
+        "y": 3
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 6
+          },
+          {
+            "item": "item.stone",
+            "amount": 2
+          }
+        ],
+        "workTicks": 240
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 16,
+          "accepts": []
+        },
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "item.stone"
+          ],
+          "workerSlots": 1,
+          "workRadius": 28,
+          "jobName": "Stonemason"
+        }
+      }
+    },
+    {
+      "id": "building.ants.house",
+      "kind": "building",
+      "name": "Settler house",
+      "description": "Welcomes three additional settlers. Free settlers carry goods.",
+      "asset": "asset.ants.house",
+      "icon": "icon.ants.house",
+      "body": {
+        "maxHp": 250,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 5,
+        "depth": 5
+      },
+      "entrance": {
+        "x": 0,
+        "y": 3
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 8
+          },
+          {
+            "item": "item.stone",
+            "amount": 4
+          }
+        ],
+        "workTicks": 240
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "unit.ants.settler"
+          ],
+          "workerSlots": 0,
+          "totalLimit": 3
+        }
+      }
+    },
+    {
+      "id": "building.ants.tower",
+      "kind": "building",
+      "name": "Watchtower",
+      "description": "Expands territory and sight. Does not fire at enemies.",
+      "asset": "asset.ants.tower",
+      "icon": "icon.ants.tower",
+      "body": {
+        "maxHp": 350,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 22,
+      "footprint": {
+        "width": 5,
+        "depth": 5
+      },
+      "entrance": {
+        "x": 0,
+        "y": 3
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.plank",
+            "amount": 10
+          },
+          {
+            "item": "item.stone",
+            "amount": 8
+          }
+        ],
+        "workTicks": 320
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "territory": {
+          "radius": 38
+        }
+      }
+    },
+    {
+      "id": "item.log",
+      "kind": "item",
+      "name": "Log",
+      "description": "Harvested timber. Sawmills turn logs into planks.",
+      "asset": "asset.item.log",
+      "icon": "icon.item.log",
+      "stackLimit": 16,
+      "behaviors": {},
+      "creation": {
+        "method": "harvest",
+        "items": [],
+        "workTicks": 100,
+        "source": "resource.forest.tree"
+      }
+    },
+    {
+      "id": "item.plank",
+      "kind": "item",
+      "name": "Plank",
+      "description": "Sawn timber used in construction and recruitment.",
+      "asset": "asset.item.plank",
+      "icon": "icon.item.plank",
+      "stackLimit": 16,
+      "behaviors": {},
+      "creation": {
+        "method": "craft",
+        "items": [
+          {
+            "item": "item.log",
+            "amount": 1
+          }
+        ],
+        "workTicks": 120
+      }
+    },
+    {
+      "id": "item.stone",
+      "kind": "item",
+      "name": "Stone",
+      "description": "Quarried stone used in sturdy construction.",
+      "asset": "asset.item.stone",
+      "icon": "icon.item.stone",
+      "stackLimit": 16,
+      "behaviors": {},
+      "creation": {
+        "method": "harvest",
+        "items": [],
+        "workTicks": 100,
+        "source": "resource.stone.deposit"
+      }
+    },
+    {
+      "id": "resource.forest.tree",
+      "kind": "resource",
+      "name": "Forest tree",
+      "description": "Harvestable timber. Foresters can restore an exhausted site.",
+      "asset": "asset.resource.ant-pine-1",
+      "icon": "icon.item.log",
+      "regrowthTicks": 1600,
+      "behaviors": {},
+      "creation": {
+        "method": "plant",
+        "items": [],
+        "workTicks": 80
+      },
+      "yield": 24
+    },
+    {
+      "id": "resource.stone.deposit",
+      "kind": "resource",
+      "name": "Stone deposit",
+      "description": "A finite supply of stone for the colony.",
+      "asset": "asset.resource.ant-stone-deposit",
+      "icon": "icon.item.stone",
+      "behaviors": {},
+      "yield": 80
+    }
+  ]
+}

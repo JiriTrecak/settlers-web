@@ -14,6 +14,7 @@ export type Slot = {
   player: number;
   kind: SlotKind;
   name?: string;
+  team?: number;
 };
 
 export type MatchConfig = {

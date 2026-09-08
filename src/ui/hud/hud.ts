@@ -1,4 +1,4 @@
-import {graphicsControls} from '../menu/graphicsControls';
+import { graphicsControls } from "../menu/graphicsControls";
 /**
  * In-match overlay: fps + zoom, Exit with confirm.
  */
@@ -9,13 +9,15 @@ export type HudState = {
 
 export type HudHooks = {
   onLeave: () => void;
+  onSave?: () => void;
+  onLoad?: (file: File) => void;
 };
 
 export class Hud {
   private readonly stats: HTMLDivElement;
   private readonly nav: HTMLDivElement;
   private confirm: HTMLDivElement | null = null;
-  private settings:HTMLDialogElement|null=null;
+  private settings: HTMLDialogElement | null = null;
   private readonly hooks: HudHooks;
 
   constructor(host: HTMLElement, hooks: HudHooks) {
@@ -30,14 +32,48 @@ export class Hud {
     exit.className = "hud-exit";
     exit.textContent = "Exit";
     exit.addEventListener("click", () => this.askLeave());
-    const settings=document.createElement('button');settings.className='hud-exit';settings.textContent='Settings';
-    settings.onclick=()=>{
-      this.settings?.remove();const dialog=document.createElement('dialog');this.settings=dialog;dialog.className='canopy-settings';dialog.setAttribute('aria-label','Game settings');
-      const title=document.createElement('h2');title.textContent='Settings';
-      const close=document.createElement('button');close.textContent='Done';close.onclick=()=>dialog.close();
-      dialog.append(title,graphicsControls(),close);document.body.append(dialog);dialog.showModal();
+    const settings = document.createElement("button");
+    settings.className = "hud-exit";
+    settings.textContent = "Settings";
+    settings.onclick = () => {
+      this.settings?.remove();
+      const dialog = document.createElement("dialog");
+      this.settings = dialog;
+      dialog.className = "canopy-settings";
+      dialog.setAttribute("aria-label", "Game settings");
+      const title = document.createElement("h2");
+      title.textContent = "Settings";
+      const close = document.createElement("button");
+      close.textContent = "Done";
+      close.onclick = () => dialog.close();
+      dialog.append(title, graphicsControls(), close);
+      document.body.append(dialog);
+      dialog.showModal();
     };
-    this.nav.append(settings,exit);
+    this.nav.append(settings);
+    if (hooks.onSave) {
+      const save = document.createElement("button");
+      save.className = "hud-exit";
+      save.textContent = "Save";
+      save.onclick = hooks.onSave;
+      this.nav.append(save);
+    }
+    if (hooks.onLoad) {
+      const load = document.createElement("button");
+      load.className = "hud-exit";
+      load.textContent = "Load";
+      load.onclick = () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".utcsave,application/json";
+        input.onchange = () => {
+          if (input.files?.[0]) hooks.onLoad!(input.files[0]);
+        };
+        input.click();
+      };
+      this.nav.append(load);
+    }
+    this.nav.append(exit);
 
     host.append(this.stats, this.nav);
   }

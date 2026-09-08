@@ -1,19 +1,64 @@
 import { describe, expect, it } from "vitest";
-import { emptyUtcMap, mapFileName, parseUtcMap, stringifyUtcMap, UTCMAP_VERSION } from "../../src/shared";
+import {
+  emptyUtcMap,
+  mapFileName,
+  parseUtcMap,
+  stringifyUtcMap,
+  UTCMAP_VERSION,
+} from "../../src/shared";
 
 describe("utcmap", () => {
   it("rejects invalid landscape settings instead of silently losing the scene appearance", () => {
-    const landscape = {strokes:[],cover:[],environment:{hour:8.8,season:'summer',playing:false},water:{rippleScale:.16,rippleStrength:.14,cloudStrength:.24,foamStrength:.9}};
-    expect(parseUtcMap({...emptyUtcMap(),landscape})).toBeNull();
-    landscape.water.cloudStrength=.18;
-    expect(parseUtcMap({...emptyUtcMap(),landscape})?.landscape).toEqual(landscape);
+    const landscape = {
+      strokes: [],
+      cover: [],
+      environment: { hour: 8.8, season: "summer", playing: false },
+      water: {
+        rippleScale: 0.16,
+        rippleStrength: 0.14,
+        cloudStrength: 0.24,
+        foamStrength: 0.9,
+      },
+    };
+    expect(parseUtcMap({ ...emptyUtcMap(), landscape })).toBeNull();
+    landscape.water.cloudStrength = 0.18;
+    expect(parseUtcMap({ ...emptyUtcMap(), landscape })?.landscape).toEqual(
+      landscape,
+    );
   });
   it("preserves forest understory and building exclusions when saving a map", () => {
-    const landscape = {strokes:[],cover:[{x:129,z:125,radius:34,density:10,seed:7123,flowers:.005,grassScale:.65,broadRatio:1,palette:'forest',exclusions:[{x:125.7,z:117,radius:5.94}]}],environment:{hour:10,season:'summer',playing:false}};
-    const parsed = parseUtcMap({...emptyUtcMap(),landscape});
+    const landscape = {
+      strokes: [],
+      cover: [
+        {
+          x: 129,
+          z: 125,
+          radius: 34,
+          density: 10,
+          seed: 7123,
+          flowers: 0.005,
+          grassScale: 0.65,
+          broadRatio: 1,
+          palette: "forest",
+          exclusions: [{ x: 125.7, z: 117, radius: 5.94 }],
+        },
+      ],
+      environment: { hour: 10, season: "summer", playing: false },
+    };
+    const parsed = parseUtcMap({ ...emptyUtcMap(), landscape });
     expect(parsed?.landscape).toEqual(landscape);
-    expect(parseUtcMap(JSON.parse(stringifyUtcMap(parsed!)))?.landscape).toEqual(landscape);
-    expect(parseUtcMap({...emptyUtcMap(),landscape:{...landscape,cover:[{...landscape.cover[0],palette:'unknown'}]}})).toBeNull();
+    expect(
+      parseUtcMap(JSON.parse(stringifyUtcMap(parsed!)))?.landscape,
+    ).toEqual(landscape);
+    expect(
+      parseUtcMap({
+        ...emptyUtcMap(),
+        landscape: {
+          ...landscape,
+          cover: [{ ...landscape.cover[0], palette: "unknown" }],
+        },
+      }),
+    ).toBeNull();
   });
   it("roundtrips an empty map", () => {
     const map = emptyUtcMap();
@@ -23,13 +68,13 @@ describe("utcmap", () => {
     expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))).toEqual(map);
   });
 
-  it("accepts a bare version object", () => {
-    expect(parseUtcMap({ v: 1 })).toEqual({ v: 1, name: "Untitled", stamps: [] });
+  it("rejects old and incomplete documents", () => {
+    expect(parseUtcMap({ v: 1 })).toBeNull();
   });
 
   it("roundtrips name and stamps", () => {
     const map = {
-      v: 1 as const,
+      ...emptyUtcMap(),
       name: "Forest Edge",
       stamps: [{ id: "a", asset: "pine", x: 3, y: 4, yaw: 0.4, scale: 1.2 }],
     };

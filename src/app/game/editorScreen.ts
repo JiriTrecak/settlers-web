@@ -1,16 +1,22 @@
+import { EntityDock } from "../../editor/chrome/entityDock";
 import { getMap, rememberAuthoredMap } from "../../shared/map/library";
 import { playableMapError } from "../../shared/map/playable";
 import { SpawnDock } from "../../editor/chrome/spawnDock";
 import type { UtcMap } from "../../shared/map/utcmap";
-import { EnvironmentDock } from '../../editor/chrome/environmentDock';
-import { DecalDock } from '../../editor/chrome/decalDock';
+import { EnvironmentDock } from "../../editor/chrome/environmentDock";
+import { DecalDock } from "../../editor/chrome/decalDock";
 import { TerrainDock } from "../../editor/chrome/terrainDock";
 /**
  * In-game world editor: docks + WorldEditor on the game canvas.
  * Owns dirty state, save shortcuts, catalogue modal, and leave/load/new confirms.
  */
 import { Confirm, GameScreen } from "../../ui";
-import { emptyUtcMap, parseUtcMap, stringifyUtcMap, type GridMode } from "../../shared";
+import {
+  emptyUtcMap,
+  parseUtcMap,
+  stringifyUtcMap,
+  type GridMode,
+} from "../../shared";
 import { EditorChrome, MapStore, WorldEditor } from "../../editor";
 import { CatalogueStore } from "../../editor/assets/store";
 import { BrushPresetStore } from "../../editor/brush/presets";
@@ -30,6 +36,7 @@ export class EditorScreen extends GameScreen {
   private readonly decalDock: DecalDock;
   private readonly terrainDock: TerrainDock;
   private readonly spawnDock: SpawnDock;
+  private readonly entityDock: EntityDock;
   private readonly onLeave: () => void;
   private saved = stringifyUtcMap(emptyUtcMap());
   private dialog: Confirm | null = null;
@@ -40,14 +47,20 @@ export class EditorScreen extends GameScreen {
   private readonly bridge: EditorBridge;
   private readonly onKey: (e: KeyboardEvent) => void;
 
-  constructor(canvas: HTMLCanvasElement, hooks: { onLeave: () => void; map?: UtcMap }) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    hooks: { onLeave: () => void; map?: UtcMap },
+  ) {
     super("screen");
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
       host: this.root,
       onChange: () => this.syncDoc(),
       onNeedAsset: () => this.openCatalogue(),
-      onView: () => {this.chrome.setGameCam(this.editor.gameCam);this.decalDock?.sync();},
+      onView: () => {
+        this.chrome.setGameCam(this.editor.gameCam);
+        this.decalDock?.sync();
+      },
       onBrush: () => this.syncBrush(),
       onClean: () => this.syncClean(),
       onSculpt: () => this.syncSculpt(),
@@ -68,9 +81,23 @@ export class EditorScreen extends GameScreen {
       onBrush: () => this.armBrush(),
       onClean: () => this.armClean(),
       onSculpt: () => this.armSculpt(),
-      onSpawn: () => { this.editor.setTool("spawn");this.syncRemote(); },
-      onDecal: () => { this.editor.setTool("decal");this.syncRemote(); },
-      onTerrain: () => { this.editor.setTool("terrain");this.syncRemote(); },
+      onEntities: () => {
+        this.editor.selectedEntity = null;
+        this.editor.setTool("entity");
+        this.syncRemote();
+      },
+      onSpawn: () => {
+        this.editor.setTool("spawn");
+        this.syncRemote();
+      },
+      onDecal: () => {
+        this.editor.setTool("decal");
+        this.syncRemote();
+      },
+      onTerrain: () => {
+        this.editor.setTool("terrain");
+        this.syncRemote();
+      },
       onCatalogue: () => this.openCatalogue(),
       onGrid: () => this.toggleGridMenu(),
       onGridMode: (mode) => this.setGridMode(mode),
@@ -79,7 +106,10 @@ export class EditorScreen extends GameScreen {
       onMcpEnabled: (on) => this.setMcpEnabled(on),
       onMcpPort: (n) => this.setMcpPort(n),
       onSky: () => this.toggleSky(),
-      onSeason: (season) => {this.editor.environment({season});this.syncSky();},
+      onSeason: (season) => {
+        this.editor.environment({ season });
+        this.syncSky();
+      },
       onSkyHour: (h) => this.setSkyHour(h),
       onSkyPlay: (on) => this.setSkyPlay(on),
       onSkySpeed: (n) => this.setSkySpeed(n),
@@ -116,13 +146,19 @@ export class EditorScreen extends GameScreen {
     this.chrome.setGridMenu(this.editor.gridMenu);
     this.chrome.setGridMode(this.editor.gridMode);
     this.chrome.setGameCam(this.editor.gameCam);
-    this.environmentDock = new EnvironmentDock(this.root,this.editor,()=>{this.skyOpen=false;this.syncSky();});
-    this.decalDock = new DecalDock(this.root,this.editor);
-    this.terrainDock = new TerrainDock(this.root,this.editor);
+    this.environmentDock = new EnvironmentDock(this.root, this.editor, () => {
+      this.skyOpen = false;
+      this.syncSky();
+    });
+    this.decalDock = new DecalDock(this.root, this.editor);
+    this.terrainDock = new TerrainDock(this.root, this.editor);
     this.syncBrush();
     this.syncAsset();
     this.chrome.setName(this.editor.map.name);
-    this.bridge = new EditorBridge(new EditorControl(this.editor, this.library, () => this.syncRemote()), () => this.syncMcp());
+    this.bridge = new EditorBridge(
+      new EditorControl(this.editor, this.library, () => this.syncRemote()),
+      () => this.syncMcp(),
+    );
     this.syncMcp();
     this.onEscape(() => {
       if (this.mcpOpen) {
@@ -133,7 +169,10 @@ export class EditorScreen extends GameScreen {
         this.toggleSky();
         return;
       }
-      if (this.editor.tool === "select" && this.editor.select.id) {
+      if (
+        this.editor.tool === "select" &&
+        (this.editor.select.id || this.editor.selectedEntity)
+      ) {
         this.editor.select.clear();
         this.editor.setTool("select");
         return;
@@ -142,13 +181,22 @@ export class EditorScreen extends GameScreen {
     });
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
-    { const initial=hooks.map ?? getMap("mosswater-divide").map;this.editor.replace(initial);this.saved=stringifyUtcMap(initial); }
-    this.spawnDock = new SpawnDock(this.root,this.editor);
+    {
+      const initial = hooks.map ?? getMap("mosswater-divide").map;
+      this.editor.replace(initial);
+      this.saved = stringifyUtcMap(initial);
+    }
+    this.spawnDock = new SpawnDock(this.root, this.editor);
+    this.entityDock = new EntityDock(this.root, this.editor);
     // Reloads must never interrupt the live editor / MCP iteration loop.
     try {
-      const draft = parseUtcMap(JSON.parse(sessionStorage.getItem("utc-editor-draft") ?? "null"));
+      const draft = parseUtcMap(
+        JSON.parse(sessionStorage.getItem("utc-editor-draft") ?? "null"),
+      );
       if (draft && !hooks.map) this.editor.replace(draft);
-    } catch { /* An invalid draft must not prevent opening the editor. */ }
+    } catch {
+      /* An invalid draft must not prevent opening the editor. */
+    }
   }
 
   start(): void {
@@ -170,6 +218,7 @@ export class EditorScreen extends GameScreen {
     this.bridge.stop();
     this.terrainDock.destroy();
     this.spawnDock.destroy();
+    this.entityDock.destroy();
     this.decalDock.destroy();
     this.environmentDock.destroy();
     this.chrome.destroy();
@@ -217,6 +266,9 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncBrush(): void {
+    this.entityDock?.setOpen(
+      this.editor.tool === "entity" || !!this.editor.selectedEntity,
+    );
     this.spawnDock?.setOpen(this.editor.tool === "spawn");
     this.decalDock?.setOpen(this.editor.tool === "decal");
     this.terrainDock?.setOpen(this.editor.tool === "terrain");
@@ -241,10 +293,17 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncSelect(): void {
+    this.entityDock?.setOpen(
+      this.editor.tool === "entity" || !!this.editor.selectedEntity,
+    );
     const stamp = this.editor.selectedStamp();
-    this.chrome.setSelectOpen(this.editor.tool === "select");
+    this.chrome.setSelectOpen(
+      this.editor.tool === "select" && !this.editor.selectedEntity,
+    );
     this.chrome.setSelect({
-      name: stamp ? (this.library.entry(stamp.asset)?.name ?? stamp.asset) : null,
+      name: stamp
+        ? (this.library.entry(stamp.asset)?.name ?? stamp.asset)
+        : null,
       yaw: stamp?.yaw ?? 0,
     });
   }
@@ -300,13 +359,19 @@ export class EditorScreen extends GameScreen {
   private async askDeletePreset(): Promise<void> {
     if (!this.presets.active) return;
     const p = this.presets.get(this.presets.active);
-    const choice = await this.confirm("Delete preset", `Remove “${p?.name ?? "this preset"}”?`, [
-      { id: "cancel", label: "Cancel" },
-      { id: "delete", label: "Delete", kind: "danger" },
-    ]);
+    const choice = await this.confirm(
+      "Delete preset",
+      `Remove “${p?.name ?? "this preset"}”?`,
+      [
+        { id: "cancel", label: "Cancel" },
+        { id: "delete", label: "Delete", kind: "danger" },
+      ],
+    );
     if (choice !== "delete") return;
     this.presets.remove(this.presets.active);
-    const still = this.presets.active ? this.presets.get(this.presets.active) : undefined;
+    const still = this.presets.active
+      ? this.presets.get(this.presets.active)
+      : undefined;
     this.presetName = still?.name ?? "";
     if (still) {
       this.editor.kit.load(still.slots);
@@ -329,11 +394,18 @@ export class EditorScreen extends GameScreen {
     this.chrome.setGridMode(this.editor.gridMode);
   }
 
-  private openCatalogue(forTool: "stamp" | "brush" = this.editor.tool === "brush" ? "brush" : "stamp"): void {
+  private openCatalogue(
+    forTool: "stamp" | "brush" = this.editor.tool === "brush"
+      ? "brush"
+      : "stamp",
+  ): void {
     if (this.modal) return;
     this.modal = new CatalogModal(this.root, {
       store: this.library,
-      selected: forTool === "brush" ? (this.editor.kit.slots.at(-1)?.asset ?? this.editor.asset) : this.editor.asset,
+      selected:
+        forTool === "brush"
+          ? (this.editor.kit.slots.at(-1)?.asset ?? this.editor.asset)
+          : this.editor.asset,
       onPick: (id) => {
         if (forTool === "brush") this.editor.kit.add(id);
         else this.pickAsset(id);
@@ -358,7 +430,11 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncAsset(): void {
-    this.chrome.setAsset(this.editor.asset ? (this.library.entry(this.editor.asset) ?? null) : null);
+    this.chrome.setAsset(
+      this.editor.asset
+        ? (this.library.entry(this.editor.asset) ?? null)
+        : null,
+    );
   }
 
   private syncRemote(): void {
@@ -386,7 +462,8 @@ export class EditorScreen extends GameScreen {
   }
 
   private applyMcp(): void {
-    if (this.mcpPrefs.value.enabled) this.bridge.start(this.mcpPrefs.value.port);
+    if (this.mcpPrefs.value.enabled)
+      this.bridge.start(this.mcpPrefs.value.port);
     else this.bridge.stop();
     this.syncMcp();
   }
@@ -406,12 +483,12 @@ export class EditorScreen extends GameScreen {
   }
 
   private setSkyHour(hour: number): void {
-    this.editor.environment({hour,playing:false});
+    this.editor.environment({ hour, playing: false });
     this.syncSky();
   }
 
   private setSkyPlay(on: boolean): void {
-    this.editor.environment({playing:on});
+    this.editor.environment({ playing: on });
     this.syncSky();
   }
 
@@ -426,7 +503,12 @@ export class EditorScreen extends GameScreen {
     this.environmentDock?.setOpen(this.skyOpen);
     const sky = this.editor.sky;
     this.chrome.setSky(
-      sky?.snapshot() ?? { hour: 9.5, playing: false, daySeconds: 240, label: "Morning" },
+      sky?.snapshot() ?? {
+        hour: 9.5,
+        playing: false,
+        daySeconds: 240,
+        label: "Morning",
+      },
     );
   }
 
@@ -439,7 +521,14 @@ export class EditorScreen extends GameScreen {
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());
     this.environmentDock?.sync();
-    try { sessionStorage.setItem("utc-editor-draft", stringifyUtcMap(this.editor.map)); } catch { /* Storage may be full. */ }
+    try {
+      sessionStorage.setItem(
+        "utc-editor-draft",
+        stringifyUtcMap(this.editor.map),
+      );
+    } catch {
+      /* Storage may be full. */
+    }
   }
 
   private markClean(): void {
@@ -448,6 +537,16 @@ export class EditorScreen extends GameScreen {
   }
 
   private shortcut(e: KeyboardEvent): void {
+    if (
+      (e.metaKey || e.ctrlKey) &&
+      e.key.toLowerCase() === "z" &&
+      ["entity", "spawn", "select"].includes(this.editor.tool ?? "") &&
+      !(e.target as HTMLElement)?.matches("input,textarea")
+    ) {
+      e.preventDefault();
+      this.editor.undoEntity(e.shiftKey);
+      return;
+    }
     if (e.metaKey || e.ctrlKey || e.altKey) {
       if (e.key.toLowerCase() === "s") {
         e.preventDefault();
@@ -455,15 +554,27 @@ export class EditorScreen extends GameScreen {
       }
       return;
     }
-    if (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement) return;
+    if (
+      document.activeElement instanceof HTMLInputElement ||
+      document.activeElement instanceof HTMLTextAreaElement
+    )
+      return;
     const k = e.key.toLowerCase();
-    if (k === "r" && (this.editor.tool === "stamp" || this.editor.tool === "select")) {
+    if (
+      k === "r" &&
+      (this.editor.tool === "stamp" ||
+        this.editor.tool === "select" ||
+        this.editor.tool === "entity")
+    ) {
       e.preventDefault();
       this.editor.rotateStamp();
       this.syncSelect();
       return;
     }
-    if (this.editor.tool === "select" && this.editor.select.id) {
+    if (
+      this.editor.tool === "select" &&
+      (this.editor.select.id || this.editor.selectedEntity)
+    ) {
       if (k === "q") {
         e.preventDefault();
         this.editor.nudgeSelected(-Math.PI / 12);
@@ -483,16 +594,25 @@ export class EditorScreen extends GameScreen {
   }
 
   private async save(asNew = false): Promise<boolean> {
-    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-    const error=playableMapError(this.editor.map);
-    if(error){await this.alert("Player starts",error);return false;}
+    if (document.activeElement instanceof HTMLElement)
+      document.activeElement.blur();
+    const error = playableMapError(this.editor.map);
+    if (error) {
+      await this.alert("Player starts", error);
+      return false;
+    }
     const result = await this.files.save(this.editor.map, asNew);
     if (result === "ok") {
-      try { rememberAuthoredMap(this.editor.map); } catch { /* Disk file was saved even if browser storage is full. */ }
+      try {
+        rememberAuthoredMap(this.editor.map);
+      } catch {
+        /* Disk file was saved even if browser storage is full. */
+      }
       this.markClean();
       return true;
     }
-    if (result === "fail") await this.alert("Couldn't save", "The map file could not be written.");
+    if (result === "fail")
+      await this.alert("Couldn't save", "The map file could not be written.");
     return false;
   }
 
@@ -500,11 +620,15 @@ export class EditorScreen extends GameScreen {
     if (this.modal) return;
     if (!(await this.ifClean("Save this map before leaving?"))) return;
     if (this.library.dirty) {
-      const choice = await this.confirm("Unsaved catalogue", "Save the catalogue before leaving?", [
-        { id: "cancel", label: "Cancel" },
-        { id: "discard", label: "Discard", kind: "danger" },
-        { id: "save", label: "Save", kind: "primary" },
-      ]);
+      const choice = await this.confirm(
+        "Unsaved catalogue",
+        "Save the catalogue before leaving?",
+        [
+          { id: "cancel", label: "Cancel" },
+          { id: "discard", label: "Discard", kind: "danger" },
+          { id: "save", label: "Save", kind: "primary" },
+        ],
+      );
       if (choice === "save" && (await this.library.save()) !== "ok") return;
       if (choice !== "discard" && choice !== "save") return;
     }
@@ -512,7 +636,8 @@ export class EditorScreen extends GameScreen {
   }
 
   private async askNew(): Promise<void> {
-    if (!(await this.ifClean("Save this map before starting a new one?"))) return;
+    if (!(await this.ifClean("Save this map before starting a new one?")))
+      return;
     this.files.clearFile();
     this.editor.replace(emptyUtcMap());
     this.markClean();
@@ -527,7 +652,13 @@ export class EditorScreen extends GameScreen {
       return;
     }
     this.editor.replace(result.map);
-    if(!playableMapError(result.map)){try{rememberAuthoredMap(result.map);}catch{/* Disk file remains loaded. */}}
+    if (!playableMapError(result.map)) {
+      try {
+        rememberAuthoredMap(result.map);
+      } catch {
+        /* Disk file remains loaded. */
+      }
+    }
     this.markClean();
   }
 
@@ -556,6 +687,8 @@ export class EditorScreen extends GameScreen {
   }
 
   private async alert(title: string, body: string): Promise<void> {
-    await this.confirm(title, body, [{ id: "ok", label: "OK", kind: "primary" }]);
+    await this.confirm(title, body, [
+      { id: "ok", label: "OK", kind: "primary" },
+    ]);
   }
 }

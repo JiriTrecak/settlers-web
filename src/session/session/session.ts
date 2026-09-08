@@ -1,6 +1,10 @@
-import { areaSelection } from '../../shared/settlement/selection';
-import { isSoldier, neutralKindForAsset } from '../../shared/settlement/rules';
-import {perf} from '../../debug/performance';
+import { localSaveSchema } from "./localSave";
+import { SAVE_FORMAT_VERSION } from "../../shared/save/save";
+import { areaSelection } from "../../presentation/commands";
+import { resourceStamps } from "../../presentation/scenery";
+import { content } from "../../content/builtin";
+import { slotOwner } from "../../content/schema";
+import { perf } from "../../debug/performance";
 import { EditorBridge } from "../../shared/control/editorBridge";
 import { validAction } from "../../shared/types/types";
 import { getMap, type MapEntry } from "../../shared/map/library";
@@ -14,11 +18,11 @@ import {
 } from "../../shared";
 import { projectCatalogue, projectMeshUrl } from "../../shared/assets/project";
 import { SettlementHud } from "../../ui/settlement/settlementHud";
-import { BUILDINGS } from "../../shared/settlement/rules";
+
 /**
  * One match: transport, fixed-step simulation, input and presentation orchestration.
  */
-import { MAP_SIZE, localMatch, type MatchConfig } from "../../shared";
+import { localMatch, type MatchConfig } from "../../shared";
 import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
 import { MapInput, Minimap, Renderer } from "../../render";
 import { World } from "../../sim/world/world";
@@ -40,6 +44,7 @@ export type SessionConfig = {
 export class Session {
   private loadedMap: MapEntry | null = null;
   private world: World | null = null;
+  private room: Room | null = null;
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
@@ -57,7 +62,7 @@ export class Session {
   private bridge: EditorBridge | null = null;
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
-  private resourceRevision = -1;
+  private resourceSignature = "";
   private economyHud: SettlementHud | null = null;
   private readonly onHover = (e: PointerEvent) => {
     const hit = this.renderer?.pickGround(e.clientX, e.clientY),
@@ -68,7 +73,13 @@ export class Session {
     }
     const x = Math.round(hit.x),
       z = Math.round(hit.z),
-      error = this.world?.settlement?.canBuild(this.me, kind, x, z) ?? null;
+      error =
+        this.world?.settlement?.canBuild(
+          slotOwner(this.me),
+          kind,
+          { x, y: z },
+          this.economyHud?.buildingActor,
+        ) ?? null;
     this.renderer?.gamePreview(kind, x, z, !error);
     this.economyHud?.placement(error);
   };
@@ -84,8 +95,10 @@ export class Session {
   }
 
   start(): void {
-    const loaded=this.loadedMap=getMap(this.config.match?.mapId ?? this.config.mapId);
-    const map=requirePlayableMap(loaded.map);
+    const loaded = (this.loadedMap = getMap(
+      this.config.match?.mapId ?? this.config.mapId,
+    ));
+    const map = requirePlayableMap(loaded.map);
     const match =
       this.config.match ??
       localMatch({
@@ -96,15 +109,11 @@ export class Session {
         me: this.me,
       });
     this.match = match;
-    if (
-      match.mapId !== loaded.id ||
-      match.mapRevision !== loaded.revision
-    )
+    if (match.mapId !== loaded.id || match.mapRevision !== loaded.revision)
       throw new Error(
         "This match uses a different map or gameplay rules revision. Reload both clients.",
       );
     this.world = new World({
-      size: MAP_SIZE,
       slots: match.slots,
       seed: match.seed,
       map,
@@ -125,33 +134,45 @@ export class Session {
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
     renderer.setGridMode("none");
-    this.stamps = map.stamps.filter(s=>!neutralKindForAsset(s.asset));
+    this.stamps = [
+      ...map.stamps,
+      ...resourceStamps(this.world.settlement!.view(this.me).entities),
+    ];
     this.renderer = renderer;
-    const self =
-      this.world.players.find((p) => p.id === this.me) ?? this.world.players[0];
-    if (self) renderer.camera.lookAt(self.pos.x + 0.5, self.pos.y + 0.5);
+    const self = map.playerStarts.find((p) => p.player === this.me + 1)!;
+    renderer.camera.lookAt(self.x, self.z);
     renderer.camera.setGame(true);
     this.input = new MapInput(this.canvas, renderer.camera, {
       onChanged: () => this.present(),
       rts: true,
       onClick: (x, y, shift) => this.click(x, y, shift),
-      onSelectArea: (rect,shift)=>{
-        const hud=this.economyHud,state=this.world?.settlement?.view(this.me);
-        if(!hud||!state)return;
-        const inside=new Set(renderer.unitsInScreenRect(state.workers,rect));
-        const ids=areaSelection(state.workers.filter(w=>inside.has(w.id)),this.me);
-        hud.setSelection(shift?[...hud.selectedIds,...ids]:ids);
+      onSelectArea: (rect, shift) => {
+        const hud = this.economyHud,
+          state = this.world?.settlement?.view(this.me);
+        if (!hud || !state) return;
+        const inside = new Set(
+          renderer.unitsInScreenRect(
+            state.entities.filter((e) => e.unit && !e.unit.contained),
+            rect,
+          ),
+        );
+        const ids = areaSelection(
+          state.entities.filter((w) => inside.has(w.id)),
+          slotOwner(this.me),
+          content,
+        );
+        hud.setSelection(shift ? [...hud.selectedIds, ...ids] : ids);
       },
     });
     this.economyHud = new SettlementHud(this.config.host, this.me, {
-      action: action => this.send(action),
+      action: (action) => this.send(action),
       mode: () => renderer.gamePreview(null),
-      cancel: (id) => this.send({ type: "cancel-building", id }),
       home: () => {
-        const home = this.world?.settlement?.buildings.find(
-          (b) => b.owner === this.me && b.complete && b.kind === "fort",
-        );
-        if (home) renderer.camera.lookAt(home.x, home.z);
+        const game = this.world?.settlement,
+          home = game?.entities.find(
+            (e) => e.id === game.state.objectives[slotOwner(this.me)],
+          );
+        if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
     this.economyHud.setMapName(map.name);
@@ -169,7 +190,7 @@ export class Session {
         this.present();
       },
     });
-    this.mini.mountGame(this.economyHud.minimapHost,this.economyHud.clockHost);
+    this.mini.mountGame(this.economyHud.minimapHost, this.economyHud.clockHost);
     if (this.config.channel) {
       this.bindRemote(match, this.config.channel);
       this.armConfirms(match);
@@ -178,7 +199,9 @@ export class Session {
     }
     this.mini.setHeight(this.terrain);
     this.mini.setStamps(this.stamps);
-    this.mini.setPlayerStarts((map.playerStarts ?? []).filter(s=>s.player===this.me+1));
+    this.mini.setPlayerStarts(
+      (map.playerStarts ?? []).filter((s) => s.player === this.me + 1),
+    );
     this.mini.setFog(this.world.settlement!.view(this.me));
     renderer.draw(this.world.view(this.me), this.stamps);
     this.mini?.paint();
@@ -194,7 +217,31 @@ export class Session {
             checksum: this.world!.checksum(),
             settlement: this.world!.settlement!.view(this.me),
             desynced: this.desynced,
+            hud: {
+              text: this.economyHud?.root.innerText,
+              selection: this.economyHud?.selectedIds,
+              commands: [
+                ...this.economyHud!.root.querySelectorAll("button"),
+              ].map((b) => ({
+                name: b.getAttribute("aria-label"),
+                disabled: b.disabled,
+              })),
+            },
           };
+        if (op === "gameSave") return this.snapshotLocal();
+        if (op === "gameLoad") {
+          this.restoreLocal(o.save);
+          return { restored: true };
+        }
+        if (op === "gameSelection") {
+          if (
+            !Array.isArray(o.ids) ||
+            !o.ids.every((id) => Number.isSafeInteger(id))
+          )
+            throw new Error("Selection requires numeric IDs");
+          this.economyHud!.setSelection(o.ids as number[]);
+          return { selection: this.economyHud!.selectedIds };
+        }
         if (op === "gameCommand") {
           if (!validAction(o.action))
             throw new Error("Invalid gameplay action");
@@ -248,7 +295,7 @@ export class Session {
     const renderer = this.renderer;
     const world = this.world;
     if (!renderer || !world) return;
-    const simulation=perf.start();
+    const simulation = perf.start();
     const remote = this.config.channel != null;
     if (remote && !this.desynced) this.pulseConfirm();
     this.acc += dtMs;
@@ -272,7 +319,11 @@ export class Session {
         }
       }
       this.acc -= step;
+      for (const [id, peer] of this.locksteps)
+        if (id !== this.me) peer.take(next);
       world.tick();
+      for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
+        perf.sample(`Sim · ${name}`, ms);
       const ch = this.config.channel;
       if (ch && next % matchChecksumEvery(this.match) === 0) {
         ch.send({ type: "hash", tick: next, checksum: world.checksum() });
@@ -280,40 +331,34 @@ export class Session {
       n++;
     }
     if (n >= cap && !remote) this.acc = 0;
-    perf.end('Simulation / lockstep',simulation);
-    const input=perf.start();
+    perf.end("Simulation / lockstep", simulation);
+    const input = perf.start();
     this.input?.tick(dtMs);
-    perf.end('Input',input);
-    const snapshot=perf.start();
+    perf.end("Input", input);
+    const snapshot = perf.start();
     const view = world.view(this.me);
-    perf.end('View snapshot',snapshot);
-    const hud=perf.start();
+    perf.end("View snapshot", snapshot);
+    const hud = perf.start();
     if (view.settlement) {
-      if (view.settlement.revision !== this.resourceRevision) {
-        this.resourceRevision = view.settlement.revision;
-        const removed = new Set(
-          view.settlement.resources
-            .filter((n) => n.amount === 0)
-            .map((n) => n.stampId),
-        );
-        const nextStamps = this.loadedMap!.map.stamps.filter((s) => !removed.has(s.id)&&!neutralKindForAsset(s.asset));
-        // Economy revisions also change for worker movement. Preserve scenery
-        // identity until an actual resource disappears, avoiding GPU rebatches.
-        if(nextStamps.length!==this.stamps.length||nextStamps.some((stamp,i)=>stamp!==this.stamps[i])){
-          this.stamps=nextStamps;
-          this.mini?.setStamps(this.stamps);
-        }
+      const resources = resourceStamps(view.settlement.entities),
+        signature = JSON.stringify(resources);
+      if (signature !== this.resourceSignature) {
+        this.resourceSignature = signature;
+        this.stamps = [...this.loadedMap!.map.stamps, ...resources];
+        this.mini?.setStamps(this.stamps);
       }
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(view.settlement);
       renderer.gameSelect(this.economyHud?.selectedIds ?? []);
-      this.canvas.style.cursor=this.economyHud?.attackMode?"crosshair":"default";
+      this.canvas.style.cursor = this.economyHud?.attackMode
+        ? "crosshair"
+        : "default";
     }
-    perf.end('Economy HUD / minimap data',hud);
+    perf.end("Economy HUD / minimap data", hud);
     renderer.draw(view, this.stamps);
-    const minimap=perf.start();
+    const minimap = perf.start();
     this.mini?.paint();
-    perf.end('Minimap paint',minimap);
+    perf.end("Minimap paint", minimap);
     this.fpsFrames += 1;
     this.fpsMs += dtMs;
     if (this.fpsMs >= 1000) {
@@ -324,52 +369,222 @@ export class Session {
     this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.distance });
   }
 
+  snapshotLocal() {
+    if (!this.room || !this.world || !this.match || this.config.channel)
+      throw new Error("Local saves require a singleplayer match");
+    const local = this.locksteps.get(this.me)!;
+    return {
+      v: SAVE_FORMAT_VERSION,
+      remote: false as const,
+      mapId: this.match.mapId,
+      mapRevision: this.match.mapRevision,
+      seed: this.match.seed,
+      world: this.world.snapshot(),
+      pipeline: {
+        ...this.room.snapshot(),
+        commits: local.peek(),
+        sentThrough: local.sent(),
+      },
+      clients: [...this.locksteps].map(([player, peer]) => ({
+        player,
+        sentThrough: peer.sent(),
+        outbox: peer.outbox(),
+      })),
+    };
+  }
+  restoreLocal(raw: unknown) {
+    if (this.config.channel || !this.match || !this.loadedMap)
+      throw new Error("Local load requires a singleplayer match");
+    const save = localSaveSchema.parse(raw);
+    if (
+      save.mapId !== this.match.mapId ||
+      save.mapRevision !== this.match.mapRevision
+    )
+      throw new Error(
+        "Open the same map and content revision before loading this save.",
+      );
+    const restored = new World({
+      map: this.loadedMap.map,
+      slots: this.match.slots,
+      seed: save.seed,
+    });
+    restored.restore(save.world);
+    const tick = restored.clock.tickIndex,
+      players = this.match.slots.map((s) => s.player).sort((a, b) => a - b),
+      pipeline = save.pipeline;
+    if (
+      pipeline.committed < tick ||
+      pipeline.commits.length !== pipeline.committed - tick ||
+      pipeline.commits.some(
+        (c, i) =>
+          c.tick !== tick + i + 1 ||
+          c.slots.length !== players.length ||
+          c.slots.some((s, j) => s.player !== players[j]),
+      ) ||
+      save.clients.length !== players.length ||
+      new Set(save.clients.map((c) => c.player)).size !== players.length ||
+      save.clients.some((c) => !players.includes(c.player)) ||
+      pipeline.held.some(
+        (h) => h.tick <= pipeline.committed || !players.includes(h.player),
+      ) ||
+      pipeline.through.length !== players.length ||
+      new Set(pipeline.through.map((p) => p.player)).size !== players.length ||
+      pipeline.through.some((p) => !players.includes(p.player))
+    )
+      throw new Error("Invalid saved command pipeline");
+    for (const channel of this.channels) channel.destroy();
+    this.channels.length = 0;
+    this.locksteps.clear();
+    this.match = { ...this.match, seed: save.seed };
+    this.bindLockstep(this.match);
+    this.room!.resume(pipeline);
+    for (const client of save.clients)
+      this.locksteps
+        .get(client.player)!
+        .restore(pipeline.commits, client.sentThrough, client.outbox);
+    this.world = restored;
+    this.acc = 0;
+    this.resourceSignature = "";
+    this.economyHud?.setSelection([]);
+  }
   private send(action: Action) {
     this.locksteps.get(this.me)?.send(action);
   }
-  private click(clientX: number, clientY: number, shift=false) {
+  private click(clientX: number, clientY: number, shift = false) {
     const sim = this.world?.settlement,
       hit = this.renderer?.pickGround(clientX, clientY),
       hud = this.economyHud;
     if (!sim || !hit || !hud) return;
     const x = Math.round(hit.x),
       z = Math.round(hit.z);
-    if(hud.rallyMode && hud.selected){this.send({type:'rally',id:hud.selected,x,z});hud.rallyMode=false;return;}
+    const owner = slotOwner(this.me),
+      position = { x, y: z },
+      binding = hud.targeting;
+    if (hud.rallyMode && binding) {
+      this.send({
+        type: "rally",
+        actor: binding.actors[0]!,
+        destination: position,
+      });
+      hud.clearMode();
+      return;
+    }
     if (hud.mode) {
-      const error = sim.canBuild(this.me, hud.mode, x, z);
+      const error = sim.canBuild(owner, hud.mode, position, hud.buildingActor);
       if (error) {
         hud.placement(error);
         return;
       }
-      this.send({ type: "build", kind: hud.mode, x, z });
+      this.send({
+        type: "build",
+        actor: hud.buildingActor!,
+        definition: hud.mode,
+        position,
+      });
       return;
     }
-    const known=sim.view(this.me);
-    const picked=this.renderer?.pickGameEntity(clientX,clientY);
-    let target=known.workers.find(w=>w.id===picked&&w.job!=='training')??known.buildings.find(b=>b.id===picked);
-    if(!target)target=known.workers.find(w=>w.job!=='training'&&Math.abs(w.x-hit.x)+Math.abs(w.z-hit.z)<1.6)
-      ??known.buildings.find(b=>b.health>0&&Math.abs(b.x-hit.x)<=BUILDINGS[b.kind].radius&&Math.abs(b.z-hit.z)<=BUILDINGS[b.kind].radius);
-    const army=known.workers.filter(w=>hud.selectedIds.includes(w.id)&&w.owner===this.me&&isSoldier(w.role));
-    if(hud.attackMode){
-      if(target&&army.length)this.send({type:'attack-units',ids:army.map(w=>w.id),target:target.id,force:true});
-      else if(hud.selectedIds.length)this.send({type:'move-units',ids:[...hud.selectedIds],x,z,attackMove:true});
-      hud.clearMode();return;
-    }
-    if(target){
-      if(army.length&&target.owner!==this.me&&!shift){this.send({type:'attack-units',ids:army.map(w=>w.id),target:target.id});return;}
-      if(shift&&target.owner===this.me&&'role' in target){
-        const owned=known.workers.filter(w=>w.owner===this.me&&hud.selectedIds.includes(w.id)).map(w=>w.id);
-        hud.setSelection(owned.includes(target.id)?owned.filter(id=>id!==target.id):[...owned,target.id]);
-      }else hud.selected=target.id;
+    const known = sim.view(this.me),
+      picked = this.renderer?.pickGameEntity(clientX, clientY);
+    const selectable = known.entities.filter(
+      (e) =>
+        !e.unit?.contained && content.get(e.definition).selectable !== false,
+    );
+    const target =
+      selectable.find((e) => e.id === picked) ??
+      selectable.find((e) => {
+        const d = content.get(e.definition),
+          r = d.footprint
+            ? Math.max(d.footprint.width, d.footprint.depth) / 2
+            : 0.8;
+        return Math.abs(e.x - hit.x) <= r && Math.abs(e.y - hit.z) <= r;
+      });
+    const selected = known.entities.filter(
+      (e) =>
+        hud.selectedIds.includes(e.id) &&
+        e.owner === owner &&
+        e.unit &&
+        content.get(e.definition).behaviors.playerControl,
+    );
+    const army = selected.filter(
+      (e) => content.get(e.definition).behaviors.combat,
+    );
+    if (hud.attackMode) {
+      if (target && !target.remembered)
+        this.send({
+          type: "attack",
+          actors: binding!.actors,
+          target: target.id,
+          force: true,
+        });
+      else
+        this.send({
+          type: "move",
+          actors: binding!.actors,
+          destination: position,
+          attackMove: true,
+        });
+      hud.clearMode();
       return;
     }
-    const ids=known.workers.filter(w=>w.owner===this.me&&hud.selectedIds.includes(w.id)).map(w=>w.id);
-    if(ids.length)this.send({type:'move-units',ids,x,z});
-    else if(!shift)hud.selected=null;
+    if (binding?.type === "move") {
+      this.send({
+        type: "move",
+        actors: binding.actors,
+        destination: position,
+      });
+      hud.clearMode();
+      return;
+    }
+    if (target) {
+      if (
+        army.length &&
+        target.owner !== owner &&
+        target.owner !== "none" &&
+        !target.remembered &&
+        !shift
+      ) {
+        this.send({
+          type: "attack",
+          actors: army.map((e) => e.id),
+          target: target.id,
+        });
+        return;
+      }
+      if (
+        army.length &&
+        target.owner === "none" &&
+        target.unit &&
+        !target.remembered &&
+        !shift
+      ) {
+        this.send({
+          type: "attack",
+          actors: army.map((e) => e.id),
+          target: target.id,
+        });
+        return;
+      }
+      if (shift && target.owner === owner && target.unit) {
+        const ids = selected.map((e) => e.id);
+        hud.setSelection(
+          ids.includes(target.id)
+            ? ids.filter((id) => id !== target.id)
+            : [...ids, target.id],
+        );
+      } else hud.selected = target.id;
+      return;
+    }
+    if (selected.length)
+      this.send({
+        type: "move",
+        actors: selected.map((e) => e.id),
+        destination: position,
+      });
+    else if (!shift) hud.selected = null;
   }
 
   stop(): void {
-    this.canvas.style.cursor="";
+    this.canvas.style.cursor = "";
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.confirmTimer = null;
     this.canvas.removeEventListener("pointermove", this.onHover);
@@ -391,7 +606,7 @@ export class Session {
   }
 
   private bindLockstep(match: MatchConfig): void {
-    const room = new Room(match);
+    const room = (this.room = new Room(match));
     for (const slot of match.slots) {
       const ch = new MemoryChannel(room, slot.player);
       this.channels.push(ch);

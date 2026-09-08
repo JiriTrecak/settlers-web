@@ -1,10 +1,41 @@
+import { content } from "../../content/builtin";
+import { expandMap } from "../../content/map";
+import { type Owner } from "../../content/schema";
+import {
+  editorEntities,
+  resourceStamps,
+  authoredScene,
+} from "../../presentation/scenery";
+import {
+  putEntity,
+  deleteEntity,
+  entityAuthoringState,
+  restoreEntityAuthoring,
+  type EntityAuthoringState,
+} from "./entityAuthoring";
 import { playableMapError } from "../../shared/map/playable";
-import { decalAt, validDecal, type GroundDecal, type DecalKind } from '../../shared/landscape/decal';
+import {
+  decalAt,
+  validDecal,
+  type GroundDecal,
+  type DecalKind,
+} from "../../shared/landscape/decal";
 import { readBrushSize, saveBrushSize } from "../brush/sizePrefs";
 import { DAY_CYCLE_SECONDS } from "../../render/sky/sky";
-import { DEFAULT_WATER_STYLE, type WaterStyle } from '../../shared/landscape/waterStyle';
+import {
+  DEFAULT_WATER_STYLE,
+  type WaterStyle,
+} from "../../shared/landscape/waterStyle";
 import { applyLandform, type Landform } from "../../shared/landscape/landform";
-import { sampleCurve, curveDistance, emptyLandscape, type CurvePoint, type TerrainLayer, type CoverPatch, type EnvironmentState } from "../../shared/landscape/curve";
+import {
+  sampleCurve,
+  curveDistance,
+  emptyLandscape,
+  type CurvePoint,
+  type TerrainLayer,
+  type CoverPatch,
+  type EnvironmentState,
+} from "../../shared/landscape/curve";
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
@@ -30,7 +61,16 @@ import { CleanTool, wipeStamps, eraseCover } from "../clean/clean";
 import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
-export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain" | "decal" | "spawn";
+export type EditorTool =
+  | "select"
+  | "stamp"
+  | "brush"
+  | "clean"
+  | "sculpt"
+  | "terrain"
+  | "decal"
+  | "spawn"
+  | "entity";
 
 export type EditorView = {
   x: number;
@@ -69,27 +109,91 @@ export type EditorShotOpts = {
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
-  spawnPlayer=1;
-  spawnMessage="";
+  spawnPlayer = 1;
+  entityDefinition = content.definitions.find((d) => d.kind === "unit")!.id;
+  entityOwner: Owner = "player.1";
+  selectedEntity: string | null = null;
+  entityMessage = "";
+  private entityUndo: EntityAuthoringState[] = [];
+  private entityRedo: EntityAuthoringState[] = [];
+  private entityDragging = false;
+  private entityDragStart: UtcMap | null = null;
+  private entityOffset = { x: 0, y: 0 };
+  private entityViews = editorEntities(this.map);
+  putEntity(raw: unknown) {
+    this.commitEntities(putEntity(this.map, raw));
+  }
+  private commitEntities(map: UtcMap) {
+    this.entityUndo.push(entityAuthoringState(this.map));
+    this.entityUndo = this.entityUndo.slice(-64);
+    this.entityRedo = [];
+    this.map = map;
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSelect?.();
+  }
+  undoEntity(redo = false) {
+    const source = redo ? this.entityRedo : this.entityUndo,
+      target = redo ? this.entityUndo : this.entityRedo,
+      next = source.pop();
+    if (!next) return;
+    target.push(entityAuthoringState(this.map));
+    this.map = restoreEntityAuthoring(this.map, next);
+    this.selectedEntity = null;
+    this.paint();
+    this.hooks.onChange?.();
+    this.hooks.onSelect?.();
+  }
+  removeEntity(id: string) {
+    this.commitEntities(deleteEntity(this.map, id));
+    if (this.selectedEntity === id) this.selectedEntity = null;
+  }
+  selectEntity(id: string | null) {
+    this.selectedEntity = id;
+    this.select.clear();
+    this.paint();
+    this.hooks.onSelect?.();
+  }
+  selectedPlacement() {
+    return this.map.entities.find((p) => p.id === this.selectedEntity) ?? null;
+  }
+
+  spawnMessage = "";
   tool: EditorTool | null = "stamp";
   asset: string | null = null;
-  terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' | 'hill' | 'plateau' | 'basin' = 'terrain';
-  terrainLayer: TerrainLayer = 'sand';
-  private terrainSize=readBrushSize('terrain',64);
-  get terrainRadius(): number { return this.terrainSize; }
-  set terrainRadius(n: number) { if(Number.isFinite(n)){this.terrainSize=Math.max(1,Math.min(64,n));saveBrushSize('terrain',this.terrainSize);} }
-  decalKind: DecalKind = 'leaf-litter';
-  decalSize=readBrushSize('decal');
-  decalRotation=0;
-  decalOpacity=1;
-  decalMode: 'place' | 'select' | 'erase' = 'place';
+  terrainMode:
+    | "terrain"
+    | "river"
+    | "raise"
+    | "foliage"
+    | "smooth"
+    | "flatten"
+    | "hill"
+    | "plateau"
+    | "basin" = "terrain";
+  terrainLayer: TerrainLayer = "sand";
+  private terrainSize = readBrushSize("terrain", 64);
+  get terrainRadius(): number {
+    return this.terrainSize;
+  }
+  set terrainRadius(n: number) {
+    if (Number.isFinite(n)) {
+      this.terrainSize = Math.max(1, Math.min(64, n));
+      saveBrushSize("terrain", this.terrainSize);
+    }
+  }
+  decalKind: DecalKind = "leaf-litter";
+  decalSize = readBrushSize("decal");
+  decalRotation = 0;
+  decalOpacity = 1;
+  decalMode: "place" | "select" | "erase" = "place";
   selectedDecal: string | null = null;
-  private lastDecalPoint: {x:number;z:number} | null = null;
-  terrainAspect=1;
-  terrainRotation=0;
-  terrainDepth=1.4;
-  terrainCurve=false;
-  private terrainPoints: CurvePoint[]=[];
+  private lastDecalPoint: { x: number; z: number } | null = null;
+  terrainAspect = 1;
+  terrainRotation = 0;
+  terrainDepth = 1.4;
+  terrainCurve = false;
+  private terrainPoints: CurvePoint[] = [];
   stampYaw = 0;
   gridMenu = false;
   gridMode: GridMode = "tiles";
@@ -123,15 +227,18 @@ export class WorldEditor {
       onSelect?: () => void;
     },
   ) {
-    this.brush.setRadius(readBrushSize('brush'));
-    this.clean.setRadius(readBrushSize('clean'));
-    this.sculpt.setRadius(readBrushSize('sculpt'));
+    this.brush.setRadius(readBrushSize("brush"));
+    this.clean.setRadius(readBrushSize("clean"));
+    this.sculpt.setRadius(readBrushSize("sculpt"));
   }
 
   replace(map: UtcMap): void {
     this.map = map;
+    this.entityUndo = [];
+    this.entityRedo = [];
+    this.selectedEntity = null;
     this.select.clear();
-    this.selectedDecal=null;
+    this.selectedDecal = null;
     this.loadHeight(map);
     this.renderer?.setTerrain(this.height);
     this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
@@ -147,7 +254,10 @@ export class WorldEditor {
     this.hooks.onChange?.();
   }
 
-  setLibrary(urls: ReadonlyMap<string, string>, kinds?: ReadonlyMap<string, AssetType>): void {
+  setLibrary(
+    urls: ReadonlyMap<string, string>,
+    kinds?: ReadonlyMap<string, AssetType>,
+  ): void {
     this.urls = new Map(urls);
     if (kinds) this.kinds = new Map(kinds);
     this.renderer?.setAssets(this.urls);
@@ -158,7 +268,9 @@ export class WorldEditor {
   setTool(tool: EditorTool | null): void {
     this.tool = tool;
     if (tool !== "select") this.select.clear();
-    if (tool === "brush" || tool === "clean" || tool === "sculpt") this.gridMenu = false;
+    if (tool !== "select" && tool !== "entity") this.selectedEntity = null;
+    if (tool === "brush" || tool === "clean" || tool === "sculpt")
+      this.gridMenu = false;
     this.syncPaintView();
     this.paint();
     this.hooks.onSelect?.();
@@ -170,14 +282,27 @@ export class WorldEditor {
   }
 
   rotateStamp(steps = 1): void {
+    if (this.selectedEntity) {
+      this.nudgeSelected((steps * Math.PI) / 2);
+      return;
+    }
     if (this.tool === "select" && this.select.id) {
       this.nudgeSelected(steps * (Math.PI / 2));
       return;
     }
-    this.stampYaw = ((Math.round(this.stampYaw / (Math.PI / 2)) + steps) % 4) * (Math.PI / 2);
+    this.stampYaw =
+      ((Math.round(this.stampYaw / (Math.PI / 2)) + steps) % 4) * (Math.PI / 2);
   }
 
   nudgeSelected(delta: number): void {
+    const p = this.selectedPlacement();
+    if (p) {
+      this.putEntity({
+        ...p,
+        rotation: Math.round((p.rotation + (delta * 180) / Math.PI) / 90) * 90,
+      });
+      return;
+    }
     const stamp = this.selectedStamp();
     if (!stamp) return;
     this.applyPose(stamp, stamp.x, stamp.y, (stamp.yaw ?? 0) + delta);
@@ -190,9 +315,16 @@ export class WorldEditor {
   }
 
   deleteSelected(): void {
+    if (this.selectedEntity) {
+      this.removeEntity(this.selectedEntity);
+      return;
+    }
     const id = this.select.id;
     if (!id) return;
-    this.map = { ...this.map, stamps: this.map.stamps.filter((s) => s.id !== id) };
+    this.map = {
+      ...this.map,
+      stamps: this.map.stamps.filter((s) => s.id !== id),
+    };
     this.select.clear();
     this.paint();
     this.hooks.onChange?.();
@@ -206,7 +338,11 @@ export class WorldEditor {
 
   toggleGridMenu(): void {
     this.gridMenu = !this.gridMenu;
-    if (this.gridMenu && (this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt")) this.setTool("stamp");
+    if (
+      this.gridMenu &&
+      (this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt")
+    )
+      this.setTool("stamp");
   }
 
   setGridMode(mode: GridMode): void {
@@ -225,14 +361,17 @@ export class WorldEditor {
     this.renderer?.camera.setGame(on);
     if (on) this.sky?.setDaySeconds(DAY_CYCLE_SECONDS);
     // Keep the current time on entry/exit instead of jumping to the saved hour.
-    this.environment({hour: this.sky?.hour ?? this.map.landscape?.environment.hour ?? 9.5, playing: on});
+    this.environment({
+      hour: this.sky?.hour ?? this.map.landscape?.environment.hour ?? 9.5,
+      playing: on,
+    });
     this.draw();
     this.hooks.onView?.();
   }
 
   setBrushRadius(n: number): void {
     this.brush.setRadius(n);
-    saveBrushSize('brush',this.brush.radius);
+    saveBrushSize("brush", this.brush.radius);
     this.hooks.onBrush?.();
   }
 
@@ -243,7 +382,7 @@ export class WorldEditor {
 
   setCleanRadius(n: number): void {
     this.clean.setRadius(n);
-    saveBrushSize('clean',this.clean.radius);
+    saveBrushSize("clean", this.clean.radius);
     this.hooks.onClean?.();
   }
 
@@ -254,7 +393,7 @@ export class WorldEditor {
 
   setSculptRadius(n: number): void {
     this.sculpt.setRadius(n);
-    saveBrushSize('sculpt',this.sculpt.radius);
+    saveBrushSize("sculpt", this.sculpt.radius);
     this.hooks.onSculpt?.();
   }
 
@@ -286,10 +425,16 @@ export class WorldEditor {
       this.hooks.onNeedAsset?.();
       return;
     }
-    const poses = scatterBrush(this.brush, this.map.stamps, this.kit.slots, Math.random, {
-      wet: (x, z) => this.height.wet(x, z),
-      kind: (id) => this.kinds.get(id),
-    });
+    const poses = scatterBrush(
+      this.brush,
+      this.map.stamps,
+      this.kit.slots,
+      Math.random,
+      {
+        wet: (x, z) => this.height.wet(x, z),
+        kind: (id) => this.kinds.get(id),
+      },
+    );
     if (!poses.length) return;
     this.map = {
       ...this.map,
@@ -313,11 +458,21 @@ export class WorldEditor {
   }
 
   /** Programmatic stamp. Cell coords. Rejects unknown sit / out of halo. */
-  placeAt(asset: string, x: number, y: number, yaw?: number, scale?: number, elevation?: number, variant?: MapStamp["variant"], snap=true): MapStamp | null {
-    const cx = snap?Math.floor(x):x;
-    const cy = snap?Math.floor(y):y;
+  placeAt(
+    asset: string,
+    x: number,
+    y: number,
+    yaw?: number,
+    scale?: number,
+    elevation?: number,
+    variant?: MapStamp["variant"],
+    snap = true,
+  ): MapStamp | null {
+    const cx = snap ? Math.floor(x) : x;
+    const cy = snap ? Math.floor(y) : y;
     if (!inStamp(cx, cy)) return null;
-    if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5))) return null;
+    if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5)))
+      return null;
     const stamp: MapStamp = {
       id: crypto.randomUUID(),
       asset,
@@ -325,8 +480,8 @@ export class WorldEditor {
       y: cy,
       ...(yaw ? { yaw } : {}),
       ...(scale !== undefined && scale !== 1 ? { scale } : {}),
-      ...(elevation!==undefined?{elevation}:{}),
-      ...(variant?{variant}:{}),
+      ...(elevation !== undefined ? { elevation } : {}),
+      ...(variant ? { variant } : {}),
     };
     this.map = { ...this.map, stamps: [...this.map.stamps, stamp] };
     this.paint();
@@ -334,127 +489,309 @@ export class WorldEditor {
     return stamp;
   }
 
-  clearTerrainCurve():void {this.terrainPoints=[];this.renderer?.previewCurve([]);}
-  applyTerrainCurve():void {
-    if(!this.terrainPoints.length)return;
-    if(this.terrainMode==='hill'||this.terrainMode==='plateau'||this.terrainMode==='basin'){
-      const p=this.terrainPoints[0]!;
-      this.landform({x:p.x,z:p.z,radiusX:this.terrainRadius,radiusZ:this.terrainRadius*this.terrainAspect,height:this.terrainDepth*(this.terrainMode==='basin'?-1:1),rotation:this.terrainRotation*Math.PI/180,plateau:this.terrainMode==='plateau'?.55:0,roughness:.08,seed:42});
-    }else this.curveStroke({points:this.terrainPoints,radius:this.terrainRadius,depth:this.terrainDepth,mode:this.terrainMode,layer:this.terrainLayer});
+  clearTerrainCurve(): void {
+    this.terrainPoints = [];
+    this.renderer?.previewCurve([]);
+  }
+  applyTerrainCurve(): void {
+    if (!this.terrainPoints.length) return;
+    if (
+      this.terrainMode === "hill" ||
+      this.terrainMode === "plateau" ||
+      this.terrainMode === "basin"
+    ) {
+      const p = this.terrainPoints[0]!;
+      this.landform({
+        x: p.x,
+        z: p.z,
+        radiusX: this.terrainRadius,
+        radiusZ: this.terrainRadius * this.terrainAspect,
+        height: this.terrainDepth * (this.terrainMode === "basin" ? -1 : 1),
+        rotation: (this.terrainRotation * Math.PI) / 180,
+        plateau: this.terrainMode === "plateau" ? 0.55 : 0,
+        roughness: 0.08,
+        seed: 42,
+      });
+    } else
+      this.curveStroke({
+        points: this.terrainPoints,
+        radius: this.terrainRadius,
+        depth: this.terrainDepth,
+        mode: this.terrainMode,
+        layer: this.terrainLayer,
+      });
     this.clearTerrainCurve();
   }
-  private addTerrainPoint(x:number,z:number):void {
-    const prev=this.terrainPoints.at(-1);if(prev&&Math.hypot(x-prev.x,z-prev.z)<.5)return;
-    if(this.terrainPoints.length>=128)return;
-    this.terrainPoints.push({x,z,radius:this.terrainRadius});
-    this.renderer?.previewCurve(sampleCurve(this.terrainPoints,this.terrainRadius));
+  private addTerrainPoint(x: number, z: number): void {
+    const prev = this.terrainPoints.at(-1);
+    if (prev && Math.hypot(x - prev.x, z - prev.z) < 0.5) return;
+    if (this.terrainPoints.length >= 128) return;
+    this.terrainPoints.push({ x, z, radius: this.terrainRadius });
+    this.renderer?.previewCurve(
+      sampleCurve(this.terrainPoints, this.terrainRadius),
+    );
   }
 
-  curveStroke(opts: { points: CurvePoint[]; radius: number; mode: 'river' | 'terrain' | 'foliage' | 'raise' | 'smooth' | 'flatten'; depth?: number; layer?: TerrainLayer; opacity?: number }): void {
+  curveStroke(opts: {
+    points: CurvePoint[];
+    radius: number;
+    mode: "river" | "terrain" | "foliage" | "raise" | "smooth" | "flatten";
+    depth?: number;
+    layer?: TerrainLayer;
+    opacity?: number;
+  }): void {
     const samples = sampleCurve(opts.points, opts.radius);
-    if(opts.mode==='river'){
-      const landscape=this.map.landscape??emptyLandscape();
-      this.map={...this.map,landscape:{...landscape,rivers:[...(landscape.rivers??[]),{points:opts.points,radius:opts.radius,depth:opts.depth??1.4}]}};
-    }
-    if (opts.mode === 'terrain') {
+    if (opts.mode === "river") {
       const landscape = this.map.landscape ?? emptyLandscape();
-      this.map = { ...this.map, landscape: { ...landscape, strokes: [...landscape.strokes, { points: opts.points, radius: opts.radius, layer: opts.layer ?? 'sand', opacity: opts.opacity ?? 1 }] } };
-    } else if (opts.mode === 'foliage') {
-      for (const p of samples) { this.brush.setRadius(p.radius); this.dabBrush(p.x,p.z); }
+      this.map = {
+        ...this.map,
+        landscape: {
+          ...landscape,
+          rivers: [
+            ...(landscape.rivers ?? []),
+            {
+              points: opts.points,
+              radius: opts.radius,
+              depth: opts.depth ?? 1.4,
+            },
+          ],
+        },
+      };
+    }
+    if (opts.mode === "terrain") {
+      const landscape = this.map.landscape ?? emptyLandscape();
+      this.map = {
+        ...this.map,
+        landscape: {
+          ...landscape,
+          strokes: [
+            ...landscape.strokes,
+            {
+              points: opts.points,
+              radius: opts.radius,
+              layer: opts.layer ?? "sand",
+              opacity: opts.opacity ?? 1,
+            },
+          ],
+        },
+      };
+    } else if (opts.mode === "foliage") {
+      for (const p of samples) {
+        this.brush.setRadius(p.radius);
+        this.dabBrush(p.x, p.z);
+      }
       this.applyBrush();
     } else {
-      const original=this.height.samples.slice();
-      for (let iz=0;iz<this.height.verts;iz++) for(let ix=0;ix<this.height.verts;ix++) {
-        const d=curveDistance(ix+this.height.origin,iz+this.height.origin,samples);
-        if(d>=1) continue;
-        const i=iz*this.height.verts+ix;
-        const w=(1-d*d)**2;
-        if(opts.mode==='river') {
-          // Constant riverbed depth along the centerline; overlapping dabs never dig holes.
-          const bank=Math.max(0,Math.min(1,(d-.68)/.32));
-          const blend=bank*bank*(3-2*bank);
-          const channel=this.height.waterLevel-(opts.depth ?? 1.4)*Math.max(0,1-(d/.68)**2);
-          const target=d<.68?channel:this.height.waterLevel+(original[i]!-this.height.waterLevel)*blend;
-          this.height.samples[i]=Math.min(original[i]!,target);
-        } else if(opts.mode==='smooth') {
-          let sum=0,count=0;for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){const nx=ix+dx,nz=iz+dz;if(nx>=0&&nz>=0&&nx<this.height.verts&&nz<this.height.verts){sum+=original[nz*this.height.verts+nx]!;count++;}}
-          this.height.samples[i]=original[i]!+(sum/count-original[i]!)*w;
-        } else if(opts.mode==='flatten') this.height.samples[i]=original[i]!+((opts.depth??1)-original[i]!)*w;
-        else this.height.samples[i]=Math.min(24,Math.max(-16,this.height.samples[i]!+(opts.depth ?? 1)*w));
-      }
+      const original = this.height.samples.slice();
+      for (let iz = 0; iz < this.height.verts; iz++)
+        for (let ix = 0; ix < this.height.verts; ix++) {
+          const d = curveDistance(
+            ix + this.height.origin,
+            iz + this.height.origin,
+            samples,
+          );
+          if (d >= 1) continue;
+          const i = iz * this.height.verts + ix;
+          const w = (1 - d * d) ** 2;
+          if (opts.mode === "river") {
+            // Constant riverbed depth along the centerline; overlapping dabs never dig holes.
+            const bank = Math.max(0, Math.min(1, (d - 0.68) / 0.32));
+            const blend = bank * bank * (3 - 2 * bank);
+            const channel =
+              this.height.waterLevel -
+              (opts.depth ?? 1.4) * Math.max(0, 1 - (d / 0.68) ** 2);
+            const target =
+              d < 0.68
+                ? channel
+                : this.height.waterLevel +
+                  (original[i]! - this.height.waterLevel) * blend;
+            this.height.samples[i] = Math.min(original[i]!, target);
+          } else if (opts.mode === "smooth") {
+            let sum = 0,
+              count = 0;
+            for (let dz = -2; dz <= 2; dz++)
+              for (let dx = -2; dx <= 2; dx++) {
+                const nx = ix + dx,
+                  nz = iz + dz;
+                if (
+                  nx >= 0 &&
+                  nz >= 0 &&
+                  nx < this.height.verts &&
+                  nz < this.height.verts
+                ) {
+                  sum += original[nz * this.height.verts + nx]!;
+                  count++;
+                }
+              }
+            this.height.samples[i] =
+              original[i]! + (sum / count - original[i]!) * w;
+          } else if (opts.mode === "flatten")
+            this.height.samples[i] =
+              original[i]! + ((opts.depth ?? 1) - original[i]!) * w;
+          else
+            this.height.samples[i] = Math.min(
+              24,
+              Math.max(-16, this.height.samples[i]! + (opts.depth ?? 1) * w),
+            );
+        }
       this.commitHeight();
       this.renderer?.setTerrain(this.height);
     }
     this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
-    this.paint(); this.hooks.onChange?.();
+    this.paint();
+    this.hooks.onChange?.();
   }
 
   addCover(patch: CoverPatch): void {
-    const landscape=this.map.landscape ?? emptyLandscape();
-    this.map={...this.map,landscape:{...landscape,cover:[...landscape.cover,patch]}};
-    this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
+    const landscape = this.map.landscape ?? emptyLandscape();
+    this.map = {
+      ...this.map,
+      landscape: { ...landscape, cover: [...landscape.cover, patch] },
+    };
+    this.renderer?.setLandscape(this.map.landscape!);
+    this.hooks.onChange?.();
+    this.paint();
   }
 
-  waterStyle(settings:WaterStyle):void {
-    const landscape=this.map.landscape??emptyLandscape();
-    this.map={...this.map,landscape:{...landscape,water:{...DEFAULT_WATER_STYLE,...settings}}};
-    this.renderer?.setLandscape(this.map.landscape!);this.hooks.onChange?.();this.paint();
+  waterStyle(settings: WaterStyle): void {
+    const landscape = this.map.landscape ?? emptyLandscape();
+    this.map = {
+      ...this.map,
+      landscape: {
+        ...landscape,
+        water: { ...DEFAULT_WATER_STYLE, ...settings },
+      },
+    };
+    this.renderer?.setLandscape(this.map.landscape!);
+    this.hooks.onChange?.();
+    this.paint();
   }
 
   environment(settings: Partial<EnvironmentState>): void {
-    const landscape=this.map.landscape ?? emptyLandscape();
-    const environment={...landscape.environment,...settings};
-    this.map={...this.map,landscape:{...landscape,environment}};
-    this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
+    const landscape = this.map.landscape ?? emptyLandscape();
+    const environment = { ...landscape.environment, ...settings };
+    this.map = { ...this.map, landscape: { ...landscape, environment } };
+    this.renderer?.setLandscape(this.map.landscape!);
+    this.hooks.onChange?.();
+    this.paint();
   }
 
   putDecal(decal: GroundDecal): void {
-    if(!validDecal(decal))throw new Error('Invalid decal');
-    const landscape=this.map.landscape??emptyLandscape(), existing=landscape.decals??[];
-    if(existing.length>=2048&&!existing.some(d=>d.id===decal.id))throw new Error('Decal limit reached');
-    const decals=existing.some(d=>d.id===decal.id)?existing.map(d=>d.id===decal.id?decal:d):[...existing,decal];
-    this.map={...this.map,landscape:{...landscape,decals}};
-    this.renderer?.setLandscape(this.map.landscape!);this.paint();this.hooks.onChange?.();
+    if (!validDecal(decal)) throw new Error("Invalid decal");
+    const landscape = this.map.landscape ?? emptyLandscape(),
+      existing = landscape.decals ?? [];
+    if (existing.length >= 2048 && !existing.some((d) => d.id === decal.id))
+      throw new Error("Decal limit reached");
+    const decals = existing.some((d) => d.id === decal.id)
+      ? existing.map((d) => (d.id === decal.id ? decal : d))
+      : [...existing, decal];
+    this.map = { ...this.map, landscape: { ...landscape, decals } };
+    this.renderer?.setLandscape(this.map.landscape!);
+    this.paint();
+    this.hooks.onChange?.();
   }
   removeDecal(id: string): void {
-    const landscape=this.map.landscape??emptyLandscape();
-    this.map={...this.map,landscape:{...landscape,decals:(landscape.decals??[]).filter(d=>d.id!==id)}};
-    if(this.selectedDecal===id)this.selectedDecal=null;
-    this.renderer?.setLandscape(this.map.landscape!);this.paint();this.hooks.onChange?.();
+    const landscape = this.map.landscape ?? emptyLandscape();
+    this.map = {
+      ...this.map,
+      landscape: {
+        ...landscape,
+        decals: (landscape.decals ?? []).filter((d) => d.id !== id),
+      },
+    };
+    if (this.selectedDecal === id) this.selectedDecal = null;
+    this.renderer?.setLandscape(this.map.landscape!);
+    this.paint();
+    this.hooks.onChange?.();
   }
-  configureDecal(settings: Partial<Pick<GroundDecal,'kind'|'size'|'rotation'|'opacity'>>): void {
-    const d={id:'preview',x:0,z:0,kind:this.decalKind,size:this.decalSize,rotation:this.decalRotation,opacity:this.decalOpacity,...settings};
-    if(!validDecal(d))throw new Error('Invalid decal settings');
-    this.decalKind=d.kind;this.decalSize=d.size;this.decalRotation=d.rotation;this.decalOpacity=d.opacity;saveBrushSize('decal',d.size);
-    const selected=this.map.landscape?.decals?.find(d=>d.id===this.selectedDecal);
-    if(this.decalMode==='select'&&selected)this.putDecal({...selected,...settings});
+  configureDecal(
+    settings: Partial<
+      Pick<GroundDecal, "kind" | "size" | "rotation" | "opacity">
+    >,
+  ): void {
+    const d = {
+      id: "preview",
+      x: 0,
+      z: 0,
+      kind: this.decalKind,
+      size: this.decalSize,
+      rotation: this.decalRotation,
+      opacity: this.decalOpacity,
+      ...settings,
+    };
+    if (!validDecal(d)) throw new Error("Invalid decal settings");
+    this.decalKind = d.kind;
+    this.decalSize = d.size;
+    this.decalRotation = d.rotation;
+    this.decalOpacity = d.opacity;
+    saveBrushSize("decal", d.size);
+    const selected = this.map.landscape?.decals?.find(
+      (d) => d.id === this.selectedDecal,
+    );
+    if (this.decalMode === "select" && selected)
+      this.putDecal({ ...selected, ...settings });
     this.hooks.onView?.();
   }
-  private decalStroke(x:number,z:number,erase:boolean):void {
-    if(erase||this.decalMode==='erase'){const d=decalAt(this.map.landscape?.decals??[],x,z);if(d)this.removeDecal(d.id);return;}
-    if(this.decalMode==='select'){
-      const d=decalAt(this.map.landscape?.decals??[],x,z);this.selectedDecal=d?.id??null;
-      if(d){this.decalKind=d.kind;this.decalSize=d.size;this.decalRotation=d.rotation;this.decalOpacity=d.opacity;}
-      this.hooks.onView?.();return;
+  private decalStroke(x: number, z: number, erase: boolean): void {
+    if (erase || this.decalMode === "erase") {
+      const d = decalAt(this.map.landscape?.decals ?? [], x, z);
+      if (d) this.removeDecal(d.id);
+      return;
     }
-    if(this.lastDecalPoint&&Math.hypot(x-this.lastDecalPoint.x,z-this.lastDecalPoint.z)<this.decalSize*.6)return;
-    this.lastDecalPoint={x,z};
-    this.putDecal({id:crypto.randomUUID(),x,z,kind:this.decalKind,size:this.decalSize,rotation:this.decalRotation,opacity:this.decalOpacity});
+    if (this.decalMode === "select") {
+      const d = decalAt(this.map.landscape?.decals ?? [], x, z);
+      this.selectedDecal = d?.id ?? null;
+      if (d) {
+        this.decalKind = d.kind;
+        this.decalSize = d.size;
+        this.decalRotation = d.rotation;
+        this.decalOpacity = d.opacity;
+      }
+      this.hooks.onView?.();
+      return;
+    }
+    if (
+      this.lastDecalPoint &&
+      Math.hypot(x - this.lastDecalPoint.x, z - this.lastDecalPoint.z) <
+        this.decalSize * 0.6
+    )
+      return;
+    this.lastDecalPoint = { x, z };
+    this.putDecal({
+      id: crypto.randomUUID(),
+      x,
+      z,
+      kind: this.decalKind,
+      size: this.decalSize,
+      rotation: this.decalRotation,
+      opacity: this.decalOpacity,
+    });
   }
 
-  landform(shape:Landform):void {
-    applyLandform(this.height,shape);this.commitHeight();
-    this.renderer?.setTerrain(this.height);this.paint();this.hooks.onChange?.();
+  landform(shape: Landform): void {
+    applyLandform(this.height, shape);
+    this.commitHeight();
+    this.renderer?.setTerrain(this.height);
+    this.paint();
+    this.hooks.onChange?.();
   }
 
   terrainBase(height: number): void {
-    this.height.samples.fill(height); this.commitHeight();
-    this.renderer?.setTerrain(this.height); this.paint(); this.hooks.onChange?.();
+    this.height.samples.fill(height);
+    this.commitHeight();
+    this.renderer?.setTerrain(this.height);
+    this.paint();
+    this.hooks.onChange?.();
   }
 
-  async ready(): Promise<void> { await this.renderer?.ready(); }
+  async ready(): Promise<void> {
+    await this.renderer?.ready();
+    await this.renderer?.gameReady();
+  }
 
-  diagnostics() { return this.renderer?.diagnostics(); }
+  diagnostics() {
+    return this.renderer?.diagnostics();
+  }
 
   lookAt(x: number, z: number): void {
     this.renderer?.camera.lookAt(x, z);
@@ -478,7 +815,9 @@ export class WorldEditor {
    * Present + PNG/JPEG of the live canvas. Optional pose is applied for the shot
    * then restored unless `keep` — WebGL has no preserveDrawingBuffer.
    */
-  landmarks(aspect:number,ids?:readonly string[]) {return this.renderer?.landmarks(aspect,ids)??[];}
+  landmarks(aspect: number, ids?: readonly string[]) {
+    return this.renderer?.landmarks(aspect, ids) ?? [];
+  }
   screenshot(opts: EditorShotOpts = {}): EditorShot {
     const renderer = this.renderer;
     if (!renderer) throw new Error("editor not started");
@@ -516,7 +855,18 @@ export class WorldEditor {
       });
     }
     this.draw();
-    const frame = grabFrame(opts.aspect!==undefined || opts.animationTime!==undefined ? renderer.capture(opts.maxWidth ?? 1600,opts.aspect ?? this.canvas.width/Math.max(1,this.canvas.height),opts.animationTime) : this.canvas, opts.maxWidth ?? 1280, opts.format ?? "jpeg", opts.quality ?? 0.85);
+    const frame = grabFrame(
+      opts.aspect !== undefined || opts.animationTime !== undefined
+        ? renderer.capture(
+            opts.maxWidth ?? 1600,
+            opts.aspect ?? this.canvas.width / Math.max(1, this.canvas.height),
+            opts.animationTime,
+          )
+        : this.canvas,
+      opts.maxWidth ?? 1280,
+      opts.format ?? "jpeg",
+      opts.quality ?? 0.85,
+    );
     const view = this.view();
     if (posed && !opts.keep) {
       this.gameCam = snap.game;
@@ -531,24 +881,63 @@ export class WorldEditor {
 
   pickStamp(id: string | null): void {
     this.setTool("select");
-    this.select.select(id && this.map.stamps.some((s) => s.id === id) ? id : null);
+    this.select.select(
+      id && this.map.stamps.some((s) => s.id === id) ? id : null,
+    );
     this.paint();
     this.hooks.onSelect?.();
   }
 
-  moveStamp(id: string, x: number, y: number, yaw?: number, snap=true, pitch?:number, roll?:number, heightScale?:number, widthScale?:number, depthScale?:number): boolean {
+  moveStamp(
+    id: string,
+    x: number,
+    y: number,
+    yaw?: number,
+    snap = true,
+    pitch?: number,
+    roll?: number,
+    heightScale?: number,
+    widthScale?: number,
+    depthScale?: number,
+  ): boolean {
     const stamp = this.map.stamps.find((s) => s.id === id);
     if (!stamp) return false;
     const prev = this.map;
-    if([heightScale,widthScale,depthScale].some(v=>v!==undefined&&(!Number.isFinite(v)||v<.25||v>4)))return false;
-    if([pitch,roll].some(a=>a!==undefined&&(!Number.isFinite(a)||Math.abs(a)>Math.PI/2)))return false;
-    this.applyPose({...stamp,...(pitch!==undefined?{pitch}:{}),...(roll!==undefined?{roll}:{}),...(heightScale!==undefined?{heightScale}:{}),...(widthScale!==undefined?{widthScale}:{}),...(depthScale!==undefined?{depthScale}:{})}, snap?Math.floor(x):x, snap?Math.floor(y):y, yaw ?? stamp.yaw ?? 0);
+    if (
+      [heightScale, widthScale, depthScale].some(
+        (v) => v !== undefined && (!Number.isFinite(v) || v < 0.25 || v > 4),
+      )
+    )
+      return false;
+    if (
+      [pitch, roll].some(
+        (a) =>
+          a !== undefined && (!Number.isFinite(a) || Math.abs(a) > Math.PI / 2),
+      )
+    )
+      return false;
+    this.applyPose(
+      {
+        ...stamp,
+        ...(pitch !== undefined ? { pitch } : {}),
+        ...(roll !== undefined ? { roll } : {}),
+        ...(heightScale !== undefined ? { heightScale } : {}),
+        ...(widthScale !== undefined ? { widthScale } : {}),
+        ...(depthScale !== undefined ? { depthScale } : {}),
+      },
+      snap ? Math.floor(x) : x,
+      snap ? Math.floor(y) : y,
+      yaw ?? stamp.yaw ?? 0,
+    );
     return this.map !== prev;
   }
 
   removeStamp(id: string): boolean {
     if (!this.map.stamps.some((s) => s.id === id)) return false;
-    this.map = { ...this.map, stamps: this.map.stamps.filter((s) => s.id !== id) };
+    this.map = {
+      ...this.map,
+      stamps: this.map.stamps.filter((s) => s.id !== id),
+    };
     if (this.select.id === id) this.select.clear();
     this.paint();
     this.hooks.onChange?.();
@@ -565,19 +954,33 @@ export class WorldEditor {
 
   dabClean(wx: number, wz: number): void {
     this.clean.beginStroke();
-    this.cleanAt(wx,wz);
+    this.cleanAt(wx, wz);
   }
 
-  private cleanAt(x:number,z:number): void {
-    const hits=this.clean.strokeHits(x,z);
-    const stamps=wipeStamps(this.map.stamps,hits,this.clean.radius,this.clean.type);
-    const landscape=this.map.landscape;
-    const cover=this.clean.type==='foliage'&&landscape ? eraseCover(landscape.cover,hits,this.clean.radius) : landscape?.cover;
-    const changed=!!landscape&&!!cover&&cover.some((p,i)=>p!==landscape.cover[i]);
-    if(stamps.length===this.map.stamps.length&&!changed)return;
-    this.map={...this.map,stamps,...(changed?{landscape:{...landscape!,cover:cover!}}:{})};
-    if(changed)this.renderer?.setLandscape(this.map.landscape!);
-    this.paint();this.hooks.onChange?.();
+  private cleanAt(x: number, z: number): void {
+    const hits = this.clean.strokeHits(x, z);
+    const stamps = wipeStamps(
+      this.map.stamps,
+      hits,
+      this.clean.radius,
+      this.clean.type,
+    );
+    const landscape = this.map.landscape;
+    const cover =
+      this.clean.type === "foliage" && landscape
+        ? eraseCover(landscape.cover, hits, this.clean.radius)
+        : landscape?.cover;
+    const changed =
+      !!landscape && !!cover && cover.some((p, i) => p !== landscape.cover[i]);
+    if (stamps.length === this.map.stamps.length && !changed) return;
+    this.map = {
+      ...this.map,
+      stamps,
+      ...(changed ? { landscape: { ...landscape!, cover: cover! } } : {}),
+    };
+    if (changed) this.renderer?.setLandscape(this.map.landscape!);
+    this.paint();
+    this.hooks.onChange?.();
   }
 
   dabSculpt(wx: number, wz: number, erase = false): void {
@@ -613,34 +1016,53 @@ export class WorldEditor {
         on: () => this.tool === "select",
         down: (x, y, shift) => this.grabDown(x, y, shift),
         move: (x, y) => this.grabMove(x, y),
-        up: () => this.select.end(),
+        up: () => {
+          this.select.end();
+          if (this.entityDragStart && this.entityDragStart !== this.map) {
+            this.entityUndo.push(entityAuthoringState(this.entityDragStart));
+            this.entityUndo = this.entityUndo.slice(-64);
+            this.entityRedo = [];
+          }
+          this.entityDragging = false;
+          this.entityDragStart = null;
+        },
         rotateBy: (steps) => this.nudgeSelected(steps * YAW_STEP),
       },
       paint: {
-        on: () => this.tool === "decal" || this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt" || (this.tool === "terrain" && !this.terrainCurve),
+        on: () =>
+          this.tool === "decal" ||
+          this.tool === "brush" ||
+          this.tool === "clean" ||
+          this.tool === "sculpt" ||
+          (this.tool === "terrain" && !this.terrainCurve),
         hover: (x, y) => this.hover(x, y),
         stroke: (x, y, erase) => this.stroke(x, y, erase),
         beginStroke: () => {
-          this.lastDecalPoint=null;
-          if(this.tool === "terrain")this.clearTerrainCurve();
+          this.lastDecalPoint = null;
+          if (this.tool === "terrain") this.clearTerrainCurve();
           if (this.tool === "clean") this.clean.beginStroke();
           else if (this.tool === "sculpt") this.sculpt.beginStroke();
           else this.brush.beginStroke();
         },
         endStroke: () => this.endStroke(),
         sizeBy: (steps) => {
-          if(this.tool === "decal"){this.configureDecal({size:Math.max(.5,Math.min(32,this.decalSize+steps*.5))});return;}
+          if (this.tool === "decal") {
+            this.configureDecal({
+              size: Math.max(0.5, Math.min(32, this.decalSize + steps * 0.5)),
+            });
+            return;
+          }
           if (this.tool === "clean") {
-            this.setCleanRadius(this.clean.radius + steps * .5);
+            this.setCleanRadius(this.clean.radius + steps * 0.5);
             this.hooks.onClean?.();
             return;
           }
           if (this.tool === "sculpt") {
-            this.setSculptRadius(this.sculpt.radius + steps * .5);
+            this.setSculptRadius(this.sculpt.radius + steps * 0.5);
             this.hooks.onSculpt?.();
             return;
           }
-          this.setBrushRadius(this.brush.radius + steps * .5);
+          this.setBrushRadius(this.brush.radius + steps * 0.5);
           this.hooks.onBrush?.();
         },
         densityBy: (steps) => {
@@ -653,7 +1075,10 @@ export class WorldEditor {
     this.mini = new Minimap(this.hooks.host, {
       camera: renderer.camera,
       clock: () => renderer.sky.snapshot(),
-      viewport: () => ({ w: this.canvas.clientWidth, h: this.canvas.clientHeight }),
+      viewport: () => ({
+        w: this.canvas.clientWidth,
+        h: this.canvas.clientHeight,
+      }),
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
         this.draw();
@@ -665,6 +1090,14 @@ export class WorldEditor {
     renderer.setLandscape(this.map.landscape ?? emptyLandscape());
     this.paint();
     this.syncPaintView();
+    void this.ready()
+      .then(() => {
+        if (this.renderer === renderer) this.paint();
+      })
+      .catch((error) => {
+        this.entityMessage = `Asset loading failed: ${(error as Error).message}`;
+        this.hooks.onSelect?.();
+      });
   }
 
   tick(dtMs: number): void {
@@ -683,7 +1116,16 @@ export class WorldEditor {
 
   private hover(clientX: number, clientY: number): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
-    const r = this.tool === "decal" ? this.decalSize/2 : this.tool === "terrain" ? this.terrainRadius : this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
+    const r =
+      this.tool === "decal"
+        ? this.decalSize / 2
+        : this.tool === "terrain"
+          ? this.terrainRadius
+          : this.tool === "clean"
+            ? this.clean.radius
+            : this.tool === "sculpt"
+              ? this.sculpt.radius
+              : this.brush.radius;
     if (!hit) {
       this.renderer?.brush.setCursor(0, 0, r, false);
       return;
@@ -694,10 +1136,22 @@ export class WorldEditor {
   private stroke(clientX: number, clientY: number, erase: boolean): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return;
-    if(this.tool === "decal"){this.decalStroke(hit.x,hit.z,erase);return;}
-    if (this.tool === "terrain") {this.addTerrainPoint(hit.x,hit.z);return;}
+    if (this.tool === "decal") {
+      this.decalStroke(hit.x, hit.z, erase);
+      return;
+    }
+    if (this.tool === "terrain") {
+      this.addTerrainPoint(hit.x, hit.z);
+      return;
+    }
     if (this.tool === "sculpt") {
-      this.renderer?.brush.setCursor(hit.x, hit.z, this.sculpt.radius, true, hit.y);
+      this.renderer?.brush.setCursor(
+        hit.x,
+        hit.z,
+        this.sculpt.radius,
+        true,
+        hit.y,
+      );
       const dirty = this.sculpt.stroke(hit.x, hit.z, erase, this.height);
       if (this.sculpt.mode === "water") {
         this.syncPaintView();
@@ -709,18 +1163,33 @@ export class WorldEditor {
       return;
     }
     if (this.tool === "clean") {
-      this.renderer?.brush.setCursor(hit.x, hit.z, this.clean.radius, true, hit.y);
-      this.cleanAt(hit.x,hit.z);
+      this.renderer?.brush.setCursor(
+        hit.x,
+        hit.z,
+        this.clean.radius,
+        true,
+        hit.y,
+      );
+      this.cleanAt(hit.x, hit.z);
       return;
     }
     this.brush.stroke(hit.x, hit.z, erase);
-    this.renderer?.brush.setCursor(hit.x, hit.z, this.brush.radius, true, hit.y);
+    this.renderer?.brush.setCursor(
+      hit.x,
+      hit.z,
+      this.brush.radius,
+      true,
+      hit.y,
+    );
     this.syncPaintView();
     this.hooks.onBrush?.();
   }
 
   private endStroke(): void {
-    if(this.tool === "terrain" && !this.terrainCurve){this.applyTerrainCurve();return;}
+    if (this.tool === "terrain" && !this.terrainCurve) {
+      this.applyTerrainCurve();
+      return;
+    }
     if (this.tool !== "sculpt" || this.sculpt.mode !== "live") return;
     this.commitHeight();
     this.renderer?.setTerrain(this.height);
@@ -740,7 +1209,11 @@ export class WorldEditor {
       return;
     }
     if (water) {
-      layer.sync(this.sculpt.mask.weights, this.sculpt.mask.origin, this.sculpt.mask.span);
+      layer.sync(
+        this.sculpt.mask.weights,
+        this.sculpt.mask.origin,
+        this.sculpt.mask.span,
+      );
       layer.setOpen(true);
       this.sculpt.mask.dirty = false;
       return;
@@ -749,6 +1222,33 @@ export class WorldEditor {
   }
 
   private grabDown(clientX: number, clientY: number, rotate: boolean): boolean {
+    const resourceId = this.renderer?.pickStamp(clientX, clientY);
+    const id =
+        this.renderer?.pickGameEntity(clientX, clientY) ??
+        (resourceId?.startsWith("resource-")
+          ? Number(resourceId.slice(9))
+          : null),
+      p = id ? expandMap(this.map, content)[id - 1] : null;
+    if (p) {
+      if (!this.map.entities.some((e) => e.id === p.id)) {
+        this.entityMessage = "Use the spawn tool to move setup members.";
+        this.hooks.onSelect?.();
+        return true;
+      }
+      this.selectEntity(p.id);
+      const hit = this.renderer?.pickGround(clientX, clientY);
+      if (hit) {
+        this.entityOffset = {
+          x: p.position.x - hit.x,
+          y: p.position.y - hit.z,
+        };
+        this.entityDragging = true;
+        this.entityDragStart = this.map;
+      }
+      return true;
+    }
+    this.selectedEntity = null;
+
     const stamp = this.hitStamp(clientX, clientY);
     if (!stamp) {
       this.select.clear();
@@ -765,6 +1265,28 @@ export class WorldEditor {
   }
 
   private grabMove(clientX: number, clientY: number): void {
+    if (this.entityDragging) {
+      const p = this.selectedPlacement(),
+        hit = this.renderer?.pickGround(clientX, clientY);
+      if (p && hit) {
+        try {
+          this.map = putEntity(this.map, {
+            ...p,
+            position: {
+              x: Math.round(hit.x + this.entityOffset.x),
+              y: Math.round(hit.z + this.entityOffset.y),
+            },
+          });
+          this.paint();
+          this.hooks.onChange?.();
+          this.hooks.onSelect?.();
+        } catch {
+          /* Drag outside map retains the last valid pose. */
+        }
+      }
+      return;
+    }
+
     const stamp = this.selectedStamp();
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!stamp || !hit) return;
@@ -782,27 +1304,82 @@ export class WorldEditor {
   }
 
   private applyPose(stamp: MapStamp, x: number, y: number, yaw: number): void {
-    if (!sitAllowed(this.kinds.get(stamp.asset), this.height.wet(x + 0.5, y + 0.5))) return;
+    if (
+      !sitAllowed(
+        this.kinds.get(stamp.asset),
+        this.height.wet(x + 0.5, y + 0.5),
+      )
+    )
+      return;
     const next = withPose(stamp, x, y, yaw);
     if (!next) return;
-    this.map = { ...this.map, stamps: this.map.stamps.map((s) => (s.id === stamp.id ? next : s)) };
+    this.map = {
+      ...this.map,
+      stamps: this.map.stamps.map((s) => (s.id === stamp.id ? next : s)),
+    };
     this.paint();
     this.hooks.onChange?.();
     this.hooks.onSelect?.();
   }
 
-  setSpawnPoint(player:number,x:number,z:number):void {
-    if(!Number.isInteger(player)||player<1||player>2)throw new Error('Choose Player 1 or Player 2');
-    const map={...this.map,playerStarts:[...(this.map.playerStarts??[]).filter(s=>s.player!==player),{player,x:Math.round(x),z:Math.round(z)}].sort((a,b)=>a.player-b.player)};
-    const error=playableMapError(map,false);
+  setSpawnPoint(player: number, x: number, z: number): void {
+    if (!Number.isInteger(player) || player < 1 || player > 2)
+      throw new Error("Choose Player 1 or Player 2");
+    const map = {
+      ...this.map,
+      playerStarts: [
+        ...(this.map.playerStarts ?? []).filter((s) => s.player !== player),
+        {
+          ...this.map.playerStarts.find((s) => s.player === player)!,
+          player,
+          x: Math.round(x),
+          z: Math.round(z),
+        },
+      ].sort((a, b) => a.player - b.player),
+    };
+    const error = playableMapError(map, false);
     // A landscape study may still need the other player's start.
-    if(error){this.spawnMessage=error;this.hooks.onChange?.();return;}
-    this.map=map;this.spawnMessage=`Player ${player} placed. Click again to move it.`;this.paint();this.hooks.onChange?.();
+    if (error) {
+      this.spawnMessage = error;
+      this.hooks.onChange?.();
+      return;
+    }
+    this.commitEntities(map);
+    this.spawnMessage = `Player ${player} placed. Click again to move it.`;
+    this.paint();
+    this.hooks.onChange?.();
   }
 
   private click(clientX: number, clientY: number): void {
-    if(this.tool==='spawn'){const hit=this.renderer?.pickGround(clientX,clientY);if(hit)this.setSpawnPoint(this.spawnPlayer,hit.x,hit.z);return;}
-    if(this.tool === "terrain" && this.terrainCurve){const p=this.renderer?.pickGround(clientX,clientY);if(p)this.addTerrainPoint(p.x,p.z);return;}
+    if (this.tool === "entity") {
+      const hit = this.renderer?.pickGround(clientX, clientY);
+      if (!hit) return;
+      try {
+        this.putEntity({
+          id: crypto.randomUUID(),
+          definition: this.entityDefinition,
+          position: { x: Math.round(hit.x), y: Math.round(hit.z) },
+          rotation: Math.round((this.stampYaw * 180) / Math.PI),
+          owner: this.entityOwner,
+        });
+        this.entityMessage = "Placed. Select to move or edit.";
+      } catch (e) {
+        this.entityMessage = (e as Error).message;
+      }
+      this.hooks.onSelect?.();
+      return;
+    }
+
+    if (this.tool === "spawn") {
+      const hit = this.renderer?.pickGround(clientX, clientY);
+      if (hit) this.setSpawnPoint(this.spawnPlayer, hit.x, hit.z);
+      return;
+    }
+    if (this.tool === "terrain" && this.terrainCurve) {
+      const p = this.renderer?.pickGround(clientX, clientY);
+      if (p) this.addTerrainPoint(p.x, p.z);
+      return;
+    }
     if (this.tool !== "stamp") return;
     if (!this.asset) {
       this.hooks.onNeedAsset?.();
@@ -814,7 +1391,8 @@ export class WorldEditor {
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
     if (!inStamp(x, y)) return;
-    if (!sitAllowed(this.kinds.get(this.asset), this.height.wet(hit.x, hit.z))) return;
+    if (!sitAllowed(this.kinds.get(this.asset), this.height.wet(hit.x, hit.z)))
+      return;
     this.map = {
       ...this.map,
       stamps: [
@@ -833,13 +1411,30 @@ export class WorldEditor {
   }
 
   private paint(): void {
-    if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id)) this.select.clear();
-    this.renderer?.setSpawnPoints(this.map.playerStarts??[],this.tool==='spawn');
+    if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id))
+      this.select.clear();
+    this.renderer?.setSpawnPoints(
+      this.map.playerStarts ?? [],
+      this.tool === "spawn",
+    );
     this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
-    this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
+    this.entityViews = editorEntities(this.map);
+    const stamps = [...this.map.stamps, ...resourceStamps(this.entityViews)];
+    const selected = expandMap(this.map, content).findIndex(
+      (p) => p.id === this.selectedEntity,
+    );
+    this.renderer?.gameSelect(selected >= 0 ? [selected + 1] : []);
+    this.renderer?.draw(
+      {
+        tick: 0,
+        size: MAP_SIZE,
+        settlement: authoredScene(this.entityViews),
+      },
+      stamps,
+    );
     this.mini?.setHeight(this.height);
-    this.mini?.setStamps(this.map.stamps);
-    this.mini?.setPlayerStarts(this.map.playerStarts??[]);
+    this.mini?.setStamps(stamps);
+    this.mini?.setPlayerStarts(this.map.playerStarts ?? []);
     this.mini?.paint();
   }
 
@@ -900,5 +1495,10 @@ function grabFrame(
     dataUrl = format === "png" ? off.toDataURL(mime) : off.toDataURL(mime, q);
   }
   const comma = dataUrl.indexOf(",");
-  return { data: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl, mime, width: w, height: h };
+  return {
+    data: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl,
+    mime,
+    width: w,
+    height: h,
+  };
 }

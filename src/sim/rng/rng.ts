@@ -8,7 +8,7 @@ export type Rng = {
   state(): number;
 };
 
-/** Continue a saved Mulberry32 word. `seedRng(s).state()` is not `s` — first draw already stepped. */
+/** Continue a saved Mulberry32 word; seeding does not consume a draw. */
 export function rngFromState(state: number): Rng {
   return seedRng(state >>> 0);
 }

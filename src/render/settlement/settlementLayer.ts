@@ -1,9 +1,4 @@
-import { isCombatant, unitMaxHealth, SOLDIERS, COMBAT_UNITS } from '../../shared/settlement/rules';
-import { applyPlayerMaterials } from './playerMaterials';
-import { TerritoryPosts } from "./territoryPosts";
-import { prepareAntMaterial } from '../prop/antMaterials';
 import {
-  Sprite, SpriteMaterial,
   Group,
   Object3D,
   Mesh,
@@ -11,72 +6,61 @@ import {
   BoxGeometry,
   RingGeometry,
   MeshBasicMaterial,
+  Sprite,
+  SpriteMaterial,
   Vector3,
+  CylinderGeometry,
   type Scene,
   type Raycaster,
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { BUILDINGS, type BuildingKind } from "../../shared/settlement/rules";
-import { type HeightField } from "../../shared";
-import type { SettlementView } from "../../sim/settlement/settlement";
+import { content } from "../../content/builtin";
+import { ownerSlot } from "../../content/schema";
+import { projectMeshUrl } from "../../shared/assets/project";
 import { stockpileLayout } from "../../shared/settlement/stockpile";
-import type { ItemKind, ItemStock } from "../../shared/settlement/rules";
-const urls = {
-  wolf: new URL("../../../assets/ant-colony/wolf.glb",import.meta.url).href,
-  ogre: new URL("../../../assets/ant-colony/ogre.glb",import.meta.url).href,
-  barracks: new URL("../../../assets/ant-colony/barracks.glb", import.meta.url).href,
-  warrior: new URL("../../../assets/ant-colony/warrior.glb", import.meta.url).href,
-  archer: new URL("../../../assets/ant-colony/archer.glb", import.meta.url).href,
-  fort: new URL("../../../assets/ant-colony/fort.glb", import.meta.url)
-    .href,
-  sawmill: new URL(
-    "../../../assets/ant-colony/sawmill.glb",
-    import.meta.url,
-  ).href,
-  forester: new URL(
-    "../../../assets/ant-colony/forester.glb",
-    import.meta.url,
-  ).href,
-  "item-log": new URL(
-    "../../../assets/ant-colony/item-log.glb",
-    import.meta.url,
-  ).href,
-  "item-plank": new URL(
-    "../../../assets/ant-colony/item-plank.glb",
-    import.meta.url,
-  ).href,
-  "item-stone": new URL(
-    "../../../assets/ant-colony/item-stone.glb",
-    import.meta.url,
-  ).href,
-  tower: new URL("../../../assets/ant-colony/tower.glb", import.meta.url)
-    .href,
-  lumberjack: new URL(
-    "../../../assets/ant-colony/lumberjack.glb",
-    import.meta.url,
-  ).href,
-  stonemason: new URL(
-    "../../../assets/ant-colony/stonemason.glb",
-    import.meta.url,
-  ).href,
-  house: new URL("../../../assets/ant-colony/house.glb", import.meta.url)
-    .href,
-  carrier: new URL('../../../assets/ant-colony/worker-carry.glb', import.meta.url).href,
-  settler: new URL(
-    "../../../assets/ant-colony/worker.glb",
-    import.meta.url,
-  ).href,
-};
+import type { HeightField } from "../../shared/map/height";
+import type { EntityView, SettlementView } from "../../sim/game/observation";
+import { applyPlayerMaterials } from "./playerMaterials";
+import { prepareAntMaterial } from "../prop/antMaterials";
+import { TerritoryPosts } from "./territoryPosts";
+
+/** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
-  private readonly arrowGeometry=new BoxGeometry(.045,.045,.7);
-  private readonly hpBack=new SpriteMaterial({color:0x17201c,depthTest:false});
-  private readonly hpFill=new SpriteMaterial({color:0x73d45d,depthTest:false});
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
+  private selected = new Set<number>();
+  private readonly arrows: {
+    mesh: Mesh;
+    start: Vector3;
+    end: Vector3;
+    tick: number;
+  }[] = [];
+  private readonly arrowGeometry = new CylinderGeometry(0.035, 0.035, 0.9, 5);
+  private readonly arrowMaterial = new MeshStandardMaterial({
+    color: 0xc3a779,
+    roughness: 0.8,
+  });
   private readonly borders = new TerritoryPosts();
+  private revision = -1;
+  private dead = false;
+  private readonly ringGeometry = new RingGeometry(0.82, 1, 32);
+  private readonly ringMaterial = new MeshBasicMaterial({
+    color: 0xffed9d,
+    transparent: true,
+    opacity: 0.9,
+    depthWrite: false,
+  });
+  private readonly hpBack = new SpriteMaterial({
+    color: 0x17201c,
+    depthTest: false,
+  });
+  private readonly hpFill = new SpriteMaterial({
+    color: 0x73d45d,
+    depthTest: false,
+  });
   private readonly ghost = new Mesh(
-    new BoxGeometry(5, 0.15, 5),
+    new BoxGeometry(1, 0.15, 1),
     new MeshStandardMaterial({
       color: 0x68d893,
       transparent: true,
@@ -84,291 +68,289 @@ export class SettlementLayer {
       depthWrite: false,
     }),
   );
-  private readonly selection = new Mesh(
-    new RingGeometry(0.82, 1, 40),
-    new MeshBasicMaterial({
-      color: 0xffed9d,
-      transparent: true,
-      opacity: 0.9,
-      depthWrite: false,
-    }),
-  );
-  private selected=new Set<number>();
-  private readonly selectionRings:Mesh[]=[];
-  select(id: number | null | readonly number[]) {
-    this.selected = new Set(id===null?[]:typeof id==='number'?[id]:id);
-  }
-  pick(ray: Raycaster, maxDistance = Infinity): number | null {
-    const hit = ray
-      .intersectObjects([...this.entities.values()], true)
-      .find((h) => h.distance <= maxDistance);
-    let object: Object3D | null = hit?.object ?? null;
-    while (object) {
-      if (typeof object.userData.entityId === "number")
-        return object.userData.entityId;
-      object = object.parent;
-    }
-    return null;
-  }
-  private revision = -1;
-  private dead = false;
   readonly ready: Promise<void>;
   constructor(scene: Scene) {
-    this.root.name = "settlement";
-    this.root.add(this.borders, this.ghost, this.selection);
+    this.root.name = "game-entities";
+    this.root.add(this.borders, this.ghost);
     this.ghost.visible = false;
-    this.selection.rotation.x = -Math.PI / 2;
-    this.selection.visible = false;
     scene.add(this.root);
     const loader = new GLTFLoader();
     this.ready = Promise.all(
-      Object.entries(urls).map(async ([id, url]) => {
-        const gltf = await loader.loadAsync(url);
-        if (!this.dead) this.prototypes.set(id, gltf.scene);
-      }),
+      content.assets
+        .filter((a) => a.file && !a.sceneryAsset)
+        .map(async (a) => {
+          const url = projectMeshUrl(a.file!);
+          if (!url) throw new Error(`Missing declared model ${a.file}`);
+          const gltf = await loader.loadAsync(url);
+          if (!this.dead) this.prototypes.set(a.id, gltf.scene);
+        }),
     ).then(() => {});
   }
-  private make(id: number, kind: string, owner: number) {
-    let o = this.entities.get(id);
-    if (o && o.userData.modelKind!==kind){this.disposeInstance(o);this.root.remove(o);this.entities.delete(id);o=undefined;}
-    if (o) { applyPlayerMaterials(o, owner); return o; }
-    const p = this.prototypes.get(kind);
-    if (!p) return null;
-    if(kind === 'settler') {
-      o = new Group();
-      const idle = p.clone(true);idle.name = 'IdlePose';o.add(idle);
-      const carrier = this.prototypes.get('carrier');
-      if(carrier){const pose=carrier.clone(true);pose.name='CarryPose';pose.visible=false;o.add(pose);}
-    } else o = p.clone(true);
-    o.userData.entityId = id;
-    o.userData.modelKind = kind;
+  select(ids: number | null | readonly number[]) {
+    this.selected = new Set(
+      ids === null ? [] : typeof ids === "number" ? [ids] : ids,
+    );
+  }
+  pick(ray: Raycaster, maxDistance = Infinity) {
+    const hit = ray
+      .intersectObjects(
+        [...this.entities.values()].filter((o) => o.visible),
+        true,
+      )
+      .find((h) => h.distance <= maxDistance);
+    let node: Object3D | null = hit?.object ?? null;
+    while (node) {
+      if (typeof node.userData.entityId === "number")
+        return node.userData.entityId;
+      node = node.parent;
+    }
+    return null;
+  }
+  private clone(asset: string) {
+    const proto = this.prototypes.get(asset);
+    if (!proto) return null;
+    const o = proto.clone(true);
     o.traverse((child) => {
       if (child instanceof Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        const copies = materials.map((mat) => {
-          const m = mat.clone();
-          if(m instanceof MeshStandardMaterial)prepareAntMaterial(m);
-          return m;
+        const mats = (
+          Array.isArray(child.material) ? child.material : [child.material]
+        ).map((m) => {
+          const copy = m.clone();
+          if (copy instanceof MeshStandardMaterial) prepareAntMaterial(copy);
+          return copy;
         });
-        child.material = Array.isArray(child.material) ? copies : copies[0]!;
+        child.material = Array.isArray(child.material) ? mats : mats[0];
       }
     });
-    applyPlayerMaterials(o, owner);
-    if (kind === "settler") {
-      const cargo = new Group();
-      cargo.name = "Cargo";
-      cargo.position.set(0, 1.04, 0.48);
-      cargo.visible = false;
-      o.add(cargo);
-      for (const kind of ["log", "plank", "stone"] as const) {
-        const item = this.item(kind);
-        if (item) {
-          item.name = kind;
-          item.scale.setScalar(0.7);
-          cargo.add(item);
-        }
+    return o;
+  }
+  private make(e: EntityView) {
+    const d = content.get(e.definition),
+      assetId = e.appearance?.asset ?? d.asset;
+    let o = this.entities.get(e.id);
+    if (o && o.userData.asset !== assetId) {
+      this.disposeInstance(o);
+      o.removeFromParent();
+      this.entities.delete(e.id);
+      o = undefined;
+    }
+    if (o) return o;
+    const model = this.clone(assetId);
+    if (!model) return null;
+    o = new Group();
+    model.name = "Body";
+    o.add(model);
+    o.userData.asset = assetId;
+    o.userData.entityId = e.id;
+    const asset = content.asset(assetId),
+      scale = (asset.scale ?? 1) * (e.appearance?.scale ?? 1);
+    o.userData.modelScale = scale;
+    model.scale.setScalar(scale);
+    if (asset.carryAsset) {
+      const carry = this.clone(asset.carryAsset);
+      if (carry) {
+        carry.name = "CarryBody";
+        carry.scale.setScalar(scale);
+        carry.visible = false;
+        o.add(carry);
       }
     }
-    if(kind==='archer'){
-      const arrow=new Mesh(this.arrowGeometry,new MeshBasicMaterial({color:0xe0c18d}));
-      arrow.name='ArrowTrace';arrow.visible=false;o.add(arrow);
-    }
-    const hp=new Group();hp.name='HealthBar';
-    const back=new Sprite(this.hpBack),fill=new Sprite(this.hpFill);
-    back.center.set(0,.5);fill.center.set(0,.5);back.renderOrder=20;fill.renderOrder=21;
-    back.scale.set(1.2,.13,1);fill.scale.set(1.16,.09,1);fill.position.set(.02,.005,.01);
-    hp.add(back,fill);o.add(hp);
-    this.entities.set(id, o);
+    const cargo = new Group();
+    cargo.name = "Cargo";
+    cargo.position.set(0, 1.04, 0.48);
+    o.add(cargo);
+    const stock = new Group();
+    stock.name = "Stockpile";
+    o.add(stock);
+    const ring = new Mesh(this.ringGeometry, this.ringMaterial);
+    ring.name = "Selection";
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.12;
+    ring.scale.setScalar(
+      d.footprint ? Math.max(d.footprint.width, d.footprint.depth) / 2 + 1 : 1,
+    );
+    ring.visible = false;
+    o.add(ring);
+    const hp = new Group();
+    hp.name = "Health";
+    hp.position.set(-0.6, asset.healthHeight ?? 2.5, 0);
+    const back = new Sprite(this.hpBack),
+      fill = new Sprite(this.hpFill);
+    back.center.set(0, 0.5);
+    fill.center.set(0, 0.5);
+    back.scale.set(1.2, 0.13, 1);
+    fill.scale.set(1.16, 0.09, 1);
+    fill.position.set(0.02, 0.005, 0.01);
+    back.renderOrder = 20;
+    fill.renderOrder = 21;
+    hp.add(back, fill);
+    o.add(hp);
+    this.entities.set(e.id, o);
     this.root.add(o);
     return o;
   }
   update(state: SettlementView, field: HeightField, tick: number) {
     if (state.revision !== this.revision) {
       this.revision = state.revision;
-      this.borderGeometry(state, field);
+      this.borders.rebuild(state.territory, field, state.territoryBorders);
     }
-    this.selection.visible=false;
-    const selected=[...state.buildings,...state.workers].filter(e=>this.selected.has(e.id)&&e.health>0);
-    while(this.selectionRings.length<selected.length){const ring=this.selection.clone();this.selectionRings.push(ring);this.root.add(ring);}
-    this.selectionRings.forEach((ring,i)=>{
-      const entity=selected[i];ring.visible=!!entity;
-      if(!entity)return;
-      ring.position.set(entity.x,field.sample(entity.x,entity.z)+.12,entity.z);
-      ring.scale.setScalar('kind' in entity?BUILDINGS[entity.kind].radius+1:1);
-    });
     const seen = new Set<number>();
-    for (const b of state.buildings) {
-      seen.add(b.id);
-      const o = this.make(b.id, b.kind, b.owner);
+    for (const e of state.entities) {
+      const d = content.get(e.definition);
+      if (d.kind === "resource") continue;
+      seen.add(e.id);
+      const o = this.make(e);
       if (!o) continue;
-      o.visible = b.health > 0;
-      o.position.set(b.x, field.sample(b.x, b.z), b.z);
-      const colony = state.colonies.find((c) => c.owner === b.owner);
-      const inventory: ItemStock = !b.complete
-        ? { log: 0, plank: b.delivered.wood, stone: b.delivered.stone }
-        : b.kind === "fort"
-          ? {
-              log: 0,
-              plank: colony?.stock.wood ?? 0,
-              stone: colony?.stock.stone ?? 0,
-            }
-          : b.inventory;
-      this.stockpile(o, inventory, BUILDINGS[b.kind].radius, field, b.x, b.z);
-      o.scale.y = b.complete
-        ? 1
-        : 0.12 + (0.88 * b.progress) / BUILDINGS[b.kind].work;
-      o.getObjectByName("Stockpile")?.scale.set(1, 1 / o.scale.y, 1);
-      this.healthBar(o,b.health,BUILDINGS[b.kind].health??250,5/o.scale.y,this.selected.has(b.id));
-    }
-    for (const w of state.workers) {
-      seen.add(w.id);
-      const o = this.make(w.id, isCombatant(w.role)?w.role:"settler", w.owner);
-      if (!o) continue;
-      const target = new Vector3(w.x, field.sample(w.x, w.z), w.z);
-      if (o.userData.placed) {
-        const dx = target.x - o.position.x,
-          dz = target.z - o.position.z;
-        if (Math.abs(dx) + Math.abs(dz) > 0.03)
-          o.rotation.y = Math.atan2(dx, dz);
+      o.visible = !e.unit?.contained;
+      applyPlayerMaterials(o, ownerSlot(e.owner));
+      const target = new Vector3(e.x, field.sample(e.x, e.y), e.y);
+      if (e.unit && o.userData.placed) {
+        const delta = target.clone().sub(o.position);
+        if (delta.lengthSq() > 0.005)
+          o.rotation.y = Math.atan2(delta.x, delta.z);
         o.position.lerp(target, 0.35);
       } else {
         o.position.copy(target);
+        o.rotation.y = (e.rotation * Math.PI) / 180;
         o.userData.placed = true;
       }
-      o.visible=w.job!=='training';
-      this.healthBar(o,w.health,unitMaxHealth(w.role),w.role==='ogre'?3.3:w.role==='wolf'?1.9:2.5,this.selected.has(w.id));
-      if(isCombatant(w.role) && w.target){
-        const target=state.workers.find(t=>t.id===w.target)??state.buildings.find(t=>t.id===w.target);
-        if(target)o.rotation.y=Math.atan2(target.x-w.x,target.z-w.z);
-        const strike=w.attackCooldown>COMBAT_UNITS[w.role].cooldown-6;
-        o.rotation.x=strike?.10:0;
-      }else o.rotation.x=0;
-      const arrow=o.getObjectByName('ArrowTrace');
-      if(arrow){
-        const target=state.workers.find(t=>t.id===w.target)??state.buildings.find(t=>t.id===w.target);
-        const age=SOLDIERS.archer.cooldown-w.attackCooldown;
-        arrow.visible=!!target && w.attackCooldown>0 && age<8;
-        if(target){const phase=age/8;arrow.position.set(0,1.3+Math.sin(phase*Math.PI)*.6,Math.hypot(target.x-w.x,target.z-w.z)*phase);}
+      const carry = o.getObjectByName("CarryBody"),
+        body = o.getObjectByName("Body")!;
+      if (carry) {
+        carry.visible = !!e.unit?.cargo;
+        body.visible = !carry.visible;
       }
-      const carryPose = o.getObjectByName('CarryPose');
-      const idlePose = o.getObjectByName('IdlePose');
-      if(carryPose)carryPose.visible=w.quantity>0;
-      if(idlePose)idlePose.visible=!carryPose||w.quantity===0;
-      const cargo = o.getObjectByName("Cargo");
-      if (cargo) {
-        cargo.visible = w.quantity > 0;
-        const kind = w.shipment?.item ?? (
-          w.carry === "stone"
-            ? "stone"
-            : w.role === "lumberjack" ||
-                (w.role === "sawyer" && w.job === "mill-input")
-              ? "log"
-              : "plank");
-        for (const item of cargo.children) item.visible = item.name === kind;
+      const buildProgress = e.construction
+        ? Math.max(0.1, e.construction.progress / d.creation!.workTicks)
+        : 1;
+      body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
+      if (e.item) body.visible = false;
+      o.getObjectByName("Selection")!.visible = this.selected.has(e.id);
+      const hp = o.getObjectByName("Health")!;
+      hp.visible =
+        !!d.body && (this.selected.has(e.id) || e.hp! < d.body.maxHp);
+      if (d.body)
+        hp.children[1].scale.x = 1.16 * Math.max(0, e.hp! / d.body.maxHp);
+      const cargo = o.getObjectByName("Cargo")!;
+      const cargoKey = e.unit?.cargo?.item ?? "";
+      if (o.userData.cargoKey !== cargoKey) {
+        for (const child of [...cargo.children]) {
+          this.disposeInstance(child);
+          child.removeFromParent();
+        }
+        if (cargoKey) {
+          const item = this.clone(content.get(cargoKey).asset);
+          if (item) {
+            item.scale.setScalar(0.7);
+            cargo.add(item);
+          }
+        }
+        o.userData.cargoKey = cargoKey;
       }
-      o.traverse((child) => {
-        if (child.name.startsWith("Leg") || child.name.startsWith("Arm"))
-          child.rotation.x =
-            w.job === "idle" || w.job === "gather" || w.job === "build"
-              ? 0
-              : Math.sin(tick * 0.3) *
-                (child.name.includes("L") ? 1 : -1) *
-                0.5;
-      });
+      const stock = e.item
+          ? { [e.definition]: e.item.quantity }
+          : (e.inventory ?? {}),
+        stockKey = JSON.stringify(stock);
+      if (o.userData.stockKey !== stockKey) {
+        const group = o.getObjectByName("Stockpile")!;
+        for (const child of [...group.children]) {
+          this.disposeInstance(child);
+          child.removeFromParent();
+        }
+        for (const slot of stockpileLayout(
+          stock,
+          e.item ? -0.15 : (d.footprint?.depth ?? 2) / 2,
+        )) {
+          const item = this.clone(content.get(slot.kind).asset);
+          if (item) {
+            item.position.set(slot.x, slot.y + 0.02, slot.z);
+            group.add(item);
+          }
+        }
+        o.userData.stockKey = stockKey;
+      }
+      if (e.unit && content.asset(e.appearance?.asset ?? d.asset).projectile) {
+        if (
+          e.unit.target !== null &&
+          e.unit.cooldown > (o.userData.cooldown ?? e.unit.cooldown)
+        ) {
+          const target = state.entities.find((t) => t.id === e.unit!.target);
+          if (target) {
+            const mesh = new Mesh(this.arrowGeometry, this.arrowMaterial);
+            mesh.castShadow = false;
+            this.root.add(mesh);
+            this.arrows.push({
+              mesh,
+              start: o.position.clone().add(new Vector3(0, 1.5, 0)),
+              end: new Vector3(
+                target.x,
+                field.sample(target.x, target.y) + 1,
+                target.y,
+              ),
+              tick,
+            });
+          }
+        }
+        o.userData.cooldown = e.unit.cooldown;
+      }
+      if (e.unit)
+        o.traverse((child) => {
+          if (child.name.startsWith("Leg") || child.name.startsWith("Arm"))
+            child.rotation.x = e.unit!.moving
+              ? Math.sin(tick * 0.3) * (child.name.includes("L") ? 1 : -1) * 0.5
+              : 0;
+        });
+    }
+    for (let i = this.arrows.length - 1; i >= 0; i--) {
+      const a = this.arrows[i],
+        t = (tick - a.tick) / 8;
+      if (t >= 1) {
+        a.mesh.removeFromParent();
+        this.arrows.splice(i, 1);
+      } else {
+        a.mesh.position.lerpVectors(a.start, a.end, t);
+        a.mesh.quaternion.setFromUnitVectors(
+          new Vector3(0, 1, 0),
+          a.end.clone().sub(a.start).normalize(),
+        );
+      }
     }
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
         this.disposeInstance(o);
-        this.root.remove(o);
+        o.removeFromParent();
         this.entities.delete(id);
       }
   }
-  private healthBar(o:Object3D,hp:number,max:number,height:number,selected:boolean) {
-    const bar=o.getObjectByName('HealthBar');if(!bar)return;
-    bar.visible=hp>0 && (hp<max||selected);
-    bar.position.set(-.6,height,0);bar.rotation.y=-o.rotation.y;
-    bar.children[1]!.scale.x=1.16*Math.max(0,Math.min(1,hp/max));
-  }
-  private item(kind: ItemKind) {
-    const p = this.prototypes.get("item-" + kind);
-    if (!p) return null;
-    const o = p.clone(true);
-    o.userData.sharedItem = true;
-    o.traverse((child) => {
-      if (child instanceof Mesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-        child.userData.sharedItem = true;
-      }
-    });
-    return o;
-  }
-  private stockpile(
-    o: Object3D,
-    stock: ItemStock,
-    radius: number,
-    field: HeightField,
-    x: number,
-    z: number,
-  ) {
-    const key = JSON.stringify(stock);
-    if (o.userData.stockKey === key) return;
-    o.getObjectByName("Stockpile")?.removeFromParent();
-    const group = new Group();
-    group.name = "Stockpile";
-    for (const slot of stockpileLayout(stock, radius)) {
-      const item = this.item(slot.kind);
-      if (!item) return;
-      item.position.set(
-        slot.x,
-        field.sample(x + slot.x, z + slot.z) -
-          field.sample(x, z) +
-          0.02 +
-          slot.y,
-        slot.z,
-      );
-      group.add(item);
-    }
-    o.add(group);
-    o.userData.stockKey = key;
-  }
   preview(
-    kind: BuildingKind | null,
+    definition: string | null,
     x: number,
-    z: number,
+    y: number,
     allowed: boolean,
     field: HeightField,
   ) {
-    this.ghost.visible = kind !== null;
-    if (!kind) return;
-    this.ghost.scale.set(
-      (BUILDINGS[kind].radius * 2 + 1) / 5,
-      1,
-      (BUILDINGS[kind].radius * 2 + 1) / 5,
-    );
-    this.ghost.position.set(x, field.sample(x, z) + 0.15, z);
+    this.ghost.visible = definition !== null;
+    if (!definition) return;
+    const footprint = content.get(definition).footprint!;
+    this.ghost.scale.set(footprint.width, 1, footprint.depth);
+    this.ghost.position.set(x, field.sample(x, y) + 0.15, y);
     this.ghost.material.color.set(allowed ? 0x68d893 : 0xf26960);
-  }
-  private borderGeometry(state: SettlementView, field: HeightField) {
-    this.borders.rebuild(state.territory, field, state.territoryBorders);
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
-      if (child instanceof Mesh && !child.userData.sharedItem) {
-        if (child.name === "Cargo") child.geometry.dispose();
+      if (child instanceof Mesh && child.geometry !== this.ringGeometry)
         for (const m of Array.isArray(child.material)
           ? child.material
           : [child.material])
           m.dispose();
-      }
     });
   }
   destroy(scene: Scene) {
     this.dead = true;
+    this.arrowGeometry.dispose();
+    this.arrowMaterial.dispose();
     for (const o of this.entities.values()) this.disposeInstance(o);
     for (const p of this.prototypes.values())
       p.traverse((o) => {
@@ -379,12 +361,12 @@ export class SettlementLayer {
         }
       });
     this.borders.dispose();
+    this.ringGeometry.dispose();
+    this.ringMaterial.dispose();
+    this.hpBack.dispose();
+    this.hpFill.dispose();
     this.ghost.geometry.dispose();
-    this.arrowGeometry.dispose();
-    this.hpBack.dispose();this.hpFill.dispose();
     this.ghost.material.dispose();
-    this.selection.geometry.dispose();
-    this.selection.material.dispose();
     scene.remove(this.root);
   }
 }
