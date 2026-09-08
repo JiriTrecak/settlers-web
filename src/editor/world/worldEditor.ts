@@ -1,3 +1,4 @@
+import { playableMapError } from "../../shared/map/playable";
 import { decalAt, validDecal, type GroundDecal, type DecalKind } from '../../shared/landscape/decal';
 import { readBrushSize, saveBrushSize } from "../brush/sizePrefs";
 import { DAY_CYCLE_SECONDS } from "../../render/sky/sky";
@@ -29,7 +30,7 @@ import { CleanTool, wipeStamps, eraseCover } from "../clean/clean";
 import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
-export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain" | "decal";
+export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain" | "decal" | "spawn";
 
 export type EditorView = {
   x: number;
@@ -68,6 +69,8 @@ export type EditorShotOpts = {
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
+  spawnPlayer=1;
+  spawnMessage="";
   tool: EditorTool | null = "stamp";
   asset: string | null = null;
   terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' | 'hill' | 'plateau' | 'basin' = 'terrain';
@@ -788,7 +791,17 @@ export class WorldEditor {
     this.hooks.onSelect?.();
   }
 
+  setSpawnPoint(player:number,x:number,z:number):void {
+    if(!Number.isInteger(player)||player<1||player>2)throw new Error('Choose Player 1 or Player 2');
+    const map={...this.map,playerStarts:[...(this.map.playerStarts??[]).filter(s=>s.player!==player),{player,x:Math.round(x),z:Math.round(z)}].sort((a,b)=>a.player-b.player)};
+    const error=playableMapError(map,false);
+    // A landscape study may still need the other player's start.
+    if(error){this.spawnMessage=error;this.hooks.onChange?.();return;}
+    this.map=map;this.spawnMessage=`Player ${player} placed. Click again to move it.`;this.paint();this.hooks.onChange?.();
+  }
+
   private click(clientX: number, clientY: number): void {
+    if(this.tool==='spawn'){const hit=this.renderer?.pickGround(clientX,clientY);if(hit)this.setSpawnPoint(this.spawnPlayer,hit.x,hit.z);return;}
     if(this.tool === "terrain" && this.terrainCurve){const p=this.renderer?.pickGround(clientX,clientY);if(p)this.addTerrainPoint(p.x,p.z);return;}
     if (this.tool !== "stamp") return;
     if (!this.asset) {
@@ -821,6 +834,7 @@ export class WorldEditor {
 
   private paint(): void {
     if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id)) this.select.clear();
+    this.renderer?.setSpawnPoints(this.map.playerStarts??[],this.tool==='spawn');
     this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
     this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
     this.mini?.setHeight(this.height);

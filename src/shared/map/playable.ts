@@ -5,10 +5,10 @@ import { RULES_REVISION } from '../settlement/rules';
 
 export type PlayableMap = UtcMap & { readonly playerStarts: readonly PlayerStart[] };
 /** Validate at authoring/import boundaries, never during simulation ticks. */
-export function playableMapError(map: UtcMap): string | null {
+export function playableMapError(map: UtcMap, requirePlayers=true): string | null {
   const starts = map.playerStarts ?? [];
-  if (!starts.some(s=>s.player===1)||!starts.some(s=>s.player===2)) return 'Place Player 1 and Player 2 start points.';
-  if(starts.some((_,i)=>!starts.some(s=>s.player===i+1))) return "Player slots must be consecutive, starting at Player 1.";
+  if (requirePlayers && (!starts.some(s=>s.player===1)||!starts.some(s=>s.player===2))) return 'Place Player 1 and Player 2 start points.';
+  if(requirePlayers && starts.some((_,i)=>!starts.some(s=>s.player===i+1))) return "Player slots must be consecutive, starting at Player 1.";
   const field=new HeightField();
   if(map.height) field.load(decodeHeight(map.height) ?? [], map.waterLevel ?? 0);
   else field.waterLevel=map.waterLevel ?? 0;

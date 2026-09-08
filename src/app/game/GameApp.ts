@@ -1,4 +1,4 @@
-import { authoredMaps, playableMaps, getMap } from '../../shared/map/library';
+import { playableMaps, getMap } from '../../shared/map/library';
 import { MapPicker } from '../../ui/menu/mapPicker';
 import { emptyUtcMap, type UtcMap } from '../../shared/map/utcmap';
 /**
@@ -249,7 +249,7 @@ export class GameApp {
     if (this.screens.screen instanceof EditorScreen) return;
     const gen = ++this.playGen;
     this.showCanvas();
-    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu(), map: map ?? authoredMaps().find(m=>m.id==='twinwater-reach')?.map });
+    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu(), map });
     this.screens.show(editor);
     try {
       editor.start();

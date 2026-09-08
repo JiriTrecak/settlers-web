@@ -45,6 +45,22 @@ export class Renderer {
   private readonly scene = new Scene();
   private readonly ortho = new OrthographicCamera();
   private readonly persp = new PerspectiveCamera();
+  private readonly spawnFlags = new Map<number,Group>();
+  setSpawnPoints(starts:readonly {player:number;x:number;z:number}[],visible:boolean):void {
+    for(const flag of this.spawnFlags.values())flag.visible=false;
+    if(!visible)return;
+    for(const start of starts){
+      let flag=this.spawnFlags.get(start.player);
+      if(!flag){
+        flag=new Group();
+        const pole=new Mesh(new BoxGeometry(.2,5,.2),new MeshStandardMaterial({color:0xd4d9db}));pole.position.y=2.5;
+        const cloth=new Mesh(new BoxGeometry(2.4,1.6,.15),new MeshStandardMaterial({color:PLAYER_COLORS[clampPlayer(start.player-1)]}));cloth.position.set(1.2,4,0);
+        const pad=new Mesh(new BoxGeometry(6,.08,6),new MeshStandardMaterial({color:PLAYER_COLORS[clampPlayer(start.player-1)],transparent:true,opacity:.4}));pad.position.y=.1;
+        flag.add(pole,cloth,pad);this.scene.add(flag);this.spawnFlags.set(start.player,flag);
+      }
+      flag.position.set(start.x,this.height?.sample(start.x,start.z)??0,start.z);flag.visible=true;
+    }
+  }
   private readonly cubes = new Map<number, Mesh>();
   private readonly props: PropField;
   readonly brush: BrushLayer;
@@ -304,6 +320,7 @@ export class Renderer {
   }
 
   destroy(): void {
+    for(const group of this.spawnFlags.values()){group.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();(o.material as MeshStandardMaterial).dispose();}});this.scene.remove(group);}this.spawnFlags.clear();
     this.previewCurve([]);
     this.meadow.destroy();
     this.brush.destroy(this.scene);

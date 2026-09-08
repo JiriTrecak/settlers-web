@@ -9,7 +9,7 @@ import { filterCatalog, parseCatalogQuery, sitAllowed } from "../../shared";
 import type { CatalogueStore } from "../assets/store";
 import type { EditorTool, WorldEditor } from "../world/worldEditor";
 
-const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt", "terrain", "decal"];
+const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt", "terrain", "decal", "spawn"];
 
 export class EditorControl {
   constructor(
@@ -28,6 +28,7 @@ export class EditorControl {
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     status: () => this.status(),
+    setSpawnPoint: (p) => { const o=obj(p);this.editor.setSpawnPoint(Number(o.player),Number(o.x),Number(o.z));return {starts:this.editor.map.playerStarts,message:this.editor.spawnMessage}; },
     decals: (p) => this.decals(p),
     landscape: (p) => this.landscape(p),
     catalog: (p) => this.catalog(p),

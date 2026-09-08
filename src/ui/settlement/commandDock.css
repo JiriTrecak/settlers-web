@@ -57,3 +57,20 @@
 .rts-tools button[hidden]{display:none}.rts-tools button:hover,.rts-command:hover,.rts-command[aria-pressed=true]{border-color:#d19a63;box-shadow:inset 0 0 0 1px #e7c094,0 0 5px #da9b5666}
 .rts-tools button:focus-visible{outline:2px solid #e8d699;outline-offset:2px}
 @media(max-width:720px){.rts-dock{height:260px}.rts-selection-copy{left:35%;width:36%;top:48%;height:40%}.rts-eyebrow{display:none}.rts-selection h2{font-size:14px}.rts-selection p{font-size:10px}.rts-command-grid{gap:3px;padding:2px}.rts-command-name{display:none}.rts-portrait-meter{font-size:8px}.rts-map-label{font-size:7px;letter-spacing:0}.rts-actions-label{font-size:8px}}
+
+/* Keep the command dock compact on wide displays. */
+.rts-dock{left:50%;right:auto;width:min(100%,1200px);max-width:1200px!important;transform:translateX(-50%);height:clamp(270px,24vw,288px)}
+.rts-actions-label,.rts-eyebrow,.rts-map-label{display:none}
+/* Restrained steel frame, aligned to its independent artwork wells. */
+.rts-dock{background-image:url('../../../assets/ui/ant-hud/frame-steel-v2.png');background-size:100% 105%;background-position:center top}
+.rts-map{left:2.1%;top:35.5%;width:19.1%;height:59%}
+.rts-portrait{left:24.7%;top:45%;width:9.4%;height:47%}
+.rts-selection-copy{left:37.5%;top:46%;width:36%;height:45%}
+.rts-actions{left:77.9%;top:43.7%;width:19.9%;height:49.2%}
+.rts-command-grid{gap:4px;padding:3px}
+.rts-command,.rts-tools button{border-color:#5b6465}
+.rts-command:hover,.rts-command[aria-pressed=true],.rts-tools button:hover{border-color:#bdccd1;box-shadow:0 0 5px #a3c8df66}
+.rts-selection h2{color:#e0e6e2}
+/* Clip the exported frame's empty upper margin without clipping the clock or controls. */
+.rts-dock{background:none;isolation:isolate}
+.rts-dock::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('../../../assets/ui/ant-hud/frame-steel-v2.png') center top/100% 105% no-repeat;clip-path:polygon(0 31%,22.2% 31%,24% 37.4%,35.5% 37.4%,37% 38.2%,44% 38.2%,47% 41.2%,66% 41.2%,69% 38.2%,100% 37.5%,100% 100%,0 100%)}
