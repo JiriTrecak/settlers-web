@@ -1,3 +1,4 @@
+import { validDecal, DECAL_KINDS, type GroundDecal } from '../../shared/landscape/decal';
 import { DEFAULT_WATER_STYLE, parseWaterStyle } from '../../shared/landscape/waterStyle';
 import { parseUtcMap, stringifyUtcMap } from "../../shared";
 import type { CurvePoint, TerrainLayer, EnvironmentState } from "../../shared/landscape/curve";
@@ -8,7 +9,7 @@ import { filterCatalog, parseCatalogQuery, sitAllowed } from "../../shared";
 import type { CatalogueStore } from "../assets/store";
 import type { EditorTool, WorldEditor } from "../world/worldEditor";
 
-const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt", "terrain"];
+const TOOLS: readonly EditorTool[] = ["select", "stamp", "brush", "clean", "sculpt", "terrain", "decal"];
 
 export class EditorControl {
   constructor(
@@ -27,6 +28,7 @@ export class EditorControl {
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     status: () => this.status(),
+    decals: (p) => this.decals(p),
     landscape: (p) => this.landscape(p),
     catalog: (p) => this.catalog(p),
     place: (p) => this.place(p),
@@ -43,6 +45,27 @@ export class EditorControl {
     rename: (p) => this.rename(p),
     screenshot: (p) => this.screenshot(p),
   };
+
+  private decals(params: unknown): unknown {
+    const o=obj(params), action=String(o.action??'list');
+    const list=()=>this.editor.map.landscape?.decals??[];
+    if(action==='place'){
+      const d={id:typeof o.id==='string'?o.id:crypto.randomUUID(),kind:o.kind??'leaf-litter',x:o.x,z:o.z,size:o.size??4,rotation:o.rotation??0,opacity:o.opacity??1};
+      if(!validDecal(d))throw new Error('Invalid decal');
+      if(list().some(item=>item.id===d.id))throw new Error('Decal id already exists');
+      this.editor.putDecal(d);
+    }else if(action==='update'){
+      const current=list().find(d=>d.id===o.id);if(!current)throw new Error('Unknown decal id');
+      const d={...current};for(const key of ['kind','x','z','size','rotation','opacity'] as const)if(o[key]!==undefined)(d as unknown as Record<string,unknown>)[key]=o[key];
+      if(!validDecal(d))throw new Error('Invalid decal');this.editor.putDecal(d);
+    }else if(action==='delete'){
+      if(typeof o.id!=='string'||!list().some(d=>d.id===o.id))throw new Error('Unknown decal id');this.editor.removeDecal(o.id);
+    }else if(action==='config'){
+      const d:Partial<GroundDecal>={};for(const key of ['kind','size','rotation','opacity'] as const)if(o[key]!==undefined)(d as Record<string,unknown>)[key]=o[key];
+      this.editor.configureDecal(d);this.editor.setTool('decal');
+    }else if(action!=='list')throw new Error('Unknown decal action');
+    return {patterns:DECAL_KINDS,decals:list()};
+  }
 
   private landscape(raw: unknown): unknown {
     const o=obj(raw), action=str(o.action) ?? 'status';
@@ -111,6 +134,9 @@ export class EditorControl {
         painted: this.editor.brush.any(),
         slots: this.editor.kit.slots.map((s) => ({ id: s.id, asset: s.asset, pct: s.pct, scale: s.scale })),
       },
+      clean: { radius: this.editor.clean.radius, type: this.editor.clean.type },
+      sculpt: { radius: this.editor.sculpt.radius },
+      terrain: { radius: this.editor.terrainRadius },
       selected: this.editor.selectedStamp(),
     };
   }
@@ -254,6 +280,8 @@ export class EditorControl {
     const x = num(o.x);
     const z = num(o.z) ?? num(o.y);
     if (x === undefined || z === undefined) throw new Error("clean needs x, z");
+    if(o.type!==undefined && o.type!=="objects" && o.type!=="foliage")throw new Error("clean type must be objects or foliage");
+    this.editor.setCleanType(o.type === "foliage" ? "foliage" : "objects");
     this.editor.setTool("clean");
     this.editor.dabClean(x, z);
     return { stamps: this.editor.map.stamps.length, radius: this.editor.clean.radius };
@@ -298,6 +326,7 @@ export class EditorControl {
       zoom: num(o.zoom),
       yaw: rad(num(o.yaw) ?? num(o.angle)),
       pitch: rad(num(o.pitch)),
+      gameZoom: num(o.gameZoom),
       gameCam: bool(o.gameCam) ?? bool(o.game),
       iso: o.iso === true,
       keep: o.keep === true,
@@ -314,6 +343,8 @@ export class EditorControl {
       width: shot.width,
       height: shot.height,
       view: this.camViewFrom(shot.view),
+      mapName: this.editor.map.name,
+      environment: {...this.editor.map.landscape?.environment,...this.editor.sky?.snapshot()},
     };
   }
 
@@ -321,8 +352,8 @@ export class EditorControl {
     return this.camViewFrom(this.editor.view());
   }
 
-  private camViewFrom(v: { x: number; z: number; zoom: number; yaw: number; pitch: number; gameCam: boolean }) {
-    return { x: v.x, z: v.z, zoom: v.zoom, yaw: deg(v.yaw), pitch: deg(v.pitch), gameCam: v.gameCam };
+  private camViewFrom(v: { x: number; z: number; zoom: number; yaw: number; pitch: number; gameCam: boolean; gameZoom?: number }) {
+    return { x: v.x, z: v.z, zoom: v.zoom, yaw: deg(v.yaw), pitch: deg(v.pitch), gameCam: v.gameCam, gameZoom: v.gameZoom };
   }
 }
 

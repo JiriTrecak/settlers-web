@@ -1,3 +1,4 @@
+import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prototypeGroundOffset } from './grounding';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
@@ -41,6 +42,7 @@ export class PropField {
     root.traverse(n=>{
       if(!(n instanceof Mesh))return;
       for(const m of (Array.isArray(n.material)?n.material:[n.material])){
+        if(tintVividFoliage(m,this.season,root.userData.variant))continue;
         if(m instanceof MeshLambertMaterial && m.userData.stonePalette){
           // Each saved variant has its own prototype/materials. Tint only stone,
           // independently of foliage seasons and the sunlit bank-rock palette.
@@ -50,19 +52,19 @@ export class PropField {
         const base=m.userData.foliageBase as number[]|undefined;
         if(!base||!(m instanceof MeshLambertMaterial))continue;
         const c=new Color().setRGB(base[0]!,base[1]!,base[2]!);
-        if(evergreen)c.set(/reeds/.test(String(root.userData.asset))?0xd2c589:0x8f9870);
+        if(evergreen)c.set(/reeds/.test(String(root.userData.asset))?0xd2c589:0x286f4b);
         if(!evergreen){
           const name=String(root.userData.asset);let hash=0;for(const ch of name)hash=(hash*31+ch.charCodeAt(0))>>>0;
           if(this.season==='autumn')c.set([0xc99738,0xb45b32,0xd7b644,0xc68043][hash%4]!);
-          else if(this.season==='spring')c.set(/willow/.test(name)?0xc3d897:0xb6d48b);
-          else c.set(/willow/.test(name)?0xc5c379:0xc3b471);
+          else if(this.season==='spring')c.set(/willow/.test(name)?0x99d36a:0x80c653);
+          else c.set(/willow/.test(name)?0x83b958:0x639f40);
         }
         const variant=root.userData.variant;
         if(variant==='pink')c.set(/willow/.test(String(root.userData.asset))?0xffada8:0xffb1a7);
         if(variant==='snow')c.set(0xe1e0ef);
         if(variant==='gold')c.set(/willow/.test(String(root.userData.asset))?0xffbd71:0xffca0c);
         if(variant==='red')c.set(0xca7648);
-        if(variant==='green')c.set(0xa7be79);
+        if(variant==='green')c.set(0x67b04c);
         m.color.copy(c);m.emissive.copy(c);
         if(variant==='pink')m.emissive.set(0xff6872);
         m.emissive.multiplyScalar(variant==='pink'?.16:.035);
@@ -184,6 +186,7 @@ export class PropField {
   private async load(url: string, asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
     try {
       const gltf = await this.loader.loadAsync(url);
+      if(/^(pine-chunky|tree-chunky-)/.test(asset))prepareVividFoliage(gltf.scene);
       if (url.includes("synty") || asset.startsWith("synty-") || asset === "river-reeds") flattenPolygon(gltf.scene, asset,variant);
       gltf.scene.traverse((node) => {
         node.castShadow = true;

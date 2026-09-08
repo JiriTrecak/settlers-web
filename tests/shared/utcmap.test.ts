@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { emptyUtcMap, mapFileName, parseUtcMap, stringifyUtcMap, UTCMAP_VERSION } from "../../src/shared";
 
 describe("utcmap", () => {
+  it("rejects invalid landscape settings instead of silently losing the scene appearance", () => {
+    const landscape = {strokes:[],cover:[],environment:{hour:8.8,season:'summer',playing:false},water:{rippleScale:.16,rippleStrength:.14,cloudStrength:.24,foamStrength:.9}};
+    expect(parseUtcMap({...emptyUtcMap(),landscape})).toBeNull();
+    landscape.water.cloudStrength=.18;
+    expect(parseUtcMap({...emptyUtcMap(),landscape})?.landscape).toEqual(landscape);
+  });
   it("roundtrips an empty map", () => {
     const map = emptyUtcMap();
     expect(map.v).toBe(UTCMAP_VERSION);

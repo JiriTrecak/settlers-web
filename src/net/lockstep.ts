@@ -36,8 +36,7 @@ export class Lockstep {
    * No packet if `through` did not rise and the outbox is empty.
    */
   confirm(through: number, bundleTick = through + 1): void {
-    const actions = this.pending;
-    this.pending = [];
+    const actions = this.pending.splice(0, 64);
     let at = bundleTick;
     if (actions.length && at <= this.sentThrough) at = this.sentThrough + 1;
     const bundles = actions.length ? [{ tick: at, actions }] : [];

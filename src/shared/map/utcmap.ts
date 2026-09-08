@@ -29,7 +29,10 @@ export type MapStamp = {
   readonly variant?: "snow" | "gold" | "red" | "green" | "pink" | "slate";
 };
 
+export type PlayerStart = { readonly player:number; readonly x:number; readonly z:number };
+
 export type UtcMap = {
+  readonly playerStarts?: readonly PlayerStart[];
   readonly v: typeof UTCMAP_VERSION;
   readonly name: string;
   readonly stamps: readonly MapStamp[];
@@ -39,13 +42,15 @@ export type UtcMap = {
 };
 
 export function emptyUtcMap(): UtcMap {
-  return { v: UTCMAP_VERSION, name: DEFAULT_MAP_NAME, stamps: [] };
+  return { v: UTCMAP_VERSION, name: DEFAULT_MAP_NAME, stamps: [], waterLevel: -1, playerStarts: [{player:1,x:218,z:218},{player:2,x:38,z:38}] };
 }
 
 export function parseUtcMap(raw: unknown): UtcMap | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
   if (o.v !== UTCMAP_VERSION) return null;
+  const playerStarts=o.playerStarts as PlayerStart[]|undefined;
+  if(playerStarts!==undefined&&(!Array.isArray(playerStarts)||playerStarts.length>8||!playerStarts.every(p=>p&&Number.isInteger(p.player)&&p.player>=1&&p.player<=8&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&p.x>=0&&p.x<=256&&p.z>=0&&p.z<=256)||new Set(playerStarts.map(p=>p.player)).size!==playerStarts.length))return null;
   const name = parseName(o.name);
   const stamps = parseStamps(o.stamps);
   if (!name || !stamps) return null;
@@ -53,11 +58,14 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
   if (waterLevel === false) return null;
   const height = parseHeight(o.height);
   if (height === false) return null;
+  const landscape = parseLandscape(o.landscape);
+  if (o.landscape !== undefined && !landscape) return null;
   return {
     v: UTCMAP_VERSION,
     name,
     stamps,
-    ...(parseLandscape(o.landscape) ? { landscape: parseLandscape(o.landscape) } : {}),
+    ...(playerStarts?{playerStarts}:{}),
+    ...(landscape ? { landscape } : {}),
     ...(waterLevel !== undefined ? { waterLevel } : {}),
     ...(height !== undefined ? { height } : {}),
   };
@@ -71,6 +79,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       v: map.v,
       name: map.name,
       stamps: map.stamps,
+      ...(map.playerStarts?{playerStarts:map.playerStarts}:{}),
       ...(map.landscape ? { landscape: map.landscape } : {}),
       ...(waterLevel !== undefined ? { waterLevel } : {}),
       ...(height ? { height } : {}),

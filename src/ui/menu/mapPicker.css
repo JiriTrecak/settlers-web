@@ -1,0 +1,4 @@
+.map-picker{pointer-events:auto;display:grid;place-items:center;background:linear-gradient(#030a11cf,#030a11ed),url('../../../assets/ui/main-menu/forest-heroes.png') center/cover;color:#e2ded0;padding:24px;overflow:auto}
+.map-picker-panel{width:min(640px,100%);max-height:90vh;overflow:auto;padding:28px;background:#0d171bdc;border:1px solid #667879;box-shadow:0 20px 70px #0009}
+.map-picker h1{font:28px Georgia,serif;margin:0 0 24px}.map-picker-list{display:grid;gap:10px;margin-bottom:24px}
+.map-picker button{cursor:pointer;background:linear-gradient(#263237,#131d21);color:#eee4ca;border:1px solid #70817c;padding:14px 20px;font:16px Georgia,serif;margin-right:8px}.map-picker-list button{text-align:left;display:grid;gap:8px;margin:0}.map-picker button:hover,.map-picker button:focus-visible{background:#344548;outline:1px solid #c9d9ce}.map-picker-list span{font:12px system-ui;color:#aabbb4}

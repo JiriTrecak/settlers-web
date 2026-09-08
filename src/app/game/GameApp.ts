@@ -1,16 +1,19 @@
+import { authoredMaps, playableMaps, getMap } from '../../shared/map/library';
+import { MapPicker } from '../../ui/menu/mapPicker';
+import { emptyUtcMap, type UtcMap } from '../../shared/map/utcmap';
 /**
  * Canvas host + lobby. Owns `#game` (WebGL canvas) and `#hud` (screens).
  * Match state lives in `PlayScreen` → `Session`, not here.
  */
 import { MainMenu, MultiplayerScreen, RoomWaitScreen, ScreenHost } from "../../ui";
 import { createRoom, fetchRooms, joinRoom, leaveRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
-import { MAP_ID, type MatchConfig, type RoomView, type ServerMsg } from "../../shared";
+import { type MatchConfig, type RoomView, type ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
 import { BackgroundTicker } from "./backgroundTicker";
 import { PlayScreen } from "./playScreen";
 import { EditorScreen } from "./editorScreen";
 
-const GRID = { id: MAP_ID, name: "Grid", players: 8 };
+
 
 export class GameApp {
   private canvas: HTMLCanvasElement | null = null;
@@ -45,8 +48,9 @@ export class GameApp {
 
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
-    if (intent.kind === "play" && intent.mapId === MAP_ID) this.play();
+    if (intent.kind === "play" && playableMaps().some(m=>m.id===intent.mapId)) this.play(intent.mapId);
     else if (intent.kind === "editor") this.showEditor();
+    else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
   }
 
@@ -93,19 +97,30 @@ export class GameApp {
     this.hideCanvas();
     this.screens?.show(
       new MainMenu({
-        onSinglePlayer: () => this.play(),
+        playerName: this.guestName,
+        onPlayerName: (name) => this.rememberName(name),
+        onSinglePlayer: () => this.showMapPicker(),
         onMultiplayer: () => this.showMultiplayer(),
-        onEditor: () => this.showEditor(),
+        onEditor: () => this.showMapPicker(true),
       }),
     );
+  }
+
+  private showMapPicker(edit=false):void {
+    this.playGen++;this.hideCanvas();
+    this.screens?.show(new MapPicker(edit?'edit':'play',{
+      onBack:()=>this.showMenu(),
+      onChoose:(entry)=>edit?this.showEditor(entry.map):this.play(entry.id),
+      ...(edit?{onNew:()=>this.showEditor(emptyUtcMap())}:{}),
+    }));
   }
 
   private showMultiplayer(error?: string): void {
     this.playGen++;
     this.hideCanvas();
     const screen = new MultiplayerScreen({
-      maps: [GRID],
-      mapName: () => GRID.name,
+      maps: playableMaps().filter(m=>m.source==='project'),
+      mapName: (id) => getMap(id).name,
       name: this.guestName === "player" ? "" : this.guestName,
       error,
       onBack: () => this.showMenu(),
@@ -142,7 +157,7 @@ export class GameApp {
       const created = await createRoom({
         name: `${this.guestName}'s room`,
         mapId,
-        mapRevision: MAP_ID,
+        mapRevision: getMap(mapId).revision,
         slotCount,
         guestName: this.guestName,
       });
@@ -178,7 +193,7 @@ export class GameApp {
     const channel = new WebSocketChannel(matchUrl(room.id, token));
     const wait = new RoomWaitScreen(room, {
       host,
-      mapName: GRID.name,
+      mapName: getMap(room.mapId).name,
       onBack: () => {
         channel.destroy();
         void leaveRoom(room.id, token);
@@ -229,12 +244,12 @@ export class GameApp {
     if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
   }
 
-  private showEditor(): void {
+  private showEditor(map?:UtcMap): void {
     if (!this.canvas || !this.screens) return;
     if (this.screens.screen instanceof EditorScreen) return;
     const gen = ++this.playGen;
     this.showCanvas();
-    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu() });
+    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu(), map: map ?? authoredMaps().find(m=>m.id==='twinwater-reach')?.map });
     this.screens.show(editor);
     try {
       editor.start();
@@ -244,16 +259,16 @@ export class GameApp {
     }
   }
 
-  private play(): void {
+  private play(mapId:string): void {
     if (!this.canvas || !this.screens) return;
     const current = this.screens.screen;
-    if (current instanceof PlayScreen && current.mapId === MAP_ID) return;
+    if (current instanceof PlayScreen && current.mapId === mapId) return;
     const gen = ++this.playGen;
     this.showCanvas();
     const play = new PlayScreen(this.canvas, {
-      mapId: MAP_ID,
+      mapId,
       player: this.player,
-      onLeave: () => this.showMenu(),
+      onLeave: () => this.showMapPicker(),
     });
     this.screens.show(play);
     try {

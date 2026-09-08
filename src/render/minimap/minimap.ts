@@ -1,5 +1,10 @@
+import type { SettlementView } from "../../sim/settlement/settlement";
+import { PLAYER_COLORS } from "../../shared";
+import type { PlayerStart } from '../../shared/map/utcmap';
+import { DayNightIndicator } from "./dayNight";
+import type { SkyState } from "../sky/sky";
 /**
- * Iso diamond minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
+ * North-up square minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
  * View quad is a perspective frustum ∩ ground, so the far edge is wider.
  */
 import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
@@ -12,24 +17,31 @@ const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
 
-/** Iso diamond. Y is flipped so screen-up is −X−Z (away from the default cam). */
+/** North is negative Z; east is positive X, matching the game camera. */
 export function worldToNdc(x: number, z: number, size: number): [number, number] {
-  const nx = (x / size) * 2 - 1;
-  const nz = (z / size) * 2 - 1;
-  return [(nx - nz) * 0.5, -(nx + nz) * 0.5];
+  return [x / size * 2 - 1, 1 - z / size * 2];
 }
 
 export function ndcToWorld(ndcX: number, ndcY: number, size: number): [number, number] {
-  const nx = ndcX - ndcY;
-  const nz = -ndcX - ndcY;
-  return [((nx + 1) * 0.5) * size, ((nz + 1) * 0.5) * size];
+  return [(ndcX+1)*.5*size,(1-ndcY)*.5*size];
 }
 
 export class Minimap {
   readonly root: HTMLElement;
   private readonly canvas: HTMLCanvasElement;
+  private readonly clock: DayNightIndicator;
   private readonly ctx: CanvasRenderingContext2D;
   private dots: { x: number; z: number; fill: string }[] = [];
+  private starts: readonly PlayerStart[]=[];
+  setPlayerStarts(starts:readonly PlayerStart[]):void {this.starts=starts;this.dirty=true;}
+  private fogState: SettlementView | null=null;
+  private fogRevision=-1;
+  private readonly fogCanvas=document.createElement("canvas");
+  setFog(state:SettlementView){this.fogState=state;if(this.fogRevision!==state.fog?.revision){this.fogRevision=state.fog?.revision??-1;this.dirty=true;
+    this.fogCanvas.width=this.fogCanvas.height=256;
+    const ctx=this.fogCanvas.getContext('2d')!, data=ctx.createImageData(256,256);
+    for(let i=0;i<65536;i++)data.data[i*4+3]=state.fog?.cells[i]===2?0:state.fog?.cells[i]===1?166:255;
+    ctx.putImageData(data,0,0);}}
   private height: HeightField | null = null;
   private dirty = true;
   private lastRev = -1;
@@ -44,6 +56,7 @@ export class Minimap {
     host: HTMLElement,
     private readonly spec: {
       camera: Camera;
+      clock: () => SkyState;
       size?: number;
       viewport: () => { w: number; h: number };
       onLookAt: (x: number, z: number) => void;
@@ -51,10 +64,10 @@ export class Minimap {
   ) {
     this.root = document.createElement("div");
     this.root.className =
-      "pointer-events-auto absolute top-4 right-4 z-10 h-[264px] w-[264px] cursor-grab touch-none [clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]";
+      "pointer-events-none absolute top-4 right-4 z-10 h-[264px] w-[264px]";
     this.root.setAttribute("aria-label", "Minimap");
     this.canvas = document.createElement("canvas");
-    this.canvas.className = "absolute inset-0 block h-full w-full";
+    this.canvas.className = "pointer-events-auto absolute inset-0 block h-full w-full cursor-grab touch-none ";
     this.canvas.width = PX;
     this.canvas.height = PX;
     this.canvas.style.width = "100%";
@@ -63,12 +76,14 @@ export class Minimap {
     if (!ctx) throw new Error("minimap: 2d unavailable");
     this.ctx = ctx;
     this.root.append(this.canvas);
+    this.clock = new DayNightIndicator(this.root);
+    this.clock.root.style.left="-66px";
     host.append(this.root);
     this.onDown = (e) => {
       if (e.button !== 0) return;
       this.dragging = true;
-      this.root.style.cursor = "grabbing";
-      this.root.setPointerCapture(e.pointerId);
+      this.canvas.style.cursor = "grabbing";
+      this.canvas.setPointerCapture(e.pointerId);
       this.scrub(e);
     };
     this.onMove = (e) => {
@@ -76,14 +91,20 @@ export class Minimap {
     };
     this.onUp = (e) => {
       this.dragging = false;
-      this.root.style.cursor = "grab";
-      if (this.root.hasPointerCapture(e.pointerId)) this.root.releasePointerCapture(e.pointerId);
+      this.canvas.style.cursor = "grab";
+      if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
     };
-    this.root.addEventListener("pointerdown", this.onDown);
-    this.root.addEventListener("pointermove", this.onMove);
-    this.root.addEventListener("pointerup", this.onUp);
-    this.root.addEventListener("pointercancel", this.onUp);
+    this.canvas.addEventListener("pointerdown", this.onDown);
+    this.canvas.addEventListener("pointermove", this.onMove);
+    this.canvas.addEventListener("pointerup", this.onUp);
+    this.canvas.addEventListener("pointercancel", this.onUp);
     this.paint();
+  }
+
+  mountGame(host:HTMLElement,clockHost:HTMLElement):void {
+    this.root.className="";
+    this.root.style.cssText="position:relative;width:100%;height:100%;pointer-events:auto;overflow:hidden;border:1px solid #a9946655;background:#000";
+    host.append(this.root);clockHost.append(this.clock.root);this.clock.root.style.left="0";
   }
 
   setStamps(stamps: readonly MapStamp[]): void {
@@ -97,6 +118,7 @@ export class Minimap {
   }
 
   paint(): void {
+    this.clock.update(this.spec.clock());
     const cam = this.spec.camera;
     const { w: vw, h: vh } = this.spec.viewport();
     if (!this.dirty && cam.rev === this.lastRev && vw === this.lastW && vh === this.lastH) return;
@@ -127,6 +149,23 @@ export class Minimap {
       ctx.fillStyle = d.fill;
       ctx.fillRect(px - 1, py - 1, 3, 3);
     }
+    if(this.fogState?.fog){
+      ctx.save();
+      ctx.transform(w/size,0,0,h/size,0,0);
+      ctx.drawImage(this.fogCanvas,0,0,size,size);
+      ctx.restore();
+      for(const b of this.fogState.buildings){
+        if(b.health<=0)continue;const [px,py]=this.project(b.x,b.z,size,w,h);
+        ctx.fillStyle="#"+PLAYER_COLORS[b.owner%PLAYER_COLORS.length]!.toString(16).padStart(6,"0");ctx.globalAlpha=b.remembered?.45:1;ctx.fillRect(px-2,py-2,4,4);
+      }
+      ctx.globalAlpha=1;
+      for(const unit of this.fogState.workers){const [px,py]=this.project(unit.x,unit.z,size,w,h);ctx.fillStyle="#"+PLAYER_COLORS[unit.owner%PLAYER_COLORS.length]!.toString(16).padStart(6,"0");ctx.fillRect(px-1,py-1,2,2);}
+    }
+    for(const start of this.starts){
+      const [px,py]=this.project(start.x,start.z,size,w,h);
+      ctx.fillStyle=start.player===1?'#63c7ff':'#ff997e';ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#142026';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(start.player),px,py);
+    }
     const quad = cam.viewGround(vw, vh);
     ctx.beginPath();
     for (let i = 0; i < quad.length; i++) {
@@ -140,10 +179,7 @@ export class Minimap {
     ctx.stroke();
     const o = RING / 2;
     ctx.beginPath();
-    ctx.moveTo(w * 0.5, o);
-    ctx.lineTo(w - o, h * 0.5);
-    ctx.lineTo(w * 0.5, h - o);
-    ctx.lineTo(o, h * 0.5);
+    ctx.rect(o,o,w-2*o,h-2*o);
     ctx.closePath();
     ctx.strokeStyle = SHEET;
     ctx.lineWidth = RING;
@@ -152,10 +188,10 @@ export class Minimap {
   }
 
   destroy(): void {
-    this.root.removeEventListener("pointerdown", this.onDown);
-    this.root.removeEventListener("pointermove", this.onMove);
-    this.root.removeEventListener("pointerup", this.onUp);
-    this.root.removeEventListener("pointercancel", this.onUp);
+    this.canvas.removeEventListener("pointerdown", this.onDown);
+    this.canvas.removeEventListener("pointermove", this.onMove);
+    this.canvas.removeEventListener("pointerup", this.onUp);
+    this.canvas.removeEventListener("pointercancel", this.onUp);
     this.root.remove();
   }
 

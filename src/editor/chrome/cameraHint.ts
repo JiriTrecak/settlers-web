@@ -8,14 +8,14 @@ const FREE: [string, string][] = [
   ["RMB · MMB · Alt+LMB", "Orbit"],
   ["Wheel", "Zoom"],
   ["WASD", "Pan"],
-  ["Home", "Gamecam"],
+  ["Home", "Play"],
 ];
 
 const GAME: [string, string][] = [
   ["LMB", "Pan"],
   ["Wheel", "Zoom"],
   ["WASD", "Pan"],
-  ["Home", "Free cam"],
+  ["Home", "Stop play"],
 ];
 
 export class CameraHint {

@@ -1,8 +1,15 @@
+import { validAction } from "../shared/types/types";
 /**
  * In-process MatchHost room: collect `through` from every playing slot, emit `commit`.
  * MemoryChannel is this Room with no listen port. Node later binds the same class to WS.
  */
-import type { Action, Bundle, MatchConfig, PipelineSnap, ServerMsg } from "../shared";
+import type {
+  Action,
+  Bundle,
+  MatchConfig,
+  PipelineSnap,
+  ServerMsg,
+} from "../shared";
 
 export class Room {
   private readonly through = new Map<number, number>();
@@ -33,10 +40,12 @@ export class Room {
   /** Freeze mailbox for a save. `commits` / `sentThrough` come from Lockstep. */
   snapshot(): Omit<PipelineSnap, "commits" | "sentThrough"> {
     const through: PipelineSnap["through"] = [];
-    for (const [player, value] of this.through) through.push({ player, through: value });
+    for (const [player, value] of this.through)
+      through.push({ player, through: value });
     const held: PipelineSnap["held"] = [];
     for (const [player, map] of this.held) {
-      for (const [tick, actions] of map) held.push({ player, tick, actions: actions.slice() });
+      for (const [tick, actions] of map)
+        held.push({ player, tick, actions: actions.slice() });
     }
     return { committed: this.committed, through, held };
   }
@@ -60,13 +69,38 @@ export class Room {
   /** Slot confirms it will send no more actions with tick <= `through`. Bundles may be for through+D. */
   confirm(player: number, through: number, bundles: readonly Bundle[]): void {
     if (!this.through.has(player)) return;
-    this.through.set(player, Math.max(this.through.get(player) ?? 0, through));
+    if (
+      !Number.isSafeInteger(through) ||
+      through < 0 ||
+      through > this.committed + 4096 ||
+      !Array.isArray(bundles) ||
+      bundles.length > 64
+    )
+      return;
+    if (
+      !bundles.every(
+        (b) =>
+          b &&
+          Number.isSafeInteger(b.tick) &&
+          b.tick > 0 &&
+          b.tick <= through + this.config.delay + 1 &&
+          Array.isArray(b.actions) &&
+          b.actions.length <= 64 &&
+          b.actions.every(validAction),
+      )
+    )
+      return;
+    if (through <= (this.through.get(player) ?? 0)) return;
+    this.through.set(player, through);
     const held = this.held.get(player);
     if (!held) return;
     for (const b of bundles) {
       if (b.tick <= this.committed) continue;
-      const prev = held.get(b.tick) ?? [];
-      held.set(b.tick, prev.concat(b.actions));
+      if (!held.has(b.tick))
+        held.set(
+          b.tick,
+          b.actions.map((a: Action) => ({ ...a })),
+        );
     }
     this.flush();
   }

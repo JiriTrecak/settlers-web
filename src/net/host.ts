@@ -1,3 +1,4 @@
+import { validAction } from "../shared/types/types";
 /**
  * One MatchHost room: lobby until Start, then the lockstep Room.
  * HTTP/WS bind `ingest` / `bind`. `discard` kills a room (tests + `/end`). Tests call the same methods with fake sends.
@@ -73,7 +74,9 @@ export class HostedMatch {
       mapId: this.mapId,
       host: this.members.get(this.hostToken)?.name ?? "",
       slots: seats,
-      spectators: [...this.members.values()].filter((m) => m.role === "spectator").length,
+      spectators: [...this.members.values()].filter(
+        (m) => m.role === "spectator",
+      ).length,
       tick: this.mailbox?.tick,
     };
   }
@@ -81,25 +84,46 @@ export class HostedMatch {
   you(token: string): ClientIdentity | null {
     const m = this.members.get(token);
     if (!m) return null;
-    return m.role === "player" ? { role: "player", player: m.player, name: m.name } : { role: "spectator", name: m.name };
+    return m.role === "player"
+      ? { role: "player", player: m.player, name: m.name }
+      : { role: "spectator", name: m.name };
   }
 
-  join(guestName: string, role: "player" | "spectator"): { token: string; you: ClientIdentity } | { error: string } {
-    if (role === "spectator" && (this.state === "waiting" || this.state === "playing")) {
+  join(
+    guestName: string,
+    role: "player" | "spectator",
+  ): { token: string; you: ClientIdentity } | { error: string } {
+    if (
+      role === "spectator" &&
+      (this.state === "waiting" || this.state === "playing")
+    ) {
       const t = token();
-      this.members.set(t, { token: t, name: guestName, role: "spectator", send: null });
+      this.members.set(t, {
+        token: t,
+        name: guestName,
+        role: "spectator",
+        send: null,
+      });
       this.fanout({ type: "room", room: this.view() });
       return { token: t, you: { role: "spectator", name: guestName } };
     }
     if (this.state !== "waiting") return { error: "not_waiting" };
     const taken = new Set(
-      [...this.members.values()].filter((m) => m.role === "player").map((m) => m.player),
+      [...this.members.values()]
+        .filter((m) => m.role === "player")
+        .map((m) => m.player),
     );
     let player = 0;
     while (taken.has(player) && player < this.slotCount) player++;
     if (player >= this.slotCount) return { error: "full" };
     const t = token();
-    this.members.set(t, { token: t, name: guestName, role: "player", player, send: null });
+    this.members.set(t, {
+      token: t,
+      name: guestName,
+      role: "player",
+      player,
+      send: null,
+    });
     this.fanout({ type: "room", room: this.view() });
     return { token: t, you: { role: "player", player, name: guestName } };
   }
@@ -160,15 +184,24 @@ export class HostedMatch {
    * Host loads a **multiplayer** save (`remote: true`). Lobby: `start+save`; live: `load`.
    * Mailbox resumes at the saved committed tick — clients restore the snapshot.
    */
-  load(auth: string, save: unknown): { error: string } | { config: MatchConfig } {
+  load(
+    auth: string,
+    save: unknown,
+  ): { error: string } | { config: MatchConfig } {
     if (auth !== this.hostToken) return { error: "not_host" };
     if (this.state === "ended") return { error: "ended" };
     const parsed = parseSaveForHost(save);
     if (!parsed) return { error: "bad_save" };
     if (parsed.match.slots.length < 1) return { error: "empty" };
     if (!parsed.remote) return { error: "sp_save" };
-    const players = [...this.members.values()].filter((m) => m.role === "player" && m.player != null);
-    if (this.state === "waiting" && players.length !== parsed.match.slots.length) return { error: "slots" };
+    const players = [...this.members.values()].filter(
+      (m) => m.role === "player" && m.player != null,
+    );
+    if (
+      this.state === "waiting" &&
+      players.length !== parsed.match.slots.length
+    )
+      return { error: "slots" };
     const live = this.state === "playing";
     const names = new Map<number, string>();
     for (const m of this.members.values()) {
@@ -198,7 +231,8 @@ export class HostedMatch {
    */
   restart(auth: string): { error: string } | { config: MatchConfig } {
     if (auth !== this.hostToken) return { error: "not_host" };
-    if (this.state !== "playing" || !this.config) return { error: "not_playing" };
+    if (this.state !== "playing" || !this.config)
+      return { error: "not_playing" };
     const config: MatchConfig = { ...this.config, seed: seedU32() };
     this.config = config;
     this.lastSave = null;
@@ -213,17 +247,26 @@ export class HostedMatch {
     return { config };
   }
 
-  bind(auth: string, send: (msg: ServerMsg) => void): { error: string } | { you: ClientIdentity; room: RoomView } {
+  bind(
+    auth: string,
+    send: (msg: ServerMsg) => void,
+  ): { error: string } | { you: ClientIdentity; room: RoomView } {
     const m = this.members.get(auth);
     if (!m) return { error: "bad_token" };
     m.send = send;
     const you = this.you(auth)!;
     send({ type: "welcome", you, room: this.view() });
     if (this.state === "playing" && this.config) {
-      send({ type: "start", config: this.config, you, save: this.lastSave ?? undefined });
+      send({
+        type: "start",
+        config: this.config,
+        you,
+        save: this.lastSave ?? undefined,
+      });
       const need = this.config.slots.length;
       const goTick = (this.mailbox?.tick ?? 0) + 1;
-      if (need > 0 && this.ready.size >= need) send({ type: "go", tick: goTick });
+      if (need > 0 && this.ready.size >= need)
+        send({ type: "go", tick: goTick });
     }
     return { you, room: this.view() };
   }
@@ -252,14 +295,34 @@ export class HostedMatch {
       return;
     }
     if (msg.type === "ready") {
-      if (this.state !== "playing" || m.role !== "player" || m.player == null) return;
+      if (this.state !== "playing" || m.role !== "player" || m.player == null)
+        return;
       this.ready.add(m.player);
       const need = this.config?.slots.length ?? 0;
-      if (need > 0 && this.ready.size >= need) this.fanout({ type: "go", tick: (this.mailbox?.tick ?? 0) + 1 });
+      if (need > 0 && this.ready.size >= need)
+        this.fanout({ type: "go", tick: (this.mailbox?.tick ?? 0) + 1 });
       return;
     }
     if (msg.type === "turn") {
-      if (m.role !== "player" || m.player == null || !this.mailbox || !this.config) return;
+      if (
+        m.role !== "player" ||
+        m.player == null ||
+        !this.mailbox ||
+        !this.config
+      )
+        return;
+      if (
+        !Array.isArray(msg.bundles) ||
+        msg.bundles.length > 64 ||
+        !msg.bundles.every(
+          (b) =>
+            b &&
+            Array.isArray(b.actions) &&
+            b.actions.length <= 64 &&
+            b.actions.every(validAction),
+        )
+      )
+        return;
       const delay = this.config.delay;
       const bundles = msg.bundles
         .map((b) => ({
@@ -271,14 +334,17 @@ export class HostedMatch {
       return;
     }
     if (msg.type === "hash") {
-      if (m.role !== "player" || m.player == null || this.state !== "playing") return;
+      if (m.role !== "player" || m.player == null || this.state !== "playing")
+        return;
       let at = this.hashes.get(msg.tick);
       if (!at) {
         at = new Map();
         this.hashes.set(msg.tick, at);
       }
       at.set(m.player, msg.checksum);
-      const need = this.config?.slots.filter((s) => this.membersStill(s.player)).length ?? 0;
+      const need =
+        this.config?.slots.filter((s) => this.membersStill(s.player)).length ??
+        0;
       if (need > 0 && at.size >= need) this.judgeHash(msg.tick, at);
       return;
     }
@@ -299,11 +365,16 @@ export class HostedMatch {
   }
 
   private membersStill(player: number): boolean {
-    return [...this.members.values()].some((m) => m.player === player && m.send);
+    return [...this.members.values()].some(
+      (m) => m.player === player && m.send,
+    );
   }
 
   private judgeHash(tick: number, at: Map<number, number>): void {
-    const hashes = [...at.entries()].map(([player, checksum]) => ({ player, checksum }));
+    const hashes = [...at.entries()].map(([player, checksum]) => ({
+      player,
+      checksum,
+    }));
     const first = hashes[0]?.checksum;
     if (first == null) return;
     if (hashes.every((h) => h.checksum === first)) {
@@ -323,7 +394,11 @@ export class MatchHost {
   private readonly rooms = new Map<string, HostedMatch>();
   private nextId = 1;
 
-  create(draft: CreateRoom): { token: string; room: RoomView; you: ClientIdentity } {
+  create(draft: CreateRoom): {
+    token: string;
+    room: RoomView;
+    you: ClientIdentity;
+  } {
     const match = new HostedMatch(draft, String(this.nextId++));
     this.rooms.set(match.id, match);
     const you = match.you(match.hostToken)!;

@@ -12,6 +12,7 @@ import {
   FloatType,
   Mesh,
   MeshStandardMaterial,
+  MeshDepthMaterial,
   NearestFilter, LinearFilter,
   NoColorSpace,
   PlaneGeometry,
@@ -34,9 +35,9 @@ import waterNormalUrl from "../../../assets/synty/tex/Water_Normal.png?url";
 const SINK = 0.03;
 
 /** Water_01.mat — Shader Graph underscored names. */
-const SHALLOW = new Vector3(0.43, 0.47, 0.57);
-const DEEP = new Vector3(0.26, 0.32, 0.42);
-const FOAM = new Vector3(0.86, 0.92, 0.9);
+const SHALLOW = new Vector3(0.32, 1.10, 1.50);
+const DEEP = new Vector3(0.10, 0.62, 0.66);
+const FOAM = new Vector3(1.00, 0.98, 0.80);
 
 type WaterUniforms = {
   uShadowStrength:IUniform<number>;
@@ -114,6 +115,17 @@ export class WaterLayer {
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
     mesh.receiveShadow = true;
+    // VSM renders receivers into its depth pass even with castShadow=false.
+    // A transparent water surface must not occlude the riverbed below it.
+    const shadowDepth = new MeshDepthMaterial();
+    shadowDepth.onBeforeCompile = shader => {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <clipping_planes_fragment>',
+        '#include <clipping_planes_fragment>\n discard;',
+      );
+    };
+    shadowDepth.customProgramCacheKey = () => 'water-no-shadow-depth';
+    mesh.customDepthMaterial = shadowDepth;
     mesh.name = "water";
     scene.add(mesh);
     this.mesh = mesh;
@@ -166,6 +178,7 @@ export class WaterLayer {
   destroy(scene: Scene): void {
     scene.remove(this.mesh);
     this.mesh.geometry.dispose();
+    this.mesh.customDepthMaterial?.dispose();
     this.mat.dispose();
     this.tex.dispose();this.flow.dispose();
     this.reflector.geometry.dispose();this.reflector.dispose();
@@ -285,14 +298,15 @@ const WATER_LOOK = /* glsl */ `
   vec2 flow=normalize(texture2D(uFlow,(p-vec2(uHeightOrigin))/(uHeightVerts-1.0)).rg*2.0-1.0);
   
   // Small world-space slopes become view-space normals before Three's light evaluation.
-  float sx=sin(p.x*1.7+p.y*.7+t*.8)*.055 + sin(p.x*3.3-p.y*1.4-t*1.1)*.025;
-  float sz=cos(p.y*1.8+p.x*.8+t*.7)*.055 + cos(p.y*3.5-p.x*.9+t)*.025;
-  vec3 rippleA=texture2D(uRipple,p*uRippleScale-flow*t*.013).xyz*2.0-1.0;
-  vec3 rippleB=texture2D(uRipple,p*uRippleScale*.71+flow*t*.009+vec2(.37,.63)).xyz*2.0-1.0;
+  float sx=sin(p.x*1.7+p.y*.7+t*.8)*.018 + sin(p.x*3.3-p.y*1.4-t*1.1)*.009;
+  float sz=cos(p.y*1.8+p.x*.8+t*.7)*.018 + cos(p.y*3.5-p.x*.9+t)*.009;
+  vec2 rippleUv=p*uRippleScale*vec2(.28,1.35);
+  vec3 rippleA=texture2D(uRipple,rippleUv-flow*t*.013).xyz*2.0-1.0;
+  vec3 rippleB=texture2D(uRipple,rippleUv*.71+flow*t*.009+vec2(.37,.63)).xyz*2.0-1.0;
   vec3 ripple=rippleA*.65+rippleB*.35;
-  vec3 worldN=normalize(vec3(sx+ripple.x*uRippleStrength,1.0,sz+ripple.y*uRippleStrength));
+  vec3 worldN=normalize(vec3((sx+ripple.x*.35)*uRippleStrength,1.0,(sz+ripple.y)*uRippleStrength));
   normal=normalize(mat3(viewMatrix)*worldN);
-  float waterT=1.0-exp(-depth*.65);
+  float waterT=smoothstep(.6,2.6,depth);
   vec3 col=mix(uShallow,uDeep,waterT);
   float causticA=sin(p.x*3.1+sin(p.y*2.4+t*.55)+t*.35);
   float causticB=sin(p.y*3.5+sin(p.x*2.2-t*.45)-t*.3);
@@ -304,9 +318,23 @@ const WATER_LOOK = /* glsl */ `
   float cloud=(waterCloud(drift)*.4+waterCloud(drift+stretch)*.3+waterCloud(drift-stretch)*.3-.5)*2.0;
   col+=vec3(1.0,1.08,1.2)*uCloudStrength*cloud;
   col+=vec3(.12,.2,.16)*caustics*exp(-depth*.8)*uCausticStrength;
-  float foamWidth=.38+.11*sin(p.x*2.5+p.y*1.6+t*1.4);
-  float foam=(1.0-smoothstep(.025,foamWidth,depth)) * (.3+.7*smoothstep(-.4,.7,sin(p.x*.83+p.y*.61)+sin(p.y*1.2-p.x*.37)));
-  float shoreWave=(1.0-smoothstep(.1,.6,depth))*pow(max(0.0,sin(depth*18.0-t*1.8+p.x*.4)),12.0)*.3;
+  // Broad, low-contrast crests with irregular breaks read as shallow moving water,
+  // rather than parallel white scratches. World UVs stay continuous around bends.
+  vec2 drifting=p-flow*t*.055;
+  vec2 glintP=vec2(drifting.x-drifting.y,drifting.x+drifting.y)*.70710678;
+  float glintBend=waterNoise(glintP*.32)*5.0+waterNoise(glintP*.81)*1.2;
+  float phase=glintP.y*2.4+glintBend*.65-t*.45;
+  float crest=pow(max(0.0,sin(phase)),4.0);
+  float fragments=smoothstep(.43,.77,waterCloud(vec2(glintP.x*.55,glintP.y*1.8)));
+  float glints=crest*fragments*smoothstep(.18,.8,depth);
+  col+=vec3(.22,.30,.25)*glints*sqrt(uRippleStrength);
+  // Larger translucent bands sit beneath the fine crests, with broken soft edges.
+  float broadBands=waterCloud(vec2(glintP.x*.11,glintP.y*.72)+vec2(0.0,-t*.018));
+  float bandMask=smoothstep(.38,.68,broadBands);
+  col+=vec3(.55,.65,.52)*(bandMask-.35)*uCloudStrength;
+  float foamWidth=.52+.16*waterNoise(p*.75+flow*t*.025);
+  float foam=(1.0-smoothstep(foamWidth*.78,foamWidth,depth)) * (.85+.15*smoothstep(-.4,.7,sin(p.x*.83+p.y*.61)+sin(p.y*1.2-p.x*.37)));
+  float shoreWave=(1.0-smoothstep(.1,.6,depth))*waterCloud(p*1.7-flow*t*.08)*.12;
   vec3 V=normalize(vViewPosition);
   float fres=pow(1.0-clamp(dot(normal,V),0.0,1.0),4.0);
   col=mix(col,vec3(.65,.68,.75),fres*.48);
@@ -315,8 +343,9 @@ const WATER_LOOK = /* glsl */ `
   diffuseColor.rgb=col;
   // Both color and coverage obey the brush's foam strength. Shallow coverage
   // approaches zero continuously so the shore meets the bed without a rim.
-  diffuseColor.a=clamp(mix(.6,.95,waterT)*smoothstep(.015,.2,depth)+foamAmount*.35,0.0,1.0);
-  roughnessFactor=.48;
+  float waterAlpha=mix(.56,.68,waterT)*smoothstep(.015,.2,depth);
+  diffuseColor.a=mix(waterAlpha,.94,foamAmount);
+  roughnessFactor=.58;
 }
 `;
 

@@ -10,12 +10,12 @@ import type { EditorHub } from "./hub";
 
 const SHOT = join(dirname(fileURLToPath(import.meta.url)), "../../tmp/editor-shot.jpg");
 
-function writeShot(data: string, mime: string): void {
+function writeShot(data: string, mime: string, metadata: Record<string, unknown>): void {
   const ext = mime.includes("png") ? "png" : "jpg";
   const path = ext === "png" ? SHOT.replace(/\.jpg$/, ".png") : SHOT;
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, Buffer.from(data, "base64"));
-  writeFileSync(join(dirname(path),"editor-shot.json"),JSON.stringify({file:`editor-shot.${ext}`}));
+  writeFileSync(join(dirname(path),"editor-shot.json"),JSON.stringify({file:`editor-shot.${ext}`,...metadata}));
 }
 
 const assetId = z.string().describe("Catalogue id, e.g. pine or synty-tree-pine-01");
@@ -44,6 +44,15 @@ export function editorTools(hub: EditorHub) {
       }),
       execute: async (input) => call('landscape',input),
     }),
+    editor_decals: createTool({
+      id: 'editor_decals',
+      description: 'Edit terrain-following ground decals. List patterns and decals; place a patch at world x/z; update or delete by id; config selects the editor decal tool. Size is full width in metres, rotation in degrees, opacity 0..1. Saved in landscape.decals and follows sculpted terrain.',
+      inputSchema: z.object({action:z.enum(['list','place','update','delete','config']),id:z.string().optional(),kind:z.enum(['leaf-litter','tiny-flowers','pebbles']).optional(),x:z.number().optional(),z:z.number().optional(),size:z.number().min(.5).max(32).optional(),rotation:z.number().min(-360).max(360).optional(),opacity:z.number().min(0).max(1).optional()}),
+      execute: async (input) => call('decals',input),
+    }),
+    game_status: createTool({id:'game_status',description:'Read the active game simulation, resources, workers, buildings, territory and synchronization status.',inputSchema:z.object({}),execute:async()=>call('gameStatus')}),
+    game_command: createTool({id:'game_command',description:'Queue a gameplay command through the active player’s lockstep channel. Does not mutate simulation directly.',inputSchema:z.object({action:z.discriminatedUnion('type',[z.object({type:z.literal('build'),kind:z.enum(['tower','lumberjack','sawmill','forester','stonemason','house']),x:z.number().int().min(0).max(255),z:z.number().int().min(0).max(255)}),z.object({type:z.literal('cancel-building'),id:z.number().int().positive()}),z.object({type:z.literal('move-worker'),id:z.number().int().positive(),x:z.number().int().min(0).max(255),z:z.number().int().min(0).max(255)})])}),execute:async(input)=>call('gameCommand',input)}),
+    game_view: createTool({id:'game_view',description:'Move the gameplay camera for inspection; does not change the simulation.',inputSchema:z.object({x:z.number().optional(),z:z.number().optional(),gameZoom:z.number().min(.5).max(2).optional()}),execute:async(input)=>call('gameView',input)}),
     editor_status: createTool({
       id: "editor_status",
       description: "Editor connection, map name, stamp count, current tool/asset, camera, brush kit.",
@@ -147,7 +156,7 @@ export function editorTools(hub: EditorHub) {
       id: "editor_set_tool",
       description: "Arm select, stamp, brush, clean, or sculpt.",
       inputSchema: z.object({
-        tool: z.enum(["select", "stamp", "brush", "clean", "sculpt", "terrain"]),
+        tool: z.enum(["select", "stamp", "brush", "clean", "sculpt", "terrain", "decal"]),
       }),
       execute: async (input) => call("setTool", input),
     }),
@@ -178,11 +187,12 @@ export function editorTools(hub: EditorHub) {
 
     editor_clean: createTool({
       id: "editor_clean",
-      description: "Wipe stamps in a disc at x,z (Objects).",
+      description: "Clean a disc at x,z: objects wipes stamps; foliage removes plants and grass/flower cover, preserving rocks and structures.",
       inputSchema: z.object({
         x: z.number(),
         z: z.number(),
         radius: z.number().optional(),
+        type: z.enum(["objects", "foliage"]).optional(),
       }),
       execute: async (input) => call("clean", input),
     }),
@@ -213,16 +223,17 @@ export function editorTools(hub: EditorHub) {
     editor_screenshot: createTool({
       id: "editor_screenshot",
       description:
-        "Screenshot the live editor canvas. Omit args for the current view. Optional x/z, zoom (ortho 6–90), yaw/pitch in degrees, iso, or gameCam. Pose is restored after the shot unless keep=true. Returns an image.",
+        "Screenshot the live editor canvas. Omit args for the current view. Optional x/z, zoom (ortho 6–180), yaw/pitch in degrees, iso, or gameCam. Pose is restored after the shot unless keep=true. Returns an image.",
       inputSchema: z.object({
         x: cellX.optional().describe("Look-at cell X. Omit for current view."),
         z: cellY.optional().describe("Look-at cell Z. y is accepted as an alias."),
         y: cellY.optional(),
-        zoom: z.number().optional().describe("Ortho half-height in cells (6–90). Ignored in Gamecam."),
+        zoom: z.number().optional().describe("Ortho half-height in cells (6–180). Ignored in Gamecam."),
         yaw: z.number().optional().describe("Orbit yaw in degrees. 45 is true-iso."),
         angle: z.number().optional().describe("Alias for yaw (degrees)."),
-        pitch: z.number().optional().describe("Degrees down from the horizon. Iso ≈ 35, Gamecam 56."),
+        pitch: z.number().optional().describe("Degrees down from the horizon. Iso ≈ 35, Gamecam 45."),
         iso: z.boolean().optional().describe("Reset yaw/pitch to true-iso before other overrides."),
+        gameZoom: z.number().min(.5).max(2).optional().describe("Perspective distance relative to normal Play camera. 2 is maximum zoom out; .5 is closest."),
         gameCam: z.boolean().optional().describe("WC3 perspective for the shot."),
         game: z.boolean().optional(),
         keep: z.boolean().optional().describe("Leave the camera at the shot pose."),
@@ -246,6 +257,8 @@ export function editorTools(hub: EditorHub) {
           width,
           height,
           mime,
+          mapName: typeof o.mapName === "string" ? o.mapName : undefined,
+          environment: o.environment && typeof o.environment === "object" ? o.environment : undefined,
           ...(typeof o.animationTime==="number"?{animationTime:o.animationTime}:{}),
           view: {
             x: Number(view.x) || 0,
@@ -254,10 +267,11 @@ export function editorTools(hub: EditorHub) {
             yaw: Number(view.yaw) || 0,
             pitch: Number(view.pitch) || 0,
             gameCam: view.gameCam === true,
+            gameZoom: Number(view.gameZoom) || 1,
           },
         };
         if (!data) throw new Error("screenshot returned no pixels");
-        writeShot(data, mime);
+        writeShot(data, mime, framed);
         return {
           ...framed,
           content: [

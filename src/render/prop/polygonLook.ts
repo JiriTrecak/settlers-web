@@ -150,7 +150,7 @@ export function flattenPolygon(root: Object3D, hint = "", variant?:string): void
       const grassy=/grassedge|riverside|moss/.test(hint);
       for(let i=0;i<p.count;i++){
         const green=grassy&&n.getY(i)>.55&&p.getY(i)>bottom+(top-bottom)*.48;
-        const c=new Color(green?0x9ba979:0xb4989a);
+        const c=new Color(green?0x78a65b:0x96afb0);
         const v=.92+.06*Math.sin(Math.round(p.getX(i)*1.3)+Math.round(p.getY(i)*2.1)+Math.round(p.getZ(i)*1.4));
         c.multiplyScalar(v);colors.set([c.r,c.g,c.b],i*3);
       }

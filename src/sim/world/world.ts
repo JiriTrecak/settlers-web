@@ -1,3 +1,6 @@
+import { Settlement, type SettlementView } from "../settlement/settlement";
+import { validAction } from "../../shared/types/types";
+import type { UtcMap } from "../../shared";
 /**
  * Thin match sim: clock, rng, map size, Player entities from slots.
  * Play loop applies commits via `enqueue`; render reads `view()`.
@@ -12,6 +15,7 @@ export type ViewSnapshot = {
   tick: number;
   size: number;
   players: readonly PlayerView[];
+  settlement?: SettlementView;
 };
 
 export type LoggedAction = {
@@ -28,6 +32,7 @@ export type ActionEnvelope = {
 };
 
 export type WorldOpts = {
+  map?: UtcMap;
   size?: number;
   slots: readonly Slot[];
   seed: number;
@@ -35,6 +40,7 @@ export type WorldOpts = {
 
 export class World {
   readonly clock = new Clock();
+  readonly settlement: Settlement | null;
   readonly size: number;
   readonly players: Player[];
   private readonly rng: Rng;
@@ -43,6 +49,7 @@ export class World {
 
   constructor(opts: WorldOpts) {
     this.size = opts.size ?? MAP_SIZE;
+    this.settlement = opts.map ? new Settlement(opts.map, opts.slots) : null;
     this.rng = seedRng(opts.seed);
     const n = opts.slots.length;
     this.players = opts.slots.map(
@@ -51,18 +58,33 @@ export class World {
           id: s.player,
           kind: s.kind,
           name: s.name,
-          pos: startCell(s.player, n, this.size),
+          pos: opts.map?.playerStarts?.some((p) => p.player === s.player + 1)
+            ? {
+                x: opts.map.playerStarts.find((p) => p.player === s.player + 1)!
+                  .x,
+                y: opts.map.playerStarts.find((p) => p.player === s.player + 1)!
+                  .z,
+              }
+            : startCell(s.player, n, this.size),
         }),
     );
   }
 
   enqueue(action: Action, tick: number, envelope: ActionEnvelope): void {
+    if (
+      !validAction(action) ||
+      !this.players.some((p) => p.id === envelope.player) ||
+      !Number.isSafeInteger(tick) ||
+      tick < 0 ||
+      !Number.isSafeInteger(envelope.seq ?? 0)
+    )
+      return;
     if (action.type === "noop") return;
     this.pending.push({
       tick,
       player: envelope.player,
       seq: envelope.seq ?? 0,
-      action,
+      action: { ...action },
     });
   }
 
@@ -74,13 +96,28 @@ export class World {
   tick(): void {
     this.clock.tick();
     this.applyDue();
+    if (this.settlement && this.clock.tickIndex % 400 === 0)
+      for (const player of this.players)
+        if (player.kind === "ai") {
+          const action = this.settlement.planAI(player.id);
+          if (action) {
+            this.settlement.command(player.id, action);
+            this.applied.push({
+              tick: this.clock.tickIndex,
+              player: player.id,
+              action,
+            });
+          }
+        }
+    this.settlement?.tick(this.clock.tickIndex);
   }
 
-  view(): ViewSnapshot {
+  view(owner?: number): ViewSnapshot {
     return {
       tick: this.clock.tickIndex,
       size: this.size,
-      players: this.players.map((p) => p.view()),
+      players: this.players.filter(p=>owner===undefined || p.id===owner).map((p) => p.view()),
+      ...(this.settlement ? { settlement: this.settlement.view(owner) } : {}),
     };
   }
 
@@ -96,6 +133,7 @@ export class World {
     mix(this.clock.tickIndex);
     mix(this.rng.state());
     mix(this.size);
+    if (this.settlement) mix(this.settlement.checksum());
     mix(this.players.length);
     const list = this.players.slice().sort((a, b) => a.id - b.id);
     for (const p of list) {
@@ -115,9 +153,14 @@ export class World {
     }
     this.pending.length = 0;
     this.pending.push(...keep);
-    due.sort((a, b) => a.player - b.player || a.seq - b.seq);
+    due.sort((a, b) => a.tick - b.tick || a.player - b.player || a.seq - b.seq);
     for (const item of due) {
-      this.applied.push({ tick: item.tick, player: item.player, action: item.action });
+      this.settlement?.command(item.player, item.action);
+      this.applied.push({
+        tick: item.tick,
+        player: item.player,
+        action: item.action,
+      });
     }
   }
 }

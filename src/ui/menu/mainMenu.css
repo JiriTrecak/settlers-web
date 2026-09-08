@@ -1,0 +1,34 @@
+/* Background, logo, chains and button states are independent artwork layers.
+   Labels and interactions remain native HTML; never bake navigation into the scene. */
+.canopy-menu { position:absolute; inset:0; pointer-events:auto; overflow:auto; background:#030b10; isolation:isolate; }
+.canopy-menu::before { content:""; position:absolute; inset:0; background:url("../../../assets/ui/main-menu/forest-heroes.png") center/cover; filter:blur(24px) brightness(.35); pointer-events:none; }
+.canopy-stage { position:relative; width:100%; min-height:100svh; overflow:hidden; }
+.canopy-art { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; user-select:none; pointer-events:none; }
+.canopy-rig { position:relative; margin-left:auto; margin-right:3.5vw; width:340px; min-height:100svh; display:flex; flex-direction:column; align-items:center; padding:80px 0 50px; box-sizing:border-box; isolation:isolate; }
+.canopy-title { margin:0 0 64px; width:340px; height:170px; position:relative; flex:none; }
+.canopy-title img { display:block; width:100%; height:100%; object-fit:contain; }
+.canopy-actions { display:flex; flex-direction:column; align-items:center; gap:18px; }
+.canopy-action { position:relative; width:310px; height:78px; padding:0 44px; border:0; background:transparent; color:#d6dfdf; cursor:pointer; font:20px Georgia,serif; text-shadow:0 2px 3px #000,0 0 6px #000; isolation:isolate; }
+.canopy-action::before { content:''; position:absolute; inset:0; z-index:-1; background:url('../../../assets/ui/main-menu/buttons.png') center -21px / 328px 219px no-repeat; }
+.canopy-action:hover::before,.canopy-action:focus-visible::before { background-position:center -117px; }
+.canopy-action:hover,.canopy-action:focus-visible { color:#fff; filter:drop-shadow(0 0 8px #8cbbd455); }
+.canopy-action:focus-visible { outline:2px solid #a3c9dd; outline-offset:4px; border-radius:8px; }
+.canopy-action:active { transform:translateY(1px); }
+.canopy-action:last-child { margin-top:10px; }
+.canopy-settings { width:min(420px,calc(100vw - 48px)); box-sizing:border-box; color:#ead6ae; border:1px solid #a57e43; padding:32px; background:linear-gradient(145deg,#162427,#080f12); box-shadow:0 20px 100px #000c,inset 0 0 0 4px #a57e4320; font-family:Georgia,serif; }
+.canopy-settings::backdrop { background:#02090bba; backdrop-filter:blur(6px); }
+.canopy-settings h2 { margin:0 0 24px; font-size:30px; font-weight:normal; }
+.canopy-settings label { display:grid; gap:10px; font-size:16px; }
+.canopy-settings input { min-width:0; padding:12px; border:1px solid #776344; color:#f6e7c7; background:#030b10; font:16px Georgia,serif; }
+.canopy-settings button { padding:12px 18px; color:#f5dca4; border:1px solid #a57e43; background:#172021; font:16px Georgia,serif; cursor:pointer; }
+.canopy-settings button:hover { background:#293334; }
+.canopy-settings button:focus-visible,.canopy-settings input:focus-visible { outline:2px solid #edc77d; outline-offset:3px; }
+.canopy-settings-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+.canopy-settings-status { font:14px/1.5 system-ui,sans-serif; }
+
+@media (min-width:1600px) { .canopy-rig { margin-right:5vw; } }
+@media (max-height:850px) and (min-width:701px) { .canopy-rig { padding-top:32px; padding-bottom:32px; } .canopy-title { width:320px; height:160px; margin-bottom:36px; } .canopy-actions { gap:10px; } .canopy-action { height:78px; } }
+@media (max-width:700px) { .canopy-rig { margin:0 auto; padding-top:30px; } .canopy-art { object-position:24% center; filter:brightness(.45); } .canopy-title { margin-bottom:40px; } }
+@media (max-width:370px) { .canopy-rig { width:300px; } .canopy-title { width:290px; height:193px; } .canopy-action { width:290px; } }
+
+@media (max-height:760px) and (min-width:701px) { .canopy-rig { padding-top:36px; padding-bottom:24px; } .canopy-title { height:140px; margin-bottom:30px; } .canopy-actions { gap:4px; } .canopy-action:last-child { margin-top:8px; } }

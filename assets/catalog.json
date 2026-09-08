@@ -799,6 +799,153 @@
       "category": "foliage",
       "type": "prop",
       "file": "synty/synty-plant-grass-02.gltf"
+    },
+    {
+      "id": "pine-chunky",
+      "name": "Pine \u2014 chunky emerald",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/pine-chunky.glb"
+    },
+    {
+      "id": "flower-chunky-purple",
+      "name": "Flower \u2014 chunky violet",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-chunky-purple.glb"
+    },
+    {
+      "id": "flower-chunky-blue",
+      "name": "Flower \u2014 chunky blue",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-chunky-blue.glb"
+    },
+    {
+      "id": "flower-chunky-cream",
+      "name": "Flower \u2014 chunky cream",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-chunky-cream.glb"
+    },
+    {
+      "id": "tree-chunky-broadleaf",
+      "name": "Broadleaf \u2014 chunky emerald",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/tree-chunky-broadleaf.glb"
+    },
+    {
+      "id": "lily-chunky",
+      "name": "Lily \u2014 chunky pads",
+      "category": "water",
+      "type": "water",
+      "file": "props/vivid/lily-chunky.glb"
+    },
+    {
+      "id": "flower-bud-cream",
+      "name": "Flower \u2014 upright cream heads",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-bud-cream.glb"
+    },
+    {
+      "id": "mushroom-chunky-red",
+      "name": "Mushroom \u2014 chunky red",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/mushroom-chunky-red.glb"
+    },
+    {
+      "id": "tree-chunky-drooping",
+      "name": "Broadleaf \u2014 hanging sprays",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/tree-chunky-drooping.glb"
+    },
+    {
+      "id": "flower-single-purple",
+      "name": "Wildflower \u2014 single purple",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-single-purple.glb"
+    },
+    {
+      "id": "flower-single-blue",
+      "name": "Wildflower \u2014 single blue",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-single-blue.glb"
+    },
+    {
+      "id": "flower-single-cream",
+      "name": "Wildflower \u2014 single cream",
+      "category": "foliage",
+      "type": "prop",
+      "file": "props/vivid/flower-single-cream.glb"
+    },
+    {
+      "id": "rock-rounded-cool",
+      "name": "Boulder \u2014 rounded cool stone",
+      "category": "terrain",
+      "type": "ground",
+      "file": "props/vivid/rock-rounded-cool.glb"
+    },
+    {
+      "id": "pebbles-pale",
+      "name": "Pebbles \u2014 pale meadow stones",
+      "category": "terrain",
+      "type": "ground",
+      "file": "props/vivid/pebbles-pale.glb"
+    },
+    {
+      "id": "main-fort",
+      "name": "Main fort",
+      "category": "landmark",
+      "type": "prop",
+      "file": "props/settlement/fort.glb"
+    },
+    {
+      "id": "lumberjack-hut",
+      "name": "Lumberjack hut",
+      "category": "other",
+      "type": "prop",
+      "file": "props/settlement/lumberjack.glb"
+    },
+    {
+      "id": "sawmill",
+      "name": "Sawmill",
+      "category": "other",
+      "type": "prop",
+      "file": "props/settlement/sawmill.glb"
+    },
+    {
+      "id": "forester-lodge",
+      "name": "Forester lodge",
+      "category": "other",
+      "type": "prop",
+      "file": "props/settlement/forester.glb"
+    },
+    {
+      "id": "item-log",
+      "name": "Log",
+      "category": "resource",
+      "type": "prop",
+      "file": "props/settlement/item-log.glb"
+    },
+    {
+      "id": "item-plank",
+      "name": "Plank",
+      "category": "resource",
+      "type": "prop",
+      "file": "props/settlement/item-plank.glb"
+    },
+    {
+      "id": "item-stone",
+      "name": "Dressed stone",
+      "category": "resource",
+      "type": "prop",
+      "file": "props/settlement/item-stone.glb"
     }
   ]
 }

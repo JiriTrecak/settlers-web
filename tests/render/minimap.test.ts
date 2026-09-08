@@ -5,6 +5,8 @@ import { ndcToWorld, worldToNdc } from "../../src/render/minimap/minimap";
 describe("minimap", () => {
   it("roundtrips corners", () => {
     const size = 256;
+    expect(worldToNdc(0,0,size)).toEqual([-1,1]);
+    expect(worldToNdc(size,size,size)).toEqual([1,-1]);
     for (const [x, z] of [
       [0, 0],
       [size, 0],
@@ -19,7 +21,7 @@ describe("minimap", () => {
     }
   });
 
-  it("puts the far corner (0,0) at the top — same as the iso view", () => {
+  it("puts north at the top of the square map", () => {
     const [, ny] = worldToNdc(0, 0, 256);
     expect(ny).toBeGreaterThan(0);
     const [, fy] = worldToNdc(256, 256, 256);
@@ -35,7 +37,7 @@ describe("minimap", () => {
     expect(far).toBeGreaterThan(near);
   });
 
-  it("gamecam trap is a real 70° frustum — far still wider than near", () => {
+  it("gamecam trap is a perspective frustum — far still wider than near", () => {
     const cam = new Camera();
     cam.lookAt(128, 128);
     cam.setGame(true);

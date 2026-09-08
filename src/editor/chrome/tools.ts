@@ -2,7 +2,7 @@
  * Editor docks. Add an object to a list to put a tool on that bar.
  * `modes` on an action opens a sibling vertical — Grid is the first of those.
  */
-import { Ban, Cable, Eraser, FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, Mountain, MousePointer2, Paintbrush, Save, SaveAll, Sun, TreePine, Video } from "lucide";
+import { Ban, Cable, Eraser, FilePlus, FolderOpen, Grid3x3, LayoutGrid, Library, LogOut, Mountain, MousePointer2, Paintbrush, Save, SaveAll, Sun, TreePine, Play, Sticker } from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
 
@@ -21,6 +21,7 @@ export type GameToolHooks = {
   onClean(): void;
   onSculpt(): void;
   onTerrain(): void;
+  onDecal(): void;
   onCatalogue(): void;
   onGrid(): void;
   onGridMode(mode: GridMode): void;
@@ -47,6 +48,7 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
     { id: "brush", label: "Brush", icon: Paintbrush, run: hooks.onBrush },
     { id: "clean", label: "Clean", icon: Eraser, run: hooks.onClean },
     { id: "terrain", label: "Terrain", icon: Paintbrush, run: hooks.onTerrain },
+    { id: "decal", label: "Decals", icon: Sticker, run: hooks.onDecal },
     { id: "sculpt", label: "Sculpt", icon: Mountain, run: hooks.onSculpt },
     { id: "catalogue", label: "Catalogue", icon: Library, run: hooks.onCatalogue },
     { kind: "sep" },
@@ -62,8 +64,8 @@ export function gameTools(hooks: GameToolHooks): IconItem[] {
         { id: "none", label: "None", icon: Ban, run: () => hooks.onGridMode("none") },
       ],
     },
-    { id: "gamecam", label: "Gamecam", icon: Video, run: hooks.onGameCam, latch: true },
-    { id: "sky", label: "Light", icon: Sun, run: hooks.onSky, latch: true },
+    { id: "sky", label: "Environment", icon: Sun, run: hooks.onSky, latch: true },
     { id: "mcp", label: "MCP", icon: Cable, run: hooks.onMcp, latch: true },
+    { id: "play", label: "Play", icon: Play, run: hooks.onGameCam, latch: true },
   ];
 }

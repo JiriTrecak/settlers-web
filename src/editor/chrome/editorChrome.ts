@@ -82,7 +82,7 @@ export class EditorChrome {
   }
 
   setGameCam(on: boolean): void {
-    this.game.setLatch("gamecam", on);
+    this.game.setLatch("play", on);
     this.hint.setGame(on);
   }
 
@@ -131,6 +131,8 @@ export class EditorChrome {
     this.game.setLatch("sky", on);
     this.sky.setOpen(on);
   }
+
+  setEnvironmentOpen(on:boolean):void {this.game.setLatch("sky",on);}
 
   setSky(state: SkyState): void {
     this.sky.set(state);

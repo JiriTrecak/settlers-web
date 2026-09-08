@@ -1,7 +1,7 @@
 /**
  * Look-at on the XZ plane.
  * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
- * 70° FoV, ~56° pitch, 45° yaw, terrain-following distance zoom, pan only, view half a block past the red.
+ * 32° FoV, 45° pitch, 0° yaw, terrain-following distance zoom, pan only, view half a block past the red.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
@@ -10,10 +10,12 @@ import { MAP_BLOCK, MAP_SIZE } from "../../shared";
 /** True-iso yaw / pitch. Preview snapshots and the editor free-cam use this pair. */
 export const ISO_YAW = Math.PI / 4;
 export const ISO_PITCH = Math.atan(1 / Math.sqrt(2));
-/** WC3 default AoA 304° — 56° down from the horizon. */
-export const GAME_PITCH = (56 * Math.PI) / 180;
-/** WC3 default lens. */
-export const GAME_FOV = 70;
+/** Lower RTS viewing angle reveals more of the landscape behind the foreground. */
+export const GAME_YAW = 0;
+export const GAME_PITCH = (45 * Math.PI) / 180;
+/** Mild RTS perspective keeps foreground trees readable without wide-angle stretching. */
+export const GAME_FOV = 32;
+export const GAME_ASPECT = 16 / 9;
 /** Extra view-axis distance so the near-side ground stays in front of the ortho near plane. */
 const SLACK = 32;
 const PITCH_MIN = 0.12;
@@ -29,7 +31,7 @@ export class Camera {
   /** Eye ↔ target when `game`. Ortho ignores this. */
   distance = 80;
   minZoom = 6;
-  maxZoom = 90;
+  maxZoom = 180;
   /** Play leaves this on — orbit is a no-op. Editor clears it. */
   locked = true;
   /** Play / Gamecam: perspective, distance zoom, view clamped half a block past the red. */
@@ -62,9 +64,9 @@ export class Camera {
     this.locked = on;
     this.bound = on ? size : 0;
     if (on) {
-      this.yaw = ISO_YAW;
+      this.yaw = GAME_YAW;
       this.pitch = GAME_PITCH;
-      this.distance = this.gameDistance = this.distForSpan(MAP_BLOCK * 2);
+      this.distance = this.gameDistance = this.distForSpan(MAP_BLOCK * 4);
       this.clamp();
     }
     this.touch();
@@ -77,11 +79,14 @@ export class Camera {
     this.touch();
   }
 
+  get gameZoom(): number { return this.distance / this.gameDistance; }
+
   /** One-shot look / zoom / orbit. `setGame` first if you also flip perspective. */
-  pose(next: { x?: number; z?: number; zoom?: number; yaw?: number; pitch?: number }): void {
+  pose(next: { x?: number; z?: number; zoom?: number; gameZoom?: number; yaw?: number; pitch?: number }): void {
     if (next.x !== undefined) this.targetX = next.x;
     if (next.z !== undefined) this.targetZ = next.z;
     if (next.zoom !== undefined) this.zoom = clamp(next.zoom, this.minZoom, this.maxZoom);
+    if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = this.gameDistance * clamp(next.gameZoom, .5, 2);
     if (next.yaw !== undefined) this.yaw = next.yaw;
     if (next.pitch !== undefined) this.pitch = clamp(next.pitch, PITCH_MIN, PITCH_MAX);
     this.clamp();
@@ -89,7 +94,7 @@ export class Camera {
   }
 
   resetView(): void {
-    this.yaw = ISO_YAW;
+    this.yaw = this.game ? GAME_YAW : ISO_YAW;
     this.pitch = this.game ? GAME_PITCH : ISO_PITCH;
     this.touch();
   }
@@ -158,8 +163,8 @@ export class Camera {
     const prev = this.distance, terrain = this.terrain;
     this.terrain = null;
     this.distance = 1;
-    const a = this.groundAt(0, -1, 1);
-    const b = this.groundAt(0, 1, 1);
+    const a = this.groundAt(0, -1, GAME_ASPECT);
+    const b = this.groundAt(0, 1, GAME_ASPECT);
     this.distance = prev;
     this.terrain = terrain;
     return span / Math.max(1e-6, Math.hypot(b[0] - a[0], b[1] - a[1]));
@@ -205,7 +210,7 @@ export class Camera {
     return this.hitGround(this.probe, ndcX, ndcY);
   }
 
-  /** Frustum ∩ ground. Gamecam uses the real 70° lens; free-cam matches the ortho pose. */
+  /** Frustum ∩ ground. Gamecam uses the active perspective lens; free-cam matches the ortho pose. */
   viewGround(width: number, height: number): [number, number][] {
     this.applyTo(this.persp, width, height);
     this.persp.updateMatrixWorld();
@@ -234,7 +239,9 @@ export class Camera {
     }
     const { dist, reach } = this.place(cam);
     if (cam instanceof PerspectiveCamera) {
-      cam.fov = this.game ? GAME_FOV : (2 * Math.atan(this.zoom / dist) * 180) / Math.PI;
+      // Preserve the reference horizontal field in narrow editor panes.
+      const gameFov = Math.min(75, this.pitch * 360 / Math.PI - 10, 2 * Math.atan(Math.tan(GAME_FOV * Math.PI / 360) * Math.max(1, GAME_ASPECT / aspect)) * 180 / Math.PI);
+      cam.fov = this.game ? gameFov : (2 * Math.atan(this.zoom / dist) * 180) / Math.PI;
       cam.aspect = aspect;
       cam.near = 1;
       cam.far = dist + reach + SLACK;

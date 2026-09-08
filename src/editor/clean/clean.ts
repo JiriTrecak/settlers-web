@@ -1,5 +1,6 @@
+import type { CoverPatch } from "../../shared/landscape/curve";
 /**
- * Live eraser. Wipes authored stamps in a disc. Foliage type is reserved for the grass layer.
+ * Live eraser. Wipes authored stamps in a disc. Foliage erases plants and persisted meadow cover.
  */
 import type { MapStamp } from "../../shared";
 
@@ -10,7 +11,7 @@ export type CleanType = "objects" | "foliage";
 
 export const CLEAN_TYPES: readonly { id: CleanType; name: string; ready: boolean }[] = [
   { id: "objects", name: "Objects", ready: true },
-  { id: "foliage", name: "Foliage", ready: false },
+  { id: "foliage", name: "Foliage", ready: true },
 ];
 
 export class CleanTool {
@@ -34,10 +35,15 @@ export class CleanTool {
     this.setRadius(this.radius + steps * 0.5);
   }
 
+  strokeHits(x: number, z: number): { x: number; z: number }[] {
+    const hits = samples(this.last, { x, z }, this.radius);
+    this.last = { x, z };
+    return hits;
+  }
+
   /** Dabs from the last point so a fast drag doesn't skip. */
   stroke(wx: number, wz: number, stamps: readonly MapStamp[]): MapStamp[] | null {
-    const hits = samples(this.last, { x: wx, z: wz }, this.radius);
-    this.last = { x: wx, z: wz };
+    const hits = this.strokeHits(wx, wz);
     const next = wipeStamps(stamps, hits, this.radius, this.type);
     return next.length === stamps.length ? null : next;
   }
@@ -49,9 +55,10 @@ export function wipeStamps(
   radius: number,
   type: CleanType,
 ): MapStamp[] {
-  if (type !== "objects" || hits.length === 0) return stamps.slice();
+  if (hits.length === 0) return stamps.slice();
   const r2 = radius * radius;
   return stamps.filter((s) => {
+    if (type === "foliage" && !/^(synty-(tree-|plant-)|pine(?:-|$)|tree(?:-|$)|fern(?:-|$)|grass(?:-|$)|flower(?:-|$)|mushroom(?:-|$)|lily(?:-|$)|river-reeds$)/.test(s.asset)) return true;
     const sx = s.x + 0.5;
     const sy = s.y + 0.5;
     for (const h of hits) {
@@ -78,4 +85,18 @@ function samples(from: { x: number; z: number } | null, to: { x: number; z: numb
 
 function clamp(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
+}
+
+/** Per-patch holes preserve the seeded planting outside the stroke; new patches remain paintable. */
+export function eraseCover(cover: readonly CoverPatch[], hits: readonly {x:number;z:number}[], radius:number): CoverPatch[] {
+  return cover.map(p => {
+    const additions = hits.filter(h => Math.hypot(h.x-p.x,h.z-p.z)<p.radius+radius);
+    if (!additions.length) return p;
+    const exclusions = [...(p.exclusions ?? [])];
+    for (const h of additions) {
+      if (exclusions.some(e => Math.hypot(e.x-h.x,e.z-h.z)+radius<=e.radius+.001)) continue;
+      exclusions.push({...h,radius});
+    }
+    return exclusions.length===(p.exclusions?.length??0) ? p : {...p,exclusions};
+  });
 }

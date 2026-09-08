@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
 import { MAP_BLOCK, MAP_SIZE } from "../../src/shared";
-import { Camera, GAME_FOV, GAME_PITCH, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
+import { Camera, GAME_ASPECT, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 
 describe("iso camera", () => {
   it("lookAt then applyTo does not throw and sets a projection", () => {
@@ -79,7 +79,7 @@ describe("iso camera", () => {
     expect(z).toBeCloseTo(hit.z, 4);
   });
 
-  it("setGame locks WC3 perspective, frames two blocks, and allows distance zoom while locking orbit", () => {
+  it("setGame locks WC3 perspective, frames four blocks, and allows distance zoom while locking orbit", () => {
     const cam = new Camera();
     cam.locked = false;
     cam.lookAt(128, 128);
@@ -87,14 +87,14 @@ describe("iso camera", () => {
     cam.setGame(true);
     expect(cam.game).toBe(true);
     expect(cam.locked).toBe(true);
-    expect(cam.yaw).toBe(ISO_YAW);
+    expect(cam.yaw).toBe(GAME_YAW);
     expect(cam.pitch).toBe(GAME_PITCH);
     const three = new PerspectiveCamera();
-    cam.applyTo(three, 1024, 1024);
+    cam.applyTo(three, 1280, 720);
     expect(three.fov).toBe(GAME_FOV);
-    const a = cam.groundAt(0, -1, 1);
-    const b = cam.groundAt(0, 1, 1);
-    expect(Math.hypot(b[0] - a[0], b[1] - a[1])).toBeCloseTo(MAP_BLOCK * 2, 1);
+    const a = cam.groundAt(0, -1, GAME_ASPECT);
+    const b = cam.groundAt(0, 1, GAME_ASPECT);
+    expect(Math.hypot(b[0] - a[0], b[1] - a[1])).toBeCloseTo(MAP_BLOCK * 4, 1);
     const dist = cam.distance;
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
@@ -158,8 +158,8 @@ describe("terrain-following game camera", () => {
     const distance = camera.distance;
     camera.zoomBy(100);
     expect(camera.distance).toBeCloseTo(distance * 2);
-    const a=camera.groundAt(0,-1,1),b=camera.groundAt(0,1,1);
-    expect(Math.hypot(b[0]-a[0],b[1]-a[1])).toBeCloseTo(MAP_BLOCK * 4);
+    const a=camera.groundAt(0,-1,GAME_ASPECT),b=camera.groundAt(0,1,GAME_ASPECT);
+    expect(Math.hypot(b[0]-a[0],b[1]-a[1])).toBeCloseTo(MAP_BLOCK * 8);
     camera.zoomBy(.0001);
     expect(camera.distance).toBeCloseTo(distance * .5);
   });
@@ -175,7 +175,7 @@ describe("terrain-following game camera", () => {
   });
   it("clears a hill beneath the eye even when the target is in a valley", () => {
     const camera=new Camera(); camera.lookAt(128,128); camera.setGame(true); camera.zoomBy(.5);
-    camera.setTerrain((x,z)=>x>129&&z>129?24:0);
+    camera.setTerrain((_x,z)=>z>129?24:0);
     const eye=new PerspectiveCamera(); camera.applyTo(eye,1280,720);
     expect(eye.position.y).toBeGreaterThanOrEqual(24+camera.minTerrainClearance);
   });
@@ -191,3 +191,30 @@ it("never descends toward the river bed below the water-relative camera floor", 
   const eye=new PerspectiveCamera(); camera.applyTo(eye,1280,720);
   expect(eye.position.y).toBeGreaterThanOrEqual(3+camera.minHeightAboveWater);
 });
+
+ describe("perspective capture framing", () => {
+  it("restores a saved game zoom after switching camera modes", () => {
+    const cam = new Camera();
+    cam.setGame(true);
+    cam.zoomBy(1.7);
+    const saved = cam.gameZoom, distance = cam.distance;
+    cam.setGame(false);
+    cam.setGame(true);
+    cam.pose({ gameZoom: saved });
+    expect(cam.distance).toBeCloseTo(distance);
+    expect(cam.yaw).toBe(GAME_YAW);
+    expect(cam.pitch).toBe(GAME_PITCH);
+    cam.pose({ gameZoom: 5 });
+    expect(cam.gameZoom).toBe(2);
+    cam.pose({ gameZoom: .1 });
+    expect(cam.gameZoom).toBe(.5);
+  });
+});
+
+ it("keeps horizontal Play coverage when the editor pane is narrower than a screenshot", () => {
+  const camera = new Camera(); camera.lookAt(128,128); camera.setGame(true);
+  const width = (aspect:number) => { const a=camera.groundAt(-1,0,aspect), b=camera.groundAt(1,0,aspect); return Math.hypot(b[0]-a[0],b[1]-a[1]); };
+  expect(width(.95)).toBeCloseTo(width(GAME_ASPECT),4);
+  const view=new PerspectiveCamera(); camera.applyTo(view,950,1000);
+  expect(view.fov/2).toBeLessThan(GAME_PITCH*180/Math.PI);
+ });

@@ -1,1 +1,1 @@
-Live eraser beside Brush. Disc wipes `MapStamp`s (type Objects). Foliage is reserved for the grass layer. Shift+wheel sizes the disc.
+Live disc eraser with interpolated strokes. Objects removes all stamps. Foliage removes plant/tree stamps and adds persistent exclusion discs to existing meadow cover patches, preserving rocks and structures. New cover patches can be painted into cleared areas. Clean, brush, sculpt and terrain radii are remembered separately in localStorage. MCP editor_clean accepts type=objects|foliage.

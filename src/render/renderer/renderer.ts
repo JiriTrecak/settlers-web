@@ -1,3 +1,8 @@
+import { FogOfWar } from "../visibility/fogOfWar";
+import { SettlementLayer } from '../settlement/settlementLayer';
+import type { BuildingKind } from '../../shared/settlement/rules';
+import { environmentPreset, PRESET_KEY } from '../../shared/environment/presets';
+import { DecalLayer } from '../decal/decalLayer';
 import { TerrainMaterial } from "../terrain/terrainMaterial";
 import { Meadow } from "../foliage/meadow";
 import { emptyLandscape, type Landscape } from "../../shared/landscape/curve";
@@ -55,6 +60,14 @@ export class Renderer {
   readonly sky: Sky;
   private landscape: Landscape = emptyLandscape();
   private readonly meadow: Meadow;
+  private readonly decals: DecalLayer;
+  private settlement: SettlementLayer | null=null;
+  private fog: FogOfWar | null=null;
+  gamePreview(kind:BuildingKind|null,x=0,z=0,allowed=false){if(this.height)this.settlement?.preview(kind,x,z,allowed,this.height);}
+  gameSelect(id:number|null){this.settlement?.select(id);}
+  gameReady(){return this.settlement?.ready??Promise.resolve();}
+  private readonly refreshEnvironment=()=>this.sky.setGlobalLight(environmentPreset(this.landscape.environment.preset).light);
+  private readonly presetStorage=(event:StorageEvent)=>{if(event.key===PRESET_KEY)this.refreshEnvironment();};
   gridOn = true;
   gridMode: GridMode = "tiles";
 
@@ -63,7 +76,11 @@ export class Renderer {
     this.props = new PropField(this.scene, assets);
     this.brush = new BrushLayer(this.scene);
     this.sky = new Sky(this.scene);
+    this.refreshEnvironment();
+    window.addEventListener("utc-environment-presets",this.refreshEnvironment);
+    window.addEventListener("storage",this.presetStorage);
     this.meadow = new Meadow(this.scene);
+    this.decals = new DecalLayer(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
   }
@@ -79,7 +96,7 @@ export class Renderer {
     const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
     try{
       if(animationTime!==undefined){this.water?.tick(animationTime*1000);this.meadow.tick(animationTime*1000);}
-      const cam=this.threeCam();this.camera.applyTo(cam,w,h);gl.setRenderTarget(target);gl.render(this.scene,cam);
+      const cam=this.threeCam();this.camera.applyTo(cam,w,h);this.updateAtmosphere(cam);gl.setRenderTarget(target);gl.render(this.scene,cam);
       const bytes=new Uint8Array(w*h*4);gl.readRenderTargetPixels(target,0,0,w,h,bytes);
       // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
       // alpha in an offscreen target; exporting it darkens foliage when JPEG
@@ -100,7 +117,10 @@ export class Renderer {
     const rebuild = this.landscape.cover !== landscape.cover || this.landscape.strokes !== landscape.strokes || this.landscape.environment.season !== landscape.environment.season;
     if(this.landscape.rivers!==landscape.rivers)this.water?.setFlow(landscape.rivers??[]);
     this.water?.setStyle(landscape.water);
+    if(this.height&&(this.landscape.decals!==landscape.decals||this.landscape.environment.season!==landscape.environment.season))this.decals.rebuild(landscape.decals??[],this.height,landscape.environment.season);
+    const presetChanged=this.landscape.environment.preset!==landscape.environment.preset;
     this.landscape=landscape;
+    if(presetChanged)this.refreshEnvironment();
     this.sky.setHour(landscape.environment.hour); this.sky.setPlaying(landscape.environment.playing);
     this.props.setSeason(landscape.environment.season);
     if(this.terrain && this.height){
@@ -156,6 +176,7 @@ export class Renderer {
     this.water?.setFrom(field);
     (this.terrain.mesh.material as TerrainMaterial).update(field,this.landscape.strokes);
     this.meadow.rebuild(field,this.landscape);
+    this.decals.rebuild(this.landscape.decals??[],field,this.landscape.environment.season);
     if (drape) this.refreshGrid();
   }
 
@@ -183,7 +204,8 @@ export class Renderer {
     }
     const ground = this.height ? (x: number, z: number) => this.height!.sample(x, z) : null;
     const seen = new Set<number>();
-    for (const p of snapshot.players) {
+    if(snapshot.settlement&&this.height){this.settlement??=new SettlementLayer(this.scene);this.settlement.update(snapshot.settlement,this.height,snapshot.tick);}
+    for (const p of snapshot.settlement?[]:snapshot.players) {
       seen.add(p.id);
       let mesh = this.cubes.get(p.id);
       if (!mesh) {
@@ -209,8 +231,15 @@ export class Renderer {
       this.cubes.delete(id);
     }
     this.props.sync(stamps);
+    if(snapshot.settlement?.fog){this.fog??=new FogOfWar();this.fog.update(snapshot.settlement.fog,this.scene);}
     (this.terrain?.mesh.material as TerrainMaterial|undefined)?.setContacts(this.props.contactRevision,this.props.contacts);
     this.present();
+  }
+
+  pickGameEntity(clientX: number, clientY: number): number | null {
+    if (!this.aim(clientX, clientY)) return null;
+    const terrainDistance = this.terrain ? this.ray.intersectObject(this.terrain.mesh, false)[0]?.distance : undefined;
+    return this.settlement?.pick(this.ray, terrainDistance ?? Infinity) ?? null;
   }
 
   pickStamp(clientX: number, clientY: number): string | null {
@@ -248,7 +277,15 @@ export class Renderer {
     this.meadow.tick(now);
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
+    this.updateAtmosphere(cam);
     this.display.render(this.scene, cam);
+  }
+
+  private updateAtmosphere(cam: OrthographicCamera | PerspectiveCamera): void {
+    const x = this.camera.targetX, z = this.camera.targetZ;
+    const focus = new Vector3(x, this.height?.sample(x, z) ?? 0, z);
+    const depth = focus.sub(cam.position).dot(cam.getWorldDirection(new Vector3()));
+    this.sky.setAtmosphereDepth(depth);
   }
 
   private refreshGrid(): void {
@@ -273,6 +310,11 @@ export class Renderer {
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);
     this.props.destroy();
+    this.settlement?.destroy(this.scene);
+    this.fog?.dispose();
+    window.removeEventListener("utc-environment-presets",this.refreshEnvironment);
+    window.removeEventListener("storage",this.presetStorage);
+    this.decals.destroy(this.scene);
     this.display.destroy();
   }
 }

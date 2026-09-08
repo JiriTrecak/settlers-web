@@ -1,0 +1,189 @@
+import { ART, DESCRIPTIONS, art } from "./commandArt";
+import { CommandTooltips } from "./tooltips";
+import "./commandDock.css";
+import { economyStatus } from "./economyStatus";
+import {
+  BUILDINGS,
+  BUILDING_KINDS,
+  type BuildingKind,
+} from "../../shared/settlement/rules";
+import type { SettlementView } from "../../sim/settlement/settlement";
+
+export class SettlementHud {
+  readonly root = document.createElement("div");
+  private readonly stock = document.createElement("div");
+  private readonly panel = document.createElement("div");
+  private readonly info = document.createElement("p");
+  private readonly hint = document.createElement("p");
+  private readonly cancel = document.createElement("button");
+  private readonly buttons = new Map<BuildingKind, HTMLButtonElement>();
+  mode: BuildingKind | null = null;
+  selected: number | null = null;
+  private lastEvent = -1;
+  private stockMarkup = "";
+  private readonly portrait=document.createElement("div");
+  private readonly meter=document.createElement("div");
+  private readonly tooltips:CommandTooltips;
+  private portraitIndex=-1;
+  readonly minimapHost=document.createElement("div");
+  readonly clockHost=document.createElement("div");
+  private readonly heading=document.createElement("h2");
+  private readonly onKey=(e:KeyboardEvent)=>{
+    if(e.repeat || e.ctrlKey || e.metaKey || e.altKey || (e.target instanceof HTMLElement && (e.target.matches('input,textarea,select') || e.target.isContentEditable)))return;
+    const index=Number(e.key)-1;
+    if(index>=0 && index<BUILDING_KINDS.length){e.preventDefault();this.buttons.get(BUILDING_KINDS[index]!)?.click();}
+    if(e.key==='Home'){e.preventDefault();this.hooks.home();}
+  };
+  constructor(
+    host: HTMLElement,
+    private readonly owner: number,
+    private readonly hooks: {
+      mode: () => void;
+      cancel: (id: number) => void;
+      home: () => void;
+    },
+  ) {
+    this.root.className = "rts-hud";
+    this.stock.className="rts-resources";
+    this.stock.setAttribute("aria-label","Settlement economy");
+    this.panel.className="rts-dock";
+    this.panel.setAttribute("aria-label","Game command panel");
+    const map=document.createElement("section");map.className="rts-map";
+    map.innerHTML='<div class="rts-map-label"><span>TWINWATER REACH</span><span>N ↑</span></div>';
+    this.minimapHost.className="rts-map-slot";map.append(this.minimapHost);
+    this.clockHost.className="rts-clock-slot";
+    const selection=document.createElement("section");selection.className="rts-selection";
+    const label=document.createElement("div");label.className="rts-eyebrow";label.textContent="COMMAND / SELECTION";
+    this.heading.textContent="Your settlement";
+    this.portrait.className="rts-portrait";this.portrait.tabIndex=0;
+    this.meter.className="rts-portrait-meter";
+    const text=document.createElement("div");text.className="rts-selection-copy";text.append(label,this.heading,this.info,this.hint);
+    selection.append(this.portrait,text,this.clockHost);
+    const actions=document.createElement("section");actions.className="rts-actions";
+    const actionsLabel=document.createElement("div");actionsLabel.className="rts-actions-label";actionsLabel.textContent="Build settlement";
+    const row = document.createElement("div");row.className="rts-command-grid";
+    actions.append(actionsLabel,row);
+    this.panel.append(map,selection,actions);
+    for (const kind of BUILDING_KINDS) {
+      const rule = BUILDINGS[kind],
+        b = document.createElement("button");
+      b.className = "rts-command";
+      b.setAttribute('aria-label',rule.name);
+      Object.assign(b.dataset,{tipName:rule.name,tipDescription:DESCRIPTIONS[kind],tipWood:String(rule.wood),tipStone:String(rule.stone),tipKey:String(BUILDING_KINDS.indexOf(kind)+1)});
+      b.innerHTML=`${art(ART[kind])}<kbd>${BUILDING_KINDS.indexOf(kind)+1}</kbd><span class="rts-command-name">${rule.name.replace("'s hut",'').replace(' lodge','').replace('Settler house','House')}</span>`;
+      b.onclick = () => {
+        this.mode = this.mode === kind ? null : kind;
+        this.selected = null;
+        this.hooks.mode();
+        this.hint.textContent = this.mode
+          ? "Click clear, flat ground inside your border. Escape cancels placement."
+          : "";
+        this.syncButtons();
+      };
+      row.append(b);
+      this.buttons.set(kind, b);
+    }
+    const home = document.createElement("button");
+    home.innerHTML=art(12)+'<span>Home fort</span>';
+    Object.assign(home.dataset,{tipName:'Home fort',tipDescription:'Center the camera on your main fort.',tipKey:'Home'});
+    home.onclick = hooks.home;
+    const tools=document.createElement("div");tools.className="rts-tools";tools.append(home,this.cancel);row.append(tools);
+    this.info.style.whiteSpace = "pre-line";
+    this.info.className = "rts-info";
+    this.info.textContent =
+      "Build a lumberjack, sawmill and stonemason first. Carriers deliver goods; builders construct automatically.";
+    this.hint.className = "rts-notice";
+    this.hint.setAttribute("role", "status");
+
+    this.cancel.innerHTML=art(13)+'<span>Cancel</span>';
+    Object.assign(this.cancel.dataset,{tipName:'Cancel construction',tipDescription:'Cancel this unfinished building. Reserved, delivered and in-transit construction materials are refunded.'});
+    this.cancel.hidden = true;
+    this.cancel.onclick = () => {
+      if (this.selected) this.hooks.cancel(this.selected);
+    };
+    this.root.append(this.stock, this.panel);
+    window.addEventListener("keydown",this.onKey);
+    host.append(this.root);
+    Object.assign(this.minimapHost.dataset,{tipName:'Tactical map',tipDescription:'Click or drag to move the camera. Bright ground is in sight; dim ground is remembered; black ground is unexplored.'});
+    Object.assign(this.clockHost.dataset,{tipName:'Time of day',tipDescription:'A full day and night lasts 240 seconds. Lighting changes as the clock advances.'});
+    for(const el of [this.minimapHost,this.clockHost])el.tabIndex=0;
+    this.tooltips=new CommandTooltips(host);
+    const exit=host.querySelector<HTMLButtonElement>('button');
+    if(exit?.textContent==='Exit')Object.assign(exit.dataset,{tipName:'Exit match',tipDescription:'Return to the main menu. This prototype does not save the current match.'});
+  }
+  setMapName(name:string) { const label=this.panel.querySelector(".rts-map-label span");if(label)label.textContent=name; }
+  clearMode() {
+    this.mode = null;
+    this.hooks.mode();
+    this.syncButtons();
+  }
+  placement(message: string | null) {
+    if (this.mode)
+      this.hint.textContent = message ?? "Click to order construction.";
+  }
+  private syncButtons() {
+    for (const [kind, b] of this.buttons)
+      b.setAttribute("aria-pressed",String(this.mode===kind));
+  }
+  update(state: SettlementView) {
+    const c = state.colonies.find((c) => c.owner === this.owner);
+    if (c) {
+      const workers=state.workers.filter(w=>w.owner===this.owner),carriers=workers.filter(w=>w.role==='carrier');
+      const markup = [
+        [8,c.stock.wood,'Planks','Sawn timber stored at the fort, available for construction.'],
+        [9,c.stock.stone,'Stone','Dressed stone stored at the fort, available for construction.'],
+        [7,workers.length,'Settlers','Your entire workforce. Build houses to welcome three additional settlers.'],
+        [11,`${carriers.filter(w=>w.shipment).length}/${carriers.length}`,'Carriers','Busy carriers / all unassigned settlers. Everyone without a specialist role helps transport goods.']
+      ].map(([icon,count,name,description])=>`<span tabindex="0" data-tip-name="${name}" data-tip-description="${description}" aria-label="${name}: ${count}">${art(Number(icon))}<b>${count}</b></span>`).join('');
+      if(markup!==this.stockMarkup){this.stock.innerHTML=markup;this.stockMarkup=markup;}
+    }
+    const building = state.buildings.find((b) => b.id === this.selected),
+      worker = state.workers.find((w) => w.id === this.selected);
+    this.heading.textContent=building?BUILDINGS[building.kind].name:worker?worker.role[0]!.toUpperCase()+worker.role.slice(1):this.mode?BUILDINGS[this.mode].name:"Your settlement";
+    const portraitIndex=building?ART[building.kind]:worker?7:this.mode?ART[this.mode]:6;
+    if(portraitIndex!==this.portraitIndex){this.portrait.innerHTML=art(portraitIndex);this.portrait.append(this.meter);this.portraitIndex=portraitIndex;}
+    this.meter.textContent=building?(building.complete?`${building.health} / ${BUILDINGS[building.kind].health??250}`:`${Math.floor(building.progress/BUILDINGS[building.kind].work*100)}% built`):worker?'SETTLER':this.mode?'BUILDING PLAN':'MAIN FORT';
+    Object.assign(this.portrait.dataset,{tipName:this.heading.textContent??'Selection',tipDescription:building?DESCRIPTIONS[building.kind]:worker?'Selected settler. Unassigned, idle carriers can be ordered to move by clicking the ground.':'Select a building or settler to inspect it.',...(building?{tipWood:String(BUILDINGS[building.kind].wood),tipStone:String(BUILDINGS[building.kind].stone)}:{})});
+    if(!building){delete this.portrait.dataset.tipWood;delete this.portrait.dataset.tipStone;}
+    this.cancel.hidden =
+      !building || building.owner !== this.owner || building.complete;
+    if (building) {
+      const r = BUILDINGS[building.kind];
+      const inventory =
+        building.kind === "fort"
+          ? {
+              log: 0,
+              plank:
+                state.colonies.find((c) => c.owner === building.owner)?.stock
+                  .wood ?? 0,
+              stone:
+                state.colonies.find((c) => c.owner === building.owner)?.stock
+                  .stone ?? 0,
+            }
+          : building.inventory;
+      this.info.textContent = `${r.name} · Player ${building.owner + 1} · ${building.complete ? `HP ${building.health}/${r.health ?? 250} · Stock: ${inventory.log} logs, ${inventory.plank} planks, ${inventory.stone} stone` : `Construction ${Math.floor((building.progress / r.work) * 100)}% · Delivered ${building.delivered.wood}/${r.wood} planks, ${building.delivered.stone}/${r.stone} stone`}`;
+      this.info.textContent += "\n" + (building.remembered ? "Last seen · Current activity unknown" : building.owner !== this.owner ? "Enemy building in sight" : economyStatus(building,state));
+    } else if (worker)
+      this.info.textContent = `${worker.role} · ${worker.job.replaceAll("-", " ")}${worker.quantity ? ` · Carrying ${worker.quantity} ${worker.shipment?.item ?? (worker.carry === "wood" ? "logs" : "stone")}` : ""}${worker.role === "carrier" && !worker.shipment ? " · Click ground to move." : ""}`;
+    else
+      this.info.textContent = this.mode ? DESCRIPTIONS[this.mode] : "Build a lumberjack, sawmill and stonemason first. Carriers transport goods; builders construct. Foresters replant trees; houses add workers.";
+    if (state.outcome) {
+      this.info.textContent =
+        state.outcome.winner === this.owner
+          ? "Victory — the enemy main fort has fallen."
+          : "Defeat — your main fort has fallen.";
+      this.clearMode();
+      for (const button of this.buttons.values()) button.disabled = true;
+    }
+    const event = state.events.filter((e) => e.owner === this.owner).at(-1);
+    if (event && event.tick !== this.lastEvent) {
+      this.lastEvent = event.tick;
+      this.hint.textContent = event.message;
+    }
+  }
+  destroy() {
+    this.tooltips.destroy();
+    window.removeEventListener("keydown",this.onKey);
+    this.root.remove();
+  }
+}

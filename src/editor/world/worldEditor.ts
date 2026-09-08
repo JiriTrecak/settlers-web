@@ -1,3 +1,6 @@
+import { decalAt, validDecal, type GroundDecal, type DecalKind } from '../../shared/landscape/decal';
+import { readBrushSize, saveBrushSize } from "../brush/sizePrefs";
+import { DAY_CYCLE_SECONDS } from "../../render/sky/sky";
 import { DEFAULT_WATER_STYLE, type WaterStyle } from '../../shared/landscape/waterStyle';
 import { applyLandform, type Landform } from "../../shared/landscape/landform";
 import { sampleCurve, curveDistance, emptyLandscape, type CurvePoint, type TerrainLayer, type CoverPatch, type EnvironmentState } from "../../shared/landscape/curve";
@@ -22,16 +25,17 @@ import { ISO_PITCH, ISO_YAW, MapInput, Minimap, Renderer } from "../../render";
 import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
-import { CleanTool } from "../clean/clean";
+import { CleanTool, wipeStamps, eraseCover } from "../clean/clean";
 import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
-export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain";
+export type EditorTool = "select" | "stamp" | "brush" | "clean" | "sculpt" | "terrain" | "decal";
 
 export type EditorView = {
   x: number;
   z: number;
   gameCam: boolean;
+  gameZoom?: number;
   zoom: number;
   yaw: number;
   pitch: number;
@@ -46,6 +50,7 @@ export type EditorShot = {
 };
 
 export type EditorShotOpts = {
+  gameZoom?: number;
   x?: number;
   z?: number;
   zoom?: number;
@@ -67,7 +72,16 @@ export class WorldEditor {
   asset: string | null = null;
   terrainMode: 'terrain' | 'river' | 'raise' | 'foliage' | 'smooth' | 'flatten' | 'hill' | 'plateau' | 'basin' = 'terrain';
   terrainLayer: TerrainLayer = 'sand';
-  terrainRadius=4;
+  private terrainSize=readBrushSize('terrain',64);
+  get terrainRadius(): number { return this.terrainSize; }
+  set terrainRadius(n: number) { if(Number.isFinite(n)){this.terrainSize=Math.max(1,Math.min(64,n));saveBrushSize('terrain',this.terrainSize);} }
+  decalKind: DecalKind = 'leaf-litter';
+  decalSize=readBrushSize('decal');
+  decalRotation=0;
+  decalOpacity=1;
+  decalMode: 'place' | 'select' | 'erase' = 'place';
+  selectedDecal: string | null = null;
+  private lastDecalPoint: {x:number;z:number} | null = null;
   terrainAspect=1;
   terrainRotation=0;
   terrainDepth=1.4;
@@ -105,11 +119,16 @@ export class WorldEditor {
       onSculpt?: () => void;
       onSelect?: () => void;
     },
-  ) {}
+  ) {
+    this.brush.setRadius(readBrushSize('brush'));
+    this.clean.setRadius(readBrushSize('clean'));
+    this.sculpt.setRadius(readBrushSize('sculpt'));
+  }
 
   replace(map: UtcMap): void {
     this.map = map;
     this.select.clear();
+    this.selectedDecal=null;
     this.loadHeight(map);
     this.renderer?.setTerrain(this.height);
     this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
@@ -201,12 +220,16 @@ export class WorldEditor {
   setGameCam(on: boolean): void {
     this.gameCam = on;
     this.renderer?.camera.setGame(on);
+    if (on) this.sky?.setDaySeconds(DAY_CYCLE_SECONDS);
+    // Keep the current time on entry/exit instead of jumping to the saved hour.
+    this.environment({hour: this.sky?.hour ?? this.map.landscape?.environment.hour ?? 9.5, playing: on});
     this.draw();
     this.hooks.onView?.();
   }
 
   setBrushRadius(n: number): void {
     this.brush.setRadius(n);
+    saveBrushSize('brush',this.brush.radius);
     this.hooks.onBrush?.();
   }
 
@@ -217,6 +240,7 @@ export class WorldEditor {
 
   setCleanRadius(n: number): void {
     this.clean.setRadius(n);
+    saveBrushSize('clean',this.clean.radius);
     this.hooks.onClean?.();
   }
 
@@ -227,6 +251,7 @@ export class WorldEditor {
 
   setSculptRadius(n: number): void {
     this.sculpt.setRadius(n);
+    saveBrushSize('sculpt',this.sculpt.radius);
     this.hooks.onSculpt?.();
   }
 
@@ -380,6 +405,40 @@ export class WorldEditor {
     this.renderer?.setLandscape(this.map.landscape!); this.hooks.onChange?.(); this.paint();
   }
 
+  putDecal(decal: GroundDecal): void {
+    if(!validDecal(decal))throw new Error('Invalid decal');
+    const landscape=this.map.landscape??emptyLandscape(), existing=landscape.decals??[];
+    if(existing.length>=2048&&!existing.some(d=>d.id===decal.id))throw new Error('Decal limit reached');
+    const decals=existing.some(d=>d.id===decal.id)?existing.map(d=>d.id===decal.id?decal:d):[...existing,decal];
+    this.map={...this.map,landscape:{...landscape,decals}};
+    this.renderer?.setLandscape(this.map.landscape!);this.paint();this.hooks.onChange?.();
+  }
+  removeDecal(id: string): void {
+    const landscape=this.map.landscape??emptyLandscape();
+    this.map={...this.map,landscape:{...landscape,decals:(landscape.decals??[]).filter(d=>d.id!==id)}};
+    if(this.selectedDecal===id)this.selectedDecal=null;
+    this.renderer?.setLandscape(this.map.landscape!);this.paint();this.hooks.onChange?.();
+  }
+  configureDecal(settings: Partial<Pick<GroundDecal,'kind'|'size'|'rotation'|'opacity'>>): void {
+    const d={id:'preview',x:0,z:0,kind:this.decalKind,size:this.decalSize,rotation:this.decalRotation,opacity:this.decalOpacity,...settings};
+    if(!validDecal(d))throw new Error('Invalid decal settings');
+    this.decalKind=d.kind;this.decalSize=d.size;this.decalRotation=d.rotation;this.decalOpacity=d.opacity;saveBrushSize('decal',d.size);
+    const selected=this.map.landscape?.decals?.find(d=>d.id===this.selectedDecal);
+    if(this.decalMode==='select'&&selected)this.putDecal({...selected,...settings});
+    this.hooks.onView?.();
+  }
+  private decalStroke(x:number,z:number,erase:boolean):void {
+    if(erase||this.decalMode==='erase'){const d=decalAt(this.map.landscape?.decals??[],x,z);if(d)this.removeDecal(d.id);return;}
+    if(this.decalMode==='select'){
+      const d=decalAt(this.map.landscape?.decals??[],x,z);this.selectedDecal=d?.id??null;
+      if(d){this.decalKind=d.kind;this.decalSize=d.size;this.decalRotation=d.rotation;this.decalOpacity=d.opacity;}
+      this.hooks.onView?.();return;
+    }
+    if(this.lastDecalPoint&&Math.hypot(x-this.lastDecalPoint.x,z-this.lastDecalPoint.z)<this.decalSize*.6)return;
+    this.lastDecalPoint={x,z};
+    this.putDecal({id:crypto.randomUUID(),x,z,kind:this.decalKind,size:this.decalSize,rotation:this.decalRotation,opacity:this.decalOpacity});
+  }
+
   landform(shape:Landform):void {
     applyLandform(this.height,shape);this.commitHeight();
     this.renderer?.setTerrain(this.height);this.paint();this.hooks.onChange?.();
@@ -406,6 +465,7 @@ export class WorldEditor {
       z: cam?.targetZ ?? MAP_SIZE / 2,
       gameCam: this.gameCam,
       zoom: cam?.zoom ?? 28,
+      gameZoom: cam?.gameZoom ?? 1,
       yaw: cam?.yaw ?? ISO_YAW,
       pitch: cam?.pitch ?? ISO_PITCH,
     };
@@ -427,11 +487,13 @@ export class WorldEditor {
       yaw: cam.yaw,
       pitch: cam.pitch,
       game: this.gameCam,
+      gameZoom: cam.gameZoom,
     };
     const posed =
       opts.x !== undefined ||
       opts.z !== undefined ||
       opts.zoom !== undefined ||
+      opts.gameZoom !== undefined ||
       opts.yaw !== undefined ||
       opts.pitch !== undefined ||
       opts.gameCam !== undefined ||
@@ -445,6 +507,7 @@ export class WorldEditor {
         x: opts.x,
         z: opts.z,
         zoom: opts.zoom,
+        gameZoom: opts.gameZoom,
         yaw: opts.iso ? (opts.yaw ?? ISO_YAW) : opts.yaw,
         pitch: opts.iso ? (opts.pitch ?? ISO_PITCH) : opts.pitch,
       });
@@ -499,11 +562,19 @@ export class WorldEditor {
 
   dabClean(wx: number, wz: number): void {
     this.clean.beginStroke();
-    const next = this.clean.stroke(wx, wz, this.map.stamps);
-    if (!next) return;
-    this.map = { ...this.map, stamps: next };
-    this.paint();
-    this.hooks.onChange?.();
+    this.cleanAt(wx,wz);
+  }
+
+  private cleanAt(x:number,z:number): void {
+    const hits=this.clean.strokeHits(x,z);
+    const stamps=wipeStamps(this.map.stamps,hits,this.clean.radius,this.clean.type);
+    const landscape=this.map.landscape;
+    const cover=this.clean.type==='foliage'&&landscape ? eraseCover(landscape.cover,hits,this.clean.radius) : landscape?.cover;
+    const changed=!!landscape&&!!cover&&cover.some((p,i)=>p!==landscape.cover[i]);
+    if(stamps.length===this.map.stamps.length&&!changed)return;
+    this.map={...this.map,stamps,...(changed?{landscape:{...landscape!,cover:cover!}}:{})};
+    if(changed)this.renderer?.setLandscape(this.map.landscape!);
+    this.paint();this.hooks.onChange?.();
   }
 
   dabSculpt(wx: number, wz: number, erase = false): void {
@@ -543,10 +614,11 @@ export class WorldEditor {
         rotateBy: (steps) => this.nudgeSelected(steps * YAW_STEP),
       },
       paint: {
-        on: () => this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt" || (this.tool === "terrain" && !this.terrainCurve),
+        on: () => this.tool === "decal" || this.tool === "brush" || this.tool === "clean" || this.tool === "sculpt" || (this.tool === "terrain" && !this.terrainCurve),
         hover: (x, y) => this.hover(x, y),
         stroke: (x, y, erase) => this.stroke(x, y, erase),
         beginStroke: () => {
+          this.lastDecalPoint=null;
           if(this.tool === "terrain")this.clearTerrainCurve();
           if (this.tool === "clean") this.clean.beginStroke();
           else if (this.tool === "sculpt") this.sculpt.beginStroke();
@@ -554,17 +626,18 @@ export class WorldEditor {
         },
         endStroke: () => this.endStroke(),
         sizeBy: (steps) => {
+          if(this.tool === "decal"){this.configureDecal({size:Math.max(.5,Math.min(32,this.decalSize+steps*.5))});return;}
           if (this.tool === "clean") {
-            this.clean.sizeBy(steps);
+            this.setCleanRadius(this.clean.radius + steps * .5);
             this.hooks.onClean?.();
             return;
           }
           if (this.tool === "sculpt") {
-            this.sculpt.sizeBy(steps);
+            this.setSculptRadius(this.sculpt.radius + steps * .5);
             this.hooks.onSculpt?.();
             return;
           }
-          this.brush.sizeBy(steps);
+          this.setBrushRadius(this.brush.radius + steps * .5);
           this.hooks.onBrush?.();
         },
         densityBy: (steps) => {
@@ -576,6 +649,7 @@ export class WorldEditor {
     });
     this.mini = new Minimap(this.hooks.host, {
       camera: renderer.camera,
+      clock: () => renderer.sky.snapshot(),
       viewport: () => ({ w: this.canvas.clientWidth, h: this.canvas.clientHeight }),
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
@@ -606,7 +680,7 @@ export class WorldEditor {
 
   private hover(clientX: number, clientY: number): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
-    const r = this.tool === "terrain" ? this.terrainRadius : this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
+    const r = this.tool === "decal" ? this.decalSize/2 : this.tool === "terrain" ? this.terrainRadius : this.tool === "clean" ? this.clean.radius : this.tool === "sculpt" ? this.sculpt.radius : this.brush.radius;
     if (!hit) {
       this.renderer?.brush.setCursor(0, 0, r, false);
       return;
@@ -617,6 +691,7 @@ export class WorldEditor {
   private stroke(clientX: number, clientY: number, erase: boolean): void {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return;
+    if(this.tool === "decal"){this.decalStroke(hit.x,hit.z,erase);return;}
     if (this.tool === "terrain") {this.addTerrainPoint(hit.x,hit.z);return;}
     if (this.tool === "sculpt") {
       this.renderer?.brush.setCursor(hit.x, hit.z, this.sculpt.radius, true, hit.y);
@@ -632,11 +707,7 @@ export class WorldEditor {
     }
     if (this.tool === "clean") {
       this.renderer?.brush.setCursor(hit.x, hit.z, this.clean.radius, true, hit.y);
-      const next = this.clean.stroke(hit.x, hit.z, this.map.stamps);
-      if (!next) return;
-      this.map = { ...this.map, stamps: next };
-      this.paint();
-      this.hooks.onChange?.();
+      this.cleanAt(hit.x,hit.z);
       return;
     }
     this.brush.stroke(hit.x, hit.z, erase);
@@ -754,6 +825,7 @@ export class WorldEditor {
     this.renderer?.draw({ tick: 0, size: MAP_SIZE, players: [] }, this.map.stamps);
     this.mini?.setHeight(this.height);
     this.mini?.setStamps(this.map.stamps);
+    this.mini?.setPlayerStarts(this.map.playerStarts??[]);
     this.mini?.paint();
   }
 
