@@ -1,6 +1,10 @@
+import pineLod1 from '../../../assets/ant-colony/pine-1-lod.glb?url';
+import pineLod2 from '../../../assets/ant-colony/pine-2-lod.glb?url';
+import pineLod3 from '../../../assets/ant-colony/pine-3-lod.glb?url';
+import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prepareAntMaterials } from './antMaterials';
-import { prototypeGroundOffset } from './grounding';
+import { prototypeBounds, prototypeGroundOffset } from './grounding';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
@@ -17,7 +21,20 @@ export class PropField {
   private batches: InstancedMesh[]=[];
   contactRevision=0;
   contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
+  private lodGeometries=new Set<Mesh['geometry']>();
+  private lodByGeometry=new Map<string,Mesh['geometry']>();
   private queued=false;
+  updateLOD(camera:Camera):void {
+    let coarse=0;
+    for(const batch of this.batches){
+      const low=batch.userData.lodGeometry as Mesh['geometry']|undefined;if(!low)continue;
+      const distance=camera.position.distanceTo(batch.boundingSphere!.center);
+      const previous=batch.geometry===low;
+      const useLow=('isPerspectiveCamera' in camera)&&distance>(previous?68:76);
+      batch.geometry=useLow?low:batch.userData.fullGeometry;if(useLow)coarse+=batch.count;
+    }
+    perf.value('Tree mesh instances at distant LOD',coarse);
+  }
   private destroyed=false;
   private lastStamps: readonly MapStamp[] | null=null;
   private height: ((x: number, z: number) => number) | null = null;
@@ -152,6 +169,7 @@ export class PropField {
       }
     }));
     this.protos.clear();
+    for(const geometry of this.lodGeometries)geometry.dispose();this.lodGeometries.clear();this.lodByGeometry.clear();
     for (const mesh of this.placed.values()) this.scene.remove(mesh);
     this.placed.clear();
     for(const batch of this.batches){this.scene.remove(batch);batch.dispose();}
@@ -188,6 +206,12 @@ export class PropField {
     try {
       const gltf = await this.loader.loadAsync(url);
       if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
+      const lodUrl=({'ant-pine-1':pineLod1,'ant-pine-2':pineLod2,'ant-pine-3':pineLod3} as Record<string,string>)[asset];
+      if(lodUrl){
+        const lod=await this.loader.loadAsync(lodUrl);const parts:Mesh[]=[];lod.scene.traverse(o=>{if(o instanceof Mesh)parts.push(o);});let part=0;
+        gltf.scene.traverse(o=>{if(o instanceof Mesh){const geometry=parts[part++]?.geometry;if(geometry){this.lodByGeometry.set(o.geometry.uuid,geometry);this.lodGeometries.add(geometry);}}});
+        lod.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();});
+      }
       if(/^(pine-chunky|tree-chunky-)/.test(asset))prepareVividFoliage(gltf.scene);
       if (url.includes("synty") || asset.startsWith("synty-") || asset === "river-reeds") flattenPolygon(gltf.scene, asset,variant);
       gltf.scene.traverse((node) => {
@@ -195,7 +219,7 @@ export class PropField {
         node.receiveShadow = true;
       });
       gltf.scene.updateMatrixWorld(true);
-      const box=new Box3().setFromObject(gltf.scene);
+      const box=prototypeBounds(gltf.scene);
       this.bounds.set(asset,{minY:box.min.y,height:box.max.y-box.min.y});
       const root=new Object3D();
       // Trees use zero as their soil line; negative vertices are buried roots, not a pivot error.
@@ -241,6 +265,7 @@ export class PropField {
     queueMicrotask(()=>{this.queued=false;if(!this.destroyed)this.rebuildBatches();});
   }
   private rebuildBatches():void {
+    const timing=perf.start();
     this.contacts=[];this.contactRevision++;
     for(const b of this.batches){this.scene.remove(b);b.dispose();}this.batches=[];
     const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[]}>();
@@ -255,7 +280,9 @@ export class PropField {
       root.traverse(n=>{
         if(!(n instanceof Mesh))return;
         const mats=Array.isArray(n.material)?n.material:[n.material];
-        const key=n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');
+        // Spatial batches allow camera and shadow frusta to reject offscreen forest.
+        const cell=`${Math.floor(root.position.x/24)},${Math.floor(root.position.z/24)}`;
+        const key=cell+':'+n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');
         let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[]};groups.set(key,g);}
         g.poses.push(n.matrixWorld.clone());g.ids.push(id);
       });
@@ -263,9 +290,15 @@ export class PropField {
     for(const g of groups.values()){
       const b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
       g.poses.forEach((p,i)=>b.setMatrixAt(i,p));b.instanceMatrix.needsUpdate=true;
+      b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
+      let trianglesBefore=0;
+      b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
+      b.onAfterRender=renderer=>perf.count(g.ids[0]&&String(this.placed.get(g.ids[0])?.userData.asset).includes('pine')?'Tree triangles':'Other prop triangles',renderer.info.render.triangles-trianglesBefore);
       b.castShadow=b.receiveShadow=true;b.userData.stampIds=g.ids;b.computeBoundingSphere();
       this.batches.push(b);this.scene.add(b);
     }
+    perf.value('Prop batches',this.batches.length);perf.value('Placed props',this.placed.size);
+    perf.end('Prop rebuild (event)',timing);
   }
 
   private syncMark(): void {

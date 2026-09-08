@@ -1,17 +1,18 @@
+import { TERRITORY_EDGES, territoryBorder } from '../../shared/settlement/territoryBorder';
 import { BoxGeometry, Color, Group, InstancedMesh, MeshStandardMaterial, Object3D } from 'three';
 import { PLAYER_COLORS, type HeightField } from '../../shared';
 
 /** Sparse boundary markers, sampled in stable grid order. No navigation obstacles. */
-export function territoryPostPositions(territory: ArrayLike<number>, size = 256) {
+export function territoryPostPositions(territory: ArrayLike<number>, size = 256, borders?: ArrayLike<number>) {
   const posts: { x: number; z: number; owner: number }[] = [];
   const buckets = new Map<string, typeof posts>();
   const spacing = 2.8;
   for (let z = 0; z < size; z++) for (let x = 0; x < size; x++) {
     const owner = territory[z * size + x]!;
     if (owner < 0) continue;
-    const edges = [[0,-1],[1,0],[0,1],[-1,0]] as const;
-    const edge = edges.find(([dx,dz]) => x+dx < 0 || z+dz < 0 || x+dx >= size || z+dz >= size || territory[(z+dz)*size+x+dx] !== owner);
-    if (!edge) continue;
+    const direction = borders ? borders[z * size + x]! : territoryBorder(territory, x, z, size);
+    if (!direction) continue;
+    const edge = TERRITORY_EDGES[direction - 1]!;
     const px = x + edge[0] * .25, pz = z + edge[1] * .25;
     const gx = Math.floor(px/spacing), gz = Math.floor(pz/spacing);
     let crowded = false;
@@ -32,9 +33,9 @@ export class TerritoryPosts extends Group {
   private readonly paint = new MeshStandardMaterial({roughness:.85});
   private readonly stem = new BoxGeometry(.48,.65,.48);
   private readonly cap = new BoxGeometry(.64,.43,.64);
-  rebuild(territory: ArrayLike<number>, field: HeightField) {
+  rebuild(territory: ArrayLike<number>, field: HeightField, borders?: ArrayLike<number>) {
     this.clearInstances();
-    const posts = territoryPostPositions(territory).filter(p => field.sample(p.x,p.z)>.5);
+    const posts = territoryPostPositions(territory, 256, borders).filter(p => field.sample(p.x,p.z)>.5);
     const bases = new InstancedMesh(this.stem,this.stone,posts.length);
     const caps = new InstancedMesh(this.cap,this.paint,posts.length);
     const transform = new Object3D(), color = new Color();

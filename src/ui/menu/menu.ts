@@ -1,3 +1,4 @@
+import {graphicsControls} from './graphicsControls';
 /** Illustrated first screen with real, keyboard-accessible menu controls. */
 import { GameScreen } from "../screen/screen";
 import menuArt from "../../../assets/ui/main-menu/forest-heroes.png";
@@ -62,6 +63,9 @@ export class MainMenu extends GameScreen {
       button("Multiplayer", hooks.onMultiplayer),
       button("Settings", () => {
         fullscreen.textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
+        settings.querySelector('[data-graphics]')?.remove();
+        const graphics=graphicsControls();graphics.dataset.graphics='';
+        settings.querySelector('.canopy-settings-actions')!.before(graphics);
         settings.showModal();
       }),
       button("Editor", hooks.onEditor),

@@ -38,7 +38,7 @@ export function editorTools(hub: EditorHub) {
         mode:z.enum(['terrain','river','raise','foliage','smooth','flatten']).optional(),
         layer:z.enum(['grass','sand','mud','rock','snow']).optional(),
         radius:z.number().optional(),depth:z.number().optional(),opacity:z.number().optional(),
-        x:z.number().optional(),z:z.number().optional(),density:z.number().optional(),flowers:z.number().optional(),grassScale:z.number().min(.2).max(4).optional().describe('Grass tuft size; does not scale flowers. Default 1.'),broadRatio:z.number().min(0).max(1).optional().describe('Fraction of broad bent-blade tufts versus upright thin tufts. Default .55.'),palette:z.enum(['meadow','straw','ochre','sage']).optional(),seed:z.number().optional(),
+        x:z.number().optional(),z:z.number().optional(),density:z.number().optional(),flowers:z.number().optional(),grassScale:z.number().min(.2).max(4).optional().describe('Grass tuft size; does not scale flowers. Default 1.'),broadRatio:z.number().min(0).max(1).optional().describe('Fraction of broad bent-blade tufts versus upright thin tufts. Default .55.'),palette:z.enum(['meadow','straw','ochre','sage','forest']).optional(),seed:z.number().optional(),
         hour:z.number().optional(),season:z.enum(['spring','summer','autumn']).optional(),playing:z.boolean().optional(),
         radiusX:z.number().optional(),radiusZ:z.number().optional(),rotation:z.number().optional(),plateau:z.number().optional(),roughness:z.number().optional(),
         height:z.number().optional(),grid:z.boolean().optional(),map:z.unknown().optional(),

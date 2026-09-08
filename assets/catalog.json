@@ -948,6 +948,27 @@
       "file": "ant-colony/item-stone.glb"
     },
     {
+      "id": "ant-house",
+      "name": "Ant colony \u00b7 House",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/house.glb"
+    },
+    {
+      "id": "ant-tower",
+      "name": "Ant colony \u00b7 Tower",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/tower.glb"
+    },
+    {
+      "id": "ant-stonemason",
+      "name": "Ant colony \u00b7 Stonemason",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/stonemason.glb"
+    },
+    {
       "id": "ant-fort",
       "name": "Ant colony \u00b7 Fort",
       "category": "other",
@@ -981,6 +1002,13 @@
       "category": "other",
       "type": "prop",
       "file": "ant-colony/worker.glb"
+    },
+    {
+      "id": "ant-worker-carry",
+      "name": "Ant colony \u00b7 Worker Carry",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/worker-carry.glb"
     },
     {
       "id": "ant-guard",
@@ -1086,6 +1114,27 @@
       "category": "foliage",
       "type": "prop",
       "file": "ant-colony/reeds.glb"
+    },
+    {
+      "id": "ant-driftwood",
+      "name": "Ant colony \u00b7 Driftwood",
+      "category": "other",
+      "type": "prop",
+      "file": "ant-colony/driftwood.glb"
+    },
+    {
+      "id": "ant-elephant-leaf",
+      "name": "Ant colony \u00b7 Elephant Leaf",
+      "category": "foliage",
+      "type": "prop",
+      "file": "ant-colony/elephant-leaf.glb"
+    },
+    {
+      "id": "ant-stone-deposit",
+      "name": "Ant colony \u00b7 Harvestable stone deposit",
+      "category": "resource",
+      "type": "prop",
+      "file": "ant-colony/rock.glb"
     }
   ]
 }

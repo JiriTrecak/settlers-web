@@ -1,36 +1,38 @@
-import grassNormalUrl from '../../../assets/terrain/grass-normal.png?url';
-import sandNormalUrl from '../../../assets/terrain/sand-normal.png?url';
+import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
+import type {CoverPatch} from '../../shared/landscape/curve';
+import { getAntSurfaceAtlas } from '../prop/antSurfaceAtlas';
 import { DataTexture, RedFormat, LinearFilter, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader, Color } from 'three';
 import { HEIGHT_ORIGIN, HEIGHT_VERTS, type HeightField } from '../../shared';
 import { curveDistance, sampleCurve, type TerrainStroke } from '../../shared/landscape/curve';
 import pebbleUrl from '../../../assets/terrain/pebbles.png?url';
 import snowUrl from '../../../assets/terrain/snow.png?url';
-import grassUrl from '../../../assets/terrain/grass.png?url';
 import sandUrl from '../../../assets/terrain/sand.png?url';
 import mudUrl from '../../../assets/terrain/mud.png?url';
 import rockUrl from '../../../assets/terrain/rock.png?url';
 export class TerrainMaterial extends MeshStandardMaterial {
+  private readonly coverMask=new DataTexture(new Uint8Array(512*512),512,512,RedFormat);
+  private readonly moss=new TextureLoader().load(mossUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private contactRevision=-1;
   private readonly contacts=new DataTexture(new Uint8Array(1024*1024),1024,1024,RedFormat);
   private readonly weights = new DataTexture(new Uint8Array(HEIGHT_VERTS*HEIGHT_VERTS*4),HEIGHT_VERTS,HEIGHT_VERTS);
-  private readonly seasonTint = { value: new Color(0x707840) };
+  private readonly seasonTint = { value: new Color(0xffffff) };
   private readonly level = { value: 0 };
-  private readonly textures = [grassUrl,sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl].map(url=> {
+  private readonly textures = [sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl].map(url=> {
     const t=new TextureLoader().load(url); t.wrapS=t.wrapT=RepeatWrapping; t.colorSpace=SRGBColorSpace; t.anisotropy=8; return t;
   });
-  private readonly normalTextures=[grassNormalUrl,sandNormalUrl].map(url=>{const t=new TextureLoader().load(url);t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;return t;});
   constructor() {
     super({color:0xffffff,roughness:0.95});
+    this.coverMask.minFilter=this.coverMask.magFilter=LinearFilter;this.coverMask.needsUpdate=true;
     this.contacts.minFilter=this.contacts.magFilter=LinearFilter;this.contacts.needsUpdate=true;
     this.weights.minFilter=this.weights.magFilter=LinearFilter;
     this.weights.needsUpdate=true;
     this.onBeforeCompile=shader=>{
-      Object.assign(shader.uniforms,{uContact:{value:this.contacts},uGrassNormal:{value:this.normalTextures[0]},uSandNormal:{value:this.normalTextures[1]},uPaint:{value:this.weights},uGrass:{value:this.textures[0]},uSand:{value:this.textures[1]},uMud:{value:this.textures[2]},uRock:{value:this.textures[3]},uSnow:{value:this.textures[4]},uPebbles:{value:this.textures[5]},uGrassTint:this.seasonTint,uSea:this.level});
+      Object.assign(shader.uniforms,{uMoss:{value:this.moss},uCover:{value:this.coverMask},uSoilAtlas:{value:getAntSurfaceAtlas()},uContact:{value:this.contacts},uPaint:{value:this.weights},uSand:{value:this.textures[0]},uMud:{value:this.textures[1]},uRock:{value:this.textures[2]},uSnow:{value:this.textures[3]},uPebbles:{value:this.textures[4]},uSoilTint:this.seasonTint,uSea:this.level});
       shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vTerrain; varying vec3 vTerrainNormal; varying float vSlope;').replace('#include <begin_vertex>','#include <begin_vertex>\nvTerrain=position; vTerrainNormal=normal; vSlope=1.0-normal.y;');
       shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
       varying vec3 vTerrain; varying vec3 vTerrainNormal; varying float vSlope;
-      uniform sampler2D uContact,uPaint,uGrass,uSand,uMud,uRock,uSnow,uPebbles,uGrassNormal,uSandNormal;
-      uniform vec3 uGrassTint; uniform float uSea;
+      uniform sampler2D uMoss,uCover,uSoilAtlas,uContact,uPaint,uSand,uMud,uRock,uSnow,uPebbles;
+      uniform vec3 uSoilTint; uniform float uSea;
       float hashTerrain(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noiseTerrain(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hashTerrain(i),hashTerrain(i+vec2(1,0)),f.x),mix(hashTerrain(i+vec2(0,1)),hashTerrain(i+vec2(1)),f.x),f.y);}
       `).replace('#include <map_fragment>',`
@@ -38,46 +40,6 @@ export class TerrainMaterial extends MeshStandardMaterial {
       vec4 paint=texture2D(uPaint,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)})+0.5)/${HEIGHT_VERTS.toFixed(1)});
       float n=noiseTerrain(vTerrain.xz*0.18);
       float micro=noiseTerrain(vTerrain.xz*5.0);
-      vec3 g=texture2D(uGrass,uv).rgb;
-      float value=dot(g,vec3(.3,.59,.11));
-      g=uGrassTint*(0.66+value*1.1)*(0.78+0.30*n+0.08*micro);
-      g*=mix(vec3(1.0),vec3(1.17,1.01,.82),smoothstep(.35,.78,n)*.65);
-      // Fine painted leaf flecks break up the broad color fields without extra geometry.
-      vec2 grassCell=vTerrain.xz*2.8;
-      grassCell+=vec2(noiseTerrain(vTerrain.xz*1.1),noiseTerrain(vTerrain.zx*1.3+7.0))*1.4;
-      vec2 cellId=floor(grassCell),cellUv=fract(grassCell)-.5;
-      float seed=hashTerrain(cellId);
-      cellUv-=vec2(hashTerrain(cellId+3.7),hashTerrain(cellId+9.1))*.48-.24;
-      float angle=seed*6.28318;
-      vec2 leafUv=mat2(cos(angle),-sin(angle),sin(angle),cos(angle))*cellUv;
-      leafUv*=vec2(1.0,1.9);
-      float leafDistance=length(leafUv);
-      float leafAA=max(.025,fwidth(leafDistance));
-      float leafRadius=.16+.16*hashTerrain(cellId+18.1);
-      float leafFleck=1.0-smoothstep(leafRadius-leafAA,leafRadius+leafAA,leafDistance);
-      float detailVisibility=1.0-smoothstep(.55,1.2,length(fwidth(grassCell)));
-      float fleckClusters=smoothstep(.25,.72,noiseTerrain(vTerrain.xz*.85));
-      g*=1.0+leafFleck*(seed>.48?.42:-.48)*detailVisibility*(.25+.75*fleckClusters)*step(.16,hashTerrain(cellId+22.3));
-      // Sparse three-leaf ground clumps give the painted surface readable shapes.
-      vec2 clumpCell=vTerrain.xz*1.05;
-      vec2 clumpId=floor(clumpCell),clumpUv=fract(clumpCell)-.5;
-      float clumpSeed=hashTerrain(clumpId+41.3);
-      clumpUv-=vec2(hashTerrain(clumpId+7.1),hashTerrain(clumpId+13.7))*.25-.125;
-      float clumpMask=0.0,clumpLight=0.0;
-      for(int blade=0;blade<3;blade++){
-        float a=clumpSeed*6.28318+float(blade)*2.0944;
-        vec2 q=mat2(cos(a),-sin(a),sin(a),cos(a))*clumpUv;
-        q.x-=.13;
-        float d=length(q*vec2(1.0,1.8));
-        float aa=max(.008,fwidth(d));
-        float leaf=1.0-smoothstep(.14-aa,.14+aa,d);
-        clumpMask=max(clumpMask,leaf);
-        clumpLight=max(clumpLight,leaf*smoothstep(-.025,.045,q.y));
-      }
-      float clumpVisibility=step(.68,clumpSeed)*smoothstep(.35,.65,fleckClusters)
-        *(1.0-smoothstep(.3,.8,length(fwidth(clumpCell))));
-      g=mix(g,g*vec3(.62,.79,.48),clumpMask*clumpVisibility*.65);
-      g+=uGrassTint*clumpLight*clumpVisibility*.16;
       vec3 sand=vec3(.48,.285,.12)*(.82+.30*n+.13*micro);
       sand*=.90+.22*texture2D(uSand,uv*2.5).r;
       vec3 pebbleTex=texture2D(uPebbles,vTerrain.xz*.22).rgb;
@@ -108,23 +70,23 @@ export class TerrainMaterial extends MeshStandardMaterial {
       rock*=mix(1.0,faceTone*(1.0-joint*.24),smoothstep(.25,.65,vSlope));
       float shore=1.0-smoothstep(uSea+0.02,uSea+0.65+n*.15,vTerrain.y);
       float cliff=smoothstep(.15,.5,vSlope);
-      // Irregular worn islands sit beneath the fine grass rather than a uniform lawn.
-      vec2 wearUv=vTerrain.xz*.26+vec2(noiseTerrain(vTerrain.xz*.43),noiseTerrain(vTerrain.zx*.39))*.65;
-      float wearField=noiseTerrain(wearUv)*.72+noiseTerrain(vTerrain.xz*.87)*.28;
-      float worn=smoothstep(.51,.73,wearField)*.56;
-      vec2 earthUv=vTerrain.xz*.75,earthCell=floor(earthUv),earthLocal=fract(earthUv);
-      float nearest=10.0,second=10.0;
-      for(int ez=-1;ez<=1;ez++)for(int ex=-1;ex<=1;ex++){
-        vec2 offset=vec2(float(ex),float(ez));
-        vec2 id=earthCell+offset;
-        vec2 point=offset+.15+.70*vec2(hashTerrain(id),hashTerrain(id+19.7));
-        float dist=length(point-earthLocal);
-        if(dist<nearest){second=nearest;nearest=dist;}else second=min(second,dist);
-      }
-      float crackAA=max(.007,fwidth(second-nearest));
-      float earthCrack=1.0-smoothstep(.008,.018+crackAA,second-nearest);
-      vec3 wornEarth=vec3(.27,.30,.16)*(.80+value*.65)*(1.0-earthCrack*.20);
-      vec3 base=mix(g,wornEarth,worn);
+      float earthCrack=0.0; // Fine fissures are already baked into the soil atlas.
+      // Exposed earth continues beneath the moss-like cover. Green belongs to
+      // the foliage layer, while clods and shallow fissures remain visible in gaps.
+      float soilGrain=noiseTerrain(vTerrain.xz*24.0);
+      sand*= (.87+.23*soilGrain)*(1.0-earthCrack*.08*smoothstep(.35,.68,noiseTerrain(vTerrain.xz*1.1)));
+      vec3 wornEarth=sand*(.92+.08*n);
+      vec2 soilUv=abs(fract(vTerrain.xz*.14)*2.0-1.0);
+      vec3 soilTexture=texture2D(uSoilAtlas,vec2(.506,.006)+soilUv*.488).rgb;
+      float soilValue=dot(soilTexture,vec3(.3,.59,.11));
+      float soilDetail=clamp(soilValue/.30,.50,1.65);
+      sand*=soilDetail;
+      vec3 base=wornEarth*soilDetail;
+      float colony=noiseTerrain(vTerrain.xz*.28)*.45+noiseTerrain(vTerrain.xz*.91)*.35+noiseTerrain(vTerrain.xz*2.1)*.2;
+      float mossMask=texture2D(uCover,(vTerrain.xz-vec2(-16.0))/288.0).r*smoothstep(.29,.61,colony);
+      mossMask*=smoothstep(uSea+.25,uSea+.65,vTerrain.y)*(1.0-cliff);
+      vec3 mossColor=texture2D(uMoss,vTerrain.xz*.20).rgb;
+      base=mix(base,mossColor*.85,mossMask*.94);
       base=mix(base,sand,shore*.94);
       base=mix(base,rock,cliff);
       base=mix(base,sand,paint.r); base=mix(base,mud,paint.g); base=mix(base,rock,paint.b); base=mix(base,mix(vec3(.78,.76,.83),texture2D(uSnow,uv).rgb,.15),paint.a);
@@ -141,19 +103,23 @@ export class TerrainMaterial extends MeshStandardMaterial {
       bedStone*=smoothstep(.48,.72,noiseTerrain(vTerrain.xz*.34));
       bedStone*=exp(-max(0.0,uSea-vTerrain.y-.25)*.65);
       float submerged=1.0-smoothstep(uSea-.20,uSea+.02,vTerrain.y);
-      vec3 bedColor=mix(vec3(.30,.36,.23),vec3(.85,.88,.65),bedStone*(.8+.2*bedSeed));
+      vec3 bedColor=mix(vec3(.12,.16,.17),vec3(.47,.51,.45),bedStone*(.8+.2*bedSeed));
       base=mix(base,bedColor,submerged*.75);
       base*=mix(.68,1.0,smoothstep(uSea-.6,uSea+.25,vTerrain.y));
       float contact=texture2D(uContact,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)}))/${(HEIGHT_VERTS-1).toFixed(1)}).r;
-      diffuseColor.rgb*=base*(1.0-contact);
+      diffuseColor.rgb*=base*uSoilTint*(1.0-contact);
       `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-      vec3 grassN=texture2D(uGrassNormal,vTerrain.xz*.38).xyz*2.0-1.0;
-      vec3 sandN=texture2D(uSandNormal,vTerrain.xz*.34).xyz*2.0-1.0;
-      vec3 groundN=mix(grassN,sandN,paint.r);
-      normal=normalize(normal+mat3(viewMatrix)*vec3(groundN.x,0.0,groundN.y)*.18);
+      // Relief follows the same authored soil detail as its color. Derivative
+      // gradients avoid an unrelated grass normal map and extra texture reads.
+      float soilRelief=(soilValue*.035+soilGrain*.006)*(1.0-paint.a)*(1.0-cliff)*(1.0-submerged);
+      vec3 surfaceX=dFdx(-vViewPosition),surfaceY=dFdy(-vViewPosition);
+      vec3 r1=cross(surfaceY,normal),r2=cross(normal,surfaceX);
+      float determinant=dot(surfaceX,r1);
+      vec3 gradient=sign(determinant)*(dFdx(soilRelief)*r1+dFdy(soilRelief)*r2);
+      normal=normalize(abs(determinant)*normal-gradient);
       `);
     };
-    this.customProgramCacheKey=()=> 'landscape-terrain-v1';
+    this.customProgramCacheKey=()=> 'landscape-terrain-moss-v3';
   }
   setContacts(revision:number,contacts:readonly {x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]):void {
     if(this.contactRevision===revision)return;this.contactRevision=revision;
@@ -166,7 +132,21 @@ export class TerrainMaterial extends MeshStandardMaterial {
       }
     }this.contacts.needsUpdate=true;
   }
-  setSeason(season:string):void { this.seasonTint.value.set(season==='autumn'?0x9c8352:season==='spring'?0x7f914b:0x737d42); }
+  setCover(patches:readonly CoverPatch[]):void {
+    const size=512,span=288,data=this.coverMask.image.data as Uint8Array;data.fill(0);
+    for(const p of patches){
+      if(p.palette!=='forest')continue;
+      const loX=Math.max(0,Math.floor((p.x-p.radius+16)/span*size)),hiX=Math.min(size-1,Math.ceil((p.x+p.radius+16)/span*size));
+      const loZ=Math.max(0,Math.floor((p.z-p.radius+16)/span*size)),hiZ=Math.min(size-1,Math.ceil((p.z+p.radius+16)/span*size));
+      for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
+        const x=(ix+.5)/size*span-16,z=(iz+.5)/size*span-16;
+        if((p.exclusions??[]).some(e=>Math.hypot(x-e.x,z-e.z)<e.radius))continue;
+        const edge=Math.max(0,Math.min(1,(1-Math.hypot(x-p.x,z-p.z)/p.radius)*6));
+        const i=iz*size+ix;data[i]=Math.max(data[i]!,Math.round(255*edge*Math.min(1,p.density)));
+      }
+    }this.coverMask.needsUpdate=true;
+  }
+  setSeason(season:string):void { this.seasonTint.value.set(season==='autumn'?0xfff0dc:0xffffff); }
   update(field:HeightField,strokes:readonly TerrainStroke[]):void {
     this.level.value=field.waterLevel;
     const data=this.weights.image.data as Uint8Array; data.fill(0);
@@ -182,6 +162,6 @@ export class TerrainMaterial extends MeshStandardMaterial {
     }
     this.weights.needsUpdate=true;
   }
-  override dispose():void{ this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());this.normalTextures.forEach(t=>t.dispose());super.dispose(); }
+  override dispose():void{ this.coverMask.dispose();this.moss.dispose();this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());super.dispose(); }
 }
 const smooth=(a:number,b:number,x:number)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};

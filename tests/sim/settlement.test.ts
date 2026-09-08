@@ -21,6 +21,23 @@ const map: UtcMap = {
   ],
 };
 describe("settlement simulation", () => {
+  it("new Ant resources preserve harvesting and ignore decorative stones", () => {
+    const migrated:UtcMap={...map,stamps:[
+      ...map.stamps.map(s=>({...s,asset:s.asset==='pine-chunky'?'ant-pine-1':'ant-stone-deposit'})),
+      {id:'decoration',asset:'ant-rock',x:210,y:220,scale:.1},
+      {id:'stored-goods',asset:'ant-item-stone',x:211,y:220},
+    ]};
+    const legacy=new Settlement(map,slots),current=new Settlement(migrated,slots);
+    expect(current.resources).toEqual(legacy.resources);
+    for(const sim of [legacy,current])expect(sim.command(0,{type:'build',kind:'lumberjack',x:208,z:218})).toBe(true);
+    for(let t=1;t<=3000;t++){legacy.tick(t);current.tick(t);}
+    expect(current.checksum()).toBe(legacy.checksum());
+    expect(current.buildings.find(b=>b.kind==='lumberjack')!.inventory.log).toBeGreaterThan(0);
+  });
+  it("recognizes all three original Ant pine variants", () => {
+    const sim=new Settlement({...map,stamps:[1,2,3].map((n)=>({id:'pine-'+n,asset:'ant-pine-'+n,x:200+n*2,y:217}))},slots);
+    expect(sim.resources.map(r=>r.kind)).toEqual(['wood','wood','wood']);
+  });
   it("marks rival tower ties contested and forbids construction across the border", () => {
     const sim = new Settlement(
       {

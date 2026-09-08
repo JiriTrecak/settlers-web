@@ -10,6 +10,7 @@ export function economyStatus(b: Building, state: SettlementView): string {
     const r=BUILDINGS[b.kind];
     return (b.delivered.wood < r.wood || b.delivered.stone < r.stone ? 'Waiting for construction deliveries' : state.workers.some(w=>w.building===b.id && w.role==='builder') ? 'Builders constructing' : 'Waiting for a builder') + deliveries;
   }
+  if(b.kind==='barracks') return (b.queue.length ? `${b.queue.length} queued · ${b.training ? 'Training' : b.recruit ? 'Recruit approaching' : b.inventory.plank ? 'Waiting for a free settler' : 'Waiting for plank delivery'}` : 'Recruit warriors or archers') + deliveries;
   if(b.kind==='fort') return 'Warehouse · Receives planks and stone; supplies construction' + deliveries;
   if(b.kind==='house') return 'Housing · Adds three settlers';
   if(b.kind==='tower') return 'Territory outpost';

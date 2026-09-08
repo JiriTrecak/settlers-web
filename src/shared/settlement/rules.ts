@@ -1,7 +1,8 @@
 /** Gameplay rules are shared data. Changes require a new match rules revision. */
-export const RULES_REVISION = "settlement-5";
+export const RULES_REVISION = "settlement-6";
 export type ResourceKind = "wood" | "stone";
 export type BuildingKind =
+  | "barracks"
   | "fort"
   | "tower"
   | "lumberjack"
@@ -22,6 +23,7 @@ export type BuildingRule = {
   buildable?: boolean;
 };
 export const BUILDINGS: Record<BuildingKind, BuildingRule> = {
+  barracks: { name: "Barracks", wood: 8, stone: 4, work: 240, radius: 3, territory: 0, population: 0, health: 450 },
   fort: {
     name: "Main fort",
     wood: 0,
@@ -91,6 +93,7 @@ export const BUILDINGS: Record<BuildingKind, BuildingRule> = {
   },
 };
 export const BUILDING_KINDS: BuildingKind[] = [
+  "barracks",
   "lumberjack",
   "sawmill",
   "forester",
@@ -107,3 +110,12 @@ export const MAX_WORKERS = 160;
 export type ItemKind = "log" | "plank" | "stone";
 export type ItemStock = Record<ItemKind, number>;
 export const STOCKPILE_LIMIT = 16;
+
+export type SoldierKind = 'warrior' | 'archer';
+export const SOLDIERS = {
+  warrior: { name: 'Warrior', health: 120, damage: 12, range: 1.5, cooldown: 32, training: 160, planks: 1 },
+  archer: { name: 'Archer', health: 70, damage: 9, range: 7, cooldown: 48, training: 240, planks: 1 },
+} as const;
+export const RECRUIT_QUEUE_LIMIT = 12;
+export const isSoldier = (role: string): role is SoldierKind => role === 'warrior' || role === 'archer';
+export const unitMaxHealth = (role: string) => isSoldier(role) ? SOLDIERS[role].health : 60;

@@ -1,3 +1,4 @@
+import {perf} from '../../debug/performance';
 import { authoredMaps, playableMaps, getMap } from '../../shared/map/library';
 import { MapPicker } from '../../ui/menu/mapPicker';
 import { emptyUtcMap, type UtcMap } from '../../shared/map/utcmap';
@@ -78,7 +79,10 @@ export class GameApp {
       this.raf = requestAnimationFrame(loop);
       const dt = t - this.last;
       this.last = t;
+      const cpu=perf.start();
+      perf.frame(t);
       this.screens?.tick(dt, t);
+      perf.end('App frame total (CPU)',cpu);
     };
     this.raf = requestAnimationFrame(loop);
   }
@@ -93,7 +97,10 @@ export class GameApp {
     const now = performance.now();
     const dt = now - this.last;
     this.last = now;
+    const cpu=perf.start();
+    perf.frame(now);
     this.screens?.tick(dt, now);
+    perf.end('App frame total (CPU)',cpu);
   }
 
   private showMenu(): void {

@@ -1,3 +1,4 @@
+import {perf} from '../../debug/performance';
 import { FogOfWar } from "../visibility/fogOfWar";
 import { forestEnvironment } from '../sky/forestEnvironment';
 import { SettlementLayer } from '../settlement/settlementLayer';
@@ -117,7 +118,7 @@ export class Renderer {
     const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
     try{
       if(animationTime!==undefined){this.water?.tick(animationTime*1000);this.meadow.tick(animationTime*1000);}
-      const cam=this.threeCam();this.camera.applyTo(cam,w,h);this.updateAtmosphere(cam);gl.setRenderTarget(target);gl.render(this.scene,cam);
+      const cam=this.threeCam();this.camera.applyTo(cam,w,h);this.updateAtmosphere(cam);this.props.updateLOD(cam);this.meadow.updateLOD(cam);this.water?.updateVisibility(cam);gl.setRenderTarget(target);gl.render(this.scene,cam);
       const bytes=new Uint8Array(w*h*4);gl.readRenderTargetPixels(target,0,0,w,h,bytes);
       // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
       // alpha in an offscreen target; exporting it darkens foliage when JPEG
@@ -146,12 +147,12 @@ export class Renderer {
     this.props.setSeason(landscape.environment.season);
     if(this.terrain && this.height){
       const mat=this.terrain.mesh.material as TerrainMaterial;
-      if(rebuild)mat.update(this.height,landscape.strokes);mat.setSeason(landscape.environment.season);
+      if(rebuild){mat.update(this.height,landscape.strokes);mat.setCover(landscape.cover);}mat.setSeason(landscape.environment.season);
       if(rebuild)this.meadow.rebuild(this.height,landscape);
     }
   }
   async ready():Promise<void>{await this.props.ready();}
-  diagnostics() { return { drawCalls:this.display.gl.info.render.calls,triangles:this.display.gl.info.render.triangles,geometries:this.display.gl.info.memory.geometries,textures:this.display.gl.info.memory.textures,coverInstances:this.meadow.count,assets:this.props.diagnostics(),environment:this.sky.snapshot() }; }
+  diagnostics() { return { drawCalls:this.display.gl.info.render.calls,triangles:this.display.gl.info.render.triangles,geometries:this.display.gl.info.memory.geometries,textures:this.display.gl.info.memory.textures,coverInstances:this.meadow.count,assets:this.props.diagnostics(),environment:this.sky.snapshot(),lighting:this.sky.lightingDiagnostics() }; }
 
   setAssets(assets: ReadonlyMap<string, string>): void {
     this.props.setUrls(assets);
@@ -186,19 +187,22 @@ export class Renderer {
     dirty?: { loX: number; hiX: number; loZ: number; hiZ: number } | null,
     drape = true,
   ): void {
+    const timing=perf.start();
     this.height = field;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
     this.props.setHeight(sample);
     this.props.setWaterY(field?.waterLevel ?? 0);
     this.brush.setHeight(sample, dirty);
-    if (!this.terrain || !field) return;
+    if (!this.terrain || !field) {perf.end('Terrain update (event)',timing);return;}
     this.terrain.setFrom(field, dirty);
     this.water?.setFrom(field);
     (this.terrain.mesh.material as TerrainMaterial).update(field,this.landscape.strokes);
+    (this.terrain.mesh.material as TerrainMaterial).setCover(this.landscape.cover);
     this.meadow.rebuild(field,this.landscape);
     this.decals.rebuild(this.landscape.decals??[],field,this.landscape.environment.season);
     if (drape) this.refreshGrid();
+    perf.end('Terrain update (event)',timing);
   }
 
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
@@ -217,6 +221,7 @@ export class Renderer {
         this.terrain.setFrom(this.height);
         this.water.setFrom(this.height);
         (this.terrain.mesh.material as TerrainMaterial).update(this.height,this.landscape.strokes);
+        (this.terrain.mesh.material as TerrainMaterial).setCover(this.landscape.cover);
         (this.terrain.mesh.material as TerrainMaterial).setSeason(this.landscape.environment.season);
         this.meadow.rebuild(this.height,this.landscape);
       }
@@ -225,7 +230,9 @@ export class Renderer {
     }
     const ground = this.height ? (x: number, z: number) => this.height!.sample(x, z) : null;
     const seen = new Set<number>();
+    const entities=perf.start();
     if(snapshot.settlement&&this.height){this.settlement??=new SettlementLayer(this.scene);this.settlement.update(snapshot.settlement,this.height,snapshot.tick);}
+    perf.end('Settlers / buildings',entities);
     for (const p of snapshot.settlement?[]:snapshot.players) {
       seen.add(p.id);
       let mesh = this.cubes.get(p.id);
@@ -251,8 +258,12 @@ export class Renderer {
       this.scene.remove(mesh);
       this.cubes.delete(id);
     }
+    const props=perf.start();
     this.props.sync(stamps);
+    perf.end('Prop sync',props);
+    const visibility=perf.start();
     if(snapshot.settlement?.fog){this.fog??=new FogOfWar();this.fog.update(snapshot.settlement.fog,this.scene);}
+    perf.end('Fog of war',visibility);
     (this.terrain?.mesh.material as TerrainMaterial|undefined)?.setContacts(this.props.contactRevision,this.props.contacts);
     this.present();
   }
@@ -290,16 +301,21 @@ export class Renderer {
     return true;
   }
 
-  present(): void {
-    const now = performance.now();
+  present(now = performance.now()): void {
+    const total=perf.start(),environment=perf.start();
     this.sky.tick(now);
-    this.sky.focus(this.camera.targetX,this.camera.targetZ);
+    this.sky.focus(this.camera.targetX,this.camera.targetZ,this.camera.game?Math.max(40,Math.min(110,this.camera.distance*.8)):70);
     this.water?.tick(now);
     this.meadow.tick(now);
+    perf.end('Sky / water / wind',environment);
+    const camera=perf.start();
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
     this.updateAtmosphere(cam);
+    this.props.updateLOD(cam);this.meadow.updateLOD(cam);this.water?.updateVisibility(cam);
+    perf.end('Camera / atmosphere',camera);
     this.display.render(this.scene, cam);
+    perf.end('Present total (CPU)',total);
   }
 
   private updateAtmosphere(cam: OrthographicCamera | PerspectiveCamera): void {

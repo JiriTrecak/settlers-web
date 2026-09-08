@@ -1,57 +1,87 @@
 [
   {
-    "id": "fort",
-    "parts": 707,
-    "faces": 9666
-  },
-  {
-    "id": "lumberjack",
-    "parts": 465,
-    "faces": 5653
-  },
-  {
-    "id": "sawmill",
-    "parts": 369,
-    "faces": 4573
-  },
-  {
-    "id": "forester",
-    "parts": 233,
-    "faces": 4038
-  },
-  {
     "id": "worker",
-    "parts": 35,
-    "faces": 1120
+    "parts": 57,
+    "faces": 1939
   },
   {
     "id": "guard",
-    "parts": 37,
-    "faces": 1154
-  },
-  {
-    "id": "item-log",
-    "parts": 7,
-    "faces": 83
-  },
-  {
-    "id": "item-plank",
-    "parts": 3,
-    "faces": 38
+    "parts": 61,
+    "faces": 2177
   },
   {
     "id": "item-stone",
     "parts": 1,
-    "faces": 26
+    "faces": 54
   },
   {
-    "id": "log-stack",
-    "parts": 63,
-    "faces": 747
+    "id": "driftwood",
+    "parts": 22,
+    "faces": 279
+  },
+  {
+    "id": "forester",
+    "parts": 745,
+    "faces": 11478
+  },
+  {
+    "id": "worker-carry",
+    "parts": 57,
+    "faces": 1939
+  },
+  {
+    "id": "elephant-leaf",
+    "parts": 54,
+    "faces": 618
+  },
+  {
+    "id": "item-plank",
+    "parts": 3,
+    "faces": 54
   },
   {
     "id": "plank-stack",
-    "parts": 36,
-    "faces": 456
+    "parts": 48,
+    "faces": 864
+  },
+  {
+    "id": "house",
+    "parts": 444,
+    "faces": 9746
+  },
+  {
+    "id": "stonemason",
+    "parts": 430,
+    "faces": 8458
+  },
+  {
+    "id": "tower",
+    "parts": 454,
+    "faces": 10379
+  },
+  {
+    "id": "item-log",
+    "parts": 28,
+    "faces": 339
+  },
+  {
+    "id": "log-stack",
+    "parts": 336,
+    "faces": 4068
+  },
+  {
+    "id": "lumberjack",
+    "parts": 1149,
+    "faces": 17702
+  },
+  {
+    "id": "sawmill",
+    "parts": 704,
+    "faces": 13608
+  },
+  {
+    "id": "fort",
+    "parts": 1429,
+    "faces": 30680
   }
 ]

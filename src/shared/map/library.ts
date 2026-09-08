@@ -2,7 +2,9 @@ import { parseUtcMap, type UtcMap } from './utcmap';
 import { mapRevision, playableMapError, type PlayableMap } from './playable';
 const sources=import.meta.glob('../../../assets/maps/**/*.utcmap',{query:'?raw',import:'default',eager:true}) as Record<string,string>;
 export type MapEntry={id:string;name:string;map:UtcMap;revision:string;players:number;source:'project'|'local'};
-const key='utc.authored-maps.v1';
+const key='utc.authored-maps.v2';
+// Retired pre-Ant map library. New editor saves use the current library.
+try { localStorage.removeItem('utc.authored-maps.v1'); } catch { /* Storage unavailable. */ }
 function entry(id:string,map:UtcMap,source:MapEntry['source']):MapEntry{return {id,name:map.name,map,source,revision:mapRevision(map),players:map.playerStarts?.length??0};}
 const project=Object.entries(sources).map(([path,raw])=>{
  const map=parseUtcMap(JSON.parse(raw));if(!map)throw new Error(`Invalid authored map: ${path}`);

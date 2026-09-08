@@ -1,3 +1,5 @@
+import { SOLDIERS, isSoldier, unitMaxHealth, type SoldierKind } from '../../shared/settlement/rules';
+import type { Action } from '../../shared/types/types';
 import { ART, DESCRIPTIONS, art } from "./commandArt";
 import { CommandTooltips } from "./tooltips";
 import "./commandDock.css";
@@ -17,6 +19,12 @@ export class SettlementHud {
   private readonly hint = document.createElement("p");
   private readonly cancel = document.createElement("button");
   private readonly buttons = new Map<BuildingKind, HTMLButtonElement>();
+  private readonly construction=document.createElement("div");
+  private readonly recruitment=document.createElement('div');
+  private readonly queue=document.createElement('div');
+  private readonly military=document.createElement('div');
+  private queueMarkup='';
+  rallyMode=false;
   mode: BuildingKind | null = null;
   selected: number | null = null;
   private lastEvent = -1;
@@ -38,6 +46,7 @@ export class SettlementHud {
     host: HTMLElement,
     private readonly owner: number,
     private readonly hooks: {
+      action: (action:Action) => void;
       mode: () => void;
       cancel: (id: number) => void;
       home: () => void;
@@ -49,7 +58,7 @@ export class SettlementHud {
     this.panel.className="rts-dock";
     this.panel.setAttribute("aria-label","Game command panel");
     const map=document.createElement("section");map.className="rts-map";
-    map.innerHTML='<div class="rts-map-label"><span>TWINWATER REACH</span><span>N ↑</span></div>';
+    map.innerHTML='<div class="rts-map-label"><span></span><span>N ↑</span></div>';
     this.minimapHost.className="rts-map-slot";map.append(this.minimapHost);
     this.clockHost.className="rts-clock-slot";
     const selection=document.createElement("section");selection.className="rts-selection";
@@ -60,8 +69,8 @@ export class SettlementHud {
     const text=document.createElement("div");text.className="rts-selection-copy";text.append(label,this.heading,this.info,this.hint);
     selection.append(this.portrait,text,this.clockHost);
     const actions=document.createElement("section");actions.className="rts-actions";
-    const actionsLabel=document.createElement("div");actionsLabel.className="rts-actions-label";actionsLabel.textContent="Build settlement";
-    const row = document.createElement("div");row.className="rts-command-grid";
+    const actionsLabel=document.createElement("div");actionsLabel.className="rts-actions-label";actionsLabel.textContent="";
+    const row = this.construction;row.className="rts-command-grid";
     actions.append(actionsLabel,row);
     this.panel.append(map,selection,actions);
     for (const kind of BUILDING_KINDS) {
@@ -72,8 +81,9 @@ export class SettlementHud {
       Object.assign(b.dataset,{tipName:rule.name,tipDescription:DESCRIPTIONS[kind],tipWood:String(rule.wood),tipStone:String(rule.stone),tipKey:String(BUILDING_KINDS.indexOf(kind)+1)});
       b.innerHTML=`${art(ART[kind])}<kbd>${BUILDING_KINDS.indexOf(kind)+1}</kbd><span class="rts-command-name">${rule.name.replace("'s hut",'').replace(' lodge','').replace('Settler house','House')}</span>`;
       b.onclick = () => {
+        if(b.hidden || b.disabled)return;
         this.mode = this.mode === kind ? null : kind;
-        this.selected = null;
+        this.rallyMode=false;
         this.hooks.mode();
         this.hint.textContent = this.mode
           ? "Click clear, flat ground inside your border. Escape cancels placement."
@@ -83,6 +93,25 @@ export class SettlementHud {
       row.append(b);
       this.buttons.set(kind, b);
     }
+    this.recruitment.className='rts-recruitment';
+    for(const kind of ['warrior','archer'] as SoldierKind[]) {
+      const button=document.createElement('button');button.className='rts-command';
+      button.innerHTML=`${art(kind==='warrior'?17:18)}<span class="rts-command-name">${SOLDIERS[kind].name}</span>`;
+      Object.assign(button.dataset,{tipName:`Recruit ${SOLDIERS[kind].name}`,tipWood:'1',tipDescription:`1 free settler. ${SOLDIERS[kind].training/40}s training after delivery and arrival. ${SOLDIERS[kind].health} HP. ${kind==='warrior'?'Close-range infantry.':'Ranged support; protect from melee.'}`});
+      button.onclick=()=>{if(this.selected)this.hooks.action({type:'recruit',id:this.selected,kind});};
+      this.recruitment.append(button);
+    }
+    const rally=document.createElement('button');rally.textContent='Set rally point';
+    Object.assign(rally.dataset,{tipName:'Rally point',tipDescription:'Click ground to choose where newly trained units assemble.'});
+    rally.onclick=()=>{this.rallyMode=true;this.hint.textContent='Click ground to set the rally point.';};
+    this.queue.className='rts-recruit-queue';
+    this.queue.onclick=e=>{const button=(e.target as HTMLElement).closest<HTMLButtonElement>('button[data-index]');if(button&&this.selected)this.hooks.action({type:'cancel-recruit',id:this.selected,index:Number(button.dataset.index)});};
+    this.recruitment.append(rally,this.queue);actions.append(this.recruitment);
+    const stop=document.createElement('button');stop.textContent='Stop';
+    Object.assign(stop.dataset,{tipName:'Stop',tipDescription:'Stop moving or pursuing. The unit will defend itself against nearby visible enemies.'});
+    stop.onclick=()=>{if(this.selected)this.hooks.action({type:'stop-unit',id:this.selected});};
+    this.military.className="rts-military";
+    this.military.append(stop);actions.append(this.military);
     const home = document.createElement("button");
     home.innerHTML=art(12)+'<span>Home fort</span>';
     Object.assign(home.dataset,{tipName:'Home fort',tipDescription:'Center the camera on your main fort.',tipKey:'Home'});
@@ -114,6 +143,7 @@ export class SettlementHud {
   setMapName(name:string) { const label=this.panel.querySelector(".rts-map-label span");if(label)label.textContent=name; }
   clearMode() {
     this.mode = null;
+    this.rallyMode=false;
     this.hooks.mode();
     this.syncButtons();
   }
@@ -130,7 +160,7 @@ export class SettlementHud {
     if (c) {
       const workers=state.workers.filter(w=>w.owner===this.owner),carriers=workers.filter(w=>w.role==='carrier');
       const markup = [
-        [8,c.stock.wood,'Planks','Sawn timber stored at the fort, available for construction.'],
+        [8,c.stock.wood,'Planks','Sawn timber at the fort, used for construction and soldier recruitment.'],
         [9,c.stock.stone,'Stone','Dressed stone stored at the fort, available for construction.'],
         [7,workers.length,'Settlers','Your entire workforce. Build houses to welcome three additional settlers.'],
         [11,`${carriers.filter(w=>w.shipment).length}/${carriers.length}`,'Carriers','Busy carriers / all unassigned settlers. Everyone without a specialist role helps transport goods.']
@@ -139,11 +169,20 @@ export class SettlementHud {
     }
     const building = state.buildings.find((b) => b.id === this.selected),
       worker = state.workers.find((w) => w.id === this.selected);
+    const canBuild=!!worker && worker.owner===this.owner && !isSoldier(worker.role);
+    for(const button of this.buttons.values()){button.hidden=!canBuild && !this.mode;button.disabled=!!state.outcome;}
+    this.recruitment.hidden=!(building?.kind==='barracks' && building.complete && building.health>0 && building.owner===this.owner && !state.outcome);
+    this.military.hidden=!(worker && worker.owner===this.owner && isSoldier(worker.role) && !state.outcome);
+    this.construction.hidden=!this.recruitment.hidden || !this.military.hidden;
+    if(!this.recruitment.hidden && building){
+      const markup=building.queue.map((kind,index)=>`<button data-index="${index}" data-tip-name="Cancel ${SOLDIERS[kind].name}" data-tip-description="Remove this recruit from the queue. Delivered planks stay at the barracks.">${index+1}. ${SOLDIERS[kind].name}${index===0 && building.training?` ${Math.floor(building.training/SOLDIERS[kind].training*100)}%`:''} ×</button>`).join('');
+      if(markup!==this.queueMarkup){this.queue.innerHTML=markup;this.queueMarkup=markup;}
+    }
     this.heading.textContent=building?BUILDINGS[building.kind].name:worker?worker.role[0]!.toUpperCase()+worker.role.slice(1):this.mode?BUILDINGS[this.mode].name:"Your settlement";
-    const portraitIndex=building?ART[building.kind]:worker?7:this.mode?ART[this.mode]:6;
+    const portraitIndex=building?ART[building.kind]:worker?(worker.role==='warrior'?17:worker.role==='archer'?18:7):this.mode?ART[this.mode]:6;
     if(portraitIndex!==this.portraitIndex){this.portrait.innerHTML=art(portraitIndex);this.portrait.append(this.meter);this.portraitIndex=portraitIndex;}
-    this.meter.textContent=building?(building.complete?`${building.health} / ${BUILDINGS[building.kind].health??250}`:`${Math.floor(building.progress/BUILDINGS[building.kind].work*100)}% built`):worker?'SETTLER':this.mode?'BUILDING PLAN':'MAIN FORT';
-    Object.assign(this.portrait.dataset,{tipName:this.heading.textContent??'Selection',tipDescription:building?DESCRIPTIONS[building.kind]:worker?'Selected settler. Unassigned, idle carriers can be ordered to move by clicking the ground.':'Select a building or settler to inspect it.',...(building?{tipWood:String(BUILDINGS[building.kind].wood),tipStone:String(BUILDINGS[building.kind].stone)}:{})});
+    this.meter.textContent=building?(building.complete?`${building.health} / ${BUILDINGS[building.kind].health??250}`:`${Math.floor(building.progress/BUILDINGS[building.kind].work*100)}% built`):worker?`${worker.health} / ${unitMaxHealth(worker.role)} HP`:this.mode?'BUILDING PLAN':'MAIN FORT';
+    Object.assign(this.portrait.dataset,{tipName:this.heading.textContent??'Selection',tipDescription:building?DESCRIPTIONS[building.kind]:worker?(isSoldier(worker.role)?'Click ground to move. Click a visible enemy to attack. Nearby enemies are engaged automatically.':'Select a construction command to build. Unassigned carriers can move and become recruits.'):'Select a building or settler to inspect it.',...(building?{tipWood:String(BUILDINGS[building.kind].wood),tipStone:String(BUILDINGS[building.kind].stone)}:{})});
     if(!building){delete this.portrait.dataset.tipWood;delete this.portrait.dataset.tipStone;}
     this.cancel.hidden =
       !building || building.owner !== this.owner || building.complete;
@@ -164,9 +203,9 @@ export class SettlementHud {
       this.info.textContent = `${r.name} · Player ${building.owner + 1} · ${building.complete ? `HP ${building.health}/${r.health ?? 250} · Stock: ${inventory.log} logs, ${inventory.plank} planks, ${inventory.stone} stone` : `Construction ${Math.floor((building.progress / r.work) * 100)}% · Delivered ${building.delivered.wood}/${r.wood} planks, ${building.delivered.stone}/${r.stone} stone`}`;
       this.info.textContent += "\n" + (building.remembered ? "Last seen · Current activity unknown" : building.owner !== this.owner ? "Enemy building in sight" : economyStatus(building,state));
     } else if (worker)
-      this.info.textContent = `${worker.role} · ${worker.job.replaceAll("-", " ")}${worker.quantity ? ` · Carrying ${worker.quantity} ${worker.shipment?.item ?? (worker.carry === "wood" ? "logs" : "stone")}` : ""}${worker.role === "carrier" && !worker.shipment ? " · Click ground to move." : ""}`;
+      this.info.textContent = `${worker.role} · HP ${worker.health}/${unitMaxHealth(worker.role)} · ${worker.job.replaceAll("-", " ")}${worker.quantity ? ` · Carrying ${worker.quantity} ${worker.shipment?.item ?? (worker.carry === "wood" ? "logs" : "stone")}` : ""}${(worker.role === "carrier" || isSoldier(worker.role)) && !worker.shipment ? " · Click ground to move." : ""}`;
     else
-      this.info.textContent = this.mode ? DESCRIPTIONS[this.mode] : "Build a lumberjack, sawmill and stonemason first. Carriers transport goods; builders construct. Foresters replant trees; houses add workers.";
+      this.info.textContent = this.mode ? DESCRIPTIONS[this.mode] : "Select a settler to build, a barracks to recruit, or a soldier to command. Click a visible enemy to attack. Builders repair damaged buildings for free.";
     if (state.outcome) {
       this.info.textContent =
         state.outcome.winner === this.owner

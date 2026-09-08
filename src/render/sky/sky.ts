@@ -103,10 +103,10 @@ export class Sky {
     this.apply();
   }
 
-  focus(x:number,z:number):void {
+  focus(x:number,z:number,extent=70):void {
     const dx=x-this.sun.target.position.x,dz=z-this.sun.target.position.z;
     this.sun.target.position.set(x,0,z);this.sun.position.x+=dx;this.sun.position.z+=dz;
-    const c=this.sun.shadow.camera;c.left=c.bottom=-70;c.right=c.top=70;c.updateProjectionMatrix();this.sun.target.updateMatrixWorld();
+    const c=this.sun.shadow.camera;c.left=c.bottom=-extent;c.right=c.top=extent;c.updateProjectionMatrix();this.sun.target.updateMatrixWorld();
   }
 
   /** Start haze around the view's ground focus so zooming keeps nearby detail clear. */
@@ -142,6 +142,10 @@ export class Sky {
     }
     this.last = now;
     this.apply();
+  }
+
+  lightingDiagnostics() {
+    return { preset:{...this.light},sunIntensity:this.sun.intensity,sunColor:this.sun.color.getHexString(),ambientIntensity:this.ambient.intensity,fillIntensity:this.hemi.intensity };
   }
 
   snapshot(): SkyState {

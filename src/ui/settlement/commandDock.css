@@ -74,3 +74,20 @@
 /* Clip the exported frame's empty upper margin without clipping the clock or controls. */
 .rts-dock{background:none;isolation:isolate}
 .rts-dock::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('../../../assets/ui/ant-hud/frame-steel-v2.png') center top/100% 105% no-repeat;clip-path:polygon(0 31%,22.2% 31%,24% 37.4%,35.5% 37.4%,37% 38.2%,44% 38.2%,47% 41.2%,66% 41.2%,69% 38.2%,100% 37.5%,100% 100%,0 100%)}
+
+.rts-recruitment { display:flex; flex-wrap:wrap; align-content:start; gap:6px; }
+.rts-recruitment[hidden], .rts-command[hidden], .rts-military[hidden] { display:none; }
+.rts-recruitment > .rts-command { width:76px; height:70px; }
+.rts-recruit-queue { display:flex; flex-wrap:wrap; gap:3px; max-height:78px; overflow:auto; width:100%; }
+.rts-recruit-queue button, .rts-recruitment > button:not(.rts-command), .rts-military button { color:#e7dcc0; background:#232a2b; border:1px solid #67706c; padding:5px 8px; cursor:pointer; }
+.army-command-icon { font-size:34px; color:#d9dee0; text-shadow:0 2px 3px #000; }
+
+.rts-command-grid[hidden]{display:none}
+.rts-recruitment{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:52px 22px minmax(0,1fr);height:100%;gap:4px;padding:3px;pointer-events:auto}
+.rts-recruitment>.rts-command{width:100%;height:100%}
+.rts-recruitment>button:not(.rts-command){grid-column:1/-1;padding:2px 6px;font-size:10px}
+.rts-recruit-queue{grid-column:1/-1;max-height:none;min-height:0;align-content:start}
+.rts-recruit-queue button{font-size:9px;padding:3px 5px}
+.rts-military{pointer-events:auto}
+.rts-command>.rts-military-art{position:absolute;inset:0;width:100%;height:100%;filter:none}
+.rts-portrait>.rts-military-art{width:100%;height:100%}

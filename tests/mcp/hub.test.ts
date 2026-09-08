@@ -31,6 +31,21 @@ describe("editor hub join", () => {
     tab.close();
   });
 
+  it("keeps older tabs connected without letting them displace the newest tab", async () => {
+    const host=track(new EditorHub());await host.listen(PORT+1);
+    const connect=async (name:string)=>{
+      const tab=new WebSocket(`ws://127.0.0.1:${PORT+1}`);await opened(tab);
+      tab.on('message',data=>{const req=JSON.parse(String(data));tab.send(JSON.stringify({id:req.id,ok:true,result:name}));});
+      tab.send(JSON.stringify({role:'tab'}));await delay(40);return tab;
+    };
+    const old=await connect('old'),latest=await connect('latest');
+    expect(old.readyState).toBe(WebSocket.OPEN);
+    expect(await host.call('status')).toBe('latest');
+    old.close();await delay(40);
+    expect(await host.call('status')).toBe('latest');
+    latest.close();
+  });
+
   function track(hub: EditorHub): EditorHub {
     hubs.push(hub);
     return hub;

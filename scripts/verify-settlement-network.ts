@@ -45,7 +45,7 @@ try {
   ]);
   const raw = readFileSync(
       new URL(
-        "../assets/maps/showcase/Twinwater-Reach.utcmap",
+        "../assets/maps/showcase/mosswater-divide.utcmap",
         import.meta.url,
       ),
       "utf8",
@@ -56,7 +56,7 @@ try {
     hash = Math.imul(hash ^ raw.charCodeAt(i), 16777619);
   const created = await post("/api/rooms", {
       name: "Settlement verification",
-      mapId: "twinwater-reach",
+      mapId: "mosswater-divide",
       mapRevision: `${RULES_REVISION}-${(hash >>> 0).toString(16)}`,
       slotCount: 2,
       guestName: "Blue",
@@ -121,7 +121,7 @@ try {
       through % 200 === 0 ? 1 : 0,
       through % 200 === 0 ? 0 : 1,
     ]) {
-      const home = i === 0 ? 218 : 38,
+      const home = i === 0 ? 210 : 46,
         sign = i === 0 ? 1 : -1;
       const actions =
         through === 100
@@ -141,8 +141,8 @@ try {
               {
                 type: "build",
                 kind: "sawmill",
-                x: home + sign * 14,
-                z: home + sign * 12,
+                x: home + sign * 10,
+                z: home + sign * 10,
               },
             ]
           : through === 2100

@@ -1,3 +1,5 @@
+import { SOLDIERS, RECRUIT_QUEUE_LIMIT, isSoldier, unitMaxHealth, type SoldierKind } from '../../shared/settlement/rules';
+import { resourceKindForAsset } from '../../shared/settlement/resourceAssets';
 import { Visibility, VISION_STEP, type FogView } from "../visibility/visibility";
 import {
   decodeHeight,
@@ -25,6 +27,10 @@ import { Navigation } from "./navigation";
 /** `wood` retains the v1 field name but now means spendable sawn planks. Logs live in building inventories. */
 export type Stock = { wood: number; stone: number };
 export type Building = {
+  queue: SoldierKind[];
+  recruit: number;
+  training: number;
+  rally: { x: number; z: number } | null;
   remembered?: boolean;
   id: number;
   owner: number;
@@ -49,6 +55,9 @@ export type ResourceNode = {
   growth: number;
 };
 export type WorkerJob =
+  | "to-barracks"
+  | "training"
+  | "attack"
   | "pickup"
   | "dropoff"
   | "idle"
@@ -67,12 +76,15 @@ export type WorkerJob =
   | "mill-output"
   | "plant";
 export type Worker = {
+  health: number;
+  target: number;
+  attackCooldown: number;
   id: number;
   owner: number;
   x: number;
   z: number;
   role:
-    "builder" | "carrier" | "lumberjack" | "stonemason" | "sawyer" | "forester";
+    SoldierKind | "builder" | "carrier" | "lumberjack" | "stonemason" | "sawyer" | "forester";
   job: WorkerJob;
   building: number;
   resource: number;
@@ -84,6 +96,8 @@ export type Worker = {
 };
 export type SettlementView = {
   fog?: FogView;
+  /** Observed real borders; fogged cells retain their last observation. */
+  territoryBorders?: Uint8Array;
   outcome: { winner: number | null; defeated: number[] } | null;
   revision: number;
   buildings: readonly Building[];
@@ -156,15 +170,10 @@ export class Settlement {
           home.z + BUILDINGS[home.kind].radius + 2 + Math.floor(i / 4),
           i < 2 ? "builder" : "carrier",
         );
+      for (let i=0;i<2;i++) this.spawnWorker(slot.player,home.x-2+i*4,home.z+7,'warrior');
     }
     for (const stamp of map.stamps) {
-      const kind: ResourceKind | null = /^(pine-chunky|tree-chunky)/.test(
-        stamp.asset,
-      )
-        ? "wood"
-        : stamp.asset === "rock-rounded-cool"
-          ? "stone"
-          : null;
+      const kind = resourceKindForAsset(stamp.asset);
       if (!kind) continue;
       const x = Math.round(stamp.x + 0.5),
         z = Math.round(stamp.y + 0.5);
@@ -229,6 +238,7 @@ export class Settlement {
       x,
       z,
       role,
+      health: unitMaxHealth(role), target: 0, attackCooldown: 0,
       job: "idle",
       building: 0,
       resource: 0,
@@ -257,7 +267,8 @@ export class Settlement {
       escrow: { wood: 0, stone: 0 },
       delivered: { wood: 0, stone: 0 },
       inventory: { log: 0, plank: 0, stone: 0 },
-      health: BUILDINGS[kind].health ?? 250,
+      health: complete ? (BUILDINGS[kind].health ?? 250) : Math.ceil((BUILDINGS[kind].health ?? 250)*.1),
+      queue: [], recruit: 0, training: 0, rally: null,
     };
     this.buildings.push(b);
     this.footprint(b, b.id);
@@ -351,6 +362,30 @@ export class Settlement {
   command(owner: number, action: Action): boolean {
     if (this.outcome || !validAction(action) || !this.colony(owner))
       return false;
+    if (action.type === 'recruit' || action.type === 'cancel-recruit' || action.type === 'rally') {
+      const b=this.buildings.find(b=>b.id===action.id && b.owner===owner && b.kind==='barracks' && b.complete && b.health>0);
+      if(!b)return false;
+      if(action.type==='recruit') {
+        if(b.queue.length>=RECRUIT_QUEUE_LIMIT)return false;
+        b.queue.push(action.kind);
+      } else if(action.type==='cancel-recruit') {
+        if(action.index>=b.queue.length)return false;
+        b.queue.splice(action.index,1);
+        if(action.index===0){const w=this.workers.find(w=>w.id===b.recruit);if(w)this.resetWorker(w);b.recruit=0;b.training=0;}
+      } else {
+        if(!this.walkable(action.z*256+action.x) || this.navigation.path(this.entrance(b),action.z*256+action.x)===null)return false;
+        b.rally={x:action.x,z:action.z};
+      }
+      this.revision++;return true;
+    }
+    if(action.type==='attack' || action.type==='stop-unit') {
+      const w=this.workers.find(w=>w.id===action.id && w.owner===owner && isSoldier(w.role));
+      if(!w)return false;
+      if(action.type==='stop-unit'){this.resetWorker(w);return true;}
+      const target=this.workers.find(t=>t.id===action.target)??this.buildings.find(t=>t.id===action.target);
+      if(!target || target.owner===owner || target.health<=0 || !this.targetVisible(owner,target))return false;
+      this.resetWorker(w);w.target=target.id;w.job='attack';w.timer=0;return true;
+    }
     if (action.type === "build") {
       const error = this.canBuild(owner, action.kind, action.x, action.z);
       if (error) {
@@ -393,16 +428,17 @@ export class Settlement {
     }
     if (action.type === "move-worker") {
       const w = this.workers.find(
-        (w) => w.id === action.id && w.owner === owner && w.role === "carrier" && !w.shipment && !w.quantity,
+        (w) => w.id === action.id && w.owner === owner && (w.role === "carrier" || isSoldier(w.role)) && !w.shipment && !w.quantity && !w.building,
       );
       if (!w) return false;
-      return this.travel(w, action.z * 256 + action.x, "move");
+      w.target=0;return this.travel(w, action.z * 256 + action.x, "move");
     }
     return false;
   }
   private resetWorker(w: Worker) {
     const node = this.resources.find((n) => n.id === w.resource);
     if (node?.claimed === w.id) node.claimed = 0;
+    w.target = 0;
     w.shipment = null;
     w.job = "idle";
     w.building = 0;
@@ -462,10 +498,16 @@ export class Settlement {
         w.building = b.id;
       }
     }
-    for (const w of this.workers) this.workerTick(w);
+    for(const b of this.buildings)if(b.kind==='barracks' && b.complete && b.health>0)this.recruitTick(b);
+    for (const w of [...this.workers]) {
+      if(w.health<=0)continue;
+      if(this.outcome)break;
+      this.workerTick(w);
+    }
     if(tick % VISION_STEP === 0)this.visibility.update(this.buildings,this.workers,this.resources,this.territory);
   }
   private workerTick(w: Worker) {
+    if(isSoldier(w.role)){this.soldierTick(w);return;}
     const assigned = this.buildings.find((b) => b.id === w.building);
     if (assigned && assigned.health <= 0) {
       const role = w.role;
@@ -475,6 +517,7 @@ export class Settlement {
       w.timer = 20;
       return;
     }
+    if(w.job==='training')return;
     if (w.timer > 0) {
       w.timer--;
       return;
@@ -492,6 +535,11 @@ export class Settlement {
       w.x = next % 256;
       w.z = Math.floor(next / 256);
       w.timer = WORKER_STEP_TICKS;
+      return;
+    }
+    if(w.job==='to-barracks') {
+      if(!assigned || assigned.recruit!==w.id){this.resetWorker(w);return;}
+      if(this.at(w,assigned,'to-barracks'))w.job='training';
       return;
     }
     if (w.job === "move") {
@@ -522,13 +570,13 @@ export class Settlement {
   }
   private builderTick(w: Worker) {
     let b = this.buildings.find((b) => b.id === w.building);
-    if (!b || b.complete || b.health <= 0) {
+    if (!b || (b.complete && b.health >= (BUILDINGS[b.kind].health??250)) || b.health <= 0) {
       w.building = 0;
       w.job = "idle";
       b = this.buildings.find(
         (b) =>
           b.owner === w.owner &&
-          !b.complete &&
+          (!b.complete || b.health < (BUILDINGS[b.kind].health??250)) &&
           b.health > 0 &&
           this.workers.filter(
             (v) => v.role === "builder" && v.building === b.id,
@@ -556,13 +604,17 @@ export class Settlement {
         w.quantity = 0;
       }
       w.job =
-        b.delivered.wood >= rule.wood && b.delivered.stone >= rule.stone
+        b.complete || (b.delivered.wood >= rule.wood && b.delivered.stone >= rule.stone)
           ? "build"
           : "idle";
       return;
     }
     if (w.job === "build") {
+      if(b.complete){b.health=Math.min(rule.health??250,b.health+1);w.timer=3;return;}
+      const max=rule.health??250;
+      const oldCap=Math.ceil(max*(.1+.9*b.progress/rule.work));
       b.progress++;
+      b.health+=Math.ceil(max*(.1+.9*b.progress/rule.work))-oldCap;
       if (b.progress >= rule.work) {
         b.complete = true;
         this.revision++;
@@ -718,9 +770,10 @@ export class Settlement {
       const key = task.item === "stone" ? "stone" : "wood";
       if (w.job === "pickup") {
         if (!source || !this.at(w,source,"pickup")) return;
-        const available = task.construction ? target.escrow[key] : source.inventory[task.item];
+        const available = task.construction ? target.escrow[key] : source.kind === "fort" ? this.colony(w.owner)!.stock[key] : source.inventory[task.item];
         w.quantity = Math.min(task.amount,available);
         if(task.construction) target.escrow[key] -= w.quantity;
+        else if(source.kind === "fort")this.colony(w.owner)!.stock[key]-=w.quantity;
         else source.inventory[task.item] -= w.quantity;
         if(!w.quantity) { this.resetWorker(w); return; }
         task.amount = w.quantity;
@@ -739,11 +792,11 @@ export class Settlement {
     const tasks: NonNullable<Worker["shipment"]>[] = [];
     const reserved = (predicate: (t: NonNullable<Worker["shipment"]>,v: Worker) => boolean) =>
       this.workers.reduce((n,v) => n + (v.shipment && predicate(v.shipment,v) ? v.shipment.amount : 0),0);
-    const offer = (source: Building,target: Building,item: ItemKind,available: number,construction=false) => {
+    const offer = (source: Building,target: Building,item: ItemKind,available: number,construction=false,demand=Infinity) => {
       const outgoing = reserved((t,v) => v.quantity === 0 && t.source === source.id && t.item === item && t.construction === construction && (!construction || t.target === target.id));
       const incoming = reserved(t => t.target === target.id);
       const room = target.complete && target.kind !== "fort" ? STOCKPILE_LIMIT-this.inventorySize(target)-incoming : CARRY_CAPACITY;
-      const amount = Math.min(CARRY_CAPACITY,available-outgoing,room);
+      const amount = Math.min(CARRY_CAPACITY,available-outgoing,room,demand-incoming);
       if(amount > 0) tasks.push({source:source.id,target:target.id,item,amount,construction});
     };
     // Materials already paid for take priority; then clear producer outputs, then supply mills.
@@ -751,7 +804,11 @@ export class Settlement {
       offer(home,b,"plank",b.escrow.wood,true);
       offer(home,b,"stone",b.escrow.stone,true);
     }
-    for(const b of own.filter(b => b.complete && b.kind !== "fort")) {
+    for(const b of own.filter(b=>b.complete && b.kind==='barracks'))
+      offer(home,b,'plank',this.colony(w.owner)!.stock.wood,false,Math.min(2,b.queue.length)-b.inventory.plank);
+    for(const b of own.filter(b=>b.complete && b.kind==='barracks'))
+      offer(b,home,'plank',Math.max(0,b.inventory.plank-Math.min(2,b.queue.length)));
+    for(const b of own.filter(b => b.complete && b.kind !== "fort" && b.kind !== 'barracks')) {
       offer(b,home,"plank",b.inventory.plank);
       offer(b,home,"stone",b.inventory.stone);
     }
@@ -814,6 +871,96 @@ export class Settlement {
     w.timer = 80;
   }
   /** Deterministic damage hook for the forthcoming combat system; never a trusted client payload. */
+  private recruitTick(b: Building) {
+    let w=this.workers.find(w=>w.id===b.recruit && w.health>0);
+    if(b.recruit && !w){b.recruit=0;b.training=0;}
+    if(!b.queue.length || b.inventory.plank<SOLDIERS[b.queue[0]!].planks)return;
+    if(!w) {
+      w=this.workers.find(w=>w.owner===b.owner && w.role==='carrier' && w.job==='idle' && !w.building && !w.shipment && !w.quantity
+        && this.navigation.path(w.z*256+w.x,this.entrance(b))!==null);
+      if(!w)return;
+      this.resetWorker(w);w.building=b.id;b.recruit=w.id;
+      this.travel(w,this.entrance(b),'to-barracks');return;
+    }
+    if(w.job!=='training')return;
+    const kind=b.queue[0]!, rule=SOLDIERS[kind];
+    b.training++;
+    if(b.training<rule.training)return;
+    b.inventory.plank-=rule.planks;b.queue.shift();b.training=0;b.recruit=0;
+    this.resetWorker(w);w.role=kind;w.health=rule.health;w.timer=0;
+    if(b.rally)this.travel(w,b.rally.z*256+b.rally.x,'move');
+    this.revision++;this.feedback(b.owner,`${rule.name} trained`);
+  }
+  private targetVisible(owner:number,target:Worker|Building) {
+    const r='kind' in target?BUILDINGS[target.kind].radius:0;
+    for(let z=Math.max(0,target.z-r);z<=Math.min(255,target.z+r);z++)
+      for(let x=Math.max(0,target.x-r);x<=Math.min(255,target.x+r);x++)if(this.visibility.visible(owner,x,z))return true;
+    return false;
+  }
+  private targetDistance(w:Worker,target:Worker|Building) {
+    const r='kind' in target?BUILDINGS[target.kind].radius:0;
+    return Math.max(0,Math.abs(w.x-target.x)-r)**2+Math.max(0,Math.abs(w.z-target.z)-r)**2;
+  }
+  private soldierTick(w:Worker) {
+    if(!isSoldier(w.role))return;
+    if(w.attackCooldown>0)w.attackCooldown--;
+    if(w.timer>0){w.timer--;return;}
+    const step=()=>{
+      const next=w.path.shift();
+      if(next!==undefined && this.walkable(next)){w.x=next%256;w.z=Math.floor(next/256);}
+      else w.path=[];
+      w.timer=WORKER_STEP_TICKS;
+    };
+    if(w.job==='move') {
+      if(w.path.length){step();return;}
+      w.job='idle';
+    }
+    let target=this.workers.find(t=>t.id===w.target)??this.buildings.find(t=>t.id===w.target);
+    if(target && (target.health<=0 || target.owner===w.owner || !this.targetVisible(w.owner,target))){target=undefined;w.target=0;w.path=[];}
+    if(!target) {
+      target=([...this.workers,...this.buildings] as (Worker|Building)[])
+        .filter(t=>t.owner!==w.owner && t.health>0 && this.targetDistance(w,t)<=100 && this.targetVisible(w.owner,t))
+        .sort((a,b)=>this.targetDistance(w,a)-this.targetDistance(w,b)||a.id-b.id)[0];
+      w.target=target?.id??0;
+    }
+    if(!target){w.job='idle';w.timer=12;return;}
+    const rule=SOLDIERS[w.role];w.job='attack';
+    if(this.targetDistance(w,target)<=rule.range**2) {
+      w.path=[];
+      if(!w.attackCooldown) {
+        if('kind' in target)this.damageBuilding(target.id,rule.damage);
+        else this.damageUnit(target.id,rule.damage);
+        w.attackCooldown=rule.cooldown;
+      }
+      w.timer=3;return;
+    }
+    // Replan only after exhausting a short path segment, so moving targets are followed
+    // without running navigation every frame. Integer grid + stable ordering on every peer.
+    if(!w.path.length) {
+      const r='kind' in target?BUILDINGS[target.kind].radius+1:1;
+      const candidates:number[]=[];
+      for(let dz=-r;dz<=r;dz++)for(let dx=-r;dx<=r;dx++) {
+        if(Math.max(Math.abs(dx),Math.abs(dz))!==r)continue;
+        const x=target.x+dx,z=target.z+dz;
+        if(x>=0&&z>=0&&x<256&&z<256&&this.walkable(z*256+x))candidates.push(z*256+x);
+      }
+      candidates.sort((a,b)=>(a%256-w.x)**2+(Math.floor(a/256)-w.z)**2-((b%256-w.x)**2+(Math.floor(b/256)-w.z)**2)||a-b);
+      for(const goal of candidates){const path=this.navigation.path(w.z*256+w.x,goal);if(path){w.path=path.slice(0,6);break;}}
+    }
+    if(w.path.length)step();else w.timer=40;
+  }
+  damageUnit(id:number,amount:number):boolean {
+    if(this.outcome || !Number.isSafeInteger(amount) || amount<=0)return false;
+    const w=this.workers.find(w=>w.id===id && w.health>0);
+    if(!w)return false;
+    w.health=Math.max(0,w.health-amount);
+    if(!w.health){
+      this.resetWorker(w);
+      this.workers.splice(this.workers.indexOf(w),1);
+      this.revision++;
+    }
+    return true;
+  }
   damageBuilding(id: number, amount: number): boolean {
     if (this.outcome || !Number.isSafeInteger(amount) || amount <= 0)
       return false;
@@ -823,6 +970,7 @@ export class Settlement {
     if (b.health > 0) return true;
     this.footprint(b, 0);
     b.inventory = { log: 0, plank: 0, stone: 0 };
+    b.queue=[];b.recruit=0;b.training=0;
     this.revision++;
     if (b.kind === "fort") {
       const survivors = this.colonies.filter((c) => c.owner !== b.owner);
@@ -844,6 +992,11 @@ export class Settlement {
     if (!home) return null;
     const count = (kind: BuildingKind) =>
       own.filter((b) => b.kind === kind).length;
+    const barracks=own.find(b=>b.kind==='barracks' && b.complete);
+    const army=this.workers.filter(w=>w.owner===owner && isSoldier(w.role));
+    if(barracks && barracks.queue.length<2 && army.length<10 && this.colony(owner)!.stock.wood>2
+      && this.workers.filter(w=>w.owner===owner && w.role==='carrier').length>2)
+      return {type:'recruit',id:barracks.id,kind:army.filter(w=>w.role==='warrior').length>army.filter(w=>w.role==='archer').length*2?'archer':'warrior'};
     const kind: BuildingKind =
       count("lumberjack") < 1
         ? "lumberjack"
@@ -853,6 +1006,8 @@ export class Settlement {
             ? "stonemason"
             : count("house") < 1
               ? "house"
+              : count("barracks") < 1
+                ? "barracks"
               : count("lumberjack") < 2
                 ? "lumberjack"
                 : count("stonemason") < 2
@@ -924,6 +1079,7 @@ export class Settlement {
       revision: this.revision,
       buildings: this.buildings.map((b) => ({
         ...b,
+        queue: [...b.queue], rally: b.rally ? {...b.rally} : null,
         escrow: { ...b.escrow },
         delivered: { ...b.delivered },
         inventory: { ...b.inventory },

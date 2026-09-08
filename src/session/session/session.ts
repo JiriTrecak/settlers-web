@@ -1,3 +1,5 @@
+import { isSoldier } from '../../shared/settlement/rules';
+import {perf} from '../../debug/performance';
 import { EditorBridge } from "../../shared/control/editorBridge";
 import { validAction } from "../../shared/types/types";
 import { getMap, type MapEntry } from "../../shared/map/library";
@@ -128,12 +130,12 @@ export class Session {
       this.world.players.find((p) => p.id === this.me) ?? this.world.players[0];
     if (self) renderer.camera.lookAt(self.pos.x + 0.5, self.pos.y + 0.5);
     renderer.camera.setGame(true);
-    renderer.sky.setPlaying(true);
     this.input = new MapInput(this.canvas, renderer.camera, {
       onChanged: () => this.present(),
       onClick: (x, y) => this.click(x, y),
     });
     this.economyHud = new SettlementHud(this.config.host, this.me, {
+      action: action => this.send(action),
       mode: () => renderer.gamePreview(null),
       cancel: (id) => this.send({ type: "cancel-building", id }),
       home: () => {
@@ -237,6 +239,7 @@ export class Session {
     const renderer = this.renderer;
     const world = this.world;
     if (!renderer || !world) return;
+    const simulation=perf.start();
     const remote = this.config.channel != null;
     if (remote && !this.desynced) this.pulseConfirm();
     this.acc += dtMs;
@@ -268,8 +271,14 @@ export class Session {
       n++;
     }
     if (n >= cap && !remote) this.acc = 0;
+    perf.end('Simulation / lockstep',simulation);
+    const input=perf.start();
     this.input?.tick(dtMs);
+    perf.end('Input',input);
+    const snapshot=perf.start();
     const view = world.view(this.me);
+    perf.end('View snapshot',snapshot);
+    const hud=perf.start();
     if (view.settlement) {
       if (view.settlement.revision !== this.resourceRevision) {
         this.resourceRevision = view.settlement.revision;
@@ -278,15 +287,23 @@ export class Session {
             .filter((n) => n.amount === 0)
             .map((n) => n.stampId),
         );
-        this.stamps = this.loadedMap!.map.stamps.filter((s) => !removed.has(s.id));
-        this.mini?.setStamps(this.stamps);
+        const nextStamps = this.loadedMap!.map.stamps.filter((s) => !removed.has(s.id));
+        // Economy revisions also change for worker movement. Preserve scenery
+        // identity until an actual resource disappears, avoiding GPU rebatches.
+        if(nextStamps.length!==this.stamps.length||nextStamps.some((stamp,i)=>stamp!==this.stamps[i])){
+          this.stamps=nextStamps;
+          this.mini?.setStamps(this.stamps);
+        }
       }
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(view.settlement);
       renderer.gameSelect(this.economyHud?.selected ?? null);
     }
+    perf.end('Economy HUD / minimap data',hud);
     renderer.draw(view, this.stamps);
+    const minimap=perf.start();
     this.mini?.paint();
+    perf.end('Minimap paint',minimap);
     this.fpsFrames += 1;
     this.fpsMs += dtMs;
     if (this.fpsMs >= 1000) {
@@ -307,6 +324,7 @@ export class Session {
     if (!sim || !hit || !hud) return;
     const x = Math.round(hit.x),
       z = Math.round(hit.z);
+    if(hud.rallyMode && hud.selected){this.send({type:'rally',id:hud.selected,x,z});hud.rallyMode=false;return;}
     if (hud.mode) {
       const error = sim.canBuild(this.me, hud.mode, x, z);
       if (error) {
@@ -317,7 +335,13 @@ export class Session {
       return;
     }
     const picked = this.renderer?.pickGameEntity(clientX, clientY);
+    const attacker=sim.workers.find(w=>w.id===hud.selected && w.owner===this.me && isSoldier(w.role));
+    const issueAttack=(id:number)=>{
+      const target=sim.workers.find(w=>w.id===id)??sim.buildings.find(b=>b.id===id);
+      if(attacker && target && target.owner!==this.me && target.health>0){this.send({type:'attack',id:attacker.id,target:id});return true;}return false;
+    };
     if (picked != null) {
+      if(issueAttack(picked))return;
       hud.selected = picked;
       return;
     }
@@ -331,12 +355,13 @@ export class Session {
       (w) => Math.abs(w.x - hit.x) + Math.abs(w.z - hit.z) < 1.6,
     );
     if (building || worker) {
+      if(issueAttack((building??worker)!.id))return;
       hud.selected = (building ?? worker)!.id;
       return;
     }
     const selected = sim.workers.find(
       (w) =>
-        w.id === hud.selected && w.owner === this.me && w.role === "carrier" && !w.shipment && !w.quantity,
+        w.id === hud.selected && w.owner === this.me && (w.role === "carrier" || isSoldier(w.role)) && !w.shipment && !w.quantity,
     );
     if (selected) this.send({ type: "move-worker", id: selected.id, x, z });
     else hud.selected = null;

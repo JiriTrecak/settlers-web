@@ -1,6 +1,9 @@
+import { isSoldier, unitMaxHealth, SOLDIERS } from '../../shared/settlement/rules';
+import { applyPlayerMaterials } from './playerMaterials';
 import { TerritoryPosts } from "./territoryPosts";
 import { prepareAntMaterial } from '../prop/antMaterials';
 import {
+  Sprite, SpriteMaterial,
   Group,
   Object3D,
   Mesh,
@@ -14,11 +17,14 @@ import {
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { BUILDINGS, type BuildingKind } from "../../shared/settlement/rules";
-import { PLAYER_COLORS, type HeightField } from "../../shared";
+import { type HeightField } from "../../shared";
 import type { SettlementView } from "../../sim/settlement/settlement";
 import { stockpileLayout } from "../../shared/settlement/stockpile";
 import type { ItemKind, ItemStock } from "../../shared/settlement/rules";
 const urls = {
+  barracks: new URL("../../../assets/ant-colony/barracks.glb", import.meta.url).href,
+  warrior: new URL("../../../assets/ant-colony/warrior.glb", import.meta.url).href,
+  archer: new URL("../../../assets/ant-colony/archer.glb", import.meta.url).href,
   fort: new URL("../../../assets/ant-colony/fort.glb", import.meta.url)
     .href,
   sawmill: new URL(
@@ -41,18 +47,19 @@ const urls = {
     "../../../assets/ant-colony/item-stone.glb",
     import.meta.url,
   ).href,
-  tower: new URL("../../../assets/props/settlement/tower.glb", import.meta.url)
+  tower: new URL("../../../assets/ant-colony/tower.glb", import.meta.url)
     .href,
   lumberjack: new URL(
     "../../../assets/ant-colony/lumberjack.glb",
     import.meta.url,
   ).href,
   stonemason: new URL(
-    "../../../assets/props/settlement/stonemason.glb",
+    "../../../assets/ant-colony/stonemason.glb",
     import.meta.url,
   ).href,
-  house: new URL("../../../assets/props/settlement/house.glb", import.meta.url)
+  house: new URL("../../../assets/ant-colony/house.glb", import.meta.url)
     .href,
+  carrier: new URL('../../../assets/ant-colony/worker-carry.glb', import.meta.url).href,
   settler: new URL(
     "../../../assets/ant-colony/worker.glb",
     import.meta.url,
@@ -60,6 +67,9 @@ const urls = {
 };
 export class SettlementLayer {
   private readonly root = new Group();
+  private readonly arrowGeometry=new BoxGeometry(.045,.045,.7);
+  private readonly hpBack=new SpriteMaterial({color:0x17201c,depthTest:false});
+  private readonly hpFill=new SpriteMaterial({color:0x73d45d,depthTest:false});
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
   private readonly borders = new TerritoryPosts();
@@ -117,11 +127,18 @@ export class SettlementLayer {
   }
   private make(id: number, kind: string, owner: number) {
     let o = this.entities.get(id);
-    if (o) return o;
+    if (o && o.userData.modelKind!==kind){this.disposeInstance(o);this.root.remove(o);this.entities.delete(id);o=undefined;}
+    if (o) { applyPlayerMaterials(o, owner); return o; }
     const p = this.prototypes.get(kind);
     if (!p) return null;
-    o = p.clone(true);
+    if(kind === 'settler') {
+      o = new Group();
+      const idle = p.clone(true);idle.name = 'IdlePose';o.add(idle);
+      const carrier = this.prototypes.get('carrier');
+      if(carrier){const pose=carrier.clone(true);pose.name='CarryPose';pose.visible=false;o.add(pose);}
+    } else o = p.clone(true);
     o.userData.entityId = id;
+    o.userData.modelKind = kind;
     o.traverse((child) => {
       if (child instanceof Mesh) {
         child.castShadow = true;
@@ -132,17 +149,16 @@ export class SettlementLayer {
         const copies = materials.map((mat) => {
           const m = mat.clone();
           if(m instanceof MeshStandardMaterial)prepareAntMaterial(m);
-          if (m instanceof MeshStandardMaterial && (m.name === "UTC Team color" || m.name === "Ant faction red"))
-            m.color.set(PLAYER_COLORS[owner % PLAYER_COLORS.length]!);
           return m;
         });
         child.material = Array.isArray(child.material) ? copies : copies[0]!;
       }
     });
+    applyPlayerMaterials(o, owner);
     if (kind === "settler") {
       const cargo = new Group();
       cargo.name = "Cargo";
-      cargo.position.set(0, 0.95, 0.45);
+      cargo.position.set(0, 1.04, 0.48);
       cargo.visible = false;
       o.add(cargo);
       for (const kind of ["log", "plank", "stone"] as const) {
@@ -154,6 +170,15 @@ export class SettlementLayer {
         }
       }
     }
+    if(kind==='archer'){
+      const arrow=new Mesh(this.arrowGeometry,new MeshBasicMaterial({color:0xe0c18d}));
+      arrow.name='ArrowTrace';arrow.visible=false;o.add(arrow);
+    }
+    const hp=new Group();hp.name='HealthBar';
+    const back=new Sprite(this.hpBack),fill=new Sprite(this.hpFill);
+    back.center.set(0,.5);fill.center.set(0,.5);back.renderOrder=20;fill.renderOrder=21;
+    back.scale.set(1.2,.13,1);fill.scale.set(1.16,.09,1);fill.position.set(.02,.005,.01);
+    hp.add(back,fill);o.add(hp);
     this.entities.set(id, o);
     this.root.add(o);
     return o;
@@ -199,10 +224,11 @@ export class SettlementLayer {
         ? 1
         : 0.12 + (0.88 * b.progress) / BUILDINGS[b.kind].work;
       o.getObjectByName("Stockpile")?.scale.set(1, 1 / o.scale.y, 1);
+      this.healthBar(o,b.health,BUILDINGS[b.kind].health??250,5/o.scale.y,b.id===this.selected);
     }
     for (const w of state.workers) {
       seen.add(w.id);
-      const o = this.make(w.id, "settler", w.owner);
+      const o = this.make(w.id, isSoldier(w.role)?w.role:"settler", w.owner);
       if (!o) continue;
       const target = new Vector3(w.x, field.sample(w.x, w.z), w.z);
       if (o.userData.placed) {
@@ -215,6 +241,25 @@ export class SettlementLayer {
         o.position.copy(target);
         o.userData.placed = true;
       }
+      o.visible=w.job!=='training';
+      this.healthBar(o,w.health,unitMaxHealth(w.role),2.5,w.id===this.selected);
+      if(isSoldier(w.role) && w.target){
+        const target=state.workers.find(t=>t.id===w.target)??state.buildings.find(t=>t.id===w.target);
+        if(target)o.rotation.y=Math.atan2(target.x-w.x,target.z-w.z);
+        const strike=w.attackCooldown>SOLDIERS[w.role].cooldown-6;
+        o.rotation.x=strike?.10:0;
+      }else o.rotation.x=0;
+      const arrow=o.getObjectByName('ArrowTrace');
+      if(arrow){
+        const target=state.workers.find(t=>t.id===w.target)??state.buildings.find(t=>t.id===w.target);
+        const age=SOLDIERS.archer.cooldown-w.attackCooldown;
+        arrow.visible=!!target && w.attackCooldown>0 && age<8;
+        if(target){const phase=age/8;arrow.position.set(0,1.3+Math.sin(phase*Math.PI)*.6,Math.hypot(target.x-w.x,target.z-w.z)*phase);}
+      }
+      const carryPose = o.getObjectByName('CarryPose');
+      const idlePose = o.getObjectByName('IdlePose');
+      if(carryPose)carryPose.visible=w.quantity>0;
+      if(idlePose)idlePose.visible=!carryPose||w.quantity===0;
       const cargo = o.getObjectByName("Cargo");
       if (cargo) {
         cargo.visible = w.quantity > 0;
@@ -243,6 +288,12 @@ export class SettlementLayer {
         this.root.remove(o);
         this.entities.delete(id);
       }
+  }
+  private healthBar(o:Object3D,hp:number,max:number,height:number,selected:boolean) {
+    const bar=o.getObjectByName('HealthBar');if(!bar)return;
+    bar.visible=hp>0 && (hp<max||selected);
+    bar.position.set(-.6,height,0);bar.rotation.y=-o.rotation.y;
+    bar.children[1]!.scale.x=1.16*Math.max(0,Math.min(1,hp/max));
   }
   private item(kind: ItemKind) {
     const p = this.prototypes.get("item-" + kind);
@@ -305,7 +356,7 @@ export class SettlementLayer {
     this.ghost.material.color.set(allowed ? 0x68d893 : 0xf26960);
   }
   private borderGeometry(state: SettlementView, field: HeightField) {
-    this.borders.rebuild(state.territory, field);
+    this.borders.rebuild(state.territory, field, state.territoryBorders);
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
@@ -331,6 +382,8 @@ export class SettlementLayer {
       });
     this.borders.dispose();
     this.ghost.geometry.dispose();
+    this.arrowGeometry.dispose();
+    this.hpBack.dispose();this.hpFill.dispose();
     this.ghost.material.dispose();
     this.selection.geometry.dispose();
     this.selection.material.dispose();

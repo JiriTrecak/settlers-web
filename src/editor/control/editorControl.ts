@@ -94,10 +94,10 @@ export class EditorControl {
     } else if(action==='cover') {
       const x=num(o.x),z=num(o.z),radius=num(o.radius)??10,density=num(o.density)??3,flowers=num(o.flowers)??.1;
       if(x===undefined||z===undefined||radius<=0||radius>100||density<0||density>12||flowers<0||flowers>1) throw new Error('Invalid cover patch');
-      const palette=str(o.palette);if(palette!==undefined&&!['meadow','straw','ochre','sage'].includes(palette))throw new Error('Invalid cover palette');
+      const palette=str(o.palette);if(palette!==undefined&&!['meadow','straw','ochre','sage','forest'].includes(palette))throw new Error('Invalid cover palette');
       const grassScale=num(o.grassScale),broadRatio=num(o.broadRatio);
       if((o.grassScale!==undefined&&(grassScale===undefined||grassScale<.2||grassScale>4))||(o.broadRatio!==undefined&&(broadRatio===undefined||broadRatio<0||broadRatio>1)))throw new Error('Invalid cover proportions');
-      this.editor.addCover({x,z,radius,density,flowers,grassScale,broadRatio,seed:num(o.seed)??42,palette:palette as 'meadow'|'straw'|'ochre'|'sage'|undefined});
+      this.editor.addCover({x,z,radius,density,flowers,grassScale,broadRatio,seed:num(o.seed)??42,palette:palette as 'meadow'|'straw'|'ochre'|'sage'|'forest'|undefined});
     } else if(action==='water') {
       const water=parseWaterStyle({...DEFAULT_WATER_STYLE,...this.editor.map.landscape?.water,...obj(o.water)});
       if(!water)throw new Error('Invalid water settings');this.editor.waterStyle(water);

@@ -1,18 +1,18 @@
 [
   {
     "id": "pine-1",
-    "parts": 1147,
-    "faces": 4910
+    "parts": 446,
+    "faces": 10200
   },
   {
     "id": "pine-2",
-    "parts": 1147,
-    "faces": 4910
+    "parts": 446,
+    "faces": 10200
   },
   {
     "id": "pine-3",
-    "parts": 1147,
-    "faces": 4910
+    "parts": 446,
+    "faces": 10200
   },
   {
     "id": "fern",
@@ -21,18 +21,13 @@
   },
   {
     "id": "broadleaf",
-    "parts": 16,
-    "faces": 240
+    "parts": 17,
+    "faces": 474
   },
   {
     "id": "grass",
     "parts": 28,
     "faces": 112
-  },
-  {
-    "id": "rock",
-    "parts": 2,
-    "faces": 81
   },
   {
     "id": "lily",
@@ -43,5 +38,10 @@
     "id": "reeds",
     "parts": 19,
     "faces": 106
+  },
+  {
+    "id": "rock",
+    "parts": 1,
+    "faces": 72
   }
 ]

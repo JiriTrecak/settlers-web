@@ -1,3 +1,4 @@
+import { territoryPostPositions } from '../../src/render/settlement/territoryPosts';
 import { describe,it,expect } from 'vitest';
 import { Settlement } from '../../src/sim/settlement/settlement';
 import { Visibility } from '../../src/sim/visibility/visibility';
@@ -53,5 +54,42 @@ describe('per-player fog of war',()=>{
     refresh(a);refresh(b);expect(a.checksum()).toBe(b.checksum());
     const blank=new Visibility([0,1]);
     expect(()=>blank.restore({...saved,players:[]})).toThrow();
+  });
+});
+
+describe('observed territory borders',()=>{
+  it('does not turn a scout vision circle inside enemy territory into a border',()=>{
+    const state=make().view(), scout={...state.workers[0]!,owner:0,x:128,z:128};
+    const territory=new Int16Array(65536).fill(1), visibility=new Visibility([0]);
+    visibility.update([], [scout], [], territory);
+    const view=visibility.project({...state,territory},0);
+    expect(view.territory[128*256+128]).toBe(1);
+    expect(view.territory[100*256+128]).toBe(-1);
+    expect(territoryPostPositions(view.territory,256,view.territoryBorders)).toEqual([]);
+  });
+  it('clips a real border without closing it and remembers it until it is seen again',()=>{
+    const state=make().view(), scout={...state.workers[0]!,owner:0,x:128,z:128};
+    const territory=new Int16Array(65536).fill(-1), visibility=new Visibility([0]);
+    for(let z=0;z<256;z++)territory.fill(1,z*256,z*256+128);
+    const observe=()=>visibility.update([], [scout], [], territory);
+    const posts=()=>{const v=visibility.project({...state,territory},0);return territoryPostPositions(v.territory,256,v.territoryBorders);};
+    observe();
+    const seen=posts();
+    expect(seen.length).toBeGreaterThan(2);
+    expect(seen.every(p=>p.x===127.25 && p.owner===1)).toBe(true);
+    scout.x=180;observe();
+    territory.fill(1);observe();
+    expect(posts()).toEqual(seen); // Hidden expansion must not update remembered borders.
+    const restored=new Visibility([0]);restored.restore(JSON.parse(JSON.stringify(visibility.snapshot())));
+    expect(restored.checksum()).toBe(visibility.checksum());
+    const v=restored.project({...state,territory},0);
+    expect(territoryPostPositions(v.territory,256,v.territoryBorders)).toEqual(seen);
+    scout.x=128;observe();
+    expect(posts()).toEqual([]);
+  });
+  it('still renders full territory borders without a fog projection',()=>{
+    const territory=new Int16Array(16*16).fill(-1);
+    for(let z=4;z<12;z++)territory.fill(1,z*16+4,z*16+12);
+    expect(territoryPostPositions(territory,16).length).toBeGreaterThan(4);
   });
 });

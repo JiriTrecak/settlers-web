@@ -1,11 +1,11 @@
 import { describe,it,expect } from 'vitest';
 import { emptyUtcMap,parseUtcMap,stringifyUtcMap } from '../../src/shared/map/utcmap';
 import { playableMapError,mapRevision } from '../../src/shared/map/playable';
-import { TWINWATER_MAP } from '../../src/shared/match/twinwater';
+import { MOSSWATER_MAP } from '../../src/shared/match/mosswater';
 import { World } from '../../src/sim/world/world';
 describe('authored playable maps',()=>{
  it('creates a dry map with two persisted distinct starts',()=>{const map=emptyUtcMap();expect(playableMapError(map)).toBeNull();expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.playerStarts).toEqual(map.playerStarts);});
- it('accepts Twinwater',()=>expect(playableMapError(TWINWATER_MAP)).toBeNull());
+ it('accepts Mosswater',()=>expect(playableMapError(MOSSWATER_MAP)).toBeNull());
  it('rejects missing starts, submerged forts, overlap and edge starts',()=>{
  const map=emptyUtcMap();expect(playableMapError({...map,playerStarts:[]})).not.toBeNull();expect(playableMapError({...map,waterLevel:1})).not.toBeNull();expect(playableMapError({...map,playerStarts:[{player:1,x:38,z:38},{player:2,x:38,z:38}]})).not.toBeNull();expect(playableMapError({...map,playerStarts:[{player:1,x:1,z:1},{player:2,x:38,z:38}]})).not.toBeNull();
  });

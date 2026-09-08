@@ -1,4 +1,4 @@
-import { BUILDING_KINDS, type BuildingKind } from "../settlement/rules";
+import { BUILDING_KINDS, type SoldierKind, type BuildingKind } from "../settlement/rules";
 /** Shared value types. Actions are the only way the session mutates sim. */
 export type GridPos = {
   readonly x: number;
@@ -7,6 +7,11 @@ export type GridPos = {
 
 /** Wire + enqueue payload. `noop` is dropped. `ping` is lockstep-only (sim ignores it). */
 export type Action =
+  | { type: "recruit"; id: number; kind: SoldierKind }
+  | { type: "cancel-recruit"; id: number; index: number }
+  | { type: "attack"; id: number; target: number }
+  | { type: "stop-unit"; id: number }
+  | { type: "rally"; id: number; x: number; z: number }
   | { type: "noop" }
   | { type: "ping" }
   | { type: "build"; kind: BuildingKind; x: number; z: number }
@@ -25,6 +30,11 @@ export function validAction(raw: unknown): raw is Action {
     return (
       BUILDING_KINDS.includes(a.kind as BuildingKind) && cell(a.x) && cell(a.z)
     );
+  if (a.type === 'recruit') return id(a.id) && (a.kind === 'warrior' || a.kind === 'archer');
+  if (a.type === 'cancel-recruit') return id(a.id) && Number.isInteger(a.index) && (a.index as number)>=0 && (a.index as number)<12;
+  if (a.type === 'attack') return id(a.id) && id(a.target);
+  if (a.type === 'stop-unit') return id(a.id);
+  if (a.type === 'rally') return id(a.id) && cell(a.x) && cell(a.z);
   if (a.type === "cancel-building") return id(a.id);
   return a.type === "move-worker" && id(a.id) && cell(a.x) && cell(a.z);
 }

@@ -59,7 +59,7 @@ export class EditorHub {
 
   stop(): void {
     this.failPending("editor hub stopped");
-    this.tab?.close();
+    for (const ws of this.wss?.clients ?? []) ws.close();
     this.uplink?.close();
     for (const ws of this.controllers) ws.close();
     this.controllers.clear();
@@ -157,7 +157,8 @@ export class EditorHub {
 
   private identify(ws: Ws, role: "tab" | "mcp"): void {
     if (role === "tab") {
-      if (this.tab && this.tab !== ws) this.tab.close();
+      // Keep older tabs connected but inactive. Closing them starts their retry
+      // loop, which otherwise repeatedly steals the bridge back from this tab.
       this.tab = ws;
       this.controllers.delete(ws);
       console.error("editor hub: tab connected");

@@ -142,7 +142,7 @@ export class EditorScreen extends GameScreen {
     });
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
-    { const initial=hooks.map ?? getMap("twinwater-reach").map;this.editor.replace(initial);this.saved=stringifyUtcMap(initial); }
+    { const initial=hooks.map ?? getMap("mosswater-divide").map;this.editor.replace(initial);this.saved=stringifyUtcMap(initial); }
     this.spawnDock = new SpawnDock(this.root,this.editor);
     // Reloads must never interrupt the live editor / MCP iteration loop.
     try {

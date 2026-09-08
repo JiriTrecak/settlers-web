@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        reference: fileURLToPath(new URL("./reference-stage.html", import.meta.url)),
         comparison: fileURLToPath(new URL("./visual-compare.html", import.meta.url)),
       },
     },

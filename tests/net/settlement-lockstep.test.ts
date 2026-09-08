@@ -12,7 +12,7 @@ const map = parseUtcMap(
   JSON.parse(
     readFileSync(
       new URL(
-        "../../assets/maps/showcase/Twinwater-Reach.utcmap",
+        "../../assets/maps/showcase/mosswater-divide.utcmap",
         import.meta.url,
       ),
       "utf8",
@@ -21,7 +21,7 @@ const map = parseUtcMap(
 )!;
 const config = {
   ...localMatch({
-    mapId: "twinwater-reach",
+    mapId: "mosswater-divide",
     mapRevision: "test",
     seed: 4,
     slotCount: 2,
@@ -62,16 +62,16 @@ describe("settlement lockstep integration", () => {
       worlds = [0, 1].map(
         () => new World({ map, slots: config.slots, seed: 4 }),
       );
-    peers[0]!.send({ type: "build", kind: "lumberjack", x: 208, z: 218 });
-    peers[0]!.send({ type: "build", kind: "stonemason", x: 218, z: 230 });
-    peers[1]!.send({ type: "build", kind: "lumberjack", x: 48, z: 38 });
-    peers[1]!.send({ type: "build", kind: "stonemason", x: 38, z: 26 });
-    peers[0]!.send({ type: "build", kind: "sawmill", x: 232, z: 230 });
-    peers[1]!.send({ type: "build", kind: "sawmill", x: 24, z: 26 });
+    peers[0]!.send({ type: "build", kind: "lumberjack", x: 200, z: 210 });
+    peers[0]!.send({ type: "build", kind: "stonemason", x: 210, z: 222 });
+    peers[1]!.send({ type: "build", kind: "lumberjack", x: 56, z: 46 });
+    peers[1]!.send({ type: "build", kind: "stonemason", x: 46, z: 34 });
+    peers[0]!.send({ type: "build", kind: "sawmill", x: 220, z: 220 });
+    peers[1]!.send({ type: "build", kind: "sawmill", x: 36, z: 36 });
     for (let tick = 1; tick <= 6000; tick++) {
       if (tick === 2000) {
-        peers[0]!.send({ type: "build", kind: "house", x: 230, z: 218 });
-        peers[1]!.send({ type: "build", kind: "house", x: 26, z: 38 });
+        peers[0]!.send({ type: "build", kind: "house", x: 222, z: 210 });
+        peers[1]!.send({ type: "build", kind: "house", x: 34, z: 46 });
       }
       const first = tick % 2;
       peers[first]!.confirm(tick);
@@ -86,7 +86,7 @@ describe("settlement lockstep integration", () => {
     }
     const s = worlds[0]!.settlement!;
     for (const owner of [0, 1]) {
-      expect(s.workers.filter((w) => w.owner === owner)).toHaveLength(11);
+      expect(s.workers.filter((w) => w.owner === owner)).toHaveLength(13);
       expect(
         s.buildings.filter((b) => b.owner === owner && b.complete),
       ).toHaveLength(5);
@@ -94,6 +94,30 @@ describe("settlement lockstep integration", () => {
       expect(s.colonies[owner]!.stock.stone).toBeGreaterThan(22);
     }
     channels.forEach((c) => c.destroy());
+  });
+  it('delivers recruitment, cancellation, rally and army orders identically to both peers',()=>{
+    const room=new Room(config),channels=[new MemoryChannel(room,0),new MemoryChannel(room,1)];
+    const peers=channels.map((c,i)=>new Lockstep(c,i,3));
+    const worlds=[0,1].map(()=>new World({map,slots:config.slots,seed:4}));
+    peers[0]!.send({type:'build',kind:'barracks',x:200,z:210});
+    let id=0;
+    for(let tick=1;tick<=3200;tick++){
+      if(tick===1500){
+        id=worlds[0]!.settlement!.buildings.find(b=>b.kind==='barracks')!.id;
+        peers[0]!.send({type:'recruit',id,kind:'warrior'});
+        peers[0]!.send({type:'recruit',id,kind:'archer'});
+        peers[0]!.send({type:'cancel-recruit',id,index:1});
+        peers[0]!.send({type:'rally',id,x:210,z:222});
+        const soldier=worlds[0]!.settlement!.workers.find(w=>w.owner===0&&w.role==='warrior')!;
+        peers[0]!.send({type:'move-worker',id:soldier.id,x:215,z:223});
+      }
+      peers[tick%2]!.confirm(tick);peers[1-tick%2]!.confirm(tick);
+      for(let i=0;i<2;i++)apply(worlds[i]!,peers[i]!.take(tick)!);
+      if(tick%80===0)expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
+    }
+    expect(worlds[0]!.settlement!.workers.filter(w=>w.owner===0&&w.role==='warrior')).toHaveLength(3);
+    expect(worlds[0]!.settlement!.buildings.find(b=>b.id===id)!.queue).toEqual([]);
+    channels.forEach(c=>c.destroy());
   });
   it("rejects malformed packets atomically and ignores replayed confirmations", () => {
     const room = new Room(config);

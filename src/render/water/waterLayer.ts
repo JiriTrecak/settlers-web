@@ -1,9 +1,10 @@
+import {perf} from '../../debug/performance';
 import { DEFAULT_WATER_STYLE, type WaterStyle } from '../../shared/landscape/waterStyle';
 import { riverFlow, type RiverStroke } from '../../shared/landscape/riverFlow';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 /**
- * Synty Nature water: Unity Water_01 colors, depth fade from the height field,
- * dual-panned ripples, shore foam. Sunk 0.03 so dry land at 0 wins.
+ * Forest stream: blue-gray depth, procedural flowing ripples and broken crests.
+ * Sunk 0.03 so dry land at 0 wins.
  */
 import {
   ShaderChunk,
@@ -19,10 +20,9 @@ import {
   RedFormat,
   RepeatWrapping,
   RGBAFormat,
-  TextureLoader,
   UnsignedByteType,
   Vector3,
-  type Matrix4,
+  Matrix4, Box3, Frustum, type Camera,
   type ShaderMaterial,
   type IUniform,
   type Scene,
@@ -30,14 +30,13 @@ import {
   type WebGLProgramParametersWithUniforms,
 } from "three";
 import { HEIGHT_ORIGIN, HEIGHT_VERTS, MAP_HALO, type HeightField } from "../../shared";
-import waterNormalUrl from "../../../assets/synty/tex/Water_Normal.png?url";
 
 const SINK = 0.03;
 
-/** Water_01.mat — Shader Graph underscored names. */
-const SHALLOW = new Vector3(0.18, 0.23, 0.21);
-const DEEP = new Vector3(0.035, 0.065, 0.075);
-const FOAM = new Vector3(0.64, 0.67, 0.59);
+/** Linear working-space colors sampled toward the approved stream reference. */
+const SHALLOW = new Vector3(0.055, 0.105, 0.16);
+const DEEP = new Vector3(0.02, 0.045, 0.08);
+const FOAM = new Vector3(0.73, 0.77, 0.78);
 
 type WaterUniforms = {
   uShadowStrength:IUniform<number>;
@@ -63,8 +62,25 @@ export class WaterLayer {
   private readonly flow=new DataTexture(riverFlow([],128,HEIGHT_ORIGIN,HEIGHT_VERTS-1),128,128);
   private readonly uniforms: WaterUniforms;
   private readonly mat: MeshStandardMaterial;
-  private ripple: Texture | null = null;
   private readonly reflector: Reflector;
+  private wetBounds:Box3[]=[];
+  private field:HeightField|null=null;
+  private frustum=new Frustum();
+  private projection=new Matrix4();
+  private lastReflection=-Infinity;
+  private reflectionView=new Matrix4();
+  updateVisibility(camera:Camera):void {
+    camera.updateMatrixWorld();this.projection.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
+    this.frustum.setFromProjectionMatrix(this.projection);
+    this.mesh.visible=this.wetBounds.some(box=>this.frustum.intersectsBox(box));
+    perf.value('Water visible',this.mesh.visible?'Yes':'No');
+  }
+  private rebuildWetBounds():void {
+    const field=this.field;if(!field)return;const occupied=new Set<string>();
+    for(let z=0;z<HEIGHT_VERTS;z++)for(let x=0;x<HEIGHT_VERTS;x++)if(field.samples[z*HEIGHT_VERTS+x]!<=this.mesh.position.y+.08)occupied.add(`${Math.floor((x+HEIGHT_ORIGIN)/4)},${Math.floor((z+HEIGHT_ORIGIN)/4)}`);
+    this.wetBounds=[...occupied].map(key=>{const [x,z]=key.split(',').map(Number);return new Box3(new Vector3(x!*4-1,this.mesh.position.y-.1,z!*4-1),new Vector3(x!*4+5,this.mesh.position.y+.1,z!*4+5));});
+    this.lastReflection=-Infinity;
+  }
 
   constructor(scene: Scene, size: number) {
     const visLo = -MAP_HALO;
@@ -99,7 +115,7 @@ export class WaterLayer {
       uDeep: { value: DEEP },
       uFoam: { value: FOAM },
       uTime: { value: 0 },
-      uRipple: { value: flatNormal() },
+      uRipple: { value: proceduralRipple() },
     };
     const mat = new MeshStandardMaterial({
       color: 0x4c6c6a,
@@ -110,7 +126,7 @@ export class WaterLayer {
       depthWrite: false,
     });
     mat.onBeforeCompile = (shader) => this.patch(shader);
-    mat.customProgramCacheKey = () => "utc-river-water-v1";
+    mat.customProgramCacheKey = () => "utc-forest-stream-v12";
     const mesh = new Mesh(new PlaneGeometry(span, span), mat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
@@ -132,15 +148,20 @@ export class WaterLayer {
     this.mat = mat;
     mesh.onBeforeRender=(renderer,renderScene,camera,geometry,material,group)=>{
       if(this.uniforms.uReflectionStrength.value<=0)return;
+      const now=performance.now();
+      const view=new Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
+      // Update immediately when panning; static-camera reflections need only 15 Hz.
+      if(now-this.lastReflection<1000/15&&this.reflectionView.equals(view))return;
+      this.lastReflection=now;this.reflectionView.copy(view);
+      const timing=perf.start();
       this.reflector.position.copy(mesh.position);
       this.reflector.quaternion.copy(mesh.quaternion);
       this.reflector.updateMatrixWorld(true);
       // The water must not appear in its own reflected scene.
       mesh.visible=false;
       try{this.reflector.onBeforeRender(renderer,renderScene,camera,geometry,material,group);}
-      finally{mesh.visible=true;}
+      finally{mesh.visible=true;perf.end('Water reflection (CPU)',timing);}
     };
-    void this.loadRipple();
   }
 
   setStyle(style:WaterStyle=DEFAULT_WATER_STYLE):void {
@@ -158,6 +179,7 @@ export class WaterLayer {
   }
 
   setFrom(field: HeightField): void {
+    this.field=field;
     const img = this.tex.image;
     if (img.data !== field.samples) {
       img.data = field.samples;
@@ -167,12 +189,14 @@ export class WaterLayer {
     this.tex.needsUpdate = true;
     this.uniforms.uWaterLevel.value = field.waterLevel;
     this.mesh.position.y = field.waterLevel - SINK;
+    this.rebuildWetBounds();
   }
 
   setLevel(level: number): void {
     const y = Number.isFinite(level) ? level : 0;
     this.uniforms.uWaterLevel.value = y;
     this.mesh.position.y = y - SINK;
+    this.rebuildWetBounds();
   }
 
   destroy(scene: Scene): void {
@@ -182,25 +206,7 @@ export class WaterLayer {
     this.mat.dispose();
     this.tex.dispose();this.flow.dispose();
     this.reflector.geometry.dispose();this.reflector.dispose();
-    const dummy = this.uniforms.uRipple.value;
-    this.ripple?.dispose();
-    if (dummy !== this.ripple) dummy.dispose();
-  }
-
-  private async loadRipple(): Promise<void> {
-    try {
-      const tex = await new TextureLoader().loadAsync(waterNormalUrl);
-      tex.wrapS = RepeatWrapping;
-      tex.wrapT = RepeatWrapping;
-      tex.colorSpace = NoColorSpace;
-      tex.needsUpdate = true;
-      const prev = this.uniforms.uRipple.value;
-      this.ripple = tex;
-      this.uniforms.uRipple.value = tex;
-      if (prev !== tex) prev.dispose();
-    } catch {
-      /* procedural ripples still run */
-    }
+    this.uniforms.uRipple.value.dispose();
   }
 
   private patch(shader: WebGLProgramParametersWithUniforms): void {
@@ -227,9 +233,19 @@ vReflection = uReflectionMatrix * vec4(transformed,1.0);`,
   }
 }
 
-function flatNormal(): DataTexture {
-  const data = new Uint8Array([128, 128, 255, 255, 128, 128, 255, 255, 128, 128, 255, 255, 128, 128, 255, 255]);
-  const tex = new DataTexture(data, 2, 2, RGBAFormat, UnsignedByteType);
+function proceduralRipple(): DataTexture {
+  // Analytic periodic slopes: original texture, seamless on both axes.
+  const size=128,data=new Uint8Array(size*size*4);
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const u=x/size*Math.PI*2,v=y/size*Math.PI*2;
+    const dx=.30*Math.cos(u*3+v*2)+.15*Math.cos(u*7-v*3)+.08*Math.sin(u*13+v*5);
+    const dz=.42*Math.cos(u*3+v*2)-.21*Math.cos(u*7-v*3)+.11*Math.sin(u*13+v*5);
+    const length=Math.hypot(dx,dz,1),i=(y*size+x)*4;
+    data[i]=Math.round((dx/length*.5+.5)*255);data[i+1]=Math.round((dz/length*.5+.5)*255);
+    data[i+2]=Math.round((1/length*.5+.5)*255);data[i+3]=255;
+  }
+  const tex = new DataTexture(data,size,size,RGBAFormat,UnsignedByteType);
+  tex.minFilter=tex.magFilter=LinearFilter;
   tex.colorSpace = NoColorSpace;
   tex.wrapS = RepeatWrapping;
   tex.wrapT = RepeatWrapping;
@@ -287,6 +303,24 @@ float waterCloud(vec2 p) {
   return .65*waterNoise(p)+.25*waterNoise(p*2.13+vec2(7.1,3.4))+.1*waterNoise(p*4.37);
 }
 
+float streamFilaments(vec2 drifting,vec2 flow){
+  vec2 uv=drifting*2.15;
+  vec2 warp=vec2(waterNoise(uv*.34),waterNoise(uv*.34+7.3))-.5;
+  uv+=warp*1.35;
+  // Convolve in the local current direction without rotating world coordinates.
+  // Continuous world-space samples stay coherent through a bend in the river.
+  vec2 along=flow*1.4;
+  float contour=waterNoise(uv)*.34;
+  contour+=(waterNoise(uv+along)+waterNoise(uv-along))*.23;
+  contour+=(waterNoise(uv+along*2.)+waterNoise(uv-along*2.))*.10;
+  float width=max(.004,fwidth(contour)*.7);
+  float crest=smoothstep(.55-width,.65+width,contour);
+  float patches=smoothstep(.42,.68,waterCloud(drifting*.43+vec2(7.1,3.2)));
+  float fragments=smoothstep(.32,.62,waterNoise(drifting*.9+vec2(9.1,3.4)));
+  float breakup=smoothstep(.25,.6,waterNoise(uv*1.8+vec2(3.2,7.8)));
+  return crest*patches*fragments*breakup;
+}
+
 `;
 
 const WATER_LOOK = /* glsl */ `
@@ -318,22 +352,18 @@ const WATER_LOOK = /* glsl */ `
   float cloud=(waterCloud(drift)*.4+waterCloud(drift+stretch)*.3+waterCloud(drift-stretch)*.3-.5)*2.0;
   col+=vec3(1.0,1.08,1.2)*uCloudStrength*cloud;
   col+=vec3(.12,.2,.16)*caustics*exp(-depth*.8)*uCausticStrength;
-  // Broad, low-contrast crests with irregular breaks read as shallow moving water,
-  // rather than parallel white scratches. World UVs stay continuous around bends.
-  vec2 drifting=p-flow*t*.055;
-  vec2 glintP=vec2(drifting.x-drifting.y,drifting.x+drifting.y)*.70710678;
-  float glintBend=waterNoise(glintP*.32)*5.0+waterNoise(glintP*.81)*1.2;
-  float phase=glintP.y*2.4+glintBend*.65-t*.45;
-  float crest=pow(max(0.0,sin(phase)),4.0);
-  float fragments=smoothstep(.43,.77,waterCloud(vec2(glintP.x*.55,glintP.y*1.8)));
-  float glints=crest*fragments*smoothstep(.18,.8,depth);
-  col+=vec3(.22,.30,.25)*glints*sqrt(uRippleStrength);
-  // Larger translucent bands sit beneath the fine crests, with broken soft edges.
-  float broadBands=waterCloud(vec2(glintP.x*.11,glintP.y*.72)+vec2(0.0,-t*.018));
-  float bandMask=smoothstep(.38,.68,broadBands);
-  col+=vec3(.55,.65,.52)*(bandMask-.35)*uCloudStrength;
-  float foamWidth=.52+.16*waterNoise(p*.75+flow*t*.025);
-  float foam=(1.0-smoothstep(foamWidth*.78,foamWidth,depth)) * (.85+.15*smoothstep(-.4,.7,sin(p.x*.83+p.y*.61)+sin(p.y*1.2-p.x*.37)));
+  // Flow-aligned, warped filaments. A broad envelope breaks the crests into
+  // short silver streaks rather than a bank-to-bank stripe pattern.
+  // Two overlapping advection phases avoid jumps and unbounded distortion.
+  float phaseA=fract(t*.035),phaseB=fract(t*.035+.5);
+  float flowBlend=abs(phaseA*2.0-1.0);
+  float glints=mix(streamFilaments(p-flow*phaseA*3.0,flow),streamFilaments(p-flow*phaseB*3.0,flow),flowBlend);
+  glints*=smoothstep(.10,.55,depth);
+  col=mix(col,vec3(.63,.72,.78),glints*(.18+sqrt(uRippleStrength)*.85));
+  float broadBands=waterCloud(p*.25-flow*t*.01);
+  col+=vec3(.45,.57,.65)*(broadBands-.5)*max(.035,uCloudStrength);
+  float foamWidth=.28+.20*waterNoise(p*1.7+flow*t*.025);
+  float foam=(1.0-smoothstep(foamWidth*.78,foamWidth,depth)) * smoothstep(.48,.72,waterCloud(p*2.1-flow*t*.03));
   float shoreWave=(1.0-smoothstep(.1,.6,depth))*waterCloud(p*1.7-flow*t*.08)*.12;
   vec3 V=normalize(vViewPosition);
   float fres=pow(1.0-clamp(dot(normal,V),0.0,1.0),4.0);
@@ -343,7 +373,7 @@ const WATER_LOOK = /* glsl */ `
   diffuseColor.rgb=col;
   // Both color and coverage obey the brush's foam strength. Shallow coverage
   // approaches zero continuously so the shore meets the bed without a rim.
-  float waterAlpha=mix(.56,.68,waterT)*smoothstep(.015,.2,depth);
+  float waterAlpha=mix(.77,.90,waterT)*smoothstep(.015,.2,depth);
   diffuseColor.a=mix(waterAlpha,.94,foamAmount);
   roughnessFactor=.58;
 }

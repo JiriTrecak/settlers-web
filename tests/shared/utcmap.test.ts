@@ -8,6 +8,13 @@ describe("utcmap", () => {
     landscape.water.cloudStrength=.18;
     expect(parseUtcMap({...emptyUtcMap(),landscape})?.landscape).toEqual(landscape);
   });
+  it("preserves forest understory and building exclusions when saving a map", () => {
+    const landscape = {strokes:[],cover:[{x:129,z:125,radius:34,density:10,seed:7123,flowers:.005,grassScale:.65,broadRatio:1,palette:'forest',exclusions:[{x:125.7,z:117,radius:5.94}]}],environment:{hour:10,season:'summer',playing:false}};
+    const parsed = parseUtcMap({...emptyUtcMap(),landscape});
+    expect(parsed?.landscape).toEqual(landscape);
+    expect(parseUtcMap(JSON.parse(stringifyUtcMap(parsed!)))?.landscape).toEqual(landscape);
+    expect(parseUtcMap({...emptyUtcMap(),landscape:{...landscape,cover:[{...landscape.cover[0],palette:'unknown'}]}})).toBeNull();
+  });
   it("roundtrips an empty map", () => {
     const map = emptyUtcMap();
     expect(map.v).toBe(UTCMAP_VERSION);
