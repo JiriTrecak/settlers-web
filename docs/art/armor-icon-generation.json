@@ -1,0 +1,18 @@
+{
+  "tool": "Built-in image_gen",
+  "runtimeSize": 128,
+  "icons": [
+    {
+      "id": "armor-light",
+      "prompt": "One square RTS inventory stat icon, no text, no frame. Under the Canopy fantasy ant game, matching painted Warcraft-like icons: chunky readable silhouette, dark almost-black backdrop, warm highlights, worn detailed materials. A reddish brown leather armor vest with small iron buckles and stitched leather panels, unmistakably LIGHT armor, no metal breastplate. Centered isolated object fills 80% of frame."
+    },
+    {
+      "id": "armor-heavy",
+      "prompt": "One square RTS inventory stat icon, no text, no frame. Under the Canopy fantasy ant game, matching painted Warcraft-like icons: chunky readable silhouette, dark almost-black backdrop, warm highlights, worn detailed materials. A broad polished silver forged steel breastplate with overlapping plates and heavy shoulder guards, unmistakably HEAVY armor. Centered isolated object fills 80% of frame."
+    },
+    {
+      "id": "armor-structure",
+      "prompt": "One square RTS inventory stat icon for STRUCTURE armor: a short thick crenellated gray stone fortress wall, three chunky battlements, visible beveled stone blocks, three-quarter view. Painted Warcraft-like fantasy game artwork matching Under the Canopy icons, bold chunky readable silhouette, warm highlights, near-black background. Centered fills 80% of frame. NO text, NO frame, NO lettering, NO shield."
+    }
+  ]
+}

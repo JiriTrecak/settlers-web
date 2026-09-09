@@ -2,7 +2,7 @@
   "variants": {
     "base": {
       "file": "base.glb",
-      "triangles": 3500,
+      "triangles": 3752,
       "states": {
         "build": "build",
         "chop": "chop",
@@ -17,7 +17,7 @@
     },
     "warrior": {
       "file": "warrior.glb",
-      "triangles": 4577,
+      "triangles": 4829,
       "states": {
         "idle": "idle",
         "walk": "walk",
@@ -30,7 +30,7 @@
     },
     "archer": {
       "file": "archer.glb",
-      "triangles": 3894,
+      "triangles": 4146,
       "states": {
         "idle": "idle",
         "walk": "walk",

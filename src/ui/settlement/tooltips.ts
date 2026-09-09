@@ -51,7 +51,7 @@ export class CommandTooltips {
     this.box.style.width = grid ? `${rect.width}px` : "320px";
     const height = this.box.offsetHeight, width = this.box.offsetWidth;
     this.box.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, grid ? rect.left : rect.right - width))}px`;
-    this.box.style.top = `${grid ? Math.max(8, rect.top - height - 8) : rect.top > height + 12 ? rect.top - height - 10 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
+    this.box.style.top = `${grid ? Math.max(8, rect.top - height - 28) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
 
   };
   private out = (event: Event) => {

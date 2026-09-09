@@ -1,7 +1,7 @@
 """Shared articulated ant with base, warrior and archer equipment and reusable actions."""
 import bpy, bmesh, math, json, sys
 from pathlib import Path
-from mathutils import Vector
+from mathutils import Vector, Euler
 A=Path(__file__).resolve().parent
 sys.path.insert(0,str(A.parents[2]/'building-studio'))
 from stage import create_stage
@@ -132,9 +132,36 @@ box('Belt buckle',(0,-.124,.75),(.085,.025,.064),BRONZE,'spine')
 tube('Worker hammer handle',[(-.42,-.04,.63),(-.42,-.04,.28)],[.023,.025],WOOD,'tool_hammer',8)
 box('Worker hammer head',(-.42,-.04,.28),(.105,.19,.10),STEEL,'tool_hammer')
 box('Worker hammer striking face',(-.42,-.145,.28),(.115,.025,.11),EDGE,'tool_hammer')
-tube('Worker axe handle',[(-.42,-.04,.65),(-.42,-.04,.16)],[.025,.032],WOOD,'tool_axe',8)
-# Wedge blade is solid and its cutting edge faces along the swing plane.
-mesh('Worker axe head',[(-.455,-.04,.24),(-.385,-.04,.24),(-.455,-.04,.09),(-.385,-.04,.09),(-.435,-.22,.29),(-.405,-.22,.29),(-.435,-.22,.04),(-.405,-.22,.04)],[(0,1,3,2),(0,4,5,1),(2,3,7,6),(4,6,7,5),(0,2,6,4),(1,5,7,3)],BLADE,'tool_axe')
+# Long timber haft, dark iron socket, and two flared crescent cutting blades.
+tube('Worker axe handle',[(-.43,-.025,.69),(-.43,-.025,.40),(-.43,-.025,-.10)],[.032,.029,.035],WOOD,'tool_axe',10)
+for z in [.60,.55,.48,.43]:
+    tube('Worker axe grip band',[(-.43,-.025,z+.018),(-.43,-.025,z-.018)],[.035,.035],LEATHER,'tool_axe',8)
+box('Worker axe iron eye',(-.43,-.025,-.01),(.12,.10,.17),STEEL,'tool_axe')
+# Each blade broadens toward a curved edge and narrows into the central eye.
+profile=[(.045,.055),(.12,.09),(.24,.16),(.30,.20),(.33,.10),(.345,0),(.33,-.10),(.30,-.20),(.24,-.16),(.12,-.09),(.045,-.055)]
+for sign in [-1,1]:
+    vv=[(-.43+sign*x,-.025+y,-.01+z) for y in [-.033,.033] for x,z in profile]
+    n=len(profile)
+    faces=[tuple(reversed(range(n))),tuple(range(n,2*n))]+[(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)]
+    mesh('Worker axe crescent blade',vv,faces,STEEL,'tool_axe')
+    # Broad polished bevel follows the outer cutting arc on both faces.
+    for y in [-.034,.034]:
+        vv=[]
+        for i in range(3,8):
+            x,z=profile[i];vv.extend([(-.43+sign*x,-.025+y,-.01+z),(-.43+sign*(x-.025),-.025+y*1.12,-.01+z*.90)])
+        mesh('Worker axe honed edge',vv,[(i*2,i*2+1,i*2+3,i*2+2) for i in range(4)],BLADE,'tool_axe')
+# Align the cutting blades with the horizontal swing rather than their flats.
+for ob in parts:
+    if ob.name.startswith(('Worker axe crescent blade','Worker axe honed edge','Worker axe iron eye')):
+        for v in ob.data.vertices:
+            dx=v.co.x+.43;dy=v.co.y+.025
+            v.co.x=-.43-dy;v.co.y=-.025+dx
+# Upright hammer head for striking a wall.
+for ob in parts:
+    if ob.name.startswith('Worker hammer'):
+        for v in ob.data.vertices:
+            v.co.x=-.42-(v.co.x+.42)
+            v.co.z=.60-(v.co.z-.60)
 
 # Second: warrior equipment, using the same anatomy and bone names.
 role='warrior'
@@ -382,18 +409,28 @@ def attack_bow(t):
 def work(t,chopping=False):
     idle(t)
     rig.pose.bones['tool_axe' if chopping else 'tool_hammer'].scale=(1,1,1)
-    # Repeating work cycle: lift, drive into the target in front, then recoil.
-    shoulder=curve(t,[(0,-.55),(.32,-1.50 if chopping else -1.15),(.44,-1.50 if chopping else -1.15),(.56,-.92),(.64,-.70),(1,-.55)])
-    elbow=curve(t,[(0,-.60),(.35,-1.25 if chopping else -.95),(.45,-1.25 if chopping else -.95),(.56,-.10),(.65,-.30),(1,-.60)])
-    rot('upper_arm.R',shoulder,-.10,-.06)
-    rot('forearm.R',elbow)
-    rot('hand.R',-.10*math.sin(math.pi*t)**2)
-    twist=math.sin(t*math.tau)*(.14 if chopping else .05)
-    rot('spine',-.06-.08*math.sin(math.pi*t)**2,0,-twist)
-    rot('head',.09,0,twist*.5)
-    rot('upper_arm.L',-.22,0,.08)
-    rot('forearm.L',-.48)
-    secondary(t,1.4)
+    # Solve hands in the stationary torso frame to keep the impact path level.
+    rot('spine')
+    if chopping:
+        sweep=curve(t,[(0,-.18),(.32,-1.00),(.42,-1.00),(.57,.40),(.68,.48),(1,-.18)])
+        torso=curve(t,[(0,-.06),(.34,-.55),(.43,-.53),(.58,.26),(.68,.30),(1,-.06)])
+        # Both targets are derived from one rigid haft, so the hands stay on it.
+        orientation=Euler((-math.pi/2,0,sweep),'XYZ').to_quaternion() @ Euler((0,0,math.pi/2),'XYZ').to_quaternion()
+        right=Vector((.025+.045*math.sin(sweep),-.12,1.00))
+        left=right+orientation@Vector((0,0,-.13))
+        for side,target,pole in [('R',right,(-1,.3,-.4)),('L',left,(1,.3,-.4))]:
+            arm_ik(side,target,pole)
+            wrist=rig.pose.bones['hand.'+side]
+            wrist.rotation_euler=(wrist.rotation_euler.to_quaternion() @ orientation).to_euler()
+        rot('spine',-.045,0,torso)
+        rot('head',.06,0,-torso*.65)
+    else:
+        reach=curve(t,[(0,0),(.30,-.04),(.42,-.04),(.56,.16),(.63,.11),(1,0)])
+        arm_ik('R',(-.30,-.25-reach,1.01),(-1,.2,-.4))
+        rot('head',.025,0,-.035)
+        rot('upper_arm.L',-.22,0,.08)
+        rot('forearm.L',-.48)
+    secondary(t,1.2)
 
 def hit(t):
     idle(t)

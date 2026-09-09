@@ -1,0 +1,131 @@
+{
+  "tool": "Built-in image_gen",
+  "runtimeSize": 128,
+  "icons": [
+    {
+      "id": "move",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A bold red sculpted directional arrow pointing diagonally toward upper right, with three chunky stair-step tail fins, shaded like a physical painted red token. Black backdrop. Match the provided Warcraft move symbol idea.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-36eb0f2a-c345-4482-9769-a113283a2ef3.png"
+    },
+    {
+      "id": "stop",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A stout polished silver kite shield facing viewer, warm brass edge, steel boss, very subtle dark green behind it. The shield means STOP. No sword.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-d51c30aa-3d1e-4c61-8913-6e05e8d1e0e2.png"
+    },
+    {
+      "id": "attack",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. One broad bright silver sword pointing diagonally upper right, ornate brass crossguard and deep blue inset gem, leather grip lower left. Powerful clean silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-0c70a013-f649-477b-98f2-43271593b89f.png"
+    },
+    {
+      "id": "cancel",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A vivid red three-dimensional prohibition symbol: a circular red ring with diagonal slash from lower left to upper right, on pure near-black. Simple, no other object.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-c93a792d-2c9f-4065-a51e-1ed4378c17a0.png"
+    },
+    {
+      "id": "build",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. One heavy silver-headed craftsman's hammer diagonally across warm dark oak wooden planks. Wood background clearly visible. Clean strong silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-913dca28-0b82-44e2-bc17-850753d94bfc.png"
+    },
+    {
+      "id": "build-advanced",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. One heavy silver-headed craftsman's hammer diagonally across dark forged IRON plates with a few rivets. Cool metal background clearly visible, no wood background.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-6454e645-a4d2-463f-87dc-a8c4de4d778d.png"
+    },
+    {
+      "id": "rally",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A small vivid red triangular military flag on a silver-tipped wooden pole planted in a compact mossy stone base, close-up.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-6d5f6c32-13f0-42d1-b24c-a9adbdac7158.png"
+    },
+    {
+      "id": "pause",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Two bold upright brass metallic pause bars, matching height and width, separated clearly, on near-black. Very simple unmistakable pause symbol.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-801244c8-ca5a-4f8a-b784-2cc990f62753.png"
+    },
+    {
+      "id": "produce",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A silver smithing hammer striking a glowing warm orange metal billet on a dark iron anvil, a few sparks. Represents production.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-2c635105-e4f1-4437-a497-84d403cf5878.png"
+    },
+    {
+      "id": "settler",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Bust portrait of a humanoid red-brown ant worker with two bent antennae, glossy black compound eyes, small mandibles, segmented chitin head, stout leather work harness and small steel shoulder guards. Cute but warlike, adult fantasy proportions. Clearly insect, no human face.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-fd50ae55-8d36-4afe-bdaa-af7f7914a3af.png"
+    },
+    {
+      "id": "warrior",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Bust portrait of a humanoid red-brown ant WARRIOR with bent antennae and black compound eyes, chunky worn silver iron helmet and shoulder armor, sword and shield edges visible. Red chitin face with mandibles, no human face.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-48797e2e-535f-4615-9862-b6c9dfbda982.png"
+    },
+    {
+      "id": "archer",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Bust portrait of a humanoid red-brown ant ARCHER with bent antennae, black compound eyes and mandibles, lighter leather armor with silver trim, wooden bow and quiver visible behind shoulders. No human face.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-46d2ae75-5ffd-4d4e-8882-b350d0a07171.png"
+    },
+    {
+      "id": "wolf",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Bust portrait of a fierce gray forest wolf, pale fur highlights, ears alert, muzzle with restrained bared teeth, dark woodland background.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-1eacfdcf-2a10-49ac-a5f1-e51ab4845e8f.png"
+    },
+    {
+      "id": "ogre",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Bust portrait of a hulking moss-green forest ogre with broad jaw, small tusks, heavy brow and primitive iron shoulder guard. Stocky warlike fantasy character, readable at tiny size.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-fbf31ead-dcca-465d-80d4-609ee53d6514.png"
+    },
+    {
+      "id": "fort",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant Rootbound Hall headquarters, three-quarter elevated view: broad two-tier fortress built into gnarled tree roots, rounded segmented terracotta-red barrel roofs reinforced by dark iron bands and brass rivets, arched dark doorway, timber palisade parapet, small red flag. Entire compact building fits frame.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-19b5dd3c-09cd-495e-a877-bbf852b818c7.png"
+    },
+    {
+      "id": "barracks",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant barracks, three-quarter elevated view: sturdy timber military workshop with FOUR short corner towers, layered curved terracotta-red shingle roofs, worn silver iron reinforcement bands, red ownership flag, crossed weapon military fittings above entrance. Entire building fits frame.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-b57f2a6d-b712-422a-b872-70e6e95c711a.png"
+    },
+    {
+      "id": "lumberjack",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant lumberjack workshop, three-quarter elevated view: open timber shelter with sharply curved terracotta-red shingles and iron roof bands, chopping stump and broad silver axe in foreground, small neat stack of cut logs, warm hanging lantern.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-b5cb41c4-11a6-42a8-a8e3-01e4a0923658.png"
+    },
+    {
+      "id": "sawmill",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant sawmill, three-quarter elevated view: low open timber shed with segmented curved red roof secured by dark iron bands, prominent toothed silver saw blade and log on cutting bench, neatly stacked long planks in foreground.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-d86df8ea-6100-48ba-808d-5bec771a9190.png"
+    },
+    {
+      "id": "forester",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant forester nursery, three-quarter elevated view: compact timber hut under a roof of overlapping broad green leaves, seedling growing beds in front, small watering pot and warm lantern. Strong green silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-dc63cf74-e187-4d3e-8bcb-16188be79988.png"
+    },
+    {
+      "id": "stonemason",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant stonemason workshop, three-quarter elevated view: sturdy dark timber hut with curved layered terracotta-red roof, side awning, quarry rocks beside a stone-cutting bench, silver chisels, tiny red flag. Whole compact structure visible.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-10f8e526-c411-4136-8545-b472a0437326.png"
+    },
+    {
+      "id": "house",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant worker dwelling, three-quarter elevated view: small welcoming stout timber and root cottage, curved overlapping terracotta-red roof shingles with simple iron straps, round warm doorway, little amber lantern. No human-scale modern objects.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-9defaa42-561c-442d-803e-b7c8a19b97d1.png"
+    },
+    {
+      "id": "tower",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. An Ant watchtower, three-quarter elevated view: tall stout wooden defensive tower with dark iron braces, small curved terracotta-red canopy roof, elevated lookout deck and red pennant. Whole silhouette visible.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-c58aea1c-d580-4109-b982-c05edc1514bb.png"
+    },
+    {
+      "id": "log",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Three freshly cut oak logs stacked together, rich bark, pale circular end grain facing viewer, compact strong diagonal composition.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-f1a431be-6a5f-4027-8ab4-2b3eb0ca365c.png"
+    },
+    {
+      "id": "plank",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. Three neatly stacked sawn wooden planks, honey-brown wood grain and squared pale cut ends clearly visible. Rectangular processed timber, NOT round logs.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-77086328-4b8e-4b06-a98e-ec220076202b.png"
+    },
+    {
+      "id": "stone",
+      "prompt": "Use case: stylized-concept. Create ONE square production-ready RTS command-card icon for Under the Canopy, a Warcraft-3-feeling fantasy strategy game about armored humanoid ants. Hand-painted 3D fantasy game inventory artwork, chunky elegant forms, worn silver forged iron, warm highlights, deep nearly black background, bold readable silhouette at 48 pixels. Full-bleed square illustration, central object occupies 80% of image with 8% safe margin. No frame, no lettering, no keyboard shortcut, no watermark, no collage, no extra panels. A compact pile of three quarried gray stone blocks, rough faceted chipped surfaces and pale sunlit edges, dark background.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-8a920b56-44d2-49e6-ba95-a29f1100b961.png"
+    }
+  ]
+}

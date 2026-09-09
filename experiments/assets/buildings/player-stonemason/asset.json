@@ -1,0 +1,26 @@
+{
+  "name": "Player Stonemason",
+  "blend": "player-stonemason.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": -27,
+    "elevation": 30,
+    "scale": 7.8,
+    "target": [
+      0.05,
+      -0.2,
+      2.05
+    ]
+  },
+  "render": {
+    "width": 1289,
+    "height": 1221,
+    "samples": 40
+  },
+  "light": {
+    "key_energy": 850,
+    "fill_energy": 230,
+    "rim_energy": 700
+  }
+}

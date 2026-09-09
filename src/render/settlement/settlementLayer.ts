@@ -1,3 +1,4 @@
+import { HealthPips } from "./healthPips";
 import { Line2 } from "three/addons/lines/Line2.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
@@ -14,7 +15,6 @@ import {
   PlaneGeometry,
   MeshBasicMaterial,
   Sprite,
-  SpriteMaterial,
   Vector3,
   CylinderGeometry,
   type Scene,
@@ -66,19 +66,15 @@ export class SettlementLayer {
     color: 0xffffff, linewidth: 3, worldUnits: false,
     transparent: true, opacity: 0.95, depthWrite: false,
   });
+  private readonly attackTargetMaterial = new LineMaterial({
+    color: 0xff3636, linewidth: 3, worldUnits: false, transparent: true, opacity: .95, depthWrite: false,
+  });
   private readonly selectionFillGeometry = new PlaneGeometry(1, 1);
   private readonly selectionFillMaterial = new MeshBasicMaterial({
     color: 0xffffff, transparent: true, opacity: 0.12, depthWrite: false,
     polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
   });
-  private readonly hpBack = new SpriteMaterial({
-    color: 0x17201c,
-    depthTest: false,
-  });
-  private readonly hpFill = new SpriteMaterial({
-    color: 0x73d45d,
-    depthTest: false,
-  });
+  private readonly healthPips = new HealthPips();
   private readonly entranceGhost = new Mesh(
     new BoxGeometry(0.7, 0.12, 0.7),
     new MeshBasicMaterial({ color: 0xffed9d, depthWrite: false }),
@@ -222,19 +218,12 @@ export class SettlementLayer {
     }
     selection.visible = false;
     o.add(selection);
-    const hp = new Group();
+    const hp = new Sprite(this.healthPips.material(e.hp ?? 1, d.body?.maxHp ?? 1, d.kind === "building", false));
     hp.name = "Health";
-    hp.position.set(-0.6, asset.healthHeight ?? 2.5, 0);
-    const back = new Sprite(this.hpBack),
-      fill = new Sprite(this.hpFill);
-    back.center.set(0, 0.5);
-    fill.center.set(0, 0.5);
-    back.scale.set(1.2, 0.13, 1);
-    fill.scale.set(1.16, 0.09, 1);
-    fill.position.set(0.02, 0.005, 0.01);
-    back.renderOrder = 20;
-    fill.renderOrder = 21;
-    hp.add(back, fill);
+    hp.position.set(0, asset.healthHeight ?? 2.5, 0);
+    hp.scale.set(d.kind === "building" ? 3.8 : 1.35, d.kind === "building" ? .36 : .42, 1);
+    hp.renderOrder = 21;
+    hp.raycast = () => {};
     o.add(hp);
     this.entities.set(e.id, o);
     this.root.add(o);
@@ -248,6 +237,9 @@ export class SettlementLayer {
       this.revision = state.revision;
       this.borders.rebuild(state.territory, field, state.territoryBorders);
     }
+    const commandedTargets = new Set(state.entities
+      .filter(e => this.selected.has(e.id) && !e.unit?.contained)
+      .map(e => e.unit?.commandedTarget).filter((id): id is number => id != null));
     const seen = new Set<number>();
     for (const e of state.entities) {
       const d = content.get(e.definition);
@@ -259,15 +251,19 @@ export class SettlementLayer {
       applyPlayerMaterials(o, ownerSlot(e.owner));
       const target = new Vector3(e.x, field.sample(e.x, e.y), e.y);
       if (e.unit && o.userData.placed) {
-        const delta = target.clone().sub(o.position);
-        if (delta.lengthSq() > 0.005)
-          o.rotation.y = Math.atan2(delta.x, delta.z);
+        // Facing follows observed travel, never the frame-rate-dependent smoothing gap.
+        const dx = e.x - (o.userData.observedX ?? e.x);
+        const dz = e.y - (o.userData.observedZ ?? e.y);
+        if (dx * dx + dz * dz > 1e-10)
+          o.rotation.y = Math.atan2(dx, dz);
         o.position.lerp(target, 0.35);
       } else {
         o.position.copy(target);
         o.rotation.y = (e.rotation * Math.PI) / 180;
         o.userData.placed = true;
       }
+      o.userData.observedX = e.x;
+      o.userData.observedZ = e.y;
       const character = this.characters.get(e.id);
       if (character && e.unit && o.visible) {
         const previousCooldown = o.userData.animationCooldown;
@@ -279,7 +275,11 @@ export class SettlementLayer {
           if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
         } else if (hurt && !e.unit.moving) character.player.setState("hit", { restart: true });
         else if (e.unit.moving) character.player.setState(e.unit.strolling ? "walk" : "run");
-        else if (!["attack", "hit"].includes(character.player.state)) character.player.setState(e.unit.cargo ? "carry" : "idle");
+        else if (!["attack", "hit"].includes(character.player.state)) {
+          const work = character.player.variant === "base" ? e.unit.work : undefined;
+          character.player.setState(work?.animation ?? (e.unit.cargo ? "carry" : "idle"));
+          if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
+        }
         character.player.update(dt);
         o.userData.animationCooldown = e.unit.cooldown;
         o.userData.animationHp = e.hp;
@@ -296,13 +296,21 @@ export class SettlementLayer {
       body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
       if (e.item) body.visible = false;
       const selection = o.getObjectByName("Selection")!;
-      selection.visible = this.selected.has(e.id);
+      const attackTarget = commandedTargets.has(e.id) && !e.remembered && !e.unit?.contained;
+      selection.visible = this.selected.has(e.id) || attackTarget;
+      (selection.children[0] as Line2).material = attackTarget ? this.attackTargetMaterial : this.selectionMaterial;
+      if (selection.children[1]) selection.children[1].visible = this.selected.has(e.id) && !attackTarget;
       if (e.unit) selection.rotation.y = -o.rotation.y;
-      const hp = o.getObjectByName("Health")!;
-      hp.visible =
-        !!d.body && (this.selected.has(e.id) || e.hp! < d.body.maxHp);
-      if (d.body)
-        hp.children[1].scale.x = 1.16 * Math.max(0, e.hp! / d.body.maxHp);
+      const hp = o.getObjectByName("Health") as Sprite;
+      if (e.hp !== null && o.userData.previousHealth !== undefined && e.hp < o.userData.previousHealth)
+        o.userData.lastDamageTick = tick;
+      o.userData.previousHealth = e.hp;
+      hp.visible = !!d.body && e.hp! > 0 && this.selected.has(e.id);
+      if (hp.visible && d.body) {
+        const elapsed = tick - (o.userData.lastDamageTick ?? -Infinity);
+        const blink = elapsed >= 0 && elapsed < 40 && Math.floor(elapsed / 5) % 2 === 0;
+        hp.material = this.healthPips.material(e.hp!, d.body.maxHp, d.kind === "building", blink);
+      }
       const cargo = o.getObjectByName("Cargo")!;
       const cargoKey = e.unit?.cargo?.item ?? "";
       if (o.userData.cargoKey !== cargoKey) {
@@ -519,10 +527,10 @@ export class SettlementLayer {
     this.borders.dispose();
     this.selectionGeometry.dispose();
     this.selectionMaterial.dispose();
+    this.attackTargetMaterial.dispose();
     this.selectionFillGeometry.dispose();
     this.selectionFillMaterial.dispose();
-    this.hpBack.dispose();
-    this.hpFill.dispose();
+    this.healthPips.dispose();
     this.entranceGhost.geometry.dispose();
     this.entranceGhost.material.dispose();
     this.ghost.geometry.dispose();

@@ -77,3 +77,11 @@ Worker movement declares speed 4, walkSpeed 2 and idleWander true. Normal orders
 On entering idle state, a worker saves its home cell and a deterministic next-stroll tick. Every 6–12 seconds it may walk to a clear neighboring cell within the original home's 3×3 neighborhood. Arrival never moves the home anchor. Orders/work reset the idle state; a later idle period anchors at the new location. Tick/ID hashing chooses intervals/directions without wall-clock randomness. Idle state is saved and checksummed; the simulation protocol is now declarative-sim-4.
 
 Slower traffic also exposed a yielding issue: a successful coarse route could still lead into another unit's physical body. Higher-ID friendly traffic now checks a safe sidestep when blocked even if a replacement route was found. Swept collision checks still govern every step.
+
+### Selected health indicators
+
+Selected buildings display 16 outlined segments; selected units display four pips in a shallow arc. Unit tiers are green above 75% HP, yellow above 50%, orange above 25%, red through 25%, and empty/dead at zero. Observed health decreases start a 40-tick (one-second) flash on the last filled pip. Unselected entities never show this world-space indicator. Cached sprite textures are shared across entities; no animation event affects health.
+
+Explicit attack targeting is exposed to the owner as unit.commandedTarget, separately from automatic combat target acquisition. Selected attackers highlight their visible ordered targets with an unfilled red footprint outline. Selection changes, interrupted orders, target removal or fog hide the outline. Attack-move acquisition does not create this marker.
+
+Unit facing follows the horizontal delta between consecutive observed simulation positions, independently of visual position interpolation. Repeated render frames preserve facing; slow idle steps and normal movement use the same rule. Terrain elevation changes do not trigger a turn.

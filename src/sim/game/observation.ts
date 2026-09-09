@@ -1,4 +1,4 @@
-import { precise } from "./motion";
+import { atPoint, precise } from "./motion";
 import { summarizeGoods, type GoodsSummary } from "./goodsView";
 import { simulationHash } from "./checksum";
 import { z } from "zod";
@@ -28,6 +28,8 @@ export type EntityView = {
     contained: boolean;
     cargo: NonNullable<Entity["unit"]>["cargo"];
     target: number | null;
+    commandedTarget?: number | null;
+    work?: { animation: "build" | "chop"; x: number; y: number };
     cooldown: number;
   };
   production?: Entity["production"];
@@ -161,8 +163,21 @@ export class Observation {
         contained: !!(e.unit.contained || e.unit.release),
         cargo: e.unit.cargo ? { ...e.unit.cargo } : null,
         target: privateData ? e.unit.target : null,
+        commandedTarget: privateData && e.unit.order?.type === "attack" ? e.unit.order.target : null,
         cooldown: e.unit.cooldown,
       };
+    if (e.unit && result.unit && !result.unit.moving && !result.unit.contained &&
+      (e.unit.goal === null || atPoint(e, {x: e.unit.goal % 256, y: Math.floor(e.unit.goal / 256)}))) {
+      const job = this.c.state.jobs.find(j => j.id === e.unit!.job);
+      const workplace = this.c.get(job?.target);
+      const creation = job?.type === "construct" || job?.type === "repair"
+        ? workplace && this.c.def(workplace).creation
+        : job?.type === "harvest" && job.phase !== "return" && workplace?.production?.active
+          ? this.c.registry.get(workplace.production.active.definition).creation : undefined;
+      const target = job?.type === "harvest" ? this.c.get(job.source) : workplace;
+      if (creation && "workAnimation" in creation && creation.workAnimation && target)
+        result.unit.work = {animation: creation.workAnimation, x: target.x, y: target.y};
+    }
     if (privateData) {
       result.inventory = { ...e.inventory };
       if (e.production) result.production = structuredClone(e.production);

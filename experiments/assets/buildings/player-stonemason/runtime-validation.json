@@ -1,0 +1,14 @@
+{
+  "triangles": 7974,
+  "meshes": 1,
+  "materials": 17,
+  "primitives": 17,
+  "team": [
+    {
+      "material": "TC_TeamColor",
+      "triangles": 30,
+      "defaultColor": "b72e21",
+      "neutralVertices": true
+    }
+  ]
+}

@@ -57,7 +57,7 @@
     },
     {
       "id": "icon.ants.settler",
-      "atlasIndex": 7
+      "image": "assets/ui/icons/ants-v1/settler.png"
     },
     {
       "id": "asset.ants.warrior",
@@ -67,7 +67,7 @@
     },
     {
       "id": "icon.ants.warrior",
-      "atlasIndex": 17
+      "image": "assets/ui/icons/ants-v1/warrior.png"
     },
     {
       "id": "asset.ants.archer",
@@ -78,7 +78,7 @@
     },
     {
       "id": "icon.ants.archer",
-      "atlasIndex": 18
+      "image": "assets/ui/icons/ants-v1/archer.png"
     },
     {
       "id": "asset.neutral.wolf",
@@ -87,7 +87,7 @@
     },
     {
       "id": "icon.neutral.wolf",
-      "atlasIndex": 17
+      "image": "assets/ui/icons/ants-v1/wolf.png"
     },
     {
       "id": "asset.neutral.ogre",
@@ -96,7 +96,7 @@
     },
     {
       "id": "icon.neutral.ogre",
-      "atlasIndex": 17
+      "image": "assets/ui/icons/ants-v1/ogre.png"
     },
     {
       "id": "asset.ants.fort",
@@ -105,7 +105,7 @@
     },
     {
       "id": "icon.ants.fort",
-      "atlasIndex": 6
+      "image": "assets/ui/icons/ants-v1/fort.png"
     },
     {
       "id": "asset.ants.barracks",
@@ -114,7 +114,7 @@
     },
     {
       "id": "icon.ants.barracks",
-      "atlasIndex": 16
+      "image": "assets/ui/icons/ants-v1/barracks.png"
     },
     {
       "id": "asset.ants.lumberjack",
@@ -123,7 +123,7 @@
     },
     {
       "id": "icon.ants.lumberjack",
-      "atlasIndex": 0
+      "image": "assets/ui/icons/ants-v1/lumberjack.png"
     },
     {
       "id": "asset.ants.sawmill",
@@ -132,7 +132,7 @@
     },
     {
       "id": "icon.ants.sawmill",
-      "atlasIndex": 1
+      "image": "assets/ui/icons/ants-v1/sawmill.png"
     },
     {
       "id": "asset.ants.forester",
@@ -141,16 +141,17 @@
     },
     {
       "id": "icon.ants.forester",
-      "atlasIndex": 2
+      "image": "assets/ui/icons/ants-v1/forester.png"
     },
     {
       "id": "asset.ants.stonemason",
-      "file": "assets/ant-colony/stonemason.glb",
-      "healthHeight": 5
+      "file": "assets/ant-colony/player-stonemason.glb",
+      "scale": 0.85,
+      "healthHeight": 4.2
     },
     {
       "id": "icon.ants.stonemason",
-      "atlasIndex": 3
+      "image": "assets/ui/icons/ants-v1/stonemason.png"
     },
     {
       "id": "asset.ants.house",
@@ -159,7 +160,7 @@
     },
     {
       "id": "icon.ants.house",
-      "atlasIndex": 4
+      "image": "assets/ui/icons/ants-v1/house.png"
     },
     {
       "id": "asset.ants.tower",
@@ -168,7 +169,7 @@
     },
     {
       "id": "icon.ants.tower",
-      "atlasIndex": 5
+      "image": "assets/ui/icons/ants-v1/tower.png"
     },
     {
       "id": "asset.item.log",
@@ -179,7 +180,7 @@
     },
     {
       "id": "icon.item.log",
-      "atlasIndex": 8
+      "image": "assets/ui/icons/ants-v1/log.png"
     },
     {
       "id": "asset.item.plank",
@@ -190,7 +191,7 @@
     },
     {
       "id": "icon.item.plank",
-      "atlasIndex": 8
+      "image": "assets/ui/icons/ants-v1/plank.png"
     },
     {
       "id": "asset.item.stone",
@@ -201,7 +202,7 @@
     },
     {
       "id": "icon.item.stone",
-      "atlasIndex": 9
+      "image": "assets/ui/icons/ants-v1/stone.png"
     },
     {
       "id": "asset.resource.ant-pine-1",
@@ -225,35 +226,51 @@
     },
     {
       "id": "icon.action.move",
-      "atlasIndex": 11
+      "image": "assets/ui/icons/ants-v1/move.png"
     },
     {
       "id": "icon.action.attack",
-      "atlasIndex": 17
+      "image": "assets/ui/icons/ants-v1/attack.png"
     },
     {
       "id": "icon.action.stop",
-      "atlasIndex": 13
+      "image": "assets/ui/icons/ants-v1/stop.png"
     },
     {
       "id": "icon.action.build",
-      "atlasIndex": 6
+      "image": "assets/ui/icons/ants-v1/build.png"
     },
     {
       "id": "icon.action.produce",
-      "atlasIndex": 17
+      "image": "assets/ui/icons/ants-v1/produce.png"
     },
     {
       "id": "icon.action.rally",
-      "atlasIndex": 12
+      "image": "assets/ui/icons/ants-v1/rally.png"
     },
     {
       "id": "icon.action.pause",
-      "atlasIndex": 10
+      "image": "assets/ui/icons/ants-v1/pause.png"
     },
     {
       "id": "icon.action.cancel",
-      "atlasIndex": 13
+      "image": "assets/ui/icons/ants-v1/cancel.png"
+    },
+    {
+      "id": "icon.action.build-advanced",
+      "image": "assets/ui/icons/ants-v1/build-advanced.png"
+    },
+    {
+      "id": "icon.armor.light",
+      "image": "assets/ui/icons/ants-v1/armor-light.png"
+    },
+    {
+      "id": "icon.armor.heavy",
+      "image": "assets/ui/icons/ants-v1/armor-heavy.png"
+    },
+    {
+      "id": "icon.armor.structure",
+      "image": "assets/ui/icons/ants-v1/armor-structure.png"
     }
   ],
   "actions": {
@@ -323,7 +340,7 @@
       "category.build-advanced": {
         "name": "Advanced Build",
         "description": "Open military and territory buildings.",
-        "icon": "icon.ants.barracks",
+        "icon": "icon.action.build-advanced",
         "priority": 50,
         "hotkey": "V"
       }
@@ -347,7 +364,8 @@
     "damageMultipliers": {
       "physical": {
         "light": 1000,
-        "structure": 1000
+        "structure": 1000,
+        "heavy": 1000
       }
     },
     "startingSetup": {
@@ -440,13 +458,27 @@
       ],
       "recruit": "unit.ants.warrior",
       "reserveWorkers": 2
+    },
+    "armorTypes": {
+      "light": {
+        "name": "Light armor",
+        "icon": "icon.armor.light"
+      },
+      "heavy": {
+        "name": "Heavy armor",
+        "icon": "icon.armor.heavy"
+      },
+      "structure": {
+        "name": "Building armor",
+        "icon": "icon.armor.structure"
+      }
     }
   },
   "definitions": [
     {
       "id": "unit.ants.settler",
       "kind": "unit",
-      "name": "Settler",
+      "name": "Worker",
       "description": "Builds the colony and carries goods. Employed workers help deliver while idle.",
       "asset": "asset.ants.settler",
       "icon": "icon.ants.settler",
@@ -465,7 +497,8 @@
         "method": "spawn",
         "items": [],
         "workTicks": 80
-      }
+      },
+      "level": 1
     },
     {
       "id": "unit.ants.warrior",
@@ -478,7 +511,7 @@
       "body": {
         "maxHp": 120,
         "armor": 2,
-        "armorType": "light"
+        "armorType": "heavy"
       },
       "vision": 10,
       "behaviorSets": [
@@ -503,7 +536,8 @@
         ],
         "workTicks": 160,
         "unitInput": "unit.ants.settler"
-      }
+      },
+      "level": 1
     },
     {
       "id": "unit.ants.archer",
@@ -541,7 +575,8 @@
         ],
         "workTicks": 240,
         "unitInput": "unit.ants.settler"
-      }
+      },
+      "level": 1
     },
     {
       "id": "unit.neutral.wolf",
@@ -568,7 +603,8 @@
           "cooldownTicks": 32,
           "aggroRange": 8
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "unit.neutral.ogre",
@@ -581,7 +617,7 @@
       "body": {
         "maxHp": 350,
         "armor": 4,
-        "armorType": "light"
+        "armorType": "heavy"
       },
       "vision": 10,
       "behaviorSets": [
@@ -595,7 +631,8 @@
           "cooldownTicks": 64,
           "aggroRange": 10
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.fort",
@@ -621,7 +658,8 @@
       "creation": {
         "method": "construct",
         "items": [],
-        "workTicks": 1
+        "workTicks": 1,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -638,13 +676,14 @@
             "item.stone"
           ]
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.barracks",
       "kind": "building",
       "name": "Barracks",
-      "description": "Recruits available settlers after materials arrive.",
+      "description": "Recruits available workers after materials arrive.",
       "asset": "asset.ants.barracks",
       "icon": "icon.ants.barracks",
       "body": {
@@ -673,7 +712,8 @@
             "amount": 4
           }
         ],
-        "workTicks": 240
+        "workTicks": 240,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -695,7 +735,8 @@
           "queueCapacity": 12
         }
       },
-      "category": "category.build-advanced"
+      "category": "category.build-advanced",
+      "level": 1
     },
     {
       "id": "building.ants.lumberjack",
@@ -730,7 +771,8 @@
             "amount": 2
           }
         ],
-        "workTicks": 200
+        "workTicks": 200,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -749,7 +791,8 @@
           "workRadius": 28,
           "jobName": "Lumberjack"
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.sawmill",
@@ -784,7 +827,8 @@
             "amount": 4
           }
         ],
-        "workTicks": 280
+        "workTicks": 280,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -805,7 +849,8 @@
           "workRadius": 28,
           "jobName": "Sawyer"
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.forester",
@@ -840,7 +885,8 @@
             "amount": 2
           }
         ],
-        "workTicks": 220
+        "workTicks": 220,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -855,7 +901,8 @@
           "workRadius": 28,
           "jobName": "Forester"
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.stonemason",
@@ -890,7 +937,8 @@
             "amount": 2
           }
         ],
-        "workTicks": 240
+        "workTicks": 240,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -909,13 +957,14 @@
           "workRadius": 28,
           "jobName": "Stonemason"
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.house",
       "kind": "building",
-      "name": "Settler house",
-      "description": "Welcomes three additional settlers. Free settlers carry goods.",
+      "name": "Worker house",
+      "description": "Welcomes three additional workers. Free workers carry goods.",
       "asset": "asset.ants.house",
       "icon": "icon.ants.house",
       "body": {
@@ -944,7 +993,8 @@
             "amount": 4
           }
         ],
-        "workTicks": 240
+        "workTicks": 240,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -958,7 +1008,8 @@
           "workerSlots": 0,
           "totalLimit": 3
         }
-      }
+      },
+      "level": 1
     },
     {
       "id": "building.ants.tower",
@@ -993,7 +1044,8 @@
             "amount": 8
           }
         ],
-        "workTicks": 320
+        "workTicks": 320,
+        "workAnimation": "build"
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -1003,7 +1055,8 @@
           "radius": 38
         }
       },
-      "category": "category.build-advanced"
+      "category": "category.build-advanced",
+      "level": 1
     },
     {
       "id": "item.log",
@@ -1018,7 +1071,8 @@
         "method": "harvest",
         "items": [],
         "workTicks": 100,
-        "source": "resource.forest.tree"
+        "source": "resource.forest.tree",
+        "workAnimation": "chop"
       }
     },
     {

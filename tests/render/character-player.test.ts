@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createCharacterInstance } from '../../src/render/characters/character-player.js';
-import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three';
+import { Mesh, MeshStandardMaterial, SkinnedMesh, Vector3 } from 'three';
 
 async function asset() {
   const bytes = readFileSync('experiments/assets/characters/ant-family/model.glb');
@@ -56,6 +56,12 @@ describe('exported ant character runtime', () => {
     c.player.update(2); expect(c.player.state).toBe('build');
     c.player.setState('chop'); c.player.seek(.56);
     expect(axe.scale.x).toBeCloseTo(1); expect(hammer.scale.x).toBeLessThan(.01);
+    for (const t of [.1,.35,.57,.75]) {
+      c.player.seek(t); c.root.updateMatrixWorld(true);
+      const r=c.root.getObjectByName('socket_handR')!.getWorldPosition(new Vector3());
+      const l=c.root.getObjectByName('socket_handL')!.getWorldPosition(new Vector3());
+      expect(r.distanceTo(l)).toBeCloseTo(.13, 2);
+    }
     c.player.setState('walk'); c.player.seek(.2);
     expect(hammer.scale.x).toBeLessThan(.01); expect(axe.scale.x).toBeLessThan(.01);
     c.player.setVariant('warrior'); expect(()=>c.player.setState('build')).toThrow();

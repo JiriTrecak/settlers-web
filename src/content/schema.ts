@@ -23,6 +23,7 @@ export const creationSchema = z.discriminatedUnion("method", [
   z
     .object({
       method: z.literal("construct"),
+      workAnimation: z.enum(["build", "chop"]).optional(),
       items: priceSchema,
       workTicks: work,
     })
@@ -41,6 +42,7 @@ export const creationSchema = z.discriminatedUnion("method", [
   z
     .object({
       method: z.literal("harvest"),
+      workAnimation: z.enum(["build", "chop"]).optional(),
       items: z.array(z.never()),
       source: idSchema,
       workTicks: work,
@@ -126,6 +128,7 @@ const fields = {
   asset: idSchema,
   icon: idSchema,
   hero: z.boolean().optional(),
+  level: positive.optional(),
   selectable: z.boolean().optional(),
   selectionClass: z.enum(["army", "worker"]).optional(),
   vision: natural.max(96).optional(),
@@ -218,7 +221,7 @@ export const assetSchema = z
   .object({
     id: idSchema,
     file: z.string().min(1).optional(),
-    atlasIndex: natural.max(18).optional(),
+    image: z.string().regex(/^assets\/.*\.png$/).optional(),
     carryAsset: idSchema.optional(),
     character: z.enum(["base", "warrior", "archer"]).optional(),
     scale: z.number().positive().optional(),
@@ -232,6 +235,7 @@ export const assetSchema = z
 export const rulesSchema = z
   .object({
     id: z.string(),
+    armorTypes: z.record(idSchema, z.object({ name: z.string().min(1), icon: idSchema }).strict()),
     maxUnits: positive,
     maxBuildings: positive,
     constructionHpPermille: positive.max(1000),

@@ -64,6 +64,7 @@ export class Session {
   private stamps: readonly MapStamp[] = [];
   private resourceSignature = "";
   private economyHud: SettlementHud | null = null;
+  private pendingBuildSelection: { action: Extract<Action, {type: "build"}>; selection: number[]; firstId: number } | null = null;
   private placementPointer: { clientX: number; clientY: number } | null = null;
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
     this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
@@ -133,6 +134,7 @@ export class Session {
     );
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
+    renderer.sky.setPlaying(true);
     renderer.setGridMode("none");
     this.stamps = [
       ...map.stamps,
@@ -325,6 +327,7 @@ export class Session {
       for (const [id, peer] of this.locksteps)
         if (id !== this.me) peer.take(next);
       world.tick();
+      this.selectCommittedBuilding(commit.slots.find(slot => slot.player === this.me)?.actions ?? []);
       for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
         perf.sample(`Sim · ${name}`, ms);
       const ch = this.config.channel;
@@ -450,6 +453,23 @@ export class Session {
     this.resourceSignature = "";
     this.economyHud?.setSelection([]);
   }
+  private selectCommittedBuilding(actions: readonly Action[]) {
+    const pending = this.pendingBuildSelection;
+    if (!pending || !actions.some(action => action.type === "build" && action.actor === pending.action.actor &&
+      action.definition === pending.action.definition && action.position.x === pending.action.position.x &&
+      action.position.y === pending.action.position.y && (action.rotation ?? 0) === (pending.action.rotation ?? 0))) return;
+    this.pendingBuildSelection = null;
+    const hud = this.economyHud, sim = this.world?.settlement;
+    // Do not override a newer player selection while waiting for the network commit.
+    if (!hud || !sim || hud.selectedIds !== pending.selection) return;
+    const {definition, position} = pending.action;
+    const building = sim.view(this.me).entities.find(e =>
+      e.id >= pending.firstId && e.owner === slotOwner(this.me) &&
+      e.definition === definition && e.x === position.x && e.y === position.y);
+    if (!building) return; // The simulation can reject a location that became occupied.
+    hud.update(sim.view(this.me));
+    hud.setSelection([building.id]);
+  }
   private send(action: Action) {
     this.locksteps.get(this.me)?.send(action);
   }
@@ -482,13 +502,15 @@ export class Session {
         hud.placement(error);
         return;
       }
-      this.send({
-        type: "build",
-        actor: hud.buildingActor!,
-        definition: hud.mode,
-        position,
-        rotation: hud.placementRotation,
-      });
+      const action: Extract<Action, {type: "build"}> = {
+        type: "build", actor: hud.buildingActor!, definition: hud.mode,
+        position, rotation: hud.placementRotation,
+      };
+      this.send(action);
+      if (!shift) {
+        this.pendingBuildSelection = {action, selection: hud.selectedIds, firstId: sim.state.nextId};
+        hud.clearMode();
+      }
       return;
     }
     const known = sim.view(this.me),

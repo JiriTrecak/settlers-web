@@ -13,6 +13,7 @@ import {
 } from "../../presentation/commands";
 import type { Action } from "../../shared/types/types";
 import type { SettlementView } from "../../sim/game/observation";
+import { healthPipState } from "../../presentation/health";
 import { iconArt } from "./commandArt";
 import { CommandTooltips } from "./tooltips";
 import "./commandDock.css";
@@ -25,7 +26,9 @@ export class SettlementHud {
   private readonly stock = document.createElement("div");
   private readonly heading = document.createElement("h2");
   private readonly portrait = document.createElement("div");
-  private readonly info = document.createElement("p");
+  private readonly info = document.createElement("div");
+  private readonly level = document.createElement("div");
+  private readonly portraitHp = document.createElement("div");
   private readonly hint = document.createElement("p");
   private readonly cards = document.createElement("div");
   private readonly grid = document.createElement("div");
@@ -149,12 +152,13 @@ export class SettlementHud {
     const copy = document.createElement("div");
     copy.className = "rts-selection-copy";
     this.info.className = "rts-info";
-    this.info.style.whiteSpace = "pre-line";
+    this.level.className = "rts-selection-level";
+    this.portraitHp.className = "rts-portrait-health";
     this.hint.className = "rts-notice";
     this.hint.role = "status";
     this.cards.className = "rts-unit-cards";
     this.queues.className = "rts-recruit-queue";
-    copy.append(this.heading, this.info, this.cards, this.queues, this.hint);
+    copy.append(this.heading, this.level, this.info, this.cards, this.queues, this.hint);
     this.clockHost.className = "rts-clock-slot";
     selection.append(this.portrait, copy, this.clockHost);
     const actions = document.createElement("section");
@@ -314,55 +318,56 @@ export class SettlementHud {
         );
       }
     }
-    this.heading.textContent =
-      selected.length > 1
-        ? `${selected.length} selected · ${focus ? content.get(focus.definition).name : ""}`
-        : focus
-          ? content.get(focus.definition).name
-          : "Your colony";
+    this.heading.textContent = focus ? content.get(focus.definition).name : "";
+    this.portrait.hidden = !focus;
+    this.hint.hidden = !focus;
+    this.level.hidden = !focus;
+    this.info.hidden = !focus;
     if (focus) {
       const d = content.get(focus.definition);
+      this.level.textContent = d.level === undefined ? "" : `Level ${d.level}`;
       if (this.portraitDefinition !== d.id) {
         this.portraitDefinition = d.id;
         this.portrait.innerHTML = iconArt(d.icon);
+        this.portrait.append(this.portraitHp);
       }
       Object.assign(this.portrait.dataset, {
-        tipName: d.name,
-        tipDescription: d.description,
+        tipName: d.name, tipDescription: d.description,
         tipCosts: JSON.stringify(costs(content, d.id)),
       });
-      const health = d.body
-          ? `${focus.hp} / ${d.body.maxHp} HP · ${d.body.armor} armor`
-          : "",
-        quantity = focus.item
-          ? `${focus.item.quantity} items`
-          : focus.resource
-            ? `${focus.resource.amount} remaining`
-            : "";
-      const combat = d.behaviors.combat,
-        active = focus.production?.active,
-        production = active
-          ? `${focus.production!.status} · ${Math.min(100, Math.floor((active.progress / content.get(active.definition).creation!.workTicks) * 100))}%`
-          : focus.production?.status;
-      this.info.textContent = [
-        health,
-        combat ? `${combat.damage} damage · ${combat.range} range` : "",
-        quantity,
-        focus.remembered
-          ? "Last seen · current activity unknown"
-          : (production ?? focus.job),
-        focus.inventory
-          ? Object.entries(focus.inventory)
-              .map(([id, n]) => `${n} ${content.get(id).name}`)
-              .join(" · ")
-          : "",
-      ]
-        .filter(Boolean)
-        .join("\n");
+      this.portraitHp.hidden = !d.body;
+      if (d.body) {
+        this.portraitHp.textContent = `${focus.hp ?? 0} / ${d.body.maxHp}`;
+        this.portraitHp.style.color = `#${healthPipState(focus.hp ?? 0, d.body.maxHp, d.kind === "building").color.toString(16).padStart(6, "0")}`;
+      }
+      if (this.info.dataset.definition !== d.id) {
+        this.info.dataset.definition = d.id;
+        this.info.replaceChildren();
+        if (d.body) {
+          const armor = content.rules.armorTypes[d.body.armorType];
+          for (const stat of [
+            { name: "Damage", value: d.behaviors.combat?.damage ?? 0, icon: "icon.action.attack", description: "Damage per attack." },
+            { name: "Armor", value: d.body.armor, icon: armor.icon, description: armor.name },
+          ]) {
+            const row = document.createElement("div");
+            row.className = "rts-selection-stat";
+            row.innerHTML = iconArt(stat.icon);
+            row.tabIndex = 0;
+            Object.assign(row.dataset, { tipName: stat.name, tipDescription: stat.description });
+            const text = document.createElement("div"), label = document.createElement("span"), value = document.createElement("strong");
+            label.textContent = stat.name; value.textContent = String(stat.value);
+            text.append(label, value); row.append(text); this.info.append(row);
+          }
+        }
+      }
     } else {
       this.portraitDefinition = "";
       this.portrait.replaceChildren();
-      this.info.textContent = "Select a settler, army, or workplace.";
+      for (const key of Object.keys(this.portrait.dataset)) delete this.portrait.dataset[key];
+      this.level.textContent = "";
+      this.info.replaceChildren();
+      delete this.info.dataset.definition;
+      this.hint.textContent = "";
     }
     const cardsKey = JSON.stringify(
       selected.map((e) => [e.id, e.definition, e.hp]),
@@ -384,6 +389,7 @@ export class SettlementHud {
           hp.className = "rts-unit-hp";
           const fill = document.createElement("i");
           fill.style.width = `${(e.hp! / d.body.maxHp) * 100}%`;
+          fill.style.backgroundColor = `#${healthPipState(e.hp ?? 0, d.body.maxHp, false).color.toString(16).padStart(6, "0")}`;
           hp.append(fill);
           button.append(hp);
         }

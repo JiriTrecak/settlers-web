@@ -1,0 +1,100 @@
+{
+  "camera": {
+    "position": [
+      -7.813345909118652,
+      12.050000190734863,
+      15.632685661315918
+    ],
+    "target": [
+      0.05000019073486328,
+      2.0499982833862305,
+      0.1999988555908203
+    ],
+    "up": [
+      0.2269952893257141,
+      0.866025447845459,
+      -0.4455033540725708
+    ],
+    "scale": 7.800000190734863
+  },
+  "lights": [
+    {
+      "name": "Warm lantern spill",
+      "type": "POINT",
+      "position": [
+        -1.4800000190734863,
+        1.9700000286102295,
+        1.8300000429153442
+      ],
+      "color": [
+        1.0,
+        0.3199999928474426,
+        0.03999999910593033
+      ],
+      "energy": 12.0
+    },
+    {
+      "name": "Warm lantern spill.001",
+      "type": "POINT",
+      "position": [
+        2.7300000190734863,
+        1.75,
+        1.5099999904632568
+      ],
+      "color": [
+        1.0,
+        0.3199999928474426,
+        0.03999999910593033
+      ],
+      "energy": 12.0
+    },
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -3.0,
+        8.0,
+        4.0
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 850.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        1.0,
+        5.0,
+        6.0
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 230.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        5.0,
+        7.0,
+        -3.0
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 700.0
+    }
+  ],
+  "vertices": 4448,
+  "triangles": 7974,
+  "note": "Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio."
+}

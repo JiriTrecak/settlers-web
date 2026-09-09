@@ -66,12 +66,12 @@
     "archer"
   ],
   "variantTriangles": {
-    "base": 3500,
-    "warrior": 4577,
-    "archer": 3894
+    "base": 3752,
+    "warrior": 4829,
+    "archer": 4146
   },
-  "triangles": 3500,
-  "vertices": 2691,
+  "triangles": 3752,
+  "vertices": 2853,
   "animations": [
     "attack_bow",
     "attack_sword",

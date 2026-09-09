@@ -193,8 +193,11 @@ export class ContentRegistry {
         throw new Error(`${asset.id}: animated characters require a file and use carry animation instead of carryAsset`);
       if (asset.carryAsset && !this.asset(asset.carryAsset).file)
         throw new Error(`${asset.id}: carryAsset must be a model`);
-      if (!asset.file && asset.atlasIndex === undefined)
-        throw new Error(`${asset.id}: missing file/atlasIndex`);
+      if (!asset.file && !asset.image)
+        throw new Error(`${asset.id}: missing file/image`);
+    }
+    for (const armor of Object.values(this.rules.armorTypes)) {
+      if (!this.asset(armor.icon).image) throw new Error("Armor icon must reference an image");
     }
     for (const d of this.definitions) {
       const fail = (text: string): never => {
@@ -202,8 +205,8 @@ export class ContentRegistry {
       };
       if (!d.id.startsWith(d.kind + ".")) fail("ID prefix must match kind");
       if (!this.asset(d.asset).file) fail("asset must reference a model");
-      if (this.asset(d.icon).atlasIndex === undefined)
-        fail("icon must reference an atlas entry");
+      if (!this.asset(d.icon).image)
+        fail("icon must reference an image");
       if (d.kind !== "resource" && this.asset(d.asset).sceneryAsset)
         fail("batched scenery models require a resource definition");
       if ((d.kind === "unit" || d.kind === "building") && !d.body)
@@ -215,6 +218,7 @@ export class ContentRegistry {
         )
       )
         fail("armor type must be covered by each damage row");
+      if (d.body && !this.rules.armorTypes[d.body.armorType]) fail("armor type needs presentation metadata");
       if (
         d.kind === "building" &&
         d.footprint &&
@@ -331,7 +335,7 @@ export class ContentRegistry {
     for (const a of [...Object.values(this.actions.actions), ...Object.values(this.actions.categories), ...Object.values(this.actions.navigation)]) {
       if ("category" in a && typeof a.category === "string") categoryExists(a.category);
       this.asset(a.icon);
-      if (this.asset(a.icon).atlasIndex === undefined) throw new Error(`Command icon must use an atlas: ${a.icon}`);
+      if (!this.asset(a.icon).image) throw new Error(`Command icon must reference an image: ${a.icon}`);
       if (a.hotkey) {
         if (keys.has(a.hotkey)) throw new Error(`Duplicate hotkey ${a.hotkey}`);
         keys.add(a.hotkey);

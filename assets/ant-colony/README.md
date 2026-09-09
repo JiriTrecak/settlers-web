@@ -408,3 +408,7 @@ capture checked visually; the broader art-reference goal remains incomplete.
 ## Player Barracks
 
 player-barracks.glb is copied unchanged from experiments/assets/buildings/player-barracks/model.glb (16,652 triangles). The shared asset.ants.barracks declaration uses it in gameplay, the editor and placement ghosts. Feet are at ground zero, height is 5.95 units, and the ownership flag uses TC_TeamColor. The health bar is positioned at 6.4 units to clear the towers.
+
+## Player Stonemason
+
+`player-stonemason.glb` is copied unchanged from `experiments/assets/buildings/player-stonemason/model.glb` (7,974 triangles, 17 materials). The shared `asset.ants.stonemason` declaration uses it for gameplay, editor entities and placement ghosts. A declared scale of 0.85 fits the 5.85-unit-wide export to the existing five-cell footprint; the health bar is at 4.2 units above ground, clearing the scaled 3.71-unit model. Only the `TC_TeamColor` flag recolors; the roof retains its authored red. Production, costs, entrance and persistent building ID are unchanged. Editable Blender source stays in the experiment folder.

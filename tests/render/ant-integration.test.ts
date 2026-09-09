@@ -38,6 +38,29 @@ it("uses independent animated game variants, reacts once per strike, and disting
   worker.unit!.strolling = true;
   layer.update(view, field, 1);
   expect(characters.get(worker.id).player.state).toBe("walk");
+  layer.select(warrior.id);
+  warrior.unit!.target = worker.id;
+  layer.update(view, field, 1);
+  const targetOutline = (layer as any).entities.get(worker.id).getObjectByName("Selection");
+  expect(targetOutline.visible).toBe(false); // Automatic aggro is not an explicit order.
+  warrior.unit!.commandedTarget = worker.id;
+  layer.update(view, field, 1);
+  expect(targetOutline.visible).toBe(true);
+  expect(targetOutline.children[0].material.color.getHex()).toBe(0xff3636);
+  layer.select(null);
+  layer.update(view, field, 1);
+  expect(targetOutline.visible).toBe(false);
+  // Tiny idle-walk steps still turn correctly, regardless of render interpolation.
+  worker.unit!.moving = true; worker.unit!.strolling = true;
+  worker.x -= .01; worker.y += .02;
+  layer.update(view, field, 1);
+  const workerRoot = (layer as any).entities.get(worker.id);
+  expect(workerRoot.rotation.y).toBeCloseTo(Math.atan2(-.01, .02), 8);
+  for (let i = 0; i < 12; i++) layer.update(view, field, 1);
+  expect(workerRoot.rotation.y).toBeCloseTo(Math.atan2(-.01, .02), 8);
+  worker.x += .02; worker.y -= .01;
+  layer.update(view, field, 2);
+  expect(workerRoot.rotation.y).toBeCloseTo(Math.atan2(.02, -.01), 8);
   const attack = vi.spyOn(characters.get(warrior.id).player, "setState");
   warrior.unit!.moving = false;
   warrior.unit!.cooldown = 40;

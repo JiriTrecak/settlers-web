@@ -1,36 +1,36 @@
-00:00.318  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/ant-family.blend"
-00:03.253  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/.render-1788930776929661000.png'
+00:00.348  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/ant-family.blend"
+00:03.478  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/.render-1788932581839253000.png'
 INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
 INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
-22:13:00 | INFO: Starting glTF 2.0 export
-22:13:00 | INFO: Extracting primitive: Pelvis shell.001
-22:13:00 | INFO: Primitives created: 9
-22:13:00 | INFO: Finished glTF 2.0 export in 0.4659156799316406 s
+22:43:05 | INFO: Starting glTF 2.0 export
+22:43:05 | INFO: Extracting primitive: Pelvis shell.001
+22:43:05 | INFO: Primitives created: 9
+22:43:06 | INFO: Finished glTF 2.0 export in 0.5161058902740479 s
 
-22:13:00 | INFO: Starting glTF 2.0 export
-22:13:00 | INFO: Extracting primitive: Pelvis shell.001
-22:13:00 | INFO: Primitives created: 9
-22:13:00 | INFO: Extracting primitive: Breastplate.001
-22:13:00 | INFO: Primitives created: 6
-22:13:01 | INFO: Finished glTF 2.0 export in 0.45354604721069336 s
+22:43:06 | INFO: Starting glTF 2.0 export
+22:43:06 | INFO: Extracting primitive: Pelvis shell.001
+22:43:06 | INFO: Primitives created: 9
+22:43:06 | INFO: Extracting primitive: Breastplate.001
+22:43:06 | INFO: Primitives created: 6
+22:43:06 | INFO: Finished glTF 2.0 export in 0.4892737865447998 s
 
-22:13:01 | INFO: Starting glTF 2.0 export
-22:13:01 | INFO: Extracting primitive: Archer leather vest.001
-22:13:01 | INFO: Primitives created: 6
-22:13:01 | INFO: Extracting primitive: Pelvis shell.001
-22:13:01 | INFO: Primitives created: 9
-22:13:01 | INFO: Finished glTF 2.0 export in 0.4720289707183838 s
+22:43:06 | INFO: Starting glTF 2.0 export
+22:43:06 | INFO: Extracting primitive: Archer leather vest.001
+22:43:06 | INFO: Primitives created: 6
+22:43:06 | INFO: Extracting primitive: Pelvis shell.001
+22:43:06 | INFO: Primitives created: 9
+22:43:07 | INFO: Finished glTF 2.0 export in 0.5323481559753418 s
 
-22:13:01 | INFO: Starting glTF 2.0 export
-22:13:01 | INFO: Extracting primitive: Archer leather vest.001
-22:13:01 | INFO: Primitives created: 6
-22:13:01 | INFO: Extracting primitive: Pelvis shell.001
-22:13:01 | INFO: Primitives created: 9
-22:13:01 | INFO: Extracting primitive: Breastplate.001
-22:13:01 | INFO: Primitives created: 6
-22:13:02 | INFO: Finished glTF 2.0 export in 0.4605119228363037 s
+22:43:07 | INFO: Starting glTF 2.0 export
+22:43:07 | INFO: Extracting primitive: Archer leather vest.001
+22:43:07 | INFO: Primitives created: 6
+22:43:07 | INFO: Extracting primitive: Pelvis shell.001
+22:43:07 | INFO: Primitives created: 9
+22:43:07 | INFO: Extracting primitive: Breastplate.001
+22:43:07 | INFO: Primitives created: 6
+22:43:07 | INFO: Finished glTF 2.0 export in 0.5559909343719482 s
 
-BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/.render-1788930776929661000.png
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-family/.render-1788932581839253000.png
 Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
 
 Blender quit

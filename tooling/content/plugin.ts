@@ -15,6 +15,17 @@ async function validateModels(root: string, registry: ContentRegistry) {
       await readFile(resolve(assetsRoot, "catalog.json"), "utf8"),
     );
   for (const asset of registry.assets) {
+    if (asset.image) {
+      const file = resolve(root, asset.image), path = relative(assetsRoot, file);
+      if (path.startsWith("..") || isAbsolute(path) || !file.endsWith(".png"))
+        throw new Error(`${asset.id}: icon must be a project PNG`);
+      const bytes = await readFile(file);
+      if (bytes.length < 24 || bytes.toString("hex", 0, 8) !== "89504e470d0a1a0a")
+        throw new Error(`${asset.id}: invalid PNG image`);
+      const width = bytes.readUInt32BE(16), height = bytes.readUInt32BE(20);
+      if (width !== height || width < 1 || width > 128)
+        throw new Error(`${asset.id}: icons must be square and at most 128px`);
+    }
     if (asset.file) {
       const file = resolve(root, asset.file),
         path = relative(assetsRoot, file);
