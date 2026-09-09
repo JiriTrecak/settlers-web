@@ -1,0 +1,26 @@
+{
+  "name": "Olive Pine",
+  "blend": "olive-pine.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 10,
+    "elevation": 12,
+    "scale": 7.1,
+    "target": [
+      0,
+      0,
+      3.2
+    ]
+  },
+  "render": {
+    "width": 1111,
+    "height": 1416,
+    "samples": 48
+  },
+  "light": {
+    "key_energy": 1700,
+    "fill_energy": 400,
+    "rim_energy": 650
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "triangles": 16652,
+  "team": [
+    {
+      "material": "TC_TeamColor",
+      "triangles": 64,
+      "defaultColor": "b72e21",
+      "neutralVertices": true
+    }
+  ]
+}

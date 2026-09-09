@@ -28,7 +28,10 @@ scene.render.image_settings.file_format = 'PNG'
 scene.render.image_settings.color_mode = 'RGB'
 scene.render.filepath = str(args.output)
 bpy.ops.render.render(write_still=True)
-from export_viewer import export_viewer
+if config.get('kind')=='character':
+    from export_character import export_character as export_viewer
+else:
+    from export_viewer import export_viewer
 metadata=export_viewer(args.asset,args.output.with_suffix('.glb'))
 args.output.with_suffix('.json').write_text(json.dumps(metadata,indent=2)+'\n')
 print('BUILDING_RENDER_READY', args.output)

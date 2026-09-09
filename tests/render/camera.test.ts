@@ -96,7 +96,7 @@ describe("iso camera", () => {
     expect(z).toBeCloseTo(hit.z, 4);
   });
 
-  it("setGame locks WC3 perspective, frames four blocks, and allows distance zoom while locking orbit", () => {
+  it("setGame locks WC3 perspective, starts at distance 40, and allows distance zoom while locking orbit", () => {
     const cam = new Camera();
     cam.locked = false;
     cam.lookAt(128, 128);
@@ -109,9 +109,7 @@ describe("iso camera", () => {
     const three = new PerspectiveCamera();
     cam.applyTo(three, 1280, 720);
     expect(three.fov).toBe(GAME_FOV);
-    const a = cam.groundAt(0, -1, GAME_ASPECT);
-    const b = cam.groundAt(0, 1, GAME_ASPECT);
-    expect(Math.hypot(b[0] - a[0], b[1] - a[1])).toBeCloseTo(MAP_BLOCK * 4, 1);
+    expect(cam.distance).toBe(40);
     const dist = cam.distance;
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
@@ -170,13 +168,12 @@ describe("iso camera", () => {
 });
 
 describe("terrain-following game camera", () => {
-  it("zooms to twice the default span and clamps both zoom limits", () => {
+  it("zooms to distance 60 and clamps both zoom limits", () => {
     const camera = new Camera(); camera.lookAt(128,128); camera.setGame(true);
     const distance = camera.distance;
     camera.zoomBy(100);
-    expect(camera.distance).toBeCloseTo(distance * 2);
-    const a=camera.groundAt(0,-1,GAME_ASPECT),b=camera.groundAt(0,1,GAME_ASPECT);
-    expect(Math.hypot(b[0]-a[0],b[1]-a[1])).toBeCloseTo(MAP_BLOCK * 8);
+    expect(camera.distance).toBe(60);
+
     camera.zoomBy(.0001);
     expect(camera.distance).toBeCloseTo(distance * .5);
   });
@@ -222,7 +219,7 @@ it("never descends toward the river bed below the water-relative camera floor", 
     expect(cam.yaw).toBe(GAME_YAW);
     expect(cam.pitch).toBe(GAME_PITCH);
     cam.pose({ gameZoom: 5 });
-    expect(cam.gameZoom).toBe(2);
+    expect(cam.gameZoom).toBe(1.5);
     cam.pose({ gameZoom: .1 });
     expect(cam.gameZoom).toBe(.5);
   });

@@ -53,14 +53,15 @@ def export_viewer(asset, output):
                 copied.name=source.name+' · baked viewer'
                 nodes,links=copied.node_tree.nodes,copied.node_tree.links
                 bsdf=next(n for n in nodes if n.type=='BSDF_PRINCIPLED')
-                properties={'roughness':bsdf.inputs['Roughness'].default_value,'metallic':bsdf.inputs['Metallic'].default_value,
+                properties={'team_color':source.name=='TC_TeamColor','base_color':list(bsdf.inputs['Base Color'].default_value),'roughness':bsdf.inputs['Roughness'].default_value,'metallic':bsdf.inputs['Metallic'].default_value,
                             'emission':list(bsdf.inputs['Emission Color'].default_value),'emission_strength':bsdf.inputs['Emission Strength'].default_value}
                 for coordinate in [n for n in nodes if n.type=='TEX_COORD']:
                     attr=nodes.new('ShaderNodeAttribute');attr.attribute_name='studio_generated'
                     for link in list(coordinate.outputs['Generated'].links):
                         socket=link.to_socket;links.remove(link);links.new(attr.outputs['Vector'],socket)
                 emission=nodes.new('ShaderNodeEmission')
-                if bsdf.inputs['Base Color'].is_linked:links.new(bsdf.inputs['Base Color'].links[0].from_socket,emission.inputs['Color'])
+                if source.name=='TC_TeamColor':emission.inputs['Color'].default_value=(1,1,1,1)
+                elif bsdf.inputs['Base Color'].is_linked:links.new(bsdf.inputs['Base Color'].links[0].from_socket,emission.inputs['Color'])
                 else:emission.inputs['Color'].default_value=bsdf.inputs['Base Color'].default_value
                 output_node=next(n for n in nodes if n.type=='OUTPUT_MATERIAL')
                 links.new(emission.outputs[0],output_node.inputs['Surface'])
@@ -82,7 +83,11 @@ def export_viewer(asset, output):
         nodes,links=copied.node_tree.nodes,copied.node_tree.links
         nodes.clear()
         bsdf=nodes.new('ShaderNodeBsdfPrincipled');out=nodes.new('ShaderNodeOutputMaterial')
-        bsdf.inputs['Base Color'].default_value=(1,1,1,1)
+        bsdf.inputs['Base Color'].default_value=properties['base_color'] if properties['team_color'] else (1,1,1,1)
+        if properties['team_color']:
+            source_material=bpy.data.materials.get('TC_TeamColor')
+            if source_material and source_material != copied:source_material.name='Temporary source team color'
+            copied.name='TC_TeamColor'
         bsdf.inputs['Roughness'].default_value=properties['roughness']
         bsdf.inputs['Metallic'].default_value=properties['metallic']
         bsdf.inputs['Emission Color'].default_value=properties['emission']

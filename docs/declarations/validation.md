@@ -26,3 +26,5 @@ The in-game debug overlay (F3) reports explicit simulation phases alongside rend
 The browser checks exercise the loaded game/HUD, canonical build requests, singleplayer save/load with an unsent action, editor entity editing, and the atomic content endpoint. Invalid content and stale revisions must leave the source untouched. API/headless checks prove logic; visual inspection verifies the existing model/terrain adapters still display the map.
 
 This cutover does not implement Lua, live portraits, inventory/loot, capture or advanced diplomacy. No new claim is made about Internet reconnect robustness or large-army performance. Those need their own scenarios when developed.
+
+`tests/game/any-angle.test.ts` covers straight non-45-degree travel, precise observations, mid-cell stop/retarget, swept wall avoidance and snapshot continuation. `tests/game/navigation.test.ts` checks the underlying grid search against shortest-cost reference paths.

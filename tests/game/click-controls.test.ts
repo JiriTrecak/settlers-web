@@ -45,6 +45,17 @@ describe("RTS click intentions", () => {
       }
     } finally { vi.unstubAllGlobals(); }
   });
+  it("submits and validates the chosen building orientation", () => {
+    const {session, hud, g, unit} = setup();
+    Object.assign(hud, { mode: "building.ants.barracks", buildingActor: unit.id, placementRotation: 270 });
+    const validate = vi.spyOn(g, "canBuild").mockReturnValue(null);
+    session.click(0, 0);
+    expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245, y: 245}, unit.id, 270);
+    expect(session.send).toHaveBeenCalledWith({
+      type: "build", actor: unit.id, definition: "building.ants.barracks",
+      position: {x: 245, y: 245}, rotation: 270,
+    });
+  });
   it("left ground clears selection, right ground moves without clearing it", () => {
     const {session, hud, unit} = setup();
     session.click(0, 0);

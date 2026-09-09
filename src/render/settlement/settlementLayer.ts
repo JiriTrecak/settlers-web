@@ -1,10 +1,17 @@
+import { Line2 } from "three/addons/lines/Line2.js";
+import { LineGeometry } from "three/addons/lines/LineGeometry.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import {
   Group,
+  BufferGeometry,
+  Color,
+  LineSegments,
+  LineBasicMaterial,
   Object3D,
   Mesh,
   MeshStandardMaterial,
   BoxGeometry,
-  RingGeometry,
+  PlaneGeometry,
   MeshBasicMaterial,
   Sprite,
   SpriteMaterial,
@@ -13,6 +20,8 @@ import {
   type Scene,
   type Raycaster,
 } from "three";
+import { createCharacterInstance } from "../characters/character-player.js";
+import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { content } from "../../content/builtin";
 import { ownerSlot } from "../../content/schema";
@@ -20,13 +29,19 @@ import { projectMeshUrl } from "../../shared/assets/project";
 import { stockpileLayout } from "../../shared/settlement/stockpile";
 import type { HeightField } from "../../shared/map/height";
 import type { EntityView, SettlementView } from "../../sim/game/observation";
-import { applyPlayerMaterials } from "./playerMaterials";
+import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
+import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { prepareAntMaterial } from "../prop/antMaterials";
+import { placementGrid } from "./placementGrid";
 import { TerritoryPosts } from "./territoryPosts";
 
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private readonly characterSources = new Map<string, GLTF>();
+  private readonly characters = new Map<number, ReturnType<typeof createCharacterInstance>>();
+  private readonly corpses = new Map<number, { root: Object3D; remaining: number }>();
+  private animationTime: number | null = null;
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
   private selected = new Set<number>();
@@ -44,12 +59,17 @@ export class SettlementLayer {
   private readonly borders = new TerritoryPosts();
   private revision = -1;
   private dead = false;
-  private readonly ringGeometry = new RingGeometry(0.82, 1, 32);
-  private readonly ringMaterial = new MeshBasicMaterial({
-    color: 0xffed9d,
-    transparent: true,
-    opacity: 0.9,
-    depthWrite: false,
+  private readonly selectionGeometry = new LineGeometry().setPositions([
+    -.5, 0, -.5, .5, 0, -.5, .5, 0, .5, -.5, 0, .5, -.5, 0, -.5,
+  ]);
+  private readonly selectionMaterial = new LineMaterial({
+    color: 0xffffff, linewidth: 3, worldUnits: false,
+    transparent: true, opacity: 0.95, depthWrite: false,
+  });
+  private readonly selectionFillGeometry = new PlaneGeometry(1, 1);
+  private readonly selectionFillMaterial = new MeshBasicMaterial({
+    color: 0xffffff, transparent: true, opacity: 0.12, depthWrite: false,
+    polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
   });
   private readonly hpBack = new SpriteMaterial({
     color: 0x17201c,
@@ -59,19 +79,33 @@ export class SettlementLayer {
     color: 0x73d45d,
     depthTest: false,
   });
+  private readonly entranceGhost = new Mesh(
+    new BoxGeometry(0.7, 0.12, 0.7),
+    new MeshBasicMaterial({ color: 0xffed9d, depthWrite: false }),
+  );
   private readonly ghost = new Mesh(
-    new BoxGeometry(1, 0.15, 1),
-    new MeshStandardMaterial({
-      color: 0x68d893,
-      transparent: true,
-      opacity: 0.4,
-      depthWrite: false,
+    new BufferGeometry(),
+    new MeshBasicMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.13,
+      depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
     }),
   );
+  private readonly gridLines = new LineSegments(
+    new BufferGeometry(),
+    new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65, depthWrite: false }),
+  );
+  private placementModel: Object3D | null = null;
+  private placementAsset: string | null = null;
+  private gridKey = "";
+  private readonly invalidColor = new Color(0xf26960);
+  private pendingPreview: (() => void) | null = null;
   readonly ready: Promise<void>;
   constructor(scene: Scene) {
     this.root.name = "game-entities";
-    this.root.add(this.borders, this.ghost);
+    this.root.add(this.borders, this.ghost, this.entranceGhost, this.gridLines);
+    this.gridLines.visible = false;
+    this.entranceGhost.visible = false;
     this.ghost.visible = false;
     scene.add(this.root);
     const loader = new GLTFLoader();
@@ -82,9 +116,12 @@ export class SettlementLayer {
           const url = projectMeshUrl(a.file!);
           if (!url) throw new Error(`Missing declared model ${a.file}`);
           const gltf = await loader.loadAsync(url);
-          if (!this.dead) this.prototypes.set(a.id, gltf.scene);
+          if (!this.dead) {
+            this.prototypes.set(a.id, gltf.scene);
+            if (a.character) this.characterSources.set(a.id, gltf);
+          }
         }),
-    ).then(() => {});
+    ).then(() => { if (!this.dead) this.pendingPreview?.(); });
   }
   select(ids: number | null | readonly number[]) {
     this.selected = new Set(
@@ -131,13 +168,18 @@ export class SettlementLayer {
       assetId = e.appearance?.asset ?? d.asset;
     let o = this.entities.get(e.id);
     if (o && o.userData.asset !== assetId) {
-      this.disposeInstance(o);
-      o.removeFromParent();
+      this.removeModel(e.id, o);
       this.entities.delete(e.id);
       o = undefined;
     }
     if (o) return o;
-    const model = this.clone(assetId);
+    const source = this.characterSources.get(assetId);
+    const character = source ? createCharacterInstance(source, content.asset(assetId).character) : null;
+    if (character) this.characters.set(e.id, character);
+    const model = character?.root ?? this.clone(assetId);
+    if (character) model?.traverse(child => {
+      if (child instanceof Mesh) { child.castShadow = true; child.receiveShadow = true; }
+    });
     if (!model) return null;
     o = new Group();
     model.name = "Body";
@@ -164,15 +206,22 @@ export class SettlementLayer {
     const stock = new Group();
     stock.name = "Stockpile";
     o.add(stock);
-    const ring = new Mesh(this.ringGeometry, this.ringMaterial);
-    ring.name = "Selection";
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.12;
-    ring.scale.setScalar(
-      d.footprint ? Math.max(d.footprint.width, d.footprint.depth) / 2 + 1 : 1,
-    );
-    ring.visible = false;
-    o.add(ring);
+    const selection = new Group();
+    selection.name = "Selection";
+    selection.position.y = 0.12;
+    selection.scale.set(d.footprint ? d.footprint.width + 0.3 : 1.8, 1,
+      d.footprint ? d.footprint.depth + 0.3 : 1.8);
+    const outline = new Line2(this.selectionGeometry, this.selectionMaterial);
+    outline.raycast = () => {}; // Selection decoration must not intercept unit picking.
+    selection.add(outline);
+    if (d.kind === "building") {
+      const fill = new Mesh(this.selectionFillGeometry, this.selectionFillMaterial);
+      fill.rotation.x = -Math.PI / 2;
+      fill.raycast = () => {};
+      selection.add(fill);
+    }
+    selection.visible = false;
+    o.add(selection);
     const hp = new Group();
     hp.name = "Health";
     hp.position.set(-0.6, asset.healthHeight ?? 2.5, 0);
@@ -192,6 +241,9 @@ export class SettlementLayer {
     return o;
   }
   update(state: SettlementView, field: HeightField, tick: number) {
+    const now = performance.now();
+    const dt = this.animationTime === null ? 0 : Math.min(0.1, Math.max(0, (now - this.animationTime) / 1000));
+    this.animationTime = now;
     if (state.revision !== this.revision) {
       this.revision = state.revision;
       this.borders.rebuild(state.territory, field, state.territoryBorders);
@@ -216,6 +268,22 @@ export class SettlementLayer {
         o.rotation.y = (e.rotation * Math.PI) / 180;
         o.userData.placed = true;
       }
+      const character = this.characters.get(e.id);
+      if (character && e.unit && o.visible) {
+        const previousCooldown = o.userData.animationCooldown;
+        const attacked = previousCooldown !== undefined && e.unit.cooldown > previousCooldown;
+        const hurt = o.userData.animationHp !== undefined && e.hp !== null && e.hp < o.userData.animationHp;
+        if (attacked) {
+          character.player.setState("attack", { restart: true });
+          const victim = state.entities.find(t => t.id === e.unit!.target);
+          if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
+        } else if (hurt && !e.unit.moving) character.player.setState("hit", { restart: true });
+        else if (e.unit.moving) character.player.setState(e.unit.strolling ? "walk" : "run");
+        else if (!["attack", "hit"].includes(character.player.state)) character.player.setState(e.unit.cargo ? "carry" : "idle");
+        character.player.update(dt);
+        o.userData.animationCooldown = e.unit.cooldown;
+        o.userData.animationHp = e.hp;
+      }
       const carry = o.getObjectByName("CarryBody"),
         body = o.getObjectByName("Body")!;
       if (carry) {
@@ -227,7 +295,9 @@ export class SettlementLayer {
         : 1;
       body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
       if (e.item) body.visible = false;
-      o.getObjectByName("Selection")!.visible = this.selected.has(e.id);
+      const selection = o.getObjectByName("Selection")!;
+      selection.visible = this.selected.has(e.id);
+      if (e.unit) selection.rotation.y = -o.rotation.y;
       const hp = o.getObjectByName("Health")!;
       hp.visible =
         !!d.body && (this.selected.has(e.id) || e.hp! < d.body.maxHp);
@@ -295,7 +365,7 @@ export class SettlementLayer {
         }
         o.userData.cooldown = e.unit.cooldown;
       }
-      if (e.unit)
+      if (e.unit && !character)
         o.traverse((child) => {
           if (child.name.startsWith("Leg") || child.name.startsWith("Arm"))
             child.rotation.x = e.unit!.moving
@@ -319,10 +389,26 @@ export class SettlementLayer {
     }
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
-        this.disposeInstance(o);
-        o.removeFromParent();
+        const character = this.characters.get(id);
+        const death = state.deaths?.find(e => e.id === id);
+        if (character && death && o.visible) {
+          character.player.setState("death", { restart: true });
+          for (const name of ["Selection", "Health", "Cargo"]) {
+            const part = o.getObjectByName(name);
+            if (part) part.visible = false;
+          }
+          this.corpses.set(id, { root: o, remaining: 2 });
+        } else this.removeModel(id, o);
         this.entities.delete(id);
       }
+    for (const [id, corpse] of this.corpses) {
+      const cell = Math.round(corpse.root.position.z) * 256 + Math.round(corpse.root.position.x);
+      corpse.remaining -= dt;
+      if (corpse.remaining <= 0 || (state.fog && state.fog.cells[cell] !== 2)) {
+        this.removeModel(id, corpse.root);
+        this.corpses.delete(id);
+      } else this.characters.get(id)?.player.update(dt);
+    }
   }
   preview(
     definition: string | null,
@@ -330,17 +416,82 @@ export class SettlementLayer {
     y: number,
     allowed: boolean,
     field: HeightField,
+    rotation = 0,
+    owner = 0,
   ) {
-    this.ghost.visible = definition !== null;
+    this.pendingPreview = definition ? () => this.preview(definition, x, y, allowed, field, rotation, owner) : null;
+    this.entranceGhost.visible = this.ghost.visible = this.gridLines.visible = definition !== null;
+    if (this.placementModel) this.placementModel.visible = definition !== null;
     if (!definition) return;
-    const footprint = content.get(definition).footprint!;
-    this.ghost.scale.set(footprint.width, 1, footprint.depth);
-    this.ghost.position.set(x, field.sample(x, y) + 0.15, y);
-    this.ghost.material.color.set(allowed ? 0x68d893 : 0xf26960);
+    const d = content.get(definition), footprint = d.footprint!;
+    if (this.placementAsset !== d.asset || !this.placementModel) {
+      if (this.placementModel) {
+        this.disposeInstance(this.placementModel);
+        this.placementModel.removeFromParent();
+      }
+      this.placementModel = this.clone(d.asset);
+      this.placementAsset = d.asset;
+      if (this.placementModel) {
+        this.placementModel.scale.setScalar(content.asset(d.asset).scale ?? 1);
+        this.placementModel.traverse(child => {
+          if (!(child instanceof Mesh)) return;
+          child.castShadow = false;
+          child.receiveShadow = false;
+          for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+            material.transparent = true;
+            material.opacity = 0.48;
+            material.depthWrite = false;
+            if (material instanceof MeshStandardMaterial)
+              material.userData.placementColor = material.color.clone();
+          }
+        });
+        this.root.add(this.placementModel);
+      }
+    }
+    if (this.placementModel) {
+      this.placementModel.position.set(x, field.sample(x, y), y);
+      this.placementModel.rotation.y = rotation * Math.PI / 180;
+      this.placementModel.traverse(child => {
+        if (!(child instanceof Mesh)) return;
+        for (const material of Array.isArray(child.material) ? child.material : [child.material])
+          if (material instanceof MeshStandardMaterial) {
+            material.color.copy(material.userData.placementColor);
+            if (material.name === TEAM_COLOR_MATERIAL && owner >= 0) material.color.set(PLAYER_COLORS[clampPlayer(owner)]);
+            if (!allowed) material.color.lerp(this.invalidColor, 0.7);
+          }
+      });
+    }
+    const r = ((Math.round(rotation / 90) % 4) + 4) % 4;
+    const width = r % 2 ? footprint.depth : footprint.width;
+    const depth = r % 2 ? footprint.width : footprint.depth;
+    const key = `${x}:${y}:${width}:${depth}`;
+    if (key !== this.gridKey) {
+      this.gridKey = key;
+      const grid = placementGrid(x, y, width, depth, (a, b) => field.sample(a, b));
+      this.ghost.geometry.dispose();
+      this.gridLines.geometry.dispose();
+      this.ghost.geometry = grid.fill;
+      this.gridLines.geometry = grid.lines;
+    }
+    const offset = d.entrance ?? { x: 0, y: 0 };
+    const ex = x + [offset.x, offset.y, -offset.x, -offset.y][r];
+    const ey = y + [offset.y, -offset.x, -offset.y, offset.x][r];
+    this.entranceGhost.position.set(ex, field.sample(ex, ey) + 0.2, ey);
+    this.ghost.material.color.set(allowed ? 0xffffff : 0xf26960);
+    this.gridLines.material.color.set(allowed ? 0xffffff : 0xf26960);
+  }
+
+  private removeModel(id: number, o: Object3D) {
+    // Detach the character before disposing accessories; its factory owns rig/material cleanup.
+    this.characters.get(id)?.dispose();
+    this.characters.delete(id);
+    o.getObjectByName("Selection")?.removeFromParent();
+    this.disposeInstance(o);
+    o.removeFromParent();
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
-      if (child instanceof Mesh && child.geometry !== this.ringGeometry)
+      if (child instanceof Mesh && child.geometry !== this.selectionFillGeometry && child.geometry !== this.selectionGeometry)
         for (const m of Array.isArray(child.material)
           ? child.material
           : [child.material])
@@ -349,9 +500,14 @@ export class SettlementLayer {
   }
   destroy(scene: Scene) {
     this.dead = true;
+    this.pendingPreview = null;
+    if (this.placementModel) this.disposeInstance(this.placementModel);
+    this.gridLines.geometry.dispose();
+    this.gridLines.material.dispose();
     this.arrowGeometry.dispose();
     this.arrowMaterial.dispose();
-    for (const o of this.entities.values()) this.disposeInstance(o);
+    for (const [id, o] of this.entities) this.removeModel(id, o);
+    for (const [id, corpse] of this.corpses) this.removeModel(id, corpse.root);
     for (const p of this.prototypes.values())
       p.traverse((o) => {
         if (o instanceof Mesh) {
@@ -361,10 +517,14 @@ export class SettlementLayer {
         }
       });
     this.borders.dispose();
-    this.ringGeometry.dispose();
-    this.ringMaterial.dispose();
+    this.selectionGeometry.dispose();
+    this.selectionMaterial.dispose();
+    this.selectionFillGeometry.dispose();
+    this.selectionFillMaterial.dispose();
     this.hpBack.dispose();
     this.hpFill.dispose();
+    this.entranceGhost.geometry.dispose();
+    this.entranceGhost.material.dispose();
     this.ghost.geometry.dispose();
     this.ghost.material.dispose();
     scene.remove(this.root);

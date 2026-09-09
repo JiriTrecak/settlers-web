@@ -4,7 +4,9 @@
       "id": "behavior-set.worker",
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 4,
+          "walkSpeed": 2,
+          "idleWander": true
         },
         "playerControl": {},
         "work": {
@@ -25,7 +27,7 @@
       "id": "behavior-set.ground-army",
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 4
         },
         "playerControl": {}
       }
@@ -49,9 +51,9 @@
   "assets": [
     {
       "id": "asset.ants.settler",
-      "file": "assets/ant-colony/worker.glb",
-      "healthHeight": 2.5,
-      "carryAsset": "asset.ants.worker-carry"
+      "file": "assets/ant-colony/characters/base.glb",
+      "healthHeight": 2.3,
+      "character": "base"
     },
     {
       "id": "icon.ants.settler",
@@ -59,8 +61,9 @@
     },
     {
       "id": "asset.ants.warrior",
-      "file": "assets/ant-colony/warrior.glb",
-      "healthHeight": 2.5
+      "file": "assets/ant-colony/characters/warrior.glb",
+      "healthHeight": 2.3,
+      "character": "warrior"
     },
     {
       "id": "icon.ants.warrior",
@@ -68,9 +71,10 @@
     },
     {
       "id": "asset.ants.archer",
-      "file": "assets/ant-colony/archer.glb",
-      "healthHeight": 2.5,
-      "projectile": true
+      "file": "assets/ant-colony/characters/archer.glb",
+      "healthHeight": 2.3,
+      "projectile": true,
+      "character": "archer"
     },
     {
       "id": "icon.ants.archer",
@@ -95,10 +99,6 @@
       "atlasIndex": 17
     },
     {
-      "id": "asset.ants.worker-carry",
-      "file": "assets/ant-colony/worker-carry.glb"
-    },
-    {
       "id": "asset.ants.fort",
       "file": "assets/ant-colony/rootbound-hall.glb",
       "healthHeight": 5
@@ -109,8 +109,8 @@
     },
     {
       "id": "asset.ants.barracks",
-      "file": "assets/ant-colony/barracks.glb",
-      "healthHeight": 5
+      "file": "assets/ant-colony/player-barracks.glb",
+      "healthHeight": 6.4
     },
     {
       "id": "icon.ants.barracks",
@@ -118,8 +118,8 @@
     },
     {
       "id": "asset.ants.lumberjack",
-      "file": "assets/ant-colony/lumberjack.glb",
-      "healthHeight": 5
+      "file": "assets/ant-colony/lumberjack-workshop.glb",
+      "healthHeight": 6.2
     },
     {
       "id": "icon.ants.lumberjack",
@@ -205,17 +205,17 @@
     },
     {
       "id": "asset.resource.ant-pine-1",
-      "file": "assets/ant-colony/pine-1.glb",
+      "file": "assets/ant-colony/olive-pine.glb",
       "sceneryAsset": "ant-pine-1"
     },
     {
       "id": "asset.resource.ant-pine-2",
-      "file": "assets/ant-colony/pine-2.glb",
+      "file": "assets/ant-colony/olive-pine.glb",
       "sceneryAsset": "ant-pine-2"
     },
     {
       "id": "asset.resource.ant-pine-3",
-      "file": "assets/ant-colony/pine-3.glb",
+      "file": "assets/ant-colony/olive-pine.glb",
       "sceneryAsset": "ant-pine-3"
     },
     {
@@ -327,10 +327,19 @@
         "priority": 50,
         "hotkey": "V"
       }
+    },
+    "navigation": {
+      "back": {
+        "name": "Back",
+        "description": "Return to the previous command category.",
+        "icon": "icon.action.cancel",
+        "priority": 0,
+        "hotkey": "Escape"
+      }
     }
   },
   "rules": {
-    "id": "declarations-1",
+    "id": "declarations-4",
     "maxUnits": 160,
     "maxBuildings": 160,
     "constructionHpPermille": 100,

@@ -171,7 +171,7 @@ describe("content and presentation contracts", () => {
       }).accepted,
     ).toBe(false);
   });
-  it("S15 thirteen outputs page from the top-right with stable disabled positions and scoped shortcuts", () => {
+  it("S15 thirteen outputs page from the top-left with stable disabled positions and scoped shortcuts", () => {
     const g = game([placed("b", "building.ants.barracks")], (s) => {
       const template = s.definitions.find(
         (d: any) => d.id === "unit.ants.warrior",
@@ -207,13 +207,13 @@ describe("content and presentation contracts", () => {
       second = commandPage(bindings, 1);
     expect(first).toHaveLength(12);
     expect(first[0]).toMatchObject({
-      column: 4,
+      column: 1,
       row: 1,
       binding: { enabled: false, targetDefinition: "unit.ants.variant-00" },
     });
-    expect(first[11]).toMatchObject({ column: 1, row: 3 });
+    expect(first[11]).toMatchObject({ column: 4, row: 3 });
     expect(second[0]).toMatchObject({
-      column: 4,
+      column: 1,
       row: 1,
       binding: { targetDefinition: "unit.ants.variant-12" },
     });

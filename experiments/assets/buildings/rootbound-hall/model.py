@@ -92,7 +92,7 @@ BOLT = mat('Warm steel rivets', 'rivet', .65, .37, .7)
 DARK = mat('Deep timber crevices', '#241912')
 GRAIN = mat('Carved grain shadow', '#703f2b')
 HONEY = mat('Cut edge honey', '#c58a50')
-CLOTH = mat('Vermilion banners', 'banner', .45, .92)
+CLOTH = mat('TC_TeamColor', 'banner', .45, .92)
 ROPE = mat('Hemp lashings', '#ab895d')
 
 

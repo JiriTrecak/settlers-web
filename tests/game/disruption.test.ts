@@ -40,7 +40,7 @@ describe("work disruption and capacity", () => {
         }),
       ]),
       b = g.entities.find((e) => e.placement === "mill")!;
-    run(g, 250);
+    run(g, 500);
     expect(b.production!.produced).toBeGreaterThan(0);
     expect(g.state.accounting.produced["item.plank"]).toBeGreaterThan(0);
     expect(

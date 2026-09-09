@@ -1,7 +1,8 @@
+import { atPoint, precise } from "./motion";
 import type { Camp, Owner } from "../../content/schema";
 import { GameContext } from "./context";
 import { Observation } from "./observation";
-import { cell, distance2 } from "./spatial";
+import { distance2 } from "./spatial";
 import { alive, type Entity } from "./state";
 
 export class Combat {
@@ -29,7 +30,7 @@ export class Combat {
   }
   private perceives(a: Entity, b: Entity) {
     return a.owner === "none"
-      ? distance2(a, b) <=
+      ? distance2(precise(a), precise(b)) <=
           (this.camps.find((c) => c.id === a.unit?.camp)?.aggroRange ??
             this.c.def(a).behaviors.combat!.aggroRange) **
             2
@@ -44,11 +45,11 @@ export class Combat {
       if (u.job) continue;
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
-      if (camp && (distance2(e, camp.home) > camp.leash ** 2 || u.returning)) {
+      if (camp && (distance2(precise(e), camp.home) > camp.leash ** 2 || u.returning)) {
         u.returning = true;
         u.target = null;
         u.order = null;
-        if (distance2(e, camp.home) <= 1) {
+        if (distance2(precise(e), camp.home) <= 1) {
           u.returning = false;
           u.route = [];
           u.goal = null;
@@ -120,8 +121,8 @@ export class Combat {
   private moveOrder(e: Entity, destination: { x: number; y: number }) {
     const u = e.unit!;
     if (
-      (e.x === destination.x && e.y === destination.y) ||
-      (u.goal !== null && !u.route.length && cell(e) === u.goal)
+      (atPoint(e, destination) && !u.route.length) ||
+      (u.goal !== null && !u.route.length && atPoint(e, {x: u.goal % 256, y: Math.floor(u.goal / 256)}))
     ) {
       u.order = null;
       u.goal = null;

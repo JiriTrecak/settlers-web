@@ -2,14 +2,14 @@
  * Eight player tints shared by menu swatches, faction materials and map markers.
  */
 export const PLAYER_COLORS = [
-  0x285ac8,
-  0xc82828,
-  0xdcb428,
-  0x28a046,
-  0xdc6e1e,
-  0x28b4c8,
-  0xb43cb4,
-  0xb4b4b4,
+  0xa04b31, // Red: authored ant color
+  0x2878df, // Blue
+  0x34a853, // Green
+  0xf2cf35, // Yellow
+  0xed842a, // Orange
+  0x9656cf, // Purple
+  0x36cbd0, // Cyan
+  0xeeeeee, // White
 ] as const;
 
 export function clampPlayer(n: number): number {

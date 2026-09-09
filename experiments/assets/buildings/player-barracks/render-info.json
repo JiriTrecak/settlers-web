@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-08T21:44:31-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 9.14,
+  "blend_mtime_ns": 1788928940530054920,
+  "config": {
+    "name": "Player Barracks",
+    "blend": "player-barracks.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 25,
+      "elevation": 34,
+      "scale": 8.6,
+      "target": [
+        0,
+        0,
+        2.6
+      ]
+    },
+    "render": {
+      "width": 1289,
+      "height": 1221,
+      "samples": 40
+    },
+    "light": {
+      "key_energy": 1000,
+      "fill_energy": 180,
+      "rim_energy": 700
+    }
+  }
+}

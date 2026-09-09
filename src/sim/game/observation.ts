@@ -1,3 +1,4 @@
+import { precise } from "./motion";
 import { summarizeGoods, type GoodsSummary } from "./goodsView";
 import { simulationHash } from "./checksum";
 import { z } from "zod";
@@ -23,6 +24,7 @@ export type EntityView = {
   item?: Entity["item"];
   unit?: {
     moving: boolean;
+    strolling?: boolean;
     contained: boolean;
     cargo: NonNullable<Entity["unit"]>["cargo"];
     target: number | null;
@@ -41,6 +43,8 @@ export type SettlementView = {
   fog?: FogView;
   outcome: GameState["outcome"];
   events: readonly Fact[];
+  /** Ephemeral, visibility-filtered presentation cues; never targetable entities. */
+  deaths?: readonly EntityView[];
   objectives: Readonly<Record<string, number>>;
 };
 type Memory = {
@@ -89,6 +93,13 @@ export const knowledgeSchema = z.array(
 /** Simulation-owned knowledge. No UI consumer receives authoritative entity objects. */
 export class Observation {
   private readonly memories: Memory[];
+  private readonly deathCues: { entity: EntityView; tick: number; viewers: Owner[] }[] = [];
+  recordDeath(e: Entity) {
+    if (!e.unit || e.unit.contained) return;
+    this.deathCues.push({ entity: this.describe(e, false), tick: this.c.state.tick,
+      viewers: this.memories.filter(m => e.owner === m.owner || this.previouslyVisible(m.owner, e)).map(m => m.owner) });
+    this.cache.clear();
+  }
   private readonly cache = new Map<Owner | undefined, SettlementView>();
   constructor(
     private readonly c: GameContext,
@@ -132,8 +143,8 @@ export class Observation {
       id: e.id,
       definition: e.definition,
       owner: e.owner,
-      x: e.x,
-      y: e.y,
+      x: precise(e).x,
+      y: precise(e).y,
       rotation: e.rotation,
       hp: e.hp,
       ...(e.appearance ? { appearance: { ...e.appearance } } : {}),
@@ -146,6 +157,7 @@ export class Observation {
     if (e.unit)
       result.unit = {
         moving: e.unit.route.length > 0,
+        strolling: !!e.unit.idle?.walking,
         contained: !!(e.unit.contained || e.unit.release),
         cargo: e.unit.cargo ? { ...e.unit.cargo } : null,
         target: privateData ? e.unit.target : null,
@@ -179,6 +191,7 @@ export class Observation {
   }
   update() {
     this.cache.clear();
+    while (this.deathCues.length && this.c.state.tick - this.deathCues[0].tick > 80) this.deathCues.shift();
     for (const m of this.memories) {
       m.cells = m.cells.slice();
       m.territory = m.territory.slice();
@@ -235,6 +248,7 @@ export class Observation {
       if (!owner || e.owner === owner || this.previouslyVisible(owner, e))
         known.set(e.id, this.describe(e, !owner || e.owner === owner));
     const result: SettlementView = {
+      deaths: this.deathCues.filter(cue => !owner || cue.viewers.includes(owner)).map(cue => cue.entity),
       ...(owner
         ? {
             goods: summarizeGoods(
@@ -306,6 +320,7 @@ export class Observation {
   }
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
+    this.deathCues.length = 0;
     for (const m of this.memories) {
       const row = rows.find((r) => r.owner === m.owner)!;
       m.cells = Uint8Array.from(row.cells);

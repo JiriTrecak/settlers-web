@@ -1,3 +1,4 @@
+import { fixed, lengthCeil, motionCell, POSITION_SCALE, type FixedPoint } from "./motion";
 import type { ContentRegistry } from "../../content/registry";
 import type { Owner, Placement } from "../../content/schema";
 import type { UtcMap } from "../../shared/map/utcmap";
@@ -87,7 +88,8 @@ export class GameContext {
       order: null,
       route: [],
       goal: null,
-      credit: 0,
+      position: null,
+      segment: null,
       employment: null,
       job: null,
       cargo: null,
@@ -99,6 +101,7 @@ export class GameContext {
       camp: null,
       returning: false,
       retryAt: 0,
+      idle: null,
     };
   }
   remove(e: Entity) {
@@ -130,6 +133,9 @@ export class GameContext {
   }
   release(e: Entity, at: Point) {
     if (!e.unit) return;
+    e.unit.idle = null;
+    e.unit.position = null;
+    e.unit.segment = null;
     e.unit.contained = null;
     e.unit.job = null;
     e.unit.employment = null;
@@ -149,85 +155,71 @@ export class GameContext {
     );
   }
   move() {
+    const units = this.activeUnits();
+    const occupied = new Set(units.map(cell));
     for (const e of this.live()) {
       const u = e.unit;
       if (!u) continue;
       if (u.release) {
         const p = this.spatial.nearest(u.release, 12, e.id);
         if (p) {
-          e.x = p.x;
-          e.y = p.y;
-          u.release = null;
+          e.x = p.x; e.y = p.y; u.position = null; u.segment = null; u.release = null;
+          occupied.add(cell(e));
         }
         continue;
       }
       if (!this.ready(e) || u.contained) continue;
-      const speed = this.def(e).behaviors.movement?.speed;
+      const movement = this.def(e).behaviors.movement;
+      const speed = u.idle?.walking ? (movement?.walkSpeed ?? movement?.speed) : movement?.speed;
       if (!speed || !u.route.length) continue;
-      u.credit += speed;
-      if (u.credit < 40) continue;
-      u.credit -= 40;
-      const next = u.route[0]!,
-        p = { x: next % 256, y: Math.floor(next / 256) };
-      if (
-        !this.spatial.walkable(next) ||
-        Math.abs(this.spatial.heights[cell(e)] - this.spatial.heights[next]) >
-          90
-      ) {
-        u.route = [];
-        u.retryAt = this.state.tick + 20;
-        continue;
-      }
-      if (!this.spatial.free(p, e.id)) {
-        const blocker = this.state.entities.find(
-          (b) =>
-            b.unit &&
-            !b.unit.contained &&
-            !b.unit.release &&
-            b.x === p.x &&
-            b.y === p.y &&
-            alive(b),
-        );
-        // In a head-on meeting the higher ID yields one cardinal step. Both positions remain exclusive.
-        if (
-          blocker &&
-          blocker.owner === e.owner &&
-          blocker.id < e.id &&
-          blocker.unit!.route[0] === cell(e)
-        ) {
-          const aside = [
-            { x: e.x, y: e.y - 1 },
-            { x: e.x - 1, y: e.y },
-            { x: e.x + 1, y: e.y },
-            { x: e.x, y: e.y + 1 },
-          ].find(
-            (q) =>
-              this.spatial.free(q, e.id) &&
-              Math.abs(
-                this.spatial.heights[cell(e)] - this.spatial.heights[cell(q)],
-              ) <= 90,
-          );
-          if (aside) {
-            u.route.unshift(cell(e));
-            e.x = aside.x;
-            e.y = aside.y;
-            continue;
+      occupied.delete(cell(e));
+      try {
+        let budget = speed * POSITION_SCALE / 40;
+        u.position ??= fixed(e);
+        while (budget > 0 && u.route.length) {
+          const current: FixedPoint = u.position!;
+          const next = u.route[0], goal = fixed({x: next % 256, y: Math.floor(next / 256)});
+          if (!u.segment || u.segment.to !== next) {
+            const length = lengthCeil(goal.x - current.x, goal.y - current.y);
+            if (!length) {u.route.shift(); u.segment = null; continue;}
+            u.segment = {from: {...current}, to: next, length, progress: 0};
           }
+          const segment = u.segment;
+          const distance = segment.length - segment.progress;
+          const travel = Math.min(budget, distance), progress = segment.progress + travel;
+          const proposed: FixedPoint = progress === segment.length ? goal : {
+            x: segment.from.x + Math.round((goal.x - segment.from.x) * progress / segment.length),
+            y: segment.from.y + Math.round((goal.y - segment.from.y) * progress / segment.length),
+          };
+          if (!this.spatial.clearSegment(current, proposed)) {
+            u.route = []; u.segment = null; u.retryAt = this.state.tick + 20;
+            break;
+          }
+          if (!this.spatial.clearSegment(current, proposed, occupied) || !this.spatial.unitSegmentClear(current, proposed, e.id)) {
+            if (this.state.tick >= u.retryAt && u.goal !== null) {
+              const desired = {x: u.goal % 256, y: Math.floor(u.goal / 256)};
+              const target = this.spatial.nearest(desired, 3, e.id);
+              if (target) this.spatial.route(e, target);
+              {
+                // Stable yielding lets opposing friendly traffic pass without teleports.
+                const near = units.find(b => b.id < e.id && b.owner === e.owner && b.unit!.route.length && Math.abs(b.x - e.x) <= 1 && Math.abs(b.y - e.y) <= 1);
+                if (near) {
+                  const aside = [{x: e.x, y: e.y - 1}, {x: e.x - 1, y: e.y}, {x: e.x + 1, y: e.y}, {x: e.x, y: e.y + 1}].find(p => this.spatial.free(p, e.id) && this.spatial.clearSegment(u.position!, fixed(p), occupied) && this.spatial.unitSegmentClear(u.position!, fixed(p), e.id));
+                  if (aside) u.route.unshift(cell(aside));
+                }
+              }
+              u.retryAt = this.state.tick + 20;
+            }
+            break;
+          }
+          segment.progress = progress;
+          u.position = proposed;
+          const index = motionCell(proposed);
+          e.x = index % 256; e.y = Math.floor(index / 256);
+          budget -= travel;
+          if (travel === distance) {u.route.shift(); u.segment = null;}
         }
-        if (this.state.tick >= u.retryAt && u.goal !== null) {
-          const goal = this.spatial.nearest(
-            { x: u.goal % 256, y: Math.floor(u.goal / 256) },
-            3,
-            e.id,
-          );
-          if (goal) this.spatial.route(e, goal);
-          u.retryAt = this.state.tick + 20;
-        }
-        continue;
-      }
-      u.route.shift();
-      e.x = p.x;
-      e.y = p.y;
+      } finally {occupied.add(cell(e));}
     }
   }
 }

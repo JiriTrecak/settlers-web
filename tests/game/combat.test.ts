@@ -1,3 +1,4 @@
+import { precise } from "../../src/sim/game/motion";
 import { describe, it, expect } from "vitest";
 import { game, placed, run, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
@@ -103,17 +104,26 @@ describe("combat, knowledge and deterministic navigation", () => {
     expect(soldier.hp!).toBeLessThan(hp);
     neutral.x = 170;
     neutral.y = 230;
+    neutral.unit!.position = null;
+    neutral.unit!.segment = null;
+    neutral.unit!.route = [];
+    neutral.unit!.goal = null;
     neutral.unit!.target = null;
-    run(g, 240);
+    // End the pursuit with the enemy out of the return corridor.
+    g.command("player.1", {type: "stop", actors: [soldier.id]});
+    soldier.x = 240; soldier.y = 245;
+    soldier.unit!.position = null; soldier.unit!.segment = null;
+    g.tick();
+    for (let i = 0; i < 240 && neutral.unit!.returning; i++) g.tick();
     expect(neutral.unit!.returning).toBe(false);
     expect(
-      Math.abs(neutral.x - 205) + Math.abs(neutral.y - 230),
+      (precise(neutral).x - 205) ** 2 + (precise(neutral).y - 230) ** 2,
     ).toBeLessThanOrEqual(1);
     expect(
       g.entities.find((e) => e.placement === "loose")!.item!.quantity,
     ).toBe(1);
   });
-  it("stable cardinal paths avoid blocked cells", () => {
+  it("stable eight-direction paths avoid blocked cells", () => {
     const nav = new Navigation(5, (_a, b) => ![7, 12, 17].includes(b)),
       path = nav.path(10, 14)!;
     expect(path).toEqual(nav.path(10, 14));
@@ -121,8 +131,8 @@ describe("combat, knowledge and deterministic navigation", () => {
     let prior = 10;
     for (const next of path) {
       expect(
-        Math.abs((next % 5) - (prior % 5)) +
-          Math.abs(Math.floor(next / 5) - Math.floor(prior / 5)),
+        Math.max(Math.abs((next % 5) - (prior % 5)),
+          Math.abs(Math.floor(next / 5) - Math.floor(prior / 5))),
       ).toBe(1);
       prior = next;
     }

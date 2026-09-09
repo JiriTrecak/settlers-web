@@ -22,11 +22,13 @@ ROOT = HERE.parents[1]
 ASSETS = ROOT / 'experiments/assets/buildings'
 
 
-def asset_path(name):
+def asset_path(name, category="buildings"):
     if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', name):
         raise ValueError('Asset names use lowercase letters, digits and hyphens')
-    path = (ASSETS / name).resolve()
-    if path.parent != ASSETS.resolve():
+    if category not in ('buildings','characters'):raise ValueError('Unknown asset category')
+    base=ASSETS if category=='buildings' else ROOT/'experiments/assets/characters'
+    path = (base / name).resolve()
+    if path.parent != base.resolve():
         raise ValueError('Asset path leaves buildings folder')
     return path
 
@@ -57,8 +59,8 @@ def atomic_json(path, data):
 
 class Studio:
     """One coalescing worker owns Blender jobs; saves during renders schedule one follow-up."""
-    def __init__(self, name, quick=False):
-        self.asset = asset_path(name)
+    def __init__(self, name, quick=False, category="buildings"):
+        self.asset = asset_path(name, category)
         self.config = config_for(self.asset)
         self.quick = quick
         self.lock = threading.RLock()
@@ -250,6 +252,11 @@ class Handler(SimpleHTTPRequestHandler):
             path=(base/route[len('/vendor/three/'):]).resolve()
             if not path.is_relative_to(base) or not path.is_file() or path.suffix!='.js':
                 return self.send_error(404)
+        elif route=='/character-player.js':
+            path=ROOT/'src/render/characters/character-player.js'
+        elif route=='/scale-building.glb':
+            path=ROOT/'experiments/assets/buildings/lumberjack-workshop/model.glb'
+            if not path.is_file():return self.send_error(404)
         elif route=='/viewer.js':
             path=HERE/'viewer.js'
         elif route in ('/','/index.html'):
@@ -300,10 +307,11 @@ def main():
     parser.add_argument('--quick',action='store_true')
     parser.add_argument('--view',choices=['saved','reference','front','right','back'],default='saved')
     parser.add_argument('--reference',type=Path)
+    parser.add_argument('--category',choices=['buildings','characters'],default='buildings')
     args=parser.parse_args()
     if args.command=='init':
         if not args.reference or not args.reference.is_file():parser.error('init requires --reference /path/image.png')
-        asset=asset_path(args.asset)
+        asset=asset_path(args.asset,args.category)
         if asset.exists():parser.error('Asset already exists; choose a new name')
         asset.mkdir(parents=True)
         from PIL import Image
@@ -316,7 +324,7 @@ def main():
         extract(asset)
         print(f'Created {asset}. Open the studio to sample colors, then author model.py for this reference.')
         return
-    studio=Studio(args.asset,args.quick)
+    studio=Studio(args.asset,args.quick,args.category)
     if args.command!='serve':
         studio.run(args.command,args.view)
         return

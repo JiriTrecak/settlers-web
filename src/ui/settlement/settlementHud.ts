@@ -46,6 +46,7 @@ export class SettlementHud {
   private portraitDefinition = "";
   selectedIds: number[] = [];
   targeting: CommandBinding | null = null;
+  placementRotation = 0;
   get selected() {
     return this.selectedIds[0] ?? null;
   }
@@ -75,12 +76,13 @@ export class SettlementHud {
   }
   clearMode() {
     this.targeting = null;
+    this.placementRotation = 0;
     this.hooks.mode();
     this.hint.textContent = "";
   }
   placement(message: string | null) {
     if (this.mode)
-      this.hint.textContent = message ?? "Click to order construction.";
+      this.hint.textContent = `${message ?? "Click to order construction."} R / Shift+R: rotate (${this.placementRotation}°). Escape cancels.`;
   }
   private readonly onKey = (e: KeyboardEvent) => {
     if (
@@ -94,11 +96,17 @@ export class SettlementHud {
           e.target.closest("dialog[open]")))
     )
       return;
-    if (e.key === "Escape") {
+    if (e.key === "Escape" && this.targeting) {
       e.preventDefault();
-      if (this.targeting) this.clearMode();
-      else if (this.category) this.navigate(content.actions.categories[this.category]?.parent ?? null);
+      this.clearMode();
       this.tooltips.hide();
+      return;
+    }
+    if (this.mode && e.key.toLowerCase() === "r") {
+      e.preventDefault();
+      this.placementRotation = (this.placementRotation + (e.shiftKey ? 270 : 90)) % 360;
+      this.placement(null);
+      this.hooks.mode();
       return;
     }
     if (e.key === "Home") {
@@ -188,6 +196,8 @@ export class SettlementHud {
     this.clearMode();
     this.targeting = binding;
     this.hint.textContent = `${binding.name}: choose a ${binding.type === "build" ? "building location" : binding.type === "attack" ? "target or ground location" : "ground location"}. Escape cancels.`;
+    if (this.mode) this.placement(null);
+    this.hooks.mode();
   }
   update(view: SettlementView, force = false) {
     if (this.current === view && !force) return;
@@ -259,15 +269,6 @@ export class SettlementHud {
           arrow.className = "rts-back-arrow";
           arrow.textContent = "↶";
           button.append(arrow);
-        }
-        const text = document.createElement("span");
-        text.className = "rts-command-name";
-        text.textContent = b.name;
-        button.append(text);
-        if (b.hotkey) {
-          const key = document.createElement("kbd");
-          key.textContent = b.hotkey;
-          button.append(key);
         }
         button.setAttribute("aria-label", b.name);
         Object.assign(button.dataset, {

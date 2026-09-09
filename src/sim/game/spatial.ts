@@ -1,3 +1,4 @@
+import { clearSweep, clearRay, fixed, precise, type FixedPoint } from "./motion";
 import type { ContentRegistry } from "../../content/registry";
 import { ownerSlot } from "../../content/schema";
 import {
@@ -149,6 +150,7 @@ export class Spatial {
       destination.y > 255
     )
       return false;
+    if (e.unit.idle) e.unit.idle.walking = false;
     const goal = cell(destination),
       blocked = new Set(
         this.entities()
@@ -162,23 +164,48 @@ export class Spatial {
           )
           .map(cell),
       );
-    const planner = new Navigation(
-      256,
-      (a, b) =>
-        this.walkable(b) &&
-        !blocked.has(b) &&
-        Math.abs(this.heights[a] - this.heights[b]) <= 90,
-    );
-    const path = planner.path(cell(e), goal);
+    const from = e.unit.position ?? fixed(e);
+    const direct = this.clearSegment(from, fixed(destination), blocked);
+    const path = direct ? [goal] : this.navigation.path(cell(e), goal, blocked);
     if (path === null) return false;
-    e.unit.route = path;
+    const waypoints: number[] = [];
+    let anchor = from;
+    for (let i = 0; i < path.length;) {
+      let farthest = i;
+      if (!this.clearSegment(anchor, fixed(point(path[i])), blocked)) return false;
+      // Farther candidates progressively straighten the A* corridor.
+      while (farthest + 1 < path.length && this.clearSegment(anchor, fixed(point(path[farthest + 1])), blocked)) farthest++;
+      const next = path[farthest];
+      waypoints.push(next);
+      anchor = fixed(point(next));
+      i = farthest + 1;
+    }
+    if (!waypoints.length && (from.x !== destination.x * 1000 || from.y !== destination.y * 1000)) waypoints.push(goal);
+    e.unit.route = waypoints;
+    e.unit.position ??= from;
     e.unit.goal = goal;
+    return true;
+  }
+  clearSegment(from: FixedPoint, to: FixedPoint, blocked?: ReadonlySet<number>) {
+    const terrainStep = (a: number, b: number) => this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= 90;
+    return clearSweep(from, to, terrainStep) && (!blocked || clearRay(from, to, (a, b) => terrainStep(a, b) && !blocked.has(b)));
+  }
+  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number): boolean {
+    const dx = to.x - from.x, dy = to.y - from.y, square = dx * dx + dy * dy;
+    for (const unit of this.entities()) {
+      if (unit.id === except || !unit.unit || !alive(unit) || unit.unit.contained || unit.unit.release) continue;
+      const p = unit.unit.position ?? fixed(unit);
+      if (p.x < Math.min(from.x, to.x) - 400 || p.x > Math.max(from.x, to.x) + 400 || p.y < Math.min(from.y, to.y) - 400 || p.y > Math.max(from.y, to.y) + 400) continue;
+      const t = square ? Math.max(0, Math.min(1, ((p.x - from.x) * dx + (p.y - from.y) * dy) / square)) : 0;
+      if ((p.x - from.x - t * dx) ** 2 + (p.y - from.y - t * dy) ** 2 < 400 ** 2) return false;
+    }
     return true;
   }
   range(a: Entity, b: Entity) {
     const f = this.registry.get(b.definition).footprint;
-    let dx = Math.abs(a.x - b.x),
-      dy = Math.abs(a.y - b.y);
+    const pa = precise(a), pb = precise(b);
+    let dx = Math.abs(pa.x - pb.x),
+      dy = Math.abs(pa.y - pb.y);
     if (f) {
       dx = Math.max(
         0,

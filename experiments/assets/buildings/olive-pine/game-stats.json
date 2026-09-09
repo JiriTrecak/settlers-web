@@ -1,0 +1,10 @@
+{
+  "triangles": 1512,
+  "vertices": 3410,
+  "meshes": 1,
+  "primitives": 1,
+  "materials": 1,
+  "bytes": 146728,
+  "geometry": "Same indexed geometry, normals and colors as studio export",
+  "textures": 0
+}

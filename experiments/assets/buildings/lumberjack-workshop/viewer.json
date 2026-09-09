@@ -1,0 +1,100 @@
+{
+  "camera": {
+    "position": [
+      10.826760292053223,
+      14.23570442199707,
+      12.724335670471191
+    ],
+    "target": [
+      -2.86102294921875e-06,
+      2.4800033569335938,
+      0.6999998092651367
+    ],
+    "up": [
+      -0.3933050036430359,
+      0.8090171217918396,
+      -0.4368094503879547
+    ],
+    "scale": 8.75
+  },
+  "lights": [
+    {
+      "name": "Lantern glow",
+      "type": "POINT",
+      "position": [
+        2.240000009536743,
+        2.240000009536743,
+        1.649999976158142
+      ],
+      "color": [
+        1.0,
+        0.3199999928474426,
+        0.05000000074505806
+      ],
+      "energy": 18.0
+    },
+    {
+      "name": "Lantern glow.001",
+      "type": "POINT",
+      "position": [
+        2.25,
+        2.5,
+        -1.850000023841858
+      ],
+      "color": [
+        1.0,
+        0.3199999928474426,
+        0.05000000074505806
+      ],
+      "energy": 18.0
+    },
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -3.0,
+        8.0,
+        4.0
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 1150.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        1.0,
+        5.0,
+        6.0
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 220.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        5.0,
+        7.0,
+        -3.0
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 900.0
+    }
+  ],
+  "vertices": 17214,
+  "triangles": 33004,
+  "note": "Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio."
+}

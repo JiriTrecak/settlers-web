@@ -166,7 +166,8 @@ describe("declarative physical economy", () => {
       destination: { x: 235, y: 235 },
     });
     expect(carrier!.unit!.pendingMove).toEqual({ x: 235, y: 235 });
-    run(g, 500);
+    // Stop at arrival: a free worker may subsequently begin an idle stroll.
+    for (let i = 0; i < 1600 && (carrier!.x !== 235 || carrier!.y !== 235); i++) g.tick();
     expect(carrier!.unit!.cargo).toBeNull();
     expect(carrier!.x).toBe(235);
     expect(carrier!.y).toBe(235);

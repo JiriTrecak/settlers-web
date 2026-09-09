@@ -56,8 +56,7 @@ export function commandMenu(
   entries.sort((a, b) => b.priority - a.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   if (category) entries.unshift({
     id: "navigation:back", type: "back", destination: categories[category].parent ?? null,
-    name: "Back", description: "Return to the previous command category. Escape also goes back.",
-    icon: registry.actions.actions.cancel.icon, costs: [], actors: [], priority: 0, enabled: true,
+    ...registry.actions.navigation.back, costs: [], actors: [], enabled: true,
   });
   return { category, entries };
 }
@@ -67,11 +66,10 @@ export function commandPage(bindings: readonly CommandEntry[], page: number) {
   const rest = bindings.filter(b => b.type !== "back");
   const size = COMMANDS_PER_PAGE - (back ? 1 : 0);
   const slots = rest.slice(page * size, (page + 1) * size)
-    .map((binding, i) => ({
-      binding,
-      column: 4 - (i % 4),
-      row: 1 + Math.floor(i / 4),
-    }));
+    .map((binding, i) => {
+      const slot = back && i >= 8 ? i + 1 : i; // Slot 9 is reserved for Back.
+      return { binding, column: 1 + slot % 4, row: 1 + Math.floor(slot / 4) };
+    });
   if (back) slots.push({ binding: back, column: 1, row: 3 });
   return slots;
 }
@@ -87,8 +85,7 @@ export function shortcutCommand(
   return [...commandPage(bindings, page).map(s => s.binding), ...bindings.filter(b =>
     ["move", "attack", "stop"].includes(b.type))].find(
     (b) =>
-      b.hotkey === key.toUpperCase() &&
-      b.type !== "back",
+      b.hotkey?.toUpperCase() === key.toUpperCase(),
   );
 }
 /** A queue belongs to the focused workplace; inspection need not grant cancellation. */

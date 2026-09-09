@@ -36,6 +36,9 @@ export class BuildingViewer {
     this.visible = false;
     this.wireframe = false;
     this.width = 9.7;
+    this.teamColor = 'default';
+    this.lastFrame = performance.now();
+    this.variant = 'base';
     this.observer = new ResizeObserver(() => this.resize());
     this.observer.observe(container);
     this.frame = this.frame.bind(this);
@@ -55,7 +58,14 @@ export class BuildingViewer {
 
   frame() {
     requestAnimationFrame(this.frame);
+    const now = performance.now(), dt = Math.min((now - this.lastFrame) / 1000, .10);
+    this.lastFrame = now;
     if (!this.visible) return;
+    this.player?.update(dt);
+    if (this.player?.action) {
+      document.getElementById('animationTime').value = this.player.action.time / this.player.action.getClip().duration;
+      document.getElementById('animationState').value = this.player.state;
+    }
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -69,7 +79,7 @@ export class BuildingViewer {
     this.camera.up.set(0, 1, 0);
     this.controls.target.fromArray(c.target);
     this.camera.zoom = 1;
-    this.width = c.scale;
+    this.width = c.scale * (this.metadata.kind === 'character' ? 1.25 : 1);
     this.controls.update();
     this.resize();
   }
@@ -89,6 +99,38 @@ export class BuildingViewer {
   setWireframe(value) {
     this.wireframe = value;
     this.model?.traverse(o => { if (o.isMesh) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) m.wireframe = value; });
+  }
+
+  setTeamColor(value) {
+    this.teamColor = value;
+    this.model?.traverse(o => {
+      if (!o.isMesh) return;
+      for (const material of (Array.isArray(o.material) ? o.material : [o.material])) {
+        if (material.name !== 'TC_TeamColor') continue;
+        material.userData.defaultTeamColor ??= material.color.clone();
+        if (value === 'default') material.color.copy(material.userData.defaultTeamColor);
+        else material.color.set(value);
+      }
+    });
+  }
+
+  setVariant(value) {
+    this.variant = value; this.player?.setVariant(value);
+    if (this.metadata?.variantTriangles) this.status.textContent = `${this.metadata.variantTriangles[value].toLocaleString()} triangles · ${value} · shared rig`;
+  }
+
+  async showScaleBuilding(value) {
+    if (value && !this.scaleBuilding) {
+      const gltf = await this.loader.loadAsync('/scale-building.glb');
+      this.scaleBuilding = gltf.scene;
+      this.scaleBuilding.position.set(-3.6, 0, -1.3);
+      this.scene.add(this.scaleBuilding);
+    }
+    if (this.scaleBuilding) this.scaleBuilding.visible = value;
+    if (value) {
+      this.camera.position.set(7, 7, 12); this.controls.target.set(-1.8, 1.6, 0);
+      this.camera.zoom = 1; this.width = 12; this.controls.update(); this.resize();
+    } else this.reset();
   }
 
   release(model) {
@@ -112,12 +154,22 @@ export class BuildingViewer {
       const metadata = await response.json();
       if (generation !== this.generation) { this.release(gltf.scene); return; }
       const first = !this.model;
+      const playback = this.player ? { state: this.player.state, paused: this.player.paused, speed: this.player.speed } : null;
+      this.player?.dispose(); this.player = null;
       if (this.model) { this.scene.remove(this.model); this.release(this.model); }
       this.model = gltf.scene;
       this.metadata = metadata;
       this.model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
       this.scene.add(this.model);
+      document.getElementById('characterControls').hidden = metadata.kind !== 'character';
+      if (metadata.kind === 'character') {
+        const { CharacterPlayer } = await import('/character-player.js');
+        this.player = new CharacterPlayer(this.model, gltf.animations, this.variant);
+        if (playback) { this.player.setState(playback.state); this.player.paused = playback.paused; this.player.speed = playback.speed; }
+        this.player.onEvent = e => { document.getElementById('animationEvent').textContent = e.type + ' · ' + e.variant; };
+      }
       this.setWireframe(this.wireframe);
+      this.setTeamColor(this.teamColor);
       for (const light of [...this.lights.children]) { this.lights.remove(light); light.dispose?.(); }
       this.lights.add(new THREE.AmbientLight(0xffffff, .35));
       for (const source of metadata.lights) {
@@ -139,7 +191,7 @@ export class BuildingViewer {
         this.lights.add(light);
       }
       if (first) this.reset();
-      this.status.textContent = `${metadata.triangles.toLocaleString()} triangles · drag to rotate · scroll to zoom · right-drag to pan`;
+      this.status.textContent = `${(metadata.variantTriangles?.[this.variant] ?? metadata.triangles).toLocaleString()} triangles · drag to rotate · scroll to zoom · right-drag to pan`;
     } catch (error) {
       if (generation !== this.generation) return;
       this.revision = 0;

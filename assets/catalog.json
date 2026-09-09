@@ -910,7 +910,7 @@
       "name": "Lumberjack hut",
       "category": "other",
       "type": "prop",
-      "file": "ant-colony/lumberjack.glb"
+      "file": "ant-colony/lumberjack-workshop.glb"
     },
     {
       "id": "sawmill",
@@ -980,7 +980,7 @@
       "name": "Ant colony \u00b7 Lumberjack",
       "category": "other",
       "type": "prop",
-      "file": "ant-colony/lumberjack.glb"
+      "file": "ant-colony/lumberjack-workshop.glb"
     },
     {
       "id": "ant-sawmill",
@@ -1057,21 +1057,21 @@
       "name": "Ant colony \u00b7 Pine 1",
       "category": "foliage",
       "type": "prop",
-      "file": "ant-colony/pine-1.glb"
+      "file": "ant-colony/olive-pine.glb"
     },
     {
       "id": "ant-pine-2",
       "name": "Ant colony \u00b7 Pine 2",
       "category": "foliage",
       "type": "prop",
-      "file": "ant-colony/pine-2.glb"
+      "file": "ant-colony/olive-pine.glb"
     },
     {
       "id": "ant-pine-3",
       "name": "Ant colony \u00b7 Pine 3",
       "category": "foliage",
       "type": "prop",
-      "file": "ant-colony/pine-3.glb"
+      "file": "ant-colony/olive-pine.glb"
     },
     {
       "id": "ant-fern",

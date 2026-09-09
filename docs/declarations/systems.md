@@ -7,7 +7,7 @@
 World requires a loaded map and one authored start for each participant slot. Slots are sorted metadata, not extra world entities. World applies committed commands, queues deterministic AI intentions for the following tick, then advances the game once. Each fixed 25 ms step runs:
 
 1. Assign claims, deliveries and ready work.
-2. Plan orders/pathfinding and move units with integer movement credit.
+2. Plan orders/pathfinding and move units with fixed-point continuous positions.
 3. Resolve simultaneous combat damage and death cleanup.
 4. Advance delivery, construction, recruitment, production and regrowth.
 5. Recompute territory when dirty, update knowledge, and evaluate fort objectives.
@@ -38,7 +38,7 @@ Knowledge has three states: unexplored, explored, visible. Terrain and scenery r
 
 ## Persistence and determinism
 
-Game snapshots contain authoritative entities, orders/routes, movement credit, employment, jobs, claims, queues, production progress, cargo, pending release/movement, growth, accounting, objective/outcome state, and every player's memories. They require current schema, simulation-build identity, canonical content fingerprint and map fingerprint. World adds clock/RNG, slot/team identity and future AI intentions. Transport state separately preserves committed but unapplied inputs, room-held bundles and unsent local outboxes. Singleplayer's Save/Load buttons use this complete snapshot in the same map revision.
+Game snapshots contain authoritative entities, orders/waypoints, precise fixed-point positions, employment, jobs, claims, queues, production progress, cargo, pending release/movement, growth, accounting, objective/outcome state, and every player's memories. They require current schema, simulation-build identity, canonical content fingerprint and map fingerprint. World adds clock/RNG, slot/team identity and future AI intentions. Transport state separately preserves committed but unapplied inputs, room-held bundles and unsent local outboxes. Singleplayer's Save/Load buttons use this complete snapshot in the same map revision.
 
 Checkpoint checksums use a streaming state digest; fog typed arrays are traversed directly rather than expanded into JSON arrays on each checkpoint. Save serialization remains ordinary JSON. Presentation views are never save files. Incompatible or invalid saves fail before committing a replacement state.
 
@@ -53,3 +53,27 @@ Checkpoint checksums use a streaming state digest; fog typed arrays are traverse
 7. Add a scenario test that demonstrates interaction with existing systems, not just the new field in isolation.
 
 Lua is deferred. These commands, facts, queries and lifecycle rules are the intended boundary for a future trusted scenario adapter. Do not expose unrestricted spawn or ownership mutation to player packets.
+
+## Ground navigation and continuous movement
+
+Navigation occupancy stays on a cell grid, but unit positions do not. `unit.position` stores integer thousandths of a cell; entity x/y tracks the nearest occupancy cell. A null position means the entity is exactly at its authored/deployed cell center. Rendering and combat range use the precise position. Stops preserve mid-cell positions; deployment/release reset them. Each segment saves its origin, destination, length and traveled distance, avoiding accumulated rounding drift. Snapshots validate segment progress and that precise positions agree with occupancy cells.
+
+The planner first tries a direct swept line to the destination. When blocked, eight-neighbor integer A* finds a corridor, then line-of-sight smoothing removes unnecessary grid waypoints. Units advance directly along those segments at any angle each tick, spending speed × 1000 / 40 distance units. Leftover distance continues across waypoint boundaries. This is actual simulation movement, not a cosmetic renderer shortcut.
+
+A* uses an octile heuristic, costs 1000/1414, stable heap ties and reusable generation-stamped buffers. Integer supercover ray traversal checks every crossed cell, including both sides at exact corners and slope limits. A conservative 0.2-cell half-width sweep protects buildings, terrain and resources. Execution repeats the sweep for each movement segment, checks unit occupancy and 0.4-cell pair separation, and replans/yields deterministically when blocked. A newly occupied delivery goal can choose a nearby free handoff point.
+
+The schema and advertised rules revision are `declarative-sim-3` / `declarations-3`: older snapshots and peers cannot mix with continuous movement. These geometry/collision algorithms are native systems, not content-configurable behavior code.
+
+### Building placement orientation
+
+During gameplay placement, R rotates by 90 degrees and Shift+R reverses it. The orientation persists for repeated placements until targeting is cancelled or another command is selected. The footprint and pale entrance marker update immediately at the pointer; validation and the queued build command use the same rotation. This is local targeting state until placement is submitted. The existing simulation rotates occupancy and entrance offsets, and stores rotation in entity snapshots.
+
+Placement rendering uses a translucent clone of the declared building asset at its declared scale and selected rotation, with shadows disabled. A terrain-following white grid marks the footprint; invalid locations tint the grid and model red. Geometry is shared with the loaded asset, materials belong to the preview, and grid geometry is replaced only when its cell location or dimensions change. Cancelling hides all placement visuals.
+
+### Idle worker movement
+
+Worker movement declares speed 4, walkSpeed 2 and idleWander true. Normal orders and deliveries use run animations at speed 4. Only unassigned workers with no orders, cargo, job, employment or combat activity take occasional walk-animation strolls at speed 2. Soldiers hold position.
+
+On entering idle state, a worker saves its home cell and a deterministic next-stroll tick. Every 6–12 seconds it may walk to a clear neighboring cell within the original home's 3×3 neighborhood. Arrival never moves the home anchor. Orders/work reset the idle state; a later idle period anchors at the new location. Tick/ID hashing chooses intervals/directions without wall-clock randomness. Idle state is saved and checksummed; the simulation protocol is now declarative-sim-4.
+
+Slower traffic also exposed a yielding issue: a successful coarse route could still lead into another unit's physical body. Higher-ID friendly traffic now checks a safe sidestep when blocked even if a replacement route was found. Swept collision checks still govern every step.

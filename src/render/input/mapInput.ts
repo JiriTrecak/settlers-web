@@ -2,6 +2,7 @@
  * RTS drag selection, arrow-key pan and wheel zoom. Editor also orbits (Alt-LMB, MMB, RMB).
  * Play leaves `orbit` off so the perspective stays fixed. Home / Gamecam is an editor hook.
  */
+import { ZoomMomentum } from "./zoomMomentum";
 import type { Camera } from "../camera/camera";
 
 const PAN_SPEED = 28;
@@ -38,6 +39,7 @@ export type MapInputHooks = {
 type Drag = "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
+  private readonly zoomMomentum = new ZoomMomentum();
   private startX=0;
   private startY=0;
   private readonly selectionBox=document.createElement('div');
@@ -48,7 +50,7 @@ export class MapInput {
   private readonly onPointerOut = (e: PointerEvent) => {
     if (!e.relatedTarget) this.edgePointer = null;
   };
-  private readonly onBlur=()=>{this.keys.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
+  private readonly onBlur=()=>{this.zoomMomentum.reset();this.keys.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
   private readonly onContext=(e:Event)=>e.preventDefault();
   private readonly keys = new Set<string>();
   private drag: Drag | null = null;
@@ -212,8 +214,8 @@ export class MapInput {
         this.hooks.onChanged();
         return;
       }
-      this.camera.zoomBy(e.deltaY > 0 ? 1.1 : 1 / 1.1);
-      this.hooks.onChanged();
+      const pixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? this.canvas.clientHeight : 1);
+      this.zoomMomentum.push(pixels);
     };
     window.addEventListener("blur",this.onBlur);
     if (hooks.rts) {
@@ -232,6 +234,13 @@ export class MapInput {
   }
 
   tick(dtMs: number): void {
+    const factor = this.zoomMomentum.step(dtMs);
+    if (factor !== 1) {
+      const before = this.camera.game ? this.camera.distance : this.camera.zoom;
+      this.camera.zoomBy(factor);
+      if (before === (this.camera.game ? this.camera.distance : this.camera.zoom)) this.zoomMomentum.reset();
+      this.hooks.onChanged();
+    }
     const step = (PAN_SPEED * Math.min(dtMs,50)) / 1000;
     let right = 0;
     let forward = 0;

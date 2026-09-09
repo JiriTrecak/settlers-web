@@ -1,3 +1,5 @@
+import { idleMotion } from "./idleMotion";
+import { fixed, lengthCeil } from "./motion";
 import { simulationHash } from "./checksum";
 import { z } from "zod";
 import { content } from "../../content/builtin";
@@ -20,7 +22,7 @@ import {
 } from "./state";
 import { cell } from "./spatial";
 
-export const SIMULATION_BUILD = "declarative-sim-1";
+export const SIMULATION_BUILD = "declarative-sim-4";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -314,10 +316,12 @@ export class Game {
     measure("Work assignment", () => this.economy.assign());
     measure("Orders / navigation", () => {
       this.combat.plan();
+      idleMotion(this.context);
       this.context.move();
     });
     measure("Combat", () => {
       for (const dead of this.combat.resolve()) {
+        this.observation.recordDeath(dead);
         this.context.event(dead.owner, "Entity destroyed", "death");
         this.economy.remove(dead);
       }
@@ -481,6 +485,14 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
+        if (u.position && (Math.floor((u.position.x + 500) / 1000) !== e.x || Math.floor((u.position.y + 500) / 1000) !== e.y)) throw new Error("Invalid saved precise position");
+        if (u.segment) {
+          const segment = u.segment, goal = fixed({x: segment.to % 256, y: Math.floor(segment.to / 256)});
+          const dx = goal.x - segment.from.x, dy = goal.y - segment.from.y;
+          if (!u.position || segment.length !== lengthCeil(dx, dy) || segment.progress > segment.length ||
+            u.position.x !== segment.from.x + Math.round(dx * segment.progress / segment.length) ||
+            u.position.y !== segment.from.y + Math.round(dy * segment.progress / segment.length)) throw new Error("Invalid saved movement segment");
+        }
         if (
           (u.job !== null && !jobs.has(u.job)) ||
           (u.employment !== null && !ids.has(u.employment)) ||

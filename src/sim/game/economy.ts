@@ -1,3 +1,4 @@
+import { atPoint } from "./motion";
 import type { Creation, Owner, Stock } from "../../content/schema";
 import { ownerSlot } from "../../content/schema";
 import { GameContext } from "./context";
@@ -236,7 +237,7 @@ export class Economy {
     if (i >= 0) this.s.claims.splice(i, 1);
   }
   private at(e: Entity, p: Point) {
-    return e.x === p.x && e.y === p.y;
+    return atPoint(e, p);
   }
   private workPoint(target: Entity, worker: Entity): Point | null {
     if (this.c.def(target).kind === "building") {
@@ -981,6 +982,7 @@ export class Economy {
   interrupt(w: Entity, destination?: Point) {
     const u = w.unit;
     if (!u || u.contained || u.release) return false;
+    u.idle = null;
     if (u.cargo && u.job) {
       if (destination) u.pendingMove = destination;
       return true;

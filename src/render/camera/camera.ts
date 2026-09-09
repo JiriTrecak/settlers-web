@@ -1,7 +1,7 @@
 /**
  * Look-at on the XZ plane.
  * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
- * 32° FoV, 45° pitch, 0° yaw, terrain-following distance zoom, pan only, view half a block past the red.
+ * 32° FoV, 45° pitch, -45° yaw, terrain-following distance zoom, pan only, view half a block past the red.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
@@ -11,7 +11,7 @@ import { MAP_BLOCK, MAP_SIZE } from "../../shared";
 export const ISO_YAW = Math.PI / 4;
 export const ISO_PITCH = Math.atan(1 / Math.sqrt(2));
 /** Lower RTS viewing angle reveals more of the landscape behind the foreground. */
-export const GAME_YAW = 0;
+export const GAME_YAW = -Math.PI / 4;
 export const GAME_PITCH = (45 * Math.PI) / 180;
 /** Mild RTS perspective keeps foreground trees readable without wide-angle stretching. */
 export const GAME_FOV = 32;
@@ -27,11 +27,11 @@ export class Camera {
   targetZ = 0;
   yaw = ISO_YAW;
   pitch = ISO_PITCH;
-  zoom = 28;
+  zoom = 40;
   /** Eye ↔ target when `game`. Ortho ignores this. */
-  distance = 80;
+  distance = 40;
   minZoom = 6;
-  maxZoom = 180;
+  maxZoom = 60;
   /** Play leaves this on — orbit is a no-op. Editor clears it. */
   locked = true;
   /** Play / Gamecam: perspective, distance zoom, view clamped half a block past the red. */
@@ -43,7 +43,7 @@ export class Camera {
   readonly minHeightAboveWater = 12;
   private waterLevel = 0;
   private terrain: ((x: number, z: number) => number) | null = null;
-  private gameDistance = 80;
+  private readonly gameDistance = 40;
   private bound = 0;
 
   setTerrain(sample: ((x: number, z: number) => number) | null, waterLevel = 0): void {
@@ -58,7 +58,7 @@ export class Camera {
   private readonly rayA = new Vector3();
   private readonly rayB = new Vector3();
 
-  /** Play pose: WC3 perspective, ~two 16-blocks in view, pan to half a block past the red. */
+  /** Play pose: fixed perspective, default distance 40, pan to half a block past the red. */
   setGame(on: boolean, size = MAP_SIZE): void {
     this.game = on;
     this.locked = on;
@@ -66,7 +66,7 @@ export class Camera {
     if (on) {
       this.yaw = GAME_YAW;
       this.pitch = GAME_PITCH;
-      this.distance = this.gameDistance = this.distForSpan(MAP_BLOCK * 4);
+      this.distance = this.gameDistance;
       this.clamp();
     }
     this.touch();
@@ -86,7 +86,7 @@ export class Camera {
     if (next.x !== undefined) this.targetX = next.x;
     if (next.z !== undefined) this.targetZ = next.z;
     if (next.zoom !== undefined) this.zoom = clamp(next.zoom, this.minZoom, this.maxZoom);
-    if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = this.gameDistance * clamp(next.gameZoom, .5, 2);
+    if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = this.gameDistance * clamp(next.gameZoom, .5, 1.5);
     if (next.yaw !== undefined) this.yaw = next.yaw;
     if (next.pitch !== undefined) this.pitch = clamp(next.pitch, PITCH_MIN, PITCH_MAX);
     this.clamp();
@@ -128,7 +128,7 @@ export class Camera {
   zoomBy(factor: number): void {
     if (!Number.isFinite(factor) || factor <= 0) return;
     if (this.game) {
-      this.distance = clamp(this.distance * factor, this.gameDistance * .5, this.gameDistance * 2);
+      this.distance = clamp(this.distance * factor, this.gameDistance * .5, this.gameDistance * 1.5);
       this.clamp();
       this.touch();
       return;
@@ -157,18 +157,6 @@ export class Camera {
     const d = this.groundAt(0, -2 / screenH, aspect);
     this.targetX -= dx * (r[0] - c[0]) + dy * (d[0] - c[0]);
     this.targetZ -= dx * (r[1] - c[1]) + dy * (d[1] - c[1]);
-  }
-
-  /** Perspective distance that frames `span` cells on the ground (screen-vertical). */
-  private distForSpan(span: number): number {
-    const prev = this.distance, terrain = this.terrain;
-    this.terrain = null;
-    this.distance = 1;
-    const a = this.groundAt(0, -1, GAME_ASPECT);
-    const b = this.groundAt(0, 1, GAME_ASPECT);
-    this.distance = prev;
-    this.terrain = terrain;
-    return span / Math.max(1e-6, Math.hypot(b[0] - a[0], b[1] - a[1]));
   }
 
   /** Keep the active footprint inside the red plus half a block (mid-halo). */

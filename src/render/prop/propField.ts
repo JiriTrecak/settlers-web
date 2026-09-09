@@ -1,6 +1,4 @@
-import pineLod1 from '../../../assets/ant-colony/pine-1-lod.glb?url';
-import pineLod2 from '../../../assets/ant-colony/pine-2-lod.glb?url';
-import pineLod3 from '../../../assets/ant-colony/pine-3-lod.glb?url';
+import pineLod from '../../../assets/ant-colony/olive-pine.glb?url';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prepareAntMaterials } from './antMaterials';
@@ -206,7 +204,7 @@ export class PropField {
     try {
       const gltf = await this.loader.loadAsync(url);
       if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
-      const lodUrl=({'ant-pine-1':pineLod1,'ant-pine-2':pineLod2,'ant-pine-3':pineLod3} as Record<string,string>)[asset];
+      const lodUrl=({'ant-pine-1':pineLod,'ant-pine-2':pineLod,'ant-pine-3':pineLod} as Record<string,string>)[asset];
       if(lodUrl){
         const lod=await this.loader.loadAsync(lodUrl);const parts:Mesh[]=[];lod.scene.traverse(o=>{if(o instanceof Mesh)parts.push(o);});let part=0;
         gltf.scene.traverse(o=>{if(o instanceof Mesh){const geometry=parts[part++]?.geometry;if(geometry){this.lodByGeometry.set(o.geometry.uuid,geometry);this.lodGeometries.add(geometry);}}});

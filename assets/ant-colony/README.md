@@ -398,3 +398,13 @@ capture checked visually; the broader art-reference goal remains incomplete.
 ## Rootbound Hall runtime replacement
 
 `rootbound-hall.glb` is the optimized 76,854-triangle main Ant hall, copied unchanged from `experiments/assets/buildings/rootbound-hall/model.glb`. Editable source and optimization history remain in that experiment directory. `asset.ants.fort` and both `main-fort` / `ant-fort` catalogue entries use this file, so gameplay, editor and comparison use the new model while retaining their persistent IDs. The older `fort.glb` is no longer referenced by these entries. Regenerating the earlier colony prototypes must not replace this binding.
+
+## Olive Pine and Lumberjack Workshop
+
+`olive-pine.glb` (1,512 triangles) is copied unchanged from `experiments/assets/buildings/olive-pine/pine-game.glb`. All three persistent ant-pine variants now use this lightweight model, including the distant LOD path, so zooming cannot restore the old pine geometry. Authored map placements/scales remain intact.
+
+`lumberjack-workshop.glb` (33,004 triangles) is copied unchanged from `experiments/assets/buildings/lumberjack-workshop/model.glb`. The declared lumberjack asset and both lumberjack catalogue aliases use it. Original editable sources remain in the experiment directories.
+
+## Player Barracks
+
+player-barracks.glb is copied unchanged from experiments/assets/buildings/player-barracks/model.glb (16,652 triangles). The shared asset.ants.barracks declaration uses it in gameplay, the editor and placement ghosts. Feet are at ground zero, height is 5.95 units, and the ownership flag uses TC_TeamColor. The health bar is positioned at 6.4 units to clear the towers.

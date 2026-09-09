@@ -112,3 +112,27 @@
 
 .rts-back-arrow{position:absolute;inset:0;display:grid;place-items:center;font:42px system-ui;color:#e4e9dc;text-shadow:0 2px 5px #000;background:#152022b8;pointer-events:none}
 .rts-command[aria-haspopup]::after{content:"›";position:absolute;right:4px;bottom:12px;color:#f4df9c;font:bold 20px system-ui;text-shadow:0 1px 4px #000}
+
+/* Square, icon-only commands. Give the steel artwork room for all three rows. */
+.rts-dock{height:clamp(240px,33.333vw,400px)}
+.rts-actions{height:auto}
+.rts-command-grid.declarative-commands{
+  height:auto;aspect-ratio:4/3;grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:4px;padding:2px;
+}
+.declarative-commands>.rts-command{height:auto;aspect-ratio:1;align-self:start}
+.rts-command-pages{min-height:18px;margin-top:4px}
+.rts-tooltip{
+  background:rgba(0,0,0,.82);border:1px solid #85908b;
+  box-shadow:0 4px 14px #0007;backdrop-filter:blur(3px);
+  padding:11px 13px;
+}
+
+/* Explicit square row tracks: sparse later rows must not redistribute free height. */
+.rts-actions{container-type:inline-size}
+.rts-command-grid.declarative-commands{
+  aspect-ratio:auto;
+  grid-template-rows:repeat(3,calc((100cqw - 16px)/4));
+  height:calc((100cqw - 16px)*.75 + 12px);
+}
+.declarative-commands>.rts-command{height:100%;aspect-ratio:auto;align-self:stretch}

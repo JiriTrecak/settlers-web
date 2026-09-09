@@ -52,7 +52,11 @@ export const entitySchema = z
         order: orderSchema.nullable(),
         route: z.array(natural.max(65535)),
         goal: natural.max(65535).nullable(),
-        credit: natural,
+        position: z.object({x: natural.max(255000), y: natural.max(255000)}).strict().nullable(),
+        segment: z.object({
+          from: z.object({x: natural.max(255000), y: natural.max(255000)}).strict(),
+          to: natural.max(65535), length: positive, progress: natural,
+        }).strict().nullable(),
         employment: positive.nullable(),
         job: positive.nullable(),
         cargo: z
@@ -67,6 +71,7 @@ export const entitySchema = z
         camp: z.string().nullable(),
         returning: z.boolean(),
         retryAt: natural,
+        idle: z.object({ home: point, nextTick: natural, walking: z.boolean() }).strict().nullable(),
       })
       .strict()
       .optional(),

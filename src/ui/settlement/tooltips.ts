@@ -45,11 +45,14 @@ export class CommandTooltips {
       : "";
     this.box.replaceChildren(name, costs, description, shortcut);
     this.box.hidden = false;
-    const rect = target.getBoundingClientRect(),
-      height = this.box.offsetHeight,
-      width = this.box.offsetWidth;
-    this.box.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, rect.right - width))}px`;
-    this.box.style.top = `${rect.top > height + 12 ? rect.top - height - 10 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
+    // Commands share one stable tooltip shelf above all four columns.
+    const grid = target.closest<HTMLElement>(".rts-command-grid");
+    const rect = (grid ?? target).getBoundingClientRect();
+    this.box.style.width = grid ? `${rect.width}px` : "320px";
+    const height = this.box.offsetHeight, width = this.box.offsetWidth;
+    this.box.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, grid ? rect.left : rect.right - width))}px`;
+    this.box.style.top = `${grid ? Math.max(8, rect.top - height - 8) : rect.top > height + 12 ? rect.top - height - 10 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
+
   };
   private out = (event: Event) => {
     if (

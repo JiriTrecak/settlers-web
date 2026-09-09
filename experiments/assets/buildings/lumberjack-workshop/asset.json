@@ -1,0 +1,26 @@
+{
+  "name": "Lumberjack Workshop",
+  "blend": "lumberjack-workshop.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 42,
+    "elevation": 36,
+    "scale": 8.75,
+    "target": [
+      0,
+      -0.7,
+      2.48
+    ]
+  },
+  "render": {
+    "width": 1289,
+    "height": 1221,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1150,
+    "fill_energy": 220,
+    "rim_energy": 900
+  }
+}

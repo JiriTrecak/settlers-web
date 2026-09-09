@@ -1,0 +1,58 @@
+{
+  "variants": {
+    "base": {
+      "file": "base.glb",
+      "triangles": 3500,
+      "states": {
+        "build": "build",
+        "chop": "chop",
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "attack": "attack_unarmed",
+        "hit": "hit",
+        "death": "death"
+      }
+    },
+    "warrior": {
+      "file": "warrior.glb",
+      "triangles": 4577,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "attack": "attack_sword",
+        "hit": "hit",
+        "death": "death"
+      }
+    },
+    "archer": {
+      "file": "archer.glb",
+      "triangles": 3894,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "attack": "attack_bow",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "warrior": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    },
+    "archer": {
+      "normalizedTime": 0.65,
+      "event": "release"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.03
+}

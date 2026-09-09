@@ -53,6 +53,22 @@ describe("command categories", () => {
     expect(new Set(pages.flatMap(p => p.filter(s => s.binding.type !== "back").map(s => s.binding.id))).size).toBe(23);
   });
 
+  it("fills left-to-right, skips slot 9 for Back and reads its shortcut from content", () => {
+    const s = source() as any;
+    s.actions.navigation.back.hotkey = "Q";
+    s.actions.navigation.back.description = "Return one level";
+    const registry = new ContentRegistry(s), g = game();
+    const seed = commandCard(g.view("player.1"), [worker(g).id], "player.1", registry).find(b => b.type === "build")!;
+    const root = Array.from({length: 12}, (_, i) => ({...seed, id: String(i), category: undefined}));
+    expect(commandPage(root, 0).map(s => (s.row - 1) * 4 + s.column)).toEqual([1,2,3,4,5,6,7,8,9,10,11,12]);
+    const menu = commandMenu(root.map(b => ({...b, category: "category.build"})), "category.build", registry).entries;
+    expect(commandPage(menu, 0).map(s => (s.row - 1) * 4 + s.column)).toEqual([1,2,3,4,5,6,7,8,10,11,12,9]);
+    expect(shortcutCommand(menu, 0, "q")).toMatchObject({type: "back", hotkey: "Q", description: "Return one level"});
+    expect(shortcutCommand(menu, 0, "Escape")).toBeUndefined();
+    const defaults = commandMenu(root.map(b => ({...b, category: "category.build"})), "category.build", g.registry).entries;
+    expect(shortcutCommand(defaults, 0, "Escape")).toMatchObject({type: "back", hotkey: "Escape"});
+  });
+
   it("rejects missing references, cycles, invalid icons and ambiguous shortcuts", () => {
     for (const edit of [
       (s: any) => {s.actions.actions.build.category = "category.missing";},

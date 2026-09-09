@@ -64,7 +64,9 @@ export class Session {
   private stamps: readonly MapStamp[] = [];
   private resourceSignature = "";
   private economyHud: SettlementHud | null = null;
-  private readonly onHover = (e: PointerEvent) => {
+  private placementPointer: { clientX: number; clientY: number } | null = null;
+  private readonly onHover = (e: { clientX: number; clientY: number }) => {
+    this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
     const hit = this.renderer?.pickGround(e.clientX, e.clientY),
       kind = this.economyHud?.mode;
     if (!hit || !kind) {
@@ -79,8 +81,9 @@ export class Session {
           kind,
           { x, y: z },
           this.economyHud?.buildingActor,
+          this.economyHud?.placementRotation ?? 0,
         ) ?? null;
-    this.renderer?.gamePreview(kind, x, z, !error);
+    this.renderer?.gamePreview(kind, x, z, !error, this.economyHud?.placementRotation ?? 0, this.me);
     this.economyHud?.placement(error);
   };
 
@@ -164,7 +167,10 @@ export class Session {
     });
     this.economyHud = new SettlementHud(this.config.host, this.me, {
       action: (action) => this.send(action),
-      mode: () => renderer.gamePreview(null),
+      mode: () => {
+        if (this.placementPointer) this.onHover(this.placementPointer);
+        else renderer.gamePreview(null);
+      },
       home: () => {
         const game = this.world?.settlement,
           home = game?.entities.find(
@@ -471,7 +477,7 @@ export class Session {
       return;
     }
     if (hud.mode) {
-      const error = sim.canBuild(owner, hud.mode, position, hud.buildingActor);
+      const error = sim.canBuild(owner, hud.mode, position, hud.buildingActor, hud.placementRotation);
       if (error) {
         hud.placement(error);
         return;
@@ -481,6 +487,7 @@ export class Session {
         actor: hud.buildingActor!,
         definition: hud.mode,
         position,
+        rotation: hud.placementRotation,
       });
       return;
     }

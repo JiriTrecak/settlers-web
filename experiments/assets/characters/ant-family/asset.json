@@ -1,0 +1,27 @@
+{
+  "name": "Ant \u00b7 Base / Warrior / Archer",
+  "blend": "ant-family.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 18,
+    "elevation": 14,
+    "scale": 2.65,
+    "target": [
+      0,
+      0,
+      1.03
+    ]
+  },
+  "render": {
+    "width": 1100,
+    "height": 1200,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 110,
+    "fill_energy": 40,
+    "rim_energy": 140
+  },
+  "kind": "character"
+}

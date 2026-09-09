@@ -1,0 +1,18 @@
+{
+  "objects": 225,
+  "meshes": 219,
+  "faces": 3211,
+  "materials": 20,
+  "collections": [
+    "01 \u00b7 Stone feet",
+    "02 \u00b7 Timber frame",
+    "03 \u00b7 Roof",
+    "04 \u00b7 Ironwork",
+    "05 \u00b7 Axe sign",
+    "06 \u00b7 Interior",
+    "07 \u00b7 Lanterns",
+    "08 \u00b7 Team flag",
+    "09 \u00b7 Studio"
+  ],
+  "blender": "5.2.1 LTS"
+}

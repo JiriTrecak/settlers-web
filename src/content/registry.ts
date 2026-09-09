@@ -189,6 +189,8 @@ export class ContentRegistry {
       return d;
     };
     for (const asset of this.assets) {
+      if (asset.character && (!asset.file || asset.carryAsset))
+        throw new Error(`${asset.id}: animated characters require a file and use carry animation instead of carryAsset`);
       if (asset.carryAsset && !this.asset(asset.carryAsset).file)
         throw new Error(`${asset.id}: carryAsset must be a model`);
       if (!asset.file && asset.atlasIndex === undefined)
@@ -326,8 +328,8 @@ export class ContentRegistry {
       }
     }
     for (const d of this.definitions) categoryExists(d.category);
-    for (const a of [...Object.values(this.actions.actions), ...Object.values(this.actions.categories)]) {
-      if ("category" in a) categoryExists(a.category);
+    for (const a of [...Object.values(this.actions.actions), ...Object.values(this.actions.categories), ...Object.values(this.actions.navigation)]) {
+      if ("category" in a && typeof a.category === "string") categoryExists(a.category);
       this.asset(a.icon);
       if (this.asset(a.icon).atlasIndex === undefined) throw new Error(`Command icon must use an atlas: ${a.icon}`);
       if (a.hotkey) {

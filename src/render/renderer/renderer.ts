@@ -119,8 +119,8 @@ export class Renderer {
   private readonly decals: DecalLayer;
   private settlement: SettlementLayer | null = null;
   private fog: FogOfWar | null = null;
-  gamePreview(kind: string | null, x = 0, z = 0, allowed = false) {
-    if (this.height) this.settlement?.preview(kind, x, z, allowed, this.height);
+  gamePreview(kind: string | null, x = 0, z = 0, allowed = false, rotation = 0, owner = 0) {
+    if (this.height) this.settlement?.preview(kind, x, z, allowed, this.height, rotation, owner);
   }
   gameSelect(id: number | null | readonly number[]) {
     this.settlement?.select(id);

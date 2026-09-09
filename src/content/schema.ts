@@ -61,7 +61,7 @@ export const creationSchema = z.discriminatedUnion("method", [
     })
     .strict(),
 ]);
-const movement = z.object({ speed: positive.max(40) }).strict();
+const movement = z.object({ speed: positive.max(40), walkSpeed: positive.max(40).optional(), idleWander: z.boolean().optional() }).strict();
 const combat = z
   .object({
     damage: positive,
@@ -188,12 +188,13 @@ export const actionMetaSchema = z
     priority: z.number().int(),
     hotkey: z
       .string()
-      .regex(/^[A-Z]$/)
+      .regex(/^(?:[A-Z]|Escape)$/)
       .optional(),
   })
   .strict();
 export const actionsSchema = z
   .object({
+    navigation: z.object({ back: actionMetaSchema.omit({ category: true }) }).strict(),
     categories: z.record(idSchema, actionMetaSchema.omit({ category: true }).extend({
       parent: idSchema.optional(),
     })).default({}),
@@ -206,7 +207,7 @@ export const actionsSchema = z
           priority: z.number().int().optional(),
           hotkey: z
             .string()
-            .regex(/^[A-Z]$/)
+            .regex(/^(?:[A-Z]|Escape)$/)
             .optional(),
         })
         .strict(),
@@ -219,6 +220,7 @@ export const assetSchema = z
     file: z.string().min(1).optional(),
     atlasIndex: natural.max(18).optional(),
     carryAsset: idSchema.optional(),
+    character: z.enum(["base", "warrior", "archer"]).optional(),
     scale: z.number().positive().optional(),
     healthHeight: z.number().positive().optional(),
     stackHeight: z.number().positive().optional(),
