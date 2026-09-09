@@ -4,6 +4,23 @@ import { MAP_BLOCK, MAP_SIZE } from "../../src/shared";
 import { Camera, GAME_ASPECT, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 
 describe("iso camera", () => {
+  it("edge/arrow travel moves toward the corresponding projected ground edge", () => {
+    for (const game of [false, true]) {
+      for (const yaw of [0, Math.PI / 4, Math.PI / 2]) {
+        for (const [right, forward] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+          const cam = new Camera();
+          cam.setGame(game);
+          cam.pose({x: 128, z: 128, yaw});
+          const origin = cam.groundAt(0, 0, GAME_ASPECT);
+          const edge = cam.groundAt(right * 0.5, forward * 0.5, GAME_ASPECT);
+          const before = [cam.targetX, cam.targetZ];
+          cam.panWorld(right, forward);
+          const dx = cam.targetX - before[0], dz = cam.targetZ - before[1];
+          expect(dx * (edge[0] - origin[0]) + dz * (edge[1] - origin[1])).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
   it("lookAt then applyTo does not throw and sets a projection", () => {
     const cam = new Camera();
     cam.lookAt(128, 128);

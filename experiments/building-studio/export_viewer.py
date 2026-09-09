@@ -8,6 +8,7 @@ from pathlib import Path
 
 import bpy
 from mathutils import Vector
+from optimize_mesh import optimize_objects
 
 
 def yup(v):
@@ -27,6 +28,7 @@ def export_viewer(asset, output):
             metadata['lights'].append({'name':obj.name,'type':obj.data.type,'position':yup(obj.matrix_world.translation),
                                        'color':list(obj.data.color),'energy':obj.data.energy})
     originals=[o for o in scene.objects if o.type in ('MESH','CURVE') and not o.hide_render]
+    optimize_objects(originals)
     depsgraph=bpy.context.evaluated_depsgraph_get()
     collection=bpy.data.collections.new('Temporary viewer export')
     scene.collection.children.link(collection)
@@ -91,5 +93,5 @@ def export_viewer(asset, output):
                               export_animations=False,export_cameras=False,export_lights=False)
     metadata['vertices']=len(merged.data.vertices)
     metadata['triangles']=sum(len(p.vertices)-2 for p in merged.data.polygons)
-    metadata['note']='Evaluated geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio.'
+    metadata['note']='Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio.'
     return metadata

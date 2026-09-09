@@ -94,7 +94,7 @@
       "energy": 1050.0
     }
   ],
-  "vertices": 39703,
-  "triangles": 76854,
-  "note": "Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio."
+  "vertices": 83368,
+  "triangles": 137580,
+  "note": "Evaluated geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio."
 }

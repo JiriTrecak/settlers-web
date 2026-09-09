@@ -24,7 +24,7 @@ Each asset lives in `experiments/assets/buildings/<name>/`:
 - `samples.json`: named source coordinates. `palette.json`: exact source pixels, robust representative pixels, hex, and linear RGB.
 - `samples.png`: annotated sample locations.
 - `render.png`, `comparison.png`: latest rendered asset and side-by-side comparison.
-- `model.glb`, `viewer.json`: evaluated mesh and camera/light metadata for the 3D viewer. Procedural albedo is baked to vertex colors; roughness, metalness and emission are retained. This preview mesh includes bevels and curves and is not decimated for game use.
+- `model.glb`, `viewer.json`: evaluated mesh and camera/light metadata for the 3D viewer. Procedural albedo is baked to vertex colors; roughness, metalness and emission are retained. The realtime export reduces small bevel rings, curve cross-sections, and selected root, roof, and cloth surfaces. Simplification runs only in the disposable export process; the editable Blender source keeps its full surface resolution.
 - `history/`: earlier renders. `render-info.json`: camera preset, saved-file timestamp, timing and config.
 - `emblem-trace.json`: for this hall, a threshold-based geometry trace of the reference emblem.
 

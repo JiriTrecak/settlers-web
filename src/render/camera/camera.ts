@@ -107,11 +107,12 @@ export class Camera {
     this.touch();
   }
 
-  /** WASD / arrows in camera-forward / camera-right on XZ. */
+  /** Positive right/forward moves the camera toward screen-right/screen-top on XZ. */
   panWorld(right: number, forward: number): void {
     const { rx, rz, fx, fz } = basis(this.yaw);
-    this.targetX += right * rx + forward * fx;
-    this.targetZ += right * rz + forward * fz;
+    // basis.f points from the target toward the eye, opposite to forward travel.
+    this.targetX += right * rx - forward * fx;
+    this.targetZ += right * rz - forward * fz;
     this.clamp();
     this.touch();
   }

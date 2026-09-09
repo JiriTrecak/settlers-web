@@ -93,7 +93,6 @@ DARK = mat('Deep timber crevices', '#241912')
 GRAIN = mat('Carved grain shadow', '#703f2b')
 HONEY = mat('Cut edge honey', '#c58a50')
 CLOTH = mat('Vermilion banners', 'banner', .45, .92)
-EMBLEM = mat('Bone banner sigil', 'emblem', .83)
 ROPE = mat('Hemp lashings', '#ab895d')
 
 
@@ -261,11 +260,8 @@ for side in [-1,1]:
     for x in [side*1.64,side*2.26]:
         box('Front vertical timber',(x,-2.01,2.04),(.26,.25,.88),WOOD[2],.035,.025)
     box('Gate shoulder beam',(side*1.78,-2.05,1.94),(1.25,.23,.22),WOOD[1],.05)
-for x in [-1.92,-1.18,0,1.15,2.05]:
-    y=1.46
-    top=3.08+(.48 if abs(x)<1.3 else .17)+random.uniform(-.12,.15)
-    cone('Rear sharpened roof stake',(x,y,2.57),(x+.03,y,top),.16,.12,WOOD[1],7)
-    cone('Cut spike tip',(x+.03,y,top),(x,y,top+.28),.14,.006,WOOD[2],5)
+# Preserve the seeded variation of the remaining building after removing five rear stakes.
+for _ in range(5): random.uniform(-.12,.15)
 
 CURRENT=COLS['03 · Roof planks']
 RX,RY,RZ=2.28,1.60,CONFIG['shape']['roof_height']
@@ -296,12 +292,6 @@ for course in range(4):
         obj=mesh('Curved redwood shingle',verts,[(v*nu+u,v*nu+u+1,(v+1)*nu+u+1,(v+1)*nu+u) for v in range(nv-1) for u in range(nu-1)],random.choice(ROOF),True)
         solid=obj.modifiers.new('Thick hewn plank','SOLIDIFY');solid.thickness=.10
         bevel=obj.modifiers.new('Soft cut edges','BEVEL');bevel.width=.027;bevel.segments=2
-        # Long irregular grain follows each curved roof board, avoiding flat texture billboards.
-        for k in range(2):
-            t=lo+(hi-lo)*(.3+k*.37)
-            pts=[tuple(dome(t+.007*math.sin(u*1.4+j),a0+(a1-a0)*u/11,.015)) for u in range(1,11)]
-            line('Roof hewn grain',pts,.004,GRAIN if k==0 else WOOD[1])
-
 # A broad lower tier is structurally joined to the upper roof and the wall frame.
 # It gives the stepped, heavy silhouette visible beneath the reference's iron hoop.
 for j in range(20):
@@ -408,17 +398,6 @@ def banner(cx,y,top,width,height,pole_side=1,base_z=None):
     verts=[cloth(i/(nu-1),j/(nv-1)) for j in range(nv) for i in range(nu)]
     ob=mesh('Tattered crimson cloth',verts,[(j*nu+i,j*nu+i+1,(j+1)*nu+i+1,(j+1)*nu+i) for j in range(nv-1) for i in range(nu-1)],CLOTH,True)
     sol=ob.modifiers.new('Woven cloth thickness','SOLIDIFY');sol.thickness=.012
-    # The bright emblem pixels are traced into actual geometry, then draped over the folds.
-    trace=json.loads((ASSET/'emblem-trace.json').read_text())
-    verts=[];faces=[]
-    du=.64/trace['width'];dv=.58/trace['height']
-    for u,v in trace['points']:
-        u=.18+u*.64;v=.20+v*.58
-        start=len(verts)
-        verts.extend([cloth(u,v,.026),cloth(u+du,v,.026),cloth(u+du,v+dv,.026),cloth(u,v+dv,.026)])
-        faces.append((start,start+1,start+2,start+3))
-    mesh('Reference traced bone sigil',verts,faces,EMBLEM,True)
-
 # Matching banners hang against the masonry below the front fence, one outer pike each.
 banner(-1.87,-2.30,1.91,.77,1.25,pole_side=-1)
 banner(1.87,-2.30,1.91,.77,1.25,pole_side=1)

@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-08T16:53:08-0700",
+  "at": "2026-09-08T17:00:22-0700",
   "view": "saved",
   "quick": false,
-  "seconds": 9.05,
-  "blend_mtime_ns": 1788911579978110652,
+  "seconds": 8.23,
+  "blend_mtime_ns": 1788911980140881258,
   "config": {
     "name": "Rootbound Hall",
     "recipe": "model.py",
