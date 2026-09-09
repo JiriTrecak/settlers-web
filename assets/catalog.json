@@ -903,7 +903,7 @@
       "name": "Main fort",
       "category": "landmark",
       "type": "prop",
-      "file": "ant-colony/fort.glb"
+      "file": "ant-colony/rootbound-hall.glb"
     },
     {
       "id": "lumberjack-hut",
@@ -973,7 +973,7 @@
       "name": "Ant colony \u00b7 Fort",
       "category": "other",
       "type": "prop",
-      "file": "ant-colony/fort.glb"
+      "file": "ant-colony/rootbound-hall.glb"
     },
     {
       "id": "ant-lumberjack",

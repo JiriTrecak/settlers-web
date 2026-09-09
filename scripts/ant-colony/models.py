@@ -38,7 +38,7 @@ iron=mat('forged iron','394249',.72,.48);silver=mat('worn steel','a0a6a2',.65,.4
 cut=mat('end grain','c59f61');grain=mat('growth rings','866039');dark=mat('recess','241c17')
 rock=[mat('foundation '+str(i),c) for i,c in enumerate(['746d57','8c8065','a39679','615c4d'])]
 leaf=[mat('leaf '+str(i),c) for i,c in enumerate(['556228','728238','8a9642','414d20'])]
-flagmat=mat('faction red','b43329');gold=mat('ant emblem','d3b77e',.35)
+flagmat=mat('faction red','b43329');flagmat.name='TC_TeamColor';gold=mat('ant emblem','d3b77e',.35)
 chitin=mat('rust chitin','9f432c',.15,.58);chitinlight=mat('chitin planes','bb5939',.15,.6)
 eye=mat('onyx eyes','11191c',.2,.22);glint=mat('eye glint','b3c4bf',.3,.18)
 amber=mat('resin lamp','ff9f26',0,.35,3);flame=mat('flame heart','ffe693',0,.3,6)

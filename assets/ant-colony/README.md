@@ -394,3 +394,7 @@ See src/debug/performance.md for methodology and benchmark limitations. Latest
 uncapped local initial-view benchmark averages ~220 FPS at 1681x850; both CPU
 and GPU p95 are below 8.33 ms. Build and 8 targeted tests pass. Final comparison
 capture checked visually; the broader art-reference goal remains incomplete.
+
+## Rootbound Hall runtime replacement
+
+`rootbound-hall.glb` is the optimized 76,854-triangle main Ant hall, copied unchanged from `experiments/assets/buildings/rootbound-hall/model.glb`. Editable source and optimization history remain in that experiment directory. `asset.ants.fort` and both `main-fort` / `ant-fort` catalogue entries use this file, so gameplay, editor and comparison use the new model while retaining their persistent IDs. The older `fort.glb` is no longer referenced by these entries. Regenerating the earlier colony prototypes must not replace this binding.

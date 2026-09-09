@@ -36,3 +36,5 @@ Duplicate the warrior definition, assign a new ID, change name/stats/art/price, 
 `tests/game/content.test.ts` exercises this end to end, including recruitment and tooltip costs. If a proposed addition needs an identity check such as `definition === 'unit.ants.new-unit'` in a system, revisit whether a genuine new capability is needed.
 
 Continue with [behavior reference](behaviors.md), [worked JSON examples](examples.md), [native systems](systems.md), and [validation and acceptance](validation.md).
+
+Asset authoring: [team-color material contract](team-color.md). Only `TC_TeamColor` is recolored; roofs and chitin retain their authored colors.
