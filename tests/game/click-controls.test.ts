@@ -11,7 +11,7 @@ function setup() {
     clearMode: vi.fn(), setSelection: vi.fn(),
   };
   const session = Object.assign(Object.create(Session.prototype), {
-    world: {settlement: g}, me: 0, economyHud: hud,
+    world: {settlement: g}, me: 0, config: {player: 0}, economyHud: hud,
     renderer: { pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
     send: vi.fn(),
   });

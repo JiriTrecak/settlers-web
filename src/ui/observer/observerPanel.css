@@ -1,0 +1,230 @@
+.observer-panel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 640px;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+  z-index: 30;
+  pointer-events: auto;
+  color: #e1e4db;
+  background: linear-gradient(125deg, #162026ec, #090f13ed);
+  border: 1px solid #77858b80;
+  box-shadow:
+    inset 0 1px #d3e2e222,
+    0 4px 20px #0007;
+  border-radius: 3px;
+  font:
+    12px/1.4 system-ui,
+    sans-serif;
+  text-shadow: 0 1px 2px #0008;
+}
+.observer-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid #71808433;
+}
+.observer-panel h2 {
+  margin: 0;
+  color: #ded2b7;
+  font:
+    16px Georgia,
+    serif;
+}
+.observer-panel-badge {
+  color: #93afb5;
+  font-size: 9px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+.observer-panel-scroll {
+  overflow: auto;
+  max-height: min(380px, 45vh);
+}
+.observer-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.observer-panel th {
+  font-weight: 400;
+}
+.observer-panel thead {
+  font-size: 9px;
+  color: #92a09f;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.observer-panel thead th {
+  padding: 8px 6px 5px;
+  text-align: center;
+}
+.observer-panel thead th:first-child {
+  text-align: left;
+  padding-left: 14px;
+  width: 24%;
+}
+.observer-panel thead th:nth-child(2),
+.observer-panel thead th:nth-child(3) {
+  width: 18%;
+}
+.observer-panel thead th:nth-child(4),
+.observer-panel thead th:nth-child(5) {
+  width: 10%;
+}
+.observer-panel thead th:last-child {
+  width: 20%;
+}
+.observer-panel tbody tr {
+  border-top: 1px solid #6f7d7e24;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--observer-color) 11%, transparent),
+    transparent 28%
+  );
+}
+.observer-panel tbody td {
+  padding: 8px 6px;
+  vertical-align: middle;
+}
+.observer-panel .observer-player {
+  padding: 10px 6px 10px 12px;
+  text-align: left;
+  box-shadow: inset 3px 0 var(--observer-color);
+}
+.observer-player-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 25px;
+  height: 30px;
+  vertical-align: middle;
+  border-radius: 2px 2px 7px 7px;
+  border: 1px solid var(--observer-color);
+  background: color-mix(in srgb, var(--observer-color) 35%, #101819);
+  font: 14px Georgia;
+  color: #f9edda;
+  margin-right: 8px;
+}
+.observer-player-identity {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: calc(100% - 37px);
+}
+.observer-player-identity strong {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+.observer-player-identity small {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  color: #8c9d9b;
+}
+.observer-resource-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.observer-panel .rts-art {
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  flex: none;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #76817855;
+  border-radius: 2px;
+}
+.observer-resource strong {
+  font-size: 17px;
+  font-weight: 500;
+  color: #eed5a1;
+  font-variant-numeric: tabular-nums;
+}
+.observer-income {
+  display: block;
+  margin-top: 3px;
+  text-align: center;
+  color: #a3bf8a;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.observer-population {
+  text-align: center;
+  font-size: 19px;
+  color: #d9e0dd;
+  font-variant-numeric: tabular-nums;
+}
+.observer-heroes {
+  text-align: center;
+  color: #869591;
+}
+.observer-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+.observer-hero .rts-art {
+  width: 30px;
+  height: 32px;
+  border-color: #baa27388;
+}
+.observer-hero > span:last-child {
+  font-size: 13px;
+  color: #e7d6b1;
+  white-space: nowrap;
+}
+.observer-hero small {
+  display: block;
+  font-size: 8px;
+  color: #c29483;
+}
+.observer-hero-fallen .rts-art,
+.observer-hero-reviving .rts-art {
+  filter: grayscale(0.85);
+  opacity: 0.6;
+}
+.observer-player-defeated {
+  opacity: 0.58;
+}
+.observer-panel footer {
+  padding: 6px 12px;
+  border-top: 1px solid #71808433;
+  color: #879a99;
+  font-size: 9px;
+  text-align: right;
+}
+.observer-match .hud-stats,
+.observer-match .rts-resources {
+  display: none;
+}
+.observer-match .hud-nav {
+  right: 12px;
+}
+@media (max-width: 960px) {
+  .observer-panel {
+    top: 52px;
+    width: 610px;
+  }
+}
+@media (max-width: 560px) {
+  .observer-panel {
+    left: 8px;
+    max-width: calc(100vw - 16px);
+  }
+  .observer-panel table {
+    min-width: 575px;
+  }
+  .observer-panel header {
+    padding: 8px 10px;
+  }
+}

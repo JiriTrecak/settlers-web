@@ -353,3 +353,41 @@
     width: 110px;
   }
 }
+/* Keep the square atlas and launch action within a normal desktop window. */
+.skirmish-preview {
+  width: min(100%, clamp(240px, calc(100svh - 410px), 460px));
+  margin-inline: auto;
+}
+@media (max-height: 850px) and (min-width: 801px) {
+  .skirmish-shell {
+    padding: 20px 30px;
+  }
+  .skirmish-heading {
+    margin-bottom: 18px;
+  }
+  .skirmish-heading h1 {
+    font-size: 36px;
+  }
+  .skirmish-details {
+    padding: 18px 24px;
+  }
+  .skirmish-map-title {
+    margin-top: 16px;
+  }
+  .skirmish-description {
+    margin-top: 12px;
+  }
+  .skirmish-footer {
+    padding-top: 16px;
+  }
+}
+@media (max-height: 850px) and (min-width: 801px) {
+  .skirmish-roster {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+  .skirmish-rules {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+}

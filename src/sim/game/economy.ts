@@ -15,8 +15,20 @@ import {
   type QueueEntry,
 } from "./state";
 
+/** Ephemeral receipts for presentation; not commands, accounting, or saved simulation state. */
+export type ResourceDelivery = { tick: number; owner: Owner; item: string; amount: number };
+
 /** Hall stores fund work atomically; workers only carry harvests back to a drop-off. */
 export class Economy {
+  readonly deliveries: ResourceDelivery[] = [];
+  private depositCargo(worker: Entity, store: Entity) {
+    const cargo = worker.unit!.cargo;
+    if (!cargo) return;
+    add(store.inventory, cargo.item, cargo.amount);
+    if (this.c.def(store).behaviors.storage?.dropoff)
+      this.deliveries.push({tick:this.s.tick,owner:store.owner,item:cargo.item,amount:cargo.amount});
+    worker.unit!.cargo = null;
+  }
   constructor(private readonly c: GameContext) {}
   private get s() {
     return this.c.state;
@@ -272,7 +284,7 @@ export class Economy {
     const u=w.unit!,resource=this.c.get(job.source),creation=this.c.registry.get(job.item!).creation!;
     if(job.phase==="return") {
       if(u.cargo && this.room(hall)+job.amount>=u.cargo.amount) {
-        add(hall.inventory,u.cargo.item,u.cargo.amount);u.cargo=null;
+        this.depositCargo(w,hall);
         this.finishHarvest(job,w);
       } else this.abandon(job);
       return;
@@ -562,6 +574,7 @@ export class Economy {
     return true;
   }
   advance() {
+    this.deliveries.length = 0;
     for (const job of [...this.s.jobs]) {
       if (!this.s.jobs.includes(job)) continue;
       const w = this.c.get(job.worker),
@@ -672,8 +685,7 @@ export class Economy {
       const resource = this.c.get(job.source);
       if (job.phase === "return") {
         if (u.cargo) {
-          add(b.inventory, u.cargo.item, u.cargo.amount);
-          u.cargo = null;
+          this.depositCargo(w,b);
         }
         this.eraseJob(job);
         this.finishCycle(b);
@@ -737,8 +749,7 @@ export class Economy {
     if(!cargo || !this.c.def(b).behaviors.storage?.dropoff || b.owner!==w.owner || this.room(b)+job.amount<cargo.amount) {
       this.abandon(job); return;
     }
-    add(b.inventory,cargo.item,cargo.amount);
-    w.unit!.cargo=null;
+    this.depositCargo(w,b);
     this.eraseJob(job);
     this.applyPending(w);
   }

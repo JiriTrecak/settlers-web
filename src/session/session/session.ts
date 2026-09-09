@@ -1,3 +1,8 @@
+import {
+  ObserverIncome,
+  observerStats,
+} from "../../presentation/observerStats";
+import { ObserverPanel } from "../../ui/observer/observerPanel";
 import { PresentationView, matchSpeed } from "./presentationView";
 import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
 import { precise } from "../../sim/game/motion";
@@ -67,6 +72,9 @@ export class Session {
   private reveal = false;
   private speed = 1;
   private visionPlayer: number;
+  private observerPanel: ObserverPanel | null = null;
+  private observerIncome: ObserverIncome | null = null;
+  private observerStatsTick = -1;
   private unbindDebug: (() => void) | null = null;
   private get observing(): boolean {
     return this.config.player === null;
@@ -192,6 +200,11 @@ export class Session {
       seed: match.seed,
       map,
     });
+    if (this.observing) {
+      this.observerIncome = new ObserverIncome();
+      this.observerPanel = new ObserverPanel(this.config.host);
+      this.updateObserverStats();
+    }
     const catalog = projectCatalogue(),
       urls = new Map(
         catalog.assets.flatMap((a) => {
@@ -441,6 +454,7 @@ export class Session {
       for (const [id, peer] of this.locksteps)
         if (id !== this.me) peer.take(next);
       world.tick();
+      this.observerIncome?.record(next, world.settlement.economy.deliveries);
       for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
         perf.sample(`Sim · ${name}`, ms);
       if (perf.enabled)
@@ -471,6 +485,7 @@ export class Session {
       this.fpsMs = 0;
       return;
     }
+    this.updateObserverStats();
     const input = perf.start();
     this.input?.tick(dtMs);
     perf.end("Input", input);
@@ -515,6 +530,33 @@ export class Session {
       this.fpsMs = 0;
     }
     this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.distance });
+  }
+
+  private updateObserverStats(force = false): void {
+    if (
+      !this.observerPanel ||
+      !this.observerIncome ||
+      !this.world ||
+      !this.match
+    )
+      return;
+    const tick = this.world.clock.tickIndex;
+    // One projection per game second; the receipt collector still runs every simulation tick.
+    if (
+      !force &&
+      this.observerStatsTick >= 0 &&
+      tick - this.observerStatsTick < 40
+    )
+      return;
+    this.observerStatsTick = tick;
+    this.observerPanel.update(
+      observerStats(
+        this.world.settlement.state,
+        this.match.slots,
+        content,
+        this.observerIncome,
+      ),
+    );
   }
 
   snapshotLocal() {
@@ -591,6 +633,8 @@ export class Session {
         .get(client.player)!
         .restore(pipeline.commits, client.sentThrough, client.outbox);
     this.world = restored;
+    this.observerIncome?.reset(restored.clock.tickIndex);
+    this.updateObserverStats(true);
     this.acc = 0;
     this.resourceSignature = "";
     this.economyHud?.setSelection([]);
@@ -836,6 +880,9 @@ export class Session {
   }
 
   stop(): void {
+    this.observerPanel?.destroy();
+    this.observerPanel = null;
+    this.observerIncome = null;
     this.unbindDebug?.();
     this.unbindDebug = null;
     this.canvas.style.cursor = "";
