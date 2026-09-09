@@ -44,21 +44,26 @@ export class Minimap {
   private dots: { x: number; z: number; fill: string }[] = [];
   private starts: readonly PlayerStart[] = [];
   setPlayerStarts(starts: readonly PlayerStart[]): void {
+    if(starts.length === this.starts.length && starts.every((start,index)=>start===this.starts[index])) return;
     this.starts = starts;
     this.dirty = true;
   }
   private fogState: SettlementView | null = null;
   private fogRevision = -1;
+  private fogOwner: number | undefined;
   private readonly fogCanvas = document.createElement("canvas");
   setFog(state: SettlementView) {
+    if(this.fogState?.revision !== state.revision) this.dirty = true;
     this.fogState = state;
-    if (this.fogRevision !== state.fog?.revision) {
+    if (this.fogRevision !== state.fog?.revision || this.fogOwner !== state.fog?.owner) {
+      this.fogOwner = state.fog?.owner;
       this.fogRevision = state.fog?.revision ?? -1;
       this.dirty = true;
-      this.fogCanvas.width = this.fogCanvas.height = 256;
+      const size=Math.sqrt(state.fog?.cells.length??0)||this.spec.size||MAP_SIZE;
+      this.fogCanvas.width = this.fogCanvas.height = size;
       const ctx = this.fogCanvas.getContext("2d")!,
-        data = ctx.createImageData(256, 256);
-      for (let i = 0; i < 65536; i++)
+        data = ctx.createImageData(size, size);
+      for (let i = 0; i < size*size; i++)
         data.data[i * 4 + 3] =
           state.fog?.cells[i] === 2 ? 0 : state.fog?.cells[i] === 1 ? 166 : 255;
       ctx.putImageData(data, 0, 0);
@@ -163,7 +168,7 @@ export class Minimap {
     this.lastRev = cam.rev;
     this.lastW = vw;
     this.lastH = vh;
-    const size = this.spec.size ?? MAP_SIZE;
+    const size = this.height?.size ?? this.spec.size ?? MAP_SIZE;
     const ctx = this.ctx;
     const w = this.canvas.width;
     const h = this.canvas.height;
@@ -214,7 +219,7 @@ export class Minimap {
     }
     for (const start of this.starts) {
       const [px, py] = this.project(start.x, start.z, size, w, h);
-      ctx.fillStyle = start.player === 1 ? "#63c7ff" : "#ff997e";
+      ctx.fillStyle = "#" + PLAYER_COLORS[start.player - 1].toString(16).padStart(6,"0");
       ctx.beginPath();
       ctx.arc(px, py, 7, 0, Math.PI * 2);
       ctx.fill();
@@ -269,7 +274,7 @@ export class Minimap {
     if (rect.width < 1 || rect.height < 1) return;
     const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = 1 - ((e.clientY - rect.top) / rect.height) * 2;
-    const size = this.spec.size ?? MAP_SIZE;
+    const size = this.height?.size ?? this.spec.size ?? MAP_SIZE;
     const [x, z] = ndcToWorld(ndcX, ndcY, size);
     const max = size - 0.01;
     this.spec.onLookAt(clamp(x, 0, max), clamp(z, 0, max));

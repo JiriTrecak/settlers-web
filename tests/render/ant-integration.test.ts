@@ -9,12 +9,12 @@ afterEach(() => vi.restoreAllMocks());
 
 it("uses independent animated game variants, reacts once per strike, and distinguishes fog removal from death", async () => {
   const loader = new GLTFLoader();
-  const variants = await Promise.all(["base", "warrior", "archer"].map(async variant => {
+  const variants = await Promise.all(["base", "warrior", "archer", "marshal"].map(async variant => {
     const bytes = readFileSync(`assets/ant-colony/characters/${variant}.glb`);
     return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), "");
   }));
   vi.spyOn(GLTFLoader.prototype, "loadAsync").mockImplementation(async url => {
-    const index = ["base", "warrior", "archer"].findIndex(v => url.includes(`characters/${v}.glb`));
+    const index = ["base", "warrior", "archer", "marshal"].findIndex(v => url.includes(`characters/${v}.glb`));
     return index >= 0 ? variants[index] : {scene: new Group(), animations: []} as any;
   });
   const scene = new Scene(), layer = new SettlementLayer(scene);

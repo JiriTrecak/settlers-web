@@ -1,4 +1,4 @@
-import {graphicsControls} from './graphicsControls';
+import { graphicsControls } from "./graphicsControls";
 /** Illustrated first screen with real, keyboard-accessible menu controls. */
 import { GameScreen } from "../screen/screen";
 import menuArt from "../../../assets/ui/main-menu/forest-heroes.png";
@@ -6,7 +6,7 @@ import logoArt from "../../../assets/ui/main-menu/logo-iron-wordmark.png";
 import "./mainMenu.css";
 
 export type MainMenuHooks = {
-  onSinglePlayer(): void;
+  onSkirmish(): void;
   onMultiplayer(): void;
   onEditor(): void;
   playerName: string;
@@ -44,28 +44,39 @@ export class MainMenu extends GameScreen {
     settings.querySelector("form")!.addEventListener("submit", () => {
       hooks.onPlayerName(input.value.trim() || "player");
     });
-    const fullscreen = settings.querySelector<HTMLButtonElement>("[data-fullscreen]")!;
+    const fullscreen =
+      settings.querySelector<HTMLButtonElement>("[data-fullscreen]")!;
     fullscreen.addEventListener("click", async () => {
       try {
         if (document.fullscreenElement) await document.exitFullscreen();
         else await document.documentElement.requestFullscreen();
-        fullscreen.textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
+        fullscreen.textContent = document.fullscreenElement
+          ? "Exit fullscreen"
+          : "Fullscreen";
       } catch {
-        settings.querySelector("[role=status]")!.textContent = "Fullscreen is unavailable in this browser window.";
+        settings.querySelector("[role=status]")!.textContent =
+          "Fullscreen is unavailable in this browser window.";
       }
     });
     const exitDialog = document.createElement("dialog");
     exitDialog.className = "canopy-settings";
     exitDialog.setAttribute("aria-labelledby", "canopy-exit-title");
     exitDialog.innerHTML = `<form method="dialog"><h2 id="canopy-exit-title">Until next time</h2><p class="canopy-settings-status">You can close this tab to exit Under the Canopy.</p><div class="canopy-settings-actions"><button type="submit">Return to menu</button></div></form>`;
+    const campaign = button("Campaign", () => {});
+    campaign.disabled = true;
+    campaign.title = "Campaign — coming soon";
     nav.append(
-      button("Singleplayer", hooks.onSinglePlayer),
+      campaign,
+      button("Skirmish", hooks.onSkirmish),
       button("Multiplayer", hooks.onMultiplayer),
       button("Settings", () => {
-        fullscreen.textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
-        settings.querySelector('[data-graphics]')?.remove();
-        const graphics=graphicsControls();graphics.dataset.graphics='';
-        settings.querySelector('.canopy-settings-actions')!.before(graphics);
+        fullscreen.textContent = document.fullscreenElement
+          ? "Exit fullscreen"
+          : "Fullscreen";
+        settings.querySelector("[data-graphics]")?.remove();
+        const graphics = graphicsControls();
+        graphics.dataset.graphics = "";
+        settings.querySelector(".canopy-settings-actions")!.before(graphics);
         settings.showModal();
       }),
       button("Editor", hooks.onEditor),

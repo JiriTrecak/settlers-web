@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { game, placed, physical, run, worker, slots } from "./helpers";
+import { craftGame, game, placed, physical, run, worker, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 
 describe("work disruption and capacity", () => {
@@ -8,13 +8,13 @@ describe("work disruption and capacity", () => {
         const b = s.definitions.find(
           (d: any) => d.id === "building.ants.barracks",
         ) as any;
-        b.behaviors.storage.accepts.push("item.stone");
+        b.behaviors.storage.capacity=16;
         const w = s.definitions.find(
           (d: any) => d.id === "unit.ants.warrior",
         ) as any;
         w.creation.items = [
-          { item: "item.plank", amount: 7 },
-          { item: "item.stone", amount: 7 },
+          { item: "item.wood", amount: 7 },
+          { item: "item.amber", amount: 7 },
         ];
         w.creation.workTicks = 4;
       }),
@@ -34,14 +34,14 @@ describe("work disruption and capacity", () => {
     expect(b.production!.queue).toEqual([]);
   });
   it("S06 a full input store can consume a bill and commit its output in the same cycle", () => {
-    const g = game([
+    const g = craftGame([
         placed("mill", "building.ants.sawmill", 205, 210, {
-          inventory: { "item.log": 16 },
+          inventory: { "item.wood": 16 },
         }),
       ]),
       b = g.entities.find((e) => e.placement === "mill")!;
-    run(g, 500);
-    expect(b.production!.produced).toBeGreaterThan(0);
+    run(g, 3000);
+    expect(b.production!.produced).toBe(16);
     expect(g.state.accounting.produced["item.plank"]).toBeGreaterThan(0);
     expect(
       g.entities
@@ -53,10 +53,10 @@ describe("work disruption and capacity", () => {
         ),
     ).toBe(true);
   });
-  it("S08 source destruction removes stale claims and records physical loss", () => {
+  it("S08 hall destruction loses only unreserved stock, preserving funded construction", () => {
     const g = game([
         placed("store", "building.ants.fort", 235, 235, {
-          inventory: { "item.plank": 20, "item.stone": 10 },
+          inventory: { "item.wood": 20, "item.amber": 10 },
         }),
       ]),
       w = worker(g),
@@ -73,9 +73,9 @@ describe("work disruption and capacity", () => {
     ).toBe(true);
     g.economy.remove(fort);
     run(g, 20);
-    expect(g.state.claims.some((c) => c.source === fort.id)).toBe(false);
-    expect(g.state.accounting.lost["item.plank"]).toBe(20);
-    expect(physical(g, "item.plank")).toBe(40);
+    expect(g.state.jobs.some((j) => j.source === fort.id)).toBe(false);
+    expect(g.state.accounting.lost["item.wood"]).toBe(12);
+    expect(physical(g, "item.wood")).toBe(88);
   });
   it("S12 harvest reservations prevent two workplaces duplicating the last resource unit", () => {
     const g = game([
@@ -87,8 +87,8 @@ describe("work disruption and capacity", () => {
       },
     ]);
     run(g, 700);
-    expect(g.state.accounting.produced["item.log"]).toBe(1);
-    expect(physical(g, "item.log")).toBe(1);
+    expect(g.state.accounting.produced["item.wood"]).toBe(1);
+    expect(physical(g, "item.wood")).toBe(161);
     expect(
       g.entities.find((e) => e.placement === "tree")!.resource!.amount,
     ).toBe(0);
@@ -134,9 +134,9 @@ describe("work disruption and capacity", () => {
     expect(g.checksum()).toBe(before);
   });
   it("dead staff can be replaced and the resulting snapshot remains valid", () => {
-    const g = game([
+    const g = craftGame([
         placed("mill", "building.ants.sawmill", 205, 210, {
-          inventory: { "item.log": 3 },
+          inventory: { "item.wood": 3 },
         }),
       ]),
       b = g.entities.find((e) => e.placement === "mill")!;

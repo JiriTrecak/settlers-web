@@ -1,3 +1,4 @@
+import {spellSchema,spellVisualSchema} from "./spells";
 import { z } from "zod";
 
 export const idSchema = z.string().regex(/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/);
@@ -8,8 +9,8 @@ export const ownerSchema = z.union([
 export type Owner = z.infer<typeof ownerSchema>;
 export const pointSchema = z
   .object({
-    x: z.number().int().min(0).max(255),
-    y: z.number().int().min(0).max(255),
+    x: z.number().int().min(0).max(511),
+    y: z.number().int().min(0).max(511),
   })
   .strict();
 const natural = z.number().int().nonnegative();
@@ -74,10 +75,10 @@ const combat = z
   })
   .strict();
 const worker = z
-  .object({ carryCapacity: positive.max(32), builds: z.array(idSchema) })
+  .object({ carryCapacity: positive.max(32), builds: z.array(idSchema), harvests: z.array(idSchema).optional() })
   .strict();
 const storage = z
-  .object({ capacity: positive.max(10000), accepts: z.array(idSchema) })
+  .object({ capacity: positive.max(1000000), accepts: z.array(idSchema), dropoff: z.boolean().optional() })
   .strict();
 const production = z
   .object({
@@ -91,6 +92,13 @@ const production = z
   })
   .strict();
 const territory = z.object({ radius: positive.max(96) }).strict();
+const progression = z.object({
+  thresholds: z.array(natural).min(1).max(50),
+  healthPerLevel: natural, damagePerLevel: natural, armorPerLevel: natural,
+  experienceRadius: positive.max(64),
+}).strict();
+const spellcasting = z.object({abilities:z.array(idSchema).min(1).max(8),learningCategory:idSchema,manaIcon:idSchema,maxMana:positive,regenTicks:positive}).strict();
+const inventory = z.object({slots:positive.max(12),pickupRange:z.number().positive().max(4)}).strict();
 const empty = z.object({}).strict();
 export const behaviorSchema = z
   .object({
@@ -102,6 +110,10 @@ export const behaviorSchema = z
     production: production.optional(),
     territory: territory.optional(),
     campDefense: empty.optional(),
+    progression: progression.optional(),
+    inventory: inventory.optional(),
+    spellcasting: spellcasting.optional(),
+    revival: z.object({workTicks:positive,queueCapacity:positive.max(12)}).strict().optional(),
   })
   .strict();
 export const behaviorNames = Object.keys(
@@ -117,6 +129,10 @@ const rawBehaviors = z
     production: production.partial().optional(),
     territory: territory.partial().optional(),
     campDefense: empty.optional(),
+    progression: progression.partial().optional(),
+    inventory: inventory.partial().optional(),
+    spellcasting: spellcasting.partial().optional(),
+    revival: z.object({workTicks:positive,queueCapacity:positive.max(12)}).strict().optional(),
   })
   .strict();
 const fields = {
@@ -129,6 +145,11 @@ const fields = {
   icon: idSchema,
   hero: z.boolean().optional(),
   level: positive.optional(),
+  experienceYield: natural.optional(),
+  itemEffect: z.discriminatedUnion("type",[
+    z.object({type:z.literal("equipment"),damage:natural,armor:natural,maxHp:natural}).strict(),
+    z.object({type:z.literal("consumable"),heal:positive}).strict(),
+  ]).optional(),
   selectable: z.boolean().optional(),
   selectionClass: z.enum(["army", "worker"]).optional(),
   vision: natural.max(96).optional(),
@@ -147,6 +168,7 @@ const fields = {
   stackLimit: positive.max(100).optional(),
   yield: positive.optional(),
   regrowthTicks: positive.optional(),
+  constructionClearance: natural.max(32).optional(),
   creation: creationSchema.optional(),
 };
 export const definitionSchema = z
@@ -223,12 +245,12 @@ export const assetSchema = z
     file: z.string().min(1).optional(),
     image: z.string().regex(/^assets\/.*\.png$/).optional(),
     carryAsset: idSchema.optional(),
-    character: z.enum(["base", "warrior", "archer"]).optional(),
+    character: idSchema.optional(),
     scale: z.number().positive().optional(),
     healthHeight: z.number().positive().optional(),
     stackHeight: z.number().positive().optional(),
     stackColumns: positive.optional(),
-    projectile: z.boolean().optional(),
+    projectile: z.enum(["arrow", "thorn"]).optional(),
     sceneryAsset: z.string().optional(),
   })
   .strict();
@@ -240,11 +262,18 @@ export const rulesSchema = z
     maxBuildings: positive,
     constructionHpPermille: positive.max(1000),
     repairTicks: positive,
+    spells:z.record(idSchema,spellSchema),
+    spellVisuals:z.record(idSchema,spellVisualSchema),
+    lootPools: z.record(idSchema, z.object({
+      rolls: positive.max(16),
+      entries: z.array(z.object({ item: idSchema.nullable(), weight: positive.max(1000000) }).strict()).min(1).max(256),
+    }).strict()),
     damageMultipliers: z.record(idSchema, z.record(idSchema, natural)),
     startingSetup: z
       .object({
         id: idSchema,
         fort: idSchema,
+        gathering: z.array(z.object({item:idSchema,workers:positive.max(32),radius:positive.max(96)}).strict()).optional(),
         inventory: stockSchema,
         units: z.array(
           z
@@ -260,9 +289,16 @@ export const rulesSchema = z
       .strict(),
     ai: z
       .object({
-        buildOrder: z.array(idSchema),
-        recruit: idSchema,
-        reserveWorkers: natural,
+        revision: positive,
+        decisionTicks: positive.max(400), economyTicks: positive.max(2400),
+        strategyTicks: positive.max(2400), operationTicks: positive.max(400),
+        reactionTicks: natural.max(200), orderIntervalTicks: positive.max(400),
+        workers: z.object({minimum:positive.max(100), target:positive.max(100), maximum:positive.max(120), reserve:natural.max(12)}).strict(),
+        army: z.object({minimum:positive.max(160),maximum:positive.max(160),homeGuard:natural.max(16),
+          engagePermille:positive.max(5000),campPermille:positive.max(5000),retreatHealthPermille:positive.max(900),pursuitRadius:positive.max(64)}).strict(),
+        limits: z.object({commandsPerBeat:positive.max(16),placementCandidates:positive.max(64),spellCandidates:positive.max(64)}).strict(),
+        composition: z.array(z.object({definition:idSchema,weight:positive.max(1000)}).strict()).min(1).max(16),
+        skillPreference: z.array(idSchema).max(16),
       })
       .strict(),
   })
@@ -270,6 +306,7 @@ export const rulesSchema = z
 export const placementSchema = z
   .object({
     id: z.string().min(1),
+    mapKnowledge: z.enum(["public", "hidden"]).optional(),
     definition: idSchema,
     position: pointSchema,
     rotation: z.number().finite().default(0),
@@ -296,11 +333,13 @@ export const placementSchema = z
 export const campSchema = z
   .object({
     id: z.string().min(1),
+    mapKnowledge: z.enum(["public", "hidden"]).optional(),
     members: z.array(z.string()).min(1),
     home: pointSchema,
     aggroRange: positive.max(64),
     leash: positive.max(96),
     aggression: z.enum(["players", "passive"]),
+    lootPool: idSchema.optional(),
   })
   .strict();
 export type Definition = z.infer<typeof definitionSchema>;

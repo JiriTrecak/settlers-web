@@ -199,6 +199,13 @@ export class ContentRegistry {
     for (const armor of Object.values(this.rules.armorTypes)) {
       if (!this.asset(armor.icon).image) throw new Error("Armor icon must reference an image");
     }
+    for (const [id, pool] of Object.entries(this.rules.lootPools)) {
+      for (const entry of pool.entries) {
+        if (entry.item !== null) expect(entry.item, "item");
+      }
+      if (new Set(pool.entries.map(e => e.item)).size !== pool.entries.length)
+        throw new Error(`${id}: duplicate loot entry`);
+    }
     for (const d of this.definitions) {
       const fail = (text: string): never => {
         throw new Error(`${d.id}: ${text}`);
@@ -230,6 +237,21 @@ export class ContentRegistry {
       if (d.kind === "resource" && !this.asset(d.asset).sceneryAsset)
         fail("resource model needs sceneryAsset");
       if (d.kind !== "unit" && d.hero) fail("hero flag requires a unit");
+      if(d.behaviors.spellcasting) {
+        this.asset(d.behaviors.spellcasting.manaIcon);
+        if(!this.actions.categories[d.behaviors.spellcasting.learningCategory])fail("unknown learning category");
+        if(!d.hero || !d.behaviors.progression)fail("spellcasting requires a progressing hero");
+        if(new Set(d.behaviors.spellcasting.abilities).size!==d.behaviors.spellcasting.abilities.length)fail("duplicate abilities");
+        for(const id of d.behaviors.spellcasting.abilities)if(!this.rules.spells[id])fail(`unknown ability ${id}`);
+      }
+      if (d.behaviors.inventory && (!d.hero || !d.behaviors.movement)) fail("inventory requires a mobile hero");
+      if (d.itemEffect && (d.kind !== "item" || d.stackLimit !== 1)) fail("hero items require item kind and stackLimit 1");
+      if (d.behaviors.progression) {
+        const levels = d.behaviors.progression.thresholds;
+        if (!d.hero || levels[0] !== 0 || levels.some((n,i) => i > 0 && n <= levels[i-1]))
+          fail("progression requires a hero and strictly increasing XP thresholds starting at zero");
+        if (d.level !== undefined && d.level !== 1) fail("progression starts at level 1");
+      }
       if (d.kind === "building" && (!d.footprint || !d.entrance))
         fail("footprint/entrance required");
       if (
@@ -257,6 +279,11 @@ export class ContentRegistry {
         if (expect(id, "building").creation?.method !== "construct")
           fail(`unconstructable ${id}`);
       for (const id of d.behaviors.storage?.accepts ?? []) expect(id, "item");
+      for(const id of d.behaviors.work?.harvests ?? []) {
+        if(expect(id,"item").creation?.method!=="harvest")fail(`worker harvest ${id} requires a harvest recipe`);
+      }
+      if(d.constructionClearance!==undefined && d.kind!=="resource")fail("construction clearance requires resource");
+      if(d.behaviors.storage?.dropoff && d.kind!=="building")fail("drop-off requires building");
       const c = d.creation;
       if (c) {
         if (new Set(c.items.map((p) => p.item)).size !== c.items.length)
@@ -351,6 +378,13 @@ export class ContentRegistry {
         keys.add(a.hotkey);
       }
     }
+    for(const [id,spell] of Object.entries(this.rules.spells)) {
+      this.asset(spell.icon);
+      if(!this.rules.spellVisuals[spell.visual])throw new Error(`${id}: unknown spell visual`);
+      if(!this.rules.damageMultipliers[spell.damageType])throw new Error(`${id}: unknown spell damage type`);
+      if(spell.ranks.some((r,i)=>i>0 && r.requiredLevel<=spell.ranks[i-1].requiredLevel))throw new Error(`${id}: rank levels must increase`);
+      if((spell.effect==='line'||spell.effect==='blast') !== (spell.target==='point'))throw new Error(`${id}: effect target mismatch`);
+    }
     const setup = this.rules.startingSetup;
     const fort = expect(setup.fort, "building");
     for (const [id, n] of Object.entries(setup.inventory)) {
@@ -364,7 +398,23 @@ export class ContentRegistry {
     )
       throw new Error("Starting inventory exceeds fort capacity");
     for (const u of setup.units) expect(u.definition, "unit");
-    for (const id of this.rules.ai.buildOrder) expect(id, "building");
-    expect(this.rules.ai.recruit, "unit");
+    for(const task of setup.gathering??[])if(expect(task.item,"item").creation?.method!=="harvest")throw new Error("Starting gather requires harvest recipe");
+    const ai = this.rules.ai;
+    if (ai.workers.minimum > ai.workers.target || ai.workers.target > ai.workers.maximum ||
+        ai.workers.reserve >= ai.workers.minimum || ai.army.minimum > ai.army.maximum)
+      throw new Error("rules.ai: inconsistent workforce/army limits");
+    if (new Set(ai.composition.map(x=>x.definition)).size !== ai.composition.length ||
+        new Set(ai.skillPreference).size !== ai.skillPreference.length)
+      throw new Error("rules.ai: duplicate preference");
+    for (const entry of ai.composition) {
+      const d=expect(entry.definition,"unit");
+      if (!d.behaviors.combat || d.creation?.method!=="recruit" ||
+          !this.definitions.some(b=>b.behaviors.production?.outputs.includes(d.id) &&
+            this.definitions.some(w=>w.behaviors.work?.builds.includes(b.id))))
+        throw new Error(`rules.ai.composition: no buildable recruiter for ${d.id}`);
+    }
+    for (const id of ai.skillPreference)
+      if (!this.rules.spells[id] || !this.definitions.some(d=>d.behaviors.spellcasting?.abilities.includes(id)))
+        throw new Error(`rules.ai.skillPreference: unlearnable ${id}`);
   }
 }

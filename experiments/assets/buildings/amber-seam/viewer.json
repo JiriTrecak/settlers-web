@@ -1,0 +1,70 @@
+{
+  "camera": {
+    "position": [
+      5.85237455368042,
+      11.017422676086426,
+      16.99652862548828
+    ],
+    "target": [
+      -9.5367431640625e-07,
+      2.2500009536743164,
+      -1.9073486328125e-06
+    ],
+    "up": [
+      -0.14271962642669678,
+      0.8987941145896912,
+      -0.4144880175590515
+    ],
+    "scale": 9.0
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -3.0,
+        8.0,
+        4.0
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 850.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        1.0,
+        5.0,
+        6.0
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 260.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        5.0,
+        7.0,
+        -3.0
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 600.0
+    }
+  ],
+  "vertices": 23655,
+  "triangles": 23172,
+  "note": "Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio."
+}

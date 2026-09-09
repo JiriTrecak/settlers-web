@@ -31,7 +31,7 @@ def height(x,z):
         d=math.hypot(x-sx,z-sz)
         if d<24: h=1.8+(h-1.8)*max(0,(d-18)/6)
     return h
-m={'v':2,'name':'Crownmere Basin','waterLevel':0,'stamps':[],'entities':[],'camps':[],
+m={'v':2,'size':256,'name':'Crownmere Basin','waterLevel':0,'stamps':[],'entities':[],'camps':[],
    'playerStarts':[{'player':i+1,'x':x,'z':z,'setup':'setup.ants','mainFort':f'start.player.{i+1}/main-fort'} for i,(x,z) in enumerate(starts)]}
 m['height']=base64.b64encode(b''.join(struct.pack('<h',round(height(x,z)*100)) for z in range(-16,273) for x in range(-16,273))).decode()
 occupied=set(); serial=0

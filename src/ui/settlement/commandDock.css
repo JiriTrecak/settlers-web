@@ -152,3 +152,19 @@
 .rts-selection-stat strong{color:#f0f0e4;font:600 15px/1.1 Georgia,serif}
 .rts-selection-copy .rts-notice:empty{display:none}
 .rts-selection-copy .rts-notice[hidden]{display:none}
+.rts-inventory{display:flex;gap:4px;justify-content:center;flex:none;margin-top:5px}
+.rts-inventory[hidden]{display:none}
+.rts-inventory>button{width:34px;height:34px;padding:1px;border:1px solid #6b777b;background:#05090ba8;cursor:pointer}
+.rts-inventory>button:disabled{cursor:default;border-color:#343e42}
+.rts-inventory>button:hover:not(:disabled){border-color:#d6b571}
+.rts-inventory .rts-art{display:block;width:100%;height:100%}
+
+.rts-portrait-mana{position:absolute;bottom:0;left:0;right:0;height:18px;text-align:center;background:#07111d;color:#72b9ff;font:700 12px/18px Georgia,serif}.rts-portrait-mana[hidden]{display:none}.rts-portrait[data-mana="true"]>.rts-art{height:calc(100% - 43px)}.rts-portrait[data-mana="true"]>.rts-portrait-health{bottom:18px}
+
+.rts-experience{height:5px;min-height:5px;width:70%;align-self:center;border:1px solid #514766;background:linear-gradient(to right,#a986d2 0 var(--experience,0%),#17121f var(--experience,0%) 100%);flex:none}
+.rts-experience[hidden]{display:none}
+
+/* Ability timing remains readable even though the command cannot be issued yet. */
+.rts-command.is-cooling-down:disabled{opacity:1}
+.rts-command-cooldown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:conic-gradient(from 0deg,rgba(0,0,0,.76) 0deg var(--cooldown),rgba(0,0,0,.18) var(--cooldown) 360deg);color:#fff5d9;font:700 clamp(12px,1.5vw,20px)/1 Georgia,serif;text-shadow:0 1px 3px #000,0 0 5px #000;pointer-events:none}
+.rts-command-cooldown[hidden]{display:none}

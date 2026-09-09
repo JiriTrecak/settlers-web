@@ -1,0 +1,46 @@
+{
+  "name": "Thornspitter",
+  "blend": "thornspitter.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 32,
+    "elevation": 22,
+    "scale": 4.6,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "render": {
+    "width": 1200,
+    "height": 1000,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 180,
+    "fill_energy": 65,
+    "rim_energy": 160
+  },
+  "kind": "character",
+  "characterHeight": 2.1,
+  "characterVariants": {
+    "thornspitter": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack_spit",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "thornspitter": {
+      "normalizedTime": 0.65,
+      "event": "release"
+    }
+  }
+}

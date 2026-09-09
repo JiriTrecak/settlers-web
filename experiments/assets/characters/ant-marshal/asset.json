@@ -1,0 +1,48 @@
+{
+  "name": "Ant Marshal",
+  "blend": "ant-marshal.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 19,
+    "elevation": 12,
+    "scale": 3.6,
+    "target": [
+      0,
+      0,
+      1.28
+    ]
+  },
+  "render": {
+    "width": 1225,
+    "height": 1284,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 155,
+    "fill_energy": 55,
+    "rim_energy": 180
+  },
+  "kind": "character",
+  "characterHeight": 2.5375,
+  "characterVariants": {
+    "marshal": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "attack": "attack_mace",
+        "hit": "hit",
+        "death": "death",
+        "cast": "cast"
+      }
+    }
+  },
+  "attackEvents": {
+    "marshal": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  }
+}

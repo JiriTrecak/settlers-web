@@ -2,16 +2,30 @@ import type { ContentRegistry } from "../content/registry";
 import type { ActionName, Owner } from "../content/schema";
 import type { Action } from "../shared/types/types";
 import type { EntityView, SettlementView } from "../sim/game/observation";
+import { TICK_MS } from "../shared/match/match";
 
 export type CostView = {
   name: string;
   icon: string;
   amount: number;
-  kind: "item" | "unit";
+  kind: "item" | "unit" | "mana";
 };
+
+export function inventoryCard(view:SettlementView,focusId:number|undefined,owner:Owner,registry:ContentRegistry,readOnly=false) {
+  const hero=view.entities.find(e=>e.id===focusId);
+  if(!hero?.equipment || (!readOnly && hero.owner!==owner) || hero.remembered)return [];
+  const controllable=!readOnly && !!registry.get(hero.definition).behaviors.playerControl && !view.outcome;
+  return hero.equipment.map((id,slot)=>{
+    const d=id ? registry.get(id) : null;
+    return {slot,definition:id,name:d?.name ?? "Empty inventory slot",description:d?.description ?? "",icon:d?.icon ?? null,
+      use:controllable && d?.itemEffect?.type==="consumable" ? {type:"useItem" as const,actor:hero.id,slot} : null,
+      drop:controllable && d ? {type:"dropItem" as const,actor:hero.id,slot} : null};
+  });
+}
 export type CommandBinding = {
   id: string;
-  type: ActionName;
+  type: ActionName | "cast" | "learnAbility" | "revive";
+  ability?:string;
   name: string;
   description: string;
   icon: string;
@@ -22,6 +36,7 @@ export type CommandBinding = {
   actors: number[];
   targetDefinition?: string;
   enabled: boolean;
+  cooldown?: { remainingTicks: number; totalTicks: number };
   reason?: string;
   immediate?: Action;
 };
@@ -94,12 +109,16 @@ export function queueCard(
   focusId: number | undefined,
   owner: Owner,
   registry: ContentRegistry,
+  readOnly = false,
 ) {
   const focus = view.entities.find((e) => e.id === focusId);
-  if (!focus?.production || focus.remembered || focus.owner !== owner)
+  if(focus?.revival&&(readOnly || focus.owner===owner)&&!focus.remembered){
+    return focus.revival.queue.flatMap(q=>{const hero=view.fallenHeroes?.find(h=>h.id===q.hero);return hero?[{id:q.hero,name:`Revive ${registry.get(hero.definition).name} · ${Math.floor(q.progress/registry.get(focus.definition).behaviors.revival!.workTicks*100)}%`,costs:[] as CostView[],cancel:!readOnly && !view.outcome?{type:"cancelRevival" as const,actor:focus.id,hero:q.hero}:null}]:[];});
+  }
+  if (!focus?.production || focus.remembered || (!readOnly && focus.owner !== owner))
     return [];
   const controllable =
-    registry.get(focus.definition).behaviors.playerControl && !view.outcome;
+    !readOnly && registry.get(focus.definition).behaviors.playerControl && !view.outcome;
   return focus.production.queue.map((q) => {
     const d = registry.get(q.definition);
     return {
@@ -206,6 +225,13 @@ export function commandCard(
       add("cancel", [focus], undefined, { type: "cancel", actor: focus.id });
       return result;
     }
+    if(d.behaviors.revival&&focus.revival){
+      for(const hero of view.fallenHeroes??[]){
+        const definition=registry.get(hero.definition),queued=view.entities.some(b=>b.revival?.queue.some(q=>q.hero===hero.id));
+        const reason=queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':undefined;
+        result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${d.behaviors.revival.workTicks*TICK_MS/1000}s.`,icon:definition.icon,costs:[],priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
+      }
+    }
     if (p && policy) {
       if (policy.mode === "queued")
         for (const output of policy.outputs) {
@@ -241,6 +267,28 @@ export function commandCard(
       type: "stop",
       actors: movers.map((e) => e.id),
     });
+    const caster=controlled.find(e=>e.spellcasting);
+    if(caster?.spellcasting){
+      const state=caster.spellcasting,policy=registry.get(caster.definition).behaviors.spellcasting!;
+      const level=caster.stats?.level??1,points=level-Object.values(state.learned).reduce((n,r)=>n+r,0);
+      for(const id of policy.abilities){
+        const spell=registry.rules.spells[id],learned=state.learned[id]??0,rank=spell.ranks[Math.max(0,learned-1)];
+        const remaining=Math.max(0,(state.cooldowns[id]??0)-view.revision);
+        const reason=!learned?'Learn this ability first':state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<rank.mana?'Not enough mana':undefined;
+        result.push({id:`cast:${id}`,type:'cast',ability:id,name:spell.name,icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,
+          description:`${spell.description}\nRank ${learned}/${spell.ranks.length} · ${rank.cooldownTicks*TICK_MS/1000}s cooldown`,
+          cooldown:learned?{remainingTicks:remaining,totalTicks:rank.cooldownTicks}:undefined,
+          costs:[{kind:'mana',name:'Mana',icon:policy.manaIcon,amount:rank.mana}],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
+          ...(spell.target==='self'?{immediate:{type:'cast',actor:caster.id,ability:id} as Action}:{})});
+        const next=spell.ranks[learned];
+        if(next){
+          const reason=points<1?'No unspent skill points':level<next.requiredLevel?`Requires level ${next.requiredLevel}`:undefined;
+          result.push({id:`learn:${id}`,type:'learnAbility',ability:id,name:`${spell.name} — Rank ${learned+1}`,description:`${spell.description}\nRequires level ${next.requiredLevel}. ${points} skill points available.`,
+            icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,category:policy.learningCategory,costs:[],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
+            immediate:{type:'learnAbility',actor:caster.id,ability:id}});
+        }
+      }
+    }
     const buildIds = new Set(
       units.flatMap(
         (e) => registry.get(e.definition).behaviors.work?.builds ?? [],

@@ -1,3 +1,5 @@
+import type {AbilityAim} from "../settlement/abilityTarget";
+import {WeatherLayer} from '../sky/weatherLayer';
 import { perf } from "../../debug/performance";
 import { FogOfWar } from "../visibility/fogOfWar";
 import { forestEnvironment } from "../sky/forestEnvironment";
@@ -52,6 +54,9 @@ import { WaterLayer } from "../water/waterLayer";
 const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 
 export class Renderer {
+  gameTimeScale = 1;
+  private visualClock = 0;
+  private visualLast: number | null = null;
   readonly camera = new Camera();
   private readonly display: Display;
   private readonly reflections: WebGLRenderTarget;
@@ -114,6 +119,7 @@ export class Renderer {
   private readonly lines = new Group();
   private curvePreview: Line | null = null;
   readonly sky: Sky;
+  private readonly weather = new WeatherLayer(this.scene);
   private landscape: Landscape = emptyLandscape();
   private readonly meadow: Meadow;
   private readonly decals: DecalLayer;
@@ -122,6 +128,7 @@ export class Renderer {
   gamePreview(kind: string | null, x = 0, z = 0, allowed = false, rotation = 0, owner = 0) {
     if (this.height) this.settlement?.preview(kind, x, z, allowed, this.height, rotation, owner);
   }
+  gameAbilityTarget(aim:AbilityAim|null){if(this.height)this.settlement?.targetAbility(aim,this.height);}
   gameSelect(id: number | null | readonly number[]) {
     this.settlement?.select(id);
   }
@@ -185,6 +192,7 @@ export class Renderer {
       const cam = this.threeCam();
       this.camera.applyTo(cam, w, h);
       this.updateAtmosphere(cam);
+      this.weather.update(animationTime===undefined?performance.now():animationTime*1000,this.camera.targetX,this.camera.targetZ,cam,this.height);
       this.props.updateLOD(cam);
       this.meadow.updateLOD(cam);
       this.water?.updateVisibility(cam);
@@ -254,12 +262,13 @@ export class Renderer {
     const presetChanged =
       this.landscape.environment.preset !== landscape.environment.preset;
     this.landscape = landscape;
+    this.weather.configure(landscape.environment.weather);
     if (presetChanged) this.refreshEnvironment();
     this.sky.setHour(landscape.environment.hour);
     this.sky.setPlaying(landscape.environment.playing);
     this.props.setSeason(landscape.environment.season);
     if (this.terrain && this.height) {
-      const mat = this.terrain.mesh.material as TerrainMaterial;
+      const mat = this.terrain.material as TerrainMaterial;
       if (rebuild) {
         mat.update(this.height, landscape.strokes);
         mat.setCover(landscape.cover);
@@ -325,17 +334,17 @@ export class Renderer {
     this.props.setHeight(sample);
     this.props.setWaterY(field?.waterLevel ?? 0);
     this.brush.setHeight(sample, dirty);
-    if (!this.terrain || !field) {
+    if (!this.terrain || !field || field.size!==this.size) {
       perf.end("Terrain update (event)", timing);
       return;
     }
     this.terrain.setFrom(field, dirty);
     this.water?.setFrom(field);
-    (this.terrain.mesh.material as TerrainMaterial).update(
+    (this.terrain.material as TerrainMaterial).update(
       field,
       this.landscape.strokes,
     );
-    (this.terrain.mesh.material as TerrainMaterial).setCover(
+    (this.terrain.material as TerrainMaterial).setCover(
       this.landscape.cover,
     );
     this.meadow.rebuild(field, this.landscape);
@@ -354,23 +363,24 @@ export class Renderer {
       this.lines.clear();
       this.terrain?.destroy(this.scene);
       this.water?.destroy(this.scene);
+      this.fog?.dispose();this.fog=null;
       addSunAndGrid(this.scene, snapshot.size, this.lines, this.gridMode);
       this.sky.resize(snapshot.size);
-      this.terrain = new HeightMesh(this.scene);
+      this.terrain = new HeightMesh(this.scene,snapshot.size);
       this.water = new WaterLayer(this.scene, snapshot.size);
       this.water.setStyle(this.landscape.water);
       this.water.setFlow(this.landscape.rivers ?? []);
       if (this.height) {
         this.terrain.setFrom(this.height);
         this.water.setFrom(this.height);
-        (this.terrain.mesh.material as TerrainMaterial).update(
+        (this.terrain.material as TerrainMaterial).update(
           this.height,
           this.landscape.strokes,
         );
-        (this.terrain.mesh.material as TerrainMaterial).setCover(
+        (this.terrain.material as TerrainMaterial).setCover(
           this.landscape.cover,
         );
-        (this.terrain.mesh.material as TerrainMaterial).setSeason(
+        (this.terrain.material as TerrainMaterial).setSeason(
           this.landscape.environment.season,
         );
         this.meadow.rebuild(this.height, this.landscape);
@@ -381,7 +391,7 @@ export class Renderer {
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
       this.settlement ??= new SettlementLayer(this.scene);
-      this.settlement.update(snapshot.settlement, this.height, snapshot.tick);
+      this.settlement.update(snapshot.settlement, this.height, snapshot.tick, this.gameTimeScale);
     }
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
@@ -389,11 +399,11 @@ export class Renderer {
     perf.end("Prop sync", props);
     const visibility = perf.start();
     if (snapshot.settlement?.fog) {
-      this.fog ??= new FogOfWar();
+      this.fog ??= new FogOfWar(snapshot.size);
       this.fog.update(snapshot.settlement.fog, this.scene);
     }
     perf.end("Fog of war", visibility);
-    (this.terrain?.mesh.material as TerrainMaterial | undefined)?.setContacts(
+    (this.terrain?.material as TerrainMaterial | undefined)?.setContacts(
       this.props.contactRevision,
       this.props.contacts,
     );
@@ -403,7 +413,7 @@ export class Renderer {
   pickGameEntity(clientX: number, clientY: number): number | null {
     if (!this.aim(clientX, clientY)) return null;
     const terrainDistance = this.terrain
-      ? this.ray.intersectObject(this.terrain.mesh, false)[0]?.distance
+      ? this.ray.intersectObject(this.terrain.mesh, true)[0]?.distance
       : undefined;
     return this.settlement?.pick(this.ray, terrainDistance ?? Infinity) ?? null;
   }
@@ -420,7 +430,7 @@ export class Renderer {
   ): { x: number; z: number; y: number } | null {
     if (!this.aim(clientX, clientY)) return null;
     if (this.terrain) {
-      const hits = this.ray.intersectObject(this.terrain.mesh, false);
+      const hits = this.ray.intersectObject(this.terrain.mesh, true);
       const p = hits[0]?.point;
       if (p) return { x: p.x, z: p.z, y: p.y };
     }
@@ -442,6 +452,10 @@ export class Renderer {
   }
 
   present(now = performance.now()): void {
+    if (this.visualLast === null) this.visualClock = now;
+    else this.visualClock += Math.max(0, now - this.visualLast) * this.gameTimeScale;
+    this.visualLast = now;
+    now = this.visualClock;
     const total = perf.start(),
       environment = perf.start();
     this.sky.tick(now);
@@ -459,6 +473,7 @@ export class Renderer {
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
     this.updateAtmosphere(cam);
+    this.weather.update(now,this.camera.targetX,this.camera.targetZ,cam,this.height);
     this.props.updateLOD(cam);
     this.meadow.updateLOD(cam);
     this.water?.updateVisibility(cam);
@@ -530,6 +545,7 @@ export class Renderer {
     this.spawnFlags.clear();
     this.previewCurve([]);
     this.meadow.destroy();
+    this.weather.dispose();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);

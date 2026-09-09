@@ -29,7 +29,7 @@ import {
   type Texture,
   type WebGLProgramParametersWithUniforms,
 } from "three";
-import { HEIGHT_ORIGIN, HEIGHT_VERTS, MAP_HALO, type HeightField } from "../../shared";
+import { HEIGHT_ORIGIN, MAP_HALO, type HeightField } from "../../shared";
 
 const SINK = 0.03;
 
@@ -59,7 +59,8 @@ type WaterUniforms = {
 export class WaterLayer {
   readonly mesh: Mesh;
   private readonly tex: DataTexture;
-  private readonly flow=new DataTexture(riverFlow([],128,HEIGHT_ORIGIN,HEIGHT_VERTS-1),128,128);
+  private readonly flow:DataTexture;
+  private readonly verts:number;
   private readonly uniforms: WaterUniforms;
   private readonly mat: MeshStandardMaterial;
   private readonly reflector: Reflector;
@@ -77,18 +78,20 @@ export class WaterLayer {
   }
   private rebuildWetBounds():void {
     const field=this.field;if(!field)return;const occupied=new Set<string>();
-    for(let z=0;z<HEIGHT_VERTS;z++)for(let x=0;x<HEIGHT_VERTS;x++)if(field.samples[z*HEIGHT_VERTS+x]!<=this.mesh.position.y+.08)occupied.add(`${Math.floor((x+HEIGHT_ORIGIN)/4)},${Math.floor((z+HEIGHT_ORIGIN)/4)}`);
+    for(let z=0;z<this.verts;z++)for(let x=0;x<this.verts;x++)if(field.samples[z*this.verts+x]!<=this.mesh.position.y+.08)occupied.add(`${Math.floor((x+HEIGHT_ORIGIN)/4)},${Math.floor((z+HEIGHT_ORIGIN)/4)}`);
     this.wetBounds=[...occupied].map(key=>{const [x,z]=key.split(',').map(Number);return new Box3(new Vector3(x!*4-1,this.mesh.position.y-.1,z!*4-1),new Vector3(x!*4+5,this.mesh.position.y+.1,z!*4+5));});
     this.lastReflection=-Infinity;
   }
 
   constructor(scene: Scene, size: number) {
+    this.verts=size+MAP_HALO*2+1;
+    this.flow=new DataTexture(riverFlow([],128,HEIGHT_ORIGIN,this.verts-1),128,128);
     const visLo = -MAP_HALO;
     const visHi = size + MAP_HALO;
     const span = visHi - visLo;
     const mid = (visLo + visHi) / 2;
-    const data = new Float32Array(HEIGHT_VERTS * HEIGHT_VERTS);
-    const tex = new DataTexture(data, HEIGHT_VERTS, HEIGHT_VERTS, RedFormat, FloatType);
+    const data = new Float32Array(this.verts * this.verts);
+    const tex = new DataTexture(data, this.verts, this.verts, RedFormat, FloatType);
     tex.colorSpace = NoColorSpace;
     tex.minFilter = NearestFilter;
     tex.magFilter = NearestFilter;
@@ -110,7 +113,7 @@ export class WaterLayer {
       uFlow: { value: this.flow },
       uWaterLevel: { value: 0 },
       uHeightOrigin: { value: HEIGHT_ORIGIN },
-      uHeightVerts: { value: HEIGHT_VERTS },
+      uHeightVerts: { value: this.verts },
       uShallow: { value: SHALLOW },
       uDeep: { value: DEEP },
       uFoam: { value: FOAM },
@@ -175,7 +178,7 @@ export class WaterLayer {
   }
 
   setFlow(rivers:readonly RiverStroke[]):void {
-    this.flow.image.data=riverFlow(rivers,128,HEIGHT_ORIGIN,HEIGHT_VERTS-1);this.flow.needsUpdate=true;
+    this.flow.image.data=riverFlow(rivers,128,HEIGHT_ORIGIN,this.verts-1);this.flow.needsUpdate=true;
   }
 
   setFrom(field: HeightField): void {
@@ -183,8 +186,8 @@ export class WaterLayer {
     const img = this.tex.image;
     if (img.data !== field.samples) {
       img.data = field.samples;
-      img.width = HEIGHT_VERTS;
-      img.height = HEIGHT_VERTS;
+      img.width = this.verts;
+      img.height = this.verts;
     }
     this.tex.needsUpdate = true;
     this.uniforms.uWaterLevel.value = field.waterLevel;

@@ -1,0 +1,20 @@
+import {afterEach,expect,it,vi} from 'vitest';
+import {Group,Scene} from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {SettlementLayer} from '../../src/render/settlement/settlementLayer';
+import {HeightField} from '../../src/shared/map/height';
+import {content} from '../../src/content/builtin';
+import {game,placed} from '../game/helpers';
+afterEach(()=>vi.restoreAllMocks());
+it('renders loose pickups at their selectable position with the declared asset scale',async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
+ const g=game([{...placed('loot','item.royal-crest',219,230),owner:'none'}]);
+ const view=g.view(),pickup=view.entities.find(e=>e.definition==='item.royal-crest')!;
+ expect(pickup).toBeDefined();layer.update({...view,entities:[pickup]},new HeightField(),0);
+ const root=(layer as any).entities.get(pickup.id),stock=root.getObjectByName('Stockpile');
+ expect(stock.children).toHaveLength(1);
+ expect(stock.children[0].position.x).toBe(0);expect(stock.children[0].position.z).toBe(0);
+ expect(stock.children[0].scale.x).toBe(content.asset('asset.item.chest').scale);
+ layer.destroy(scene);
+});

@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "marshal": {
+      "file": "marshal.glb",
+      "triangles": 6512,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "attack": "attack_mace",
+        "hit": "hit",
+        "death": "death",
+        "cast": "cast"
+      }
+    }
+  },
+  "attackEvents": {
+    "marshal": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.5375
+}

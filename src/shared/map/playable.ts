@@ -1,5 +1,4 @@
 import { decodeHeight, HeightField } from "./height";
-import { MAP_SIZE } from "./map";
 import type { PlayerStart, UtcMap } from "./utcmap";
 import { content } from "../../content/builtin";
 import { validatePlacements, placementOccupancyError } from "../../content/map";
@@ -29,9 +28,9 @@ export function playableMapError(
     starts.some((_, i) => !starts.some((s) => s.player === i + 1))
   )
     return "Player slots must be consecutive, starting at Player 1.";
-  const field = new HeightField();
+  const field = new HeightField(map.size);
   if (map.height)
-    field.load(decodeHeight(map.height) ?? [], map.waterLevel ?? 0);
+    field.load(decodeHeight(map.height,map.size) ?? [], map.waterLevel ?? 0);
   else field.waterLevel = map.waterLevel ?? 0;
   for (const s of starts) {
     if (
@@ -39,8 +38,8 @@ export function playableMapError(
       !Number.isInteger(s.z) ||
       s.x < 8 ||
       s.z < 8 ||
-      s.x > MAP_SIZE - 9 ||
-      s.z > MAP_SIZE - 9
+      s.x > map.size - 9 ||
+      s.z > map.size - 9
     )
       return `Player ${s.player} needs an integer start at least 8 cells inside the map.`;
     let lo = Infinity,

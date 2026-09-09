@@ -2,8 +2,8 @@ import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
 import type {CoverPatch} from '../../shared/landscape/curve';
 import { getAntSurfaceAtlas } from '../prop/antSurfaceAtlas';
 import { DataTexture, RedFormat, LinearFilter, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader, Color } from 'three';
-import { HEIGHT_ORIGIN, HEIGHT_VERTS, type HeightField } from '../../shared';
-import { curveDistance, sampleCurve, type TerrainStroke } from '../../shared/landscape/curve';
+import { HEIGHT_ORIGIN, MAP_SIZE, MAP_HALO, type HeightField } from '../../shared';
+import { rasterizeCurve, sampleCurve, type TerrainStroke } from '../../shared/landscape/curve';
 import pebbleUrl from '../../../assets/terrain/pebbles.png?url';
 import snowUrl from '../../../assets/terrain/snow.png?url';
 import sandUrl from '../../../assets/terrain/sand.png?url';
@@ -14,18 +14,22 @@ export class TerrainMaterial extends MeshStandardMaterial {
   private readonly moss=new TextureLoader().load(mossUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private contactRevision=-1;
   private readonly contacts=new DataTexture(new Uint8Array(1024*1024),1024,1024,RedFormat);
-  private readonly weights = new DataTexture(new Uint8Array(HEIGHT_VERTS*HEIGHT_VERTS*4),HEIGHT_VERTS,HEIGHT_VERTS);
+  private readonly weights:DataTexture;
+  private readonly verts:number;
   private readonly seasonTint = { value: new Color(0xffffff) };
   private readonly level = { value: 0 };
   private readonly textures = [sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl].map(url=> {
     const t=new TextureLoader().load(url); t.wrapS=t.wrapT=RepeatWrapping; t.colorSpace=SRGBColorSpace; t.anisotropy=8; return t;
   });
-  constructor() {
+  constructor(size=MAP_SIZE) {
     super({color:0xffffff,roughness:0.95});
+    this.verts=size+MAP_HALO*2+1;
+    this.weights=new DataTexture(new Uint8Array(this.verts*this.verts*4),this.verts,this.verts);
     this.coverMask.minFilter=this.coverMask.magFilter=LinearFilter;this.coverMask.needsUpdate=true;
     this.contacts.minFilter=this.contacts.magFilter=LinearFilter;this.contacts.needsUpdate=true;
     this.weights.minFilter=this.weights.magFilter=LinearFilter;
     this.weights.needsUpdate=true;
+    this.customProgramCacheKey=()=>`terrain-${this.verts}`;
     this.onBeforeCompile=shader=>{
       Object.assign(shader.uniforms,{uMoss:{value:this.moss},uCover:{value:this.coverMask},uSoilAtlas:{value:getAntSurfaceAtlas()},uContact:{value:this.contacts},uPaint:{value:this.weights},uSand:{value:this.textures[0]},uMud:{value:this.textures[1]},uRock:{value:this.textures[2]},uSnow:{value:this.textures[3]},uPebbles:{value:this.textures[4]},uSoilTint:this.seasonTint,uSea:this.level});
       shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vTerrain; varying vec3 vTerrainNormal; varying float vSlope;').replace('#include <begin_vertex>','#include <begin_vertex>\nvTerrain=position; vTerrainNormal=normal; vSlope=1.0-normal.y;');
@@ -37,7 +41,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       float noiseTerrain(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hashTerrain(i),hashTerrain(i+vec2(1,0)),f.x),mix(hashTerrain(i+vec2(0,1)),hashTerrain(i+vec2(1)),f.x),f.y);}
       `).replace('#include <map_fragment>',`
       vec2 uv=vTerrain.xz*0.12;
-      vec4 paint=texture2D(uPaint,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)})+0.5)/${HEIGHT_VERTS.toFixed(1)});
+      vec4 paint=texture2D(uPaint,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)})+0.5)/${this.verts.toFixed(1)});
       float n=noiseTerrain(vTerrain.xz*0.18);
       float micro=noiseTerrain(vTerrain.xz*5.0);
       vec3 sand=vec3(.48,.285,.12)*(.82+.30*n+.13*micro);
@@ -83,7 +87,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       sand*=soilDetail;
       vec3 base=wornEarth*soilDetail;
       float colony=noiseTerrain(vTerrain.xz*.28)*.45+noiseTerrain(vTerrain.xz*.91)*.35+noiseTerrain(vTerrain.xz*2.1)*.2;
-      float mossMask=texture2D(uCover,(vTerrain.xz-vec2(-16.0))/288.0).r*smoothstep(.29,.61,colony);
+      float mossMask=texture2D(uCover,(vTerrain.xz-vec2(-16.0))/${(this.verts-1).toFixed(1)}).r*smoothstep(.29,.61,colony);
       mossMask*=smoothstep(uSea+.25,uSea+.65,vTerrain.y)*(1.0-cliff);
       vec3 mossColor=texture2D(uMoss,vTerrain.xz*.20).rgb;
       base=mix(base,mossColor*.85,mossMask*.94);
@@ -106,7 +110,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       vec3 bedColor=mix(vec3(.12,.16,.17),vec3(.47,.51,.45),bedStone*(.8+.2*bedSeed));
       base=mix(base,bedColor,submerged*.75);
       base*=mix(.68,1.0,smoothstep(uSea-.6,uSea+.25,vTerrain.y));
-      float contact=texture2D(uContact,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)}))/${(HEIGHT_VERTS-1).toFixed(1)}).r;
+      float contact=texture2D(uContact,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)}))/${(this.verts-1).toFixed(1)}).r;
       diffuseColor.rgb*=base*uSoilTint*(1.0-contact);
       `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       // Relief follows the same authored soil detail as its color. Derivative
@@ -123,7 +127,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
   }
   setContacts(revision:number,contacts:readonly {x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]):void {
     if(this.contactRevision===revision)return;this.contactRevision=revision;
-    const data=this.contacts.image.data as Uint8Array;data.fill(0);const size=1024,scale=size/(HEIGHT_VERTS-1);
+    const data=this.contacts.image.data as Uint8Array;data.fill(0);const size=1024,scale=size/(this.verts-1);
     for(const c of contacts){
       const cx=(c.x-HEIGHT_ORIGIN)*scale,cz=(c.z-HEIGHT_ORIGIN)*scale,rx=c.radiusX*scale*1.5,rz=c.radiusZ*scale*1.5;
       for(let z=Math.max(0,Math.floor(cz-rz));z<=Math.min(size-1,cz+rz);z++)for(let x=Math.max(0,Math.floor(cx-rx));x<=Math.min(size-1,cx+rx);x++){
@@ -133,7 +137,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
     }this.contacts.needsUpdate=true;
   }
   setCover(patches:readonly CoverPatch[]):void {
-    const size=512,span=288,data=this.coverMask.image.data as Uint8Array;data.fill(0);
+    const size=512,span=this.verts-1,data=this.coverMask.image.data as Uint8Array;data.fill(0);
     for(const p of patches){
       if(p.palette!=='forest')continue;
       const loX=Math.max(0,Math.floor((p.x-p.radius+16)/span*size)),hiX=Math.min(size-1,Math.ceil((p.x+p.radius+16)/span*size));
@@ -153,10 +157,11 @@ export class TerrainMaterial extends MeshStandardMaterial {
     for(const s of strokes){
       const curve=sampleCurve(s.points,s.radius,1);
       const channel={sand:0,mud:1,rock:2,snow:3,grass:-1}[s.layer];
-      for(let z=0;z<HEIGHT_VERTS;z++)for(let x=0;x<HEIGHT_VERTS;x++){
-        const d=curveDistance(x+HEIGHT_ORIGIN,z+HEIGHT_ORIGIN,curve);
+      const distances=rasterizeCurve(curve,this.verts,HEIGHT_ORIGIN);
+      for(let z=0;z<this.verts;z++)for(let x=0;x<this.verts;x++){
+        const d=distances[z*this.verts+x]!;
         if(d>=1)continue;
-        const w=s.opacity*(1-smooth(.55,1,d)); const i=(z*HEIGHT_VERTS+x)*4;
+        const w=s.opacity*(1-smooth(.55,1,d)); const i=(z*this.verts+x)*4;
         for(let c=0;c<4;c++)data[i+c]=Math.round(data[i+c]!*(1-w)+(c===channel?255*w:0));
       }
     }

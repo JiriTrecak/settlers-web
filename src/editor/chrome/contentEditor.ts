@@ -48,7 +48,7 @@ export class ContentEditor {
     };
     const help = document.createElement("p");
     help.textContent =
-      "Changes apply to the next loaded match. Edit linked definitions together, apply the draft, then save the complete graph to content/game.json.";
+      "Saved changes apply after an explicit page reload. Edit linked definitions together, apply the draft, then save the complete graph to content/game.json.";
     this.chooser.onchange = () => {
       if (!this.apply(false)) {
         this.chooser.value = this.selected;

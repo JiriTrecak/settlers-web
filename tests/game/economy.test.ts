@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { game, placed, physical, run, worker } from "./helpers";
+import { craftGame, game, placed, physical, run, worker } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 import { slots } from "./helpers";
 
 describe("declarative physical economy", () => {
-  it("S01 constructs a barracks with deliveries and transforms the same settler into a warrior", () => {
+  it("S01 constructs a barracks from hall stores and transforms the same settler into a warrior", () => {
     const g = game(),
       w = worker(g),
-      before = physical(g, "item.plank");
+      before = physical(g, "item.wood");
     expect(
       g.command("player.1", {
         type: "build",
@@ -16,7 +16,7 @@ describe("declarative physical economy", () => {
         position: { x: 205, y: 210 },
       }).accepted,
     ).toBe(true);
-    expect(physical(g, "item.plank")).toBe(before);
+    expect(physical(g, "item.wood")).toBe(before);
     const b = g.entities.at(-1)!;
     expect(b.construction).toBeDefined();
     run(g, 1000);
@@ -40,13 +40,13 @@ describe("declarative physical economy", () => {
     ).toHaveLength(3);
     const bill = g.registry
       .get(b.definition)
-      .creation!.items.find((p) => p.item === "item.plank")!.amount;
+      .creation!.items.find((p) => p.item === "item.wood")!.amount;
     const price = g.registry
       .get("unit.ants.warrior")
-      .creation!.items.find((p) => p.item === "item.plank")!.amount;
-    expect(physical(g, "item.plank")).toBe(before - bill - price);
+      .creation!.items.find((p) => p.item === "item.wood")!.amount;
+    expect(physical(g, "item.wood")).toBe(before - bill - price);
   });
-  it("S02 one unassigned settler can deliver the whole bill and then construct", () => {
+  it("S02 one unassigned settler can construct without a carrier relay", () => {
     const g = game([], (s) => {
       const r = s.rules as any;
       r.startingSetup.units = r.startingSetup.units
@@ -67,13 +67,13 @@ describe("declarative physical economy", () => {
     expect(b.construction).toBeUndefined();
     expect(g.state.jobs).toHaveLength(0);
   });
-  it("S03 a lone assigned sawmill worker carries the next input before crafting again", () => {
-    const g = game(
+  it("S03 a lone assigned worker reserves craft inputs directly from hall storage", () => {
+    const g = craftGame(
       [
         placed("mill", "building.ants.sawmill", 205, 210, {
-          inventory: { "item.log": 1 },
+          inventory: { "item.wood": 1 },
         }),
-        placed("logs", "item.log", 211, 216, { quantity: 3 }),
+
       ],
       (s) => {
         const r = s.rules as any;
@@ -83,19 +83,20 @@ describe("declarative physical economy", () => {
       },
     );
     const mill = g.entities.find((e) => e.placement === "mill")!;
+    g.context.get(g.state.objectives["player.1"])!.inventory["item.wood"]=3;
     run(g, 1400);
     expect(mill.production!.produced).toBe(4);
-    expect(physical(g, "item.log")).toBe(0);
+    expect(physical(g, "item.wood")).toBe(80);
     expect(g.state.accounting.produced["item.plank"]).toBe(4);
   });
   it("S04 two barracks cannot reserve one settler twice", () => {
     const g = game(
       [
         placed("a", "building.ants.barracks", 205, 210, {
-          inventory: { "item.plank": 1 },
+          inventory: { "item.wood": 1 },
         }),
         placed("b", "building.ants.barracks", 230, 210, {
-          inventory: { "item.plank": 1 },
+          inventory: { "item.wood": 1 },
         }),
       ],
       (s) => {
@@ -123,10 +124,10 @@ describe("declarative physical economy", () => {
         .reduce((n, b) => n + b.production!.queue.length, 0),
     ).toBe(1);
   });
-  it("S07 cancels partial construction into physical goods, never a global refund", () => {
+  it("S07 cancels partial construction and returns its reserved cost to the hall", () => {
     const g = game(),
       w = worker(g),
-      before = physical(g, "item.plank");
+      before = physical(g, "item.wood");
     g.command("player.1", {
       type: "build",
       actor: w.id,
@@ -142,20 +143,15 @@ describe("declarative physical economy", () => {
       g.command("player.1", { type: "cancel", actor: b.id }).accepted,
     ).toBe(true);
     run(g, 300);
-    expect(physical(g, "item.plank")).toBe(before);
-    expect(g.state.claims.some((c) => c.target === b.id)).toBe(false);
+    expect(physical(g, "item.wood")).toBe(before);
+    expect(g.state.jobs.some((j) => j.target === b.id)).toBe(false);
   });
-  it("S09 finishes carrying a delivery before following a manual destination", () => {
-    const g = game(),
-      w = worker(g);
-    g.command("player.1", {
-      type: "build",
-      actor: w.id,
-      definition: "building.ants.barracks",
-      position: { x: 205, y: 210 },
-    });
+  it("S09 finishes carrying a harvest before following a manual destination", () => {
+    const g=game([{...placed("tree","resource.forest.tree",217,228,{amount:8}),owner:"none"}]),w=worker(g);
+    const tree=g.entities.find(e=>e.placement==="tree")!;
+    expect(g.command("player.1",{type:"gather",actors:[w.id],target:tree.id}).accepted).toBe(true);
     let carrier;
-    for (let i = 0; i < 200 && !carrier; i++) {
+    for (let i = 0; i < 800 && !carrier; i++) {
       g.tick();
       carrier = g.entities.find((e) => e.unit?.cargo);
     }
@@ -175,7 +171,7 @@ describe("declarative physical economy", () => {
   it("S10 deployment blocked retains input, queue and identity; cancellation releases exactly once", () => {
     const g = game([
         placed("b", "building.ants.barracks", 205, 210, {
-          inventory: { "item.plank": 1 },
+          inventory: { "item.wood": 1 },
         }),
       ]),
       b = g.entities.find((e) => e.placement === "b")!;
@@ -195,7 +191,7 @@ describe("declarative physical economy", () => {
     g.spatial.nearest = () => null;
     run(g, 500);
     expect(original.definition).toBe("unit.ants.settler");
-    expect(b.inventory["item.plank"]).toBe(1);
+    expect(b.inventory["item.wood"]).toBe(5);
     expect(b.production!.queue).toHaveLength(1);
     g.command("player.1", {
       type: "cancel",
@@ -223,7 +219,7 @@ describe("declarative physical economy", () => {
     run(g, 100);
     expect(g.entities.filter((e) => e.unit)).toHaveLength(count);
   });
-  it("S21 save during delivery and training resumes the same future simulation", () => {
+  it("S21 save during recruitment and training resumes the same future simulation", () => {
     const g = game([placed("b", "building.ants.barracks", 205, 210)]),
       b = g.entities.find((e) => e.placement === "b")!;
     g.command("player.1", {

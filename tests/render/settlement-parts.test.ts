@@ -1,0 +1,24 @@
+import {afterEach,expect,it,vi} from 'vitest';
+import {Group,Scene} from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {SettlementLayer} from '../../src/render/settlement/settlementLayer';
+import {HeightField} from '../../src/shared/map/height';
+import {game,placed} from '../game/helpers';
+afterEach(()=>vi.restoreAllMocks());
+it('updates cached model decorations without recursive name searches and refreshes them on asset replacement',async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
+ const g=game([placed('building','building.ants.house',205,210)]),view=g.view();
+ const entity=view.entities.find(e=>e.definition==='building.ants.house')!;
+ const state={...view,entities:[entity]},field=new HeightField();
+ layer.update(state,field,0);
+ const root=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!;
+ const health=root.getObjectByName('Health')!,selection=root.getObjectByName('Selection')!;
+ const lookup=vi.spyOn(root,'getObjectByName');layer.select([entity.id]);
+ for(let i=1;i<=60;i++)layer.update(state,field,i);
+ expect(lookup).not.toHaveBeenCalled();expect(health.visible).toBe(true);expect(selection.visible).toBe(true);
+ layer.update({...state,entities:[{...entity,appearance:{asset:'asset.ants.forester'}}]},field,61);
+ const replacement=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!;
+ expect(replacement).not.toBe(root);expect(replacement.getObjectByName('Selection')!.visible).toBe(true);
+ layer.destroy(scene);
+});

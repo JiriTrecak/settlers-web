@@ -1,25 +1,43 @@
-import {perf} from '../../debug/performance';
-import { authoredMaps, playableMaps, getMap } from '../../shared/map/library';
-import { MapPicker } from '../../ui/menu/mapPicker';
-import { emptyUtcMap, type UtcMap } from '../../shared/map/utcmap';
+import { SkirmishScreen } from "../../ui/menu/skirmish";
+import {
+  createSkirmishMatch,
+  defaultSlots,
+  type MatchSetup,
+} from "../../shared/match/skirmish";
+import { perf } from "../../debug/performance";
+import { authoredMaps, playableMaps, getMap } from "../../shared/map/library";
+import { MapPicker } from "../../ui/menu/mapPicker";
+import { emptyUtcMap, type UtcMap } from "../../shared/map/utcmap";
 /**
  * Canvas host + lobby. Owns `#game` (WebGL canvas) and `#hud` (screens).
  * Match state lives in `PlayScreen` → `Session`, not here.
  */
-import { MainMenu, MultiplayerScreen, RoomWaitScreen, ScreenHost } from "../../ui";
-import { createRoom, fetchRooms, joinRoom, leaveRoom, matchUrl, startRoom, WebSocketChannel } from "../../net";
+import {
+  MainMenu,
+  MultiplayerScreen,
+  RoomWaitScreen,
+  ScreenHost,
+} from "../../ui";
+import {
+  createRoom,
+  fetchRooms,
+  joinRoom,
+  leaveRoom,
+  matchUrl,
+  startRoom,
+  WebSocketChannel,
+} from "../../net";
 import { type MatchConfig, type RoomView, type ServerMsg } from "../../shared";
 import { parseBootIntent } from "./bootIntent";
 import { BackgroundTicker } from "./backgroundTicker";
 import { PlayScreen } from "./playScreen";
 import { EditorScreen } from "./editorScreen";
 
-
-
 export class GameApp {
   private canvas: HTMLCanvasElement | null = null;
   private screens: ScreenHost | null = null;
   private player = 0;
+  private skirmishSetup: MatchSetup | undefined;
   private guestName = readGuest();
   private playGen = 0;
   private backgroundTicker: BackgroundTicker | null = null;
@@ -49,13 +67,18 @@ export class GameApp {
 
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
-    if (intent.kind === "play" && playableMaps().some(m=>m.id===intent.mapId)) this.play(intent.mapId);
+    if (
+      intent.kind === "play" &&
+      playableMaps().some((m) => m.id === intent.mapId)
+    )
+      this.play(intent.mapId);
     else if (intent.kind === "editor") {
-      const selected=intent.mapId?authoredMaps().find(m=>m.id===intent.mapId):undefined;
-      if(intent.mapId&&!selected)this.showMapPicker(true);
+      const selected = intent.mapId
+        ? authoredMaps().find((m) => m.id === intent.mapId)
+        : undefined;
+      if (intent.mapId && !selected) this.showMapPicker(true);
       else this.showEditor(selected?.map);
-    }
-    else if (intent.kind === "single") this.showMapPicker();
+    } else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
   }
 
@@ -79,10 +102,10 @@ export class GameApp {
       this.raf = requestAnimationFrame(loop);
       const dt = t - this.last;
       this.last = t;
-      const cpu=perf.start();
+      const cpu = perf.start();
       perf.frame(t);
       this.screens?.tick(dt, t);
-      perf.end('App frame total (CPU)',cpu);
+      perf.end("App frame total (CPU)", cpu);
     };
     this.raf = requestAnimationFrame(loop);
   }
@@ -97,10 +120,10 @@ export class GameApp {
     const now = performance.now();
     const dt = now - this.last;
     this.last = now;
-    const cpu=perf.start();
+    const cpu = perf.start();
     perf.frame(now);
     this.screens?.tick(dt, now);
-    perf.end('App frame total (CPU)',cpu);
+    perf.end("App frame total (CPU)", cpu);
   }
 
   private showMenu(): void {
@@ -110,33 +133,58 @@ export class GameApp {
       new MainMenu({
         playerName: this.guestName,
         onPlayerName: (name) => this.rememberName(name),
-        onSinglePlayer: () => this.showMapPicker(),
+        onSkirmish: () => this.showMapPicker(),
         onMultiplayer: () => this.showMultiplayer(),
         onEditor: () => this.showMapPicker(true),
       }),
     );
   }
 
-  private showMapPicker(edit=false):void {
-    this.playGen++;this.hideCanvas();
-    this.screens?.show(new MapPicker(edit?'edit':'play',{
-      onBack:()=>this.showMenu(),
-      onChoose:(entry)=>edit?this.showEditor(entry.map):this.play(entry.id),
-      ...(edit?{onNew:()=>this.showEditor(emptyUtcMap())}:{}),
-    }));
+  private showMapPicker(edit = false): void {
+    if (!edit) {
+      this.showSkirmish();
+      return;
+    }
+    this.playGen++;
+    this.hideCanvas();
+    this.screens?.show(
+      new MapPicker(edit ? "edit" : "play", {
+        onBack: () => this.showMenu(),
+        onChoose: (entry) =>
+          edit ? this.showEditor(entry.map) : this.play(entry.id),
+        ...(edit ? { onNew: () => this.showEditor(emptyUtcMap()) } : {}),
+      }),
+    );
+  }
+
+  private showSkirmish(): void {
+    this.playGen++;
+    this.hideCanvas();
+    this.screens?.show(
+      new SkirmishScreen({
+        initial: this.skirmishSetup,
+        playerName: this.guestName,
+        onBack: () => this.showMenu(),
+        onStart: (setup) => {
+          this.skirmishSetup = setup;
+          this.play(setup.mapId, setup);
+        },
+      }),
+    );
   }
 
   private showMultiplayer(error?: string): void {
     this.playGen++;
     this.hideCanvas();
     const screen = new MultiplayerScreen({
-      maps: playableMaps().filter(m=>m.source==='project'),
+      maps: playableMaps().filter((m) => m.source === "project"),
       mapName: (id) => getMap(id).name,
       name: this.guestName === "player" ? "" : this.guestName,
       error,
       onBack: () => this.showMenu(),
       onRefresh: () => void this.refreshJoinList(),
-      onHost: (name, mapId, slotCount) => void this.hostRoom(name, mapId, slotCount),
+      onHost: (name, mapId, slotCount) =>
+        void this.hostRoom(name, mapId, slotCount),
       onJoin: (roomId, name) => void this.enterRoom(roomId, name),
     });
     this.screens?.show(screen);
@@ -158,11 +206,17 @@ export class GameApp {
     try {
       screen.setRooms(await fetchRooms());
     } catch (err) {
-      screen.setError(err instanceof Error ? err.message : "Can't reach MatchHost");
+      screen.setError(
+        err instanceof Error ? err.message : "Can't reach MatchHost",
+      );
     }
   }
 
-  private async hostRoom(name: string, mapId: string, slotCount: number): Promise<void> {
+  private async hostRoom(
+    name: string,
+    mapId: string,
+    slotCount: number,
+  ): Promise<void> {
     this.rememberName(name);
     try {
       const created = await createRoom({
@@ -172,7 +226,12 @@ export class GameApp {
         slotCount,
         guestName: this.guestName,
       });
-      this.enterLobby(created.room, created.token, created.you.player ?? 0, true);
+      this.enterLobby(
+        created.room,
+        created.token,
+        created.you.player ?? 0,
+        true,
+      );
     } catch (err) {
       const screen = this.screens?.screen;
       if (screen instanceof MultiplayerScreen) {
@@ -186,7 +245,10 @@ export class GameApp {
   private async enterRoom(roomId: string, name: string): Promise<void> {
     this.rememberName(name);
     try {
-      const joined = await joinRoom(roomId, { guestName: this.guestName, role: "player" });
+      const joined = await joinRoom(roomId, {
+        guestName: this.guestName,
+        role: "player",
+      });
       this.enterLobby(joined.room, joined.token, joined.you.player ?? 0, false);
     } catch (err) {
       const screen = this.screens?.screen;
@@ -199,7 +261,12 @@ export class GameApp {
     }
   }
 
-  private enterLobby(room: RoomView, token: string, player: number, host: boolean): void {
+  private enterLobby(
+    room: RoomView,
+    token: string,
+    player: number,
+    host: boolean,
+  ): void {
     const gen = ++this.playGen;
     const channel = new WebSocketChannel(matchUrl(room.id, token));
     const wait = new RoomWaitScreen(room, {
@@ -213,7 +280,9 @@ export class GameApp {
       onStart: () => {
         void startRoom(room.id, token).catch((err) => {
           channel.destroy();
-          this.showMultiplayer(err instanceof Error ? err.message : "Start failed");
+          this.showMultiplayer(
+            err instanceof Error ? err.message : "Start failed",
+          );
         });
       },
     });
@@ -231,12 +300,19 @@ export class GameApp {
         await this.playRemote(start.config, channel, this.player);
       } catch (err) {
         channel.destroy();
-        if (gen === this.playGen) this.showMultiplayer(err instanceof Error ? err.message : "Match failed");
+        if (gen === this.playGen)
+          this.showMultiplayer(
+            err instanceof Error ? err.message : "Match failed",
+          );
       }
     })();
   }
 
-  private async playRemote(match: MatchConfig, channel: WebSocketChannel, player: number): Promise<void> {
+  private async playRemote(
+    match: MatchConfig,
+    channel: WebSocketChannel,
+    player: number,
+  ): Promise<void> {
     if (!this.canvas || !this.screens) return;
     const gen = ++this.playGen;
     this.showCanvas();
@@ -252,15 +328,19 @@ export class GameApp {
     });
     this.screens.show(play);
     play.start();
-    if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+    if (gen !== this.playGen && this.screens.screen === play)
+      this.screens.clear();
   }
 
-  private showEditor(map?:UtcMap): void {
+  private showEditor(map?: UtcMap): void {
     if (!this.canvas || !this.screens) return;
     if (this.screens.screen instanceof EditorScreen) return;
     const gen = ++this.playGen;
     this.showCanvas();
-    const editor = new EditorScreen(this.canvas, { onLeave: () => this.showMenu(), map });
+    const editor = new EditorScreen(this.canvas, {
+      onLeave: () => this.showMenu(),
+      map,
+    });
     this.screens.show(editor);
     try {
       editor.start();
@@ -270,15 +350,33 @@ export class GameApp {
     }
   }
 
-  private play(mapId:string): void {
+  private play(mapId: string, setup?: MatchSetup): void {
     if (!this.canvas || !this.screens) return;
     const current = this.screens.screen;
     if (current instanceof PlayScreen && current.mapId === mapId) return;
     const gen = ++this.playGen;
     this.showCanvas();
+    const entry = getMap(mapId);
+    const initialHuman = entry.map.playerStarts.some(
+      (s) => s.player === this.player + 1,
+    )
+      ? this.player
+      : entry.map.playerStarts[0].player - 1;
+    const chosen = setup ?? {
+      mapId,
+      slots: defaultSlots(entry.map.playerStarts, initialHuman),
+    };
+    const { match, player } = createSkirmishMatch(
+      chosen,
+      entry.map.playerStarts,
+      entry.revision,
+      this.guestName,
+    );
+    this.skirmishSetup = chosen;
     const play = new PlayScreen(this.canvas, {
       mapId,
-      player: this.player,
+      player,
+      match,
       onLeave: () => this.showMapPicker(),
     });
     this.screens.show(play);
@@ -289,7 +387,8 @@ export class GameApp {
       if (gen === this.playGen) this.showMenu();
       return;
     }
-    if (gen !== this.playGen && this.screens.screen === play) this.screens.clear();
+    if (gen !== this.playGen && this.screens.screen === play)
+      this.screens.clear();
   }
 
   private hideCanvas(): void {

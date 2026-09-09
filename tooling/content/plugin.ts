@@ -59,6 +59,12 @@ export function contentAuthoring(): Plugin {
     configResolved(config) {
       root = config.root;
     },
+    handleHotUpdate(context) {
+      // Content is a match contract. Saving a draft must neither mutate an
+      // active simulation nor reload the world editor and discard its state.
+      // Vite invalidates the module; an explicit page reload loads the revision.
+      if (context.file === resolve(root, "content/game.json")) return [];
+    },
     async buildStart() {
       const registry = new ContentRegistry(
         JSON.parse(await readFile(resolve(root, "content/game.json"), "utf8")),
@@ -119,8 +125,8 @@ export function contentAuthoring(): Plugin {
             const source = body.source as ContentSource,
               registry = new ContentRegistry(source);
             await validateModels(server.config.root, registry);
-            const dir = resolve(server.config.root, "assets/maps/showcase");
-            for (const name of await readdir(dir)) {
+            const dir = resolve(server.config.root, "assets/maps");
+            for (const name of await readdir(dir, {recursive:true})) {
               if (!name.endsWith(".utcmap")) continue;
               const map = parseUtcMap(
                 JSON.parse(await readFile(resolve(dir, name), "utf8")),
@@ -128,9 +134,11 @@ export function contentAuthoring(): Plugin {
               if (!map) throw new Error(`${name}: invalid map`);
               validatePlacements(map, registry);
             }
-            const temporary = file + ".pending";
-            await writeFile(temporary, JSON.stringify(source, null, 2) + "\n");
-            await rename(temporary, file);
+            if (fingerprint(source) !== fingerprint(latest)) {
+              const temporary = file + ".pending";
+              await writeFile(temporary, JSON.stringify(source, null, 2) + "\n");
+              await rename(temporary, file);
+            }
             res.end(
               JSON.stringify({
                 revision: fingerprint(source),

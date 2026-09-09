@@ -1,0 +1,26 @@
+{
+  "name": "Amber Sanctuary",
+  "blend": "amber-sanctuary.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 25,
+    "elevation": 33,
+    "scale": 10,
+    "target": [
+      0,
+      0,
+      2.3
+    ]
+  },
+  "render": {
+    "width": 1200,
+    "height": 1000,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1000,
+    "fill_energy": 220,
+    "rim_energy": 800
+  }
+}

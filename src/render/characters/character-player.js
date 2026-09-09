@@ -1,14 +1,15 @@
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AnimationMixer, LoopOnce, LoopRepeat } from 'three';
 
-const ATTACK = { base: 'attack_unarmed', warrior: 'attack_sword', archer: 'attack_bow' };
-const ONE_SHOT = new Set(['attack', 'hit', 'death']);
+const ONE_SHOT = new Set(['attack', 'cast', 'hit', 'death']);
 /** Shared by the studio and game. Call update(dt) with seconds from the game clock. */
 export class CharacterPlayer {
   constructor(root, clips, variant = 'base') {
     this.root = root;
     this.mixer = new AnimationMixer(root);
     this.actions = new Map(clips.map(clip => [clip.name, this.mixer.clipAction(clip)]));
+    root.traverse(o => { if (o.userData.characterProfile) this.profile = o.userData.characterProfile; });
+    if (!this.profile?.variants) throw new Error('Character asset is missing its animation profile');
     this.variant = variant; this.state = null; this.paused = false; this.speed = 1.5;
     this.onEvent = null; this.eventFired = false;
     this.mixer.addEventListener('finished', e => {
@@ -17,16 +18,14 @@ export class CharacterPlayer {
     this.setVariant(variant); this.setState('idle');
   }
   setVariant(variant) {
-    if (!(variant in ATTACK)) throw new Error(`Unknown character variant: ${variant}`);
+    if (!Object.hasOwn(this.profile.variants, variant)) throw new Error(`Unknown character variant: ${variant}`);
     this.variant = variant;
     this.root.traverse(o => { if (o.userData.role) o.visible = o.userData.role === 'base' || o.userData.role === variant; });
-    if (['build', 'chop'].includes(this.state) && variant !== 'base') this.setState('idle');
-    if (this.state === 'attack') this.setState('attack', { restart: true });
+    if (this.state) this.setState(this.profile.variants[variant].states[this.state] ? this.state : 'idle', {restart:true});
   }
   setState(state, { restart = false, fade = .12 } = {}) {
     if (this.state === state && !restart) return;
-    if (['build', 'chop'].includes(state) && this.variant !== 'base') throw new Error('Work actions require the base worker variant');
-    const name = state === 'attack' ? ATTACK[this.variant] : state;
+    const name = this.profile.variants[this.variant].states[state];
     const next = this.actions.get(name);
     if (!next) throw new Error(`Animation state unavailable: ${state} (${name})`);
     const previous = this.action;
@@ -41,10 +40,10 @@ export class CharacterPlayer {
     if (!Number.isFinite(dt) || dt < 0) throw new Error('Animation delta must be finite nonnegative seconds');
     if (this.paused) return;
     const attack = this.state === 'attack', action = this.action;
-    const threshold = this.variant === 'archer' ? .65 : .55;
+    const event = this.profile.attackEvents[this.variant];
     // Evaluate the crossing before mixer.finished changes state, including a long frame.
-    const crossed = attack && !this.eventFired && action.time + dt * this.speed >= action.getClip().duration * threshold;
-    if (crossed) { this.eventFired = true; this.onEvent?.({ type: this.variant === 'archer' ? 'release' : 'hit', variant: this.variant }); }
+    const crossed = attack && event && !this.eventFired && action.time + dt * this.speed >= action.getClip().duration * event.normalizedTime;
+    if (crossed) { this.eventFired = true; this.onEvent?.({ type: event.event, variant: this.variant }); }
     this.mixer.update(dt * this.speed);
   }
   seek(normalized) {

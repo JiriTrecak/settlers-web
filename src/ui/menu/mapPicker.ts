@@ -12,7 +12,7 @@ export class MapPicker extends GameScreen {
   for(const map of maps){
    const b=document.createElement('button');b.type='button';
    const name=document.createElement('strong');name.textContent=map.name;
-   const info=document.createElement('span');info.textContent=`256 × 256 · ${playableMapError(map.map)?'Landscape study':`${map.players} players`} · ${map.source==='local'?'Saved locally':'Project map'}`;
+   const info=document.createElement('span');info.textContent=`${map.map.size} × ${map.map.size} · ${playableMapError(map.map)?'Landscape study':`${map.players} players`} · ${map.source==='local'?'Saved locally':'Project map'}`;
    b.append(name,info);b.onclick=()=>hooks.onChoose(map);list.append(b);
   }
   if(!maps.length){const p=document.createElement('p');p.textContent='Create a map with Player 1 and Player 2 starts in the editor to begin.';list.append(p);}

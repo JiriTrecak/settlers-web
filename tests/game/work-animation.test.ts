@@ -13,8 +13,8 @@ it("exposes declared work poses only after arrival, and never on the harvest ret
   expect(pose()).toBeUndefined();
   w.unit!.route = [];
   const tree = g.context.create({id: "tree", definition: "resource.forest.tree", owner: "none", position: {x: 206, y: 210}, rotation: 0});
-  Object.assign(job, {type: "harvest", source: tree.id});
-  b.production!.active = {definition: "item.log", queue: null, worker: w.id, progress: 1};
+  Object.assign(job, {type: "harvest", source: tree.id, item: "item.wood"});
+  b.production!.active = {definition: "item.wood", queue: null, worker: w.id, progress: 1};
   expect(pose()).toMatchObject({animation: "chop", x: tree.x, y: tree.y});
   Object.assign(job, {phase: "return"});
   expect(pose()).toBeUndefined();

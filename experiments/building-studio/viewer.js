@@ -116,7 +116,15 @@ export class BuildingViewer {
 
   setVariant(value) {
     this.variant = value; this.player?.setVariant(value);
+    this.syncAnimationOptions();
     if (this.metadata?.variantTriangles) this.status.textContent = `${this.metadata.variantTriangles[value].toLocaleString()} triangles · ${value} · shared rig`;
+  }
+
+  syncAnimationOptions() {
+    if (!this.player) return;
+    const select = document.getElementById('animationState');
+    select.replaceChildren(...Object.keys(this.player.profile.variants[this.variant].states).map(state => new Option(state, state)));
+    select.value = this.player.state;
   }
 
   async showScaleBuilding(value) {
@@ -164,8 +172,13 @@ export class BuildingViewer {
       document.getElementById('characterControls').hidden = metadata.kind !== 'character';
       if (metadata.kind === 'character') {
         const { CharacterPlayer } = await import('/character-player.js');
+        if (!metadata.variants.includes(this.variant)) this.variant = metadata.variants[0];
+        const select = document.getElementById('characterVariant');
+        select.replaceChildren(...metadata.variants.map(role => new Option(role,role)));
+        select.value = this.variant;
         this.player = new CharacterPlayer(this.model, gltf.animations, this.variant);
-        if (playback) { this.player.setState(playback.state); this.player.paused = playback.paused; this.player.speed = playback.speed; }
+        if (playback) { if (this.player.profile.variants[this.variant].states[playback.state]) this.player.setState(playback.state); this.player.paused = playback.paused; this.player.speed = playback.speed; }
+        this.syncAnimationOptions();
         this.player.onEvent = e => { document.getElementById('animationEvent').textContent = e.type + ' · ' + e.variant; };
       }
       this.setWireframe(this.wireframe);

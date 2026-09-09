@@ -46,7 +46,6 @@ import {
   encodeHeight,
   HeightField,
   inStamp,
-  MAP_SIZE,
   sitAllowed,
   type AssetType,
   type GridMode,
@@ -201,7 +200,7 @@ export class WorldEditor {
   readonly brush = new BrushMask();
   readonly kit = new BrushKit();
   readonly clean = new CleanTool();
-  readonly height = new HeightField();
+  height = new HeightField();
   readonly sculpt = new SculptTool();
   readonly select = new SelectTool();
   private urls = new Map<string, string>();
@@ -358,7 +357,7 @@ export class WorldEditor {
 
   setGameCam(on: boolean): void {
     this.gameCam = on;
-    this.renderer?.camera.setGame(on);
+    this.renderer?.camera.setGame(on,this.map.size);
     if (on) this.sky?.setDaySeconds(DAY_CYCLE_SECONDS);
     // Keep the current time on entry/exit instead of jumping to the saved hour.
     this.environment({
@@ -470,7 +469,7 @@ export class WorldEditor {
   ): MapStamp | null {
     const cx = snap ? Math.floor(x) : x;
     const cy = snap ? Math.floor(y) : y;
-    if (!inStamp(cx, cy)) return null;
+    if (!inStamp(cx, cy,this.map.size)) return null;
     if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5)))
       return null;
     const stamp: MapStamp = {
@@ -669,7 +668,9 @@ export class WorldEditor {
 
   environment(settings: Partial<EnvironmentState>): void {
     const landscape = this.map.landscape ?? emptyLandscape();
-    const environment = { ...landscape.environment, ...settings };
+    // Keep the live clock when editing weather/season rather than rewinding to
+    // the hour last stored in the map. An explicit time edit still wins.
+    const environment = { ...landscape.environment, hour: this.sky?.hour ?? landscape.environment.hour, ...settings };
     this.map = { ...this.map, landscape: { ...landscape, environment } };
     this.renderer?.setLandscape(this.map.landscape!);
     this.hooks.onChange?.();
@@ -801,8 +802,8 @@ export class WorldEditor {
   view(): EditorView {
     const cam = this.renderer?.camera;
     return {
-      x: cam?.targetX ?? MAP_SIZE / 2,
-      z: cam?.targetZ ?? MAP_SIZE / 2,
+      x: cam?.targetX ?? this.map.size / 2,
+      z: cam?.targetZ ?? this.map.size / 2,
       gameCam: this.gameCam,
       zoom: cam?.zoom ?? 28,
       gameZoom: cam?.gameZoom ?? 1,
@@ -843,7 +844,7 @@ export class WorldEditor {
     if (posed) {
       if (opts.gameCam !== undefined) {
         this.gameCam = opts.gameCam;
-        cam.setGame(opts.gameCam);
+        cam.setGame(opts.gameCam,this.map.size);
       }
       cam.pose({
         x: opts.x,
@@ -870,7 +871,7 @@ export class WorldEditor {
     const view = this.view();
     if (posed && !opts.keep) {
       this.gameCam = snap.game;
-      cam.setGame(snap.game);
+      cam.setGame(snap.game,this.map.size);
       cam.pose(snap);
       this.draw();
     } else if (posed && opts.keep) {
@@ -1005,8 +1006,8 @@ export class WorldEditor {
     this.renderer = renderer;
     renderer.setKinds(this.kinds);
     renderer.camera.locked = false;
-    renderer.camera.lookAt(MAP_SIZE / 2, MAP_SIZE / 2);
-    if (this.gameCam) renderer.camera.setGame(true);
+    renderer.camera.lookAt(this.map.size / 2, this.map.size / 2);
+    if (this.gameCam) renderer.camera.setGame(true,this.map.size);
     this.input = new MapInput(this.canvas, renderer.camera, {
       orbit: true,
       onChanged: () => this.draw(),
@@ -1311,7 +1312,7 @@ export class WorldEditor {
       )
     )
       return;
-    const next = withPose(stamp, x, y, yaw);
+    const next = withPose(stamp, x, y, yaw,this.map.size);
     if (!next) return;
     this.map = {
       ...this.map,
@@ -1390,7 +1391,7 @@ export class WorldEditor {
     if (!hit) return;
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
-    if (!inStamp(x, y)) return;
+    if (!inStamp(x, y,this.map.size)) return;
     if (!sitAllowed(this.kinds.get(this.asset), this.height.wet(hit.x, hit.z)))
       return;
     this.map = {
@@ -1427,8 +1428,8 @@ export class WorldEditor {
     this.renderer?.draw(
       {
         tick: 0,
-        size: MAP_SIZE,
-        settlement: authoredScene(this.entityViews),
+        size: this.map.size,
+        settlement: authoredScene(this.entityViews,this.map.size),
       },
       stamps,
     );
@@ -1439,7 +1440,9 @@ export class WorldEditor {
   }
 
   private loadHeight(map: UtcMap): void {
-    const samples = map.height ? decodeHeight(map.height) : null;
+    if(this.height.size!==map.size){this.height=new HeightField(map.size);this.brush.resize(map.size);this.sculpt.mask.resize(map.size);}
+    this.renderer?.camera.setGame(this.gameCam,map.size);
+    const samples = map.height ? decodeHeight(map.height,map.size) : null;
     if (samples) this.height.load(samples, map.waterLevel ?? 0);
     else {
       this.height.clear();
@@ -1448,7 +1451,7 @@ export class WorldEditor {
   }
 
   private commitHeight(): void {
-    const height = encodeHeight(this.height.samples);
+    const height = encodeHeight(this.height.samples,this.map.size);
     const waterLevel = this.height.waterLevel;
     this.map = {
       ...this.map,

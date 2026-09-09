@@ -1,10 +1,10 @@
 import type { GameContext } from "./context";
 import { fixed } from "./motion";
-import { cell } from "./spatial";
+
 
 /** Short, bounded idle strolls. Tick/ID hashing varies cadence without a random source. */
 export function idleMotion(c: GameContext) {
-  const occupied = new Set(c.activeUnits().map(cell));
+  const occupied = new Set(c.activeUnits().map(e=>c.spatial.cell(e)));
   for (const e of c.activeUnits()) {
     const u = e.unit!;
     const busy = u.order || u.job || u.employment || u.cargo || u.pendingMove ||
@@ -29,12 +29,12 @@ export function idleMotion(c: GameContext) {
     u.idle.nextTick = c.state.tick + wait;
     const home = u.idle.home;
     const target = {x: home.x + seed % 3 - 1, y: home.y + Math.floor(seed / 3) % 3 - 1};
-    if (target.x < 0 || target.y < 0 || target.x > 255 || target.y > 255 ||
-      (target.x === e.x && target.y === e.y) || occupied.has(cell(target))) continue;
+    if (target.x < 0 || target.y < 0 || target.x >= c.spatial.size || target.y >= c.spatial.size ||
+      (target.x === e.x && target.y === e.y) || occupied.has(c.spatial.cell(target))) continue;
     // Never wander through an obstacle or take a long detour.
-    occupied.delete(cell(e));
+    occupied.delete(c.spatial.cell(e));
     const clear = c.spatial.clearSegment(u.position ?? fixed(e), fixed(target), occupied);
-    occupied.add(cell(e));
+    occupied.add(c.spatial.cell(e));
     if (clear && c.spatial.route(e, target)) u.idle.walking = true;
   }
 }

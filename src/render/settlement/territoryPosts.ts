@@ -35,7 +35,7 @@ export class TerritoryPosts extends Group {
   private readonly cap = new BoxGeometry(.64,.43,.64);
   rebuild(territory: ArrayLike<number>, field: HeightField, borders?: ArrayLike<number>) {
     this.clearInstances();
-    const posts = territoryPostPositions(territory, 256, borders).filter(p => field.sample(p.x,p.z)>.5);
+    const posts = territoryPostPositions(territory, field.size, borders).filter(p => field.sample(p.x,p.z)>.5);
     const bases = new InstancedMesh(this.stem,this.stone,posts.length);
     const caps = new InstancedMesh(this.cap,this.paint,posts.length);
     const transform = new Object3D(), color = new Color();

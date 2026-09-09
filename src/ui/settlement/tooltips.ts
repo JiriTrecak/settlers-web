@@ -25,6 +25,9 @@ export class CommandTooltips {
     this.hide();
     this.active = target;
     target.setAttribute("aria-describedby", this.box.id);
+    this.render(target);
+  };
+  private render(target: HTMLElement) {
     const name = document.createElement("strong");
     name.textContent = target.dataset.tipName ?? "";
     const description = document.createElement("p");
@@ -54,6 +57,9 @@ export class CommandTooltips {
     this.box.style.top = `${grid ? Math.max(8, rect.top - height - 28) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
 
   };
+  refresh(target: HTMLElement) {
+    if (this.active === target) this.render(target);
+  }
   private out = (event: Event) => {
     if (
       this.active?.contains((event as MouseEvent).relatedTarget as Node | null)

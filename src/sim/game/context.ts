@@ -1,8 +1,10 @@
+import {isStunned} from "./effects";
 import { fixed, lengthCeil, motionCell, POSITION_SCALE, type FixedPoint } from "./motion";
 import type { ContentRegistry } from "../../content/registry";
 import type { Owner, Placement } from "../../content/schema";
 import type { UtcMap } from "../../shared/map/utcmap";
-import { Spatial, cell } from "./spatial";
+import { Spatial } from "./spatial";
+import { entityStats } from "./stats";
 import {
   add,
   alive,
@@ -33,6 +35,7 @@ export class GameContext {
   def(e: Entity) {
     return this.registry.get(e.definition);
   }
+  stats(e: Entity) { return entityStats(this.def(e), e, this.registry); }
   live() {
     return this.state.entities.filter(alive);
   }
@@ -56,6 +59,9 @@ export class GameContext {
         ...(p.appearance ? { appearance: { ...p.appearance } } : {}),
       };
     if (d.kind === "unit") e.unit = this.freshUnit();
+    if(d.behaviors.spellcasting)e.spellcasting={mana:d.behaviors.spellcasting.maxMana,learned:{},cooldowns:{},pending:null};
+    if (d.behaviors.progression) e.progression = {experience: 0};
+    if (d.behaviors.inventory) e.equipment = Array(d.behaviors.inventory.slots).fill(null);
     if (d.kind === "building" && !complete) {
       const hp = Math.max(
         1,
@@ -66,6 +72,7 @@ export class GameContext {
       e.hp = hp;
       e.construction = { progress: 0, supportedHp: hp };
     }
+    if(d.behaviors.revival)e.revival={queue:[]};
     if (d.behaviors.production)
       e.production = {
         paused: false,
@@ -156,7 +163,7 @@ export class GameContext {
   }
   move() {
     const units = this.activeUnits();
-    const occupied = new Set(units.map(cell));
+    const occupied = new Set(units.map(e=>this.spatial.cell(e)));
     for (const e of this.live()) {
       const u = e.unit;
       if (!u) continue;
@@ -164,21 +171,21 @@ export class GameContext {
         const p = this.spatial.nearest(u.release, 12, e.id);
         if (p) {
           e.x = p.x; e.y = p.y; u.position = null; u.segment = null; u.release = null;
-          occupied.add(cell(e));
+          occupied.add(this.spatial.cell(e));
         }
         continue;
       }
-      if (!this.ready(e) || u.contained) continue;
+      if (!this.ready(e) || u.contained || e.spellcasting?.pending || isStunned(e,this.registry)) continue;
       const movement = this.def(e).behaviors.movement;
       const speed = u.idle?.walking ? (movement?.walkSpeed ?? movement?.speed) : movement?.speed;
       if (!speed || !u.route.length) continue;
-      occupied.delete(cell(e));
+      occupied.delete(this.spatial.cell(e));
       try {
         let budget = speed * POSITION_SCALE / 40;
         u.position ??= fixed(e);
         while (budget > 0 && u.route.length) {
           const current: FixedPoint = u.position!;
-          const next = u.route[0], goal = fixed({x: next % 256, y: Math.floor(next / 256)});
+          const next = u.route[0], goal = fixed({x: next % this.spatial.size, y: Math.floor(next / this.spatial.size)});
           if (!u.segment || u.segment.to !== next) {
             const length = lengthCeil(goal.x - current.x, goal.y - current.y);
             if (!length) {u.route.shift(); u.segment = null; continue;}
@@ -197,7 +204,7 @@ export class GameContext {
           }
           if (!this.spatial.clearSegment(current, proposed, occupied) || !this.spatial.unitSegmentClear(current, proposed, e.id)) {
             if (this.state.tick >= u.retryAt && u.goal !== null) {
-              const desired = {x: u.goal % 256, y: Math.floor(u.goal / 256)};
+              const desired = {x: u.goal % this.spatial.size, y: Math.floor(u.goal / this.spatial.size)};
               const target = this.spatial.nearest(desired, 3, e.id);
               if (target) this.spatial.route(e, target);
               {
@@ -205,7 +212,7 @@ export class GameContext {
                 const near = units.find(b => b.id < e.id && b.owner === e.owner && b.unit!.route.length && Math.abs(b.x - e.x) <= 1 && Math.abs(b.y - e.y) <= 1);
                 if (near) {
                   const aside = [{x: e.x, y: e.y - 1}, {x: e.x - 1, y: e.y}, {x: e.x + 1, y: e.y}, {x: e.x, y: e.y + 1}].find(p => this.spatial.free(p, e.id) && this.spatial.clearSegment(u.position!, fixed(p), occupied) && this.spatial.unitSegmentClear(u.position!, fixed(p), e.id));
-                  if (aside) u.route.unshift(cell(aside));
+                  if (aside) u.route.unshift(this.spatial.cell(aside));
                 }
               }
               u.retryAt = this.state.tick + 20;
@@ -214,12 +221,12 @@ export class GameContext {
           }
           segment.progress = progress;
           u.position = proposed;
-          const index = motionCell(proposed);
-          e.x = index % 256; e.y = Math.floor(index / 256);
+          const index = motionCell(proposed,this.spatial.size);
+          e.x = index % this.spatial.size; e.y = Math.floor(index / this.spatial.size);
           budget -= travel;
           if (travel === distance) {u.route.shift(); u.segment = null;}
         }
-      } finally {occupied.add(cell(e));}
+      } finally {occupied.add(this.spatial.cell(e));}
     }
   }
 }

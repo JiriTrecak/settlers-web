@@ -14,11 +14,10 @@
           "builds": [
             "building.ants.barracks",
             "building.ants.lumberjack",
-            "building.ants.sawmill",
             "building.ants.forester",
-            "building.ants.stonemason",
             "building.ants.house",
-            "building.ants.tower"
+            "building.ants.tower",
+            "building.ants.sanctuary"
           ]
         }
       }
@@ -73,7 +72,7 @@
       "id": "asset.ants.archer",
       "file": "assets/ant-colony/characters/archer.glb",
       "healthHeight": 2.3,
-      "projectile": true,
+      "projectile": "arrow",
       "character": "archer"
     },
     {
@@ -172,14 +171,14 @@
       "image": "assets/ui/icons/ants-v1/tower.png"
     },
     {
-      "id": "asset.item.log",
+      "id": "asset.item.wood",
       "file": "assets/ant-colony/item-log.glb",
       "healthHeight": 2.5,
       "stackHeight": 0.42,
       "stackColumns": 1
     },
     {
-      "id": "icon.item.log",
+      "id": "icon.item.wood",
       "image": "assets/ui/icons/ants-v1/log.png"
     },
     {
@@ -194,15 +193,15 @@
       "image": "assets/ui/icons/ants-v1/plank.png"
     },
     {
-      "id": "asset.item.stone",
+      "id": "asset.item.amber",
       "file": "assets/ant-colony/item-stone.glb",
       "healthHeight": 2.5,
       "stackHeight": 0.58,
       "stackColumns": 2
     },
     {
-      "id": "icon.item.stone",
-      "image": "assets/ui/icons/ants-v1/stone.png"
+      "id": "icon.item.amber",
+      "image": "assets/ui/icons/ants-v1/amber.png"
     },
     {
       "id": "asset.resource.ant-pine-1",
@@ -271,6 +270,83 @@
     {
       "id": "icon.armor.structure",
       "image": "assets/ui/icons/ants-v1/armor-structure.png"
+    },
+    {
+      "id": "asset.ants.marshal",
+      "file": "assets/ant-colony/characters/marshal.glb",
+      "character": "marshal",
+      "scale": 1,
+      "healthHeight": 2.8
+    },
+    {
+      "id": "icon.ants.marshal",
+      "image": "assets/ui/icons/ants-v1/marshal.png"
+    },
+    {
+      "id": "asset.item.chest",
+      "file": "assets/ant-colony/props/loot-chest.glb",
+      "scale": 0.38
+    },
+    {
+      "id": "icon.item.barkguard",
+      "image": "assets/ui/icons/ants-v1/barkguard.png"
+    },
+    {
+      "id": "icon.item.thornband",
+      "image": "assets/ui/icons/ants-v1/thornband.png"
+    },
+    {
+      "id": "icon.item.heartseed",
+      "image": "assets/ui/icons/ants-v1/heartseed.png"
+    },
+    {
+      "id": "icon.item.resin-salve",
+      "image": "assets/ui/icons/ants-v1/resin-salve.png"
+    },
+    {
+      "id": "icon.item.royal-crest",
+      "image": "assets/ui/icons/ants-v1/royal-crest.png"
+    },
+    {
+      "id": "icon.item.moon-dew",
+      "image": "assets/ui/icons/ants-v1/moon-dew.png"
+    },
+    {
+      "id": "asset.resource.amber-seam",
+      "file": "assets/ant-colony/amber-seam.glb",
+      "sceneryAsset": "amber-seam"
+    },
+    {
+      "id": "icon.spell.faultline",
+      "image": "assets/ui/icons/ants-v1/faultline.png"
+    },
+    {
+      "id": "icon.spell.rally",
+      "image": "assets/ui/icons/ants-v1/rally.png"
+    },
+    {
+      "id": "icon.spell.carapace",
+      "image": "assets/ui/icons/ants-v1/carapace.png"
+    },
+    {
+      "id": "icon.spell.crownfall",
+      "image": "assets/ui/icons/ants-v1/crownfall.png"
+    },
+    {
+      "id": "asset.neutral.thornspitter",
+      "file": "assets/ant-colony/characters/thornspitter.glb",
+      "character": "thornspitter",
+      "healthHeight": 2.5,
+      "projectile": "thorn"
+    },
+    {
+      "id": "icon.neutral.thornspitter",
+      "image": "assets/ui/icons/ants-v1/thornspitter.png"
+    },
+    {
+      "id": "asset.ants.sanctuary",
+      "file": "assets/ant-colony/amber-sanctuary.glb",
+      "healthHeight": 5
     }
   ],
   "actions": {
@@ -359,6 +435,13 @@
         "icon": "icon.action.build-advanced",
         "priority": 50,
         "hotkey": "V"
+      },
+      "category.hero.skills": {
+        "name": "Learn Ability",
+        "description": "Spend a skill point to learn or improve an ability.",
+        "icon": "icon.ants.marshal",
+        "priority": 106,
+        "hotkey": "K"
       }
     },
     "navigation": {
@@ -387,8 +470,8 @@
     "startingSetup": {
       "fort": "building.ants.fort",
       "inventory": {
-        "item.plank": 40,
-        "item.stone": 30
+        "item.wood": 80,
+        "item.amber": 60
       },
       "units": [
         {
@@ -460,20 +543,73 @@
             "x": 4,
             "y": 12
           }
+        },
+        {
+          "definition": "unit.ants.marshal",
+          "offset": {
+            "x": 0,
+            "y": 12
+          }
         }
       ],
-      "id": "setup.ants"
+      "id": "setup.ants",
+      "gathering": [
+        {
+          "item": "item.amber",
+          "workers": 3,
+          "radius": 40
+        },
+        {
+          "item": "item.wood",
+          "workers": 3,
+          "radius": 40
+        }
+      ]
     },
     "ai": {
-      "buildOrder": [
-        "building.ants.lumberjack",
-        "building.ants.sawmill",
-        "building.ants.stonemason",
-        "building.ants.house",
-        "building.ants.barracks"
+      "revision": 1,
+      "decisionTicks": 10,
+      "economyTicks": 80,
+      "strategyTicks": 200,
+      "operationTicks": 40,
+      "reactionTicks": 20,
+      "orderIntervalTicks": 40,
+      "workers": {
+        "minimum": 6,
+        "target": 16,
+        "maximum": 28,
+        "reserve": 2
+      },
+      "army": {
+        "minimum": 6,
+        "maximum": 44,
+        "homeGuard": 2,
+        "engagePermille": 1100,
+        "campPermille": 1400,
+        "retreatHealthPermille": 280,
+        "pursuitRadius": 20
+      },
+      "limits": {
+        "commandsPerBeat": 4,
+        "placementCandidates": 24,
+        "spellCandidates": 16
+      },
+      "composition": [
+        {
+          "definition": "unit.ants.warrior",
+          "weight": 60
+        },
+        {
+          "definition": "unit.ants.archer",
+          "weight": 40
+        }
       ],
-      "recruit": "unit.ants.warrior",
-      "reserveWorkers": 2
+      "skillPreference": [
+        "spell.marshal.faultline",
+        "spell.marshal.rally",
+        "spell.marshal.carapace",
+        "spell.marshal.crownfall"
+      ]
     },
     "armorTypes": {
       "light": {
@@ -487,6 +623,297 @@
       "structure": {
         "name": "Building armor",
         "icon": "icon.armor.structure"
+      }
+    },
+    "lootPools": {
+      "loot.camp.easy": {
+        "rolls": 1,
+        "entries": [
+          {
+            "item": "item.resin-salve",
+            "weight": 45
+          },
+          {
+            "item": "item.barkguard",
+            "weight": 25
+          },
+          {
+            "item": "item.thornband",
+            "weight": 20
+          },
+          {
+            "item": "item.heartseed",
+            "weight": 10
+          }
+        ]
+      },
+      "loot.camp.medium": {
+        "rolls": 1,
+        "entries": [
+          {
+            "item": "item.heartseed",
+            "weight": 30
+          },
+          {
+            "item": "item.thornband",
+            "weight": 25
+          },
+          {
+            "item": "item.barkguard",
+            "weight": 25
+          },
+          {
+            "item": "item.moon-dew",
+            "weight": 15
+          },
+          {
+            "item": "item.royal-crest",
+            "weight": 5
+          }
+        ]
+      },
+      "loot.camp.hard": {
+        "rolls": 2,
+        "entries": [
+          {
+            "item": "item.royal-crest",
+            "weight": 35
+          },
+          {
+            "item": "item.moon-dew",
+            "weight": 25
+          },
+          {
+            "item": "item.heartseed",
+            "weight": 20
+          },
+          {
+            "item": "item.thornband",
+            "weight": 10
+          },
+          {
+            "item": "item.barkguard",
+            "weight": 10
+          }
+        ]
+      }
+    },
+    "spells": {
+      "spell.marshal.faultline": {
+        "name": "Faultline",
+        "description": "Sends a mace shockwave along the ground, damaging and briefly stunning enemies.",
+        "icon": "icon.spell.faultline",
+        "hotkey": "Q",
+        "priority": 110,
+        "target": "point",
+        "effect": "line",
+        "damageType": "physical",
+        "visual": "effect.faultline",
+        "ranks": [
+          {
+            "requiredLevel": 1,
+            "mana": 60,
+            "cooldownTicks": 480,
+            "castTicks": 20,
+            "range": 14,
+            "radius": 2,
+            "damage": 75,
+            "stunTicks": 20,
+            "durationTicks": 0,
+            "damageBonus": 0,
+            "reductionPermille": 0
+          },
+          {
+            "requiredLevel": 3,
+            "mana": 60,
+            "cooldownTicks": 480,
+            "castTicks": 20,
+            "range": 14,
+            "radius": 2,
+            "damage": 120,
+            "stunTicks": 30,
+            "durationTicks": 0,
+            "damageBonus": 0,
+            "reductionPermille": 0
+          },
+          {
+            "requiredLevel": 5,
+            "mana": 60,
+            "cooldownTicks": 480,
+            "castTicks": 20,
+            "range": 14,
+            "radius": 2,
+            "damage": 165,
+            "stunTicks": 40,
+            "durationTicks": 0,
+            "damageBonus": 0,
+            "reductionPermille": 0
+          }
+        ]
+      },
+      "spell.marshal.rally": {
+        "name": "Rally the Colony",
+        "description": "Grants nearby allied units additional attack damage for a short time.",
+        "icon": "icon.spell.rally",
+        "hotkey": "W",
+        "priority": 109,
+        "target": "self",
+        "effect": "rally",
+        "damageType": "physical",
+        "visual": "effect.rally",
+        "ranks": [
+          {
+            "requiredLevel": 1,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 8,
+            "reductionPermille": 0
+          },
+          {
+            "requiredLevel": 3,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 15,
+            "reductionPermille": 0
+          },
+          {
+            "requiredLevel": 5,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 22,
+            "reductionPermille": 0
+          }
+        ]
+      },
+      "spell.marshal.carapace": {
+        "name": "Iron Carapace",
+        "description": "Brace behind hardened armor to reduce incoming damage temporarily.",
+        "icon": "icon.spell.carapace",
+        "hotkey": "E",
+        "priority": 108,
+        "target": "self",
+        "effect": "guard",
+        "damageType": "physical",
+        "visual": "effect.carapace",
+        "ranks": [
+          {
+            "requiredLevel": 1,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 0,
+            "reductionPermille": 350
+          },
+          {
+            "requiredLevel": 3,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 0,
+            "reductionPermille": 500
+          },
+          {
+            "requiredLevel": 5,
+            "mana": 50,
+            "cooldownTicks": 1000,
+            "castTicks": 20,
+            "range": 0,
+            "radius": 10,
+            "damage": 0,
+            "stunTicks": 0,
+            "durationTicks": 400,
+            "damageBonus": 0,
+            "reductionPermille": 650
+          }
+        ]
+      },
+      "spell.marshal.crownfall": {
+        "name": "Crownfall",
+        "description": "An immense ground slam damages and stuns enemies around the target point.",
+        "icon": "icon.spell.crownfall",
+        "hotkey": "R",
+        "priority": 107,
+        "target": "point",
+        "effect": "blast",
+        "damageType": "physical",
+        "visual": "effect.crownfall",
+        "ranks": [
+          {
+            "requiredLevel": 6,
+            "mana": 150,
+            "cooldownTicks": 3600,
+            "castTicks": 40,
+            "range": 14,
+            "radius": 7,
+            "damage": 260,
+            "stunTicks": 100,
+            "durationTicks": 0,
+            "damageBonus": 0,
+            "reductionPermille": 0
+          }
+        ]
+      }
+    },
+    "spellVisuals": {
+      "effect.faultline": {
+        "color": "#E8A33D",
+        "accent": "#FFDF8A",
+        "durationTicks": 40,
+        "particles": 20,
+        "particleSize": 0.12,
+        "rise": 1.5
+      },
+      "effect.rally": {
+        "color": "#F4CE70",
+        "accent": "#FFFFFF",
+        "durationTicks": 40,
+        "particles": 16,
+        "particleSize": 0.12,
+        "rise": 3
+      },
+      "effect.carapace": {
+        "color": "#79BBCE",
+        "accent": "#D7F3FF",
+        "durationTicks": 40,
+        "particles": 12,
+        "particleSize": 0.12,
+        "rise": 1
+      },
+      "effect.crownfall": {
+        "color": "#FFB942",
+        "accent": "#FFF1B0",
+        "durationTicks": 64,
+        "particles": 40,
+        "particleSize": 0.18,
+        "rise": 4
       }
     }
   },
@@ -508,13 +935,21 @@
       "behaviorSets": [
         "behavior-set.worker"
       ],
-      "behaviors": {},
+      "behaviors": {
+        "work": {
+          "harvests": [
+            "item.wood",
+            "item.amber"
+          ]
+        }
+      },
       "creation": {
         "method": "spawn",
         "items": [],
         "workTicks": 80
       },
-      "level": 1
+      "level": 1,
+      "experienceYield": 15
     },
     {
       "id": "unit.ants.warrior",
@@ -546,14 +981,19 @@
         "method": "recruit",
         "items": [
           {
-            "item": "item.plank",
-            "amount": 1
+            "item": "item.wood",
+            "amount": 5
+          },
+          {
+            "item": "item.amber",
+            "amount": 8
           }
         ],
         "workTicks": 160,
         "unitInput": "unit.ants.settler"
       },
-      "level": 1
+      "level": 1,
+      "experienceYield": 25
     },
     {
       "id": "unit.ants.archer",
@@ -585,14 +1025,19 @@
         "method": "recruit",
         "items": [
           {
-            "item": "item.plank",
-            "amount": 1
+            "item": "item.wood",
+            "amount": 5
+          },
+          {
+            "item": "item.amber",
+            "amount": 10
           }
         ],
         "workTicks": 240,
         "unitInput": "unit.ants.settler"
       },
-      "level": 1
+      "level": 1,
+      "experienceYield": 25
     },
     {
       "id": "unit.neutral.wolf",
@@ -620,7 +1065,8 @@
           "aggroRange": 8
         }
       },
-      "level": 1
+      "level": 1,
+      "experienceYield": 35
     },
     {
       "id": "unit.neutral.ogre",
@@ -648,13 +1094,14 @@
           "aggroRange": 10
         }
       },
-      "level": 1
+      "level": 1,
+      "experienceYield": 120
     },
     {
       "id": "building.ants.fort",
       "kind": "building",
       "name": "Main fort",
-      "description": "Your colony\u2019s heart and warehouse. Losing the bound main fort ends the match.",
+      "description": "The heart of the colony. Workers deliver gathered resources here.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
       "body": {
@@ -685,12 +1132,12 @@
           "radius": 38
         },
         "storage": {
-          "capacity": 192,
+          "capacity": 100000,
           "accepts": [
-            "item.log",
-            "item.plank",
-            "item.stone"
-          ]
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
         }
       },
       "level": 1
@@ -720,11 +1167,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 8
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 4
           }
         ],
@@ -736,9 +1183,10 @@
       ],
       "behaviors": {
         "storage": {
-          "capacity": 16,
+          "capacity": 100,
           "accepts": [
-            "item.plank"
+            "item.wood",
+            "item.amber"
           ]
         },
         "production": {
@@ -757,7 +1205,7 @@
     {
       "id": "building.ants.lumberjack",
       "kind": "building",
-      "name": "Lumberjack\u2019s hut",
+      "name": "Lumberjack’s hut",
       "description": "Harvests trees in owned territory. Produces logs for sawmills.",
       "asset": "asset.ants.lumberjack",
       "icon": "icon.ants.lumberjack",
@@ -779,11 +1227,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 6
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 2
           }
         ],
@@ -801,7 +1249,7 @@
         "production": {
           "mode": "automatic",
           "outputs": [
-            "item.log"
+            "item.wood"
           ],
           "workerSlots": 1,
           "workRadius": 28,
@@ -835,11 +1283,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 8
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 4
           }
         ],
@@ -849,23 +1297,7 @@
       "behaviorSets": [
         "behavior-set.player-building"
       ],
-      "behaviors": {
-        "storage": {
-          "capacity": 16,
-          "accepts": [
-            "item.log"
-          ]
-        },
-        "production": {
-          "mode": "automatic",
-          "outputs": [
-            "item.plank"
-          ],
-          "workerSlots": 1,
-          "workRadius": 28,
-          "jobName": "Sawyer"
-        }
-      },
+      "behaviors": {},
       "level": 1
     },
     {
@@ -893,11 +1325,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 6
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 2
           }
         ],
@@ -923,7 +1355,7 @@
     {
       "id": "building.ants.stonemason",
       "kind": "building",
-      "name": "Stonemason\u2019s hut",
+      "name": "Stonemason’s hut",
       "description": "Quarries stone deposits in owned territory.",
       "asset": "asset.ants.stonemason",
       "icon": "icon.ants.stonemason",
@@ -945,11 +1377,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 6
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 2
           }
         ],
@@ -959,21 +1391,7 @@
       "behaviorSets": [
         "behavior-set.player-building"
       ],
-      "behaviors": {
-        "storage": {
-          "capacity": 16,
-          "accepts": []
-        },
-        "production": {
-          "mode": "automatic",
-          "outputs": [
-            "item.stone"
-          ],
-          "workerSlots": 1,
-          "workRadius": 28,
-          "jobName": "Stonemason"
-        }
-      },
+      "behaviors": {},
       "level": 1
     },
     {
@@ -1001,11 +1419,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 8
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 4
           }
         ],
@@ -1052,11 +1470,11 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.plank",
+            "item": "item.wood",
             "amount": 10
           },
           {
-            "item": "item.stone",
+            "item": "item.amber",
             "amount": 8
           }
         ],
@@ -1075,12 +1493,12 @@
       "level": 1
     },
     {
-      "id": "item.log",
+      "id": "item.wood",
       "kind": "item",
-      "name": "Log",
-      "description": "Harvested timber. Sawmills turn logs into planks.",
-      "asset": "asset.item.log",
-      "icon": "icon.item.log",
+      "name": "Wood",
+      "description": "Timber gathered by workers and carried to the main hall.",
+      "asset": "asset.item.wood",
+      "icon": "icon.item.wood",
       "stackLimit": 16,
       "behaviors": {},
       "creation": {
@@ -1095,36 +1513,27 @@
       "id": "item.plank",
       "kind": "item",
       "name": "Plank",
-      "description": "Sawn timber used in construction and recruitment.",
+      "description": "A cut timber plank.",
       "asset": "asset.item.plank",
       "icon": "icon.item.plank",
       "stackLimit": 16,
-      "behaviors": {},
-      "creation": {
-        "method": "craft",
-        "items": [
-          {
-            "item": "item.log",
-            "amount": 1
-          }
-        ],
-        "workTicks": 120
-      }
+      "behaviors": {}
     },
     {
-      "id": "item.stone",
+      "id": "item.amber",
       "kind": "item",
-      "name": "Stone",
-      "description": "Quarried stone used in sturdy construction.",
-      "asset": "asset.item.stone",
-      "icon": "icon.item.stone",
+      "name": "Amber",
+      "description": "Precious forest resin mined from ancient roots and carried to the main hall.",
+      "asset": "asset.item.amber",
+      "icon": "icon.item.amber",
       "stackLimit": 16,
       "behaviors": {},
       "creation": {
         "method": "harvest",
         "items": [],
         "workTicks": 100,
-        "source": "resource.stone.deposit"
+        "source": "resource.amber.seam",
+        "workAnimation": "chop"
       }
     },
     {
@@ -1133,7 +1542,7 @@
       "name": "Forest tree",
       "description": "Harvestable timber. Foresters can restore an exhausted site.",
       "asset": "asset.resource.ant-pine-1",
-      "icon": "icon.item.log",
+      "icon": "icon.item.wood",
       "regrowthTicks": 1600,
       "behaviors": {},
       "creation": {
@@ -1149,9 +1558,286 @@
       "name": "Stone deposit",
       "description": "A finite supply of stone for the colony.",
       "asset": "asset.resource.ant-stone-deposit",
-      "icon": "icon.item.stone",
+      "icon": "icon.item.amber",
       "behaviors": {},
       "yield": 80
+    },
+    {
+      "id": "unit.ants.marshal",
+      "kind": "unit",
+      "name": "Ant Marshal",
+      "description": "A seasoned colony champion armed with a heavy flanged mace. Gains experience from nearby enemy defeats.",
+      "asset": "asset.ants.marshal",
+      "icon": "icon.ants.marshal",
+      "hero": true,
+      "level": 1,
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 480,
+        "armor": 4,
+        "armorType": "heavy"
+      },
+      "vision": 14,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 34,
+          "damageType": "physical",
+          "range": 1.8,
+          "cooldownTicks": 40,
+          "aggroRange": 12
+        },
+        "progression": {
+          "thresholds": [
+            0,
+            100,
+            250,
+            450,
+            700,
+            1000,
+            1400,
+            1900,
+            2500,
+            3200
+          ],
+          "healthPerLevel": 65,
+          "damagePerLevel": 5,
+          "armorPerLevel": 1,
+          "experienceRadius": 18
+        },
+        "inventory": {
+          "slots": 6,
+          "pickupRange": 1.5
+        },
+        "spellcasting": {
+          "abilities": [
+            "spell.marshal.faultline",
+            "spell.marshal.rally",
+            "spell.marshal.carapace",
+            "spell.marshal.crownfall"
+          ],
+          "maxMana": 320,
+          "regenTicks": 10,
+          "learningCategory": "category.hero.skills",
+          "manaIcon": "icon.item.moon-dew"
+        }
+      },
+      "experienceYield": 150
+    },
+    {
+      "id": "item.barkguard",
+      "kind": "item",
+      "name": "Barkguard Charm",
+      "description": "A layered bark talisman. Grants 2 armor.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.barkguard",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 2,
+        "maxHp": 0
+      }
+    },
+    {
+      "id": "item.thornband",
+      "kind": "item",
+      "name": "Thornband",
+      "description": "A thorn-forged ring. Grants 6 damage.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.thornband",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 6,
+        "armor": 0,
+        "maxHp": 0
+      }
+    },
+    {
+      "id": "item.heartseed",
+      "kind": "item",
+      "name": "Heartseed",
+      "description": "A living seed pendant. Grants 120 maximum health.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.heartseed",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 120
+      }
+    },
+    {
+      "id": "item.resin-salve",
+      "kind": "item",
+      "name": "Resin Salve",
+      "description": "Consume to restore 160 health.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.resin-salve",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "consumable",
+        "heal": 160
+      }
+    },
+    {
+      "id": "item.royal-crest",
+      "kind": "item",
+      "name": "Royal Crest",
+      "description": "A relic of the old colony. Grants 10 damage, 3 armor and 100 maximum health.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.royal-crest",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 10,
+        "armor": 3,
+        "maxHp": 100
+      }
+    },
+    {
+      "id": "item.moon-dew",
+      "kind": "item",
+      "name": "Moon Dew",
+      "description": "Consume to restore 400 health.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.moon-dew",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "consumable",
+        "heal": 400
+      }
+    },
+    {
+      "id": "resource.amber.seam",
+      "kind": "resource",
+      "name": "Amber Seam",
+      "description": "An ancient root rich in amber. Send workers to gather resin and carry it to a main hall.",
+      "asset": "asset.resource.amber-seam",
+      "icon": "icon.item.amber",
+      "footprint": {
+        "width": 5,
+        "depth": 5
+      },
+      "constructionClearance": 3,
+      "behaviors": {},
+      "yield": 12000
+    },
+    {
+      "id": "unit.neutral.thornspitter",
+      "kind": "unit",
+      "name": "Thornspitter",
+      "description": "A territorial seedpod creature that launches thorns at distant intruders.",
+      "asset": "asset.neutral.thornspitter",
+      "icon": "icon.neutral.thornspitter",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 180,
+        "armor": 2,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 17,
+          "damageType": "physical",
+          "range": 10,
+          "cooldownTicks": 68,
+          "aggroRange": 12
+        }
+      },
+      "level": 2,
+      "experienceYield": 70
+    },
+    {
+      "id": "unit.neutral.elder-thornspitter",
+      "kind": "unit",
+      "name": "Elder Thornspitter",
+      "description": "A territorial seedpod creature that launches thorns at distant intruders.",
+      "asset": "asset.neutral.thornspitter",
+      "icon": "icon.neutral.thornspitter",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 520,
+        "armor": 5,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 35,
+          "damageType": "physical",
+          "range": 10,
+          "cooldownTicks": 68,
+          "aggroRange": 12
+        }
+      },
+      "level": 5,
+      "experienceYield": 240
+    },
+    {
+      "id": "building.ants.sanctuary",
+      "kind": "building",
+      "name": "Amber Sanctuary",
+      "description": "Calls fallen heroes back to the colony, preserving their experience, abilities and inventory.",
+      "asset": "asset.ants.sanctuary",
+      "icon": "icon.item.amber",
+      "body": {
+        "maxHp": 500,
+        "armor": 4,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.wood",
+            "amount": 12
+          },
+          {
+            "item": "item.amber",
+            "amount": 8
+          }
+        ],
+        "workTicks": 220,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "revival": {
+          "workTicks": 400,
+          "queueCapacity": 4
+        }
+      },
+      "level": 1,
+      "category": "category.build-advanced"
     }
   ]
 }

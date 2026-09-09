@@ -2,11 +2,11 @@ import { content } from "../content/builtin";
 import type { EntityView, SettlementView } from "../sim/game/observation";
 import type { MapStamp, UtcMap } from "../shared/map/utcmap";
 import { expandMap } from "../content/map";
-export function authoredScene(entities: EntityView[]): SettlementView {
+export function authoredScene(entities: EntityView[],size=256): SettlementView {
   return {
     revision: 0,
     entities,
-    territory: new Int16Array(65536).fill(-1),
+    territory: new Int16Array(size*size).fill(-1),
     outcome: null,
     events: [],
     objectives: {},

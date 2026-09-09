@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-09T03:43:18-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 24.89,
+  "blend_mtime_ns": 1788942339196025158,
+  "config": {
+    "name": "Colony Loot Chest",
+    "blend": "colony-loot-chest.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": -22,
+      "elevation": 20,
+      "scale": 4.4,
+      "target": [
+        0,
+        0,
+        0.85
+      ]
+    },
+    "render": {
+      "width": 1402,
+      "height": 1122,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 1400,
+      "fill_energy": 400,
+      "rim_energy": 1000
+    }
+  }
+}

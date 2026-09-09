@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "thornspitter": {
+      "file": "thornspitter.glb",
+      "triangles": 3456,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack_spit",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "thornspitter": {
+      "normalizedTime": 0.65,
+      "event": "release"
+    }
+  },
+  "teamMaterial": null,
+  "metersPerUnit": 1,
+  "height": 2.1
+}

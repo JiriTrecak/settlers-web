@@ -1,10 +1,11 @@
+import {SHADOW_KEY,SHADOWS_CHANGED,readShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_KEY,GRAPHICS_CHANGED,readResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
 import {perf} from '../../debug/performance';
 /**
  * Canvas + WebGLRenderer. GameApp owns the canvas for the page lifetime;
  * each match builds a Renderer on it. Shadows on. Output is sRGB.
  */
-import { ACESFilmicToneMapping, VSMShadowMap, SRGBColorSpace, WebGLRenderer, type Camera, type Scene } from "three";
+import { ACESFilmicToneMapping, PCFShadowMap, VSMShadowMap, SRGBColorSpace, WebGLRenderer, type Camera, type Scene } from "three";
 
 export class Display {
   readonly gl: WebGLRenderer;
@@ -12,6 +13,17 @@ export class Display {
   private queries:WebGLQuery[]=[];
   private scale=readResolutionScale();
   private readonly graphicsChanged=(e:Event)=>{if(e instanceof StorageEvent&&e.key&&e.key!==RESOLUTION_KEY)return;if(e instanceof CustomEvent)this.scale=e.detail as ResolutionScale;else this.scale=readResolutionScale();this.onResize();};
+  private readonly shadowsChanged=(event:Event)=>{
+    if(event instanceof StorageEvent&&event.key&&event.key!==SHADOW_KEY)return;
+    this.applyShadows();
+    this.onResize();
+  };
+  private applyShadows():void {
+    const mode=readShadowMode();
+    this.gl.shadowMap.enabled=mode!=='off';
+    this.gl.shadowMap.type=mode==='soft'?VSMShadowMap:PCFShadowMap;
+    this.gl.shadowMap.needsUpdate=true;
+  }
   private readonly onResize: () => void;
 
   constructor(
@@ -27,14 +39,15 @@ export class Display {
     this.gl.toneMapping = ACESFilmicToneMapping;
     this.gl.toneMappingExposure = 1.15;
     this.gl.setPixelRatio(renderPixelRatio(this.scale,window.devicePixelRatio));
-    this.gl.shadowMap.enabled = true;
-    this.gl.shadowMap.type = VSMShadowMap;
+    this.applyShadows();
     this.onResize = () => {
       this.syncSize();
       onResize?.();
     };
     this.syncSize();
     window.addEventListener("resize", this.onResize);
+    window.addEventListener(SHADOWS_CHANGED,this.shadowsChanged);
+    window.addEventListener("storage",this.shadowsChanged);
     window.addEventListener(GRAPHICS_CHANGED,this.graphicsChanged);
     window.addEventListener("storage",this.graphicsChanged);
   }
@@ -73,6 +86,7 @@ export class Display {
     perf.end('WebGL submit (CPU)',start);
     if(q){ctx.endQuery(ext!.TIME_ELAPSED_EXT);this.queries.push(q);}
     if(perf.enabled){
+      perf.value('Shadows',readShadowMode());
       perf.value('GPU timer',ext?'Supported':'Unavailable in this browser');
       perf.value('Draw calls',this.gl.info.render.calls);perf.value('Triangles (all passes)',this.gl.info.render.triangles.toLocaleString());
       perf.value('Textures',this.gl.info.memory.textures);perf.value('Geometries',this.gl.info.memory.geometries);
@@ -83,6 +97,8 @@ export class Display {
 
   destroy(): void {
     window.removeEventListener("resize", this.onResize);
+    window.removeEventListener(SHADOWS_CHANGED,this.shadowsChanged);
+    window.removeEventListener("storage",this.shadowsChanged);
     window.removeEventListener(GRAPHICS_CHANGED,this.graphicsChanged);
     window.removeEventListener("storage",this.graphicsChanged);
     for(const q of this.queries)(this.gl.getContext() as WebGL2RenderingContext).deleteQuery(q);

@@ -12,7 +12,7 @@ describe("command categories", () => {
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
-      ["lumberjack", "stonemason", "sawmill", "forester", "house"].map(id => `building.ants.${id}`),
+      ["lumberjack", "forester", "house"].map(id => `building.ants.${id}`),
     );
     expect(basic.some(b => b.targetDefinition === "building.ants.barracks")).toBe(false);
     const advanced = commandMenu(bindings, "category.build-advanced", g.registry).entries;

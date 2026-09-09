@@ -38,3 +38,5 @@ Duplicate the warrior definition, assign a new ID, change name/stats/art/price, 
 Continue with [behavior reference](behaviors.md), [worked JSON examples](examples.md), [native systems](systems.md), and [validation and acceptance](validation.md).
 
 Asset authoring: [team-color material contract](team-color.md). Only `TC_TeamColor` is recolored; roofs and chitin retain their authored colors.
+
+Design under review: [opponent AI proposal](../ai/README.md), including coordinated economy/hero/army planning, initial map knowledge separated from live observations, one declarative AI policy, and adversarial acceptance scenarios. This describes a planned replacement for the current small AI planner, not implemented behavior.

@@ -1,7 +1,7 @@
 /**
  * Height sculpt. Live raise/lower, or Water: paint a mask and Apply to cut a basin.
  */
-import { HEIGHT_MIN, HEIGHT_ORIGIN, HEIGHT_VERTS, unionDirty, type HeightDirty, type HeightField } from "../../shared";
+import { HEIGHT_MIN, HEIGHT_ORIGIN, unionDirty, type HeightDirty, type HeightField } from "../../shared";
 import { BrushMask } from "../brush/brush";
 
 export const SCULPT_RADIUS_MIN = 1;
@@ -77,17 +77,17 @@ export class SculptTool {
 export function cutBasin(field: HeightField, mask: BrushMask, depth: number): HeightDirty | null {
   const d = Math.max(0.05, depth);
   let any = false;
-  let loX = HEIGHT_VERTS;
+  let loX = field.verts;
   let hiX = -1;
-  let loZ = HEIGHT_VERTS;
+  let loZ = field.verts;
   let hiZ = -1;
-  for (let iz = 0; iz < HEIGHT_VERTS; iz++) {
+  for (let iz = 0; iz < field.verts; iz++) {
     const z = HEIGHT_ORIGIN + iz;
-    for (let ix = 0; ix < HEIGHT_VERTS; ix++) {
+    for (let ix = 0; ix < field.verts; ix++) {
       const x = HEIGHT_ORIGIN + ix;
       const w = mask.sample(x, z);
       if (w < 0.08) continue;
-      const i = iz * HEIGHT_VERTS + ix;
+      const i = iz * field.verts + ix;
       const target = -d * w;
       const next = Math.max(HEIGHT_MIN, Math.min(field.samples[i]!, target));
       if (next === field.samples[i]) continue;

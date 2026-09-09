@@ -7,45 +7,49 @@ import {
 } from "three";
 import type { FogView } from "../../sim/game/observation";
 
-/** One shared 256² texture; shader sampling darkens terrain, water, props and buildings together. */
+/** One map-sized texture; shader sampling darkens terrain, water, props and buildings together. */
 export class FogOfWar {
-  private readonly pixels = new Uint8Array(256 * 256 * 4);
-  readonly texture = new DataTexture(this.pixels, 256, 256);
-  private readonly uniform = { value: this.texture };
+  private readonly pixels:Uint8Array;
+  readonly texture:DataTexture;
+  private readonly uniform:{value:DataTexture};
   private readonly patched = new WeakSet<Material>();
   private revision = -1;
-  private readonly horizontal = new Float32Array(65536);
-  constructor() {
+  private owner: number | undefined;
+  private readonly horizontal:Float32Array;
+  private readonly previous:Uint8Array;
+  constructor(readonly size=256) {
+    this.previous=new Uint8Array(size*size);this.pixels=new Uint8Array(size*size*4);this.horizontal=new Float32Array(size*size);
+    this.texture=new DataTexture(this.pixels,size,size);this.uniform={value:this.texture};
     this.texture.minFilter = LinearFilter;
     this.texture.magFilter = LinearFilter;
     this.texture.generateMipmaps = false;
+    this.texture.needsUpdate=true;
   }
   update(fog: FogView, scene: Scene) {
-    if (this.revision !== fog.revision) {
+    if (this.revision !== fog.revision || this.owner !== fog.owner) {
+      this.owner = fog.owner;
       this.revision = fog.revision;
-      // Separable five-cell blur on updates, rather than nine GPU reads per rendered pixel.
-      const brightness = (i: number) =>
-        fog.cells[i] === 2 ? 255 : fog.cells[i] === 1 ? 90 : 0;
-      for (let z = 0; z < 256; z++)
-        for (let x = 0; x < 256; x++) {
-          let sum = 0;
-          for (let dx = -2; dx <= 2; dx++)
-            if (x + dx >= 0 && x + dx < 256)
-              sum += brightness(z * 256 + x + dx);
-          this.horizontal[z * 256 + x] = sum / 5;
+      let loX=this.size,hiX=-1,loZ=this.size,hiZ=-1;
+      for(let i=0;i<fog.cells.length;i++)if(this.previous[i]!==fog.cells[i]){
+        this.previous[i]=fog.cells[i]!;const x=i%this.size,z=Math.floor(i/this.size);
+        loX=Math.min(loX,x);hiX=Math.max(hiX,x);loZ=Math.min(loZ,z);hiZ=Math.max(hiZ,z);
+      }
+      if(hiX>=0){
+        loX=Math.max(0,loX-2);hiX=Math.min(this.size-1,hiX+2);
+        // Only changed rows affect the horizontal pass; expand vertically for the second pass.
+        const brightness=(i:number)=>fog.cells[i]===2?255:fog.cells[i]===1?90:0;
+        for(let z=loZ;z<=hiZ;z++)for(let x=loX;x<=hiX;x++){
+          let sum=0;for(let dx=-2;dx<=2;dx++)if(x+dx>=0&&x+dx<this.size)sum+=brightness(z*this.size+x+dx);
+          this.horizontal[z*this.size+x]=sum/5;
         }
-      for (let z = 0; z < 256; z++)
-        for (let x = 0; x < 256; x++) {
-          let sum = 0;
-          for (let dz = -2; dz <= 2; dz++)
-            if (z + dz >= 0 && z + dz < 256)
-              sum += this.horizontal[(z + dz) * 256 + x]!;
-          const i = (z * 256 + x) * 4,
-            value = Math.round(sum / 5);
-          this.pixels[i] = this.pixels[i + 1] = this.pixels[i + 2] = value;
-          this.pixels[i + 3] = 255;
+        loZ=Math.max(0,loZ-2);hiZ=Math.min(this.size-1,hiZ+2);
+        for(let z=loZ;z<=hiZ;z++)for(let x=loX;x<=hiX;x++){
+          let sum=0;for(let dz=-2;dz<=2;dz++)if(z+dz>=0&&z+dz<this.size)sum+=this.horizontal[(z+dz)*this.size+x]!;
+          const i=(z*this.size+x)*4,value=Math.round(sum/5);
+          this.pixels[i]=this.pixels[i+1]=this.pixels[i+2]=value;this.pixels[i+3]=255;
         }
-      this.texture.needsUpdate = true;
+        this.texture.needsUpdate=true;
+      }
     }
     scene.traverse((o) => {
       if (o instanceof Mesh)
@@ -86,7 +90,7 @@ export class FogOfWar {
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <fog_fragment>",
         `#include <fog_fragment>
-        vec2 utcUv=(utcFogPosition+0.5)/256.0;
+        vec2 utcUv=(utcFogPosition+0.5)/${this.size.toFixed(1)};
         float inside=step(0.0,utcUv.x)*step(0.0,utcUv.y)*step(utcUv.x,1.0)*step(utcUv.y,1.0);
         float utcLight=texture2D(utcVisibility,clamp(utcUv,0.0,1.0)).r*inside;
         float utcGray=dot(gl_FragColor.rgb,vec3(0.2126,0.7152,0.0722));
@@ -94,7 +98,7 @@ export class FogOfWar {
       `,
       );
     };
-    material.customProgramCacheKey = () => key + "|utc-fog-v1";
+    material.customProgramCacheKey = () => key + `|utc-fog-v2-${this.size}`;
     material.needsUpdate = true;
   }
   dispose() {

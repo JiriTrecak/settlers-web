@@ -10,12 +10,15 @@ export const BRUSH_DENSITY_MAX = 2.5;
 
 export class BrushMask {
   readonly origin = -MAP_HALO;
-  readonly span = MAP_SIZE + MAP_HALO * 2;
-  readonly weights = new Float32Array(this.span * this.span);
+  span = MAP_SIZE + MAP_HALO * 2;
+  size = MAP_SIZE;
+  weights = new Float32Array(this.span * this.span);
   radius = 4;
   density = 0.45;
   dirty = false;
   private last: { x: number; z: number } | null = null;
+
+  resize(size:number){this.size=size;this.span=size+MAP_HALO*2;this.weights=new Float32Array(this.span*this.span);this.clear();}
 
   beginStroke(): void {
     this.last = null;
@@ -30,7 +33,7 @@ export class BrushMask {
     const sign = erase ? -1 : 1;
     for (let z = loZ; z <= hiZ; z++) {
       for (let x = loX; x <= hiX; x++) {
-        if (!inStamp(x, z)) continue;
+        if (!inStamp(x, z,this.size)) continue;
         const i = this.index(x, z);
         if (i < 0) continue;
         const d = Math.hypot(x + 0.5 - wx, z + 0.5 - wz);

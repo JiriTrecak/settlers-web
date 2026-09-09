@@ -1,12 +1,12 @@
 import { BufferGeometry, Float32BufferAttribute, CanvasTexture, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene } from 'three';
-import { HEIGHT_ORIGIN, HEIGHT_SPAN, type HeightField } from '../../shared';
+import { HEIGHT_ORIGIN, type HeightField } from '../../shared';
 import { DECAL_KINDS, type DecalKind, type GroundDecal } from '../../shared/landscape/decal';
 
 /** Uses the exact terrain grid and diagonal: decals remain flush after sculpting. */
 export function decalGeometry(d: GroundDecal, field: HeightField): BufferGeometry {
   const a=d.rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a),r=d.size*(Math.abs(c)+Math.abs(s))/2;
-  const loX=Math.max(HEIGHT_ORIGIN,Math.floor(d.x-r)),hiX=Math.min(HEIGHT_ORIGIN+HEIGHT_SPAN,Math.ceil(d.x+r));
-  const loZ=Math.max(HEIGHT_ORIGIN,Math.floor(d.z-r)),hiZ=Math.min(HEIGHT_ORIGIN+HEIGHT_SPAN,Math.ceil(d.z+r));
+  const loX=Math.max(HEIGHT_ORIGIN,Math.floor(d.x-r)),hiX=Math.min(field.origin+field.span,Math.ceil(d.x+r));
+  const loZ=Math.max(HEIGHT_ORIGIN,Math.floor(d.z-r)),hiZ=Math.min(field.origin+field.span,Math.ceil(d.z+r));
   const pos:number[]=[],uv:number[]=[],indices:number[]=[];
   for(let z=loZ;z<=hiZ;z++)for(let x=loX;x<=hiX;x++){
     pos.push(x,field.sample(x,z)+.012,z);

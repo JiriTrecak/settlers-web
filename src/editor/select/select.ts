@@ -67,8 +67,8 @@ export function wrapYaw(rad: number): number {
   return t < 0 ? t + Math.PI * 2 : t;
 }
 
-export function withPose(stamp: MapStamp, x: number, y: number, yaw: number): MapStamp | null {
-  if (!inStamp(x, y)) return null;
+export function withPose(stamp: MapStamp, x: number, y: number, yaw: number,size=256): MapStamp | null {
+  if (!inStamp(x, y,size)) return null;
   const y0 = wrapYaw(yaw);
   const { yaw: _oldYaw, ...rest } = stamp;
   const next: MapStamp = { ...rest, x, y };

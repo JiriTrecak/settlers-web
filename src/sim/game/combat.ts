@@ -1,10 +1,13 @@
+import {isStunned} from "./effects";
 import { atPoint, precise } from "./motion";
 import type { Camp, Owner } from "../../content/schema";
 import { GameContext } from "./context";
 import { Observation } from "./observation";
 import { distance2 } from "./spatial";
 import { alive, type Entity } from "./state";
+import { Progression } from "./progression";
 
+export type DamageHit={source:number;target:number;damage:number;damageType:string};
 export class Combat {
   constructor(
     private readonly c: GameContext,
@@ -12,6 +15,7 @@ export class Combat {
     private readonly camps: readonly Camp[],
     private readonly teams: ReadonlyMap<Owner, number>,
   ) {}
+  allied(a:Entity,b:Entity) {return a.owner!=="none" && b.owner!=="none" && this.teams.get(a.owner)===this.teams.get(b.owner);}
   hostile(a: Entity, b: Entity): boolean {
     if (
       a.id === b.id ||
@@ -21,6 +25,9 @@ export class Combat {
       b.unit?.release
     )
       return false;
+    return this.opponents(a,b);
+  }
+  private opponents(a: Entity, b: Entity): boolean {
     if (a.owner !== "none" && b.owner !== "none")
       return this.teams.get(a.owner) !== this.teams.get(b.owner);
     if (a.owner === "none" && b.owner === "none") return false;
@@ -38,11 +45,13 @@ export class Combat {
   }
   plan() {
     const c = this.c;
+    const targets=c.live().filter(e=>e.hp!==null);
     for (const e of c.activeUnits()) {
       const u = e.unit!,
         combat = c.def(e).behaviors.combat,
         order = u.order;
-      if (u.job) continue;
+      if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
+      if (u.job || order?.type === "pickup" || order?.type === "gather") continue;
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
       if (camp && (distance2(precise(e), camp.home) > camp.leash ** 2 || u.returning)) {
@@ -88,8 +97,7 @@ export class Combat {
         (c.state.tick % 8 === e.id % 8 ||
           (order?.type === "move" && order.attackMove))
       ) {
-        target = c
-          .live()
+        target = targets
           .filter(
             (t) =>
               this.hostile(e, t) &&
@@ -122,7 +130,7 @@ export class Combat {
     const u = e.unit!;
     if (
       (atPoint(e, destination) && !u.route.length) ||
-      (u.goal !== null && !u.route.length && atPoint(e, {x: u.goal % 256, y: Math.floor(u.goal / 256)}))
+      (u.goal !== null && !u.route.length && atPoint(e, {x: u.goal % this.c.spatial.size, y: Math.floor(u.goal / this.c.spatial.size)}))
     ) {
       u.order = null;
       u.goal = null;
@@ -134,13 +142,22 @@ export class Combat {
       u.retryAt = this.c.state.tick + 20;
     }
   }
-  resolve(): Entity[] {
+  private damage(target:Entity,raw:number,type:string){
+    const multiplier=this.c.registry.rules.damageMultipliers[type][this.c.def(target).body!.armorType];
+    if(!multiplier)return 0;
+    const armorDamage=Math.max(1,Math.floor(raw*multiplier/1000)-this.c.stats(target).armor);
+    const reduction=Math.max(0,...(target.effects??[]).map(b=>this.c.registry.rules.spells[b.ability].ranks[b.rank-1].reductionPermille));
+    return Math.max(1,Math.floor(armorDamage*(1000-reduction)/1000));
+  }
+  resolve(extra:DamageHit[]=[]): Entity[] {
     const hits = new Map<number, number>();
+    const contested = new Set<number>();
     for (const a of this.c.activeUnits()) {
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
       if (
+        a.spellcasting?.pending || isStunned(a,this.c.registry) ||
         !combat ||
         !b ||
         u.cooldown > 0 ||
@@ -152,20 +169,22 @@ export class Combat {
         continue;
       if (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a, b))
         continue;
-      const body = this.c.def(b).body!,
-        multiplier =
-          this.c.registry.rules.damageMultipliers[combat.damageType][
-            body.armorType
-          ];
-      const damage =
-        multiplier === 0
-          ? 0
-          : Math.max(
-              1,
-              Math.floor((combat.damage * multiplier) / 1000) - body.armor,
-            );
+      const damage = this.damage(b,this.c.stats(a).damage,combat.damageType);
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
+      if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
       u.cooldown = combat.cooldownTicks;
+      if(this.c.registry.asset(this.c.def(a).asset).projectile) {
+        const destination=precise(b);
+        u.shot={tick:this.c.state.tick,x:destination.x,y:destination.y,
+          viewers:[...this.teams.keys()].filter(owner=>this.vision.visible(owner,a)&&this.vision.visible(owner,b))};
+      }
+    }
+    for(const hit of extra){
+      const a=this.c.get(hit.source),b=this.c.get(hit.target);
+      if(!a||!b||!alive(b)||b.hp===null)continue;
+      const damage=this.damage(b,hit.damage,hit.damageType);
+      hits.set(b.id,(hits.get(b.id)??0)+damage);
+      if(damage>0&&this.opponents(a,b))contested.add(b.id);
     }
     const dead: Entity[] = [];
     for (const [id, damage] of [...hits].sort((a, b) => a[0] - b[0])) {
@@ -173,6 +192,9 @@ export class Combat {
       target.hp = Math.max(0, target.hp! - damage);
       if (!target.hp) dead.push(target);
     }
+    const progression = new Progression(this.c);
+    for (const target of dead) if (contested.has(target.id))
+      progression.award(target,hero => this.opponents(hero,target));
     return dead;
   }
 }

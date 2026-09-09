@@ -1,3 +1,4 @@
+import {CLEAR_WEATHER,type WeatherSettings} from '../../shared/landscape/weather';
 import { sheet, btn, btnPrimary } from '../../ui';
 import { environmentPreset, environmentPresets, saveEnvironmentPreset, LIGHT_RANGES, type GlobalLight, type EnvironmentPreset } from '../../shared/environment/presets';
 import { formatHour } from '../../render/sky/sky';
@@ -15,6 +16,8 @@ export class EnvironmentDock {
   private readonly hour=document.createElement('input');
   private readonly clock=document.createElement('span');
   private readonly season=document.createElement('select');
+  private readonly weather=document.createElement('select');
+  private readonly weatherInputs=new Map<'intensity'|'windX'|'windZ',HTMLInputElement>();
   private readonly play=document.createElement('button');
   private readonly fallback=document.createElement('textarea');
   private opened=false;
@@ -38,6 +41,16 @@ export class EnvironmentDock {
     this.color(global,'Sky fill tint','skyTint');this.color(global,'Ground bounce tint','bounceTint');this.range(global,'Sky / ground fill strength','fillStrength',.05);
     const shadows=this.section('Shadows');this.range(shadows,'Shadow softness','shadowSoftness',.25);
     const atmosphere=this.section('Atmosphere');this.color(atmosphere,'Haze color','hazeColor');this.range(atmosphere,'Haze fade distance (m)','hazeDistance',5);
+    const weather=this.section('Weather',true);
+    this.weather.setAttribute('aria-label','Weather');this.weather.className='rounded bg-black/30 p-2 text-canopy';
+    for(const [id,label] of [['clear','Clear'],['rain','Rain'],['snow','Snow']])this.weather.add(new Option(label,id));
+    this.weather.onchange=()=>{const current=editor.map.landscape?.environment.weather??CLEAR_WEATHER;editor.environment({weather:{...current,kind:this.weather.value as WeatherSettings['kind'],intensity:current.intensity||.5}});this.sync();};weather.append(this.weather);
+    for(const [key,label,min,max,step] of [['intensity','Weather intensity',0,1,.05],['windX','Weather east wind',-10,10,.5],['windZ','Weather south wind',-10,10,.5]] as const){
+      const row=document.createElement('label');row.className='flex flex-col gap-1 text-xs text-canopy/80';row.append(label);
+      const input=document.createElement('input');input.type='range';input.min=String(min);input.max=String(max);input.step=String(step);input.setAttribute('aria-label',label);
+      input.oninput=()=>{const current=editor.map.landscape?.environment.weather??CLEAR_WEATHER;editor.environment({weather:{...current,[key]:Number(input.value)}});};this.weatherInputs.set(key,input);row.append(input);weather.append(row);
+    }
+    const weatherHelp=document.createElement('p');weatherHelp.className='text-xs text-canopy/50';weatherHelp.textContent='Weather is saved with this map. Wind moves rain or snow; it does not affect unit movement.';weather.append(weatherHelp);
     const time=this.section('Preview time',true);this.hour.type='range';this.hour.min='0';this.hour.max='23.99';this.hour.step='.05';this.hour.setAttribute('aria-label','Environment preview hour');this.hour.oninput=()=>{editor.environment({hour:Number(this.hour.value),playing:false});this.sync();};
     this.play.className=btn;this.play.onclick=()=>{editor.environment({hour:editor.sky?.hour??10,playing:!editor.sky?.playing});this.sync();};time.append(this.clock,this.hour,this.play);
     this.season.setAttribute('aria-label','Environment season');this.season.className='rounded bg-black/30 p-2 text-canopy';for(const value of ['spring','summer','autumn']){const o=document.createElement('option');o.value=value;o.textContent=value[0]!.toUpperCase()+value.slice(1);this.season.append(o);}this.season.onchange=()=>editor.environment({season:this.season.value as 'spring'|'summer'|'autumn'});time.append(this.season);
@@ -54,7 +67,7 @@ export class EnvironmentDock {
   private save(){try{const p:EnvironmentPreset={...this.preset,light:{...this.draft}};saveEnvironmentPreset(p);this.preset=p;this.notice.textContent='Preset saved on this device.';this.sync();}catch(e){this.notice.textContent=`Could not save: ${e instanceof Error?e.message:String(e)}`;}}
   settings(){return {version:1,preset:{...this.preset,light:{...this.draft}},preview:{...this.editor.map.landscape?.environment,...this.editor.sky?.snapshot()}};}
   private async copy(){const text=JSON.stringify(this.settings(),null,2);try{await navigator.clipboard.writeText(text);this.notice.textContent='Settings copied. Paste them into the conversation.';this.fallback.classList.add('hidden');}catch{this.fallback.value=text;this.fallback.classList.remove('hidden');this.fallback.focus();this.fallback.select();this.notice.textContent='Select and copy the settings below.';}}
-  sync(){if(!this.opened)return;const id=this.editor.map.landscape?.environment.preset??'forest';if(id!==this.preset.id){this.preset=environmentPreset(id);this.draft={...this.preset.light};this.options();this.apply();}this.select.value=this.preset.id;this.state.textContent=`${this.preset.name}${JSON.stringify(this.draft)!==JSON.stringify(this.preset.light)?' · Modified':' · Saved'}`;for(const [key,c] of this.controls){if(document.activeElement!==c.input)c.input.value=String(this.draft[key]);if(c.number&&document.activeElement!==c.number)c.number.value=String(this.draft[key]);}this.season.value=this.editor.map.landscape?.environment.season??'summer';const sky=this.editor.sky;this.hour.value=String(sky?.hour??10);this.clock.textContent=formatHour(sky?.hour??10);this.play.textContent=sky?.playing?'Pause cycle':'Play cycle';}
+  sync(){if(!this.opened)return;const id=this.editor.map.landscape?.environment.preset??'forest';if(id!==this.preset.id){this.preset=environmentPreset(id);this.draft={...this.preset.light};this.options();this.apply();}this.select.value=this.preset.id;this.state.textContent=`${this.preset.name}${JSON.stringify(this.draft)!==JSON.stringify(this.preset.light)?' · Modified':' · Saved'}`;for(const [key,c] of this.controls){if(document.activeElement!==c.input)c.input.value=String(this.draft[key]);if(c.number&&document.activeElement!==c.number)c.number.value=String(this.draft[key]);}this.season.value=this.editor.map.landscape?.environment.season??'summer';const weather=this.editor.map.landscape?.environment.weather??CLEAR_WEATHER;this.weather.value=weather.kind;for(const [key,input]of this.weatherInputs){if(document.activeElement!==input)input.value=String(weather[key]);input.disabled=weather.kind==='clear';}const sky=this.editor.sky;this.hour.value=String(sky?.hour??10);this.clock.textContent=formatHour(sky?.hour??10);this.play.textContent=sky?.playing?'Pause cycle':'Play cycle';}
   setOpen(on:boolean){this.opened=on;this.root.classList.toggle('hidden',!on);if(on){this.sync();this.apply();}}
   destroy(){this.root.remove();}
 }

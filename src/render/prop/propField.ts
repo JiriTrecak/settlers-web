@@ -265,7 +265,8 @@ export class PropField {
   private rebuildBatches():void {
     const timing=perf.start();
     this.contacts=[];this.contactRevision++;
-    for(const b of this.batches){this.scene.remove(b);b.dispose();}this.batches=[];
+    const previous=new Map(this.batches.map(b=>[b.userData.batchKey as string,b]));
+    this.batches=[];
     const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[]}>();
     for(const [id,root] of this.placed){
       root.updateMatrixWorld(true);
@@ -285,16 +286,38 @@ export class PropField {
         g.poses.push(n.matrixWorld.clone());g.ids.push(id);
       });
     }
-    for(const g of groups.values()){
-      const b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
-      g.poses.forEach((p,i)=>b.setMatrixAt(i,p));b.instanceMatrix.needsUpdate=true;
-      b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
-      let trianglesBefore=0;
-      b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
-      b.onAfterRender=renderer=>perf.count(g.ids[0]&&String(this.placed.get(g.ids[0])?.userData.asset).includes('pine')?'Tree triangles':'Other prop triangles',renderer.info.render.triangles-trianglesBefore);
-      b.castShadow=b.receiveShadow=true;b.userData.stampIds=g.ids;b.computeBoundingSphere();
-      this.batches.push(b);this.scene.add(b);
+    for(const [key,g] of groups){
+      let b=previous.get(key);previous.delete(key);
+      const capacity=b?.instanceMatrix.count??0;
+      if(b&&capacity<g.poses.length){this.scene.remove(b);b.dispose();b=undefined;}
+      if(!b){
+        b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
+        b.userData.batchKey=key;
+        b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
+        let trianglesBefore=0;
+        b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
+        const batch=b;
+        b.onAfterRender=renderer=>perf.count(batch.userData.category,renderer.info.render.triangles-trianglesBefore);
+        b.castShadow=b.receiveShadow=true;this.scene.add(b);
+      }
+      let changed=b.count!==g.poses.length;
+      const matrices=b.instanceMatrix.array;
+      for(let i=0;i<g.poses.length;i++){
+        const pose=g.poses[i].elements;
+        // Float32 comparison avoids treating unchanged non-integer transforms
+        // as edits merely because the authored matrices use double precision.
+        for(let j=0;j<16;j++)if(matrices[i*16+j]!==Math.fround(pose[j])){changed=true;break;}
+        if(changed)b.setMatrixAt(i,g.poses[i]);
+      }
+      b.count=g.poses.length;b.userData.stampIds=g.ids;
+      b.userData.category=String(this.placed.get(g.ids[0])?.userData.asset).includes('pine')?'Tree triangles':'Other prop triangles';
+      if(changed||!b.boundingSphere){
+        b.instanceMatrix.needsUpdate=true;
+        const displayed=b.geometry;b.geometry=g.source.geometry;b.computeBoundingSphere();b.geometry=displayed;
+      }
+      this.batches.push(b);
     }
+    for(const b of previous.values()){this.scene.remove(b);b.dispose();}
     perf.value('Prop batches',this.batches.length);perf.value('Placed props',this.placed.size);
     perf.end('Prop rebuild (event)',timing);
   }

@@ -9,3 +9,15 @@ describe('render resolution',()=>{
   data.set('utc.graphics.resolution-scale','garbage');expect(readResolutionScale()).toBe(1);
  });
 });
+
+import {readShadowMode,setShadowMode,SHADOW_KEY,SHADOWS_CHANGED} from '../../src/shared/settings/graphics';
+it('persists shadow selection independently of resolution and announces changes',()=>{
+ const data=new Map<string,string>();const dispatchEvent=vi.fn();
+ vi.stubGlobal('localStorage',{getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>data.set(k,v)});vi.stubGlobal('window',{dispatchEvent});
+ expect(readShadowMode()).toBe('soft');setResolutionScale(.5);
+ for(const mode of ['filtered','off','soft'] as const){setShadowMode(mode);expect(readShadowMode()).toBe(mode);expect(readResolutionScale()).toBe(.5);expect(dispatchEvent.mock.lastCall![0].type).toBe(SHADOWS_CHANGED);}
+ data.set(SHADOW_KEY,'broken');expect(readShadowMode()).toBe('soft');
+});
+it('retains the existing soft look if preferences cannot be read',()=>{
+ vi.stubGlobal('localStorage',{getItem:()=>{throw new Error('storage unavailable');}});expect(readShadowMode()).toBe('soft');
+});

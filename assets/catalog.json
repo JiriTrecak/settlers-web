@@ -1149,6 +1149,13 @@
       "category": "units",
       "type": "prop",
       "file": "ant-colony/ogre.glb"
+    },
+    {
+      "id": "amber-seam",
+      "name": "Amber Seam",
+      "category": "resource",
+      "type": "prop",
+      "file": "ant-colony/amber-seam.glb"
     }
   ]
 }

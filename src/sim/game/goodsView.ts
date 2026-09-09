@@ -17,8 +17,10 @@ export function summarizeGoods(
   available: (e: Entity, item: string) => number,
 ): GoodsSummary[] {
   const owned = entities.filter((e) => e.owner === owner);
+  const currencies = new Set(registry.definitions.flatMap(d =>
+    d.behaviors.storage?.dropoff ? d.behaviors.storage.accepts : []));
   return registry.definitions
-    .filter((d) => d.kind === "item")
+    .filter((d) => d.kind === "item" && currencies.has(d.id))
     .map((item) => {
       const stored = owned.reduce((n, e) => n + (e.inventory[item.id] ?? 0), 0),
         loose = owned.reduce(

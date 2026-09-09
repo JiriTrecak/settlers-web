@@ -11,6 +11,17 @@ import {
 } from "../../src/shared";
 
 describe("height field", () => {
+  it("roundtrips large-map terrain without interpreting it with a small-map stride", () => {
+    const large = new HeightField(512);
+    large.raise(440, 380, 5, 3);
+    const blob = encodeHeight(large.samples, large.size)!;
+    expect(decodeHeight(blob)).toBeNull();
+    const restored = new HeightField(512);
+    restored.load(decodeHeight(blob, 512)!);
+    expect(restored.sample(440, 380)).toBe(3);
+    expect(restored.sample(184, 380)).toBe(0);
+    expect(new HeightField().sample(440, 380)).toBe(0);
+  });
   it("samples bilinear and raises a soft disc", () => {
     const h = new HeightField();
     expect(h.sample(10, 10)).toBe(0);

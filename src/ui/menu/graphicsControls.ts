@@ -1,3 +1,4 @@
+import {SHADOW_MODES,readShadowMode,setShadowMode,type ShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_SCALES,readResolutionScale,setResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
 /** Shared by main-menu and in-game settings; applies immediately. */
 export function graphicsControls():HTMLElement {
@@ -11,5 +12,13 @@ export function graphicsControls():HTMLElement {
  }
  select.value=String(readResolutionScale());select.onchange=()=>setResolutionScale(Number(select.value) as ResolutionScale);
  const note=document.createElement('p');note.className='canopy-settings-status';note.textContent='Applies immediately and is saved. Only the 3D scene changes; interface text stays sharp. 50% uses one quarter of the native pixels.';
- label.append(select);group.append(label,note);return group;
+ label.append(select);group.append(label,note);
+ const shadowLabel=document.createElement('label');shadowLabel.textContent='Shadows';
+ const shadows=document.createElement('select');shadows.style.cssText=select.style.cssText;
+ const names={soft:'Soft · original',filtered:'Filtered · faster',off:'Off'};
+ for(const mode of SHADOW_MODES){const option=document.createElement('option');option.value=mode;option.textContent=names[mode];shadows.append(option);}
+ shadows.value=readShadowMode();shadows.onchange=()=>setShadowMode(shadows.value as ShadowMode);
+ shadowLabel.append(shadows);group.append(shadowLabel);
+ const shadowNote=document.createElement('p');shadowNote.className='canopy-settings-status';shadowNote.textContent='Filtered shadows use sharper edges and skip the soft-shadow blur passes. Applies immediately and is saved.';group.append(shadowNote);
+ return group;
 }

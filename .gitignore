@@ -30,3 +30,7 @@ assets/maps/*
 # Authored reference landscapes are source assets.
 !assets/maps/showcase/
 !assets/maps/showcase/*.utcmap
+
+# Authored playable maps are source assets too.
+!assets/maps/skirmish/
+!assets/maps/skirmish/*.utcmap

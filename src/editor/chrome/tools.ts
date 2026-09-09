@@ -23,6 +23,7 @@ import {
   TreePine,
   Play,
   Sticker,
+  Sparkles,
 } from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
@@ -33,6 +34,7 @@ export type FileToolHooks = {
   onSaveAs(): void;
   onLoad(): void;
   onLeave(): void;
+  onEffects(): void;
 };
 
 export type GameToolHooks = {
@@ -59,6 +61,7 @@ export function fileTools(hooks: FileToolHooks): IconItem[] {
     { id: "save", label: "Save", icon: Save, run: hooks.onSave },
     { id: "save-as", label: "Save as", icon: SaveAll, run: hooks.onSaveAs },
     { id: "load", label: "Load", icon: FolderOpen, run: hooks.onLoad },
+    { id: "effects", label: "Effects", icon: Sparkles, run: hooks.onEffects },
     { kind: "sep" },
     { id: "exit", label: "Exit", icon: LogOut, run: hooks.onLeave },
   ];

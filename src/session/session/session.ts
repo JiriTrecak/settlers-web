@@ -1,3 +1,6 @@
+import { PresentationView, matchSpeed } from "./presentationView";
+import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
+import { precise } from "../../sim/game/motion";
 import { localSaveSchema } from "./localSave";
 import { SAVE_FORMAT_VERSION } from "../../shared/save/save";
 import { areaSelection } from "../../presentation/commands";
@@ -22,7 +25,7 @@ import { SettlementHud } from "../../ui/settlement/settlementHud";
 /**
  * One match: transport, fixed-step simulation, input and presentation orchestration.
  */
-import { localMatch, type MatchConfig } from "../../shared";
+import { type MatchConfig } from "../../shared";
 import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
 import { MapInput, Minimap, Renderer } from "../../render";
 import { World } from "../../sim/world/world";
@@ -33,7 +36,7 @@ export type SessionHooks = {
 };
 
 export type SessionConfig = {
-  player: number;
+  player: number | null;
   mapId: string;
   host: HTMLElement;
   channel?: Channel;
@@ -58,18 +61,63 @@ export class Session {
   private confirmTimer: ReturnType<typeof setInterval> | null = null;
   private matchStartMs = 0;
   private desynced = false;
+  /** Transport mailbox, not authority. An observer borrows an empty local mailbox. */
   private readonly me: number;
+  private presentation = new PresentationView();
+  private reveal = false;
+  private speed = 1;
+  private visionPlayer: number;
+  private unbindDebug: (() => void) | null = null;
+  private get observing(): boolean {
+    return this.config.player === null;
+  }
+  private get simulationSpeed(): number {
+    return matchSpeed(this.speed, !!this.config.channel);
+  }
+  private visualView() {
+    return (this.presentation ??= new PresentationView()).project(
+      this.world!,
+      this.visionPlayer ?? this.me,
+      this.reveal,
+    );
+  }
+  private selectionView() {
+    return this.observing
+      ? this.visualView().settlement!
+      : this.world!.settlement!.view(this.me);
+  }
+
   private bridge: EditorBridge | null = null;
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
   private resourceSignature = "";
   private economyHud: SettlementHud | null = null;
-  private pendingBuildSelection: { action: Extract<Action, {type: "build"}>; selection: number[]; firstId: number } | null = null;
   private placementPointer: { clientX: number; clientY: number } | null = null;
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
     this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
     const hit = this.renderer?.pickGround(e.clientX, e.clientY),
       kind = this.economyHud?.mode;
+    const binding = this.economyHud?.targeting,
+      sim = this.world?.settlement;
+    const caster =
+      binding?.type === "cast" ? sim?.context.get(binding.actors[0]) : null;
+    const spell = binding?.ability
+      ? content.rules.spells[binding.ability]
+      : null;
+    const rank = binding?.ability
+      ? caster?.spellcasting?.learned[binding.ability]
+      : 0;
+    if (hit && caster && spell && rank) {
+      const origin = precise(caster),
+        point = { x: Math.round(hit.x), y: Math.round(hit.z) };
+      const valid =
+        Math.hypot(point.x - origin.x, point.y - origin.y) <=
+          spell.ranks[rank - 1].range &&
+        !!sim?.observation.explored(slotOwner(this.me), [
+          sim.spatial.cell(point),
+        ]);
+      this.renderer?.gameAbilityTarget({ spell, rank, origin, point, valid });
+    } else this.renderer?.gameAbilityTarget(null);
     if (!hit || !kind) {
       this.renderer?.gamePreview(null);
       return;
@@ -84,7 +132,14 @@ export class Session {
           this.economyHud?.buildingActor,
           this.economyHud?.placementRotation ?? 0,
         ) ?? null;
-    this.renderer?.gamePreview(kind, x, z, !error, this.economyHud?.placementRotation ?? 0, this.me);
+    this.renderer?.gamePreview(
+      kind,
+      x,
+      z,
+      !error,
+      this.economyHud?.placementRotation ?? 0,
+      this.me,
+    );
     this.economyHud?.placement(error);
   };
 
@@ -92,7 +147,14 @@ export class Session {
     private readonly canvas: HTMLCanvasElement,
     private readonly config: SessionConfig,
   ) {
-    this.me = config.match ? config.player : Math.min(1, config.player);
+    if (config.channel && config.player === null)
+      throw new Error("Network observers require a spectator connection.");
+    this.me =
+      config.player ??
+      config.match?.slots[0]?.player ??
+      getMap(config.mapId).map.playerStarts[0].player - 1;
+    this.visionPlayer = this.me;
+    this.reveal = this.observing;
   }
 
   start(): void {
@@ -102,17 +164,28 @@ export class Session {
     const map = requirePlayableMap(loaded.map);
     const match =
       this.config.match ??
-      localMatch({
-        mapId: loaded.id,
-        mapRevision: loaded.revision,
-        seed: 1,
-        slotCount: loaded.players,
-        me: this.me,
-      });
+      createSkirmishMatch(
+        {
+          mapId: loaded.id,
+          slots: defaultSlots(map.playerStarts, this.config.player),
+        },
+        map.playerStarts,
+        loaded.revision,
+      ).match;
     this.match = match;
     if (match.mapId !== loaded.id || match.mapRevision !== loaded.revision)
       throw new Error(
         "This match uses a different map or gameplay rules revision. Reload both clients.",
+      );
+    if (
+      !match.slots.some((slot) => slot.player === this.me) ||
+      (!this.observing &&
+        match.slots.find((slot) => slot.player === this.me)?.kind !==
+          "human") ||
+      (this.observing && match.slots.some((slot) => slot.kind === "human"))
+    )
+      throw new Error(
+        "The local controller must match the lobby's player slots.",
       );
     this.world = new World({
       slots: match.slots,
@@ -128,8 +201,9 @@ export class Session {
       );
     const renderer = new Renderer(this.canvas, urls);
     renderer.setKinds(new Map(catalog.assets.map((a) => [a.id, a.type])));
+    this.terrain = new HeightField(map.size);
     this.terrain.load(
-      map.height ? decodeHeight(map.height)! : [],
+      map.height ? decodeHeight(map.height, map.size)! : [],
       map.waterLevel ?? 0,
     );
     renderer.setTerrain(this.terrain);
@@ -138,12 +212,12 @@ export class Session {
     renderer.setGridMode("none");
     this.stamps = [
       ...map.stamps,
-      ...resourceStamps(this.world.settlement!.view(this.me).entities),
+      ...resourceStamps(this.visualView().settlement!.entities),
     ];
     this.renderer = renderer;
     const self = map.playerStarts.find((p) => p.player === this.me + 1)!;
     renderer.camera.lookAt(self.x, self.z);
-    renderer.camera.setGame(true);
+    renderer.camera.setGame(true, map.size);
     this.input = new MapInput(this.canvas, renderer.camera, {
       onChanged: () => this.present(),
       rts: true,
@@ -151,7 +225,7 @@ export class Session {
       onRightClick: (x, y) => this.click(x, y, false, true),
       onSelectArea: (rect, shift) => {
         const hud = this.economyHud,
-          state = this.world?.settlement?.view(this.me);
+          state = this.world ? this.selectionView() : undefined;
         if (!hud || !state) return;
         const inside = new Set(
           renderer.unitsInScreenRect(
@@ -159,19 +233,24 @@ export class Session {
             rect,
           ),
         );
-        const ids = areaSelection(
-          state.entities.filter((w) => inside.has(w.id)),
-          slotOwner(this.me),
-          content,
-        );
+        const ids = this.observing
+          ? [...inside]
+          : areaSelection(
+              state.entities.filter((w) => inside.has(w.id)),
+              slotOwner(this.me),
+              content,
+            );
         hud.setSelection(shift ? [...hud.selectedIds, ...ids] : ids);
       },
     });
-    this.economyHud = new SettlementHud(this.config.host, this.me, {
+    this.economyHud = new SettlementHud(this.config.host, this.config.player, {
       action: (action) => this.send(action),
       mode: () => {
         if (this.placementPointer) this.onHover(this.placementPointer);
-        else renderer.gamePreview(null);
+        else {
+          renderer.gamePreview(null);
+          renderer.gameAbilityTarget(null);
+        }
       },
       home: () => {
         const game = this.world?.settlement,
@@ -181,7 +260,9 @@ export class Session {
         if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
-    this.economyHud.setMapName(map.name);
+    this.economyHud.setMapName(
+      this.observing ? "Observing · " + map.name : map.name,
+    );
     this.canvas.addEventListener("pointermove", this.onHover);
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
@@ -207,8 +288,37 @@ export class Session {
     this.mini.setPlayerStarts(
       (map.playerStarts ?? []).filter((s) => s.player === this.me + 1),
     );
-    this.mini.setFog(this.world.settlement!.view(this.me));
-    renderer.draw(this.world.view(this.me), this.stamps);
+    const initialView = this.visualView();
+    this.mini.setFog(initialView.settlement!);
+    this.economyHud.update(this.selectionView());
+    renderer.draw(initialView, this.stamps);
+    this.unbindDebug = perf.bindMatch({
+      reveal: this.reveal,
+      speed: this.simulationSpeed,
+      remote: !!this.config.channel,
+      visionPlayer: this.visionPlayer,
+      players: match.slots,
+      onReveal: (value) => {
+        if (!this.config.channel) {
+          this.reveal = value;
+          this.resourceSignature = "";
+        }
+      },
+      onSpeed: (value) => {
+        this.speed = matchSpeed(value, !!this.config.channel);
+        renderer.gameTimeScale = this.simulationSpeed;
+      },
+      onVision: (player) => {
+        if (
+          !this.config.channel &&
+          match.slots.some((s) => s.player === player)
+        ) {
+          this.visionPlayer = player;
+          this.resourceSignature = "";
+          this.economyHud?.setSelection([]);
+        }
+      },
+    });
     this.mini?.paint();
     this.bridge = new EditorBridge({
       dispatch: async (op, params) => {
@@ -217,7 +327,10 @@ export class Session {
           return {
             map: match.mapId,
             revision: match.mapRevision,
-            player: this.me,
+            player: this.config.player,
+            observing: this.observing,
+            speed: this.simulationSpeed,
+            reveal: this.reveal,
             tick: this.world!.clock.tickIndex,
             checksum: this.world!.checksum(),
             settlement: this.world!.settlement!.view(this.me),
@@ -250,7 +363,8 @@ export class Session {
         if (op === "gameCommand") {
           if (!validAction(o.action))
             throw new Error("Invalid gameplay action");
-          this.send(o.action);
+          if (!this.send(o.action))
+            throw new Error("Observers cannot issue player commands");
           return { queued: true, player: this.me };
         }
         if (op === "gameView") {
@@ -303,9 +417,9 @@ export class Session {
     const simulation = perf.start();
     const remote = this.config.channel != null;
     if (remote && !this.desynced) this.pulseConfirm();
-    this.acc += dtMs;
+    this.acc += Math.max(0, dtMs) * this.simulationSpeed;
     const step = world.clock.tickMs;
-    const cap = remote ? 2 : 8;
+    const cap = remote ? 2 : 8 * this.simulationSpeed;
     let n = 0;
     while (this.acc >= step && n < cap) {
       const next = world.clock.tickIndex + 1;
@@ -327,22 +441,41 @@ export class Session {
       for (const [id, peer] of this.locksteps)
         if (id !== this.me) peer.take(next);
       world.tick();
-      this.selectCommittedBuilding(commit.slots.find(slot => slot.player === this.me)?.actions ?? []);
       for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
         perf.sample(`Sim · ${name}`, ms);
+      if (perf.enabled)
+        for (const [name, ms] of Object.entries(world.aiTimings ?? {}))
+          perf.sample(`AI decision · ${name}`, ms);
+      if (perf.enabled && next % 40 === 0)
+        for (const ai of world.aiSummary()) {
+          perf.value(`AI ${ai.owner}`, `${ai.mission} · ${ai.economy}`);
+          perf.value(`AI ${ai.owner} reason`, ai.reason);
+          perf.value(
+            `AI ${ai.owner} commands`,
+            `${ai.metrics.accepted} accepted / ${ai.metrics.rejected} rejected`,
+          );
+        }
       const ch = this.config.channel;
       if (ch && next % matchChecksumEvery(this.match) === 0) {
         ch.send({ type: "hash", tick: next, checksum: world.checksum() });
       }
       n++;
     }
-    if (n >= cap && !remote) this.acc = 0;
+    if (n >= cap && !remote) this.acc %= step;
     perf.end("Simulation / lockstep", simulation);
+    // Keep the authoritative match and network running in a hidden tab, but
+    // defer snapshots, DOM, animation, minimap and GPU work until it is visible.
+    // This also prevents a stale edge-hover from moving an unseen camera.
+    if (document.hidden) {
+      this.fpsFrames = 0;
+      this.fpsMs = 0;
+      return;
+    }
     const input = perf.start();
     this.input?.tick(dtMs);
     perf.end("Input", input);
     const snapshot = perf.start();
-    const view = world.view(this.me);
+    const view = this.visualView();
     perf.end("View snapshot", snapshot);
     const hud = perf.start();
     if (view.settlement) {
@@ -353,14 +486,23 @@ export class Session {
         this.stamps = [...this.loadedMap!.map.stamps, ...resources];
         this.mini?.setStamps(this.stamps);
       }
+      this.mini?.setPlayerStarts(
+        this.loadedMap!.map.playerStarts.filter(
+          (start) =>
+            (view.settlement.fog?.cells[start.z * view.size + start.x] ?? 0) >
+            0,
+        ),
+      );
       this.mini?.setFog(view.settlement);
-      this.economyHud?.update(view.settlement);
+      this.economyHud?.update(this.selectionView());
       renderer.gameSelect(this.economyHud?.selectedIds ?? []);
       this.canvas.style.cursor = this.economyHud?.attackMode
         ? "crosshair"
         : "default";
     }
     perf.end("Economy HUD / minimap data", hud);
+    if (this.economyHud?.targeting?.type === "cast" && this.placementPointer)
+      this.onHover(this.placementPointer);
     renderer.draw(view, this.stamps);
     const minimap = perf.start();
     this.mini?.paint();
@@ -453,27 +595,19 @@ export class Session {
     this.resourceSignature = "";
     this.economyHud?.setSelection([]);
   }
-  private selectCommittedBuilding(actions: readonly Action[]) {
-    const pending = this.pendingBuildSelection;
-    if (!pending || !actions.some(action => action.type === "build" && action.actor === pending.action.actor &&
-      action.definition === pending.action.definition && action.position.x === pending.action.position.x &&
-      action.position.y === pending.action.position.y && (action.rotation ?? 0) === (pending.action.rotation ?? 0))) return;
-    this.pendingBuildSelection = null;
-    const hud = this.economyHud, sim = this.world?.settlement;
-    // Do not override a newer player selection while waiting for the network commit.
-    if (!hud || !sim || hud.selectedIds !== pending.selection) return;
-    const {definition, position} = pending.action;
-    const building = sim.view(this.me).entities.find(e =>
-      e.id >= pending.firstId && e.owner === slotOwner(this.me) &&
-      e.definition === definition && e.x === position.x && e.y === position.y);
-    if (!building) return; // The simulation can reject a location that became occupied.
-    hud.update(sim.view(this.me));
-    hud.setSelection([building.id]);
+  private send(action: Action): boolean {
+    if (this.observing) return false;
+    const peer = this.locksteps.get(this.me);
+    if (!peer) return false;
+    peer.send(action);
+    return true;
   }
-  private send(action: Action) {
-    this.locksteps.get(this.me)?.send(action);
-  }
-  private click(clientX: number, clientY: number, shift = false, right = false) {
+  private click(
+    clientX: number,
+    clientY: number,
+    shift = false,
+    right = false,
+  ) {
     const sim = this.world?.settlement,
       hit = this.renderer?.pickGround(clientX, clientY),
       hud = this.economyHud;
@@ -497,23 +631,31 @@ export class Session {
       return;
     }
     if (hud.mode) {
-      const error = sim.canBuild(owner, hud.mode, position, hud.buildingActor, hud.placementRotation);
+      const error = sim.canBuild(
+        owner,
+        hud.mode,
+        position,
+        hud.buildingActor,
+        hud.placementRotation,
+      );
       if (error) {
         hud.placement(error);
         return;
       }
-      const action: Extract<Action, {type: "build"}> = {
-        type: "build", actor: hud.buildingActor!, definition: hud.mode,
-        position, rotation: hud.placementRotation,
+      const action: Extract<Action, { type: "build" }> = {
+        type: "build",
+        actor: hud.buildingActor!,
+        definition: hud.mode,
+        position,
+        rotation: hud.placementRotation,
       };
       this.send(action);
       if (!shift) {
-        this.pendingBuildSelection = {action, selection: hud.selectedIds, firstId: sim.state.nextId};
         hud.clearMode();
       }
       return;
     }
-    const known = sim.view(this.me),
+    const known = this.selectionView(),
       picked = this.renderer?.pickGameEntity(clientX, clientY);
     const selectable = known.entities.filter(
       (e) =>
@@ -528,6 +670,19 @@ export class Session {
             : 0.8;
         return Math.abs(e.x - hit.x) <= r && Math.abs(e.y - hit.z) <= r;
       });
+    if (this.observing) {
+      if (!right)
+        hud.setSelection(
+          target
+            ? shift
+              ? [...hud.selectedIds.filter((id) => id !== target.id), target.id]
+              : [target.id]
+            : shift
+              ? [...hud.selectedIds]
+              : [],
+        );
+      return;
+    }
     const selected = known.entities.filter(
       (e) =>
         hud.selectedIds.includes(e.id) &&
@@ -556,6 +711,29 @@ export class Session {
       hud.clearMode();
       return;
     }
+    if (binding?.type === "cast" && binding.ability) {
+      const caster = sim.context.get(binding.actors[0]),
+        spell = content.rules.spells[binding.ability],
+        rank = caster?.spellcasting?.learned[binding.ability];
+      if (
+        !caster ||
+        !rank ||
+        Math.hypot(
+          position.x - precise(caster).x,
+          position.y - precise(caster).y,
+        ) > spell.ranks[rank - 1].range ||
+        !sim.observation.explored(owner, [sim.spatial.cell(position)])
+      )
+        return;
+      this.send({
+        type: "cast",
+        actor: binding.actors[0],
+        ability: binding.ability,
+        point: position,
+      });
+      hud.clearMode();
+      return;
+    }
     if (binding?.type === "move") {
       this.send({
         type: "move",
@@ -566,8 +744,42 @@ export class Session {
       return;
     }
     if (target) {
+      if (right && target.resource && !target.remembered) {
+        const workers = selected.filter((e) =>
+          content.get(e.definition).behaviors.work?.harvests?.some((id) => {
+            const recipe = content.get(id).creation;
+            return (
+              recipe?.method === "harvest" &&
+              recipe.source === target.definition
+            );
+          }),
+        );
+        if (workers.length) {
+          this.send({
+            type: "gather",
+            actors: workers.map((e) => e.id),
+            target: target.id,
+          });
+          return;
+        }
+      }
       if (
-        right && army.length &&
+        right &&
+        target.item &&
+        !target.remembered &&
+        content.get(target.definition).itemEffect
+      ) {
+        const hero = selected.find(
+          (e) => content.get(e.definition).behaviors.inventory,
+        );
+        if (hero) {
+          this.send({ type: "pickup", actor: hero.id, target: target.id });
+          return;
+        }
+      }
+      if (
+        right &&
+        army.length &&
         target.owner !== owner &&
         target.owner !== "none" &&
         !target.remembered &&
@@ -581,7 +793,8 @@ export class Session {
         return;
       }
       if (
-        right && army.length &&
+        right &&
+        army.length &&
         target.owner === "none" &&
         target.unit &&
         !target.remembered &&
@@ -595,7 +808,12 @@ export class Session {
         return;
       }
       if (right) {
-        if (selected.length) this.send({ type: "move", actors: selected.map(e => e.id), destination: position });
+        if (selected.length)
+          this.send({
+            type: "move",
+            actors: selected.map((e) => e.id),
+            destination: position,
+          });
         return;
       }
       if (shift && target.owner === owner && target.unit) {
@@ -618,6 +836,8 @@ export class Session {
   }
 
   stop(): void {
+    this.unbindDebug?.();
+    this.unbindDebug = null;
     this.canvas.style.cursor = "";
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.confirmTimer = null;

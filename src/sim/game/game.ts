@@ -1,3 +1,5 @@
+import {Revival} from "./revival";
+import {Spellcasting} from "./spellcasting";
 import { idleMotion } from "./idleMotion";
 import { fixed, lengthCeil } from "./motion";
 import { simulationHash } from "./checksum";
@@ -12,6 +14,9 @@ import type { Slot } from "../../shared/match/match";
 import { GameContext } from "./context";
 import { Economy } from "./economy";
 import { Combat } from "./combat";
+import { CampLoot } from "./campLoot";
+import { entityStats } from "./stats";
+import { Inventory } from "./inventory";
 import { Observation, knowledgeSchema } from "./observation";
 import {
   alive,
@@ -20,9 +25,8 @@ import {
   type Entity,
   type Point,
 } from "./state";
-import { cell } from "./spatial";
 
-export const SIMULATION_BUILD = "declarative-sim-4";
+export const SIMULATION_BUILD = "declarative-sim-11";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -47,14 +51,20 @@ export class Game {
   readonly economy: Economy;
   readonly observation: Observation;
   readonly combat: Combat;
+  readonly campLoot: CampLoot;
+  readonly inventory: Inventory;
+  readonly revival: Revival;
+  readonly spells:Spellcasting;
   readonly timings: Record<string, number> = {};
   private readonly owners: Owner[];
   constructor(
     readonly map: UtcMap,
     readonly slots: readonly Slot[],
     readonly registry: ContentRegistry = content,
+    seed?: number,
   ) {
     validatePlacements(map, registry);
+    this.state.random = (seed === undefined ? parseInt(fingerprint({map, slots}), 16) : seed >>> 0) || 1;
     this.owners = slots.map((s) => slotOwner(s.player));
     this.context = new GameContext(this.state, registry, map);
     for (const p of expandMap(map, registry)) {
@@ -73,8 +83,15 @@ export class Game {
     this.context.spatial.rebuild();
     this.context.spatial.updateTerritory();
     this.economy = new Economy(this.context);
+    this.campLoot = new CampLoot(this.context, map.camps);
+    this.inventory = new Inventory(this.context);
+    this.revival = new Revival(this.context);
     this.observation = new Observation(this.context, this.owners, (e, item) =>
       this.economy.available(e, item),
+      (owner,e)=>e.owner==='none'
+        ? this.map.camps.some(c=>c.id===e.unit?.camp && c.aggression==='players')
+        : (this.slots.find(s=>slotOwner(s.player)===owner)?.team ?? ownerSlot(owner)) !==
+          (this.slots.find(s=>slotOwner(s.player)===e.owner)?.team ?? ownerSlot(e.owner)),
     );
     this.combat = new Combat(
       this.context,
@@ -82,6 +99,8 @@ export class Game {
       map.camps,
       new Map(slots.map((s) => [slotOwner(s.player), s.team ?? s.player])),
     );
+    this.spells=new Spellcasting(this.context,this.combat,this.observation);
+    this.economy.startGathering();
     this.observation.update();
   }
   get entities() {
@@ -128,19 +147,26 @@ export class Game {
       return "Build inside your territory";
     if (
       cells.some((i) => !this.spatial.walkable(i)) ||
-      this.context.activeUnits().some((e) => cells.includes(cell(e)))
+      this.context.activeUnits().some((e) => cells.includes(this.spatial.cell(e)))
     )
       return "Placement blocked";
+    for(const resource of this.context.live()) {
+      const clearance=this.context.def(resource).constructionClearance;
+      if(clearance===undefined || !resource.resource?.amount)continue;
+      const f=this.context.def(resource).footprint??{width:1,depth:1};
+      if(cells.some(i=>Math.abs(i%this.spatial.size-resource.x)<=Math.floor(f.width/2)+clearance &&
+        Math.abs(Math.floor(i/this.spatial.size)-resource.y)<=Math.floor(f.depth/2)+clearance))return "Leave access around the resource deposit";
+    }
     const elevations = cells.map((i) => this.spatial.heights[i]);
     if (Math.max(...elevations) - Math.min(...elevations) > 100)
       return "Choose flatter ground";
     const entrance = this.spatial.entrance(candidate);
     if (
       entrance.x < 0 ||
-      entrance.x > 255 ||
+      entrance.x > (this.spatial.size-1) ||
       entrance.y < 0 ||
-      entrance.y > 255 ||
-      !this.spatial.walkable(cell(entrance))
+      entrance.y > (this.spatial.size-1) ||
+      !this.spatial.walkable(this.spatial.cell(entrance))
     )
       return "Entrance blocked";
     if (!this.economy.reserveBill(owner, definition))
@@ -226,8 +252,8 @@ export class Game {
                 ? { x: 0, y: 0 }
                 : { x: (i % 4) * 2 - 3, y: Math.floor(i / 4) * 2 - 1 };
           const goal = {
-            x: Math.max(0, Math.min(255, action.destination.x + offset.x)),
-            y: Math.max(0, Math.min(255, action.destination.y + offset.y)),
+            x: Math.max(0, Math.min((this.spatial.size-1), action.destination.x + offset.x)),
+            y: Math.max(0, Math.min((this.spatial.size-1), action.destination.y + offset.y)),
           };
           this.economy.interrupt(e, goal);
           if (!e.unit.cargo)
@@ -243,8 +269,41 @@ export class Game {
         ? { accepted: true, actors: applied }
         : reject("No actors support that order");
     }
+    if(action.type === "gather") {
+      const target=this.context.get(action.target);
+      if(!target?.resource?.amount || !this.observation.previouslyVisible(owner,target))return reject("Resource is not visible");
+      const actors=eligible.filter(e=>e.unit && this.economy.harvestItem(e,target));
+      for(const e of actors){this.economy.interrupt(e);e.unit!.order={type:"gather",target:target.id};}
+      return actors.length?{accepted:true,actors:actors.map(e=>e.id)}:reject("No workers can gather this resource");
+    }
     const actor = eligible[0]!,
       d = this.context.def(actor);
+    if(action.type==='revive'||action.type==='cancelRevival'){
+      const error=action.type==='revive'?this.revival.enqueue(actor,action.hero):this.revival.cancel(actor,action.hero);
+      return error?reject(error):{accepted:true,actors:[actor.id]};
+    }
+    if(action.type==='learnAbility'){
+      const error=this.spells.learn(actor,action.ability);
+      return error?reject(error):{accepted:true,actors:[actor.id]};
+    }
+    if(action.type==='cast'){
+      if(action.point&&!this.observation.explored(owner,[this.spatial.cell(action.point)]))return reject("Explore the target first");
+      const error=this.spells.cast(actor,action.ability,action.point);
+      return error?reject(error):{accepted:true,actors:[actor.id]};
+    }
+    if (action.type === "pickup") {
+      const target=this.context.get(action.target);
+      if(!target || !this.observation.previouslyVisible(owner,target))return reject("Item is not visible");
+      const error=this.inventory.pickupError(actor,target);
+      if(error)return reject(error);
+      this.economy.interrupt(actor);
+      actor.unit!.order={type:"pickup",target:target.id};
+      return {accepted:true,actors:[actor.id]};
+    }
+    if(action.type === "dropItem" || action.type === "useItem") {
+      const error=action.type === "dropItem" ? this.inventory.drop(actor,action.slot) : this.inventory.use(actor,action.slot);
+      return error ? reject(error) : {accepted:true,actors:[actor.id]};
+    }
     if (action.type === "build") {
       const error = this.canBuild(
         owner,
@@ -266,6 +325,7 @@ export class Game {
         false,
       );
       this.economy.admitProject(b, reservation);
+      this.economy.interrupt(actor);
       this.spatial.rebuild();
       return { accepted: true, actors: [actor.id] };
     }
@@ -313,20 +373,25 @@ export class Game {
       fn();
       this.timings[name] = performance.now() - t;
     };
+    measure("Spell timers",()=>this.spells.tick());
     measure("Work assignment", () => this.economy.assign());
     measure("Orders / navigation", () => {
+      this.inventory.plan();
       this.combat.plan();
       idleMotion(this.context);
       this.context.move();
     });
     measure("Combat", () => {
-      for (const dead of this.combat.resolve()) {
+      for (const dead of this.combat.resolve(this.spells.resolve())) {
+        this.campLoot.onDeath(dead);
+        if(!this.context.def(dead).hero)this.inventory.onDeath(dead);
         this.observation.recordDeath(dead);
         this.context.event(dead.owner, "Entity destroyed", "death");
         this.economy.remove(dead);
+        if(this.context.def(dead).hero)this.revival.retain(dead);
       }
     });
-    measure("Economy", () => this.economy.advance());
+    measure("Economy", () => {this.economy.advance();this.inventory.advance();this.revival.tick();});
     measure("Territory / observation", () => {
       this.spatial.updateTerritory();
       this.observation.update();
@@ -348,84 +413,6 @@ export class Game {
       typeof owner === "number" ? slotOwner(owner) : owner,
     );
   }
-  /** AI emits the same command type; World commits it deterministically for the following tick. */
-  planAI(owner: Owner): Action | null {
-    const known = this.view(owner),
-      owned = known.entities.filter((e) => e.owner === owner),
-      workers = owned.filter(
-        (e) =>
-          this.registry.get(e.definition).behaviors.work && !e.unit?.contained,
-      ),
-      planner = workers.find((e) => !this.context.get(e.id)?.unit?.employment);
-    if (planner) {
-      const wanted = this.registry.rules.ai.buildOrder.find(
-        (id) => !owned.some((e) => e.definition === id),
-      );
-      const home = this.context.get(this.state.objectives[owner]);
-      if (wanted && home)
-        for (let r = 10; r <= 28; r += 5)
-          for (const [dx, dy] of [
-            [r, 0],
-            [-r, 0],
-            [0, r],
-            [0, -r],
-            [r, r],
-            [-r, -r],
-          ]) {
-            const position = { x: home.x + dx, y: home.y + dy };
-            if (!this.canBuild(owner, wanted, position, planner.id))
-              return {
-                type: "build",
-                actor: planner.id,
-                definition: wanted,
-                position,
-              };
-          }
-    }
-    if (
-      workers.filter(
-        (e) =>
-          !this.context.get(e.id)?.unit?.employment &&
-          !this.context.get(e.id)?.unit?.job,
-      ).length > this.registry.rules.ai.reserveWorkers
-    ) {
-      const producer = owned.find(
-        (e) =>
-          !e.construction &&
-          this.registry
-            .get(e.definition)
-            .behaviors.production?.outputs.includes(
-              this.registry.rules.ai.recruit,
-            ) &&
-          (e.production?.queue.length ?? 0) < 2,
-      );
-      if (producer)
-        return {
-          type: "produce",
-          actor: producer.id,
-          definition: this.registry.rules.ai.recruit,
-        };
-    }
-    const army = owned.filter(
-      (e) => this.registry.get(e.definition).behaviors.combat,
-    );
-    if (army.length >= 5) {
-      const enemy = known.entities.find(
-        (e) =>
-          e.owner !== owner &&
-          e.owner !== "none" &&
-          e.hp !== null &&
-          !e.remembered,
-      );
-      if (enemy)
-        return {
-          type: "attack",
-          actors: army.map((e) => e.id),
-          target: enemy.id,
-        };
-    }
-    return null;
-  }
   snapshot(): GameSnapshot {
     return {
       version: 1,
@@ -446,17 +433,20 @@ export class Game {
     this.observation.validateSnapshot(saved.knowledge);
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),
-      jobs = new Set(state.jobs.map((j) => j.id)),
-      claims = new Set(state.claims.map((c) => c.id));
+      jobs = new Set(state.jobs.map((j) => j.id));
+    if (new Set(state.clearedCamps).size !== state.clearedCamps.length ||
+        state.clearedCamps.some(id => !this.map.camps.some(c => c.id === id) ||
+          state.entities.some(e => e.unit?.camp === id && alive(e))))
+      throw new Error("Invalid saved camp rewards");
     if (
       ids.size !== state.entities.length ||
       state.nextId <= Math.max(0, ...ids) ||
       jobs.size !== state.jobs.length ||
-      state.nextJob <= Math.max(0, ...jobs) ||
-      claims.size !== state.claims.length ||
-      state.nextClaim <= Math.max(0, ...claims)
+      state.nextJob <= Math.max(0, ...jobs)
     )
       throw new Error("Invalid saved identity counters");
+    if(new Set(state.visuals.map(v=>v.id)).size!==state.visuals.length || state.nextVisual<=Math.max(0,...state.visuals.map(v=>v.id)) ||
+      state.visuals.some(v=>!this.registry.rules.spells[v.ability]?.ranks[v.rank-1] || v.viewers.some(o=>!this.owners.includes(o))))throw new Error("Invalid visual cues");
     const queues = state.entities
       .flatMap((e) => e.production?.queue ?? [])
       .map((q) => q.id);
@@ -465,15 +455,30 @@ export class Game {
       state.nextQueue <= Math.max(0, ...queues)
     )
       throw new Error("Invalid saved queue identity");
+    const queuedHeroes=state.entities.flatMap(b=>b.revival?.queue.map(q=>q.hero)??[]);
+    if(new Set(queuedHeroes).size!==queuedHeroes.length)throw new Error('Duplicate hero revival');
     for (const e of state.entities) {
+      if(e.x>=this.map.size || e.y>=this.map.size || e.unit?.route.some(i=>i>=this.map.size**2) ||
+        (e.unit?.goal!=null && e.unit.goal>=this.map.size**2) ||
+        (e.unit?.position && (e.unit.position.x>(this.map.size-1)*1000 || e.unit.position.y>(this.map.size-1)*1000)))throw new Error("Saved position outside map");
       const d = this.registry.get(e.definition);
+      if(e.fallen&&(!d.hero||e.hp!==0))throw new Error('Invalid fallen hero');
+      if(!!e.revival!==!!d.behaviors.revival)throw new Error('Invalid revival building');
+      if(e.revival&&(e.revival.queue.length>d.behaviors.revival!.queueCapacity||e.revival.queue.some(q=>{
+        const hero=state.entities.find(h=>h.id===q.hero);return !hero?.fallen||hero.owner!==e.owner||q.progress>d.behaviors.revival!.workTicks;
+      })))throw new Error('Invalid revival queue');
       if (e.owner !== "none" && !this.owners.includes(e.owner))
         throw new Error("Unknown saved owner");
       if (
         (d.kind === "unit") !== !!e.unit ||
         (d.kind === "resource") !== !!e.resource ||
         (d.kind === "item") !== !!e.item ||
-        (e.hp !== null && (!d.body || e.hp > d.body.maxHp)) ||
+        (e.hp !== null && (!d.body || e.hp > entityStats(d,e,this.registry).maxHp)) ||
+        !!e.equipment !== !!d.behaviors.inventory ||
+        (e.equipment !== undefined && (e.equipment.length!==d.behaviors.inventory!.slots ||
+          e.equipment.some(id=>id!==null && !this.registry.find(id)?.itemEffect))) ||
+        !!e.progression !== !!d.behaviors.progression ||
+        (e.progression !== undefined && e.progression.experience > d.behaviors.progression!.thresholds.at(-1)!) ||
         !!d.body !== (e.hp !== null) ||
         !!e.production !== !!d.behaviors.production
       )
@@ -487,7 +492,7 @@ export class Game {
         const u = e.unit;
         if (u.position && (Math.floor((u.position.x + 500) / 1000) !== e.x || Math.floor((u.position.y + 500) / 1000) !== e.y)) throw new Error("Invalid saved precise position");
         if (u.segment) {
-          const segment = u.segment, goal = fixed({x: segment.to % 256, y: Math.floor(segment.to / 256)});
+          const segment = u.segment, goal = fixed({x: segment.to % this.spatial.size, y: Math.floor(segment.to / this.spatial.size)});
           const dx = goal.x - segment.from.x, dy = goal.y - segment.from.y;
           if (!u.position || segment.length !== lengthCeil(dx, dy) || segment.progress > segment.length ||
             u.position.x !== segment.from.x + Math.round(dx * segment.progress / segment.length) ||
@@ -504,6 +509,17 @@ export class Game {
         if (u.camp !== null && !this.map.camps.some((c) => c.id === u.camp))
           throw new Error("Unknown saved camp");
       }
+      const casting=e.spellcasting,policy=d.behaviors.spellcasting;
+      if(!!casting!==!!policy)throw new Error("Invalid saved spellcaster");
+      if(casting&&policy){
+        const entries=Object.entries(casting.learned);
+        if(casting.mana>policy.maxMana || entries.reduce((n,[,rank])=>n+rank,0)>entityStats(d,e,this.registry).level ||
+          entries.some(([id,rank])=>!policy.abilities.includes(id)||rank<1||!this.registry.rules.spells[id]?.ranks[rank-1]||
+            this.registry.rules.spells[id].ranks[rank-1].requiredLevel>entityStats(d,e,this.registry).level)||
+          Object.keys(casting.cooldowns).some(id=>!policy.abilities.includes(id)) ||
+          (casting.pending&&(!casting.learned[casting.pending.ability]||casting.pending.rank>casting.learned[casting.pending.ability])))throw new Error("Invalid saved ability state");
+      }
+      if(e.effects?.some(b=>!this.registry.rules.spells[b.ability]?.ranks[b.rank-1]))throw new Error("Invalid saved status effect");
       if (e.production) {
         const p = e.production;
         if (
@@ -522,18 +538,9 @@ export class Game {
       if (
         !ids.has(j.worker) ||
         !ids.has(j.target) ||
-        state.entities.find((e) => e.id === j.worker)?.unit?.job !== j.id ||
-        (j.claim !== null && !claims.has(j.claim))
+        state.entities.find((e) => e.id === j.worker)?.unit?.job !== j.id
       )
         throw new Error("Invalid saved work reference");
-    for (const r of state.claims)
-      if (
-        !ids.has(r.target) ||
-        (!r.picked && !ids.has(r.source)) ||
-        (r.worker !== null && !ids.has(r.worker)) ||
-        this.registry.get(r.item).kind !== "item"
-      )
-        throw new Error("Invalid saved claim");
     if (
       this.owners.some(
         (owner) => state.objectives[owner] !== this.state.objectives[owner],

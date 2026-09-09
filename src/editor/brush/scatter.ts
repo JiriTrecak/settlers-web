@@ -33,7 +33,7 @@ export function scatterBrush(
     for (let t = 0; t < tries; t++) {
       const x = cx + rng();
       const y = cz + rng();
-      if (!inStamp(Math.floor(x), Math.floor(y))) continue;
+      if (!inStamp(Math.floor(x), Math.floor(y),mask.size)) continue;
       if (mask.sample(x, y) < 0.12) continue;
       if (tooClose(x, y, spots)) continue;
       const slot = pickSlot(slots, rng);

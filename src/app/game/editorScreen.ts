@@ -1,4 +1,5 @@
 import { EntityDock } from "../../editor/chrome/entityDock";
+import { SpellWorkbench } from "../../editor/chrome/spellWorkbench";
 import { getMap, rememberAuthoredMap } from "../../shared/map/library";
 import { playableMapError } from "../../shared/map/playable";
 import { SpawnDock } from "../../editor/chrome/spawnDock";
@@ -41,6 +42,7 @@ export class EditorScreen extends GameScreen {
   private saved = stringifyUtcMap(emptyUtcMap());
   private dialog: Confirm | null = null;
   private modal: CatalogModal | null = null;
+  private spellWorkbench: SpellWorkbench | null = null;
   private readonly mcpPrefs = new McpPrefsStore();
   private mcpOpen = false;
   private skyOpen = false;
@@ -76,6 +78,10 @@ export class EditorScreen extends GameScreen {
       onSaveAs: () => void this.save(true),
       onLoad: () => void this.askLoad(),
       onLeave: () => void this.askLeave(),
+      onEffects: () => {
+        this.spellWorkbench?.destroy();
+        this.spellWorkbench = new SpellWorkbench(this.root);
+      },
       onSelect: () => this.armSelect(),
       onStamp: () => this.stamp(),
       onBrush: () => this.armBrush(),
@@ -183,8 +189,8 @@ export class EditorScreen extends GameScreen {
     window.addEventListener("keydown", this.onKey);
     {
       const initial = hooks.map ?? getMap("mosswater-divide").map;
-      this.editor.replace(initial);
       this.saved = stringifyUtcMap(initial);
+      this.editor.replace(initial);
     }
     this.spawnDock = new SpawnDock(this.root, this.editor);
     this.entityDock = new EntityDock(this.root, this.editor);
@@ -215,6 +221,7 @@ export class EditorScreen extends GameScreen {
 
     this.modal?.close();
     this.dialog?.cancel();
+    this.spellWorkbench?.destroy();
     this.bridge.stop();
     this.terrainDock.destroy();
     this.spawnDock.destroy();
@@ -636,10 +643,16 @@ export class EditorScreen extends GameScreen {
   }
 
   private async askNew(): Promise<void> {
+    const size = await this.confirm("New map", "Choose the size of the battlefield. Both sizes start with two player spawn points.", [
+      { id: "cancel", label: "Cancel" },
+      { id: "256", label: "256 × 256", kind: "primary" },
+      { id: "512", label: "512 × 512" },
+    ]);
+    if (size !== "256" && size !== "512") return;
     if (!(await this.ifClean("Save this map before starting a new one?")))
       return;
     this.files.clearFile();
-    this.editor.replace(emptyUtcMap());
+    this.editor.replace(emptyUtcMap(size === "512" ? 512 : 256));
     this.markClean();
   }
 

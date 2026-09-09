@@ -1,0 +1,84 @@
+{
+  "kind": "character",
+  "camera": {
+    "position": [
+      6.369073867797852,
+      5.438233375549316,
+      18.497135162353516
+    ],
+    "target": [
+      4.76837158203125e-07,
+      1.2800045013427734,
+      -0.0
+    ],
+    "scale": 3.5999999046325684
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -1.3499999046325684,
+        3.5999999046325684,
+        1.7999999523162842
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 1085.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        0.44999998807907104,
+        2.25,
+        2.6999998092651367
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 385.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        2.25,
+        3.1499998569488525,
+        -1.3499999046325684
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 1260.0
+    }
+  ],
+  "variants": [
+    "marshal"
+  ],
+  "variantTriangles": {
+    "marshal": 6512
+  },
+  "triangles": 6512,
+  "vertices": 3478,
+  "animations": [
+    "attack_mace",
+    "carry",
+    "cast",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ],
+  "height": 2.5375,
+  "forward": "+Z",
+  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips."
+}

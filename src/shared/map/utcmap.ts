@@ -39,8 +39,8 @@ export type MapStamp = {
 const startSchema = z
   .object({
     player: z.number().int().min(1).max(8),
-    x: z.number().int().min(0).max(255),
-    z: z.number().int().min(0).max(255),
+    x: z.number().int().min(0).max(511),
+    z: z.number().int().min(0).max(511),
     setup: z.string(),
     mainFort: z.string(),
   })
@@ -48,20 +48,23 @@ const startSchema = z
 export type PlayerStart = z.infer<typeof startSchema>;
 
 export type UtcMap = {
+  readonly size: 256 | 512;
   readonly playerStarts: readonly PlayerStart[];
   readonly entities: readonly Placement[];
   readonly camps: readonly Camp[];
   readonly v: typeof UTCMAP_VERSION;
   readonly name: string;
+  readonly description?: string;
   readonly stamps: readonly MapStamp[];
   readonly waterLevel?: number;
   readonly height?: string;
   readonly landscape?: Landscape;
 };
 
-export function emptyUtcMap(): UtcMap {
+export function emptyUtcMap(size: 256 | 512 = 256): UtcMap {
   return {
     v: UTCMAP_VERSION,
+    size,
     name: DEFAULT_MAP_NAME,
     stamps: [],
     entities: [],
@@ -69,8 +72,8 @@ export function emptyUtcMap(): UtcMap {
     waterLevel: -1,
     playerStarts: [1, 2].map((player) => ({
       player,
-      x: player === 1 ? 218 : 38,
-      z: player === 1 ? 218 : 38,
+      x: player === 1 ? size - 38 : 38,
+      z: player === 1 ? size - 38 : 38,
       setup: "setup.ants",
       mainFort: `start.player.${player}/main-fort`,
     })),
@@ -86,7 +89,9 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
       (k) =>
         ![
           "v",
+          "size",
           "name",
+          "description",
           "stamps",
           "playerStarts",
           "entities",
@@ -98,25 +103,41 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     )
   )
     return null;
+  if (o.size !== 256 && o.size !== 512) return null;
+  const size = o.size;
   const starts = z.array(startSchema).min(2).max(8).safeParse(o.playerStarts);
   const placements = z.array(placementSchema).safeParse(o.entities),
     camps = z.array(campSchema).safeParse(o.camps);
   if (!starts.success || !placements.success || !camps.success) return null;
   const playerStarts = starts.data;
+  if (
+    playerStarts.some((p) => p.x >= size || p.z >= size) ||
+    placements.data.some((p) => p.position.x >= size || p.position.y >= size)
+  )
+    return null;
   if (new Set(playerStarts.map((p) => p.player)).size !== playerStarts.length)
     return null;
+  if (
+    o.description !== undefined &&
+    (typeof o.description !== "string" || o.description.length > 1200)
+  )
+    return null;
+  const description =
+    typeof o.description === "string" ? o.description.trim() : undefined;
   const name = parseName(o.name);
   const stamps = parseStamps(o.stamps);
   if (!name || !stamps) return null;
   const waterLevel = parseWaterLevel(o.waterLevel);
   if (waterLevel === false) return null;
-  const height = parseHeight(o.height);
+  const height = parseHeight(o.height, size);
   if (height === false) return null;
   const landscape = parseLandscape(o.landscape);
   if (o.landscape !== undefined && !landscape) return null;
   return {
     v: UTCMAP_VERSION,
+    size,
     name,
+    ...(description ? { description } : {}),
     stamps,
     playerStarts,
     entities: placements.data,
@@ -129,14 +150,16 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
 
 export function stringifyUtcMap(map: UtcMap): string {
   const height = map.height
-    ? encodeHeight(decodeHeight(map.height) ?? [])
+    ? encodeHeight(decodeHeight(map.height, map.size) ?? [], map.size)
     : undefined;
   const waterLevel =
     map.waterLevel && map.waterLevel !== 0 ? map.waterLevel : undefined;
   return `${JSON.stringify(
     {
       v: map.v,
+      size: map.size,
       name: map.name,
+      ...(map.description ? { description: map.description } : {}),
       stamps: map.stamps,
       playerStarts: map.playerStarts,
       entities: map.entities,
@@ -166,12 +189,12 @@ function parseWaterLevel(raw: unknown): number | undefined | false {
   return raw;
 }
 
-function parseHeight(raw: unknown): string | undefined | false {
+function parseHeight(raw: unknown, size: number): string | undefined | false {
   if (raw === undefined) return undefined;
   if (typeof raw !== "string" || !raw) return false;
-  const samples = decodeHeight(raw);
+  const samples = decodeHeight(raw, size);
   if (!samples) return false;
-  const packed = encodeHeight(samples);
+  const packed = encodeHeight(samples, size);
   return packed ?? undefined;
 }
 

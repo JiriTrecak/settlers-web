@@ -1,3 +1,4 @@
+import {visualCueSchema} from "./visualCues";
 import { z } from "zod";
 import {
   stockSchema,
@@ -10,6 +11,8 @@ const positive = z.number().int().positive(),
   natural = z.number().int().nonnegative();
 const point = pointSchema;
 const orderSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("gather"),target:positive}).strict(),
+  z.object({type:z.literal("pickup"),target:positive}).strict(),
   z
     .object({
       type: z.literal("move"),
@@ -31,11 +34,19 @@ export const entitySchema = z
     placement: z.string().nullable(),
     definition: idSchema,
     owner: ownerSchema,
-    x: z.number().int().min(0).max(255),
-    y: z.number().int().min(0).max(255),
+    x: z.number().int().min(0).max(511),
+    y: z.number().int().min(0).max(511),
     rotation: z.number().finite(),
     hp: natural.nullable(),
     inventory: stockSchema,
+    progression: z.object({ experience: natural }).strict().optional(),
+    fallen: z.literal(true).optional(),
+    revival: z.object({queue:z.array(z.object({hero:positive,progress:natural}).strict())}).strict().optional(),
+    equipment: z.array(idSchema.nullable()).max(12).optional(),
+    spellcasting:z.object({mana:natural,learned:z.record(idSchema,natural.max(3)),cooldowns:z.record(idSchema,natural),
+      pending:z.object({ability:idSchema,rank:positive.max(3),point,resolveTick:natural}).strict().nullable(),
+    }).strict().optional(),
+    effects:z.array(z.object({ability:idSchema,source:positive,expires:natural,rank:positive.max(3)}).strict()).optional(),
     appearance: z
       .object({
         asset: idSchema.optional(),
@@ -50,12 +61,12 @@ export const entitySchema = z
     unit: z
       .object({
         order: orderSchema.nullable(),
-        route: z.array(natural.max(65535)),
-        goal: natural.max(65535).nullable(),
-        position: z.object({x: natural.max(255000), y: natural.max(255000)}).strict().nullable(),
+        route: z.array(natural.max(262143)),
+        goal: natural.max(262143).nullable(),
+        position: z.object({x: natural.max(511000), y: natural.max(511000)}).strict().nullable(),
         segment: z.object({
-          from: z.object({x: natural.max(255000), y: natural.max(255000)}).strict(),
-          to: natural.max(65535), length: positive, progress: natural,
+          from: z.object({x: natural.max(511000), y: natural.max(511000)}).strict(),
+          to: natural.max(262143), length: positive, progress: natural,
         }).strict().nullable(),
         employment: positive.nullable(),
         job: positive.nullable(),
@@ -68,6 +79,7 @@ export const entitySchema = z
         release: point.nullable(),
         target: positive.nullable(),
         cooldown: natural,
+        shot: z.object({tick:natural, x:z.number().nonnegative(), y:z.number().nonnegative(), viewers:z.array(ownerSchema)}).strict().optional(),
         camp: z.string().nullable(),
         returning: z.boolean(),
         retryAt: natural,
@@ -119,24 +131,9 @@ export const jobSchema = z
     source: positive.nullable(),
     item: idSchema.nullable(),
     amount: natural,
-    phase: z.enum(["pickup", "walk", "work", "return"]),
+    phase: z.enum(["walk", "work", "return"]),
     progress: natural,
     queue: positive.nullable(),
-    claim: positive.nullable(),
-    internal: z.boolean(),
-  })
-  .strict();
-export const claimSchema = z
-  .object({
-    id: positive,
-    source: positive,
-    target: positive,
-    item: idSchema,
-    amount: positive,
-    queue: positive.nullable(),
-    worker: positive.nullable(),
-    picked: z.boolean(),
-    internal: z.boolean(),
   })
   .strict();
 export const factSchema = z
@@ -160,9 +157,12 @@ export const factSchema = z
 export const stateSchema = z
   .object({
     tick: natural,
+    random: positive.max(0xffffffff),
+    clearedCamps: z.array(z.string().min(1)),
+    nextVisual:positive,
+    visuals:z.array(visualCueSchema),
     nextId: positive,
     nextJob: positive,
-    nextClaim: positive,
     nextQueue: positive,
     nextFact: positive,
     entities: z.array(entitySchema),
@@ -174,7 +174,6 @@ export const stateSchema = z
       })
       .strict(),
     jobs: z.array(jobSchema),
-    claims: z.array(claimSchema),
     facts: z.array(factSchema),
     objectives: z.record(ownerSchema, positive),
     outcome: z
@@ -188,22 +187,23 @@ export const stateSchema = z
   .strict();
 export type Entity = z.infer<typeof entitySchema>;
 export type Job = z.infer<typeof jobSchema>;
-export type Claim = z.infer<typeof claimSchema>;
 export type Fact = z.infer<typeof factSchema>;
 export type GameState = z.infer<typeof stateSchema>;
 export type Point = z.infer<typeof point>;
 export type QueueEntry = z.infer<typeof queueSchema>;
 export const emptyState = (): GameState => ({
   tick: 0,
+  random: 1,
+  clearedCamps: [],
+  nextVisual:1,
+  visuals:[],
   nextId: 1,
   nextJob: 1,
-  nextClaim: 1,
   nextQueue: 1,
   nextFact: 1,
   entities: [],
   accounting: { produced: {}, consumed: {}, lost: {} },
   jobs: [],
-  claims: [],
   facts: [],
   objectives: {},
   outcome: null,

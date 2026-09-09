@@ -118,7 +118,7 @@ describe("declarative lockstep integration", () => {
         ],
       },
       a = new World(opts);
-    for (let i = 0; i < 400; i++) a.tick();
+    for (let i = 0; i < 400 && a.snapshot().pending.length===0; i++) a.tick();
     expect(a.snapshot().pending.length).toBeGreaterThan(0);
     const b = new World(opts);
     b.restore(a.snapshot());

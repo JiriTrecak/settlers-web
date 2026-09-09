@@ -1,3 +1,4 @@
+import type {Rules} from '../../src/content/schema';
 import { describe, it, expect } from "vitest";
 import { ContentRegistry, fingerprint } from "../../src/content/registry";
 import { content } from "../../src/content/builtin";
@@ -35,7 +36,7 @@ describe("content and presentation contracts", () => {
     const warrior = c.definitions.find(
       (d: any) => d.id === "unit.ants.warrior",
     ) as any;
-    warrior.creation.items = [{ item: "item.stone", amount: 1 }];
+    warrior.creation.items = [{ item: "item.plank", amount: 1 }];
     expect(() => new ContentRegistry(c)).toThrow(/storage must accept/);
     const d = source();
     d.behaviorSets.push({
@@ -64,7 +65,7 @@ describe("content and presentation contracts", () => {
     const g = game(
       [
         placed("b", "building.ants.barracks", 205, 210, {
-          inventory: { "item.plank": 2 },
+          inventory: { "item.wood": 2 },
         }),
       ],
       (s) => {
@@ -101,9 +102,9 @@ describe("content and presentation contracts", () => {
       ]),
       view = g.view("player.1"),
       ids = areaSelection(view.entities, "player.1", g.registry);
-    expect(ids).toHaveLength(2);
+    expect(ids).toHaveLength(3);
     expect(
-      ids.every((id) => g.context.get(id)!.definition === "unit.ants.warrior"),
+      ids.every((id) => g.registry.get(g.context.get(id)!.definition).selectionClass === "army"),
     ).toBe(true);
     const b = g.entities.find((e) => e.placement === "b")!,
       mill = g.entities.find((e) => e.placement === "mill")!;
@@ -118,7 +119,8 @@ describe("content and presentation contracts", () => {
         .every((c) => c.actors[0] === b.id),
     ).toBe(true);
     expect(
-      commandCard(view, ids, "player.1", g.registry).map((b) => b.type),
+      commandCard(view, ids, "player.1", g.registry)
+        .filter(b => b.type !== "cast" && b.type !== "learnAbility").map((b) => b.type),
     ).toEqual(["move", "attack", "stop"]);
   });
   it("S15 removing control removes orders from both UI and authoritative ingress", () => {
@@ -186,6 +188,7 @@ describe("content and presentation contracts", () => {
       (
         s.definitions.find((d: any) => d.id === "building.ants.barracks") as any
       ).behaviors.production.outputs = outputs;
+      (s.rules as Rules).ai.composition = [{definition:outputs[0]!,weight:1}];
       (
         s.actions as { overrides: Record<string, { hotkey: string }> }
       ).overrides[`produce:${outputs[12]}`] = { hotkey: "Z" };
@@ -245,9 +248,10 @@ describe("content and presentation contracts", () => {
   it("prices include physical goods and the settler; visible stacks are capped at sixteen", () => {
     expect(costs(content, "unit.ants.warrior").map((c) => c.kind)).toEqual([
       "item",
+      "item",
       "unit",
     ]);
-    const stack = stockpileLayout({ "item.log": 20, "item.plank": 20 }, 4);
+    const stack = stockpileLayout({ "item.wood": 20, "item.plank": 20 }, 4);
     expect(stack).toHaveLength(16);
     expect(stack.every((p) => Number.isFinite(p.y))).toBe(true);
   });

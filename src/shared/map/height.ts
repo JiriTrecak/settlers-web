@@ -14,9 +14,15 @@ export type HeightDirty = { loX: number; hiX: number; loZ: number; hiZ: number }
 
 export class HeightField {
   readonly origin = HEIGHT_ORIGIN;
-  readonly span = HEIGHT_SPAN;
-  readonly verts = HEIGHT_VERTS;
-  readonly samples = new Float32Array(HEIGHT_VERTS * HEIGHT_VERTS);
+  readonly span: number;
+  readonly verts: number;
+  readonly samples: Float32Array;
+  constructor(readonly size = MAP_SIZE) {
+    if (!Number.isInteger(size) || size < 16 || size > 512) throw new Error("Unsupported height field size");
+    this.span = size + MAP_HALO * 2;
+    this.verts = this.span + 1;
+    this.samples = new Float32Array(this.verts * this.verts);
+  }
   waterLevel = 0;
 
   load(samples: ArrayLike<number>, waterLevel = 0): void {
@@ -32,7 +38,7 @@ export class HeightField {
   }
 
   sample(x: number, z: number): number {
-    return sampleHeight(this.samples, x, z);
+    return sampleHeight(this.samples, x, z, this.size);
   }
 
   wet(x: number, z: number): boolean {
@@ -76,25 +82,26 @@ export class HeightField {
   }
 }
 
-export function sampleHeight(samples: ArrayLike<number>, x: number, z: number): number {
+export function sampleHeight(samples: ArrayLike<number>, x: number, z: number, size = MAP_SIZE): number {
+  const span = size + MAP_HALO * 2, verts = span + 1;
   const fx = x - HEIGHT_ORIGIN;
   const fz = z - HEIGHT_ORIGIN;
-  if (fx < 0 || fz < 0 || fx > HEIGHT_SPAN || fz > HEIGHT_SPAN) return 0;
-  const x0 = Math.min(HEIGHT_SPAN, Math.floor(fx));
-  const z0 = Math.min(HEIGHT_SPAN, Math.floor(fz));
-  const x1 = Math.min(HEIGHT_SPAN, x0 + 1);
-  const z1 = Math.min(HEIGHT_SPAN, z0 + 1);
+  if (fx < 0 || fz < 0 || fx > span || fz > span) return 0;
+  const x0 = Math.min(span, Math.floor(fx));
+  const z0 = Math.min(span, Math.floor(fz));
+  const x1 = Math.min(span, x0 + 1);
+  const z1 = Math.min(span, z0 + 1);
   const tx = fx - x0;
   const tz = fz - z0;
-  const a = samples[z0 * HEIGHT_VERTS + x0] ?? 0;
-  const b = samples[z0 * HEIGHT_VERTS + x1] ?? 0;
-  const c = samples[z1 * HEIGHT_VERTS + x0] ?? 0;
-  const d = samples[z1 * HEIGHT_VERTS + x1] ?? 0;
+  const a = samples[z0 * verts + x0] ?? 0;
+  const b = samples[z0 * verts + x1] ?? 0;
+  const c = samples[z1 * verts + x0] ?? 0;
+  const d = samples[z1 * verts + x1] ?? 0;
   return a * (1 - tx) * (1 - tz) + b * tx * (1 - tz) + c * (1 - tx) * tz + d * tx * tz;
 }
 
-export function encodeHeight(samples: ArrayLike<number>): string | undefined {
-  const n = HEIGHT_VERTS * HEIGHT_VERTS;
+export function encodeHeight(samples: ArrayLike<number>, size = MAP_SIZE): string | undefined {
+  const n = (size + MAP_HALO * 2 + 1) ** 2;
   if (samples.length < n) return undefined;
   const i16 = new Int16Array(n);
   let any = false;
@@ -107,10 +114,10 @@ export function encodeHeight(samples: ArrayLike<number>): string | undefined {
   return bytesToB64(new Uint8Array(i16.buffer, i16.byteOffset, i16.byteLength));
 }
 
-export function decodeHeight(raw: string): Float32Array | null {
+export function decodeHeight(raw: string, size = MAP_SIZE): Float32Array | null {
   if (!raw) return null;
   const bytes = b64ToBytes(raw);
-  if (!bytes || bytes.byteLength !== HEIGHT_VERTS * HEIGHT_VERTS * 2) return null;
+  if (!bytes || bytes.byteLength !== (size + MAP_HALO * 2 + 1) ** 2 * 2) return null;
   const copy = bytes.byteOffset === 0 ? bytes : bytes.slice();
   const i16 = new Int16Array(copy.buffer, copy.byteOffset, copy.byteLength / 2);
   const out = new Float32Array(i16.length);

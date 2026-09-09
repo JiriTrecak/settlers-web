@@ -56,24 +56,20 @@ describe("RTS click intentions", () => {
       position: {x: 245, y: 245}, rotation: 270,
     });
   });
-  it("selects a committed construction site unless Shift was held", () => {
+  it("retains all selected workers after placement; Shift retains placement mode too", () => {
     for (const shift of [false, true]) {
       const {session, hud, g, unit} = setup();
-      Object.assign(hud, {mode: "building.ants.barracks", buildingActor: unit.id, placementRotation: 0, update: vi.fn()});
+      const workers = g.entities.filter(e => e.definition === "unit.ants.settler").slice(0, 3).map(e => e.id);
+      hud.selectedIds = workers;
+      Object.assign(hud, {mode: "building.ants.barracks", buildingActor: unit.id, placementRotation: 0});
       session.renderer.pickGround = () => ({x: 205, z: 210});
       session.click(0, 0, shift);
       const action = session.send.mock.calls[0][0];
       expect(g.command("player.1", action).accepted).toBe(true);
-      const site = g.entities.at(-1)!;
       g.observation.update();
-      session.selectCommittedBuilding([action]);
-      if (shift) {
-        expect(hud.clearMode).not.toHaveBeenCalled();
-        expect(hud.setSelection).not.toHaveBeenCalled();
-      } else {
-        expect(hud.clearMode).toHaveBeenCalledOnce();
-        expect(hud.setSelection).toHaveBeenCalledWith([site.id]);
-      }
+      expect(hud.selectedIds).toEqual(workers);
+      expect(hud.setSelection).not.toHaveBeenCalled();
+      expect(hud.clearMode).toHaveBeenCalledTimes(shift ? 0 : 1);
     }
   });
   it("left ground clears selection, right ground moves without clearing it", () => {

@@ -16,7 +16,7 @@ export class PlayScreen extends GameScreen {
     hooks: {
       onLeave: () => void;
       mapId: string;
-      player: number;
+      player: number | null;
       channel?: Channel;
       match?: MatchConfig;
     },
@@ -62,6 +62,14 @@ export class PlayScreen extends GameScreen {
           }
         : {}),
     });
+    if (hooks.player === null) {
+      const label = document.createElement("div");
+      label.textContent = "OBSERVER";
+      label.setAttribute("aria-label", "Observer mode — no player commands");
+      label.style.cssText =
+        "position:absolute;top:18px;left:50%;transform:translateX(-50%);color:#c9dfdc;background:#101b20dd;border:1px solid #758e8a66;padding:6px 18px;font:11px system-ui;letter-spacing:.2em;pointer-events:none";
+      this.root.append(label);
+    }
     this.session = new Session(canvas, {
       player: hooks.player,
       mapId: hooks.mapId,

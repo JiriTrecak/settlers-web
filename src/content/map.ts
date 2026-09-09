@@ -47,6 +47,7 @@ export function validatePlacements(
       state = p.initialState;
     if (ids.has(p.id)) throw new Error(`Duplicate placement ${p.id}`);
     ids.add(p.id);
+    if(p.position.x>=map.size || p.position.y>=map.size)throw new Error(`${p.id}: outside map bounds`);
     if (
       p.owner !== "none" &&
       !map.playerStarts.some((s) => p.owner === `player.${s.player}`)
@@ -102,6 +103,8 @@ export function validatePlacements(
     campIds = new Set<string>();
   for (const raw of map.camps) {
     const camp = campSchema.parse(raw);
+    if (camp.lootPool && !registry.rules.lootPools[camp.lootPool])
+      throw new Error(`${camp.id}: unknown loot pool ${camp.lootPool}`);
     if (campIds.has(camp.id)) throw new Error("Duplicate camp ID");
     campIds.add(camp.id);
     for (const id of camp.members) {
@@ -156,9 +159,9 @@ export function placementOccupancyError(
         x <= p.position.x + Math.floor(w / 2);
         x++
       ) {
-        if (x < 0 || x > 255 || y < 0 || y > 255)
+        if (x < 0 || x >= map.size || y < 0 || y >= map.size)
           return `${p.id}: footprint is outside the playable map`;
-        const cell = y * 256 + x,
+        const cell = y * map.size + x,
           other = occupied.get(cell);
         if (other) return `${p.id}: overlaps ${other}`;
         occupied.set(cell, p.id);

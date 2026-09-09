@@ -36,10 +36,11 @@ describe("Mosswater Divide", () => {
       expect(a.y + b.y).toBeCloseTo(255);
     }
   });
-  it("contains mirrored wolf packs and ogres outside the bases", () => {
+  it("contains mirrored mixed packs and ogres outside the bases", () => {
     expect(
       map.entities.filter((s) => s.definition === "unit.neutral.wolf"),
-    ).toHaveLength(6);
+    ).toHaveLength(4);
+    expect(map.entities.filter(s=>s.definition==="unit.neutral.thornspitter")).toHaveLength(2);
     expect(
       map.entities.filter((s) => s.definition === "unit.neutral.ogre"),
     ).toHaveLength(2);
