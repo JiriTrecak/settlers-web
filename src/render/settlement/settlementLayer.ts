@@ -305,7 +305,7 @@ export class SettlementLayer {
       if (e.hp !== null && o.userData.previousHealth !== undefined && e.hp < o.userData.previousHealth)
         o.userData.lastDamageTick = tick;
       o.userData.previousHealth = e.hp;
-      hp.visible = !!d.body && e.hp! > 0 && this.selected.has(e.id);
+      hp.visible = !!d.body && e.hp! > 0 && (this.selected.has(e.id) || (d.kind === "unit" && e.hp! < d.body.maxHp));
       if (hp.visible && d.body) {
         const elapsed = tick - (o.userData.lastDamageTick ?? -Infinity);
         const blink = elapsed >= 0 && elapsed < 40 && Math.floor(elapsed / 5) % 2 === 0;

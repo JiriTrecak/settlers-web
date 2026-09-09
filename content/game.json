@@ -328,7 +328,23 @@
         "priority": 20
       }
     },
-    "overrides": {},
+    "overrides": {
+      "build:building.ants.lumberjack": {
+        "priority": 100
+      },
+      "build:building.ants.stonemason": {
+        "priority": 90
+      },
+      "build:building.ants.sawmill": {
+        "priority": 80
+      },
+      "build:building.ants.forester": {
+        "priority": 70
+      },
+      "build:building.ants.house": {
+        "priority": 60
+      }
+    },
     "categories": {
       "category.build": {
         "name": "Build",

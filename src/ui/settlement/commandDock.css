@@ -110,8 +110,6 @@
 .rts-command-pages button{cursor:pointer;color:#dde5e1;background:#192326;border:1px solid #687778;padding:0 8px}
 .rts-actions .rts-command-name{font-size:8px}
 
-.rts-back-arrow{position:absolute;inset:0;display:grid;place-items:center;font:42px system-ui;color:#e4e9dc;text-shadow:0 2px 5px #000;background:#152022b8;pointer-events:none}
-.rts-command[aria-haspopup]::after{content:"›";position:absolute;right:4px;bottom:12px;color:#f4df9c;font:bold 20px system-ui;text-shadow:0 1px 4px #000}
 
 /* Square, icon-only commands. Give the steel artwork room for all three rows. */
 .rts-dock{height:clamp(240px,33.333vw,400px)}

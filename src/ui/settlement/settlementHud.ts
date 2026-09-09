@@ -268,12 +268,6 @@ export class SettlementHud {
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
         if (b.type === "category") button.setAttribute("aria-haspopup", "true");
-        if (b.type === "back") {
-          const arrow = document.createElement("span");
-          arrow.className = "rts-back-arrow";
-          arrow.textContent = "↶";
-          button.append(arrow);
-        }
         button.setAttribute("aria-label", b.name);
         Object.assign(button.dataset, {
           tipName: b.name,
@@ -293,11 +287,6 @@ export class SettlementHud {
         this.grid.append(button);
       }
       this.pages.replaceChildren();
-      if (this.category) {
-        const label = document.createElement("span");
-        label.textContent = content.actions.categories[this.category].name;
-        this.pages.append(label);
-      }
       const pages = commandPageCount(this.menuEntries);
       if (pages > 1) {
         for (const delta of [-1, 1]) {

@@ -50,6 +50,19 @@ it("uses independent animated game variants, reacts once per strike, and disting
   layer.select(null);
   layer.update(view, field, 1);
   expect(targetOutline.visible).toBe(false);
+  const workerHealth = (layer as any).entities.get(worker.id).getObjectByName("Health");
+  const fullHp = worker.hp!;
+  expect(workerHealth.visible).toBe(false);
+  worker.hp = fullHp - 1;
+  layer.update(view, field, 1);
+  expect(workerHealth.visible).toBe(true);
+  worker.hp = fullHp;
+  layer.update(view, field, 1);
+  expect(workerHealth.visible).toBe(false);
+  layer.select(worker.id);
+  layer.update(view, field, 1);
+  expect(workerHealth.visible).toBe(true);
+  layer.select(null);
   // Tiny idle-walk steps still turn correctly, regardless of render interpolation.
   worker.unit!.moving = true; worker.unit!.strolling = true;
   worker.x -= .01; worker.y += .02;
