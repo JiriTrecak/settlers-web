@@ -13,11 +13,12 @@ Commands come from each selected entity's capabilities. Workers expose construct
 - **Right-click a dropped item with a hero:** approach and pick it up.
 - **Arrow keys or screen edges:** pan the camera.
 - **Home:** return to your Main Hall.
+- **Hero portrait, top-left:** click to select; double-click to center the camera on the hero.
 - **F3:** open debug controls.
 - **Mouse wheel:** zoom with smoothing and momentum.
 - **R / Shift + R while placing:** rotate the building in opposite quarter-turn directions.
 
-Workers remain selected after committing a building. The ghost and ground footprint let you inspect placement before spending resources.
+Workers remain selected after committing a building. The first selected worker who is not already building takes the job. If all selected workers are building, the first is redirected to the new site. A worker carrying resources delivers that load first, then builds. Shift also keeps placement mode active. The ghost and ground footprint let you inspect placement before spending resources.
 
 ## Declared shortcuts
 

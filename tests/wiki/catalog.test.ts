@@ -43,12 +43,12 @@ describe("generated game wiki", () => {
     const workerSet = edited.behaviorSets.find(
       (s) => s.id === "behavior-set.worker",
     )!;
-    workerSet.behaviors.work!.carryCapacity = 6;
+    workerSet.behaviors.work!.carryCapacity = 16;
     const { files } = buildCatalog(edited);
     expect(files.get("units/unit-ants-archer.md")).toContain("| Health | 87 |");
     expect(files.get("units/unit-ants-archer.md")).toContain("7 [Wood]");
     expect(files.get("units/unit-ants-settler.md")).toContain(
-      "| Cargo capacity | 6 |",
+      "| Cargo capacity | 16 |",
     );
   });
   it("rejects broken registry references before publication", () => {

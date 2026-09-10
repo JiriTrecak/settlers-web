@@ -265,6 +265,12 @@ export class Session {
           renderer.gameAbilityTarget(null);
         }
       },
+      focus: (id) => {
+        const hero = this.selectionView().entities.find(e => e.id === id);
+        if (!hero || !content.get(hero.definition).hero || hero.unit?.contained || (hero.hp ?? 0) <= 0) return;
+        renderer.camera.lookAt(hero.x, hero.y);
+        this.present();
+      },
       home: () => {
         const game = this.world?.settlement,
           home = game?.entities.find(
@@ -688,7 +694,7 @@ export class Session {
       }
       const action: Extract<Action, { type: "build" }> = {
         type: "build",
-        actor: hud.buildingActor!,
+        actors: hud.targeting!.actors,
         definition: hud.mode,
         position,
         rotation: hud.placementRotation,

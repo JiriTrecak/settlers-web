@@ -33,10 +33,20 @@ This cutover does not implement Lua, live portraits, capture or advanced diploma
 
 The amber/wood cutover passed 325 tests across 90 files and the production build. A 16,000-tick Mosswater AI duel exercised recurring worker capacity and mixed-army recruitment; both players maintained 23 living workers by the end. Headless timing is not a browser FPS guarantee.
 
-The updated real MatchHost smoke test also passed: two WebSocket peers, 3,000 ticks, fifteen confirmed hashes each, and exact shared spending of 26 wood and 44 amber. Live browser inspection confirmed mine selection/occupancy, the automatic worker cap and worker-built barracks.
+That earlier cutover's real MatchHost smoke test also passed: two WebSocket peers, 3,000 ticks, fifteen confirmed hashes each, and exact shared spending of 26 wood and 44 amber at the former compact prices. Live browser inspection confirmed mine selection/occupancy, the automatic worker cap and worker-built barracks. The balance pass below supersedes those prices.
 
 ## First combat balance pass
 
 `tests/game/balance.test.ts` covers armor/class/spell/guard ordering, immunity, meaningful small hits against high armor, complete level-ten stats, six-slot equipment plus Rally, deterministic fractional regeneration and save continuation, level-up pool changes, derived attack intervals, six-target area budgets, immunity exclusions, hero stun duration and building stun exclusion. `tests/game/gathering.test.ts` verifies ten-unit amber and wood delivery cycles plus partial depletion conservation.
 
 The schema validates complete damage matrices, one matching level-one stat record, increasing XP thresholds, non-shrinking resource pools and millipoint regeneration rates. The simulation build is `declarative-sim-13`; earlier saves/content hashes are incompatible.
+
+The 9 September 2026 pass (`4c1d51f7`) passed all 340 tests across 92 files, the game production build, wiki type checking and wiki production build. The real MatchHost check passed 3,000 ticks with two WebSocket peers and fifteen confirmed hashes each; combined construction/recruitment consumption was exactly 800 amber and 160 wood at the new prices. Browser inspection confirmed starting resources, Hall/Warrior/Marshal stats and the updated hero command card.
+
+`node --import tsx scripts/probe-balance-match.ts` ran a 16,000-tick Mosswater AI duel (6 minutes 40 seconds of game time). Both sides gathered, constructed a barracks and four houses, recruited armies and kept their level-two Marshals alive; three camps were cleared. It is an opening smoke test, not a completed-match balance verdict. Lumber accumulated faster than amber, which remains an explicit playtest question.
+
+## Animated tree harvesting
+
+The pine integration advances the simulation build to `declarative-sim-14`. Tests cover exactly ten one-HP contacts, one reserved load, no early hall credit, the 72-tick fall/departure gate, interrupted chopping, damaged/falling snapshot continuation, fog-memory isolation and renewed HP after regrowth. The real exported GLB is sampled in `tests/render/tree-player.test.ts` to verify hit rest, fall/decay continuity, full-size sinking, eventual removal and independent instances.
+
+All 345 tests across 94 files passed. Live Mosswater play showed wood being delivered; an isolated scene using the actual Game, SettlementLayer and PropField verified the final hit, grounded fall, sinking and disappearance. Static standing trees retain instancing; active tree proxies share geometry/materials. Flat-ground animation limitations from the asset handoff still apply on steep terrain.

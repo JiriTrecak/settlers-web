@@ -16,7 +16,7 @@ Amber Mines are neutral buildings already present on the map. You can select the
 
 Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the hall. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
 
-Trees are directly targetable, including their canopies. A depleted tree disappears and stops blocking movement. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
+Trees are directly targetable, including their canopies. A felled tree stops blocking movement, falls and then sinks out of view. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
 
 A [Forester lodge](/buildings/building-ants-forester) employs a worker to restore suitable depleted tree sites. The replacement needs time to mature; a mature tree cannot appear through a unit occupying its space.
 
@@ -36,7 +36,7 @@ A destroyed house removes its capacity, but excess existing workers survive. Bir
 
 {{stats:recruitment}}
 
-The [Barracks](/buildings/building-ants-barracks) reserves the resource bill immediately, calls a real **available Worker** to its entrance and trains that ant. Training is quick once the worker arrives. Traveling and a blocked exit can make the total wait longer.
+The [Barracks](/buildings/building-ants-barracks) reserves the full resource bill immediately for **every unit you queue**, calls a real **available Worker** to its entrance and trains that ant. Unaffordable units cannot be queued. Cancelling any queue slot returns that unit's full reserved cost; the next unit is already paid for. Training is quick once the worker arrives. Traveling and a blocked exit can make the total wait longer.
 
 An available worker has no assignment, cargo, active order, job or pending release. A mine assignment is protected even while the ant is between loads. Training does **not** silently strip your economy. If there is no eligible worker, the queue waits.
 
@@ -59,3 +59,9 @@ A contested third resource for higher tiers has been discussed, but is **not imp
 ## Load size and initial scale
 
 Workers bring **10 amber or 10 wood per full trip**. Amber takes 2.5 seconds of work per load; wood takes 10 seconds, with travel added in both cases. Depletion or limited storage can produce a partial final load without losing resources. Mature trees hold 100 wood. The price and starting-resource scale is deliberately close to Warcraft-sized numbers for this first playtest; worker conversion and automatic births remain our own economy. See the [implemented balance baseline](/development/first-balance-pass).
+
+## Chopping and felling trees
+
+A fresh tree has **10 chopping HP** and yields **10 lumber**. A worker swings once per second, removing one HP at axe contact. The first nine hits shake the tree; the tenth starts its **1.8-second fall**. The worker then carries the load home, where it becomes spendable. The fallen tree sinks at full size for six seconds and disappears.
+
+Stopping or changing workers preserves damage already done. One worker reserves each tree, so multiple workers cannot duplicate the harvest. Workers automatically continue to nearby trees; foresters restore exhausted sites with full chopping health. Amber remains ten per trip.

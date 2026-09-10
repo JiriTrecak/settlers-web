@@ -1,0 +1,41 @@
+.rts-hero-bar {
+  position: absolute;
+  top: 54px;
+  left: 24px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+}
+.rts-hero-bar[hidden] { display: none; }
+.rts-hero-shortcut {
+  position: relative;
+  box-sizing: border-box;
+  width: 64px;
+  height: 68px;
+  padding: 3px 3px 7px;
+  border: 2px solid #79888d;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #374449, #0b1115);
+  box-shadow: inset 0 0 0 1px #c5d0ce30, 0 3px 9px #0009;
+  cursor: pointer;
+}
+.rts-hero-shortcut > .rts-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  border-radius: 1px;
+}
+.rts-hero-shortcut:hover { border-color: #d4dedb; }
+.rts-hero-shortcut[aria-pressed="true"] {
+  border-color: #e3c478;
+  box-shadow: inset 0 0 0 1px #e3c47855, 0 0 8px #d4a34b55;
+}
+.rts-hero-shortcut:focus-visible { outline: 2px solid #ecdaa4; outline-offset: 3px; }
+.rts-hero-shortcut:disabled { cursor: default; }
+.rts-hero-shortcut:disabled > .rts-art { filter: grayscale(1) brightness(.45); }
+.rts-hero-health { position: absolute; left: 3px; right: 3px; bottom: 2px; height: 3px; background: #23100f; }
+.rts-hero-health::after { content: ''; display: block; width: var(--hero-health); height: 100%; background: var(--hero-health-color); }

@@ -26,8 +26,8 @@ async function validateModels(root: string, registry: ContentRegistry) {
       if (width !== height || width < 1 || width > 128)
         throw new Error(`${asset.id}: icons must be square and at most 128px`);
     }
-    if (asset.file) {
-      const file = resolve(root, asset.file),
+    for (const model of [asset.file, asset.harvestAnimation].filter((p): p is string => !!p)) {
+      const file = resolve(root, model),
         path = relative(assetsRoot, file);
       if (
         path.startsWith("..") ||
@@ -35,7 +35,7 @@ async function validateModels(root: string, registry: ContentRegistry) {
         !/\.(glb|gltf)$/.test(file) ||
         !(await stat(file).catch(() => null))?.isFile()
       )
-        throw new Error(`${asset.id}: missing project model ${asset.file}`);
+        throw new Error(`${asset.id}: missing project model ${model}`);
     }
     if (
       asset.sceneryAsset &&

@@ -52,7 +52,7 @@ export class Combat {
         combat = c.def(e).behaviors.combat,
         order = u.order;
       if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
-      if (u.job || order?.type === "pickup" || order?.type === "gather") continue;
+      if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") continue;
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
       if (camp && (distance2(precise(e), camp.home) > camp.leash ** 2 || u.returning)) {

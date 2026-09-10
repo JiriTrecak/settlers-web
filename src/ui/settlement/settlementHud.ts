@@ -1,3 +1,5 @@
+import { heroShortcuts } from "../../presentation/heroes";
+import { HeroBar } from "./heroBar";
 import { armorMultiplier } from "../../sim/game/damage";
 import { experienceMeter } from "../../presentation/experience";
 import { TICK_MS } from "../../shared/match/match";
@@ -27,6 +29,7 @@ export class SettlementHud {
   readonly root = document.createElement("div");
   readonly minimapHost = document.createElement("div");
   readonly clockHost = document.createElement("div");
+  private readonly heroes: HeroBar;
   private readonly stock = document.createElement("div");
   private readonly heading = document.createElement("h2");
   private readonly portrait = document.createElement("div");
@@ -146,10 +149,15 @@ export class SettlementHud {
       action: (action: Action) => void;
       mode: () => void;
       home: () => void;
+      focus: (id: number) => void;
     },
   ) {
     this.owner = owner === null ? "none" : slotOwner(owner);
     this.readOnly = owner === null;
+    this.heroes = new HeroBar({
+      select: id => this.setSelection([id]),
+      focus: id => this.hooks.focus(id),
+    });
     this.root.className = "rts-hud";
     this.stock.className = "rts-resources";
     const dock = document.createElement("div");
@@ -197,7 +205,7 @@ export class SettlementHud {
     this.pages.className = "rts-command-pages";
     actions.append(this.grid, this.pages);
     dock.append(map, selection, actions);
-    this.root.append(this.stock, dock);
+    this.root.append(this.stock, this.heroes.root, dock);
     host.append(this.root);
     this.tooltips = new CommandTooltips(host);
     window.addEventListener("keydown", this.onKey);
@@ -252,6 +260,7 @@ export class SettlementHud {
       this.page = 0;
       this.clearMode();
     }
+    this.heroes.update(heroShortcuts(view, this.owner, content), this.selectedIds);
     this.root.classList.toggle(
       "has-unit-selection",
       this.selectedIds.some(

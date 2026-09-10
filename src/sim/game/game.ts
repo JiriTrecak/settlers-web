@@ -27,7 +27,7 @@ import {
   type Point,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-13";
+export const SIMULATION_BUILD = "declarative-sim-15";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -203,7 +203,7 @@ export class Game {
       return { accepted: true, actors: [] };
     const ids =
       "actors" in action
-        ? [...action.actors].sort((a, b) => a - b)
+        ? action.type === "build" ? action.actors : [...action.actors].sort((a, b) => a - b)
         : [action.actor];
     if (
       ids.some((id) => {
@@ -356,11 +356,14 @@ export class Game {
       return error ? reject(error) : { accepted: true, actors: [actor.id] };
     }
     if (action.type === "build") {
+      const builders = eligible.filter(e => this.context.def(e).behaviors.work?.builds.includes(action.definition));
+      const builder = builders.find(e => !this.economy.isConstructing(e)) ?? builders[0];
+      if (!builder) return reject("Select an eligible worker");
       const error = this.canBuild(
         owner,
         action.definition,
         action.position,
-        actor.id,
+        builder.id,
         action.rotation ?? 0,
       );
       if (error) return reject(error);
@@ -376,9 +379,9 @@ export class Game {
         false,
       );
       this.economy.admitProject(b, reservation);
-      this.economy.interrupt(actor);
+      this.economy.orderConstruction(builder, b);
       this.spatial.rebuild();
-      return { accepted: true, actors: [actor.id] };
+      return { accepted: true, actors: [builder.id] };
     }
     if (action.type === "cancel" && actor.construction) {
       if (action.queue) return reject("Project has no recruitment queue");
@@ -396,7 +399,8 @@ export class Game {
         return reject("Unsupported output");
       if (actor.production.queue.length >= production.queueCapacity!)
         return reject("Queue is full");
-      this.economy.queue(actor, action.definition);
+      if (!this.economy.queue(actor, action.definition))
+        return reject("Insufficient unreserved materials");
     } else if (action.type === "cancel") {
       if (!action.queue || !this.economy.cancelEntry(actor, action.queue))
         return reject("Queue entry no longer exists");
@@ -580,6 +584,13 @@ export class Game {
         !!e.production !== !!d.behaviors.production
       )
         throw new Error(`Invalid saved entity ${e.id}`);
+      const felling = e.resource?.felling;
+      if (!!d.felling !== !!felling || (felling && (
+        felling.hp > d.felling!.maxHp ||
+        (felling.hp === 0) !== (felling.fallTick !== null) ||
+        (felling.lastHitTick !== null && felling.lastHitTick > state.tick) ||
+        (felling.fallTick !== null && (felling.fallTick > state.tick || felling.fallTick !== felling.lastHitTick))
+      ))) throw new Error("Invalid saved felling state");
       for (const item of Object.keys(e.inventory))
         if (this.registry.get(item).kind !== "item")
           throw new Error("Invalid stored item");
@@ -669,6 +680,12 @@ export class Game {
           (p.staff !== null && !ids.has(p.staff))
         )
           throw new Error("Invalid saved production");
+        const reserved: Record<string, number> = {};
+        for (const q of p.queue)
+          for (const cost of this.registry.get(q.definition).creation!.items)
+            reserved[cost.item] = (reserved[cost.item] ?? 0) + cost.amount;
+        if (Object.entries(reserved).some(([item, amount]) => (e.inventory[item] ?? 0) < amount))
+          throw new Error("Unfunded saved recruitment queue");
       }
     }
     for (const j of state.jobs)

@@ -253,7 +253,7 @@ describe("direct gathering and protected recruitment", () => {
     expect(
       g.command("player.1", {
         type: "build",
-        actor: w.id,
+        actors: [w.id],
         definition: "building.ants.house",
         position: { x: 132, y: 129 },
       }).accepted,
@@ -288,7 +288,7 @@ describe("direct gathering and protected recruitment", () => {
       w = worker(g);
     g.command("player.1", {
       type: "build",
-      actor: w.id,
+      actors: [w.id],
       definition: "building.ants.house",
       position: { x: 205, y: 210 },
     });

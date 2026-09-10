@@ -21,6 +21,7 @@ export function resourceStamps(entities: readonly EntityView[]): MapStamp[] {
       (e) =>
         e.resource &&
         e.resource.amount > 0 &&
+        e.resource.felling?.lastHitTick == null &&
         content.get(e.definition).kind === "resource",
     )
     .map((e) => ({
@@ -66,6 +67,7 @@ export function editorEntities(map: UtcMap): EntityView[] {
             resource: {
               amount: p.initialState?.amount ?? d.yield!,
               growingUntil: null,
+              ...(d.felling ? {felling: {hp: d.felling.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1}}} : {}),
             },
           }
         : {}),

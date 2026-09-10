@@ -37,7 +37,7 @@ export const actionSchema = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("build"),
-      actor,
+      actors,
       definition: idSchema,
       position: pointSchema,
       rotation: z.number().int().multipleOf(90).optional(),

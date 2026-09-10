@@ -48,7 +48,7 @@ describe("work disruption and capacity", () => {
     expect(
       g.command("player.1", {
         type: "build",
-        actor: w.id,
+        actors: [w.id],
         definition: "building.ants.house",
         position: { x: 205, y: 210 },
       }).accepted,

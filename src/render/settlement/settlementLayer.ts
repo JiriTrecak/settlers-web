@@ -1,3 +1,4 @@
+import { HarvestTrees } from "./harvestTrees";
 import { MineLabels } from "./mineLabels";
 import { AbilityTarget, type AbilityAim } from "./abilityTarget";
 import { batchCharacterMaterials } from "../characters/materialBatch";
@@ -40,6 +41,9 @@ import { placementGrid } from "./placementGrid";
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private readonly harvestTrees = new HarvestTrees(this.root);
+  private sampledTick = -1;
+  private tickTime = 0;
   private readonly abilityTarget = new AbilityTarget(this.root);
   targetAbility(aim: AbilityAim | null, height: HeightField) {
     this.abilityTarget.update(aim, height);
@@ -143,7 +147,7 @@ export class SettlementLayer {
     this.ghost.visible = false;
     scene.add(this.root);
     const loader = new GLTFLoader();
-    this.ready = Promise.all(
+    this.ready = Promise.all([this.harvestTrees.ready, ...
       content.assets
         .filter(
           (a) =>
@@ -166,7 +170,7 @@ export class SettlementLayer {
             }
           }
         }),
-    ).then(() => {
+    ]).then(() => {
       if (!this.dead) this.pendingPreview?.();
     });
   }
@@ -178,7 +182,7 @@ export class SettlementLayer {
   pick(ray: Raycaster, maxDistance = Infinity) {
     const hit = ray
       .intersectObjects(
-        [...this.entities.values()].filter((o) => o.visible),
+        [...this.entities.values(), ...this.harvestTrees.pickableRoots()].filter((o) => o.visible),
         true,
       )
       .find((h) => h.distance <= maxDistance);
@@ -334,6 +338,9 @@ export class SettlementLayer {
         : Math.min(0.1, Math.max(0, (now - this.animationTime) / 1000)) *
           timeScale;
     this.animationTime = now;
+    if (tick !== this.sampledTick) { this.sampledTick = tick; this.tickTime = now; }
+    const renderTick = tick + Math.min(.999, Math.max(0, now - this.tickTime) / 25 * timeScale);
+    this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
       state.entities
         .filter((e) => this.selected.has(e.id) && !e.unit?.contained)
@@ -391,7 +398,7 @@ export class SettlementLayer {
           character.player.setState("attack", { restart: true });
           const victim = byId.get(e.unit!.target!);
           if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
-        } else if (hurt && !e.unit.moving)
+        } else if (hurt && !e.unit.moving && !e.unit.work?.cycle)
           character.player.setState("hit", { restart: true });
         else if (e.unit.moving)
           character.player.setState(e.unit.strolling ? "walk" : "run");
@@ -403,7 +410,11 @@ export class SettlementLayer {
           );
           if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
         }
-        character.player.update(dt);
+        const cycle = e.unit.work?.cycle;
+        if (cycle && character.player.state === e.unit.work?.animation) {
+          // Authoritative work phase locks axe contact to the exact damage tick.
+          character.player.seek(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks));
+        } else character.player.update(dt);
         o.userData.animationCooldown = e.unit.cooldown;
         o.userData.animationHp = e.hp;
       }
@@ -631,6 +642,7 @@ export class SettlementLayer {
     this.gridLines.geometry.dispose();
     this.gridLines.material.dispose();
     this.spellEffects.dispose();
+    this.harvestTrees.dispose();
     this.abilityTarget.dispose();
     this.projectiles.dispose();
     for (const [id, o] of this.entities) this.removeModel(id, o);

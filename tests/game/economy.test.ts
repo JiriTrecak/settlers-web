@@ -11,7 +11,7 @@ describe("declarative physical economy", () => {
     expect(
       g.command("player.1", {
         type: "build",
-        actor: w.id,
+        actors: [w.id],
         definition: "building.ants.barracks",
         position: { x: 205, y: 210 },
       }).accepted,
@@ -55,7 +55,7 @@ describe("declarative physical economy", () => {
     expect(
       g.command("player.1", {
         type: "build",
-        actor: w.id,
+        actors: [w.id],
         definition: "building.ants.barracks",
         position: { x: 205, y: 210 },
       }).accepted,
@@ -106,7 +106,7 @@ describe("declarative physical economy", () => {
       before = physical(g, "item.wood");
     g.command("player.1", {
       type: "build",
-      actor: w.id,
+      actors: [w.id],
       definition: "building.ants.barracks",
       position: { x: 205, y: 210 },
     });
@@ -167,7 +167,7 @@ describe("declarative physical economy", () => {
     g.spatial.nearest = () => null;
     run(g, 500);
     expect(original.definition).toBe("unit.ants.settler");
-    expect(b.inventory["item.amber"]).toBe(g.economy.price("unit.ants.warrior")["item.amber"]);
+    expect(b.inventory["item.amber"]).toBe(g.registry.get("unit.ants.warrior").creation!.items.find(p=>p.item === "item.amber")!.amount);
     expect(b.production!.queue).toHaveLength(1);
     g.command("player.1", {
       type: "cancel",

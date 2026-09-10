@@ -51,29 +51,6 @@ export class Economy {
       ]),
     );
   }
-  private productionTargets(
-    e: Entity,
-  ): { definition: string; queue: number | null }[] {
-    const p = e.production,
-      r = this.c.def(e).behaviors.production;
-    if (!p || !r || e.construction) return [];
-    if (p.active)
-      return [
-        { definition: p.active.definition, queue: p.active.queue },
-        ...(!p.paused && r.mode === "queued"
-          ? p.queue
-              .filter((q) => q.id !== p.active!.queue)
-              .slice(0, 1)
-              .map((q) => ({ definition: q.definition, queue: q.id }))
-          : []),
-      ];
-    if (p.paused) return [];
-    if (r.mode === "queued")
-      return p.queue
-        .slice(0, 2)
-        .map((q) => ({ definition: q.definition, queue: q.id }));
-    return [{ definition: r.outputs[0]!, queue: null }];
-  }
   available(e: Entity, item: string): number {
     return !e.construction && this.c.def(e).behaviors.storage?.dropoff
       ? quantity(e.inventory, item)
@@ -106,7 +83,15 @@ export class Economy {
   private head(
     e: Entity,
   ): { definition: string; queue: number | null } | undefined {
-    return this.productionTargets(e)[0];
+    const p = e.production, policy = this.c.def(e).behaviors.production;
+    if (!p || !policy || e.construction) return;
+    if (p.active) return {definition: p.active.definition, queue: p.active.queue};
+    if (p.paused) return;
+    if (policy.mode === "queued") {
+      const entry = p.queue[0];
+      return entry && {definition: entry.definition, queue: entry.id};
+    }
+    return {definition: policy.outputs[0]!, queue: null};
   }
   private missing(e: Entity, price: Stock) {
     return Object.entries(price).some(
@@ -186,6 +171,35 @@ export class Economy {
     this.s.jobs.push(j);
     worker.unit!.job = j.id;
     return j;
+  }
+  isConstructing(worker: Entity): boolean {
+    return worker.unit?.order?.type === "construct" ||
+      this.findJob(worker.unit?.job ?? null)?.type === "construct";
+  }
+  orderConstruction(worker: Entity, building: Entity) {
+    this.interrupt(worker);
+    worker.unit!.pendingMove = null;
+    worker.unit!.order = { type: "construct", target: building.id };
+    worker.unit!.retryAt = this.s.tick;
+  }
+  /** Explicit orders reserve the builder even while their last harvest is going home. */
+  private constructionOrders(): Set<number> {
+    const claimed = new Set<number>();
+    for (const worker of this.c.activeUnits()) {
+      const u = worker.unit!, order = u.order;
+      if (order?.type !== "construct") continue;
+      const building = this.c.get(order.target);
+      if (!building?.construction || !alive(building) || building.owner !== worker.owner) {
+        u.order = null;
+        continue;
+      }
+      claimed.add(building.id);
+      if (u.job || u.cargo || u.retryAt > this.s.tick || isStunned(worker, this.c.registry)) continue;
+      if (this.missing(building, this.price(building.definition))) continue;
+      if (this.workPoint(building, worker)) this.job("construct", worker, building);
+      else u.retryAt = this.s.tick + 40;
+    }
+    return claimed;
   }
   private eraseJob(job: Job) {
     const w = this.c.get(job.worker);
@@ -348,6 +362,8 @@ export class Economy {
       this.c.def(w).behaviors.work!.carryCapacity,
       this.room(hall),
     );
+    // A felled tree is one reserved load. A second worker chooses another tree.
+    if (this.c.def(resource).felling && amount !== resource.resource.amount) return false;
     if (amount <= 0 || !this.workPoint(resource, w)) return false;
     this.job("harvest", w, hall, { source: resource.id, item, amount });
     return true;
@@ -409,12 +425,33 @@ export class Economy {
       } else this.abandon(job);
       return;
     }
+    if (job.phase === "fall") {
+      const fallenAt = resource?.resource?.felling?.fallTick;
+      if (fallenAt == null) { this.abandon(job); return; }
+      if (this.s.tick - fallenAt < this.c.def(resource!).felling!.fallTicks) return;
+      job.phase = "return";
+      if (!this.workPoint(hall, w)) this.abandon(job);
+      return;
+    }
     if (!resource?.resource?.amount) {
       this.abandon(job);
       return;
     }
-    if (++job.progress < creation.workTicks) return;
-    job.progress = 0;
+    const felling = resource.resource.felling;
+    if (felling) {
+      job.progress++;
+      if (job.progress >= creation.workTicks) job.progress = 0;
+      if (job.progress !== creation.impactTick) return;
+      felling.hp--;
+      felling.lastHitTick = this.s.tick;
+      if (felling.hp > 0) return;
+      felling.fallTick = this.s.tick;
+      const position = precise(w);
+      felling.direction = {x: resource.x - position.x, y: resource.y - position.y};
+    } else {
+      if (++job.progress < creation.workTicks) return;
+      job.progress = 0;
+    }
     const amount = Math.min(creation.amount, job.amount - (u.cargo?.amount ?? 0), resource.resource.amount);
     resource.resource.amount -= amount;
     u.cargo = { item: job.item!, amount: (u.cargo?.amount ?? 0) + amount };
@@ -422,8 +459,9 @@ export class Economy {
     if (!resource.resource.amount) this.c.spatial.rebuild();
     if (u.cargo.amount >= job.amount || !resource.resource.amount) {
       job.amount = u.cargo.amount;
-      job.phase = "return";
-      if (!this.workPoint(hall, w)) this.abandon(job);
+      // Goods belong to this worker at the final blow; departure waits for the fall.
+      job.phase = felling ? "fall" : "return";
+      if (!felling && !this.workPoint(hall, w)) this.abandon(job);
     }
   }
   private startWorkplace(b: Entity) {
@@ -561,15 +599,10 @@ export class Economy {
       );
     for (const b of buildings.filter((e) => !!e.construction))
       this.requestInputs(b);
-    for (const b of buildings.filter(
-      (e) =>
-        e.production &&
-        !e.construction &&
-        this.c.def(e).behaviors.production!.mode === "queued",
-    ))
-      this.requestInputs(b);
+    const claimedConstruction = this.constructionOrders();
     for (const b of buildings.filter((e) => !!e.construction)) {
       if (
+        claimedConstruction.has(b.id) ||
         this.missing(b, this.price(b.definition)) ||
         this.s.jobs.some((j) => j.target === b.id && j.type === "construct")
       )
@@ -740,6 +773,7 @@ export class Economy {
         if (b.construction.progress >= c.workTicks) {
           this.inputConsume(b, c);
           delete b.construction;
+          if (u.order?.type === "construct" && u.order.target === b.id) u.order = null;
           b.readyTick = this.s.tick + 1;
           this.eraseJob(job);
           this.c.spatial.rebuild();
@@ -838,6 +872,9 @@ export class Economy {
       ) {
         r.resource!.amount = this.c.def(r).yield!;
         r.resource!.growingUntil = null;
+        if (this.c.def(r).felling) r.resource!.felling = {
+          hp: this.c.def(r).felling!.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1},
+        };
         this.c.spatial.rebuild();
       }
   }
@@ -945,16 +982,16 @@ export class Economy {
   }
   cancelEntry(b: Entity, id: number): boolean {
     const p = b.production;
-    if (!p?.queue.some((q) => q.id === id)) return false;
+    const entry = p?.queue.find((q) => q.id === id);
+    if (!p || !entry) return false;
     if (p.active?.queue === id) {
       const w = this.c.get(p.active.worker),
         job = this.findJob(w?.unit?.job ?? null);
       if (job) this.abandon(job);
       p.active = null;
     }
-    const funded = p.queue[0]?.id === id;
     p.queue = p.queue.filter((q) => q.id !== id);
-    if (funded) this.refund(b);
+    this.refund(b, this.price(entry.definition));
     return true;
   }
   pause(b: Entity, paused: boolean) {
@@ -1007,7 +1044,7 @@ export class Economy {
         e.item.quantity,
       );
   }
-  private refund(e: Entity) {
+  private refund(e: Entity, bill: Stock = e.inventory) {
     const halls = this.c
       .live()
       .filter(
@@ -1018,8 +1055,8 @@ export class Economy {
           this.c.def(h).behaviors.storage?.dropoff,
       )
       .sort((a, b) => a.id - b.id);
-    for (const [item, n] of Object.entries(e.inventory)) {
-      let left = n;
+    for (const [item, n] of Object.entries(bill)) {
+      let left = Math.min(n, quantity(e.inventory, item));
       for (const h of halls) {
         if (!this.legalStore(h, item)) continue;
         const amount = Math.min(left, this.room(h));
@@ -1030,7 +1067,12 @@ export class Economy {
       }
     }
   }
-  queue(b: Entity, definition: string): QueueEntry {
+  queue(b: Entity, definition: string): QueueEntry | null {
+    // Every queue entry owns its whole bill. Cancelling any slot returns exactly
+    // that bill; starting the next recruit cannot silently charge it again.
+    const reservation = this.reserveBill(b.owner, definition);
+    if (!reservation) return null;
+    this.admitProject(b, reservation);
     const q = { id: this.s.nextQueue++, definition };
     b.production!.queue.push(q);
     return q;

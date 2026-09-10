@@ -35,7 +35,7 @@ The **30% discount is a design requirement**. It applies to tier-one combat-unit
 
 The **ten-resource load** now sets the denomination: use Warcraft-sized prices instead of an inferred compact-currency exchange rate. The classic Footman costs 135 gold; 70% is 94.5, rounded to **95 amber** for a Warrior. The classic Rifleman costs 205 gold/30 lumber; 70% is 143.5/21, rounded to **145 amber/20 wood** for an Archer. These roundings are deliberate first-pass exceptions. [Footman](https://classic.battle.net/war3/human/units/footman.shtml), [Rifleman](https://classic.battle.net/war3/human/units/rifleman.shtml).
 
-A full gathering cycle produces ten, capped by source remainder and reserved load space. Amber work is **2.5 seconds per load**, lumber **10 seconds per load**, plus travel. Each tree holds 100 wood. Starting funds are **500 amber/150 wood**. Barracks cost 160/60; house 80/20; forester 120/80; Sanctuary 180/50; non-attacking Watchtower 30/20. Building work times and free repair remain unchanged. The starting Hall is still not offered as an expansion purchase.
+A full gathering cycle produces ten, capped by source remainder and reserved load space. Amber work is **2.5 seconds per load**, lumber **10 seconds per load**, plus travel. This balance measurement used trees holding 100 wood; the subsequent animated-harvesting pass changes each tree to 10 wood and 10 axe hits, followed by a 1.8-second fall. See the [current economy](/guide/economy). Starting funds are **500 amber/150 wood**. Barracks cost 160/60; house 80/20; forester 120/80; Sanctuary 180/50; non-attacking Watchtower 30/20. Building work times and free repair remain unchanged. The starting Hall is still not offered as an expansion purchase.
 
 This aligns resource denominations, **not exact Warcraft income per minute**. A three-minute Mosswater probe with the starting three miners and two woodcutters delivered **290 amber and 180 wood**. Minute-to-minute deliveries were 100/60, 90/50 and 100/70; travel and contention matter. Reproduce with `node --import tsx scripts/probe-balance-income.ts`. The old four-resource probe is superseded. Watch whether the new prices make available workers or delivered amber the limiting factor before further adjustments.
 
@@ -205,6 +205,14 @@ Derived from the tables and formulas in this proposal; the Footman reference use
 7. **AI parity:** use the same armor calculation and derived stats in its combat estimates. AI now uses the same armor curve and resolved attack interval, with matchup-aware focus/spell estimates. Check camp selection, retreat and target priorities in matches.
 
 Run at normal simulation speed for timing measurements; accelerated observer matches are useful for spotting macro behavior. Record map, content fingerprint, player configuration, game-time duration and force composition. Report outcomes before adjusting the next variable.
+
+## Recorded implementation checks
+
+The 9 September 2026 baseline (`4c1d51f7`) passed **340 tests across 92 files**, the game production build, wiki type checking and wiki production build. A real two-client WebSocket match remained synchronized for 3,000 ticks, with fifteen host-confirmed hashes per client and exactly 800 amber/160 wood consumed by the scripted construction and recruitment.
+
+A **6-minute-40-second Mosswater AI opening** ran for 16,000 ticks. Both colonies built a barracks and four houses, reached 19 living workers, kept their level-two Marshals alive and fielded armies of 15 and 17 (including heroes). Three camps were cleared. Neither side had won when the probe ended. Reproduce with `node --import tsx scripts/probe-balance-match.ts`.
+
+The final banks contained 50/65 amber and 1,030/1,020 wood. **Amber pressure versus excess lumber** is therefore an early playtest question. Keep the agreed ten-unit loads and measure gathering assignments, travel and spending before changing another variable. These checks establish that the opening plays through; the acceptance matches above remain necessary for competitive balance.
 
 ## Implementation boundary
 

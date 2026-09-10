@@ -322,7 +322,7 @@ export async function generate() {
       items: [
         { text: "Authoring the wiki", link: "/development/" },
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
-        { text: "First combat balance proposal", link: "/development/first-balance-pass" },
+        { text: "First combat balance baseline", link: "/development/first-balance-pass" },
         ...[
           "declarations/README.md",
           "declarations/behaviors.md",

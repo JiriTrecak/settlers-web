@@ -55,7 +55,7 @@ describe("declarative lockstep integration", () => {
     )!.id;
     peers[0]!.send({
       type: "build",
-      actor,
+      actors: [actor],
       definition: "building.ants.barracks",
       position: { x: 205, y: 210 },
     });
@@ -92,7 +92,7 @@ describe("declarative lockstep integration", () => {
     const room = new Room(config),
       action: Action = {
         type: "build",
-        actor: 2,
+        actors: [2],
         definition: "building.ants.house",
         position: { x: 200, y: 210 },
       };

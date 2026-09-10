@@ -246,6 +246,8 @@ export class ContentRegistry {
         fail("combat currently requires a unit");
       if (d.kind === "resource" && !this.asset(d.asset).sceneryAsset)
         fail("resource model needs sceneryAsset");
+      if (d.felling && (d.kind !== "resource" || !d.yield || !this.asset(d.asset).harvestAnimation))
+        fail("felling requires a resource yield and animated scenery asset");
       if (d.kind !== "unit" && d.hero) fail("hero flag requires a unit");
       if (d.behaviors.spellcasting) {
         this.asset(d.behaviors.spellcasting.manaIcon);
@@ -325,6 +327,10 @@ export class ContentRegistry {
       for (const id of d.behaviors.work?.harvests ?? []) {
         if (expect(id, "item").creation?.method !== "harvest")
           fail(`worker harvest ${id} requires a harvest recipe`);
+        const recipe = this.get(id).creation!;
+        if (recipe.method === "harvest" && this.get(recipe.source).felling &&
+            d.behaviors.work!.carryCapacity < this.get(recipe.source).yield!)
+          fail("worker must be able to carry a complete felled resource");
       }
       if (d.constructionClearance !== undefined && !d.yield)
         fail("construction clearance requires resource yield");
@@ -345,6 +351,14 @@ export class ContentRegistry {
           fail("harvest targets items");
         if (c.method === "harvest" && !this.get(c.source).yield)
           fail("harvest source requires yield");
+        if (c.method === "harvest") {
+          const source = this.get(c.source);
+          if (!!source.felling !== (c.impactTick !== undefined) ||
+              (c.impactTick !== undefined && c.impactTick >= c.workTicks))
+            fail("felling harvest requires an impact tick inside the work cycle");
+          if (source.felling && c.amount !== source.yield)
+            fail("a felled resource must yield one complete load");
+        }
         if (c.method === "plant" && (d.kind !== "resource" || !d.regrowthTicks))
           fail("plant needs resource and regrowthTicks");
         if (c.method === "spawn" && d.kind !== "unit")

@@ -256,6 +256,11 @@ export function commandCard(
             const b = result.at(-1)!;
             b.enabled = false;
             b.reason = "Queue full";
+          } else if (registry.get(output).creation!.items.some(cost =>
+            (view.goods?.find(g => g.item === cost.item)?.available ?? 0) < cost.amount)) {
+            const b = result.at(-1)!;
+            b.enabled = false;
+            b.reason = "Insufficient resources";
           }
         }
       if (policy.outputs.some((id) => registry.get(id).kind === "unit"))
@@ -310,10 +315,7 @@ export function commandCard(
       const workers = units.filter((e) =>
         registry.get(e.definition).behaviors.work?.builds.includes(id),
       );
-      const actor =
-        workers.find((e) => e.id === focus.id) ??
-        workers.sort((a, b) => a.id - b.id)[0]!;
-      add("build", [actor], id);
+      add("build", workers, id);
     }
   }
   return result.sort(

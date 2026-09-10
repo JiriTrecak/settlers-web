@@ -44,7 +44,7 @@ export function build(
     return emit(
       {
         type: "build",
-        actor: worker.id,
+        actors: [worker.id],
         definition: d.id,
         position: p,
         rotation: r,

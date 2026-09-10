@@ -93,10 +93,19 @@ export function buildCatalog(source: ContentSource) {
         ["Attack interval", seconds(b.combat.cooldownTicks)],
         ["Aggro range", `${b.combat.aggroRange} cells`],
       );
-    if (d.creation?.method === "harvest") stats.push(
-      ["Harvest per work cycle", d.creation.amount],
-      ["Harvest work cycle", `${seconds(d.creation.workTicks)} + travel`],
-    );
+    if (d.creation?.method === "harvest") {
+      const source = registry.get(d.creation.source), felling = source.felling;
+      if (felling) stats.push(
+        ["Lumber per felled tree", d.creation.amount],
+        ["Axe hits required", felling.maxHp],
+        ["Axe cycle", seconds(d.creation.workTicks)],
+        ["Departure after final hit", seconds(felling.fallTicks)],
+      );
+      else stats.push(
+        ["Harvest per work cycle", d.creation.amount],
+        ["Harvest work cycle", `${seconds(d.creation.workTicks)} + travel`],
+      );
+    }
     if (d.vision) stats.push(["Vision radius", `${d.vision} cells`]);
     if (b.movement)
       stats.push(["Movement speed", `${b.movement.speed} cells / second`]);
@@ -108,6 +117,11 @@ export function buildCatalog(source: ContentSource) {
     if (d.experienceYield)
       stats.push(["Experience on defeat", d.experienceYield]);
     if (d.yield) stats.push(["Resource yield", d.yield]);
+    if (d.felling) stats.push(
+      ["Chopping health", d.felling.maxHp],
+      ["Fall duration", seconds(d.felling.fallTicks)],
+      ["Sinking duration", seconds(d.felling.decayTicks)],
+    );
     if (d.gatheringCapacity)
       stats.push([
         "Gathering capacity",

@@ -205,17 +205,20 @@
     {
       "id": "asset.resource.ant-pine-1",
       "file": "assets/ant-colony/olive-pine.glb",
-      "sceneryAsset": "ant-pine-1"
+      "sceneryAsset": "ant-pine-1",
+      "harvestAnimation": "assets/ant-colony/olive-pine-animated.glb"
     },
     {
       "id": "asset.resource.ant-pine-2",
       "file": "assets/ant-colony/olive-pine.glb",
-      "sceneryAsset": "ant-pine-2"
+      "sceneryAsset": "ant-pine-2",
+      "harvestAnimation": "assets/ant-colony/olive-pine-animated.glb"
     },
     {
       "id": "asset.resource.ant-pine-3",
       "file": "assets/ant-colony/olive-pine.glb",
-      "sceneryAsset": "ant-pine-3"
+      "sceneryAsset": "ant-pine-3",
+      "harvestAnimation": "assets/ant-colony/olive-pine-animated.glb"
     },
     {
       "id": "asset.resource.ant-stone-deposit",
@@ -445,7 +448,7 @@
     }
   },
   "rules": {
-    "id": "declarations-5",
+    "id": "declarations-6",
     "maxUnits": 160,
     "maxBuildings": 160,
     "constructionHpPermille": 100,
@@ -1381,10 +1384,11 @@
       "creation": {
         "method": "harvest",
         "items": [],
-        "workTicks": 400,
+        "workTicks": 40,
         "source": "resource.forest.tree",
         "workAnimation": "chop",
-        "amount": 10
+        "amount": 10,
+        "impactTick": 22
       },
       "currency": true
     },
@@ -1411,7 +1415,7 @@
       "id": "resource.forest.tree",
       "kind": "resource",
       "name": "Forest tree",
-      "description": "Harvestable timber. Foresters can restore an exhausted site.",
+      "description": "Ten axe hits fell a tree, yielding one 10-lumber load. Foresters restore exhausted sites.",
       "asset": "asset.resource.ant-pine-1",
       "icon": "icon.item.wood",
       "regrowthTicks": 1600,
@@ -1421,7 +1425,12 @@
         "items": [],
         "workTicks": 80
       },
-      "yield": 100
+      "yield": 10,
+      "felling": {
+        "maxHp": 10,
+        "fallTicks": 72,
+        "decayTicks": 240
+      }
     },
     {
       "id": "unit.ants.marshal",

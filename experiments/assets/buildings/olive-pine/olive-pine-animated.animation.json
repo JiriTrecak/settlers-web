@@ -1,0 +1,45 @@
+{
+  "asset": "olive-pine-animated.glb",
+  "type": "neutral-vegetation",
+  "triangles": 1568,
+  "meshes": 2,
+  "materials": 1,
+  "upAxis": "+Y",
+  "fallDirection": "+Z",
+  "sourceFps": 30,
+  "playbackRate": 1,
+  "clips": {
+    "hit": {
+      "duration": 0.6,
+      "loop": false
+    },
+    "fall": {
+      "duration": 1.8,
+      "loop": false,
+      "impactTime": 1.25
+    },
+    "decay": {
+      "duration": 6,
+      "loop": false,
+      "removeOnFinish": true,
+      "sinkStart": 0.75,
+      "stumpSinkStart": 4.5,
+      "mode": "vertical sinking at full scale",
+      "requiresOpaqueGround": true
+    }
+  },
+  "sequence": [
+    "hit (repeat per contact)",
+    "fall (final blow)",
+    "decay",
+    "remove"
+  ],
+  "teamColor": false,
+  "integration": "export only",
+  "fallGrounding": {
+    "trunkCenterlineY": 0,
+    "tipY": 0,
+    "foliagePenetrationIntentional": true,
+    "upwardLift": false
+  }
+}

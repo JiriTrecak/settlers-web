@@ -11,6 +11,7 @@ const positive = z.number().int().positive(),
   natural = z.number().int().nonnegative();
 const point = pointSchema;
 const orderSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("construct"), target: positive }).strict(),
   z.object({ type: z.literal("gather"), target: positive }).strict(),
   z.object({ type: z.literal("pickup"), target: positive }).strict(),
   z
@@ -27,6 +28,12 @@ const orderSchema = z.discriminatedUnion("type", [
 export const queueSchema = z
   .object({ id: positive, definition: idSchema })
   .strict();
+export const fellingStateSchema = z.object({
+  hp: natural,
+  lastHitTick: natural.nullable(),
+  fallTick: natural.nullable(),
+  direction: z.object({x: z.number().finite(), y: z.number().finite()}).strict(),
+}).strict();
 export const entitySchema = z
   .object({
     id: positive,
@@ -162,7 +169,7 @@ export const entitySchema = z
       .strict()
       .optional(),
     resource: z
-      .object({ amount: natural, growingUntil: natural.nullable() })
+      .object({ amount: natural, growingUntil: natural.nullable(), felling: fellingStateSchema.optional() })
       .strict()
       .optional(),
     item: z.object({ quantity: positive }).strict().optional(),
@@ -184,7 +191,7 @@ export const jobSchema = z
     source: positive.nullable(),
     item: idSchema.nullable(),
     amount: natural,
-    phase: z.enum(["walk", "work", "return"]),
+    phase: z.enum(["walk", "work", "fall", "return"]),
     progress: natural,
     queue: positive.nullable(),
   })

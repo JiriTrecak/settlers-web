@@ -3,7 +3,7 @@ import {game,worker} from './helpers';
 it('cached vision agrees with full rebuilding through movement, construction and restore',()=>{
  const a=game(),b=game();
  for(const g of [a,b]){
-  g.command('player.1',{type:'build',actor:worker(g).id,definition:'building.ants.barracks',position:{x:205,y:210}});
+  g.command('player.1',{type:'build',actors: [worker(g).id],definition:'building.ants.barracks',position:{x:205,y:210}});
   const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
   expect(g.command('player.1',{type:'move',actors:[warrior.id],destination:{x:190,y:230}}).accepted).toBe(true);
  }

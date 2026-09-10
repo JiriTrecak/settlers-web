@@ -8,7 +8,7 @@ import { z } from "zod";
 import type { Owner, Stock } from "../../content/schema";
 import { ownerSchema, ownerSlot } from "../../content/schema";
 import { GameContext } from "./context";
-import { type Entity, type Fact, type GameState } from "./state";
+import { fellingStateSchema, type Entity, type Fact, type GameState } from "./state";
 import { resolvedStatsSchema, type entityStats } from "./stats";
 
 export type EntityView = {
@@ -55,7 +55,7 @@ export type EntityView = {
     cargo: NonNullable<Entity["unit"]>["cargo"];
     target: number | null;
     commandedTarget?: number | null;
-    work?: { animation: "build" | "chop"; x: number; y: number };
+    work?: { animation: "build" | "chop"; x: number; y: number; cycle?: {ticks: number; progress: number} };
     cooldown: number;
     shot?: { tick: number; x: number; y: number };
   };
@@ -117,6 +117,7 @@ const memoryEntity = z
       .object({
         amount: z.number().int().nonnegative(),
         growingUntil: z.number().int().nullable(),
+        felling: fellingStateSchema.optional(),
       })
       .optional(),
     gathering: z
@@ -245,7 +246,7 @@ export class Observation {
       ...(e.construction
         ? { construction: { progress: e.construction.progress } }
         : {}),
-      ...(e.resource ? { resource: { ...e.resource } } : {}),
+      ...(e.resource ? { resource: structuredClone(e.resource) } : {}),
       ...(this.c.def(e).gatheringCapacity
         ? {
             gathering: {
@@ -309,16 +310,23 @@ export class Observation {
             : undefined;
       const target =
         job?.type === "harvest" ? this.c.get(job.source) : workplace;
+      const strike = creation?.method === "harvest" && creation.impactTick !== undefined;
+      const progress = job?.phase === "fall" && target?.resource?.felling?.fallTick != null && strike
+        ? creation.impactTick! + this.c.state.tick - target.resource.felling.fallTick
+        : job?.progress ?? 0;
       if (
         creation &&
         "workAnimation" in creation &&
         creation.workAnimation &&
+        (!strike || progress < creation.workTicks) &&
+        !isStunned(e, this.c.registry) &&
         target
       )
         result.unit.work = {
           animation: creation.workAnimation,
           x: target.x,
           y: target.y,
+          ...(strike ? {cycle: {ticks: creation.workTicks, progress}} : {}),
         };
     }
     if (privateData) {

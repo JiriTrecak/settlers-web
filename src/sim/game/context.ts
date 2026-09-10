@@ -99,7 +99,9 @@ export class GameContext {
         status: "Idle",
       };
     if (d.yield)
-      e.resource = { amount: initial?.amount ?? d.yield!, growingUntil: null };
+      e.resource = { amount: initial?.amount ?? d.yield!, growingUntil: null,
+        ...(d.felling ? { felling: {hp: d.felling.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1}} } : {}),
+      };
     if (d.kind === "item") e.item = { quantity: initial?.quantity ?? 1 };
     this.state.entities.push(e);
     this.index.set(e.id, e);

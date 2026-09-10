@@ -13,6 +13,7 @@ it('plants an exhausted site, restores its visual and blocker, and resumes harve
  const saved=g.snapshot(),restored=game([placed('forester','building.ants.forester',205,220),{...placed('tree','resource.forest.tree',205,215,{amount:0}),owner:'none'}]);restored.restore(saved);
  run(g,1700);run(restored,1700);expect(restored.snapshot()).toEqual(g.snapshot());
  expect(tree.resource!.amount).toBe(g.registry.get(tree.definition).yield);
+ expect(tree.resource!.felling).toMatchObject({hp:10,lastHitTick:null,fallTick:null});
  expect(visible()).toBe(true);expect(g.spatial.resources[g.spatial.cell(tree)]).toBe(tree.id);
  const worker=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).behaviors.work&&!e.unit?.employment)!;
  const before=hall.inventory['item.wood'];

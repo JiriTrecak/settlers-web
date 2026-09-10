@@ -193,6 +193,7 @@ describe("content and presentation contracts", () => {
       ).overrides[`produce:${outputs[12]}`] = { hotkey: "Z" };
     });
     const b = g.entities.find((e) => e.placement === "b")!;
+    g.context.get(g.state.objectives["player.1"])!.inventory["item.amber"] = 10000;
     for (
       let i = 0;
       i < g.registry.get(b.definition).behaviors.production!.queueCapacity!;

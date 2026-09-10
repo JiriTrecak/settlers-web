@@ -47,12 +47,12 @@ describe("RTS click intentions", () => {
   });
   it("submits and validates the chosen building orientation", () => {
     const {session, hud, g, unit} = setup();
-    Object.assign(hud, { mode: "building.ants.barracks", buildingActor: unit.id, placementRotation: 270 });
+    Object.assign(hud, { mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 270 });
     const validate = vi.spyOn(g, "canBuild").mockReturnValue(null);
     session.click(0, 0);
     expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245, y: 245}, unit.id, 270);
     expect(session.send).toHaveBeenCalledWith({
-      type: "build", actor: unit.id, definition: "building.ants.barracks",
+      type: "build", actors: [unit.id], definition: "building.ants.barracks",
       position: {x: 245, y: 245}, rotation: 270,
     });
   });
@@ -61,7 +61,7 @@ describe("RTS click intentions", () => {
       const {session, hud, g, unit} = setup();
       const workers = g.entities.filter(e => e.definition === "unit.ants.settler").slice(0, 3).map(e => e.id);
       hud.selectedIds = workers;
-      Object.assign(hud, {mode: "building.ants.barracks", buildingActor: unit.id, placementRotation: 0});
+      Object.assign(hud, {mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 0});
       session.renderer.pickGround = () => ({x: 205, z: 210});
       session.click(0, 0, shift);
       const action = session.send.mock.calls[0][0];

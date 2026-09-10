@@ -55,7 +55,7 @@ A failed source validation leaves the previous generated output intact. Regenera
 ## Engineering reference
 
 - [Warcraft III Human balance research](/development/warcraft-human-balance)
-- [First combat balance proposal](/development/first-balance-pass)
+- [First combat balance baseline](/development/first-balance-pass)
 - [Declaration architecture](/development/declarations/README)
 - [Behaviors](/development/declarations/behaviors)
 - [Worked examples](/development/declarations/examples)

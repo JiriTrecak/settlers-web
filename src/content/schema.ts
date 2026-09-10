@@ -44,6 +44,7 @@ export const creationSchema = z.discriminatedUnion("method", [
       items: z.array(z.never()),
       source: idSchema,
       amount: positive.max(32),
+      impactTick: positive.optional(),
       workTicks: work,
     })
     .strict(),
@@ -217,6 +218,7 @@ const fields = {
     .optional(),
   stackLimit: positive.max(100).optional(),
   yield: positive.optional(),
+  felling: z.object({ maxHp: positive, fallTicks: positive, decayTicks: positive }).strict().optional(),
   gatheringCapacity: positive.max(100).optional(),
   currency: z.boolean().optional(),
   regrowthTicks: positive.optional(),
@@ -306,6 +308,7 @@ export const assetSchema = z
       .string()
       .regex(/^assets\/.*\.png$/)
       .optional(),
+    harvestAnimation: z.string().regex(/^assets\/.*\.glb$/).optional(),
     carryAsset: idSchema.optional(),
     character: idSchema.optional(),
     scale: z.number().positive().optional(),
