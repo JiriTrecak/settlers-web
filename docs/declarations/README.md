@@ -27,7 +27,7 @@ The old Settlement simulation, gameplay rule tables, role dispatch, asset-name r
 4. Entities → Edit definitions opens a separate content draft. Name, description, HP, and armor have fields; the JSON pane exposes the complete category. Apply Draft checks the full graph. Save writes `content/game.json` through the local development server after validating retained map references. A stale disk revision or invalid graph leaves the previous source intact.
 5. Content changes apply to newly loaded matches. Never hot-patch an active deterministic simulation. A changed fingerprint intentionally rejects incompatible saves/multiplayer revisions.
 
-Map Save still writes the `.utcmap` JSON and makes playable maps available to Singleplayer. The content editor requires the development server to write project files; packaged runtime content remains read-only.
+Map Save still writes the `.utcmap` JSON and makes playable maps available to Skirmish. The content editor requires the development server to write project files; packaged runtime content remains read-only.
 
 ## Add a content variant
 
@@ -39,4 +39,6 @@ Continue with [behavior reference](behaviors.md), [worked JSON examples](example
 
 Asset authoring: [team-color material contract](team-color.md). Only `TC_TeamColor` is recolored; roofs and chitin retain their authored colors.
 
-Design under review: [opponent AI proposal](../ai/README.md), including coordinated economy/hero/army planning, initial map knowledge separated from live observations, one declarative AI policy, and adversarial acceptance scenarios. This describes a planned replacement for the current small AI planner, not implemented behavior.
+The [implemented opponent AI](../ai/implementation.md) coordinates economy, hero and army planning from authorized map knowledge and live observations. Its [design rationale](../ai/README.md) includes the declarative policy and adversarial acceptance scenarios. The implementation document distinguishes shipped behavior from the remaining adversarial playtesting backlog.
+
+Current economy: [amber, wood and living workers](../game/economy.md). This supersedes the historical production-chain sections of the reviewed design proposals.

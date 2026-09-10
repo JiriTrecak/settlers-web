@@ -34,3 +34,8 @@ assets/maps/*
 # Authored playable maps are source assets too.
 !assets/maps/skirmish/
 !assets/maps/skirmish/*.utcmap
+
+# Reproducible wiki output
+/wiki/.generated/
+/wiki/.vitepress/cache/
+/wiki/.vitepress/dist/

@@ -21,7 +21,6 @@ import {
   entityAuthoringState,
   restoreEntityAuthoring,
 } from "../../src/editor/world/entityAuthoring";
-import { stockpileLayout } from "../../src/shared/settlement/stockpile";
 import { game, placed, worker, run, source } from "./helpers";
 
 describe("content and presentation contracts", () => {
@@ -36,7 +35,7 @@ describe("content and presentation contracts", () => {
     const warrior = c.definitions.find(
       (d: any) => d.id === "unit.ants.warrior",
     ) as any;
-    warrior.creation.items = [{ item: "item.plank", amount: 1 }];
+    warrior.creation.items = [{ item: "item.barkguard", amount: 1 }];
     expect(() => new ContentRegistry(c)).toThrow(/storage must accept/);
     const d = source();
     d.behaviorSets.push({
@@ -98,7 +97,7 @@ describe("content and presentation contracts", () => {
   it("S14 prioritizes army on box selection and focuses one workplace command card", () => {
     const g = game([
         placed("b", "building.ants.barracks"),
-        placed("mill", "building.ants.sawmill", 230, 210),
+        placed("mill", "building.ants.sanctuary", 230, 210),
       ]),
       view = g.view("player.1"),
       ids = areaSelection(view.entities, "player.1", g.registry);
@@ -228,7 +227,7 @@ describe("content and presentation contracts", () => {
   it("S18/S19 authored items, ownership and neutral camps round trip without asset inference", () => {
     let map = putEntity(
       emptyUtcMap(),
-      placed("loot", "item.plank", 100, 100, { quantity: 3 }),
+      placed("loot", "item.barkguard", 100, 100, { quantity: 1 }),
     );
     map = putEntity(map, {
       ...placed("wolf", "unit.neutral.wolf", 110, 110),
@@ -245,15 +244,10 @@ describe("content and presentation contracts", () => {
       /required/,
     );
   });
-  it("prices include physical goods and the settler; visible stacks are capped at sixteen", () => {
-    expect(costs(content, "unit.ants.warrior").map((c) => c.kind)).toEqual([
-      "item",
-      "item",
-      "unit",
-    ]);
-    const stack = stockpileLayout({ "item.wood": 20, "item.plank": 20 }, 4);
-    expect(stack).toHaveLength(16);
-    expect(stack.every((p) => Number.isFinite(p.y))).toBe(true);
+  it("prices include amber, wood and a worker, while currencies cannot be placed on the ground", () => {
+    expect(costs(content, "unit.ants.archer").map(c=>c.kind)).toEqual(["item","item","unit"]);
+    expect(() => putEntity(emptyUtcMap(), placed("loose", "item.wood"))).toThrow(/currencies/);
+    expect(() => putEntity(emptyUtcMap(), placed("loose", "item.amber"))).toThrow(/currencies/);
   });
   it("S20 entity undo restores camps and spawns without undoing newer landscape edits", () => {
     const original = emptyUtcMap();

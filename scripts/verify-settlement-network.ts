@@ -156,7 +156,7 @@ try {
         );
         assert.ok(
           barracks && !barracks.construction,
-          "Physical construction completed",
+          "Worker construction completed",
         );
         actions.push({
           type: "produce",
@@ -187,7 +187,7 @@ try {
       const owned = s.entities.filter((e) => e.owner === slotOwner(owner));
       assert.equal(
         owned.filter((e) => e.definition === "unit.ants.settler").length,
-        6,
+        8,
       );
       assert.equal(
         owned.filter((e) => e.definition === "unit.ants.warrior").length,
@@ -197,9 +197,9 @@ try {
         owned.filter((e) => e.definition === "unit.ants.archer").length,
         1,
       );
-      assert.equal(owned.filter((e) => e.unit).length, 10);
-      assert.equal(s.state.accounting.consumed["item.plank"], 20);
-      assert.equal(s.state.accounting.consumed["item.stone"], 8);
+      assert.equal(owned.filter((e) => e.unit).length, 13);
+      assert.equal(s.state.accounting.consumed["item.wood"], 160);
+      assert.equal(s.state.accounting.consumed["item.amber"], 800);
     }
   console.log(
     JSON.stringify(

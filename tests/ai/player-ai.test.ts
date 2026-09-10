@@ -1,3 +1,4 @@
+import { entityStats } from "../../src/sim/game/stats";
 import { economy } from "../../src/sim/ai/economy";
 import { describe, it, expect } from "vitest";
 import { World } from "../../src/sim/world/world";
@@ -69,12 +70,7 @@ function soldier(
     y,
     rotation: 0,
     hp: hp ?? d.body!.maxHp,
-    stats: {
-      level: 1,
-      maxHp: d.body!.maxHp,
-      damage: d.behaviors.combat?.damage ?? 0,
-      armor: d.body!.armor,
-    },
+    stats: entityStats(d, {}, content),
     unit: {
       moving: false,
       contained: false,
@@ -99,7 +95,7 @@ function seen(base: SettlementView, entities: EntityView[]): SettlementView {
     fog: {
       owner: 0,
       revision: 1,
-      cells: new Uint8Array(base.territory.length).fill(2),
+      cells: new Uint8Array(base.fog?.cells.length ?? 256**2).fill(2),
     },
   };
 }
@@ -327,7 +323,7 @@ describe("disruption and scaling gates", () => {
       worker = soldier(900, "unit.ants.settler", 218, 223);
     const resource: EntityView = {
       id: 901,
-      definition: "resource.amber.seam",
+      definition: "building.neutral.amber-mine",
       owner: "none",
       x: 230,
       y: 223,

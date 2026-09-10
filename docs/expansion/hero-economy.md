@@ -16,7 +16,7 @@ Amber deposits leave build-free work aprons. Placement validates the entire cand
 
 A larger armored Ant marshal carries a mace. His own rigged export includes idle, walk, run, carry, attack, hit and death; spell animation is added where needed. Base damage exceeds ordinary warriors substantially, but soldiers remain relevant.
 
-Hero progression is declared: XP thresholds, per-level health/damage growth, mana and inventory capacity. Runtime state contains XP, learned ability ranks, mana, cooldowns and inventory. XP is awarded once for a death to eligible nearby opposing heroes, evenly divided with stable entity-ID remainder assignment. Allied/forced friendly kills grant no XP. Neutral rewards cannot be farmed repeatedly from the same dead entity.
+Hero progression is declared: explicit per-level XP/stat records, mana and inventory capacity. Runtime state contains XP, learned ability ranks, mana, cooldowns and inventory. XP is awarded once for a death to eligible nearby opposing heroes, evenly divided with stable entity-ID remainder assignment. Allied/forced friendly kills grant no XP. Neutral rewards cannot be farmed repeatedly from the same dead entity.
 
 Marshal has three regular active abilities and one ultimate, detailed below. Explicit spell algorithms implement line damage, area damage, allied rally, and self-defense; authored spell ranks configure range, radius, damage, stun, duration, cooldown and mana. Presentation effects observe committed simulation events and never apply damage themselves.
 
@@ -35,7 +35,7 @@ Verify economy conservation, interruption/reassignment, no remote deposits, tree
 ## Implementation checkpoints (2026-09-09)
 
 - Camp loot is connected to authoritative deaths. `rules.lootPools` holds weighted entries; maps reference `camp.lootPool`. Snapshot state owns the PRNG and cleared camp IDs. Existing camps now reference easy/medium/hard item pools. Six item definitions have individual 128px icons and share the modeled neutral chest.
-- Hero progression is declared through `behaviors.progression`: cumulative XP thresholds starting at zero, per-level health/damage/armor, and XP radius. `experienceYield` belongs to each defeated definition. Simultaneous combat resolves deaths before sharing XP, so dead heroes receive none; forced friendly kills grant none. Level-up preserves existing damage. `entityStats` supplies combat and public HUD values; exact XP is owner-only.
+- Hero progression is declared through `behaviors.progression`: explicit level records with cumulative XP starting at zero, HP/damage/armor/attack interval/mana/regeneration, and XP radius. `experienceYield` belongs to each defeated definition. Simultaneous combat resolves deaths before sharing XP, so dead heroes receive none; forced friendly kills grant none. Level-up preserves existing damage. `entityStats` supplies combat and public HUD values; exact XP is owner-only.
 - Character GLBs now embed animation profiles. Existing ant GLBs received metadata only, with geometry and clips retained. New character exporter roles and studio controls are driven by those declarations.
 - Marshal is integrated into each starting army, with its 6,512-triangle skinned GLB, independent rig instances, team color and eight animation clips. Studio run, attack and cast poses were inspected. Additional orbit/death and gameplay portrait checks remain.
 - Inventory pickup/use/drop and equipped stat bonuses are implemented, including full-inventory rejection, simultaneous pickup ownership, death drops, and save restoration.
@@ -49,7 +49,7 @@ Verify economy conservation, interruption/reassignment, no remote deposits, tree
 User explicitly authorized continued work until they stop the run. Finish the original playable expansion first, then continue useful improvements to editor, assets/foliage/rocks, atmospheric god rays/weather, visible archer arrows, and potentially a declarative particle/spell-effect editor. Verify current arrow presentation before replacing it. Keep the goal active while pursuing this expanded scope; do not declare the whole run complete merely because the original feature list is implemented.
 
 Marshal is capped at level 10, with THREE regular abilities and ONE ultimate:
-- **Faultline**: aimed mace shockwave, short line of physical damage and brief stun; deliberate ground targeting.
+- **Faultline**: aimed mace shockwave, short line of spell damage and brief stun; deliberate ground targeting.
 - **Rally the Colony**: nearby allied combatants gain temporary attack strength. Encourages combined armies, not a solo hero.
 - **Iron Carapace**: activated defensive stance with temporary damage reduction; duration/cooldown prevent permanent invulnerability.
 - **Crownfall** (ultimate, level 6): telegraphed ground slam with a large shockwave, damage and a longer control effect. Strong cooldown and mana cost.

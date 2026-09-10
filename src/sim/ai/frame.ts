@@ -1,5 +1,6 @@
+import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
 import type { ContentRegistry } from "../../content/registry";
-import { ownerSlot, type Owner, type Definition } from "../../content/schema";
+import { type Owner, type Definition } from "../../content/schema";
 import type { SettlementView, EntityView } from "../game/observation";
 import type { Point } from "../game/state";
 import type { MapBriefing } from "./briefing";
@@ -227,6 +228,7 @@ export class Frame {
       e.hp ?? 0,
       e.stats?.damage,
       e.stats?.armor,
+      e.stats?.cooldownTicks,
     );
   }
   nominalPower(
@@ -234,14 +236,22 @@ export class Frame {
     hp = d.body?.maxHp ?? 0,
     damage = d.behaviors.combat?.damage ?? 0,
     armor = d.body?.armor ?? 0,
+    cooldownTicks = d.behaviors.combat?.cooldownTicks ?? 1,
   ) {
     const c = d.behaviors.combat;
     if (!c) return 0;
     return (
       Math.sqrt(
-        (Math.max(0, hp) * (1 + armor * 0.05) * damage * 40) / c.cooldownTicks,
+        (Math.max(0, hp) / armorMultiplier(this.registry.rules, armor) * damage * 40) / cooldownTicks,
       ) * (c.range > 3 ? 1.2 : 1)
     );
+  }
+  damage(target: EntityView, raw: number, type: string) {
+    const body = this.def(target).body!;
+    return resolveDamage(this.registry.rules, {
+      armorType: body.armorType, armor: target.stats?.armor ?? body.armor,
+      reductionPermille: guardReduction(this.registry.rules, target.effects),
+    }, raw, type);
   }
   nearestSafe(p: Point) {
     const base = integerPoint(p);
@@ -263,7 +273,6 @@ export class Frame {
   /** Local placement view: no authoritative canBuild query, including resource buffers and entrances. */
   placeable(d: Definition, p: Point, r: number) {
     const cells = footprint(d, p, r),
-      slot = ownerSlot(this.owner),
       heights = this.geo.map.heights;
     if (
       cells.some(
@@ -271,8 +280,7 @@ export class Frame {
           !this.geo.inside(q) ||
           !this.geo.map.land[this.geo.index(q)] ||
           this.blocked.has(this.geo.index(q)) ||
-          !this.view.fog?.cells[this.geo.index(q)] ||
-          this.view.territory[this.geo.index(q)] !== slot,
+          !this.view.fog?.cells[this.geo.index(q)],
       )
     )
       return false;

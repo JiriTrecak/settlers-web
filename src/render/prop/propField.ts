@@ -147,9 +147,10 @@ export class PropField {
     this.syncMark();
   }
 
-  pick(ray: Raycaster): string | null {
+  pick(ray: Raycaster, maxDistance = Infinity): string | null {
     const hits = ray.intersectObjects(this.batches, false);
     for (const hit of hits) {
+      if (hit.distance > maxDistance) continue;
       const ids=hit.object.userData.stampIds as string[]|undefined;
       if(ids && hit.instanceId!==undefined)return ids[hit.instanceId] ?? null;
     }

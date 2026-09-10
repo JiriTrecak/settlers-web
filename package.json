@@ -16,7 +16,12 @@
     "import:synty": "tsx scripts/import-synty.ts",
     "server": "tsx server/index.ts",
     "server:deploy": "bash scripts/deploy.sh",
-    "building:studio": "node experiments/building-studio/launch.mjs"
+    "building:studio": "node experiments/building-studio/launch.mjs",
+    "wiki:generate": "node --import tsx scripts/wiki/generate.ts generate",
+    "wiki:dev": "node --import tsx scripts/wiki/generate.ts dev",
+    "wiki:build": "node --import tsx scripts/wiki/generate.ts build",
+    "wiki:preview": "node --import tsx scripts/wiki/generate.ts preview",
+    "wiki:check": "tsc --project scripts/wiki/tsconfig.json"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",
@@ -39,6 +44,7 @@
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-node": "^6.0.0",
+    "vitepress": "1.6.4",
     "vitest": "^4.1.10"
   }
 }

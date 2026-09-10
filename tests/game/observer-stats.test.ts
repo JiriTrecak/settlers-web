@@ -60,14 +60,14 @@ describe("observer score projection", () => {
     const initial = observerStats(g.state, slots, content, income);
     expect(initial.players[0].resources[0]).toEqual({
       item: "item.amber",
-      stored: 60,
+      stored: content.rules.startingSetup.inventory["item.amber"],
       perMinute: 16,
     });
     hall.inventory["item.amber"] -= 20;
     const spent = observerStats(g.state, slots, content, income);
     expect(spent.players[0].resources[0]).toEqual({
       item: "item.amber",
-      stored: 40,
+      stored: content.rules.startingSetup.inventory["item.amber"]-20,
       perMinute: 16,
     });
     hall.inventory["item.amber"] += 20;
@@ -75,7 +75,7 @@ describe("observer score projection", () => {
     expect(
       observerStats(g.state, slots, content, income).players[0].resources[0]
         .stored,
-    ).toBe(60);
+    ).toBe(content.rules.startingSetup.inventory["item.amber"]);
     expect(initial.players[1].resources[0].perMinute).toBe(0);
   });
   it("counts contained and idle workers, excludes dead units, and retains fallen hero level", () => {
@@ -102,7 +102,7 @@ describe("observer score projection", () => {
     hero.fallen = true;
     hero.progression!.experience = content.get(
       hero.definition,
-    ).behaviors.progression!.thresholds[4];
+    ).behaviors.progression!.levels[4].experience;
     row = observerStats(g.state, slots, content, income).players[0];
     expect(row.units).toBe(ownerUnits.length - 2);
     expect(row.heroes[0]).toMatchObject({
@@ -142,7 +142,7 @@ describe("economy delivery receipts", () => {
     const map = emptyUtcMap(),
       entities = map.playerStarts.flatMap((s) => [
         {
-          ...placed(`mine.${s.player}`, "resource.amber.seam", s.x, s.z - 14),
+          ...placed(`mine.${s.player}`, "building.neutral.amber-mine", s.x, s.z - 14),
           owner: "none" as const,
         },
         {
@@ -191,10 +191,10 @@ describe("economy delivery receipts", () => {
     for (const owner of ["player.1", "player.2"]) {
       const hall = g.context.get(g.state.objectives[owner])!;
       expect(totals.get(owner + "/item.amber")).toBe(
-        hall.inventory["item.amber"] - 60,
+        hall.inventory["item.amber"] - content.rules.startingSetup.inventory["item.amber"],
       );
       expect(totals.get(owner + "/item.wood")).toBe(
-        hall.inventory["item.wood"] - 80,
+        hall.inventory["item.wood"] - content.rules.startingSetup.inventory["item.wood"],
       );
     }
     expect(income.perMinute("player.1", "item.amber")).toBeGreaterThan(0);

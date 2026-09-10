@@ -9,7 +9,7 @@ it('cached vision agrees with full rebuilding through movement, construction and
  }
  const retained=a.view('player.1'),oldCells=retained.fog!.cells.slice();
  for(let i=0;i<250;i++){
-  (b.observation as any).sensorSignatures.clear();(b.observation as any).territoryVersions.clear();
+  (b.observation as any).sensorSignatures.clear();
   a.tick();b.tick();
   if(i%50===0)expect(a.observation.snapshot()).toEqual(b.observation.snapshot());
  }

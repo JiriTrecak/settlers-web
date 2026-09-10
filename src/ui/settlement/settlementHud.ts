@@ -1,5 +1,6 @@
-import {experienceMeter} from '../../presentation/experience';
-import {TICK_MS} from '../../shared/match/match';
+import { armorMultiplier } from "../../sim/game/damage";
+import { experienceMeter } from "../../presentation/experience";
+import { TICK_MS } from "../../shared/match/match";
 import { content } from "../../content/builtin";
 import { slotOwner, type Owner } from "../../content/schema";
 import {
@@ -32,7 +33,7 @@ export class SettlementHud {
   private readonly info = document.createElement("div");
   private readonly level = document.createElement("div");
   private readonly experience = document.createElement("div");
-  private readonly portraitMana=document.createElement("div");
+  private readonly portraitMana = document.createElement("div");
   private readonly portraitHp = document.createElement("div");
   private readonly hint = document.createElement("p");
   private readonly cards = document.createElement("div");
@@ -115,7 +116,8 @@ export class SettlementHud {
     }
     if (this.mode && e.key.toLowerCase() === "r") {
       e.preventDefault();
-      this.placementRotation = (this.placementRotation + (e.shiftKey ? 270 : 90)) % 360;
+      this.placementRotation =
+        (this.placementRotation + (e.shiftKey ? 270 : 90)) % 360;
       this.placement(null);
       this.hooks.mode();
       return;
@@ -125,8 +127,13 @@ export class SettlementHud {
       this.hooks.home();
       return;
     }
-    const binding = shortcutCommand(this.menuEntries, this.page, e.key) ??
-      this.bindings.find(b => ["move", "attack", "stop"].includes(b.type) && b.hotkey === e.key.toUpperCase());
+    const binding =
+      shortcutCommand(this.menuEntries, this.page, e.key) ??
+      this.bindings.find(
+        (b) =>
+          ["move", "attack", "stop"].includes(b.type) &&
+          b.hotkey === e.key.toUpperCase(),
+      );
     if (binding?.enabled) {
       e.preventDefault();
       this.activate(binding);
@@ -165,14 +172,23 @@ export class SettlementHud {
     this.experience.className = "rts-experience";
     this.experience.tabIndex = 0;
     this.experience.setAttribute("role", "progressbar");
-    this.portraitMana.className="rts-portrait-mana";
+    this.portraitMana.className = "rts-portrait-mana";
     this.portraitHp.className = "rts-portrait-health";
     this.hint.className = "rts-notice";
     this.hint.role = "status";
     this.cards.className = "rts-unit-cards";
     this.queues.className = "rts-recruit-queue";
     this.inventory.className = "rts-inventory";
-    copy.append(this.heading, this.level, this.experience, this.info, this.inventory, this.cards, this.queues, this.hint);
+    copy.append(
+      this.heading,
+      this.level,
+      this.experience,
+      this.info,
+      this.inventory,
+      this.cards,
+      this.queues,
+      this.hint,
+    );
     this.clockHost.className = "rts-clock-slot";
     selection.append(this.portrait, copy, this.clockHost);
     const actions = document.createElement("section");
@@ -246,7 +262,9 @@ export class SettlementHud {
         view.entities.find((e) => e.id === id)!,
       ),
       focus = selected[0];
-    this.bindings = this.readOnly ? [] : commandCard(view, this.selectedIds, this.owner, content);
+    this.bindings = this.readOnly
+      ? []
+      : commandCard(view, this.selectedIds, this.owner, content);
     if (
       this.targeting &&
       !this.bindings.some(
@@ -262,13 +280,14 @@ export class SettlementHud {
     this.menuEntries = menu.entries;
     this.page = Math.max(
       0,
-      Math.min(
-        this.page,
-        commandPageCount(this.menuEntries) - 1,
-      ),
+      Math.min(this.page, commandPageCount(this.menuEntries) - 1),
     );
     // Tick-by-tick progress updates do not recreate command icons.
-    const signature = JSON.stringify([this.menuEntries.map(({cooldown,reason,enabled,...entry})=>entry), this.page, this.category]);
+    const signature = JSON.stringify([
+      this.menuEntries.map(({ cooldown, reason, enabled, ...entry }) => entry),
+      this.page,
+      this.category,
+    ]);
     if (signature !== this.commandSignature) {
       this.commandSignature = signature;
       this.grid.replaceChildren();
@@ -282,8 +301,12 @@ export class SettlementHud {
         button.style.gridColumn = String(column);
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
-        button.dataset.commandId=b.id;
-        const cooldown=document.createElement('span');cooldown.className='rts-command-cooldown';cooldown.hidden=true;cooldown.setAttribute('aria-hidden','true');button.append(cooldown);
+        button.dataset.commandId = b.id;
+        const cooldown = document.createElement("span");
+        cooldown.className = "rts-command-cooldown";
+        cooldown.hidden = true;
+        cooldown.setAttribute("aria-hidden", "true");
+        button.append(cooldown);
         if (b.type === "category") button.setAttribute("aria-haspopup", "true");
         button.setAttribute("aria-label", b.name);
         Object.assign(button.dataset, {
@@ -300,7 +323,10 @@ export class SettlementHud {
           tipCosts: JSON.stringify(b.costs),
           tipKey: b.hotkey ?? "",
         });
-        button.onclick = () => {const current=this.menuEntries.find(entry=>entry.id===b.id);if(current)this.activate(current);};
+        button.onclick = () => {
+          const current = this.menuEntries.find((entry) => entry.id === b.id);
+          if (current) this.activate(current);
+        };
         this.grid.append(button);
       }
       this.pages.replaceChildren();
@@ -324,19 +350,43 @@ export class SettlementHud {
         );
       }
     }
-    for(const button of this.grid.querySelectorAll<HTMLButtonElement>('button[data-command-id]')){
-      const binding=this.menuEntries.find(b=>b.id===button.dataset.commandId),state=binding?.cooldown;
-      if(binding){
-        button.disabled=!binding.enabled;
-        const description=[binding.description,binding.reason,binding.actors.length>1?`${binding.actors.length} eligible selected actors`:''].filter(Boolean).join('\n');
-        if(button.dataset.tipDescription!==description){button.dataset.tipDescription=description;this.tooltips.refresh(button);}
+    for (const button of this.grid.querySelectorAll<HTMLButtonElement>(
+      "button[data-command-id]",
+    )) {
+      const binding = this.menuEntries.find(
+          (b) => b.id === button.dataset.commandId,
+        ),
+        state = binding?.cooldown;
+      if (binding) {
+        button.disabled = !binding.enabled;
+        const description = [
+          binding.description,
+          binding.reason,
+          binding.actors.length > 1
+            ? `${binding.actors.length} eligible selected actors`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n");
+        if (button.dataset.tipDescription !== description) {
+          button.dataset.tipDescription = description;
+          this.tooltips.refresh(button);
+        }
       }
-      const overlay=button.querySelector<HTMLElement>('.rts-command-cooldown')!;
-      const active=!!state&&state.remainingTicks>0;
-      overlay.hidden=!active;button.classList.toggle('is-cooling-down',active);
-      if(active){
-        overlay.style.setProperty('--cooldown',`${Math.min(1,state.remainingTicks/Math.max(1,state.totalTicks))*360}deg`);
-        overlay.textContent=String(Math.ceil(state.remainingTicks*TICK_MS/1000));
+      const overlay = button.querySelector<HTMLElement>(
+        ".rts-command-cooldown",
+      )!;
+      const active = !!state && state.remainingTicks > 0;
+      overlay.hidden = !active;
+      button.classList.toggle("is-cooling-down", active);
+      if (active) {
+        overlay.style.setProperty(
+          "--cooldown",
+          `${Math.min(1, state.remainingTicks / Math.max(1, state.totalTicks)) * 360}deg`,
+        );
+        overlay.textContent = String(
+          Math.ceil((state.remainingTicks * TICK_MS) / 1000),
+        );
       }
     }
     this.heading.textContent = focus ? content.get(focus.definition).name : "";
@@ -350,56 +400,96 @@ export class SettlementHud {
       const xp = experienceMeter(focus, d);
       this.experience.hidden = !xp;
       if (xp) {
-        this.experience.style.setProperty('--experience', `${xp.fraction*100}%`);
-        this.experience.setAttribute('aria-valuemin', '0');
-        this.experience.setAttribute('aria-valuemax', '100');
-        this.experience.setAttribute('aria-valuenow', String(Math.round(xp.fraction*100)));
-        this.experience.setAttribute('aria-label', xp.label);
-        Object.assign(this.experience.dataset,{tipName:xp.label,tipDescription:xp.description});
+        this.experience.style.setProperty(
+          "--experience",
+          `${xp.fraction * 100}%`,
+        );
+        this.experience.setAttribute("aria-valuemin", "0");
+        this.experience.setAttribute("aria-valuemax", "100");
+        this.experience.setAttribute(
+          "aria-valuenow",
+          String(Math.round(xp.fraction * 100)),
+        );
+        this.experience.setAttribute("aria-label", xp.label);
+        Object.assign(this.experience.dataset, {
+          tipName: xp.label,
+          tipDescription: xp.description,
+        });
       }
-      this.level.textContent = d.level === undefined ? "" : `Level ${focus.stats?.level ?? d.level}`;
+      this.level.textContent =
+        d.level === undefined ? "" : `Level ${focus.stats?.level ?? d.level}`;
       if (this.portraitDefinition !== d.id) {
         this.portraitDefinition = d.id;
         this.portrait.innerHTML = iconArt(d.icon);
-        this.portrait.append(this.portraitHp,this.portraitMana);
+        this.portrait.append(this.portraitHp, this.portraitMana);
       }
       Object.assign(this.portrait.dataset, {
-        tipName: d.name, tipDescription: d.description,
+        tipName: d.name,
+        tipDescription: d.description,
         tipCosts: JSON.stringify(costs(content, d.id)),
       });
-      this.portrait.dataset.mana=String(!!focus.spellcasting);
-      this.portraitMana.hidden=!focus.spellcasting;
-      this.portraitMana.textContent=focus.spellcasting?`${focus.spellcasting.mana} / ${d.behaviors.spellcasting!.maxMana}`:'';
+      this.portrait.dataset.mana = String(!!focus.spellcasting);
+      this.portraitMana.hidden = !focus.spellcasting;
+      this.portraitMana.textContent = focus.spellcasting
+        ? `${focus.spellcasting.mana} / ${focus.stats!.maxMana}`
+        : "";
       this.portraitHp.hidden = !d.body;
       if (d.body) {
         this.portraitHp.textContent = `${focus.hp ?? 0} / ${focus.stats?.maxHp ?? d.body.maxHp}`;
-        this.portraitHp.style.color = `#${healthPipState(focus.hp ?? 0, focus.stats?.maxHp ?? d.body.maxHp, d.kind === "building").color.toString(16).padStart(6, "0")}`;
+        this.portraitHp.style.color = `#${healthPipState(
+          focus.hp ?? 0,
+          focus.stats?.maxHp ?? d.body.maxHp,
+          d.kind === "building",
+        )
+          .color.toString(16)
+          .padStart(6, "0")}`;
       }
-      const statKey = `${d.id}/${focus.stats?.damage}/${focus.stats?.armor}`;
+      const statKey = `${d.id}/${focus.stats?.damage}/${focus.stats?.armor}/${focus.stats?.cooldownTicks}`;
       if (this.info.dataset.definition !== statKey) {
         this.info.dataset.definition = statKey;
         this.info.replaceChildren();
         if (d.body) {
           const armor = content.rules.armorTypes[d.body.armorType];
           for (const stat of [
-            { name: "Damage", value: focus.stats?.damage ?? d.behaviors.combat?.damage ?? 0, icon: "icon.action.attack", description: "Damage per attack." },
-            { name: "Armor", value: focus.stats?.armor ?? d.body.armor, icon: armor.icon, description: armor.name },
+            {
+              name: "Damage",
+              value: focus.stats?.damage ?? d.behaviors.combat?.damage ?? 0,
+              icon: "icon.action.attack",
+              description: d.behaviors.combat
+                ? `${content.rules.damageTypes[d.behaviors.combat.damageType].name}. ${Number(((focus.stats?.cooldownTicks ?? d.behaviors.combat.cooldownTicks) * TICK_MS / 1000).toFixed(3))}s between attacks. Damage shown before target armor and resistance.`
+                : "This unit has no attack.",
+            },
+            {
+              name: "Armor",
+              value: focus.stats?.armor ?? d.body.armor,
+              icon: armor.icon,
+              description: `${armor.name}. Armor points reduce ordinary attack damage by ${((1-armorMultiplier(content.rules,focus.stats?.armor ?? d.body.armor))*100).toFixed(1)}%.\n${Object.entries(content.rules.damageTypes).map(([id,t]) => `${t.name}: ${content.rules.damageMultipliers[id][d.body!.armorType]/10}% class damage${t.appliesArmor ? " before armor" : "; bypasses armor points"}`).join("\n")}`,
+            },
           ]) {
             const row = document.createElement("div");
             row.className = "rts-selection-stat";
             row.innerHTML = iconArt(stat.icon);
             row.tabIndex = 0;
-            Object.assign(row.dataset, { tipName: stat.name, tipDescription: stat.description });
-            const text = document.createElement("div"), label = document.createElement("span"), value = document.createElement("strong");
-            label.textContent = stat.name; value.textContent = String(stat.value);
-            text.append(label, value); row.append(text); this.info.append(row);
+            Object.assign(row.dataset, {
+              tipName: stat.name,
+              tipDescription: stat.description,
+            });
+            const text = document.createElement("div"),
+              label = document.createElement("span"),
+              value = document.createElement("strong");
+            label.textContent = stat.name;
+            value.textContent = String(Number(stat.value.toFixed(1)));
+            text.append(label, value);
+            row.append(text);
+            this.info.append(row);
           }
         }
       }
     } else {
       this.portraitDefinition = "";
       this.portrait.replaceChildren();
-      for (const key of Object.keys(this.portrait.dataset)) delete this.portrait.dataset[key];
+      for (const key of Object.keys(this.portrait.dataset))
+        delete this.portrait.dataset[key];
       this.level.textContent = "";
       this.info.replaceChildren();
       delete this.info.dataset.definition;
@@ -425,12 +515,20 @@ export class SettlementHud {
           hp.className = "rts-unit-hp";
           const fill = document.createElement("i");
           fill.style.width = `${(e.hp! / (e.stats?.maxHp ?? d.body.maxHp)) * 100}%`;
-          fill.style.backgroundColor = `#${healthPipState(e.hp ?? 0, e.stats?.maxHp ?? d.body.maxHp, false).color.toString(16).padStart(6, "0")}`;
+          fill.style.backgroundColor = `#${healthPipState(
+            e.hp ?? 0,
+            e.stats?.maxHp ?? d.body.maxHp,
+            false,
+          )
+            .color.toString(16)
+            .padStart(6, "0")}`;
           hp.append(fill);
           button.append(hp);
         }
         const text = document.createElement("small");
-        text.textContent = d.body ? `${e.hp}/${e.stats?.maxHp ?? d.body.maxHp}` : d.name;
+        text.textContent = d.body
+          ? `${e.hp}/${e.stats?.maxHp ?? d.body.maxHp}`
+          : d.name;
         button.append(text);
         button.onclick = (event) =>
           this.setSelection(
@@ -443,26 +541,86 @@ export class SettlementHud {
       }
     }
     this.cards.hidden = selected.length < 2;
-    const inventory=inventoryCard(view,focus?.id,this.owner,content,this.readOnly),inventoryKey=JSON.stringify(inventory);
-    this.inventory.hidden=!inventory.length;
-    if(inventoryKey!==this.inventorySignature) {
-      this.inventorySignature=inventoryKey;this.inventory.replaceChildren();
-      for(const item of inventory) {
-        const button=document.createElement("button");button.type="button";
-        button.setAttribute("aria-label",`${item.name}, slot ${item.slot+1}`);
-        if(item.icon)button.innerHTML=iconArt(item.icon);
-        Object.assign(button.dataset,{tipName:item.name,tipDescription:item.description+(item.drop ? (item.use ? " Click to use. Right-click to drop." : " Equipped. Right-click to drop.") : "")});
-        button.disabled=!item.definition || !item.drop;
-        button.onclick=()=>{if(item.use)this.hooks.action(item.use);};
-        button.oncontextmenu=event=>{event.preventDefault();if(item.drop)this.hooks.action(item.drop);};
+    const inventory = inventoryCard(
+        view,
+        focus?.id,
+        this.owner,
+        content,
+        this.readOnly,
+      ),
+      inventoryKey = JSON.stringify(inventory);
+    this.inventory.hidden = !inventory.length;
+    if (inventoryKey !== this.inventorySignature) {
+      this.inventorySignature = inventoryKey;
+      this.inventory.replaceChildren();
+      for (const item of inventory) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.setAttribute(
+          "aria-label",
+          `${item.name}, slot ${item.slot + 1}`,
+        );
+        if (item.icon) button.innerHTML = iconArt(item.icon);
+        Object.assign(button.dataset, {
+          tipName: item.name,
+          tipDescription:
+            item.description +
+            (item.drop
+              ? item.use
+                ? " Click to use. Right-click to drop."
+                : " Equipped. Right-click to drop."
+              : ""),
+        });
+        button.disabled = !item.definition || !item.drop;
+        button.onclick = () => {
+          if (item.use) this.hooks.action(item.use);
+        };
+        button.oncontextmenu = (event) => {
+          event.preventDefault();
+          if (item.drop) this.hooks.action(item.drop);
+        };
         this.inventory.append(button);
       }
     }
-    const queue = queueCard(view, focus?.id, this.owner, content, this.readOnly),
-      queueKey = JSON.stringify([focus?.id, queue]);
+    const queue = queueCard(
+        view,
+        focus?.id,
+        this.owner,
+        content,
+        this.readOnly,
+      ),
+      queueKey = JSON.stringify([
+        focus?.id,
+        queue,
+        focus?.production?.status,
+        Math.floor((focus?.production?.active?.progress ?? 0) / 40),
+        focus?.gathering,
+        focus?.resource?.amount,
+      ]);
     if (queueKey !== this.queueSignature) {
       this.queueSignature = queueKey;
       this.queues.replaceChildren();
+      if (focus && !focus.remembered) {
+        const summary = document.createElement("span");
+        summary.className = "rts-production-summary";
+        const production = content.get(focus.definition).behaviors.production;
+        if (focus.production && production) {
+          const population = production.population;
+          summary.textContent = population
+            ? `${focus.production.status} · ${Math.floor((focus.production.active?.progress ?? 0) / 40)}/${population.intervalTicks / 40}s · +${population.capacity} worker capacity`
+            : queue.length
+              ? focus.production.status
+              : "";
+        } else if (focus.gathering) {
+          const resource = content.definitions.find(
+            (d) =>
+              d.creation?.method === "harvest" &&
+              d.creation.source === focus.definition,
+          );
+          summary.textContent = `${focus.gathering.workers}/${focus.gathering.capacity} workers · ${focus.resource?.amount ?? 0} ${resource?.name ?? "resources"} remaining`;
+        }
+        if (summary.textContent) this.queues.append(summary);
+      }
       for (const q of queue) {
         const button = document.createElement("button");
         button.textContent = `${q.name}${q.cancel ? " ×" : ""}`;
@@ -470,7 +628,7 @@ export class SettlementHud {
         Object.assign(button.dataset, {
           tipName: q.cancel ? `Cancel ${q.name}` : q.name,
           tipDescription: q.cancel
-            ? "Remove this queue entry. Delivered goods stay physical."
+            ? "Cancel this recruit. Reserved resources return to the hall and the worker is released."
             : "Production queue. This workplace cannot receive player commands.",
           tipCosts: JSON.stringify(q.costs),
         });
@@ -480,7 +638,7 @@ export class SettlementHud {
         this.queues.append(button);
       }
     }
-    const stockSignature = JSON.stringify(view.goods);
+    const stockSignature = JSON.stringify([view.goods, view.population]);
     if (this.stockSignature !== stockSignature) {
       this.stockSignature = stockSignature;
       this.stock.replaceChildren();
@@ -494,10 +652,32 @@ export class SettlementHud {
         badge.append(number);
         Object.assign(badge.dataset, {
           tipName: item.name,
-          tipDescription: `${item.description}\n${row.available} available · ${row.reserved} reserved\n${row.stored} stored · ${row.loose} on ground · ${row.inTransit} in transit`,
+          tipDescription: `${item.description}\n${row.available} available · ${row.reserved} reserved\n${row.stored} stored · ${row.inTransit} being carried`,
         });
         this.stock.append(badge);
       }
+    }
+    // Resource and population badges share the same declarative icon/tooltip path.
+    if (view.population) {
+      let badge = this.stock.querySelector<HTMLElement>("[data-population]");
+      if (!badge) {
+        badge = document.createElement("span");
+        badge.dataset.population = "true";
+        badge.tabIndex = 0;
+        badge.innerHTML =
+          iconArt(
+            content.get(
+              content.rules.startingSetup.units.find(
+                (u) => content.get(u.definition).behaviors.work,
+              )!.definition,
+            ).icon,
+          ) + "<b></b>";
+        this.stock.append(badge);
+      }
+      const p = view.population;
+      badge.querySelector("b")!.textContent = `${p.workers}/${p.capacity}`;
+      badge.dataset.tipName = "Workers";
+      badge.dataset.tipDescription = `${p.available} available for recruitment or construction. ${p.workers} living workers / ${p.capacity} capacity. Employed workers are protected from automatic recruitment. Halls and houses replenish workers when there is space.`;
     }
     if (view.outcome) {
       this.info.textContent =
@@ -505,9 +685,9 @@ export class SettlementHud {
           ? "Draw — both main forts fell."
           : this.readOnly
             ? `Player ${view.outcome.winner.split(".")[1]} wins — the rival main hall fell.`
-          : view.outcome.winner === this.owner
-            ? "Victory — the enemy main fort fell."
-            : "Defeat — your main fort fell.";
+            : view.outcome.winner === this.owner
+              ? "Victory — the enemy main fort fell."
+              : "Defeat — your main fort fell.";
       this.clearMode();
     } else {
       const latest = view.events.at(-1);

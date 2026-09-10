@@ -1,4 +1,4 @@
-import {visualCueSchema} from "./visualCues";
+import { visualCueSchema } from "./visualCues";
 import { z } from "zod";
 import {
   stockSchema,
@@ -11,8 +11,8 @@ const positive = z.number().int().positive(),
   natural = z.number().int().nonnegative();
 const point = pointSchema;
 const orderSchema = z.discriminatedUnion("type", [
-  z.object({type:z.literal("gather"),target:positive}).strict(),
-  z.object({type:z.literal("pickup"),target:positive}).strict(),
+  z.object({ type: z.literal("gather"), target: positive }).strict(),
+  z.object({ type: z.literal("pickup"), target: positive }).strict(),
   z
     .object({
       type: z.literal("move"),
@@ -40,13 +40,46 @@ export const entitySchema = z
     hp: natural.nullable(),
     inventory: stockSchema,
     progression: z.object({ experience: natural }).strict().optional(),
+    regeneration: z.object({ health: natural.max(39999), mana: natural.max(39999) }).strict().optional(),
     fallen: z.literal(true).optional(),
-    revival: z.object({queue:z.array(z.object({hero:positive,progress:natural}).strict())}).strict().optional(),
+    revival: z
+      .object({
+        queue: z.array(
+          z.object({ hero: positive, progress: natural }).strict(),
+        ),
+      })
+      .strict()
+      .optional(),
     equipment: z.array(idSchema.nullable()).max(12).optional(),
-    spellcasting:z.object({mana:natural,learned:z.record(idSchema,natural.max(3)),cooldowns:z.record(idSchema,natural),
-      pending:z.object({ability:idSchema,rank:positive.max(3),point,resolveTick:natural}).strict().nullable(),
-    }).strict().optional(),
-    effects:z.array(z.object({ability:idSchema,source:positive,expires:natural,rank:positive.max(3)}).strict()).optional(),
+    spellcasting: z
+      .object({
+        mana: natural,
+        learned: z.record(idSchema, natural.max(3)),
+        cooldowns: z.record(idSchema, natural),
+        pending: z
+          .object({
+            ability: idSchema,
+            rank: positive.max(3),
+            point,
+            resolveTick: natural,
+          })
+          .strict()
+          .nullable(),
+      })
+      .strict()
+      .optional(),
+    effects: z
+      .array(
+        z
+          .object({
+            ability: idSchema,
+            source: positive,
+            expires: natural,
+            rank: positive.max(3),
+          })
+          .strict(),
+      )
+      .optional(),
     appearance: z
       .object({
         asset: idSchema.optional(),
@@ -63,11 +96,21 @@ export const entitySchema = z
         order: orderSchema.nullable(),
         route: z.array(natural.max(262143)),
         goal: natural.max(262143).nullable(),
-        position: z.object({x: natural.max(511000), y: natural.max(511000)}).strict().nullable(),
-        segment: z.object({
-          from: z.object({x: natural.max(511000), y: natural.max(511000)}).strict(),
-          to: natural.max(262143), length: positive, progress: natural,
-        }).strict().nullable(),
+        position: z
+          .object({ x: natural.max(511000), y: natural.max(511000) })
+          .strict()
+          .nullable(),
+        segment: z
+          .object({
+            from: z
+              .object({ x: natural.max(511000), y: natural.max(511000) })
+              .strict(),
+            to: natural.max(262143),
+            length: positive,
+            progress: natural,
+          })
+          .strict()
+          .nullable(),
         employment: positive.nullable(),
         job: positive.nullable(),
         cargo: z
@@ -79,11 +122,22 @@ export const entitySchema = z
         release: point.nullable(),
         target: positive.nullable(),
         cooldown: natural,
-        shot: z.object({tick:natural, x:z.number().nonnegative(), y:z.number().nonnegative(), viewers:z.array(ownerSchema)}).strict().optional(),
+        shot: z
+          .object({
+            tick: natural,
+            x: z.number().nonnegative(),
+            y: z.number().nonnegative(),
+            viewers: z.array(ownerSchema),
+          })
+          .strict()
+          .optional(),
         camp: z.string().nullable(),
         returning: z.boolean(),
         retryAt: natural,
-        idle: z.object({ home: point, nextTick: natural, walking: z.boolean() }).strict().nullable(),
+        idle: z
+          .object({ home: point, nextTick: natural, walking: z.boolean() })
+          .strict()
+          .nullable(),
       })
       .strict()
       .optional(),
@@ -123,7 +177,6 @@ export const jobSchema = z
       "repair",
       "harvest",
       "plant",
-      "craft",
       "recruit",
     ]),
     worker: positive,
@@ -159,8 +212,8 @@ export const stateSchema = z
     tick: natural,
     random: positive.max(0xffffffff),
     clearedCamps: z.array(z.string().min(1)),
-    nextVisual:positive,
-    visuals:z.array(visualCueSchema),
+    nextVisual: positive,
+    visuals: z.array(visualCueSchema),
     nextId: positive,
     nextJob: positive,
     nextQueue: positive,
@@ -195,8 +248,8 @@ export const emptyState = (): GameState => ({
   tick: 0,
   random: 1,
   clearedCamps: [],
-  nextVisual:1,
-  visuals:[],
+  nextVisual: 1,
+  visuals: [],
   nextId: 1,
   nextJob: 1,
   nextQueue: 1,

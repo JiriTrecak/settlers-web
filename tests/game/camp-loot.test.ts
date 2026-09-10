@@ -8,7 +8,7 @@ import { placed, slots, source } from "./helpers";
 function setup() {
   const data = source();
   (data.rules as Rules).lootPools = { "loot.test": {rolls: 2, entries: [
-    {item: "item.plank", weight: 3}, {item: "item.amber", weight: 1},
+    {item: "item.barkguard", weight: 3}, {item: "item.thornband", weight: 1},
   ]} };
   const map = {...emptyUtcMap(), entities: [
     {...placed("wolf.1", "unit.neutral.wolf", 100, 100), owner: "none" as const},

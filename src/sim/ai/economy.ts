@@ -138,16 +138,12 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     )
       return;
   }
-  // Refill finite worker houses before recruitment converts the productive workforce.
-  const arriving = f.buildings.reduce((n, b) => {
-    const p = f.def(b).behaviors.production;
-    return (
-      n +
-      (p?.outputs.some((id) => f.registry.get(id).creation?.method === "spawn")
-        ? Math.max(0, (p.totalLimit ?? 0) - (b.production?.produced ?? 0))
-        : 0)
-    );
-  }, 0);
+  // Houses add persistent capacity and replenishment, not a one-off batch of workers.
+  // Include planned construction so the AI does not overbuild while waiting for births.
+  const capacity = f.buildings.reduce(
+    (n, b) => n + (f.def(b).behaviors.production?.population?.capacity ?? 0),
+    0,
+  );
   const total = workers.length + training,
     hasProducer = f.buildings.some((b) =>
       producers.some((d) => d.id === b.definition),
@@ -183,8 +179,8 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
   );
   const endangered = workers.length < rules.workers.minimum;
   const needHouse =
-    (total + arriving < incomeNeed ||
-      total + arriving - queues.length <
+    (capacity < incomeNeed ||
+      capacity - queues.length <
         rules.workers.minimum + rules.workers.reserve) &&
     (hasProducer || endangered);
   if (needHouse) {
@@ -332,6 +328,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
             const c = f.registry.get(id).creation;
             return c?.method === "harvest" && c.source === r.definition;
           }) &&
+          (!r.gathering || r.gathering.workers < r.gathering.capacity) &&
           f.geo.connected(w, r) &&
           !f.hostiles.some((h) => distance(h, r) < 12),
       )
@@ -374,6 +371,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
       .filter(
         (r) =>
           r.definition === creation.source &&
+          (!r.gathering || r.gathering.workers < r.gathering.capacity) &&
           f.geo.connected(f.home, r) &&
           !f.hostiles.some((h) => distance(h, r) < 12),
       )

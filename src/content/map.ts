@@ -45,9 +45,14 @@ export function validatePlacements(
     const p = placementSchema.parse(raw),
       d = registry.get(p.definition),
       state = p.initialState;
+    if (d.currency)
+      throw new Error(`${p.id}: currencies cannot be placed on the ground`);
+    if (d.gatheringCapacity && p.owner !== "none")
+      throw new Error(`${p.id}: mines must be neutral`);
     if (ids.has(p.id)) throw new Error(`Duplicate placement ${p.id}`);
     ids.add(p.id);
-    if(p.position.x>=map.size || p.position.y>=map.size)throw new Error(`${p.id}: outside map bounds`);
+    if (p.position.x >= map.size || p.position.y >= map.size)
+      throw new Error(`${p.id}: outside map bounds`);
     if (
       p.owner !== "none" &&
       !map.playerStarts.some((s) => p.owner === `player.${s.player}`)
@@ -55,10 +60,7 @@ export function validatePlacements(
       throw new Error(`${p.id}: missing owner slot`);
     if (state?.health !== undefined && (!d.body || state.health > d.body.maxHp))
       throw new Error(`${p.id}: invalid initial health`);
-    if (
-      state?.amount !== undefined &&
-      (d.kind !== "resource" || state.amount > d.yield!)
-    )
+    if (state?.amount !== undefined && (!d.yield || state.amount > d.yield))
       throw new Error(`${p.id}: invalid initial yield`);
     if (
       state?.quantity !== undefined &&

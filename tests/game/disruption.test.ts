@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { craftGame, game, placed, physical, run, worker, slots } from "./helpers";
+import { game, placed, physical, run, worker, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 
 describe("work disruption and capacity", () => {
@@ -9,6 +9,8 @@ describe("work disruption and capacity", () => {
           (d: any) => d.id === "building.ants.barracks",
         ) as any;
         b.behaviors.storage.capacity=16;
+        const a = s.definitions.find((d:any) => d.id === "unit.ants.archer") as any;
+        a.creation.items=[{item:"item.wood",amount:5},{item:"item.amber",amount:10}];
         const w = s.definitions.find(
           (d: any) => d.id === "unit.ants.warrior",
         ) as any;
@@ -33,30 +35,10 @@ describe("work disruption and capacity", () => {
     expect(b.production!.produced).toBe(2);
     expect(b.production!.queue).toEqual([]);
   });
-  it("S06 a full input store can consume a bill and commit its output in the same cycle", () => {
-    const g = craftGame([
-        placed("mill", "building.ants.sawmill", 205, 210, {
-          inventory: { "item.wood": 16 },
-        }),
-      ]),
-      b = g.entities.find((e) => e.placement === "mill")!;
-    run(g, 3000);
-    expect(b.production!.produced).toBe(16);
-    expect(g.state.accounting.produced["item.plank"]).toBeGreaterThan(0);
-    expect(
-      g.entities
-        .filter((e) => e.production)
-        .every(
-          (e) =>
-            Object.values(e.inventory).reduce((a, b) => a + b, 0) <=
-            g.registry.get(e.definition).behaviors.storage!.capacity,
-        ),
-    ).toBe(true);
-  });
   it("S08 hall destruction loses only unreserved stock, preserving funded construction", () => {
     const g = game([
         placed("store", "building.ants.fort", 235, 235, {
-          inventory: { "item.wood": 20, "item.amber": 10 },
+          inventory: { "item.wood": 32, "item.amber": 100 },
         }),
       ]),
       w = worker(g),
@@ -75,20 +57,21 @@ describe("work disruption and capacity", () => {
     run(g, 20);
     expect(g.state.jobs.some((j) => j.source === fort.id)).toBe(false);
     expect(g.state.accounting.lost["item.wood"]).toBe(12);
-    expect(physical(g, "item.wood")).toBe(88);
+    expect(physical(g, "item.wood")).toBe(g.registry.rules.startingSetup.inventory["item.wood"]+20);
   });
-  it("S12 harvest reservations prevent two workplaces duplicating the last resource unit", () => {
+  it("S12 harvest reservations prevent two gatherers duplicating the last resource unit", () => {
     const g = game([
-      placed("a", "building.ants.lumberjack", 205, 210),
-      placed("b", "building.ants.lumberjack", 219, 200),
       {
         ...placed("tree", "resource.forest.tree", 207, 200, { amount: 1 }),
         owner: "none",
       },
     ]);
+    const tree = g.entities.find(e=>e.placement==='tree')!;
+    for (const w of g.entities.filter(e=>e.owner==='player.1'&&e.unit&&g.registry.get(e.definition).behaviors.work))
+      g.command('player.1',{type:'gather',actors:[w.id],target:tree.id});
     run(g, 700);
     expect(g.state.accounting.produced["item.wood"]).toBe(1);
-    expect(physical(g, "item.wood")).toBe(161);
+    expect(physical(g, "item.wood")).toBe(2*g.registry.rules.startingSetup.inventory["item.wood"]+1);
     expect(
       g.entities.find((e) => e.placement === "tree")!.resource!.amount,
     ).toBe(0);
@@ -134,11 +117,7 @@ describe("work disruption and capacity", () => {
     expect(g.checksum()).toBe(before);
   });
   it("dead staff can be replaced and the resulting snapshot remains valid", () => {
-    const g = craftGame([
-        placed("mill", "building.ants.sawmill", 205, 210, {
-          inventory: { "item.wood": 3 },
-        }),
-      ]),
+    const g = game([placed("mill", "building.ants.forester"), {...placed("tree", "resource.forest.tree", 200, 205, {amount:0}),owner:"none"}]),
       b = g.entities.find((e) => e.placement === "mill")!;
     g.tick();
     const staff = g.context.get(b.production!.staff)!;

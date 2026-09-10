@@ -12,13 +12,13 @@ describe("command categories", () => {
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
-      ["lumberjack", "forester", "house"].map(id => `building.ants.${id}`),
+      ["forester", "house"].map(id => `building.ants.${id}`),
     );
     expect(basic.some(b => b.targetDefinition === "building.ants.barracks")).toBe(false);
     const advanced = commandMenu(bindings, "category.build-advanced", g.registry).entries;
     const barracks = advanced.find(b => b.targetDefinition === "building.ants.barracks")!;
     expect(barracks.actors).toEqual([w.id]);
-    expect(barracks.costs.map(c => c.amount)).toEqual([8, 4]);
+    expect(barracks.costs.map(c => c.amount)).toEqual([160, 60]);
     expect(commandPage(advanced, 0).find(s => s.binding.type === "back")).toMatchObject({column: 1, row: 3, binding: {destination: null}});
     const soldier = g.entities.find(e => e.definition === "unit.ants.warrior")!;
     const army = commandCard(g.view("player.1"), [soldier.id], "player.1", g.registry);

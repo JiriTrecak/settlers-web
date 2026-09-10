@@ -2,7 +2,7 @@ import { builtinSource } from "../../src/content/builtin";
 import { ContentRegistry } from "../../src/content/registry";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { Game } from "../../src/sim/game/game";
-import type { Placement, Rules, Definition } from "../../src/content/schema";
+import type { Placement, Rules } from "../../src/content/schema";
 export const slots = [
   { player: 0, kind: "human" as const },
   { player: 1, kind: "human" as const },
@@ -55,14 +55,4 @@ export function physical(g: Game, item: string) {
       (e.unit?.cargo?.item === item ? e.unit.cargo.amount : 0),
     0,
   );
-}
-
-/** A synthetic producer exercises generic crafting without restoring a retired gameplay chain. */
-export function craftGame(entities: Placement[] = [], edit?: (draft:ReturnType<typeof source>)=>void) {
-  return game(entities,draft=>{
-    const mill=(draft.definitions as Definition[]).find(d=>d.id==='building.ants.sawmill')!;
-    mill.behaviors={storage:{capacity:16,accepts:['item.wood']},production:{mode:'automatic',outputs:['item.plank'],workerSlots:1,workRadius:28}};
-    (draft.definitions as Definition[]).find(d=>d.id==='item.plank')!.creation={method:'craft',items:[{item:'item.wood',amount:1}],workTicks:120};
-    edit?.(draft);
-  });
 }

@@ -3,7 +3,6 @@ import { describe, it, expect } from "vitest";
 import { game, placed, run, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
-import { territoryBorder } from "../../src/shared/settlement/territoryBorder";
 import { Navigation } from "../../src/sim/game/navigation";
 
 describe("combat, knowledge and deterministic navigation", () => {
@@ -31,7 +30,7 @@ describe("combat, knowledge and deterministic navigation", () => {
     expect(g.state.outcome?.winner).toBeNull();
     expect(g.state.outcome?.defeated).toHaveLength(2);
   });
-  it("S17 observation does not disclose enemy inventories or draw a border at the sight circle", () => {
+  it("S17 observation does not disclose enemy inventories and contains no territory boundary data", () => {
     const map = emptyUtcMap(),
       g = new Game(
         {
@@ -52,15 +51,8 @@ describe("combat, knowledge and deterministic navigation", () => {
     expect(enemy).toBeDefined();
     expect(enemy.inventory).toBeUndefined();
     expect(enemy.production).toBeUndefined();
-    let interior = 0;
-    for (let i = 0; i < 65536; i++)
-      if (view.fog!.cells[i] === 2 && g.spatial.territory[i] === 1) {
-        expect(view.territoryBorders![i]).toBe(
-          territoryBorder(g.spatial.territory, i % 256, Math.floor(i / 256)),
-        );
-        if (view.territoryBorders![i] === 0) interior++;
-      }
-    expect(interior).toBeGreaterThan(20);
+    expect(view).not.toHaveProperty('territory');
+    expect(g.snapshot().knowledge[0]).not.toHaveProperty('borders');
     const scout = g.entities.find((e) => e.placement === "scout")!;
     scout.x = 90;
     scout.y = 128;
@@ -82,7 +74,7 @@ describe("combat, knowledge and deterministic navigation", () => {
           entities: [
             wolf,
             placed("warrior", "unit.ants.warrior", 206, 230),
-            { ...placed("loose", "item.plank", 205, 231), owner: "none" },
+            { ...placed("loose", "item.barkguard", 205, 231), owner: "none" },
           ],
           camps: [
             {

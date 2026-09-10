@@ -4,11 +4,13 @@ The validator rejects unknown fields, unresolved IDs/assets, duplicate IDs, conf
 
 Reference tests:
 
+- `tests/game/colony-economy.test.ts`: exact startup/birth timing, recurring house replacement, shared capacity, destroyed capacity, save continuation, ten-slot neutral mines, protected gatherers, physical recruitment, remote construction, retired content and no currency drops.
+
 - `tests/game/command-categories.test.ts`: populated/nested menus, grouping precedence, empty-category recovery, Back on every page, scoped shortcuts, invalid references/cycles/icons.
-- `tests/game/content.test.ts`: graph failures, immutable registry, canonical identity, adding a new unit without type branches, unit/building control removal, thirteen-output paging, command projection, map items/camps, isolated entity undo and visual stack cap.
-- `tests/game/economy.test.ts`: physical opening, one-worker liveness, assigned-worker input hauling, competing recruitment, cancellation, deferred carrier movement, blocked deployment/release, finite house output, busy snapshot continuation.
-- `tests/game/combat.test.ts`: forced friendly damage and simultaneous defeat, fog privacy and real territory boundaries, neutral aggression/leash, deterministic navigation.
-- `tests/game/disruption.test.ts`: head-first capacity protection, full-store crafting, source destruction, harvest contention, blocked regrowth/restore, invalid-snapshot atomicity and replacing a dead employee.
+- `tests/game/content.test.ts`: graph failures, immutable registry, canonical identity, adding a new unit without type branches, unit/building control removal, thirteen-output paging, command projection, map items/camps, isolated entity undo and currency placement rejection.
+- `tests/game/economy.test.ts`: bank-funded construction, one-worker liveness, protected workers, competing recruitment, cancellation, deferred carrier movement, blocked deployment/release, busy snapshot continuation.
+- `tests/game/combat.test.ts`: forced friendly damage and simultaneous defeat, fog privacy, neutral aggression/leash, deterministic navigation.
+- `tests/game/disruption.test.ts`: head-first funding protection, source destruction, harvest contention, blocked regrowth/restore, invalid-snapshot atomicity and replacing a dead employee.
 - `tests/net/settlement-lockstep.test.ts`: packet limits, independent mailboxes through construction/recruitment, restored state, malformed batches, queued AI continuation, and simultaneous restore of unapplied commits, held commands and unsent outboxes.
 - `tests/engine/world.test.ts`: mandatory authored starts, participant ordering and team identity on restore.
 - Existing terrain, rendering, player-material, map, transport, editor and architecture tests cover retained infrastructure.
@@ -21,10 +23,20 @@ The in-game debug overlay (F3) reports explicit simulation phases alongside rend
 
 ## Real transport and browser checks
 
-`node --import tsx scripts/verify-settlement-network.ts` starts a temporary MatchHost on loopback port 18787 and two real WebSocket clients. On Mosswater, both players construct a barracks and recruit a warrior and an archer. It verifies 3,000 ticks, fifteen host-confirmed hashes per peer, unchanged total unit population, and exact construction/recruitment material consumption. The temporary host stops on exit.
+`node --import tsx scripts/verify-settlement-network.ts` starts a temporary MatchHost on loopback port 18787 and two real WebSocket clients. On Mosswater, both players construct a barracks and recruit a warrior and an archer. It verifies 3,000 ticks, fifteen host-confirmed hashes per peer, worker replenishment and conversion, and exact construction/recruitment material consumption. The temporary host stops on exit.
 
 The browser checks exercise the loaded game/HUD, canonical build requests, singleplayer save/load with an unsent action, editor entity editing, and the atomic content endpoint. Invalid content and stale revisions must leave the source untouched. API/headless checks prove logic; visual inspection verifies the existing model/terrain adapters still display the map.
 
-This cutover does not implement Lua, live portraits, inventory/loot, capture or advanced diplomacy. No new claim is made about Internet reconnect robustness or large-army performance. Those need their own scenarios when developed.
+This cutover does not implement Lua, live portraits, capture or advanced diplomacy. No new claim is made about Internet reconnect robustness or large-army performance. Those need their own scenarios when developed.
 
 `tests/game/any-angle.test.ts` covers straight non-45-degree travel, precise observations, mid-cell stop/retarget, swept wall avoidance and snapshot continuation. `tests/game/navigation.test.ts` checks the underlying grid search against shortest-cost reference paths.
+
+The amber/wood cutover passed 325 tests across 90 files and the production build. A 16,000-tick Mosswater AI duel exercised recurring worker capacity and mixed-army recruitment; both players maintained 23 living workers by the end. Headless timing is not a browser FPS guarantee.
+
+The updated real MatchHost smoke test also passed: two WebSocket peers, 3,000 ticks, fifteen confirmed hashes each, and exact shared spending of 26 wood and 44 amber. Live browser inspection confirmed mine selection/occupancy, the automatic worker cap and worker-built barracks.
+
+## First combat balance pass
+
+`tests/game/balance.test.ts` covers armor/class/spell/guard ordering, immunity, meaningful small hits against high armor, complete level-ten stats, six-slot equipment plus Rally, deterministic fractional regeneration and save continuation, level-up pool changes, derived attack intervals, six-target area budgets, immunity exclusions, hero stun duration and building stun exclusion. `tests/game/gathering.test.ts` verifies ten-unit amber and wood delivery cycles plus partial depletion conservation.
+
+The schema validates complete damage matrices, one matching level-one stat record, increasing XP thresholds, non-shrinking resource pools and millipoint regeneration rates. The simulation build is `declarative-sim-13`; earlier saves/content hashes are incompatible.

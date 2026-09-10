@@ -1,3 +1,4 @@
+import { areaDamageScale, stunDuration } from './damage';
 import {spellAreaContains} from '../../content/spellArea';
 import type {Observation} from "./observation";
 import type {VisualCue} from "./visualCues";
@@ -50,7 +51,6 @@ export class Spellcasting {
    if(e.effects){e.effects=e.effects.filter(b=>b.expires>this.c.state.tick);if(!e.effects.length)delete e.effects;}
    const state=e.spellcasting,policy=this.c.def(e).behaviors.spellcasting;
    if(state&&policy){
-    if(this.c.state.tick%policy.regenTicks===0)state.mana=Math.min(policy.maxMana,state.mana+1);
     if(isStunned(e,this.c.registry))state.pending=null;
    }
   }
@@ -62,6 +62,7 @@ export class Spellcasting {
    if(!state || !pending || pending.resolveTick>this.c.state.tick)continue;
    state.pending=null;
    const spell=this.c.registry.rules.spells[pending.ability],rank=spell.ranks[pending.rank-1],origin=precise(caster);
+   const targets: Entity[] = [];
    for(const target of this.c.live()){
     if(target.hp===null || target.unit?.contained || target.unit?.release)continue;
     const p=precise(target);
@@ -71,12 +72,17 @@ export class Spellcasting {
     else if(this.combat.hostile(caster,target)){
      affected=spellAreaContains(spell.effect,origin,pending.point,rank.radius,p);
     }
-    if(!affected)continue;
-    if(rank.damage)hits.push({source:caster.id,target:target.id,damage:rank.damage,damageType:spell.damageType});
-    if(rank.damageBonus || rank.reductionPermille || rank.stunTicks){
+    if(affected)targets.push(target);
+   }
+   const eligible = targets.filter(t => this.c.registry.rules.damageMultipliers[spell.damageType][this.c.def(t).body!.armorType] > 0);
+   const scale = areaDamageScale(spell.damageTargetBudget, eligible.length);
+   for (const target of targets) {
+    if(rank.damage && eligible.includes(target))hits.push({source:caster.id,target:target.id,damage:rank.damage*scale,damageType:spell.damageType});
+    const stun = stunDuration(this.c.registry.rules, rank.stunTicks, !!target.unit, !!this.c.def(target).hero);
+    if(rank.damageBonusPermille || rank.reductionPermille || stun){
      // Refresh the same spell's effect; multiple marshals cannot stack identical rally buffs.
      target.effects=(target.effects??[]).filter(b=>b.ability!==pending.ability);
-     target.effects.push({ability:pending.ability,source:caster.id,expires:this.c.state.tick+(rank.stunTicks||rank.durationTicks),
+     target.effects.push({ability:pending.ability,source:caster.id,expires:this.c.state.tick+(stun||rank.durationTicks),
       rank:pending.rank});
     }
    }

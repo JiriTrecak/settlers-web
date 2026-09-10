@@ -1,3 +1,4 @@
+import { resolveDamage, guardReduction } from "./damage";
 import {isStunned} from "./effects";
 import { atPoint, precise } from "./motion";
 import type { Camp, Owner } from "../../content/schema";
@@ -143,11 +144,11 @@ export class Combat {
     }
   }
   private damage(target:Entity,raw:number,type:string){
-    const multiplier=this.c.registry.rules.damageMultipliers[type][this.c.def(target).body!.armorType];
-    if(!multiplier)return 0;
-    const armorDamage=Math.max(1,Math.floor(raw*multiplier/1000)-this.c.stats(target).armor);
-    const reduction=Math.max(0,...(target.effects??[]).map(b=>this.c.registry.rules.spells[b.ability].ranks[b.rank-1].reductionPermille));
-    return Math.max(1,Math.floor(armorDamage*(1000-reduction)/1000));
+    return resolveDamage(this.c.registry.rules, {
+      armorType: this.c.def(target).body!.armorType,
+      armor: this.c.stats(target).armor,
+      reductionPermille: guardReduction(this.c.registry.rules, target.effects),
+    }, raw, type);
   }
   resolve(extra:DamageHit[]=[]): Entity[] {
     const hits = new Map<number, number>();
@@ -172,7 +173,7 @@ export class Combat {
       const damage = this.damage(b,this.c.stats(a).damage,combat.damageType);
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
       if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
-      u.cooldown = combat.cooldownTicks;
+      u.cooldown = this.c.stats(a).cooldownTicks;
       if(this.c.registry.asset(this.c.def(a).asset).projectile) {
         const destination=precise(b);
         u.shot={tick:this.c.state.tick,x:destination.x,y:destination.y,

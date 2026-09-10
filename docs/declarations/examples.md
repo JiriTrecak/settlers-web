@@ -30,14 +30,14 @@ Add this complete definition:
   },
   "creation": {
     "method": "recruit",
-    "items": [{ "item": "item.plank", "amount": 2 }],
+    "items": [{ "item": "item.amber", "amount": 16 }],
     "unitInput": "unit.ants.settler",
-    "workTicks": 240
+    "workTicks": 40
   }
 }
 ```
 
-Append `unit.ants.vanguard` to the barracks' `behaviors.production.outputs`. Its existing store accepts planks and fits this bill. The command card, tooltip price, deliveries, settler claim, training, deployment, HP and selection now follow this definition. The ground-army set supplies movement and direct control; the definition overrides speed and supplies its combat values. No new simulation or HTML branch is needed.
+Append `unit.ants.vanguard` to the barracks' `behaviors.production.outputs`. Its existing store accepts amber and fits this bill. The command card, tooltip price, bank reservation, worker claim, training, deployment, HP and selection now follow this definition. The ground-army set supplies movement and direct control; the definition overrides speed and supplies its combat values. No new simulation or HTML branch is needed.
 
 Optionally add an action override under `actions.overrides`:
 
@@ -49,7 +49,7 @@ Optionally add an action override under `actions.overrides`:
 
 This is an entry to merge into the existing overrides object. Priority changes presentation order only. Work scheduling and combat targeting do not read it. Conflicting shortcuts are validation failures.
 
-If the unit later costs stone as well, the unit's bill changes and the barracks must also accept `item.stone`. Add a new armor type only with corresponding entries in every damage-multiplier row. A renamed ID requires updating every reference, including maps; no aliases are created.
+If the unit later costs wood as well, add `item.wood` to its bill; the producer must accept every declared input and have sufficient capacity. Add a new armor type only with corresponding entries in every damage-multiplier row. A renamed ID requires updating every reference, including maps; no aliases are created.
 
 ## A scenario instance
 
@@ -70,19 +70,32 @@ This instance starts damaged; its maximum HP still comes from the definition. Th
 
 Placing `unit.neutral.wolf` through Editor → Entities writes an explicit camp record too. Editing raw JSON requires adding its placement ID to exactly one camp's `members`, with `home`, `aggroRange`, `leash` and `aggression`. The neutral model name is never inspected to discover a camp.
 
-## Another workshop
+## A population producer
 
-A sawmill definition lists `item.plank` as its automatic output and accepts `item.log`. The plank owns `creation.method = "craft"`, the one-log input and work ticks. The workshop owns storage capacity, work radius where relevant, staffing and the name shown for the assigned job. The worker remains `unit.ants.settler` with runtime employment.
+The house's `production` capability is:
 
-To add another workshop using the same process, duplicate the building and give it its own ID, art, footprint, construction bill and production settings. Add its ID to the settlers' `work.builds` list. The engine performs construction, staffing and item production through the existing native verbs.
+```json
+{
+  "mode": "automatic",
+  "outputs": ["unit.ants.settler"],
+  "workerSlots": 0,
+  "population": { "capacity": 3, "intervalTicks": 800 }
+}
+```
 
-To introduce a genuinely new process, such as healing, follow [Adding a native behavior](systems.md#adding-a-native-behavior). JSON cannot supply executable conditions, change pathfinding algorithms, or call arbitrary engine functions.
+The worker has `creation.method = "spawn"`. The house contributes three living-worker capacity and produces one replacement every twenty seconds while the colony is below its shared cap. A hall uses the same capability with capacity eight and interval 480. No building-ID branch, lifetime quota or separate population token is required.
+
+To add another population building, give it its own ID, art, footprint, currency construction bill and population values. Add its ID to the worker's `work.builds`. Automatic output must be a worker definition, and incompatible combinations fail validation.
+
+A neutral mine instead declares `kind: "building"`, owner `none` on the map, `yield`, `gatheringCapacity`, body, footprint and entrance. The currency's harvest recipe refers to that source, and a worker's `work.harvests` exposes it. Set a map instance's `initialState.amount` to override remaining yield. A tree is a yielding resource rather than a neutral building.
+
+To introduce a new process, follow [Adding a native behavior](systems.md#adding-a-native-behavior). JSON cannot supply executable conditions, change pathfinding algorithms or call arbitrary engine functions.
 
 ## Commands are intentions
 
 The command card binds an actor before enqueueing. For example, a recruitment intention carries `type: "produce"`, the selected barracks' runtime `actor` ID, and the output `definition` ID. It does not carry the price, worker ID to steal, result HP or a callback. Authoritative systems validate and resolve those details.
 
-Future scenario scripting can enqueue supported intentions at a deterministic tick and consume structured facts. Spawn, ownership transfer, inventory, hero leveling and Lua bindings need their own explicit lifecycle contracts; they are not hidden capabilities of the current JSON format.
+Future scenario scripting can enqueue supported intentions at a deterministic tick and consume structured facts. Inventory, hero leveling and revival already use explicit lifecycle systems. General scenario spawning, ownership transfer and Lua bindings remain deferred; ordinary player packets cannot invoke unrestricted mutations.
 
 ## Group construction commands
 

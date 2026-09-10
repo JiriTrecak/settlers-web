@@ -1,7 +1,8 @@
-import {AbilityTarget,type AbilityAim} from "./abilityTarget";
-import {batchCharacterMaterials} from "../characters/materialBatch";
-import {ProjectileEffects} from "./projectileEffects";
-import {SpellEffects} from "./spellEffects";
+import { MineLabels } from "./mineLabels";
+import { AbilityTarget, type AbilityAim } from "./abilityTarget";
+import { batchCharacterMaterials } from "../characters/materialBatch";
+import { ProjectileEffects } from "./projectileEffects";
+import { SpellEffects } from "./spellEffects";
 import { HealthPips } from "./healthPips";
 import { Line2 } from "three/addons/lines/Line2.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
@@ -29,51 +30,80 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { content } from "../../content/builtin";
 import { ownerSlot } from "../../content/schema";
 import { projectMeshUrl } from "../../shared/assets/project";
-import { stockpileLayout } from "../../shared/settlement/stockpile";
 import type { HeightField } from "../../shared/map/height";
 import type { EntityView, SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { prepareAntMaterial } from "../prop/antMaterials";
 import { placementGrid } from "./placementGrid";
-import { TerritoryPosts } from "./territoryPosts";
 
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
-  private readonly abilityTarget=new AbilityTarget(this.root);
-  targetAbility(aim:AbilityAim|null,height:HeightField){this.abilityTarget.update(aim,height);}
-  private readonly spellEffects=new SpellEffects(this.root);
+  private readonly abilityTarget = new AbilityTarget(this.root);
+  targetAbility(aim: AbilityAim | null, height: HeightField) {
+    this.abilityTarget.update(aim, height);
+  }
+  private readonly spellEffects = new SpellEffects(this.root);
   private readonly characterSources = new Map<string, GLTF>();
-  private readonly characters = new Map<number, ReturnType<typeof createCharacterInstance>>();
-  private readonly corpses = new Map<number, { root: Object3D; remaining: number }>();
+  private readonly characters = new Map<
+    number,
+    ReturnType<typeof createCharacterInstance>
+  >();
+  private readonly corpses = new Map<
+    number,
+    { root: Object3D; remaining: number }
+  >();
   private animationTime: number | null = null;
-  private readonly characterBatchDisposers: Array<()=>void> = [];
+  private readonly characterBatchDisposers: Array<() => void> = [];
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
   private selected = new Set<number>();
-  private readonly parts = new WeakMap<Object3D,{body:Object3D;carry:Object3D|undefined;cargo:Group;stock:Group;selection:Group;hp:Sprite}>();
+  private readonly parts = new WeakMap<
+    Object3D,
+    {
+      body: Object3D;
+      carry: Object3D | undefined;
+      cargo: Group;
+      selection: Group;
+      hp: Sprite;
+      mine?: Sprite;
+    }
+  >();
   private readonly targetPosition = new Vector3();
-  private readonly projectiles=new ProjectileEffects(this.root);
-  private readonly borders = new TerritoryPosts();
-  private revision = -1;
+  private readonly projectiles = new ProjectileEffects(this.root);
   private dead = false;
   private readonly selectionGeometry = new LineGeometry().setPositions([
-    -.5, 0, -.5, .5, 0, -.5, .5, 0, .5, -.5, 0, .5, -.5, 0, -.5,
+    -0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5, -0.5, 0, -0.5,
   ]);
   private readonly selectionMaterial = new LineMaterial({
-    color: 0xffffff, linewidth: 3, worldUnits: false,
-    transparent: true, opacity: 0.95, depthWrite: false,
+    color: 0xffffff,
+    linewidth: 3,
+    worldUnits: false,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
   });
   private readonly attackTargetMaterial = new LineMaterial({
-    color: 0xff3636, linewidth: 3, worldUnits: false, transparent: true, opacity: .95, depthWrite: false,
+    color: 0xff3636,
+    linewidth: 3,
+    worldUnits: false,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
   });
   private readonly selectionFillGeometry = new PlaneGeometry(1, 1);
   private readonly selectionFillMaterial = new MeshBasicMaterial({
-    color: 0xffffff, transparent: true, opacity: 0.12, depthWrite: false,
-    polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.12,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
   });
   private readonly healthPips = new HealthPips();
+  private readonly mineLabels = new MineLabels();
   private readonly entranceGhost = new Mesh(
     new BoxGeometry(0.7, 0.12, 0.7),
     new MeshBasicMaterial({ color: 0xffed9d, depthWrite: false }),
@@ -81,14 +111,23 @@ export class SettlementLayer {
   private readonly ghost = new Mesh(
     new BufferGeometry(),
     new MeshBasicMaterial({
-      color: 0xffffff, transparent: true, opacity: 0.13,
-      depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.13,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
       polygonOffsetUnits: -1,
     }),
   );
   private readonly gridLines = new LineSegments(
     new BufferGeometry(),
-    new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65, depthWrite: false }),
+    new LineBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.65,
+      depthWrite: false,
+    }),
   );
   private placementModel: Object3D | null = null;
   private placementAsset: string | null = null;
@@ -98,7 +137,7 @@ export class SettlementLayer {
   readonly ready: Promise<void>;
   constructor(scene: Scene) {
     this.root.name = "game-entities";
-    this.root.add(this.borders, this.ghost, this.entranceGhost, this.gridLines);
+    this.root.add(this.ghost, this.entranceGhost, this.gridLines);
     this.gridLines.visible = false;
     this.entranceGhost.visible = false;
     this.ghost.visible = false;
@@ -106,7 +145,13 @@ export class SettlementLayer {
     const loader = new GLTFLoader();
     this.ready = Promise.all(
       content.assets
-        .filter((a) => a.file && !a.sceneryAsset)
+        .filter(
+          (a) =>
+            a.file &&
+            !a.sceneryAsset &&
+            (content.definitions.some((d) => d.asset === a.id) ||
+              content.assets.some((other) => other.carryAsset === a.id)),
+        )
         .map(async (a) => {
           const url = projectMeshUrl(a.file!);
           if (!url) throw new Error(`Missing declared model ${a.file}`);
@@ -114,12 +159,16 @@ export class SettlementLayer {
           if (!this.dead) {
             this.prototypes.set(a.id, gltf.scene);
             if (a.character) {
-              this.characterBatchDisposers.push(batchCharacterMaterials(gltf.scene,gltf.animations));
+              this.characterBatchDisposers.push(
+                batchCharacterMaterials(gltf.scene, gltf.animations),
+              );
               this.characterSources.set(a.id, gltf);
             }
           }
         }),
-    ).then(() => { if (!this.dead) this.pendingPreview?.(); });
+    ).then(() => {
+      if (!this.dead) this.pendingPreview?.();
+    });
   }
   select(ids: number | null | readonly number[]) {
     this.selected = new Set(
@@ -172,12 +221,18 @@ export class SettlementLayer {
     }
     if (o) return o;
     const source = this.characterSources.get(assetId);
-    const character = source ? createCharacterInstance(source, content.asset(assetId).character) : null;
+    const character = source
+      ? createCharacterInstance(source, content.asset(assetId).character)
+      : null;
     if (character) this.characters.set(e.id, character);
     const model = character?.root ?? this.clone(assetId);
-    if (character) model?.traverse(child => {
-      if (child instanceof Mesh) { child.castShadow = true; child.receiveShadow = true; }
-    });
+    if (character)
+      model?.traverse((child) => {
+        if (child instanceof Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
     if (!model) return null;
     o = new Group();
     model.name = "Body";
@@ -201,50 +256,91 @@ export class SettlementLayer {
     cargo.name = "Cargo";
     cargo.position.set(0, 1.04, 0.48);
     o.add(cargo);
-    const stock = new Group();
-    stock.name = "Stockpile";
-    o.add(stock);
     const selection = new Group();
     selection.name = "Selection";
     selection.position.y = 0.12;
-    selection.scale.set(d.footprint ? d.footprint.width + 0.3 : 1.8, 1,
-      d.footprint ? d.footprint.depth + 0.3 : 1.8);
+    selection.scale.set(
+      d.footprint ? d.footprint.width + 0.3 : 1.8,
+      1,
+      d.footprint ? d.footprint.depth + 0.3 : 1.8,
+    );
     const outline = new Line2(this.selectionGeometry, this.selectionMaterial);
     outline.raycast = () => {}; // Selection decoration must not intercept unit picking.
     selection.add(outline);
     if (d.kind === "building") {
-      const fill = new Mesh(this.selectionFillGeometry, this.selectionFillMaterial);
+      const fill = new Mesh(
+        this.selectionFillGeometry,
+        this.selectionFillMaterial,
+      );
       fill.rotation.x = -Math.PI / 2;
       fill.raycast = () => {};
       selection.add(fill);
     }
     selection.visible = false;
     o.add(selection);
-    const hp = new Sprite(this.healthPips.material(e.hp ?? 1, e.stats?.maxHp ?? d.body?.maxHp ?? 1, d.kind === "building", false));
+    const hp = new Sprite(
+      this.healthPips.material(
+        e.hp ?? 1,
+        e.stats?.maxHp ?? d.body?.maxHp ?? 1,
+        d.kind === "building",
+        false,
+      ),
+    );
     hp.name = "Health";
     hp.position.set(0, asset.healthHeight ?? 2.5, 0);
-    hp.scale.set(d.kind === "building" ? 3.8 : 1.35, d.kind === "building" ? .36 : .42, 1);
+    hp.scale.set(
+      d.kind === "building" ? 3.8 : 1.35,
+      d.kind === "building" ? 0.36 : 0.42,
+      1,
+    );
     hp.renderOrder = 21;
     hp.raycast = () => {};
     o.add(hp);
-    this.parts.set(o,{body:model,carry:o.children.find(c=>c.name==="CarryBody"),cargo,stock,selection,hp});
+    let mine: Sprite | undefined;
+    if (e.gathering) {
+      mine = new Sprite(
+        this.mineLabels.material(e.gathering.workers, e.gathering.capacity),
+      );
+      mine.name = "Mine occupancy";
+      mine.position.set(0, (asset.healthHeight ?? 3) + 0.55, 0);
+      mine.scale.set(4.4, 1.1, 1);
+      mine.renderOrder = 22;
+      mine.raycast = () => {};
+      o.add(mine);
+    }
+    this.parts.set(o, {
+      mine,
+      body: model,
+      carry: o.children.find((c) => c.name === "CarryBody"),
+      cargo,
+      selection,
+      hp,
+    });
     this.entities.set(e.id, o);
     this.root.add(o);
     return o;
   }
-  update(state: SettlementView, field: HeightField, tick: number, timeScale = 1) {
-    this.spellEffects.update(state.visuals??[],field,tick);
+  update(
+    state: SettlementView,
+    field: HeightField,
+    tick: number,
+    timeScale = 1,
+  ) {
+    this.spellEffects.update(state.visuals ?? [], field, tick);
     const now = performance.now();
-    const dt = this.animationTime === null ? 0 : Math.min(0.1, Math.max(0, (now - this.animationTime) / 1000)) * timeScale;
+    const dt =
+      this.animationTime === null
+        ? 0
+        : Math.min(0.1, Math.max(0, (now - this.animationTime) / 1000)) *
+          timeScale;
     this.animationTime = now;
-    if (state.revision !== this.revision) {
-      this.revision = state.revision;
-      this.borders.rebuild(state.territory, field, state.territoryBorders);
-    }
-    const commandedTargets = new Set(state.entities
-      .filter(e => this.selected.has(e.id) && !e.unit?.contained)
-      .map(e => e.unit?.commandedTarget).filter((id): id is number => id != null));
-    const byId=new Map(state.entities.map(e=>[e.id,e]));
+    const commandedTargets = new Set(
+      state.entities
+        .filter((e) => this.selected.has(e.id) && !e.unit?.contained)
+        .map((e) => e.unit?.commandedTarget)
+        .filter((id): id is number => id != null),
+    );
+    const byId = new Map(state.entities.map((e) => [e.id, e]));
     const seen = new Set<number>();
     for (const e of state.entities) {
       const d = content.get(e.definition);
@@ -254,14 +350,20 @@ export class SettlementLayer {
       if (!o) continue;
       o.visible = !e.unit?.contained;
       applyPlayerMaterials(o, ownerSlot(e.owner));
-      const parts=this.parts.get(o)!;
+      const parts = this.parts.get(o)!;
+      if (parts.mine && e.gathering) {
+        parts.mine.visible = !e.remembered;
+        parts.mine.material = this.mineLabels.material(
+          e.gathering.workers,
+          e.gathering.capacity,
+        );
+      }
       const target = this.targetPosition.set(e.x, field.sample(e.x, e.y), e.y);
       if (e.unit && o.userData.placed) {
         // Facing follows observed travel, never the frame-rate-dependent smoothing gap.
         const dx = e.x - (o.userData.observedX ?? e.x);
         const dz = e.y - (o.userData.observedZ ?? e.y);
-        if (dx * dx + dz * dz > 1e-10)
-          o.rotation.y = Math.atan2(dx, dz);
+        if (dx * dx + dz * dz > 1e-10) o.rotation.y = Math.atan2(dx, dz);
         o.position.lerp(target, 0.35);
       } else {
         o.position.copy(target);
@@ -273,29 +375,39 @@ export class SettlementLayer {
       const character = this.characters.get(e.id);
       if (character && e.unit && o.visible) {
         const previousCooldown = o.userData.animationCooldown;
-        const attacked = previousCooldown !== undefined && e.unit.cooldown > previousCooldown;
-        const hurt = o.userData.animationHp !== undefined && e.hp !== null && e.hp < o.userData.animationHp;
-        const cast=e.unit.casting;
-        if(cast){
-          const key=`${cast.ability}/${cast.resolveTick}`;
-          if(o.userData.castKey!==key)character.player.setState("cast",{restart:true});
-          o.userData.castKey=key;
+        const attacked =
+          previousCooldown !== undefined && e.unit.cooldown > previousCooldown;
+        const hurt =
+          o.userData.animationHp !== undefined &&
+          e.hp !== null &&
+          e.hp < o.userData.animationHp;
+        const cast = e.unit.casting;
+        if (cast) {
+          const key = `${cast.ability}/${cast.resolveTick}`;
+          if (o.userData.castKey !== key)
+            character.player.setState("cast", { restart: true });
+          o.userData.castKey = key;
         } else if (attacked) {
           character.player.setState("attack", { restart: true });
           const victim = byId.get(e.unit!.target!);
           if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
-        } else if (hurt && !e.unit.moving) character.player.setState("hit", { restart: true });
-        else if (e.unit.moving) character.player.setState(e.unit.strolling ? "walk" : "run");
+        } else if (hurt && !e.unit.moving)
+          character.player.setState("hit", { restart: true });
+        else if (e.unit.moving)
+          character.player.setState(e.unit.strolling ? "walk" : "run");
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
-          const work = character.player.variant === "base" ? e.unit.work : undefined;
-          character.player.setState(work?.animation ?? (e.unit.cargo ? "carry" : "idle"));
+          const work =
+            character.player.variant === "base" ? e.unit.work : undefined;
+          character.player.setState(
+            work?.animation ?? (e.unit.cargo ? "carry" : "idle"),
+          );
           if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
         }
         character.player.update(dt);
         o.userData.animationCooldown = e.unit.cooldown;
         o.userData.animationHp = e.hp;
       }
-      const {carry,body}=parts;
+      const { carry, body } = parts;
       if (carry) {
         carry.visible = !!e.unit?.cargo;
         body.visible = !carry.visible;
@@ -304,22 +416,40 @@ export class SettlementLayer {
         ? Math.max(0.1, e.construction.progress / d.creation!.workTicks)
         : 1;
       body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
-      if (e.item) body.visible = false;
       const selection = parts.selection;
-      const attackTarget = commandedTargets.has(e.id) && !e.remembered && !e.unit?.contained;
+      const attackTarget =
+        commandedTargets.has(e.id) && !e.remembered && !e.unit?.contained;
       selection.visible = this.selected.has(e.id) || attackTarget;
-      (selection.children[0] as Line2).material = attackTarget ? this.attackTargetMaterial : this.selectionMaterial;
-      if (selection.children[1]) selection.children[1].visible = this.selected.has(e.id) && !attackTarget;
+      (selection.children[0] as Line2).material = attackTarget
+        ? this.attackTargetMaterial
+        : this.selectionMaterial;
+      if (selection.children[1])
+        selection.children[1].visible =
+          this.selected.has(e.id) && !attackTarget;
       if (e.unit) selection.rotation.y = -o.rotation.y;
       const hp = parts.hp;
-      if (e.hp !== null && o.userData.previousHealth !== undefined && e.hp < o.userData.previousHealth)
+      if (
+        e.hp !== null &&
+        o.userData.previousHealth !== undefined &&
+        e.hp < o.userData.previousHealth
+      )
         o.userData.lastDamageTick = tick;
       o.userData.previousHealth = e.hp;
-      hp.visible = !!d.body && e.hp! > 0 && (this.selected.has(e.id) || (d.kind === "unit" && e.hp! < (e.stats?.maxHp ?? d.body.maxHp)));
+      hp.visible =
+        !!d.body &&
+        e.hp! > 0 &&
+        (this.selected.has(e.id) ||
+          (d.kind === "unit" && e.hp! < (e.stats?.maxHp ?? d.body.maxHp)));
       if (hp.visible && d.body) {
         const elapsed = tick - (o.userData.lastDamageTick ?? -Infinity);
-        const blink = elapsed >= 0 && elapsed < 40 && Math.floor(elapsed / 5) % 2 === 0;
-        hp.material = this.healthPips.material(e.hp!, e.stats?.maxHp ?? d.body.maxHp, d.kind === "building", blink);
+        const blink =
+          elapsed >= 0 && elapsed < 40 && Math.floor(elapsed / 5) % 2 === 0;
+        hp.material = this.healthPips.material(
+          e.hp!,
+          e.stats?.maxHp ?? d.body.maxHp,
+          d.kind === "building",
+          blink,
+        );
       }
       const cargo = parts.cargo;
       const cargoKey = e.unit?.cargo?.item ?? "";
@@ -331,43 +461,29 @@ export class SettlementLayer {
         if (cargoKey) {
           const item = this.clone(content.get(cargoKey).asset);
           if (item) {
-            item.scale.setScalar(0.7 * (content.asset(content.get(cargoKey).asset).scale ?? 1));
+            item.scale.setScalar(
+              0.7 * (content.asset(content.get(cargoKey).asset).scale ?? 1),
+            );
             cargo.add(item);
           }
         }
         o.userData.cargoKey = cargoKey;
       }
-      const stock = e.item
-          ? { [e.definition]: e.item.quantity }
-          : (e.inventory ?? {}),
-        stockKey = JSON.stringify(stock);
-      if (o.userData.stockKey !== stockKey) {
-        const group = parts.stock;
-        for (const child of [...group.children]) {
-          this.disposeInstance(child);
-          child.removeFromParent();
-        }
-        // A loose pickup sits at its selectable entity position. Storage uses
-        // sampled piles around the building, regardless of ledger quantity.
-        const slots = e.item
-          ? [{ kind: e.definition, x: 0, y: 0, z: 0 }]
-          : stockpileLayout(stock, (d.footprint?.depth ?? 2) / 2);
-        for (const slot of slots) {
-          const item = this.clone(content.get(slot.kind).asset);
-          if (item) {
-            item.scale.setScalar(content.asset(content.get(slot.kind).asset).scale ?? 1);
-            item.position.set(slot.x, slot.y + 0.02, slot.z);
-            group.add(item);
-          }
-        }
-        o.userData.stockKey = stockKey;
-      }
-      const shot=e.unit?.shot;
-      if(shot && o.userData.shotTick!==shot.tick){
-        o.userData.shotTick=shot.tick;
-        const start=o.position.clone().add(new Vector3(0,1.5,0));
-        const end=new Vector3(shot.x,field.sample(shot.x,shot.y)+1,shot.y);
-        this.projectiles.spawn(content.asset(e.appearance?.asset ?? d.asset).projectile ?? 'arrow',start,end,shot.tick);
+      const shot = e.unit?.shot;
+      if (shot && o.userData.shotTick !== shot.tick) {
+        o.userData.shotTick = shot.tick;
+        const start = o.position.clone().add(new Vector3(0, 1.5, 0));
+        const end = new Vector3(
+          shot.x,
+          field.sample(shot.x, shot.y) + 1,
+          shot.y,
+        );
+        this.projectiles.spawn(
+          content.asset(e.appearance?.asset ?? d.asset).projectile ?? "arrow",
+          start,
+          end,
+          shot.tick,
+        );
       }
       if (e.unit && !character)
         o.traverse((child) => {
@@ -381,7 +497,7 @@ export class SettlementLayer {
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
         const character = this.characters.get(id);
-        const death = state.deaths?.find(e => e.id === id);
+        const death = state.deaths?.find((e) => e.id === id);
         if (character && death && o.visible) {
           character.player.setState("death", { restart: true });
           for (const name of ["Selection", "Health", "Cargo"]) {
@@ -393,7 +509,9 @@ export class SettlementLayer {
         this.entities.delete(id);
       }
     for (const [id, corpse] of this.corpses) {
-      const cell = Math.round(corpse.root.position.z) * field.size + Math.round(corpse.root.position.x);
+      const cell =
+        Math.round(corpse.root.position.z) * field.size +
+        Math.round(corpse.root.position.x);
       corpse.remaining -= dt;
       if (corpse.remaining <= 0 || (state.fog && state.fog.cells[cell] !== 2)) {
         this.removeModel(id, corpse.root);
@@ -410,11 +528,17 @@ export class SettlementLayer {
     rotation = 0,
     owner = 0,
   ) {
-    this.pendingPreview = definition ? () => this.preview(definition, x, y, allowed, field, rotation, owner) : null;
-    this.entranceGhost.visible = this.ghost.visible = this.gridLines.visible = definition !== null;
+    this.pendingPreview = definition
+      ? () => this.preview(definition, x, y, allowed, field, rotation, owner)
+      : null;
+    this.entranceGhost.visible =
+      this.ghost.visible =
+      this.gridLines.visible =
+        definition !== null;
     if (this.placementModel) this.placementModel.visible = definition !== null;
     if (!definition) return;
-    const d = content.get(definition), footprint = d.footprint!;
+    const d = content.get(definition),
+      footprint = d.footprint!;
     if (this.placementAsset !== d.asset || !this.placementModel) {
       if (this.placementModel) {
         this.disposeInstance(this.placementModel);
@@ -424,11 +548,13 @@ export class SettlementLayer {
       this.placementAsset = d.asset;
       if (this.placementModel) {
         this.placementModel.scale.setScalar(content.asset(d.asset).scale ?? 1);
-        this.placementModel.traverse(child => {
+        this.placementModel.traverse((child) => {
           if (!(child instanceof Mesh)) return;
           child.castShadow = false;
           child.receiveShadow = false;
-          for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+          for (const material of Array.isArray(child.material)
+            ? child.material
+            : [child.material]) {
             material.transparent = true;
             material.opacity = 0.48;
             material.depthWrite = false;
@@ -441,13 +567,16 @@ export class SettlementLayer {
     }
     if (this.placementModel) {
       this.placementModel.position.set(x, field.sample(x, y), y);
-      this.placementModel.rotation.y = rotation * Math.PI / 180;
-      this.placementModel.traverse(child => {
+      this.placementModel.rotation.y = (rotation * Math.PI) / 180;
+      this.placementModel.traverse((child) => {
         if (!(child instanceof Mesh)) return;
-        for (const material of Array.isArray(child.material) ? child.material : [child.material])
+        for (const material of Array.isArray(child.material)
+          ? child.material
+          : [child.material])
           if (material instanceof MeshStandardMaterial) {
             material.color.copy(material.userData.placementColor);
-            if (material.name === TEAM_COLOR_MATERIAL && owner >= 0) material.color.set(PLAYER_COLORS[clampPlayer(owner)]);
+            if (material.name === TEAM_COLOR_MATERIAL && owner >= 0)
+              material.color.set(PLAYER_COLORS[clampPlayer(owner)]);
             if (!allowed) material.color.lerp(this.invalidColor, 0.7);
           }
       });
@@ -458,7 +587,9 @@ export class SettlementLayer {
     const key = `${x}:${y}:${width}:${depth}`;
     if (key !== this.gridKey) {
       this.gridKey = key;
-      const grid = placementGrid(x, y, width, depth, (a, b) => field.sample(a, b));
+      const grid = placementGrid(x, y, width, depth, (a, b) =>
+        field.sample(a, b),
+      );
       this.ghost.geometry.dispose();
       this.gridLines.geometry.dispose();
       this.ghost.geometry = grid.fill;
@@ -482,7 +613,11 @@ export class SettlementLayer {
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
-      if (child instanceof Mesh && child.geometry !== this.selectionFillGeometry && child.geometry !== this.selectionGeometry)
+      if (
+        child instanceof Mesh &&
+        child.geometry !== this.selectionFillGeometry &&
+        child.geometry !== this.selectionGeometry
+      )
         for (const m of Array.isArray(child.material)
           ? child.material
           : [child.material])
@@ -508,14 +643,14 @@ export class SettlementLayer {
             m.dispose();
         }
       });
-    this.characterBatchDisposers.forEach(dispose=>dispose());
-    this.borders.dispose();
+    this.characterBatchDisposers.forEach((dispose) => dispose());
     this.selectionGeometry.dispose();
     this.selectionMaterial.dispose();
     this.attackTargetMaterial.dispose();
     this.selectionFillGeometry.dispose();
     this.selectionFillMaterial.dispose();
     this.healthPips.dispose();
+    this.mineLabels.dispose();
     this.entranceGhost.geometry.dispose();
     this.entranceGhost.material.dispose();
     this.ghost.geometry.dispose();

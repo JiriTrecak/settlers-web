@@ -7,7 +7,7 @@ import {placed,slots,run} from './helpers';
 function setup(){
  const map=emptyUtcMap();
  const entities=map.playerStarts.flatMap(s=>[
-  {...placed(`mine.${s.player}`,'resource.amber.seam',s.x,s.z-14),owner:'none' as const},
+  {...placed(`mine.${s.player}`,'building.neutral.amber-mine',s.x,s.z-14),owner:'none' as const},
   {...placed(`tree.${s.player}`,'resource.forest.tree',s.x+8,s.z+5,{amount:8}),owner:'none' as const},
  ]);
  return new Game({...map,entities},slots,content,159);
@@ -15,12 +15,12 @@ function setup(){
 describe('hall gathering economy',()=>{
  it('auto-starts declared worker groups, depletes trees and deposits both resources into each hall',()=>{
   const g=setup();
-  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(12);
+  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(10);
   run(g,2400);
   for(const id of Object.values(g.state.objectives)){
    const hall=g.context.get(id)!;
-   expect(hall.inventory['item.amber']).toBeGreaterThan(60);
-   expect(hall.inventory['item.wood']).toBe(88);
+   expect(hall.inventory['item.amber']).toBeGreaterThan(content.rules.startingSetup.inventory['item.amber']);
+   expect(hall.inventory['item.wood']).toBe(content.rules.startingSetup.inventory['item.wood']+8);
   }
   const trees=g.entities.filter(e=>e.definition==='resource.forest.tree');
   expect(trees.every(e=>e.resource!.amount===0)).toBe(true);

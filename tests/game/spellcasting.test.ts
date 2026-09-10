@@ -34,11 +34,11 @@ describe('declarative marshal abilities',()=>{
   const ally=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
   const before=g.context.stats(ally).damage,enemyBefore=g.context.stats(enemy).damage;
   g.spells.cast(hero,id('rally'));g.state.tick+=20;g.spells.resolve();
-  expect(g.context.stats(ally).damage).toBe(before+8);expect(g.context.stats(enemy).damage).toBe(enemyBefore);
+  expect(g.context.stats(ally).damage).toBeCloseTo(before*1.1);expect(g.context.stats(enemy).damage).toBe(enemyBefore);
   hero.spellcasting!.cooldowns[id('rally')]=0;g.spells.cast(hero,id('rally'));g.state.tick+=20;g.spells.resolve();
-  expect(g.context.stats(ally).damage).toBe(before+8);
+  expect(g.context.stats(ally).damage).toBeCloseTo(before*1.1);
   g.spells.cast(hero,id('carapace'));g.state.tick+=20;g.spells.resolve();
-  const initial=hero.hp!;g.combat.resolve([{source:enemy.id,target:hero.id,damage:100,damageType:'physical'}]);
+  const initial=hero.hp!;g.combat.resolve([{source:enemy.id,target:hero.id,damage:100,damageType:'melee'}]);
   expect(initial-hero.hp!).toBeLessThan(70);
   hero.effects!.push({ability:id('faultline'),rank:1,source:enemy.id,expires:g.state.tick+10});expect(isStunned(hero,g.registry)).toBe(true);
   g.state.tick+=500;g.spells.tick();expect(isStunned(hero,g.registry)).toBe(false);expect(g.context.stats(ally).damage).toBe(before);

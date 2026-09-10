@@ -61,9 +61,7 @@ export function createMapBriefing(
     .sort((a, b) => (a.id < b.id ? -1 : 1));
   const resources = map.entities
     .filter(
-      (p) =>
-        registry.get(p.definition).kind === "resource" &&
-        p.mapKnowledge !== "hidden",
+      (p) => !!registry.get(p.definition).yield && p.mapKnowledge !== "hidden",
     )
     .map((p) =>
       Object.freeze({

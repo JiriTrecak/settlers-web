@@ -32,7 +32,8 @@ export class EntityDock {
     this.definition.onchange = () => {
       editor.entityDefinition = this.definition.value;
       const d = content.get(editor.entityDefinition);
-      if (d.behaviors.campDefense) editor.entityOwner = "none";
+      if (d.behaviors.campDefense || d.gatheringCapacity)
+        editor.entityOwner = "none";
       this.sync();
     };
     this.owner.append(new Option("Unowned / neutral", "none"));
@@ -96,7 +97,7 @@ export class EntityDock {
   private options() {
     this.definition.replaceChildren(
       ...content.definitions
-        .filter((d) => d.kind === this.category.value)
+        .filter((d) => d.kind === this.category.value && !d.currency)
         .map((d) => new Option(d.name, d.id)),
     );
     this.editor.entityDefinition = this.definition.value;
@@ -105,6 +106,8 @@ export class EntityDock {
   sync() {
     const p = this.editor.selectedPlacement(),
       d = content.get(p?.definition ?? this.editor.entityDefinition);
+    if (!p && d.gatheringCapacity) this.editor.entityOwner = "none";
+    this.owner.disabled = !!d.gatheringCapacity;
     this.controls.hidden = !p;
     this.category.disabled = !!p;
     this.definition.disabled = !!p;

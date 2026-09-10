@@ -12,9 +12,10 @@ it('renders loose pickups at their selectable position with the declared asset s
  const g=game([{...placed('loot','item.royal-crest',219,230),owner:'none'}]);
  const view=g.view(),pickup=view.entities.find(e=>e.definition==='item.royal-crest')!;
  expect(pickup).toBeDefined();layer.update({...view,entities:[pickup]},new HeightField(),0);
- const root=(layer as any).entities.get(pickup.id),stock=root.getObjectByName('Stockpile');
- expect(stock.children).toHaveLength(1);
- expect(stock.children[0].position.x).toBe(0);expect(stock.children[0].position.z).toBe(0);
- expect(stock.children[0].scale.x).toBe(content.asset('asset.item.chest').scale);
+ const root=(layer as any).entities.get(pickup.id),body=root.getObjectByName('Body');
+ expect(body.visible).toBe(true);
+ expect(body.position.x).toBe(0);expect(body.position.z).toBe(0);
+ expect(body.scale.x).toBe(content.asset('asset.item.chest').scale);
+ expect(root.getObjectByName('Stockpile')).toBeUndefined();
  layer.destroy(scene);
 });

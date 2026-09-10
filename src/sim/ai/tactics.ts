@@ -1,3 +1,4 @@
+import { areaDamageScale, stunDuration } from "../game/damage";
 import { spellAreaContains } from "../../content/spellArea";
 import type { EntityView } from "../game/observation";
 import type { AIState } from "./state";
@@ -117,7 +118,7 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
           if (allies.length >= 3 && enemies.some((e) => distance(e, hero) < 10))
             candidates.push({
               id,
-              score: allies.length * rank.damageBonus * 3,
+              score: allies.reduce((sum, a) => sum + (a.stats?.damage ?? 0) * rank.damageBonusPermille / 1000, 0) * 3,
             });
         } else {
           for (const target of enemies.slice(
@@ -130,19 +131,14 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
               !f.view.fog?.cells[f.geo.index(p)]
             )
               continue;
+            const effect = spell.effect;
+            const hits = enemies.filter(enemy => spellAreaContains(effect, hero, p, rank.radius, enemy));
+            const eligible = hits.filter(e => f.registry.rules.damageMultipliers[spell.damageType][f.def(e).body!.armorType] > 0);
+            const scale = areaDamageScale(spell.damageTargetBudget, eligible.length);
             let score = 0;
-            for (const enemy of enemies) {
-              const hit = spellAreaContains(
-                spell.effect,
-                hero,
-                p,
-                rank.radius,
-                enemy,
-              );
-              if (hit)
-                score +=
-                  Math.min(enemy.hp ?? 0, rank.damage) +
-                  (rank.stunTicks ? 15 : 0);
+            for (const enemy of hits) {
+              score += Math.min(enemy.hp ?? 0, f.damage(enemy, rank.damage * scale, spell.damageType));
+              score += stunDuration(f.registry.rules, rank.stunTicks, !!enemy.unit, !!f.def(enemy).hero) * 0.75;
             }
             // Expensive ultimates require a cluster or a durable priority target.
             if (score >= Math.max(35, rank.damage * 0.7))
@@ -296,7 +292,7 @@ export function reactions(f: Frame, s: AIState, emit: Emit) {
       .sort((a, b) => {
         const score = (e: EntityView) =>
           distance(soldier, e) * 2 +
-          (e.hp ?? 0) / 15 -
+          (e.hp ?? 0) / Math.max(1, f.damage(e, soldier.stats?.damage ?? combat.damage, combat.damageType)) -
           (f.def(e).hero ? 10 : 0) -
           (f.def(e).behaviors.combat?.range ?? 0);
         return score(a) - score(b) || a.id - b.id;

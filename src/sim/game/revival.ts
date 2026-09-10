@@ -27,9 +27,9 @@ export class Revival {
    const hero=this.c.get(entry.hero);if(!hero?.fallen){queue!.shift();continue;}
    entry.progress=Math.min(policy.workTicks,entry.progress+1);if(entry.progress<policy.workTicks)continue;
    const location=this.c.spatial.nearest(this.c.spatial.entrance(building),12,hero.id);if(!location)continue;
-   hero.x=location.x;hero.y=location.y;hero.unit=this.c.freshUnit();hero.hp=this.c.stats(hero).maxHp;delete hero.fallen;
+   hero.x=location.x;hero.y=location.y;hero.unit=this.c.freshUnit();hero.hp=this.c.stats(hero).maxHp;hero.regeneration={health:0,mana:0};delete hero.fallen;
    hero.readyTick=this.c.state.tick+1;
-   if(hero.spellcasting){hero.spellcasting.mana=this.c.def(hero).behaviors.spellcasting!.maxMana;hero.spellcasting.pending=null;}
+   if(hero.spellcasting){hero.spellcasting.mana=this.c.stats(hero).maxMana;hero.spellcasting.pending=null;}
    queue!.shift();this.c.event(hero.owner,`${this.c.def(hero).name} has returned`);
   }
  }

@@ -4,6 +4,18 @@ import type { Action } from "../shared/types/types";
 import type { EntityView, SettlementView } from "../sim/game/observation";
 import { TICK_MS } from "../shared/match/match";
 
+/** Payload numbers come from the same rank that the cast command consumes. */
+function spellDetails(spell: ContentRegistry["rules"]["spells"][string], rank: ContentRegistry["rules"]["spells"][string]["ranks"][number], registry: ContentRegistry) {
+  return [
+    rank.damage ? `${rank.damage} ${registry.rules.damageTypes[spell.damageType].name.toLowerCase()} damage` : "",
+    rank.damageBonusPermille ? `+${rank.damageBonusPermille / 10}% attack damage` : "",
+    rank.reductionPermille ? `${rank.reductionPermille / 10}% incoming damage reduction` : "",
+    rank.durationTicks ? `${rank.durationTicks * TICK_MS / 1000}s duration` : "",
+    rank.stunTicks ? `${rank.stunTicks * TICK_MS / 1000}s unit stun; ${rank.stunTicks * registry.rules.heroStunDurationPermille / 1000 * TICK_MS / 1000}s against heroes` : "",
+    spell.damageTargetBudget ? `Damage shared beyond ${spell.damageTargetBudget} targets. Buildings cannot be stunned.` : "",
+  ].filter(Boolean).join(" · ");
+}
+
 export type CostView = {
   name: string;
   icon: string;
@@ -276,14 +288,14 @@ export function commandCard(
         const remaining=Math.max(0,(state.cooldowns[id]??0)-view.revision);
         const reason=!learned?'Learn this ability first':state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<rank.mana?'Not enough mana':undefined;
         result.push({id:`cast:${id}`,type:'cast',ability:id,name:spell.name,icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,
-          description:`${spell.description}\nRank ${learned}/${spell.ranks.length} · ${rank.cooldownTicks*TICK_MS/1000}s cooldown`,
+          description:`${spell.description}\n${spellDetails(spell,rank,registry)}\nRank ${learned}/${spell.ranks.length} · ${rank.cooldownTicks*TICK_MS/1000}s cooldown`,
           cooldown:learned?{remainingTicks:remaining,totalTicks:rank.cooldownTicks}:undefined,
           costs:[{kind:'mana',name:'Mana',icon:policy.manaIcon,amount:rank.mana}],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
           ...(spell.target==='self'?{immediate:{type:'cast',actor:caster.id,ability:id} as Action}:{})});
         const next=spell.ranks[learned];
         if(next){
           const reason=points<1?'No unspent skill points':level<next.requiredLevel?`Requires level ${next.requiredLevel}`:undefined;
-          result.push({id:`learn:${id}`,type:'learnAbility',ability:id,name:`${spell.name} — Rank ${learned+1}`,description:`${spell.description}\nRequires level ${next.requiredLevel}. ${points} skill points available.`,
+          result.push({id:`learn:${id}`,type:'learnAbility',ability:id,name:`${spell.name} — Rank ${learned+1}`,description:`${spell.description}\n${spellDetails(spell,next,registry)}\nRequires level ${next.requiredLevel}. ${points} skill points available.`,
             icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,category:policy.learningCategory,costs:[],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
             immediate:{type:'learnAbility',actor:caster.id,ability:id}});
         }

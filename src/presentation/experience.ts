@@ -2,7 +2,7 @@ import type {Definition} from '../content/schema';
 import type {EntityView} from '../sim/game/observation';
 /** Private progression is absent for opponents; never infer their exact experience. */
 export function experienceMeter(entity:EntityView,definition:Definition){
- const thresholds=definition.behaviors.progression?.thresholds;
+ const thresholds=definition.behaviors.progression?.levels.map(l => l.experience);
  if(!thresholds||!entity.progression)return null;
  const level=Math.min(thresholds.length,Math.max(1,entity.stats?.level??1));
  const experience=entity.progression.experience,base=thresholds[level-1],next=thresholds[level];

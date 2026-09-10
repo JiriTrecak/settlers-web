@@ -2,11 +2,13 @@ import { content } from "../content/builtin";
 import type { EntityView, SettlementView } from "../sim/game/observation";
 import type { MapStamp, UtcMap } from "../shared/map/utcmap";
 import { expandMap } from "../content/map";
-export function authoredScene(entities: EntityView[],size=256): SettlementView {
+export function authoredScene(
+  entities: EntityView[],
+  _size = 256,
+): SettlementView {
   return {
     revision: 0,
     entities,
-    territory: new Int16Array(size*size).fill(-1),
     outcome: null,
     events: [],
     objectives: {},
@@ -15,7 +17,12 @@ export function authoredScene(entities: EntityView[],size=256): SettlementView {
 /** Resource definition/state explicitly chooses scenery; filenames never create gameplay resources. */
 export function resourceStamps(entities: readonly EntityView[]): MapStamp[] {
   return entities
-    .filter((e) => e.resource && e.resource.amount > 0)
+    .filter(
+      (e) =>
+        e.resource &&
+        e.resource.amount > 0 &&
+        content.get(e.definition).kind === "resource",
+    )
     .map((e) => ({
       id: `resource-${e.id}`,
       asset: content.asset(
@@ -51,7 +58,10 @@ export function editorEntities(map: UtcMap): EntityView[] {
             },
           }
         : {}),
-      ...(d.kind === "resource"
+      ...(d.gatheringCapacity
+        ? { gathering: { workers: 0, capacity: d.gatheringCapacity } }
+        : {}),
+      ...(d.yield
         ? {
             resource: {
               amount: p.initialState?.amount ?? d.yield!,

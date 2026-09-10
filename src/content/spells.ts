@@ -5,10 +5,11 @@ export const spellSchema=z.object({
  name:z.string().min(1),description:z.string(),icon:z.string().min(1),hotkey:z.string().min(1),priority:n,
  target:z.enum(['point','self']),effect:z.enum(['line','blast','rally','guard']),
  damageType:z.string().min(1),visual:z.string().min(1),
+ damageTargetBudget:positive.optional(),
  ranks:z.array(z.object({
   requiredLevel:positive.max(10),mana:n,cooldownTicks:positive,castTicks:positive,
   range:n.max(64),radius:n.max(32),damage:n,stunTicks:n.max(400),
-  durationTicks:n,damageBonus:n,reductionPermille:n.max(900),
+  durationTicks:n,damageBonusPermille:n,reductionPermille:n.max(900),
  }).strict()).min(1).max(3),
 }).strict();
 export type Spell= z.infer<typeof spellSchema>;

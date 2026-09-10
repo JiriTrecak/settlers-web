@@ -4,19 +4,22 @@
 
 Every definition has `id`, `kind`, `name`, `description`, `asset`, `icon`, and resolved `behaviors`. `body` holds maximum HP, integer armor, and armor type. `vision` is a sight radius in cells. Buildings declare an odd-cell rectangular `footprint` and an entrance offset outside it. Rotation is in degrees; building placement uses quarter turns. Unit speed is cells per second at a fixed 40 Hz simulation.
 
-Items declare `stackLimit`; resources declare `yield` and optionally `regrowthTicks`. `hero` is metadata on units only. No inventory/progression mechanic is implied. `selectable` controls selection; `selectionClass` selects army or worker priority for area selection.
+Items declare `stackLimit`; currencies declare `currency: true` and cannot exist as ground pickups. Resource sources declare `yield` and optionally `regrowthTicks`; a building can also have yield, and `gatheringCapacity` limits its simultaneous harvest assignments. `hero` is metadata on units only; inventory, progression and spellcasting are separate explicit capabilities. `selectable` controls selection; `selectionClass` selects army or worker priority for area selection.
 
-The `asset` record selects a project-relative model file, optional carry model, scale, HP-bar height, stockpile spacing, and (for batched resources) an explicit scenery catalogue asset. `icon` selects an atlas entry. Model and icon roles are validated; build/content-save also check model files and scenery catalogue links. Resource models are batched through the scenery adapter. Asset names never confer gameplay capabilities.
+The `asset` record selects a project-relative model file, optional carry model, scale, HP-bar height, and (for batched resources) an explicit scenery catalogue asset. `icon` selects an atlas entry. Model and icon roles are validated; build/content-save also check model files and scenery catalogue links. Resource models are batched through the scenery adapter. Asset names never confer gameplay capabilities.
 
 ## Composed capabilities
 
 - `movement { speed }`: participates in native navigation and movement. Path search and replanning are not content options.
 - `playerControl {}`: permits owner-issued orders. Ownership alone does not grant control. Removing this also removes direct command bindings.
 - `combat { damage, damageType, range, cooldownTicks, aggroRange }`: unit auto-acquisition and combat. Every armor type must be covered by every damage row in `rules.damageMultipliers`.
-- `work { carryCapacity, builds }`: mobile workers can carry goods and perform native work. `builds` lists constructible definition IDs. Employment is runtime state; lumberjack/builder/carrier are jobs, not unit definitions.
-- `storage { capacity, accepts }`: total physical goods capacity and accepted item IDs. A producer can also store its declared item output. A storage-only building is a depot.
-- `production { mode, outputs, workerSlots, ... }`: automatic single-output production or a queued producer. `workerSlots` is currently zero or one. Queued production declares `queueCapacity`; external work declares `workRadius`; spawning declares `totalLimit`. `jobName` labels employment in the UI.
-- `territory { radius }`: complete, owned buildings contribute land control. Under-construction buildings do not contribute.
+- `work { carryCapacity, builds, harvests }`: mobile workers can carry goods and perform native work. `builds` lists constructible definition IDs. `harvests` lists direct gathering recipes. Employment is runtime state; builder/carrier/forester are jobs, not unit definitions.
+- `storage { capacity, accepts, dropoff? }`: capacity and accepted currency IDs. `dropoff: true` makes a completed owned store a harvest destination and spendable bank. A producer holds reserved costs, not a relay economy.
+- `production { mode, outputs, workerSlots, ... }`: automatic single-output production or a queued producer. `workerSlots` is currently zero or one. Queued production declares `queueCapacity`; external work declares `workRadius`; spawning declares `population: { capacity, intervalTicks }`. `jobName` labels employment in the UI.
+- `progression { levels, experienceRadius }`: explicit level records containing cumulative `experience`, `maxHp`, `damage`, `armor`, `cooldownTicks`, `maxMana`, `healthRegenPerSecond` and `manaRegenPerSecond`. The first record must agree with the body's/combat's/spellcaster's level-one fields. XP starts at zero and strictly increases; HP and mana pools cannot shrink. There is one representation, with no STR/AGI/INT or old per-level increment fields.
+- `spellcasting { abilities, learningCategory, manaIcon, maxMana, manaRegenPerSecond }`: declared ability IDs and the base mana policy. Progression overrides pool/rate at later levels. Regeneration rates have millipoint-per-second precision. Native recovery retains integer remainders across fixed ticks and saves.
+- `inventory { slots, pickupRange }`: hero equipment/pickup participation. Items modify resolved stats before percentage attack buffs. Death retains slots and contents.
+- `revival { workTicks, queueCapacity }`: building queue for returning fallen owned heroes with their identity, experience and items.
 - `campDefense {}`: mobile combat unit participates in its authored neutral camp's aggression/leash policy. The map must supply a camp.
 
 Behavior sets are flat bundles. Arrays replace; known object fields merge. Conflicting set defaults require an explicit field override. `disabledBehaviors` removes a capability after expansion. Sets cannot include other sets, scripts, formulas, or engine callbacks.
@@ -25,12 +28,11 @@ Behavior sets are flat bundles. Arrays replace; known object fields merge. Confl
 
 All creation records contain `method`, `items`, and `workTicks`. The output definition owns its price; producers only enumerate output IDs.
 
-- `construct`: building, physical item bill, then construction work.
-- `recruit`: unit, physical bill plus `unitInput` definition. One unassigned matching settler approaches and is contained during training. Successful deployment changes that entity's definition and preserves its runtime ID.
-- `craft`: item; one employed worker converts the input bill to one item.
-- `harvest`: item with `source` resource definition; one employed worker travels, removes finite resource yield, and carries it home.
+- `construct`: building, full currency bill reserved from owned banks, then physical builder work.
+- `recruit`: unit, currency bill plus `unitInput` definition. One unassigned matching worker approaches and is contained during training. Successful deployment changes that entity's definition and preserves its runtime ID.
+- `harvest`: currency with a `source` yielding resource or building definition; a directly assigned worker removes finite yield and carries it to an owned drop-off. `amount` is the number gathered per completed `workTicks` cycle, capped by reserved load space and remaining source yield. Built-in workers carry ten; amber gathers ten in 100 ticks and wood ten in 400 ticks. Travel is additional.
 - `plant`: resource with regrowth duration; one employed worker restores an eligible depleted site.
-- `spawn`: unit, no material input; producer has a finite contribution limit.
+- `spawn`: worker unit, no material input. The producer owns its recurring interval and shared living-worker capacity contribution. `population.intervalTicks` governs birth timing; the unit creation record does not override a producer's interval.
 
 These are native verbs. Adding a new building that uses an existing verb is content work. Adding a new verb is an explicit system change, with schema validation, state, lifecycle rules, snapshot support, and acceptance tests.
 
@@ -48,8 +50,14 @@ A focused building shows that building's workplace actions. Mixed units contribu
 
 An optional `category` on action metadata supplies the default grouping. An output definition's optional `category` overrides it for build/produce commands. A binding override's `category` takes precedence over both; explicit `null` there puts the command at the root. Ungrouped commands appear at the root. This is presentation metadata, independent of construction/production mechanics.
 
-The initial worker card uses Build (B) for economy buildings and Advanced Build (V) for Barracks and Watchtower. Build is the action default; the two advanced building definitions override it. These are sibling menus; assigning `parent` creates a submenu without changing renderer or simulation code. Registry validation rejects unknown categories, cycles, invalid icons and duplicate declared shortcuts.
+The initial worker card uses Build (B) for economy buildings and Advanced Build (V) for Barracks, Watchtower and Sanctuary. Build is the action default; advanced definitions override it. These are sibling menus; assigning `parent` creates a submenu without changing renderer or simulation code. Registry validation rejects unknown categories, cycles, invalid icons and duplicate declared shortcuts.
 
 `commandCard` discovers executable bindings; `commandMenu` projects those into the current category and local navigation entries. Opening a category and Back never enter the multiplayer command queue. Higher priority still fills from the top-left. Each submenu page reserves bottom-left for Back, leaving eleven content slots. Empty/stale categories return to the root. Selection changes reset navigation; regular simulation updates preserve it. Escape cancels targeting first, then returns to the parent. Move/Attack/Stop shortcuts remain usable within categories; other shortcuts operate on the visible page only.
 
 Back metadata (name, description, icon, priority and shortcut) lives in actions.navigation.back. Keyboard dispatch and tooltip text consume the same binding, including Escape. Commands fill slots 1–12 left-to-right; submenu content skips reserved slot 9. Escape while actively targeting remains a local targeting-cancel control.
+
+## Damage and spell rules
+
+`rules.damageTypes` declares display names and whether armor points apply. `damageMultipliers` must have exactly one row per attack type and a column for every armor class. Values are permille; zero is immunity. `armorCoefficient` supplies the positive-armor percentage curve. `heroStunDurationPermille` scales unit stuns against heroes; buildings never receive stun effects.
+
+Ability ranks use `damageBonusPermille` for percentage attack buffs, not flat bonuses. Identical buffs refresh instead of stacking; distinct percentage bonuses add before one multiplication of equipped base damage. `reductionPermille` uses the strongest active protection. Offensive area abilities may declare `damageTargetBudget`: raw damage is scaled by `min(1, budget / eligible targets)` before individual defenses. Immune targets do not consume this budget. Damage immunity alone does not imply stun immunity.

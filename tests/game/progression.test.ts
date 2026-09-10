@@ -11,8 +11,8 @@ function setup() {
   const warrior=structuredClone(data.definitions.find(d=>(d as {id:string}).id==="unit.ants.warrior")) as Record<string,unknown>;
   data.definitions.push({...warrior,id:"unit.ants.test-hero",hero:true,level:1,
     body:{maxHp:100,armor:0,armorType:"heavy"},
-    behaviors:{movement:{speed:4},playerControl:{},combat:{damage:30,damageType:"physical",range:2,cooldownTicks:40,aggroRange:8},
-      progression:{thresholds:[0,10,30],healthPerLevel:20,damagePerLevel:5,armorPerLevel:1,experienceRadius:8}}});
+    behaviors:{movement:{speed:4},playerControl:{},combat:{damage:30,damageType:"melee",range:2,cooldownTicks:40,aggroRange:8},
+      progression:{levels:[0,10,30].map((experience,i)=>({experience,maxHp:100+20*i,damage:30+5*i,armor:i,cooldownTicks:40,maxMana:0,healthRegenPerSecond:0,manaRegenPerSecond:0})),experienceRadius:8}}});
   for(const d of data.definitions as Record<string,unknown>[]) if(d.id==="unit.neutral.wolf" || d.id==="unit.ants.settler")d.experienceYield=35;
   const map={...emptyUtcMap(),entities:[placed("hero1","unit.ants.test-hero",208,230),placed("hero2","unit.ants.test-hero",208,229),
     {...placed("victim","unit.neutral.wolf",209,230,{health:1}),owner:"none" as const}],
@@ -26,7 +26,7 @@ describe("hero leveling",()=>{
     h.hp=70; h.unit!.target=g.entities.find(e=>e.placement==="victim")!.id;
     g.tick();
     expect(h.progression!.experience).toBe(18);expect(h2.progression!.experience).toBe(17);
-    expect(g.context.stats(h)).toEqual({level:2,maxHp:120,damage:35,armor:1});
+    expect(g.context.stats(h)).toMatchObject({level:2,maxHp:120,damage:35,armor:1});
     // Level-up adds maximum-health growth; it does not erase earlier damage.
     expect(h.hp).toBeLessThanOrEqual(90);expect(h.hp).toBeGreaterThan(70);
     const own=g.view("player.1").entities.find(e=>e.id===h.id)!;

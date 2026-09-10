@@ -10,10 +10,9 @@
         },
         "playerControl": {},
         "work": {
-          "carryCapacity": 4,
+          "carryCapacity": 10,
           "builds": [
             "building.ants.barracks",
-            "building.ants.lumberjack",
             "building.ants.forester",
             "building.ants.house",
             "building.ants.tower",
@@ -314,7 +313,7 @@
     {
       "id": "asset.resource.amber-seam",
       "file": "assets/ant-colony/amber-seam.glb",
-      "sceneryAsset": "amber-seam"
+      "healthHeight": 5
     },
     {
       "id": "icon.spell.faultline",
@@ -374,14 +373,14 @@
       },
       "build": {
         "name": "Build",
-        "description": "Place a construction project inside owned territory.",
+        "description": "Place a construction project on explored, clear ground.",
         "icon": "icon.action.build",
         "priority": 60,
         "category": "category.build"
       },
       "produce": {
         "name": "Produce",
-        "description": "Queue production. Materials and an eligible recruit must arrive before training.",
+        "description": "Reserve the resource cost and call an available worker to the building for training.",
         "icon": "icon.action.produce",
         "priority": 60
       },
@@ -399,21 +398,12 @@
       },
       "cancel": {
         "name": "Cancel construction",
-        "description": "Cancel this project. Delivered goods remain as recoverable owned stacks.",
+        "description": "Cancel this project and refund its reserved resources to an owned Main Hall with space.",
         "icon": "icon.action.cancel",
         "priority": 20
       }
     },
     "overrides": {
-      "build:building.ants.lumberjack": {
-        "priority": 100
-      },
-      "build:building.ants.stonemason": {
-        "priority": 90
-      },
-      "build:building.ants.sawmill": {
-        "priority": 80
-      },
       "build:building.ants.forester": {
         "priority": 70
       },
@@ -431,7 +421,7 @@
       },
       "category.build-advanced": {
         "name": "Advanced Build",
-        "description": "Open military and territory buildings.",
+        "description": "Open military and support buildings.",
         "icon": "icon.action.build-advanced",
         "priority": 50,
         "hotkey": "V"
@@ -455,23 +445,42 @@
     }
   },
   "rules": {
-    "id": "declarations-4",
+    "id": "declarations-5",
     "maxUnits": 160,
     "maxBuildings": 160,
     "constructionHpPermille": 100,
     "repairTicks": 4,
     "damageMultipliers": {
-      "physical": {
+      "melee": {
+        "light": 1500,
+        "heavy": 1000,
+        "hero": 1000,
+        "structure": 700
+      },
+      "piercing": {
+        "light": 750,
+        "heavy": 900,
+        "hero": 500,
+        "structure": 350
+      },
+      "hero": {
         "light": 1000,
-        "structure": 1000,
-        "heavy": 1000
+        "heavy": 1000,
+        "hero": 1000,
+        "structure": 500
+      },
+      "spell": {
+        "light": 1000,
+        "heavy": 1000,
+        "hero": 700,
+        "structure": 250
       }
     },
     "startingSetup": {
       "fort": "building.ants.fort",
       "inventory": {
-        "item.wood": 80,
-        "item.amber": 60
+        "item.amber": 500,
+        "item.wood": 150
       },
       "units": [
         {
@@ -510,27 +519,6 @@
           }
         },
         {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": -1,
-            "y": 9
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 1,
-            "y": 9
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 3,
-            "y": 9
-          }
-        },
-        {
           "definition": "unit.ants.warrior",
           "offset": {
             "x": -4,
@@ -561,13 +549,13 @@
         },
         {
           "item": "item.wood",
-          "workers": 3,
+          "workers": 2,
           "radius": 40
         }
       ]
     },
     "ai": {
-      "revision": 1,
+      "revision": 2,
       "decisionTicks": 10,
       "economyTicks": 80,
       "strategyTicks": 200,
@@ -623,6 +611,10 @@
       "structure": {
         "name": "Building armor",
         "icon": "icon.armor.structure"
+      },
+      "hero": {
+        "name": "Hero armor",
+        "icon": "icon.armor.heavy"
       }
     },
     "lootPools": {
@@ -707,7 +699,7 @@
         "priority": 110,
         "target": "point",
         "effect": "line",
-        "damageType": "physical",
+        "damageType": "spell",
         "visual": "effect.faultline",
         "ranks": [
           {
@@ -717,11 +709,11 @@
             "castTicks": 20,
             "range": 14,
             "radius": 2,
-            "damage": 75,
+            "damage": 100,
             "stunTicks": 20,
             "durationTicks": 0,
-            "damageBonus": 0,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 0
           },
           {
             "requiredLevel": 3,
@@ -730,11 +722,11 @@
             "castTicks": 20,
             "range": 14,
             "radius": 2,
-            "damage": 120,
+            "damage": 160,
             "stunTicks": 30,
             "durationTicks": 0,
-            "damageBonus": 0,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 0
           },
           {
             "requiredLevel": 5,
@@ -743,13 +735,14 @@
             "castTicks": 20,
             "range": 14,
             "radius": 2,
-            "damage": 165,
+            "damage": 220,
             "stunTicks": 40,
             "durationTicks": 0,
-            "damageBonus": 0,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 0
           }
-        ]
+        ],
+        "damageTargetBudget": 6
       },
       "spell.marshal.rally": {
         "name": "Rally the Colony",
@@ -759,7 +752,7 @@
         "priority": 109,
         "target": "self",
         "effect": "rally",
-        "damageType": "physical",
+        "damageType": "spell",
         "visual": "effect.rally",
         "ranks": [
           {
@@ -772,8 +765,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 8,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 100
           },
           {
             "requiredLevel": 3,
@@ -785,8 +778,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 15,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 200
           },
           {
             "requiredLevel": 5,
@@ -798,8 +791,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 22,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 300
           }
         ]
       },
@@ -811,7 +804,7 @@
         "priority": 108,
         "target": "self",
         "effect": "guard",
-        "damageType": "physical",
+        "damageType": "spell",
         "visual": "effect.carapace",
         "ranks": [
           {
@@ -824,8 +817,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 0,
-            "reductionPermille": 350
+            "reductionPermille": 200,
+            "damageBonusPermille": 0
           },
           {
             "requiredLevel": 3,
@@ -837,8 +830,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 0,
-            "reductionPermille": 500
+            "reductionPermille": 300,
+            "damageBonusPermille": 0
           },
           {
             "requiredLevel": 5,
@@ -850,8 +843,8 @@
             "damage": 0,
             "stunTicks": 0,
             "durationTicks": 400,
-            "damageBonus": 0,
-            "reductionPermille": 650
+            "reductionPermille": 400,
+            "damageBonusPermille": 0
           }
         ]
       },
@@ -863,7 +856,7 @@
         "priority": 107,
         "target": "point",
         "effect": "blast",
-        "damageType": "physical",
+        "damageType": "spell",
         "visual": "effect.crownfall",
         "ranks": [
           {
@@ -873,13 +866,14 @@
             "castTicks": 40,
             "range": 14,
             "radius": 7,
-            "damage": 260,
-            "stunTicks": 100,
+            "damage": 280,
+            "stunTicks": 80,
             "durationTicks": 0,
-            "damageBonus": 0,
-            "reductionPermille": 0
+            "reductionPermille": 0,
+            "damageBonusPermille": 0
           }
-        ]
+        ],
+        "damageTargetBudget": 6
       }
     },
     "spellVisuals": {
@@ -915,6 +909,26 @@
         "particleSize": 0.18,
         "rise": 4
       }
+    },
+    "armorCoefficient": 0.06,
+    "heroStunDurationPermille": 500,
+    "damageTypes": {
+      "melee": {
+        "name": "Melee",
+        "appliesArmor": true
+      },
+      "piercing": {
+        "name": "Piercing",
+        "appliesArmor": true
+      },
+      "hero": {
+        "name": "Hero attack",
+        "appliesArmor": true
+      },
+      "spell": {
+        "name": "Spell",
+        "appliesArmor": false
+      }
     }
   },
   "definitions": [
@@ -922,12 +936,12 @@
       "id": "unit.ants.settler",
       "kind": "unit",
       "name": "Worker",
-      "description": "Builds the colony and carries goods. Employed workers help deliver while idle.",
+      "description": "Gathers amber and wood, builds the colony, or enters a barracks to become a soldier. Assigned workers are protected from automatic recruitment.",
       "asset": "asset.ants.settler",
       "icon": "icon.ants.settler",
       "selectionClass": "worker",
       "body": {
-        "maxHp": 60,
+        "maxHp": 240,
         "armor": 0,
         "armorType": "light"
       },
@@ -960,7 +974,7 @@
       "icon": "icon.ants.warrior",
       "selectionClass": "army",
       "body": {
-        "maxHp": 120,
+        "maxHp": 300,
         "armor": 2,
         "armorType": "heavy"
       },
@@ -970,10 +984,10 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 12,
-          "damageType": "physical",
+          "damage": 9,
+          "damageType": "melee",
           "range": 1.5,
-          "cooldownTicks": 32,
+          "cooldownTicks": 54,
           "aggroRange": 10
         }
       },
@@ -981,15 +995,11 @@
         "method": "recruit",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 5
-          },
-          {
             "item": "item.amber",
-            "amount": 8
+            "amount": 95
           }
         ],
-        "workTicks": 160,
+        "workTicks": 40,
         "unitInput": "unit.ants.settler"
       },
       "level": 1,
@@ -1004,7 +1014,7 @@
       "icon": "icon.ants.archer",
       "selectionClass": "army",
       "body": {
-        "maxHp": 70,
+        "maxHp": 375,
         "armor": 0,
         "armorType": "light"
       },
@@ -1014,10 +1024,10 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 9,
-          "damageType": "physical",
+          "damage": 15,
+          "damageType": "piercing",
           "range": 7,
-          "cooldownTicks": 48,
+          "cooldownTicks": 60,
           "aggroRange": 10
         }
       },
@@ -1025,15 +1035,15 @@
         "method": "recruit",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 5
+            "item": "item.amber",
+            "amount": 145
           },
           {
-            "item": "item.amber",
-            "amount": 10
+            "item": "item.wood",
+            "amount": 20
           }
         ],
-        "workTicks": 240,
+        "workTicks": 40,
         "unitInput": "unit.ants.settler"
       },
       "level": 1,
@@ -1048,7 +1058,7 @@
       "icon": "icon.neutral.wolf",
       "selectionClass": "army",
       "body": {
-        "maxHp": 90,
+        "maxHp": 300,
         "armor": 0,
         "armorType": "light"
       },
@@ -1058,10 +1068,10 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 10,
-          "damageType": "physical",
+          "damage": 14,
+          "damageType": "melee",
           "range": 1.5,
-          "cooldownTicks": 32,
+          "cooldownTicks": 48,
           "aggroRange": 8
         }
       },
@@ -1077,7 +1087,7 @@
       "icon": "icon.neutral.ogre",
       "selectionClass": "army",
       "body": {
-        "maxHp": 350,
+        "maxHp": 900,
         "armor": 4,
         "armorType": "heavy"
       },
@@ -1087,8 +1097,8 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 24,
-          "damageType": "physical",
+          "damage": 38,
+          "damageType": "melee",
           "range": 2,
           "cooldownTicks": 64,
           "aggroRange": 10
@@ -1100,13 +1110,13 @@
     {
       "id": "building.ants.fort",
       "kind": "building",
-      "name": "Main fort",
-      "description": "The heart of the colony. Workers deliver gathered resources here.",
+      "name": "Main Hall",
+      "description": "Receives gathered amber and wood. Produces one worker every 12 seconds and supports 8 living workers.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
       "body": {
-        "maxHp": 1000,
-        "armor": 4,
+        "maxHp": 1800,
+        "armor": 5,
         "armorType": "structure"
       },
       "vision": 42,
@@ -1128,9 +1138,6 @@
         "behavior-set.player-building"
       ],
       "behaviors": {
-        "territory": {
-          "radius": 38
-        },
         "storage": {
           "capacity": 100000,
           "accepts": [
@@ -1138,6 +1145,17 @@
             "item.amber"
           ],
           "dropoff": true
+        },
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "unit.ants.settler"
+          ],
+          "workerSlots": 0,
+          "population": {
+            "capacity": 8,
+            "intervalTicks": 480
+          }
         }
       },
       "level": 1
@@ -1146,12 +1164,12 @@
       "id": "building.ants.barracks",
       "kind": "building",
       "name": "Barracks",
-      "description": "Recruits available workers after materials arrive.",
+      "description": "Trains free workers into soldiers. Recruits enter the barracks and emerge armed; employed workers are never taken automatically.",
       "asset": "asset.ants.barracks",
       "icon": "icon.ants.barracks",
       "body": {
-        "maxHp": 450,
-        "armor": 4,
+        "maxHp": 1200,
+        "armor": 5,
         "armorType": "structure"
       },
       "vision": 12,
@@ -1167,12 +1185,12 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 8
+            "item": "item.amber",
+            "amount": 160
           },
           {
-            "item": "item.amber",
-            "amount": 4
+            "item": "item.wood",
+            "amount": 60
           }
         ],
         "workTicks": 240,
@@ -1183,7 +1201,7 @@
       ],
       "behaviors": {
         "storage": {
-          "capacity": 100,
+          "capacity": 500,
           "accepts": [
             "item.wood",
             "item.amber"
@@ -1203,104 +1221,6 @@
       "level": 1
     },
     {
-      "id": "building.ants.lumberjack",
-      "kind": "building",
-      "name": "Lumberjack’s hut",
-      "description": "Harvests trees in owned territory. Produces logs for sawmills.",
-      "asset": "asset.ants.lumberjack",
-      "icon": "icon.ants.lumberjack",
-      "body": {
-        "maxHp": 250,
-        "armor": 4,
-        "armorType": "structure"
-      },
-      "vision": 12,
-      "footprint": {
-        "width": 7,
-        "depth": 7
-      },
-      "entrance": {
-        "x": 0,
-        "y": 4
-      },
-      "creation": {
-        "method": "construct",
-        "items": [
-          {
-            "item": "item.wood",
-            "amount": 6
-          },
-          {
-            "item": "item.amber",
-            "amount": 2
-          }
-        ],
-        "workTicks": 200,
-        "workAnimation": "build"
-      },
-      "behaviorSets": [
-        "behavior-set.player-building"
-      ],
-      "behaviors": {
-        "storage": {
-          "capacity": 16,
-          "accepts": []
-        },
-        "production": {
-          "mode": "automatic",
-          "outputs": [
-            "item.wood"
-          ],
-          "workerSlots": 1,
-          "workRadius": 28,
-          "jobName": "Lumberjack"
-        }
-      },
-      "level": 1
-    },
-    {
-      "id": "building.ants.sawmill",
-      "kind": "building",
-      "name": "Sawmill",
-      "description": "Turns delivered logs into planks for construction and recruitment.",
-      "asset": "asset.ants.sawmill",
-      "icon": "icon.ants.sawmill",
-      "body": {
-        "maxHp": 300,
-        "armor": 4,
-        "armorType": "structure"
-      },
-      "vision": 12,
-      "footprint": {
-        "width": 9,
-        "depth": 9
-      },
-      "entrance": {
-        "x": 0,
-        "y": 5
-      },
-      "creation": {
-        "method": "construct",
-        "items": [
-          {
-            "item": "item.wood",
-            "amount": 8
-          },
-          {
-            "item": "item.amber",
-            "amount": 4
-          }
-        ],
-        "workTicks": 280,
-        "workAnimation": "build"
-      },
-      "behaviorSets": [
-        "behavior-set.player-building"
-      ],
-      "behaviors": {},
-      "level": 1
-    },
-    {
       "id": "building.ants.forester",
       "kind": "building",
       "name": "Forester lodge",
@@ -1308,8 +1228,8 @@
       "asset": "asset.ants.forester",
       "icon": "icon.ants.forester",
       "body": {
-        "maxHp": 250,
-        "armor": 4,
+        "maxHp": 750,
+        "armor": 3,
         "armorType": "structure"
       },
       "vision": 12,
@@ -1325,12 +1245,12 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 6
+            "item": "item.amber",
+            "amount": 120
           },
           {
-            "item": "item.amber",
-            "amount": 2
+            "item": "item.wood",
+            "amount": 80
           }
         ],
         "workTicks": 220,
@@ -1353,57 +1273,15 @@
       "level": 1
     },
     {
-      "id": "building.ants.stonemason",
-      "kind": "building",
-      "name": "Stonemason’s hut",
-      "description": "Quarries stone deposits in owned territory.",
-      "asset": "asset.ants.stonemason",
-      "icon": "icon.ants.stonemason",
-      "body": {
-        "maxHp": 250,
-        "armor": 4,
-        "armorType": "structure"
-      },
-      "vision": 12,
-      "footprint": {
-        "width": 5,
-        "depth": 5
-      },
-      "entrance": {
-        "x": 0,
-        "y": 3
-      },
-      "creation": {
-        "method": "construct",
-        "items": [
-          {
-            "item": "item.wood",
-            "amount": 6
-          },
-          {
-            "item": "item.amber",
-            "amount": 2
-          }
-        ],
-        "workTicks": 240,
-        "workAnimation": "build"
-      },
-      "behaviorSets": [
-        "behavior-set.player-building"
-      ],
-      "behaviors": {},
-      "level": 1
-    },
-    {
       "id": "building.ants.house",
       "kind": "building",
       "name": "Worker house",
-      "description": "Welcomes three additional workers. Free workers carry goods.",
+      "description": "Supports 3 additional living workers and produces one every 20 seconds. Replenishes workers after losses or recruitment.",
       "asset": "asset.ants.house",
       "icon": "icon.ants.house",
       "body": {
-        "maxHp": 250,
-        "armor": 4,
+        "maxHp": 600,
+        "armor": 3,
         "armorType": "structure"
       },
       "vision": 12,
@@ -1419,12 +1297,12 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 8
+            "item": "item.amber",
+            "amount": 80
           },
           {
-            "item": "item.amber",
-            "amount": 4
+            "item": "item.wood",
+            "amount": 20
           }
         ],
         "workTicks": 240,
@@ -1440,7 +1318,10 @@
             "unit.ants.settler"
           ],
           "workerSlots": 0,
-          "totalLimit": 3
+          "population": {
+            "capacity": 3,
+            "intervalTicks": 800
+          }
         }
       },
       "level": 1
@@ -1449,12 +1330,12 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "Expands territory and sight. Does not fire at enemies.",
+      "description": "Provides sight over the surrounding forest. Does not fire at enemies.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
-        "maxHp": 350,
-        "armor": 4,
+        "maxHp": 500,
+        "armor": 2,
         "armorType": "structure"
       },
       "vision": 22,
@@ -1470,12 +1351,12 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 10
+            "item": "item.amber",
+            "amount": 30
           },
           {
-            "item": "item.amber",
-            "amount": 8
+            "item": "item.wood",
+            "amount": 20
           }
         ],
         "workTicks": 320,
@@ -1484,11 +1365,7 @@
       "behaviorSets": [
         "behavior-set.player-building"
       ],
-      "behaviors": {
-        "territory": {
-          "radius": 38
-        }
-      },
+      "behaviors": {},
       "category": "category.build-advanced",
       "level": 1
     },
@@ -1504,20 +1381,12 @@
       "creation": {
         "method": "harvest",
         "items": [],
-        "workTicks": 100,
+        "workTicks": 400,
         "source": "resource.forest.tree",
-        "workAnimation": "chop"
-      }
-    },
-    {
-      "id": "item.plank",
-      "kind": "item",
-      "name": "Plank",
-      "description": "A cut timber plank.",
-      "asset": "asset.item.plank",
-      "icon": "icon.item.plank",
-      "stackLimit": 16,
-      "behaviors": {}
+        "workAnimation": "chop",
+        "amount": 10
+      },
+      "currency": true
     },
     {
       "id": "item.amber",
@@ -1532,9 +1401,11 @@
         "method": "harvest",
         "items": [],
         "workTicks": 100,
-        "source": "resource.amber.seam",
-        "workAnimation": "chop"
-      }
+        "source": "building.neutral.amber-mine",
+        "workAnimation": "chop",
+        "amount": 10
+      },
+      "currency": true
     },
     {
       "id": "resource.forest.tree",
@@ -1550,17 +1421,7 @@
         "items": [],
         "workTicks": 80
       },
-      "yield": 24
-    },
-    {
-      "id": "resource.stone.deposit",
-      "kind": "resource",
-      "name": "Stone deposit",
-      "description": "A finite supply of stone for the colony.",
-      "asset": "asset.resource.ant-stone-deposit",
-      "icon": "icon.item.amber",
-      "behaviors": {},
-      "yield": 80
+      "yield": 100
     },
     {
       "id": "unit.ants.marshal",
@@ -1573,9 +1434,9 @@
       "level": 1,
       "selectionClass": "army",
       "body": {
-        "maxHp": 480,
-        "armor": 4,
-        "armorType": "heavy"
+        "maxHp": 700,
+        "armor": 2,
+        "armorType": "hero"
       },
       "vision": 14,
       "behaviorSets": [
@@ -1583,29 +1444,116 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 34,
-          "damageType": "physical",
+          "damage": 31,
+          "damageType": "hero",
           "range": 1.8,
-          "cooldownTicks": 40,
+          "cooldownTicks": 73,
           "aggroRange": 12
         },
         "progression": {
-          "thresholds": [
-            0,
-            100,
-            250,
-            450,
-            700,
-            1000,
-            1400,
-            1900,
-            2500,
-            3200
-          ],
-          "healthPerLevel": 65,
-          "damagePerLevel": 5,
-          "armorPerLevel": 1,
-          "experienceRadius": 18
+          "experienceRadius": 18,
+          "levels": [
+            {
+              "experience": 0,
+              "maxHp": 700,
+              "damage": 31,
+              "armor": 2,
+              "maxMana": 225,
+              "cooldownTicks": 73,
+              "healthRegenPerSecond": 1.45,
+              "manaRegenPerSecond": 0.76
+            },
+            {
+              "experience": 100,
+              "maxHp": 775,
+              "damage": 34,
+              "armor": 3,
+              "maxMana": 240,
+              "cooldownTicks": 72,
+              "healthRegenPerSecond": 1.6,
+              "manaRegenPerSecond": 0.81
+            },
+            {
+              "experience": 250,
+              "maxHp": 850,
+              "damage": 37,
+              "armor": 3,
+              "maxMana": 270,
+              "cooldownTicks": 69,
+              "healthRegenPerSecond": 1.75,
+              "manaRegenPerSecond": 0.91
+            },
+            {
+              "experience": 450,
+              "maxHp": 925,
+              "damage": 40,
+              "armor": 4,
+              "maxMana": 285,
+              "cooldownTicks": 68,
+              "healthRegenPerSecond": 1.9,
+              "manaRegenPerSecond": 0.96
+            },
+            {
+              "experience": 700,
+              "maxHp": 1000,
+              "damage": 43,
+              "armor": 4,
+              "maxMana": 315,
+              "cooldownTicks": 66,
+              "healthRegenPerSecond": 2.05,
+              "manaRegenPerSecond": 1.06
+            },
+            {
+              "experience": 1000,
+              "maxHp": 1075,
+              "damage": 46,
+              "armor": 4,
+              "maxMana": 330,
+              "cooldownTicks": 65,
+              "healthRegenPerSecond": 2.2,
+              "manaRegenPerSecond": 1.11
+            },
+            {
+              "experience": 1400,
+              "maxHp": 1150,
+              "damage": 49,
+              "armor": 5,
+              "maxMana": 360,
+              "cooldownTicks": 63,
+              "healthRegenPerSecond": 2.35,
+              "manaRegenPerSecond": 1.21
+            },
+            {
+              "experience": 1900,
+              "maxHp": 1225,
+              "damage": 52,
+              "armor": 5,
+              "maxMana": 375,
+              "cooldownTicks": 63,
+              "healthRegenPerSecond": 2.5,
+              "manaRegenPerSecond": 1.26
+            },
+            {
+              "experience": 2500,
+              "maxHp": 1300,
+              "damage": 55,
+              "armor": 6,
+              "maxMana": 405,
+              "cooldownTicks": 61,
+              "healthRegenPerSecond": 2.65,
+              "manaRegenPerSecond": 1.36
+            },
+            {
+              "experience": 3200,
+              "maxHp": 1375,
+              "damage": 58,
+              "armor": 6,
+              "maxMana": 420,
+              "cooldownTicks": 60,
+              "healthRegenPerSecond": 2.8,
+              "manaRegenPerSecond": 1.41
+            }
+          ]
         },
         "inventory": {
           "slots": 6,
@@ -1618,10 +1566,10 @@
             "spell.marshal.carapace",
             "spell.marshal.crownfall"
           ],
-          "maxMana": 320,
-          "regenTicks": 10,
+          "maxMana": 225,
           "learningCategory": "category.hero.skills",
-          "manaIcon": "icon.item.moon-dew"
+          "manaIcon": "icon.item.moon-dew",
+          "manaRegenPerSecond": 0.76
         }
       },
       "experienceYield": 150
@@ -1719,10 +1667,10 @@
       }
     },
     {
-      "id": "resource.amber.seam",
-      "kind": "resource",
-      "name": "Amber Seam",
-      "description": "An ancient root rich in amber. Send workers to gather resin and carry it to a main hall.",
+      "id": "building.neutral.amber-mine",
+      "kind": "building",
+      "name": "Amber Mine",
+      "description": "A neutral amber mine. Assign up to 10 workers; each carries amber back to a main hall.",
       "asset": "asset.resource.amber-seam",
       "icon": "icon.item.amber",
       "footprint": {
@@ -1731,7 +1679,17 @@
       },
       "constructionClearance": 3,
       "behaviors": {},
-      "yield": 12000
+      "yield": 12000,
+      "entrance": {
+        "x": 0,
+        "y": 3
+      },
+      "body": {
+        "maxHp": 1500,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "gatheringCapacity": 10
     },
     {
       "id": "unit.neutral.thornspitter",
@@ -1742,9 +1700,9 @@
       "icon": "icon.neutral.thornspitter",
       "selectionClass": "army",
       "body": {
-        "maxHp": 180,
-        "armor": 2,
-        "armorType": "heavy"
+        "maxHp": 400,
+        "armor": 1,
+        "armorType": "light"
       },
       "vision": 10,
       "behaviorSets": [
@@ -1752,10 +1710,10 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 17,
-          "damageType": "physical",
+          "damage": 20,
+          "damageType": "piercing",
           "range": 10,
-          "cooldownTicks": 68,
+          "cooldownTicks": 64,
           "aggroRange": 12
         }
       },
@@ -1771,8 +1729,8 @@
       "icon": "icon.neutral.thornspitter",
       "selectionClass": "army",
       "body": {
-        "maxHp": 520,
-        "armor": 5,
+        "maxHp": 1000,
+        "armor": 3,
         "armorType": "heavy"
       },
       "vision": 10,
@@ -1781,8 +1739,8 @@
       ],
       "behaviors": {
         "combat": {
-          "damage": 35,
-          "damageType": "physical",
+          "damage": 36,
+          "damageType": "piercing",
           "range": 10,
           "cooldownTicks": 68,
           "aggroRange": 12
@@ -1799,8 +1757,8 @@
       "asset": "asset.ants.sanctuary",
       "icon": "icon.item.amber",
       "body": {
-        "maxHp": 500,
-        "armor": 4,
+        "maxHp": 1000,
+        "armor": 5,
         "armorType": "structure"
       },
       "vision": 12,
@@ -1816,12 +1774,12 @@
         "method": "construct",
         "items": [
           {
-            "item": "item.wood",
-            "amount": 12
+            "item": "item.amber",
+            "amount": 180
           },
           {
-            "item": "item.amber",
-            "amount": 8
+            "item": "item.wood",
+            "amount": 50
           }
         ],
         "workTicks": 220,

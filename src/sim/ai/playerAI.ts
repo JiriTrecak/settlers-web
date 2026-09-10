@@ -351,7 +351,7 @@ export class PlayerAI {
       level = hero?.stats?.level ?? 1,
       xp = hero?.progression?.experience ?? 0;
     const thresholds = hero
-      ? f.def(hero).behaviors.progression?.thresholds
+      ? f.def(hero).behaviors.progression?.levels.map(l => l.experience)
       : undefined;
     s.plan.heroLevel = level;
     s.plan.heroXpNeeded = Math.max(0, (thresholds?.[level] ?? xp) - xp);

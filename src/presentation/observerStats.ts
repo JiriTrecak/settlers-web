@@ -1,3 +1,4 @@
+import { workerPopulation } from "../sim/game/population";
 import type { ContentRegistry } from "../content/registry";
 import { slotOwner, type Owner } from "../content/schema";
 import { alive, type GameState } from "../sim/game/state";
@@ -9,8 +10,8 @@ import { TICK_MS } from "../shared/match/match";
 export const OBSERVER_RESOURCES = [
   {
     item: "item.amber",
-    label: "Gold",
-    explanation: "Amber, the colony’s gold resource.",
+    label: "Amber",
+    explanation: "Amber mined from ancient forest roots.",
   },
   {
     item: "item.wood",
@@ -82,6 +83,8 @@ export type ObserverPlayerStats = {
   resources: { item: string; stored: number; perMinute: number }[];
   units: number;
   workers: number;
+  availableWorkers: number;
+  workerCapacity: number;
   army: number;
   heroes: {
     id: number;
@@ -119,6 +122,16 @@ export function observerStats(
       })),
       units: 0,
       workers: 0,
+      availableWorkers: workerPopulation(
+        state.entities,
+        slotOwner(slot.player),
+        registry,
+      ).available,
+      workerCapacity: workerPopulation(
+        state.entities,
+        slotOwner(slot.player),
+        registry,
+      ).capacity,
       army: 0,
       heroes: [],
     });

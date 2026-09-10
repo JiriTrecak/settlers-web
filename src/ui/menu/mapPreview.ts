@@ -151,7 +151,7 @@ function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
   }
   ctx.restore();
   for (const e of map.entities.filter(
-    (e) => e.definition === "resource.amber.seam",
+    (e) => e.definition === "building.neutral.amber-mine",
   )) {
     const x = e.position.x * scale,
       y = e.position.y * scale;
