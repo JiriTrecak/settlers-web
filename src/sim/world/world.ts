@@ -55,6 +55,8 @@ export class World {
   }
   private readonly pending: QueuedAction[] = [];
   private readonly applied: LoggedAction[] = [];
+  /** Accepted intentions this tick; presentation only, excluded from saves/hash. */
+  readonly commandReceipts: LoggedAction[] = [];
 
   constructor(opts: WorldOpts) {
     this.size = opts.map.size;
@@ -239,6 +241,7 @@ export class World {
     this.rng = seedRng(snap.rng);
     this.pending.splice(0, this.pending.length, ...snap.pending);
     this.applied.length = 0;
+    this.commandReceipts.length = 0;
   }
   checksum(): number {
     let h = 2166136261 | 0;
@@ -263,6 +266,7 @@ export class World {
   }
 
   private applyDue(): void {
+    this.commandReceipts.length = 0;
     const due: QueuedAction[] = [];
     const keep: QueuedAction[] = [];
     for (const e of this.pending) {
@@ -277,6 +281,7 @@ export class World {
         slotOwner(item.player),
         item.action,
       );
+      if (receipt.accepted) this.commandReceipts.push({tick: this.clock.tickIndex, player: item.player, action: item.action});
       this.brains
         .get(item.player)
         ?.receipt({

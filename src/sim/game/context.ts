@@ -1,3 +1,4 @@
+import { itemFlag } from "./itemModifiers";
 import { isStunned } from "./effects";
 import {
   fixed,
@@ -30,7 +31,13 @@ export class GameContext {
     map: UtcMap,
   ) {
     this.reindex();
-    this.spatial = new Spatial(map, registry, () => state.entities);
+    this.spatial = new Spatial(map, registry, () => state.entities, e => {
+      if (!e.unit || !this.def(e).behaviors.work) return false;
+      const job = e.unit.job == null ? undefined : state.jobs.find(j => j.id === e.unit!.job);
+      const source = job?.type === "harvest" ? this.get(job.source)
+        : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
+      return !!source && this.def(source).gatheringUnitCollision === false;
+    });
   }
   reindex() {
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
@@ -42,7 +49,7 @@ export class GameContext {
     return this.registry.get(e.definition);
   }
   stats(e: Entity) {
-    return entityStats(this.def(e), e, this.registry);
+    return entityStats(this.def(e), e, this.registry, this.state.research[e.owner]);
   }
   live() {
     return this.state.entities.filter(alive);
@@ -103,6 +110,8 @@ export class GameContext {
         ...(d.felling ? { felling: {hp: d.felling.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1}} } : {}),
       };
     if (d.kind === "item") e.item = { quantity: initial?.quantity ?? 1 };
+    if (d.behaviors.research) e.research = {queue: []};
+    if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
     this.state.entities.push(e);
     this.index.set(e.id, e);
     return e;
@@ -110,6 +119,7 @@ export class GameContext {
   freshUnit(): NonNullable<Entity["unit"]> {
     return {
       order: null,
+      orderQueue: [],
       route: [],
       goal: null,
       position: null,
@@ -180,7 +190,7 @@ export class GameContext {
   }
   move() {
     const units = this.activeUnits();
-    const occupied = new Set(units.map((e) => this.spatial.cell(e)));
+    const occupied = new Set(units.filter(e => !this.spatial.ignoresUnits(e)).map((e) => this.spatial.cell(e)));
     for (const e of this.live()) {
       const u = e.unit;
       if (!u) continue;
@@ -192,7 +202,7 @@ export class GameContext {
           u.position = null;
           u.segment = null;
           u.release = null;
-          occupied.add(this.spatial.cell(e));
+          if (!this.spatial.ignoresUnits(e)) occupied.add(this.spatial.cell(e));
         }
         continue;
       }
@@ -207,10 +217,13 @@ export class GameContext {
       const speed = u.idle?.walking
         ? (movement?.walkSpeed ?? movement?.speed)
         : movement?.speed;
-      if (!speed || !u.route.length) continue;
-      occupied.delete(this.spatial.cell(e));
+      if (!speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !itemFlag(e, this.registry, "controlImmune"))) continue;
+      const ignoresUnits = this.spatial.ignoresUnits(e);
+      if (!ignoresUnits) occupied.delete(this.spatial.cell(e));
       try {
-        let budget = (speed * POSITION_SCALE) / 40;
+        const charge = u.charge?.target !== null && u.charge?.target === u.target && u.charge.expires > this.state.tick
+          ? (this.def(e).behaviors.combat?.charge?.speedPermille ?? 1000) : 1000;
+        let budget = (speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000;
         u.position ??= fixed(e);
         while (budget > 0 && u.route.length) {
           const current: FixedPoint = u.position!;
@@ -254,7 +267,7 @@ export class GameContext {
             break;
           }
           if (
-            !this.spatial.clearSegment(current, proposed, occupied) ||
+            (!ignoresUnits && !this.spatial.clearSegment(current, proposed, occupied)) ||
             !this.spatial.unitSegmentClear(current, proposed, e.id)
           ) {
             if (this.state.tick >= u.retryAt && u.goal !== null) {
@@ -313,7 +326,7 @@ export class GameContext {
           }
         }
       } finally {
-        occupied.add(this.spatial.cell(e));
+        if (!ignoresUnits) occupied.add(this.spatial.cell(e));
       }
     }
   }

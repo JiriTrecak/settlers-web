@@ -1,4 +1,5 @@
 import type { AbilityAim } from "../settlement/abilityTarget";
+import type { CommandFeedback } from "../../presentation/commandFeedback";
 import { WeatherLayer } from "../sky/weatherLayer";
 import { perf } from "../../debug/performance";
 import { FogOfWar } from "../visibility/fogOfWar";
@@ -146,6 +147,9 @@ export class Renderer {
   }
   gameAbilityTarget(aim: AbilityAim | null) {
     if (this.height) this.settlement?.targetAbility(aim, this.height);
+  }
+  gameCommandFeedback(feedback: CommandFeedback) {
+    if (this.height) this.settlement?.commandFeedback(feedback, this.height);
   }
   gameSelect(id: number | null | readonly number[]) {
     this.settlement?.select(id);
@@ -440,6 +444,8 @@ export class Renderer {
 
   pickGameEntity(clientX: number, clientY: number): number | null {
     if (!this.aim(clientX, clientY)) return null;
+    const unit = this.settlement?.pickUnit(this.threeCam(), this.display.canvas.getBoundingClientRect(), clientX, clientY);
+    if (unit != null) return unit;
     const terrainDistance = this.terrain
       ? this.ray.intersectObject(this.terrain.mesh, true)[0]?.distance
       : undefined;

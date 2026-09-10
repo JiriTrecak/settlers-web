@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "amberjaw-staglord": {
+      "file": "amberjaw-staglord.glb",
+      "triangles": 4356,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "amberjaw-staglord": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "teamMaterial": null,
+  "metersPerUnit": 1,
+  "height": 2.5
+}

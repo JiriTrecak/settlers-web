@@ -20,6 +20,7 @@ import {
 } from "../../ui";
 import {
   createRoom,
+  clearRooms,
   fetchRooms,
   joinRoom,
   leaveRoom,
@@ -183,6 +184,7 @@ export class GameApp {
       error,
       onBack: () => this.showMenu(),
       onRefresh: () => void this.refreshJoinList(),
+      onClearSessions: async () => (await clearRooms()).deleted,
       onHost: (name, mapId, slotCount) =>
         void this.hostRoom(name, mapId, slotCount),
       onJoin: (roomId, name) => void this.enterRoom(roomId, name),

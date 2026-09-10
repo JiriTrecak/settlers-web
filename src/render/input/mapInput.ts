@@ -12,7 +12,7 @@ const EDGE_PX = 20; // CSS pixels: independent of render resolution / Retina sca
 export type MapInputHooks = {
   onChanged(): void;
   onClick?(clientX: number, clientY: number, shift: boolean): void;
-  onRightClick?(clientX: number, clientY: number): void;
+  onRightClick?(clientX: number, clientY: number, shift: boolean): void;
   rts?: boolean;
   onSelectArea?(rect: {left:number;top:number;right:number;bottom:number}, shift:boolean): void;
   onHome?: () => void;
@@ -167,7 +167,7 @@ export class MapInput {
         if (e.button !== 2) return;
         this.drag = null;
         if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
-        this.hooks.onRightClick?.(e.clientX, e.clientY);
+        this.hooks.onRightClick?.(e.clientX, e.clientY, e.shiftKey);
         return;
       }
       if(this.drag==='select'){

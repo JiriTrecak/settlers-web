@@ -1,0 +1,26 @@
+{
+  "name": "Ironroot Forge",
+  "blend": "ironroot-forge.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 24,
+    "elevation": 30,
+    "scale": 8.5,
+    "target": [
+      0,
+      0,
+      2.1
+    ]
+  },
+  "render": {
+    "width": 1289,
+    "height": 1221,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 300,
+    "rim_energy": 1000
+  }
+}

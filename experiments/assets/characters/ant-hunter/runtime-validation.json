@@ -1,0 +1,38 @@
+{
+  "triangles": 4328,
+  "meshes": 2,
+  "materials": 9,
+  "skins": 1,
+  "clips": [
+    "attack_spear",
+    "carry",
+    "charge",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ],
+  "sha256": "fd6b608030053e2ebcf2f8d664ba5fcea53b53a15209ee5092453f0a5c56b289",
+  "sameAsStudio": true,
+  "teamMaterial": [
+    [
+      0,
+      {
+        "doubleSided": true,
+        "name": "TC_TeamColor",
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0.35153260827064514,
+            0.07036009430885315,
+            0.03071344457566738,
+            1
+          ],
+          "metallicFactor": 0.05000000074505806,
+          "roughnessFactor": 0.5
+        }
+      }
+    ]
+  ],
+  "teamVertexColorsAbsent": true
+}

@@ -12,6 +12,7 @@ export function build(
   d: Definition,
   emit: Emit,
   reason: string,
+  origin = f.home,
 ) {
   const worker = f.workers.find(
     (w) => f.free(w) && f.def(w).behaviors.work?.builds.includes(d.id),
@@ -28,10 +29,10 @@ export function build(
     const k = s.placementCursor++ % 192,
       ring = Math.floor(k / 32),
       angle = ((k % 32) * Math.PI) / 16,
-      radius = 12 + ring * 4;
+      radius = d.placementNear ? 9 + ring % 3 : 12 + ring * 4;
     const p = {
-      x: Math.round(f.home.x + Math.cos(angle) * radius),
-      y: Math.round(f.home.y + Math.sin(angle) * radius),
+      x: Math.round(origin.x + Math.cos(angle) * radius),
+      y: Math.round(origin.y + Math.sin(angle) * radius),
     };
     const dx = f.home.x - p.x,
       dy = f.home.y - p.y,
@@ -195,6 +196,54 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     const d = producers.find((d) => f.canAfford(d, promised));
     if (d && build(f, s, d, emit, "Establish army production")) return;
   }
+  // Invest only after a fighting force exists and no observed enemy threatens home.
+  if (f.army.length >= 4 && workers.length >= rules.workers.minimum &&
+      !f.hostiles.some(e => distance(e,f.home)<32)) {
+    const payable = (items: readonly {item:string,amount:number}[]) => items.every(c => (f.bank[c.item]??0)>=c.amount);
+    // A specialized outpost is discovered from its placement and storage declarations.
+    for (const d of defs.filter(d => d.placementNear && d.behaviors.storage?.dropoff)) {
+      if (f.buildings.some(b => b.definition===d.id)) continue;
+      const source=f.resources.filter(e => !e.remembered && e.definition===d.placementNear!.source &&
+        !f.hostiles.some(h=>distance(h,e)<16) && f.geo.connected(f.home,e))
+        .sort((a,b)=>distance(a,f.home)-distance(b,f.home)||a.id-b.id)[0];
+      if(source && build(f,s,d,emit,`Claim observed ${f.def(source).name} with ${d.name}`,source))return;
+    }
+    for (const b of ready) {
+      const upgrade=f.def(b).upgrade;
+      if(upgrade && !b.upgrade && payable(upgrade.items) &&
+        emit({type:'upgrade',actor:b.id},`Advance to ${f.registry.get(upgrade.target).name}`))return;
+    }
+    for (const d of producers) {
+      if (d.requires?.length && !f.buildings.some(b=>b.definition===d.id) &&
+        build(f,s,d,emit,`Unlock advanced production at ${d.name}`))return;
+    }
+    const forge=defs.find(d=>d.behaviors.research);
+    if(forge && !f.buildings.some(b=>b.definition===forge.id) &&
+      build(f,s,forge,emit,`Establish ${forge.name} for permanent improvements`))return;
+    const completed=new Set(f.view.research?.[f.owner]??[]);
+    const pending=new Set(f.buildings.flatMap(b=>b.research?.queue.map(q=>q.id)??[]));
+    for(const b of ready.filter(b=>b.research && !b.research.queue.length)) {
+      const choices=(f.def(b).behaviors.research?.outputs??[])
+        .filter(id=>!completed.has(id)&&!pending.has(id))
+        .map(id=>({id,r:f.registry.rules.research[id]}))
+        .filter(({r})=>f.available(r)&&payable(r.items)&&r.effects.some(e=>f.own.some(u=>e.units.includes(u.definition))))
+        .sort((a,b)=>b.r.priority-a.r.priority||ordinal(a.id,b.id));
+      if(choices[0]&&emit({type:'research',actor:b.id,research:choices[0].id},`Research ${choices[0].r.name} for the current force`))return;
+    }
+  }
+  // A funded army must leave room for one next investment; otherwise cheap recruits
+  // consume each Amber delivery forever and the colony can never advance.
+  const investmentReserve: Record<string,number> = {...promised};
+  if (f.army.length >= 8 && !f.hostiles.some(e=>distance(e,f.home)<32)) {
+    const outpost=defs.find(d=>d.placementNear && d.behaviors.storage?.dropoff &&
+      f.geo.map.resources.some(r=>r.definition===d.placementNear!.source) &&
+      !f.buildings.some(b=>b.definition===d.id));
+    const upgrade=ready.map(b=>({b,u:f.def(b).upgrade})).find(({b,u})=>u&&!b.upgrade);
+    const next=outpost ?? producers.find(d=>d.requires?.length && f.available(d) && !f.buildings.some(b=>b.definition===d.id)) ??
+      defs.find(d=>d.behaviors.research && !f.buildings.some(b=>b.definition===d.id));
+    const bill=outpost?.creation?.items ?? upgrade?.u?.items ?? next?.creation?.items ?? [];
+    for(const c of bill)investmentReserve[c.item]=Math.max(investmentReserve[c.item]??0,c.amount);
+  }
   // Queue only soldiers that can be funded, with enough workers left harvesting.
   const canRecruit =
     total - training - queues.length > rules.workers.minimum &&
@@ -246,9 +295,19 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
             f.def(b).behaviors.production!.outputs.includes(d.id) &&
             (b.production?.queue.length ?? 0) < 2,
         );
+      if (producer && f.available(d) && f.army.length >= rules.army.minimum &&
+          !f.canAfford(d, investmentReserve) &&
+          (d.creation?.items ?? []).every(c => (f.bank[c.item] ?? 0) >= c.amount || f.accepts(c.item))) {
+        // Preserve the composition's next recruit instead of consuming every
+        // delivery on an affordable fallback. Below the army floor, immediate
+        // replacement troops still take priority over composition savings.
+        for (const cost of d.creation?.items ?? [])
+          investmentReserve[cost.item] = Math.max(investmentReserve[cost.item] ?? 0, cost.amount);
+        break;
+      }
       if (
         producer &&
-        f.canAfford(d, promised) &&
+        f.canAfford(d, investmentReserve) &&
         emit(
           { type: "produce", actor: producer.id, definition: d.id },
           `Train ${d.name}; workforce remains above its floor`,
@@ -261,7 +320,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     sanctuary &&
     f.army.length >= 5 &&
     !f.buildings.some((b) => b.definition === sanctuary.id) &&
-    f.canAfford(sanctuary, promised) &&
+    f.canAfford(sanctuary, investmentReserve) &&
     build(f, s, sanctuary, emit, "Prepare hero recovery before the next fight")
   )
     return;
@@ -273,7 +332,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     workers.length >= rules.workers.target &&
     nearbyTrees.length < 18 &&
     !f.buildings.some((b) => b.definition === forest.id) &&
-    f.canAfford(forest, promised) &&
+    f.canAfford(forest, investmentReserve) &&
     build(f, s, forest, emit, "Replenish accessible timber")
   )
     return;
@@ -326,7 +385,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
         (r) =>
           f.def(w).behaviors.work!.harvests?.some((id) => {
             const c = f.registry.get(id).creation;
-            return c?.method === "harvest" && c.source === r.definition;
+            return c?.method === "harvest" && c.source === r.definition && f.accepts(id);
           }) &&
           (!r.gathering || r.gathering.workers < r.gathering.capacity) &&
           f.geo.connected(w, r) &&
@@ -366,7 +425,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
   harvests.sort((a, b) => demand(a) - demand(b) || ordinal(a, b));
   for (const item of harvests) {
     const creation = f.registry.get(item).creation;
-    if (creation?.method !== "harvest") continue;
+    if (creation?.method !== "harvest" || !f.accepts(item)) continue;
     const targets = f.resources
       .filter(
         (r) =>
@@ -376,18 +435,42 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
           !f.hostiles.some((h) => distance(h, r) < 12),
       )
       .sort((a, b) => distance(a, f.home) - distance(b, f.home) || a.id - b.id);
-    const worker = spare.find((w) =>
+    let worker = spare.find((w) =>
       f.def(w).behaviors.work!.harvests?.includes(item),
     );
+    // New outposts must be staffed even when all established workers already
+    // have jobs. Move one empty-handed gatherer from a substantially overfunded
+    // resource, retaining at least two workers on that source. Hysteresis and a
+    // five-second review interval prevent oscillation and abandoned cargo.
+    let rebalanced = false;
+    if (!worker && targets[0] && (s.inspected['economy:rebalance'] ?? 0) <= f.tick) {
+      const donor = [...harvests].reverse().find(other => {
+        if (other === item || demand(other) <= demand(item) * 2) return false;
+        const c = f.registry.get(other).creation;
+        return c?.method === 'harvest' && manual.filter(w =>
+          w.control?.order?.type === 'gather' &&
+          f.byId.get(w.control.order.target)?.definition === c.source).length > 2;
+      });
+      const donorRecipe = donor ? f.registry.get(donor).creation : undefined;
+      if (donorRecipe?.method === 'harvest') {
+        worker = manual.find(w => !w.unit?.cargo && !w.control?.pendingMove &&
+          f.def(w).behaviors.work!.harvests?.includes(item) &&
+          w.control?.order?.type === 'gather' &&
+          f.byId.get(w.control.order.target)?.definition === donorRecipe.source);
+        rebalanced = !!worker;
+      }
+    }
     if (
       worker &&
       targets[0] &&
       emit(
         { type: "gather", actors: [worker.id], target: targets[0].id },
-        `Assign an available worker to ${item}`,
+        rebalanced ? `Rebalance an empty-handed gatherer to ${item}` : `Assign an available worker to ${item}`,
       )
-    )
+    ) {
+      if (rebalanced) s.inspected['economy:rebalance'] = f.tick + 200;
       return;
+    }
   }
   // On depletion, scout an authored resource site rather than knowing its current amount in fog.
   if (spare[0] && !f.resources.some((r) => distance(r, f.home) < 40)) {

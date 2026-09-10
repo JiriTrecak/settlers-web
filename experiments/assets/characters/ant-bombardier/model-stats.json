@@ -1,0 +1,12 @@
+{
+  "objects": 85,
+  "meshes": 80,
+  "materials": 12,
+  "blender": "5.2.1 LTS",
+  "collections": [
+    "Base anatomy",
+    "Bombardier equipment",
+    "Rig",
+    "Studio"
+  ]
+}

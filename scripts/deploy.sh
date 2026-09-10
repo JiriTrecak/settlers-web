@@ -52,7 +52,8 @@ echo
 sudo systemctl is-active settlers-matchhost
 REMOTE
 
-if command -v aws >/dev/null 2>&1; then
+# Redeploys can preserve the existing firewall instead of provisioning ingress.
+if [[ "${MATCHHOST_SKIP_FIREWALL:-0}" != "1" ]] && command -v aws >/dev/null 2>&1; then
   aws ec2 authorize-security-group-ingress \
     --region eu-west-2 \
     --group-id sg-0ae99a69cf8d1d325 \

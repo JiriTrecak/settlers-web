@@ -29,6 +29,7 @@ export class Spatial {
     map: UtcMap,
     readonly registry: ContentRegistry,
     private readonly entities: () => readonly Entity[],
+    readonly ignoresUnits: (e: Entity) => boolean = () => false,
   ) {
     this.size = map.size;
     this.heights = new Int16Array(this.size * this.size);
@@ -105,22 +106,24 @@ export class Spatial {
     );
   }
   free(p: Point, except?: number) {
+    const mover = except == null ? undefined : this.entities().find(e => e.id === except);
     return (
       p.x >= 0 &&
       p.x < this.size &&
       p.y >= 0 &&
       p.y < this.size &&
       this.walkable(this.cell(p)) &&
-      !this.entities().some(
+      (!!mover && this.ignoresUnits(mover) || !this.entities().some(
         (e) =>
           e.unit &&
           alive(e) &&
           !e.unit.contained &&
           !e.unit.release &&
+          !this.ignoresUnits(e) &&
           e.id !== except &&
           e.x === p.x &&
           e.y === p.y,
-      )
+      ))
     );
   }
   nearest(origin: Point, max = 12, except?: number): Point | null {
@@ -152,7 +155,8 @@ export class Spatial {
               u.unit &&
               alive(u) &&
               !u.unit.contained &&
-              !u.unit.release,
+              !u.unit.release &&
+              !this.ignoresUnits(e) && !this.ignoresUnits(u),
           )
           .map((e) => this.cell(e)),
       );
@@ -212,6 +216,8 @@ export class Spatial {
     );
   }
   unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number): boolean {
+    const mover = this.entities().find(e => e.id === except);
+    if (mover && this.ignoresUnits(mover)) return true;
     const dx = to.x - from.x,
       dy = to.y - from.y,
       square = dx * dx + dy * dy;
@@ -222,6 +228,7 @@ export class Spatial {
         !alive(unit) ||
         unit.unit.contained ||
         unit.unit.release
+        || this.ignoresUnits(unit)
       )
         continue;
       const p = unit.unit.position ?? fixed(unit);
@@ -246,10 +253,10 @@ export class Spatial {
     }
     return true;
   }
-  range(a: Entity, b: Entity) {
+  range(a: Entity, b: Entity) { return this.pointRange(precise(a), b); }
+  pointRange(pa: Point, b: Entity) {
     const f = this.registry.get(b.definition).footprint;
-    const pa = precise(a),
-      pb = precise(b);
+    const pb = precise(b);
     let dx = Math.abs(pa.x - pb.x),
       dy = Math.abs(pa.y - pb.y);
     if (f) {

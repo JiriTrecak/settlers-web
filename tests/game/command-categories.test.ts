@@ -10,16 +10,16 @@ describe("command categories", () => {
     const root = commandMenu(bindings, null, g.registry).entries;
     expect(root.map(b => b.id)).toEqual(["move", "stop", "category:category.build", "category:category.build-advanced"]);
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
+    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Mound"});
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
-      ["forester", "house"].map(id => `building.ants.${id}`),
+      ["house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),
     );
-    expect(basic.some(b => b.targetDefinition === "building.ants.barracks")).toBe(false);
-    const advanced = commandMenu(bindings, "category.build-advanced", g.registry).entries;
-    const barracks = advanced.find(b => b.targetDefinition === "building.ants.barracks")!;
+    expect(bindings.some(b => ["building.ants.forester", "building.ants.tower"].includes(b.targetDefinition ?? ""))).toBe(false);
+    const barracks = basic.find(b => b.targetDefinition === "building.ants.barracks")!;
     expect(barracks.actors).toEqual([w.id]);
     expect(barracks.costs.map(c => c.amount)).toEqual([160, 60]);
-    expect(commandPage(advanced, 0).find(s => s.binding.type === "back")).toMatchObject({column: 1, row: 3, binding: {destination: null}});
+    expect(commandPage(basic, 0).find(s => s.binding.type === "back")).toMatchObject({column: 1, row: 3, binding: {destination: null}});
     const soldier = g.entities.find(e => e.definition === "unit.ants.warrior")!;
     const army = commandCard(g.view("player.1"), [soldier.id], "player.1", g.registry);
     expect(commandMenu(army, "category.build", g.registry).category).toBeNull();
@@ -30,6 +30,7 @@ describe("command categories", () => {
   it("supports nested categories, explicit ungrouping, and command-specific overrides", () => {
     const s = source() as any;
     s.actions.categories["category.build-advanced"].parent = "category.build";
+    s.actions.overrides["build:building.ants.tower"].hidden = false;
     s.actions.overrides["build:building.ants.house"] = {category: null};
     s.actions.overrides["build:building.ants.barracks"] = {category: "category.build"};
     const registry = new ContentRegistry(s), g = game();

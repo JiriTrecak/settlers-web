@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-10T01:31:10-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 7.14,
+  "blend_mtime_ns": 1789028927341638500,
+  "config": {
+    "name": "Great Mound",
+    "recipe": "model.py",
+    "blend": "great-mound.blend",
+    "seed": 28,
+    "camera": {
+      "azimuth": 19,
+      "elevation": 34,
+      "scale": 12.1,
+      "target": [
+        0,
+        0,
+        2.9
+      ]
+    },
+    "render": {
+      "width": 1462,
+      "height": 1076,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 1050,
+      "fill_energy": 170,
+      "rim_energy": 1050
+    },
+    "shape": {
+      "roof_height": 1.6,
+      "root_spread": 1.0
+    },
+    "emblem_trace": {
+      "box": [
+        279,
+        176,
+        364,
+        311
+      ]
+    }
+  }
+}

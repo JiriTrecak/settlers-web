@@ -35,6 +35,35 @@ export class Navigation {
     if (++this.epoch >= 0xffffffff) { this.seen.fill(0); this.closed.fill(0); this.epoch = 1; }
     const {prev, cost, seen, closed, epoch} = this;
     const step = (a: number, b: number) => !blocked?.has(b) && this.canStep(a, b);
+    // An occupied or completely enclosed destination cannot be reached. Reject
+    // it before flooding the whole map, without changing successful A* ties.
+    if (blocked?.has(goal)) return null;
+    const goalX = goal % this.size, goalY = Math.floor(goal / this.size);
+    if (!DIRECTIONS.some(([dx, dy]) => {
+      const x = goalX + dx, y = goalY + dy;
+      if (x < 0 || y < 0 || x >= this.size || y >= this.size) return false;
+      const from = y * this.size + x;
+      return (from === start || !blocked?.has(from)) && canTraverse(this.size, from, goal, step);
+    })) return null;
+    // Small goal-side pockets are common in crowded bases. A bounded reverse
+    // reachability check proves failure cheaply; larger regions fall through
+    // to the unchanged forward A* and retain its deterministic route choice.
+    const reverse = [goal], reverseSeen = new Set<number>(reverse);
+    let connected = false, cursor = 0;
+    for (; cursor < reverse.length && reverse.length < 128; cursor++) {
+      const to = reverse[cursor]!, x = to % this.size, y = Math.floor(to / this.size);
+      for (const [dx, dy] of DIRECTIONS) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= this.size || ny >= this.size) continue;
+        const from = ny * this.size + nx;
+        if (reverseSeen.has(from) || (from !== start && blocked?.has(from)) ||
+            !canTraverse(this.size, from, to, step)) continue;
+        if (from === start) { connected = true; break; }
+        reverseSeen.add(from); reverse.push(from);
+      }
+      if (connected) break;
+    }
+    if (!connected && cursor === reverse.length) return null;
     type Node = { id: number; g: number; h: number };
     const heap: Node[] = [];
     const better = (a: Node, b: Node) =>

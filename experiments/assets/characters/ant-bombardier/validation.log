@@ -1,0 +1,5 @@
+00:00.334  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/ant-bombardier.blend"
+BUILDING_VALIDATED {"file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/ant-bombardier.blend", "meshes": 80, "objects": 85, "reference_packed": true, "images": [{"name": "reference.png", "packed_files": 1, "size": [1009, 1559]}], "camera": "Reference camera", "resolution": [1100, 1200]}
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

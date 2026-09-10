@@ -4,7 +4,7 @@ import type {Entity} from './state';
 export class Revival {
  constructor(private readonly c:GameContext){}
  retain(hero:Entity){
-  hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.effects;
+  hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.effects;delete hero.itemStatuses;delete hero.itemHits;
   if(hero.spellcasting)hero.spellcasting.pending=null;
   this.c.state.entities.push(hero);this.c.state.entities.sort((a,b)=>a.id-b.id);this.c.reindex();
  }

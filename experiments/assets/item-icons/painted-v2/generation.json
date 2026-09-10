@@ -1,0 +1,221 @@
+{
+  "mode": "built-in image_gen",
+  "size": [
+    128,
+    128
+  ],
+  "styleReference": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-0419f249-295f-4efe-acc9-03e1be0ed509.png",
+  "stylePrompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: ",
+  "completed": [
+    {
+      "slug": "barkguard",
+      "promptSummary": "Approved sample: rugged oak bark shield with weathered steel edging, antique brass rivets, leather fastening and small green leaves. Detailed painted fantasy inventory icon using barkguard.png and attack.png as style references, pure black background, full object centered for 128px readability.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-0419f249-295f-4efe-acc9-03e1be0ed509.png",
+      "master": "sources/barkguard.png",
+      "runtime": "assets/ui/icons/items-v2/barkguard.png"
+    },
+    {
+      "slug": "thornband",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A dark bronze finger ring formed from a thick twisted thorn vine, three sharp curved thorns and a tiny deep ruby set in the knot. Aggressive modest T1 accessory.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-866857dc-b990-4470-a7a6-c20342910c42.png",
+      "master": "sources/thornband.png",
+      "runtime": "assets/ui/icons/items-v2/thornband.png"
+    },
+    {
+      "slug": "heartseed",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A plump reddish amber heart-shaped seed, embraced by two small oak leaves and a dark brown seed husk, a fine natural vein across its warm translucent surface. A humble vitality charm.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-61a345d9-7d8b-4171-914b-88f1ab3a8a55.png",
+      "master": "sources/heartseed.png",
+      "runtime": "assets/ui/icons/items-v2/heartseed.png"
+    },
+    {
+      "slug": "resin-salve",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A squat open terracotta ointment pot filled with glossy golden tree resin, leather neck binding and a little wooden applicator resting across its rim; one small green leaf tucked into the binding.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-c40748c0-61cd-4817-a932-bbd5edf68479.png",
+      "master": "sources/resin-salve.png",
+      "runtime": "assets/ui/icons/items-v2/resin-salve.png"
+    },
+    {
+      "slug": "royal-crest",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A substantial heraldic brooch: sculpted antique brass ant head with crossed mandibles on a deep crimson enamel oval, small steel rim and four rivets. Regal compact wearable crest, no lettering.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-f39e241b-a550-432f-933c-ee69b4f8407d.png",
+      "master": "sources/royal-crest.png",
+      "runtime": "assets/ui/icons/items-v2/royal-crest.png"
+    },
+    {
+      "slug": "moon-dew",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A small rounded blue glass mana potion vial with bright cyan liquid, cork stopper, silver crescent-shaped collar and a leather cord. Single readable elegant blue potion.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-73bb5122-0ae5-4196-b8f2-e9c939937a26.png",
+      "master": "sources/moon-dew.png",
+      "runtime": "assets/ui/icons/items-v2/moon-dew.png"
+    },
+    {
+      "slug": "trailkeeper-flask",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A sturdy flattened green glass travel flask filled with teal potion, tan leather harness with brass buckle, broad cork stopper and worn bronze neck. Practical adventurer's reusable flask.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-199a137f-defc-4027-942d-7c9b31f097ec.png",
+      "master": "sources/trailkeeper-flask.png",
+      "runtime": "assets/ui/icons/items-v2/trailkeeper-flask.png"
+    },
+    {
+      "slug": "firefly-pendant",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A hanging teardrop amber gemstone pendant with one tiny golden firefly visibly trapped inside, delicate bronze branch setting and short loop of leather cord. Luminous interior, background stays pure black.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-66be94e3-2634-48fb-88cd-61082326669f.png",
+      "master": "sources/firefly-pendant.png",
+      "runtime": "assets/ui/icons/items-v2/firefly-pendant.png"
+    },
+    {
+      "slug": "mossweave-wraps",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A paired bundle of thick rolled beige linen wrist wraps intertwined with soft green moss, stitched leather tabs and tiny brown twig fastenings. Clearly readable healing bandages.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-3a2a143a-f89a-47eb-8adb-78de87394e47.png",
+      "master": "sources/mossweave-wraps.png",
+      "runtime": "assets/ui/icons/items-v2/mossweave-wraps.png"
+    },
+    {
+      "slug": "quickstep-spurs",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A pair of modest leather ankle straps with polished brass hooked spurs shaped like small insect legs, one dominant in front and the second tucked behind. Agile practical equipment.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-1704adbd-2c70-4e6d-be2f-1c95aa1d91fe.png",
+      "master": "sources/quickstep-spurs.png",
+      "runtime": "assets/ui/icons/items-v2/quickstep-spurs.png"
+    },
+    {
+      "slug": "scout-whistle",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A short carved ivory acorn-shaped whistle with a clear dark mouth opening, bronze bands and looped brown leather lanyard. One tiny green leaf charm. Recognizable scouting whistle.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-eaaf665f-aef8-4688-802e-b8e2c3de73bf.png",
+      "master": "sources/scout-whistle.png",
+      "runtime": "assets/ui/icons/items-v2/scout-whistle.png"
+    },
+    {
+      "slug": "ancient-heartwood",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A thick gnarled fragment of ancient dark heartwood, split open to reveal a warm crimson amber core, craggy bark and curling woody tendrils framing the glowing heart. Substantial magical vitality relic.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-b2b38275-430c-41b9-8d2b-85dc103fd27b.png",
+      "master": "sources/ancient-heartwood.png",
+      "runtime": "assets/ui/icons/items-v2/ancient-heartwood.png"
+    },
+    {
+      "slug": "moonwell-chalice",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: An elegant deep silver chalice with crescent moon handles and aged bronze foot, filled with luminous sapphire blue liquid. Cool moonlike highlights and delicate engraved vine patterns, no lettering.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-6146b2c5-dab1-4558-93d2-8feaafa12f02.png",
+      "master": "sources/moonwell-chalice.png",
+      "runtime": "assets/ui/icons/items-v2/moonwell-chalice.png"
+    },
+    {
+      "slug": "predator-talon",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A great hooked ivory predator claw with a dark brown root, strapped to a heavy leather grip with bronze rings and a small blood-red gem. Sharply curved trophy weapon charm.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-f7df4581-2421-494a-8202-58aab04705a9.png",
+      "master": "sources/predator-talon.png",
+      "runtime": "assets/ui/icons/items-v2/predator-talon.png"
+    },
+    {
+      "slug": "amber-carapace",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A thick convex insect carapace armor plate in polished honey amber, dark bronze perimeter reinforcement and broad rivets, layered translucent segments catching golden light. A protective breastplate fragment.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-2a53f8ff-e64f-474d-9e25-d83cb4e94723.png",
+      "master": "sources/amber-carapace.png",
+      "runtime": "assets/ui/icons/items-v2/amber-carapace.png"
+    },
+    {
+      "slug": "broodkeeper-lantern",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A compact bronze lantern built from interwoven branches, rounded green glass panes containing warm golden light, sturdy loop handle and a small leaf at its foot. A nurturing forest lantern, background completely black.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-2e056f5d-1230-4999-8921-3b9ae5a50b76.png",
+      "master": "sources/broodkeeper-lantern.png",
+      "runtime": "assets/ui/icons/items-v2/broodkeeper-lantern.png"
+    },
+    {
+      "slug": "warcaller-standard",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A compact crimson cloth battle standard hanging from a short dark wooden crossbar on a bronze-tipped pole, bold brass ant-mandible clasp, cloth fluttering slightly. Single standard filling the square diagonally, no glyphs or lettering.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-4b4bc74f-6781-4e7d-b5a5-de0a40cf0426.png",
+      "master": "sources/warcaller-standard.png",
+      "runtime": "assets/ui/icons/items-v2/warcaller-standard.png"
+    },
+    {
+      "slug": "stormwing-spurs",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A pair of ornate silver-and-bronze ankle spurs shaped like swept insect wings, electric blue inset gems and dark leather straps. One foreground spur and partially overlapped companion, energetic sharp silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-bad57424-eca9-44ab-a7fd-5899d3529671.png",
+      "master": "sources/stormwing-spurs.png",
+      "runtime": "assets/ui/icons/items-v2/stormwing-spurs.png"
+    },
+    {
+      "slug": "restoration-draught",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A large ornate rounded potion bottle with ruby red liquid in its lower bulb and luminous blue liquid in a smaller upper chamber, connected as ONE coherent glass bottle. Antique brass collar, leaf-shaped cork cap and leather binding. Powerful red-and-blue restorative.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-1053ff66-74c8-4f50-8903-21fa87c6248a.png",
+      "master": "sources/restoration-draught.png",
+      "runtime": "assets/ui/icons/items-v2/restoration-draught.png"
+    },
+    {
+      "slug": "rootbinder-idol",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A small menacing humanoid idol carved from twisted dark roots, glowing emerald eyes, interwoven roots forming its stout arms and feet, bronze binding around its forehead. Tangled but clean readable silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-73f5da44-5789-4b27-87d1-87106a1d15e5.png",
+      "master": "sources/rootbinder-idol.png",
+      "runtime": "assets/ui/icons/items-v2/rootbinder-idol.png"
+    },
+    {
+      "slug": "first-queen-crown",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A magnificent ancient queen's crown made of blackened bronze and polished gold, tall ant-mandible-shaped points, a central ruby red gemstone and small amber side stones. Rich regal craftsmanship, grand legendary silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-781c642a-0f21-4633-a216-272137d07fd4.png",
+      "master": "sources/first-queen-crown.png",
+      "runtime": "assets/ui/icons/items-v2/first-queen-crown.png"
+    },
+    {
+      "slug": "worldroot-heart",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A massive heart-shaped glowing red-orange amber crystal cradled tightly by ancient dark roots, three fresh green leaves and intricate natural wooden veins. Legendary living heart of an ancient tree, strong jewel-like center.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-9d1f5c5d-93e2-4637-a324-28628773b489.png",
+      "master": "sources/worldroot-heart.png",
+      "runtime": "assets/ui/icons/items-v2/worldroot-heart.png"
+    },
+    {
+      "slug": "reaper-mandible",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A single huge crescent-shaped obsidian insect mandible with jagged ivory cutting teeth, tarnished gold mount and blood-red crystal at the base. Menacing legendary cleaving relic, sharp sweeping silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-ef93dea6-c2a2-49b1-9405-e1620bdeb067.png",
+      "master": "sources/reaper-mandible.png",
+      "runtime": "assets/ui/icons/items-v2/reaper-mandible.png"
+    },
+    {
+      "slug": "canopy-aegis",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A majestic broad shield of layered deep green leaf-shaped steel plates, luminous emerald central stone, intertwined golden branch edging and a crown of oak leaves. Protective legendary shield, materially distinct from the simple bark shield.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-9ea3dfe5-4d83-4bc7-8216-e13e88c4b4ca.png",
+      "master": "sources/canopy-aegis.png",
+      "runtime": "assets/ui/icons/items-v2/canopy-aegis.png"
+    },
+    {
+      "slug": "tempest-antennae",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A paired forked insect-antenna relic: two graceful blackened silver curved prongs rising from one bronze base, bright sapphire nodes at the tips, a small contained blue lightning arc connecting them. Clear two-pronged silhouette on pure black.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-3e2f307b-ebb0-4b8c-b874-a0effb9b7a47.png",
+      "master": "sources/tempest-antennae.png",
+      "runtime": "assets/ui/icons/items-v2/tempest-antennae.png"
+    },
+    {
+      "slug": "phoenix-chrysalis",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A large suspended chrysalis cocoon made of translucent fiery amber and overlapping copper scales, a luminous curled insect shape visible inside, ornate dark bronze suspension loop and small ember cracks. Rebirth relic, no surrounding flames or particles.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-a900a584-67de-4105-b665-a4e1116292c9.png",
+      "master": "sources/phoenix-chrysalis.png",
+      "runtime": "assets/ui/icons/items-v2/phoenix-chrysalis.png"
+    },
+    {
+      "slug": "deep-moon-scepter",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: An ornate short silver and dark bronze magical scepter laid diagonally, a crescent moon head cradling a brilliant deep sapphire orb, wrapped midnight blue leather shaft and polished silver pommel. Fully visible, compact legendary staff.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-8eceb613-f4de-4e3d-9de5-a07a15549c33.png",
+      "master": "sources/deep-moon-scepter.png",
+      "runtime": "assets/ui/icons/items-v2/deep-moon-scepter.png"
+    },
+    {
+      "slug": "endless-brood-banner",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A lavish deep violet silk banner on a heavy gilded crossbar and short pole, gold branch embroidery and a sculpted ant-queen finial, layered cloth with two pointed tails. A commanding legendary banner, no text or glyphs.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-38e44109-7174-41df-a24f-b4e32cb4276b.png",
+      "master": "sources/endless-brood-banner.png",
+      "runtime": "assets/ui/icons/items-v2/endless-brood-banner.png"
+    },
+    {
+      "slug": "amber-hourglass",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: An intricate hourglass with amber crystal bulbs holding flowing golden grains, frame of gnarled dark roots and polished bronze caps, a small blue gemstone set into the top. Clear waist and hourglass silhouette.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-aabdb244-dc44-423c-bcc7-c6662b3c832c.png",
+      "master": "sources/amber-hourglass.png",
+      "runtime": "assets/ui/icons/items-v2/amber-hourglass.png"
+    },
+    {
+      "slug": "winter-heart",
+      "prompt": "Use case: stylized-concept. Generate ONE finished square fantasy RTS inventory icon. The input image is the APPROVED STYLE REFERENCE ONLY; replace its shield with the specified subject. Match the richly painted realistic game-item illustration, tactile materials, beveled aged metal, nuanced shading and strong readable highlights. Whole object centered at a three-quarter angle, occupying 85% of the square with safe margins. Bold distinctive silhouette legible at final 128x128 pixels. Uniform pure solid BLACK #000000 background, no gradients, scenery, floor, mist or background glow. Warm upper-left key light, rich midtones and restrained cool highlights. No text, numbers, letters, UI frame, badge, watermark, vector clipart or flat symbols. Deliver only one square icon. Subject: A jagged heart-shaped blue ice crystal with brilliant white frost fractures, dark silver claw-like setting and small sharp ice shards attached to the perimeter. Powerful cold legendary relic, no fog, no snow on background.",
+      "source": "/Users/jiritrecak/.codex/generated_images/01a0832e-b6f2-7920-a890-c52b86d02788/exec-48855c71-09f2-4174-b1cc-baf7d815a897.png",
+      "master": "sources/winter-heart.png",
+      "runtime": "assets/ui/icons/items-v2/winter-heart.png"
+    }
+  ]
+}

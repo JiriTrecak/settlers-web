@@ -66,7 +66,7 @@ export class SkirmishScreen extends GameScreen {
     const rules = el("div", "skirmish-rules");
     rules.append(
       el("span", "", "VICTORY"),
-      el("p", "", "Destroy the rival colony’s main hall."),
+      el("p", "", "Destroy the rival colony’s Mound."),
       el("span", "", "OPPONENT"),
       el(
         "p",

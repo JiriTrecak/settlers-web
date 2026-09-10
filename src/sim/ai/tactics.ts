@@ -7,6 +7,8 @@ import { Frame, ordinal, distance, integerPoint } from "./frame";
 
 function itemValue(f: Frame, id: string | null) {
   const effect = id ? f.registry.get(id).itemEffect : null;
+  const tier = id ? f.registry.get(id).itemTier : undefined;
+  if(tier) return tier * 250;
   return !effect
     ? 0
     : effect.type === "equipment"
@@ -56,13 +58,19 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
     }
     const missing = (hero.stats?.maxHp ?? d.body!.maxHp) - (hero.hp ?? 0);
     const healing =
-      hero.equipment?.findIndex((id) => {
+      hero.equipment?.findIndex((id, slot) => {
         const effect = id ? f.registry.get(id).itemEffect : null;
-        return (
-          effect?.type === "consumable" &&
-          missing >=
-            Math.min(effect.heal * 0.65, (hero.stats?.maxHp ?? 0) * 0.35)
-        );
+        if (!effect || (hero.equipmentState?.[slot]?.readyTick ?? 0)>f.tick) return false;
+        const active=effect.active;
+        const heal=active?.heal ?? (effect.type==="consumable" ? effect.heal : 0);
+        const missingMana=(hero.stats?.maxMana ?? 0)-(hero.spellcasting?.mana ?? 0);
+        const fighting=f.hostiles.some(e=>e.unit && distance(hero,e)<(active?.radius || 8));
+        if(heal>0 && missing>=Math.min(heal*.65,(hero.stats?.maxHp ?? 0)*.35)) return true;
+        if(active?.mana && missingMana>=active.mana*.65) return true;
+        if(active?.healMaxPermille && missing>=(hero.stats?.maxHp ?? 0)*.3) return true;
+        if(active?.reduceAbilityCooldownTicks) return fighting && Object.values(hero.spellcasting?.cooldowns ?? {}).some(t=>t-f.tick>200);
+        return !!active && fighting && !!(active.damage || active.status);
+
       }) ?? -1;
     if (
       healing >= 0 &&

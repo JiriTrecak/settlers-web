@@ -48,13 +48,16 @@ export class CommandTooltips {
       : "";
     this.box.replaceChildren(name, costs, description, shortcut);
     this.box.hidden = false;
-    // Commands share one stable tooltip shelf above all four columns.
-    const grid = target.closest<HTMLElement>(".rts-command-grid");
+    // Commands and resource badges share a shelf above the resource strip.
+    const actions = target.closest<HTMLElement>(".rts-actions");
+    const grid = actions?.querySelector<HTMLElement>(".rts-command-grid");
+    const resources = actions?.querySelector<HTMLElement>(".rts-resources:not([hidden])");
     const rect = (grid ?? target).getBoundingClientRect();
+    const shelfTop = Math.min(rect.top, resources?.getBoundingClientRect().top ?? rect.top);
     this.box.style.width = grid ? `${rect.width}px` : "320px";
     const height = this.box.offsetHeight, width = this.box.offsetWidth;
     this.box.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, grid ? rect.left : rect.right - width))}px`;
-    this.box.style.top = `${grid ? Math.max(8, rect.top - height - 28) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
+    this.box.style.top = `${grid ? Math.max(8, shelfTop - height - 12) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
 
   };
   refresh(target: HTMLElement) {

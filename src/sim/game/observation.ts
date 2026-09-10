@@ -15,6 +15,7 @@ export type EntityView = {
   /** Owner-private control state, shared by command adapters; never parse job labels. */
   control?: {
     order: NonNullable<Entity["unit"]>["order"];
+    orderQueue: NonNullable<Entity["unit"]>["orderQueue"];
     employment: number | null;
     job: {
       type: import("./state").Job["type"];
@@ -28,6 +29,8 @@ export type EntityView = {
     stunned: boolean;
   };
   effects?: Entity["effects"];
+  itemStatuses?: Entity["itemStatuses"];
+  equipmentState?: Entity["equipmentState"];
   hostile?: boolean;
   id: number;
   definition: string;
@@ -44,12 +47,15 @@ export type EntityView = {
   remembered?: boolean;
   inventory?: Stock;
   construction?: { progress: number };
+  upgrade?: Entity["upgrade"];
+  research?: Entity["research"];
   resource?: Entity["resource"];
   gathering?: { workers: number; capacity: number };
   item?: Entity["item"];
   unit?: {
     moving: boolean;
     strolling?: boolean;
+    charging?: boolean;
     casting?: { ability: string; resolveTick: number };
     contained: boolean;
     cargo: NonNullable<Entity["unit"]>["cargo"];
@@ -75,9 +81,11 @@ const observedDeathSchema = z
   .strict();
 type ObservedDeath = z.infer<typeof observedDeathSchema>;
 export type SettlementView = {
+  research?: GameState["research"];
   /** Bounded, saved eyewitness reports. AI can confirm kills without reading hidden deaths. */
   observedDeaths?: readonly ObservedDeath[];
   fallenHeroes?: readonly EntityView[];
+  shells?: GameState["shells"];
   visuals?: VisualCue[];
   goods?: GoodsSummary[];
   population?: ReturnType<typeof workerPopulation>;
@@ -241,11 +249,16 @@ export class Observation {
       ...(privateData && e.spellcasting
         ? { spellcasting: structuredClone(e.spellcasting) }
         : {}),
+      ...(e.itemStatuses ? {itemStatuses: structuredClone(e.itemStatuses)} : {}),
+      ...(e.effects ? {effects: structuredClone(e.effects)} : {}),
+      ...(privateData && e.equipmentState ? {equipmentState: structuredClone(e.equipmentState)} : {}),
       ...(privateData && e.equipment ? { equipment: [...e.equipment] } : {}),
       ...(e.appearance ? { appearance: { ...e.appearance } } : {}),
       ...(e.construction
         ? { construction: { progress: e.construction.progress } }
         : {}),
+      ...(privateData && e.upgrade ? {upgrade: {...e.upgrade}} : {}),
+      ...(privateData && e.research ? {research: structuredClone(e.research)} : {}),
       ...(e.resource ? { resource: structuredClone(e.resource) } : {}),
       ...(this.c.def(e).gatheringCapacity
         ? {
@@ -261,6 +274,7 @@ export class Observation {
       result.unit = {
         moving: e.unit.route.length > 0,
         strolling: !!e.unit.idle?.walking,
+        charging: e.unit.charge?.target != null && e.unit.charge.expires > this.c.state.tick,
         ...(e.spellcasting?.pending
           ? {
               casting: {
@@ -335,6 +349,7 @@ export class Observation {
         const j = this.c.state.jobs.find((j) => j.id === e.unit!.job);
         result.control = {
           order: structuredClone(e.unit.order),
+          orderQueue: structuredClone(e.unit.orderQueue),
           employment: e.unit.employment,
           job: j
             ? {
@@ -436,17 +451,23 @@ export class Observation {
     const m = this.memories.find((p) => p.owner === owner),
       known = new Map<number, EntityView>();
     if (owner !== undefined && !m) throw new Error("Unknown observation owner");
-    if (m)
-      for (const [id, e] of m.entities)
-        known.set(id, { ...structuredClone(e), remembered: true });
+    const visible = new Map<number, EntityView>();
     for (const e of this.c.live())
       if (!owner || e.owner === owner || this.previouslyVisible(owner, e))
-        known.set(e.id, this.describe(e, !owner || e.owner === owner, owner));
+        visible.set(e.id, this.describe(e, !owner || e.owner === owner, owner));
+    if (m)
+      for (const [id, e] of m.entities)
+        // Visible records replace memory immediately. Avoid cloning the stale
+        // record first, while preserving the original map insertion order.
+        known.set(id, visible.get(id) ?? { ...structuredClone(e), remembered: true });
+    for (const [id, e] of visible) known.set(id, e);
     const result: SettlementView = {
+      research: structuredClone(owner ? {[owner]: this.c.state.research[owner] ?? []} : this.c.state.research),
       observedDeaths: m ? m.observedDeaths.map((d) => ({ ...d })) : [],
       fallenHeroes: this.c.state.entities
         .filter((e) => e.fallen && (!owner || e.owner === owner))
         .map((e) => this.describe(e, true, owner)),
+      shells: this.c.state.shells.filter(s=>!owner || s.viewers.includes(owner)).map(s=>structuredClone(s)),
       visuals: this.c.state.visuals
         .filter((v) => !owner || v.viewers.includes(owner))
         .map((v) => structuredClone(v)),

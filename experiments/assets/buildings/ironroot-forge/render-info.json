@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-10T00:58:25-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 7.77,
+  "blend_mtime_ns": 1789027098118979206,
+  "config": {
+    "name": "Ironroot Forge",
+    "blend": "ironroot-forge.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 24,
+      "elevation": 30,
+      "scale": 8.5,
+      "target": [
+        0,
+        0,
+        2.1
+      ]
+    },
+    "render": {
+      "width": 1289,
+      "height": 1221,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 1200,
+      "fill_energy": 300,
+      "rim_energy": 1000
+    }
+  }
+}

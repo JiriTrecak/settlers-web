@@ -21,6 +21,7 @@ export function workerPopulation(
     const u = e.unit;
     if (
       !u.order &&
+      !u.orderQueue.length &&
       !u.job &&
       !u.employment &&
       !u.cargo &&

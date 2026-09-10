@@ -1,0 +1,46 @@
+{
+  "name": "Thornblade Matriarch",
+  "blend": "thornblade-matriarch.blend",
+  "recipe": "model.py",
+  "seed": 47,
+  "kind": "character",
+  "characterHeight": 3.8,
+  "camera": {
+    "azimuth": 32,
+    "elevation": 25,
+    "scale": 6.8,
+    "target": [
+      0,
+      -0.1,
+      1.71
+    ]
+  },
+  "render": {
+    "width": 1200,
+    "height": 1100,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 240,
+    "fill_energy": 90,
+    "rim_energy": 210
+  },
+  "characterVariants": {
+    "thornblade-matriarch": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "thornblade-matriarch": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  }
+}

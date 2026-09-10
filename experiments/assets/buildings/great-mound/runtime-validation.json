@@ -1,0 +1,15 @@
+{
+  "triangles": 58902,
+  "meshes": 1,
+  "materials": 30,
+  "teamMaterial": "TC_TeamColor",
+  "teamColorVertexWhite": true,
+  "defaultColor": [
+    0.35153260827064514,
+    0.07036009430885315,
+    0.03071344457566738,
+    1
+  ],
+  "sha256": "4da443a68f3ee9f06610dabf5f63dfb3125414f8572a781113bede0c90e0ba93",
+  "publishedIdentical": true
+}

@@ -415,6 +415,13 @@ export class MatchHost {
       .filter((v) => v.state === "waiting" || v.state === "playing");
   }
 
+  /** End every session, including ended/desynced rooms hidden from discovery. */
+  discardAll(): number {
+    const ids = [...this.rooms.keys()];
+    for (const id of ids) this.discard(id);
+    return ids.length;
+  }
+
   /** Drop a finished / test room so the process does not leak HostedMatch forever. */
   discard(id: string): boolean {
     const room = this.rooms.get(id);

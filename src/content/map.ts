@@ -103,10 +103,17 @@ export function validatePlacements(
   }
   const members = new Set<string>(),
     campIds = new Set<string>();
+  let legendaryRewards = 0;
   for (const raw of map.camps) {
     const camp = campSchema.parse(raw);
     if (camp.lootPool && !registry.rules.lootPools[camp.lootPool])
       throw new Error(`${camp.id}: unknown loot pool ${camp.lootPool}`);
+    const pool = camp.lootPool && registry.rules.lootPools[camp.lootPool];
+    if(pool && pool.entries.some(e => e.item && registry.get(e.item).itemTier === 3)) {
+      if(!camp.legendary) throw new Error(`${camp.id}: T3 loot requires a legendary camp`);
+      legendaryRewards += pool.rolls;
+      if(legendaryRewards > 3) throw new Error("Maps may award at most three legendary items from camps");
+    }
     if (campIds.has(camp.id)) throw new Error("Duplicate camp ID");
     campIds.add(camp.id);
     for (const id of camp.members) {

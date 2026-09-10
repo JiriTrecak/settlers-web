@@ -1,3 +1,7 @@
+import { validateItemState } from "./itemValidation";
+import { BuildingUpgrades } from "./upgrades";
+import { Research } from "./research";
+import { prerequisiteReason } from "../../content/prerequisites";
 import { Revival } from "./revival";
 import { Regeneration } from "./regeneration";
 import { Spellcasting } from "./spellcasting";
@@ -14,6 +18,7 @@ import type { UtcMap } from "../../shared/map/utcmap";
 import type { Slot } from "../../shared/match/match";
 import { GameContext } from "./context";
 import { Economy } from "./economy";
+import { UnitOrders } from "./unitOrders";
 import { Combat } from "./combat";
 import { CampLoot } from "./campLoot";
 import { entityStats } from "./stats";
@@ -25,9 +30,10 @@ import {
   stateSchema,
   type Entity,
   type Point,
+  type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-15";
+export const SIMULATION_BUILD = "declarative-sim-21";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -50,6 +56,9 @@ export class Game {
   readonly state = emptyState();
   readonly context: GameContext;
   readonly economy: Economy;
+  readonly upgrades: BuildingUpgrades;
+  readonly research: Research;
+  readonly orders: UnitOrders;
   readonly observation: Observation;
   readonly combat: Combat;
   readonly campLoot: CampLoot;
@@ -86,8 +95,10 @@ export class Game {
     }
     this.context.spatial.rebuild();
     this.economy = new Economy(this.context);
+    this.upgrades = new BuildingUpgrades(this.context, this.economy);
+    this.research = new Research(this.context, this.economy);
+    this.orders = new UnitOrders(this.context, this.economy);
     this.campLoot = new CampLoot(this.context, map.camps);
-    this.inventory = new Inventory(this.context);
     this.revival = new Revival(this.context);
     this.observation = new Observation(
       this.context,
@@ -109,6 +120,7 @@ export class Game {
       map.camps,
       new Map(slots.map((s) => [slotOwner(s.player), s.team ?? s.player])),
     );
+    this.inventory = new Inventory(this.context, this.combat.items);
     this.spells = new Spellcasting(this.context, this.combat, this.observation);
     this.economy.startGathering();
     this.observation.update();
@@ -141,6 +153,8 @@ export class Game {
     )
       return "Select an eligible worker";
     if (this.state.outcome) return "Match has ended";
+    const prerequisite = prerequisiteReason(d, owner, this.state.entities, this.registry);
+    if (prerequisite) return prerequisite;
     if (
       this.state.entities.filter(
         (e) => e.owner === owner && this.context.def(e).kind === "building",
@@ -151,6 +165,13 @@ export class Game {
       cells = this.spatial.footprint(candidate);
     if (!this.observation.explored(owner, cells))
       return "Explore this location first";
+    if (d.placementNear) {
+      const rule = d.placementNear;
+      const nearby = this.observation.view(owner).entities.some(e =>
+        e.definition === rule.source && !e.remembered && (e.resource?.amount ?? 0) > 0 &&
+        Math.hypot(e.x - position.x, e.y - position.y) <= rule.radius);
+      if (!nearby) return `Build within ${rule.radius} cells of ${this.registry.get(rule.source).name}`;
+    }
     if (
       cells.some((i) => !this.spatial.walkable(i)) ||
       this.context
@@ -244,6 +265,7 @@ export class Game {
       for (const e of eligible) {
         const behaviors = this.context.def(e).behaviors;
         if (!e.unit || !behaviors.movement) continue;
+        if (action.type !== "stop" && !this.orders.canIssue(e, action.append)) continue;
         if (action.type === "attack") {
           if (
             !behaviors.combat ||
@@ -251,13 +273,11 @@ export class Game {
             (!action.force && !this.combat.hostile(e, target!))
           )
             continue;
-          this.economy.interrupt(e);
-          e.unit.order = {
+          this.orders.issue(e, {
             type: "attack",
             target: target!.id,
             force: action.force ?? false,
-          };
-          e.unit.target = target!.id;
+          }, action.append);
         } else if (action.type === "stop") {
           this.economy.interrupt(e);
         } else {
@@ -277,13 +297,11 @@ export class Game {
               Math.min(this.spatial.size - 1, action.destination.y + offset.y),
             ),
           };
-          this.economy.interrupt(e, goal);
-          if (!e.unit.cargo)
-            e.unit.order = {
+          this.orders.issue(e, {
               type: "move",
               destination: goal,
               attackMove: action.attackMove ?? false,
-            };
+          }, action.append);
         }
         applied.push(e.id);
       }
@@ -303,11 +321,11 @@ export class Game {
         if (
           !e.unit ||
           !this.economy.harvestItem(e, target) ||
-          !this.economy.canAssignGather(e, target)
+          !this.orders.canIssue(e, action.append) ||
+          (!(action.append && this.orders.busy(e)) && !this.economy.canAssignGather(e, target))
         )
           continue;
-        this.economy.interrupt(e);
-        e.unit.order = { type: "gather", target: target.id };
+        this.orders.issue(e, { type: "gather", target: target.id }, action.append);
         actors.push(e);
       }
       return actors.length
@@ -318,6 +336,14 @@ export class Game {
     }
     const actor = eligible[0]!,
       d = this.context.def(actor);
+    if (action.type === "research" || action.type === "cancelResearch") {
+      const error = action.type === "research" ? this.research.enqueue(actor, action.research) : this.research.cancel(actor, action.research);
+      return error ? reject(error) : {accepted: true, actors: [actor.id]};
+    }
+    if (action.type === "upgrade" || action.type === "cancelUpgrade") {
+      const error = action.type === "upgrade" ? this.upgrades.enqueue(actor) : this.upgrades.cancel(actor);
+      return error ? reject(error) : {accepted: true, actors: [actor.id]};
+    }
     if (action.type === "revive" || action.type === "cancelRevival") {
       const error =
         action.type === "revive"
@@ -344,8 +370,7 @@ export class Game {
         return reject("Item is not visible");
       const error = this.inventory.pickupError(actor, target);
       if (error) return reject(error);
-      this.economy.interrupt(actor);
-      actor.unit!.order = { type: "pickup", target: target.id };
+      if (!this.orders.issue(actor, { type: "pickup", target: target.id }, action.append)) return reject("Order queue is full");
       return { accepted: true, actors: [actor.id] };
     }
     if (action.type === "dropItem" || action.type === "useItem") {
@@ -359,6 +384,7 @@ export class Game {
       const builders = eligible.filter(e => this.context.def(e).behaviors.work?.builds.includes(action.definition));
       const builder = builders.find(e => !this.economy.isConstructing(e)) ?? builders[0];
       if (!builder) return reject("Select an eligible worker");
+      if (!this.orders.canIssue(builder, action.append)) return reject("Order queue is full");
       const error = this.canBuild(
         owner,
         action.definition,
@@ -379,7 +405,7 @@ export class Game {
         false,
       );
       this.economy.admitProject(b, reservation);
-      this.economy.orderConstruction(builder, b);
+      this.orders.issue(builder, {type: "construct", target: b.id}, action.append);
       this.spatial.rebuild();
       return { accepted: true, actors: [builder.id] };
     }
@@ -399,6 +425,8 @@ export class Game {
         return reject("Unsupported output");
       if (actor.production.queue.length >= production.queueCapacity!)
         return reject("Queue is full");
+      const prerequisite = prerequisiteReason(this.registry.get(action.definition), owner, this.state.entities, this.registry);
+      if (prerequisite) return reject(prerequisite);
       if (!this.economy.queue(actor, action.definition))
         return reject("Insufficient unreserved materials");
     } else if (action.type === "cancel") {
@@ -415,6 +443,18 @@ export class Game {
     }
     return { accepted: true, actors: [actor.id] };
   }
+  private activateQueuedOrder(e: Entity, order: UnitOrder): boolean {
+    if (order.type === "construct") {
+      const building = this.context.get(order.target);
+      if (!building?.construction || !alive(building) || building.owner !== e.owner ||
+          !this.context.def(e).behaviors.work?.builds.includes(building.definition)) return false;
+      return this.orders.issue(e, order);
+    }
+    const action: Action = order.type === "pickup"
+      ? {...order, actor: e.id}
+      : {...order, actors: [e.id]};
+    return this.command(e.owner, action).accepted;
+  }
   tick(tick = this.state.tick + 1) {
     if (tick !== this.state.tick + 1)
       throw new Error("Ticks must advance exactly once");
@@ -429,14 +469,19 @@ export class Game {
       this.timings[name] = performance.now() - t;
     };
     measure("Spell timers", () => this.spells.tick());
+    measure("Item effects", () => this.combat.items.tick());
     measure("Regeneration", () => new Regeneration(this.context).tick());
-    measure("Work assignment", () => this.economy.assign());
+    measure("Work assignment", () => {
+      this.orders.advance((e, order) => this.activateQueuedOrder(e, order));
+      this.economy.assign();
+    });
     measure("Orders / navigation", () => {
       this.inventory.plan();
       this.combat.plan();
       idleMotion(this.context);
       this.context.move();
     });
+    this.combat.items.tick();
     measure("Combat", () => {
       for (const dead of this.combat.resolve(this.spells.resolve())) {
         this.campLoot.onDeath(dead);
@@ -451,6 +496,8 @@ export class Game {
       this.economy.advance();
       this.inventory.advance();
       this.revival.tick();
+      this.upgrades.tick();
+      this.research.tick();
     });
     measure("Observation", () => {
       this.observation.update();
@@ -493,6 +540,37 @@ export class Game {
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),
       jobs = new Set(state.jobs.map((j) => j.id));
+    for (const [owner, ids] of Object.entries(state.research)) {
+      if (!this.owners.includes(owner as Owner) || new Set(ids).size !== ids.length || ids.some(id => !this.registry.rules.research[id]))
+        throw new Error("Invalid saved colony research");
+    }
+    if (new Set(state.shells.map(s => s.id)).size !== state.shells.length ||
+        state.nextShell <= Math.max(0, ...state.shells.map(s => s.id))) throw new Error("Invalid saved shell identity");
+    for (const shell of state.shells) {
+      const policy = this.registry.get(shell.definition).behaviors.combat?.shell;
+      if (!policy || !this.registry.rules.damageTypes[shell.damageType] ||
+          shell.launched > state.tick || shell.impact !== shell.launched + policy.flightTicks ||
+          shell.viewers.some(o => !this.owners.includes(o)) ||
+          shell.victims.some(o => o !== "none" && !this.owners.includes(o)) ||
+          new Set(shell.viewers).size !== shell.viewers.length || new Set(shell.victims).size !== shell.victims.length ||
+          (shell.resolved && shell.impact > state.tick) ||
+          (shell.owner !== "none" && !this.owners.includes(shell.owner)) ||
+          [shell.origin, shell.target].some(p => p.x >= this.map.size || p.y >= this.map.size))
+        throw new Error("Invalid saved shell");
+    }
+    const pendingResearch = new Set<string>();
+    for (const e of state.entities) {
+      const policy = this.registry.get(e.definition).behaviors.research;
+      if (!!e.research !== !!policy || (e.research && e.research.queue.length > policy!.queueCapacity))
+        throw new Error("Invalid saved research capability");
+      for (const [index, q] of (e.research?.queue ?? []).entries()) {
+        const key = `${e.owner}:${q.id}`, r = this.registry.rules.research[q.id];
+        if (!r || !policy!.outputs.includes(q.id) || pendingResearch.has(key) || state.research[e.owner]?.includes(q.id) ||
+            q.progress >= r.workTicks || (index > 0 && q.progress !== 0) || e.construction)
+          throw new Error("Invalid saved research queue");
+        pendingResearch.add(key);
+      }
+    }
     if (
       new Set(state.clearedCamps).size !== state.clearedCamps.length ||
       state.clearedCamps.some(
@@ -544,6 +622,9 @@ export class Game {
       )
         throw new Error("Saved position outside map");
       const d = this.registry.get(e.definition);
+      if (e.upgrade && (!d.upgrade || e.construction ||
+          e.upgrade.target !== d.upgrade.target || e.upgrade.progress >= d.upgrade.workTicks))
+        throw new Error("Invalid saved building upgrade");
       if (e.fallen && (!d.hero || e.hp !== 0))
         throw new Error("Invalid fallen hero");
       if (!!e.revival !== !!d.behaviors.revival)
@@ -569,7 +650,7 @@ export class Game {
         !!d.yield !== !!e.resource ||
         (d.kind === "item") !== !!e.item ||
         (e.hp !== null &&
-          (!d.body || e.hp > entityStats(d, e, this.registry).maxHp)) ||
+          (!d.body || e.hp > entityStats(d, e, this.registry, state.research[e.owner]).maxHp)) ||
         !!e.equipment !== !!d.behaviors.inventory ||
         (e.equipment !== undefined &&
           (e.equipment.length !== d.behaviors.inventory!.slots ||
@@ -584,6 +665,9 @@ export class Game {
         !!e.production !== !!d.behaviors.production
       )
         throw new Error(`Invalid saved entity ${e.id}`);
+      validateItemState(e, this.registry);
+      if (e.slows && (!e.unit || new Set(e.slows.map(s => s.permille)).size !== e.slows.length))
+        throw new Error("Invalid saved slow effects");
       const felling = e.resource?.felling;
       if (!!d.felling !== !!felling || (felling && (
         felling.hp > d.felling!.maxHp ||
@@ -598,6 +682,17 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
+        if (u.shellWindup && (!d.behaviors.combat?.shell?.windupTicks ||
+          u.shellWindup.releaseTick > state.tick + d.behaviors.combat.shell.windupTicks))
+          throw new Error("Invalid saved shell windup");
+        if (u.charge && (!d.behaviors.combat?.charge ||
+          u.charge.readyTick > state.tick + d.behaviors.combat.charge.cooldownTicks ||
+          u.charge.expires > state.tick + d.behaviors.combat.charge.durationTicks))
+          throw new Error("Invalid saved charge state");
+        for (const order of [u.order, ...u.orderQueue]) {
+          if (order?.type === "move" && (order.destination.x >= this.map.size || order.destination.y >= this.map.size))
+            throw new Error("Saved order outside map");
+        }
         if (
           u.position &&
           (Math.floor((u.position.x + 500) / 1000) !== e.x ||
@@ -642,16 +737,16 @@ export class Game {
       if (casting && policy) {
         const entries = Object.entries(casting.learned);
         if (
-          casting.mana > entityStats(d, e, this.registry).maxMana ||
+          casting.mana > entityStats(d, e, this.registry, state.research[e.owner]).maxMana ||
           entries.reduce((n, [, rank]) => n + rank, 0) >
-            entityStats(d, e, this.registry).level ||
+            entityStats(d, e, this.registry, state.research[e.owner]).level ||
           entries.some(
             ([id, rank]) =>
               !policy.abilities.includes(id) ||
               rank < 1 ||
               !this.registry.rules.spells[id]?.ranks[rank - 1] ||
               this.registry.rules.spells[id].ranks[rank - 1].requiredLevel >
-                entityStats(d, e, this.registry).level,
+                entityStats(d, e, this.registry, state.research[e.owner]).level,
           ) ||
           Object.keys(casting.cooldowns).some(
             (id) => !policy.abilities.includes(id),

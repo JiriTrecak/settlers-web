@@ -59,7 +59,13 @@ describe("generated game wiki", () => {
     expect(() => buildCatalog(edited)).toThrow();
   });
   it("keeps currencies out of hero item pages and states exact loot semantics", () => {
-    const { catalog, files } = buildCatalog(source);
+    // Exercise plural rolls and weighted odds independently of live balance edits.
+    const fixture = structuredClone(source);
+    fixture.rules.lootPools["loot.camp.easy"] = {
+      rolls: 2, maxTier: 1,
+      entries: [{item: "item.barkguard", weight: 35}, {item: "item.resin-salve", weight: 65}],
+    };
+    const { catalog, files } = buildCatalog(fixture);
     expect(catalog.find((d) => d.id === "item.amber")!.section).toBe(
       "resources",
     );

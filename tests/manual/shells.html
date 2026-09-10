@@ -1,0 +1,26 @@
+<!doctype html><html><meta charset="utf-8"><title>Authoritative shell inspection</title>
+<style>body{margin:0;background:#222;color:#eee;font:14px system-ui}#ui{position:fixed;z-index:2;left:20px;top:20px;background:#101820ed;padding:14px;border:1px solid #789}button{padding:8px;margin:5px}pre{white-space:pre-wrap}</style>
+<div id="ui"><b>Shell system test · native Bombardier · no saved match changes</b><div><button id="fire">Launch shell</button><button id="dodge">Move target away</button><button id="reset">Reset target</button></div><pre id="status">Loading…</pre></div>
+<script>window.addEventListener("error",e=>document.querySelector("#status").textContent=e.message);window.addEventListener("unhandledrejection",e=>document.querySelector("#status").textContent=String(e.reason));</script>
+<script type="module">
+import * as T from '/node_modules/three/build/three.module.js';
+import {builtinSource} from '/src/content/builtin.ts';import {ContentRegistry} from '/src/content/registry.ts';import {Game} from '/src/sim/game/game.ts';import {emptyUtcMap} from '/src/shared/map/utcmap.ts';import {HeightField} from '/src/shared/map/height.ts';import {SettlementLayer} from '/src/render/settlement/settlementLayer.ts';
+const source=structuredClone(builtinSource),warrior=source.definitions.find(d=>d.id==='unit.ants.warrior');
+delete warrior.behaviors.combat;source.rules.ai.composition=source.rules.ai.composition.filter(c=>c.definition!==warrior.id);
+source.rules.startingSetup.gathering=[];
+const map=emptyUtcMap(),at=(id,definition,x,y,owner)=>({id,definition,position:{x,y},rotation:0,owner});map.entities=[at('shooter','unit.ants.bombardier',100,100,'player.1'),at('target','unit.ants.warrior',108,100,'player.2')];
+const game=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}],new ContentRegistry(source));const a=game.entities.find(e=>e.placement==='shooter'),b=game.entities.find(e=>e.placement==='target');
+const scene=new T.Scene();scene.background=new T.Color('#202920');const renderer=new T.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);document.body.prepend(renderer.domElement);
+const camera=new T.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camera.position.set(104,13,117);camera.lookAt(104,0,100);scene.add(new T.HemisphereLight(0xffe7ba,0x324136,2));const light=new T.DirectionalLight(0xffffff,3);light.position.set(90,30,105);scene.add(light);
+const floor=new T.Mesh(new T.PlaneGeometry(50,50),new T.MeshStandardMaterial({color:'#766441'}));floor.rotation.x=-Math.PI/2;floor.position.set(104,-.03,100);scene.add(floor);
+const layer=new SettlementLayer(scene),height=new HeightField(map.size);let ticks=0,last=performance.now(),acc=0,paused=true;
+document.querySelector('#fire').onclick=()=>{if(b.hp>0){game.state.shells=game.state.shells.filter(s=>!s.resolved);paused=false;a.unit.cooldown=0;game.command('player.1',{type:'attack',actors:[a.id],target:b.id,force:false})}};
+document.querySelector('#dodge').onclick=()=>game.command('player.2',{type:'move',actors:[b.id],destination:{x:108,y:104},attackMove:false});
+document.querySelector('#reset').onclick=()=>{paused=true;acc=0;game.state.shells=[];game.command('player.1',{type:'stop',actors:[a.id]});game.command('player.2',{type:'stop',actors:[b.id]});b.x=108;b.y=100;b.hp=300;b.unit.position=null;b.unit.segment=null;b.unit.route=[];delete b.slows;};
+await layer.ready;function frame(now){acc=paused?0:acc+Math.min(100,now-last);last=now;while(acc>=25&&!paused){
+ // Launch is explicit in this test so that each impact can be inspected in isolation.
+ game.tick();acc-=25;ticks++;if(game.state.shells.some(s=>s.resolved&&game.state.tick<=s.impact+1)){paused=true;acc=0;}
+}const view=game.view();layer.select(new Set([b.id]));layer.update(view,height,game.state.tick,1);renderer.render(scene,camera);
+document.querySelector('#status').textContent=`${paused?"Paused (Launch to fire; Reset to restore target)\n":""}Target health: ${b.hp}/300\nMovement: ${game.context.stats(b).moveSpeedPermille/10}%\nShells: ${game.state.shells.map(s=>s.resolved?'impact':Math.max(0,(s.impact-game.state.tick)/40).toFixed(2)+'s to impact').join(', ')||'none'}\nSimulation: ${(ticks/40).toFixed(1)}s`;
+requestAnimationFrame(frame)}requestAnimationFrame(frame);
+</script></html>

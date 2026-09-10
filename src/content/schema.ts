@@ -1,3 +1,4 @@
+import { itemEffectSchema } from "./items";
 import { spellSchema, spellVisualSchema } from "./spells";
 import { z } from "zod";
 
@@ -77,6 +78,17 @@ const combat = z
     range: z.number().positive().max(64),
     cooldownTicks: positive,
     aggroRange: positive.max(64),
+    shell: z.object({
+      windupTicks: natural.max(120).optional(),
+      flightTicks: positive.max(400), radius: z.number().positive().max(12),
+      slowPermille: natural.max(800), slowTicks: positive.max(1200),
+    }).strict().optional(),
+    charge: z.object({
+      minRange: positive.max(32), maxRange: positive.max(32),
+      cooldownTicks: positive, durationTicks: positive.max(400),
+      speedPermille: positive.min(1000).max(4000),
+      damagePermille: positive.min(1000).max(4000),
+    }).strict().refine(c => c.minRange < c.maxRange, "Charge requires an approach interval").optional(),
   })
   .strict();
 const worker = z
@@ -138,8 +150,24 @@ const inventory = z
   })
   .strict();
 const empty = z.object({}).strict();
+const research = z.object({outputs: z.array(idSchema).min(1), queueCapacity: positive.max(12)}).strict();
+export const researchSchema = z.object({
+  name: z.string().min(1), description: z.string(), icon: idSchema,
+  priority: z.number().int(), requires: z.array(idSchema).optional(),
+  items: priceSchema, workTicks: positive,
+  effects: z.array(z.object({
+    units: z.array(idSchema).min(1),
+    maxHp: natural.optional(), armor: natural.optional(),
+    damagePermille: natural.max(3000).optional(),
+    treeHitDamage: positive.max(10).optional(),
+    splashRadius: z.number().positive().max(12).optional(),
+    splashSlowPermille: natural.max(800).optional(),
+    chargeCooldownPermille: positive.min(250).max(1000).optional(),
+  }).strict()).min(1),
+}).strict();
 export const behaviorSchema = z
   .object({
+    research: research.optional(),
     movement: movement.optional(),
     playerControl: empty.optional(),
     combat: combat.optional(),
@@ -161,6 +189,7 @@ export const behaviorNames = Object.keys(
 ) as (keyof z.infer<typeof behaviorSchema>)[];
 const rawBehaviors = z
   .object({
+    research: research.optional(),
     movement: movement.partial().optional(),
     playerControl: empty.optional(),
     combat: combat.partial().optional(),
@@ -179,6 +208,8 @@ const rawBehaviors = z
   .strict();
 const fields = {
   id: idSchema,
+  requires: z.array(idSchema).min(1).optional(),
+  upgrade: z.object({target: idSchema, items: priceSchema, workTicks: work}).strict().optional(),
   category: idSchema.optional(),
   kind: z.enum(["unit", "building", "item", "resource"]),
   name: z.string().min(1),
@@ -188,19 +219,8 @@ const fields = {
   hero: z.boolean().optional(),
   level: positive.optional(),
   experienceYield: natural.optional(),
-  itemEffect: z
-    .discriminatedUnion("type", [
-      z
-        .object({
-          type: z.literal("equipment"),
-          damage: natural,
-          armor: natural,
-          maxHp: natural,
-        })
-        .strict(),
-      z.object({ type: z.literal("consumable"), heal: positive }).strict(),
-    ])
-    .optional(),
+  itemTier: z.number().int().min(1).max(3).optional(),
+  itemEffect: itemEffectSchema.optional(),
   selectable: z.boolean().optional(),
   selectionClass: z.enum(["army", "worker"]).optional(),
   vision: natural.max(96).optional(),
@@ -220,9 +240,11 @@ const fields = {
   yield: positive.optional(),
   felling: z.object({ maxHp: positive, fallTicks: positive, decayTicks: positive }).strict().optional(),
   gatheringCapacity: positive.max(100).optional(),
+  gatheringUnitCollision: z.boolean().optional(),
   currency: z.boolean().optional(),
   regrowthTicks: positive.optional(),
   constructionClearance: natural.max(32).optional(),
+  placementNear: z.object({ source: idSchema, radius: positive.max(64) }).strict().optional(),
   creation: creationSchema.optional(),
 };
 export const definitionSchema = z
@@ -257,6 +279,10 @@ export const actionNames = [
   "cancel",
   "rally",
   "pause",
+  "upgrade",
+  "cancelUpgrade",
+  "research",
+  "cancelResearch",
 ] as const;
 export const actionMetaSchema = z
   .object({
@@ -290,6 +316,7 @@ export const actionsSchema = z
       z
         .object({
           category: idSchema.nullable().optional(),
+          hidden: z.boolean().optional(),
           priority: z.number().int().optional(),
           hotkey: z
             .string()
@@ -330,6 +357,7 @@ export const rulesSchema = z
     maxBuildings: positive,
     constructionHpPermille: positive.max(1000),
     repairTicks: positive,
+    research: z.record(idSchema, researchSchema),
     spells: z.record(idSchema, spellSchema),
     spellVisuals: z.record(idSchema, spellVisualSchema),
     lootPools: z.record(
@@ -337,6 +365,7 @@ export const rulesSchema = z
       z
         .object({
           rolls: positive.max(16),
+          maxTier: positive.max(3).optional(),
           entries: z
             .array(
               z
@@ -470,6 +499,7 @@ export const campSchema = z
     leash: positive.max(96),
     aggression: z.enum(["players", "passive"]),
     lootPool: idSchema.optional(),
+    legendary: z.boolean().optional(),
   })
   .strict();
 export type Definition = z.infer<typeof definitionSchema>;

@@ -1,0 +1,82 @@
+{
+  "kind": "character",
+  "camera": {
+    "position": [
+      9.605399131774902,
+      9.57736587524414,
+      15.47185230255127
+    ],
+    "target": [
+      -2.86102294921875e-06,
+      1.1250066757202148,
+      0.10000038146972656
+    ],
+    "scale": 6.699999809265137
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -1.8000000715255737,
+        4.800000190734863,
+        2.4000000953674316
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 1680.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        0.6000000238418579,
+        3.0,
+        3.6000001430511475
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 630.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        3.0,
+        4.200000286102295,
+        -1.8000000715255737
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 1470.0
+    }
+  ],
+  "variants": [
+    "amberjaw-staglord"
+  ],
+  "variantTriangles": {
+    "amberjaw-staglord": 4356
+  },
+  "triangles": 4356,
+  "vertices": 2314,
+  "animations": [
+    "attack",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ],
+  "height": 2.5,
+  "forward": "+Z",
+  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips."
+}

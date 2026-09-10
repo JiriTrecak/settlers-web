@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "thornblade-matriarch": {
+      "file": "thornblade-matriarch.glb",
+      "triangles": 3680,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "thornblade-matriarch": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "teamMaterial": null,
+  "metersPerUnit": 1,
+  "height": 3.8
+}

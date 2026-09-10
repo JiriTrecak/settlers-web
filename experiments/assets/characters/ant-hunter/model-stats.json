@@ -1,0 +1,12 @@
+{
+  "objects": 75,
+  "meshes": 70,
+  "materials": 12,
+  "blender": "5.2.1 LTS",
+  "collections": [
+    "Base anatomy",
+    "Hunter equipment",
+    "Rig",
+    "Studio"
+  ]
+}

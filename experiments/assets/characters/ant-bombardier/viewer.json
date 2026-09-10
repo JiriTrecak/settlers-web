@@ -1,0 +1,83 @@
+{
+  "kind": "character",
+  "camera": {
+    "position": [
+      -7.819607257843018,
+      6.532747268676758,
+      17.713125228881836
+    ],
+    "target": [
+      -1.430511474609375e-06,
+      1.0199999809265137,
+      0.14999771118164062
+    ],
+    "scale": 3.5
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -1.0800000429153442,
+        2.880000114440918,
+        1.440000057220459
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 770.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        0.36000001430511475,
+        1.8000000715255737,
+        2.1600000858306885
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 280.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        1.8000000715255737,
+        2.5199999809265137,
+        -1.0800000429153442
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 980.0
+    }
+  ],
+  "variants": [
+    "bombardier"
+  ],
+  "variantTriangles": {
+    "bombardier": 5008
+  },
+  "triangles": 5008,
+  "vertices": 2687,
+  "animations": [
+    "attack_mortar",
+    "carry",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ],
+  "height": 2.03,
+  "forward": "+Z",
+  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips."
+}

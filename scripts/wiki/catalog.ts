@@ -93,6 +93,14 @@ export function buildCatalog(source: ContentSource) {
         ["Attack interval", seconds(b.combat.cooldownTicks)],
         ["Aggro range", `${b.combat.aggroRange} cells`],
       );
+    if (b.combat?.charge) {
+      const charge = b.combat.charge;
+      stats.push(["Charge approach", `${charge.minRange}–${charge.maxRange} cells`],
+        ["Charge cooldown", seconds(charge.cooldownTicks)],
+        ["Charge duration", seconds(charge.durationTicks)],
+        ["Charge movement", `${charge.speedPermille / 1000}× normal speed`],
+        ["Charge impact", `${charge.damagePermille / 1000}× attack damage`]);
+    }
     if (d.creation?.method === "harvest") {
       const source = registry.get(d.creation.source), felling = source.felling;
       if (felling) stats.push(
@@ -167,6 +175,19 @@ export function buildCatalog(source: ContentSource) {
     } else if (d.kind === "unit" || d.gatheringCapacity)
       body +=
         "## Where to find it\n\nPlaced by the map author. See the [map atlas](/maps/) for locations and camp compositions.\n\n";
+    if (d.requires?.length)
+      body += `## Prerequisites\n\nRequires completed owned ${d.requires.map(link).join(", ")}. Losing a prerequisite locks new purchases; paid tasks continue.\n\n`;
+    if (d.upgrade) {
+      const u = d.upgrade;
+      body += `## Building upgrade\n\nUpgrades in place to ${link(u.target)}. Cost: ${u.items.map(p => `${p.amount} ${link(p.item)}`).join(", ")}. Time: ${seconds(u.workTicks)}. Worker spawning pauses. Cancellation refunds the full price; destruction loses the paid upgrade. Identity, stored resources and existing damage are preserved.\n\n`;
+    }
+    if (b.research) {
+      body += `## Research\n\nOne task runs at a time; queue capacity **${b.research.queueCapacity}**. Purchases are paid on enqueue. Cancellation refunds the full price. Each upgrade is researched once per colony and affects existing and future units; completed research survives loss of the Forge.\n\n`;
+      body += table(["Research", "Effect", "Cost", "Time", "Requires"], b.research.outputs.map(id => {
+        const r = registry.rules.research[id];
+        return [prose(r.name), prose(r.description), r.items.map(p => `${p.amount} ${link(p.item)}`).join(", "), seconds(r.workTicks), r.requires?.map(link).join(", ") || "—"];
+      })) + "\n";
+    }
     if (b.production) {
       const p = b.production;
       body += `## Production\n\n${bulletLinks(p.outputs)}\n\n`;
@@ -231,8 +252,10 @@ export function buildCatalog(source: ContentSource) {
       );
       body += `\n## Drops\n\n${pools.map(([id]) => `[${id.split(".").at(-1)} camps](/guide/loot#${id.replaceAll(".", "-")})`).join(", ")}. Rolls are weighted; [the loot tables](/guide/loot) list exact chances per roll. Items remain with a fallen hero and return on revival.\n\n`;
     }
-    if (d.currency)
-      body += `## Gathering and spending\n\nWorkers gather this currency directly from ${d.creation?.method === "harvest" ? link(d.creation.source) : "its declared resource source"} and carry it to a completed owned ${link(registry.rules.startingSetup.fort)}. It enters the spendable bank on delivery. Currency never appears as a loose ground item.\n\n### Used by\n\n${bulletLinks(defs.filter((x) => x.creation?.items.some((c) => c.item === d.id)).map((x) => x.id))}\n\n`;
+    if (d.currency) {
+      const dropoffs = defs.filter(x => x.behaviors.storage?.dropoff && x.behaviors.storage.accepts.includes(d.id));
+      body += `## Gathering and spending\n\nWorkers gather this currency directly from ${d.creation?.method === "harvest" ? link(d.creation.source) : "its declared resource source"} and carry it to a completed owned drop-off: ${dropoffs.map(x => link(x.id)).join(", ")}. It enters the spendable colony bank on delivery. Currency never appears as a loose ground item.\n\n### Used by\n\n${bulletLinks(defs.filter((x) => x.creation?.items.some((c) => c.item === d.id) || x.upgrade?.items.some(c => c.item === d.id)).map((x) => x.id))}\n\n`;
+    }
     if (d.gatheringCapacity)
       body +=
         "Assignments count for the entire gather-and-return trip, including approach and cargo delivery. Right-click with workers to assign them. The mine belongs to no player and cannot be captured; occupancy is shared. Its label shows current assigned workers / capacity. Buildings must leave its declared access clearance.\n\n";

@@ -1,30 +1,61 @@
 # Economy and living workers
 
-Your economy has two spendable resources: **[Amber](/resources/item-amber)** and **[Wood](/resources/item-wood)**. Your workforce is a separate strategic constraint. The same ant can gather, build or become a soldier, but cannot do all three at once.
+Your economy has three spendable resources: **[Amber](/resources/item-amber)**, **[Wood](/resources/item-wood)** and contested **[Root](/resources/item-root)**. Your workforce is a separate strategic constraint. The same ant can gather, build or become a soldier, but cannot do all three at once.
 
 ## Gather → carry → deposit
 
-Select Workers and right-click a [mine](/buildings/building-neutral-amber-mine) or [tree](/resources/resource-forest-tree). They approach, harvest and carry the load to a completed owned [Main Hall](/buildings/building-ants-fort). Resources become spendable **on delivery**, not when harvesting starts.
+Workers assigned to an Amber Mine pass through other units on the outward and return trip. Terrain, water and buildings still block them. Tree gathering and ordinary movement retain unit collision.
+
+Select Workers and right-click a [mine](/buildings/building-neutral-amber-mine) or [tree](/resources/resource-forest-tree). They approach, harvest and carry the load to a completed owned [Mound](/buildings/building-ants-fort). Resources become spendable **on delivery**, not when harvesting starts.
 
 There are no lumber mills, planks, stone chains or economic piles on the ground in the current game. The Forester remains useful because it restores exhausted tree sites. Hero loot chests are separate from economic resources.
 
-A dead worker loses its cargo. Losing a hall destroys the inventory it held. Keep the paths between sources and your drop-off safe.
+A dead worker loses its cargo. Losing a Mound destroys the inventory it held. Keep the paths between sources and your drop-off safe.
 
 ## Mines and trees
 
 Amber Mines are neutral buildings already present on the map. You can select them, inspect their remaining yield and assign workers directly. They do not need to be captured or constructed.
 
-Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the hall. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
+Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the Mound. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
 
 Trees are directly targetable, including their canopies. A felled tree stops blocking movement, falls and then sinks out of view. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
 
 A [Forester lodge](/buildings/building-ants-forester) employs a worker to restore suitable depleted tree sites. The replacement needs time to mature; a mature tree cannot appear through a unit occupying its space.
+
+## Contested Root and Tier 2
+
+[Corrupted Root](/buildings/building-neutral-corrupted-root) grows outside the
+starting bases, near guarded camps. Each deposit contains **3,000 Root** and
+allows **five assigned harvesters**, shared across players. Workers carry
+**10 Root per trip** and use the same unit pass-through rules as Amber miners.
+Terrain and buildings still block them.
+
+Build a Tier 1 [Rootworks](/buildings/building-ants-rootworks) within 12 cells of
+a deposit. It is the **only Root drop-off**: a Mound or Bombardier Workshop cannot
+receive a worker's Root cargo. Once delivered, Root enters the colony's shared
+spendable account. Protect both the deposit and its delivery route.
+
+Upgrade your starting [Mound](/buildings/building-ants-fort) in place to a
+[Great Mound](/buildings/building-ants-great-mound) for **320 Amber, 180 Wood and
+100 Root**. The upgrade takes 60 seconds and pauses that Mound's worker births.
+Canceling refunds its full price; destruction does not. The same building
+remains your defeat-condition objective after upgrading.
+
+Great Mound unlocks [Hunters](/units/unit-ants-hunter) at the Barracks and the
+advanced [Bombardier Workshop](/buildings/building-ants-bombardier-workshop).
+Hunters cost an available Worker plus Amber and Wood. Bombardiers also require
+Root for every recruit. The [Ironroot Forge](/buildings/building-ants-ironroot-forge)
+buys permanent colony-wide research; some research requires Great Mound and Root.
+Research benefits existing and future eligible units, survives losing the Forge,
+and refunds in full if canceled while queued or in progress.
 
 ## Population is a living pool
 
 {{stats:population}}
 
 Capacity is **pooled per colony**, not permanently attached to the building that birthed a particular worker. Gatherers, builders, foresters, idle workers and workers inside training all count. Soldiers and heroes do not count toward this worker pool.
+
+The ant counter above the command card shows **available now / free allocation after replenishment**, rather than the total workforce. For example, **3/10** means three workers can be recruited now and seven more can spawn into that reserve, assuming current assignments stay the same. Assigned workers are excluded from both numbers. The denominator is the current reserve plus empty worker slots; births need active Mounds or houses. Hover the counter for details.
 
 At capacity, birth progress waits and resets. A death or successful conversion to a soldier opens space and starts a fresh interval. The listed capacity is not a lifetime quota: your colony keeps making replacements.
 

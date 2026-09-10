@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-10T02:01:43-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 4.61,
+  "blend_mtime_ns": 1789030899640292976,
+  "config": {
+    "name": "Ant Hunter",
+    "blend": "ant-hunter.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 18,
+      "elevation": 16,
+      "scale": 3.3,
+      "target": [
+        0,
+        -0.15,
+        1.02
+      ]
+    },
+    "render": {
+      "width": 1100,
+      "height": 1200,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 110,
+      "fill_energy": 40,
+      "rim_energy": 140
+    },
+    "kind": "character",
+    "characterVariants": {
+      "hunter": {
+        "states": {
+          "idle": "idle",
+          "walk": "walk",
+          "run": "run",
+          "carry": "carry",
+          "hit": "hit",
+          "death": "death",
+          "charge": "charge",
+          "attack": "attack_spear"
+        }
+      }
+    },
+    "attackEvents": {
+      "hunter": {
+        "event": "hit",
+        "normalizedTime": 0.55
+      }
+    }
+  }
+}

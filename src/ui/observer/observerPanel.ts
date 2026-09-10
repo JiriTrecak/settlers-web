@@ -1,7 +1,7 @@
 import { content } from "../../content/builtin";
 import { playerCss } from "../../shared/player/player";
 import {
-  OBSERVER_RESOURCES,
+  observerResources,
   type ObserverStats,
   type ObserverPlayerStats,
 } from "../../presentation/observerStats";
@@ -35,7 +35,7 @@ export class ObserverPanel {
       row = document.createElement("tr");
     for (const label of [
       "Player",
-      ...OBSERVER_RESOURCES.map((r) => r.label),
+      ...observerResources(content).map((r) => r.label),
       "Units",
       "Workers",
       "Hero",
@@ -68,7 +68,7 @@ export class ObserverPanel {
         ? "Income / min · last 60s of game time"
         : `Income / min · ${seconds}s of game time sampled`;
     this.interval.title =
-      "Gross resources delivered to completed halls, normalized to one game minute. Starting stock, spending and refunds do not count. The income window restarts when loading a save.";
+      "Gross resources delivered to completed drop-offs, normalized to one game minute. Starting stock, spending and refunds do not count. The income window restarts when loading a save.";
   }
   private playerRow(player: ObserverPlayerStats): HTMLTableRowElement {
     const row = document.createElement("tr");
@@ -92,14 +92,14 @@ export class ObserverPanel {
     who.append(badge, identity);
     row.append(who);
     for (const resource of player.resources) {
-      const spec = OBSERVER_RESOURCES.find((r) => r.item === resource.item)!;
+      const spec = content.get(resource.item);
       const cell = document.createElement("td");
       cell.className = "observer-resource";
       cell.setAttribute(
         "aria-label",
-        `${spec.label}: ${resource.stored}, income ${resource.perMinute} per minute`,
+        `${spec.name}: ${resource.stored}, income ${resource.perMinute} per minute`,
       );
-      cell.title = `${spec.explanation} ${resource.stored} currently stored in completed halls. +${resource.perMinute}/min delivered; spending is excluded from income.`;
+      cell.title = `${spec.description} ${resource.stored} in the colony account. +${resource.perMinute}/min delivered; spending is excluded from income.`;
       const display = document.createElement("div");
       display.className = "observer-resource-main";
       display.innerHTML = iconArt(content.get(resource.item).icon);

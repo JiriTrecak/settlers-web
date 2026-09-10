@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Tier two runtime inspection</title>
+<style>body{margin:0;background:#161b16;overflow:hidden}#tools{position:fixed;z-index:100;top:12px;right:12px;background:#101820ed;padding:12px;color:#eee;font:13px system-ui;max-width:420px}button{margin:3px;padding:7px;background:#38443e;color:white;border:1px solid #77847a}#status{display:block;margin:8px}#error{color:#ff9180}</style>
+<div id="tools"><strong>Native T2 test scene · no saved game changes</strong><div id="buttons"></div><span id="status">Loading models…</span><span id="error"></span></div>
+<script type="module">
+import * as T from '/node_modules/three/build/three.module.js';
+import {Game} from '/src/sim/game/game.ts';
+import {content} from '/src/content/builtin.ts';
+import {emptyUtcMap} from '/src/shared/map/utcmap.ts';
+import {HeightField} from '/src/shared/map/height.ts';
+import {SettlementLayer} from '/src/render/settlement/settlementLayer.ts';
+import {SettlementHud} from '/src/ui/settlement/settlementHud.ts';
+import {ObserverPanel} from '/src/ui/observer/observerPanel.ts';
+import {ObserverIncome,observerStats} from '/src/presentation/observerStats.ts';
+const slots=[{player:0,kind:'human'},{player:1,kind:'human'}],map=emptyUtcMap();
+map.entities=[['works','building.ants.rootworks',230,217,'player.1'],['root','building.neutral.corrupted-root',238,217,'none'],['forge','building.ants.ironroot-forge',210,207,'player.1']].map(([id,definition,x,y,owner])=>({id,definition,position:{x,y},owner,rotation:0}));
+const game=new Game(map,slots,content),mound=game.context.get(game.state.objectives['player.1']);
+mound.inventory['item.amber']=1500;mound.inventory['item.wood']=1000;mound.inventory['item.root']=160;
+const byPlacement=id=>game.entities.find(e=>e.placement===id),worker=game.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work);
+const scene=new T.Scene();scene.background=new T.Color('#1d2924');const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(1);renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;document.body.prepend(renderer.domElement);
+const camera=new T.OrthographicCamera(-25*innerWidth/innerHeight,25*innerWidth/innerHeight,25,-25,.1,180);camera.position.set(245,44,266);camera.lookAt(223,0,216);
+scene.add(new T.HemisphereLight(0xffdfad,0x38482e,2));const sun=new T.DirectionalLight(0xffe4b6,3);sun.position.set(210,35,245);sun.target.position.set(222,0,216);sun.castShadow=true;Object.assign(sun.shadow.camera,{left:-40,right:40,top:40,bottom:-40});sun.shadow.mapSize.set(2048,2048);scene.add(sun,sun.target);
+const plane=new T.Mesh(new T.PlaneGeometry(110,110),new T.MeshStandardMaterial({color:'#655640',roughness:.95}));plane.rotation.x=-Math.PI/2;plane.position.set(222,-.025,216);plane.receiveShadow=true;scene.add(plane);
+const layer=new SettlementLayer(scene),height=new HeightField(map.size),income=new ObserverIncome(),observer=new ObserverPanel(document.body);observer.root.hidden=true;
+let paused=false;
+const status=document.querySelector('#status'),error=document.querySelector('#error');
+const hud=new SettlementHud(document.body,0,{action:a=>{const result=game.command('player.1',a);error.textContent=result.accepted?'':result.reason??'Rejected';refresh();},mode(){},home(){},focus(){}});
+function refresh(){game.observation.update();const view=game.view('player.1');hud.update(view);layer.select(hud.selectedIds);layer.update(view,height,game.state.tick,1);observer.update(observerStats(game.state,slots,content,income));status.textContent=`${content.get(mound.definition).name} · ${game.state.tick/40}s · ${renderer.info.render.triangles.toLocaleString()} rendered triangles`;}
+function button(label,action){const b=document.createElement('button');b.textContent=label;b.onclick=action;document.querySelector('#buttons').append(b);}
+for(const [label,entity] of [['Mound',mound],['Forge',byPlacement('forge')],['Rootworks',byPlacement('works')],['Corrupted Root',byPlacement('root')],['Worker',worker]])button(label,()=>{hud.selected=entity.id;refresh()});
+button('Advance 60 seconds',()=>{for(let i=0;i<2400;i++){game.tick();income.record(game.state.tick,game.economy.deliveries)}refresh()});
+button('Harvest Root',()=>{game.command('player.1',{type:'gather',actors:[worker.id],target:byPlacement('root').id});hud.selected=worker.id;refresh()});
+button('Inspect Root cargo',()=>{
+ game.command('player.1',{type:'gather',actors:[worker.id],target:byPlacement('root').id});
+ for(let i=0;i<4000&&worker.unit?.cargo?.item!=='item.root';i++){game.tick();income.record(game.state.tick,game.economy.deliveries)}
+ paused=true;hud.selected=worker.id;
+ camera.left=-4*innerWidth/innerHeight;camera.right=4*innerWidth/innerHeight;camera.top=4;camera.bottom=-4;
+ camera.position.set(worker.x+4,8,worker.y+9);camera.lookAt(worker.x,1,worker.y);camera.updateProjectionMatrix();refresh();
+ error.textContent=worker.unit?.cargo?.item==='item.root'?'Native harvested cargo: '+worker.unit.cargo.amount+' Root':'No cargo acquired';
+});
+button('Resume',()=>{paused=false});
+button('Observer',()=>{observer.root.hidden=!observer.root.hidden;refresh()});
+button('Hunter duel',()=>{
+ const at=(id,definition,x,y,owner)=>({id,definition,position:{x,y},owner,rotation:0});
+ const h=game.context.create(at('hunter-demo','unit.ants.hunter',221,236,'player.1'));
+ const enemy=game.context.create(at('hunter-target','unit.ants.warrior',228,236,'player.2'));
+ game.observation.update();game.command('player.1',{type:'attack',actors:[h.id],target:enemy.id,force:false});
+ camera.left=-7*innerWidth/innerHeight;camera.right=7*innerWidth/innerHeight;camera.top=7;camera.bottom=-7;camera.position.set(225,16,252);camera.lookAt(225,0,236);camera.updateProjectionMatrix();
+ game.tick();game.observation.update();hud.selected=h.id;refresh();
+});
+try{await layer.ready;hud.selected=mound.id;refresh();let last=performance.now(),acc=0;function frame(now){acc=paused?0:acc+Math.min(100,now-last);last=now;while(acc>=25){game.tick();income.record(game.state.tick,game.economy.deliveries);acc-=25}refresh();renderer.render(scene,camera);requestAnimationFrame(frame)}requestAnimationFrame(frame);}catch(e){error.textContent=String(e);console.error(e)}
+</script></html>

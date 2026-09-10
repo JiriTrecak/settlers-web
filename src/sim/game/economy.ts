@@ -29,7 +29,12 @@ export class Economy {
   private depositCargo(worker: Entity, store: Entity) {
     const cargo = worker.unit!.cargo;
     if (!cargo) return;
-    add(store.inventory, cargo.item, cargo.amount);
+    // A drop-off validates the physical delivery. Earned currency is credited
+    // to the colony's existing Mound account, not left in a vulnerable outpost.
+    const objective = this.c.get(this.s.objectives[store.owner]);
+    const account = this.c.registry.get(cargo.item).currency && objective && alive(objective)
+      ? objective : store;
+    add(account.inventory, cargo.item, cargo.amount);
     if (this.c.def(store).behaviors.storage?.dropoff)
       this.deliveries.push({
         tick: this.s.tick,
@@ -106,8 +111,11 @@ export class Economy {
     owner: Owner,
     definition: string,
   ): { source: Entity; item: string; amount: number }[] | null {
+    return this.reserveCost(owner, this.price(definition));
+  }
+  reserveCost(owner: Owner, bill: Stock): { source: Entity; item: string; amount: number }[] | null {
     const entries: { source: Entity; item: string; amount: number }[] = [];
-    for (const [item, required] of Object.entries(this.price(definition))) {
+    for (const [item, required] of Object.entries(bill)) {
       let left = required;
       for (const source of this.c
         .live()
@@ -141,6 +149,7 @@ export class Economy {
           e.owner === owner &&
           this.c.def(e).behaviors.work &&
           !e.unit!.order &&
+          !e.unit!.orderQueue.length &&
           !e.unit!.pendingMove &&
           !e.unit!.job &&
           !e.unit!.cargo &&
@@ -174,19 +183,16 @@ export class Economy {
   }
   isConstructing(worker: Entity): boolean {
     return worker.unit?.order?.type === "construct" ||
+      !!worker.unit?.orderQueue.some(order => order.type === "construct") ||
       this.findJob(worker.unit?.job ?? null)?.type === "construct";
-  }
-  orderConstruction(worker: Entity, building: Entity) {
-    this.interrupt(worker);
-    worker.unit!.pendingMove = null;
-    worker.unit!.order = { type: "construct", target: building.id };
-    worker.unit!.retryAt = this.s.tick;
   }
   /** Explicit orders reserve the builder even while their last harvest is going home. */
   private constructionOrders(): Set<number> {
     const claimed = new Set<number>();
     for (const worker of this.c.activeUnits()) {
       const u = worker.unit!, order = u.order;
+      for (const pending of u.orderQueue)
+        if (pending.type === "construct") claimed.add(pending.target);
       if (order?.type !== "construct") continue;
       const building = this.c.get(order.target);
       if (!building?.construction || !alive(building) || building.owner !== worker.owner) {
@@ -216,12 +222,17 @@ export class Economy {
   }
   private workPoint(target: Entity, worker: Entity): Point | null {
     if (this.c.def(target).kind === "building") {
-      const p = this.c.spatial.nearest(
-        this.c.spatial.entrance(target),
-        3,
-        worker.id,
-      );
-      return p && this.c.spatial.route(worker, p) ? p : null;
+      const door = this.c.spatial.entrance(target);
+      // A free doorway cell can still be cut off by standing units. Try the
+      // complete existing service radius before deferring this builder.
+      for (let radius = 0; radius <= 3; radius++)
+        for (let dy = -radius; dy <= radius; dy++)
+          for (let dx = -radius; dx <= radius; dx++) {
+            if (Math.abs(dx) + Math.abs(dy) !== radius) continue;
+            const p = { x: door.x + dx, y: door.y + dy };
+            if (this.c.spatial.free(p, worker.id) && this.c.spatial.route(worker, p)) return p;
+          }
+      return null;
     }
     const footprint = this.c.spatial.footprint(target),
       occupied = new Set(footprint),
@@ -403,7 +414,8 @@ export class Economy {
               : distance2(a, w) - distance2(b, w) || a.id - b.id,
         );
       if (!candidates.some((r) => this.startHarvest(w, r, item)))
-        u.retryAt = this.s.tick + 40;
+        if (!candidates.length && u.orderQueue.length) u.order = null;
+        else u.retryAt = this.s.tick + 40;
     }
   }
   private finishHarvest(job: Job, w: Entity) {
@@ -412,6 +424,7 @@ export class Economy {
     if (workplace?.production?.active?.worker === w.id)
       this.finishCycle(workplace);
     this.applyPending(w);
+    if (w.unit!.order?.type === "gather" && w.unit!.orderQueue.length) w.unit!.order = null;
   }
   private advanceHarvest(job: Job, w: Entity, hall: Entity) {
     const u = w.unit!,
@@ -419,7 +432,7 @@ export class Economy {
       creation = this.c.registry.get(job.item!).creation!;
     if (creation.method !== "harvest") throw new Error("Harvest job needs a harvest recipe");
     if (job.phase === "return") {
-      if (u.cargo && this.room(hall) + job.amount >= u.cargo.amount) {
+      if (u.cargo && this.legalStore(hall, u.cargo.item) && this.room(hall) + job.amount >= u.cargo.amount) {
         this.depositCargo(w, hall);
         this.finishHarvest(job, w);
       } else this.abandon(job);
@@ -442,7 +455,9 @@ export class Economy {
       job.progress++;
       if (job.progress >= creation.workTicks) job.progress = 0;
       if (job.progress !== creation.impactTick) return;
-      felling.hp--;
+      const hitDamage = Math.max(1, ...(this.s.research[w.owner] ?? []).flatMap(id =>
+        this.c.registry.rules.research[id].effects.filter(e => e.units.includes(w.definition)).map(e => e.treeHitDamage ?? 1)));
+      felling.hp = Math.max(0, felling.hp - hitDamage);
       felling.lastHitTick = this.s.tick;
       if (felling.hp > 0) return;
       felling.fallTick = this.s.tick;
@@ -533,7 +548,7 @@ export class Economy {
     let w = this.c.get(p.staff);
     if (
       w?.unit &&
-      (w.unit.job || w.unit.order || w.unit.cargo || w.unit.pendingMove)
+      (w.unit.job || w.unit.order || w.unit.orderQueue.length || w.unit.cargo || w.unit.pendingMove)
     ) {
       p.status = "Worker busy";
       return;
@@ -675,7 +690,7 @@ export class Economy {
       const j = this.findJob(w.unit.job);
       if (j) this.eraseJob(j);
       w.definition = d.id;
-      w.hp = d.body!.maxHp;
+      w.hp = this.c.stats(w).maxHp;
       w.unit = this.c.freshUnit();
       w.x = exit.x;
       w.y = exit.y;
@@ -827,7 +842,7 @@ export class Economy {
     for (const b of this.c
       .live()
       .filter(
-        (e) => this.c.ready(e) && !e.construction && e.production?.active,
+        (e) => this.c.ready(e) && !e.construction && !e.upgrade && e.production?.active,
       )) {
       const a = b.production!.active!,
         c = this.c.registry.get(a.definition).creation!;
@@ -883,6 +898,7 @@ export class Economy {
     if (
       !cargo ||
       !this.c.def(b).behaviors.storage?.dropoff ||
+      !this.legalStore(b, cargo.item) ||
       b.owner !== w.owner ||
       this.room(b) + job.amount < cargo.amount
     ) {
@@ -898,7 +914,7 @@ export class Economy {
       w.unit.order = {
         type: "move",
         destination: w.unit.pendingMove,
-        attackMove: false,
+        attackMove: w.unit.order?.type === "move" && w.unit.order.attackMove,
       };
       w.unit.pendingMove = null;
     }
@@ -955,6 +971,8 @@ export class Economy {
   interrupt(w: Entity, destination?: Point) {
     const u = w.unit;
     if (!u || u.contained || u.release) return false;
+    u.orderQueue = [];
+    delete u.shellWindup;
     u.idle = null;
     const workplace = this.c.get(u.employment);
     if (workplace?.production) {
@@ -966,7 +984,7 @@ export class Economy {
     u.employment = null;
     if (u.cargo && u.job) {
       u.order = null;
-      if (destination) u.pendingMove = destination;
+      u.pendingMove = destination ?? null;
       return true;
     }
     const job = this.findJob(u.job);
@@ -1001,6 +1019,12 @@ export class Economy {
     }
   }
   remove(e: Entity, cancel = false) {
+    const paidTasks = [
+      ...(e.upgrade ? this.c.def(e).upgrade!.items : []),
+      ...(e.research?.queue.flatMap(q => this.c.registry.rules.research[q.id].items) ?? []),
+    ];
+    for (const p of paidTasks)
+      this.c.event(e.owner, "Unfinished technology lost", "lost", p.item, p.amount);
     // Resolve references while entrance/owner still exist, then remove occupancy.
     for (const j of [...this.s.jobs])
       if (j.worker === e.id || j.target === e.id || j.source === e.id)
@@ -1058,7 +1082,8 @@ export class Economy {
     for (const [item, n] of Object.entries(bill)) {
       let left = Math.min(n, quantity(e.inventory, item));
       for (const h of halls) {
-        if (!this.legalStore(h, item)) continue;
+        const treasury = h.id === this.s.objectives[e.owner] && this.c.registry.get(item).currency;
+        if (!treasury && !this.legalStore(h, item)) continue;
         const amount = Math.min(left, this.room(h));
         add(h.inventory, item, amount);
         add(e.inventory, item, -amount);

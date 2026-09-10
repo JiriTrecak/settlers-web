@@ -30,6 +30,13 @@ export async function fetchRooms(): Promise<RoomView[]> {
   return json(await fetch(matchHttp("/api/rooms")));
 }
 
+/** Explicit multiplayer maintenance action: ends all server sessions. */
+export async function clearRooms(): Promise<{ deleted: number }> {
+  const res = await fetch(matchHttp("/api/rooms/clear"), { method: "POST" });
+  if (res.status === 404) throw new Error("Session cleanup requires an updated MatchHost server.");
+  return json(res);
+}
+
 export async function fetchRoom(id: string): Promise<RoomView> {
   return json(await fetch(matchHttp(`/api/rooms/${encodeURIComponent(id)}`)));
 }

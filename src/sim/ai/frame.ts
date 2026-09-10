@@ -1,3 +1,4 @@
+import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
 import type { ContentRegistry } from "../../content/registry";
 import { type Owner, type Definition } from "../../content/schema";
@@ -181,11 +182,12 @@ export class Frame {
     this.stores = this.buildings.filter(
       (e) => !e.construction && this.def(e).behaviors.storage?.dropoff,
     );
-    this.home = this.stores[0]
+    const homeStore = this.stores.find(s => this.def(s).behaviors.production?.population) ?? this.stores[0];
+    this.home = homeStore
       ? entrance(
-          this.def(this.stores[0]),
-          this.stores[0],
-          this.stores[0].rotation,
+          this.def(homeStore),
+          homeStore,
+          homeStore.rotation,
         )
       : integerPoint(this.own[0] ?? geo.map.starts[0]!);
     this.hostiles = view.entities.filter(
@@ -205,6 +207,7 @@ export class Frame {
     return (
       !!e.control &&
       !e.control.order &&
+      !e.control.orderQueue.length &&
       !e.control.job &&
       e.control.employment === null &&
       !e.control.pendingMove &&
@@ -217,8 +220,10 @@ export class Frame {
   visible(p: Point) {
     return this.geo.inside(p) && this.view.fog?.cells[this.geo.index(p)] === 2;
   }
+  available(d: Pick<Definition,"requires">) { return !prerequisiteReason(d,this.owner,this.own,this.registry); }
+  accepts(item: string) { return this.stores.some(s => this.def(s).behaviors.storage!.accepts.includes(item)); }
   canAfford(d: Definition, reserve: Record<string, number> = {}) {
-    return (d.creation?.items ?? []).every(
+    return this.available(d) && (d.creation?.items ?? []).every(
       (c) => (this.bank[c.item] ?? 0) >= (reserve[c.item] ?? 0) + c.amount,
     );
   }
@@ -272,6 +277,8 @@ export class Frame {
   }
   /** Local placement view: no authoritative canBuild query, including resource buffers and entrances. */
   placeable(d: Definition, p: Point, r: number) {
+    if (!this.available(d)) return false;
+    if (d.placementNear && !this.resources.some(e => !e.remembered && e.definition === d.placementNear!.source && distance(e,p) <= d.placementNear!.radius)) return false;
     const cells = footprint(d, p, r),
       heights = this.geo.map.heights;
     if (
@@ -331,10 +338,13 @@ export class Frame {
       this.blocked.has(this.geo.index(door))
     )
       return false;
-    // Bounded flood through the known base verifies a usable doorway without reading hidden blockers.
+    // Outposts check a local approach after the terrain-connectivity check above.
+    // A home-centered flood would reject every remote resource site.
+    const approach = d.placementNear ? this.nearestSafe({x:p.x,y:p.y+12}) : this.home;
+    // Bounded flood verifies a usable doorway without reading hidden blockers.
     const proposed = new Set(cells.map((q) => this.geo.index(q))),
       seen = new Set<number>(),
-      queue = [integerPoint(this.home)];
+      queue = [integerPoint(approach)];
     for (let i = 0; i < queue.length && i < 4096; i++) {
       const a = queue[i]!;
       if (distance(a, door) < 1) return true;
@@ -348,7 +358,7 @@ export class Frame {
           idx = this.geo.index(q);
         if (
           !this.geo.inside(q) ||
-          distance(q, this.home) > 44 ||
+          distance(q, approach) > (d.placementNear ? 24 : 44) ||
           seen.has(idx) ||
           proposed.has(idx) ||
           this.blocked.has(idx) ||

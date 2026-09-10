@@ -16,7 +16,10 @@
             "building.ants.forester",
             "building.ants.house",
             "building.ants.tower",
-            "building.ants.sanctuary"
+            "building.ants.sanctuary",
+            "building.ants.ironroot-forge",
+            "building.ants.rootworks",
+            "building.ants.bombardier-workshop"
           ]
         }
       }
@@ -291,27 +294,27 @@
     },
     {
       "id": "icon.item.barkguard",
-      "image": "assets/ui/icons/ants-v1/barkguard.png"
+      "image": "assets/ui/icons/items-v2/barkguard.png"
     },
     {
       "id": "icon.item.thornband",
-      "image": "assets/ui/icons/ants-v1/thornband.png"
+      "image": "assets/ui/icons/items-v2/thornband.png"
     },
     {
       "id": "icon.item.heartseed",
-      "image": "assets/ui/icons/ants-v1/heartseed.png"
+      "image": "assets/ui/icons/items-v2/heartseed.png"
     },
     {
       "id": "icon.item.resin-salve",
-      "image": "assets/ui/icons/ants-v1/resin-salve.png"
+      "image": "assets/ui/icons/items-v2/resin-salve.png"
     },
     {
       "id": "icon.item.royal-crest",
-      "image": "assets/ui/icons/ants-v1/royal-crest.png"
+      "image": "assets/ui/icons/items-v2/royal-crest.png"
     },
     {
       "id": "icon.item.moon-dew",
-      "image": "assets/ui/icons/ants-v1/moon-dew.png"
+      "image": "assets/ui/icons/items-v2/moon-dew.png"
     },
     {
       "id": "asset.resource.amber-seam",
@@ -349,6 +352,198 @@
       "id": "asset.ants.sanctuary",
       "file": "assets/ant-colony/amber-sanctuary.glb",
       "healthHeight": 5
+    },
+    {
+      "id": "icon.item.trailkeeper-flask",
+      "image": "assets/ui/icons/items-v2/trailkeeper-flask.png"
+    },
+    {
+      "id": "icon.item.firefly-pendant",
+      "image": "assets/ui/icons/items-v2/firefly-pendant.png"
+    },
+    {
+      "id": "icon.item.mossweave-wraps",
+      "image": "assets/ui/icons/items-v2/mossweave-wraps.png"
+    },
+    {
+      "id": "icon.item.quickstep-spurs",
+      "image": "assets/ui/icons/items-v2/quickstep-spurs.png"
+    },
+    {
+      "id": "icon.item.scout-whistle",
+      "image": "assets/ui/icons/items-v2/scout-whistle.png"
+    },
+    {
+      "id": "icon.item.ancient-heartwood",
+      "image": "assets/ui/icons/items-v2/ancient-heartwood.png"
+    },
+    {
+      "id": "icon.item.moonwell-chalice",
+      "image": "assets/ui/icons/items-v2/moonwell-chalice.png"
+    },
+    {
+      "id": "icon.item.predator-talon",
+      "image": "assets/ui/icons/items-v2/predator-talon.png"
+    },
+    {
+      "id": "icon.item.amber-carapace",
+      "image": "assets/ui/icons/items-v2/amber-carapace.png"
+    },
+    {
+      "id": "icon.item.broodkeeper-lantern",
+      "image": "assets/ui/icons/items-v2/broodkeeper-lantern.png"
+    },
+    {
+      "id": "icon.item.warcaller-standard",
+      "image": "assets/ui/icons/items-v2/warcaller-standard.png"
+    },
+    {
+      "id": "icon.item.stormwing-spurs",
+      "image": "assets/ui/icons/items-v2/stormwing-spurs.png"
+    },
+    {
+      "id": "icon.item.restoration-draught",
+      "image": "assets/ui/icons/items-v2/restoration-draught.png"
+    },
+    {
+      "id": "icon.item.rootbinder-idol",
+      "image": "assets/ui/icons/items-v2/rootbinder-idol.png"
+    },
+    {
+      "id": "icon.item.first-queen-crown",
+      "image": "assets/ui/icons/items-v2/first-queen-crown.png"
+    },
+    {
+      "id": "icon.item.worldroot-heart",
+      "image": "assets/ui/icons/items-v2/worldroot-heart.png"
+    },
+    {
+      "id": "icon.item.reaper-mandible",
+      "image": "assets/ui/icons/items-v2/reaper-mandible.png"
+    },
+    {
+      "id": "icon.item.canopy-aegis",
+      "image": "assets/ui/icons/items-v2/canopy-aegis.png"
+    },
+    {
+      "id": "icon.item.tempest-antennae",
+      "image": "assets/ui/icons/items-v2/tempest-antennae.png"
+    },
+    {
+      "id": "icon.item.phoenix-chrysalis",
+      "image": "assets/ui/icons/items-v2/phoenix-chrysalis.png"
+    },
+    {
+      "id": "icon.item.deep-moon-scepter",
+      "image": "assets/ui/icons/items-v2/deep-moon-scepter.png"
+    },
+    {
+      "id": "icon.item.endless-brood-banner",
+      "image": "assets/ui/icons/items-v2/endless-brood-banner.png"
+    },
+    {
+      "id": "icon.item.amber-hourglass",
+      "image": "assets/ui/icons/items-v2/amber-hourglass.png"
+    },
+    {
+      "id": "icon.item.winter-heart",
+      "image": "assets/ui/icons/items-v2/winter-heart.png"
+    },
+    {
+      "id": "asset.neutral.amberjaw-staglord",
+      "file": "assets/ant-colony/characters/amberjaw-staglord.glb",
+      "character": "amberjaw-staglord",
+      "healthHeight": 2.8
+    },
+    {
+      "id": "icon.neutral.amberjaw-staglord",
+      "image": "assets/ui/icons/neutral-v1/amberjaw-staglord.png"
+    },
+    {
+      "id": "asset.neutral.thornblade-matriarch",
+      "file": "assets/ant-colony/characters/thornblade-matriarch.glb",
+      "character": "thornblade-matriarch",
+      "healthHeight": 4.1
+    },
+    {
+      "id": "icon.neutral.thornblade-matriarch",
+      "image": "assets/ui/icons/neutral-v1/thornblade-matriarch.png"
+    },
+    {
+      "id": "asset.ants.ironroot-forge",
+      "file": "assets/ant-colony/ironroot-forge.glb",
+      "scale": 1.1,
+      "healthHeight": 5.5
+    },
+    {
+      "id": "icon.ants.ironroot-forge",
+      "image": "assets/ui/icons/ants-v1/ironroot-forge.png"
+    },
+    {
+      "id": "asset.resource.corrupted-root",
+      "file": "assets/ant-colony/corrupted-root.glb",
+      "scale": 0.85,
+      "healthHeight": 4.8
+    },
+    {
+      "id": "asset.item.root",
+      "file": "assets/ant-colony/root-bundle.glb",
+      "healthHeight": 1,
+      "stackHeight": 0.3,
+      "stackColumns": 2
+    },
+    {
+      "id": "asset.ants.rootworks",
+      "file": "assets/ant-colony/rootworks.glb",
+      "scale": 1.1,
+      "healthHeight": 5.2
+    },
+    {
+      "id": "icon.item.root",
+      "image": "assets/ui/icons/ants-v1/corrupted-root.png"
+    },
+    {
+      "id": "icon.ants.rootworks",
+      "image": "assets/ui/icons/ants-v1/rootworks.png"
+    },
+    {
+      "id": "asset.ants.great-mound",
+      "file": "assets/ant-colony/great-mound.glb",
+      "healthHeight": 5.6
+    },
+    {
+      "id": "icon.ants.great-mound",
+      "image": "assets/ui/icons/ants-v1/great-mound.png"
+    },
+    {
+      "id": "asset.ants.hunter",
+      "file": "assets/ant-colony/characters/hunter.glb",
+      "healthHeight": 2.3,
+      "character": "hunter"
+    },
+    {
+      "id": "icon.ants.hunter",
+      "image": "assets/ui/icons/ants-v1/hunter.png"
+    },
+    {
+      "id": "asset.ants.bombardier",
+      "file": "assets/ant-colony/characters/bombardier.glb",
+      "healthHeight": 2.4,
+      "character": "bombardier"
+    },
+    {
+      "id": "icon.ants.bombardier",
+      "image": "assets/ui/icons/ants-v1/bombardier.png"
+    },
+    {
+      "id": "asset.ants.bombardier-workshop",
+      "file": "assets/ant-colony/bombardier-workshop.glb",
+      "scale": 1.0,
+      "healthHeight": 6
+    },
+    {
+      "id": "icon.ants.bombardier-workshop",
+      "image": "assets/ui/icons/ants-v1/bombardier-workshop.png"
     }
   ],
   "actions": {
@@ -401,17 +596,67 @@
       },
       "cancel": {
         "name": "Cancel construction",
-        "description": "Cancel this project and refund its reserved resources to an owned Main Hall with space.",
+        "description": "Cancel this project and refund its reserved resources to an owned Mound with space.",
+        "icon": "icon.action.cancel",
+        "priority": 20
+      },
+      "upgrade": {
+        "name": "Upgrade building",
+        "description": "Upgrade this building in place.",
+        "icon": "icon.ants.fort",
+        "priority": 110,
+        "hotkey": "U"
+      },
+      "cancelUpgrade": {
+        "name": "Cancel upgrade",
+        "description": "Cancel the upgrade and refund the full price.",
+        "icon": "icon.action.cancel",
+        "priority": 20,
+        "hotkey": "C"
+      },
+      "research": {
+        "name": "Research",
+        "description": "Research a permanent colony upgrade.",
+        "icon": "icon.ants.fort",
+        "priority": 100
+      },
+      "cancelResearch": {
+        "name": "Cancel research",
+        "description": "Cancel this research and refund its full price.",
         "icon": "icon.action.cancel",
         "priority": 20
       }
     },
     "overrides": {
       "build:building.ants.forester": {
-        "priority": 70
+        "priority": 70,
+        "hidden": true
       },
       "build:building.ants.house": {
-        "priority": 60
+        "priority": 90
+      },
+      "build:building.ants.barracks": {
+        "category": "category.build",
+        "priority": 80
+      },
+      "build:building.ants.sanctuary": {
+        "category": "category.build",
+        "priority": 70
+      },
+      "build:building.ants.tower": {
+        "hidden": true
+      },
+      "build:building.ants.ironroot-forge": {
+        "priority": 30,
+        "category": "category.build"
+      },
+      "build:building.ants.rootworks": {
+        "priority": 25,
+        "category": "category.build"
+      },
+      "build:building.ants.bombardier-workshop": {
+        "category": "category.build-advanced",
+        "priority": 100
       }
     },
     "categories": {
@@ -477,6 +722,12 @@
         "heavy": 1000,
         "hero": 700,
         "structure": 250
+      },
+      "siege": {
+        "light": 1000,
+        "heavy": 1000,
+        "hero": 1000,
+        "structure": 1000
       }
     },
     "startingSetup": {
@@ -588,11 +839,19 @@
       "composition": [
         {
           "definition": "unit.ants.warrior",
-          "weight": 60
+          "weight": 40
         },
         {
           "definition": "unit.ants.archer",
-          "weight": 40
+          "weight": 30
+        },
+        {
+          "definition": "unit.ants.hunter",
+          "weight": 20
+        },
+        {
+          "definition": "unit.ants.bombardier",
+          "weight": 10
         }
       ],
       "skillPreference": [
@@ -623,71 +882,184 @@
     "lootPools": {
       "loot.camp.easy": {
         "rolls": 1,
+        "maxTier": 1,
         "entries": [
           {
             "item": "item.resin-salve",
-            "weight": 45
+            "weight": 10
           },
           {
-            "item": "item.barkguard",
-            "weight": 25
+            "item": "item.moon-dew",
+            "weight": 10
           },
           {
-            "item": "item.thornband",
-            "weight": 20
+            "item": "item.trailkeeper-flask",
+            "weight": 10
           },
           {
             "item": "item.heartseed",
+            "weight": 10
+          },
+          {
+            "item": "item.thornband",
+            "weight": 10
+          },
+          {
+            "item": "item.barkguard",
+            "weight": 10
+          },
+          {
+            "item": "item.firefly-pendant",
+            "weight": 10
+          },
+          {
+            "item": "item.mossweave-wraps",
+            "weight": 10
+          },
+          {
+            "item": "item.quickstep-spurs",
+            "weight": 10
+          },
+          {
+            "item": "item.scout-whistle",
             "weight": 10
           }
         ]
       },
       "loot.camp.medium": {
         "rolls": 1,
+        "maxTier": 2,
         "entries": [
           {
-            "item": "item.heartseed",
-            "weight": 30
-          },
-          {
-            "item": "item.thornband",
-            "weight": 25
-          },
-          {
-            "item": "item.barkguard",
-            "weight": 25
-          },
-          {
-            "item": "item.moon-dew",
-            "weight": 15
+            "item": "item.ancient-heartwood",
+            "weight": 10
           },
           {
             "item": "item.royal-crest",
-            "weight": 5
+            "weight": 10
+          },
+          {
+            "item": "item.moonwell-chalice",
+            "weight": 10
+          },
+          {
+            "item": "item.predator-talon",
+            "weight": 10
+          },
+          {
+            "item": "item.amber-carapace",
+            "weight": 10
+          },
+          {
+            "item": "item.broodkeeper-lantern",
+            "weight": 10
+          },
+          {
+            "item": "item.warcaller-standard",
+            "weight": 10
+          },
+          {
+            "item": "item.stormwing-spurs",
+            "weight": 10
+          },
+          {
+            "item": "item.restoration-draught",
+            "weight": 10
+          },
+          {
+            "item": "item.rootbinder-idol",
+            "weight": 10
           }
         ]
       },
       "loot.camp.hard": {
-        "rolls": 2,
+        "rolls": 1,
+        "maxTier": 2,
         "entries": [
           {
-            "item": "item.royal-crest",
-            "weight": 35
-          },
-          {
-            "item": "item.moon-dew",
-            "weight": 25
-          },
-          {
-            "item": "item.heartseed",
-            "weight": 20
-          },
-          {
-            "item": "item.thornband",
+            "item": "item.ancient-heartwood",
             "weight": 10
           },
           {
-            "item": "item.barkguard",
+            "item": "item.royal-crest",
+            "weight": 10
+          },
+          {
+            "item": "item.moonwell-chalice",
+            "weight": 10
+          },
+          {
+            "item": "item.predator-talon",
+            "weight": 10
+          },
+          {
+            "item": "item.amber-carapace",
+            "weight": 10
+          },
+          {
+            "item": "item.broodkeeper-lantern",
+            "weight": 10
+          },
+          {
+            "item": "item.warcaller-standard",
+            "weight": 10
+          },
+          {
+            "item": "item.stormwing-spurs",
+            "weight": 10
+          },
+          {
+            "item": "item.restoration-draught",
+            "weight": 10
+          },
+          {
+            "item": "item.rootbinder-idol",
+            "weight": 10
+          }
+        ]
+      },
+      "loot.camp.legendary": {
+        "rolls": 1,
+        "maxTier": 3,
+        "entries": [
+          {
+            "item": "item.first-queen-crown",
+            "weight": 10
+          },
+          {
+            "item": "item.worldroot-heart",
+            "weight": 10
+          },
+          {
+            "item": "item.reaper-mandible",
+            "weight": 10
+          },
+          {
+            "item": "item.canopy-aegis",
+            "weight": 10
+          },
+          {
+            "item": "item.tempest-antennae",
+            "weight": 10
+          },
+          {
+            "item": "item.phoenix-chrysalis",
+            "weight": 10
+          },
+          {
+            "item": "item.deep-moon-scepter",
+            "weight": 10
+          },
+          {
+            "item": "item.endless-brood-banner",
+            "weight": 10
+          },
+          {
+            "item": "item.amber-hourglass",
+            "weight": 10
+          },
+          {
+            "item": "item.winter-heart",
             "weight": 10
           }
         ]
@@ -931,6 +1303,185 @@
       "spell": {
         "name": "Spell",
         "appliesArmor": false
+      },
+      "siege": {
+        "name": "Siege",
+        "appliesArmor": true
+      }
+    },
+    "research": {
+      "research.ants.serrated-tools": {
+        "name": "Serrated Tools",
+        "description": "Workers fell a full tree in five axe contacts instead of ten. Each tree still supplies ten Wood.",
+        "icon": "icon.ants.settler",
+        "priority": 100,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 100
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1200,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.settler"
+            ],
+            "treeHitDamage": 2
+          }
+        ]
+      },
+      "research.ants.reinforced-carapace": {
+        "name": "Reinforced Carapace",
+        "description": "Warriors gain 150 maximum health and 2 armor. Existing wounds are preserved.",
+        "icon": "icon.ants.warrior",
+        "priority": 90,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          }
+        ],
+        "workTicks": 1600,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.warrior"
+            ],
+            "maxHp": 150,
+            "armor": 2
+          }
+        ]
+      },
+      "research.ants.broadheads": {
+        "name": "Broadheads",
+        "description": "Archers deal 35% more attack damage.",
+        "icon": "icon.ants.archer",
+        "priority": 80,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1600,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.archer"
+            ],
+            "damagePermille": 350
+          }
+        ]
+      },
+      "research.ants.campaign-harness": {
+        "name": "Campaign Harness",
+        "description": "The Marshal gains 200 maximum health. Existing wounds are preserved; the improvement remains through death and revival.",
+        "icon": "icon.ants.marshal",
+        "priority": 50,
+        "requires": [
+          "building.ants.great-mound"
+        ],
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 200
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          },
+          {
+            "item": "item.root",
+            "amount": 60
+          }
+        ],
+        "workTicks": 2000,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.marshal"
+            ],
+            "maxHp": 200
+          }
+        ]
+      },
+      "research.ants.driving-spear": {
+        "name": "Driving Spear",
+        "description": "Hunters can charge every 4 seconds instead of 8. Requires a fresh approach; remaining in melee never triggers another charge.",
+        "icon": "icon.ants.hunter",
+        "priority": 70,
+        "requires": [
+          "building.ants.great-mound"
+        ],
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 180
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          },
+          {
+            "item": "item.root",
+            "amount": 40
+          }
+        ],
+        "workTicks": 1800,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.hunter"
+            ],
+            "chargeCooldownPermille": 500
+          }
+        ]
+      },
+      "research.ants.saturating-shells": {
+        "name": "Saturating Shells",
+        "description": "Bombardier blast radius grows from 2 to 3 cells, and its two-second slow strengthens from 20% to 35%. Slows do not add together.",
+        "icon": "icon.ants.bombardier",
+        "priority": 60,
+        "requires": [
+          "building.ants.great-mound"
+        ],
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 200
+          },
+          {
+            "item": "item.wood",
+            "amount": 100
+          },
+          {
+            "item": "item.root",
+            "amount": 60
+          }
+        ],
+        "workTicks": 2000,
+        "effects": [
+          {
+            "units": [
+              "unit.ants.bombardier"
+            ],
+            "splashRadius": 3,
+            "splashSlowPermille": 350
+          }
+        ]
       }
     }
   },
@@ -956,7 +1507,8 @@
         "work": {
           "harvests": [
             "item.wood",
-            "item.amber"
+            "item.amber",
+            "item.root"
           ]
         }
       },
@@ -1113,7 +1665,7 @@
     {
       "id": "building.ants.fort",
       "kind": "building",
-      "name": "Main Hall",
+      "name": "Mound",
       "description": "Receives gathered amber and wood. Produces one worker every 12 seconds and supports 8 living workers.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
@@ -1161,7 +1713,78 @@
           }
         }
       },
-      "level": 1
+      "level": 1,
+      "upgrade": {
+        "target": "building.ants.great-mound",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 320
+          },
+          {
+            "item": "item.wood",
+            "amount": 180
+          },
+          {
+            "item": "item.root",
+            "amount": 100
+          }
+        ],
+        "workTicks": 2400
+      }
+    },
+    {
+      "id": "building.ants.great-mound",
+      "kind": "building",
+      "name": "Great Mound",
+      "description": "The colony\u2019s fortified tier-two heart. Unlocks advanced troops and research; retains Mound worker births and amber/wood drop-off.",
+      "asset": "asset.ants.great-mound",
+      "icon": "icon.ants.great-mound",
+      "body": {
+        "maxHp": 2400,
+        "armor": 6,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 9,
+        "depth": 9
+      },
+      "entrance": {
+        "x": 0,
+        "y": 5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [],
+        "workTicks": 1,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
+        },
+        "production": {
+          "mode": "automatic",
+          "outputs": [
+            "unit.ants.settler"
+          ],
+          "workerSlots": 0,
+          "population": {
+            "capacity": 8,
+            "intervalTicks": 480
+          }
+        }
+      },
+      "level": 2
     },
     {
       "id": "building.ants.barracks",
@@ -1214,7 +1837,8 @@
           "mode": "queued",
           "outputs": [
             "unit.ants.warrior",
-            "unit.ants.archer"
+            "unit.ants.archer",
+            "unit.ants.hunter"
           ],
           "workerSlots": 0,
           "queueCapacity": 12
@@ -1376,7 +2000,7 @@
       "id": "item.wood",
       "kind": "item",
       "name": "Wood",
-      "description": "Timber gathered by workers and carried to the main hall.",
+      "description": "Timber gathered by workers and carried to the Mound.",
       "asset": "asset.item.wood",
       "icon": "icon.item.wood",
       "stackLimit": 16,
@@ -1396,7 +2020,7 @@
       "id": "item.amber",
       "kind": "item",
       "name": "Amber",
-      "description": "Precious forest resin mined from ancient roots and carried to the main hall.",
+      "description": "Precious forest resin mined from ancient roots and carried to the Mound.",
       "asset": "asset.item.amber",
       "icon": "icon.item.amber",
       "stackLimit": 16,
@@ -1586,8 +2210,9 @@
     {
       "id": "item.barkguard",
       "kind": "item",
+      "itemTier": 1,
       "name": "Barkguard Charm",
-      "description": "A layered bark talisman. Grants 2 armor.",
+      "description": "+2 armor.",
       "asset": "asset.item.chest",
       "icon": "icon.item.barkguard",
       "stackLimit": 1,
@@ -1602,8 +2227,9 @@
     {
       "id": "item.thornband",
       "kind": "item",
+      "itemTier": 1,
       "name": "Thornband",
-      "description": "A thorn-forged ring. Grants 6 damage.",
+      "description": "+6 attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.thornband",
       "stackLimit": 1,
@@ -1618,8 +2244,9 @@
     {
       "id": "item.heartseed",
       "kind": "item",
+      "itemTier": 1,
       "name": "Heartseed",
-      "description": "A living seed pendant. Grants 120 maximum health.",
+      "description": "+120 maximum health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.heartseed",
       "stackLimit": 1,
@@ -1634,6 +2261,7 @@
     {
       "id": "item.resin-salve",
       "kind": "item",
+      "itemTier": 1,
       "name": "Resin Salve",
       "description": "Consume to restore 160 health.",
       "asset": "asset.item.chest",
@@ -1642,14 +2270,21 @@
       "behaviors": {},
       "itemEffect": {
         "type": "consumable",
-        "heal": 160
+        "heal": 160,
+        "active": {
+          "target": "self",
+          "radius": 0,
+          "cooldownTicks": 400,
+          "heal": 160
+        }
       }
     },
     {
       "id": "item.royal-crest",
       "kind": "item",
+      "itemTier": 2,
       "name": "Royal Crest",
-      "description": "A relic of the old colony. Grants 10 damage, 3 armor and 100 maximum health.",
+      "description": "+10 damage, +3 armor and +100 maximum health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.royal-crest",
       "stackLimit": 1,
@@ -1664,22 +2299,29 @@
     {
       "id": "item.moon-dew",
       "kind": "item",
+      "itemTier": 1,
       "name": "Moon Dew",
-      "description": "Consume to restore 400 health.",
+      "description": "Restore 80 mana. Consumed on use.",
       "asset": "asset.item.chest",
       "icon": "icon.item.moon-dew",
       "stackLimit": 1,
       "behaviors": {},
       "itemEffect": {
         "type": "consumable",
-        "heal": 400
+        "heal": 0,
+        "active": {
+          "target": "self",
+          "radius": 0,
+          "cooldownTicks": 400,
+          "mana": 80
+        }
       }
     },
     {
       "id": "building.neutral.amber-mine",
       "kind": "building",
       "name": "Amber Mine",
-      "description": "A neutral amber mine. Assign up to 10 workers; each carries amber back to a main hall.",
+      "description": "A neutral amber mine. Assign up to 10 workers; each carries amber back to a Mound.",
       "asset": "asset.resource.amber-seam",
       "icon": "icon.item.amber",
       "footprint": {
@@ -1698,7 +2340,8 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "gatheringCapacity": 10
+      "gatheringCapacity": 10,
+      "gatheringUnitCollision": false
     },
     {
       "id": "unit.neutral.thornspitter",
@@ -1805,6 +2448,990 @@
       },
       "level": 1,
       "category": "category.build-advanced"
+    },
+    {
+      "id": "item.trailkeeper-flask",
+      "kind": "item",
+      "itemTier": 1,
+      "name": "Trailkeeper\u2019s Flask",
+      "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.trailkeeper-flask",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "consumable",
+        "heal": 70,
+        "active": {
+          "target": "self",
+          "radius": 0,
+          "cooldownTicks": 400,
+          "charges": 3,
+          "heal": 70,
+          "mana": 25
+        }
+      }
+    },
+    {
+      "id": "item.firefly-pendant",
+      "kind": "item",
+      "itemTier": 1,
+      "name": "Firefly Pendant",
+      "description": "+50 maximum mana and +0.5 mana per second.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.firefly-pendant",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "maxMana": 50,
+          "manaRegenPerSecond": 0.5
+        }
+      }
+    },
+    {
+      "id": "item.mossweave-wraps",
+      "kind": "item",
+      "itemTier": 1,
+      "name": "Mossweave Wraps",
+      "description": "Regenerate 1.5 extra health per second.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.mossweave-wraps",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "healthRegenPerSecond": 1.5
+        }
+      }
+    },
+    {
+      "id": "item.quickstep-spurs",
+      "kind": "item",
+      "itemTier": 1,
+      "name": "Quickstep Spurs",
+      "description": "+8% movement speed.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.quickstep-spurs",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "moveSpeedPermille": 80
+        }
+      }
+    },
+    {
+      "id": "item.scout-whistle",
+      "kind": "item",
+      "itemTier": 1,
+      "name": "Scout\u2019s Whistle",
+      "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.scout-whistle",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "consumable",
+        "heal": 0,
+        "active": {
+          "cooldownTicks": 1000,
+          "target": "allies",
+          "radius": 6,
+          "charges": 2,
+          "status": {
+            "durationTicks": 320,
+            "modifiers": {
+              "moveSpeedPermille": 150
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "item.ancient-heartwood",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Ancient Heartwood",
+      "description": "+280 maximum health and +2 health per second.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.ancient-heartwood",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 280,
+        "modifiers": {
+          "healthRegenPerSecond": 2
+        }
+      }
+    },
+    {
+      "id": "item.moonwell-chalice",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Moonwell Chalice",
+      "description": "+140 maximum mana and +1.5 mana per second.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.moonwell-chalice",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "maxMana": 140,
+          "manaRegenPerSecond": 1.5
+        }
+      }
+    },
+    {
+      "id": "item.predator-talon",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Predator\u2019s Talon",
+      "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.predator-talon",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 10,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "lifestealPermille": 100
+        }
+      }
+    },
+    {
+      "id": "item.amber-carapace",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Amber Carapace",
+      "description": "+4 armor. Activate: absorb 180 damage for up to 8s. 45s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.amber-carapace",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 4,
+        "maxHp": 0,
+        "active": {
+          "cooldownTicks": 1800,
+          "target": "self",
+          "radius": 0,
+          "status": {
+            "durationTicks": 320,
+            "modifiers": {},
+            "shield": 180
+          }
+        }
+      }
+    },
+    {
+      "id": "item.broodkeeper-lantern",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Broodkeeper\u2019s Lantern",
+      "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.broodkeeper-lantern",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "aura": {
+          "target": "allies",
+          "radius": 6,
+          "modifiers": {
+            "healthRegenPerSecond": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "item.warcaller-standard",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Warcaller\u2019s Standard",
+      "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.warcaller-standard",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "aura": {
+          "target": "allies",
+          "radius": 6,
+          "modifiers": {
+            "damagePermille": 100
+          }
+        }
+      }
+    },
+    {
+      "id": "item.stormwing-spurs",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Stormwing Spurs",
+      "description": "+10% movement speed and +12% attack speed.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.stormwing-spurs",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "moveSpeedPermille": 100,
+          "attackSpeedPermille": 120
+        }
+      }
+    },
+    {
+      "id": "item.restoration-draught",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Restoration Draught",
+      "description": "2 charges: restore 300 health and 120 mana. 10s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.restoration-draught",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "consumable",
+        "heal": 300,
+        "active": {
+          "target": "self",
+          "radius": 0,
+          "cooldownTicks": 400,
+          "charges": 2,
+          "heal": 300,
+          "mana": 120
+        }
+      }
+    },
+    {
+      "id": "item.rootbinder-idol",
+      "kind": "item",
+      "itemTier": 2,
+      "name": "Rootbinder\u2019s Idol",
+      "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.rootbinder-idol",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "active": {
+          "cooldownTicks": 1400,
+          "target": "enemies",
+          "radius": 4,
+          "damage": 60,
+          "damageType": "spell",
+          "status": {
+            "durationTicks": 80,
+            "modifiers": {
+              "rooted": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "item.first-queen-crown",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Crown of the First Queen",
+      "description": "+150 maximum health. Aura: allied units within 7 tiles gain 15% damage and +2 armor.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.first-queen-crown",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 150,
+        "aura": {
+          "target": "allies",
+          "radius": 7,
+          "modifiers": {
+            "damagePermille": 150,
+            "armor": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "item.worldroot-heart",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Worldroot Heart",
+      "description": "+450 maximum health and +4 health per second. Activate: restore 20% maximum health. 70s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.worldroot-heart",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 450,
+        "modifiers": {
+          "healthRegenPerSecond": 4
+        },
+        "active": {
+          "cooldownTicks": 2800,
+          "target": "self",
+          "radius": 0,
+          "healMaxPermille": 200
+        }
+      }
+    },
+    {
+      "id": "item.reaper-mandible",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Reaper\u2019s Mandible",
+      "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.reaper-mandible",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 18,
+        "armor": 0,
+        "maxHp": 0,
+        "onHit": {
+          "every": 4,
+          "radius": 3,
+          "targets": 4,
+          "attackDamagePermille": 500,
+          "damageType": "hero"
+        }
+      }
+    },
+    {
+      "id": "item.canopy-aegis",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Aegis of the Canopy",
+      "description": "+5 armor. Activate: shield allied units within 6 tiles for 180 damage each for up to 8s. 80s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.canopy-aegis",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 5,
+        "maxHp": 0,
+        "active": {
+          "cooldownTicks": 3200,
+          "target": "allies",
+          "radius": 6,
+          "status": {
+            "durationTicks": 320,
+            "modifiers": {},
+            "shield": 180
+          }
+        }
+      }
+    },
+    {
+      "id": "item.tempest-antennae",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Tempest Antennae",
+      "description": "+15% attack speed. Every third basic hit arcs 45 magic damage to up to 3 enemies within 4 tiles of the target.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.tempest-antennae",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "attackSpeedPermille": 150
+        },
+        "onHit": {
+          "every": 3,
+          "radius": 4,
+          "targets": 3,
+          "damage": 45,
+          "damageType": "spell"
+        }
+      }
+    },
+    {
+      "id": "item.phoenix-chrysalis",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Phoenix Chrysalis",
+      "description": "+120 maximum health. Once: prevent a lethal hit, restore 35% health and become invulnerable for 1.5s. The chrysalis then breaks.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.phoenix-chrysalis",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 120,
+        "rescue": {
+          "healMaxPermille": 350,
+          "invulnerableTicks": 60,
+          "charges": 1
+        }
+      }
+    },
+    {
+      "id": "item.deep-moon-scepter",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Scepter of the Deep Moon",
+      "description": "+220 maximum mana, +2 mana per second and 20% shorter hero ability cooldowns. Does not affect items.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.deep-moon-scepter",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "maxMana": 220,
+          "manaRegenPerSecond": 2,
+          "cooldownReductionPermille": 200
+        }
+      }
+    },
+    {
+      "id": "item.endless-brood-banner",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Banner of the Endless Brood",
+      "description": "Aura: allied units within 7 tiles gain 15% attack speed. Activate: nearby allies ignore roots and stuns for 4s. 90s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.endless-brood-banner",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "aura": {
+          "target": "allies",
+          "radius": 7,
+          "modifiers": {
+            "attackSpeedPermille": 150
+          }
+        },
+        "active": {
+          "cooldownTicks": 3600,
+          "target": "allies",
+          "radius": 7,
+          "status": {
+            "durationTicks": 160,
+            "modifiers": {
+              "controlImmune": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "item.amber-hourglass",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Hourglass of Amber",
+      "description": "+100 maximum mana. Activate: reduce remaining hero ability cooldowns by 12s. Does not affect items. 100s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.amber-hourglass",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 0,
+        "modifiers": {
+          "maxMana": 100
+        },
+        "active": {
+          "cooldownTicks": 4000,
+          "target": "self",
+          "radius": 0,
+          "reduceAbilityCooldownTicks": 480
+        }
+      }
+    },
+    {
+      "id": "item.winter-heart",
+      "kind": "item",
+      "itemTier": 3,
+      "name": "Heart of Winter",
+      "description": "+180 maximum health. Aura: enemies within 5 tiles move 15% slower. Activate: deal 120 magic damage within 5 tiles and slow attack speed by 20% for 4s. 60s cooldown.",
+      "asset": "asset.item.chest",
+      "icon": "icon.item.winter-heart",
+      "stackLimit": 1,
+      "behaviors": {},
+      "itemEffect": {
+        "type": "equipment",
+        "damage": 0,
+        "armor": 0,
+        "maxHp": 180,
+        "aura": {
+          "target": "enemies",
+          "radius": 5,
+          "modifiers": {
+            "moveSpeedPermille": -150
+          }
+        },
+        "active": {
+          "cooldownTicks": 2400,
+          "target": "enemies",
+          "radius": 5,
+          "damage": 120,
+          "damageType": "spell",
+          "status": {
+            "durationTicks": 160,
+            "modifiers": {
+              "attackSpeedPermille": -200
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "unit.neutral.amberjaw-staglord",
+      "kind": "unit",
+      "name": "Amberjaw Staglord",
+      "description": "A legendary guardian of the ancient root. Challenge with an army; its camp carries a tier-three relic.",
+      "asset": "asset.neutral.amberjaw-staglord",
+      "icon": "icon.neutral.amberjaw-staglord",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 2400,
+        "armor": 7,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 76,
+          "damageType": "melee",
+          "range": 2.5,
+          "cooldownTicks": 64,
+          "aggroRange": 10
+        }
+      },
+      "level": 8,
+      "experienceYield": 600
+    },
+    {
+      "id": "unit.neutral.thornblade-matriarch",
+      "kind": "unit",
+      "name": "Thornblade Matriarch",
+      "description": "A legendary guardian of the ancient root. Challenge with an army; its camp carries a tier-three relic.",
+      "asset": "asset.neutral.thornblade-matriarch",
+      "icon": "icon.neutral.thornblade-matriarch",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 1850,
+        "armor": 4,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 58,
+          "damageType": "melee",
+          "range": 2.5,
+          "cooldownTicks": 40,
+          "aggroRange": 10
+        }
+      },
+      "level": 8,
+      "experienceYield": 600
+    },
+    {
+      "id": "building.ants.ironroot-forge",
+      "kind": "building",
+      "name": "Ironroot Forge",
+      "description": "Researches permanent improvements for the colony. Existing and future units benefit from completed research.",
+      "asset": "asset.ants.ironroot-forge",
+      "icon": "icon.ants.ironroot-forge",
+      "body": {
+        "maxHp": 1100,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 140
+          },
+          {
+            "item": "item.wood",
+            "amount": 70
+          }
+        ],
+        "workTicks": 1200,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "research": {
+          "outputs": [
+            "research.ants.serrated-tools",
+            "research.ants.reinforced-carapace",
+            "research.ants.broadheads",
+            "research.ants.campaign-harness",
+            "research.ants.driving-spear",
+            "research.ants.saturating-shells"
+          ],
+          "queueCapacity": 3
+        }
+      },
+      "category": "category.build",
+      "level": 1
+    },
+    {
+      "id": "item.root",
+      "kind": "item",
+      "name": "Root",
+      "description": "Fibrous heartwood from contested Corrupted Root deposits. Workers deliver it only to a Rootworks.",
+      "asset": "asset.item.root",
+      "icon": "icon.item.root",
+      "stackLimit": 16,
+      "behaviors": {},
+      "creation": {
+        "method": "harvest",
+        "items": [],
+        "workTicks": 100,
+        "source": "building.neutral.corrupted-root",
+        "workAnimation": "chop",
+        "amount": 10
+      },
+      "currency": true
+    },
+    {
+      "id": "building.neutral.corrupted-root",
+      "kind": "building",
+      "name": "Corrupted Root",
+      "description": "A finite contested deposit. Up to five workers carry ten Root per trip to a nearby Rootworks.",
+      "asset": "asset.resource.corrupted-root",
+      "icon": "icon.item.root",
+      "footprint": {
+        "width": 5,
+        "depth": 5
+      },
+      "constructionClearance": 3,
+      "behaviors": {},
+      "yield": 3000,
+      "entrance": {
+        "x": 0,
+        "y": 3
+      },
+      "body": {
+        "maxHp": 1500,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "gatheringCapacity": 5,
+      "gatheringUnitCollision": false
+    },
+    {
+      "id": "building.ants.rootworks",
+      "kind": "building",
+      "name": "Rootworks",
+      "description": "Receives Root from nearby Corrupted Root deposits. Delivered Root becomes spendable colony currency. Does not accept Amber or Wood.",
+      "asset": "asset.ants.rootworks",
+      "icon": "icon.ants.rootworks",
+      "body": {
+        "maxHp": 1000,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 7,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 140
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          }
+        ],
+        "workTicks": 1200,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.root"
+          ],
+          "dropoff": true
+        }
+      },
+      "placementNear": {
+        "source": "building.neutral.corrupted-root",
+        "radius": 12
+      },
+      "category": "category.build",
+      "level": 1
+    },
+    {
+      "id": "unit.ants.hunter",
+      "kind": "unit",
+      "name": "Hunter",
+      "description": "Spear infantry that charges enemy units from 3\u20137 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "asset": "asset.ants.hunter",
+      "icon": "icon.ants.hunter",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 600,
+        "armor": 2,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 24,
+          "damageType": "melee",
+          "range": 1.8,
+          "cooldownTicks": 56,
+          "aggroRange": 10,
+          "charge": {
+            "minRange": 3,
+            "maxRange": 7,
+            "cooldownTicks": 320,
+            "durationTicks": 100,
+            "speedPermille": 2000,
+            "damagePermille": 2000
+          }
+        }
+      },
+      "creation": {
+        "method": "recruit",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 190
+          },
+          {
+            "item": "item.wood",
+            "amount": 45
+          }
+        ],
+        "workTicks": 60,
+        "unitInput": "unit.ants.settler"
+      },
+      "requires": [
+        "building.ants.great-mound"
+      ],
+      "level": 2,
+      "experienceYield": 50
+    },
+    {
+      "id": "unit.ants.bombardier",
+      "kind": "unit",
+      "name": "Bombardier",
+      "description": "Back-mounted mortar fires arcing shells that damage enemies in a two-cell radius and slow movement by 20% for two seconds. Shells can be dodged.",
+      "asset": "asset.ants.bombardier",
+      "icon": "icon.ants.bombardier",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 500,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 3
+        },
+        "combat": {
+          "damage": 42,
+          "damageType": "siege",
+          "range": 10,
+          "cooldownTicks": 120,
+          "aggroRange": 12,
+          "shell": {
+            "windupTicks": 22,
+            "flightTicks": 40,
+            "radius": 2,
+            "slowPermille": 200,
+            "slowTicks": 80
+          }
+        }
+      },
+      "creation": {
+        "method": "recruit",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 220
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          },
+          {
+            "item": "item.root",
+            "amount": 40
+          }
+        ],
+        "workTicks": 80,
+        "unitInput": "unit.ants.settler"
+      },
+      "requires": [
+        "building.ants.great-mound"
+      ],
+      "level": 2,
+      "experienceYield": 65
+    },
+    {
+      "id": "building.ants.bombardier-workshop",
+      "kind": "building",
+      "name": "Bombardier Workshop",
+      "description": "Equips free workers with Root-loaded mortars. Requires a Great Mound; each Bombardier consumes Amber, Wood, Root and one worker.",
+      "asset": "asset.ants.bombardier-workshop",
+      "icon": "icon.ants.bombardier-workshop",
+      "body": {
+        "maxHp": 1400,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 12,
+      "footprint": {
+        "width": 9,
+        "depth": 7
+      },
+      "entrance": {
+        "x": 0,
+        "y": 4
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 220
+          },
+          {
+            "item": "item.wood",
+            "amount": 120
+          }
+        ],
+        "workTicks": 1200,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.ants.bombardier"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 12
+        },
+        "storage": {
+          "capacity": 500,
+          "accepts": [
+            "item.amber",
+            "item.wood",
+            "item.root"
+          ]
+        }
+      },
+      "category": "category.build-advanced",
+      "requires": [
+        "building.ants.great-mound"
+      ],
+      "level": 2
     }
   ]
 }

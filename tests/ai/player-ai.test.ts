@@ -79,7 +79,7 @@ function soldier(
       cooldown: 0,
     },
     control: {
-      order: null,
+      order: null, orderQueue: [],
       job: null,
       employment: null,
       pendingMove: null,
@@ -333,7 +333,7 @@ describe("disruption and scaling gates", () => {
     };
     const actions: Action[] = [];
     economy(
-      new Frame(seen(base, [worker, resource]), "player.1", content, geo, 100),
+      new Frame(seen(base, [worker, resource, {...base.entities.find(e=>e.owner==="player.1" && e.definition==="building.ants.fort")!, inventory:{}}]), "player.1", content, geo, 100),
       newAIState(geo.map.fingerprint, 1),
       (a) => {
         actions.push(a);

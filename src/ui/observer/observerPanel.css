@@ -2,7 +2,7 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  width: 640px;
+  width: 720px;
   max-width: calc(100vw - 24px);
   box-sizing: border-box;
   z-index: 30;
@@ -64,18 +64,10 @@
 .observer-panel thead th:first-child {
   text-align: left;
   padding-left: 14px;
-  width: 24%;
-}
-.observer-panel thead th:nth-child(2),
-.observer-panel thead th:nth-child(3) {
-  width: 18%;
-}
-.observer-panel thead th:nth-child(4),
-.observer-panel thead th:nth-child(5) {
-  width: 10%;
+  width: 22%;
 }
 .observer-panel thead th:last-child {
-  width: 20%;
+  width: 16%;
 }
 .observer-panel tbody tr {
   border-top: 1px solid #6f7d7e24;

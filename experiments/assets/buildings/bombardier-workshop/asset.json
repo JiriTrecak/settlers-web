@@ -1,0 +1,26 @@
+{
+  "name": "Bombardier Workshop",
+  "blend": "bombardier-workshop.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 24,
+    "elevation": 30,
+    "scale": 10.5,
+    "target": [
+      0,
+      0,
+      2.2
+    ]
+  },
+  "render": {
+    "width": 1280,
+    "height": 1200,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 300,
+    "rim_energy": 1000
+  }
+}

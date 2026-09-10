@@ -73,3 +73,20 @@ describe("eight-direction navigation", () => {
 
 // Movement geometry tests use a fixed speed independently of balance tuning.
 function game() { return baseGame([], draft => { for (const set of draft.behaviorSets as any[]) if (set.behaviors.movement) set.behaviors.movement.speed = 8; }); }
+
+it('rejects an occupied or unit-enclosed destination without flooding the map',()=>{
+ let probes=0;const n=128,nav=new Navigation(n,()=>{probes++;return true}),goal=64*n+64;
+ expect(nav.path(0,goal,new Set([goal]))).toBeNull();expect(probes).toBe(0);
+ const ring=new Set<number>();for(let y=-1;y<=1;y++)for(let x=-1;x<=1;x++)if(x||y)ring.add(goal+y*n+x);
+ expect(nav.path(0,goal,ring)).toBeNull();expect(probes).toBeLessThan(40);
+ // A start inside the ring may still step directly into the destination.
+ expect(nav.path(goal+1,goal,ring)).toEqual([goal]);
+});
+
+it('rejects a small enclosed goal region, while allowing its exit to reopen',()=>{
+ const n=128,goal=64*n+64,ring=new Set<number>();let probes=0;
+ for(let y=-4;y<=4;y++)for(let x=-4;x<=4;x++)if(Math.max(Math.abs(x),Math.abs(y))===4)ring.add(goal+y*n+x);
+ const nav=new Navigation(n,()=>{probes++;return true});
+ expect(nav.path(0,goal,ring)).toBeNull();expect(probes).toBeLessThan(5000);
+ ring.delete(goal-4*n);expect(nav.path(0,goal,ring)?.at(-1)).toBe(goal);
+});

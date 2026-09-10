@@ -52,6 +52,15 @@ describe("observer income", () => {
   });
 });
 describe("observer score projection", () => {
+  it("includes declared Root balances and income without counting undelivered cargo", () => {
+    const g = game(), income = new ObserverIncome();
+    const mound = g.context.get(g.state.objectives["player.1"])!;
+    mound.inventory["item.root"] = 70;
+    worker(g).unit!.cargo = {item: "item.root", amount: 10};
+    income.record(1200, [receipt(1200, 10, "item.root")]);
+    const row = observerStats(g.state, slots, content, income).players[0];
+    expect(row.resources.find(r => r.item === "item.root")).toEqual({item: "item.root", stored: 70, perMinute: 20});
+  });
   it("shows each hall balance separately; spending and refunds do not masquerade as income", () => {
     const g = game(),
       income = new ObserverIncome();

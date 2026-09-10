@@ -1,4 +1,7 @@
+import { itemStatusCard } from "../../presentation/itemStatus";
 import { heroShortcuts } from "../../presentation/heroes";
+import { unitOrderCard } from "../../presentation/orderQueue";
+import { workforceReserve } from "../../presentation/workforce";
 import { HeroBar } from "./heroBar";
 import { armorMultiplier } from "../../sim/game/damage";
 import { experienceMeter } from "../../presentation/experience";
@@ -42,7 +45,11 @@ export class SettlementHud {
   private readonly cards = document.createElement("div");
   private readonly grid = document.createElement("div");
   private readonly queues = document.createElement("div");
+  private readonly statuses = document.createElement("div");
+  private statusSignature = "";
   private readonly inventory = document.createElement("div");
+  private readonly orders = document.createElement("div");
+  private ordersSignature = "";
   private inventorySignature = "";
   private readonly pages = document.createElement("div");
   private readonly mapLabel = document.createElement("span");
@@ -58,6 +65,7 @@ export class SettlementHud {
   private queueSignature = "";
   private page = 0;
   private stockSignature = "";
+  private readonly resourceBadges = new Map<string, HTMLElement>();
   private portraitDefinition = "";
   selectedIds: number[] = [];
   targeting: CommandBinding | null = null;
@@ -186,13 +194,19 @@ export class SettlementHud {
     this.hint.role = "status";
     this.cards.className = "rts-unit-cards";
     this.queues.className = "rts-recruit-queue";
+    this.statuses.className = "rts-statuses";
+    this.statuses.setAttribute("aria-label", "Active effects and auras");
     this.inventory.className = "rts-inventory";
+    this.orders.className = "rts-order-queue";
+    this.orders.setAttribute("aria-label", "Queued unit orders");
     copy.append(
       this.heading,
       this.level,
       this.experience,
       this.info,
+      this.statuses,
       this.inventory,
+      this.orders,
       this.cards,
       this.queues,
       this.hint,
@@ -203,9 +217,9 @@ export class SettlementHud {
     actions.className = "rts-actions";
     this.grid.className = "rts-command-grid declarative-commands";
     this.pages.className = "rts-command-pages";
-    actions.append(this.grid, this.pages);
+    actions.append(this.stock, this.grid, this.pages);
     dock.append(map, selection, actions);
-    this.root.append(this.stock, this.heroes.root, dock);
+    this.root.append(this.heroes.root, dock);
     host.append(this.root);
     this.tooltips = new CommandTooltips(host);
     window.addEventListener("keydown", this.onKey);
@@ -550,6 +564,35 @@ export class SettlementHud {
       }
     }
     this.cards.hidden = selected.length < 2;
+    const orders = unitOrderCard(focus, view, content), ordersKey = JSON.stringify(orders);
+    this.orders.hidden = !orders.length;
+    if (ordersKey !== this.ordersSignature) {
+      this.ordersSignature = ordersKey;
+      this.orders.replaceChildren();
+      for (const order of orders) {
+        const tile = document.createElement("span");
+        tile.tabIndex = 0;
+        tile.innerHTML = iconArt(order.icon);
+        tile.setAttribute("aria-label", `${order.index}. ${order.name}`);
+        Object.assign(tile.dataset, {tipName: order.name, tipDescription: order.description});
+        const index = document.createElement("small");
+        index.textContent = String(order.index);
+        tile.append(index);
+        this.orders.append(tile);
+      }
+    }
+    const statuses = itemStatusCard(focus, view.revision, content), statusKey = JSON.stringify(statuses);
+    this.statuses.hidden = !statuses.length;
+    if (statusKey !== this.statusSignature) {
+      this.statusSignature = statusKey;
+      this.statuses.replaceChildren(...statuses.map(status => {
+        const badge = document.createElement("span");
+        badge.tabIndex = 0; badge.innerHTML = iconArt(status.icon);
+        badge.setAttribute("aria-label", status.name);
+        Object.assign(badge.dataset, {tipName:status.name, tipDescription:status.description});
+        return badge;
+      }));
+    }
     const inventory = inventoryCard(
         view,
         focus?.id,
@@ -570,10 +613,16 @@ export class SettlementHud {
           `${item.name}, slot ${item.slot + 1}`,
         );
         if (item.icon) button.innerHTML = iconArt(item.icon);
+        if (item.tier) button.dataset.tier = String(item.tier);
+        if (item.charges !== undefined || item.cooldown) {
+          const count = document.createElement("small");
+          count.textContent = item.cooldown ? `${item.cooldown}s` : String(item.charges);
+          button.append(count);
+        }
         Object.assign(button.dataset, {
           tipName: item.name,
           tipDescription:
-            item.description +
+            (item.tier ? `Tier ${item.tier}. ` : "") + item.description + (item.charges !== undefined ? ` ${item.charges} charges remaining.` : "") + (item.cooldown ? ` Cooldown: ${item.cooldown}s.` : "") +
             (item.drop
               ? item.use
                 ? " Click to use. Right-click to drop."
@@ -600,11 +649,13 @@ export class SettlementHud {
       ),
       queueKey = JSON.stringify([
         focus?.id,
-        queue,
+        queue.map(q => ({...q, progress: undefined})),
         focus?.production?.status,
         Math.floor((focus?.production?.active?.progress ?? 0) / 40),
         focus?.gathering,
         focus?.resource?.amount,
+        focus?.upgrade?.target,
+        Math.floor((focus?.upgrade?.progress ?? 0) / 40),
       ]);
     if (queueKey !== this.queueSignature) {
       this.queueSignature = queueKey;
@@ -613,7 +664,10 @@ export class SettlementHud {
         const summary = document.createElement("span");
         summary.className = "rts-production-summary";
         const production = content.get(focus.definition).behaviors.production;
-        if (focus.production && production) {
+        if (focus.upgrade) {
+          const recipe = content.get(focus.definition).upgrade!;
+          summary.textContent = `${content.get(focus.upgrade.target).name} · ${Math.floor(focus.upgrade.progress / 40)}/${recipe.workTicks / 40}s · Worker spawning paused`;
+        } else if (focus.production && production) {
           const population = production.population;
           summary.textContent = population
             ? `${focus.production.status} · ${Math.floor((focus.production.active?.progress ?? 0) / 40)}/${population.intervalTicks / 40}s · +${population.capacity} worker capacity`
@@ -632,13 +686,20 @@ export class SettlementHud {
       }
       for (const q of queue) {
         const button = document.createElement("button");
-        button.textContent = `${q.name}${q.cancel ? " ×" : ""}`;
+        button.className = "rts-queued-task";
+        button.innerHTML = iconArt(q.icon);
+        button.setAttribute("aria-label", q.cancel ? `Cancel ${q.name}` : q.name);
+        if (q.progress !== null) {
+          const meter = document.createElement("span");
+          meter.className = "rts-queued-progress";
+          button.append(meter);
+        }
         button.disabled = !q.cancel;
         Object.assign(button.dataset, {
           tipName: q.cancel ? `Cancel ${q.name}` : q.name,
           tipDescription: q.cancel
-            ? "Cancel this recruit. Reserved resources return to the hall and the worker is released."
-            : "Production queue. This workplace cannot receive player commands.",
+            ? q.cancel.type === "cancelResearch" ? "Cancel this research and refund its full price to the Mound." : "Cancel this recruit. Reserved resources return to the Mound and the worker is released."
+            : "Queued task. This workplace cannot receive player commands.",
           tipCosts: JSON.stringify(q.costs),
         });
         button.onclick = () => {
@@ -647,23 +708,46 @@ export class SettlementHud {
         this.queues.append(button);
       }
     }
+    // Keep the target button stable while progress advances: rebuilding it can lose
+    // a pointer-down, keyboard focus or an open cancellation tooltip.
+    const taskButtons = this.queues.querySelectorAll<HTMLButtonElement>(".rts-queued-task");
+    queue.forEach((q, index) => {
+      const button = taskButtons[index];
+      const meter = button?.querySelector<HTMLElement>(".rts-queued-progress");
+      if (meter && q.progress !== null) {
+        const percent = Math.floor(q.progress * 100);
+        meter.style.width = `${percent}%`;
+        button.setAttribute("aria-label", `${q.cancel ? "Cancel " : ""}${q.name} · ${percent}%`);
+        button.dataset.tipName = `${q.cancel ? "Cancel " : ""}${q.name} · ${percent}%`;
+      }
+    });
     const stockSignature = JSON.stringify([view.goods, view.population]);
     if (this.stockSignature !== stockSignature) {
       this.stockSignature = stockSignature;
-      this.stock.replaceChildren();
+      const shown = new Set((view.goods ?? []).map(row => row.item));
+      for (const [id, badge] of this.resourceBadges) {
+        if (shown.has(id)) continue;
+        this.tooltips.hide();
+        badge.remove();
+        this.resourceBadges.delete(id);
+      }
       for (const row of view.goods ?? []) {
-        const item = content.get(row.item),
+        const item = content.get(row.item);
+        let badge = this.resourceBadges.get(row.item);
+        if (!badge) {
           badge = document.createElement("span");
-        badge.tabIndex = 0;
-        badge.innerHTML = iconArt(item.icon);
-        const number = document.createElement("b");
-        number.textContent = String(row.available);
-        badge.append(number);
+          badge.tabIndex = 0;
+          badge.innerHTML = iconArt(item.icon) + "<b></b>";
+          this.resourceBadges.set(row.item, badge);
+          this.stock.insertBefore(badge, this.stock.querySelector("[data-population]"));
+        }
+        badge.querySelector("b")!.textContent = String(row.available);
+        badge.setAttribute("aria-label", `${item.name}: ${row.available} available`);
         Object.assign(badge.dataset, {
           tipName: item.name,
           tipDescription: `${item.description}\n${row.available} available · ${row.reserved} reserved\n${row.stored} stored · ${row.inTransit} being carried`,
         });
-        this.stock.append(badge);
+        this.tooltips.refresh(badge);
       }
     }
     // Resource and population badges share the same declarative icon/tooltip path.
@@ -683,17 +767,26 @@ export class SettlementHud {
           ) + "<b></b>";
         this.stock.append(badge);
       }
-      const p = view.population;
-      badge.querySelector("b")!.textContent = `${p.workers}/${p.capacity}`;
-      badge.dataset.tipName = "Workers";
-      badge.dataset.tipDescription = `${p.available} available for recruitment or construction. ${p.workers} living workers / ${p.capacity} capacity. Employed workers are protected from automatic recruitment. Halls and houses replenish workers when there is space.`;
+      const reserve = workforceReserve(view.population);
+      const description = `${reserve.available} ready to recruit now.\n${reserve.replenishing} more can spawn.\n${reserve.allocation} free workers after replenishment, keeping current assignments.\nAssigned workers are protected from recruitment.`;
+      if (badge.dataset.tipDescription !== description) {
+        badge.querySelector("b")!.textContent = `${reserve.available}/${reserve.allocation}`;
+        badge.setAttribute("aria-label", `${reserve.available} workers available for recruitment, ${reserve.allocation} after replenishment`);
+        badge.dataset.tipName = "Available workers";
+        badge.dataset.tipDescription = description;
+        this.tooltips.refresh(badge);
+      }
+    } else {
+      const badge = this.stock.querySelector("[data-population]");
+      if (badge) { this.tooltips.hide(); badge.remove(); }
     }
+    this.stock.hidden = !this.stock.childElementCount;
     if (view.outcome) {
       this.info.textContent =
         view.outcome.winner === null
           ? "Draw — both main forts fell."
           : this.readOnly
-            ? `Player ${view.outcome.winner.split(".")[1]} wins — the rival main hall fell.`
+            ? `Player ${view.outcome.winner.split(".")[1]} wins — the rival Mound fell.`
             : view.outcome.winner === this.owner
               ? "Victory — the enemy main fort fell."
               : "Defeat — your main fort fell.";

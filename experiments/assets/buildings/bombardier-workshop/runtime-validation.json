@@ -1,0 +1,12 @@
+{
+  "triangles": 17594,
+  "meshes": 1,
+  "materials": 16,
+  "sha256": "cd11bfbf9261cdf89950351a821e46fafeeffcc1b1fa1e079e2c5a8c5c49acb3",
+  "teamMaterial": "TC_TeamColor",
+  "teamColorBounds": {
+    "min": 65535,
+    "max": 65535,
+    "componentType": 5123
+  }
+}

@@ -1,0 +1,1595 @@
+{
+  "map": "assets/maps/showcase/mosswater-divide.utcmap",
+  "tick": 48000,
+  "wallMs": 297420.99175,
+  "aiMs": {
+    "p50": 2.5319170000148006,
+    "p95": 3.52554100000998,
+    "p99": 4.151333999994677,
+    "max": 8.205832999985432
+  },
+  "outcome": null,
+  "research": {
+    "player.1": [
+      "research.ants.broadheads",
+      "research.ants.reinforced-carapace",
+      "research.ants.serrated-tools"
+    ],
+    "player.2": [
+      "research.ants.broadheads",
+      "research.ants.reinforced-carapace",
+      "research.ants.serrated-tools"
+    ]
+  },
+  "buildings": [
+    {
+      "id": 2313,
+      "owner": "player.1",
+      "definition": "building.ants.fort",
+      "x": 210,
+      "y": 210
+    },
+    {
+      "id": 2322,
+      "owner": "player.2",
+      "definition": "building.ants.fort",
+      "x": 46,
+      "y": 46
+    },
+    {
+      "id": 2335,
+      "owner": "player.2",
+      "definition": "building.ants.barracks",
+      "x": 38,
+      "y": 59
+    },
+    {
+      "id": 2336,
+      "owner": "player.1",
+      "definition": "building.ants.barracks",
+      "x": 220,
+      "y": 208
+    },
+    {
+      "id": 2337,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 34,
+      "y": 49
+    },
+    {
+      "id": 2338,
+      "owner": "player.1",
+      "definition": "building.ants.house",
+      "x": 226,
+      "y": 218
+    },
+    {
+      "id": 2341,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 56,
+      "y": 44
+    },
+    {
+      "id": 2342,
+      "owner": "player.1",
+      "definition": "building.ants.house",
+      "x": 221,
+      "y": 226
+    },
+    {
+      "id": 2356,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 62,
+      "y": 51
+    },
+    {
+      "id": 2357,
+      "owner": "player.1",
+      "definition": "building.ants.house",
+      "x": 213,
+      "y": 231
+    },
+    {
+      "id": 2376,
+      "owner": "player.1",
+      "definition": "building.ants.house",
+      "x": 204,
+      "y": 230
+    },
+    {
+      "id": 2381,
+      "owner": "player.1",
+      "definition": "building.ants.ironroot-forge",
+      "x": 195,
+      "y": 221,
+      "research": {
+        "queue": []
+      }
+    },
+    {
+      "id": 2384,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 59,
+      "y": 60
+    },
+    {
+      "id": 2386,
+      "owner": "player.2",
+      "definition": "building.ants.ironroot-forge",
+      "x": 49,
+      "y": 67,
+      "research": {
+        "queue": []
+      }
+    },
+    {
+      "id": 2395,
+      "owner": "player.1",
+      "definition": "building.ants.sanctuary",
+      "x": 194,
+      "y": 212
+    },
+    {
+      "id": 2397,
+      "owner": "player.2",
+      "definition": "building.ants.sanctuary",
+      "x": 35,
+      "y": 40
+    },
+    {
+      "id": 2400,
+      "owner": "player.2",
+      "definition": "building.ants.forester",
+      "x": 38,
+      "y": 69
+    },
+    {
+      "id": 2422,
+      "owner": "player.1",
+      "definition": "building.ants.forester",
+      "x": 234,
+      "y": 215
+    },
+    {
+      "id": 2429,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 29,
+      "y": 62
+    },
+    {
+      "id": 2437,
+      "owner": "player.1",
+      "definition": "building.ants.barracks",
+      "x": 230,
+      "y": 228
+    },
+    {
+      "id": 2488,
+      "owner": "player.2",
+      "definition": "building.ants.rootworks",
+      "x": 149,
+      "y": 123
+    },
+    {
+      "id": 2499,
+      "owner": "player.2",
+      "definition": "building.ants.barracks",
+      "x": 22,
+      "y": 51
+    },
+    {
+      "id": 2509,
+      "owner": "player.2",
+      "definition": "building.ants.house",
+      "x": 24,
+      "y": 42,
+      "construction": {
+        "progress": 0,
+        "supportedHp": 60
+      }
+    }
+  ],
+  "ai": [
+    {
+      "owner": "player.1",
+      "mission": "assault: 2488",
+      "workers": 19,
+      "army": 28,
+      "heroLevel": 4,
+      "heroXpNeeded": 115,
+      "economy": "20 workers, 12 army; 0 training orders",
+      "reason": "Use the trained army to pressure known enemy infrastructure",
+      "metrics": {
+        "issued": 4048,
+        "accepted": 3994,
+        "rejected": 53,
+        "builds": 10,
+        "recruits": 61,
+        "casts": 23,
+        "pickups": 3,
+        "revivals": 0
+      },
+      "trace": [
+        {
+          "tick": 47800,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47830,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47830,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47850,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47880,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47880,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 47880,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack",
+          "accepted": true
+        },
+        {
+          "tick": 48000,
+          "reason": "Engage a visible target inside the operation area",
+          "action": "attack"
+        }
+      ]
+    },
+    {
+      "owner": "player.2",
+      "mission": "regroup: home",
+      "workers": 24,
+      "army": 32,
+      "heroLevel": 5,
+      "heroXpNeeded": 60,
+      "economy": "22 workers, 32 army; 0 training orders",
+      "reason": "Use the trained army to pressure known enemy infrastructure",
+      "metrics": {
+        "issued": 3434,
+        "accepted": 3367,
+        "rejected": 67,
+        "builds": 13,
+        "recruits": 58,
+        "casts": 28,
+        "pickups": 1,
+        "revivals": 1
+      },
+      "trace": [
+        {
+          "tick": 47765,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47805,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47805,
+          "reason": "Withdraw from a visibly unfavorable fight",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47845,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47885,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47885,
+          "reason": "Keep a small guard near the workers",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47925,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 47965,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        }
+      ]
+    }
+  ],
+  "banks": [
+    {
+      "owner": "player.1",
+      "inventory": {
+        "item.wood": 1850,
+        "item.amber": 155
+      }
+    },
+    {
+      "owner": "player.2",
+      "inventory": {
+        "item.wood": 2430,
+        "item.amber": 340
+      }
+    },
+    {
+      "owner": "player.2",
+      "inventory": {}
+    }
+  ],
+  "units": [
+    {
+      "id": 2314,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 226,
+      "x": 205,
+      "y": 214,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 214,
+          "y": 220
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2315,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 214,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 212,
+          "y": 217
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2316,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 210,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2837,
+      "cargo": null
+    },
+    {
+      "id": 2321,
+      "owner": "player.1",
+      "definition": "unit.ants.marshal",
+      "hp": 1025,
+      "x": 135,
+      "y": 131,
+      "order": {
+        "type": "attack",
+        "target": 2483,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2323,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 41,
+      "y": 44,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2835,
+      "cargo": null
+    },
+    {
+      "id": 2324,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 41,
+      "y": 46,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2838,
+      "cargo": null
+    },
+    {
+      "id": 2325,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 41,
+      "y": 46,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2839,
+      "cargo": null
+    },
+    {
+      "id": 2326,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 428,
+      "x": 148,
+      "y": 152,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 43,
+          "y": 50
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2330,
+      "owner": "player.2",
+      "definition": "unit.ants.marshal",
+      "hp": 649,
+      "x": 151,
+      "y": 156,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 45,
+          "y": 50
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2343,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 221,
+      "y": 214,
+      "order": {
+        "type": "gather",
+        "target": 462
+      },
+      "job": 2836,
+      "cargo": null
+    },
+    {
+      "id": 2345,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 214,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2842,
+      "cargo": null
+    },
+    {
+      "id": 2347,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 47,
+      "y": 52,
+      "order": {
+        "type": "gather",
+        "target": 1186
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2348,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 224,
+      "y": 230,
+      "order": {
+        "type": "gather",
+        "target": 460
+      },
+      "job": 2829,
+      "cargo": null
+    },
+    {
+      "id": 2349,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 212,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2813,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2350,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 41,
+      "y": 48,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2812,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2351,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 206,
+      "y": 204,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2832,
+      "cargo": null
+    },
+    {
+      "id": 2352,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 38,
+      "y": 64,
+      "order": {
+        "type": "gather",
+        "target": 1243
+      },
+      "job": 2834,
+      "cargo": null
+    },
+    {
+      "id": 2355,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 46,
+      "y": 35,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2825,
+      "cargo": null
+    },
+    {
+      "id": 2359,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 209,
+      "y": 215,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2810,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2360,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 46,
+      "y": 51,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2809,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2361,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 232,
+      "x": 148,
+      "y": 141,
+      "order": {
+        "type": "attack",
+        "target": 2487,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2362,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 46,
+      "y": 35,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2828,
+      "cargo": null
+    },
+    {
+      "id": 2364,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 43,
+      "y": 68,
+      "order": null,
+      "job": 2831,
+      "cargo": null
+    },
+    {
+      "id": 2365,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 43,
+      "y": 57,
+      "order": {
+        "type": "gather",
+        "target": 1072
+      },
+      "job": 2843,
+      "cargo": null
+    },
+    {
+      "id": 2378,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 41,
+      "y": 41,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2833,
+      "cargo": null
+    },
+    {
+      "id": 2379,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 230,
+      "y": 205,
+      "order": null,
+      "job": 2827,
+      "cargo": null
+    },
+    {
+      "id": 2385,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 30,
+      "x": 49,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2389,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 87,
+      "x": 46,
+      "y": 54,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2394,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 120,
+      "x": 45,
+      "y": 58,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2407,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 47,
+      "x": 45,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2417,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 75,
+      "x": 44,
+      "y": 52,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2420,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 119,
+      "x": 46,
+      "y": 57,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2423,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 31,
+      "x": 48,
+      "y": 52,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2426,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 59,
+      "x": 44,
+      "y": 57,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2427,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 84,
+      "x": 45,
+      "y": 57,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2430,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 17,
+      "x": 45,
+      "y": 56,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2432,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 45,
+      "y": 36,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2822,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2433,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 375,
+      "x": 153,
+      "y": 151,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 47,
+          "y": 50
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2435,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 112,
+      "x": 50,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2438,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 37,
+      "x": 41,
+      "y": 51,
+      "order": {
+        "type": "gather",
+        "target": 2
+      },
+      "job": 2844,
+      "cargo": null
+    },
+    {
+      "id": 2439,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 95,
+      "x": 209,
+      "y": 215,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2440,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 102,
+      "x": 46,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2444,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 333,
+      "x": 43,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2446,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 224,
+      "y": 212,
+      "order": {
+        "type": "gather",
+        "target": 635
+      },
+      "job": null,
+      "cargo": {
+        "item": "item.wood",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2448,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 210,
+      "y": 199,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2824,
+      "cargo": null
+    },
+    {
+      "id": 2449,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 120,
+      "x": 45,
+      "y": 55,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2450,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 115,
+      "x": 46,
+      "y": 55,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2451,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 375,
+      "x": 44,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2452,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 206,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2816,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2455,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 145,
+      "y": 147,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 164,
+          "y": 162
+        },
+        "attackMove": true
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2456,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 135,
+      "y": 129,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 49,
+          "y": 50
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2458,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 211,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2814,
+      "cargo": {
+        "item": "item.amber",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2466,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 123,
+      "x": 47,
+      "y": 53,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2469,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 375,
+      "x": 124,
+      "y": 121,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 43,
+          "y": 52
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2470,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 80,
+      "x": 43,
+      "y": 52,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2472,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 45,
+      "x": 46,
+      "y": 52,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2474,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 49,
+      "y": 71,
+      "order": {
+        "type": "gather",
+        "target": 1237
+      },
+      "job": 2815,
+      "cargo": {
+        "item": "item.wood",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2475,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 315,
+      "x": 144,
+      "y": 148,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 45,
+          "y": 52
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2476,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 44,
+      "y": 74,
+      "order": {
+        "type": "gather",
+        "target": 1186
+      },
+      "job": 2826,
+      "cargo": null
+    },
+    {
+      "id": 2477,
+      "owner": "player.2",
+      "definition": "unit.ants.archer",
+      "hp": 85,
+      "x": 51,
+      "y": 49,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 46,
+          "y": 51
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2479,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 152,
+      "y": 146,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 146,
+          "y": 118
+        },
+        "attackMove": true
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2480,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 151,
+      "y": 149,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 47,
+          "y": 52
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2481,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 138,
+      "y": 134,
+      "order": {
+        "type": "attack",
+        "target": 2483,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2482,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 210,
+      "y": 199,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2823,
+      "cargo": null
+    },
+    {
+      "id": 2483,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 193,
+      "x": 131,
+      "y": 128,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 49,
+          "y": 52
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2487,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 373,
+      "x": 139,
+      "y": 136,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 43,
+          "y": 54
+        },
+        "attackMove": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2489,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 296,
+      "x": 135,
+      "y": 133,
+      "order": {
+        "type": "attack",
+        "target": 2483,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2490,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 107,
+      "y": 109,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 150,
+          "y": 157
+        },
+        "attackMove": true
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2491,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 276,
+      "x": 149,
+      "y": 142,
+      "order": {
+        "type": "attack",
+        "target": 2487,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2492,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 133,
+      "y": 129,
+      "order": {
+        "type": "attack",
+        "target": 2483,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2493,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 222,
+      "y": 214,
+      "order": {
+        "type": "gather",
+        "target": 456
+      },
+      "job": 2805,
+      "cargo": {
+        "item": "item.wood",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2494,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 45,
+      "y": 72,
+      "order": {
+        "type": "gather",
+        "target": 1188
+      },
+      "job": 2817,
+      "cargo": {
+        "item": "item.wood",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2495,
+      "owner": "player.1",
+      "definition": "unit.ants.archer",
+      "hp": 76,
+      "x": 210,
+      "y": 215,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2496,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 43,
+      "y": 60,
+      "order": {
+        "type": "gather",
+        "target": 1243
+      },
+      "job": 2840,
+      "cargo": null
+    },
+    {
+      "id": 2497,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 443,
+      "x": 149,
+      "y": 144,
+      "order": {
+        "type": "attack",
+        "target": 2487,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2498,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 43,
+      "y": 58,
+      "order": {
+        "type": "gather",
+        "target": 1331
+      },
+      "job": 2818,
+      "cargo": {
+        "item": "item.wood",
+        "amount": 10
+      }
+    },
+    {
+      "id": 2500,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 141,
+      "y": 137,
+      "order": {
+        "type": "attack",
+        "target": 2483,
+        "force": false
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2501,
+      "owner": "player.1",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 165,
+      "y": 155,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 152,
+          "y": 141
+        },
+        "attackMove": true
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2502,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 47,
+      "y": 51,
+      "order": {
+        "type": "construct",
+        "target": 2509
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2503,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 216,
+      "y": 219,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2504,
+      "owner": "player.2",
+      "definition": "unit.ants.warrior",
+      "hp": 450,
+      "x": 68,
+      "y": 78,
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 152,
+          "y": 157
+        },
+        "attackMove": true
+      },
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2505,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 223,
+      "y": 217,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2506,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 48,
+      "y": 51,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2507,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 205,
+      "y": 212,
+      "order": {
+        "type": "gather",
+        "target": 1
+      },
+      "job": 2841,
+      "cargo": null
+    },
+    {
+      "id": 2508,
+      "owner": "player.2",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 45,
+      "y": 53,
+      "order": null,
+      "job": null,
+      "cargo": null
+    },
+    {
+      "id": 2510,
+      "owner": "player.1",
+      "definition": "unit.ants.settler",
+      "hp": 240,
+      "x": 234,
+      "y": 226,
+      "order": {
+        "type": "gather",
+        "target": 456
+      },
+      "job": 2830,
+      "cargo": null
+    }
+  ]
+}

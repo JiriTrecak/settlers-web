@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-10T02:41:06-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 4.4,
+  "blend_mtime_ns": 1789033262511404196,
+  "config": {
+    "name": "Ant Bombardier",
+    "blend": "ant-bombardier.blend",
+    "recipe": "model.py",
+    "seed": 29,
+    "camera": {
+      "azimuth": -24,
+      "elevation": 16,
+      "scale": 3.5,
+      "target": [
+        0,
+        -0.15,
+        1.02
+      ]
+    },
+    "render": {
+      "width": 1100,
+      "height": 1200,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 110,
+      "fill_energy": 40,
+      "rim_energy": 140
+    },
+    "kind": "character",
+    "characterVariants": {
+      "bombardier": {
+        "states": {
+          "idle": "idle",
+          "walk": "walk",
+          "run": "run",
+          "carry": "carry",
+          "hit": "hit",
+          "death": "death",
+          "attack": "attack_mortar"
+        }
+      }
+    },
+    "attackEvents": {
+      "bombardier": {
+        "event": "release",
+        "normalizedTime": 0.65
+      }
+    }
+  }
+}

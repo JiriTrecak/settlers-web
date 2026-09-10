@@ -1435,6 +1435,8 @@ export class WorldEditor {
     );
     this.mini?.setHeight(this.height);
     this.mini?.setStamps(stamps);
+    this.mini?.setLandscape(this.map.landscape);
+    this.mini?.setFog(authoredScene(this.entityViews,this.map.size));
     this.mini?.setPlayerStarts(this.map.playerStarts ?? []);
     this.mini?.paint();
   }

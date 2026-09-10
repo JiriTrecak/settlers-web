@@ -1,0 +1,18 @@
+{
+  "triangles": 5008,
+  "meshes": 2,
+  "materials": 7,
+  "skins": 1,
+  "clips": [
+    "attack_mortar",
+    "carry",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ],
+  "sha256": "0b693838925be8c9740179e43a019861cdeac61464baa6b4087373259c2cc46e",
+  "sameAsStudio": true,
+  "teamVertexColorsAbsent": true
+}

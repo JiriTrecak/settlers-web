@@ -1,0 +1,22 @@
+00:00.312  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-hunter/ant-hunter.blend"
+00:02.678  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-hunter/.render-1789030899681238000.png'
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:01:42 | INFO: Starting glTF 2.0 export
+02:01:42 | INFO: Extracting primitive: Pelvis shell.001
+02:01:42 | INFO: Primitives created: 5
+02:01:42 | INFO: Extracting primitive: Hunter fitted cuirass.001
+02:01:42 | INFO: Primitives created: 7
+02:01:42 | INFO: Finished glTF 2.0 export in 0.30689501762390137 s
+
+02:01:42 | INFO: Starting glTF 2.0 export
+02:01:42 | INFO: Extracting primitive: Pelvis shell.001
+02:01:42 | INFO: Primitives created: 5
+02:01:42 | INFO: Extracting primitive: Hunter fitted cuirass.001
+02:01:42 | INFO: Primitives created: 7
+02:01:43 | INFO: Finished glTF 2.0 export in 0.32640814781188965 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-hunter/.render-1789030899681238000.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

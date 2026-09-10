@@ -1,0 +1,18 @@
+00:00.756  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord/amberjaw-staglord.blend"
+00:06.949  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord/.render-1789027696333697000.png'
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+01:08:23 | INFO: Starting glTF 2.0 export
+01:08:23 | INFO: Extracting primitive: Heavy abdomen.001
+01:08:23 | INFO: Primitives created: 6
+01:08:24 | INFO: Finished glTF 2.0 export in 0.6289427280426025 s
+
+01:08:24 | INFO: Starting glTF 2.0 export
+01:08:24 | INFO: Extracting primitive: Heavy abdomen.001
+01:08:24 | INFO: Primitives created: 6
+01:08:24 | INFO: Finished glTF 2.0 export in 0.5738999843597412 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord/.render-1789027696333697000.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

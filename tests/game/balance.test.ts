@@ -27,7 +27,7 @@ describe('first combat balance', () => {
   });
   it('publishes one complete stat table through level ten, including item and percentage bonuses', () => {
     const d=content.get('unit.ants.marshal');
-    expect(entityStats(d,{},content)).toEqual({level:1,maxHp:700,damage:31,armor:2,cooldownTicks:73,maxMana:225,healthRegenPerSecond:1.45,manaRegenPerSecond:.76});
+    expect(entityStats(d,{},content)).toEqual({moveSpeedPermille:1000,cooldownReductionPermille:0,lifestealPermille:0,level:1,maxHp:700,damage:31,armor:2,cooldownTicks:73,maxMana:225,healthRegenPerSecond:1.45,manaRegenPerSecond:.76});
     const e={progression:{experience:3200},equipment:Array(6).fill('item.royal-crest')};
     expect(entityStats(d,e,content)).toMatchObject({level:10,maxHp:1975,damage:118,armor:24,cooldownTicks:60,maxMana:420,healthRegenPerSecond:2.8,manaRegenPerSecond:1.41});
     expect(entityStats(d,{...e,effects:[{ability:spell('rally'),rank:3,source:1,expires:10}]},content).damage).toBeCloseTo(153.4);

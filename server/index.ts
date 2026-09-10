@@ -74,6 +74,13 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       send(res, 200, host.list());
       return;
     }
+    if (req.method === "POST" && path === "/api/rooms/clear") {
+      const deleted = host.discardAll();
+      // Existing sockets retain room references; close them after the ended event.
+      for (const ws of wss.clients) ws.close(1000, "Server sessions cleared");
+      send(res, 200, { deleted });
+      return;
+    }
     const one = /^\/api\/rooms\/([^/]+)$/.exec(path);
     if (req.method === "GET" && one) {
       const room = host.get(decodeURIComponent(one[1]!));

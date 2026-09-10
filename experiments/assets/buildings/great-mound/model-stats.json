@@ -1,0 +1,17 @@
+{
+  "objects": 648,
+  "meshes": 574,
+  "faces": 9924,
+  "materials": 32,
+  "collections": [
+    "01 \u00b7 Masonry",
+    "02 \u00b7 Timber frame",
+    "03 \u00b7 Roof planks",
+    "04 \u00b7 Ironwork",
+    "05 \u00b7 Living roots",
+    "06 \u00b7 Banners",
+    "07 \u00b7 Torches",
+    "08 \u00b7 Studio"
+  ],
+  "blender": "5.2.1 LTS"
+}

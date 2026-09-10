@@ -3,7 +3,7 @@ import {Session} from '../../src/session/session/session';
 afterEach(()=>vi.unstubAllGlobals());
 it('advances hidden match commits without snapshots, input or presentation and resumes on visibility',()=>{
  const doc={hidden:true};vi.stubGlobal('document',doc);
- const clock={tickMs:25,tickIndex:0},world={clock,enqueue:vi.fn(),tick:vi.fn(()=>clock.tickIndex++),view:vi.fn(()=>({}))};
+ const clock={tickMs:25,tickIndex:0},world={clock,commandReceipts:[],enqueue:vi.fn(),tick:vi.fn(()=>clock.tickIndex++),view:vi.fn(()=>({}))};
  const lock={confirm:vi.fn(),take:vi.fn(()=>({slots:[]}))};
  const renderer={draw:vi.fn(),camera:{distance:40}},input={tick:vi.fn()},mini={paint:vi.fn()},onHud=vi.fn();
  const session=Object.assign(Object.create(Session.prototype),{world,renderer,input,mini,config:{hooks:{onHud}},me:0,locksteps:new Map([[0,lock]]),acc:0,fpsFrames:0,fpsMs:0,stamps:[]});

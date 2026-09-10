@@ -188,6 +188,21 @@ export class ContentRegistry {
       if (d.kind !== kind) throw new Error(`${id}: expected ${kind}`);
       return d;
     };
+    for (const [id, r] of Object.entries(this.rules.research)) {
+      if (!this.asset(r.icon).image) throw new Error(`${id}: research icon must be an image`);
+      if (new Set(r.items.map(p => p.item)).size !== r.items.length) throw new Error(`${id}: duplicate research input`);
+      for (const p of r.items) expect(p.item, "item");
+      for (const prerequisite of r.requires ?? []) expect(prerequisite, "building");
+      for (const effect of r.effects) {
+        if (new Set(effect.units).size !== effect.units.length) throw new Error(`${id}: duplicate research unit`);
+        for (const unit of effect.units) {
+          const target = expect(unit, "unit");
+          if ((effect.splashRadius !== undefined || effect.splashSlowPermille !== undefined) && !target.behaviors.combat?.shell) throw new Error(`${id}: splash research requires shell combat`);
+          if (effect.chargeCooldownPermille && !target.behaviors.combat?.charge) throw new Error(`${id}: charge research requires charge combat`);
+          if (effect.treeHitDamage && !target.behaviors.work) throw new Error(`${id}: tree research requires worker`);
+        }
+      }
+    }
     for (const asset of this.assets) {
       if (asset.character && (!asset.file || asset.carryAsset))
         throw new Error(
@@ -210,6 +225,8 @@ export class ContentRegistry {
     }
     for (const [id, pool] of Object.entries(this.rules.lootPools)) {
       for (const entry of pool.entries) {
+        if (entry.item && (this.get(entry.item).itemTier ?? 1) > (pool.maxTier ?? 2))
+          throw new Error(`${id}: item exceeds declared loot tier`);
         if (entry.item !== null && !expect(entry.item, "item").itemEffect)
           throw new Error(`${id}: loot must be a hero item, not a currency`);
       }
@@ -220,6 +237,40 @@ export class ContentRegistry {
       const fail = (text: string): never => {
         throw new Error(`${d.id}: ${text}`);
       };
+      if (d.requires) {
+        if (new Set(d.requires).size !== d.requires.length) fail("duplicate prerequisite");
+        for (const id of d.requires) {
+          if (id === d.id || this.get(id).kind !== "building")
+            fail("prerequisites must reference another building");
+        }
+      }
+      if (d.behaviors.research) {
+        if (d.kind !== "building") fail("research requires building");
+        const outputs = d.behaviors.research.outputs;
+        if (new Set(outputs).size !== outputs.length) fail("duplicate research output");
+        for (const id of outputs) if (!this.rules.research[id]) fail(`unknown research ${id}`);
+      }
+      if (d.upgrade) {
+        const target = this.get(d.upgrade.target);
+        if (d.kind !== "building" || target.kind !== "building" || target.id === d.id ||
+            canonical(d.footprint) !== canonical(target.footprint) ||
+            canonical(d.entrance) !== canonical(target.entrance) ||
+            canonical(d.behaviors) !== canonical(target.behaviors) ||
+            target.body!.maxHp < d.body!.maxHp)
+          fail("upgrade requires a different building with compatible footprint, behaviors and health capacity");
+        if (new Set(d.upgrade.items.map(p => p.item)).size !== d.upgrade.items.length)
+          fail("duplicate upgrade input");
+        for (const input of d.upgrade.items) expect(input.item, "item");
+      }
+      if (d.itemTier && (!d.itemEffect || d.kind !== "item")) fail("item tier requires a hero item");
+      if (d.itemEffect) {
+        const effect=d.itemEffect;
+        for(const hit of [effect.active, effect.onHit])
+          if(hit && "damageType" in hit && hit.damageType && !this.rules.damageTypes[hit.damageType]) fail("unknown item damage type");
+        if(effect.active?.damage && !effect.active.damageType) fail("item damage requires damageType");
+        if(effect.active?.target === "self" && effect.active.radius !== 0) fail("self item radius must be zero");
+        if(effect.active && effect.active.target !== "self" && !effect.active.radius) fail("area item requires radius");
+      }
       if (!d.id.startsWith(d.kind + ".")) fail("ID prefix must match kind");
       if (!this.asset(d.asset).file) fail("asset must reference a model");
       if (!this.asset(d.icon).image) fail("icon must reference an image");
@@ -334,6 +385,8 @@ export class ContentRegistry {
       }
       if (d.constructionClearance !== undefined && !d.yield)
         fail("construction clearance requires resource yield");
+      if (d.placementNear && (d.kind !== "building" || d.creation?.method !== "construct" || !this.get(d.placementNear.source).yield))
+        fail("placement-near requires a constructable building and a finite resource source");
       if (d.behaviors.storage?.dropoff && d.kind !== "building")
         fail("drop-off requires building");
       const c = d.creation;

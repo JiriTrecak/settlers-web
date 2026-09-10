@@ -1,6 +1,6 @@
 # Combat and victory
 
-An army competes for space, protects gatherers, clears camps and threatens the enemy's Main Hall. Units and buildings have declared health and armor. The [unit encyclopedia](/units/) lists current base values; equipment, levels and abilities can modify a hero during play.
+An army competes for space, protects gatherers, clears camps and threatens the enemy's Mound. Units and buildings have declared health and armor. The [unit encyclopedia](/units/) lists current base values; equipment, levels and abilities can modify a hero during play.
 
 ## Orders and targets
 
@@ -17,7 +17,7 @@ Drag selection prioritizes army units. If the area contains no army, it selects 
 - **[The Ant Marshal](/units/unit-ants-marshal)** is a stronger hero whose experience, abilities and equipment make survival valuable.
 - **[Workers](/units/unit-ants-settler)** support the economy and construction. Converting too many into soldiers reduces income.
 
-A [Watchtower](/buildings/building-ants-tower) currently supplies vision, **not an attack**. The Main Hall has no automatic defensive weapon either. Early aggression remains a viable strategy.
+A [Watchtower](/buildings/building-ants-tower) currently supplies vision, **not an attack**. The Mound has no automatic defensive weapon either. Early aggression remains a viable strategy.
 
 ## Armor and damage
 
@@ -47,4 +47,4 @@ Scouting a camp is useful even when it is too strong to fight. Ranged defenders 
 
 ## Objective
 
-Protect your starting Main Hall and destroy the opponent's. See [first-match rules](/guide/getting-started#winning-and-losing) for the current win condition.
+Protect your starting Mound and destroy the opponent's. See [first-match rules](/guide/getting-started#winning-and-losing) for the current win condition.

@@ -1,4 +1,5 @@
-import { ownerSlot } from "../../content/schema";
+import { entityMarker } from "./presentation";
+import { sampleCurve, type Landscape } from "../../shared/landscape/curve";
 import { content } from "../../content/builtin";
 import type { SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS } from "../../shared";
@@ -13,8 +14,7 @@ import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
 
 const PX = 264;
-const LAND = "#24282c";
-const WATER = "#3d6e72";
+const LAND = "#62543a";
 const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
@@ -68,6 +68,14 @@ export class Minimap {
           state.fog?.cells[i] === 2 ? 0 : state.fog?.cells[i] === 1 ? 166 : 255;
       ctx.putImageData(data, 0, 0);
     }
+  }
+  private readonly terrainCanvas = document.createElement("canvas");
+  private terrainDirty = true;
+  private landscape: Landscape | undefined;
+  setLandscape(landscape: Landscape | undefined): void {
+    if(this.landscape === landscape) return;
+    this.landscape = landscape;
+    this.terrainDirty = this.dirty = true;
   }
   private height: HeightField | null = null;
   private dirty = true;
@@ -150,7 +158,7 @@ export class Minimap {
 
   setHeight(field: HeightField | null): void {
     this.height = field;
-    this.dirty = true;
+    this.terrainDirty = this.dirty = true;
   }
 
   paint(): void {
@@ -172,50 +180,32 @@ export class Minimap {
     const ctx = this.ctx;
     const w = this.canvas.width;
     const h = this.canvas.height;
-    ctx.fillStyle = LAND;
-    ctx.fillRect(0, 0, w, h);
-    const field = this.height;
-    if (field) {
-      ctx.fillStyle = WATER;
-      const step = 2;
-      for (let z = 0; z < size; z += step) {
-        for (let x = 0; x < size; x += step) {
-          if (field.sample(x + 0.5, z + 0.5) >= field.waterLevel) continue;
-          const [px, py] = this.project(
-            x + step * 0.5,
-            z + step * 0.5,
-            size,
-            w,
-            h,
-          );
-          ctx.fillRect(px - 1, py - 1, 3, 3);
-        }
-      }
-    }
+    if(this.terrainDirty) this.paintTerrain(size);
+    ctx.drawImage(this.terrainCanvas,0,0,w,h);
+    ctx.globalAlpha = 0.18;
     for (const d of this.dots) {
       const [px, py] = this.project(d.x, d.z, size, w, h);
       ctx.fillStyle = d.fill;
-      ctx.fillRect(px - 1, py - 1, 3, 3);
+      ctx.fillRect(px - 0.5, py - 0.5, 1, 1);
     }
+    ctx.globalAlpha = 1;
     if (this.fogState?.fog) {
       ctx.save();
       ctx.transform(w / size, 0, 0, h / size, 0, 0);
       ctx.drawImage(this.fogCanvas, 0, 0, size, size);
       ctx.restore();
+    }
+    if(this.fogState) {
+      // Observation is already visibility-filtered, including remembered structures.
       for (const entity of this.fogState.entities) {
-        if (entity.resource || entity.unit?.contained) continue;
-        const [px, py] = this.project(entity.x, entity.y, size, w, h),
-          owner = ownerSlot(entity.owner),
-          radius = content.get(entity.definition).kind === "building" ? 2 : 1;
-        ctx.fillStyle =
-          "#" +
-          (owner < 0 ? 0xd7b36b : PLAYER_COLORS[owner % PLAYER_COLORS.length]!)
-            .toString(16)
-            .padStart(6, "0");
-        ctx.globalAlpha = entity.remembered ? 0.45 : 1;
-        ctx.fillRect(px - radius, py - radius, radius * 2, radius * 2);
+        const marker=entityMarker(entity,content.get(entity.definition),size,w);
+        if(!marker) continue;
+        const [px,py]=this.project(entity.x,entity.y,size,w,h);
+        ctx.fillStyle=marker.fill;
+        ctx.globalAlpha=marker.alpha;
+        ctx.fillRect(px-marker.width/2,py-marker.height/2,marker.width,marker.height);
       }
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha=1;
     }
     for (const start of this.starts) {
       const [px, py] = this.project(start.x, start.z, size, w, h);
@@ -250,6 +240,41 @@ export class Minimap {
     ctx.stroke();
   }
 
+  /** Static terrain is rasterized only when map geometry/paint changes. */
+  private paintTerrain(size:number):void {
+    this.terrainDirty=false;
+    const canvas=this.terrainCanvas;canvas.width=canvas.height=PX;
+    const ctx=canvas.getContext('2d')!, scale=PX/size;
+    ctx.fillStyle=LAND;ctx.fillRect(0,0,PX,PX);
+    const coverColors={meadow:'#64723d',straw:'#80764b',ochre:'#7b6238',sage:'#65715a',forest:'#465735'};
+    for(const patch of this.landscape?.cover??[]) {
+      ctx.fillStyle=coverColors[patch.palette??'meadow'];
+      ctx.globalAlpha=Math.min(.85,patch.density*.35);
+      ctx.beginPath();ctx.arc(patch.x*scale,patch.z*scale,patch.radius*scale,0,Math.PI*2);ctx.fill();
+    }
+    const colors={grass:'#64703e',sand:'#978252',mud:'#61513b',rock:'#727671',snow:'#b5b9b1'};
+    for(const stroke of this.landscape?.strokes??[]) {
+      ctx.fillStyle=colors[stroke.layer];ctx.globalAlpha=stroke.opacity;
+      // Fill one unioned path so overlapping samples don't amplify opacity.
+      ctx.beginPath();
+      for(const p of sampleCurve(stroke.points,stroke.radius,Math.max(.5,size/PX))) {
+        ctx.moveTo((p.x+p.radius)*scale,p.z*scale);ctx.arc(p.x*scale,p.z*scale,p.radius*scale,0,Math.PI*2);
+      }
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    if(!this.height)return;
+    const field=this.height,data=ctx.getImageData(0,0,PX,PX);
+    for(let py=0;py<PX;py++)for(let px=0;px<PX;px++) {
+      const x=(px+.5)/scale,z=(py+.5)/scale,y=field.sample(x,z),i=(py*PX+px)*4;
+      if(y<field.waterLevel){data.data[i]=64;data.data[i+1]=94;data.data[i+2]=102;continue;}
+      const dx=field.sample(x+1,z)-field.sample(x-1,z),dz=field.sample(x,z+1)-field.sample(x,z-1);
+      const shade=clamp(1+(y-field.waterLevel)*.009-(dx+dz)*.07,.68,1.16);
+      for(let c=0;c<3;c++)data.data[i+c]=data.data[i+c]!*shade;
+    }
+    ctx.putImageData(data,0,0);
+  }
+
   destroy(): void {
     this.canvas.removeEventListener("pointerdown", this.onDown);
     this.canvas.removeEventListener("pointermove", this.onMove);
@@ -281,26 +306,8 @@ export class Minimap {
   }
 }
 
-function tint(id: string): string {
-  if (id === "pine") return "#6bc729";
-  if (id === "pine-dark") return "#3a6a2a";
-  if (id === "pine-umber") return "#6a5428";
-  if (id === "boulder") return "#c7b86b";
-  if (id === "rock") return "#b8a878";
-  if (id === "rock-cleft") return "#8e8674";
-  if (id === "rock-slab") return "#c4a66a";
-  if (id === "lily") return "#e07a96";
-  if (id === "lily-white") return "#f0ece4";
-  if (id === "lily-gold") return "#e0b84a";
-  if (id === "bridge-8" || id === "bridge-16" || id === "bridge-32")
-    return "#8a6a40";
-  let h = 2166136261;
-  for (let i = 0; i < id.length; i++)
-    h = Math.imul(h ^ id.charCodeAt(i), 16777619);
-  const r = 90 + ((h >>> 16) & 127);
-  const g = 140 + ((h >>> 8) & 87);
-  const b = 50 + (h & 87);
-  return `rgb(${r},${g},${b})`;
+function tint(_id: string): string {
+  return "#26351f";
 }
 
 function clamp(n: number, lo: number, hi: number): number {

@@ -1,49 +1,24 @@
-import { describe, expect, it } from "vitest";
-import { Camera } from "../../src/render/camera/camera";
-import { ndcToWorld, worldToNdc } from "../../src/render/minimap/minimap";
-
-describe("minimap", () => {
-  it("roundtrips corners", () => {
-    const size = 256;
-    expect(worldToNdc(0,0,size)).toEqual([-1,1]);
-    expect(worldToNdc(size,size,size)).toEqual([1,-1]);
-    for (const [x, z] of [
-      [0, 0],
-      [size, 0],
-      [0, size],
-      [size, size],
-      [size / 2, size / 2],
-    ] as const) {
-      const [nx, ny] = worldToNdc(x, z, size);
-      const [bx, bz] = ndcToWorld(nx, ny, size);
-      expect(bx).toBeCloseTo(x);
-      expect(bz).toBeCloseTo(z);
-    }
+import {describe,it,expect} from 'vitest';
+import {entityMarker,footprintPixels} from '../../src/render/minimap/presentation';
+import type {EntityView} from '../../src/sim/game/observation';
+const entity:EntityView={id:1,definition:'building.ants.fort',owner:'player.1',x:20,y:20,rotation:0,hp:100};
+describe('minimap footprint and resource presentation',()=>{
+  it('scales footprint area with map size rather than using a fixed building dot',()=>{
+    expect(footprintPixels({width:9,depth:9},0,264,264)).toEqual([9,9]);
+    expect(footprintPixels({width:9,depth:9},0,528,264)).toEqual([4.5,4.5]);
+    expect(footprintPixels({width:1,depth:1},0,512,264)).toEqual([1,1]);
   });
-
-  it("puts north at the top of the square map", () => {
-    const [, ny] = worldToNdc(0, 0, 256);
-    expect(ny).toBeGreaterThan(0);
-    const [, fy] = worldToNdc(256, 256, 256);
-    expect(fy).toBeLessThan(0);
+  it('swaps rectangular footprints at quarter turns',()=>{
+    expect(footprintPixels({width:3,depth:7},90,264,264)).toEqual([7,3]);
+    expect(footprintPixels({width:3,depth:7},-90,264,264)).toEqual([7,3]);
   });
-
-  it("view footprint is a trapezoid — far edge wider than near", () => {
-    const cam = new Camera();
-    cam.lookAt(128, 128);
-    const [bl, br, tr, tl] = cam.viewGround(1280, 720).map(([x, z]) => worldToNdc(x, z, 256));
-    const near = Math.hypot(br![0] - bl![0], br![1] - bl![1]);
-    const far = Math.hypot(tr![0] - tl![0], tr![1] - tl![1]);
-    expect(far).toBeGreaterThan(near);
+  it('shows a neutral amber mine yellow at its actual footprint, including remembered mines',()=>{
+    const marker=entityMarker({...entity,owner:'none',remembered:true,resource:{amount:10,growingUntil:null}},{id:'building.neutral.amber-mine',kind:'building',footprint:{width:5,depth:5}},512,264)!;
+    expect(marker.fill).toBe('#ffd43b');expect(marker.width).toBeCloseTo(2.578125);expect(marker.height).toBe(marker.width);expect(marker.alpha).toBe(.5);
   });
-
-  it("gamecam trap is a perspective frustum — far still wider than near", () => {
-    const cam = new Camera();
-    cam.lookAt(128, 128);
-    cam.setGame(true);
-    const [bl, br, tr, tl] = cam.viewGround(1280, 720).map(([x, z]) => worldToNdc(x, z, 256));
-    const near = Math.hypot(br![0] - bl![0], br![1] - bl![1]);
-    const far = Math.hypot(tr![0] - tl![0], tr![1] - tl![1]);
-    expect(far).toBeGreaterThan(near);
+  it('does not promote trees, exhausted deposits, contained workers or loose items to player markers',()=>{
+    expect(entityMarker({...entity,resource:{amount:10,growingUntil:null}},{id:'resource.tree',kind:'resource'},256,264)).toBeNull();
+    expect(entityMarker({...entity,resource:{amount:0,growingUntil:null}},{id:'building.neutral.amber-mine',kind:'building'},256,264)).toBeNull();
+    expect(entityMarker(entity,{id:'item.wood',kind:'item'},256,264)).toBeNull();
   });
 });

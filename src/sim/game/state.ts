@@ -1,3 +1,5 @@
+import { shellSchema } from "./shellState";
+import { itemRuntimeSchema, itemStatusSchema } from "../../content/items";
 import { visualCueSchema } from "./visualCues";
 import { z } from "zod";
 import {
@@ -10,7 +12,8 @@ import {
 const positive = z.number().int().positive(),
   natural = z.number().int().nonnegative();
 const point = pointSchema;
-const orderSchema = z.discriminatedUnion("type", [
+export const MAX_QUEUED_ORDERS = 16;
+export const orderSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("construct"), target: positive }).strict(),
   z.object({ type: z.literal("gather"), target: positive }).strict(),
   z.object({ type: z.literal("pickup"), target: positive }).strict(),
@@ -46,6 +49,9 @@ export const entitySchema = z
     rotation: z.number().finite(),
     hp: natural.nullable(),
     inventory: stockSchema,
+    slows: z.array(z.object({permille: positive.max(800), expires: natural}).strict()).max(800).optional(),
+    upgrade: z.object({target: idSchema, progress: natural}).strict().optional(),
+    research: z.object({queue: z.array(z.object({id: idSchema, progress: natural}).strict()).max(12)}).strict().optional(),
     progression: z.object({ experience: natural }).strict().optional(),
     regeneration: z.object({ health: natural.max(39999), mana: natural.max(39999) }).strict().optional(),
     fallen: z.literal(true).optional(),
@@ -57,6 +63,9 @@ export const entitySchema = z
       })
       .strict()
       .optional(),
+    equipmentState: z.array(itemRuntimeSchema.nullable()).max(12).optional(),
+    itemHits: z.array(z.object({item: idSchema, source: positive, target: positive, damage: natural, damageType: idSchema}).strict()).max(512).optional(),
+    itemStatuses: z.array(itemStatusSchema).max(128).optional(),
     equipment: z.array(idSchema.nullable()).max(12).optional(),
     spellcasting: z
       .object({
@@ -101,6 +110,7 @@ export const entitySchema = z
     unit: z
       .object({
         order: orderSchema.nullable(),
+        orderQueue: z.array(orderSchema).max(MAX_QUEUED_ORDERS),
         route: z.array(natural.max(262143)),
         goal: natural.max(262143).nullable(),
         position: z
@@ -129,6 +139,8 @@ export const entitySchema = z
         release: point.nullable(),
         target: positive.nullable(),
         cooldown: natural,
+        shellWindup: z.object({target: positive, releaseTick: natural}).strict().optional(),
+        charge: z.object({readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
         shot: z
           .object({
             tick: natural,
@@ -172,7 +184,7 @@ export const entitySchema = z
       .object({ amount: natural, growingUntil: natural.nullable(), felling: fellingStateSchema.optional() })
       .strict()
       .optional(),
-    item: z.object({ quantity: positive }).strict().optional(),
+    item: z.object({ quantity: positive, runtime: itemRuntimeSchema.optional() }).strict().optional(),
   })
   .strict();
 export const jobSchema = z
@@ -219,6 +231,8 @@ export const stateSchema = z
     tick: natural,
     random: positive.max(0xffffffff),
     clearedCamps: z.array(z.string().min(1)),
+    nextShell: positive,
+    shells: z.array(shellSchema),
     nextVisual: positive,
     visuals: z.array(visualCueSchema),
     nextId: positive,
@@ -236,6 +250,7 @@ export const stateSchema = z
     jobs: z.array(jobSchema),
     facts: z.array(factSchema),
     objectives: z.record(ownerSchema, positive),
+    research: z.record(ownerSchema, z.array(idSchema)),
     outcome: z
       .object({
         winner: ownerSchema.nullable(),
@@ -246,6 +261,7 @@ export const stateSchema = z
   })
   .strict();
 export type Entity = z.infer<typeof entitySchema>;
+export type UnitOrder = z.infer<typeof orderSchema>;
 export type Job = z.infer<typeof jobSchema>;
 export type Fact = z.infer<typeof factSchema>;
 export type GameState = z.infer<typeof stateSchema>;
@@ -255,6 +271,8 @@ export const emptyState = (): GameState => ({
   tick: 0,
   random: 1,
   clearedCamps: [],
+  nextShell: 1,
+  shells: [],
   nextVisual: 1,
   visuals: [],
   nextId: 1,
@@ -266,6 +284,7 @@ export const emptyState = (): GameState => ({
   jobs: [],
   facts: [],
   objectives: {},
+  research: {},
   outcome: null,
 });
 export const quantity = (stock: Record<string, number>, id: string) =>

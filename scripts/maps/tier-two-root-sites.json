@@ -1,0 +1,122 @@
+[
+  {
+    "file": "assets/maps/skirmish/worldroot-hollow.utcmap",
+    "camp": "worldroot.camp.4",
+    "deposit": {
+      "x": 91,
+      "y": 57
+    },
+    "rootworks": {
+      "x": 100,
+      "y": 57
+    }
+  },
+  {
+    "file": "assets/maps/skirmish/worldroot-hollow.utcmap",
+    "camp": "worldroot.camp.7",
+    "deposit": {
+      "x": 165,
+      "y": 189
+    },
+    "rootworks": {
+      "x": 174,
+      "y": 189
+    }
+  },
+  {
+    "file": "assets/maps/skirmish/crownmere-basin.utcmap",
+    "camp": "camp.100.38",
+    "deposit": {
+      "x": 100,
+      "y": 33
+    },
+    "rootworks": {
+      "x": 109,
+      "y": 33
+    }
+  },
+  {
+    "file": "assets/maps/skirmish/crownmere-basin.utcmap",
+    "camp": "camp.156.218",
+    "deposit": {
+      "x": 156,
+      "y": 213
+    },
+    "rootworks": {
+      "x": 147,
+      "y": 213
+    }
+  },
+  {
+    "file": "assets/maps/skirmish/amberfall-wilds.utcmap",
+    "camp": "camp.17",
+    "deposit": {
+      "x": 132,
+      "y": 251
+    },
+    "rootworks": {
+      "x": 123,
+      "y": 251
+    }
+  },
+  {
+    "file": "assets/maps/skirmish/amberfall-wilds.utcmap",
+    "camp": "camp.18",
+    "deposit": {
+      "x": 380,
+      "y": 251
+    },
+    "rootworks": {
+      "x": 389,
+      "y": 251
+    }
+  },
+  {
+    "file": "assets/maps/showcase/mosswater-divide.utcmap",
+    "camp": "camp-camp-ogre-103-145-0",
+    "deposit": {
+      "x": 106,
+      "y": 141
+    },
+    "rootworks": {
+      "x": 106,
+      "y": 132
+    }
+  },
+  {
+    "file": "assets/maps/showcase/mosswater-divide.utcmap",
+    "camp": "camp-camp-ogre-103-145-1",
+    "deposit": {
+      "x": 149,
+      "y": 114
+    },
+    "rootworks": {
+      "x": 149,
+      "y": 123
+    }
+  },
+  {
+    "file": "assets/maps/tutorial/mosswater-divide.utcmap",
+    "camp": "camp-camp-ogre-103-145-0",
+    "deposit": {
+      "x": 106,
+      "y": 141
+    },
+    "rootworks": {
+      "x": 106,
+      "y": 132
+    }
+  },
+  {
+    "file": "assets/maps/tutorial/mosswater-divide.utcmap",
+    "camp": "camp-camp-ogre-103-145-1",
+    "deposit": {
+      "x": 149,
+      "y": 114
+    },
+    "rootworks": {
+      "x": 149,
+      "y": 123
+    }
+  }
+]

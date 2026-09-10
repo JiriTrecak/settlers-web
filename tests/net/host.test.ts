@@ -209,3 +209,21 @@ describe("MatchHost", () => {
     expect(room.view().state).toBe("ended");
   });
 });
+
+it("clears all sessions, notifies players, and never reuses deleted ids", () => {
+  const host = new MatchHost();
+  const waiting = host.create(draft());
+  const playing = host.create(draft());
+  const ended = host.create(draft());
+  const messages: ServerMsg[] = [];
+  host.get(waiting.room.id)!.bind(waiting.token, (m) => messages.push(m));
+  host.get(playing.room.id)!.bind(playing.token, (m) => messages.push(m));
+  host.get(playing.room.id)!.start(playing.token);
+  host.get(ended.room.id)!.shutdown();
+  expect(host.discardAll()).toBe(3);
+  expect(host.list()).toEqual([]);
+  for (const room of [waiting, playing, ended]) expect(host.get(room.room.id)).toBeUndefined();
+  expect(messages.filter((m) => m.type === "ended")).toHaveLength(2);
+  expect(host.discardAll()).toBe(0);
+  expect(host.create(draft()).room.id).toBe("4");
+});

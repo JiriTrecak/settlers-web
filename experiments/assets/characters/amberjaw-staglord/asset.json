@@ -1,0 +1,46 @@
+{
+  "name": "Amberjaw Staglord",
+  "blend": "amberjaw-staglord.blend",
+  "recipe": "model.py",
+  "seed": 47,
+  "kind": "character",
+  "characterHeight": 2.5,
+  "camera": {
+    "azimuth": 32,
+    "elevation": 25,
+    "scale": 6.7,
+    "target": [
+      0,
+      -0.1,
+      1.125
+    ]
+  },
+  "render": {
+    "width": 1200,
+    "height": 1100,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 240,
+    "fill_energy": 90,
+    "rim_energy": 210
+  },
+  "characterVariants": {
+    "amberjaw-staglord": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "attack": "attack",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "amberjaw-staglord": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  }
+}

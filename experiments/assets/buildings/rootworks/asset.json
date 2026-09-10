@@ -1,0 +1,26 @@
+{
+  "name": "Rootworks",
+  "blend": "rootworks.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 19,
+    "elevation": 29,
+    "scale": 8.0,
+    "target": [
+      0,
+      0,
+      2.15
+    ]
+  },
+  "render": {
+    "width": 1289,
+    "height": 1221,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 300,
+    "rim_energy": 1000
+  }
+}

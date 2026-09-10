@@ -24,7 +24,7 @@ import { heroActions, reactions } from "./tactics";
 
 const actors = (a: Action): number[] =>
   "actors" in a ? a.actors : "actor" in a ? [a.actor] : [];
-const spends = (a: Action) => a.type === "build" || a.type === "produce";
+const spends = (a: Action) => a.type === "build" || a.type === "produce" || a.type === "upgrade" || a.type === "research" || a.type === "revive";
 /** The only AI entry point. Dependencies deliberately exclude Game, Spatial and authoritative state. */
 export class PlayerAI {
   private state: AIState;
@@ -388,6 +388,8 @@ export class PlayerAI {
           distance(a, f.home) - distance(b, f.home),
       );
     const armyReady = f.army.length >= rules.army.minimum;
+    const contestedSources = new Set(this.registry.definitions.filter(d=>d.placementNear && d.behaviors.storage?.dropoff &&
+      !f.buildings.some(b=>b.definition===d.id)).map(d=>d.placementNear!.source));
     const camps = this.geography.map.camps
       .filter(
         (c) =>
@@ -425,20 +427,21 @@ export class PlayerAI {
                 Math.max(0, 1 - (f.tick - e.seen) / 800),
             0,
           );
+        const unlocksResource = this.geography.map.resources.some(r=>contestedSources.has(r.definition)&&distance(r.point,c.point)<16);
         const score =
           distance(origin, c.point) +
           strength * 0.6 +
           risk * 2 -
-          useful * 0.08 +
+          useful * 0.08 - (unlocksResource ? 65 : 0) +
           (mem.status === "empty" ? 60 : 0);
-        return { c, strength, score };
+        return { c, strength, score, unlocksResource };
       })
       .filter((c) => c.strength * rules.army.campPermille <= power * 1000)
       .sort((a, b) => a.score - b.score || ordinal(a.c.id, b.c.id));
     if (
       buildings[0] &&
       armyReady &&
-      (level >= 3 || !camps[0] || s.plan.heroXpNeeded === 0)
+      (!camps[0]?.unlocksResource && (level >= 3 || !camps[0] || s.plan.heroXpNeeded === 0))
     ) {
       this.mission(
         "assault",
@@ -451,10 +454,10 @@ export class PlayerAI {
         "Use the trained army to pressure known enemy infrastructure";
       return;
     }
-    if (hero && camps[0] && s.plan.heroXpNeeded > 0) {
+    if (hero && camps[0] && (s.plan.heroXpNeeded > 0 || camps[0].unlocksResource)) {
       const c = camps[0].c;
       this.mission("camp", c.id, c.point, f.tick, 2400);
-      s.plan.reason = `Earn useful hero experience at ${c.id}`;
+      s.plan.reason = camps[0].unlocksResource ? `Secure a contested resource at ${c.id}` : `Earn useful hero experience at ${c.id}`;
       return;
     }
     if (buildings[0] && armyReady) {

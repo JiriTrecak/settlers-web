@@ -1,3 +1,4 @@
+import { commandFeedback } from "../../presentation/commandFeedback";
 import {
   ObserverIncome,
   observerStats,
@@ -235,7 +236,7 @@ export class Session {
       onChanged: () => this.present(),
       rts: true,
       onClick: (x, y, shift) => this.click(x, y, shift),
-      onRightClick: (x, y) => this.click(x, y, false, true),
+      onRightClick: (x, y, shift) => this.click(x, y, shift, true),
       onSelectArea: (rect, shift) => {
         const hud = this.economyHud,
           state = this.world ? this.selectionView() : undefined;
@@ -303,10 +304,9 @@ export class Session {
       this.bindLockstep(match);
     }
     this.mini.setHeight(this.terrain);
+    this.mini.setLandscape(map.landscape);
     this.mini.setStamps(this.stamps);
-    this.mini.setPlayerStarts(
-      (map.playerStarts ?? []).filter((s) => s.player === this.me + 1),
-    );
+    // Spawn-number badges belong to the editor; gameplay shows real footprints.
     const initialView = this.visualView();
     this.mini.setFog(initialView.settlement!);
     this.economyHud.update(this.selectionView());
@@ -460,6 +460,11 @@ export class Session {
       for (const [id, peer] of this.locksteps)
         if (id !== this.me) peer.take(next);
       world.tick();
+      if (!document.hidden) for (const receipt of world.commandReceipts) {
+        if (this.observing || receipt.player !== this.me) continue;
+        const feedback = commandFeedback(receipt.action, world.settlement.view(this.me), content);
+        if (feedback) renderer.gameCommandFeedback(feedback);
+      }
       this.observerIncome?.record(next, world.settlement.economy.deliveries);
       for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
         perf.sample(`Sim · ${name}`, ms);
@@ -507,13 +512,6 @@ export class Session {
         this.stamps = [...this.loadedMap!.map.stamps, ...resources];
         this.mini?.setStamps(this.stamps);
       }
-      this.mini?.setPlayerStarts(
-        this.loadedMap!.map.playerStarts.filter(
-          (start) =>
-            (view.settlement.fog?.cells[start.z * view.size + start.x] ?? 0) >
-            0,
-        ),
-      );
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(this.selectionView());
       renderer.gameSelect(this.economyHud?.selectedIds ?? []);
@@ -698,6 +696,7 @@ export class Session {
         definition: hud.mode,
         position,
         rotation: hud.placementRotation,
+        ...(shift ? {append: true} : {}),
       };
       this.send(action);
       if (!shift) {
@@ -750,6 +749,7 @@ export class Session {
           actors: binding!.actors,
           target: target.id,
           force: true,
+          ...(shift ? {append: true} : {}),
         });
       else
         this.send({
@@ -757,6 +757,7 @@ export class Session {
           actors: binding!.actors,
           destination: position,
           attackMove: true,
+          ...(shift ? {append: true} : {}),
         });
       hud.clearMode();
       return;
@@ -789,6 +790,7 @@ export class Session {
         type: "move",
         actors: binding.actors,
         destination: position,
+        ...(shift ? {append: true} : {}),
       });
       hud.clearMode();
       return;
@@ -809,6 +811,7 @@ export class Session {
             type: "gather",
             actors: workers.map((e) => e.id),
             target: target.id,
+            ...(shift ? {append: true} : {}),
           });
           return;
         }
@@ -823,7 +826,7 @@ export class Session {
           (e) => content.get(e.definition).behaviors.inventory,
         );
         if (hero) {
-          this.send({ type: "pickup", actor: hero.id, target: target.id });
+          this.send({ type: "pickup", actor: hero.id, target: target.id, ...(shift ? {append: true} : {}) });
           return;
         }
       }
@@ -832,13 +835,13 @@ export class Session {
         army.length &&
         target.owner !== owner &&
         target.owner !== "none" &&
-        !target.remembered &&
-        !shift
+        !target.remembered
       ) {
         this.send({
           type: "attack",
           actors: army.map((e) => e.id),
           target: target.id,
+          ...(shift ? {append: true} : {}),
         });
         return;
       }
@@ -847,13 +850,13 @@ export class Session {
         army.length &&
         target.owner === "none" &&
         target.unit &&
-        !target.remembered &&
-        !shift
+        !target.remembered
       ) {
         this.send({
           type: "attack",
           actors: army.map((e) => e.id),
           target: target.id,
+          ...(shift ? {append: true} : {}),
         });
         return;
       }
@@ -863,6 +866,7 @@ export class Session {
             type: "move",
             actors: selected.map((e) => e.id),
             destination: position,
+            ...(shift ? {append: true} : {}),
           });
         return;
       }
@@ -881,6 +885,7 @@ export class Session {
         type: "move",
         actors: selected.map((e) => e.id),
         destination: position,
+        ...(shift ? {append: true} : {}),
       });
     else if (!right && !shift) hud.selected = null;
   }

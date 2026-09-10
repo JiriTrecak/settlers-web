@@ -1,3 +1,4 @@
+import type {Rules} from "../../src/content/schema";
 import { describe, it, expect } from "vitest";
 import { game, placed, physical, run, worker, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
@@ -9,6 +10,8 @@ describe("work disruption and capacity", () => {
           (d: any) => d.id === "building.ants.barracks",
         ) as any;
         b.behaviors.storage.capacity=16;
+        b.behaviors.production.outputs=["unit.ants.warrior","unit.ants.archer"];
+        (s.rules as Rules).ai.composition=(s.rules as Rules).ai.composition.filter(c=>b.behaviors.production.outputs.includes(c.definition));
         const a = s.definitions.find((d:any) => d.id === "unit.ants.archer") as any;
         a.creation.items=[{item:"item.wood",amount:5},{item:"item.amber",amount:10}];
         const w = s.definitions.find(

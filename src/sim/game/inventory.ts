@@ -1,3 +1,4 @@
+import { ItemEffects } from "./itemEffects";
 import {dropPosition} from './dropPosition';
 import {isStunned} from './effects';
 import type { GameContext } from "./context";
@@ -7,7 +8,7 @@ import type { Entity } from "./state";
 
 /** Hero slots own item identities. Pickup and removal are atomic simulation operations. */
 export class Inventory {
-  constructor(private readonly c: GameContext) {}
+  constructor(private readonly c: GameContext, private readonly items = new ItemEffects(c)) {}
   pickupError(hero:Entity,target:Entity|undefined):string|null {
     if(!hero.equipment || !this.c.def(hero).behaviors.inventory) return "This unit has no inventory";
     if(!target?.item || !this.c.def(target).itemEffect || target.item.quantity!==1 ||
@@ -39,7 +40,10 @@ export class Inventory {
       if(this.pickupError(hero,target))continue;
       if(isStunned(hero,this.c.registry)||hero.spellcasting?.pending)continue;
       if(distance2(precise(hero),target!)>this.c.def(hero).behaviors.inventory!.pickupRange**2)continue;
-      hero.equipment![hero.equipment!.indexOf(null)]=target!.definition;
+      const slot = hero.equipment!.indexOf(null);
+      hero.equipment![slot]=target!.definition;
+      hero.equipmentState ??= hero.equipment!.map(() => null);
+      hero.equipmentState[slot] = target!.item?.runtime ? {...target!.item.runtime} : null;
       this.c.remove(target!);
       this.stop(hero);
     }
@@ -51,18 +55,16 @@ export class Inventory {
   drop(hero:Entity,slot:number):string|null {
     const definition=hero.equipment?.[slot];
     if(!definition)return "Inventory slot is empty";
-    this.c.create({id:"",definition,owner:"none",position:dropPosition(this.c,hero,hero.id),rotation:0,initialState:{quantity:1}});
+    const dropped = this.c.create({id:"",definition,owner:"none",position:dropPosition(this.c,hero,hero.id),rotation:0,initialState:{quantity:1}});
+    if(hero.equipmentState?.[slot]) dropped.item!.runtime = {...hero.equipmentState[slot]!};
+    if(hero.equipmentState) hero.equipmentState[slot]=null;
     hero.equipment![slot]=null;
     hero.hp=Math.min(hero.hp!,this.c.stats(hero).maxHp);
+    if(hero.spellcasting) hero.spellcasting.mana=Math.min(hero.spellcasting.mana,this.c.stats(hero).maxMana);
     return null;
   }
   use(hero:Entity,slot:number):string|null {
-    const id=hero.equipment?.[slot],effect=id && this.c.registry.get(id).itemEffect;
-    if(!effect || effect.type!=="consumable")return "This item cannot be used";
-    const max=this.c.stats(hero).maxHp;
-    if(hero.hp!>=max)return "Health is already full";
-    hero.hp=Math.min(max,hero.hp!+effect.heal);hero.equipment![slot]=null;
-    return null;
+    return this.items.use(hero,slot);
   }
   onDeath(hero:Entity) {
     if(this.c.def(hero).hero)return;

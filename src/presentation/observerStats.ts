@@ -7,18 +7,11 @@ import { entityStats } from "../sim/game/stats";
 import type { Slot } from "../shared/match/match";
 import { TICK_MS } from "../shared/match/match";
 
-export const OBSERVER_RESOURCES = [
-  {
-    item: "item.amber",
-    label: "Amber",
-    explanation: "Amber mined from ancient forest roots.",
-  },
-  {
-    item: "item.wood",
-    label: "Lumber",
-    explanation: "Wood delivered to the colony.",
-  },
-] as const;
+/** Currency declarations own both the available columns and their presentation. */
+export const observerResources = (registry: ContentRegistry) =>
+  registry.definitions.filter(d => d.currency).map(d => ({
+    item: d.id, label: d.name, explanation: d.description,
+  }));
 const MINUTE_TICKS = 60_000 / TICK_MS;
 
 type IncomeBucket = { tick: number; amounts: Map<Owner, Map<string, number>> };
@@ -115,7 +108,7 @@ export function observerStats(
       controller: slot.kind === "ai" ? "AI" : "Human",
       defeated:
         state.outcome?.defeated.includes(slotOwner(slot.player)) ?? false,
-      resources: OBSERVER_RESOURCES.map((r) => ({
+      resources: observerResources(registry).map((r) => ({
         item: r.item,
         stored: 0,
         perMinute: income.perMinute(slotOwner(slot.player), r.item),

@@ -32,7 +32,7 @@ export class Spellcasting {
   if(spell.target==='point' && !point)return 'Choose a ground target';
   const target=spell.target==='self'?{x:e.x,y:e.y}:point!;
   if(distance2(precise(e),target)>rank.range**2 && spell.target==='point')return 'Target is out of range';
-  state.mana-=rank.mana;state.cooldowns[id]=this.c.state.tick+rank.cooldownTicks;
+  state.mana-=rank.mana;state.cooldowns[id]=this.c.state.tick+Math.max(1, Math.round(rank.cooldownTicks*(1000-this.c.stats(e).cooldownReductionPermille)/1000));
   state.pending={ability:id,rank:learned,point:target,resolveTick:this.c.state.tick+rank.castTicks};
   this.cue(e,id,learned,target,"cast",rank.castTicks);
   e.unit!.order=null;e.unit!.target=null;e.unit!.route=[];e.unit!.goal=null;e.unit!.idle=null;

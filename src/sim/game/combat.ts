@@ -1,3 +1,6 @@
+import { ShellCombat } from "./shellCombat";
+import { maintainCharge, startCharge, chargeDamage } from "./charge";
+import { ItemEffects } from "./itemEffects";
 import { resolveDamage, guardReduction } from "./damage";
 import {isStunned} from "./effects";
 import { atPoint, precise } from "./motion";
@@ -8,14 +11,16 @@ import { distance2 } from "./spatial";
 import { alive, type Entity } from "./state";
 import { Progression } from "./progression";
 
-export type DamageHit={source:number;target:number;damage:number;damageType:string};
+export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string};
 export class Combat {
+  readonly items: ItemEffects;
+  readonly shells: ShellCombat;
   constructor(
     private readonly c: GameContext,
     private readonly vision: Observation,
     private readonly camps: readonly Camp[],
     private readonly teams: ReadonlyMap<Owner, number>,
-  ) {}
+  ) { this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b)); }
   allied(a:Entity,b:Entity) {return a.owner!=="none" && b.owner!=="none" && this.teams.get(a.owner)===this.teams.get(b.owner);}
   hostile(a: Entity, b: Entity): boolean {
     if (
@@ -46,11 +51,19 @@ export class Combat {
   }
   plan() {
     const c = this.c;
+    this.shells.expire();
     const targets=c.live().filter(e=>e.hp!==null);
     for (const e of c.activeUnits()) {
       const u = e.unit!,
         combat = c.def(e).behaviors.combat,
         order = u.order;
+      maintainCharge(c, e);
+      if (u.shellWindup) {
+        const target = c.get(u.shellWindup.target);
+        if (!target || !alive(target) || u.target !== target.id || isStunned(e,c.registry) || e.spellcasting?.pending ||
+            !this.perceives(e,target) || (order?.type === 'move' && !order.attackMove)) delete u.shellWindup;
+        else { u.route = []; u.goal = null; if (u.cooldown > 0) u.cooldown--; continue; }
+      }
       if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
       if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") continue;
       if (u.cooldown > 0) u.cooldown--;
@@ -92,6 +105,15 @@ export class Combat {
         u.goal = null;
         if (order?.type === "attack") u.order = null;
       }
+      // A destroyed or no-longer-observed explicit target completes this order.
+      // Do not let automatic acquisition hold up the next player waypoint.
+      if (!target && order?.type === "attack") {
+        u.order = null;
+        u.target = null;
+        u.route = [];
+        u.goal = null;
+        continue;
+      }
       if (
         !target &&
         combat &&
@@ -112,6 +134,7 @@ export class Combat {
       }
       if (target && combat) {
         u.target = target.id;
+        maintainCharge(c, e);
         if (c.spatial.range(e, target) <= combat.range ** 2) {
           u.route = [];
           u.goal = null;
@@ -122,6 +145,7 @@ export class Combat {
           if (goal) c.spatial.route(e, goal);
           u.retryAt = c.state.tick + 20;
         }
+        startCharge(c, e, target);
         continue;
       }
       if (u.order?.type === "move") this.moveOrder(e, u.order.destination);
@@ -139,24 +163,38 @@ export class Combat {
     }
     if (!u.route.length && u.retryAt <= this.c.state.tick) {
       const goal = this.c.spatial.nearest(destination, 8, e.id);
-      if (goal) this.c.spatial.route(e, goal);
+      if (goal && !this.c.spatial.route(e, goal) &&
+          this.c.spatial.navigation.path(this.c.spatial.cell(e), this.c.spatial.cell(goal)) === null) {
+        u.order = null;
+        u.goal = null;
+        this.c.event(e.owner, "Move destination is unreachable");
+      }
       u.retryAt = this.c.state.tick + 20;
     }
   }
   private damage(target:Entity,raw:number,type:string){
-    return resolveDamage(this.c.registry.rules, {
+    return this.items.absorb(target, resolveDamage(this.c.registry.rules, {
       armorType: this.c.def(target).body!.armorType,
       armor: this.c.stats(target).armor,
       reductionPermille: guardReduction(this.c.registry.rules, target.effects),
-    }, raw, type);
+    }, raw, type));
   }
   resolve(extra:DamageHit[]=[]): Entity[] {
+    extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve()];
     const hits = new Map<number, number>();
     const contested = new Set<number>();
     for (const a of this.c.activeUnits()) {
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
+      if (u.shellWindup) {
+        const pending = u.shellWindup;
+        if (!b || b.id !== pending.target || !alive(b) || isStunned(a,this.c.registry) || a.spellcasting?.pending || !this.perceives(a,b)) delete u.shellWindup;
+        else if (this.c.state.tick >= pending.releaseTick) {
+          this.shells.launch(a,b); delete u.shellWindup;
+        }
+        continue;
+      }
       if (
         a.spellcasting?.pending || isStunned(a,this.c.registry) ||
         !combat ||
@@ -170,8 +208,15 @@ export class Combat {
         continue;
       if (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a, b))
         continue;
-      const damage = this.damage(b,this.c.stats(a).damage,combat.damageType);
+      if (combat.shell) {
+        if (combat.shell.windupTicks) u.shellWindup = {target:b.id,releaseTick:this.c.state.tick+combat.shell.windupTicks};
+        else this.shells.launch(a,b);
+        u.cooldown = this.c.stats(a).cooldownTicks;
+        continue;
+      }
+      const damage = this.damage(b,chargeDamage(this.c,a,b),combat.damageType);
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
+      extra.push(...this.items.onHit(a, b, damage, combat.damageType));
       if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
       u.cooldown = this.c.stats(a).cooldownTicks;
       if(this.c.registry.asset(this.c.def(a).asset).projectile) {
@@ -182,16 +227,16 @@ export class Combat {
     }
     for(const hit of extra){
       const a=this.c.get(hit.source),b=this.c.get(hit.target);
-      if(!a||!b||!alive(b)||b.hp===null)continue;
+      if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null)continue;
       const damage=this.damage(b,hit.damage,hit.damageType);
       hits.set(b.id,(hits.get(b.id)??0)+damage);
-      if(damage>0&&this.opponents(a,b))contested.add(b.id);
+      if(damage>0 && (a ? this.opponents(a,b) : hit.owner !== b.owner && (hit.owner === "none" || b.owner === "none" || this.teams.get(hit.owner!) !== this.teams.get(b.owner))))contested.add(b.id);
     }
     const dead: Entity[] = [];
     for (const [id, damage] of [...hits].sort((a, b) => a[0] - b[0])) {
       const target = this.c.get(id)!;
       target.hp = Math.max(0, target.hp! - damage);
-      if (!target.hp) dead.push(target);
+      if (!target.hp && !this.items.rescue(target)) dead.push(target);
     }
     const progression = new Progression(this.c);
     for (const target of dead) if (contested.has(target.id))

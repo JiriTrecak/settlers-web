@@ -1,0 +1,26 @@
+{
+  "name": "Corrupted Root",
+  "blend": "corrupted-root.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 19,
+    "elevation": 26,
+    "scale": 9.0,
+    "target": [
+      0,
+      0,
+      2
+    ]
+  },
+  "render": {
+    "width": 1312,
+    "height": 1199,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 850,
+    "fill_energy": 260,
+    "rim_energy": 600
+  }
+}

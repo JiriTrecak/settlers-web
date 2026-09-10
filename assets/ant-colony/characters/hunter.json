@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "hunter": {
+      "file": "hunter.glb",
+      "triangles": 4328,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "hit": "hit",
+        "death": "death",
+        "charge": "charge",
+        "attack": "attack_spear"
+      }
+    }
+  },
+  "attackEvents": {
+    "hunter": {
+      "event": "hit",
+      "normalizedTime": 0.55
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.03
+}

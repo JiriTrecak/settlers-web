@@ -1,0 +1,16 @@
+{
+  "corrupted-root": {
+    "triangles": 8106,
+    "meshes": 1,
+    "materials": 13,
+    "sha256": "a293dc682f765605de27b78719b8d3a98c1ff4c96150c2cedc9819d91fc1921c",
+    "ownership": "none"
+  },
+  "root-bundle": {
+    "triangles": 114,
+    "meshes": 3,
+    "materials": 3,
+    "sha256": "34704115e18b6893cbbaf9b169fd79b89a28eae22f1d385e1834dc5d1b417b0c",
+    "ownership": "none"
+  }
+}

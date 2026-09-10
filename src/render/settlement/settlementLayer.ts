@@ -1,4 +1,10 @@
+import { ShellEffects } from "./shellEffects";
+import { StatusBadges } from "./statusBadges";
 import { HarvestTrees } from "./harvestTrees";
+import { pickUnitBody, type UnitPickBody } from "./unitPicking";
+import type { Camera } from "three";
+import { CommandFeedbackEffects } from "./commandFeedbackEffects";
+import type { CommandFeedback } from "../../presentation/commandFeedback";
 import { MineLabels } from "./mineLabels";
 import { AbilityTarget, type AbilityAim } from "./abilityTarget";
 import { batchCharacterMaterials } from "../characters/materialBatch";
@@ -41,6 +47,10 @@ import { placementGrid } from "./placementGrid";
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private readonly commandEffects = new CommandFeedbackEffects(this.root);
+  commandFeedback(feedback: CommandFeedback, height: HeightField) {
+    this.commandEffects.show(feedback, height);
+  }
   private readonly harvestTrees = new HarvestTrees(this.root);
   private sampledTick = -1;
   private tickTime = 0;
@@ -75,6 +85,7 @@ export class SettlementLayer {
     }
   >();
   private readonly targetPosition = new Vector3();
+  private readonly shells = new ShellEffects(this.root);
   private readonly projectiles = new ProjectileEffects(this.root);
   private dead = false;
   private readonly selectionGeometry = new LineGeometry().setPositions([
@@ -106,6 +117,7 @@ export class SettlementLayer {
     polygonOffsetFactor: -1,
     polygonOffsetUnits: -1,
   });
+  private readonly statusBadges = new StatusBadges();
   private readonly healthPips = new HealthPips();
   private readonly mineLabels = new MineLabels();
   private readonly entranceGhost = new Mesh(
@@ -179,6 +191,14 @@ export class SettlementLayer {
       ids === null ? [] : typeof ids === "number" ? [ids] : ids,
     );
   }
+  pickUnit(camera: Camera, viewport: DOMRect, x: number, y: number): number | null {
+    const bodies: UnitPickBody[] = [];
+    for (const [id, root] of this.entities) {
+      if (!root.visible || !root.userData.clickableUnit) continue;
+      bodies.push({id, position: root.position, height: root.userData.pickHeight});
+    }
+    return pickUnitBody(bodies, camera, viewport, x, y);
+  }
   pick(ray: Raycaster, maxDistance = Infinity) {
     const hit = ray
       .intersectObjects(
@@ -246,6 +266,7 @@ export class SettlementLayer {
     const asset = content.asset(assetId),
       scale = (asset.scale ?? 1) * (e.appearance?.scale ?? 1);
     o.userData.modelScale = scale;
+    o.userData.pickHeight = asset.healthHeight ?? 2.5;
     model.scale.setScalar(scale);
     if (asset.carryAsset) {
       const carry = this.clone(asset.carryAsset);
@@ -331,7 +352,9 @@ export class SettlementLayer {
     timeScale = 1,
   ) {
     this.spellEffects.update(state.visuals ?? [], field, tick);
+    this.shells.update(state.shells ?? [], field, tick);
     const now = performance.now();
+    this.commandEffects.update(now);
     const dt =
       this.animationTime === null
         ? 0
@@ -356,6 +379,7 @@ export class SettlementLayer {
       const o = this.make(e);
       if (!o) continue;
       o.visible = !e.unit?.contained;
+      o.userData.clickableUnit = d.kind === "unit" && !e.remembered && (e.hp === null || e.hp > 0);
       applyPlayerMaterials(o, ownerSlot(e.owner));
       const parts = this.parts.get(o)!;
       if (parts.mine && e.gathering) {
@@ -401,7 +425,7 @@ export class SettlementLayer {
         } else if (hurt && !e.unit.moving && !e.unit.work?.cycle)
           character.player.setState("hit", { restart: true });
         else if (e.unit.moving)
-          character.player.setState(e.unit.strolling ? "walk" : "run");
+          character.player.setState(e.unit.charging ? "charge" : e.unit.strolling ? "walk" : "run");
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
           const work =
             character.player.variant === "base" ? e.unit.work : undefined;
@@ -438,6 +462,7 @@ export class SettlementLayer {
         selection.children[1].visible =
           this.selected.has(e.id) && !attackTarget;
       if (e.unit) selection.rotation.y = -o.rotation.y;
+      this.statusBadges.update(o, e, tick, content.asset(d.asset).healthHeight ?? 2.5);
       const hp = parts.hp;
       if (
         e.hp !== null &&
@@ -642,9 +667,11 @@ export class SettlementLayer {
     this.gridLines.geometry.dispose();
     this.gridLines.material.dispose();
     this.spellEffects.dispose();
+    this.commandEffects.dispose();
     this.harvestTrees.dispose();
     this.abilityTarget.dispose();
     this.projectiles.dispose();
+    this.shells.dispose();
     for (const [id, o] of this.entities) this.removeModel(id, o);
     for (const [id, corpse] of this.corpses) this.removeModel(id, corpse.root);
     for (const p of this.prototypes.values())
@@ -661,6 +688,7 @@ export class SettlementLayer {
     this.attackTargetMaterial.dispose();
     this.selectionFillGeometry.dispose();
     this.selectionFillMaterial.dispose();
+    this.statusBadges.dispose();
     this.healthPips.dispose();
     this.mineLabels.dispose();
     this.entranceGhost.geometry.dispose();

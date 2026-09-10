@@ -1,4 +1,5 @@
 import type { ContentRegistry } from "../content/registry";
+import { prerequisiteReason } from "../content/prerequisites";
 import type { ActionName, Owner } from "../content/schema";
 import type { Action } from "../shared/types/types";
 import type { EntityView, SettlementView } from "../sim/game/observation";
@@ -29,14 +30,17 @@ export function inventoryCard(view:SettlementView,focusId:number|undefined,owner
   const controllable=!readOnly && !!registry.get(hero.definition).behaviors.playerControl && !view.outcome;
   return hero.equipment.map((id,slot)=>{
     const d=id ? registry.get(id) : null;
-    return {slot,definition:id,name:d?.name ?? "Empty inventory slot",description:d?.description ?? "",icon:d?.icon ?? null,
-      use:controllable && d?.itemEffect?.type==="consumable" ? {type:"useItem" as const,actor:hero.id,slot} : null,
+    const state=hero.equipmentState?.[slot], effect=d?.itemEffect;
+    const charges=state?.charges ?? effect?.active?.charges ?? effect?.rescue?.charges;
+    const cooldown=Math.max(0, Math.ceil(((state?.readyTick ?? 0)-view.revision)/40));
+    return {slot,charges,cooldown,tier:d?.itemTier,definition:id,name:d?.name ?? "Empty inventory slot",description:d?.description ?? "",icon:d?.icon ?? null,
+      use:controllable && (effect?.type==="consumable" || effect?.active) && !cooldown ? {type:"useItem" as const,actor:hero.id,slot} : null,
       drop:controllable && d ? {type:"dropItem" as const,actor:hero.id,slot} : null};
   });
 }
 export type CommandBinding = {
   id: string;
-  type: ActionName | "cast" | "learnAbility" | "revive";
+  type: ActionName | "cast" | "learnAbility" | "revive" | "upgrade" | "cancelUpgrade";
   ability?:string;
   name: string;
   description: string;
@@ -124,8 +128,15 @@ export function queueCard(
   readOnly = false,
 ) {
   const focus = view.entities.find((e) => e.id === focusId);
+  if (focus?.research && !focus.remembered && (readOnly || focus.owner === owner)) {
+    return focus.research.queue.map((q, index) => {
+      const r = registry.rules.research[q.id];
+      return {id: index + 1, icon: r.icon, progress: q.progress / r.workTicks, name: r.name, costs: r.items.map(p => ({kind: "item" as const, name: registry.get(p.item).name, icon: registry.get(p.item).icon, amount: p.amount})),
+        cancel: !readOnly && !view.outcome ? {type: "cancelResearch" as const, actor: focus.id, research: q.id} : null};
+    });
+  }
   if(focus?.revival&&(readOnly || focus.owner===owner)&&!focus.remembered){
-    return focus.revival.queue.flatMap(q=>{const hero=view.fallenHeroes?.find(h=>h.id===q.hero);return hero?[{id:q.hero,name:`Revive ${registry.get(hero.definition).name} · ${Math.floor(q.progress/registry.get(focus.definition).behaviors.revival!.workTicks*100)}%`,costs:[] as CostView[],cancel:!readOnly && !view.outcome?{type:"cancelRevival" as const,actor:focus.id,hero:q.hero}:null}]:[];});
+    return focus.revival.queue.flatMap(q=>{const hero=view.fallenHeroes?.find(h=>h.id===q.hero);return hero?[{id:q.hero,icon:registry.get(hero.definition).icon,progress:q.progress/registry.get(focus.definition).behaviors.revival!.workTicks,name:`Revive ${registry.get(hero.definition).name}`,costs:[] as CostView[],cancel:!readOnly && !view.outcome?{type:"cancelRevival" as const,actor:focus.id,hero:q.hero}:null}]:[];});
   }
   if (!focus?.production || focus.remembered || (!readOnly && focus.owner !== owner))
     return [];
@@ -136,6 +147,8 @@ export function queueCard(
     return {
       id: q.id,
       name: d.name,
+      icon: d.icon,
+      progress: null,
       costs: costs(registry, d.id),
       cancel: controllable
         ? { type: "cancel" as const, actor: focus.id, queue: q.id }
@@ -212,6 +225,8 @@ export function commandCard(
       id = targetDefinition ? `${type}:${targetDefinition}` : type,
       target = targetDefinition ? registry.get(targetDefinition) : null,
       override = registry.actions.overrides[id];
+    if (override?.hidden) return;
+    const reason = target ? prerequisiteReason(target, owner, view.entities, registry) : undefined;
     result.push({
       id,
       type,
@@ -224,7 +239,8 @@ export function commandCard(
       category: override?.category === null ? undefined : override?.category ?? target?.category ?? meta.category,
       actors: actors.map((e) => e.id),
       targetDefinition,
-      enabled: !view.outcome,
+      enabled: !view.outcome && !reason,
+      reason,
       ...(immediate ? { immediate } : {}),
     });
   };
@@ -237,6 +253,38 @@ export function commandCard(
       add("cancel", [focus], undefined, { type: "cancel", actor: focus.id });
       return result;
     }
+    if (d.upgrade) {
+      const target = registry.get(d.upgrade.target);
+      const reason = prerequisiteReason(target, owner, view.entities, registry) ??
+        (d.upgrade.items.some(p => (view.goods?.find(g => g.item === p.item)?.available ?? 0) < p.amount) ? "Insufficient resources" : undefined);
+      if (focus.upgrade) {
+        const meta = registry.actions.actions.cancelUpgrade;
+        result.push({id: "cancelUpgrade", type: "cancelUpgrade", name: meta.name, icon: meta.icon,
+          description: `${target.name}: ${Math.floor(focus.upgrade.progress / d.upgrade.workTicks * 100)}% complete. Cancel to refund the full price.`,
+          priority: meta.priority, hotkey: meta.hotkey, costs: [], actors: [focus.id], enabled: !view.outcome,
+          immediate: {type: "cancelUpgrade", actor: focus.id}});
+      } else {
+        const meta = registry.actions.actions.upgrade;
+        result.push({id: "upgrade", type: "upgrade", name: `Upgrade to ${target.name}`, icon: target.icon,
+          description: `${target.description}\n${d.upgrade.workTicks*TICK_MS/1000}s. Worker spawning pauses during the upgrade.`,
+          priority: meta.priority, hotkey: meta.hotkey, costs: d.upgrade.items.map(p => ({kind: "item", name: registry.get(p.item).name, icon: registry.get(p.item).icon, amount: p.amount})),
+          actors: [focus.id], enabled: !view.outcome && !reason, reason, immediate: {type: "upgrade", actor: focus.id}});
+      }
+    }
+    if (d.behaviors.research && focus.research) {
+      for (const id of d.behaviors.research.outputs) {
+        const r = registry.rules.research[id];
+        const reason = view.research?.[owner]?.includes(id) ? "Already researched" :
+          view.entities.some(e => e.owner === owner && e.research?.queue.some(q => q.id === id)) ? "Research already queued" :
+          focus.research.queue.length >= d.behaviors.research.queueCapacity ? "Research queue is full" :
+          prerequisiteReason(r, owner, view.entities, registry) ??
+          (r.items.some(p => (view.goods?.find(g => g.item === p.item)?.available ?? 0) < p.amount) ? "Insufficient resources" : undefined);
+        result.push({id: `research:${id}`, type: "research", name: r.name, description: `${r.description}\n${r.workTicks*TICK_MS/1000}s. Applies to existing and future units.`, icon: r.icon,
+          costs: r.items.map(p => ({kind: "item", name: registry.get(p.item).name, icon: registry.get(p.item).icon, amount: p.amount})),
+          priority: r.priority, actors: [focus.id], enabled: !view.outcome && !reason, reason,
+          immediate: {type: "research", actor: focus.id, research: id}});
+      }
+    }
     if(d.behaviors.revival&&focus.revival){
       for(const hero of view.fallenHeroes??[]){
         const definition=registry.get(hero.definition),queued=view.entities.some(b=>b.revival?.queue.some(q=>q.hero===hero.id));
@@ -247,11 +295,13 @@ export function commandCard(
     if (p && policy) {
       if (policy.mode === "queued")
         for (const output of policy.outputs) {
+          const before = result.length;
           add("produce", [focus], output, {
             type: "produce",
             actor: focus.id,
             definition: output,
           });
+          if (result.length === before || result.at(-1)!.reason) continue;
           if (p.queue.length >= policy.queueCapacity!) {
             const b = result.at(-1)!;
             b.enabled = false;
