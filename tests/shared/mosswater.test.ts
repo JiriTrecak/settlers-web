@@ -1,102 +1,43 @@
-import { readFileSync, readdirSync } from "node:fs";
-import { describe, it, expect } from "vitest";
-import {
-  parseUtcMap,
-  decodeHeight,
-  HeightField,
-  stringifyUtcMap,
-} from "../../src/shared";
-import { playableMapError } from "../../src/shared/map/playable";
-const map = parseUtcMap(
-  JSON.parse(
-    readFileSync("assets/maps/showcase/mosswater-divide.utcmap", "utf8"),
-  ),
-)!;
-describe("Mosswater Divide", () => {
-  it("is playable and round trips both starting positions", () => {
-    expect(playableMapError(map)).toBeNull();
-    expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.playerStarts).toEqual(
-      map.playerStarts,
-    );
-    expect(
-      readdirSync("assets/maps/showcase")
-        .filter((f) => f.endsWith(".utcmap"))
-        .sort(),
-    ).toEqual(["ant-colony-compare.utcmap", "mosswater-divide.utcmap"]);
-  });
-  it("pairs terrain, resources and scenery under 180 degree rotation", () => {
-    const h = Array.from(decodeHeight(map.height!)!);
-    expect(h).toEqual(h.slice().reverse());
-    for (let i = 0; i < map.stamps.length; i += 2) {
-      const a = map.stamps[i]!,
-        b = map.stamps[i + 1]!;
-      expect(a.asset).toBe(b.asset);
-      expect(a.scale).toBe(b.scale);
-      expect(a.x + b.x).toBeCloseTo(255);
-      expect(a.y + b.y).toBeCloseTo(255);
-    }
-  });
-  it("contains mirrored mixed packs and ogres outside the bases", () => {
-    expect(
-      map.entities.filter((s) => s.definition === "unit.neutral.wolf"),
-    ).toHaveLength(4);
-    expect(map.entities.filter(s=>s.definition==="unit.neutral.thornspitter")).toHaveLength(2);
-    expect(
-      map.entities.filter((s) => s.definition === "unit.neutral.ogre"),
-    ).toHaveLength(2);
-    for (const n of map.entities.filter((s) =>
-      s.definition.startsWith("unit.neutral."),
-    ))
-      for (const p of map.playerStarts!)
-        expect(
-          Math.hypot(n.position.x - p.x, n.position.y - p.z),
-        ).toBeGreaterThan(45);
-  });
-  it("keeps starting construction space clear and all three crossings dry", () => {
-    const f = new HeightField();
-    f.load(decodeHeight(map.height!)!, 0);
-    for (const p of map.playerStarts!) {
-      for (let dz = -7; dz <= 7; dz++)
-        for (let dx = -7; dx <= 7; dx++)
-          expect(f.sample(p.x + dx, p.z + dz)).toBeCloseTo(1.3);
-      for (const t of map.stamps.filter((s) => s.asset.startsWith("ant-pine")))
-        expect(
-          Math.hypot(t.x + 0.5 - p.x, t.y + 0.5 - p.z),
-        ).toBeGreaterThanOrEqual(19);
-    }
-    for (const z of [64, 128, 192])
-      for (let x = 108; x <= 148; x++)
-        expect(f.sample(x, z)).toBeGreaterThan(0.5);
-    // Grid flood fill verifies the two home clearings share traversable dry land.
-    const seen = new Set<number>([46 * 256 + 46]),
-      q = [46 * 256 + 46];
-    for (let i = 0; i < q.length; i++) {
-      const n = q[i]!,
-        x = n % 256,
-        z = Math.floor(n / 256);
-      for (const [dx, dz] of [
-        [1, 0],
-        [-1, 0],
-        [0, 1],
-        [0, -1],
-      ]) {
-        const nx = x + dx!,
-          nz = z + dz!,
-          id = nz * 256 + nx;
-        if (
-          nx < 0 ||
-          nz < 0 ||
-          nx >= 256 ||
-          nz >= 256 ||
-          seen.has(id) ||
-          f.sample(nx, nz) < 0.2 ||
-          Math.abs(f.sample(nx, nz) - f.sample(x, z)) > 0.6
-        )
-          continue;
-        seen.add(id);
-        q.push(id);
-      }
-    }
-    expect(seen.has(210 * 256 + 210)).toBe(true);
-  });
+/** Regression coverage migrated from the retired Mosswater layout to the current library. */
+import {readFileSync,readdirSync} from 'node:fs';
+import {expect,it} from 'vitest';
+import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
+import {playableMapError} from '../../src/shared/map/playable';
+import {Game} from '../../src/sim/game/game';
+import {content} from '../../src/content/builtin';
+import {slots} from '../game/helpers';
+import {createMapBriefing} from '../../src/sim/ai/briefing';
+const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/worldroot-hollow.utcmap','utf8')))!;
+it('ships only Worldroot and round trips its starts and landscape',()=>{
+ expect(readdirSync('assets/maps',{recursive:true}).filter(f=>String(f).endsWith('.utcmap'))).toEqual(['skirmish/worldroot-hollow.utcmap']);
+ expect(playableMapError(map)).toBeNull();
+ const restored=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
+ expect(restored.playerStarts).toEqual(map.playerStarts);expect(restored.landscape).toEqual(map.landscape);
+ expect(restored.waterLevel ?? 0).toBe(map.waterLevel ?? 0);
+});
+it('has traversable shallows and blocked deep water with identical AI terrain knowledge',()=>{
+ const g=new Game(map,slots,content),briefing=createMapBriefing(map,content);
+ let shallow=0,deep=0;
+ for(let i=0;i<g.spatial.heights.length;i++){
+  const h=g.spatial.heights[i];
+  expect(briefing.land[i]).toBe(g.spatial.terrain[i]);
+  if(h<0&&h>=-60){shallow++;expect(g.spatial.terrain[i]).toBe(1);}
+  if(h< -60){deep++;expect(g.spatial.terrain[i]).toBe(0);}
+ }
+ expect(shallow).toBeGreaterThan(500);expect(deep).toBeGreaterThan(1000);
+});
+it('keeps home construction ground dry, with a complete scenery palette and clustered timber',()=>{
+ const g=new Game(map,slots,content);
+ for(const s of map.playerStarts)for(let dy=-7;dy<=7;dy++)for(let dx=-7;dx<=7;dx++)expect(g.spatial.heights[(s.z+dy)*map.size+s.x+dx]).toBeGreaterThan(10);
+ const trees=map.entities.filter(e=>e.definition==='resource.forest.tree');
+ expect(trees.length).toBeGreaterThan(2000);
+ for(const id of ['ant-rock','ant-reeds','ant-lily','ant-fern','synty-plant-flowerpatch-01','ant-driftwood'])expect(map.stamps.some(s=>s.asset===id)).toBe(true);
+});
+it('does not permit construction on otherwise walkable shallow ground',()=>{
+ const g=new Game(map,slots,content);
+ const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
+ const p={x:42,y:146};worker.x=42;worker.y=151;worker.unit!.position=null;g.observation.update();
+ const cells=g.spatial.footprint({definition:'building.ants.house',...p,rotation:0});
+ for(const i of cells){g.spatial.heights[i]=-32;g.spatial.terrain[i]=1;g.spatial.occupied[i]=0;g.spatial.resources[i]=0;}
+ expect(g.canBuild('player.1','building.ants.house',p,worker.id)).toBe('Build on dry ground');
 });

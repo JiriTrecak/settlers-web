@@ -1,3 +1,5 @@
+import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
+import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import {
   clearSweep,
   clearRay,
@@ -6,7 +8,7 @@ import {
   type FixedPoint,
 } from "./motion";
 import type { ContentRegistry } from "../../content/registry";
-import { decodeHeight, HEIGHT_ORIGIN } from "../../shared/map/height";
+import { sampleHeight, decodeHeight, HEIGHT_ORIGIN, WADING_DEPTH_CM } from "../../shared/map/height";
 import type { UtcMap } from "../../shared/map/utcmap";
 import { Navigation } from "./navigation";
 import { alive, type Entity, type Point } from "./state";
@@ -22,6 +24,8 @@ export class Spatial {
   readonly size: number;
   readonly heights: Int16Array;
   readonly terrain: Uint8Array;
+  readonly sea: number;
+  readonly decks: Uint8Array;
   readonly occupied: Int32Array;
   readonly resources: Int32Array;
   readonly navigation: Navigation;
@@ -39,14 +43,17 @@ export class Spatial {
     const verts = this.size + 33;
     const h = map.height ? decodeHeight(map.height, this.size) : null,
       sea = Math.round((map.waterLevel ?? 0) * 100);
+    this.sea = sea;
     for (let y = 0; y < this.size; y++)
       for (let x = 0; x < this.size; x++) {
         const i = y * this.size + x;
         this.heights[i] = Math.round(
           (h?.[(y - HEIGHT_ORIGIN) * verts + x - HEIGHT_ORIGIN] ?? 0) * 100,
         );
-        this.terrain[i] = this.heights[i] > sea + 10 ? 1 : 0;
+        this.terrain[i] = this.heights[i] >= sea - WADING_DEPTH_CM ? 1 : 0;
       }
+    this.decks=applyBridgeSurfaces(this.size,bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,this.size):0),this.terrain,this.heights);
+    applySceneryBlockers(map, this.terrain);
     this.navigation = new Navigation(
       this.size,
       (a, b) =>
@@ -136,7 +143,7 @@ export class Spatial {
           }
     return null;
   }
-  route(e: Entity, destination: Point): boolean {
+  route(e: Entity, destination: Point, avoidUnits = e.unit?.order?.type !== "move" && e.unit?.order?.type !== "attack"): boolean {
     if (
       !e.unit ||
       destination.x < 0 ||
@@ -151,7 +158,7 @@ export class Spatial {
         this.entities()
           .filter(
             (u) =>
-              u.id !== e.id &&
+              avoidUnits && u.id !== e.id &&
               u.unit &&
               alive(u) &&
               !u.unit.contained &&

@@ -1,3 +1,6 @@
+import type { GameState } from "../../sim/game/state";
+import type { HeightField } from "../../shared";
+import { content } from "../../content/builtin";
 import {BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshStandardMaterial,Quaternion,Vector3} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -14,7 +17,7 @@ function arrowGeometry(){
  const parts=[colored(new CylinderGeometry(.035,.035,.9,5),0xc3a779),colored(new CylinderGeometry(0,.13,.28,4).translate(0,.55,0),0xa5afb4),colored(new BoxGeometry(.24,.24,.025).translate(0,-.35,0),0xc3a779)];
  const merged=mergeGeometries(parts)!;parts.forEach(p=>p.dispose());return merged;
 }
-/** Observer-filtered cosmetic flights. One draw per projectile kind, never one per shot. */
+/** Observer-filtered authoritative flights. One draw per projectile kind, never one per shot. */
 export class ProjectileEffects {
  readonly root=new Group();
  private readonly material=new MeshStandardMaterial({vertexColors:true,roughness:.75});
@@ -26,9 +29,6 @@ export class ProjectileEffects {
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
  constructor(parent:Group){parent.add(this.root);}
- spawn(kind:ProjectileKind,start:Vector3,end:Vector3,tick:number){
-  this.flights.push({kind,start:start.clone(),end:end.clone(),tick,duration:Math.max(5,Math.min(16,start.distanceTo(end)*1.2))});
- }
  private batch(kind:ProjectileKind,count:number){
   let batch=this.batches.get(kind);if(batch&&batch.capacity>=count)return batch;
   let capacity=batch?.capacity??16;while(capacity<count)capacity*=2;
@@ -37,7 +37,13 @@ export class ProjectileEffects {
   mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;mesh.count=0;
   this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
  }
- update(tick:number){
+ update(tick:number, missiles:GameState["missiles"], field:HeightField){
+  this.flights = missiles.filter(m=>tick<m.impact).map(m=>({
+   kind:content.asset(content.get(m.definition).asset).projectile ?? 'arrow',
+   start:new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y)+1.5,m.origin.y),
+   end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y)+1,m.destination.y),
+   tick:m.launched,duration:m.impact-m.launched,
+  }));
   let live=0;const counts:Record<ProjectileKind,number>={arrow:0,thorn:0};
   for(const flight of this.flights)if(tick-flight.tick<flight.duration){this.flights[live++]=flight;counts[flight.kind]++;}
   this.flights.length=live;

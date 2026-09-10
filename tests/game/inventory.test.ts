@@ -70,7 +70,8 @@ it('revives the same hero with items, XP and skills after real combat death and 
  expect(g.spells.learn(victim,'spell.marshal.faultline')).toBeNull();
  g.tick();
  expect(g.command('player.1',{type:'attack',actors:[attacker.id],target:victim.id,force:true}).accepted).toBe(true);
- g.tick();expect(victim.fallen).toBe(true);expect(victim.hp).toBe(0);
+ for(let t=0;t<=g.registry.get(attacker.definition).behaviors.combat!.attack.windupTicks;t++)g.tick();
+ expect(victim.fallen).toBe(true);expect(victim.hp).toBe(0);
  expect(g.view('player.1').entities.some(e=>e.id===victim.id)).toBe(false);
  expect(g.view('player.2').fallenHeroes?.some(e=>e.id===victim.id)).toBe(false);
  expect(g.entities.filter(e=>e.definition==='item.test-ring')).toHaveLength(1);

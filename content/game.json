@@ -528,6 +528,7 @@
     {
       "id": "asset.ants.bombardier",
       "file": "assets/ant-colony/characters/bombardier.glb",
+      "projectileSocket": "socket_muzzle",
       "healthHeight": 2.4,
       "character": "bombardier"
     },
@@ -544,6 +545,18 @@
     {
       "id": "icon.ants.bombardier-workshop",
       "image": "assets/ui/icons/ants-v1/bombardier-workshop.png"
+    },
+    {
+      "id": "asset.resource.tree-primary",
+      "file": "assets/environment/coniferous-pack/tree_primary.glb",
+      "sceneryAsset": "tree_primary",
+      "harvestAnimation": "assets/environment/coniferous-pack/tree_primary.glb"
+    },
+    {
+      "id": "asset.resource.tree-secondary",
+      "file": "assets/environment/coniferous-pack/tree_secondary.glb",
+      "sceneryAsset": "tree_secondary",
+      "harvestAnimation": "assets/environment/coniferous-pack/tree_secondary.glb"
     }
   ],
   "actions": {
@@ -1543,7 +1556,12 @@
           "damageType": "melee",
           "range": 1.5,
           "cooldownTicks": 54,
-          "aggroRange": 10
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
         }
       },
       "creation": {
@@ -1583,7 +1601,15 @@
           "damageType": "piercing",
           "range": 10,
           "cooldownTicks": 60,
-          "aggroRange": 10
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 20,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
         }
       },
       "creation": {
@@ -1627,7 +1653,12 @@
           "damageType": "melee",
           "range": 1.5,
           "cooldownTicks": 48,
-          "aggroRange": 8
+          "aggroRange": 8,
+          "attack": {
+            "windupTicks": 10,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
         }
       },
       "level": 1,
@@ -1656,7 +1687,12 @@
           "damageType": "melee",
           "range": 2,
           "cooldownTicks": 64,
-          "aggroRange": 10
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 20,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          }
         }
       },
       "level": 1,
@@ -2014,7 +2050,8 @@
         "amount": 10,
         "impactTick": 22
       },
-      "currency": true
+      "currency": true,
+      "displayOrder": 20
     },
     {
       "id": "item.amber",
@@ -2033,14 +2070,15 @@
         "workAnimation": "chop",
         "amount": 10
       },
-      "currency": true
+      "currency": true,
+      "displayOrder": 10
     },
     {
       "id": "resource.forest.tree",
       "kind": "resource",
       "name": "Forest tree",
       "description": "Ten axe hits fell a tree, yielding one 10-lumber load. Foresters restore exhausted sites.",
-      "asset": "asset.resource.ant-pine-1",
+      "asset": "asset.resource.tree-primary",
       "icon": "icon.item.wood",
       "regrowthTicks": 1600,
       "behaviors": {},
@@ -2081,7 +2119,12 @@
           "damageType": "hero",
           "range": 1.8,
           "cooldownTicks": 73,
-          "aggroRange": 12
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 18,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          }
         },
         "progression": {
           "experienceRadius": 18,
@@ -2366,7 +2409,15 @@
           "damageType": "piercing",
           "range": 10,
           "cooldownTicks": 64,
-          "aggroRange": 12
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
         }
       },
       "level": 2,
@@ -2395,7 +2446,15 @@
           "damageType": "piercing",
           "range": 10,
           "cooldownTicks": 68,
-          "aggroRange": 12
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
         }
       },
       "level": 5,
@@ -3064,7 +3123,12 @@
           "damageType": "melee",
           "range": 2.5,
           "cooldownTicks": 64,
-          "aggroRange": 10
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          }
         }
       },
       "level": 8,
@@ -3093,7 +3157,12 @@
           "damageType": "melee",
           "range": 2.5,
           "cooldownTicks": 40,
-          "aggroRange": 10
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          }
         }
       },
       "level": 8,
@@ -3171,7 +3240,8 @@
         "workAnimation": "chop",
         "amount": 10
       },
-      "currency": true
+      "currency": true,
+      "displayOrder": 30
     },
     {
       "id": "building.neutral.corrupted-root",
@@ -3285,6 +3355,11 @@
             "durationTicks": 100,
             "speedPermille": 2000,
             "damagePermille": 2000
+          },
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
           }
         }
       },
@@ -3337,11 +3412,15 @@
           "cooldownTicks": 120,
           "aggroRange": 12,
           "shell": {
-            "windupTicks": 22,
             "flightTicks": 40,
             "radius": 2,
             "slowPermille": 200,
             "slowTicks": 80
+          },
+          "attack": {
+            "windupTicks": 22,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
           }
         }
       },

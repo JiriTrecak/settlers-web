@@ -36,3 +36,10 @@ it('lets rival workers contest the same root and preserves their assignments',()
   for(const other of map.camps.filter(c=>!c.legendary))expect(hp).toBeGreaterThan(map.entities.filter(e=>other.members.includes(e.id)).reduce((n,e)=>n+content.get(e.definition).body!.maxHp,0));
  }
 });
+it('has a traversable bridge with connected banks and a marked deck footprint',()=>{
+ const g=new Game(map,slots,content);
+ expect(g.spatial.decks[g.spatial.cell({x:110,y:123})]).toBe(1);
+ expect(g.spatial.heights[g.spatial.cell({x:110,y:123})]).toBeGreaterThan(190);
+ const route=g.spatial.navigation.path(g.spatial.cell({x:101,y:123}),g.spatial.cell({x:119,y:123}));
+ expect(route).not.toBeNull();expect(route!.some(i=>g.spatial.decks[i])).toBe(true);
+});

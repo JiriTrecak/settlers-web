@@ -212,6 +212,9 @@ export async function generate() {
     md = md.replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
       (full, label: string, href: string) => {
+        href=href.replace(/^<|>$/g, "");
+        if (href.startsWith(root + path.sep))
+          return `${label} (repository source: \`${path.relative(root, href)}\`)`;
         if (/^(https?:|#|\/)/.test(href)) return full;
         const target = path.resolve(path.dirname(file), href.split("#")[0]);
         if (!target.startsWith(path.join(root, "docs") + path.sep))

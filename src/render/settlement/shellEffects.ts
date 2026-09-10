@@ -15,6 +15,7 @@ export class ShellEffects {
  private readonly matrix=new Matrix4();private readonly position=new Vector3();private readonly scale=new Vector3();
  private readonly rotation=new Quaternion();private readonly flat=new Quaternion().setFromAxisAngle(new Vector3(1,0,0),-Math.PI/2);
  private readonly color=new Color();
+ private readonly origins=new Map<number,{launched:number;position:Vector3}>();
  constructor(parent:Group){parent.add(this.root);}
  private reserve(count:number){
   if(this.capacity>=count)return;
@@ -23,14 +24,24 @@ export class ShellEffects {
   this.balls=new InstancedMesh(this.ballGeometry,this.ballMaterial,capacity);this.rings=new InstancedMesh(this.ringGeometry,this.ringMaterial,capacity);
   for(const mesh of [this.balls,this.rings]){mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;this.root.add(mesh);}
  }
- update(shells:readonly Shell[],field:HeightField,tick:number){
+ update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined){
+  const live=new Set(shells.map(s=>s.id));
+  for(const id of this.origins.keys())if(!live.has(id))this.origins.delete(id);
   this.reserve(shells.length);if(!this.balls||!this.rings)return;this.balls.count=0;this.rings.count=0;
   for(const shell of shells){
    if(tick<shell.impact){
-    const t=Math.max(0,(tick-shell.launched)/(shell.impact-shell.launched)),dx=shell.target.x-shell.origin.x,dy=shell.target.y-shell.origin.y;
-    const start=field.sample(shell.origin.x,shell.origin.y)+2.1,end=field.sample(shell.target.x,shell.target.y)+.1;
+    let cached=this.origins.get(shell.id);
+    if(!cached||cached.launched!==shell.launched){
+     // Sample once: a flying shell must not follow its moving or dying shooter.
+     const position=(tick<=shell.launched+1?launchPosition?.(shell):undefined)?.clone()
+      ?? new Vector3(shell.origin.x,field.sample(shell.origin.x,shell.origin.y)+2.1,shell.origin.y);
+     cached={launched:shell.launched,position};this.origins.set(shell.id,cached);
+    }
+    const origin=cached.position;
+    const t=Math.max(0,(tick-shell.launched)/(shell.impact-shell.launched)),dx=shell.target.x-origin.x,dy=shell.target.y-origin.z;
+    const start=origin.y,end=field.sample(shell.target.x,shell.target.y)+.1;
     const arc=Math.max(2,Math.hypot(dx,dy)*.3);
-    this.position.set(shell.origin.x+dx*t,start+(end-start)*t+4*arc*t*(1-t),shell.origin.y+dy*t);this.scale.setScalar(1);
+    this.position.set(origin.x+dx*t,start+(end-start)*t+4*arc*t*(1-t),origin.z+dy*t);this.scale.setScalar(1);
     this.balls.setMatrixAt(this.balls.count++,this.matrix.compose(this.position,this.rotation,this.scale));
    }else{
     const t=(tick-shell.impact)/20;if(t>=1)continue;
@@ -41,5 +52,5 @@ export class ShellEffects {
   }
   this.balls.instanceMatrix.needsUpdate=true;this.rings.instanceMatrix.needsUpdate=true;if(this.rings.instanceColor)this.rings.instanceColor.needsUpdate=true;
  }
- dispose(){this.balls?.dispose();this.rings?.dispose();this.root.removeFromParent();this.root.clear();this.ballGeometry.dispose();this.ringGeometry.dispose();this.ballMaterial.dispose();this.ringMaterial.dispose();}
+ dispose(){this.origins.clear();this.balls?.dispose();this.rings?.dispose();this.root.removeFromParent();this.root.clear();this.ballGeometry.dispose();this.ringGeometry.dispose();this.ballMaterial.dispose();this.ringMaterial.dispose();}
 }

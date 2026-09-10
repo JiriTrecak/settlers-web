@@ -1,6 +1,8 @@
+import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
+import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import { fingerprint, type ContentRegistry } from "../../content/registry";
 import type { UtcMap } from "../../shared/map/utcmap";
-import { decodeHeight, HEIGHT_ORIGIN } from "../../shared/map/height";
+import { sampleHeight, decodeHeight, HEIGHT_ORIGIN, WADING_DEPTH_CM } from "../../shared/map/height";
 import type { Point } from "../game/state";
 
 export type CampSite = Readonly<{
@@ -39,8 +41,10 @@ export function createMapBriefing(
         (h?.[(y - HEIGHT_ORIGIN) * vertices + x - HEIGHT_ORIGIN] ?? 0) * 100,
       );
       heights.push(n);
-      land.push(n > sea + 10 ? 1 : 0);
+      land.push(n >= sea - WADING_DEPTH_CM ? 1 : 0);
     }
+  applyBridgeSurfaces(map.size,bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,map.size):0),land,heights);
+  applySceneryBlockers(map, land);
   const placements = new Map(map.entities.map((p) => [p.id, p]));
   const camps = map.camps
     .filter((c) => c.aggression === "players" && c.mapKnowledge !== "hidden")

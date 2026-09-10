@@ -4,6 +4,7 @@ import { MapInput } from "../../src/render/input/mapInput";
 function setup(rts = true) {
   const win = new EventTarget();
   const doc = {
+    documentElement: {classList: {contains: vi.fn(() => false)}},
     hidden: false, hasFocus: () => true, querySelector: vi.fn((): unknown => null),
     createElement: () => ({style: {}, remove() {}}), body: {append() {}},
   };
@@ -62,6 +63,18 @@ describe("RTS edge scrolling", () => {
     expect(camera.panWorld).not.toHaveBeenCalled();
   });
 
+  it("clears edge motion while chat is open and resumes only on a new pointer move", () => {
+    const {input, camera, move, doc} = setup();
+    move(101,300);
+    doc.documentElement.classList.contains.mockReturnValue(true);
+    input.tick(50);
+    doc.documentElement.classList.contains.mockReturnValue(false);
+    input.tick(50);
+    expect(camera.panWorld).not.toHaveBeenCalled();
+    move(101,300); input.tick(50);
+    expect(camera.panWorld).toHaveBeenCalledOnce();
+    input.destroy();
+  });
   it("leaves editor hover behavior unchanged", () => {
     const {input, camera, move} = setup(false);
     move(101, 300); input.tick(50);

@@ -77,9 +77,10 @@ const combat = z
     damageType: idSchema,
     range: z.number().positive().max(64),
     cooldownTicks: positive,
+    attack: z.object({windupTicks: positive.max(120), recoveryTicks: positive.max(120), rangeBuffer: z.number().min(0).max(4)}).strict().default({windupTicks: 12, recoveryTicks: 12, rangeBuffer: .75}),
     aggroRange: positive.max(64),
+    projectile: z.object({speed: positive.max(128)}).strict().optional(),
     shell: z.object({
-      windupTicks: natural.max(120).optional(),
       flightTicks: positive.max(400), radius: z.number().positive().max(12),
       slowPermille: natural.max(800), slowTicks: positive.max(1200),
     }).strict().optional(),
@@ -216,6 +217,7 @@ const fields = {
   description: z.string(),
   asset: idSchema,
   icon: idSchema,
+  displayOrder: z.number().int().optional(),
   hero: z.boolean().optional(),
   level: positive.optional(),
   experienceYield: natural.optional(),
@@ -343,6 +345,7 @@ export const assetSchema = z
     stackHeight: z.number().positive().optional(),
     stackColumns: positive.optional(),
     projectile: z.enum(["arrow", "thorn"]).optional(),
+    projectileSocket: z.string().min(1).optional(),
     sceneryAsset: z.string().optional(),
   })
   .strict();

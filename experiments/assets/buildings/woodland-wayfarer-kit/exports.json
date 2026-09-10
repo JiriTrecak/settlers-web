@@ -1,0 +1,27 @@
+[
+  {
+    "id": "timber-bridge",
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/environment/wayfarer/timber-bridge.glb",
+    "triangles": 2168
+  },
+  {
+    "id": "lantern-post",
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/environment/wayfarer/lantern-post.glb",
+    "triangles": 336
+  },
+  {
+    "id": "splitrail-fence",
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/environment/wayfarer/splitrail-fence.glb",
+    "triangles": 128
+  },
+  {
+    "id": "waystone-outcrop",
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/environment/wayfarer/waystone-outcrop.glb",
+    "triangles": 190
+  },
+  {
+    "id": "road-segment",
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/environment/wayfarer/road-segment.glb",
+    "triangles": 2
+  }
+]

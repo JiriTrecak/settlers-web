@@ -352,7 +352,6 @@ export class SettlementLayer {
     timeScale = 1,
   ) {
     this.spellEffects.update(state.visuals ?? [], field, tick);
-    this.shells.update(state.shells ?? [], field, tick);
     const now = performance.now();
     this.commandEffects.update(now);
     const dt =
@@ -389,13 +388,13 @@ export class SettlementLayer {
           e.gathering.capacity,
         );
       }
-      const target = this.targetPosition.set(e.x, field.sample(e.x, e.y), e.y);
+      const target = this.targetPosition.set(e.x, (e.unit?field.walkSample(e.x,e.y):field.sample(e.x, e.y)), e.y);
       if (e.unit && o.userData.placed) {
         // Facing follows observed travel, never the frame-rate-dependent smoothing gap.
         const dx = e.x - (o.userData.observedX ?? e.x);
         const dz = e.y - (o.userData.observedZ ?? e.y);
         if (dx * dx + dz * dz > 1e-10) o.rotation.y = Math.atan2(dx, dz);
-        o.position.lerp(target, 0.35);
+        o.position.lerp(target, 1 - Math.exp(-dt * 60));
       } else {
         o.position.copy(target);
         o.rotation.y = (e.rotation * Math.PI) / 180;
@@ -405,9 +404,9 @@ export class SettlementLayer {
       o.userData.observedZ = e.y;
       const character = this.characters.get(e.id);
       if (character && e.unit && o.visible) {
-        const previousCooldown = o.userData.animationCooldown;
-        const attacked =
-          previousCooldown !== undefined && e.unit.cooldown > previousCooldown;
+        const attack = e.unit.attack;
+        const attacked = !!attack && o.userData.attackStarted !== attack.started;
+        if (attack) o.userData.attackStarted = attack.started;
         const hurt =
           o.userData.animationHp !== undefined &&
           e.hp !== null &&
@@ -418,6 +417,10 @@ export class SettlementLayer {
           if (o.userData.castKey !== key)
             character.player.setState("cast", { restart: true });
           o.userData.castKey = key;
+        } else if (attack && !e.unit.moving) {
+          character.player.setState("attack", { restart: attacked, fade: .04 });
+          const victim = byId.get(attack.target);
+          if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
         } else if (attacked) {
           character.player.setState("attack", { restart: true });
           const victim = byId.get(e.unit!.target!);
@@ -426,6 +429,7 @@ export class SettlementLayer {
           character.player.setState("hit", { restart: true });
         else if (e.unit.moving)
           character.player.setState(e.unit.charging ? "charge" : e.unit.strolling ? "walk" : "run");
+        else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.05});
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
           const work =
             character.player.variant === "base" ? e.unit.work : undefined;
@@ -435,11 +439,16 @@ export class SettlementLayer {
           if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
         }
         const cycle = e.unit.work?.cycle;
-        if (cycle && character.player.state === e.unit.work?.animation) {
+        if (attack && character.player.state === "attack") {
+          const contact = character.player.attackContact();
+          const phase = renderTick <= attack.impact
+            ? contact * Math.max(0,renderTick-attack.started) / Math.max(1,attack.impact-attack.started)
+            : contact + (1-contact) * (renderTick-attack.impact) / Math.max(1,attack.ends-attack.impact);
+          character.player.seek(Math.min(.999999,phase));
+        } else if (cycle && character.player.state === e.unit.work?.animation) {
           // Authoritative work phase locks axe contact to the exact damage tick.
           character.player.seek(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks));
         } else character.player.update(dt);
-        o.userData.animationCooldown = e.unit.cooldown;
         o.userData.animationHp = e.hp;
       }
       const { carry, body } = parts;
@@ -505,22 +514,6 @@ export class SettlementLayer {
         }
         o.userData.cargoKey = cargoKey;
       }
-      const shot = e.unit?.shot;
-      if (shot && o.userData.shotTick !== shot.tick) {
-        o.userData.shotTick = shot.tick;
-        const start = o.position.clone().add(new Vector3(0, 1.5, 0));
-        const end = new Vector3(
-          shot.x,
-          field.sample(shot.x, shot.y) + 1,
-          shot.y,
-        );
-        this.projectiles.spawn(
-          content.asset(e.appearance?.asset ?? d.asset).projectile ?? "arrow",
-          start,
-          end,
-          shot.tick,
-        );
-      }
       if (e.unit && !character)
         o.traverse((child) => {
           if (child.name.startsWith("Leg") || child.name.startsWith("Arm"))
@@ -529,7 +522,14 @@ export class SettlementLayer {
               : 0;
         });
     }
-    this.projectiles.update(tick);
+    this.shells.update(state.shells ?? [], field, tick, shell => {
+      const source = this.entities.get(shell.source);
+      const observed = byId.get(shell.source);
+      if (!source?.visible || !observed || observed.remembered) return undefined;
+      const socket = content.asset(observed.appearance?.asset ?? content.get(observed.definition).asset).projectileSocket;
+      return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
+    });
+    this.projectiles.update(renderTick, state.missiles ?? [], field);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
         const character = this.characters.get(id);

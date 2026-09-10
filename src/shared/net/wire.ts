@@ -58,6 +58,7 @@ export type JoinRoom = {
 };
 
 export type ClientMsg =
+  | { type: "chat"; text: string }
   | { type: "hello"; token: string }
   | { type: "ready" }
   | { type: "turn"; through: number; bundles: Bundle[] }
@@ -67,6 +68,7 @@ export type ClientMsg =
   | { type: "restart" };
 
 export type ServerMsg =
+  | { type: "chat"; message: import("../chat/chat").ChatMessage }
   | { type: "welcome"; you: ClientIdentity; room: RoomView }
   | { type: "room"; room: RoomView }
   | { type: "start"; config: MatchConfig; you: ClientIdentity; save?: unknown }

@@ -293,6 +293,7 @@ export class ContentRegistry {
         (!(d.footprint.width % 2) || !(d.footprint.depth % 2))
       )
         fail("footprint dimensions must be odd cell counts");
+      if (d.behaviors.combat?.projectile && d.behaviors.combat.shell) fail("weapon cannot launch both a missile and an area shell");
       if (d.behaviors.combat && d.kind !== "unit")
         fail("combat currently requires a unit");
       if (d.kind === "resource" && !this.asset(d.asset).sceneryAsset)

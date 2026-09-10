@@ -1,3 +1,4 @@
+import { Missiles } from "./missiles";
 import { ShellCombat } from "./shellCombat";
 import { maintainCharge, startCharge, chargeDamage } from "./charge";
 import { ItemEffects } from "./itemEffects";
@@ -11,16 +12,17 @@ import { distance2 } from "./spatial";
 import { alive, type Entity } from "./state";
 import { Progression } from "./progression";
 
-export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string};
+export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string;weapon?:boolean};
 export class Combat {
   readonly items: ItemEffects;
   readonly shells: ShellCombat;
+  readonly missiles: Missiles;
   constructor(
     private readonly c: GameContext,
     private readonly vision: Observation,
     private readonly camps: readonly Camp[],
     private readonly teams: ReadonlyMap<Owner, number>,
-  ) { this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b)); }
+  ) { this.missiles = new Missiles(c,vision,[...teams.keys()]); this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b)); }
   allied(a:Entity,b:Entity) {return a.owner!=="none" && b.owner!=="none" && this.teams.get(a.owner)===this.teams.get(b.owner);}
   hostile(a: Entity, b: Entity): boolean {
     if (
@@ -58,11 +60,15 @@ export class Combat {
         combat = c.def(e).behaviors.combat,
         order = u.order;
       maintainCharge(c, e);
-      if (u.shellWindup) {
-        const target = c.get(u.shellWindup.target);
-        if (!target || !alive(target) || u.target !== target.id || isStunned(e,c.registry) || e.spellcasting?.pending ||
-            !this.perceives(e,target) || (order?.type === 'move' && !order.attackMove)) delete u.shellWindup;
-        else { u.route = []; u.goal = null; if (u.cooldown > 0) u.cooldown--; continue; }
+      if (u.attack) {
+        const victim = c.get(u.attack.target);
+        if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || u.target !== victim.id ||
+            isStunned(e,c.registry) || e.spellcasting?.pending || !this.perceives(e,victim)) delete u.attack;
+        else if (!u.attack.released) {
+          u.route = []; u.goal = null;
+          if (u.cooldown > 0) u.cooldown--;
+          continue;
+        }
       }
       if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
       if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") continue;
@@ -138,12 +144,14 @@ export class Combat {
         if (c.spatial.range(e, target) <= combat.range ** 2) {
           u.route = [];
           u.goal = null;
+          if (!u.attack && !u.cooldown) this.beginAttack(e, target);
           continue;
         }
-        if (!u.route.length && u.retryAt <= c.state.tick) {
+        const staleGoal = u.goal !== null && c.spatial.pointRange(c.spatial.point(u.goal),target) > Math.max(1,combat.range * .75) ** 2;
+        if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
           const goal = c.spatial.nearest(target, 12, e.id);
           if (goal) c.spatial.route(e, goal);
-          u.retryAt = c.state.tick + 20;
+          u.retryAt = c.state.tick + 6;
         }
         startCharge(c, e, target);
         continue;
@@ -167,10 +175,17 @@ export class Combat {
           this.c.spatial.navigation.path(this.c.spatial.cell(e), this.c.spatial.cell(goal)) === null) {
         u.order = null;
         u.goal = null;
-        this.c.event(e.owner, "Move destination is unreachable");
+        this.c.event(e.owner, "Move destination is unreachable", "error");
       }
       u.retryAt = this.c.state.tick + 20;
     }
+  }
+  private beginAttack(a: Entity, b: Entity) {
+    const u = a.unit!, policy = this.c.def(a).behaviors.combat!.attack;
+    u.attack = {target: b.id, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
+      ends: this.c.state.tick + policy.windupTicks + policy.recoveryTicks, released: false};
+    u.cooldown = this.c.stats(a).cooldownTicks;
+    u.route = []; u.goal = null;
   }
   private damage(target:Entity,raw:number,type:string){
     return this.items.absorb(target, resolveDamage(this.c.registry.rules, {
@@ -180,55 +195,41 @@ export class Combat {
     }, raw, type));
   }
   resolve(extra:DamageHit[]=[]): Entity[] {
-    extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve()];
+    extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve(), ...this.missiles.resolve()];
     const hits = new Map<number, number>();
     const contested = new Set<number>();
     for (const a of this.c.activeUnits()) {
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
-      if (u.shellWindup) {
-        const pending = u.shellWindup;
-        if (!b || b.id !== pending.target || !alive(b) || isStunned(a,this.c.registry) || a.spellcasting?.pending || !this.perceives(a,b)) delete u.shellWindup;
-        else if (this.c.state.tick >= pending.releaseTick) {
-          this.shells.launch(a,b); delete u.shellWindup;
-        }
+      if (a.spellcasting?.pending || isStunned(a,this.c.registry) || !combat || !b ||
+          !alive(b) || b.hp === null || !this.perceives(a,b) ||
+          (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a,b))) {
+        delete u.attack;
         continue;
       }
-      if (
-        a.spellcasting?.pending || isStunned(a,this.c.registry) ||
-        !combat ||
-        !b ||
-        u.cooldown > 0 ||
-        !alive(b) ||
-        b.hp === null ||
-        !this.perceives(a, b) ||
-        this.c.spatial.range(a, b) > combat.range ** 2
-      )
-        continue;
-      if (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a, b))
-        continue;
-      if (combat.shell) {
-        if (combat.shell.windupTicks) u.shellWindup = {target:b.id,releaseTick:this.c.state.tick+combat.shell.windupTicks};
-        else this.shells.launch(a,b);
-        u.cooldown = this.c.stats(a).cooldownTicks;
+      if (!u.attack) {
+        if (u.cooldown === 0 && this.c.spatial.range(a,b) <= combat.range ** 2) this.beginAttack(a,b);
         continue;
       }
-      const damage = this.damage(b,chargeDamage(this.c,a,b),combat.damageType);
+      const attack = u.attack;
+      if (attack.target !== b.id) { delete u.attack; continue; }
+      if (attack.released || this.c.state.tick < attack.impact) continue;
+      attack.released = true;
+      if (this.c.spatial.range(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
+      if (combat.shell) { this.shells.launch(a,b); continue; }
+      const raw = chargeDamage(this.c,a,b);
+      if (combat.projectile) { this.missiles.launch(a,b,raw); continue; }
+      const damage = this.damage(b,raw,combat.damageType);
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
       extra.push(...this.items.onHit(a, b, damage, combat.damageType));
       if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
-      u.cooldown = this.c.stats(a).cooldownTicks;
-      if(this.c.registry.asset(this.c.def(a).asset).projectile) {
-        const destination=precise(b);
-        u.shot={tick:this.c.state.tick,x:destination.x,y:destination.y,
-          viewers:[...this.teams.keys()].filter(owner=>this.vision.visible(owner,a)&&this.vision.visible(owner,b))};
-      }
     }
     for(const hit of extra){
       const a=this.c.get(hit.source),b=this.c.get(hit.target);
       if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null)continue;
       const damage=this.damage(b,hit.damage,hit.damageType);
+      if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,damage,hit.damageType));
       hits.set(b.id,(hits.get(b.id)??0)+damage);
       if(damage>0 && (a ? this.opponents(a,b) : hit.owner !== b.owner && (hit.owner === "none" || b.owner === "none" || this.teams.get(hit.owner!) !== this.teams.get(b.owner))))contested.add(b.id);
     }

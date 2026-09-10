@@ -1,3 +1,4 @@
+import { GameChat } from "../../ui/chat/chat";
 import { commandFeedback } from "../../presentation/commandFeedback";
 import {
   ObserverIncome,
@@ -51,6 +52,8 @@ export type SessionConfig = {
 };
 
 export class Session {
+  private chat: GameChat | null = null;
+  private readonly aiGreeted = new Set<number>();
   private loadedMap: MapEntry | null = null;
   private world: World | null = null;
   private room: Room | null = null;
@@ -100,6 +103,18 @@ export class Session {
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
   private resourceSignature = "";
+  private resourceEntities: Parameters<typeof resourceStamps>[0] | undefined;
+  private updateResourceStamps(entities: Parameters<typeof resourceStamps>[0]) {
+    // Observation owns immutable per-update arrays. Reuse them between simulation
+    // ticks, but never key by tick alone: reveal/restore can change the same tick.
+    if (this.resourceEntities === entities && this.resourceSignature) return;
+    this.resourceEntities = entities;
+    const resources = resourceStamps(entities), signature = JSON.stringify(resources);
+    if (signature === this.resourceSignature) return;
+    this.resourceSignature = signature;
+    this.stamps = [...this.loadedMap!.map.stamps, ...resources];
+    this.mini?.setStamps(this.stamps);
+  }
   private economyHud: SettlementHud | null = null;
   private placementPointer: { clientX: number; clientY: number } | null = null;
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
@@ -182,6 +197,13 @@ export class Session {
         loaded.revision,
       ).match;
     this.match = match;
+    this.chat?.destroy();
+    this.aiGreeted.clear();
+    this.chat = new GameChat(this.config.host, text => {
+      if (this.config.channel) this.config.channel.send({type: "chat", text});
+      else this.chat?.receive({text, player: this.observing ? null : this.me,
+        name: this.observing ? "Observer" : match.slots.find(s => s.player === this.me)?.name ?? `Player ${this.me + 1}`});
+    });
     if (match.mapId !== loaded.id || match.mapRevision !== loaded.revision)
       throw new Error(
         "This match uses a different map or gameplay rules revision. Reload both clients.",
@@ -442,7 +464,7 @@ export class Session {
     let n = 0;
     while (this.acc >= step && n < cap) {
       const next = world.clock.tickIndex + 1;
-      if (!remote) for (const ls of this.locksteps.values()) ls.confirm(next);
+      if (!remote) for (const ls of this.locksteps.values()) ls.confirm(next, next);
       const commit = this.locksteps.get(this.me)?.take(next);
       if (!commit) {
         if (remote) this.acc = Math.min(this.acc, step);
@@ -462,8 +484,17 @@ export class Session {
       world.tick();
       if (!document.hidden) for (const receipt of world.commandReceipts) {
         if (this.observing || receipt.player !== this.me) continue;
-        const feedback = commandFeedback(receipt.action, world.settlement.view(this.me), content);
-        if (feedback) renderer.gameCommandFeedback(feedback);
+        if (receipt.action.type === "learnAbility") this.economyHud?.learnedAbility();
+      }
+      if (!remote) for (const slot of this.match?.slots ?? []) {
+        if (slot.kind !== "ai" || this.aiGreeted.has(slot.player)) continue;
+        const game = world.settlement;
+        const hall = game.entities.find(e => e.id === game.state.objectives[slotOwner(slot.player)]);
+        const max = hall && content.get(hall.definition).body?.maxHp;
+        if ((hall && max && hall.hp !== null && hall.hp <= max * .15) || game.state.outcome?.defeated.includes(slotOwner(slot.player))) {
+          this.aiGreeted.add(slot.player);
+          this.chat?.receive({name: slot.name ?? `Player ${slot.player + 1}`, player: slot.player, text: "gg"});
+        }
       }
       this.observerIncome?.record(next, world.settlement.economy.deliveries);
       for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
@@ -505,13 +536,7 @@ export class Session {
     perf.end("View snapshot", snapshot);
     const hud = perf.start();
     if (view.settlement) {
-      const resources = resourceStamps(view.settlement.entities),
-        signature = JSON.stringify(resources);
-      if (signature !== this.resourceSignature) {
-        this.resourceSignature = signature;
-        this.stamps = [...this.loadedMap!.map.stamps, ...resources];
-        this.mini?.setStamps(this.stamps);
-      }
+      this.updateResourceStamps(view.settlement.entities);
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(this.selectionView());
       renderer.gameSelect(this.economyHud?.selectedIds ?? []);
@@ -648,6 +673,13 @@ export class Session {
     const peer = this.locksteps.get(this.me);
     if (!peer) return false;
     peer.send(action);
+    // Send remote orders now; do not wait for the periodic heartbeat. Local
+    // orders enter the very next simulation tick through the same Room channel.
+    if (this.config.channel && this.world && !this.desynced) this.pulseConfirm();
+    if (this.world && this.renderer) {
+      const feedback = commandFeedback(action, this.world.settlement.view(this.me), content);
+      if (feedback) this.renderer.gameCommandFeedback(feedback);
+    }
     return true;
   }
   private click(
@@ -687,6 +719,7 @@ export class Session {
         hud.placementRotation,
       );
       if (error) {
+        hud.showError(error);
         hud.placement(error);
         return;
       }
@@ -900,6 +933,8 @@ export class Session {
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
     this.confirmTimer = null;
     this.canvas.removeEventListener("pointermove", this.onHover);
+    this.chat?.destroy();
+    this.chat = null;
     this.economyHud?.destroy();
     this.economyHud = null;
     this.input?.destroy();
@@ -933,6 +968,7 @@ export class Session {
       send: (msg) => channel.send(msg),
       onMessage: (fn) => {
         channel.onMessage((msg) => {
+          if (msg.type === "chat") this.chat?.receive(msg.message);
           if (msg.type === "desync") this.desynced = true;
           fn(msg);
         });

@@ -1,3 +1,4 @@
+import {forestCoverStroke} from './forestCover';
 import { content } from "../../content/builtin";
 import { expandMap } from "../../content/map";
 import { type Owner } from "../../content/schema";
@@ -163,7 +164,9 @@ export class WorldEditor {
   terrainMode:
     | "terrain"
     | "river"
+    | "shallows"
     | "raise"
+    | "cover"
     | "foliage"
     | "smooth"
     | "flatten"
@@ -534,13 +537,13 @@ export class WorldEditor {
   curveStroke(opts: {
     points: CurvePoint[];
     radius: number;
-    mode: "river" | "terrain" | "foliage" | "raise" | "smooth" | "flatten";
+    mode: "river" | "shallows" | "terrain" | "cover" | "foliage" | "raise" | "smooth" | "flatten";
     depth?: number;
     layer?: TerrainLayer;
     opacity?: number;
   }): void {
     const samples = sampleCurve(opts.points, opts.radius);
-    if (opts.mode === "river") {
+    if (opts.mode === "river" || opts.mode === "shallows") {
       const landscape = this.map.landscape ?? emptyLandscape();
       this.map = {
         ...this.map,
@@ -551,7 +554,7 @@ export class WorldEditor {
             {
               points: opts.points,
               radius: opts.radius,
-              depth: opts.depth ?? 1.4,
+              depth: opts.mode === "shallows" ? .32 : opts.depth ?? 1.4,
             },
           ],
         },
@@ -574,6 +577,9 @@ export class WorldEditor {
           ],
         },
       };
+    } else if (opts.mode === "cover") {
+      const landscape=this.map.landscape??emptyLandscape();
+      this.map={...this.map,landscape:{...landscape,cover:[...landscape.cover,...forestCoverStroke(opts.points,opts.radius)]}};
     } else if (opts.mode === "foliage") {
       for (const p of samples) {
         this.brush.setRadius(p.radius);
@@ -592,19 +598,19 @@ export class WorldEditor {
           if (d >= 1) continue;
           const i = iz * this.height.verts + ix;
           const w = (1 - d * d) ** 2;
-          if (opts.mode === "river") {
+          if (opts.mode === "river" || opts.mode === "shallows") {
             // Constant riverbed depth along the centerline; overlapping dabs never dig holes.
             const bank = Math.max(0, Math.min(1, (d - 0.68) / 0.32));
             const blend = bank * bank * (3 - 2 * bank);
             const channel =
               this.height.waterLevel -
-              (opts.depth ?? 1.4) * Math.max(0, 1 - (d / 0.68) ** 2);
+              (opts.mode === "shallows" ? .32 : opts.depth ?? 1.4) * Math.max(0, 1 - (d / 0.68) ** 2);
             const target =
               d < 0.68
                 ? channel
                 : this.height.waterLevel +
                   (original[i]! - this.height.waterLevel) * blend;
-            this.height.samples[i] = Math.min(original[i]!, target);
+            this.height.samples[i] = opts.mode === "shallows" ? target : Math.min(original[i]!, target);
           } else if (opts.mode === "smooth") {
             let sum = 0,
               count = 0;

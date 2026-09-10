@@ -8,17 +8,17 @@ export class TerrainDock {
     this.root.setAttribute('aria-label','Terrain and curves');
     const title=document.createElement('strong');title.textContent='Terrain & curves';
     const mode=document.createElement('select');mode.setAttribute('aria-label','Brush effect');
-    for(const [value,label] of [['terrain','Paint ground'],['river','Carve river'],['hill','Shape hill'],['plateau','Shape plateau'],['basin','Shape basin'],['raise','Raise ground'],['smooth','Smooth terrain'],['flatten','Level terrain'],['foliage','Scatter current kit']]){const o=document.createElement('option');o.value=value;o.textContent=label;mode.append(o);}
+    for(const [value,label] of [['terrain','Paint ground'],['cover','Forest grass · pack 3 + 6'],['river','Carve deep river'],['shallows','Paint shallow crossing'],['hill','Shape hill'],['plateau','Shape plateau'],['basin','Shape basin'],['raise','Raise ground'],['smooth','Smooth terrain'],['flatten','Level terrain'],['foliage','Scatter current kit']]){const o=document.createElement('option');o.value=value;o.textContent=label;mode.append(o);}
     mode.className='rounded-lg bg-black/30 p-2 text-canopy';mode.onchange=()=>{editor.terrainMode=mode.value as WorldEditor['terrainMode'];};
     const layer=document.createElement('select');layer.setAttribute('aria-label','Ground material');
-    for(const value of ['grass','sand','mud','rock','snow']){const o=document.createElement('option');o.value=value;o.textContent=value[0]!.toUpperCase()+value.slice(1);layer.append(o);}
+    for(const value of ['grass','sand','road','mud','rock','snow']){const o=document.createElement('option');o.value=value;o.textContent=value[0]!.toUpperCase()+value.slice(1);layer.append(o);}
     layer.value='sand';layer.className=mode.className;layer.onchange=()=>{editor.terrainLayer=layer.value as WorldEditor['terrainLayer'];};
     const radius=range('Radius (m)',.5,32,.5,4,n=>editor.terrainRadius=n);
     const depth=range('Depth / height (m)',.1,8,.1,1.4,n=>editor.terrainDepth=n);
     const aspect=range('Oval shape',.25,2,.05,1,n=>editor.terrainAspect=n);
     const rotation=range('Rotation',0,180,5,0,n=>editor.terrainRotation=n);
     const curve=document.createElement('button');curve.className=btn;curve.textContent='Stroke: freehand';curve.onclick=()=>{editor.terrainCurve=!editor.terrainCurve;curve.textContent=editor.terrainCurve?'Stroke: curve points':'Stroke: freehand';editor.clearTerrainCurve();};
-    const hint=document.createElement('p');hint.className='text-xs leading-5 text-canopy/60';hint.textContent='Drag to paint; click to place a hill, plateau, or basin. In curve mode, click to add control points, then Apply curve. The line previews the center of your stroke.';
+    const hint=document.createElement('p');hint.className='text-xs leading-5 text-canopy/60';hint.textContent='Drag to paint; click to place a hill, plateau, or basin. In curve mode, click to add control points, then Apply curve. Shallow crossings are walkable; deep rivers block ground units. Buildings require dry land.';
     const apply=document.createElement('button');apply.className=btnPrimary;apply.textContent='Apply curve';apply.onclick=()=>editor.applyTerrainCurve();
     const clear=document.createElement('button');clear.className=btn;clear.textContent='Clear points';clear.onclick=()=>editor.clearTerrainCurve();
     this.root.append(title,mode,layer,radius,depth,aspect,rotation,curve,hint,apply,clear);host.append(this.root);this.setOpen(false);

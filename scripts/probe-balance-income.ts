@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs';
 import {parseUtcMap} from '../src/shared/map/utcmap';
 import {Game} from '../src/sim/game/game';
 import {content} from '../src/content/builtin';
-const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/showcase/mosswater-divide.utcmap','utf8')))!;
+const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/worldroot-hollow.utcmap','utf8')))!;
 const g=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}],content);
 let previous:Record<string,number>={};
 for(let minute=1;minute<=3;minute++){

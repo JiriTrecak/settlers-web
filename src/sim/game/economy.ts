@@ -972,7 +972,7 @@ export class Economy {
     const u = w.unit;
     if (!u || u.contained || u.release) return false;
     u.orderQueue = [];
-    delete u.shellWindup;
+    delete u.attack;
     u.idle = null;
     const workplace = this.c.get(u.employment);
     if (workplace?.production) {

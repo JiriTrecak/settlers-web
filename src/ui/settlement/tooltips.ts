@@ -1,3 +1,4 @@
+import { content } from "../../content/builtin";
 import { iconArt } from "./commandArt";
 import type { CostView } from "../../presentation/commands";
 /** Delegated so changing selection and resource counters need no new event listeners. */
@@ -29,24 +30,21 @@ export class CommandTooltips {
   };
   private render(target: HTMLElement) {
     const name = document.createElement("strong");
-    name.textContent = target.dataset.tipName ?? "";
+    name.textContent = (target.dataset.tipName ?? "") + (target.dataset.tipKey ? ` (${target.dataset.tipKey})` : "");
     const description = document.createElement("p");
     description.textContent = target.dataset.tipDescription ?? "";
     const costs = document.createElement("div");
     costs.className = "rts-tooltip-costs";
     const rows: CostView[] = JSON.parse(target.dataset.tipCosts ?? "[]");
-    for (const cost of rows) {
+    const order = (icon: string) => content.definitions.find(d => d.displayOrder !== undefined && d.icon === icon)?.displayOrder ?? 1000;
+    for (const cost of rows.sort((a,b) => order(a.icon)-order(b.icon))) {
       const row = document.createElement("span");
       row.innerHTML = iconArt(cost.icon);
       row.append(document.createTextNode(String(cost.amount)));
       row.setAttribute("aria-label", `${cost.amount} ${cost.name}`);
       costs.append(row);
     }
-    const shortcut = document.createElement("small");
-    shortcut.textContent = target.dataset.tipKey
-      ? `Shortcut: ${target.dataset.tipKey}`
-      : "";
-    this.box.replaceChildren(name, costs, description, shortcut);
+    this.box.replaceChildren(name, costs, description);
     this.box.hidden = false;
     // Commands and resource badges share a shelf above the resource strip.
     const actions = target.closest<HTMLElement>(".rts-actions");

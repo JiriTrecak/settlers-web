@@ -51,7 +51,7 @@ try {
   ]);
   const raw = readFileSync(
       new URL(
-        "../assets/maps/showcase/mosswater-divide.utcmap",
+        "../assets/maps/skirmish/worldroot-hollow.utcmap",
         import.meta.url,
       ),
       "utf8",

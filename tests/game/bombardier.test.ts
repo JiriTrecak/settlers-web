@@ -26,6 +26,6 @@ it('purchases permanent shell research and applies it to the real mortar at rele
  // Advance research without introducing an unrelated battle before the release assertion.
  for(let i=0;i<2000;i++)g.research.tick();
  expect(g.state.research['player.1']).toContain(research);
- a.unit!.target=b.id;g.combat.resolve();expect(a.unit!.shellWindup?.releaseTick).toBe(22);expect(g.state.shells).toHaveLength(0);
+ a.unit!.target=b.id;g.combat.resolve();expect(a.unit!.attack?.impact).toBe(22);expect(g.state.shells).toHaveLength(0);
  g.state.tick=22;g.combat.resolve();expect(g.state.shells[0]).toMatchObject({radius:3,slowPermille:350,damage:42,damageType:'siege',impact:62});
 });

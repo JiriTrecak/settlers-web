@@ -1,3 +1,5 @@
+import {bridgeSurfaces,bridgeHeight} from '../../shared/map/bridgeSurface';
+import {SceneryLights} from '../prop/sceneryLights';
 import type { AbilityAim } from "../settlement/abilityTarget";
 import type { CommandFeedback } from "../../presentation/commandFeedback";
 import { WeatherLayer } from "../sky/weatherLayer";
@@ -62,6 +64,7 @@ export class Renderer {
   private readonly display: Display;
   private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
+  private readonly sceneryLights = new SceneryLights(this.scene);
   private readonly ortho = new OrthographicCamera();
   private readonly persp = new PerspectiveCamera();
   private readonly spawnFlags = new Map<number, Group>();
@@ -306,7 +309,7 @@ export class Renderer {
     }
   }
   async ready(): Promise<void> {
-    await this.props.ready();
+    await Promise.all([this.props.ready(),this.meadow.ready]);
   }
   diagnostics() {
     return {
@@ -415,6 +418,7 @@ export class Renderer {
       this.lines.visible = this.gridOn;
       this.refreshGrid();
     }
+    if(this.height){const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));field.walkSurface=(x,z)=>bridgeHeight(surfaces,x,z);}
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
       this.settlement ??= new SettlementLayer(this.scene);
@@ -428,6 +432,7 @@ export class Renderer {
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
     this.props.sync(stamps);
+    if(this.height)this.sceneryLights.sync(stamps,this.height);
     perf.end("Prop sync", props);
     const visibility = perf.start();
     if (snapshot.settlement?.fog) {
@@ -509,6 +514,7 @@ export class Renderer {
     );
     this.water?.tick(now);
     this.meadow.tick(now);
+    this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
     perf.end("Sky / water / wind", environment);
     const camera = perf.start();
     const cam = this.threeCam();
@@ -593,6 +599,7 @@ export class Renderer {
     this.previewCurve([]);
     this.meadow.destroy();
     this.weather.dispose();
+    this.sceneryLights.dispose();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);

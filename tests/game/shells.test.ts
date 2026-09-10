@@ -2,10 +2,11 @@ import {expect,it} from 'vitest';
 import type {Rules} from '../../src/content/schema';
 import {game,placed,run} from './helpers';
 const definition='unit.ants.archer';
-function scene(windupTicks=0){
+function scene(windupTicks=1){
  const g=game([placed('a',definition,205,210),{...placed('b','unit.ants.warrior',211,210),owner:'player.2'},placed('friend','unit.ants.warrior',212,211)],s=>{
   const a=s.definitions.find((d:any)=>d.id===definition)! as any;
-  a.behaviors.combat.shell={windupTicks,flightTicks:40,radius:2,slowPermille:200,slowTicks:80};a.behaviors.combat.cooldownTicks=400;
+  a.behaviors.combat.attack.windupTicks=windupTicks;delete a.behaviors.combat.projectile;
+  a.behaviors.combat.shell={flightTicks:40,radius:2,slowPermille:200,slowTicks:80};a.behaviors.combat.cooldownTicks=400;
  (s.rules as Rules).research['research.test.shells']={name:'Test shells',description:'',icon:'icon.ants.archer',priority:1,items:[],workTicks:1,effects:[{units:[definition],splashRadius:3,splashSlowPermille:350}]};
  });
  const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!,friend=g.entities.find(e=>e.placement==='friend')!;
@@ -44,8 +45,9 @@ it('does not reveal unseen shell trajectories to another player',()=>{
 });
 it('normal combat launches a shell instead of applying immediate or duplicate damage',()=>{
  const {g,a,b}=scene();g.state.shells=[];g.state.tick=1;a.unit!.target=b.id;
- const hp=b.hp!;g.combat.resolve();expect(b.hp).toBe(hp);expect(g.state.shells).toHaveLength(1);
- expect(a.unit!.cooldown).toBe(400);g.state.tick=41;g.combat.resolve();expect(b.hp!).toBeLessThan(hp);
+ const hp=b.hp!;g.combat.resolve();expect(b.hp).toBe(hp);expect(g.state.shells).toHaveLength(0);
+ g.state.tick=2;g.combat.resolve();expect(g.state.shells).toHaveLength(1);
+ expect(a.unit!.cooldown).toBe(400);g.state.tick=42;g.combat.resolve();expect(b.hp!).toBeLessThan(hp);
  const after=b.hp;g.combat.resolve();expect(b.hp).toBe(after);
 });
 it('applies splash research to newly launched shots and leaves an existing flight unchanged',()=>{
@@ -57,7 +59,7 @@ it('applies splash research to newly launched shots and leaves an existing fligh
 
 it('holds a mortar windup, releases once on its frame, and preserves it through save',()=>{
  const {g,a,b}=scene(22);g.state.shells=[];a.unit!.target=b.id;
- g.combat.resolve();expect(g.state.shells).toHaveLength(0);expect(a.unit!.shellWindup?.releaseTick).toBe(22);
+ g.combat.resolve();expect(g.state.shells).toHaveLength(0);expect(a.unit!.attack?.impact).toBe(22);
  const restored=scene(22).g;restored.restore(g.snapshot());
  g.state.tick=21;g.combat.resolve();expect(g.state.shells).toHaveLength(0);
  g.state.tick=22;g.combat.resolve();expect(g.state.shells).toHaveLength(1);expect(g.state.shells[0].launched).toBe(22);
@@ -66,7 +68,7 @@ it('holds a mortar windup, releases once on its frame, and preserves it through 
 });
 it('cancels a mortar windup when interrupted or its target dies',()=>{
  const {g,a,b}=scene(22);g.state.shells=[];a.unit!.target=b.id;g.combat.resolve();
- g.economy.interrupt(a);expect(a.unit!.shellWindup).toBeUndefined();g.state.tick=22;g.combat.resolve();expect(g.state.shells).toHaveLength(0);
+ g.economy.interrupt(a);expect(a.unit!.attack).toBeUndefined();g.state.tick=22;g.combat.resolve();expect(g.state.shells).toHaveLength(0);
  const next=scene(22);next.g.state.shells=[];next.a.unit!.target=next.b.id;next.g.combat.resolve();next.b.hp=0;
- next.g.state.tick=22;next.g.combat.resolve();expect(next.g.state.shells).toHaveLength(0);expect(next.a.unit!.shellWindup).toBeUndefined();
+ next.g.state.tick=22;next.g.combat.resolve();expect(next.g.state.shells).toHaveLength(0);expect(next.a.unit!.attack).toBeUndefined();
 });

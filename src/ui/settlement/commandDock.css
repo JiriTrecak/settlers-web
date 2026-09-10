@@ -235,3 +235,6 @@
 .rts-inventory button[data-tier="2"] { border-color:#7aa7ce; }
 .rts-inventory button[data-tier="3"] { border-color:#dcb261; box-shadow:inset 0 0 5px #dbac6044; }
 .rts-inventory button small { position:absolute; right:1px; bottom:0; padding:1px 3px; background:#091010df; color:#ffe5ac; font:bold 10px system-ui; }
+
+.rts-command kbd{top:auto;bottom:6px;right:7px;font:600 12px system-ui;color:#fff1be;text-shadow:0 1px 3px #000;pointer-events:none}.rts-command[aria-disabled="true"]{opacity:.4;cursor:default}
+.rts-error{position:absolute;bottom:calc(clamp(156px,21.667vw,260px) + 20px);left:50%;transform:translateX(-50%);width:min(90vw,800px);text-align:center;color:#ff5252;font:600 17px system-ui;text-shadow:0 2px 4px #000;opacity:0;transition:opacity .3s;pointer-events:none}.rts-error.visible{opacity:1;transition:none}

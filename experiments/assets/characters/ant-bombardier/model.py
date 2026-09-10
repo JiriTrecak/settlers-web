@@ -42,6 +42,7 @@ for side,sign in [('L',1),('R',-1)]:
     spec[f'socket_hand.{side}']=(spec[f'hand.{side}'][0],f'hand.{side}')
 spec['socket_back']=((0,.13,.94),'spine')
 spec['mortar']=((-.35,.26,.95),'socket_back')
+spec['socket_muzzle']=((-.42,-.08,1.93),'mortar')
 for name,(pos,parent) in spec.items():
     b=arm.edit_bones.new(name);b.head=pos;b.tail=Vector(pos)+Vector((0,.10,0))
     if parent:b.parent=arm.edit_bones[parent]

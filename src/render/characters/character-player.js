@@ -46,6 +46,7 @@ export class CharacterPlayer {
     if (crossed) { this.eventFired = true; this.onEvent?.({ type: event.event, variant: this.variant }); }
     this.mixer.update(dt * this.speed);
   }
+  attackContact() { return this.profile.attackEvents[this.variant]?.normalizedTime ?? .55; }
   seek(normalized) {
     if (!this.action) return;
     for (const action of this.actions.values()) if (action !== this.action) action.stop();

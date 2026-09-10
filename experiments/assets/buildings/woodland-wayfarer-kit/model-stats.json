@@ -1,0 +1,30 @@
+{
+  "source_faces": 1150,
+  "modules": {
+    "timber-bridge": [
+      -5,
+      0,
+      0
+    ],
+    "lantern-post": [
+      1,
+      -4,
+      0
+    ],
+    "splitrail-fence": [
+      4,
+      -4,
+      0
+    ],
+    "waystone-outcrop": [
+      4,
+      2,
+      0
+    ],
+    "road-segment": [
+      -5,
+      -6,
+      0
+    ]
+  }
+}

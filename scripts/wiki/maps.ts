@@ -51,7 +51,8 @@ export function mapSvg(map: UtcMap): string {
   for (const [color, paths] of terrainPaths)
     elements.push(`<path fill="${color}" d="${paths.join("")}"/>`);
   const colors = {
-    sand: "#b9a077",
+    road: "#aa8152",
+      sand: "#b9a077",
     mud: "#8d7358",
     grass: "#566b36",
     rock: "#868677",

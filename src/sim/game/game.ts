@@ -1,3 +1,5 @@
+import { formationDestinations } from "./formation";
+import { precise } from "./motion";
 import { validateItemState } from "./itemValidation";
 import { BuildingUpgrades } from "./upgrades";
 import { Research } from "./research";
@@ -33,7 +35,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-21";
+export const SIMULATION_BUILD = "declarative-sim-23";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -173,7 +175,7 @@ export class Game {
       if (!nearby) return `Build within ${rule.radius} cells of ${this.registry.get(rule.source).name}`;
     }
     if (
-      cells.some((i) => !this.spatial.walkable(i)) ||
+      cells.some((i) => !this.spatial.walkable(i) || this.spatial.decks[i]) ||
       this.context
         .activeUnits()
         .some((e) => cells.includes(this.spatial.cell(e)))
@@ -195,6 +197,8 @@ export class Game {
         return "Leave access around the resource deposit";
     }
     const elevations = cells.map((i) => this.spatial.heights[i]);
+    if (elevations.some(h => h <= this.spatial.sea + 10))
+      return "Build on dry ground";
     if (Math.max(...elevations) - Math.min(...elevations) > 100)
       return "Choose flatter ground";
     const entrance = this.spatial.entrance(candidate);
@@ -213,7 +217,7 @@ export class Game {
   command(owner: Owner, raw: Action): CommandResult {
     const parsed = actionSchema.safeParse(raw);
     const reject = (reason: string): CommandResult => {
-      this.context.event(owner, reason);
+      this.context.event(owner, reason, "error");
       return { accepted: false, actors: [], reason };
     };
     if (!parsed.success || !this.owners.includes(owner))
@@ -261,6 +265,11 @@ export class Game {
           target.unit?.release)
       )
         return reject("Target is not visible and damageable");
+      const destinations = action.type === "move" ? formationDestinations(
+        eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
+          .map(e=>({id:e.id,x:precise(e).x,y:precise(e).y})), action.destination, this.spatial.size,
+        p=>this.spatial.walkable(this.spatial.cell(p)),
+      ) : null;
       const applied: number[] = [];
       for (const e of eligible) {
         const behaviors = this.context.def(e).behaviors;
@@ -282,21 +291,8 @@ export class Game {
           this.economy.interrupt(e);
         } else {
           if (action.attackMove && !behaviors.combat) continue;
-          const i = applied.length,
-            offset =
-              eligible.length === 1
-                ? { x: 0, y: 0 }
-                : { x: (i % 4) * 2 - 3, y: Math.floor(i / 4) * 2 - 1 };
-          const goal = {
-            x: Math.max(
-              0,
-              Math.min(this.spatial.size - 1, action.destination.x + offset.x),
-            ),
-            y: Math.max(
-              0,
-              Math.min(this.spatial.size - 1, action.destination.y + offset.y),
-            ),
-          };
+          const goal = destinations!.get(e.id);
+          if (!goal) continue;
           this.orders.issue(e, {
               type: "move",
               destination: goal,
@@ -544,6 +540,15 @@ export class Game {
       if (!this.owners.includes(owner as Owner) || new Set(ids).size !== ids.length || ids.some(id => !this.registry.rules.research[id]))
         throw new Error("Invalid saved colony research");
     }
+    if (new Set(state.missiles.map(m => m.id)).size !== state.missiles.length ||
+        state.nextMissile <= Math.max(0,...state.missiles.map(m => m.id))) throw new Error("Invalid saved missile identity");
+    for (const missile of state.missiles) {
+      if (!this.registry.get(missile.definition).behaviors.combat?.projectile ||
+          missile.launched > state.tick || missile.impact <= missile.launched ||
+          !this.registry.rules.damageTypes[missile.damageType] ||
+          [missile.origin,missile.destination].some(p=>p.x>=this.map.size || p.y>=this.map.size))
+        throw new Error("Invalid saved missile");
+    }
     if (new Set(state.shells.map(s => s.id)).size !== state.shells.length ||
         state.nextShell <= Math.max(0, ...state.shells.map(s => s.id))) throw new Error("Invalid saved shell identity");
     for (const shell of state.shells) {
@@ -682,9 +687,10 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
-        if (u.shellWindup && (!d.behaviors.combat?.shell?.windupTicks ||
-          u.shellWindup.releaseTick > state.tick + d.behaviors.combat.shell.windupTicks))
-          throw new Error("Invalid saved shell windup");
+        if (u.attack && (!d.behaviors.combat || u.attack.started > state.tick ||
+          u.attack.impact - u.attack.started !== d.behaviors.combat.attack.windupTicks ||
+          u.attack.ends - u.attack.impact !== d.behaviors.combat.attack.recoveryTicks ||
+          (u.attack.released && u.attack.impact > state.tick))) throw new Error("Invalid saved attack phase");
         if (u.charge && (!d.behaviors.combat?.charge ||
           u.charge.readyTick > state.tick + d.behaviors.combat.charge.cooldownTicks ||
           u.charge.expires > state.tick + d.behaviors.combat.charge.durationTicks))

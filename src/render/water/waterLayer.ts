@@ -34,7 +34,7 @@ import { HEIGHT_ORIGIN, MAP_HALO, type HeightField } from "../../shared";
 const SINK = 0.03;
 
 /** Linear working-space colors sampled toward the approved stream reference. */
-const SHALLOW = new Vector3(0.055, 0.105, 0.16);
+const SHALLOW = new Vector3(0.105, 0.22, 0.23);
 const DEEP = new Vector3(0.02, 0.045, 0.08);
 const FOAM = new Vector3(0.73, 0.77, 0.78);
 
@@ -376,7 +376,7 @@ const WATER_LOOK = /* glsl */ `
   diffuseColor.rgb=col;
   // Both color and coverage obey the brush's foam strength. Shallow coverage
   // approaches zero continuously so the shore meets the bed without a rim.
-  float waterAlpha=mix(.77,.90,waterT)*smoothstep(.015,.2,depth);
+  float waterAlpha=mix(.48,.90,waterT)*smoothstep(.015,.2,depth);
   diffuseColor.a=mix(waterAlpha,.94,foamAmount);
   roughnessFactor=.58;
 }

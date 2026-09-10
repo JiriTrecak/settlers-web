@@ -1,3 +1,11 @@
+import grass3MediumUrl from '../../../assets/environment/coniferous-pack/grass_v5_03-medium.json?url';
+import grass3FarUrl from '../../../assets/environment/coniferous-pack/grass_v5_03-far.json?url';
+import grass6MediumUrl from '../../../assets/environment/coniferous-pack/grass_v5_06-medium.json?url';
+import grass6FarUrl from '../../../assets/environment/coniferous-pack/grass_v5_06-far.json?url';
+import grass3Url from '../../../assets/environment/coniferous-pack/grass_v5_03.glb?url';
+import grass6Url from '../../../assets/environment/coniferous-pack/grass_v5_06.glb?url';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {Mesh, BufferGeometryLoader} from 'three';
 import type {Camera} from 'three';
 import {perf} from '../../debug/performance';
 import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
@@ -22,7 +30,18 @@ export class Meadow {
   private readonly flowers=flowerGeometry();
   private readonly understory=understoryGeometry();
   private readonly understoryFar=understoryGeometry(true);
+  private readonly packBatches=new Map<InstancedMesh,number>();
+  private packLODs:BufferGeometry[][]=[];
   updateLOD(camera:Camera):void {
+    for(const [mesh,variant] of this.packBatches){
+      // Projected fraction is independent of Retina pixel ratio. Orthographic
+      // detail depends on zoom, not distance from the camera.
+      const perspective='isPerspectiveCamera' in camera;
+      const distance=Math.max(1,camera.position.distanceTo(mesh.boundingSphere!.center));
+      const size=camera.projectionMatrix.elements[5]!/(perspective?distance:1);
+      const lod=size>.16?0:size>.075?1:2;
+      mesh.geometry=lod===0?this.packGeometry[variant]!:this.packLODs[variant]![lod-1]!;
+    }
     for(const mesh of this.meshes){
       if(mesh.geometry!==this.understory&&mesh.geometry!==this.understoryFar)continue;
       const distance=camera.position.distanceTo(mesh.boundingSphere!.center);
@@ -34,7 +53,38 @@ export class Meadow {
   private readonly moss=new TextureLoader().load(mossUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private readonly materials=[this.material(true),this.material(true,true),this.material(false),this.material(true,true,true)];
   count=0;
-  constructor(private readonly scene:Scene){}
+  private packGeometry:BufferGeometry[]=[];
+  private lastCover:{field:HeightField;landscape:Landscape}|null=null;
+  private dead=false;
+  readonly ready:Promise<void>;
+  private readonly packMaterial=this.purchasedGrassMaterial();
+  constructor(private readonly scene:Scene){
+    const loader=new GLTFLoader();
+    this.ready=Promise.all([grass3Url,grass6Url].map(async url=>{
+      const gltf=await loader.loadAsync(url);gltf.scene.updateMatrixWorld(true);
+      let geometry:BufferGeometry|undefined;
+      gltf.scene.traverse(o=>{if(o instanceof Mesh){geometry=o.geometry.clone().applyMatrix4(o.matrixWorld);o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();}});
+      if(!geometry)throw Error('Grass export has no mesh');return geometry;
+    })).then(async geometries=>{
+      const geometryLoader=new BufferGeometryLoader();
+      const lods=await Promise.all([[grass3MediumUrl,grass3FarUrl],[grass6MediumUrl,grass6FarUrl]].map(urls=>Promise.all(urls.map(url=>geometryLoader.loadAsync(url)))));
+      if(this.dead){[...geometries,...lods.flat()].forEach(g=>g.dispose());return;}
+      this.packGeometry=geometries;this.packLODs=lods;
+      if(this.lastCover)this.rebuild(this.lastCover.field,this.lastCover.landscape);
+    });
+  }
+  private purchasedGrassMaterial():MeshLambertMaterial{
+    const material=new MeshLambertMaterial({vertexColors:true,side:DoubleSide});
+    material.customProgramCacheKey=()=> 'purchased-grass-wind-1';
+    material.onBeforeCompile=s=>{
+      s.uniforms.uWind=this.time;
+      s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nuniform float uWind;').replace('#include <begin_vertex>',`#include <begin_vertex>
+        vec3 anchor=instanceMatrix[3].xyz;
+        float bend=pow(max(position.y,0.0),2.0);
+        transformed.x+=sin(uWind*1.35+anchor.x*.7+anchor.z*.43)*bend*.085;
+        transformed.z+=cos(uWind*1.05+anchor.z*.61)*bend*.045;`);
+    };return material;
+  }
   private material(grass:boolean,broad=false,forest=false):MeshLambertMaterial {
     const m=new MeshLambertMaterial({side:DoubleSide, vertexColors:forest, map:grass&&!broad?this.tuft:null, alphaTest:grass&&!broad?.45:0,alphaToCoverage:grass&&!broad});
     m.customProgramCacheKey=()=>`utc-meadow-4-${grass}-${broad}-${forest}`;
@@ -60,29 +110,30 @@ export class Meadow {
   }
   tick(now:number):void{this.time.value=now*.001;}
   rebuild(field:HeightField,landscape:Landscape):void {
+    this.lastCover={field,landscape};
     const timing=perf.start();
-    for(const m of this.meshes){this.scene.remove(m);m.dispose();}this.meshes=[];
+    for(const m of this.meshes){this.scene.remove(m);m.dispose();}this.meshes=[];this.packBatches.clear();
     const poses:{x:number;y:number;z:number;s:number;r:number;flower:boolean;broad:boolean;forest:boolean;c:Color}[]=[];
     const paints=landscape.strokes.map(s=>({s,curve:sampleCurve(s.points,s.radius,1)}));
     const season=landscape.environment.season;
     const occupied=new Set<string>();
     // Share the candidate budget across the entire map: processing order must
     // not leave later patches bare on larger authored battlefields.
-    const requested=landscape.cover.reduce((sum,p)=>sum+Math.min(40000,Math.round(Math.PI*p.radius**2*p.density)),0);
+    const requested=landscape.cover.reduce((sum,p)=>sum+Math.min(40000,Math.round(Math.PI*p.radius**2*p.density*(p.palette==='forest'?3:1))),0);
     const budgetScale=Math.min(1,160000/Math.max(1,requested));
     for(const patch of landscape.cover){
       let seed=patch.seed>>>0;const rand=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;};
       const palette=patch.palette??'meadow';
       const hue=palette==='forest'?.175:palette==='ochre'?.085:palette==='sage'?.17:palette==='straw'?.10:season==='autumn'?.13:season==='spring'?.25:.27;
       const saturation=palette==='forest'?.42:palette==='ochre'?.5:palette==='sage'?.23:.58;
-      const n=Math.floor(Math.min(40000,Math.round(Math.PI*patch.radius**2*patch.density))*budgetScale*(palette==='forest'?.35:1));
+      const n=Math.floor(Math.min(40000,Math.round(Math.PI*patch.radius**2*patch.density*(palette==='forest'?3:1)))*budgetScale);
       for(let i=0;i<n && poses.length<90000;i++){
         const a=rand()*Math.PI*2,r=Math.sqrt(rand())*patch.radius,x=patch.x+Math.cos(a)*r,z=patch.z+Math.sin(a)*r;
         const y=field.sample(x,z);if(y<field.waterLevel+.25)continue;
-        const edge=1-r/patch.radius;const clump=palette==='forest'?coverNoise(x*.28,z*.28)*.45+coverNoise(x*.91,z*.91)*.35+coverNoise(x*2.1,z*2.1)*.2:.5+.5*Math.sin(x*.7+Math.cos(z*.6))*Math.sin(z*.8);
+        const edge=1-r/patch.radius;const clump=palette==='forest'?coverNoise(x*.085,z*.085)*.70+coverNoise(x*.25,z*.25)*.23+coverNoise(x*.91,z*.91)*.07:.5+.5*Math.sin(x*.7+Math.cos(z*.6))*Math.sin(z*.8);
         // Forest cover grows in connected colonies with bare soil between them.
         // A nonzero floor preserves stray leaves at the edges of each colony.
-        const colony=Math.max(0,Math.min(1,(clump-.28)/.34));
+        const colony=Math.max(0,Math.min(1,(clump-.30)/.24));
         const cover=palette==='forest'?.04+.96*colony*colony*(3-2*colony):.3+.7*clump;
         if(rand()>Math.min(1,edge*6)*cover)continue;
         if(Math.hypot(field.sample(x+.4,z)-field.sample(x-.4,z),field.sample(x,z+.4)-field.sample(x,z-.4))>.65)continue;
@@ -96,27 +147,27 @@ export class Meadow {
         if (!(patch.exclusions??[]).some(e=>Math.hypot(x-e.x,z-e.z)<e.radius)) poses.push(pose);
       }
     }
-    for(let idx=0;idx<4;idx++){
+    for(let idx=0;idx<5;idx++){
       const flower=idx===2;
-      const list=poses.filter(p=>flower?p.flower:!p.flower&&(idx===3?p.forest:!p.forest&&p.broad===(idx===1)));if(!list.length)continue;
+      const list=poses.filter(p=>flower?p.flower:!p.flower&&(idx>=3?p.forest&&((Math.floor(p.x*3)+Math.floor(p.z*3))%2+2)%2===idx-3:!p.forest&&p.broad===(idx===1)));if(!list.length)continue;
       // Keep each batch local so the rest of the map is culled in both passes.
       const chunks=new Map<string,typeof list>();
       for(const pose of list){const key=`${Math.floor(pose.x/16)},${Math.floor(pose.z/16)}`;const chunk=chunks.get(key)??[];chunk.push(pose);chunks.set(key,chunk);}
       for(const list of chunks.values()){
-      const mesh=new InstancedMesh(flower?this.flowers:idx===3?this.understory:idx===1?this.broadGrass:this.grass,this.materials[idx]!,list.length);
-      const o=new Object3D();list.forEach((p,i)=>{o.position.set(p.x,p.y,p.z);o.rotation.y=p.r;o.scale.set(p.s*(p.flower?1:p.broad?.85:.8),p.s*(p.flower?1:p.forest?1.0:1.05),p.s*(p.flower?1:p.broad?.85:.8));o.updateMatrix();mesh.setMatrixAt(i,o.matrix);mesh.setColorAt(i,p.c);});
+      const mesh=new InstancedMesh(flower?this.flowers:idx>=3?(this.packGeometry[idx-3]??this.understory):idx===1?this.broadGrass:this.grass,idx>=3&&this.packGeometry.length?this.packMaterial:this.materials[Math.min(idx,3)]!,list.length);
+      const o=new Object3D();list.forEach((p,i)=>{o.position.set(p.x,p.y,p.z);o.rotation.y=p.r;o.scale.set(p.s*(p.flower?1:p.forest?1.4:p.broad?.85:.8),p.s*(p.flower?1:p.forest?.65:1.05),p.s*(p.flower?1:p.forest?1.4:p.broad?.85:.8));o.updateMatrix();mesh.setMatrixAt(i,o.matrix);mesh.setColorAt(i,idx>=3&&this.packGeometry.length?new Color(0xffffff):p.c);});
       mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
       let trianglesBefore=0;
       mesh.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
-      mesh.onAfterRender=renderer=>perf.count(idx===3?'Moss triangles':'Other ground-cover triangles',renderer.info.render.triangles-trianglesBefore);
-      mesh.receiveShadow=true;mesh.castShadow=!flower;mesh.name=flower?'meadow-flowers':'meadow-grass';mesh.computeBoundingSphere();if(mesh.boundingSphere)mesh.boundingSphere.radius+=1;this.scene.add(mesh);this.meshes.push(mesh);
+      mesh.onAfterRender=renderer=>perf.count(idx>=3?'Forest grass triangles':'Other ground-cover triangles',renderer.info.render.triangles-trianglesBefore);
+      mesh.receiveShadow=true;mesh.castShadow=!flower&&idx<3;mesh.name=flower?'meadow-flowers':'meadow-grass';mesh.computeBoundingSphere();if(mesh.boundingSphere)mesh.boundingSphere.radius+=1;this.scene.add(mesh);this.meshes.push(mesh);if(idx>=3&&this.packGeometry.length)this.packBatches.set(mesh,idx-3);
     }
     }
     this.count=poses.length;
     perf.value('Cover instances',this.count);perf.value('Cover batches',this.meshes.length);
     perf.end('Foliage rebuild (event)',timing);
   }
-  destroy():void{for(const m of this.meshes){this.scene.remove(m);m.dispose();}this.tuft.dispose();this.moss.dispose();this.broadGrass.dispose();this.understory.dispose();this.understoryFar.dispose();this.grass.dispose();this.flowers.dispose();this.materials.forEach(m=>m.dispose());}
+  destroy():void{this.dead=true;this.packGeometry.forEach(g=>g.dispose());this.packLODs.flat().forEach(g=>g.dispose());this.packMaterial.dispose();for(const m of this.meshes){this.scene.remove(m);m.dispose();}this.tuft.dispose();this.moss.dispose();this.broadGrass.dispose();this.understory.dispose();this.understoryFar.dispose();this.grass.dispose();this.flowers.dispose();this.materials.forEach(m=>m.dispose());}
 }
 function bladeGeometry():BufferGeometry {
   const p:number[]=[],uv:number[]=[];

@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-10T11:37:58-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 5.46,
+  "blend_mtime_ns": 1789065473425765920,
+  "config": {
+    "name": "Woodland Wayfarer Kit",
+    "blend": "woodland-wayfarer-kit.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 24,
+      "elevation": 40,
+      "scale": 22,
+      "target": [
+        0,
+        0,
+        1
+      ]
+    },
+    "render": {
+      "width": 1600,
+      "height": 1100,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 1200,
+      "fill_energy": 700,
+      "rim_energy": 1100
+    }
+  }
+}

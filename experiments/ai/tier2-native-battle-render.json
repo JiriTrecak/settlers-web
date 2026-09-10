@@ -1,0 +1,33 @@
+{
+  "fixture": "tests/manual/tier-two-battle.html",
+  "map": "mosswater-divide",
+  "canvas": [
+    2560,
+    1440
+  ],
+  "dpr": 2,
+  "shadows": "soft",
+  "durationSeconds": 30,
+  "warmupSeconds": 10,
+  "troops": {
+    "hunter": 12,
+    "warrior": 12,
+    "bombardier": 8
+  },
+  "fps": 109.80497995821713,
+  "frameP95Ms": 16.7,
+  "simulationTickP95Ms": 5.1,
+  "shells": 66,
+  "chargeTickObservations": 1023,
+  "survivors": 13,
+  "finalRollingGpuMeanMs": 3.5134870166666663,
+  "finalRollingGpuP95Ms": 5.220249,
+  "finalRollingPresentCpuMeanMs": 2.2808333337306976,
+  "finalRollingPresentCpuP95Ms": 3.6,
+  "limitations": [
+    "No HUD or minimap",
+    "Fixture caches observation view between simulation ticks; main session currently rebuilds views per frame",
+    "GPU/CPU statistics are final rolling profiler window; FPS covers measured 20 seconds",
+    "Not a sustained 120 FPS result"
+  ]
+}

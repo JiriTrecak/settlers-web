@@ -40,6 +40,13 @@ button('Inspect Root cargo',()=>{
 });
 button('Resume',()=>{paused=false});
 button('Observer',()=>{observer.root.hidden=!observer.root.hidden;refresh()});
+button('Inspect Workshop',()=>{
+ let workshop=byPlacement('workshop-demo');
+ if(!workshop)workshop=game.context.create({id:'workshop-demo',definition:'building.ants.bombardier-workshop',position:{x:220,y:236},owner:'player.1',rotation:0});
+ paused=true;game.tick();game.observation.update();hud.update(game.view('player.1'));hud.selected=workshop.id;
+ camera.left=-10*innerWidth/innerHeight;camera.right=10*innerWidth/innerHeight;camera.top=10;camera.bottom=-10;
+ camera.position.set(232,20,253);camera.lookAt(220,2,236);camera.updateProjectionMatrix();refresh();
+});
 button('Hunter duel',()=>{
  const at=(id,definition,x,y,owner)=>({id,definition,position:{x,y},owner,rotation:0});
  const h=game.context.create(at('hunter-demo','unit.ants.hunter',221,236,'player.1'));

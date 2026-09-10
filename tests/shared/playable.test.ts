@@ -5,7 +5,7 @@ import {
   stringifyUtcMap,
 } from "../../src/shared/map/utcmap";
 import { playableMapError, mapRevision } from "../../src/shared/map/playable";
-import { MOSSWATER_MAP } from "../../src/shared/match/mosswater";
+import { WORLDROOT_MAP } from "../../src/shared/match/worldroot";
 import { World } from "../../src/sim/world/world";
 describe("authored playable maps", () => {
   it("creates a dry map with two persisted distinct starts", () => {
@@ -15,8 +15,8 @@ describe("authored playable maps", () => {
       map.playerStarts,
     );
   });
-  it("accepts Mosswater", () =>
-    expect(playableMapError(MOSSWATER_MAP)).toBeNull());
+  it("accepts Worldroot Hollow", () =>
+    expect(playableMapError(WORLDROOT_MAP)).toBeNull());
   it("rejects missing starts, submerged forts, overlap and edge starts", () => {
     const map = emptyUtcMap();
     expect(playableMapError({ ...map, playerStarts: [] })).not.toBeNull();

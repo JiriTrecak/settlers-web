@@ -4,6 +4,8 @@
  */
 import { MAP_HALO, MAP_SIZE } from "./map";
 
+/** Maximum water depth a ground unit can wade through. Buildings still need dry land. */
+export const WADING_DEPTH_CM = 60;
 export const HEIGHT_MIN = -16;
 export const HEIGHT_MAX = 24;
 export const HEIGHT_SPAN = MAP_SIZE + MAP_HALO * 2;
@@ -24,6 +26,8 @@ export class HeightField {
     this.samples = new Float32Array(this.verts * this.verts);
   }
   waterLevel = 0;
+  walkSurface?: (x:number,z:number)=>number|undefined;
+  walkSample(x:number,z:number):number {return this.walkSurface?.(x,z) ?? this.sample(x,z);}
 
   load(samples: ArrayLike<number>, waterLevel = 0): void {
     const n = Math.min(this.samples.length, samples.length);

@@ -50,7 +50,7 @@ export class Inventory {
   }
   private stop(hero:Entity,message?:string) {
     hero.unit!.order=null;hero.unit!.route=[];hero.unit!.goal=null;
-    if(message)this.c.event(hero.owner,message);
+    if(message)this.c.event(hero.owner,message,"error");
   }
   drop(hero:Entity,slot:number):string|null {
     const definition=hero.equipment?.[slot];

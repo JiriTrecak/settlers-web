@@ -226,7 +226,7 @@ export class EditorControl {
         throw new Error("Provide 1..128 finite curve points");
       const mode = str(o.mode) ?? "terrain";
       if (
-        !["terrain", "river", "foliage", "raise", "smooth", "flatten"].includes(
+        !["terrain", "river", "shallows", "cover", "foliage", "raise", "smooth", "flatten"].includes(
           mode,
         )
       )
@@ -234,7 +234,7 @@ export class EditorControl {
       const radius = num(o.radius) ?? 4;
       if (radius <= 0 || radius > 64) throw new Error("radius must be 0..64");
       const layer = str(o.layer) ?? "sand";
-      if (!["grass", "sand", "mud", "rock", "snow"].includes(layer))
+      if (!["grass", "sand", "road", "mud", "rock", "snow"].includes(layer))
         throw new Error("Invalid terrain layer");
       const depth = num(o.depth) ?? 1.4;
       if (Math.abs(depth) > 16) throw new Error("depth must be -16..16");
@@ -244,7 +244,7 @@ export class EditorControl {
         points,
         radius,
         mode: mode as
-          "terrain" | "river" | "foliage" | "raise" | "smooth" | "flatten",
+          "terrain" | "river" | "shallows" | "cover" | "foliage" | "raise" | "smooth" | "flatten",
         depth,
         layer: layer as TerrainLayer,
         opacity,

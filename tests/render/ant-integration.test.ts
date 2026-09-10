@@ -77,6 +77,7 @@ it("uses independent animated game variants, reacts once per strike, and disting
   const attack = vi.spyOn(characters.get(warrior.id).player, "setState");
   warrior.unit!.moving = false;
   warrior.unit!.cooldown = 40;
+  warrior.unit!.attack = {target:worker.id,started:2,impact:14,ends:24,released:false};
   layer.update(view, field, 2);
   layer.update(view, field, 2);
   expect(attack.mock.calls.filter(([state, options]) => state === "attack" && (options as any)?.restart)).toHaveLength(1);

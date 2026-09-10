@@ -58,7 +58,7 @@ export function wipeStamps(
   if (hits.length === 0) return stamps.slice();
   const r2 = radius * radius;
   return stamps.filter((s) => {
-    if (type === "foliage" && !/^(synty-(tree-|plant-)|pine(?:-|$)|tree(?:-|$)|fern(?:-|$)|grass(?:-|$)|flower(?:-|$)|mushroom(?:-|$)|lily(?:-|$)|river-reeds$)/.test(s.asset)) return true;
+    if (type === "foliage" && !/^(coniferous_trees_|lowpolymushroom_|tree_|grass_|synty-(tree-|plant-)|pine(?:-|$)|tree(?:-|$)|fern(?:-|$)|grass(?:-|$)|flower(?:-|$)|mushroom(?:-|$)|lily(?:-|$)|river-reeds$)/.test(s.asset)) return true;
     const sx = s.x + 0.5;
     const sy = s.y + 0.5;
     for (const h of hits) {

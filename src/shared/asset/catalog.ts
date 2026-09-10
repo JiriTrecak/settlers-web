@@ -16,6 +16,10 @@ export type CatalogEntry = {
   readonly category: AssetCategory;
   readonly type: AssetType;
   readonly file: string;
+  /** Ground-plane collision in asset-local metres, independent of visual mesh. */
+  readonly deck?: { readonly width: number; readonly depth: number; readonly height: number; readonly arch: number };
+  readonly light?: { readonly x: number; readonly y: number; readonly z: number; readonly color: string; readonly intensity: number; readonly range: number };
+  readonly blocker?: { readonly width: number; readonly depth: number };
 };
 
 export type Catalogue = {
@@ -75,7 +79,34 @@ function parseEntry(raw: unknown): CatalogEntry | null {
   if (typeof o.name !== "string" || !o.name.trim()) return null;
   if (typeof o.file !== "string" || !o.file.trim()) return null;
   if (!isCategory(o.category) || !isType(o.type)) return null;
+  let blocker: CatalogEntry["blocker"];
+  if (o.blocker !== undefined) {
+    if (!o.blocker || typeof o.blocker !== "object") return null;
+    const b = o.blocker as Record<string, unknown>;
+    if (typeof b.width !== "number" || !Number.isFinite(b.width) || b.width <= 0 ||
+        typeof b.depth !== "number" || !Number.isFinite(b.depth) || b.depth <= 0) return null;
+    blocker = { width: b.width, depth: b.depth };
+  }
+  let deck: CatalogEntry["deck"];
+  if (o.deck !== undefined) {
+    if (!o.deck || typeof o.deck !== "object") return null;
+    const d=o.deck as Record<string,unknown>;
+    if (![d.width,d.depth,d.height,d.arch].every(v=>typeof v === "number" && Number.isFinite(v)) ||
+        (d.width as number)<=0 || (d.depth as number)<=0 || (d.arch as number)<0) return null;
+    deck={width:d.width as number,depth:d.depth as number,height:d.height as number,arch:d.arch as number};
+  }
+  let light: CatalogEntry["light"];
+  if (o.light !== undefined) {
+    if (!o.light || typeof o.light !== "object") return null;
+    const l = o.light as Record<string, unknown>;
+    if (![l.x,l.y,l.z,l.intensity,l.range].every(v=>typeof v === "number" && Number.isFinite(v)) ||
+        (l.intensity as number) < 0 || (l.range as number) <= 0 || typeof l.color !== "string" || !/^#[0-9a-f]{6}$/i.test(l.color)) return null;
+    light = {x:l.x as number,y:l.y as number,z:l.z as number,color:l.color,intensity:l.intensity as number,range:l.range as number};
+  }
   return {
+    ...(deck ? { deck } : {}),
+    ...(light ? { light } : {}),
+    ...(blocker ? { blocker } : {}),
     id: o.id.trim(),
     name: o.name.trim(),
     category: o.category,

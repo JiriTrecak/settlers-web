@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Tier 2 battle performance</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#report{position:fixed;left:12px;top:12px;z-index:50;background:#101820ed;color:white;padding:12px;font:13px monospace;white-space:pre-wrap;max-width:520px}canvas{display:block;width:100%;height:100%}</style>
+<canvas id="scene"></canvas><pre id="report">Loading native Mosswater battle…</pre>
+<script type="module">
+import {Renderer} from '/src/render/index.ts';
+import {Game} from '/src/sim/game/game.ts';
+import {content} from '/src/content/builtin.ts';
+import {parseUtcMap,decodeHeight,HeightField} from '/src/shared/index.ts';
+import {projectCatalogue,projectMeshUrl} from '/src/shared/assets/project.ts';
+import {emptyLandscape} from '/src/shared/landscape/curve.ts';
+import {resourceStamps} from '/src/presentation/scenery.ts';
+import {perf} from '/src/debug/performance.ts';
+import mapRaw from '/assets/maps/skirmish/worldroot-hollow.utcmap?raw';
+const output=document.querySelector('#report');
+try {
+ const map=parseUtcMap(JSON.parse(mapRaw)),catalog=projectCatalogue();
+ const renderer=new Renderer(document.querySelector('#scene'),new Map(catalog.assets.flatMap(a=>{const u=projectMeshUrl(a.file);return u?[[a.id,u]]:[]})));
+ renderer.setKinds(new Map(catalog.assets.map(a=>[a.id,a.type])));
+ const field=new HeightField(map.size);field.load(decodeHeight(map.height,map.size),map.waterLevel??0);
+ renderer.setTerrain(field);renderer.setLandscape(map.landscape??emptyLandscape());renderer.setGridMode('none');
+ renderer.camera.setGame(true,map.size);renderer.camera.pose({x:135,z:128,yaw:0,pitch:42*Math.PI/180,gameZoom:1});
+ renderer.sky.setPlaying(false);renderer.sky.setHour(11);
+ const game=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}],content,471);
+ const squads=[];
+ for(let side=0;side<2;side++){
+  const owner=`player.${side+1}`,cx=side?144:126,cy=128;
+  const cells=[];
+  for(let y=116;y<=140;y++)for(let x=cx-6;x<=cx+6;x++){
+   const cell=y*map.size+x;if(game.context.spatial.walkable(cell)&&!game.context.spatial.occupied[cell]&&!game.context.spatial.resources[cell])cells.push({x,y});
+  }
+  cells.sort((a,b)=>((a.x-cx)**2+(a.y-cy)**2)-((b.x-cx)**2+(b.y-cy)**2)||a.y-b.y||a.x-b.x);
+  if(cells.length<16)throw Error('Insufficient legal formation space');
+  const actors=[];
+  for(let i=0;i<16;i++){
+   const role=i<6?'hunter':i<12?'warrior':'bombardier';
+   actors.push(game.context.create({id:`battle-${side}-${i}`,definition:`unit.ants.${role}`,owner,rotation:side?270:90,position:cells[i]}).id);
+  }
+  squads.push({owner,actors});game.context.spatial.rebuild();
+ }
+ game.observation.update();
+ for(const squad of squads)game.command(squad.owner,{type:'move',actors:squad.actors,destination:{x:squad.owner==='player.1'?144:126,y:128},attackMove:true});
+ const stamps=[...map.stamps,...resourceStamps(game.view().entities)];
+ let view=game.view();
+ const draw=()=>renderer.draw({tick:game.state.tick,size:map.size,settlement:view},stamps);
+ draw();await Promise.all([renderer.ready(),renderer.gameReady()]);
+ const debugWas=perf.enabled;if(!debugWas)perf.toggle();
+ window.addEventListener('beforeunload',()=>{if(perf.enabled!==debugWas)perf.toggle()},{once:true});
+ let last=performance.now(),elapsed=0,acc=0,samples=[],ticks=[],shellIds=new Set(),charges=0,finished=false;
+ const active=new Set(squads.flatMap(s=>s.actors));
+ function frame(now){
+  const rawDelta=now-last,delta=Math.min(100,rawDelta);last=now;
+  if(!document.hidden&&!finished){
+   elapsed+=delta;acc+=delta;
+   let advanced=false;
+   while(acc>=25){advanced=true;const t=performance.now();game.tick();ticks.push(performance.now()-t);acc-=25;
+    for(const shell of game.state.shells)shellIds.add(shell.id);
+    charges+=game.entities.filter(e=>active.has(e.id)&&e.unit?.charge?.target!=null&&e.unit.charge.expires>game.state.tick).length;
+   }
+   if(advanced)view=game.view();
+   if(elapsed>10000)samples.push(rawDelta);
+  }
+  perf.frame(now);draw();renderer.present(now);
+  if(!finished){
+   output.textContent=`Native Mosswater · 32 troops (12 Hunters, 12 Warriors, 8 Bombardiers)\n${(elapsed/1000).toFixed(1)} / 30 seconds · first 10s warm-up\nShells launched: ${shellIds.size} · charge tick observations: ${charges}`;
+   if(elapsed>=30000){
+    finished=true;const sorted=samples.slice().sort((a,b)=>a-b),ts=ticks.slice().sort((a,b)=>a-b);
+    const result={fps:1000/(samples.reduce((a,b)=>a+b,0)/samples.length),frameP95:sorted[Math.ceil(sorted.length*.95)-1],tickP95:ts[Math.ceil(ts.length*.95)-1],shells:shellIds.size,chargeTicks:charges,survivors:game.entities.filter(e=>active.has(e.id)&&e.hp>0).length,report:perf.report()};
+    document.body.dataset.result=JSON.stringify(result);
+    output.textContent=JSON.stringify({...result,report:undefined,GPU:result.report.timings['GPU frame'],CPU:result.report.timings['Present total (CPU)']},null,2);
+    if(!debugWas)perf.toggle();
+   }
+  }
+  requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}catch(e){output.textContent=String(e.stack??e)}
+</script></html>

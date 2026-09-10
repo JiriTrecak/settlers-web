@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { parseUtcMap } from "../../src/shared/map/utcmap";
 import { World } from "../../src/sim/world/world";
-const path = process.argv[2] ?? "assets/maps/showcase/mosswater-divide.utcmap";
+const path = process.argv[2] ?? "assets/maps/skirmish/worldroot-hollow.utcmap";
 const map = parseUtcMap(JSON.parse(readFileSync(path, "utf8")))!;
 if (!map) throw new Error("Invalid map");
 const ticks = Number(process.argv[3] ?? 12000),

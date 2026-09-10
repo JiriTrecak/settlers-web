@@ -234,6 +234,7 @@ export class MapInput {
   }
 
   tick(dtMs: number): void {
+    if (document.documentElement.classList.contains("game-chat-open")) { this.onBlur(); return; }
     const factor = this.zoomMomentum.step(dtMs);
     if (factor !== 1) {
       const before = this.camera.game ? this.camera.distance : this.camera.zoom;

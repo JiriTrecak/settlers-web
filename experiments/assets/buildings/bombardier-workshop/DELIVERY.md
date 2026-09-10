@@ -13,3 +13,5 @@ Original Ant Tier 2 production building: twin armored red-roof sheds, open morta
 - Gameplay declarations connected: Great Mound prerequisite, advanced build category, worker conversion to Bombardier, Amber/Wood/Root recruitment bill. Physical Root dropoff remains Rootworks-only; Workshop storage is not a dropoff.
 - Native tests pass for prerequisite, recruitment, Root refund and Saturating Shells research. In-game visual scale/combat inspection and army performance remain pending.
 - Limitations: hidden construction inferred, fine surface painting simplified. Studio's realtime shading differs from Cycles.
+
+Final integration/performance status: see docs/declarations/tier-two-completion.md. Earlier unchecked-integration statements in historical notes are superseded by that audit.

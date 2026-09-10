@@ -23,6 +23,7 @@ export function summarizeGoods(
   );
   return registry.definitions
     .filter((d) => d.kind === "item" && currencies.has(d.id))
+    .sort((a, b) => (a.displayOrder ?? 1000) - (b.displayOrder ?? 1000))
     .map((item) => {
       const stored = owned.reduce((n, e) => n + (e.inventory[item.id] ?? 0), 0),
         inTransit = owned.reduce(

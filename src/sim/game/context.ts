@@ -263,7 +263,7 @@ export class GameContext {
           if (!this.spatial.clearSegment(current, proposed)) {
             u.route = [];
             u.segment = null;
-            u.retryAt = this.state.tick + 20;
+            u.retryAt = this.state.tick + 6;
             break;
           }
           if (
@@ -276,7 +276,7 @@ export class GameContext {
                 y: Math.floor(u.goal / this.spatial.size),
               };
               const target = this.spatial.nearest(desired, 3, e.id);
-              if (target) this.spatial.route(e, target);
+              if (target) this.spatial.route(e, target, true);
               {
                 // Stable yielding lets opposing friendly traffic pass without teleports.
                 const near = units.find(
@@ -310,7 +310,7 @@ export class GameContext {
                   if (aside) u.route.unshift(this.spatial.cell(aside));
                 }
               }
-              u.retryAt = this.state.tick + 20;
+              u.retryAt = this.state.tick + 6;
             }
             break;
           }

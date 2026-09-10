@@ -41,6 +41,18 @@ export class SettlementHud {
   private readonly experience = document.createElement("div");
   private readonly portraitMana = document.createElement("div");
   private readonly portraitHp = document.createElement("div");
+  private readonly errorNotice = document.createElement("div");
+  private errorTimer: ReturnType<typeof setTimeout> | undefined;
+  private lastErrorFact: unknown;
+  showError(message: string) {
+    this.errorNotice.className = "rts-error visible";
+    this.errorNotice.textContent = message;
+    this.errorNotice.role = "alert";
+    this.root.append(this.errorNotice);
+    clearTimeout(this.errorTimer);
+    this.errorTimer = setTimeout(() => this.errorNotice.classList.remove("visible"), 2500);
+  }
+  learnedAbility() { this.navigate(null); }
   private readonly hint = document.createElement("p");
   private readonly cards = document.createElement("div");
   private readonly grid = document.createElement("div");
@@ -145,7 +157,7 @@ export class SettlementHud {
           ["move", "attack", "stop"].includes(b.type) &&
           b.hotkey === e.key.toUpperCase(),
       );
-    if (binding?.enabled) {
+    if (binding) {
       e.preventDefault();
       this.activate(binding);
     }
@@ -240,7 +252,7 @@ export class SettlementHud {
     if (this.current) this.update(this.current, true);
   }
   private activate(binding: CommandEntry) {
-    if (!binding.enabled) return;
+    if (!binding.enabled) { this.showError(binding.reason ?? "Command unavailable"); return; }
     if ("destination" in binding) {
       this.navigate(binding.destination);
       return;
@@ -320,10 +332,11 @@ export class SettlementHud {
       )) {
         const button = document.createElement("button");
         button.className = "rts-command";
-        button.disabled = !b.enabled;
+        button.setAttribute("aria-disabled", String(!b.enabled));
         button.style.gridColumn = String(column);
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
+        if (b.hotkey) { const key = document.createElement("kbd"); key.textContent = b.hotkey; button.append(key); }
         button.dataset.commandId = b.id;
         const cooldown = document.createElement("span");
         cooldown.className = "rts-command-cooldown";
@@ -381,7 +394,7 @@ export class SettlementHud {
         ),
         state = binding?.cooldown;
       if (binding) {
-        button.disabled = !binding.enabled;
+        button.setAttribute("aria-disabled", String(!binding.enabled));
         const description = [
           binding.description,
           binding.reason,
@@ -792,16 +805,16 @@ export class SettlementHud {
               : "Defeat — your main fort fell.";
       this.clearMode();
     } else {
-      const latest = view.events.at(-1);
-      if (
-        latest?.type === "command" &&
-        view.revision - latest.tick < 100 &&
-        !this.targeting
-      )
-        this.hint.textContent = latest.message;
+      const latest = view.events.filter(e => e.type === "error").at(-1);
+      const key = latest ? JSON.stringify(latest) : null;
+      if (latest && key !== this.lastErrorFact && view.revision - latest.tick < 5) {
+        this.lastErrorFact = key;
+        this.showError(latest.message);
+      }
     }
   }
   destroy() {
+    clearTimeout(this.errorTimer);
     window.removeEventListener("keydown", this.onKey);
     this.tooltips.destroy();
     this.root.remove();

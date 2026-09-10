@@ -1,22 +1,22 @@
-00:00.289  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/ant-bombardier.blend"
-00:02.636  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/.render-1789033262548206000.png'
+00:00.334  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/ant-bombardier.blend"
+00:02.900  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/.render-1789056766411239000.png'
 INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
 INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
-02:41:05 | INFO: Starting glTF 2.0 export
-02:41:05 | INFO: Extracting primitive: Pelvis shell.001
-02:41:05 | INFO: Primitives created: 4
-02:41:05 | INFO: Extracting primitive: Broad padded cuirass.001
-02:41:05 | INFO: Primitives created: 6
-02:41:05 | INFO: Finished glTF 2.0 export in 0.2689530849456787 s
+09:12:49 | INFO: Starting glTF 2.0 export
+09:12:49 | INFO: Extracting primitive: Pelvis shell.001
+09:12:49 | INFO: Primitives created: 4
+09:12:49 | INFO: Extracting primitive: Broad padded cuirass.001
+09:12:49 | INFO: Primitives created: 6
+09:12:49 | INFO: Finished glTF 2.0 export in 0.28638625144958496 s
 
-02:41:05 | INFO: Starting glTF 2.0 export
-02:41:05 | INFO: Extracting primitive: Pelvis shell.001
-02:41:05 | INFO: Primitives created: 4
-02:41:05 | INFO: Extracting primitive: Broad padded cuirass.001
-02:41:05 | INFO: Primitives created: 6
-02:41:05 | INFO: Finished glTF 2.0 export in 0.27156686782836914 s
+09:12:49 | INFO: Starting glTF 2.0 export
+09:12:49 | INFO: Extracting primitive: Pelvis shell.001
+09:12:49 | INFO: Primitives created: 4
+09:12:49 | INFO: Extracting primitive: Broad padded cuirass.001
+09:12:49 | INFO: Primitives created: 6
+09:12:50 | INFO: Finished glTF 2.0 export in 0.35788798332214355 s
 
-BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/.render-1789033262548206000.png
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/.render-1789056766411239000.png
 Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
 
 Blender quit

@@ -92,9 +92,9 @@ function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
         i,
       );
       if (h < field.waterLevel) {
-        const depth = Math.min(1, (field.waterLevel - h) / 5);
+        const depth = Math.min(1, (field.waterLevel - h) / 2.6);
         water.data.set(
-          [54 - depth * 14, 83 - depth * 16, 87 - depth * 12, 255],
+          [99 - depth * 64, 151 - depth * 85, 151 - depth * 76, 255],
           i,
         );
       }
@@ -110,6 +110,7 @@ function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
   }
   for (const stroke of map.landscape?.strokes ?? []) {
     ctx.fillStyle = {
+      road: "#aa8152",
       sand: "#b39a67",
       mud: "#817054",
       grass: "#596a38",

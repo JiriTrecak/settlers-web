@@ -13,7 +13,7 @@ export type MapEntry = {
   players: number;
   source: "project" | "local";
 };
-const key = "utc.authored-maps.declarations-1";
+const key = "utc.authored-maps.worldroot-1";
 function entry(id: string, map: UtcMap, source: MapEntry["source"]): MapEntry {
   return {
     id,

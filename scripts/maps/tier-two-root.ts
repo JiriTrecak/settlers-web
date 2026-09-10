@@ -6,10 +6,6 @@ import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
 const plans=[
  ['assets/maps/skirmish/worldroot-hollow.utcmap',['worldroot.camp.4','worldroot.camp.7']],
- ['assets/maps/skirmish/crownmere-basin.utcmap',['camp.100.38','camp.156.218']],
- ['assets/maps/skirmish/amberfall-wilds.utcmap',['camp.17','camp.18']],
- ['assets/maps/showcase/mosswater-divide.utcmap',['camp-camp-ogre-103-145-0','camp-camp-ogre-103-145-1']],
- ['assets/maps/tutorial/mosswater-divide.utcmap',['camp-camp-ogre-103-145-0','camp-camp-ogre-103-145-1']],
 ] as const;
 const report:unknown[]=[];
 for(const [file,ids] of plans){

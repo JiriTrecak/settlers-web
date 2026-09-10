@@ -1,3 +1,4 @@
+import { missileSchema } from "./missileState";
 import { shellSchema } from "./shellState";
 import { itemRuntimeSchema, itemStatusSchema } from "../../content/items";
 import { visualCueSchema } from "./visualCues";
@@ -139,17 +140,8 @@ export const entitySchema = z
         release: point.nullable(),
         target: positive.nullable(),
         cooldown: natural,
-        shellWindup: z.object({target: positive, releaseTick: natural}).strict().optional(),
+        attack: z.object({target: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
         charge: z.object({readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
-        shot: z
-          .object({
-            tick: natural,
-            x: z.number().nonnegative(),
-            y: z.number().nonnegative(),
-            viewers: z.array(ownerSchema),
-          })
-          .strict()
-          .optional(),
         camp: z.string().nullable(),
         returning: z.boolean(),
         retryAt: natural,
@@ -215,6 +207,7 @@ export const factSchema = z
     owner: ownerSchema,
     type: z.enum([
       "command",
+      "error",
       "produced",
       "consumed",
       "lost",
@@ -231,6 +224,8 @@ export const stateSchema = z
     tick: natural,
     random: positive.max(0xffffffff),
     clearedCamps: z.array(z.string().min(1)),
+    nextMissile: positive,
+    missiles: z.array(missileSchema),
     nextShell: positive,
     shells: z.array(shellSchema),
     nextVisual: positive,
@@ -271,6 +266,8 @@ export const emptyState = (): GameState => ({
   tick: 0,
   random: 1,
   clearedCamps: [],
+  nextMissile: 1,
+  missiles: [],
   nextShell: 1,
   shells: [],
   nextVisual: 1,

@@ -34,6 +34,7 @@ function fixture(player: number | null = 0, speed = 1) {
   );
   const session = Object.assign(Object.create(Session.prototype), {
     world,
+    aiGreeted: new Set<number>(),
     me: player ?? 0,
     visionPlayer: player ?? 0,
     config: { player, hooks: { onHud: vi.fn() } },
@@ -122,6 +123,17 @@ describe("skirmish presentation and transport", () => {
     expect(session.send({ type: "ping" })).toBe(false);
     channels.forEach((c) => c.destroy());
     session.channels.forEach((c: MemoryChannel) => c.destroy());
+  });
+  it("AI says gg once when its main objective is nearly destroyed", () => {
+    vi.stubGlobal("document", { hidden: true });
+    const {session, world, channels} = fixture(0);
+    const receive = vi.fn(); session.chat = {receive};
+    const hall = world.settlement.entities.find(e => e.id === world.settlement.state.objectives["player.2"])!;
+    hall.hp = 1;
+    session.tick(50, 50); session.tick(50, 100);
+    expect(receive).toHaveBeenCalledTimes(1);
+    expect(receive.mock.calls[0][0]).toMatchObject({player: 1, text: "gg"});
+    channels.forEach(c => c.destroy());
   });
   it("P2 input is submitted through P2, not the first transport slot", () => {
     const { session, peers, channels } = fixture(1);

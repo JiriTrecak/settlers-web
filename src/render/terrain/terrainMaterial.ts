@@ -1,3 +1,4 @@
+import roadUrl from '../../../assets/environment/wayfarer/road-albedo.png?url';
 import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
 import type {CoverPatch} from '../../shared/landscape/curve';
 import { getAntSurfaceAtlas } from '../prop/antSurfaceAtlas';
@@ -15,27 +16,30 @@ export class TerrainMaterial extends MeshStandardMaterial {
   private contactRevision=-1;
   private readonly contacts=new DataTexture(new Uint8Array(1024*1024),1024,1024,RedFormat);
   private readonly weights:DataTexture;
+  private readonly roadMask:DataTexture;
   private readonly verts:number;
   private readonly seasonTint = { value: new Color(0xffffff) };
   private readonly level = { value: 0 };
-  private readonly textures = [sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl].map(url=> {
+  private readonly textures = [sandUrl,mudUrl,rockUrl,snowUrl,pebbleUrl,roadUrl].map(url=> {
     const t=new TextureLoader().load(url); t.wrapS=t.wrapT=RepeatWrapping; t.colorSpace=SRGBColorSpace; t.anisotropy=8; return t;
   });
   constructor(size=MAP_SIZE) {
     super({color:0xffffff,roughness:0.95});
     this.verts=size+MAP_HALO*2+1;
     this.weights=new DataTexture(new Uint8Array(this.verts*this.verts*4),this.verts,this.verts);
+    this.roadMask=new DataTexture(new Uint8Array(this.verts*this.verts),this.verts,this.verts,RedFormat);
+    this.roadMask.minFilter=this.roadMask.magFilter=LinearFilter;this.roadMask.needsUpdate=true;
     this.coverMask.minFilter=this.coverMask.magFilter=LinearFilter;this.coverMask.needsUpdate=true;
     this.contacts.minFilter=this.contacts.magFilter=LinearFilter;this.contacts.needsUpdate=true;
     this.weights.minFilter=this.weights.magFilter=LinearFilter;
     this.weights.needsUpdate=true;
     this.customProgramCacheKey=()=>`terrain-${this.verts}`;
     this.onBeforeCompile=shader=>{
-      Object.assign(shader.uniforms,{uMoss:{value:this.moss},uCover:{value:this.coverMask},uSoilAtlas:{value:getAntSurfaceAtlas()},uContact:{value:this.contacts},uPaint:{value:this.weights},uSand:{value:this.textures[0]},uMud:{value:this.textures[1]},uRock:{value:this.textures[2]},uSnow:{value:this.textures[3]},uPebbles:{value:this.textures[4]},uSoilTint:this.seasonTint,uSea:this.level});
+      Object.assign(shader.uniforms,{uRoad:{value:this.textures[5]},uRoadMask:{value:this.roadMask},uMoss:{value:this.moss},uCover:{value:this.coverMask},uSoilAtlas:{value:getAntSurfaceAtlas()},uContact:{value:this.contacts},uPaint:{value:this.weights},uSand:{value:this.textures[0]},uMud:{value:this.textures[1]},uRock:{value:this.textures[2]},uSnow:{value:this.textures[3]},uPebbles:{value:this.textures[4]},uSoilTint:this.seasonTint,uSea:this.level});
       shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vTerrain; varying vec3 vTerrainNormal; varying float vSlope;').replace('#include <begin_vertex>','#include <begin_vertex>\nvTerrain=position; vTerrainNormal=normal; vSlope=1.0-normal.y;');
       shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
       varying vec3 vTerrain; varying vec3 vTerrainNormal; varying float vSlope;
-      uniform sampler2D uMoss,uCover,uSoilAtlas,uContact,uPaint,uSand,uMud,uRock,uSnow,uPebbles;
+      uniform sampler2D uRoad,uRoadMask,uMoss,uCover,uSoilAtlas,uContact,uPaint,uSand,uMud,uRock,uSnow,uPebbles;
       uniform vec3 uSoilTint; uniform float uSea;
       float hashTerrain(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noiseTerrain(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hashTerrain(i),hashTerrain(i+vec2(1,0)),f.x),mix(hashTerrain(i+vec2(0,1)),hashTerrain(i+vec2(1)),f.x),f.y);}
@@ -93,6 +97,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       base=mix(base,mossColor*.85,mossMask*.94);
       base=mix(base,sand,shore*.94);
       base=mix(base,rock,cliff);
+      base=mix(base,texture2D(uRoad,vTerrain.xz*.25).rgb*(.9+.15*n),texture2D(uRoadMask,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)})+0.5)/${this.verts.toFixed(1)}).r);
       base=mix(base,sand,paint.r); base=mix(base,mud,paint.g); base=mix(base,rock,paint.b); base=mix(base,mix(vec3(.78,.76,.83),texture2D(uSnow,uv).rgb,.15),paint.a);
       base=mix(base,vec3(.52,.38,.36)*(0.65+pebble*2.0),pebbleMask*.30*(1.0-paint.a)*(1.0-cliff));
       // Rounded stones belong to the riverbed, so water coverage reveals them naturally.
@@ -154,19 +159,21 @@ export class TerrainMaterial extends MeshStandardMaterial {
   update(field:HeightField,strokes:readonly TerrainStroke[]):void {
     this.level.value=field.waterLevel;
     const data=this.weights.image.data as Uint8Array; data.fill(0);
+    const roads=this.roadMask.image.data as Uint8Array;roads.fill(0);
     for(const s of strokes){
       const curve=sampleCurve(s.points,s.radius,1);
-      const channel={sand:0,mud:1,rock:2,snow:3,grass:-1}[s.layer];
+      const channel={sand:0,mud:1,rock:2,snow:3,grass:-1,road:-1}[s.layer];
       const distances=rasterizeCurve(curve,this.verts,HEIGHT_ORIGIN);
       for(let z=0;z<this.verts;z++)for(let x=0;x<this.verts;x++){
         const d=distances[z*this.verts+x]!;
         if(d>=1)continue;
         const w=s.opacity*(1-smooth(.55,1,d)); const i=(z*this.verts+x)*4;
+        roads[i/4]=Math.round(roads[i/4]!*(1-w)+(s.layer==='road'?255*w:0));
         for(let c=0;c<4;c++)data[i+c]=Math.round(data[i+c]!*(1-w)+(c===channel?255*w:0));
       }
     }
-    this.weights.needsUpdate=true;
+    this.weights.needsUpdate=true;this.roadMask.needsUpdate=true;
   }
-  override dispose():void{ this.coverMask.dispose();this.moss.dispose();this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());super.dispose(); }
+  override dispose():void{ this.roadMask.dispose(); this.coverMask.dispose();this.moss.dispose();this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());super.dispose(); }
 }
 const smooth=(a:number,b:number,x:number)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};

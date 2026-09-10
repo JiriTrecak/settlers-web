@@ -1,0 +1,37 @@
+[
+  {
+    "id": "timber-bridge",
+    "triangles": 2168,
+    "meshes": 114,
+    "materials": 7,
+    "images": 0
+  },
+  {
+    "id": "lantern-post",
+    "triangles": 336,
+    "meshes": 16,
+    "materials": 5,
+    "images": 0
+  },
+  {
+    "id": "splitrail-fence",
+    "triangles": 128,
+    "meshes": 7,
+    "materials": 4,
+    "images": 0
+  },
+  {
+    "id": "waystone-outcrop",
+    "triangles": 190,
+    "meshes": 5,
+    "materials": 5,
+    "images": 0
+  },
+  {
+    "id": "road-segment",
+    "triangles": 2,
+    "meshes": 1,
+    "materials": 1,
+    "images": 1
+  }
+]

@@ -1156,6 +1156,329 @@
       "category": "resource",
       "type": "prop",
       "file": "ant-colony/amber-seam.glb"
+    },
+    {
+      "id": "coniferous_trees_05",
+      "name": "Coniferous Trees 05",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_05.glb"
+    },
+    {
+      "id": "coniferous_trees_06",
+      "name": "Coniferous Trees 06",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_06.glb"
+    },
+    {
+      "id": "coniferous_trees_07",
+      "name": "Coniferous Trees 07",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_07.glb"
+    },
+    {
+      "id": "coniferous_trees_08",
+      "name": "Coniferous Trees 08",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_08.glb"
+    },
+    {
+      "id": "coniferous_trees_09",
+      "name": "Coniferous Trees 09",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_09.glb"
+    },
+    {
+      "id": "coniferous_trees_10",
+      "name": "Coniferous Trees 10",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_10.glb"
+    },
+    {
+      "id": "coniferous_trees_11",
+      "name": "Coniferous Trees 11",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_11.glb"
+    },
+    {
+      "id": "coniferous_trees_12",
+      "name": "Coniferous Trees 12",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_12.glb"
+    },
+    {
+      "id": "tree_secondary",
+      "name": "Tree Secondary",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/tree_secondary.glb"
+    },
+    {
+      "id": "tree_primary",
+      "name": "Tree Primary",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/tree_primary.glb"
+    },
+    {
+      "id": "coniferous_trees_16",
+      "name": "Coniferous Trees 16",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_16.glb"
+    },
+    {
+      "id": "coniferous_trees_17",
+      "name": "Coniferous Trees 17",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_17.glb"
+    },
+    {
+      "id": "coniferous_trees_18",
+      "name": "Coniferous Trees 18",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_18.glb"
+    },
+    {
+      "id": "coniferous_trees_19",
+      "name": "Coniferous Trees 19",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_19.glb"
+    },
+    {
+      "id": "coniferous_trees_20",
+      "name": "Coniferous Trees 20",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_20.glb"
+    },
+    {
+      "id": "coniferous_trees_21",
+      "name": "Coniferous Trees 21",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_21.glb"
+    },
+    {
+      "id": "coniferous_trees_22",
+      "name": "Coniferous Trees 22",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_22.glb"
+    },
+    {
+      "id": "coniferous_trees_23",
+      "name": "Coniferous Trees 23",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_23.glb"
+    },
+    {
+      "id": "coniferous_trees_24",
+      "name": "Coniferous Trees 24",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_24.glb"
+    },
+    {
+      "id": "coniferous_trees_25",
+      "name": "Coniferous Trees 25",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_25.glb"
+    },
+    {
+      "id": "coniferous_trees_26",
+      "name": "Coniferous Trees 26",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/coniferous_trees_26.glb"
+    },
+    {
+      "id": "grass_v5_01",
+      "name": "Grass V5 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_01.glb"
+    },
+    {
+      "id": "grass_v5_02",
+      "name": "Grass V5 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_02.glb"
+    },
+    {
+      "id": "grass_v5_03",
+      "name": "Grass V5 03",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_03.glb"
+    },
+    {
+      "id": "grass_v5_04",
+      "name": "Grass V5 04",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_04.glb"
+    },
+    {
+      "id": "grass_v5_05",
+      "name": "Grass V5 05",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_05.glb"
+    },
+    {
+      "id": "grass_v5_06",
+      "name": "Grass V5 06",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_06.glb"
+    },
+    {
+      "id": "grass_v5_07",
+      "name": "Grass V5 07",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v5_07.glb"
+    },
+    {
+      "id": "grass_v6_01",
+      "name": "Grass V6 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v6_01.glb"
+    },
+    {
+      "id": "grass_v6_02",
+      "name": "Grass V6 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v6_02.glb"
+    },
+    {
+      "id": "grass_v6_03",
+      "name": "Grass V6 03",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/grass_v6_03.glb"
+    },
+    {
+      "id": "lowpolymushroom_01",
+      "name": "Lowpolymushroom 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_01.glb"
+    },
+    {
+      "id": "lowpolymushroom_03",
+      "name": "Lowpolymushroom 03",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_03.glb"
+    },
+    {
+      "id": "lowpolymushroom_04",
+      "name": "Lowpolymushroom 04",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_04.glb"
+    },
+    {
+      "id": "lowpolymushroom_08",
+      "name": "Lowpolymushroom 08",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_08.glb"
+    },
+    {
+      "id": "lowpolymushroom_09",
+      "name": "Lowpolymushroom 09",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_09.glb"
+    },
+    {
+      "id": "lowpolymushroom_17",
+      "name": "Lowpolymushroom 17",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_17.glb"
+    },
+    {
+      "id": "lowpolymushroom_20",
+      "name": "Lowpolymushroom 20",
+      "category": "foliage",
+      "type": "prop",
+      "file": "environment/coniferous-pack/lowpolymushroom_20.glb"
+    },
+    {
+      "id": "timber-bridge",
+      "name": "Timber bridge",
+      "type": "span",
+      "category": "landmark",
+      "file": "environment/wayfarer/timber-bridge.glb",
+      "deck": {
+        "width": 3.3,
+        "depth": 8,
+        "height": 0.61,
+        "arch": 0.35
+      }
+    },
+    {
+      "id": "lantern-post",
+      "name": "Wayfarer lantern",
+      "type": "prop",
+      "category": "landmark",
+      "file": "environment/wayfarer/lantern-post.glb",
+      "light": {
+        "x": 0.78,
+        "y": 2.85,
+        "z": 0,
+        "color": "#FFC16B",
+        "intensity": 9,
+        "range": 8
+      }
+    },
+    {
+      "id": "splitrail-fence",
+      "name": "Split-rail fence",
+      "type": "prop",
+      "category": "landmark",
+      "file": "environment/wayfarer/splitrail-fence.glb",
+      "blocker": {
+        "width": 3.2,
+        "depth": 0.25
+      }
+    },
+    {
+      "id": "waystone-outcrop",
+      "name": "Waystone outcrop",
+      "type": "span",
+      "category": "terrain",
+      "file": "environment/wayfarer/waystone-outcrop.glb",
+      "blocker": {
+        "width": 5.8,
+        "depth": 4.2
+      }
+    },
+    {
+      "id": "road-segment",
+      "name": "Packed-earth road",
+      "type": "ground",
+      "category": "terrain",
+      "file": "environment/wayfarer/road-segment.glb"
     }
   ]
 }

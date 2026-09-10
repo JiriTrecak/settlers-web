@@ -54,7 +54,9 @@ describe('first combat balance', () => {
     target.x=h.x+1;target.y=h.y;g.observation.update();g.state.tick++;
     h.unit!.target=target.id;const before=target.hp!;
     g.combat.resolve();
-    expect(before-target.hp!).toBe(52);expect(h.unit!.cooldown).toBe(60);
+    expect(target.hp).toBe(before);expect(h.unit!.cooldown).toBe(60);
+    g.state.tick=h.unit!.attack!.impact;g.combat.resolve();
+    expect(before-target.hp!).toBe(52);
   });
   it('caps area damage at six target equivalents; heroes have shorter stuns and buildings never stun', () => {
     const g=game(),h=heroOf(g);h.progression!.experience=3200;

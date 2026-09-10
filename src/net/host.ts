@@ -1,3 +1,4 @@
+import { chatText } from "../shared/chat/chat";
 import { validAction } from "../shared/types/types";
 /**
  * One MatchHost room: lobby until Start, then the lockstep Room.
@@ -44,6 +45,7 @@ export class HostedMatch {
   private config: MatchConfig | null = null;
   private replayId: string | null = null;
   private lastSave: unknown = null;
+  private chatTimes = new Map<string, number>();
 
   constructor(draft: CreateRoom, id: string = crypto.randomUUID()) {
     this.id = id;
@@ -283,6 +285,14 @@ export class HostedMatch {
   ingest(auth: string, msg: ClientMsg): void {
     const m = this.members.get(auth);
     if (!m) return;
+    if (msg.type === "chat") {
+      if (!m.send || this.state !== "playing") return;
+      const text = chatText(msg.text), now = Date.now();
+      if (!text || now - (this.chatTimes.get(auth) ?? -Infinity) < 500) return;
+      this.chatTimes.set(auth, now);
+      this.fanout({type: "chat", message: {name: m.name, player: m.player ?? null, text}});
+      return;
+    }
     if (msg.type === "hello") return;
     if (msg.type === "loadSave") {
       if (m.token !== this.hostToken) return;

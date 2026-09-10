@@ -63,7 +63,8 @@ export type EntityView = {
     commandedTarget?: number | null;
     work?: { animation: "build" | "chop"; x: number; y: number; cycle?: {ticks: number; progress: number} };
     cooldown: number;
-    shot?: { tick: number; x: number; y: number };
+    attack?: NonNullable<Entity["unit"]>["attack"];
+
   };
   production?: Entity["production"];
   revival?: Entity["revival"];
@@ -86,6 +87,7 @@ export type SettlementView = {
   observedDeaths?: readonly ObservedDeath[];
   fallenHeroes?: readonly EntityView[];
   shells?: GameState["shells"];
+  missiles?: GameState["missiles"];
   visuals?: VisualCue[];
   goods?: GoodsSummary[];
   population?: ReturnType<typeof workerPopulation>;
@@ -291,17 +293,8 @@ export class Observation {
             ? e.unit.order.target
             : null,
         cooldown: e.unit.cooldown,
-        ...(e.unit.shot &&
-        (!observer || e.unit.shot.viewers.includes(observer)) &&
-        this.c.state.tick - e.unit.shot.tick < 24
-          ? {
-              shot: {
-                tick: e.unit.shot.tick,
-                x: e.unit.shot.x,
-                y: e.unit.shot.y,
-              },
-            }
-          : {}),
+        ...(e.unit.attack ? {attack: {...e.unit.attack}} : {}),
+
       };
     if (
       e.unit &&
@@ -467,6 +460,7 @@ export class Observation {
       fallenHeroes: this.c.state.entities
         .filter((e) => e.fallen && (!owner || e.owner === owner))
         .map((e) => this.describe(e, true, owner)),
+      missiles: this.c.state.missiles.filter(s=>!owner || (s.viewers.includes(owner) && m?.cells[this.c.spatial.cell(s.destination)] === 2)).map(s=>structuredClone(s)),
       shells: this.c.state.shells.filter(s=>!owner || s.viewers.includes(owner)).map(s=>structuredClone(s)),
       visuals: this.c.state.visuals
         .filter((v) => !owner || v.viewers.includes(owner))

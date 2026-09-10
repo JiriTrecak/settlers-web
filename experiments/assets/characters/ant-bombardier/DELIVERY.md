@@ -3,9 +3,21 @@
 - **What it is:** Ant mortar carrier with reinforced harness, goggles, back ammunition rack and an offset hollow-barrel mortar. Firing braces the legs and recoils the barrel.
 - **Asset folder:** [ant-bombardier](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier>)
 - **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/ant-bombardier.blend>) · [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/ant-colony/characters/bombardier.glb>) · [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/ant-bombardier/comparison.png>)
-- **Live preview:** [Bombardier studio](http://127.0.0.1:8793/)
+- **Live preview:** [Local studio](http://127.0.0.1:8806/).
 - **Geometry:** 5,008 exported triangles; 2 meshes; 7 materials; 1 skeleton. No LOD variants.
 - **Runtime features:** TC_TeamColor body, antennae and belt tab; default #A04B31. Armor, mortar and harness retain independent materials. Seven clips: idle, walk, run, carry, attack_mortar, hit, death. Semantic attack maps to attack_mortar; release event at 65%. Default 1.5× playback, in-place movement, Y-up/+Z-forward game orientation, approximately 2.03 ant height. Carry is a stationary harness-gripping stance. Death holds.
 - **Validation:** Saved Blender validation with packed reference, finite geometry and camera. Full-resolution render comparison and front/side/rear/animation/workshop-scale inspection; blue recoloring verified. Actual exported GLB tests pass for mapped clips, distinct gaits, recoil bone translation, loop seams, one release event and independent held death. Runtime and studio exports match byte-for-byte; team vertex colors absent. TypeScript passes.
-- **Game integration:** Published asset and manifest only. Native shell simulation already exists, but the Bombardier definition, Workshop recruitment and release synchronization remain unfinished in the active goal.
+- **Game integration:** Integrated at the Workshop with physical Worker recruitment, authoritative arcing area damage/slow and an animated muzzle socket captured once per launch.
 - **Limitations:** Simplified broad surfaces match the current ant family; fine painted reference detail is omitted, and mortar/hidden construction is inferred. Full-army performance and in-game firing inspection remain pending. The visual release occurs at about 0.542 seconds with default playback; integration must account for that timing rather than spawn at animation start.
+
+
+## Muzzle refinement — 2026-09-10
+
+Added `socket_muzzle` at the barrel opening, parented to the mortar recoil bone.
+Rebuilt source and published runtime GLB; 5,008 triangles, 2 meshes, 7 materials.
+Blender validation, packed reference, runtime parity, animated socket test,
+comparison inspection, studio attack and blue recoloring passed. Working studio:
+http://127.0.0.1:8806/ . Renderer now samples the declared socket once per launch.
+Final gameplay-camera launch inspection remains pending; no new geometry added.
+
+Final integration/performance status: see docs/declarations/tier-two-completion.md. Earlier unchecked-integration statements in historical notes are superseded by that audit.

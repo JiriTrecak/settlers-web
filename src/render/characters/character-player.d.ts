@@ -9,6 +9,7 @@ export class CharacterPlayer {
   setVariant(variant: AntVariant): void;
   setState(state: AntState, options?: {restart?: boolean; fade?: number}): void;
   update(dt: number): void;
+  attackContact(): number;
   seek(normalized: number): void;
   setTeamColor(color: ColorRepresentation | 'default'): void;
   dispose(): void;

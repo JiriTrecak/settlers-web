@@ -1,3 +1,5 @@
+import catalog from '../../../assets/catalog.json';
+const structuralOrigins=new Set(catalog.assets.filter(e=>'deck' in e).map(e=>e.id));
 import { Box3, type Object3D } from 'three';
 
 /** Rotated glTF roots require vertex-accurate bounds for the soil line.
@@ -9,7 +11,7 @@ export function prototypeBounds(root:Object3D):Box3 {
 
 /** Preserve the soil line of trees with buried roots; repair positive import offsets. */
 export function prototypeGroundOffset(asset:string,minY:number,floating:boolean):number {
-  if(floating||!Number.isFinite(minY)||asset.includes('pillar-arch'))return 0;
+  if(structuralOrigins.has(asset)||floating||!Number.isFinite(minY)||asset.includes('pillar-arch'))return 0;
   if(/tree-|pine|spruce/.test(asset)&&minY<0)return 0;
   return -minY;
 }

@@ -1,24 +1,24 @@
 # Ant Tier 2: implementation design
 
-Status: implementation in progress. This document describes the intended complete pass, not a claim that all systems or assets already exist.
+Status: implemented and verified. See [completion audit](./tier-two-completion.md) for current requirement-by-requirement evidence and known limits. Chronological checkpoints below retain their historical context.
 
 ### Current implementation checkpoint
 
-The goal remains active. This is the current state, replacing earlier chronological checkpoints.
+The Tier 2 pass is complete; the completion audit supersedes historical pending-work notes below.
 
-- **Core systems implemented:** `requires` with shared live-owned-building prerequisite checks; `placementNear` with observed, finite-resource validation; specialized accepted-item drop-offs crediting the colony account; native paid in-place building upgrades; colony-wide paid research queues. Cancellation refunds exactly once, destruction loses unfinished purchases, completed knowledge persists, and save/restore validates task and research state. Simulation build is 21.
+- **Core systems implemented:** `requires` with shared live-owned-building prerequisite checks; `placementNear` with observed, finite-resource validation; specialized accepted-item drop-offs crediting the colony account; native paid in-place building upgrades; colony-wide paid research queues. Cancellation refunds exactly once, destruction loses unfinished purchases, completed knowledge persists, and save/restore validates task and research state. Simulation build is 22.
 - **Mound → Great Mound integrated:** actual JSON costs 320 Amber / 180 Wood / 100 Root and 60 seconds. Same entity, footprint, entrance and behaviors; +600 HP capacity, armor 6, worker births pause then resume. The new raised command-storey model is 58,902 triangles / one mesh / 30 materials, with three `TC_TeamColor` flags. Own Blender/recipe/reference/palette/full-resolution comparison and delivery report in `experiments/assets/buildings/great-mound`; studio port 8791. Blender, GLB, white team vertex colors, blue flag recoloring and front/side/rear inspection passed.
 - **Rootworks integrated:** 140 Amber / 80 Wood, basic card, 12-cell live-deposit placement constraint, only Root accepted. Model 11,004 triangles / one mesh / 17 materials; studio 8788. Source and report in `experiments/assets/buildings/rootworks`.
 - **Corrupted Root integrated:** neutral targetable source, 3,000 Root, five gatherers, ten per trip, final partial load allowed, mineral unit-collision pass-through. Deposit model 8,106 triangles / one mesh / 13 materials; carried bundle 114 triangles. Source/report in `experiments/assets/buildings/corrupted-root`; studio 8790. Blender and exported source inspection passed. Native browser inspection confirmed the pale carried bundle on a Worker holding exactly 10 Root; the shared balance remains unchanged before delivery.
 - **Ironroot Forge integrated:** 140 Amber / 70 Wood, basic card, three-slot paid queue. Current research: Serrated Tools, Reinforced Carapace, Broadheads, Driving Spear, Campaign Harness, and Saturating Shells. Harness requires Great Mound and costs 200 Amber / 80 Wood / 60 Root, 50 seconds, Marshal +200 HP. Source/report in `experiments/assets/buildings/ironroot-forge`; model 11,684 triangles / one mesh / 17 materials; studio 8789. Blender/GLB/orbit/recolor checks passed.
-- **Verification:** latest full suite **475 tests passed across 121 files**; game build, TypeScript, wiki generation/type check and whitespace checks pass. Focused upgrade/research/Forge/Root/actual Great Mound flow tests pass (16 tests). The actual-content flow gathers 160 Root, upgrades for 100, purchases Harness for 60, and restores the save. Other tests cover births, wounded HP, hero revival, five-contact tree harvesting, refunds, duplicate queues, depletion, capacity and deterministic saves. The native browser test scene verifies upgrade model replacement, level/health/armor, research admission, full three-currency cancellation/refund, Root gathering label and observer delivery income. Research queue buttons retain their DOM nodes as progress changes, avoiding lost clicks. A stale loot-wiki test now uses its own weighted/two-roll fixture rather than assumptions about current balance.
-- **Hunter integrated:** 4,328-triangle rigged model, eight animation states including charge, same size as the original ants; source/studio `experiments/assets/characters/ant-hunter`, port 8792. Barracks recruitment requires Great Mound, costs 190 Amber / 45 Wood / one free Worker. Native charge grants 2× movement and one 2× impact for a 3–7 cell clear approach, eight-second cooldown, at most 2.5 seconds active. Ordinary move, changed target, stun/root, expired/lost target cancel the burst; normal collision/pathing remains authoritative. Driving Spear research halves cooldown. Save build 21 persists active/cooling state. Six gameplay tests cover impact, no repeat in melee, interrupted/blocked/building approaches, worker recruitment, research, deterministic restore and invalid saved capabilities. Native renderer duel was visually inspected.
-- **Bombardier integrated:** `experiments/assets/characters/ant-bombardier`, studio 8793; published `assets/ant-colony/characters/bombardier.glb` and manifest. 5,008 triangles / 2 meshes / 7 materials / one rig. Goggles, reinforced harness, offset back mortar, seven clips with braced attack and actual barrel recoil. Blender/GLB/loop/release/death/color/orbit/workshop-scale checks passed; two actual-export tests pass. Actual recruitment, Great Mound gating, 22-tick windup/release and Saturating Shells research are integrated and covered by gameplay tests.
+- **Verification:** latest full suite **483 tests passed across 124 files**; game build, TypeScript, wiki generation/type check and whitespace checks pass. Focused upgrade/research/Forge/Root/actual Great Mound flow tests pass (16 tests). The actual-content flow gathers 160 Root, upgrades for 100, purchases Harness for 60, and restores the save. Other tests cover births, wounded HP, hero revival, five-contact tree harvesting, refunds, duplicate queues, depletion, capacity and deterministic saves. The native browser test scene verifies upgrade model replacement, level/health/armor, research admission, full three-currency cancellation/refund, Root gathering label and observer delivery income. Research queue buttons retain their DOM nodes as progress changes, avoiding lost clicks. A stale loot-wiki test now uses its own weighted/two-roll fixture rather than assumptions about current balance.
+- **Hunter integrated:** 4,328-triangle rigged model, eight animation states including charge, same size as the original ants; source/studio `experiments/assets/characters/ant-hunter`, port 8792. Barracks recruitment requires Great Mound, costs 190 Amber / 45 Wood / one free Worker. Native charge grants 2× movement and one 2× impact for a 3–7 cell clear approach, eight-second cooldown, at most 2.5 seconds active. Ordinary move, changed target, stun/root, expired/lost target cancel the burst; normal collision/pathing remains authoritative. Driving Spear research halves cooldown. Save build 22 persists active/cooling state. Six gameplay tests cover impact, no repeat in melee, interrupted/blocked/building approaches, worker recruitment, research, deterministic restore and invalid saved capabilities. Native renderer duel was visually inspected.
+- **Bombardier integrated:** `experiments/assets/characters/ant-bombardier`, studio 8806; published `assets/ant-colony/characters/bombardier.glb` and manifest. 5,008 triangles / 2 meshes / 7 materials / one rig. Goggles, reinforced harness, offset back mortar, seven clips with braced attack and actual barrel recoil. Blender/GLB/loop/release/death/color/orbit/workshop-scale checks passed; two actual-export tests pass. Actual recruitment, Great Mound gating, 22-tick windup/release and Saturating Shells research are integrated and covered by gameplay tests.
 - **Shell infrastructure implemented:** `combat.shell` declares flight ticks, radius and slow duration/strength; research can materially increase radius/slow. Persistent non-homing shots capture damage and faction eligibility on launch, survive shooter removal, resolve damage once on arrival and can be dodged. Buildings receive splash but no movement slow. Equal-strength slows refresh; overlapping strengths use the strongest active value, and a weaker longer effect resumes when the stronger expires. Observed flight/impact cues use two instanced render batches, with no renderer-authoritative damage. Nine shell tests pass, including deterministic midflight restore and no immediate damage. `tests/manual/shells.html` verifies arc, delayed damage, 80% movement and impact rendering using the actual Bombardier asset/definition and ordinary attack command.
 - **Presentation:** `tests/manual/tier-two.html` provides a repeatable isolated native-renderer/HUD inspection scene (no changes to saved matches). Normal HUD currencies derive from content. Observer resource columns now also derive from currency definitions, including Root balances and delivery income. Generated wiki explains accepted drop-offs, prerequisites, upgrade and research costs/effects.
 - **Workshop integrated:** Advanced Great-Mound-gated production building, 220 Amber / 120 Wood, 30 seconds, 1,400 HP. Model is 17,594 triangles / one mesh / 16 materials; source/report in `experiments/assets/buildings/bombardier-workshop`, last verified studio port 8795. Bombardier recruitment consumes one Worker, 220 Amber / 80 Wood / 40 Root in two seconds after arrival. Flags alone use team color.
-- **Maps and AI:** two guarded Root deposits added to each playable battle map with native placement and route tests. AI prerequisites, specialized dropoffs, upgrade/research commands, investment savings, camp priority and gatherer reallocation are implemented. A passive-opponent run reached Great Mound. Contested duels have not yet proved full Tier 2 progression; construction service-point recovery is now under match verification.
-- **Still required:** reliable full-match AI Tier 2 production/use; all-map visual inspection; final animation/muzzle/scale/performance verification and end-to-end T2 playtesting. No completion claim for the full pass.
+- **Maps and AI:** two guarded Root deposits added to each playable battle map with native placement and route tests. AI prerequisites, specialized dropoffs, upgrade/research commands, investment savings, camp priority and gatherer reallocation are implemented. A passive-opponent run reached Great Mound. Recorded contested duels reached Great Mound and Rootworks on both sides; a Workshop produced a Bombardier that fired two shells, and the continuation recruited one Hunter per AI. Reports and exact limitations are documented below.
+- **Completion:** full-session HUD/minimap/AI/fog runtime inspection and the final requirement audit are recorded in `tier-two-completion.md`. No Tier 2 implementation requirement remains open.
 - Preserve concurrent multiplayer, item/loot, neutral and terrain work. Asset studios are managed sessions; verify their identity before reusing or rebuilding.
 
 ## Progression
@@ -243,3 +243,201 @@ not WebGL rendering. AI-only timings were insufficient to expose these spikes;
 profiling and reducing native simulation tail latency remains necessary before
 performance completion. Tests: **477 passed**, TypeScript and wiki generation
 passed at this checkpoint.
+
+### Native simulation spike reduction
+
+CPU profiling the saved tick-48,000 duel identified failed A* searches as the
+main tail-latency cost. A free goal can belong to a small region enclosed by
+standing units. Navigation now rejects occupied/fully enclosed goals, then
+performs a bounded reverse reachability probe (128 discovered cells). If that
+small region is exhausted without reaching the start, failure is proven without
+searching the rest of the map. Otherwise the original forward A* runs unchanged,
+including its stable tie order. This adds no pathfinding author configuration.
+
+Observation also avoids cloning remembered records that are immediately
+replaced by visible records, retaining the original entity insertion order and
+copy isolation. Both optimizations preserve the exact resulting simulation.
+
+Matched 2,000-tick CPU-profiled runs from the same saved duel:
+- Before: p50 3.79ms, p95 60.14ms, p99 84.14ms, max 139.27ms.
+- After: p50 3.96ms, p95 9.45ms, p99 11.28ms, max 14.20ms.
+- Final serialized snapshots are byte-for-byte identical.
+
+Reports: `experiments/ai/tier2-spikes-before.json` and
+`tier2-spikes-pocket-profiled.json`. The unprofiled optimized run measured p95
+8.79ms and p99 10.35ms. These are native whole-tick costs, not rendered FPS;
+full-map browser rendering remains part of the final performance audit.
+Navigation tests bound the number of terrain probes for enclosed targets,
+check reopening their exits, and retain independent shortest-path comparisons.
+
+### Live battlefield rendering checkpoint
+
+The authored Mosswater Divide was opened in the native editor and match. Both
+Root deposits were visible among the forest/clearing layout. At the broad editor
+view, the Retina canvas (2560×1440, soft shadows) reported about 89 FPS and GPU
+7.1ms mean / 8.3ms p95. This view included 8.17M triangles across all passes.
+
+The settled starting-base match view at zoom 40 reported about 69 FPS, CPU frame
+4.67ms mean / 7.5ms p95 and GPU 9.22ms mean / 10.47ms p95, with 1.97M triangles
+across all passes. At 50% resolution (1280×720), a later view reported about
+101 FPS and GPU 4.54ms mean / 5.46ms p95. The match/time-of-day changed between
+samples, so these are observational bounds, not a controlled resolution speedup
+benchmark. The original 100% native resolution preference was restored afterward.
+No map was saved during the editor inspection. A stable 120 FPS is not yet
+proven; remaining rendering work needs a fixed scene/time and camera benchmark.
+
+
+### Fixed-scene rendering and Root-site visual audit
+
+`reference-stage.html` now reads authored map files and their actual dimensions,
+including Amberfall's 512-cell terrain. Its **Inspect Root sites** menu links to
+all eight contested sites across Mosswater, Amberfall, Crownmere and Worldroot.
+Both sites on each map were inspected in the native browser: deposits stand on
+dry terrain, guards render, and adjacent construction clearings remain visible.
+The last close-up was Mosswater west (106, 141), with the deposit, Ogre and
+clearing visible beside the forest and river. This is visual placement evidence;
+placement legality and reachability are covered separately by native map tests.
+
+Repeat the controlled render check with:
+`reference-stage.html?map=mosswater-divide&x=149&z=114&zoom=1&benchmark=1`.
+It locks daylight to 11:00 and wind/water presentation to one instant. Each
+resolution/shadow mode receives 120 warm-up frames and 240 measured intervals;
+hidden-tab samples restart. Results include frame intervals and the existing
+CPU/GPU profiler. Original resolution, shadows and debug preference are restored
+on completion or navigation away. Full results are exposed in the page's
+`data-benchmark` attribute for inspection.
+
+Two completed runs held approximately **120 FPS in all four modes**. In the
+second run, native soft shadows measured GPU mean 3.72ms / p95 4.75ms; half-scale
+soft measured 3.15ms / 5.02ms; native filtered measured 3.54ms / 4.79ms; half-scale
+filtered measured 3.04ms / 4.58ms. CPU presentation means were 2.15–2.19ms.
+These are fixed, static Root-site results, not proof of 120 FPS during an active
+Tier 2 battle. The earlier changing-camera match readings remain separate.
+
+The final launch-alignment audit found a concrete remaining issue: shell effects
+start at the shooter's center plus a hardcoded 2.1 height. The authored mortar is
+side-offset, and the exported Bombardier rig has a mortar bone but no muzzle
+socket. Correcting and verifying the projectile origin is still required.
+
+
+### Bombardier muzzle correction
+
+The Bombardier recipe and rebuilt Blender/GLB now include `socket_muzzle`,
+parented to the recoiling mortar bone at the authored barrel mouth. Its asset
+JSON declares `projectileSocket`; the renderer resolves it after character pose
+updates and captures the launch position once per observed shell. A moving or
+dead shooter cannot drag the trajectory. Mid-flight observation/save loading
+without a captured muzzle uses the authoritative shot origin fallback. Gameplay
+impact timing, damage, victims and slow remain entirely simulation-owned.
+
+The exported runtime file matches the studio variant byte-for-byte: 5,008
+triangles, two meshes, seven materials. Blender validation, packed reference,
+full-resolution comparison, GLB animated-socket test, native studio attack and
+blue ownership preview passed. The old studio port did not respond; the verified
+replacement is `http://127.0.0.1:8806/`.
+
+`tests/render/shell-effects.test.ts` verifies the initial muzzle position,
+immutable flight after shooter movement, impact transition, and actual exported
+socket recoil. Character/shell regression tests and production build passed.
+The final game-camera muzzle inspection and active-battle performance audit
+remain pending; this correction does not close the overall Tier 2 goal.
+
+Verification: 479 tests passed in the sandbox; the two localhost hub tests could
+not bind (EPERM), then both passed when rerun with local server permissions.
+All 481 tests are accounted for. Wiki generation and diff whitespace checks pass.
+
+
+### Native muzzle and active battle inspection
+
+The shell fixture now has **Pause at muzzle release**. It pauses on the actual
+simulation launch tick and freezes animation playback. Native browser inspection
+showed the shell centered at the mortar opening, with target HP still 300/300
+and 1.00 second remaining before impact. This closes the prior game-renderer
+launch-position inspection gap.
+
+`tests/manual/tier-two-battle.html` runs the real Game and Renderer on authored
+Mosswater terrain/foliage at fixed 11:00. It places 12 Hunters, 12 Warriors and
+eight Bombardiers on legal unoccupied terrain, then issues ordinary opposing
+attack-move commands. The benchmark runs 30 seconds, excluding the first ten
+seconds from frame statistics. It does not alter saved maps or matches.
+
+At 2560×1440 / 2 DPR with soft shadows, the final run averaged **109.8 FPS**,
+frame p95 **16.7ms**, native simulation tick p95 **5.1ms**. The fight launched
+66 shells, recorded 1,023 unit-tick charge observations (not 1,023 distinct
+charges), and left 13 of the 32 added troops alive. Native screenshot inspection
+confirmed damaged red/blue troops fighting in the clearing. Final rolling GPU
+mean/p95 was 3.51/5.22ms; CPU presentation was 2.28/3.60ms. These rolling windows
+are shorter than the FPS measurement period.
+
+Results: `experiments/ai/tier2-native-battle-render.json`. A preliminary run had
+an undersized canvas and is excluded. The full-viewport uncached-view run
+averaged 103.7 FPS. The final fixture caches view data between simulation ticks;
+the main session currently rebuilds views each frame. No HUD/minimap is present,
+so this is a native combat/rendering measurement, not complete-session throughput
+or proof of sustained 120 FPS. Main-session snapshot/UI work remains a concrete
+performance follow-up.
+
+
+### Full-session resource presentation cleanup
+
+Inspection confirmed that `Observation.view` already caches its entity snapshots
+until observation updates/restore. Earlier notes suggesting repeated deep view
+construction every frame were incorrect. The native battle fixture's local view
+cache therefore does not establish a separate snapshot-allocation speedup; its
+FPS differences must not be attributed to that change without profiling.
+
+The full session did rebuild `resourceStamps` and JSON-serialize them every frame.
+It now skips that scan while the observation's entity array is unchanged. A new
+array (including same-tick fog perspective changes) is re-evaluated; existing
+signature invalidation still refreshes restored/authored map props. Resource
+appearance remains updated immediately after a tree starts falling. HUD input,
+selection, interpolation and animation continue every render frame.
+
+The targeted session suite passes 11 tests, including falling-tree removal,
+same-tick view changes and map-prop invalidation. TypeScript passes. This removes
+redundant work; no unmeasured FPS improvement is claimed.
+
+Simulation compatibility advances to `declarative-sim-22` for the accumulated
+Tier 2/native behavior changes. Older saved diagnostic snapshots and clients are
+intentionally incompatible rather than silently diverging. Historical reports
+above retain their original build context.
+
+
+### Complete native progression regression and deliverable availability
+
+`tests/game/tier-two-progression.test.ts` now exercises one continuous native
+scenario using authored costs, durations, definitions and ordinary commands:
+construct Rootworks, harvest and physically deliver 240 Root, construct Barracks
+and Forge, upgrade Mound, construct Workshop, convert two existing Worker IDs to
+Hunter/Bombardier, complete Driving Spear and Saturating Shells, attack an enemy,
+and save/restore during a researched shell flight. Root begins at zero; the
+source loses exactly 240 and the three upgrade/research/recruitment bills spend
+all 240. Rootworks stores none of the delivered currency. Original/restored
+simulations stay identical through subsequent combat damage. A moving target is
+allowed to dodge the first shell rather than making the test force a hit.
+
+The isolated map does not replace the separate guarded-map reachability tests,
+AI duel evidence, or rendered battle checks. Its starting Amber/Wood funding is
+explicit test setup; no Root, advanced unit or completed upgrade is injected.
+
+Full suite after compatibility version 22: **483 tests across 124 files pass**.
+Production build passes (existing Vite chunk-size/config warnings remain).
+
+All seven source packages contain the configured Blender file, deterministic
+recipe, reference, palette, comparison and delivery report. Five older studio
+ports closed requests without responses. Replacement managed viewers were
+started without stopping those processes; status identity and served GLB headers
+were verified:
+
+- Rootworks: http://127.0.0.1:8811/
+- Ironroot Forge: http://127.0.0.1:8812/
+- Corrupted Root: http://127.0.0.1:8813/
+- Great Mound: http://127.0.0.1:8814/
+- Hunter: http://127.0.0.1:8815/
+- Bombardier Workshop remains responsive at http://127.0.0.1:8795/
+- Bombardier remains responsive at http://127.0.0.1:8806/
+
+These availability checks do not replace the earlier model/orbit/color/animation
+inspections. The remaining completion gate is a final full-session runtime and
+performance check, including HUD/minimap, and reconciliation of any outstanding
+requirements against this collected evidence. No full-goal completion claim yet.

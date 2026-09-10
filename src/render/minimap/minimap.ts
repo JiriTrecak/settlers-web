@@ -252,7 +252,7 @@ export class Minimap {
       ctx.globalAlpha=Math.min(.85,patch.density*.35);
       ctx.beginPath();ctx.arc(patch.x*scale,patch.z*scale,patch.radius*scale,0,Math.PI*2);ctx.fill();
     }
-    const colors={grass:'#64703e',sand:'#978252',mud:'#61513b',rock:'#727671',snow:'#b5b9b1'};
+    const colors={road:'#aa8152',grass:'#64703e',sand:'#978252',mud:'#61513b',rock:'#727671',snow:'#b5b9b1'};
     for(const stroke of this.landscape?.strokes??[]) {
       ctx.fillStyle=colors[stroke.layer];ctx.globalAlpha=stroke.opacity;
       // Fill one unioned path so overlapping samples don't amplify opacity.

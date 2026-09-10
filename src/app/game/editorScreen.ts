@@ -188,7 +188,7 @@ export class EditorScreen extends GameScreen {
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
     {
-      const initial = hooks.map ?? getMap("mosswater-divide").map;
+      const initial = hooks.map ?? getMap("worldroot-hollow").map;
       this.saved = stringifyUtcMap(initial);
       this.editor.replace(initial);
     }

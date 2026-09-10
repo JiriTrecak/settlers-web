@@ -26,7 +26,7 @@ describe("combat, knowledge and deterministic navigation", () => {
         }).accepted,
       ).toBe(true);
     }
-    g.tick();
+    run(g, 1 + g.registry.get("unit.ants.warrior").behaviors.combat!.attack.windupTicks);
     expect(g.state.outcome?.winner).toBeNull();
     expect(g.state.outcome?.defeated).toHaveLength(2);
   });

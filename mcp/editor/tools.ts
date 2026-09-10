@@ -108,9 +108,9 @@ export function editorTools(hub: EditorHub) {
           )
           .optional(),
         mode: z
-          .enum(["terrain", "river", "raise", "foliage", "smooth", "flatten"])
+          .enum(["terrain", "river", "shallows", "cover", "raise", "foliage", "smooth", "flatten"])
           .optional(),
-        layer: z.enum(["grass", "sand", "mud", "rock", "snow"]).optional(),
+        layer: z.enum(["grass", "sand", "road", "mud", "rock", "snow"]).optional(),
         radius: z.number().optional(),
         depth: z.number().optional(),
         opacity: z.number().optional(),

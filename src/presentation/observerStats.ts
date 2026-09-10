@@ -9,7 +9,7 @@ import { TICK_MS } from "../shared/match/match";
 
 /** Currency declarations own both the available columns and their presentation. */
 export const observerResources = (registry: ContentRegistry) =>
-  registry.definitions.filter(d => d.currency).map(d => ({
+  registry.definitions.filter(d => d.currency).sort((a,b) => (a.displayOrder ?? 1000) - (b.displayOrder ?? 1000)).map(d => ({
     item: d.id, label: d.name, explanation: d.description,
   }));
 const MINUTE_TICKS = 60_000 / TICK_MS;

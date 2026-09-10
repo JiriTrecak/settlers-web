@@ -1,0 +1,850 @@
+{
+  "objects": [
+    {
+      "name": "SM_Coniferous_Trees_05",
+      "mesh": "Mesh.004",
+      "triangles": 204,
+      "dimensions": [
+        0.6076423525810242,
+        2.811412811279297,
+        0.5247846841812134
+      ],
+      "location": [
+        1.9579793214797974,
+        -1.7342690229415894,
+        2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_06",
+      "mesh": "Mesh.005",
+      "triangles": 204,
+      "dimensions": [
+        0.4175228774547577,
+        2.327836751937866,
+        0.425270676612854
+      ],
+      "location": [
+        1.0432486534118652,
+        -2.7828593254089355,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_07",
+      "mesh": "Mesh.006",
+      "triangles": 204,
+      "dimensions": [
+        0.606799304485321,
+        2.142098903656006,
+        0.6310409307479858
+      ],
+      "location": [
+        5.310722827911377,
+        -2.021385431289673,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_08",
+      "mesh": "Mesh.007",
+      "triangles": 736,
+      "dimensions": [
+        1.2332018613815308,
+        4.136923789978027,
+        1.2042920589447021
+      ],
+      "location": [
+        0.5974435210227966,
+        -1.3149467706680298,
+        2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_09",
+      "mesh": "Mesh.008",
+      "triangles": 993,
+      "dimensions": [
+        0.8714648485183716,
+        1.787526249885559,
+        0.9322012066841125
+      ],
+      "location": [
+        3.1889808177948,
+        -2.5639772415161133,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_10",
+      "mesh": "Mesh.009",
+      "triangles": 749,
+      "dimensions": [
+        1.2447741031646729,
+        2.7629923820495605,
+        1.144478678703308
+      ],
+      "location": [
+        -0.12914066016674042,
+        -3.1604421138763428,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_11",
+      "mesh": "Mesh.010",
+      "triangles": 1212,
+      "dimensions": [
+        1.7698328495025635,
+        4.889431953430176,
+        1.836981177330017
+      ],
+      "location": [
+        3.144317626953125,
+        0.4690795838832855,
+        -7.105427198782324e-17
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_12",
+      "mesh": "Mesh.011",
+      "triangles": 742,
+      "dimensions": [
+        1.749414324760437,
+        4.9263153076171875,
+        1.240227460861206
+      ],
+      "location": [
+        5.762415409088135,
+        -0.8243638277053833,
+        1.4210854397564648e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_13",
+      "mesh": "Mesh.012",
+      "triangles": 740,
+      "dimensions": [
+        2.9382951259613037,
+        5.7712554931640625,
+        2.636573314666748
+      ],
+      "location": [
+        -4.400430202484131,
+        -1.0633995532989502,
+        1.4210854397564648e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_14",
+      "mesh": "Mesh.013",
+      "triangles": 1365,
+      "dimensions": [
+        2.7292442321777344,
+        6.235903263092041,
+        2.8849596977233887
+      ],
+      "location": [
+        5.7457685470581055,
+        1.1373138427734375,
+        -2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_16",
+      "mesh": "Mesh.014",
+      "triangles": 1502,
+      "dimensions": [
+        2.928764581680298,
+        8.635754585266113,
+        2.1431820392608643
+      ],
+      "location": [
+        0.24601073563098907,
+        0.927691638469696,
+        -1.4210854397564648e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_17",
+      "mesh": "Mesh.015",
+      "triangles": 1507,
+      "dimensions": [
+        2.017310857772827,
+        8.191715240478516,
+        2.0798134803771973
+      ],
+      "location": [
+        -3.412487268447876,
+        1.3611352443695068,
+        -2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_18",
+      "mesh": "Mesh.016",
+      "triangles": 1201,
+      "dimensions": [
+        1.6045995950698853,
+        3.3418188095092773,
+        1.3869199752807617
+      ],
+      "location": [
+        -3.4310262203216553,
+        -2.842679262161255,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_19",
+      "mesh": "Mesh.017",
+      "triangles": 204,
+      "dimensions": [
+        0.6076421737670898,
+        3.6805388927459717,
+        0.524784505367279
+      ],
+      "location": [
+        -2.5883774757385254,
+        -2.047123432159424,
+        2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_20",
+      "mesh": "Mesh.018",
+      "triangles": 373,
+      "dimensions": [
+        1.036439061164856,
+        2.453517198562622,
+        1.0175304412841797
+      ],
+      "location": [
+        -1.6963235139846802,
+        -3.0441741943359375,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_21",
+      "mesh": "Mesh.019",
+      "triangles": 485,
+      "dimensions": [
+        1.3044466972351074,
+        2.9315130710601807,
+        0.9925828576087952
+      ],
+      "location": [
+        -6.570259094238281,
+        -3.354729175567627,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_22",
+      "mesh": "Mesh.020",
+      "triangles": 1017,
+      "dimensions": [
+        2.322563409805298,
+        6.848315238952637,
+        1.2931228876113892
+      ],
+      "location": [
+        -1.6761401891708374,
+        0.34283187985420227,
+        -7.105427198782324e-17
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_23",
+      "mesh": "Mesh.021",
+      "triangles": 914,
+      "dimensions": [
+        1.3201464414596558,
+        7.460482120513916,
+        1.3142688274383545
+      ],
+      "location": [
+        1.590122103691101,
+        -0.6529947519302368,
+        1.4210854397564648e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_24",
+      "mesh": "Mesh.022",
+      "triangles": 1389,
+      "dimensions": [
+        2.7485547065734863,
+        5.661660671234131,
+        2.2744057178497314
+      ],
+      "location": [
+        1.816918969154358,
+        2.1522531509399414,
+        -2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_25",
+      "mesh": "Mesh.029",
+      "triangles": 447,
+      "dimensions": [
+        1.504580020904541,
+        4.785976886749268,
+        1.092999815940857
+      ],
+      "location": [
+        3.6741504669189453,
+        -1.6442714929580688,
+        2.8421708795129297e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Coniferous_Trees_26",
+      "mesh": "Mesh.030",
+      "triangles": 1362,
+      "dimensions": [
+        2.527587890625,
+        4.018376350402832,
+        2.550248384475708
+      ],
+      "location": [
+        -5.925956726074219,
+        -0.2505975663661957,
+        3.552713599391162e-17
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_01",
+      "mesh": "Mesh.026",
+      "triangles": 192,
+      "dimensions": [
+        0.287320613861084,
+        0.21418939530849457,
+        0.2371087521314621
+      ],
+      "location": [
+        -0.8353031277656555,
+        -5.094456672668457,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_02",
+      "mesh": "Mesh.025",
+      "triangles": 372,
+      "dimensions": [
+        0.6379305720329285,
+        0.4114569425582886,
+        0.7960317730903625
+      ],
+      "location": [
+        0.1103472113609314,
+        -5.196159362792969,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_03",
+      "mesh": "Mesh.023",
+      "triangles": 504,
+      "dimensions": [
+        0.7520914077758789,
+        0.563254177570343,
+        0.8500228524208069
+      ],
+      "location": [
+        -0.43961772322654724,
+        -4.098513603210449,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_04",
+      "mesh": "Mesh",
+      "triangles": 187,
+      "dimensions": [
+        0.3054215908050537,
+        0.47626930475234985,
+        0.42659056186676025
+      ],
+      "location": [
+        1.7868841886520386,
+        -3.7107884883880615,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_05",
+      "mesh": "Mesh.001",
+      "triangles": 460,
+      "dimensions": [
+        0.576636016368866,
+        0.8186819553375244,
+        0.5375494360923767
+      ],
+      "location": [
+        2.151656150817871,
+        -5.169571399688721,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_06",
+      "mesh": "Mesh.002",
+      "triangles": 734,
+      "dimensions": [
+        0.756520688533783,
+        0.8576815128326416,
+        0.6135226488113403
+      ],
+      "location": [
+        2.9701249599456787,
+        -3.7672524452209473,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v5_07",
+      "mesh": "Mesh.003",
+      "triangles": 274,
+      "dimensions": [
+        0.3142254650592804,
+        0.5895577669143677,
+        0.3171679675579071
+      ],
+      "location": [
+        2.741520881652832,
+        -4.467318058013916,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v6_01",
+      "mesh": "Mesh.027",
+      "triangles": 84,
+      "dimensions": [
+        0.15732818841934204,
+        0.23259493708610535,
+        0.12380920350551605
+      ],
+      "location": [
+        2.106637954711914,
+        -4.481751918792725,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v6_02",
+      "mesh": "Mesh.028",
+      "triangles": 210,
+      "dimensions": [
+        0.4865852892398834,
+        0.3924097716808319,
+        0.580619215965271
+      ],
+      "location": [
+        1.1973156929016113,
+        -4.989652156829834,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_Grass_v6_03",
+      "mesh": "Mesh.024",
+      "triangles": 420,
+      "dimensions": [
+        0.8920112252235413,
+        0.450107216835022,
+        0.717507004737854
+      ],
+      "location": [
+        0.7516469359397888,
+        -3.6696953773498535,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_01",
+      "mesh": "Mesh.031",
+      "triangles": 432,
+      "dimensions": [
+        0.34492385387420654,
+        0.3860104978084564,
+        0.48364347219467163
+      ],
+      "location": [
+        -1.3991910219192505,
+        -4.596175193786621,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_03",
+      "mesh": "Mesh.032",
+      "triangles": 480,
+      "dimensions": [
+        0.4167204201221466,
+        0.5148929953575134,
+        0.395006388425827
+      ],
+      "location": [
+        -1.5103189945220947,
+        -3.9288251399993896,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_04",
+      "mesh": "Mesh.033",
+      "triangles": 1040,
+      "dimensions": [
+        0.504304826259613,
+        0.47331687808036804,
+        0.5777236819267273
+      ],
+      "location": [
+        -2.331693410873413,
+        -3.862013816833496,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_08",
+      "mesh": "Mesh.035",
+      "triangles": 6032,
+      "dimensions": [
+        0.28311675786972046,
+        0.5122460126876831,
+        0.24075378477573395
+      ],
+      "location": [
+        -2.1575400829315186,
+        -4.913873195648193,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_09",
+      "mesh": "Mesh.036",
+      "triangles": 608,
+      "dimensions": [
+        0.6172475814819336,
+        0.40934139490127563,
+        0.5442788600921631
+      ],
+      "location": [
+        -2.809809446334839,
+        -4.611908912658691,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_17",
+      "mesh": "Mesh.034",
+      "triangles": 1024,
+      "dimensions": [
+        0.17346984148025513,
+        0.6426948308944702,
+        0.13891631364822388
+      ],
+      "location": [
+        -1.8968918323516846,
+        -4.431567668914795,
+        1.1368683518051719e-15
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    },
+    {
+      "name": "SM_LowpolyMushroom_20",
+      "mesh": "Mesh.037",
+      "triangles": 208,
+      "dimensions": [
+        0.3562386929988861,
+        0.45771512389183044,
+        0.3562386929988861
+      ],
+      "location": [
+        -3.037275552749634,
+        -4.113804817199707,
+        5.684341759025859e-16
+      ],
+      "materials": [
+        "Lowpoly_Trees_M"
+      ],
+      "collections": [
+        "Collection"
+      ]
+    }
+  ],
+  "images": [
+    {
+      "name": "Render Result",
+      "filepath": "",
+      "packed": false,
+      "size": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Texture_BaseColor_v02.png",
+      "filepath": "//../../../../Work/0. Ref/All Texture/Texture_BaseColor_v02.png",
+      "packed": true,
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    {
+      "name": "Viewer Node",
+      "filepath": "",
+      "packed": false,
+      "size": [
+        256,
+        256
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "Lowpoly_Trees_M",
+      "nodes": [
+        {
+          "type": "BSDF_PRINCIPLED",
+          "image": null
+        },
+        {
+          "type": "OUTPUT_MATERIAL",
+          "image": null
+        },
+        {
+          "type": "TEX_IMAGE",
+          "image": "Texture_BaseColor_v02.png"
+        }
+      ]
+    }
+  ]
+}

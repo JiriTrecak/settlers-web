@@ -1,3 +1,4 @@
+import {sceneryRules} from './sceneryCollision';
 import { decodeHeight, HeightField } from "./height";
 import type { PlayerStart, UtcMap } from "./utcmap";
 import { content } from "../../content/builtin";
@@ -71,5 +72,5 @@ export function requirePlayableMap(map: UtcMap): PlayableMap {
   return map as PlayableMap;
 }
 export function mapRevision(map: UtcMap): string {
-  return `${content.rules.id}-${content.fingerprint}-${fingerprint(map)}`;
+  return `${content.rules.id}-${content.fingerprint}-${fingerprint({map,sceneryRules})}`;
 }
