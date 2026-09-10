@@ -10,8 +10,8 @@ EC2_USER="ubuntu"
 EC2_KEY="$PROJECT_ROOT/keys/arb-key-london.pem"
 REMOTE="${EC2_USER}@${EC2_HOST}"
 REMOTE_DIR="/home/ubuntu/settlers-match"
-SSH=(ssh -i "$EC2_KEY" -o StrictHostKeyChecking=no)
-RSYNC_SSH="ssh -i '$EC2_KEY' -o StrictHostKeyChecking=no"
+SSH=(ssh -i "$EC2_KEY" -o StrictHostKeyChecking=accept-new)
+RSYNC_SSH="ssh -i '$EC2_KEY' -o StrictHostKeyChecking=accept-new"
 
 chmod 400 "$EC2_KEY" 2>/dev/null || true
 
@@ -25,6 +25,9 @@ rsync -az --delete -e "$RSYNC_SSH" \
 
 rsync -az --delete -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/src/shared/" "$REMOTE:$REMOTE_DIR/src/shared/"
+
+rsync -az --delete -e "$RSYNC_SSH" \
+  "$PROJECT_ROOT/src/content/" "$REMOTE:$REMOTE_DIR/src/content/"
 
 rsync -az -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/scripts/settlers-matchhost.service" \
@@ -40,7 +43,10 @@ sudo cp scripts/settlers-matchhost.service /etc/systemd/system/settlers-matchhos
 sudo systemctl daemon-reload
 sudo systemctl enable --now settlers-matchhost
 sudo systemctl restart settlers-matchhost
-sleep 1
+for attempt in {1..20}; do
+  if curl -sf http://127.0.0.1:8787/api/health; then break; fi
+  sleep 1
+done
 curl -sf http://127.0.0.1:8787/api/health
 echo
 sudo systemctl is-active settlers-matchhost

@@ -1029,7 +1029,7 @@
         "combat": {
           "damage": 15,
           "damageType": "piercing",
-          "range": 7,
+          "range": 10,
           "cooldownTicks": 60,
           "aggroRange": 10
         }
