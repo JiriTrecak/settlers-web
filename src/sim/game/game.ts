@@ -1,3 +1,4 @@
+import {Mission} from "../scenario/mission";
 import {MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {attackTiming} from './attackTiming';
 import { formationDestinations } from "./formation";
@@ -37,7 +38,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-38";
+export const SIMULATION_BUILD = "declarative-sim-42";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -69,6 +70,7 @@ export class Game {
   readonly inventory: Inventory;
   readonly revival: Revival;
   readonly spells: Spellcasting;
+  readonly mission?: Mission;
   readonly timings: Record<string, number> = {};
   private readonly owners: Owner[];
   constructor(
@@ -85,6 +87,7 @@ export class Game {
     this.owners = slots.map((s) => slotOwner(s.player));
     this.context = new GameContext(this.state, registry, map);
     for (const p of expandMap(map, registry)) {
+      if(p.activation === "script") continue;
       if (p.owner !== "none" && !this.owners.includes(p.owner))
         throw new Error(`Placement owner ${p.owner} has no match slot`);
       const e = this.context.create(p);
@@ -92,7 +95,7 @@ export class Game {
       const camp = map.camps.find((c) => c.members.includes(p.id));
       if (camp && e.unit) e.unit.camp = camp.id;
     }
-    for (const s of map.playerStarts) {
+    for (const s of map.mission ? [] : map.playerStarts) {
       const e = this.state.entities.find((e) => e.placement === s.mainFort);
       if (!e) throw new Error("Missing main fort");
       this.state.objectives[`player.${s.player}`] = e.id;
@@ -126,7 +129,8 @@ export class Game {
     );
     this.inventory = new Inventory(this.context, this.combat.items);
     this.spells = new Spellcasting(this.context, this.combat, this.observation);
-    this.economy.startGathering();
+    if(map.mission) this.mission=new Mission(this);
+    else this.economy.startGathering();
     this.observation.update();
   }
   get entities() {
@@ -224,6 +228,7 @@ export class Game {
     };
     if (!parsed.success || !this.owners.includes(owner))
       return reject("Invalid request");
+    if (this.state.mission?.scene || this.state.mission?.dialogue?.remaining) return reject("Cinematic dialogue is playing");
     if (this.state.outcome) return reject("Match has ended");
     if(this.isDefeated(owner))return reject("Your colony has been defeated");
     const action = parsed.data;
@@ -471,10 +476,17 @@ export class Game {
       : {...order, actors: [e.id]};
     return this.command(e.owner, action).accepted;
   }
-  tick(tick = this.state.tick + 1) {
-    if (tick !== this.state.tick + 1)
+  tick(tick = this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1) {
+    if (tick !== this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1)
       throw new Error("Ticks must advance exactly once");
-    this.state.tick = tick;
+    const mission = this.state.mission;
+    if (mission?.dialogue?.cinematic && mission.dialogue.remaining > 0 && !this.state.outcome) {
+      mission.pausedTicks++;
+      if (--mission.dialogue.remaining === 0) mission.dialogue.until = this.state.tick;
+      this.observation.update();
+      return;
+    }
+    this.state.tick = tick - (mission?.pausedTicks ?? 0);
     if (this.state.outcome) {
       this.observation.update();
       return;
@@ -515,9 +527,11 @@ export class Game {
       this.upgrades.tick();
       this.research.tick();
     });
+    if(this.mission) measure("Mission Lua",()=>this.mission!.tick());
     measure("Observation", () => {
       this.observation.update();
     });
+    if(this.mission) return;
     const defeated=this.owners.filter(owner=>this.isDefeated(owner));
     if(defeated.length){
       // Losing a Mound eliminates that colony, not the entire FFA. Remove its
@@ -534,6 +548,7 @@ export class Game {
     }
   }
   isDefeated(owner:Owner):boolean {
+    if(this.mission) return this.state.outcome?.defeated.includes(owner) ?? false;
     const objective=this.context.get(this.state.objectives[owner]);
     return !objective || !alive(objective);
   }
@@ -560,6 +575,9 @@ export class Game {
     )
       throw new Error("Save content/map mismatch");
     this.observation.validateSnapshot(saved.knowledge);
+    if (!!saved.state.mission !== !!this.map.mission) throw new Error("Mission state mismatch");
+    if(saved.state.mission && (new Set(saved.state.mission.spawned).size!==saved.state.mission.spawned.length || saved.state.mission.spawned.some(id=>!this.map.entities.some(p=>p.id===id&&p.activation==="script")))) throw new Error("Invalid mission spawn history");
+    if(saved.state.mission && Object.keys(saved.state.mission.objectiveStates).some(id=>!this.map.mission?.objectives?.some(o=>o.id===id)))throw new Error('Unknown saved mission objective');
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),
       jobs = new Set(state.jobs.map((j) => j.id));
@@ -693,7 +711,7 @@ export class Game {
         !!e.progression !== !!d.behaviors.progression ||
         (e.progression !== undefined &&
           e.progression.experience >
-            d.behaviors.progression!.levels.at(-1)!.experience) ||
+            d.behaviors.progression!.levels[Math.min(d.behaviors.progression!.levels.length,this.map.mission?.heroLevelCap??10)-1].experience) ||
         !!d.body !== (e.hp !== null) ||
         !!e.production !== !!d.behaviors.production
       )

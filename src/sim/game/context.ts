@@ -44,7 +44,7 @@ export class GameContext {
   constructor(
     readonly state: GameState,
     readonly registry: ContentRegistry,
-    map: UtcMap,
+    readonly map: UtcMap,
   ) {
     this.reindex();
     this.spatial = new Spatial(map, registry, () => state.entities, e => {

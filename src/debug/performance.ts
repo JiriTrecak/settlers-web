@@ -124,6 +124,7 @@ class PerformanceDebug {
     } catch {}
     const root = document.createElement("div");
     this.panel = root;
+    root.className = "performance-debug";
     root.style.cssText =
       "position:fixed;right:12px;top:48px;z-index:10000;color:#dce8e9;font:12px/1.5 monospace;pointer-events:auto";
     const toggle = document.createElement("button");

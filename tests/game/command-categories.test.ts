@@ -8,7 +8,7 @@ describe("command categories", () => {
     const g = game(), w = worker(g);
     const bindings = commandCard(g.view("player.1"), [w.id], "player.1", g.registry);
     const root = commandMenu(bindings, null, g.registry).entries;
-    expect(root.map(b => b.id)).toEqual(["move", "stop", "hold", "patrol", "category:category.build", "category:category.build-advanced", "follow"]);
+    expect(root.map(b => b.id)).toEqual(["move", "stop", "hold", "patrol", "follow", "category:category.build", "category:category.build-advanced"]);
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
     expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Mound"});
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
@@ -85,4 +85,59 @@ describe("command categories", () => {
       expect(() => new ContentRegistry(s)).toThrow();
     }
   });
+});
+
+ it('keeps unlearned spells hidden and the skill banner outside all twelve slots',()=>{
+  const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!;
+  const read=()=>commandCard(g.view('player.1'),[hero.id],'player.1',g.registry);
+  let card=read();expect(card.filter(b=>b.type==='cast')).toHaveLength(0);
+  const root=commandMenu(card,null,g.registry).entries,slots=commandPage(root,0);
+  expect(slots.filter(s=>s.row===1).map(s=>s.binding.type)).toEqual(['move','attack','stop','hold']);
+  expect(slots.find(s=>s.binding.placement==='banner')).toMatchObject({row:4,column:1,binding:{name:'New spell available',hotkey:'K'}});
+  expect(shortcutCommand(root,0,'k')?.type).toBe('category');
+  expect(g.spells.learn(hero,'spell.marshal.faultline')).toBeNull();g.tick();card=read();
+  expect(card.filter(b=>b.type==='cast').map(b=>b.ability)).toEqual(['spell.marshal.faultline']);
+  expect(commandMenu(card,null,g.registry).entries.some(b=>b.placement==='banner')).toBe(false);
+  expect(commandPage(commandMenu(card,null,g.registry).entries,0).find(s=>s.binding.type==='cast')).toMatchObject({row:3,column:1});
+  expect(commandMenu(card,'category.hero.skills',g.registry).category).toBeNull();
+ });
+ it('does not let a banner consume a paginated grid slot',()=>{
+  const g=game(),seed=commandCard(g.view('player.1'),[worker(g).id],'player.1',g.registry)[0];
+  const entries=[...Array.from({length:12},(_,i)=>({...seed,id:String(i)})),{...seed,id:'banner',placement:'banner' as const}];
+  expect(commandPageCount(entries)).toBe(1);expect(commandPage(entries,0)).toHaveLength(13);
+  expect(commandPage(entries,0).filter(s=>s.row<=3)).toHaveLength(12);
+ });
+
+it('keeps all learned abilities on the bottom row independently of movement commands',()=>{
+  const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!;
+  hero.progression!.experience=3200;
+  const abilities=g.context.def(hero).behaviors.spellcasting!.abilities;
+  for(const ability of abilities)expect(g.spells.learn(hero,ability)).toBeNull();
+  g.observation.update();
+  const root=commandMenu(commandCard(g.view('player.1'),[hero.id],'player.1',g.registry),null,g.registry).entries;
+  const slots=commandPage(root,0);
+  expect(slots.filter(s=>s.row===3).map(s=>s.binding.ability)).toEqual(abilities);
+  expect(slots.filter(s=>s.row===3).map(s=>s.column)).toEqual([1,2,3,4]);
+  expect(slots.find(s=>s.binding.placement==='banner')?.row).toBe(4);
+  expect(slots.filter(s=>s.binding.type==='move'||s.binding.type==='follow').every(s=>s.row<3)).toBe(true);
+});
+
+it('preserves declared ability columns when only skills one and three are learned',()=>{
+  const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!;
+  hero.progression!.experience=100;
+  for(const id of ['spell.marshal.faultline','spell.marshal.carapace'])expect(g.spells.learn(hero,id)).toBeNull();
+  g.observation.update();
+  const menu=commandMenu(commandCard(g.view('player.1'),[hero.id],'player.1',g.registry),null,g.registry);
+  const abilities=commandPage(menu.entries,0).filter(s=>s.binding.type==='cast');
+  expect(abilities.map(s=>({id:s.binding.ability,row:s.row,column:s.column}))).toEqual([
+    {id:'spell.marshal.faultline',row:3,column:1},
+    {id:'spell.marshal.carapace',row:3,column:3},
+  ]);
+  expect(shortcutCommand(menu.entries,0,'e')?.ability).toBe('spell.marshal.carapace');
+});
+it('rejects overlapping and out-of-range declared ability columns',()=>{
+  const s=source() as any;s.rules.spells['spell.marshal.carapace'].column=1;
+  expect(()=>new ContentRegistry(s)).toThrow(/duplicate ability column/);
+  s.rules.spells['spell.marshal.carapace'].column=5;
+  expect(()=>new ContentRegistry(s)).toThrow();
 });

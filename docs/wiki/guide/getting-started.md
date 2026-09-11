@@ -4,7 +4,7 @@ Under the Canopy is an insect-scale economic RTS. Grow a living workforce, gathe
 
 ## Set up a match
 
-Choose **Skirmish**, select an authored map, then assign the player slots. Your human slot determines your starting position. Set every slot to AI to watch an observer match. Ants are currently the only playable faction; Campaign is not yet available.
+Choose **Skirmish**, select an authored map, then assign the player slots. Your human slot determines your starting position. Set every slot to AI to watch an observer match. Ants are currently the only playable faction. For a short story mission, choose **Campaign → Vanguard → Mission 1 — Prologue**. [Campaign guide](/guide/campaign).
 
 The [map atlas](/maps/) shows terrain, starting locations, amber mines and neutral camps. These are initial layouts; it does not track what has happened in a running match.
 

@@ -9,6 +9,8 @@ export class EntityDock {
   private readonly definition = document.createElement("select");
   private readonly owner = document.createElement("select");
   private readonly info = document.createElement("p");
+  private readonly scriptId = document.createElement("input");
+  private readonly scripted = document.createElement("input");
   private readonly state = document.createElement("textarea");
   private readonly controls = document.createElement("div");
   private key = "";
@@ -37,7 +39,7 @@ export class EntityDock {
       this.sync();
     };
     this.owner.append(new Option("Unowned / neutral", "none"));
-    for (const player of [1, 2])
+    for (const player of editor.map.playerStarts.map(s=>s.player))
       this.owner.append(new Option(`Player ${player}`, `player.${player}`));
     this.owner.onchange = () => {
       editor.entityOwner = this.owner.value as Owner;
@@ -55,7 +57,15 @@ export class EntityDock {
       b.onclick = () => this.run(fn);
       return b;
     };
+    this.scriptId.style.cssText="width:100%;padding:7px;background:#14201a;border:1px solid #526453;color:#e4e7dc;font:12px monospace";
+    this.scriptId.setAttribute("aria-label","Script ID");this.scriptId.placeholder="Unique script ID";
+    this.scripted.type="checkbox";this.scripted.setAttribute("aria-label","Spawn through Lua");
+    const spawnLabel=document.createElement("label");spawnLabel.append(this.scripted,document.createTextNode(" Spawn through Lua"));
+    this.scripted.onchange=()=>this.run(()=>{const p=editor.selectedPlacement();if(p){const {activation,...rest}=p;editor.putEntity({...rest,...(this.scripted.checked?{activation:"script"}:{})});}});
     this.controls.append(
+      this.scriptId,
+      button("Rename Script ID",()=>{const p=editor.selectedPlacement();if(p)editor.renameEntity(p.id,this.scriptId.value.trim());}),
+      document.createTextNode("Update Lua references after renaming."),spawnLabel,
       this.state,
       button("Apply instance state", () => {
         const p = editor.selectedPlacement();
@@ -109,6 +119,7 @@ export class EntityDock {
     if (!p && d.gatheringCapacity) this.editor.entityOwner = "none";
     this.owner.disabled = !!d.gatheringCapacity;
     this.controls.hidden = !p;
+    this.scripted.disabled=!this.editor.map.mission;
     this.category.disabled = !!p;
     this.definition.disabled = !!p;
     if (p) {
@@ -129,6 +140,7 @@ export class EntityDock {
       const key = JSON.stringify(p);
       if (this.key !== key) {
         this.key = key;
+        this.scriptId.value=p.id;this.scripted.checked=!!p.activation;this.scripted.disabled=!this.editor.map.mission;
         this.state.value = JSON.stringify(p.initialState ?? {}, null, 2);
       }
     } else {

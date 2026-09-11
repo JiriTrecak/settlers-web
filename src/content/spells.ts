@@ -3,6 +3,7 @@ const n=z.number().int().nonnegative(),positive=z.number().int().positive();
 /** A small set of explicit effect algorithms, parameterized by authored ranks. */
 export const spellSchema=z.object({
  name:z.string().min(1),description:z.string(),icon:z.string().min(1),hotkey:z.string().min(1),priority:n,
+ placement:z.literal('bottom-row').optional(),column:positive.max(4),
  target:z.enum(['point','self']),effect:z.enum(['line','blast','rally','guard']),
  damageType:z.string().min(1),visual:z.string().min(1),
  damageTargetBudget:positive.optional(),

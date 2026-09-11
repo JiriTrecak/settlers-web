@@ -1,3 +1,4 @@
+import {missionSchema} from "../shared/scenario/schema";
 import type { ContentRegistry } from "./registry";
 import { placementSchema, campSchema, type Placement } from "./schema";
 import type { UtcMap } from "../shared/map/utcmap";
@@ -5,7 +6,7 @@ import type { UtcMap } from "../shared/map/utcmap";
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
 export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
   const result = [...map.entities];
-  for (const s of map.playerStarts) {
+  for (const s of map.mission ? [] : map.playerStarts) {
     const setup = registry.rules.startingSetup;
     if (s.setup !== setup.id)
       throw new Error(`Player ${s.player}: unknown setup ${s.setup}`);
@@ -39,12 +40,14 @@ export function validatePlacements(
   map: UtcMap,
   registry: ContentRegistry,
 ): void {
+  if(map.mission) missionSchema.parse(map.mission);
   const all = expandMap(map, registry),
     ids = new Set<string>();
   for (const raw of all) {
     const p = placementSchema.parse(raw),
       d = registry.get(p.definition),
       state = p.initialState;
+    if (p.activation && !map.mission) throw new Error(`${p.id}: scripted spawns require a mission map`);
     if (d.currency)
       throw new Error(`${p.id}: currencies cannot be placed on the ground`);
     if (d.gatheringCapacity && p.owner !== "none")
@@ -108,6 +111,14 @@ export function validatePlacements(
     const camp = campSchema.parse(raw);
     if (camp.lootPool && !registry.rules.lootPools[camp.lootPool])
       throw new Error(`${camp.id}: unknown loot pool ${camp.lootPool}`);
+    for (const id of camp.fixedDrops ?? []) {
+      const item = registry.get(id);
+      if (item.kind !== 'item') throw new Error(`${camp.id}: fixed drop must be an item: ${id}`);
+      if (item.itemTier === 3) {
+        if (!camp.legendary) throw new Error(`${camp.id}: T3 loot requires a legendary camp`);
+        if (++legendaryRewards > 3) throw new Error("Maps may award at most three legendary items from camps");
+      }
+    }
     const pool = camp.lootPool && registry.rules.lootPools[camp.lootPool];
     if(pool && pool.entries.some(e => e.item && registry.get(e.item).itemTier === 3)) {
       if(!camp.legendary) throw new Error(`${camp.id}: T3 loot requires a legendary camp`);
@@ -131,7 +142,7 @@ export function validatePlacements(
   for (const p of all)
     if (registry.get(p.definition).behaviors.campDefense && !members.has(p.id))
       throw new Error(`${p.id}: camp defense requires an authored camp`);
-  for (const s of map.playerStarts) {
+  for (const s of map.mission ? [] : map.playerStarts) {
     const p = all.find((p) => p.id === s.mainFort);
     if (
       !p ||

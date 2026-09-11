@@ -40,6 +40,7 @@ export type MapInputHooks = {
 type Drag = "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
+  reset():void { this.onBlur(); }
   private readonly zoomMomentum = new ZoomMomentum();
   private lastClick:{x:number;y:number;time:number}|null=null;
   private startX=0;

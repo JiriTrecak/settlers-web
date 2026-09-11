@@ -312,8 +312,13 @@ export class ContentRegistry {
           d.behaviors.spellcasting.abilities.length
         )
           fail("duplicate abilities");
-        for (const id of d.behaviors.spellcasting.abilities)
-          if (!this.rules.spells[id]) fail(`unknown ability ${id}`);
+        const abilityColumns = new Set<number>();
+        for (const id of d.behaviors.spellcasting.abilities) {
+          const spell = this.rules.spells[id];
+          if (!spell) fail(`unknown ability ${id}`);
+          if (abilityColumns.has(spell.column)) fail("duplicate ability column");
+          abilityColumns.add(spell.column);
+        }
       }
       if (d.behaviors.inventory && (!d.hero || !d.behaviors.movement))
         fail("inventory requires a mobile hero");

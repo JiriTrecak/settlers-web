@@ -379,6 +379,11 @@ export class SettlementHud {
     if (signature !== this.commandSignature) {
       this.commandSignature = signature;
       this.grid.replaceChildren();
+      for(let slot=0;slot<12;slot++){
+        const well=document.createElement("span");well.className="rts-command-well";well.setAttribute("aria-hidden","true");
+        well.style.gridColumn=String(1+slot%4);well.style.gridRow=String(1+Math.floor(slot/4));this.grid.append(well);
+      }
+      this.grid.classList.toggle("has-banner",this.menuEntries.some(b=>b.placement==="banner"));
       for (const { binding: b, column, row } of commandPage(
         this.menuEntries,
         this.page,
@@ -386,9 +391,12 @@ export class SettlementHud {
         const button = document.createElement("button");
         button.className = "rts-command";
         button.setAttribute("aria-disabled", String(!b.enabled));
-        button.style.gridColumn = String(column);
+        button.style.gridColumn = b.placement === "banner" ? "1 / -1" : String(column);
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
+        if(b.placement==="banner"){
+          button.classList.add("rts-command-banner");const label=document.createElement("span");label.className="rts-banner-label";label.textContent=b.name;button.append(label);
+        }
         if (shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))) { const key = document.createElement("kbd"); key.textContent = keyLabel(shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))); button.append(key); }
         button.dataset.commandId = b.id;
         const cooldown = document.createElement("span");
@@ -486,7 +494,7 @@ export class SettlementHud {
     this.experience.hidden = true;
     if (focus) {
       const d = content.get(focus.definition);
-      const xp = experienceMeter(focus, d);
+      const xp = experienceMeter(focus, d, this.current?.heroLevelCap);
       this.experience.hidden = !xp;
       if (xp) {
         this.experience.style.setProperty(
@@ -852,7 +860,7 @@ export class SettlementHud {
     this.stock.hidden = !this.stock.childElementCount;
     if (view.outcome) {
       this.info.textContent =
-        view.outcome.winner === null
+        view.mission ? (view.outcome.winner === this.owner ? "Mission complete" : "Mission failed") : view.outcome.winner === null
           ? "Draw — both main forts fell."
           : this.readOnly
             ? `Player ${view.outcome.winner.split(".")[1]} wins — the rival Mound fell.`

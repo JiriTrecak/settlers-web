@@ -64,7 +64,9 @@ A key only works when that command is available for the current selection. Abili
 
 ## Command card
 
-Actions fill the card by priority in row-major order, left to right. **Back** occupies the first slot of the last row. Hover or focus an icon for its name, description, resource cost and shortcut. Categories open a submenu instead of crowding every possible construction command onto one card.
+The command card has twelve square slots in three rows of four. Actions fill it by priority in row-major order, left to right. Move, Attack, Stop and Hold Position lead the first row; Patrol and Follow follow them. Each has a distinct icon. **Back** occupies the first slot of the last row. Hover or focus an icon for its name, description, resource cost and shortcut. Categories open a submenu instead of crowding every possible construction command onto one card.
+
+Heroes show only learned spells on the main card, always in their assigned bottom-row positions (slots 9–12). Learning the first and third abilities leaves the second and fourth positions empty. Movement controls stay in the first two rows. With unspent skill points, **New spell available (K)** appears as a full-width button below the twelve slots. Open it to choose an ability; learning one immediately returns to the main card. The button disappears once all points are spent. Higher ranks and the ultimate retain their level requirements.
 
 The worker's basic Build menu currently contains **Worker House, Barracks, Amber Sanctuary, Ironroot Forge and Rootworks**. Forester and Watchtower are hidden from worker cards for now, but remain available in the editor.
 
@@ -77,3 +79,13 @@ Debug controls include timing/performance information, a visual fog reveal and f
 ### Mixed selection priority
 
 New selections and recalled control groups focus **heroes first, army units second, workers third**. The hero portrait and abilities appear immediately in mixed groups. Box selection still prefers heroes and army over workers; workers are selected when no army is in the box. Tab cycles unit types in that priority order; Shift+Tab cycles backwards. Clicking a portrait explicitly focuses that unit without dropping the group.
+
+## Game menu, saves and restarting
+
+Press **F10** (or click **Menu**) to pause a local game and open Resume, Save game, Load game, Restart scenario, Settings, and Exit to menu. F10 or Escape closes the menu. The Game menu shortcut can be changed in Settings. It remains available during campaign cinematics; their dialogue countdown pauses while the menu is open.
+
+**Restart scenario** offers **Save and restart**, **Restart without saving**, or **Cancel**. It starts the same map from the beginning, preserving its player slots, teams, human/AI assignments and random seed. Observer matches stay observer matches. Saving must finish successfully before a requested restart or exit happens.
+
+Name your saves in **Save game**. They persist on this device in browser storage. **Load game** lists only the current mode: campaign saves cannot be loaded in skirmish, and skirmish saves cannot be loaded in campaign. A save restores its original player setup, including a human in Player 2's slot. Export and Import allow `.utcsave` files to be moved between devices; imports obey the same mode restriction.
+
+A save requires the same map and content revision. Editing its map or changing incompatible game content can make it unloadable. This save format replaces the earlier experimental local save files. Network matches continue running with the menu open and do not offer these local save/restart controls.

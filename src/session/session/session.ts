@@ -1,3 +1,6 @@
+import {restoreSavedWorld} from "./restoreSavedWorld";
+import {MissionHud} from "../../ui/campaign/missionHud";
+import {createMissionMatch} from "../../shared/scenario/match";
 import {preloadCommandArt} from '../../ui/settlement/commandArt';
 import type {LoadProgress} from '../../shared/loading';
 import {AssetLoading,loadingPaint} from '../../render/loading/assetLoading';
@@ -11,8 +14,7 @@ import { ObserverPanel } from "../../ui/observer/observerPanel";
 import { PresentationView, matchSpeed } from "./presentationView";
 import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
 import { precise } from "../../sim/game/motion";
-import { localSaveSchema } from "./localSave";
-import { SAVE_FORMAT_VERSION } from "../../shared/save/save";
+import { localSaveSchema, LOCAL_SAVE_FORMAT_VERSION } from "../../shared/save/localSave";
 import { areaSelection } from "../../presentation/commands";
 import { resourceStamps, ResourceScenery } from "../../presentation/scenery";
 import { content } from "../../content/builtin";
@@ -43,6 +45,7 @@ import type { HudState } from "../../ui";
 
 export type SessionHooks = {
   onHud: (state: HudState) => void;
+  onMissionLeave?:()=>void;
 };
 
 export type SessionConfig = {
@@ -66,6 +69,8 @@ export class Session {
   private readonly locksteps = new Map<number, Lockstep>();
   private readonly channels: MemoryChannel[] = [];
   private match: MatchConfig | null = null;
+  private menuPaused = false;
+  setMenuPaused(paused:boolean):void {if(this.config.channel)return;this.menuPaused=paused;this.acc=0;this.input?.reset();}
   private acc = 0;
   private fps = 60;
   private fpsFrames = 0;
@@ -120,6 +125,7 @@ export class Session {
     this.stamps = [...mapStamps, ...resources];
     this.mini?.setStamps(this.stamps);
   }
+  private missionHud: MissionHud | null = null;
   private economyHud: SettlementHud | null = null;
   private placementPointer: { clientX: number; clientY: number } | null = null;
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
@@ -199,14 +205,14 @@ export class Session {
     const map = requirePlayableMap(loaded.map);
     const match =
       this.config.match ??
-      createSkirmishMatch(
+      (map.mission ? createMissionMatch(loaded.id,map,loaded.revision) : createSkirmishMatch(
         {
           mapId: loaded.id,
           slots: defaultSlots(map.playerStarts, this.config.player),
         },
         map.playerStarts,
         loaded.revision,
-      ).match;
+      ).match);
     this.match = match;
     this.chat?.destroy();
     this.aiGreeted.clear();
@@ -321,6 +327,7 @@ export class Session {
         if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
+    if(map.mission) this.missionHud=new MissionHud(this.config.host,()=>this.config.hooks.onMissionLeave?.());
     this.economyHud.setMapName(
       this.observing ? "Observing · " + map.name : map.name,
     );
@@ -357,6 +364,7 @@ export class Session {
     const initialView = this.visualView();
     this.mini.setFog(initialView.settlement!);
     this.economyHud.update(this.selectionView());
+    if(map.mission)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
     renderer.draw(initialView, this.stamps);
     // Include scenery variants outside current fog, without revealing entities.
     await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(this.world.view().settlement!.entities)]), preloadCommandArt(), document.fonts.ready]); check();
@@ -498,7 +506,7 @@ export class Session {
     const simulation = perf.start();
     const remote = this.config.channel != null;
     if (remote && !this.desynced) this.pulseConfirm();
-    this.acc += Math.max(0, dtMs) * this.simulationSpeed;
+    this.acc += this.menuPaused ? 0 : Math.max(0, dtMs) * this.simulationSpeed;
     const step = world.clock.tickMs;
     // Two ticks per frame throttles a remote match below 40 Hz whenever
     // rendering falls below 20 FPS. Catch up in bounded batches without
@@ -572,7 +580,11 @@ export class Session {
     }
     this.updateObserverStats();
     const input = perf.start();
-    this.input?.tick(dtMs);
+    const scene=world.settlement.state.mission?.scene;
+    const cinematic=!!scene || !!world.settlement.state.mission?.dialogue?.remaining;
+    if(scene && (renderer.camera.targetX!==scene.x || renderer.camera.targetZ!==scene.y))renderer.camera.lookAt(scene.x,scene.y);
+    if(cinematic || this.menuPaused)this.input?.reset();else this.input?.tick(dtMs);
+    renderer.camera.cinematic(cinematic,dtMs);
     perf.end("Input", input);
     const snapshot = perf.start();
     const view = this.visualView();
@@ -582,7 +594,8 @@ export class Session {
       this.updateResourceStamps(view.settlement.entities);
       this.mini?.setFog(view.settlement);
       this.economyHud?.update(this.selectionView());
-      renderer.gameSelect(this.economyHud?.selectedIds ?? []);
+      this.missionHud?.update(view.settlement);
+      renderer.gameSelect(cinematic ? [] : this.economyHud?.selectedIds ?? []);
       this.canvas.style.cursor = this.economyHud?.attackMode
         ? "crosshair"
         : "default";
@@ -636,7 +649,10 @@ export class Session {
       throw new Error("Local saves require a singleplayer match");
     const local = this.locksteps.get(this.me)!;
     return {
-      v: SAVE_FORMAT_VERSION,
+      v: LOCAL_SAVE_FORMAT_VERSION as typeof LOCAL_SAVE_FORMAT_VERSION,
+      mode: this.loadedMap?.map.mission ? "campaign" as const : "skirmish" as const,
+      player:this.config.player,
+      match:structuredClone(this.match),
       remote: false as const,
       mapId: this.match.mapId,
       mapRevision: this.match.mapRevision,
@@ -659,6 +675,8 @@ export class Session {
     if (this.config.channel || !this.match || !this.loadedMap)
       throw new Error("Local load requires a singleplayer match");
     const save = localSaveSchema.parse(raw);
+    if(save.mode!==(this.loadedMap.map.mission?"campaign":"skirmish"))throw new Error("This save belongs to a different game mode.");
+    if(save.player!==this.config.player || save.match.slots.length!==this.match.slots.length || save.match.slots.some((slot,i)=>{const current=this.match!.slots[i];return slot.player!==current.player||slot.kind!==current.kind||slot.team!==current.team||slot.name!==current.name;}))throw new Error("Load this save with its original player setup.");
     if (
       save.mapId !== this.match.mapId ||
       save.mapRevision !== this.match.mapRevision
@@ -666,35 +684,9 @@ export class Session {
       throw new Error(
         "Open the same map and content revision before loading this save.",
       );
-    const restored = new World({
-      map: this.loadedMap.map,
-      slots: this.match.slots,
-      seed: save.seed,
-    });
-    restored.restore(save.world);
-    const tick = restored.clock.tickIndex,
-      players = this.match.slots.map((s) => s.player).sort((a, b) => a - b),
-      pipeline = save.pipeline;
-    if (
-      pipeline.committed < tick ||
-      pipeline.commits.length !== pipeline.committed - tick ||
-      pipeline.commits.some(
-        (c, i) =>
-          c.tick !== tick + i + 1 ||
-          c.slots.length !== players.length ||
-          c.slots.some((s, j) => s.player !== players[j]),
-      ) ||
-      save.clients.length !== players.length ||
-      new Set(save.clients.map((c) => c.player)).size !== players.length ||
-      save.clients.some((c) => !players.includes(c.player)) ||
-      pipeline.held.some(
-        (h) => h.tick <= pipeline.committed || !players.includes(h.player),
-      ) ||
-      pipeline.through.length !== players.length ||
-      new Set(pipeline.through.map((p) => p.player)).size !== players.length ||
-      pipeline.through.some((p) => !players.includes(p.player))
-    )
-      throw new Error("Invalid saved command pipeline");
+    if(save.match.mapId!==save.mapId||save.match.mapRevision!==save.mapRevision||save.match.seed!==save.seed)throw new Error("Saved match metadata does not match the scenario.");
+    const restored = restoreSavedWorld(save,this.loadedMap.map);
+    const pipeline=save.pipeline;
     for (const channel of this.channels) channel.destroy();
     this.channels.length = 0;
     this.locksteps.clear();
@@ -994,6 +986,7 @@ export class Session {
     this.canvas.removeEventListener("pointermove", this.onHover);
     this.chat?.destroy();
     this.chat = null;
+    this.missionHud?.destroy();this.missionHud=null;
     this.economyHud?.destroy();
     this.economyHud = null;
     this.input?.destroy();

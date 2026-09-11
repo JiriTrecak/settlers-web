@@ -562,6 +562,18 @@
       "file": "assets/environment/coniferous-pack/tree_secondary.glb",
       "sceneryAsset": "tree_secondary",
       "harvestAnimation": "assets/environment/coniferous-pack/tree_secondary.glb"
+    },
+    {
+      "id": "icon.action.patrol",
+      "image": "assets/ui/icons/ants-v2/patrol.png"
+    },
+    {
+      "id": "icon.action.follow",
+      "image": "assets/ui/icons/ants-v2/follow.png"
+    },
+    {
+      "id": "icon.action.hold",
+      "image": "assets/ui/icons/ants-v2/hold.png"
     }
   ],
   "actions": {
@@ -570,21 +582,21 @@
         "name": "Move",
         "description": "Move eligible selected units to a destination.",
         "icon": "icon.action.move",
-        "priority": 100,
+        "priority": 200,
         "hotkey": "M"
       },
       "attack": {
         "name": "Attack",
         "description": "Attack-move on ground, or force attack a visible damageable target, including friendlies.",
         "icon": "icon.action.attack",
-        "priority": 90,
+        "priority": 190,
         "hotkey": "A"
       },
       "stop": {
         "name": "Stop",
         "description": "Cancel orders and return to autonomous activity. Carried goods remain physical.",
         "icon": "icon.action.stop",
-        "priority": 80,
+        "priority": 180,
         "hotkey": "S"
       },
       "build": {
@@ -647,22 +659,22 @@
       "hold": {
         "name": "Hold Position",
         "description": "Stand your ground. Attack enemies within weapon range without chasing.",
-        "icon": "icon.action.stop",
-        "priority": 79,
+        "icon": "icon.action.hold",
+        "priority": 170,
         "hotkey": "H"
       },
       "patrol": {
         "name": "Patrol",
         "description": "Patrol between the current position and a destination. Engage enemies, then resume patrol.",
-        "icon": "icon.action.move",
-        "priority": 78,
+        "icon": "icon.action.patrol",
+        "priority": 160,
         "hotkey": "P"
       },
       "follow": {
         "name": "Follow",
         "description": "Follow a friendly unit. Right-click a friendly unit to follow it.",
-        "icon": "icon.action.move",
-        "priority": 0
+        "icon": "icon.action.follow",
+        "priority": 150
       }
     },
     "overrides": {
@@ -713,11 +725,12 @@
         "hotkey": "V"
       },
       "category.hero.skills": {
-        "name": "Learn Ability",
+        "name": "New spell available",
         "description": "Spend a skill point to learn or improve an ability.",
         "icon": "icon.ants.marshal",
         "priority": 106,
-        "hotkey": "K"
+        "hotkey": "K",
+        "placement": "banner"
       }
     },
     "navigation": {
@@ -1155,7 +1168,9 @@
             "damageBonusPermille": 0
           }
         ],
-        "damageTargetBudget": 6
+        "damageTargetBudget": 6,
+        "placement": "bottom-row",
+        "column": 1
       },
       "spell.marshal.rally": {
         "name": "Rally the Colony",
@@ -1207,7 +1222,9 @@
             "reductionPermille": 0,
             "damageBonusPermille": 300
           }
-        ]
+        ],
+        "placement": "bottom-row",
+        "column": 2
       },
       "spell.marshal.carapace": {
         "name": "Iron Carapace",
@@ -1259,7 +1276,9 @@
             "reductionPermille": 400,
             "damageBonusPermille": 0
           }
-        ]
+        ],
+        "placement": "bottom-row",
+        "column": 3
       },
       "spell.marshal.crownfall": {
         "name": "Crownfall",
@@ -1286,7 +1305,9 @@
             "damageBonusPermille": 0
           }
         ],
-        "damageTargetBudget": 6
+        "damageTargetBudget": 6,
+        "placement": "bottom-row",
+        "column": 4
       }
     },
     "spellVisuals": {

@@ -1,3 +1,6 @@
+import {missionSchema,type MissionDefinition} from "../../shared/scenario/schema";
+import {renameEntity} from "./entityAuthoring";
+import {validatePlacements} from "../../content/map";
 import {sculptPlateau,sculptRamp} from '../../shared/landscape/tacticalAuthoring';
 import {forestCoverStroke} from './forestCover';
 import { content } from "../../content/builtin";
@@ -121,6 +124,12 @@ export class WorldEditor {
   private entityDragStart: UtcMap | null = null;
   private entityOffset = { x: 0, y: 0 };
   private entityViews = editorEntities(this.map);
+  setMission(mission:MissionDefinition|undefined,camps=this.map.camps){
+    const next={...this.map,camps,mission:mission ? missionSchema.parse(mission):undefined};
+    if(!mission && next.playerStarts.length<2) throw new Error("Skirmish maps need at least two player starts.");
+    validatePlacements(next,content);this.commitEntities(next);
+  }
+  renameEntity(id:string,nextId:string){this.commitEntities(renameEntity(this.map,id,nextId));this.selectEntity(nextId);}
   putEntity(raw: unknown) {
     this.commitEntities(putEntity(this.map, raw));
   }

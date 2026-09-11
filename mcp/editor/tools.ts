@@ -1,3 +1,5 @@
+import {campSchema} from '../../src/content/schema';
+import {missionSchema} from "../../src/shared/scenario/schema";
 import { actionSchema } from "../../src/shared/types/types";
 import { placementSchema } from "../../src/content/schema";
 /**
@@ -40,14 +42,16 @@ export function editorTools(hub: EditorHub) {
   const call = (op: string, params?: unknown) => hub.call(op, params);
 
   return {
+    editor_mission:createTool({id:"editor_mission",description:"Read or replace mission metadata, Lua source and named circular regions in the loaded map. Mission maps are excluded from Skirmish.",inputSchema:z.object({action:z.enum(["get","set"]),mission:missionSchema.nullable().optional(),camps:z.array(campSchema).optional()}),execute:async(input)=>call("mission",input)}),
     editor_entities: createTool({
       id: "editor_entities",
       description:
         "List gameplay definitions or authored entities; put, select or delete an explicit placement. Neutral units create authored camps. These are gameplay entities, separate from decorative stamps.",
       inputSchema: z.object({
-        action: z.enum(["definitions", "list", "put", "select", "delete"]),
+        action: z.enum(["definitions", "list", "put", "select", "delete", "rename"]),
         placement: placementSchema.optional(),
         id: z.string().optional(),
+        nextId: z.string().optional(),
       }),
       execute: async (input) => call("entities", input),
     }),

@@ -48,6 +48,8 @@ export type CommandBinding = {
   icon: string;
   costs: CostView[];
   priority: number;
+  placement?: "banner" | "bottom-row";
+  column?: number;
   category?: string;
   hotkey?: string;
   actors: number[];
@@ -93,21 +95,32 @@ export function commandMenu(
   return { category, entries };
 }
 export const COMMANDS_PER_PAGE = 12;
-export function commandPage(bindings: readonly CommandEntry[], page: number) {
+/** Reserved presentation rows do not depend on how many ordinary commands are present. */
+function commandLayout(bindings: readonly CommandEntry[]) {
   const back = bindings.find(b => b.type === "back");
-  const rest = bindings.filter(b => b.type !== "back");
-  const size = COMMANDS_PER_PAGE - (back ? 1 : 0);
-  const slots = rest.slice(page * size, (page + 1) * size)
+  const banners = bindings.filter(b => b.type !== "back" && b.placement === "banner");
+  const bottom = bindings.filter(b => b.type !== "back" && b.placement === "bottom-row");
+  const ordinary = bindings.filter(b => b.type !== "back" && !b.placement);
+  return { back, banners, bottom, ordinary,
+    ordinarySize: bottom.length ? 8 : COMMANDS_PER_PAGE - (back ? 1 : 0),
+    bottomSize: back ? 3 : 4 };
+}
+export function commandPage(bindings: readonly CommandEntry[], page: number) {
+  const { back, banners, bottom, ordinary, ordinarySize, bottomSize } = commandLayout(bindings);
+  const slots = ordinary.slice(page * ordinarySize, (page + 1) * ordinarySize)
     .map((binding, i) => {
       const slot = back && i >= 8 ? i + 1 : i; // Slot 9 is reserved for Back.
       return { binding, column: 1 + slot % 4, row: 1 + Math.floor(slot / 4) };
     });
+  bottom.slice(page * bottomSize, (page + 1) * bottomSize).forEach((binding, i) =>
+    slots.push({ binding, column: binding.column ?? 1 + (back ? 1 : 0) + i, row: 3 }));
   if (back) slots.push({ binding: back, column: 1, row: 3 });
+  banners.forEach((binding, index) => slots.push({ binding, column: 1, row: 4 + index }));
   return slots;
 }
 export function commandPageCount(bindings: readonly CommandEntry[]) {
-  const back = bindings.some(b => b.type === "back") ? 1 : 0;
-  return Math.max(1, Math.ceil((bindings.length - back) / (COMMANDS_PER_PAGE - back)));
+  const { ordinary, ordinarySize, bottom, bottomSize } = commandLayout(bindings);
+  return Math.max(1, Math.ceil(ordinary.length / ordinarySize), Math.ceil(bottom.length / bottomSize));
 }
 export function shortcutCommand(
   bindings: readonly CommandEntry[],
@@ -233,6 +246,7 @@ export function commandCard(
       icon: target?.icon ?? meta.icon,
       costs: target ? costs(registry, target.id) : [],
       priority: override?.priority ?? meta.priority,
+      placement: meta.placement,
       hotkey: override?.hotkey ?? meta.hotkey,
       category: override?.category === null ? undefined : override?.category ?? target?.category ?? meta.category,
       actors: actors.map((e) => e.id),
@@ -342,15 +356,15 @@ export function commandCard(
       for(const id of policy.abilities){
         const spell=registry.rules.spells[id],learned=state.learned[id]??0,rank=spell.ranks[Math.max(0,learned-1)];
         const remaining=Math.max(0,(state.cooldowns[id]??0)-view.revision);
-        const reason=!learned?'Learn this ability first':state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<rank.mana?'Not enough mana':undefined;
-        result.push({id:`cast:${id}`,type:'cast',ability:id,name:spell.name,icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,
+        const reason=state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<rank.mana?'Not enough mana':undefined;
+        if(learned>0)result.push({id:`cast:${id}`,type:'cast',ability:id,name:spell.name,icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,placement:spell.placement,column:spell.column,
           description:`${spell.description}\n${spellDetails(spell,rank,registry)}\nRank ${learned}/${spell.ranks.length} · ${rank.cooldownTicks*TICK_MS/1000}s cooldown`,
-          cooldown:learned?{remainingTicks:remaining,totalTicks:rank.cooldownTicks}:undefined,
+          cooldown:{remainingTicks:remaining,totalTicks:rank.cooldownTicks},
           costs:[{kind:'mana',name:'Mana',icon:policy.manaIcon,amount:rank.mana}],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
           ...(spell.target==='self'?{immediate:{type:'cast',actor:caster.id,ability:id} as Action}:{})});
         const next=spell.ranks[learned];
-        if(next){
-          const reason=points<1?'No unspent skill points':level<next.requiredLevel?`Requires level ${next.requiredLevel}`:undefined;
+        if(next && points>0){
+          const reason=level<next.requiredLevel?`Requires level ${next.requiredLevel}`:undefined;
           result.push({id:`learn:${id}`,type:'learnAbility',ability:id,name:`${spell.name} — Rank ${learned+1}`,description:`${spell.description}\n${spellDetails(spell,next,registry)}\nRequires level ${next.requiredLevel}. ${points} skill points available.`,
             icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,category:policy.learningCategory,costs:[],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
             immediate:{type:'learnAbility',actor:caster.id,ability:id}});

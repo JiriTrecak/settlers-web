@@ -133,7 +133,7 @@ export async function generate() {
     image: string;
     path: string;
   }[] = [];
-  for (const dir of ["showcase", "skirmish"])
+  for (const dir of ["showcase", "skirmish", "campaign"])
     for (const file of await paths(path.join(root, "assets/maps", dir))) {
       if (!file.endsWith(".utcmap")) continue;
       const map = parseUtcMap(JSON.parse(await readFile(file, "utf8")));
@@ -164,6 +164,7 @@ export async function generate() {
       body += table(
         ["Map facts", "Value"],
         [
+          ["Mode", map.mission ? "Campaign mission" : "Skirmish"],
           ["Dimensions", `${map.size} × ${map.size} cells`],
           ["Player slots", map.playerStarts.length],
           ["Amber mines", mines.filter(e=>e.definition==="building.neutral.amber-mine").length],
@@ -175,9 +176,9 @@ export async function generate() {
       body += `\n## Starting positions\n${table(
         ["Slot", "X", "Y"],
         map.playerStarts.map((p) => [`Player ${p.player}`, p.x, p.z]),
-      )}\nSelect your human slot in Skirmish to start at that position. Assign all slots to AI to observe. [Match setup](/guide/getting-started).\n\n`;
+      )}\n${map.mission ? "Open Campaign → Vanguard to play this mission. Mission maps are hidden from Skirmish. [Campaign guide](/guide/campaign)." : "Select your human slot in Skirmish to start at that position. Assign all slots to AI to observe. [Match setup](/guide/getting-started)."}\n\n`;
       if (map.camps.length)
-        body += `## Neutral camps\n\nThese are initial defenders. Cleared camps no longer contain these units during a match.\n${table(
+        body += `## Neutral camps\n\nAuthored defenders may begin on the map or arrive through a mission script. Cleared camps no longer contain these units during a match.\n${table(
           ["Camp", "Location", "Defenders", "Reward pool"],
           map.camps.map((c) => {
             const counts = new Map<string, number>();
@@ -201,7 +202,7 @@ export async function generate() {
     "maps/index.md",
     page(
       "Map atlas",
-      "Explore the authored battlefields. Previews and camp lists are generated from the same map files loaded by Skirmish and the editor.\n\n<WikiMaps />",
+      "Explore the authored battlefields. Previews and camp lists are generated from the same map files loaded by Skirmish, Campaign and the editor.\n\n<WikiMaps />",
     ),
   );
   // Preserve relative links inside technical documentation. Old design logs are explicitly historical.
@@ -282,6 +283,7 @@ export async function generate() {
       text: "Start playing",
       items: [
         { text: "Welcome", link: "/" },
+        { text: "Vanguard campaign", link: "/guide/campaign" },
         { text: "First match", link: "/guide/getting-started" },
         { text: "Economy & workers", link: "/guide/economy" },
         { text: "Combat & victory", link: "/guide/combat" },
@@ -339,6 +341,7 @@ export async function generate() {
       collapsed: true,
       items: [
         { text: "Authoring the wiki", link: "/development/" },
+        { text: "Mission scripting & Lua", link: "/development/mission-scripting" },
         { text: "Performance & loading", link: "/development/performance" },
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
         { text: "First combat balance baseline", link: "/development/first-balance-pass" },

@@ -39,3 +39,7 @@ assets/maps/*
 /wiki/.generated/
 /wiki/.vitepress/cache/
 /wiki/.vitepress/dist/
+
+# Authored campaign missions include their Lua source.
+!assets/maps/campaign/
+!assets/maps/campaign/*.utcmap

@@ -5,12 +5,13 @@ import type { UtcMap } from "../../shared/map/utcmap";
 
 export type EntityAuthoringState = Pick<
   UtcMap,
-  "entities" | "camps" | "playerStarts"
+  "entities" | "camps" | "playerStarts" | "mission"
 >;
 
 /** Keep entity/spawn undo independent of later terrain, scenery and lighting edits. */
 export function entityAuthoringState(map: UtcMap): EntityAuthoringState {
   return structuredClone({
+    mission: map.mission,
     entities: map.entities,
     camps: map.camps,
     playerStarts: map.playerStarts,
@@ -80,4 +81,13 @@ export function deleteEntity(map: UtcMap, id: string): UtcMap {
 }
 export function authoredEntity(map: UtcMap, id: string): Placement | undefined {
   return expandMap(map, content).find((p) => p.id === id);
+}
+
+export function renameEntity(map:UtcMap,id:string,nextId:string):UtcMap {
+  if(!/^[a-zA-Z][a-zA-Z0-9_.-]{0,119}$/.test(nextId))throw new Error("Use a letter, then letters, digits, dots, dashes or underscores (max 120).");
+  if(nextId===id)return map;
+  if(!map.entities.some(p=>p.id===id))throw new Error("Select an authored entity.");
+  if(expandMap(map,content).some(p=>p.id===nextId))throw new Error("That entity ID already exists.");
+  const next={...map,entities:map.entities.map(p=>p.id===id?{...p,id:nextId}:p),camps:map.camps.map(c=>({...c,members:c.members.map(m=>m===id?nextId:m)})),playerStarts:map.playerStarts.map(s=>s.mainFort===id?{...s,mainFort:nextId}:s)};
+  validatePlacements(next,content);return next;
 }

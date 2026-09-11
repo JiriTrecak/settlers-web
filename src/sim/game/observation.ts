@@ -82,6 +82,10 @@ const observedDeathSchema = z
   .strict();
 type ObservedDeath = z.infer<typeof observedDeathSchema>;
 export type SettlementView = {
+  mission?: GameState["mission"];
+  heroLevelCap?: number;
+  missionObjectives?: import('../../shared/scenario/schema').MissionDefinition['objectives'];
+  tick?: number;
   research?: GameState["research"];
   /** Bounded, saved eyewitness reports. AI can confirm kills without reading hidden deaths. */
   observedDeaths?: readonly ObservedDeath[];
@@ -536,6 +540,7 @@ export class Observation {
           }
         : {}),
       outcome: structuredClone(this.c.state.outcome),
+      ...(this.c.state.mission ? {missionObjectives:this.c.map.mission?.objectives,heroLevelCap:this.c.map.mission?.heroLevelCap,mission:structuredClone(this.c.state.mission),tick:this.c.state.tick}:{}),
       events: this.c.state.facts
         .filter((f) => !owner || f.owner === owner)
         .map((f) => ({ ...f })),

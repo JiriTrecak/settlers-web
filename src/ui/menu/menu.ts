@@ -6,6 +6,7 @@ import logoArt from "../../../assets/ui/main-menu/logo-iron-wordmark.png";
 import "./mainMenu.css";
 
 export type MainMenuHooks = {
+  onCampaign(): void;
   onSkirmish(): void;
   onMultiplayer(): void;
   onEditor(): void;
@@ -62,9 +63,7 @@ export class MainMenu extends GameScreen {
     exitDialog.className = "canopy-settings";
     exitDialog.setAttribute("aria-labelledby", "canopy-exit-title");
     exitDialog.innerHTML = `<form method="dialog"><h2 id="canopy-exit-title">Until next time</h2><p class="canopy-settings-status">You can close this tab to exit Under the Canopy.</p><div class="canopy-settings-actions"><button type="submit">Return to menu</button></div></form>`;
-    const campaign = button("Campaign", () => {});
-    campaign.disabled = true;
-    campaign.title = "Campaign — coming soon";
+    const campaign = button("Campaign", hooks.onCampaign);
     nav.append(
       campaign,
       button("Skirmish", hooks.onSkirmish),

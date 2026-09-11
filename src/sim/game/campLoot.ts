@@ -13,9 +13,9 @@ export class CampLoot {
     if (!camp || this.c.state.clearedCamps.includes(camp.id)) return [];
     if (this.c.state.entities.some(e => e.unit?.camp === camp.id && alive(e))) return [];
     this.c.state.clearedCamps.push(camp.id);
-    if (!camp.lootPool) return [];
-    const pool = this.c.registry.rules.lootPools[camp.lootPool];
-    return rollLoot(this.c.state, pool).map(definition => this.c.create({
+    const drops = camp.fixedDrops ?? (camp.lootPool
+      ? rollLoot(this.c.state, this.c.registry.rules.lootPools[camp.lootPool]) : []);
+    return drops.map(definition => this.c.create({
       id: "", definition, owner: "none", rotation: 0,
       position: dropPosition(this.c, dead, dead.id), initialState: {quantity: 1},
     }));

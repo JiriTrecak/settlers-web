@@ -17,7 +17,7 @@ export class Progression {
       const before = this.c.stats(hero);
       const amount = Math.floor(reward/heroes.length) + (i < reward % heroes.length ? 1 : 0);
       const p = this.c.def(hero).behaviors.progression!;
-      hero.progression!.experience = Math.min(p.levels[p.levels.length-1].experience,hero.progression!.experience+amount);
+      hero.progression!.experience = Math.min(p.levels[Math.min(p.levels.length, this.c.map.mission?.heroLevelCap ?? p.levels.length)-1].experience,hero.progression!.experience+amount);
       const after = this.c.stats(hero);
       // Preserve damage already sustained, rather than healing completely on level-up.
       hero.hp! += after.maxHp-before.maxHp;

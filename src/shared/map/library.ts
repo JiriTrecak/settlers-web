@@ -47,7 +47,7 @@ export function authoredMaps(): MapEntry[] {
   return [...maps.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 export function playableMaps(): (MapEntry & { map: PlayableMap })[] {
-  return authoredMaps().filter((m) => !playableMapError(m.map)) as (MapEntry & {
+  return authoredMaps().filter((m) => !m.map.mission && !playableMapError(m.map)) as (MapEntry & {
     map: PlayableMap;
   })[];
 }
@@ -71,3 +71,5 @@ export function rememberAuthoredMap(map: UtcMap): void {
     JSON.stringify(maps.map(({ id, map }) => ({ id, map }))),
   );
 }
+
+export function missionMaps(campaign?:string):MapEntry[]{return authoredMaps().filter(m=>m.map.mission && (!campaign || m.map.mission.campaign===campaign) && !playableMapError(m.map)).sort((a,b)=>a.map.mission!.order-b.map.mission!.order);}

@@ -147,7 +147,7 @@ export class World {
 
   view(owner?: number): ViewSnapshot {
     return {
-      tick: this.clock.tickIndex,
+      tick: this.settlement.state.tick,
       size: this.size,
       settlement: this.settlement.view(owner),
     };
@@ -209,7 +209,7 @@ export class World {
       throw new Error("Invalid world save");
     if (
       !snap.game ||
-      (snap.game as { state?: { tick?: number } }).state?.tick !== snap.tick
+      (() => { const state = (snap.game as {state?: {tick?:number;mission?:{pausedTicks?:number}}}).state; return (state?.tick ?? -1) + (state?.mission?.pausedTicks ?? 0); })() !== snap.tick
     )
       throw new Error("Save tick mismatch");
     if (

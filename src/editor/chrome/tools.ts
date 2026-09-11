@@ -24,6 +24,7 @@ import {
   Play,
   Sticker,
   Sparkles,
+  FileCode,
 } from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
@@ -35,6 +36,7 @@ export type FileToolHooks = {
   onLoad(): void;
   onLeave(): void;
   onEffects(): void;
+  onMission(): void;
 };
 
 export type GameToolHooks = {
@@ -61,6 +63,7 @@ export function fileTools(hooks: FileToolHooks): IconItem[] {
     { id: "save", label: "Save", icon: Save, run: hooks.onSave },
     { id: "save-as", label: "Save as", icon: SaveAll, run: hooks.onSaveAs },
     { id: "load", label: "Load", icon: FolderOpen, run: hooks.onLoad },
+    {id:"mission",label:"Mission & Lua",icon:FileCode,run:hooks.onMission},
     { id: "effects", label: "Effects", icon: Sparkles, run: hooks.onEffects },
     { kind: "sep" },
     { id: "exit", label: "Exit", icon: LogOut, run: hooks.onLeave },

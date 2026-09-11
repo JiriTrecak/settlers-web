@@ -1,3 +1,4 @@
+import {fengariBrowser} from "./tooling/scripting/fengariBrowser";
 import { contentAuthoring } from "./tooling/content/plugin";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
@@ -6,7 +7,8 @@ import { defineConfig } from "vite";
 export default defineConfig(({ command }) => ({
   base: command === "build" ? "./" : "/",
   clearScreen: false,
-  plugins: [tailwindcss(), contentAuthoring()],
+  optimizeDeps: {rolldownOptions: {plugins:[fengariBrowser()]}},
+  plugins: [fengariBrowser(), tailwindcss(), contentAuthoring()],
   server: {
     host: "127.0.0.1",
     port: 5173,

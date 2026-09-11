@@ -297,6 +297,7 @@ export const actionMetaSchema = z
     description: z.string(),
     icon: idSchema,
     priority: z.number().int(),
+    placement: z.enum(["banner", "bottom-row"]).optional(),
     hotkey: z
       .string()
       .regex(/^(?:[A-Z]|Escape)$/)
@@ -472,6 +473,7 @@ export const rulesSchema = z
   .strict();
 export const placementSchema = z
   .object({
+    activation: z.literal("script").optional(),
     id: z.string().min(1),
     mapKnowledge: z.enum(["public", "hidden"]).optional(),
     definition: idSchema,
@@ -507,9 +509,10 @@ export const campSchema = z
     leash: positive.max(96),
     aggression: z.enum(["players", "passive"]),
     lootPool: idSchema.optional(),
+    fixedDrops: z.array(idSchema).max(12).optional(),
     legendary: z.boolean().optional(),
   })
-  .strict();
+  .strict().refine(c => !(c.lootPool && c.fixedDrops), "Choose a loot pool or fixed drops, not both");
 export type Definition = z.infer<typeof definitionSchema>;
 export type Behaviors = z.infer<typeof behaviorSchema>;
 export type Creation = z.infer<typeof creationSchema>;

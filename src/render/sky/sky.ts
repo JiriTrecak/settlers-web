@@ -16,7 +16,7 @@ import { MAP_FRINGE, MAP_HALO } from "../../shared";
 
 
 /** One complete daylight + night loop in real seconds. */
-export const DAY_CYCLE_SECONDS = 240;
+export const DAY_CYCLE_SECONDS = 600;
 
 export type SkyState = {
   hour: number;

@@ -17,5 +17,5 @@ it('projects authoritative ability cooldowns, clamps expired timers, and keeps e
  expect(read().cooldown?.remainingTicks).toBe(0);expect(read().enabled).toBe(true);
  expect(commandCard(g.view('player.2'),[hero.id],'player.2',g.context.registry).some(c=>c.cooldown)).toBe(false);
  const unlearned=commandCard(g.view('player.1'),[hero.id],'player.1',g.context.registry).find(c=>c.ability==='spell.marshal.crownfall'&&c.type==='cast')!;
- expect(unlearned.cooldown).toBeUndefined();expect(unlearned.enabled).toBe(false);
+ expect(unlearned).toBeUndefined();
 });

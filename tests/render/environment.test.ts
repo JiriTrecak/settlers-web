@@ -12,12 +12,12 @@ describe('environment presets',()=>{
     expect(validLight({...draft.light,hazeDistance:NaN})).toBe(false);
     expect(validLight({...draft.light,sunTint:'red'})).toBe(false);
   });
-  it('applies live daylight edits while retaining a running 240 second clock',()=>{
+  it('applies live daylight edits while retaining a running 600 second clock',()=>{
     const scene=new Scene(),sky=new Sky(scene);sky.setHour(9);
     const sun=scene.children.find(o=>o instanceof DirectionalLight) as DirectionalLight;
     const before=sun.intensity,position=sun.position.clone();
     sky.setGlobalLight({...FOREST.light,sunStrength:.5,sunDirection:35});
     expect(sun.intensity).toBeCloseTo(before*.5/FOREST.light.sunStrength);expect(sun.position.distanceTo(position)).toBeGreaterThan(1);
-    sky.setPlaying(true);sky.tick(1000);sky.tick(121000);expect(sky.hour).toBeCloseTo(21);sky.tick(241000);expect(sky.hour).toBeCloseTo(9);
+    sky.setPlaying(true);sky.tick(1000);sky.tick(301000);expect(sky.hour).toBeCloseTo(21);sky.tick(601000);expect(sky.hour).toBeCloseTo(9);
   });
 });

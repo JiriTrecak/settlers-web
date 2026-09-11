@@ -125,6 +125,31 @@ describe("skirmish presentation and transport", () => {
     channels.forEach((c) => c.destroy());
     session.channels.forEach((c: MemoryChannel) => c.destroy());
   });
+  it("pauses local simulation and pending orders while the game menu is open",()=>{
+    vi.stubGlobal("document",{hidden:true});
+    const {session,world,channels}=fixture(1);
+    session.input={reset:vi.fn()};
+    session.send({type:"ping"});session.setMenuPaused(true);
+    const before=world.checksum();session.tick(10000,10000);
+    expect(world.clock.tickIndex).toBe(0);expect(world.checksum()).toBe(before);
+    expect(session.input.reset).toHaveBeenCalled();
+    session.setMenuPaused(false);session.tick(25,10025);
+    expect(world.clock.tickIndex).toBe(1);
+    expect(world.log().some(a=>a.player===1)).toBe(true);
+    channels.forEach(c=>c.destroy());
+  });
+  it("round trips P2 and rejects a save assigned to another human",()=>{
+    vi.stubGlobal("document",{hidden:true});
+    const {session,world,channels}=fixture(1);
+    session.tick(100,100);const save=session.snapshotLocal(),checksum=world.checksum();
+    expect(save).toMatchObject({v:4,mode:"skirmish",player:1});
+    expect(()=>session.restoreLocal({...save,player:0})).toThrow(/player setup/);
+    expect(()=>session.restoreLocal({...save,mode:"campaign"})).toThrow(/mode/);
+    session.restoreLocal(JSON.parse(JSON.stringify(save)));
+    expect(session.world.checksum()).toBe(checksum);
+    expect(session.send({type:"ping"})).toBe(true);
+    channels.forEach(c=>c.destroy());session.channels.forEach((c:MemoryChannel)=>c.destroy());
+  });
   it("AI says gg once when its main objective is nearly destroyed", () => {
     vi.stubGlobal("document", { hidden: true });
     const {session, world, channels} = fixture(0);

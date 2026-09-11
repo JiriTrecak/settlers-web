@@ -1,3 +1,4 @@
+import {missionStateSchema} from "../../shared/scenario/schema";
 import { missileSchema } from "./missileState";
 import {worldPointSchema} from './coordinates';
 import { shellSchema } from "./shellState";
@@ -235,6 +236,7 @@ export const factSchema = z
 export const stateSchema = z
   .object({
     tick: natural,
+    mission: missionStateSchema.optional(),
     random: positive.max(0xffffffff),
     clearedCamps: z.array(z.string().min(1)),
     nextMissile: positive,

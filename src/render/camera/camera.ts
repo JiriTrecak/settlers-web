@@ -23,6 +23,11 @@ const PITCH_MAX = Math.PI / 2 - 0.04;
 const ORBIT = 0.007;
 
 export class Camera {
+  private cinematicBlend = 0;
+  cinematic(on:boolean,dtMs:number):void {
+    const next=this.cinematicBlend+((on?1:0)-this.cinematicBlend)*(1-Math.exp(-Math.max(0,dtMs)/220));
+    if(Math.abs(next-this.cinematicBlend)>.0001){this.cinematicBlend=next;this.touch();}
+  }
   targetX = 0;
   targetZ = 0;
   yaw = ISO_YAW;
@@ -230,7 +235,7 @@ export class Camera {
     if (cam instanceof PerspectiveCamera) {
       // Preserve the reference horizontal field in narrow editor panes.
       const gameFov = Math.min(75, this.pitch * 360 / Math.PI - 10, 2 * Math.atan(Math.tan(GAME_FOV * Math.PI / 360) * Math.max(1, GAME_ASPECT / aspect)) * 180 / Math.PI);
-      cam.fov = this.game ? gameFov : (2 * Math.atan(this.zoom / dist) * 180) / Math.PI;
+      cam.fov = this.game ? gameFov * (1 - .08 * this.cinematicBlend) : (2 * Math.atan(this.zoom / dist) * 180) / Math.PI;
       cam.aspect = aspect;
       cam.near = 1;
       cam.far = dist + reach + SLACK;

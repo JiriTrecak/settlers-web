@@ -6,12 +6,14 @@ import { clampPlayer } from "../../shared";
 
 export type BootIntent =
   | { kind: "menu"; player?: number }
+  | { kind: "campaign"; player?: number }
   | { kind: "single"; player?: number }
   | { kind: "editor"; mapId?: string; player?: number }
   | { kind: "play"; mapId: string; player?: number };
 
 export function parseBootIntent(search = window.location.search): BootIntent {
   const q = new URLSearchParams(search);
+  if(q.get("screen")==="campaign") return {kind:"campaign"};
   const colorRaw = q.get("color");
   const player =
     colorRaw !== null && colorRaw !== ""

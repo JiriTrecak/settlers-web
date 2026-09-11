@@ -1,3 +1,6 @@
+import {GameMenu} from '../../ui/menu/gameMenu';
+import {getMap} from '../../shared/map/library';
+import type {LocalSave} from '../../shared/save/localSave';
 import {LoadingScreen} from '../../ui/loadingScreen';
 /**
  * In-match screen: HUD + session. Destroy stops the session.
@@ -13,11 +16,17 @@ export class PlayScreen extends GameScreen {
   private readonly session: Session;
   private readonly loading: LoadingScreen;
   private destroyed = false;
+  private ready = false;
+  private readonly menu:GameMenu;
+  private readonly initialSave?:LocalSave;
 
   constructor(
     canvas: HTMLCanvasElement,
     hooks: {
       onLeave: () => void;
+      onRestart?:()=>void;
+      onLoadSave?:(save:LocalSave)=>void;
+      save?:LocalSave;
       mapId: string;
       player: number | null;
       channel?: Channel;
@@ -26,45 +35,13 @@ export class PlayScreen extends GameScreen {
   ) {
     super("screen");
     this.mapId = hooks.mapId;
-    this.hud = new Hud(this.root, {
-      onLeave: hooks.onLeave,
-      ...(!hooks.channel
-        ? {
-            onSave: () => {
-              const data = this.session.snapshotLocal(),
-                url = URL.createObjectURL(
-                  new Blob([JSON.stringify(data)], {
-                    type: "application/json",
-                  }),
-                ),
-                a = document.createElement("a");
-              a.href = url;
-              a.download = `${this.mapId}.utcsave`;
-              a.click();
-              setTimeout(() => URL.revokeObjectURL(url), 1000);
-            },
-            onLoad: async (file: File) => {
-              try {
-                this.session.restoreLocal(JSON.parse(await file.text()));
-              } catch (e) {
-                const dialog = document.createElement("dialog");
-                dialog.className = "canopy-settings";
-                const text = document.createElement("p");
-                text.textContent = (e as Error).message;
-                const close = document.createElement("button");
-                close.textContent = "Close";
-                close.onclick = () => {
-                  dialog.close();
-                  dialog.remove();
-                };
-                dialog.append(text, close);
-                this.root.append(dialog);
-                dialog.showModal();
-              }
-            },
-          }
-        : {}),
+    this.initialSave=hooks.save;
+    const entry=getMap(hooks.mapId);
+    this.menu=new GameMenu(entry.map.mission?'campaign':'skirmish',entry.name,{
+      pause:p=>this.session?.setMenuPaused(p),leave:hooks.onLeave,
+      ...(!hooks.channel?{snapshot:()=>this.session.snapshotLocal(),restart:hooks.onRestart,load:hooks.onLoadSave}:{}),
     });
+    this.hud = new Hud(this.root,{onLeave:hooks.onLeave,onMenu:()=>{if(this.ready)this.menu.open();}});
     this.root.classList.toggle("observer-match", hooks.player === null);
     this.session = new Session(canvas, {
       player: hooks.player,
@@ -72,14 +49,14 @@ export class PlayScreen extends GameScreen {
       host: this.root,
       channel: hooks.channel,
       match: hooks.match,
-      hooks: { onHud: (state) => this.hud.update(state) },
+      hooks: { onMissionLeave: hooks.onLeave, onHud: (state) => this.hud.update(state) },
     });
     this.loading = new LoadingScreen(this.root, hooks.onLeave);
   }
 
   start(): void {
     void this.session.start(p => this.loading.update(p)).then(() => {
-      if (!this.destroyed) this.loading.destroy();
+      if (!this.destroyed) {if(this.initialSave)this.session.restoreLocal(this.initialSave);this.ready=true;this.loading.destroy();}
     }).catch(error => {
       if (!this.destroyed) {this.session.stop();this.loading.error(error);console.error(error);}
     });
@@ -92,6 +69,7 @@ export class PlayScreen extends GameScreen {
   override destroy(): void {
     this.destroyed = true;
     this.loading.destroy();
+    this.menu.destroy();
     this.session.stop();
     this.hud.destroy();
     super.destroy();

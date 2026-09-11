@@ -1,4 +1,4 @@
-import {shortcuts,inputCaptured} from '../../shared/input/shortcuts';
+import {shortcuts} from '../../shared/input/shortcuts';
 import { graphicsControls } from "../menu/graphicsControls";
 /**
  * In-match overlay: fps + zoom, Exit with confirm.
@@ -10,6 +10,7 @@ export type HudState = {
 
 export type HudHooks = {
   onLeave: () => void;
+  onMenu?:()=>void;
   onSave?: () => void;
   onLoad?: (file: File) => void;
 };
@@ -22,7 +23,7 @@ export class Hud {
   private readonly hooks: HudHooks;
 
   private openSettings:(()=>void)|null=null;
-  private key=(e:KeyboardEvent)=>{if(!inputCaptured(e)&&!e.repeat&&shortcuts.matches('game.settings',e)){e.preventDefault();this.openSettings?.();}};
+  private key=(e:KeyboardEvent)=>{if(!e.defaultPrevented&&!document.querySelector('dialog[open]')&&!(e.target instanceof HTMLElement&&e.target.matches('input,textarea,select'))&&!e.repeat&&shortcuts.matches('game.settings',e)){e.preventDefault();this.openSettings?.();}};
   constructor(host: HTMLElement, hooks: HudHooks) {
     this.hooks = hooks;
     this.stats = document.createElement("div");
@@ -37,8 +38,9 @@ export class Hud {
     exit.addEventListener("click", () => this.askLeave());
     const settings = document.createElement("button");
     settings.className = "hud-exit";
-    settings.textContent = "Settings";
+    settings.textContent = hooks.onMenu ? "Menu" : "Settings";
     settings.onclick = this.openSettings = () => {
+      if(hooks.onMenu){hooks.onMenu();return;}
       this.settings?.remove();
       const dialog = document.createElement("dialog");
       this.settings = dialog;

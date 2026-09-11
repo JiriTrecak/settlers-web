@@ -1,3 +1,4 @@
+import {validateMissionLua} from "../scenario/lua";
 import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
 import {sceneryRules} from './sceneryCollision';
 import { decodeHeight, HeightField } from "./height";
@@ -16,12 +17,15 @@ export function playableMapError(
 ): string | null {
   try {
     validatePlacements(map, content);
+    if(map.mission)validateMissionLua(map.mission.script);
   } catch (e) {
     return (e as Error).message;
   }
   const starts = map.playerStarts;
+  if (!starts.length) return "Place a player start.";
+  if (map.mission?.regions.some(r=>r.x>=map.size||r.y>=map.size)) return "Mission region outside map.";
   if (
-    requirePlayers &&
+    requirePlayers && !map.mission &&
     (!starts.some((s) => s.player === 1) || !starts.some((s) => s.player === 2))
   )
     return "Place Player 1 and Player 2 start points.";

@@ -1,3 +1,4 @@
+import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
 import { SpellWorkbench } from "../../editor/chrome/spellWorkbench";
 import { getMap, rememberAuthoredMap } from "../../shared/map/library";
@@ -42,6 +43,7 @@ export class EditorScreen extends GameScreen {
   private saved = stringifyUtcMap(emptyUtcMap());
   private dialog: Confirm | null = null;
   private modal: CatalogModal | null = null;
+  private missionEditor:MissionEditor|null=null;
   private spellWorkbench: SpellWorkbench | null = null;
   private readonly mcpPrefs = new McpPrefsStore();
   private mcpOpen = false;
@@ -78,6 +80,11 @@ export class EditorScreen extends GameScreen {
       onSaveAs: () => void this.save(true),
       onLoad: () => void this.askLoad(),
       onLeave: () => void this.askLeave(),
+      onMission:()=>{this.missionEditor?.destroy();this.missionEditor=new MissionEditor(this.root,this.editor,()=>{
+        const error=playableMapError(this.editor.map);if(error)throw new Error(error);
+        rememberAuthoredMap(this.editor.map);const id=this.editor.map.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+        window.open(`/?map=${encodeURIComponent(id)}`,"_blank");
+      });},
       onEffects: () => {
         this.spellWorkbench?.destroy();
         this.spellWorkbench = new SpellWorkbench(this.root);
@@ -222,6 +229,7 @@ export class EditorScreen extends GameScreen {
     this.modal?.close();
     this.dialog?.cancel();
     this.spellWorkbench?.destroy();
+    this.missionEditor?.destroy();
     this.bridge.stop();
     this.terrainDock.destroy();
     this.spawnDock.destroy();

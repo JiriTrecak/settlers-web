@@ -242,3 +242,38 @@
 .rts-control-groups{position:absolute;bottom:70%;left:37.5%;display:flex;gap:4px;pointer-events:auto;max-width:36%;overflow-x:auto;padding:4px;background:#10171bce;border:1px solid #667279;border-radius:4px}
 .rts-control-groups[hidden]{display:none}.rts-control-groups button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:32px;height:36px;padding:2px 6px;background:#263238d9;border:1px solid #56646b;color:#e9eded;cursor:pointer;font:12px system-ui}
 .rts-control-groups button[aria-pressed=true]{border-color:#ecdda8;background:#48514c}.rts-control-groups button:hover{background:#52626b}.rts-control-groups kbd{font:11px system-ui;color:#ead39d}.rts-control-groups button span{font-size:10px;color:#bcc9ce}
+
+/* The live 4×3 grid owns its wells; conceal the mismatched wells baked into the old frame. */
+.rts-actions {
+  top:43.7%;bottom:3%;height:auto;padding:0;box-sizing:border-box;
+  background:#080d0f;border:0;border-radius:3px;
+  box-shadow:0 0 0 4px #080d0f,inset 0 0 20px #000;
+  container-type:inline-size;
+}
+.rts-command-grid.declarative-commands {
+  --command-gap:4px;
+  --command-cell:calc((100cqw - 3 * var(--command-gap))/4);
+  width:100%;height:auto;padding:0;box-sizing:border-box;aspect-ratio:auto;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(3,var(--command-cell));
+  gap:var(--command-gap);align-content:start;grid-auto-rows:12cqw;
+}
+.rts-command-grid.declarative-commands.has-banner {grid-template-rows:repeat(3,var(--command-cell)) 12cqw}
+.rts-command-well,.declarative-commands>.rts-command {
+  box-sizing:border-box;min-width:0;min-height:0;width:100%;height:100%;margin:0;
+  border:2px solid #697479;border-radius:2px;
+  background:linear-gradient(140deg,#172126,#070b0d 65%);
+  box-shadow:inset 1px 1px 0 #b0bbbe30,inset -1px -1px 0 #000,0 1px 2px #000;
+}
+.rts-command-well {pointer-events:none;border-color:#424e53}
+.declarative-commands>.rts-command {z-index:1;align-self:stretch}
+.declarative-commands>.rts-command-banner {
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:0 24px 0 27px;
+  border-color:#9d875b;background:radial-gradient(ellipse at 50% 0,#65513170,transparent 75%),linear-gradient(#283337,#10191d);
+  box-shadow:inset 0 1px 0 #e9d29755,inset 0 -1px 0 #000,0 0 7px #d1a95220;
+  color:#f2dfad;overflow:hidden;
+}
+.rts-command-banner>.rts-art {position:absolute;left:4px;top:4px;bottom:4px;width:auto;height:calc(100% - 8px);aspect-ratio:1;opacity:.8;border-radius:50%}
+.rts-banner-label {font:600 clamp(9px,4.8cqw,12px)/1.1 Georgia,serif;text-shadow:0 1px 2px #000;text-align:center}
+.rts-command-banner kbd {top:50%;bottom:auto;transform:translateY(-50%);right:6px;font-size:10px}
+.rts-command-pages:empty {display:none}

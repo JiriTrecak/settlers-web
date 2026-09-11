@@ -17,7 +17,7 @@ export const globalShortcuts:Shortcut[]=[
  {id:'camera.hall',name:'Next Mound',key:'Backspace',scope:'global'},
  {id:'selection.next',name:'Next subgroup',key:'Tab',scope:'global'},
  {id:'selection.previous',name:'Previous subgroup',key:'Shift+Tab',scope:'global'},
- {id:'game.settings',name:'Game settings',key:'F10',scope:'global'},
+ {id:'game.settings',name:'Game menu',key:'F10',scope:'global'},
  {id:'debug.toggle',name:'Debug overlay',key:'Ctrl+F3',scope:'global'},
  {id:'target.cancel',name:'Cancel targeting',key:'Escape',scope:'global'},
  {id:'placement.rotate',name:'Rotate building clockwise',key:'KeyR',scope:'command'},
@@ -54,7 +54,7 @@ export class ShortcutSettings {
 }
 export const shortcuts=new ShortcutSettings();
 
-export function inputCaptured(e:KeyboardEvent):boolean {return e.defaultPrevented || (typeof document!=="undefined" && !!document.querySelector("dialog[open]")) || (typeof HTMLElement!=="undefined" && e.target instanceof HTMLElement && (e.target.matches("input,textarea,select")||e.target.isContentEditable));}
+export function inputCaptured(e:KeyboardEvent):boolean {return e.defaultPrevented || (typeof document!=="undefined" && !!document.querySelector("dialog[open], .mission-cinematic")) || (typeof HTMLElement!=="undefined" && e.target instanceof HTMLElement && (e.target.matches("input,textarea,select")||e.target.isContentEditable));}
 
 /** Shift is an order-queue modifier unless the player explicitly bound a shifted chord. */
 export function commandMatches(id:string,e:KeyboardEvent,fallback=''):boolean{

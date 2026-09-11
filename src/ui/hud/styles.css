@@ -2,9 +2,16 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  /* Cinematic transforms and focused HUD controls must never scroll the battlefield. */
+  overflow: clip;
   background: #020814;
   font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* This is a fullscreen application; only explicit menu panels can scroll. */
+body {
+  position: fixed;
+  inset: 0;
 }
 
 #game {

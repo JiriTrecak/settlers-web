@@ -45,8 +45,7 @@ describe('declarative marshal abilities',()=>{
  });
  it('derives learning and casting cards from the selected hero without leaking private mana',()=>{
   const {g,hero}=setup();const cards=commandCard(g.view('player.1'),[hero.id],'player.1',g.registry);
-  expect(cards.filter(c=>c.type==='cast')).toHaveLength(4);
-  expect(cards.filter(c=>c.type==='cast').every(c=>!c.enabled)).toBe(true);
+  expect(cards.filter(c=>c.type==='cast')).toHaveLength(0);
   const learning=commandMenu(cards,g.context.def(hero).behaviors.spellcasting!.learningCategory,g.registry);
   expect(learning.entries.filter(c=>c.type==='learnAbility')).toHaveLength(4);
   g.spells.learn(hero,id('faultline'));g.observation.update();

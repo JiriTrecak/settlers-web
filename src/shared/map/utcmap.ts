@@ -1,3 +1,4 @@
+import {missionSchema, type MissionDefinition} from "../scenario/schema";
 import { z } from "zod";
 import {
   placementSchema,
@@ -55,6 +56,7 @@ export type UtcMap = {
   readonly v: typeof UTCMAP_VERSION;
   readonly name: string;
   readonly description?: string;
+  readonly mission?: MissionDefinition;
   readonly stamps: readonly MapStamp[];
   readonly waterLevel?: number;
   readonly height?: string;
@@ -92,6 +94,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
           "size",
           "name",
           "description",
+          "mission",
           "stamps",
           "playerStarts",
           "entities",
@@ -105,7 +108,9 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     return null;
   if (o.size !== 256 && o.size !== 512) return null;
   const size = o.size;
-  const starts = z.array(startSchema).min(2).max(8).safeParse(o.playerStarts);
+  const mission = missionSchema.optional().safeParse(o.mission);
+  if (!mission.success) return null;
+  const starts = z.array(startSchema).min(mission.data ? 1 : 2).max(8).safeParse(o.playerStarts);
   const placements = z.array(placementSchema).safeParse(o.entities),
     camps = z.array(campSchema).safeParse(o.camps);
   if (!starts.success || !placements.success || !camps.success) return null;
@@ -138,6 +143,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     size,
     name,
     ...(description ? { description } : {}),
+    ...(mission.data ? {mission:mission.data} : {}),
     stamps,
     playerStarts,
     entities: placements.data,
@@ -160,6 +166,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       size: map.size,
       name: map.name,
       ...(map.description ? { description: map.description } : {}),
+      ...(map.mission ? {mission:map.mission} : {}),
       stamps: map.stamps,
       playerStarts: map.playerStarts,
       entities: map.entities,

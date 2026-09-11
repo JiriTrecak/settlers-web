@@ -1,3 +1,8 @@
+import {restoreSavedWorld} from "../../session/session/restoreSavedWorld";
+import {validateSaveDestination} from '../../shared/save/saveLibrary';
+import type {LocalSave} from '../../shared/save/localSave';
+import {CampaignScreen} from "../../ui/menu/campaign";
+import {createMissionMatch} from "../../shared/scenario/match";
 import { SkirmishScreen } from "../../ui/menu/skirmish";
 import {
   createSkirmishMatch,
@@ -72,7 +77,7 @@ export class GameApp {
     if (intent.player !== undefined) this.player = intent.player;
     if (
       intent.kind === "play" &&
-      playableMaps().some((m) => m.id === intent.mapId)
+      authoredMaps().some((m) => m.id === intent.mapId)
     )
       this.play(intent.mapId);
     else if (intent.kind === "editor") {
@@ -81,7 +86,8 @@ export class GameApp {
         : undefined;
       if (intent.mapId && !selected) this.showMapPicker(true);
       else this.showEditor(selected?.map);
-    } else if (intent.kind === "single") this.showMapPicker();
+    } else if (intent.kind === "campaign") this.showCampaign();
+    else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
   }
 
@@ -140,11 +146,17 @@ export class GameApp {
       new MainMenu({
         playerName: this.guestName,
         onPlayerName: (name) => this.rememberName(name),
+        onCampaign: () => this.showCampaign(),
         onSkirmish: () => this.showMapPicker(),
         onMultiplayer: () => this.showMultiplayer(),
         onEditor: () => this.showMapPicker(true),
       }),
     );
+  }
+
+  private showCampaign(missions=false):void {
+    this.playGen++;this.hideCanvas();
+    this.screens?.show(new CampaignScreen({onBack:()=>this.showMenu(),onPlay:id=>this.play(id)},missions));
   }
 
   private showMapPicker(edit = false): void {
@@ -362,7 +374,6 @@ export class GameApp {
     if (!this.canvas || !this.screens) return;
     const current = this.screens.screen;
     if (current instanceof PlayScreen && current.mapId === mapId) return;
-    const gen = ++this.playGen;
     this.showCanvas();
     const entry = getMap(mapId);
     const initialHuman = entry.map.playerStarts.some(
@@ -374,18 +385,30 @@ export class GameApp {
       mapId,
       slots: defaultSlots(entry.map.playerStarts, initialHuman),
     };
-    const { match, player } = createSkirmishMatch(
+    const { match, player } = entry.map.mission ? {match:createMissionMatch(mapId,entry.map,entry.revision),player:0} : createSkirmishMatch(
       chosen,
       entry.map.playerStarts,
       entry.revision,
       this.guestName,
     );
     this.skirmishSetup = chosen;
+    this.launchLocal(mapId,match,player);
+  }
+
+  private launchLocal(mapId:string,match:MatchConfig,player:number|null,save?:LocalSave):void {
+    if(!this.canvas||!this.screens)return;
+    const entry=getMap(mapId),mode=entry.map.mission?'campaign':'skirmish';
+    if(entry.revision!==match.mapRevision)throw new Error('The scenario changed since this match began. Open the updated map to start a new match.');
+    if(save)restoreSavedWorld(save,entry.map);
+    const gen=++this.playGen;
     const play = new PlayScreen(this.canvas, {
       mapId,
       player,
       match,
-      onLeave: () => this.showMapPicker(),
+      save,
+      onRestart:()=>this.launchLocal(mapId,structuredClone(match),player),
+      onLoadSave:raw=>{const target=getMap(raw.mapId),loaded=validateSaveDestination(raw,mode,target);this.launchLocal(loaded.mapId,loaded.match,loaded.player,loaded);},
+      onLeave: () => entry.map.mission ? this.showCampaign(true) : this.showMapPicker(),
     });
     this.screens.show(play);
     try {

@@ -1,3 +1,6 @@
+import {campSchema} from '../../content/schema';
+import {missionSchema} from "../../shared/scenario/schema";
+import {validateMissionLua} from "../../shared/scenario/lua";
 import { content } from "../../content/builtin";
 import {
   validDecal,
@@ -50,6 +53,7 @@ export class EditorControl {
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     status: () => this.status(),
+    mission: (params)=>{const p=obj(params);if(p.action==="set"){const m=p.mission===null?undefined:missionSchema.parse(p.mission);if(m)validateMissionLua(m.script);this.editor.setMission(m,p.camps===undefined?undefined:campSchema.array().parse(p.camps));}else if(p.action!=="get")throw new Error("Mission operation must be get or set");return {mission:this.editor.map.mission??null,camps:this.editor.map.camps};},
     entities: (params) => {
       const p = obj(params);
       switch (p.action) {
@@ -57,6 +61,9 @@ export class EditorControl {
           return content.definitions;
         case "put":
           this.editor.putEntity(p.placement);
+          break;
+        case "rename":
+          this.editor.renameEntity(String(p.id),String(p.nextId));
           break;
         case "delete":
           this.editor.removeEntity(String(p.id));
