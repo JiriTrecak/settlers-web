@@ -4,7 +4,7 @@ import type { Entity, Point } from './state';
 
 /** Choose a firing/striking position, not an occupied target center. */
 export function routeToAttack(c: GameContext, actor: Entity, target: Entity): boolean {
-  const range = c.def(actor).behaviors.combat!.range;
+  const combat=c.def(actor).behaviors.combat!,range=combat.range;
   const origin = precise(actor), center = precise(target);
   const footprint = c.def(target).footprint;
   const rotated = Math.round(target.rotation / 90) % 2 !== 0;
@@ -20,6 +20,7 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity): bo
       const dx = Math.max(0, Math.abs(x - center.x) - halfX);
       const dy = Math.max(0, Math.abs(y - center.y) - halfY);
       if (dx * dx + dy * dy > range * range || !c.spatial.walkable(c.spatial.cell(point))) continue;
+      if(!c.spatial.attackClear(point,target,!!(combat.projectile||combat.shell)))continue;
       candidates.push({point, score: Math.hypot(x - origin.x, y - origin.y) + (reservations.has(c.spatial.cell(point)) ? 4 : 0)});
     }
   }

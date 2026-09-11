@@ -85,10 +85,12 @@ export function mapSvg(map: UtcMap): string {
     elements.push(
       `<rect x="${e.position.x - 2}" y="${e.position.y - 2}" width="4" height="4" fill="#ffc775" stroke="#352918" stroke-width=".7"/>`,
     );
+  for(const e of map.entities.filter(e=>e.definition==="building.neutral.corrupted-root"))
+    elements.push(`<circle cx="${e.position.x}" cy="${e.position.y}" r="2.8" fill="#b09be4" stroke="#322749" stroke-width=".7"/>`);
   for (const c of map.camps) {
     const { x, y } = c.home;
     elements.push(
-      `<path d="M${x},${y - 3}l3,3 -3,3 -3,-3z" fill="${c.lootPool?.endsWith("hard") ? "#df7361" : c.lootPool?.endsWith("medium") ? "#eda36b" : "#e3daab"}" stroke="#1c2420" stroke-width=".7"/>`,
+      `<path d="M${x},${y - 3}l3,3 -3,3 -3,-3z" fill="${c.legendary ? "#c38dff" : c.lootPool?.endsWith("hard") ? "#df7361" : c.lootPool?.endsWith("medium") ? "#eda36b" : "#e3daab"}" stroke="#1c2420" stroke-width=".7"/>`,
     );
   }
   for (const s of map.playerStarts)

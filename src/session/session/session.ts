@@ -1,3 +1,5 @@
+import {preloadCommandArt} from '../../ui/settlement/commandArt';
+import {AssetLoading,loadingPaint,type LoadProgress} from '../../render/loading/assetLoading';
 import { GameChat } from "../../ui/chat/chat";
 import { commandFeedback } from "../../presentation/commandFeedback";
 import {
@@ -11,7 +13,7 @@ import { precise } from "../../sim/game/motion";
 import { localSaveSchema } from "./localSave";
 import { SAVE_FORMAT_VERSION } from "../../shared/save/save";
 import { areaSelection } from "../../presentation/commands";
-import { resourceStamps } from "../../presentation/scenery";
+import { resourceStamps, ResourceScenery } from "../../presentation/scenery";
 import { content } from "../../content/builtin";
 import { slotOwner } from "../../content/schema";
 import { perf } from "../../debug/performance";
@@ -101,16 +103,17 @@ export class Session {
   private bridge: EditorBridge | null = null;
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
-  private resourceSignature = "";
+  private resourceScenery = new ResourceScenery();
+  private resourceStampsView: readonly MapStamp[] | undefined;
   private resourceEntities: Parameters<typeof resourceStamps>[0] | undefined;
   private updateResourceStamps(entities: Parameters<typeof resourceStamps>[0]) {
     // Observation owns immutable per-update arrays. Reuse them between simulation
     // ticks, but never key by tick alone: reveal/restore can change the same tick.
-    if (this.resourceEntities === entities && this.resourceSignature) return;
+    if (this.resourceEntities === entities) return;
     this.resourceEntities = entities;
-    const resources = resourceStamps(entities), signature = JSON.stringify(resources);
-    if (signature === this.resourceSignature) return;
-    this.resourceSignature = signature;
+    const resources = this.resourceScenery.project(entities);
+    if (resources === this.resourceStampsView) return;
+    this.resourceStampsView = resources;
     this.stamps = [...this.loadedMap!.map.stamps, ...resources];
     this.mini?.setStamps(this.stamps);
   }
@@ -180,7 +183,13 @@ export class Session {
     this.reveal = this.observing;
   }
 
-  start(): void {
+  private started = false;
+  private loadGeneration = 0;
+  private assetLoading: AssetLoading | null = null;
+
+  async start(report: (progress: LoadProgress) => void = () => {}): Promise<void> {
+    const generation = ++this.loadGeneration;
+    const check = () => {if (generation !== this.loadGeneration) throw new DOMException("Match loading cancelled", "AbortError");};
     const loaded = (this.loadedMap = getMap(
       this.config.match?.mapId ?? this.config.mapId,
     ));
@@ -217,6 +226,10 @@ export class Session {
       throw new Error(
         "The local controller must match the lobby's player slots.",
       );
+    // Receive remote commits during loading; confirmations start only when ready.
+    if (this.config.channel) this.bindRemote(match, this.config.channel);
+    report({stage:"Preparing simulation and terrain"});
+    await loadingPaint(); check();
     this.world = new World({
       slots: match.slots,
       seed: match.seed,
@@ -234,7 +247,10 @@ export class Session {
           return url ? [[a.id, url] as [string, string]] : [];
         }),
       );
-    const renderer = new Renderer(this.canvas, urls);
+    report({stage:"Loading models and textures"});
+    await loadingPaint(); check();
+    const assets = this.assetLoading = new AssetLoading(report);
+    const renderer = this.renderer = new Renderer(this.canvas, urls);
     renderer.setKinds(new Map(catalog.assets.map((a) => [a.id, a.type])));
     this.terrain = new HeightField(map.size);
     this.terrain.load(
@@ -243,7 +259,7 @@ export class Session {
     );
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
-    renderer.sky.setPlaying(true);
+    renderer.sky.setPlaying(false);
     renderer.setGridMode("none");
     this.stamps = [
       ...map.stamps,
@@ -330,12 +346,7 @@ export class Session {
       },
     });
     this.mini.mountGame(this.economyHud.minimapHost, this.economyHud.clockHost);
-    if (this.config.channel) {
-      this.bindRemote(match, this.config.channel);
-      this.armConfirms(match);
-    } else {
-      this.bindLockstep(match);
-    }
+    if (!this.config.channel) this.bindLockstep(match);
     this.mini.setHeight(this.terrain);
     this.mini.setLandscape(map.landscape);
     this.mini.setStamps(this.stamps);
@@ -344,6 +355,20 @@ export class Session {
     this.mini.setFog(initialView.settlement!);
     this.economyHud.update(this.selectionView());
     renderer.draw(initialView, this.stamps);
+    // Include scenery variants outside current fog, without revealing entities.
+    await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(this.world.view().settlement!.entities)]), preloadCommandArt(), document.fonts.ready]); check();
+    await assets.ready(); check();
+    report({stage:"Preparing graphics and shaders"});
+    await loadingPaint(); check();
+    renderer.draw(initialView, this.stamps);
+    await renderer.warmup(); check();
+    await assets.ready(); check();
+    renderer.present();
+    assets.close(); this.assetLoading = null;
+    this.acc = 0;
+    renderer.sky.setPlaying(true);
+    this.started = true;
+    if (this.config.channel) this.armConfirms(match);
     this.unbindDebug = perf.bindMatch({
       reveal: this.reveal,
       speed: this.simulationSpeed,
@@ -353,7 +378,7 @@ export class Session {
       onReveal: (value) => {
         if (!this.config.channel) {
           this.reveal = value;
-          this.resourceSignature = "";
+          this.resourceEntities = undefined;
         }
       },
       onSpeed: (value) => {
@@ -366,7 +391,7 @@ export class Session {
           match.slots.some((s) => s.player === player)
         ) {
           this.visionPlayer = player;
-          this.resourceSignature = "";
+          this.resourceEntities = undefined;
           this.economyHud?.setSelection([]);
         }
       },
@@ -398,6 +423,7 @@ export class Session {
               })),
             },
           };
+        if (op === "gamePerformance") return {timings:perf.report(),renderer:renderer.diagnostics(),tick:this.world!.clock.tickIndex};
         if (op === "gameSave") return this.snapshotLocal();
         if (op === "gameLoad") {
           this.restoreLocal(o.save);
@@ -465,7 +491,7 @@ export class Session {
   tick(dtMs: number, _nowMs: number): void {
     const renderer = this.renderer;
     const world = this.world;
-    if (!renderer || !world) return;
+    if (!this.started || !renderer || !world) return;
     const simulation = perf.start();
     const remote = this.config.channel != null;
     if (remote && !this.desynced) this.pulseConfirm();
@@ -505,7 +531,7 @@ export class Session {
         const game = world.settlement;
         const hall = game.entities.find(e => e.id === game.state.objectives[slotOwner(slot.player)]);
         const max = hall && content.get(hall.definition).body?.maxHp;
-        if ((hall && max && hall.hp !== null && hall.hp <= max * .15) || game.state.outcome?.defeated.includes(slotOwner(slot.player))) {
+        if ((hall && max && hall.hp !== null && hall.hp <= max * .15) || game.isDefeated(slotOwner(slot.player))) {
           this.aiGreeted.add(slot.player);
           this.chat?.receive({name: slot.name ?? `Player ${slot.player + 1}`, player: slot.player, text: "gg"});
         }
@@ -680,7 +706,7 @@ export class Session {
     this.observerIncome?.reset(restored.clock.tickIndex);
     this.updateObserverStats(true);
     this.acc = 0;
-    this.resourceSignature = "";
+    this.resourceEntities = undefined;
     this.economyHud?.restoreControls(save.controlGroups);
   }
   private send(action: Action): boolean {
@@ -950,6 +976,10 @@ export class Session {
   }
 
   stop(): void {
+    this.started = false;
+    this.loadGeneration++;
+    this.assetLoading?.close();
+    this.assetLoading = null;
     this.observerPanel?.destroy();
     this.observerPanel = null;
     this.observerIncome = null;

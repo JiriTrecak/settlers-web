@@ -4,6 +4,7 @@ import {
   Mesh,
   type Material,
   type Scene,
+  type Object3D,
 } from "three";
 import type { FogView } from "../../sim/game/observation";
 
@@ -51,6 +52,9 @@ export class FogOfWar {
         this.texture.needsUpdate=true;
       }
     }
+    this.prepare(scene);
+  }
+  prepare(scene: Object3D) {
     scene.traverse((o) => {
       if (o instanceof Mesh)
         for (const m of Array.isArray(o.material) ? o.material : [o.material])

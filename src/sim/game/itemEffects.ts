@@ -82,7 +82,7 @@ export class ItemEffects {
   }
   drainHits(): DamageHit[] {
     const hits: DamageHit[] = [];
-    for (const e of this.c.state.entities) { if (alive(e)) hits.push(...(e.itemHits ?? [])); delete e.itemHits; }
+    for (const e of this.c.state.entities) { if (!e.itemHits) continue; if (alive(e)) hits.push(...e.itemHits); delete e.itemHits; }
     return hits;
   }
   onHit(source: Entity, target: Entity, damage: number, damageType: string): DamageHit[] {

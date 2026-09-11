@@ -35,6 +35,8 @@ import {
   Scene,
   Vector2,
   Vector3,
+  Texture,
+  type Object3D,
 } from "three";
 import {
   PLAYER_COLORS,
@@ -57,6 +59,7 @@ import { WaterLayer } from "../water/waterLayer";
 const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 
 export class Renderer {
+  private destroyed = false;
   gameTimeScale = 1;
   private visualClock = 0;
   private visualLast: number | null = null;
@@ -120,6 +123,7 @@ export class Renderer {
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
   private size = 0;
+  private bridgeStamps: readonly MapStamp[] | null = null;
   private readonly lines = new Group();
   private curvePreview: Line | null = null;
   readonly sky: Sky;
@@ -311,6 +315,47 @@ export class Renderer {
   async ready(): Promise<void> {
     await Promise.all([this.props.ready(),this.meadow.ready]);
   }
+  async preload(stamps: readonly MapStamp[]): Promise<void> {
+    this.settlement ??= new SettlementLayer(this.scene);
+    await Promise.all([this.props.preload(stamps), this.gameReady(), this.ready()]);
+  }
+  private warming: Promise<void> | null = null;
+  warmup(): Promise<void> {
+    return this.warming ??= this.prepareGraphics().finally(() => {
+      this.warming = null;
+      if (this.destroyed) this.disposeResources();
+    });
+  }
+  private async prepareGraphics(): Promise<void> {
+    const cam = this.threeCam();
+    this.camera.applyTo(cam, this.display.width, this.display.height);
+    const models = [...(this.settlement?.prepareModels() ?? []), ...await this.props.prepareModels()];
+    if(this.destroyed)return;
+    const textures = new Set<Texture>();
+    const upload = (root: Object3D) => root.traverse(o => {
+      const material = (o as Mesh).material;
+      if (!material) return;
+      for (const m of Array.isArray(material) ? material : [material])
+        for (const value of Object.values(m)) if (value instanceof Texture) textures.add(value);
+    });
+    upload(this.scene); models.forEach(model => {this.fog?.prepare(model);upload(model);});
+    for (const texture of textures) this.display.gl.initTexture(texture);
+    await this.display.gl.compileAsync(this.scene, cam);
+    // Models need the same lights, fog and environment as their eventual scene.
+    for (const model of models) {if(this.destroyed)return;await this.display.gl.compileAsync(model, cam, this.scene);}
+    if(this.destroyed)return;
+    // Compile is not a vertex-buffer upload. A tiny offscreen draw also warms
+    // shared geometry and skinning; temporary instances never enter game state.
+    const group=new Group(),target=new WebGLRenderTarget(64,64),gl=this.display.gl;
+    const previous=gl.getRenderTarget(),shadowUpdates=gl.shadowMap.autoUpdate;
+    group.position.set(this.camera.targetX,this.height?.sample(this.camera.targetX,this.camera.targetZ)??0,this.camera.targetZ);
+    for(const model of models){model.traverse(o=>{o.frustumCulled=false;});group.add(model);}
+    this.scene.add(group);
+    try {gl.shadowMap.autoUpdate=false;gl.setRenderTarget(target);gl.render(this.scene,cam);}
+    finally {gl.setRenderTarget(previous);gl.shadowMap.autoUpdate=shadowUpdates;group.removeFromParent();group.clear();target.dispose();}
+    this.present();
+    this.visualLast = null;
+  }
   diagnostics() {
     return {
       drawCalls: this.display.gl.info.render.calls,
@@ -360,6 +405,7 @@ export class Renderer {
   ): void {
     const timing = perf.start();
     this.height = field;
+    this.bridgeStamps = null;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
     this.props.setHeight(sample);
@@ -418,7 +464,7 @@ export class Renderer {
       this.lines.visible = this.gridOn;
       this.refreshGrid();
     }
-    if(this.height){const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));field.walkSurface=(x,z)=>bridgeHeight(surfaces,x,z);}
+    if(this.height && this.bridgeStamps !== stamps){this.bridgeStamps=stamps;const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));field.walkSurface=(x,z)=>bridgeHeight(surfaces,x,z);}
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
       this.settlement ??= new SettlementLayer(this.scene);
@@ -496,6 +542,7 @@ export class Renderer {
   }
 
   present(now = performance.now()): void {
+    if(this.destroyed)return;
     if (this.visualLast === null) this.visualClock = now;
     else
       this.visualClock +=
@@ -586,6 +633,13 @@ export class Renderer {
   }
 
   destroy(): void {
+    if(this.destroyed)return;
+    this.destroyed = true;
+    // compileAsync polls material program handles. Releasing them during its
+    // poll would invalidate Three's pending promise when a user leaves loading.
+    if(!this.warming)this.disposeResources();
+  }
+  private disposeResources(): void {
     for (const group of this.spawnFlags.values()) {
       group.traverse((o) => {
         if (o instanceof Mesh) {

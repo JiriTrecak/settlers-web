@@ -160,13 +160,14 @@ export async function generate() {
       files.set(`public/media/maps/${id}.svg`, mapSvg(map));
       const defLink = (id: string) =>
         `[${registry.get(id).name}](/${definitionPath(registry.get(id))})`;
-      let body = `${escape(map.description ?? "")}\n\n![${escape(map.name)} terrain and starting positions](${summary.image})\n\n*North up. Numbered circles: player starts. Amber squares: mines. Diamonds: camps (pale = easy, orange = medium, red = hard). This is the authored starting layout, not a live match view.*\n\n`;
+      let body = `${escape(map.description ?? "")}\n\n![${escape(map.name)} terrain and starting positions](${summary.image})\n\n*North up. Numbered circles: player starts. Amber squares: amber mines. Purple circles: root deposits. Diamonds: camps (pale = easy, orange = medium, red = hard, purple = T3 bosses). This is the authored starting layout, not a live match view.*\n\n`;
       body += table(
         ["Map facts", "Value"],
         [
           ["Dimensions", `${map.size} × ${map.size} cells`],
           ["Player slots", map.playerStarts.length],
-          ["Amber mines", mines.length],
+          ["Amber mines", mines.filter(e=>e.definition==="building.neutral.amber-mine").length],
+          ["Root deposits", mines.filter(e=>e.definition==="building.neutral.corrupted-root").length],
           ["Neutral camps", map.camps.length],
           ["Source", `\`assets/maps/${dir}/${id}.utcmap\``],
         ],
@@ -284,6 +285,7 @@ export async function generate() {
         { text: "First match", link: "/guide/getting-started" },
         { text: "Economy & workers", link: "/guide/economy" },
         { text: "Combat & victory", link: "/guide/combat" },
+        { text: "Terrain & high ground", link: "/guide/terrain" },
         { text: "Heroes & inventory", link: "/guide/heroes" },
         { text: "Controls", link: "/guide/controls" },
         { text: "Loot tables", link: "/guide/loot" },

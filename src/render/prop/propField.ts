@@ -1,3 +1,4 @@
+import {batchStaticMaterials} from './staticBatch';
 import pineLod from '../../../assets/ant-colony/olive-pine.glb?url';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
@@ -17,6 +18,7 @@ export class PropField {
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private batches: InstancedMesh[]=[];
+  private warmMeshes: InstancedMesh[]=[];
   contactRevision=0;
   contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
   private lodGeometries=new Set<Mesh['geometry']>();
@@ -34,6 +36,7 @@ export class PropField {
     perf.value('Tree mesh instances at distant LOD',coarse);
   }
   private destroyed=false;
+  private readonly batchDisposers: (()=>void)[]=[];
   private lastStamps: readonly MapStamp[] | null=null;
   private height: ((x: number, z: number) => number) | null = null;
   private float = new Set<string>();
@@ -51,6 +54,28 @@ export class PropField {
   ) {}
 
   async ready():Promise<void>{await Promise.all(this.protos.values());}
+  async preload(stamps: readonly MapStamp[]): Promise<void> {
+    const unique = new Map(stamps.map(s => [`${s.asset}#${s.variant ?? "base"}`, s]));
+    const results = await Promise.all([...unique.values()].map(s => this.proto(s.asset, s.variant)));
+    if (results.some(p => !p)) throw Error(`Scenery assets could not be loaded: ${[...unique.values()].filter((_,i)=>!results[i]).map(s=>s.asset).join(', ')}`);
+  }
+  async prepareModels(): Promise<readonly Object3D[]> {
+    if (this.warmMeshes.length) return this.warmMeshes;
+    const roots=await Promise.all(this.protos.values());
+    if(this.destroyed)return [];
+    const keys=new Set<string>();
+    for(const root of roots)root?.traverse(o=>{
+      if(!(o instanceof Mesh))return;
+      const key=o.geometry.uuid+':'+(Array.isArray(o.material)?o.material:[o.material]).map(m=>m.uuid).join(',');
+      if(keys.has(key))return;keys.add(key);
+      for(const geometry of [o.geometry,this.lodByGeometry.get(o.geometry.uuid)].filter((g):g is Mesh['geometry']=>!!g)){
+        const mesh=new InstancedMesh(geometry,o.material,1);
+        mesh.castShadow=mesh.receiveShadow=true;
+        this.warmMeshes.push(mesh);
+      }
+    });
+    return this.warmMeshes;
+  }
   diagnostics() { return { loaded:this.placed.size,failed:[...this.failed],bounds:Object.fromEntries(this.bounds) }; }
   setSeason(season:string):void { this.season=season;for(const root of this.placed.values())this.tint(root); }
   private tint(root:Object3D):void {
@@ -159,6 +184,8 @@ export class PropField {
 
   destroy(): void {
     this.destroyed=true;
+    for(const dispose of this.batchDisposers)dispose();this.batchDisposers.length=0;
+    for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
     this.gen++;
     for(const pending of this.protos.values())void pending.then(root=>root?.traverse(node=>{
       if(!(node instanceof Mesh))return;
@@ -217,6 +244,10 @@ export class PropField {
         node.castShadow = true;
         node.receiveShadow = true;
       });
+      if(!lodUrl){
+        const dispose=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
+        if(this.destroyed)dispose();else this.batchDisposers.push(dispose);
+      }
       gltf.scene.updateMatrixWorld(true);
       const box=prototypeBounds(gltf.scene);
       this.bounds.set(asset,{minY:box.min.y,height:box.max.y-box.min.y});
@@ -299,7 +330,7 @@ export class PropField {
         b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
         const batch=b;
         b.onAfterRender=renderer=>perf.count(batch.userData.category,renderer.info.render.triangles-trianglesBefore);
-        b.castShadow=b.receiveShadow=true;this.scene.add(b);
+        b.castShadow=b.receiveShadow=true;b.matrixAutoUpdate=false;b.matrixWorldAutoUpdate=false;this.scene.add(b);
       }
       let changed=b.count!==g.poses.length;
       const matrices=b.instanceMatrix.array;

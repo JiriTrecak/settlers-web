@@ -72,3 +72,9 @@ Water controls also accept `shadowStrength` (0–1, default 0.6), the directiona
 `editor_move` accepts `widthScale`, `heightScale`, and `depthScale` (.25–4, default 1). These multiply the uniform stamp scale on local X/Y/Z before yaw/pitch/roll. They persist through map export/load; omitted fields retain the stamp’s current value. Use `snap:false` for fractional positioning.
 
 `editor_screenshot.animationTime` fixes water and grass animation to a time in seconds (0–86400) for the capture only. Scene hour is separate; live animation resumes immediately. Use `format:"png"` for lossless comparisons. `tmp/editor-shot.json` identifies the newest PNG/JPEG, and the comparison page reads that manifest instead of assuming JPEG.
+
+## Tactical elevation
+
+`editor_landscape` action `plateau`: provide 3–128 `points: [{x,z}, ...]` and absolute `height` (-16..24). The closed outline sets a flat crown with steep rock shoulders.
+
+Action `ramp`: provide 2–128 points from lower to upper ground and `radius` (half-width, 1..64). Both endpoint heights are sampled from the loaded map. The curve interpolates by arc length; grades above .65 reject before editing. Save/export persists the resulting heightfield. Use the same operations for scripts and the Terrain dock.

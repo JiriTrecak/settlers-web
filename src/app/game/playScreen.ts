@@ -1,3 +1,4 @@
+import {LoadingScreen} from '../../ui/loadingScreen';
 /**
  * In-match screen: HUD + session. Destroy stops the session.
  */
@@ -10,6 +11,8 @@ export class PlayScreen extends GameScreen {
   readonly mapId: string;
   private readonly hud: Hud;
   private readonly session: Session;
+  private readonly loading: LoadingScreen;
+  private destroyed = false;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -71,10 +74,15 @@ export class PlayScreen extends GameScreen {
       match: hooks.match,
       hooks: { onHud: (state) => this.hud.update(state) },
     });
+    this.loading = new LoadingScreen(this.root, hooks.onLeave);
   }
 
   start(): void {
-    this.session.start();
+    void this.session.start(p => this.loading.update(p)).then(() => {
+      if (!this.destroyed) this.loading.destroy();
+    }).catch(error => {
+      if (!this.destroyed) {this.session.stop();this.loading.error(error);console.error(error);}
+    });
   }
 
   override tick(dtMs: number, nowMs: number): void {
@@ -82,6 +90,8 @@ export class PlayScreen extends GameScreen {
   }
 
   override destroy(): void {
+    this.destroyed = true;
+    this.loading.destroy();
     this.session.stop();
     this.hud.destroy();
     super.destroy();

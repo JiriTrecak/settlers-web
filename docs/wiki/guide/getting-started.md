@@ -29,7 +29,7 @@ This is an opening suggestion, not a prescribed build order. Early aggression is
 
 ## Winning and losing
 
-The current match objective is the starting **Mound**. Destroy an opponent's objective Mound to defeat that colony. Losing every soldier is not itself defeat; losing the objective Mound is. In the current two-player maps, the surviving colony wins. Simultaneous objective losses can produce no winner.
+The current match objective is the starting **Mound**. Destroy an opponent's objective Mound to defeat that colony. Losing every soldier is not itself defeat; losing the objective Mound is. The defeated colony loses its remaining actors. In a free-for-all, the other players continue until only one colony survives; team matches end when one team remains. Simultaneous final objective losses can produce no winner.
 
 The present implementation ends the match when an objective loss is detected. Larger free-for-all elimination rules are not established just because the editor supports more starting slots.
 

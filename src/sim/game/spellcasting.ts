@@ -61,7 +61,8 @@ export class Spellcasting {
   this.c.state.visuals=this.c.state.visuals.filter(v=>v.tick+v.durationTicks>this.c.state.tick);
   for(const e of this.c.live()){
    if(e.effects){e.effects=e.effects.filter(b=>b.expires>this.c.state.tick);if(!e.effects.length)delete e.effects;}
-   const state=e.spellcasting,policy=this.c.def(e).behaviors.spellcasting;
+   const state=e.spellcasting; if (!state) continue;
+   const policy=this.c.def(e).behaviors.spellcasting;
    if(state&&policy){
     if(isStunned(e,this.c.registry))state.pending=null;
     const pending=state.pending;
@@ -77,7 +78,7 @@ export class Spellcasting {
    state.pending=null;
    const spell=this.c.registry.rules.spells[pending.ability],rank=spell.ranks[pending.rank-1],origin=precise(caster);
    const targets: Entity[] = [];
-   for(const target of this.c.live()){
+   for(const target of this.c.liveBodies()){
     if(target.hp===null || target.unit?.contained || target.unit?.release)continue;
     const p=precise(target);
     let affected=false;

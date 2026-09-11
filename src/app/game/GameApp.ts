@@ -44,6 +44,7 @@ export class GameApp {
   private backgroundTicker: BackgroundTicker | null = null;
   private raf = 0;
   private last = 0;
+  private lastRaf = 0;
   private ticking = false;
 
   constructor(
@@ -63,6 +64,7 @@ export class GameApp {
       startRaf: () => this.startRaf(),
       stopRaf: () => this.stopRaf(),
       pump: () => this.pump(),
+      needsPump: () => performance.now() - this.lastRaf > 100,
     });
     this.backgroundTicker.start();
 
@@ -97,15 +99,19 @@ export class GameApp {
   private startRaf(): void {
     if (this.ticking) return;
     this.ticking = true;
-    this.last = performance.now();
+    this.lastRaf = performance.now();
+    if (!this.last) this.last = this.lastRaf;
     const loop = (t: number): void => {
       if (!this.ticking) return;
       this.raf = requestAnimationFrame(loop);
-      const dt = t - this.last;
-      this.last = t;
+      this.lastRaf = performance.now();
+      // A resumed rAF timestamp may precede the worker's most recent pump.
+      // Never move the shared clock backwards or count that interval twice.
+      const now = Math.max(t, this.last), dt = now - this.last;
+      this.last = now;
       const cpu = perf.start();
-      perf.frame(t);
-      this.screens?.tick(dt, t);
+      perf.frame(now);
+      this.screens?.tick(dt, now);
       perf.end("App frame total (CPU)", cpu);
     };
     this.raf = requestAnimationFrame(loop);

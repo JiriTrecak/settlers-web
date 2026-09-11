@@ -56,16 +56,16 @@ export function editorTools(hub: EditorHub) {
       description:
         "Place or move a player spawn point in the loaded map, validating dry level terrain and separation.",
       inputSchema: z.object({
-        player: z.number().int().min(1).max(2),
-        x: z.number().min(8).max(247),
-        z: z.number().min(8).max(247),
+        player: z.number().int().min(1).max(8),
+        x: z.number().int().min(8).max(503),
+        z: z.number().int().min(8).max(503),
       }),
       execute: async (input) => call("setSpawnPoint", input),
     }),
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Landscape authoring: landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
@@ -74,6 +74,8 @@ export function editorTools(hub: EditorHub) {
           "environment",
           "base",
           "landform",
+          "plateau",
+          "ramp",
           "view",
           "export",
           "load",

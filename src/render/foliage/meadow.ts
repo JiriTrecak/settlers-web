@@ -1,3 +1,4 @@
+import {CurveIndex} from '../../shared/landscape/curveIndex';
 import grass3MediumUrl from '../../../assets/environment/coniferous-pack/grass_v5_03-medium.json?url';
 import grass3FarUrl from '../../../assets/environment/coniferous-pack/grass_v5_03-far.json?url';
 import grass6MediumUrl from '../../../assets/environment/coniferous-pack/grass_v5_06-medium.json?url';
@@ -12,7 +13,7 @@ import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
 import tuftUrl from '../../../assets/terrain/tuft.png?url';
 import { BufferGeometry, Float32BufferAttribute, InstancedMesh, MeshLambertMaterial, DoubleSide, Color, Object3D, type Scene, type IUniform, TextureLoader, RepeatWrapping, SRGBColorSpace, LinearSRGBColorSpace } from 'three';
 import type { HeightField } from '../../shared';
-import { curveDistance, sampleCurve, type Landscape } from '../../shared/landscape/curve';
+import { sampleCurve, type Landscape } from '../../shared/landscape/curve';
 /** Stable spatial variation for authored cover; independent of candidate order. */
 function coverNoise(x:number,z:number):number {
  const ix=Math.floor(x),iz=Math.floor(z),fx=x-ix,fz=z-iz;
@@ -111,10 +112,12 @@ export class Meadow {
   tick(now:number):void{this.time.value=now*.001;}
   rebuild(field:HeightField,landscape:Landscape):void {
     this.lastCover={field,landscape};
+    // Avoid generating fallback cover only to rebuild it when the pack arrives.
+    if (!this.packGeometry.length || this.dead) return;
     const timing=perf.start();
     for(const m of this.meshes){this.scene.remove(m);m.dispose();}this.meshes=[];this.packBatches.clear();
     const poses:{x:number;y:number;z:number;s:number;r:number;flower:boolean;broad:boolean;forest:boolean;c:Color}[]=[];
-    const paints=landscape.strokes.map(s=>({s,curve:sampleCurve(s.points,s.radius,1)}));
+    const paints=landscape.strokes.map(s=>({s,curve:new CurveIndex(sampleCurve(s.points,s.radius,1))}));
     const season=landscape.environment.season;
     const occupied=new Set<string>();
     // Share the candidate budget across the entire map: processing order must
@@ -138,7 +141,7 @@ export class Meadow {
         if(rand()>Math.min(1,edge*6)*cover)continue;
         if(Math.hypot(field.sample(x+.4,z)-field.sample(x-.4,z),field.sample(x,z+.4)-field.sample(x,z-.4))>.65)continue;
         let blocked=0;
-        for(const p of paints){const d=curveDistance(x,z,p.curve);if(d>=1)continue;const t=Math.max(0,Math.min(1,(d-.55)/.45));const w=p.s.opacity*(1-t*t*(3-2*t));blocked=blocked*(1-w)+(p.s.layer==='grass'?0:w);}
+        for(const p of paints){const d=p.curve.distance(x,z);if(d>=1)continue;const t=Math.max(0,Math.min(1,(d-.55)/.45));const w=p.s.opacity*(1-t*t*(3-2*t));blocked=blocked*(1-w)+(p.s.layer==='grass'?0:w);}
         if(rand()<blocked)continue;
         const key=`${Math.floor(x*4)},${Math.floor(z*4)}`;if(occupied.has(key))continue;occupied.add(key);
         const flower=rand()<patch.flowers;
@@ -160,6 +163,7 @@ export class Meadow {
       let trianglesBefore=0;
       mesh.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
       mesh.onAfterRender=renderer=>perf.count(idx>=3?'Forest grass triangles':'Other ground-cover triangles',renderer.info.render.triangles-trianglesBefore);
+      mesh.matrixAutoUpdate=false;mesh.matrixWorldAutoUpdate=false;
       mesh.receiveShadow=true;mesh.castShadow=!flower&&idx<3;mesh.name=flower?'meadow-flowers':'meadow-grass';mesh.computeBoundingSphere();if(mesh.boundingSphere)mesh.boundingSphere.radius+=1;this.scene.add(mesh);this.meshes.push(mesh);if(idx>=3&&this.packGeometry.length)this.packBatches.set(mesh,idx-3);
     }
     }

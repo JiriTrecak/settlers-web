@@ -1,3 +1,4 @@
+import {MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {attackTiming} from './attackTiming';
 import { formationDestinations } from "./formation";
 import { precise } from "./motion";
@@ -36,7 +37,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-37";
+export const SIMULATION_BUILD = "declarative-sim-38";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -200,7 +201,7 @@ export class Game {
     const elevations = cells.map((i) => this.spatial.heights[i]);
     if (elevations.some(h => h <= this.spatial.sea + 10))
       return "Build on dry ground";
-    if (Math.max(...elevations) - Math.min(...elevations) > 100)
+    if (Math.max(...elevations) - Math.min(...elevations) > MAX_FOUNDATION_RELIEF_CM)
       return "Choose flatter ground";
     const entrance = this.spatial.entrance(candidate);
     if (
@@ -224,6 +225,7 @@ export class Game {
     if (!parsed.success || !this.owners.includes(owner))
       return reject("Invalid request");
     if (this.state.outcome) return reject("Match has ended");
+    if(this.isDefeated(owner))return reject("Your colony has been defeated");
     const action = parsed.data;
     if (action.type === "noop" || action.type === "ping")
       return { accepted: true, actors: [] };
@@ -516,17 +518,24 @@ export class Game {
     measure("Observation", () => {
       this.observation.update();
     });
-    const defeated = this.owners.filter(
-      (owner) => !this.context.get(this.state.objectives[owner]),
-    );
-    if (defeated.length) {
-      const remaining = this.owners.filter((o) => !defeated.includes(o));
-      this.state.outcome = {
-        winner: remaining.length === 1 ? remaining[0] : null,
-        defeated,
-      };
+    const defeated=this.owners.filter(owner=>this.isDefeated(owner));
+    if(defeated.length){
+      // Losing a Mound eliminates that colony, not the entire FFA. Remove its
+      // remaining actors without combat XP/loot and release outstanding jobs.
+      for(const owner of defeated){
+        const abandoned=this.entities.filter(e=>e.owner===owner);
+        if(abandoned.length)this.context.event(owner,"Colony defeated","death");
+        for(const entity of abandoned)if(this.context.get(entity.id))this.economy.remove(entity);
+      }
+      const remaining=this.owners.filter(o=>!defeated.includes(o));
+      const teams=new Set(remaining.map(owner=>{const slot=this.slots.find(s=>slotOwner(s.player)===owner)!;return slot.team??slot.player;}));
+      if(teams.size<=1)this.state.outcome={winner:remaining[0]??null,defeated};
       this.observation.update();
     }
+  }
+  isDefeated(owner:Owner):boolean {
+    const objective=this.context.get(this.state.objectives[owner]);
+    return !objective || !alive(objective);
   }
   view(owner?: number | Owner) {
     return this.observation.view(

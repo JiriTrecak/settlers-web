@@ -27,6 +27,7 @@ export class Missiles {
    if(this.c.state.tick<m.impact)continue;
    m.resolved=true;
    if(!target||!alive(target)||target.hp===null||target.unit?.contained||target.unit?.release)continue;
+   if(!this.c.spatial.tactical.shotClear(m.origin,m.destination))continue;
    hits.push({source:m.source,owner:m.owner,target:target.id,damage:m.damage,damageType:m.damageType,weapon:true});
   }
   return hits;

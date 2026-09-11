@@ -50,6 +50,9 @@ import { placementGrid } from "./placementGrid";
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private observedEntities: readonly EntityView[] | undefined;
+  private modelEntities: readonly EntityView[] = [];
+  private observedById = new Map<number,EntityView>();
   private readonly commandEffects = new CommandFeedbackEffects(this.root);
   commandFeedback(feedback: CommandFeedback, height: HeightField) {
     this.commandEffects.show(feedback, height);
@@ -174,6 +177,7 @@ export class SettlementLayer {
           const url = projectMeshUrl(a.file!);
           if (!url) throw new Error(`Missing declared model ${a.file}`);
           const gltf = await loader.loadAsync(url);
+          if (this.dead) { this.disposePrototype(gltf.scene); return; }
           if (!this.dead) {
             this.prototypes.set(a.id, gltf.scene);
             if (a.character) {
@@ -215,6 +219,23 @@ export class SettlementLayer {
       node = node.parent;
     }
     return null;
+  }
+  /** Keep prepared material variants alive so the GPU program cache survives warm-up. */
+  private warmModels: Object3D[] = [];
+  private warmDisposers: Array<() => void> = [];
+  prepareModels(): readonly Object3D[] {
+    if (this.warmModels.length) return this.warmModels;
+    for (const asset of this.prototypes.keys()) {
+      const source = this.characterSources.get(asset);
+      const character = source ? createCharacterInstance(source, content.asset(asset).character) : null;
+      const model = character?.root ?? this.clone(asset);
+      if (!model) continue;
+      model.traverse(o => { if (o instanceof Mesh) {o.castShadow = true; o.receiveShadow = true;} });
+      applyPlayerMaterials(model, 0);
+      this.warmModels.push(model);
+      this.warmDisposers.push(() => character ? character.dispose() : this.disposeInstance(model));
+    }
+    return this.warmModels;
   }
   private clone(asset: string) {
     const proto = this.prototypes.get(asset);
@@ -353,6 +374,11 @@ export class SettlementLayer {
     tick: number,
     timeScale = 1,
   ) {
+    if(this.observedEntities!==state.entities){
+      this.observedEntities=state.entities;
+      this.modelEntities=state.entities.filter(e=>content.get(e.definition).kind!=="resource");
+      this.observedById=new Map(this.modelEntities.map(e=>[e.id,e]));
+    }
     const now = performance.now();
     const heldHealth = this.healthKeys.active();
     this.commandEffects.update(now);
@@ -360,16 +386,15 @@ export class SettlementLayer {
     this.spellEffects.update(state.visuals ?? [], field, renderTick);
     this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
-      state.entities
+      this.modelEntities
         .filter((e) => this.selected.has(e.id) && !e.unit?.contained)
         .map((e) => e.unit?.commandedTarget)
         .filter((id): id is number => id != null),
     );
-    const byId = new Map(state.entities.map((e) => [e.id, e]));
+    const byId = this.observedById;
     const seen = new Set<number>();
-    for (const e of state.entities) {
+    for (const e of this.modelEntities) {
       const d = content.get(e.definition);
-      if (d.kind === "resource") continue;
       seen.add(e.id);
       const o = this.make(e);
       if (!o) continue;
@@ -673,8 +698,16 @@ export class SettlementLayer {
           m.dispose();
     });
   }
+  private disposePrototype(root: Object3D) {
+    const geometries=new Set<BufferGeometry>(),materials=new Set<import('three').Material>(),textures=new Set<import('three').Texture>();
+    root.traverse(o=>{if(o instanceof Mesh){geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])materials.add(m);}});
+    for(const material of materials){for(const value of Object.values(material))if(value && typeof value==='object' && value.isTexture)textures.add(value);material.dispose();}
+    geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());
+  }
   destroy(scene: Scene) {
     this.dead = true;
+    this.warmDisposers.forEach(dispose => dispose());
+    this.warmDisposers = []; this.warmModels = [];
     this.pendingPreview = null;
     if (this.placementModel) this.disposeInstance(this.placementModel);
     this.gridLines.geometry.dispose();
@@ -687,14 +720,8 @@ export class SettlementLayer {
     this.shells.dispose();
     for (const [id, o] of this.entities) this.removeModel(id, o);
     for (const [id, corpse] of this.corpses) this.removeModel(id, corpse.root);
-    for (const p of this.prototypes.values())
-      p.traverse((o) => {
-        if (o instanceof Mesh) {
-          o.geometry.dispose();
-          for (const m of Array.isArray(o.material) ? o.material : [o.material])
-            m.dispose();
-        }
-      });
+    for (const p of this.prototypes.values()) this.disposePrototype(p);
+    this.prototypes.clear();this.characterSources.clear();
     this.characterBatchDisposers.forEach((dispose) => dispose());
     this.selectionGeometry.dispose();
     this.selectionMaterial.dispose();

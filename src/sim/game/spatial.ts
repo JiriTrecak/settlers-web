@@ -1,3 +1,5 @@
+import {WalkRegions} from './walkRegions';
+import {TacticalTerrain,MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {UnitIndex} from "./unitIndex";
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
@@ -24,7 +26,7 @@ export const distance2 = (a: Point, b: Point) =>
 export class Spatial {
   private unitIndex:UnitIndex|null=null;
   /** Scoped to synchronous movement: queries outside the scope use live entities. */
-  beginUnitMovement(){this.unitIndex=new UnitIndex(this.entities(),this.size,this.ignoresUnits);}
+  beginUnitMovement(){this.unitIndex=new UnitIndex(this.units(),this.size,this.ignoresUnits);}
   updateUnitMovement(e:Entity){this.unitIndex?.update(e);}
   endUnitMovement(){this.unitIndex=null;}
 
@@ -36,11 +38,14 @@ export class Spatial {
   readonly occupied: Int32Array;
   readonly resources: Int32Array;
   readonly navigation: Navigation;
+  readonly regions: WalkRegions;
+  readonly tactical: TacticalTerrain;
   constructor(
     map: UtcMap,
     readonly registry: ContentRegistry,
     private readonly entities: () => readonly Entity[],
     readonly ignoresUnits: (e: Entity) => boolean = () => false,
+    private readonly units: () => readonly Entity[] = () => entities().filter(e => e.unit),
   ) {
     this.size = map.size;
     this.heights = new Int16Array(this.size * this.size);
@@ -61,11 +66,21 @@ export class Spatial {
       }
     this.decks=applyBridgeSurfaces(this.size,bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,this.size):0),this.terrain,this.heights);
     applySceneryBlockers(map, this.terrain);
+    this.tactical=new TacticalTerrain(this.size,this.heights);
+    this.regions = new WalkRegions(this.size, i=>this.walkable(i),this.heights,MAX_GROUND_STEP_CM);
     this.navigation = new Navigation(
       this.size,
       (a, b) =>
-        this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= 90,
+        this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= MAX_GROUND_STEP_CM,
+      (a,b)=>this.regions.connected(a,b),
     );
+  }
+  attackClear(origin:Point,target:Entity,ranged:boolean):boolean {
+    const center=precise(target),f=this.registry.get(target.definition).footprint;
+    const rotated=Math.round(target.rotation/90)%2!==0;
+    const halfX=f?(rotated?f.depth:f.width)/2:0,halfY=f?(rotated?f.width:f.depth)/2:0;
+    const end={x:Math.max(center.x-halfX,Math.min(center.x+halfX,origin.x)),y:Math.max(center.y-halfY,Math.min(center.y+halfY,origin.y))};
+    return ranged?this.tactical.shotClear(origin,end):this.tactical.meleeClear(origin,end);
   }
   cell(p: Point) {
     return cell(p, this.size);
@@ -98,6 +113,7 @@ export class Spatial {
     return { x: e.x + x, y: e.y + y };
   }
   rebuild() {
+    this.regions.invalidate();
     this.occupied.fill(0);
     this.resources.fill(0);
     for (const e of this.entities())
@@ -120,14 +136,14 @@ export class Spatial {
     );
   }
   free(p: Point, except?: number) {
-    const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.entities().find(e => e.id === except);
+    const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     return (
       p.x >= 0 &&
       p.x < this.size &&
       p.y >= 0 &&
       p.y < this.size &&
       this.walkable(this.cell(p)) &&
-      (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.entities()).some(
+      (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.units()).some(
         (e) =>
           e.unit &&
           alive(e) &&
@@ -162,7 +178,7 @@ export class Spatial {
     if (e.unit.idle) e.unit.idle.walking = false;
     const goal = this.cell(destination),
       blocked = new Set(
-        this.entities()
+        (avoidUnits && !this.ignoresUnits(e) ? this.units() : [])
           .filter(
             (u) =>
               avoidUnits && u.id !== e.id &&
@@ -185,6 +201,21 @@ export class Spatial {
       maxCost=Math.min(maxCost,Math.ceil(length*1.25/1000+4)*1000);
     }
     const direct = this.clearSegment(from, fixed(destination), blocked);
+    // Every A* route starts at one of the eight neighboring cell centers.
+    // If an interrupted sub-cell position cannot join any of those (or its own
+    // center), all resulting routes would be rejected by the smoothing loop.
+    // Prove that once up front instead of searching hundreds of tree targets.
+    if (!direct && !this.clearSegment(from, fixed(e), blocked)) {
+      let exit = false;
+      for (let dy = -1; dy <= 1 && !exit; dy++)
+        for (let dx = -1; dx <= 1 && !exit; dx++) {
+          if (!dx && !dy) continue;
+          const x = e.x + dx, y = e.y + dy;
+          if (x >= 0 && y >= 0 && x < this.size && y < this.size &&
+              this.clearSegment(from, fixed({x,y}), blocked)) exit = true;
+        }
+      if (!exit) return false;
+    }
     const path = direct
       ? [goal]
       : this.navigation.path(this.cell(e), goal, blocked, maxCost);
@@ -235,7 +266,7 @@ export class Spatial {
     blocked?: ReadonlySet<number>,
   ) {
     const terrainStep = (a: number, b: number) =>
-      this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= 90;
+      this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= MAX_GROUND_STEP_CM;
     return (
       clearSweep(from, to, terrainStep, this.size) &&
       (!blocked ||
@@ -251,12 +282,12 @@ export class Spatial {
    * ordinary movement query's allocation-free, first-collision fast path. */
   unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[]): boolean {
     const initialCount=blockers?.length ?? 0;
-    const mover = this.unitIndex?.entities.get(except) ?? this.entities().find(e => e.id === except);
+    const mover = this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     if (mover && this.ignoresUnits(mover)) return true;
     const dx = to.x - from.x,
       dy = to.y - from.y,
       square = dx * dx + dy * dy;
-    const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-400,Math.min(from.y,to.y)-400,Math.max(from.x,to.x)+400,Math.max(from.y,to.y)+400) ?? this.entities();
+    const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-400,Math.min(from.y,to.y)-400,Math.max(from.x,to.x)+400,Math.max(from.y,to.y)+400) ?? this.units();
     for (const unit of candidates) {
       if (
         unit.id === except ||

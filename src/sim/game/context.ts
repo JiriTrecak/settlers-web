@@ -30,6 +30,17 @@ import {
 export class GameContext {
   readonly spatial: Spatial;
   private index = new Map<number, Entity>();
+  // Structural indexes include dead/contained entities; callers still evaluate
+  // current life/readiness. Recruitment and revival retain entity identity.
+  private unitEntities: Entity[] = [];
+  private bodyEntities: Entity[] = [];
+  private buildingEntities: Entity[] = [];
+  private sightEntities: Entity[] = [];
+  private canProvideSight(e: Entity) {
+    // Bodies can transform/upgrade and change vision; also retain any authored
+    // non-body sensor so this remains independent of content kind.
+    return e.hp !== null || (this.def(e).vision ?? 0) > 0;
+  }
   constructor(
     readonly state: GameState,
     readonly registry: ContentRegistry,
@@ -42,10 +53,14 @@ export class GameContext {
       const source = job?.type === "harvest" ? this.get(job.source)
         : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
       return !!source && this.def(source).gatheringUnitCollision === false;
-    });
+    }, () => this.unitEntities);
   }
   reindex() {
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
+    this.unitEntities = this.state.entities.filter(e => e.unit);
+    this.bodyEntities = this.state.entities.filter(e => e.hp !== null);
+    this.buildingEntities = this.state.entities.filter(e => this.def(e).kind === "building");
+    this.sightEntities = this.state.entities.filter(e => this.canProvideSight(e));
   }
   get(id: number | null | undefined) {
     return id ? this.index.get(id) : undefined;
@@ -59,6 +74,11 @@ export class GameContext {
   live() {
     return this.state.entities.filter(alive);
   }
+  liveUnits() { return this.unitEntities.filter(alive); }
+  liveBodies() { return this.bodyEntities.filter(alive); }
+  liveBuildings() { return this.buildingEntities.filter(alive); }
+  populationCandidates() { return [...this.unitEntities, ...this.buildingEntities]; }
+  liveSensors() { return this.sightEntities.filter(e => alive(e) && (this.def(e).vision ?? 0) > 0); }
   ready(e: Entity) {
     return alive(e) && e.readyTick <= this.state.tick;
   }
@@ -119,6 +139,10 @@ export class GameContext {
     if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
     this.state.entities.push(e);
     this.index.set(e.id, e);
+    if(e.unit)this.unitEntities.push(e);
+    if(e.hp!==null)this.bodyEntities.push(e);
+    if(d.kind === "building")this.buildingEntities.push(e);
+    if(this.canProvideSight(e))this.sightEntities.push(e);
     return e;
   }
   freshUnit(): NonNullable<Entity["unit"]> {
@@ -146,6 +170,10 @@ export class GameContext {
   remove(e: Entity) {
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
     this.index.delete(e.id);
+    if(e.unit)this.unitEntities.splice(this.unitEntities.indexOf(e),1);
+    if(e.hp!==null)this.bodyEntities.splice(this.bodyEntities.indexOf(e),1);
+    const buildingIndex=this.buildingEntities.indexOf(e);if(buildingIndex>=0)this.buildingEntities.splice(buildingIndex,1);
+    const sightIndex=this.sightEntities.indexOf(e);if(sightIndex>=0)this.sightEntities.splice(sightIndex,1);
   }
   event(
     owner: Owner,
@@ -190,7 +218,7 @@ export class GameContext {
     } else e.unit.release = { ...at };
   }
   activeUnits() {
-    return this.live().filter(
+    return this.unitEntities.filter(
       (e) => this.ready(e) && e.unit && !e.unit.contained && !e.unit.release,
     );
   }
@@ -202,7 +230,7 @@ export class GameContext {
     const units = this.activeUnits();
     let requests:ReturnType<typeof trafficRequests>|undefined;
     const occupied = new Set(units.filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)]));
-    for (const e of this.live()) {
+    for (const e of this.liveUnits()) {
       const u = e.unit;
       if (!u) continue;
       if (u.detour && (u.goal !== u.detour.goal || !u.route.length || u.route[0] !== u.detour.waypoint))

@@ -1,3 +1,4 @@
+import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
 import type { ContentRegistry } from "../../content/registry";
@@ -105,7 +106,7 @@ export class Geography {
           if (
             !land[b] ||
             this.regions[b] ||
-            Math.abs(heights[a]! - heights[b]!) > 90
+            Math.abs(heights[a]! - heights[b]!) > MAX_GROUND_STEP_CM
           )
             continue;
           this.regions[b] = region;
@@ -292,7 +293,7 @@ export class Frame {
     )
       return false;
     const hs = cells.map((q) => heights[this.geo.index(q)]!);
-    if (Math.max(...hs) - Math.min(...hs) > 100) return false;
+    if (Math.max(...hs) - Math.min(...hs) > MAX_FOUNDATION_RELIEF_CM) return false;
     if (
       this.own.some(
         (e) =>
@@ -363,7 +364,7 @@ export class Frame {
           proposed.has(idx) ||
           this.blocked.has(idx) ||
           !this.geo.map.land[idx] ||
-          Math.abs(heights[idx]! - heights[this.geo.index(a)]!) > 90
+          Math.abs(heights[idx]! - heights[this.geo.index(a)]!) > MAX_GROUND_STEP_CM
         )
           continue;
         seen.add(idx);

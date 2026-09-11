@@ -107,7 +107,7 @@ export function observerStats(
       name: slot.name ?? `Player ${slot.player + 1}`,
       controller: slot.kind === "ai" ? "AI" : "Human",
       defeated:
-        state.outcome?.defeated.includes(slotOwner(slot.player)) ?? false,
+        (!!state.objectives[slotOwner(slot.player)] && !state.entities.some(e=>e.id===state.objectives[slotOwner(slot.player)] && (e.hp===null||e.hp>0))),
       resources: observerResources(registry).map((r) => ({
         item: r.item,
         stored: 0,

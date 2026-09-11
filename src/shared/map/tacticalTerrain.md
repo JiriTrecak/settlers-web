@@ -1,0 +1,17 @@
+# Tactical terrain contract
+
+The persisted centimetre heightfield is the source for the renderer, editor, native movement, observation, AI geography and weapon clearance. `tacticalTerrain.ts` owns fixed engine constants: 120 cm sight offset, 90 cm adjacent movement step, 50 cm foundation relief. These are not per-model traits.
+
+`TacticalTerrain` reads the immutable match grid (including walkable bridge deck heights). Visibility first rejects endpoints above observer ground + 120 cm, then checks an elevated line against bilinearly sampled terrain. Weapon corridors use the line check without the uphill visibility cap: allied observation is a separate prerequisite. Melee checks height and grade. Sampling at quarter-cell intervals avoids simply checking endpoints. Flat maps short-circuit; conservative 16-cell block maxima skip ray marching over level shelves; up to 256 origin/radius viewsheds are reused. Caches are derived, not serialized.
+
+`Observation.visible` and fog rasterization use the same cell positions and terrain rules. Same-team sensors share vision; neutral sensors never contribute. AI consumes filtered observations; debug reveal cannot bypass this. Static memories persist while current enemy units disappear behind occlusion.
+
+`Spatial.attackClear` uses the nearest target-footprint point. Combat checks before committing and again at contact/release; approach candidates must offer clear terrain. Released homing missiles check their recorded origin to updated destination at impact. Shells require a clear release corridor; area spell damage keeps its existing rules. No universal projectile physics/terrain-destructibility system is introduced here.
+
+`shared/landscape/tacticalAuthoring.ts` edits the same samples. Plateau polygons set absolute height with one-cell rock shoulders, not soft additive hills. Ramps interpolate endpoint heights by curve arc length, rasterizing only segment bounds. Impossible grades reject before mutation. The rendering mesh remains a heightfield: steep rocky slopes, not vertical overhangs, caves or stacked floors. Scenery placement still needs authoring care around steep faces.
+
+Game snapshot compatibility is `declarative-sim-38`. Old snapshots are rejected rather than silently resuming under different visibility/combat rules. Map encoding remains v2. Test coverage lives in `tests/game/tactical-terrain.test.ts` and `tactical-maps.test.ts`; the latter flood-fills actual movement terrain including trees and scenery to verify all FFA starts, camp centres and deposit approaches.
+
+Rebuild the authored maps with `node --import tsx scripts/maps/tactical-maps.ts`. The generator uses a fixed seed, validates the map, and writes the normal project map files. It does not alter Worldroot Hollow.
+
+For large forests, observation builds one static-cell index per update, then visits only visible static IDs for each player. Neutral foliage projections are reused until harvest, growth, appearance or position changes; old fog memories remain immutable. Observer mode uses the same cache while retaining its private-view fields. `GameContext` indexes unit, body and potential sight-source membership at creation/removal/restore; alive, ready, contained and current vision checks still happen at query time. Unit recruitment and building upgrades preserve these structural categories; any future kind-changing transform must rebuild the indexes.

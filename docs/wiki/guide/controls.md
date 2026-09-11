@@ -73,3 +73,7 @@ The worker's basic Build menu currently contains **Worker House, Barracks, Amber
 Assign all active player slots to AI in Skirmish to observe. The observer panel shows each colony's resources, resource income per minute, unit and Worker counts, and hero level.
 
 Debug controls include timing/performance information, a visual fog reveal and faster match speeds. Speeding up a match advances simulation time faster; it does not change the underlying unit definitions. Persistent graphics settings let you reduce render resolution on high-density displays.
+
+### Mixed selection priority
+
+New selections and recalled control groups focus **heroes first, army units second, workers third**. The hero portrait and abilities appear immediately in mixed groups. Box selection still prefers heroes and army over workers; workers are selected when no army is in the box. Tab cycles unit types in that priority order; Shift+Tab cycles backwards. Clicking a portrait explicitly focuses that unit without dropping the group.

@@ -77,3 +77,28 @@ export function editorEntities(map: UtcMap): EntityView[] {
     };
   });
 }
+
+/** Retain stamp identities through unrelated simulation ticks. Most of the map
+ * is unchanged forest: never serialize the entire forest to detect a harvest. */
+export class ResourceScenery {
+  private readonly cache = new WeakMap<EntityView, MapStamp | null>();
+  private previous: readonly MapStamp[] = [];
+  project(entities: readonly EntityView[]): readonly MapStamp[] {
+    const next: MapStamp[] = [];
+    for (const e of entities) {
+      if (!e.resource) continue;
+      let stamp = this.cache.get(e);
+      if (stamp === undefined) {
+        stamp = resourceStamps([e])[0] ?? null;
+        this.cache.set(e, stamp);
+      }
+      if (stamp) next.push(stamp);
+    }
+    if (next.length === this.previous.length && next.every((s,i) => {
+      const p=this.previous[i]!;
+      return s===p || (s.id===p.id && s.asset===p.asset && s.x===p.x && s.y===p.y && s.yaw===p.yaw && s.scale===p.scale);
+    })) return this.previous;
+    this.previous = next;
+    return next;
+  }
+}

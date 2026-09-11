@@ -62,20 +62,16 @@ export class TerrainMaterial extends MeshStandardMaterial {
         +texture2D(uRock,vTerrain.xz*.22).rgb*rockBlend.y
         +texture2D(uRock,vTerrain.xy*.22).rgb*rockBlend.z;
       float rockValue=dot(rockTex,vec3(.3,.59,.11));
-      vec3 rock=vec3(.32,.43,.48)*(.78+rockValue*.95);
-      // Staggered rock joints break long exposed banks into readable slate faces.
+      vec3 rock=vec3(.19,.205,.18)*(.68+rockValue*1.25);
+      // Irregular sediment and vertical fractures, not regular masonry courses.
       float faceU=abs(vTerrainNormal.x)>abs(vTerrainNormal.z)?vTerrain.z:vTerrain.x;
-      float course=vTerrain.y*.85+noiseTerrain(vec2(faceU*.45,0.0))*.65;
-      float row=floor(course);
-      vec2 jointUv=vec2(faceU*.85+hashTerrain(vec2(row,9.3))*.8,course);
-      jointUv.x+=sin(vTerrain.y*2.1+row)*.09;
-      vec2 edge=min(fract(jointUv),1.0-fract(jointUv));
-      vec2 jointAA=max(fwidth(jointUv),vec2(.008));
-      float verticalJoint=1.0-smoothstep(.008,.026+jointAA.x,edge.x);
-      float crossJoint=(1.0-smoothstep(.005,.018+jointAA.y,edge.y))*smoothstep(.35,.75,hashTerrain(floor(jointUv)));
-      float joint=max(verticalJoint,crossJoint);
-      float faceTone=.87+.24*hashTerrain(floor(jointUv));
-      rock*=mix(1.0,faceTone*(1.0-joint*.24),smoothstep(.25,.65,vSlope));
+      float strata=vTerrain.y*.55+noiseTerrain(vec2(faceU*.24,vTerrain.y*.04))*1.5;
+      float seam=abs(fract(strata)-.5);
+      float fracture=abs(fract(faceU*.23+noiseTerrain(vec2(faceU*.19,vTerrain.y*.22))*1.3)-.5);
+      float joint=(1.0-smoothstep(.008,.04+fwidth(strata),seam))*.23
+        +(1.0-smoothstep(.012,.045+fwidth(fracture),fracture))*.32;
+      rock*=.88+.24*noiseTerrain(vec2(faceU*.5,vTerrain.y*.7));
+      rock*=1.0-joint;
       float shore=1.0-smoothstep(uSea+0.02,uSea+0.65+n*.15,vTerrain.y);
       float cliff=smoothstep(.15,.5,vSlope);
       float earthCrack=0.0; // Fine fissures are already baked into the soil atlas.
@@ -120,7 +116,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       // Relief follows the same authored soil detail as its color. Derivative
       // gradients avoid an unrelated grass normal map and extra texture reads.
-      float soilRelief=(soilValue*.035+soilGrain*.006)*(1.0-paint.a)*(1.0-cliff)*(1.0-submerged);
+      float soilRelief=(soilValue*.035+soilGrain*.006)*(1.0-paint.a)*(1.0-cliff)*(1.0-submerged)+(rockValue*.08-joint*.035)*cliff;
       vec3 surfaceX=dFdx(-vViewPosition),surfaceY=dFdy(-vViewPosition);
       vec3 r1=cross(surfaceY,normal),r2=cross(normal,surfaceX);
       float determinant=dot(surfaceX,r1);
@@ -128,7 +124,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       normal=normalize(abs(determinant)*normal-gradient);
       `);
     };
-    this.customProgramCacheKey=()=> 'landscape-terrain-moss-v3';
+    this.customProgramCacheKey=()=> 'landscape-terrain-cliffs-v4';
   }
   setContacts(revision:number,contacts:readonly {x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]):void {
     if(this.contactRevision===revision)return;this.contactRevision=revision;

@@ -22,6 +22,7 @@ export class Navigation {
   constructor(
     readonly size: number,
     private readonly canStep: (from: number, to: number) => boolean,
+    private readonly connected?: (start:number,goal:number) => boolean,
   ) {
     const n = size * size;
     this.prev = new Int32Array(n);
@@ -32,6 +33,7 @@ export class Navigation {
   path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity): number[] | null {
     if (!Number.isInteger(start) || !Number.isInteger(goal) || start < 0 || goal < 0 || start >= this.size ** 2 || goal >= this.size ** 2) return null;
     if (start === goal) return [];
+    if (this.connected && !this.connected(start,goal)) return null;
     if (++this.epoch >= 0xffffffff) { this.seen.fill(0); this.closed.fill(0); this.epoch = 1; }
     const {prev, cost, seen, closed, epoch} = this;
     const step = (a: number, b: number) => !blocked?.has(b) && this.canStep(a, b);

@@ -8,8 +8,8 @@ import {content} from '../../src/content/builtin';
 import {slots} from '../game/helpers';
 import {createMapBriefing} from '../../src/sim/ai/briefing';
 const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/worldroot-hollow.utcmap','utf8')))!;
-it('ships only Worldroot and round trips its starts and landscape',()=>{
- expect(readdirSync('assets/maps',{recursive:true}).filter(f=>String(f).endsWith('.utcmap'))).toEqual(['skirmish/worldroot-hollow.utcmap']);
+it('ships the current library and round trips Worldroot starts and landscape',()=>{
+ expect(readdirSync('assets/maps',{recursive:true}).filter(f=>String(f).endsWith('.utcmap')).sort()).toEqual(['skirmish/four-crowns.utcmap','skirmish/terrain-proving-ground.utcmap','skirmish/worldroot-hollow.utcmap']);
  expect(playableMapError(map)).toBeNull();
  const restored=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
  expect(restored.playerStarts).toEqual(map.playerStarts);expect(restored.landscape).toEqual(map.landscape);

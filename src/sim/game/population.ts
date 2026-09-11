@@ -38,13 +38,14 @@ export function gathererCount(
   state: GameState,
   resource: number,
   except?: number,
+  units: readonly Entity[] = state.entities,
 ) {
   const sources = new Map(
     state.jobs
       .filter((j) => j.type === "harvest")
       .map((j) => [j.worker, j.source]),
   );
-  return state.entities.filter(
+  return units.filter(
     (e) =>
       e.id !== except &&
       alive(e) &&

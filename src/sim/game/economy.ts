@@ -231,7 +231,7 @@ export class Economy {
           for (let dx = -radius; dx <= radius; dx++) {
             if (Math.abs(dx) + Math.abs(dy) !== radius) continue;
             const p = { x: door.x + dx, y: door.y + dy };
-            if (this.c.spatial.free(p, worker.id) && this.c.spatial.route(worker, p)) return p;
+            if (this.c.spatial.free(p, worker.id) && this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
           }
       return null;
     }
@@ -256,7 +256,7 @@ export class Economy {
           distance2(this.c.spatial.point(b), worker) || a - b,
     )) {
       const p = this.c.spatial.point(i);
-      if (this.c.spatial.route(worker, p)) return p;
+      if (this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
     }
     return null;
   }
@@ -327,7 +327,7 @@ export class Economy {
     const capacity = this.c.def(resource).gatheringCapacity;
     return (
       capacity === undefined ||
-      gathererCount(this.s, resource.id, w.id) < capacity
+      gathererCount(this.s, resource.id, w.id, this.c.liveUnits()) < capacity
     );
   }
   harvestItem(w: Entity, resource: Entity): string | undefined {
@@ -504,7 +504,7 @@ export class Economy {
     }
     if (creation.method === "spawn") {
       const population = workerPopulation(
-        this.s.entities,
+        this.c.populationCandidates(),
         b.owner,
         this.c.registry,
       );
@@ -513,7 +513,7 @@ export class Economy {
         return;
       }
       if (
-        this.c.live().filter((e) => e.unit && e.owner === b.owner).length >=
+        this.c.liveUnits().filter((e) => e.owner === b.owner).length >=
         this.c.registry.rules.maxUnits
       ) {
         p.status = "Population limit";
@@ -606,7 +606,7 @@ export class Economy {
     for (const e of this.c.activeUnits())
       if (e.unit!.cargo && !e.unit!.job) this.reroute(e);
     const buildings = this.c
-      .live()
+      .liveBuildings()
       .filter(
         (e) =>
           this.c.ready(e) &&
@@ -705,13 +705,13 @@ export class Economy {
         };
     } else {
       const population = workerPopulation(
-        this.s.entities,
+        this.c.populationCandidates(),
         b.owner,
         this.c.registry,
       );
       if (population.workers >= population.capacity) return false;
       if (
-        this.c.live().filter((e) => e.unit && e.owner === b.owner).length >=
+        this.c.liveUnits().filter((e) => e.owner === b.owner).length >=
         this.c.registry.rules.maxUnits
       )
         return false;
@@ -842,7 +842,7 @@ export class Economy {
       }
     }
     for (const b of this.c
-      .live()
+      .liveBuildings()
       .filter(
         (e) => this.c.ready(e) && !e.construction && !e.upgrade && e.production?.active,
       )) {
@@ -850,7 +850,7 @@ export class Economy {
         c = this.c.registry.get(a.definition).creation!;
       if (c.method === "spawn") {
         const population = workerPopulation(
-          this.s.entities,
+          this.c.populationCandidates(),
           b.owner,
           this.c.registry,
         );
@@ -878,7 +878,7 @@ export class Economy {
       if (
         r.resource!.growingUntil! <= this.s.tick &&
         this.c.spatial.free(r) &&
-        !this.c.live().some((e) => {
+        !this.c.liveUnits().some((e) => {
           if (!e.unit || e.unit.contained || e.unit.release) return false;
           const p = precise(e),
             clearance = 0.5 + UNIT_RADIUS / POSITION_SCALE;
@@ -1034,9 +1034,9 @@ export class Economy {
     for (const j of [...this.s.jobs])
       if (j.worker === e.id || j.target === e.id || j.source === e.id)
         this.abandon(j);
-    for (const w of this.c.live())
+    for (const w of this.c.liveUnits())
       if (w.unit?.employment === e.id) w.unit.employment = null;
-    for (const b of this.c.live())
+    for (const b of this.c.liveBuildings())
       if (b.production?.staff === e.id) b.production.staff = null;
     if (e.unit?.cargo)
       this.c.event(

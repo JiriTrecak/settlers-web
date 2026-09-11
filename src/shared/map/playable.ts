@@ -1,3 +1,4 @@
+import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
 import {sceneryRules} from './sceneryCollision';
 import { decodeHeight, HeightField } from "./height";
 import type { PlayerStart, UtcMap } from "./utcmap";
@@ -53,7 +54,7 @@ export function playableMapError(
       }
     if (lo <= field.waterLevel + 0.1)
       return `Player ${s.player} needs dry ground for the fort and workers.`;
-    if (hi - lo > 1)
+    if (hi - lo > MAX_FOUNDATION_RELIEF_CM/100)
       return `Player ${s.player} needs flatter ground for the fort and workers.`;
     if (
       starts.some(

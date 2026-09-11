@@ -1,3 +1,4 @@
+import {sculptPlateau,sculptRamp} from '../../shared/landscape/tacticalAuthoring';
 import {forestCoverStroke} from './forestCover';
 import { content } from "../../content/builtin";
 import { expandMap } from "../../content/map";
@@ -172,6 +173,7 @@ export class WorldEditor {
     | "flatten"
     | "hill"
     | "plateau"
+    | "ramp"
     | "basin" = "terrain";
   terrainLayer: TerrainLayer = "sand";
   private terrainSize = readBrushSize("terrain", 64);
@@ -497,9 +499,15 @@ export class WorldEditor {
   }
   applyTerrainCurve(): void {
     if (!this.terrainPoints.length) return;
-    if (
+    if(this.terrainMode === "plateau"){
+      if(this.terrainCurve)this.tacticalTerrain("plateau",this.terrainPoints,this.terrainDepth,this.terrainRadius);
+      else for(const p of this.terrainPoints){
+        const outline=Array.from({length:32},(_,i)=>({x:p.x+Math.cos(i*Math.PI/16)*this.terrainRadius,z:p.z+Math.sin(i*Math.PI/16)*this.terrainRadius}));
+        this.tacticalTerrain("plateau",outline,this.terrainDepth,this.terrainRadius);
+      }
+    } else if(this.terrainMode === "ramp")this.tacticalTerrain("ramp",this.terrainPoints,this.terrainDepth,this.terrainRadius);
+    else if (
       this.terrainMode === "hill" ||
-      this.terrainMode === "plateau" ||
       this.terrainMode === "basin"
     ) {
       const p = this.terrainPoints[0]!;
@@ -510,7 +518,7 @@ export class WorldEditor {
         radiusZ: this.terrainRadius * this.terrainAspect,
         height: this.terrainDepth * (this.terrainMode === "basin" ? -1 : 1),
         rotation: (this.terrainRotation * Math.PI) / 180,
-        plateau: this.terrainMode === "plateau" ? 0.55 : 0,
+        plateau: 0,
         roughness: 0.08,
         seed: 42,
       });
@@ -773,6 +781,15 @@ export class WorldEditor {
       rotation: this.decalRotation,
       opacity: this.decalOpacity,
     });
+  }
+
+  tacticalTerrain(mode:"plateau"|"ramp",points:readonly CurvePoint[],height:number,radius:number):void {
+    if(mode==="plateau")sculptPlateau(this.height,points,height);
+    else sculptRamp(this.height,points,radius);
+    this.commitHeight();
+    this.renderer?.setTerrain(this.height);
+    this.mini?.setHeight(this.height);
+    this.paint();this.hooks.onChange?.();
   }
 
   landform(shape: Landform): void {

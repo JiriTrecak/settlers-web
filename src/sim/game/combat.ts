@@ -1,3 +1,4 @@
+import {TargetIndex} from './targetIndex';
 import {routeToAttack} from './attackApproach';
 import {attackTiming} from './attackTiming';
 import {facing} from "./facing";
@@ -48,16 +49,20 @@ export class Combat {
   }
   private perceives(a: Entity, b: Entity) {
     return a.owner === "none"
-      ? distance2(precise(a), precise(b)) <=
+      ? this.c.spatial.tactical.visible(a,b) && distance2(precise(a), precise(b)) <=
           (this.camps.find((c) => c.id === a.unit?.camp)?.aggroRange ??
             this.c.def(a).behaviors.combat!.aggroRange) **
             2
       : this.vision.visible(a.owner, b);
   }
+  private terrainClear(a:Entity,b:Entity){
+    const combat=this.c.def(a).behaviors.combat!;
+    return this.c.spatial.attackClear(precise(a),b,!!(combat.projectile||combat.shell));
+  }
   plan() {
     const c = this.c;
     this.shells.expire();
-    const targets=c.live().filter(e=>e.hp!==null);
+    const targets=new TargetIndex(c.liveBodies(), c.registry);
     for (const e of c.activeUnits()) {
       const u = e.unit!,
         combat = c.def(e).behaviors.combat,
@@ -167,14 +172,14 @@ export class Combat {
         this.rememberTarget(e,target);
         u.target = target.id;
         maintainCharge(c, e);
-        if (c.spatial.range(e, target) <= combat.range ** 2) {
+        if (c.spatial.range(e, target) <= combat.range ** 2 && this.terrainClear(e,target)) {
           u.route = [];
           u.goal = null;
           if (!u.attack && !u.cooldown) this.beginAttack(e, target);
           continue;
         }
         if(order?.type==='hold'){u.target=null;continue;}
-        const staleGoal = u.goal !== null && c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2;
+        const staleGoal = u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear(c.spatial.point(u.goal),target,!!(combat.projectile||combat.shell)));
         if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
           routeToAttack(c,e,target);
           u.retryAt = c.state.tick + 6;
@@ -190,9 +195,15 @@ export class Combat {
       }
     }
   }
-  private closestTarget(actor:Entity,targets:readonly Entity[],range:number){
-    return targets.filter(t=>this.hostile(actor,t)&&this.c.spatial.range(actor,t)<=range**2&&this.perceives(actor,t))
-      .sort((a,b)=>this.c.spatial.range(actor,a)-this.c.spatial.range(actor,b)||a.id-b.id)[0];
+  private closestTarget(actor:Entity,targets:TargetIndex,range:number){
+    let best: Entity | undefined, bestDistance = range ** 2;
+    for (const target of targets.near(precise(actor), range)) {
+      const distance = this.c.spatial.range(actor, target);
+      if (distance > bestDistance || (best && distance === bestDistance && target.id >= best.id)) continue;
+      if (!this.hostile(actor,target) || !this.perceives(actor,target)) continue;
+      best = target; bestDistance = distance;
+    }
+    return best;
   }
   private rememberTarget(actor:Entity,target:Entity){
     actor.unit!.pursuit={target:target.id,position:{x:target.x,y:target.y},seenTick:this.c.state.tick};
@@ -231,7 +242,7 @@ export class Combat {
     }
   }
   private beginAttack(a: Entity, b: Entity) {
-    if(!facing(a,precise(b)))return;
+    if(!this.terrainClear(a,b)||!facing(a,precise(b)))return;
     const u = a.unit!, cycleTicks=this.c.stats(a).cooldownTicks, policy=attackTiming(this.c.def(a).behaviors.combat!,cycleTicks);
     u.attack = {target: b.id, cycleTicks, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
       ends: this.c.state.tick + policy.windupTicks + policy.recoveryTicks, released: false};
@@ -267,7 +278,7 @@ export class Combat {
       if (attack.target !== b.id) { delete u.attack; continue; }
       if (attack.released || this.c.state.tick < attack.impact) continue;
       attack.released = true;
-      if (this.c.spatial.range(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
+      if (!this.terrainClear(a,b) || this.c.spatial.range(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
       if (combat.shell) { this.shells.launch(a,b); continue; }
       const raw = chargeDamage(this.c,a,b);
       if (combat.projectile) { this.missiles.launch(a,b,raw); continue; }

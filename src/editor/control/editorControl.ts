@@ -209,6 +209,11 @@ export class EditorControl {
         roughness,
         seed,
       });
+    } else if(action === "plateau" || action === "ramp"){
+      const points=o.points as CurvePoint[],height=num(o.height)??4,radius=num(o.radius)??4;
+      if(!Array.isArray(points)||points.length<(action==="plateau"?3:2)||points.length>128||!points.every(p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&(p.radius===undefined||(Number.isFinite(p.radius)&&p.radius>=1&&p.radius<=64))))throw new Error('Provide finite outline/ramp points (maximum 128)');
+      if(height < -16 || height > 24 || radius<1 || radius>64)throw new Error('Height must be -16..24 and radius 1..64');
+      this.editor.tacticalTerrain(action,points,height,radius);
     } else if (action === "curve") {
       const points = o.points as CurvePoint[];
       if (

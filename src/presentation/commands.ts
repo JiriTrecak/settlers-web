@@ -1,3 +1,4 @@
+import {prioritizeSelection} from "./selection";
 import type { ContentRegistry } from "../content/registry";
 import { prerequisiteReason } from "../content/prerequisites";
 import type { ActionName, Owner } from "../content/schema";
@@ -184,15 +185,12 @@ export function areaSelection(
       registry.get(e.definition).behaviors.playerControl,
   );
   const army = own.filter(
-    (e) => registry.get(e.definition).selectionClass === "army",
+    (e) => registry.get(e.definition).hero || registry.get(e.definition).selectionClass === "army",
   );
-  return (
-    army.length
-      ? army
-      : own.filter((e) => registry.get(e.definition).behaviors.work)
-  )
-    .map((e) => e.id)
-    .sort((a, b) => a - b);
+  const candidates = army.length
+    ? army
+    : own.filter((e) => registry.get(e.definition).behaviors.work);
+  return prioritizeSelection(candidates.map(e => e.id).sort((a,b) => a-b), entities, registry);
 }
 /** Renderer-neutral command discovery. Never reads live simulation records. */
 export function commandCard(

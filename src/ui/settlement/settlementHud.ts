@@ -1,3 +1,4 @@
+import {prioritizeSelection,cycleSelection} from "../../presentation/selection";
 import {ControlGroups} from "../../presentation/controlGroups";
 import {shortcuts,keyLabel,authoredKey,commandShortcut,inputCaptured,SHORTCUTS_CHANGED} from "../../shared/input/shortcuts";
 import { itemStatusCard } from "../../presentation/itemStatus";
@@ -107,8 +108,8 @@ export class SettlementHud {
   get buildingActor() {
     return this.targeting?.actors[0];
   }
-  setSelection(ids: readonly number[]) {
-    this.selectedIds = [...new Set(ids)];
+  setSelection(ids: readonly number[], focus?: number) {
+    this.selectedIds = prioritizeSelection(ids, this.current?.entities ?? [], content, focus);
     this.category = null;
     this.page = 0;
     this.clearMode();
@@ -129,7 +130,7 @@ export class SettlementHud {
     const owned=new Set(this.current.entities.filter(e=>e.owner===this.owner&&!e.remembered&&content.get(e.definition).behaviors.playerControl).map(e=>e.id));
     if(operation==="recall"){
       const result=this.controlGroups.recall(slot,performance.now());
-      if(result.ids.length){this.setSelection(result.ids);if(result.focus)this.hooks.focus(result.ids[0],result.ids);}
+      if(result.ids.length){this.setSelection(result.ids);if(result.focus)this.hooks.focus(this.selectedIds[0],this.selectedIds);}
     }else this.controlGroups.assign(slot,this.selectedIds.filter(id=>owned.has(id)),operation==="add");
     this.renderGroups(this.current);
   }
@@ -191,8 +192,8 @@ export class SettlementHud {
     }
     if(shortcuts.matches('selection.next',e)||shortcuts.matches('selection.previous',e)){
       e.preventDefault();if(!view)return;
-      const types=[...new Set(this.selectedIds.map(id=>view.entities.find(v=>v.id===id)?.definition).filter(Boolean))].sort();
-      if(types.length>1){const at=types.indexOf(view.entities.find(v=>v.id===this.selectedIds[0])?.definition),next=types[(at+(shortcuts.matches('selection.previous',e)?types.length-1:1))%types.length];this.setSelection([...this.selectedIds.filter(id=>view.entities.find(v=>v.id===id)?.definition===next),...this.selectedIds.filter(id=>view.entities.find(v=>v.id===id)?.definition!==next)]);}return;
+      const next=cycleSelection(this.selectedIds,view.entities,content,shortcuts.matches('selection.previous',e));
+      if(next!==undefined)this.setSelection(this.selectedIds,next);return;
     }
     for(let slot=0;slot<6;slot++)if(shortcuts.matches(`inventory.${slot}`,e)){
       e.preventDefault();if(view){const entry=inventoryCard(view,this.selectedIds[0],this.owner,content,this.readOnly)[slot];if(entry?.use)this.hooks.action(entry.use);}return;
@@ -331,7 +332,8 @@ export class SettlementHud {
     );
     const filtered = this.selectedIds.filter((id) => valid.has(id));
     if (filtered.length !== this.selectedIds.length) {
-      this.selectedIds = filtered;
+      this.selectedIds = filtered.includes(this.selectedIds[0])
+        ? filtered : prioritizeSelection(filtered, view.entities, content);
       this.category = null;
       this.page = 0;
       this.clearMode();
@@ -622,6 +624,7 @@ export class SettlementHud {
             event.shiftKey
               ? this.selectedIds.filter((id) => id !== e.id)
               : [e.id, ...this.selectedIds.filter((id) => id !== e.id)],
+            event.shiftKey ? undefined : e.id,
           );
         button.ondblclick = () => this.setSelection([e.id]);
         this.cards.append(button);

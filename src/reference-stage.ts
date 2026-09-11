@@ -90,7 +90,13 @@ async function start() {
     if(perf.enabled!==original.debug)perf.toggle();
   };
   if(benchmark){apply();window.addEventListener('beforeunload',restore,{once:true})}
+  let previewPaused=false;
+  const pause=document.createElement('button');pause.textContent='Pause preview';pause.style.cssText='position:fixed;left:12px;bottom:12px;z-index:10;background:#101820ee;color:white;border:1px solid #6b7966;padding:8px 12px';
+  pause.onclick=()=>{previewPaused=!previewPaused;pause.textContent=previewPaused?'Resume preview':'Pause preview';};
+  if(!benchmark)document.body.append(pause);
   const frame = (now:number) => {
+    if(!benchmark&&(document.hidden||previewPaused)){requestAnimationFrame(frame);return;}
+
     perf.frame(now);renderer.present(12_000);
     if(benchmark&&!finished){
       if(document.hidden){frames=0;intervals=[];lastFrame=0;}

@@ -1,10 +1,5 @@
-/**
- * Chrome parks rAF in an unfocused window (still visible — two-monitor MP).
- * Hidden tabs also get 1s timer throttling. A dedicated Worker is not on that
- * rAF budget; a near-silent AudioContext keeps the tab out of the deepest sleep.
- * When the window is not focused, rAF is stopped and we pump Session from the
- * Worker so the match still ticks at ~40 Hz.
- */
+/** Keep hidden/throttled multiplayer clients ticking without capping a visible
+ * unfocused game. A worker is a fallback for stalled frames, not a second clock. */
 const WORKER_MS = 25;
 
 const WORKER_SRC = `
@@ -25,6 +20,7 @@ export type TickLoop = {
   startRaf(): void;
   stopRaf(): void;
   pump(): void;
+  needsPump(): boolean;
 };
 
 export class BackgroundTicker {
@@ -52,7 +48,7 @@ export class BackgroundTicker {
     const worker = new Worker(url);
     this.worker = worker;
     worker.onmessage = () => {
-      if (!this.background) return;
+      if (!this.background && !this.loop.needsPump()) return;
       this.loop.pump();
     };
     worker.postMessage("start");
@@ -81,9 +77,9 @@ export class BackgroundTicker {
     this.loop.startRaf();
   }
 
-  /** Unfocused or hidden: Worker pumps Session. Focused: rAF as usual. */
+  /** Visible windows keep rAF, even without focus. Hidden windows use the worker. */
   private sync(): void {
-    const background = document.hidden || !document.hasFocus();
+    const background = document.hidden;
     this.background = background;
     if (background) this.loop.stopRaf();
     else this.loop.startRaf();

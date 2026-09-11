@@ -12,6 +12,8 @@ export class HarvestTrees {
   private readonly sources = new Map<string, GLTF>();
   private readonly active = new Map<number, {root: Object3D; player: TreePlayer; file: string}>();
   private dead = false;
+  private observed: readonly EntityView[] | undefined;
+  private damaged: readonly EntityView[] = [];
   readonly ready: Promise<void>;
   constructor(private readonly parent: Group) {
     const loader = new GLTFLoader();
@@ -27,8 +29,9 @@ export class HarvestTrees {
     })).then(() => {});
   }
   update(entities: readonly EntityView[], field: HeightField, tick: number) {
+    if(this.observed!==entities){this.observed=entities;this.damaged=entities.filter(e=>e.resource?.felling?.lastHitTick!=null);}
     const seen = new Set<number>();
-    for (const e of entities) {
+    for (const e of this.damaged) {
       const f = e.resource?.felling, d = content.get(e.definition);
       if (!f || f.lastHitTick === null || !d.felling) continue;
       if (f.fallTick !== null && tick >= f.fallTick + d.felling.fallTicks + d.felling.decayTicks) continue;

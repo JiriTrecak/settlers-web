@@ -39,6 +39,8 @@ Workers can repair damaged friendly buildings without paying resources. Repair s
 
 Your normal view depends on explored terrain and current visibility. A remembered mine or enemy building is not permission to see its live changing state. Ownership determines who can issue orders; neutral creatures belong to no player.
 
+Cliffs, ramps and ridges also affect vision and weapon clearance. See [terrain and high ground](/guide/terrain) for the fixed sight-height rule and ranged combat.
+
 The debug fog toggle reveals the battlefield visually and can be turned back on. It does not grant the AI additional knowledge or alter the simulation's visibility rules.
 
 ## Camps

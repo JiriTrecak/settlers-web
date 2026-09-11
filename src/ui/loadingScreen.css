@@ -1,0 +1,5 @@
+.match-loading{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;pointer-events:auto;background:radial-gradient(ellipse at 50% 40%,#263329,#0a100eee);color:#eee9db;text-align:center;backdrop-filter:blur(12px)}
+.match-loading section{width:min(480px,85vw);padding:40px 32px;border:1px solid #627064;border-radius:8px;background:#0c120dd9;box-shadow:0 16px 60px #0008}
+.match-loading h1{font:600 27px Georgia,serif;margin:0 0 28px}.match-loading p{margin:16px 0}
+.match-loading progress{width:100%;height:10px;accent-color:#a9bf88}.match-loading-detail{font-size:13px;color:#b4bdb2;overflow-wrap:anywhere;max-height:24vh;overflow:auto}
+.match-loading button{margin-top:24px;padding:10px 24px;background:#252e26;color:#eee;border:1px solid #74806e;border-radius:4px;cursor:pointer}
