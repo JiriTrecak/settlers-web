@@ -78,3 +78,11 @@ Water controls also accept `shadowStrength` (0–1, default 0.6), the directiona
 `editor_landscape` action `plateau`: provide 3–128 `points: [{x,z}, ...]` and absolute `height` (-16..24). The closed outline sets a flat crown with steep rock shoulders.
 
 Action `ramp`: provide 2–128 points from lower to upper ground and `radius` (half-width, 1..64). Both endpoint heights are sampled from the loaded map. The curve interpolates by arc length; grades above .65 reject before editing. Save/export persists the resulting heightfield. Use the same operations for scripts and the Terrain dock.
+
+### Game performance inspection
+
+`game_performance` reads the active game's rolling CPU/GPU report, simulation tick,
+renderer counters, and loaded asset diagnostics. Enable **Debug** in the game first
+to collect timing samples. It neither advances the match nor changes its settings.
+CPU scopes are nested; do not add every row together. GPU timing may be unavailable
+on a browser that does not expose timer queries.

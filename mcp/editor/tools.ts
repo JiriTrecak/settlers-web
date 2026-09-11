@@ -175,6 +175,12 @@ export function editorTools(hub: EditorHub) {
       inputSchema: z.object({}),
       execute: async () => call("gameStatus"),
     }),
+    game_performance: createTool({
+      id: "game_performance",
+      description: "Read active-match CPU/GPU timing samples, draw calls, triangle counts and loaded asset diagnostics. Enable Debug in the game to collect timing samples. Read-only; does not change simulation or graphics settings.",
+      inputSchema: z.object({}),
+      execute: async () => call("gamePerformance"),
+    }),
     game_command: createTool({
       id: "game_command",
       description:

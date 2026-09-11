@@ -1,3 +1,4 @@
+import {batchStaticMaterials} from '../prop/staticBatch';
 import { ShellEffects } from "./shellEffects";
 import { PresentationClock } from "./presentationClock";
 import { StatusBadges } from "./statusBadges";
@@ -44,7 +45,7 @@ import type { HeightField } from "../../shared/map/height";
 import type { EntityView, SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
-import { prepareAntMaterial } from "../prop/antMaterials";
+import { prepareAntMaterial, prepareAntMaterials } from "../prop/antMaterials";
 import { placementGrid } from "./placementGrid";
 
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
@@ -179,6 +180,10 @@ export class SettlementLayer {
           const gltf = await loader.loadAsync(url);
           if (this.dead) { this.disposePrototype(gltf.scene); return; }
           if (!this.dead) {
+            if (!a.character) {
+              prepareAntMaterials(gltf.scene);
+              this.characterBatchDisposers.push(batchStaticMaterials(gltf.scene,!!gltf.animations.length));
+            }
             this.prototypes.set(a.id, gltf.scene);
             if (a.character) {
               this.characterBatchDisposers.push(
@@ -249,6 +254,7 @@ export class SettlementLayer {
           Array.isArray(child.material) ? child.material : [child.material]
         ).map((m) => {
           const copy = m.clone();
+          copy.onBeforeCompile=m.onBeforeCompile;copy.customProgramCacheKey=m.customProgramCacheKey;
           if (copy instanceof MeshStandardMaterial) prepareAntMaterial(copy);
           return copy;
         });

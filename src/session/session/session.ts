@@ -1,5 +1,6 @@
 import {preloadCommandArt} from '../../ui/settlement/commandArt';
-import {AssetLoading,loadingPaint,type LoadProgress} from '../../render/loading/assetLoading';
+import type {LoadProgress} from '../../shared/loading';
+import {AssetLoading,loadingPaint} from '../../render/loading/assetLoading';
 import { GameChat } from "../../ui/chat/chat";
 import { commandFeedback } from "../../presentation/commandFeedback";
 import {
@@ -104,17 +105,19 @@ export class Session {
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
   private resourceScenery = new ResourceScenery();
+  private resourceMapStamps: readonly MapStamp[] | undefined;
   private resourceStampsView: readonly MapStamp[] | undefined;
   private resourceEntities: Parameters<typeof resourceStamps>[0] | undefined;
   private updateResourceStamps(entities: Parameters<typeof resourceStamps>[0]) {
     // Observation owns immutable per-update arrays. Reuse them between simulation
     // ticks, but never key by tick alone: reveal/restore can change the same tick.
-    if (this.resourceEntities === entities) return;
+    const mapStamps=this.loadedMap!.map.stamps;
+    if (this.resourceEntities === entities && this.resourceMapStamps===mapStamps) return;
     this.resourceEntities = entities;
     const resources = this.resourceScenery.project(entities);
-    if (resources === this.resourceStampsView) return;
-    this.resourceStampsView = resources;
-    this.stamps = [...this.loadedMap!.map.stamps, ...resources];
+    if (resources === this.resourceStampsView && this.resourceMapStamps===mapStamps) return;
+    this.resourceStampsView = resources;this.resourceMapStamps=mapStamps;
+    this.stamps = [...mapStamps, ...resources];
     this.mini?.setStamps(this.stamps);
   }
   private economyHud: SettlementHud | null = null;

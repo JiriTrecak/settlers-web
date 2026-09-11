@@ -33,6 +33,7 @@ function fixture(player: number | null = 0, speed = 1) {
     ]),
   );
   const session = Object.assign(Object.create(Session.prototype), {
+    started: true,
     world,
     aiGreeted: new Set<number>(),
     me: player ?? 0,

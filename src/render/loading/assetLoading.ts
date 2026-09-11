@@ -1,5 +1,5 @@
 import {DefaultLoadingManager} from 'three';
-export type LoadProgress = {stage: string; loaded?: number; total?: number};
+import type {LoadProgress} from '../../shared/loading';
 
 /** Observe the shared manager used by existing Three loaders, including texture
  * dependencies inside GLTFs. Overlapping/cancelled sessions cannot steal callbacks. */

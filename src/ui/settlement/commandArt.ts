@@ -1,4 +1,3 @@
-import {ImageLoader} from 'three';
 import { content } from "../../content/builtin";
 
 // Only the game-sized 128px images enter the bundle. Authoring originals live outside assets.
@@ -24,7 +23,7 @@ export function preloadCommandArt(): Promise<HTMLImageElement[]> {
     if(!url)throw Error(`Missing declared icon image: ${a.id}`);
     return url;
   }))].map(async url=>{
-    const image=await new ImageLoader().loadAsync(url);
+    const image=new Image();image.src=url;
     await image.decode();return image;
   })).catch(error=>{preparedArt=undefined;throw error;});
 }

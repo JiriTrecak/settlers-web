@@ -13,7 +13,7 @@ export function batchStaticMaterials(root:Object3D,animated=false):()=>void {
     for(const child of parent.children){
       if(!(child instanceof Mesh)||'isSkinnedMesh' in child||child.children.length||child.morphTargetInfluences||Array.isArray(child.material))continue;
       const m=child.material as Material & {color?:Color},g=child.geometry;
-      if(!m.color||m.transparent||m.opacity!==1||g.groups.length||m.name==='TC_TeamColor'||m.userData.foliageBase||m.userData.vividLeaf||m.userData.stonePalette||Object.values(m).some(v=>v instanceof Texture))continue;
+      if(!m.color||m.transparent||m.opacity!==1||g.groups.length||g.getAttribute('color')?.itemSize===4||m.name==='TC_TeamColor'||m.userData.foliageBase||m.userData.vividLeaf||m.userData.stonePalette||Object.values(m).some(v=>v instanceof Texture))continue;
       child.updateMatrix();
       const {uuid,name,color,...drawState}=m.toJSON();
       const key=JSON.stringify([drawState,m.customProgramCacheKey(),child.matrix.elements,child.visible,child.renderOrder,child.layers.mask,child.castShadow,child.receiveShadow,child.frustumCulled,Object.keys(g.attributes).filter(k=>k!=='color').sort()]);

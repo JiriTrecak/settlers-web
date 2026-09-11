@@ -41,6 +41,7 @@ function fixture(latency: (packet: number) => number = () => 0, delay=8) {
     const world = new World({ map, slots: match.slots, seed: 1 });
     const lockstep = new Lockstep(channel, me, match.delay);
     const session = Object.assign(Object.create(Session.prototype), {
+    started: true,
       world, me, visionPlayer: me, match,
       config: { channel, player: me, hooks: { onHud: vi.fn() } },
       renderer: { gameCommandFeedback: vi.fn() },

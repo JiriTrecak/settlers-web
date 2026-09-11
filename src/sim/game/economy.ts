@@ -349,8 +349,7 @@ export class Economy {
       )
       .sort((a, b) => distance2(a, w) - distance2(b, w) || a.id - b.id)[0];
   }
-  private startHarvest(w: Entity, resource: Entity, item: string): boolean {
-    const hall = this.hall(w, item);
+  private startHarvest(w: Entity, resource: Entity, item: string, hall: Entity | undefined): boolean {
     if (
       !hall ||
       !resource.resource?.amount ||
@@ -414,7 +413,10 @@ export class Economy {
               ? 1
               : distance2(a, w) - distance2(b, w) || a.id - b.id,
         );
-      if (!candidates.some((r) => this.startHarvest(w, r, item)))
+      // Failed candidate probes do not mutate stores or jobs. Resolve the same
+      // drop-off once for this worker, not again for every nearby forest tree.
+      const hall = candidates.length ? this.hall(w, item) : undefined;
+      if (!candidates.some((r) => this.startHarvest(w, r, item, hall)))
         if (!candidates.length && u.orderQueue.length) u.order = null;
         else u.retryAt = this.s.tick + 40;
     }

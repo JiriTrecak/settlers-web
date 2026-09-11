@@ -22,7 +22,8 @@
     "wiki:build": "node --import tsx scripts/wiki/generate.ts build",
     "wiki:preview": "node --import tsx scripts/wiki/generate.ts preview",
     "wiki:check": "tsc --project scripts/wiki/tsconfig.json",
-    "build:desktop": "tauri build --bundles app"
+    "build:desktop": "tauri build --bundles app",
+    "bench:sim": "node --import tsx scripts/bench/simulation.ts"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",

@@ -1,4 +1,4 @@
-import type {LoadProgress} from '../render/loading/assetLoading';
+import type {LoadProgress} from '../shared/loading';
 import './loadingScreen.css';
 export class LoadingScreen {
   readonly root=document.createElement('div');

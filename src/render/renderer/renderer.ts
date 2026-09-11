@@ -342,11 +342,14 @@ export class Renderer {
     for (const texture of textures) this.display.gl.initTexture(texture);
     await this.display.gl.compileAsync(this.scene, cam);
     // Models need the same lights, fog and environment as their eventual scene.
-    for (const model of models) {if(this.destroyed)return;await this.display.gl.compileAsync(model, cam, this.scene);}
     if(this.destroyed)return;
+    const group=new Group();for(const model of models)group.add(model);
+    try {await this.display.gl.compileAsync(group,cam,this.scene);}
+    catch(error){group.clear();throw error;}
+    if(this.destroyed){group.clear();return;}
     // Compile is not a vertex-buffer upload. A tiny offscreen draw also warms
     // shared geometry and skinning; temporary instances never enter game state.
-    const group=new Group(),target=new WebGLRenderTarget(64,64),gl=this.display.gl;
+    const target=new WebGLRenderTarget(64,64),gl=this.display.gl;
     const previous=gl.getRenderTarget(),shadowUpdates=gl.shadowMap.autoUpdate;
     group.position.set(this.camera.targetX,this.height?.sample(this.camera.targetX,this.camera.targetZ)??0,this.camera.targetZ);
     for(const model of models){model.traverse(o=>{o.frustumCulled=false;});group.add(model);}
