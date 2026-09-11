@@ -1,3 +1,5 @@
+import {ControlGroups} from "../../presentation/controlGroups";
+import {shortcuts,keyLabel,authoredKey,commandShortcut,inputCaptured,SHORTCUTS_CHANGED} from "../../shared/input/shortcuts";
 import { itemStatusCard } from "../../presentation/itemStatus";
 import { heroShortcuts } from "../../presentation/heroes";
 import { unitOrderCard } from "../../presentation/orderQueue";
@@ -12,7 +14,6 @@ import {
   commandCard,
   inventoryCard,
   commandPage,
-  shortcutCommand,
   queueCard,
   commandMenu,
   commandPageCount,
@@ -79,6 +80,10 @@ export class SettlementHud {
   private stockSignature = "";
   private readonly resourceBadges = new Map<string, HTMLElement>();
   private portraitDefinition = "";
+  private readonly controlGroups=new ControlGroups();
+  private readonly groupBar=document.createElement("nav");
+  private groupSignature="";
+  private readonly bindingsChanged=()=>{this.groupSignature="";this.commandSignature="";this.inventorySignature="";if(this.current)this.update(this.current,true);};
   selectedIds: number[] = [];
   targeting: CommandBinding | null = null;
   placementRotation = 0;
@@ -117,50 +122,89 @@ export class SettlementHud {
   }
   placement(message: string | null) {
     if (this.mode)
-      this.hint.textContent = `${message ?? "Click to order construction."} R / Shift+R: rotate (${this.placementRotation}°). Escape cancels.`;
+      this.hint.textContent = `${message ?? "Click to order construction."} ${keyLabel(shortcuts.key("placement.rotate"))} / ${keyLabel(shortcuts.key("placement.reverse"))}: rotate (${this.placementRotation}°). ${keyLabel(shortcuts.key("target.cancel"))} cancels.`;
+  }
+  private groupInput(slot:number,operation:"assign"|"add"|"recall"){
+    if(!this.current||this.readOnly)return;
+    const owned=new Set(this.current.entities.filter(e=>e.owner===this.owner&&!e.remembered&&content.get(e.definition).behaviors.playerControl).map(e=>e.id));
+    if(operation==="recall"){
+      const result=this.controlGroups.recall(slot,performance.now());
+      if(result.ids.length){this.setSelection(result.ids);if(result.focus)this.hooks.focus(result.ids[0],result.ids);}
+    }else this.controlGroups.assign(slot,this.selectedIds.filter(id=>owned.has(id)),operation==="add");
+    this.renderGroups(this.current);
+  }
+  private renderGroups(view:SettlementView){
+    const owned=new Set(view.entities.filter(e=>e.owner===this.owner&&!e.remembered&&content.get(e.definition).behaviors.playerControl).map(e=>e.id));
+    this.controlGroups.prune(owned);
+    const signature=JSON.stringify([Array.from({length:10},(_,i)=>this.controlGroups.members((i+1)%10)),this.selectedIds]);
+    if(signature===this.groupSignature)return;this.groupSignature=signature;this.groupBar.replaceChildren();
+    for(let i=0;i<10;i++){
+      const slot=(i+1)%10,ids=this.controlGroups.members(slot),button=document.createElement("button");button.type="button";
+      const label=keyLabel(shortcuts.key(`group.${slot}.recall`));
+      button.setAttribute("aria-label",`Control group ${slot}, ${ids.length} members`);
+      button.setAttribute("aria-pressed",String(ids.length>0&&ids.length===this.selectedIds.length&&ids.every(id=>this.selectedIds.includes(id))));
+      const key=document.createElement("kbd");key.textContent=label||"—";
+      const count=document.createElement("span");count.textContent=ids.length?String(ids.length):"·";button.append(key,count);
+      Object.assign(button.dataset,{tipName:`Control group ${slot}`,tipDescription:`${ids.length} members. ${keyLabel(shortcuts.key(`group.${slot}.assign`))}: assign. ${keyLabel(shortcuts.key(`group.${slot}.add`))}: add selection. Double press or double click to focus.`,tipKey:label});
+      button.onclick=e=>this.groupInput(slot,e.ctrlKey?"assign":e.shiftKey?"add":"recall");this.groupBar.append(button);
+    }
+    this.groupBar.hidden=this.readOnly;
+  }
+  private alerts:{x:number;y:number;tick:number}[]=[];
+  private alertCursor=0;
+  private previousAlerts:SettlementView|null=null;
+  private recordAlerts(view:SettlementView){
+    const previous=this.previousAlerts;this.previousAlerts=view;if(!previous||view.revision<previous.revision){this.alerts=[];return;}
+    if(previous===view)return;const previousEntities=new Map(previous.entities.map(e=>[e.id,e]));
+    for(const entity of view.entities){if(entity.owner!==this.owner||entity.remembered)continue;
+      const old=previousEntities.get(entity.id);
+      const damage=old?.hp!=null&&entity.hp!=null&&entity.hp<old.hp;
+      const completed=old?.construction&&!entity.construction;
+      const born=!old&&!!entity.unit;
+      if((damage||completed||born)&&!this.alerts.some(a=>view.revision-a.tick<120&&Math.hypot(a.x-entity.x,a.y-entity.y)<10)){
+        this.alerts.unshift({x:entity.x,y:entity.y,tick:view.revision});this.alerts.length=Math.min(8,this.alerts.length);this.alertCursor=0;
+      }
+    }
+  }
+  private cycleCursor=new Map<string,number>();
+  private heroPress:{id:number;time:number}|null=null;
+  private cycle(key:string,ids:number[],select=true){
+    if(!ids.length)return;const old=this.cycleCursor.get(key),i=old===undefined?-1:ids.indexOf(old),id=ids[(i+1)%ids.length];
+    this.cycleCursor.set(key,id);if(select)this.setSelection([id]);this.hooks.focus(id);
   }
   private readonly onKey = (e: KeyboardEvent) => {
-    if (
-      e.repeat ||
-      e.ctrlKey ||
-      e.altKey ||
-      e.metaKey ||
-      (e.target instanceof HTMLElement &&
-        (e.target.matches("input,textarea,select") ||
-          e.target.isContentEditable ||
-          e.target.closest("dialog[open]")))
-    )
-      return;
-    if (e.key === "Escape" && this.targeting) {
-      e.preventDefault();
-      this.clearMode();
-      this.tooltips.hide();
-      return;
+    if(inputCaptured(e)||e.repeat)return;
+    for(let slot=0;slot<10;slot++)for(const operation of ["assign","add","recall"] as const){
+      if(shortcuts.matches(`group.${slot}.${operation}`,e)){e.preventDefault();this.groupInput(slot,operation);return;}
     }
-    if (this.mode && e.key.toLowerCase() === "r") {
-      e.preventDefault();
-      this.placementRotation =
-        (this.placementRotation + (e.shiftKey ? 270 : 90)) % 360;
-      this.placement(null);
-      this.hooks.mode();
-      return;
+    const view=this.current;
+    if(shortcuts.matches('camera.alert',e)){e.preventDefault();const a=this.alerts[this.alertCursor%this.alerts.length];if(a){this.hooks.lookAt?.(a.x,a.y);this.alertCursor++;}return;}
+    for(let n=1;n<=3;n++)if(shortcuts.matches(`hero.${n}`,e)){
+      e.preventDefault();if(!view)return;const hero=heroShortcuts(view,this.owner,content)[n-1];if(!hero?.available)return;
+      this.setSelection([hero.id]);const time=performance.now();if(this.heroPress?.id===hero.id&&time-this.heroPress.time<=350)this.hooks.focus(hero.id);this.heroPress={id:hero.id,time};return;
     }
-    if (e.key === "Home") {
-      e.preventDefault();
-      this.hooks.home();
-      return;
+    if(view&&(shortcuts.matches('selection.worker',e)||shortcuts.matches('selection.workerAlt',e))){
+      e.preventDefault();this.cycle('worker',view.entities.filter(v=>v.owner===this.owner&&v.unit&&!v.unit.contained&&content.get(v.definition).behaviors.work&&v.control&&!v.control.order&&!v.control.job&&!v.control.orderQueue.length&&!v.control.employment&&!v.control.pendingMove&&!v.unit.cargo&&!v.control.releasing&&!v.control.stunned).map(v=>v.id));return;
     }
-    const binding =
-      shortcutCommand(this.menuEntries, this.page, e.key) ??
-      this.bindings.find(
-        (b) =>
-          ["move", "attack", "stop"].includes(b.type) &&
-          b.hotkey === e.key.toUpperCase(),
-      );
-    if (binding) {
-      e.preventDefault();
-      this.activate(binding);
+    if(view&&shortcuts.matches('camera.hall',e)){
+      e.preventDefault();this.cycle('hall',view.entities.filter(v=>v.owner===this.owner&&content.get(v.definition).behaviors.storage?.dropoff&&!v.construction).map(v=>v.id),false);return;
     }
+    if(shortcuts.matches('selection.next',e)||shortcuts.matches('selection.previous',e)){
+      e.preventDefault();if(!view)return;
+      const types=[...new Set(this.selectedIds.map(id=>view.entities.find(v=>v.id===id)?.definition).filter(Boolean))].sort();
+      if(types.length>1){const at=types.indexOf(view.entities.find(v=>v.id===this.selectedIds[0])?.definition),next=types[(at+(shortcuts.matches('selection.previous',e)?types.length-1:1))%types.length];this.setSelection([...this.selectedIds.filter(id=>view.entities.find(v=>v.id===id)?.definition===next),...this.selectedIds.filter(id=>view.entities.find(v=>v.id===id)?.definition!==next)]);}return;
+    }
+    for(let slot=0;slot<6;slot++)if(shortcuts.matches(`inventory.${slot}`,e)){
+      e.preventDefault();if(view){const entry=inventoryCard(view,this.selectedIds[0],this.owner,content,this.readOnly)[slot];if(entry?.use)this.hooks.action(entry.use);}return;
+    }
+    if (shortcuts.matches('target.cancel',e) && this.targeting) {e.preventDefault();this.clearMode();this.tooltips.hide();return;}
+    if (this.mode && (shortcuts.matches('placement.rotate',e)||shortcuts.matches('placement.reverse',e))) {
+      e.preventDefault();this.placementRotation=(this.placementRotation+(shortcuts.matches('placement.reverse',e)?270:90))%360;this.placement(null);this.hooks.mode();return;
+    }
+    if (shortcuts.matches('camera.selection',e)) {e.preventDefault();if(this.selectedIds.length)this.hooks.focus(this.selectedIds[0],this.selectedIds);else this.hooks.home();return;}
+    const entries=[...commandPage(this.menuEntries,this.page).map(s=>s.binding),...this.bindings.filter(b=>['move','attack','stop','hold','patrol'].includes(b.type))];
+    const binding=commandShortcut(entries,e);
+    if(binding){e.preventDefault();this.activate(binding,e.shiftKey);}
   };
   constructor(
     host: HTMLElement,
@@ -169,7 +213,8 @@ export class SettlementHud {
       action: (action: Action) => void;
       mode: () => void;
       home: () => void;
-      focus: (id: number) => void;
+      focus: (id: number, group?: readonly number[]) => void;
+      lookAt?: (x:number,y:number)=>void;
     },
   ) {
     this.owner = owner === null ? "none" : slotOwner(owner);
@@ -230,17 +275,21 @@ export class SettlementHud {
     this.grid.className = "rts-command-grid declarative-commands";
     this.pages.className = "rts-command-pages";
     actions.append(this.stock, this.grid, this.pages);
-    dock.append(map, selection, actions);
+    this.groupBar.className="rts-control-groups";this.groupBar.setAttribute("aria-label","Army control groups");
+    dock.append(map, selection, actions,this.groupBar);
     this.root.append(this.heroes.root, dock);
     host.append(this.root);
     this.tooltips = new CommandTooltips(host);
     window.addEventListener("keydown", this.onKey);
+    window.addEventListener(SHORTCUTS_CHANGED,this.bindingsChanged);
     Object.assign(this.minimapHost.dataset, {
       tipName: "Tactical map",
       tipDescription:
         "Click or drag to move the camera. Bright ground is visible; dim ground is remembered.",
     });
   }
+  saveControls(){return Array.from({length:10},(_,i)=>[...this.controlGroups.members(i)]);}
+  restoreControls(groups:readonly (readonly number[])[]=[]){this.controlGroups.clear();groups.forEach((ids,i)=>this.controlGroups.assign(i,ids));this.groupSignature='';this.previousAlerts=null;this.alerts=[];this.current=null;this.setSelection([]);}
   setMapName(name: string) {
     this.mapLabel.textContent = name;
   }
@@ -251,24 +300,25 @@ export class SettlementHud {
     this.tooltips.hide();
     if (this.current) this.update(this.current, true);
   }
-  private activate(binding: CommandEntry) {
+  private activate(binding: CommandEntry, append=false) {
     if (!binding.enabled) { this.showError(binding.reason ?? "Command unavailable"); return; }
     if ("destination" in binding) {
       this.navigate(binding.destination);
       return;
     }
     if (binding.immediate) {
-      this.hooks.action(binding.immediate);
+      this.hooks.action(append&&binding.immediate.type==='hold'?{...binding.immediate,append:true}:binding.immediate);
       return;
     }
     this.clearMode();
     this.targeting = binding;
-    this.hint.textContent = `${binding.name}: choose a ${binding.type === "build" ? "building location" : binding.type === "attack" ? "target or ground location" : "ground location"}. Escape cancels.`;
+    this.hint.textContent = `${binding.name}: choose a ${binding.type === "build" ? "building location" : binding.type === "attack" ? "target or ground location" : "ground location"}. ${keyLabel(shortcuts.key("target.cancel"))} cancels.`;
     if (this.mode) this.placement(null);
     this.hooks.mode();
   }
   update(view: SettlementView, force = false) {
     if (this.current === view && !force) return;
+    this.recordAlerts(view);
     this.current = view;
     const valid = new Set(
       view.entities
@@ -287,6 +337,7 @@ export class SettlementHud {
       this.clearMode();
     }
     this.heroes.update(heroShortcuts(view, this.owner, content), this.selectedIds);
+    this.renderGroups(view);
     this.root.classList.toggle(
       "has-unit-selection",
       this.selectedIds.some(
@@ -336,7 +387,7 @@ export class SettlementHud {
         button.style.gridColumn = String(column);
         button.style.gridRow = String(row);
         button.innerHTML = iconArt(b.icon);
-        if (b.hotkey) { const key = document.createElement("kbd"); key.textContent = b.hotkey; button.append(key); }
+        if (shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))) { const key = document.createElement("kbd"); key.textContent = keyLabel(shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))); button.append(key); }
         button.dataset.commandId = b.id;
         const cooldown = document.createElement("span");
         cooldown.className = "rts-command-cooldown";
@@ -357,11 +408,11 @@ export class SettlementHud {
             .filter(Boolean)
             .join("\n"),
           tipCosts: JSON.stringify(b.costs),
-          tipKey: b.hotkey ?? "",
+          tipKey: keyLabel(shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))),
         });
-        button.onclick = () => {
+        button.onclick = (event) => {
           const current = this.menuEntries.find((entry) => entry.id === b.id);
-          if (current) this.activate(current);
+          if (current) this.activate(current,event.shiftKey);
         };
         this.grid.append(button);
       }
@@ -634,6 +685,7 @@ export class SettlementHud {
         }
         Object.assign(button.dataset, {
           tipName: item.name,
+          tipKey:item.use?keyLabel(shortcuts.key(`inventory.${item.slot}`)):"",
           tipDescription:
             (item.tier ? `Tier ${item.tier}. ` : "") + item.description + (item.charges !== undefined ? ` ${item.charges} charges remaining.` : "") + (item.cooldown ? ` Cooldown: ${item.cooldown}s.` : "") +
             (item.drop
@@ -758,6 +810,7 @@ export class SettlementHud {
         badge.setAttribute("aria-label", `${item.name}: ${row.available} available`);
         Object.assign(badge.dataset, {
           tipName: item.name,
+
           tipDescription: `${item.description}\n${row.available} available · ${row.reserved} reserved\n${row.stored} stored · ${row.inTransit} being carried`,
         });
         this.tooltips.refresh(badge);
@@ -816,6 +869,7 @@ export class SettlementHud {
   destroy() {
     clearTimeout(this.errorTimer);
     window.removeEventListener("keydown", this.onKey);
+    window.removeEventListener(SHORTCUTS_CHANGED,this.bindingsChanged);
     this.tooltips.destroy();
     this.root.remove();
   }

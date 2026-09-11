@@ -25,7 +25,7 @@ describe('declarative marshal abilities',()=>{
   enemy.hp=20;const hp=hero.hp, mana=hero.spellcasting!.mana;
   expect(g.command('player.1',{type:'cast',actor:hero.id,ability:id('faultline'),point:{x:226,y:230}}).accepted).toBe(true);
   expect(hero.spellcasting!.mana).toBe(mana-60);expect(g.spells.resolve()).toEqual([]);expect(enemy.hp).toBe(20);
-  run(g,20);expect(g.context.get(enemy.id)).toBeUndefined();expect(hero.progression!.experience).toBeGreaterThan(0);expect(hero.hp).toBe(hp);
+  run(g,hero.spellcasting!.pending!.resolveTick-g.state.tick);expect(g.context.get(enemy.id)).toBeUndefined();expect(hero.progression!.experience).toBeGreaterThan(0);expect(hero.hp).toBe(hp);
   expect(g.spells.cast(hero,id('faultline'),{x:226,y:230})).toMatch(/cooling/);
  });
  it('rallies allies only, does not stack identical buffs, and expires defensive and stun effects',()=>{
@@ -57,7 +57,7 @@ describe('declarative marshal abilities',()=>{
  it('does not reveal spell targets in explored but currently hidden terrain',()=>{
   const {g,hero,enemy}=setup();enemy.x=hero.x;enemy.y=hero.y;
   g.spells.learn(hero,id('faultline'));
-  const point={x:hero.x+10,y:hero.y};
+  const point={x:hero.x+10,y:hero.y};hero.rotation=90;
   const knowledge=g.observation.snapshot(),observer=knowledge.find(m=>m.owner==='player.2')!;
   observer.cells.fill(1);observer.cells[g.spatial.cell(hero)]=2;g.observation.restore(knowledge);
   expect(g.spells.cast(hero,id('faultline'),point)).toBeNull();

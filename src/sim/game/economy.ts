@@ -213,6 +213,7 @@ export class Economy {
       w.unit.job = null;
       w.unit.route = [];
       w.unit.goal = null;
+      delete w.unit.detour;
     }
     const i = this.s.jobs.indexOf(job);
     if (i >= 0) this.s.jobs.splice(i, 1);
@@ -819,6 +820,7 @@ export class Economy {
         u.contained = b.id;
         u.route = [];
         u.goal = null;
+        delete u.detour;
         b.production!.status = "Training";
         active.progress++;
         if (active.progress >= creation.workTicks) this.completeUnit(b);
@@ -973,6 +975,9 @@ export class Economy {
     if (!u || u.contained || u.release) return false;
     u.orderQueue = [];
     delete u.attack;
+    delete u.pursuit;
+    delete u.detour;
+    delete u.lastMovedTick;
     u.idle = null;
     const workplace = this.c.get(u.employment);
     if (workplace?.production) {

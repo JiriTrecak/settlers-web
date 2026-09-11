@@ -40,6 +40,9 @@ export const actionSchema = z.discriminatedUnion("type", [
     })
     .strict(),
   z.object({ type: z.literal("stop"), actors }).strict(),
+  z.object({type:z.literal("hold"),actors,append:z.boolean().optional()}).strict(),
+  z.object({type:z.literal("patrol"),actors,destination:pointSchema,append:z.boolean().optional()}).strict(),
+  z.object({type:z.literal("follow"),actors,target:actor,append:z.boolean().optional()}).strict(),
   z
     .object({
       type: z.literal("build"),

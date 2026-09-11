@@ -1,3 +1,5 @@
+import {heading,turnDifference} from "./facing";
+import {TICK_MS} from "../../shared/match/match";
 import { areaDamageScale, stunDuration } from './damage';
 import {spellAreaContains} from '../../content/spellArea';
 import type {Observation} from "./observation";
@@ -6,7 +8,7 @@ import {isStunned} from "./effects";
 import type {GameContext} from './context';
 import type {Combat,DamageHit} from './combat';
 import type {Entity,Point} from './state';
-import {precise} from './motion';
+import {fixed,motionCell,precise} from './motion';
 import {distance2} from './spatial';
 
 export class Spellcasting {
@@ -21,6 +23,13 @@ export class Spellcasting {
   if(this.c.stats(e).level<rank.requiredLevel)return `Requires level ${rank.requiredLevel}`;
   state.learned[id]=(state.learned[id]??0)+1;return null;
  }
+ cancel(e:Entity):void {
+  const state=e.spellcasting,pending=state?.pending;if(!state || !pending)return;
+  const rank=this.c.registry.rules.spells[pending.ability].ranks[pending.rank-1];
+  state.mana=Math.min(this.c.stats(e).maxMana,state.mana+rank.mana);
+  delete state.cooldowns[pending.ability];state.pending=null;
+  this.c.state.visuals=this.c.state.visuals.filter(v=>!(v.phase==='cast'&&v.ability===pending.ability&&v.origin.x===e.x&&v.origin.y===e.y));
+ }
  cast(e:Entity,id:string,point?:Point):string|null {
   const state=e.spellcasting,policy=this.c.def(e).behaviors.spellcasting,spell=this.c.registry.rules.spells[id];
   if(!state || !policy?.abilities.includes(id) || !spell)return 'Cannot cast this ability';
@@ -30,19 +39,22 @@ export class Spellcasting {
   if((state.cooldowns[id]??0)>this.c.state.tick)return 'Ability is cooling down';
   if(state.mana<rank.mana)return 'Not enough mana';
   if(spell.target==='point' && !point)return 'Choose a ground target';
-  const target=spell.target==='self'?{x:e.x,y:e.y}:point!;
+  const target=spell.target==='self'?{x:precise(e).x,y:precise(e).y}:point!;
   if(distance2(precise(e),target)>rank.range**2 && spell.target==='point')return 'Target is out of range';
   state.mana-=rank.mana;state.cooldowns[id]=this.c.state.tick+Math.max(1, Math.round(rank.cooldownTicks*(1000-this.c.stats(e).cooldownReductionPermille)/1000));
-  state.pending={ability:id,rank:learned,point:target,resolveTick:this.c.state.tick+rank.castTicks};
-  this.cue(e,id,learned,target,"cast",rank.castTicks);
+  const turnTicks=spell.target==='self'?0:Math.ceil(Math.abs(turnDifference(e.rotation,heading(e,target)))/((this.c.def(e).behaviors.movement?.turnRate??720)*TICK_MS/1000));
+  const startTick=this.c.state.tick+turnTicks;
+  state.pending={ability:id,rank:learned,point:target,startTick,resolveTick:startTick+rank.castTicks};
+  if(!turnTicks)this.cue(e,id,learned,target,"cast",rank.castTicks);
   e.unit!.order=null;e.unit!.target=null;e.unit!.route=[];e.unit!.goal=null;e.unit!.idle=null;
-  if(target.x!==e.x || target.y!==e.y)e.rotation=Math.atan2(target.x-e.x,target.y-e.y)*180/Math.PI;
+  delete e.unit!.attack;
+  delete e.unit!.detour;
   return null;
  }
  private cue(caster:Entity,ability:string,rank:number,target:Point,phase:VisualCue['phase'],durationTicks:number){
-  const origin={x:caster.x,y:caster.y};
+  const position=precise(caster),origin={x:position.x,y:position.y};
   const viewers=Object.keys(this.c.state.objectives).filter(owner=>owner===caster.owner ||
-    (this.vision.visible(owner as Entity['owner'],caster) && this.vision.currentlyVisible(owner as Entity['owner'],[this.c.spatial.cell(target)]))) as Entity['owner'][];
+    (this.vision.visible(owner as Entity['owner'],caster) && this.vision.currentlyVisible(owner as Entity['owner'],[motionCell(fixed(target),this.c.spatial.size)]))) as Entity['owner'][];
   this.c.state.visuals.push({id:this.c.state.nextVisual++,tick:this.c.state.tick,ability,rank,phase,origin,target,durationTicks,viewers});
  }
  tick(){
@@ -52,6 +64,8 @@ export class Spellcasting {
    const state=e.spellcasting,policy=this.c.def(e).behaviors.spellcasting;
    if(state&&policy){
     if(isStunned(e,this.c.registry))state.pending=null;
+    const pending=state.pending;
+    if(pending?.startTick===this.c.state.tick)this.cue(e,pending.ability,pending.rank,pending.point,"cast",this.c.registry.rules.spells[pending.ability].ranks[pending.rank-1].castTicks);
    }
   }
  }

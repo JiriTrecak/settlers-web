@@ -19,3 +19,36 @@ it('batches authoritative volleys, uses their impact time, and reuses buffers',(
  expect(fx.root.getObjectByName('projectiles.arrow')).toBe(arrows);expect(arrows.count).toBe(1);
  fx.dispose();expect(parent.children).toHaveLength(0);
 });
+
+it('captures the bow at release once, follows the observed target and retires at authoritative impact',()=>{
+ const fx=new ProjectileEffects(new Group()),field=new HeightField();
+ const shot:GameState['missiles'][number]={id:1,source:1,target:2,definition:'unit.ants.archer',owner:'player.1',origin:{x:10,y:10},destination:{x:20,y:10},launched:100,impact:120,damage:10,damageType:'piercing',viewers:['player.1'],resolved:false};
+ const bow=new Vector3(10.4,1.1,10.1);let calls=0;
+ const resolve=()=>{calls++;return bow};
+ fx.update(99,[shot],field,resolve);expect(calls).toBe(0);expect(fx.root.children).toHaveLength(0);
+ fx.update(100,[shot],field,resolve);
+ const mesh=fx.root.getObjectByName('projectiles.arrow') as InstancedMesh;
+ const position=()=>{const m=new Matrix4();mesh.getMatrixAt(0,m);return new Vector3().setFromMatrixPosition(m)};
+ expect(position().distanceTo(bow)).toBeLessThan(.00001);
+ bow.set(99,99,99);shot.destination={x:22,y:12};fx.update(110,[shot],field,resolve);
+ expect(calls).toBe(1);expect(position().x).toBeCloseTo(16.2);expect(position().z).toBeCloseTo(11.05);
+ // Shooter removal cannot alter an already sampled origin.
+ fx.update(119.999,[shot],field,()=>undefined);
+ expect(position().distanceTo(new Vector3(22,field.walkSample(22,12)+1,12))).toBeLessThan(.002);
+ fx.update(120,[shot],field,resolve);expect(mesh.count).toBe(0);expect((fx as any).origins.size).toBe(0);
+ fx.dispose();
+});
+
+it('never samples a moved shooter for late or newly revealed flights and clears hidden origins',()=>{
+ const fx=new ProjectileEffects(new Group()),field=new HeightField();
+ const shot:GameState['missiles'][number]={id:1,source:1,target:2,definition:'unit.ants.archer',owner:'player.1',origin:{x:10,y:10},destination:{x:20,y:10},launched:100,impact:120,damage:10,damageType:'piercing',viewers:['player.1'],resolved:false};
+ let calls=0;const resolve=()=>{calls++;return new Vector3(99,99,99)};
+ fx.update(105,[shot],field,resolve);expect(calls).toBe(0);
+ const mesh=fx.root.getObjectByName('projectiles.arrow') as InstancedMesh,matrix=new Matrix4();mesh.getMatrixAt(0,matrix);
+ expect(new Vector3().setFromMatrixPosition(matrix).x).toBeCloseTo(12.5);
+ fx.update(106,[],field,resolve);expect(mesh.count).toBe(0);expect((fx as any).origins.size).toBe(0);
+ fx.update(107,[shot],field,resolve);expect(calls).toBe(0);
+ fx.update(140,[{...shot,launched:140,impact:160}],field,()=>undefined);
+ mesh.getMatrixAt(0,matrix);expect(new Vector3().setFromMatrixPosition(matrix).x).toBe(10);
+ fx.dispose();expect((fx as any).origins.size).toBe(0);
+});

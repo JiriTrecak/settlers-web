@@ -1,3 +1,4 @@
+import {keyboardControls} from './keyboardControls';
 import {SHADOW_MODES,readShadowMode,setShadowMode,type ShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_SCALES,readResolutionScale,setResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
 /** Shared by main-menu and in-game settings; applies immediately. */
@@ -20,5 +21,6 @@ export function graphicsControls():HTMLElement {
  shadows.value=readShadowMode();shadows.onchange=()=>setShadowMode(shadows.value as ShadowMode);
  shadowLabel.append(shadows);group.append(shadowLabel);
  const shadowNote=document.createElement('p');shadowNote.className='canopy-settings-status';shadowNote.textContent='Filtered shadows use sharper edges and skip the soft-shadow blur passes. Applies immediately and is saved.';group.append(shadowNote);
+ group.append(keyboardControls());
  return group;
 }

@@ -1,11 +1,11 @@
 import { chatText } from "../shared/chat/chat";
+import {ConnectionLatency,connectionDelay} from './latency';
 import { validAction } from "../shared/types/types";
 /**
  * One MatchHost room: lobby until Start, then the lockstep Room.
  * HTTP/WS bind `ingest` / `bind`. `discard` kills a room (tests + `/end`). Tests call the same methods with fake sends.
  */
 import {
-  COMMAND_DELAY,
   CHECKSUM_EVERY,
   TICK_MS,
   namedMatch,
@@ -28,6 +28,7 @@ type Member = {
   role: "player" | "spectator";
   player?: number;
   send: ((msg: ServerMsg) => void) | null;
+  latency: ConnectionLatency;
 };
 
 export class HostedMatch {
@@ -47,7 +48,7 @@ export class HostedMatch {
   private lastSave: unknown = null;
   private chatTimes = new Map<string, number>();
 
-  constructor(draft: CreateRoom, id: string = crypto.randomUUID()) {
+  constructor(draft: CreateRoom, id: string = crypto.randomUUID(), private readonly now=()=>performance.now()) {
     this.id = id;
     this.name = draft.name;
     this.mapId = draft.mapId;
@@ -60,14 +61,16 @@ export class HostedMatch {
       role: "player",
       player: 0,
       send: null,
+      latency: new ConnectionLatency(),
     });
   }
 
   view(): RoomView {
-    const seats: { player: number; name: string | null }[] = [];
+    const seats: RoomView['slots'] = [];
     for (let i = 0; i < this.slotCount; i++) {
       const m = [...this.members.values()].find((x) => x.player === i);
-      seats.push({ player: i, name: m?.name ?? null });
+      const rtt=m?.latency.roundTrip(this.now());
+      seats.push({ player: i, name: m?.name ?? null, ...(rtt!=null?{roundTripMs:rtt}:{}) });
     }
     return {
       id: this.id,
@@ -80,6 +83,7 @@ export class HostedMatch {
         (m) => m.role === "spectator",
       ).length,
       tick: this.mailbox?.tick,
+      inputDelayMs: (this.config?.delay ?? this.chooseDelay())*TICK_MS,
     };
   }
 
@@ -105,6 +109,7 @@ export class HostedMatch {
         name: guestName,
         role: "spectator",
         send: null,
+        latency: new ConnectionLatency(),
       });
       this.fanout({ type: "room", room: this.view() });
       return { token: t, you: { role: "spectator", name: guestName } };
@@ -125,6 +130,7 @@ export class HostedMatch {
       role: "player",
       player,
       send: null,
+      latency: new ConnectionLatency(),
     });
     this.fanout({ type: "room", room: this.view() });
     return { token: t, you: { role: "player", player, name: guestName } };
@@ -165,7 +171,7 @@ export class HostedMatch {
       mapId: this.mapId,
       mapRevision: this.mapRevision,
       seed: seedU32(),
-      delay: COMMAND_DELAY,
+      delay: this.chooseDelay(),
       checksumEvery: CHECKSUM_EVERY,
       tickMs: TICK_MS,
       slots,
@@ -235,7 +241,7 @@ export class HostedMatch {
     if (auth !== this.hostToken) return { error: "not_host" };
     if (this.state !== "playing" || !this.config)
       return { error: "not_playing" };
-    const config: MatchConfig = { ...this.config, seed: seedU32() };
+    const config: MatchConfig = { ...this.config, seed: seedU32(), delay:this.chooseDelay() };
     this.config = config;
     this.lastSave = null;
     this.hashes.clear();
@@ -256,8 +262,10 @@ export class HostedMatch {
     const m = this.members.get(auth);
     if (!m) return { error: "bad_token" };
     m.send = send;
+    m.latency.reset();
     const you = this.you(auth)!;
     send({ type: "welcome", you, room: this.view() });
+    this.probeMember(m);
     if (this.state === "playing" && this.config) {
       send({
         type: "start",
@@ -277,6 +285,7 @@ export class HostedMatch {
     const m = this.members.get(auth);
     if (!m) return;
     m.send = null;
+    m.latency.reset();
     if (this.state === "playing" && m.role === "player" && m.player != null) {
       this.mailbox?.drop(m.player);
     }
@@ -285,6 +294,13 @@ export class HostedMatch {
   ingest(auth: string, msg: ClientMsg): void {
     const m = this.members.get(auth);
     if (!m) return;
+    if(msg.type==='latencyReply'){
+      if(m.send&&typeof msg.id==='string'&&m.latency.reply(msg.id,this.now())){
+        this.probeMember(m);
+        if(this.state==='waiting')this.fanout({type:'room',room:this.view()});
+      }
+      return;
+    }
     if (msg.type === "chat") {
       if (!m.send || this.state !== "playing") return;
       const text = chatText(msg.text), now = Date.now();
@@ -380,6 +396,20 @@ export class HostedMatch {
     );
   }
 
+  /** Transport maintenance only; never advances the game or changes a live delay. */
+  pulse():void {
+    if(this.state!=='waiting'&&this.state!=='playing')return;
+    for(const m of this.members.values())this.probeMember(m);
+  }
+  private probeMember(m:Member){
+    if(m.role!=='player'||!m.send)return;
+    const id=m.latency.probe(this.now());
+    if(id)m.send({type:'latencyProbe',id});
+  }
+  private chooseDelay(){
+    return connectionDelay([...this.members.values()].filter(m=>m.role==='player').map(m=>m.latency.roundTrip(this.now())));
+  }
+
   private judgeHash(tick: number, at: Map<number, number>): void {
     const hashes = [...at.entries()].map(([player, checksum]) => ({
       player,
@@ -403,6 +433,7 @@ export class HostedMatch {
 export class MatchHost {
   private readonly rooms = new Map<string, HostedMatch>();
   private nextId = 1;
+  pulse(){for(const room of this.rooms.values())room.pulse();}
 
   create(draft: CreateRoom): {
     token: string;

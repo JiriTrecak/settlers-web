@@ -1,3 +1,4 @@
+import {shortcuts,inputCaptured,SHORTCUTS_CHANGED} from '../../shared/input/shortcuts';
 /**
  * RTS drag selection, arrow-key pan and wheel zoom. Editor also orbits (Alt-LMB, MMB, RMB).
  * Play leaves `orbit` off so the perspective stays fixed. Home / Gamecam is an editor hook.
@@ -11,7 +12,7 @@ const EDGE_PX = 20; // CSS pixels: independent of render resolution / Retina sca
 
 export type MapInputHooks = {
   onChanged(): void;
-  onClick?(clientX: number, clientY: number, shift: boolean): void;
+  onClick?(clientX: number, clientY: number, shift: boolean, sameType?:boolean): void;
   onRightClick?(clientX: number, clientY: number, shift: boolean): void;
   rts?: boolean;
   onSelectArea?(rect: {left:number;top:number;right:number;bottom:number}, shift:boolean): void;
@@ -40,6 +41,7 @@ type Drag = "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
   private readonly zoomMomentum = new ZoomMomentum();
+  private lastClick:{x:number;y:number;time:number}|null=null;
   private startX=0;
   private startY=0;
   private readonly selectionBox=document.createElement('div');
@@ -50,8 +52,9 @@ export class MapInput {
   private readonly onPointerOut = (e: PointerEvent) => {
     if (!e.relatedTarget) this.edgePointer = null;
   };
-  private readonly onBlur=()=>{this.zoomMomentum.reset();this.keys.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
+  private readonly onBlur=()=>{this.zoomMomentum.reset();this.keys.clear();this.panCodes.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
   private readonly onContext=(e:Event)=>e.preventDefault();
+  private readonly panCodes=new Map<string,string>();
   private readonly keys = new Set<string>();
   private drag: Drag | null = null;
   private moved = 0;
@@ -76,7 +79,8 @@ export class MapInput {
     this.selectionBox.className='rts-selection-box';this.selectionBox.hidden=true;
     if(hooks.rts)document.body.append(this.selectionBox);
     this.onKeyDown = (e) => {
-      if (typing(e)) return;
+      if (typing(e)||inputCaptured(e)) return;
+      if(this.hooks.rts){for(const dir of ["left","right","up","down","zoomIn","zoomOut"]){if(shortcuts.matches(`camera.${dir}`,e)){e.preventDefault();this.keys.add(`arrow${dir}`);this.panCodes.set(e.code,`arrow${dir}`);return;}}return;}
       if (e.code === "Space") {
         e.preventDefault();
         this.keys.add(" ");
@@ -95,6 +99,7 @@ export class MapInput {
       this.keys.add(e.key.toLowerCase());
     };
     this.onKeyUp = (e) => {
+      const pan=this.panCodes.get(e.code);if(pan){this.keys.delete(pan);this.panCodes.delete(e.code);}
       if (e.code === "Space") this.keys.delete(" ");
       this.keys.delete(e.key.toLowerCase());
     };
@@ -102,6 +107,7 @@ export class MapInput {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
       if (this.hooks.rts && e.button === 2) {
         this.drag = "command";
+        this.hooks.onRightClick?.(e.clientX,e.clientY,e.shiftKey);
         this.canvas.setPointerCapture(e.pointerId);
         return;
       }
@@ -167,13 +173,12 @@ export class MapInput {
         if (e.button !== 2) return;
         this.drag = null;
         if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
-        this.hooks.onRightClick?.(e.clientX, e.clientY, e.shiftKey);
         return;
       }
       if(this.drag==='select'){
         this.drag=null;this.selectionBox.hidden=true;
         if(this.canvas.hasPointerCapture(e.pointerId))this.canvas.releasePointerCapture(e.pointerId);
-        if(this.moved<CLICK_PX)this.hooks.onClick?.(e.clientX,e.clientY,e.shiftKey);
+        if(this.moved<CLICK_PX){const time=performance.now(),last=this.lastClick,same=e.ctrlKey||!!(last&&time-last.time<350&&Math.hypot(last.x-e.clientX,last.y-e.clientY)<6);this.lastClick={x:e.clientX,y:e.clientY,time};this.hooks.onClick?.(e.clientX,e.clientY,e.shiftKey,same);}
         else this.hooks.onSelectArea?.({left:Math.min(this.startX,e.clientX),top:Math.min(this.startY,e.clientY),right:Math.max(this.startX,e.clientX),bottom:Math.max(this.startY,e.clientY)},e.shiftKey);
         return;
       }
@@ -218,6 +223,7 @@ export class MapInput {
       this.zoomMomentum.push(pixels);
     };
     window.addEventListener("blur",this.onBlur);
+    window.addEventListener(SHORTCUTS_CHANGED,this.onBlur);
     if (hooks.rts) {
       // Track the whole viewport so HUD overlays do not create holes in the edge band.
       window.addEventListener("pointermove", this.onEdgePointer);
@@ -234,7 +240,9 @@ export class MapInput {
   }
 
   tick(dtMs: number): void {
-    if (document.documentElement.classList.contains("game-chat-open")) { this.onBlur(); return; }
+    if (document.querySelector("dialog[open]") || document.documentElement.classList.contains("game-chat-open")) { this.onBlur(); return; }
+    const keyZoom=(this.keys.has("arrowzoomOut")?1:0)-(this.keys.has("arrowzoomIn")?1:0);
+    if(keyZoom)this.zoomMomentum.push(keyZoom*Math.min(dtMs,50)*.7);
     const factor = this.zoomMomentum.step(dtMs);
     if (factor !== 1) {
       const before = this.camera.game ? this.camera.distance : this.camera.zoom;
@@ -272,6 +280,7 @@ export class MapInput {
   destroy(): void {
     this.selectionBox.remove();
     window.removeEventListener("blur",this.onBlur);
+    window.removeEventListener(SHORTCUTS_CHANGED,this.onBlur);
     window.removeEventListener("pointermove", this.onEdgePointer);
     window.removeEventListener("pointerout", this.onPointerOut);
     this.canvas.removeEventListener("contextmenu",this.onContext);

@@ -1,3 +1,4 @@
+import {UnitIndex} from "./unitIndex";
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import {
@@ -21,6 +22,12 @@ export const point = (i: number, size = 256): Point => ({
 export const distance2 = (a: Point, b: Point) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 export class Spatial {
+  private unitIndex:UnitIndex|null=null;
+  /** Scoped to synchronous movement: queries outside the scope use live entities. */
+  beginUnitMovement(){this.unitIndex=new UnitIndex(this.entities(),this.size,this.ignoresUnits);}
+  updateUnitMovement(e:Entity){this.unitIndex?.update(e);}
+  endUnitMovement(){this.unitIndex=null;}
+
   readonly size: number;
   readonly heights: Int16Array;
   readonly terrain: Uint8Array;
@@ -113,14 +120,14 @@ export class Spatial {
     );
   }
   free(p: Point, except?: number) {
-    const mover = except == null ? undefined : this.entities().find(e => e.id === except);
+    const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.entities().find(e => e.id === except);
     return (
       p.x >= 0 &&
       p.x < this.size &&
       p.y >= 0 &&
       p.y < this.size &&
       this.walkable(this.cell(p)) &&
-      (!!mover && this.ignoresUnits(mover) || !this.entities().some(
+      (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.entities()).some(
         (e) =>
           e.unit &&
           alive(e) &&
@@ -128,8 +135,8 @@ export class Spatial {
           !e.unit.release &&
           !this.ignoresUnits(e) &&
           e.id !== except &&
-          e.x === p.x &&
-          e.y === p.y,
+          ((e.x === p.x && e.y === p.y) ||
+            (!!e.unit.detour?.yielding && e.unit.detour.waypoint===this.cell(p))),
       ))
     );
   }
@@ -143,7 +150,7 @@ export class Spatial {
           }
     return null;
   }
-  route(e: Entity, destination: Point, avoidUnits = e.unit?.order?.type !== "move" && e.unit?.order?.type !== "attack"): boolean {
+  route(e: Entity, destination: Point, avoidUnits = e.unit?.order?.type !== "move" && e.unit?.order?.type !== "attack", maxCost = Infinity): boolean {
     if (
       !e.unit ||
       destination.x < 0 ||
@@ -165,20 +172,37 @@ export class Spatial {
               !u.unit.release &&
               !this.ignoresUnits(e) && !this.ignoresUnits(u),
           )
-          .map((e) => this.cell(e)),
+          .flatMap(e => e.unit!.detour?.yielding ? [this.cell(e),e.unit!.detour.waypoint] : [this.cell(e)]),
       );
     const from = e.unit.position ?? fixed(e);
+    if(avoidUnits&&Number.isFinite(maxCost)){
+      // Recompute the terrain-only budget so successive traffic retries cannot
+      // ratchet the allowed detour farther and farther away from the corridor.
+      const terrainPath=this.clearSegment(from,fixed(destination))?[goal]:this.navigation.path(this.cell(e),goal);
+      if(terrainPath===null)return false;
+      let length=0,anchor=from;
+      for(const i of terrainPath){const p=fixed(this.point(i));length+=Math.hypot(p.x-anchor.x,p.y-anchor.y);anchor=p;}
+      maxCost=Math.min(maxCost,Math.ceil(length*1.25/1000+4)*1000);
+    }
     const direct = this.clearSegment(from, fixed(destination), blocked);
     const path = direct
       ? [goal]
-      : this.navigation.path(this.cell(e), goal, blocked);
+      : this.navigation.path(this.cell(e), goal, blocked, maxCost);
     if (path === null) return false;
     const waypoints: number[] = [];
     let anchor = from;
     for (let i = 0; i < path.length;) {
       let farthest = i;
-      if (!this.clearSegment(anchor, fixed(this.point(path[i])), blocked))
-        return false;
+      if (!this.clearSegment(anchor, fixed(this.point(path[i])), blocked)) {
+        // A* starts at a cell center, but an interrupted mover may be beside a
+        // corner inside that cell. Join the corridor via its checked center
+        // instead of rejecting a reachable route or snapping the unit there.
+        const center = fixed(this.point(this.cell(e)));
+        if (i !== 0 || !this.clearSegment(anchor, center, blocked) ||
+            !this.clearSegment(center, fixed(this.point(path[i])), blocked)) return false;
+        waypoints.push(this.cell(e));
+        anchor = center;
+      }
       // Farther candidates progressively straighten the A* corridor.
       while (
         farthest + 1 < path.length &&
@@ -200,6 +224,7 @@ export class Spatial {
     )
       waypoints.push(goal);
     e.unit.route = waypoints;
+    delete e.unit.detour;
     e.unit.position ??= from;
     e.unit.goal = goal;
     return true;
@@ -222,13 +247,17 @@ export class Spatial {
         ))
     );
   }
-  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number): boolean {
-    const mover = this.entities().find(e => e.id === except);
+  /** Optional diagnostics collect every physical blocker without changing the
+   * ordinary movement query's allocation-free, first-collision fast path. */
+  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[]): boolean {
+    const initialCount=blockers?.length ?? 0;
+    const mover = this.unitIndex?.entities.get(except) ?? this.entities().find(e => e.id === except);
     if (mover && this.ignoresUnits(mover)) return true;
     const dx = to.x - from.x,
       dy = to.y - from.y,
       square = dx * dx + dy * dy;
-    for (const unit of this.entities()) {
+    const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-400,Math.min(from.y,to.y)-400,Math.max(from.x,to.x)+400,Math.max(from.y,to.y)+400) ?? this.entities();
+    for (const unit of candidates) {
       if (
         unit.id === except ||
         !unit.unit ||
@@ -255,10 +284,12 @@ export class Spatial {
       if (
         (p.x - from.x - t * dx) ** 2 + (p.y - from.y - t * dy) ** 2 <
         400 ** 2
-      )
-        return false;
+      ) {
+        if (!blockers) return false;
+        blockers.push(unit.id);
+      }
     }
-    return true;
+    return (blockers?.length ?? 0) === initialCount;
   }
   range(a: Entity, b: Entity) { return this.pointRange(precise(a), b); }
   pointRange(pa: Point, b: Entity) {

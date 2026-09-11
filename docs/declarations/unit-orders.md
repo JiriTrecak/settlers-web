@@ -2,12 +2,13 @@
 
 ## Player contract
 
-An ordinary move, attack, gather, pickup or build command replaces that actor's intentions. **Shift appends** instead. Stop clears the active intention and the pending queue. Each unit has one active order and at most **16 pending orders**; group commands append independently for every eligible selected unit. Full queues reject further appends without charging for construction.
+An ordinary move, attack, gather, pickup, build, Hold, Patrol or Follow command replaces that actor's intentions. **Shift appends** instead. Stop clears the active intention and the pending queue. Each unit has one active order and at most **16 pending orders**; group commands append independently for every eligible selected unit. Full queues reject further appends without charging for construction.
 
 The focused friendly unit's pending orders appear as numbered icons in the selection panel. Hover shows the order and target. These are read-only; use a normal command or Stop to replace the sequence. Shift-selection remains selection, and right-click while choosing a target still cancels targeting.
 
 ## What completes an order
 
+- **Hold / Patrol / Follow:** continuous orders described in [RTS controls](rts-controls.md). They support Shift append.
 - **Move:** arrive at the reachable destination (formation offset included).
 - **Attack-move:** handle threats encountered on the way, then arrive.
 - **Attack target:** target dies, disappears, becomes invalid or leaves vision. It does not chase hidden coordinates.

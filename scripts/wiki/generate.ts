@@ -101,8 +101,13 @@ export async function generate() {
   const files = new Map<string, string | Buffer>(pages);
   const authored = path.join(root, "docs/wiki");
   for (const file of await paths(authored)) {
-    if (!file.endsWith(".md")) continue;
     const key = path.relative(authored, file);
+    // Authored illustrations travel with the prose and are manifest-owned output.
+    if (key.startsWith(`media${path.sep}`) && /\.(svg|png|webp|jpg|jpeg)$/.test(file)) {
+      files.set(`public/${key}`, await readFile(file));
+      continue;
+    }
+    if (!file.endsWith(".md")) continue;
     if (files.has(key))
       throw new Error(`Authored page would override generated entry: ${key}`);
     files.set(
@@ -264,6 +269,14 @@ export async function generate() {
   }
   const sections = ["buildings", "units", "items", "resources"];
   const navigation = [
+    {
+      text: "Devlog",
+      collapsed: false,
+      items: [
+        { text: "Behind the canopy", link: "/devlog/" },
+        { text: "01 · Teaching an army to listen", link: "/devlog/teaching-an-army-to-listen" },
+      ],
+    },
     {
       text: "Start playing",
       items: [

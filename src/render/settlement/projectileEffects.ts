@@ -14,7 +14,8 @@ function colored(geometry:BufferGeometry,tint:number){
  geometry.setAttribute('color',new BufferAttribute(values,3));return geometry;
 }
 function arrowGeometry(){
- const parts=[colored(new CylinderGeometry(.035,.035,.9,5),0xc3a779),colored(new CylinderGeometry(0,.13,.28,4).translate(0,.55,0),0xa5afb4),colored(new BoxGeometry(.24,.24,.025).translate(0,-.35,0),0xc3a779)];
+ // Close to the authored nocked arrow, with slightly thicker detail for RTS zoom.
+ const parts=[colored(new CylinderGeometry(.012,.012,.62,5),0xc3a779),colored(new CylinderGeometry(0,.04,.12,4).translate(0,.37,0),0xa5afb4),colored(new BoxGeometry(.10,.13,.01).translate(0,-.23,0),0xc3a779),colored(new BoxGeometry(.01,.13,.10).translate(0,-.23,0),0xc3a779)];
  const merged=mergeGeometries(parts)!;parts.forEach(p=>p.dispose());return merged;
 }
 /** Observer-filtered authoritative flights. One draw per projectile kind, never one per shot. */
@@ -24,6 +25,7 @@ export class ProjectileEffects {
  private readonly geometry={arrow:arrowGeometry(),thorn:colored(new CylinderGeometry(0,.195,.84,4),0xc3a779)};
  private readonly batches=new Map<ProjectileKind,Batch>();
  private flights:Flight[]=[];
+ private readonly origins=new Map<number,{launched:number;position:Vector3}>();
  private readonly position=new Vector3();
  private readonly tangent=new Vector3();
  private readonly rotation=new Quaternion();
@@ -37,13 +39,26 @@ export class ProjectileEffects {
   mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;mesh.count=0;
   this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
  }
- update(tick:number, missiles:GameState["missiles"], field:HeightField){
-  this.flights = missiles.filter(m=>tick<m.impact).map(m=>({
-   kind:content.asset(content.get(m.definition).asset).projectile ?? 'arrow',
-   start:new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y)+1.5,m.origin.y),
-   end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y)+1,m.destination.y),
-   tick:m.launched,duration:m.impact-m.launched,
-  }));
+ update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined){
+  const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact);
+  const liveIds=new Set(active.map(m=>m.id));
+  for(const id of this.origins.keys())if(!liveIds.has(id))this.origins.delete(id);
+  this.flights=active.map(m=>{
+   let cached=this.origins.get(m.id);
+   if(!cached||cached.launched!==m.launched){
+    // Only a fresh launch can sample the animated bow. Late observations use
+    // the recorded origin, never a shooter who has since moved elsewhere.
+    const position=(tick<=m.launched+1?launchPosition?.(m):undefined)?.clone()
+     ?? new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y)+1.5,m.origin.y);
+    cached={launched:m.launched,position};this.origins.set(m.id,cached);
+   }
+   return {
+    kind:content.asset(content.get(m.definition).asset).projectile??'arrow',
+    start:cached.position,
+    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y)+1,m.destination.y),
+    tick:m.launched,duration:m.impact-m.launched,
+   };
+  });
   let live=0;const counts:Record<ProjectileKind,number>={arrow:0,thorn:0};
   for(const flight of this.flights)if(tick-flight.tick<flight.duration){this.flights[live++]=flight;counts[flight.kind]++;}
   this.flights.length=live;
@@ -61,5 +76,5 @@ export class ProjectileEffects {
   }
   for(const batch of this.batches.values())if(batch.mesh.count)batch.mesh.instanceMatrix.needsUpdate=true;
  }
- dispose(){for(const b of this.batches.values())b.mesh.dispose();this.batches.clear();this.flights=[];this.root.clear();this.root.removeFromParent();this.material.dispose();Object.values(this.geometry).forEach(g=>g.dispose());}
+ dispose(){for(const b of this.batches.values())b.mesh.dispose();this.batches.clear();this.flights=[];this.origins.clear();this.root.clear();this.root.removeFromParent();this.material.dispose();Object.values(this.geometry).forEach(g=>g.dispose());}
 }

@@ -1,6 +1,6 @@
 # Performance debug
 
-Debug · F3 toggles the persistent opt-in overlay in game/editor. Copy report
+Debug · Ctrl+F3 toggles the persistent opt-in overlay in game/editor. Copy report
 exports rolling mean/p95/max milliseconds and last-frame counters. GPU timing
 uses asynchronous EXT_disjoint_timer_query_webgl2 queries, bounded to four
 pending queries; unsupported browsers are labeled. CPU scopes overlap.

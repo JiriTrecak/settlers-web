@@ -120,7 +120,7 @@ describe("content and presentation contracts", () => {
     expect(
       commandCard(view, ids, "player.1", g.registry)
         .filter(b => b.type !== "cast" && b.type !== "learnAbility").map((b) => b.type),
-    ).toEqual(["move", "attack", "stop"]);
+    ).toEqual(["move", "attack", "stop", "hold", "patrol", "follow"]);
   });
   it("S15 removing control removes orders from both UI and authoritative ingress", () => {
     const g = game([], (s) => {

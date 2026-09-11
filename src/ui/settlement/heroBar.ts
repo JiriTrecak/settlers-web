@@ -1,3 +1,4 @@
+import {shortcuts,keyLabel} from '../../shared/input/shortcuts';
 import type { HeroShortcut } from '../../presentation/heroes';
 import { healthPipState } from '../../presentation/health';
 import { iconArt } from './commandArt';
@@ -17,7 +18,7 @@ export class HeroBar {
     for (const [id, entry] of this.buttons) if (!seen.has(id)) {
       entry.button.remove(); this.buttons.delete(id);
     }
-    for (const hero of heroes) {
+    for (const [index,hero] of heroes.entries()) {
       let entry = this.buttons.get(hero.id);
       if (!entry) {
         const button = document.createElement('button'), health = document.createElement('span');
@@ -36,6 +37,8 @@ export class HeroBar {
       button.setAttribute('aria-label', `Select ${hero.name}`);
       button.setAttribute('aria-pressed', String(selectedIds.includes(hero.id)));
       button.dataset.tipName = hero.name;
+      button.dataset.tipKey=keyLabel(shortcuts.key(`hero.${index+1}`));
+      let key=button.querySelector('kbd');if(!key){key=document.createElement('kbd');key.style.cssText='position:absolute;right:4px;bottom:7px;color:#fff;font-size:11px;text-shadow:0 1px 3px #000;pointer-events:none';button.append(key);}key.textContent=button.dataset.tipKey;
       button.dataset.tipDescription = hero.available
         ? 'Click to select. Double-click to center the camera.'
         : hero.hp <= 0 ? 'Fallen. Revive this hero at a Sanctuary.' : 'Hero is currently unavailable.';

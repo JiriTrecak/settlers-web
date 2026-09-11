@@ -32,11 +32,12 @@ describe("RTS click intentions", () => {
         pointer("pointerdown", 10); pointer("pointermove", 40); pointer("pointerup", 40);
         expect(left).not.toHaveBeenCalled();
         if (rts) {
-          expect(right).toHaveBeenCalledWith(40, 10, false);
+          expect(right).toHaveBeenCalledWith(10, 10, false);
+          expect(right).toHaveBeenCalledTimes(1);
           expect(camera.panScreen).not.toHaveBeenCalled();
           expect(camera.orbitScreen).not.toHaveBeenCalled();
           pointer("pointerdown", 10, 0); pointer("pointerup", 10, 0);
-          expect(left).toHaveBeenCalledWith(10, 10, false);
+          expect(left).toHaveBeenCalledWith(10, 10, false, false);
         } else {
           expect(right).not.toHaveBeenCalled();
           expect(camera.orbitScreen).toHaveBeenCalledOnce();

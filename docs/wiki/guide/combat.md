@@ -6,6 +6,8 @@ An army competes for space, protects gatherers, clears camps and threatens the e
 
 Right-click the ground to move. Right-click a visible enemy to attack. **Attack** followed by a ground click is an attack-move: travel toward the destination and engage relevant enemies along the way.
 
+During automatic combat, a unit pursuing a distant enemy can switch to a visible enemy already in weapon range. It keeps its current target while that target remains in range, and finishes a committed attack before reconsidering. An explicit attack order keeps your chosen target; a regular move order lets the unit leave combat.
+
 Attack followed by a damageable entity is a forced attack, including a friendly target. This is an explicit order, so choose carefully. A red square marks the target your selection was instructed to attack.
 
 Drag selection prioritizes army units. If the area contains no army, it selects Workers instead. This helps move a fighting force without accidentally pulling gatherers off their jobs.

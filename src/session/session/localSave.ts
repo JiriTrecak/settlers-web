@@ -10,6 +10,7 @@ export const localSaveSchema = z
     mapRevision: z.string(),
     seed: natural,
     world: z.unknown(),
+    controlGroups:z.array(z.array(z.number().int().positive()).max(160)).max(10).optional(),
     pipeline: pipelineSchema,
     clients: z.array(
       z

@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {idSchema,ownerSchema} from '../../content/schema';
-const position=z.object({x:z.number().finite().nonnegative().max(511),y:z.number().finite().nonnegative().max(511)}).strict();
+import {worldPointSchema as position} from './coordinates';
 export const shellSchema=z.object({
  id:z.number().int().positive(),source:z.number().int().positive(),definition:idSchema,owner:ownerSchema,
  origin:position,target:position,launched:z.number().int().nonnegative(),impact:z.number().int().nonnegative(),

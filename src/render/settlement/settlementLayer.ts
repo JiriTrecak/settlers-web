@@ -1,4 +1,5 @@
 import { ShellEffects } from "./shellEffects";
+import { PresentationClock } from "./presentationClock";
 import { StatusBadges } from "./statusBadges";
 import { HarvestTrees } from "./harvestTrees";
 import { pickUnitBody, type UnitPickBody } from "./unitPicking";
@@ -11,6 +12,8 @@ import { batchCharacterMaterials } from "../characters/materialBatch";
 import { ProjectileEffects } from "./projectileEffects";
 import { SpellEffects } from "./spellEffects";
 import { HealthPips } from "./healthPips";
+import { HeldShortcuts } from "../../shared/input/heldShortcuts";
+import { healthBarVisible } from "../../presentation/healthVisibility";
 import { Line2 } from "three/addons/lines/Line2.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
@@ -52,8 +55,7 @@ export class SettlementLayer {
     this.commandEffects.show(feedback, height);
   }
   private readonly harvestTrees = new HarvestTrees(this.root);
-  private sampledTick = -1;
-  private tickTime = 0;
+  private readonly presentationClock = new PresentationClock();
   private readonly abilityTarget = new AbilityTarget(this.root);
   targetAbility(aim: AbilityAim | null, height: HeightField) {
     this.abilityTarget.update(aim, height);
@@ -66,9 +68,8 @@ export class SettlementLayer {
   >();
   private readonly corpses = new Map<
     number,
-    { root: Object3D; remaining: number }
+    { root: Object3D; remaining: number; born: number }
   >();
-  private animationTime: number | null = null;
   private readonly characterBatchDisposers: Array<() => void> = [];
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
@@ -119,6 +120,7 @@ export class SettlementLayer {
   });
   private readonly statusBadges = new StatusBadges();
   private readonly healthPips = new HealthPips();
+  private readonly healthKeys = new HeldShortcuts(['health.all','health.friendly','health.enemy']);
   private readonly mineLabels = new MineLabels();
   private readonly entranceGhost = new Mesh(
     new BoxGeometry(0.7, 0.12, 0.7),
@@ -351,17 +353,11 @@ export class SettlementLayer {
     tick: number,
     timeScale = 1,
   ) {
-    this.spellEffects.update(state.visuals ?? [], field, tick);
     const now = performance.now();
+    const heldHealth = this.healthKeys.active();
     this.commandEffects.update(now);
-    const dt =
-      this.animationTime === null
-        ? 0
-        : Math.min(0.1, Math.max(0, (now - this.animationTime) / 1000)) *
-          timeScale;
-    this.animationTime = now;
-    if (tick !== this.sampledTick) { this.sampledTick = tick; this.tickTime = now; }
-    const renderTick = tick + Math.min(.999, Math.max(0, now - this.tickTime) / 25 * timeScale);
+    const {tick: renderTick, delta: dt, smoothingDelta} = this.presentationClock.sample(tick, now, timeScale);
+    this.spellEffects.update(state.visuals ?? [], field, renderTick);
     this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
       state.entities
@@ -390,11 +386,11 @@ export class SettlementLayer {
       }
       const target = this.targetPosition.set(e.x, (e.unit?field.walkSample(e.x,e.y):field.sample(e.x, e.y)), e.y);
       if (e.unit && o.userData.placed) {
-        // Facing follows observed travel, never the frame-rate-dependent smoothing gap.
-        const dx = e.x - (o.userData.observedX ?? e.x);
-        const dz = e.y - (o.userData.observedZ ?? e.y);
-        if (dx * dx + dz * dz > 1e-10) o.rotation.y = Math.atan2(dx, dz);
-        o.position.lerp(target, 1 - Math.exp(-dt * 60));
+        const yaw=e.rotation*Math.PI/180;
+        const delta=Math.atan2(Math.sin(yaw-o.rotation.y),Math.cos(yaw-o.rotation.y));
+        const blend=timeScale===0?1:1-Math.exp(-smoothingDelta*60);
+        o.rotation.y+=delta*blend;
+        o.position.lerp(target, blend);
       } else {
         o.position.copy(target);
         o.rotation.y = (e.rotation * Math.PI) / 180;
@@ -404,6 +400,7 @@ export class SettlementLayer {
       o.userData.observedZ = e.y;
       const character = this.characters.get(e.id);
       if (character && e.unit && o.visible) {
+        const previousState = character.player.state;
         const attack = e.unit.attack;
         const attacked = !!attack && o.userData.attackStarted !== attack.started;
         if (attack) o.userData.attackStarted = attack.started;
@@ -412,23 +409,25 @@ export class SettlementLayer {
           e.hp !== null &&
           e.hp < o.userData.animationHp;
         const cast = e.unit.casting;
+        const castStarted = !!cast && o.userData.castKey !== `${cast.ability}/${cast.resolveTick}`;
         if (cast) {
           const key = `${cast.ability}/${cast.resolveTick}`;
           if (o.userData.castKey !== key)
             character.player.setState("cast", { restart: true });
           o.userData.castKey = key;
+          o.userData.castTimeline = cast;
         } else if (attack && !e.unit.moving) {
           character.player.setState("attack", { restart: attacked, fade: .04 });
-          const victim = byId.get(attack.target);
-          if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
+
         } else if (attacked) {
           character.player.setState("attack", { restart: true });
-          const victim = byId.get(e.unit!.target!);
-          if (victim) o.rotation.y = Math.atan2(victim.x - e.x, victim.y - e.y);
+
         } else if (hurt && !e.unit.moving && !e.unit.work?.cycle)
           character.player.setState("hit", { restart: true });
         else if (e.unit.moving)
           character.player.setState(e.unit.charging ? "charge" : e.unit.strolling ? "walk" : "run");
+        else if (character.player.state === "cast" && o.userData.castTimeline && tick < o.userData.castTimeline.resolveTick)
+          character.player.setState("idle", {fade:.05});
         else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.05});
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
           const work =
@@ -445,10 +444,24 @@ export class SettlementLayer {
             ? contact * Math.max(0,renderTick-attack.started) / Math.max(1,attack.impact-attack.started)
             : contact + (1-contact) * (renderTick-attack.impact) / Math.max(1,attack.ends-attack.impact);
           character.player.seek(Math.min(.999999,phase));
+        } else if (character.player.state === "cast" && o.userData.castTimeline) {
+          const timeline=o.userData.castTimeline as NonNullable<NonNullable<EntityView['unit']>['casting']>;
+          const contact=content.asset(e.appearance?.asset??d.asset).castContact??.55;
+          // Windup follows authority, including late observations and long casts.
+          // Recovery is visual only and yields to movement, attacks and damage.
+          const phase=cast
+            ? contact*Math.max(0,renderTick-timeline.startTick)/Math.max(1,timeline.resolveTick-timeline.startTick)
+            : contact+(renderTick-timeline.resolveTick)/40*character.player.speed/character.player.action.getClip().duration;
+          if(phase>=1) {character.player.setState("idle",{fade:.05});character.player.update(0);}
+          else character.player.seek(Math.max(0,Math.min(cast?contact:.999999,phase)));
         } else if (cycle && character.player.state === e.unit.work?.animation) {
           // Authoritative work phase locks axe contact to the exact damage tick.
           character.player.seek(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks));
-        } else character.player.update(dt);
+        } else {
+          // A newly observed reaction must not consume the time before it was observed.
+          const restarted = castStarted || (hurt && character.player.state === "hit");
+          character.player.update(previousState === character.player.state && !restarted ? dt : 0);
+        }
         o.userData.animationHp = e.hp;
       }
       const { carry, body } = parts;
@@ -482,9 +495,7 @@ export class SettlementLayer {
       o.userData.previousHealth = e.hp;
       hp.visible =
         !!d.body &&
-        e.hp! > 0 &&
-        (this.selected.has(e.id) ||
-          (d.kind === "unit" && e.hp! < (e.stats?.maxHp ?? d.body.maxHp)));
+        healthBarVisible(e,d.kind,e.stats?.maxHp ?? d.body.maxHp,this.selected.has(e.id),heldHealth);
       if (hp.visible && d.body) {
         const elapsed = tick - (o.userData.lastDamageTick ?? -Infinity);
         const blink =
@@ -518,18 +529,19 @@ export class SettlementLayer {
         o.traverse((child) => {
           if (child.name.startsWith("Leg") || child.name.startsWith("Arm"))
             child.rotation.x = e.unit!.moving
-              ? Math.sin(tick * 0.3) * (child.name.includes("L") ? 1 : -1) * 0.5
+              ? Math.sin(renderTick * 0.3) * (child.name.includes("L") ? 1 : -1) * 0.5
               : 0;
         });
     }
-    this.shells.update(state.shells ?? [], field, tick, shell => {
-      const source = this.entities.get(shell.source);
-      const observed = byId.get(shell.source);
+    const launchPosition = (shot: {source:number}) => {
+      const source = this.entities.get(shot.source);
+      const observed = byId.get(shot.source);
       if (!source?.visible || !observed || observed.remembered) return undefined;
       const socket = content.asset(observed.appearance?.asset ?? content.get(observed.definition).asset).projectileSocket;
       return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
-    });
-    this.projectiles.update(renderTick, state.missiles ?? [], field);
+    };
+    this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
+    this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
         const character = this.characters.get(id);
@@ -540,7 +552,7 @@ export class SettlementLayer {
             const part = o.getObjectByName(name);
             if (part) part.visible = false;
           }
-          this.corpses.set(id, { root: o, remaining: 2 });
+          this.corpses.set(id, { root: o, remaining: 2, born: renderTick });
         } else this.removeModel(id, o);
         this.entities.delete(id);
       }
@@ -548,11 +560,12 @@ export class SettlementLayer {
       const cell =
         Math.round(corpse.root.position.z) * field.size +
         Math.round(corpse.root.position.x);
-      corpse.remaining -= dt;
+      const corpseDelta = corpse.born === renderTick ? 0 : dt;
+      corpse.remaining -= corpseDelta;
       if (corpse.remaining <= 0 || (state.fog && state.fog.cells[cell] !== 2)) {
         this.removeModel(id, corpse.root);
         this.corpses.delete(id);
-      } else this.characters.get(id)?.player.update(dt);
+      } else this.characters.get(id)?.player.update(corpseDelta);
     }
   }
   preview(
@@ -690,6 +703,7 @@ export class SettlementLayer {
     this.selectionFillMaterial.dispose();
     this.statusBadges.dispose();
     this.healthPips.dispose();
+    this.healthKeys.dispose();
     this.mineLabels.dispose();
     this.entranceGhost.geometry.dispose();
     this.entranceGhost.material.dispose();

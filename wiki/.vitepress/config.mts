@@ -29,6 +29,7 @@ export default defineConfig({
         ],
       },
       { text: "Map atlas", link: "/maps/" },
+      { text: "Devlog", link: "/devlog/" },
       { text: "Development", link: "/development/" },
     ],
     sidebar: navigation,

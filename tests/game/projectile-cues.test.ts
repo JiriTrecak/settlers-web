@@ -1,9 +1,10 @@
+import {heading} from '../../src/sim/game/facing';
 import {describe,it,expect} from 'vitest';
 import {game,placed} from './helpers';
 function setup(){
  const g=game([placed('archer','unit.ants.archer',224,230),{...placed('enemy','unit.ants.warrior',228,230),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='archer')!,b=g.entities.find(e=>e.placement==='enemy')!;
- a.unit!.target=b.id;g.combat.resolve();
+ a.rotation=heading(a,b);a.unit!.target=b.id;g.combat.resolve();
  g.state.tick=a.unit!.attack!.impact;g.combat.resolve();g.observation.update();
  return {g,a,b};
 }

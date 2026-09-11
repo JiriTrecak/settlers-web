@@ -68,7 +68,6 @@ export class Session {
   private fpsFrames = 0;
   private fpsMs = 0;
   private confirmTimer: ReturnType<typeof setInterval> | null = null;
-  private matchStartMs = 0;
   private desynced = false;
   /** Transport mailbox, not authority. An observer borrows an empty local mailbox. */
   private readonly me: number;
@@ -257,7 +256,7 @@ export class Session {
     this.input = new MapInput(this.canvas, renderer.camera, {
       onChanged: () => this.present(),
       rts: true,
-      onClick: (x, y, shift) => this.click(x, y, shift),
+      onClick: (x, y, shift, sameType) => this.click(x, y, shift, false, sameType),
       onRightClick: (x, y, shift) => this.click(x, y, shift, true),
       onSelectArea: (rect, shift) => {
         const hud = this.economyHud,
@@ -288,10 +287,11 @@ export class Session {
           renderer.gameAbilityTarget(null);
         }
       },
-      focus: (id) => {
-        const hero = this.selectionView().entities.find(e => e.id === id);
-        if (!hero || !content.get(hero.definition).hero || hero.unit?.contained || (hero.hp ?? 0) <= 0) return;
-        renderer.camera.lookAt(hero.x, hero.y);
+      lookAt:(x,y)=>{renderer.camera.lookAt(x,y);this.present();},
+      focus: (id, group) => {
+        const visible=this.selectionView().entities.filter(e=>(group??[id]).includes(e.id)&&!e.unit?.contained&&!e.remembered);
+        if(!visible.length)return;
+        renderer.camera.lookAt(visible.reduce((n,e)=>n+e.x,0)/visible.length,visible.reduce((n,e)=>n+e.y,0)/visible.length);
         this.present();
       },
       home: () => {
@@ -313,6 +313,17 @@ export class Session {
         w: this.canvas.clientWidth,
         h: this.canvas.clientHeight,
       }),
+      onOrder:(x,y,right,shift)=>{
+        const hud=this.economyHud;if(!hud||this.observing)return false;
+        const binding=hud.targeting,destination={x:Math.floor(x),y:Math.floor(y)};
+        if(right&&binding){hud.clearMode();return true;}
+        if(!right&&!binding)return false;
+        if(binding?.type==='rally'){this.send({type:'rally',actor:binding.actors[0],destination});hud.clearMode();return true;}
+        if(binding&&!['move','attack','patrol'].includes(binding.type))return true;
+        const actors=binding?.actors??this.selectionView().entities.filter(e=>hud.selectedIds.includes(e.id)&&e.owner===slotOwner(this.me)&&e.unit&&!e.unit.contained&&content.get(e.definition).behaviors.playerControl).map(e=>e.id);
+        if(actors.length)this.send(binding?.type==='patrol'?{type:'patrol',actors,destination,...(shift?{append:true}:{})}:{type:'move',actors,destination,attackMove:binding?.type==='attack',...(shift?{append:true}:{})});
+        if(binding)hud.clearMode();return true;
+      },
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
         this.present();
@@ -460,7 +471,10 @@ export class Session {
     if (remote && !this.desynced) this.pulseConfirm();
     this.acc += Math.max(0, dtMs) * this.simulationSpeed;
     const step = world.clock.tickMs;
-    const cap = remote ? 2 : 8 * this.simulationSpeed;
+    // Two ticks per frame throttles a remote match below 40 Hz whenever
+    // rendering falls below 20 FPS. Catch up in bounded batches without
+    // discarding any authoritative remote commits.
+    const cap = 8 * this.simulationSpeed;
     let n = 0;
     while (this.acc >= step && n < cap) {
       const next = world.clock.tickIndex + 1;
@@ -599,6 +613,7 @@ export class Session {
       mapRevision: this.match.mapRevision,
       seed: this.match.seed,
       world: this.world.snapshot(),
+      controlGroups:this.economyHud?.saveControls(),
       pipeline: {
         ...this.room.snapshot(),
         commits: local.peek(),
@@ -666,7 +681,7 @@ export class Session {
     this.updateObserverStats(true);
     this.acc = 0;
     this.resourceSignature = "";
-    this.economyHud?.setSelection([]);
+    this.economyHud?.restoreControls(save.controlGroups);
   }
   private send(action: Action): boolean {
     if (this.observing) return false;
@@ -687,6 +702,7 @@ export class Session {
     clientY: number,
     shift = false,
     right = false,
+    sameType = false,
   ) {
     const sim = this.world?.settlement,
       hit = this.renderer?.pickGround(clientX, clientY),
@@ -752,6 +768,11 @@ export class Session {
             : 0.8;
         return Math.abs(e.x - hit.x) <= r && Math.abs(e.y - hit.z) <= r;
       });
+    if(!right&&!binding&&sameType&&target&&target.owner===owner&&target.unit){
+      const screen=new Set(this.renderer!.unitsInScreenRect(selectable.filter(e=>e.unit),{left:0,top:0,right:innerWidth,bottom:innerHeight}));
+      const ids=selectable.filter(e=>e.definition===target.definition&&e.owner===owner&&screen.has(e.id)).map(e=>e.id);
+      hud.setSelection(shift?[...new Set([...hud.selectedIds,...ids])]:ids);return;
+    }
     if (this.observing) {
       if (!right)
         hud.setSelection(
@@ -818,9 +839,13 @@ export class Session {
       hud.clearMode();
       return;
     }
-    if (binding?.type === "move") {
+    if(binding?.type==='follow'){
+      if(target)this.send({type:'follow',actors:binding.actors,target:target.id,...(shift?{append:true}:{})});
+      hud.clearMode();return;
+    }
+    if (binding?.type === "move" || binding?.type === "patrol") {
       this.send({
-        type: "move",
+        type: binding.type,
         actors: binding.actors,
         destination: position,
         ...(shift ? {append: true} : {}),
@@ -829,6 +854,7 @@ export class Session {
       return;
     }
     if (target) {
+      if(right&&target.unit&&target.owner===owner&&!target.remembered){const followers=selected.filter(e=>e.id!==target.id);if(followers.length)this.send({type:'follow',actors:followers.map(e=>e.id),target:target.id,...(shift?{append:true}:{})});return;}
       if (right && target.resource && !target.remembered) {
         const workers = selected.filter((e) =>
           content.get(e.definition).behaviors.work?.harvests?.some((id) => {
@@ -979,7 +1005,6 @@ export class Session {
 
   private armConfirms(match: MatchConfig): void {
     if (this.confirmTimer != null) clearInterval(this.confirmTimer);
-    this.matchStartMs = performance.now();
     this.confirmTimer = setInterval(() => this.pulseConfirm(), match.tickMs);
     this.pulseConfirm();
   }
@@ -987,17 +1012,16 @@ export class Session {
   private pulseConfirm(): void {
     const world = this.world;
     if (!world || this.desynced) return;
-    const next = world.clock.tickIndex + 1;
-    const elapsed = Math.max(
-      0,
-      Math.floor((performance.now() - this.matchStartMs) / world.clock.tickMs),
-    );
     for (const ls of this.locksteps.values()) {
-      const through = Math.min(
-        world.clock.tickIndex + 200,
-        Math.max(next, elapsed + 1, world.clock.tickIndex + ls.delay),
-      );
-      ls.confirm(through);
+      // A confirmation is an irrevocable promise: new input must follow it.
+      // Base the pipeline on simulated time, never wall time. Otherwise a
+      // suspended/slow client promises seconds of empty turns ahead of the
+      // battlefield it can see, making every subsequent click feel delayed.
+      const through = world.clock.tickIndex + Math.max(1, ls.delay);
+      // The first click flushes immediately. Further clicks in the same
+      // simulation beat share the next packet instead of each reserving a new
+      // future tick. Even a burst during a stall cannot inflate input delay.
+      if (ls.sent() <= through) ls.confirm(through);
     }
   }
 }

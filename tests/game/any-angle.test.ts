@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { describe, expect, it } from 'vitest';
 import { game as baseGame, worker } from './helpers';
 import { cell, point } from '../../src/sim/game/spatial';
@@ -5,7 +6,7 @@ import { atPoint, clearRay, fixed, precise } from '../../src/sim/game/motion';
 
 function setup() {
   const g = game(), w = worker(g);
-  w.x = 100; w.y = 100;
+  w.x = 100; w.y = 100;w.rotation=heading(w,{x:113,y:107});
   return {g, w};
 }
 

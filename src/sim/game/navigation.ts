@@ -29,7 +29,7 @@ export class Navigation {
     this.seen = new Uint32Array(n);
     this.closed = new Uint32Array(n);
   }
-  path(start: number, goal: number, blocked?: ReadonlySet<number>): number[] | null {
+  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity): number[] | null {
     if (!Number.isInteger(start) || !Number.isInteger(goal) || start < 0 || goal < 0 || start >= this.size ** 2 || goal >= this.size ** 2) return null;
     if (start === goal) return [];
     if (++this.epoch >= 0xffffffff) { this.seen.fill(0); this.closed.fill(0); this.epoch = 1; }
@@ -102,6 +102,7 @@ export class Navigation {
       const dx = Math.abs(id % this.size - gx), dy = Math.abs(Math.floor(id / this.size) - gz);
       return CARDINAL_COST * Math.max(dx, dy) + (DIAGONAL_COST - CARDINAL_COST) * Math.min(dx, dy);
     };
+    if(heuristic(start)>maxCost)return null;
     seen[start] = epoch;
     cost[start] = 0;
     push({ id: start, g: 0, h: heuristic(start) });
@@ -127,6 +128,7 @@ export class Navigation {
         const next = ny * this.size + nx;
         if (closed[next] === epoch || !canTraverse(this.size, id, next, step)) continue;
         const g = cur.g + (dx && dy ? DIAGONAL_COST : CARDINAL_COST);
+        if(g+heuristic(next)>maxCost)continue;
         if (seen[next] === epoch && g >= cost[next]!) continue;
         seen[next] = epoch;
         cost[next] = g;

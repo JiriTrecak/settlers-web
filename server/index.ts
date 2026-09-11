@@ -17,10 +17,13 @@ const CORS = {
 };
 
 const host = new MatchHost();
+const probes=setInterval(()=>host.pulse(),1000);
+probes.unref();
 
 const server = createServer((req, res) => {
   void handle(req, res);
 });
+server.on('close',()=>clearInterval(probes));
 
 const wss = new WebSocketServer({ noServer: true });
 

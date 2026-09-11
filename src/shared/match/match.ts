@@ -1,8 +1,8 @@
 /**
  * Frozen match start. Same object on every peer; no process-wide statics.
  * D is ticks ahead of `tickIndex`. SP (MemoryChannel) uses 1.
- * MP `COMMAND_DELAY` is ticks of pipeline + input delay. MATCH_HOST is London;
- * west-coast RTT is ~150 ms → 8 ticks. Confirm `through` this far ahead of `tickIndex`.
+ * MP chooses a shared pipeline from server-measured player round trips.
+ * COMMAND_DELAY is the fallback when measurements are not yet available.
  */
 export const COMMAND_DELAY = 8;
 export const CHECKSUM_EVERY = 8;

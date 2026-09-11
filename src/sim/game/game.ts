@@ -1,3 +1,4 @@
+import {attackTiming} from './attackTiming';
 import { formationDestinations } from "./formation";
 import { precise } from "./motion";
 import { validateItemState } from "./itemValidation";
@@ -35,7 +36,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-23";
+export const SIMULATION_BUILD = "declarative-sim-37";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -248,6 +249,18 @@ export class Game {
           !e.unit?.release,
       );
     if (!eligible.length) return reject("No eligible controlled actors");
+    if(action.type==='hold'||action.type==='patrol'||action.type==='follow'){
+      const target=action.type==='follow'?this.context.get(action.target):null;
+      if(action.type==='follow'&&(!target||!alive(target)||target.owner!==owner||!target.unit||target.unit.contained||target.unit.release||!this.observation.previouslyVisible(owner,target)))return reject('Follow requires a visible friendly unit');
+      if(action.type==='patrol'&&(action.destination.x>=this.map.size||action.destination.y>=this.map.size))return reject('Destination outside map');
+      const applied:number[]=[];
+      for(const e of eligible){
+        if(!e.unit||!this.context.def(e).behaviors.movement||e.id===target?.id||!this.orders.canIssue(e,action.append))continue;
+        if(!action.append)this.spells.cancel(e);
+        this.orders.issue(e,action.type==='hold'?{type:'hold'}:action.type==='follow'?{type:'follow',target:target!.id}:{type:'patrol',destination:action.destination},action.append);applied.push(e.id);
+      }
+      return applied.length?{accepted:true,actors:applied}:reject('No actors support that order');
+    }
     if (
       action.type === "move" ||
       action.type === "attack" ||
@@ -269,6 +282,7 @@ export class Game {
         eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
           .map(e=>({id:e.id,x:precise(e).x,y:precise(e).y})), action.destination, this.spatial.size,
         p=>this.spatial.walkable(this.spatial.cell(p)),
+        (from,to)=>this.spatial.clearSegment({x:Math.round(from.x*1000),y:Math.round(from.y*1000)},{x:to.x*1000,y:to.y*1000}),
       ) : null;
       const applied: number[] = [];
       for (const e of eligible) {
@@ -282,17 +296,20 @@ export class Game {
             (!action.force && !this.combat.hostile(e, target!))
           )
             continue;
+          if (!action.append) this.spells.cancel(e);
           this.orders.issue(e, {
             type: "attack",
             target: target!.id,
             force: action.force ?? false,
           }, action.append);
         } else if (action.type === "stop") {
+          this.spells.cancel(e);
           this.economy.interrupt(e);
         } else {
           if (action.attackMove && !behaviors.combat) continue;
           const goal = destinations!.get(e.id);
           if (!goal) continue;
+          if (!action.append) this.spells.cancel(e);
           this.orders.issue(e, {
               type: "move",
               destination: goal,
@@ -446,6 +463,7 @@ export class Game {
           !this.context.def(e).behaviors.work?.builds.includes(building.definition)) return false;
       return this.orders.issue(e, order);
     }
+    if(order.type==="patrol")return this.command(e.owner,{type:"patrol",actors:[e.id],destination:order.destination}).accepted;
     const action: Action = order.type === "pickup"
       ? {...order, actor: e.id}
       : {...order, actors: [e.id]};
@@ -598,6 +616,7 @@ export class Game {
       state.visuals.some(
         (v) =>
           !this.registry.rules.spells[v.ability]?.ranks[v.rank - 1] ||
+          [v.origin,v.target].some(p => p.x > this.map.size-1 || p.y > this.map.size-1) ||
           v.viewers.some((o) => !this.owners.includes(o)),
       )
     )
@@ -687,17 +706,30 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
+        if (u.detour) {
+          const end = u.detour.points.at(-1)!;
+          if(u.detour.yielding&&(u.detour.yielding.leader===e.id||u.detour.yielding.until>state.tick+120))throw new Error('Invalid saved yielding maneuver');
+          if (!u.position || u.segment || u.goal !== u.detour.goal ||
+            !u.route.length || u.route[0] !== u.detour.waypoint || u.goal >= this.map.size**2 || u.detour.waypoint >= this.map.size**2 ||
+            u.detour.points.some(p => p.x > (this.map.size-1)*1000 || p.y > (this.map.size-1)*1000) ||
+            end.x !== (u.detour.waypoint%this.map.size)*1000 || end.y !== Math.floor(u.detour.waypoint/this.map.size)*1000)
+            throw new Error('Invalid saved local detour');
+        }
+        if(u.pursuit&&(!d.behaviors.combat||u.pursuit.seenTick>state.tick||u.pursuit.position.x>=this.map.size||u.pursuit.position.y>=this.map.size))throw new Error("Invalid saved pursuit");
+        const timing=d.behaviors.combat&&u.attack?attackTiming(d.behaviors.combat,u.attack.cycleTicks):null;
+        if(u.lastMovedTick!==undefined&&u.lastMovedTick>state.tick)throw new Error("Invalid saved movement tick");
         if (u.attack && (!d.behaviors.combat || u.attack.started > state.tick ||
-          u.attack.impact - u.attack.started !== d.behaviors.combat.attack.windupTicks ||
-          u.attack.ends - u.attack.impact !== d.behaviors.combat.attack.recoveryTicks ||
+          u.attack.impact - u.attack.started !== timing!.windupTicks ||
+          u.attack.ends - u.attack.impact !== timing!.recoveryTicks ||
           (u.attack.released && u.attack.impact > state.tick))) throw new Error("Invalid saved attack phase");
         if (u.charge && (!d.behaviors.combat?.charge ||
           u.charge.readyTick > state.tick + d.behaviors.combat.charge.cooldownTicks ||
           u.charge.expires > state.tick + d.behaviors.combat.charge.durationTicks))
           throw new Error("Invalid saved charge state");
         for (const order of [u.order, ...u.orderQueue]) {
-          if (order?.type === "move" && (order.destination.x >= this.map.size || order.destination.y >= this.map.size))
+          if ((order?.type === "move" || order?.type === "patrol") && (order.destination.x >= this.map.size || order.destination.y >= this.map.size))
             throw new Error("Saved order outside map");
+          if(order?.type==='patrol'&&order.origin&&(order.origin.x>=this.map.size||order.origin.y>=this.map.size))throw new Error('Saved patrol origin outside map');
         }
         if (
           u.position &&
@@ -759,7 +791,9 @@ export class Game {
           ) ||
           (casting.pending &&
             (!casting.learned[casting.pending.ability] ||
-              casting.pending.rank > casting.learned[casting.pending.ability]))
+              casting.pending.point.x > this.map.size-1 || casting.pending.point.y > this.map.size-1 ||
+              casting.pending.rank > casting.learned[casting.pending.ability] ||
+              casting.pending.resolveTick - casting.pending.startTick !== this.registry.rules.spells[casting.pending.ability]?.ranks[casting.pending.rank - 1]?.castTicks))
         )
           throw new Error("Invalid saved ability state");
       }

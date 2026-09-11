@@ -68,6 +68,7 @@ const movement = z
   .object({
     speed: positive.max(40),
     walkSpeed: positive.max(40).optional(),
+    turnRate: positive.max(3600).default(720),
     idleWander: z.boolean().optional(),
   })
   .strict();
@@ -276,6 +277,9 @@ export const actionNames = [
   "move",
   "attack",
   "stop",
+  "hold",
+  "patrol",
+  "follow",
   "build",
   "produce",
   "cancel",
@@ -346,6 +350,7 @@ export const assetSchema = z
     stackColumns: positive.optional(),
     projectile: z.enum(["arrow", "thorn"]).optional(),
     projectileSocket: z.string().min(1).optional(),
+    castContact: z.number().min(0).max(1).optional(),
     sceneryAsset: z.string().optional(),
   })
   .strict();

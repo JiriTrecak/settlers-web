@@ -24,11 +24,13 @@ export class Inventory {
       if(error){this.stop(hero,error);continue;}
       if(isStunned(hero,this.c.registry)||hero.spellcasting?.pending)continue;
       if(distance2(precise(hero),target!)<=this.c.def(hero).behaviors.inventory!.pickupRange**2){
-        hero.unit!.route=[];hero.unit!.goal=null;continue;
+        hero.unit!.route=[];hero.unit!.goal=null;delete hero.unit!.detour;continue;
       }
       if(!hero.unit!.route.length && hero.unit!.retryAt<=this.c.state.tick) {
         const goal=this.c.spatial.nearest(target!,4,hero.id);
-        if(!goal || !this.c.spatial.route(hero,goal)){this.stop(hero,"Item is unreachable");continue;}
+        // An allied crowd is temporary traffic, not proof that the item is
+        // unreachable. Movement handles reservations and local body clearance.
+        if(!goal || !this.c.spatial.route(hero,goal,false)){this.stop(hero,"Item is unreachable");continue;}
         hero.unit!.retryAt=this.c.state.tick+20;
       }
     }
@@ -50,6 +52,7 @@ export class Inventory {
   }
   private stop(hero:Entity,message?:string) {
     hero.unit!.order=null;hero.unit!.route=[];hero.unit!.goal=null;
+    delete hero.unit!.detour;
     if(message)this.c.event(hero.owner,message,"error");
   }
   drop(hero:Entity,slot:number):string|null {

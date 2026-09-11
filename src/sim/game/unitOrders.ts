@@ -9,7 +9,7 @@ export class UnitOrders {
 
   busy(e: Entity): boolean {
     const u = e.unit!;
-    return !!(u.order || u.job || u.cargo || u.employment || u.pendingMove || u.orderQueue.length);
+    return !!(e.spellcasting?.pending || u.order || u.job || u.cargo || u.employment || u.pendingMove || u.orderQueue.length);
   }
   canIssue(e: Entity, append = false): boolean {
     return !append || e.unit!.orderQueue.length < MAX_QUEUED_ORDERS;

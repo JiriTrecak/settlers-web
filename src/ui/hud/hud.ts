@@ -1,3 +1,4 @@
+import {shortcuts,inputCaptured} from '../../shared/input/shortcuts';
 import { graphicsControls } from "../menu/graphicsControls";
 /**
  * In-match overlay: fps + zoom, Exit with confirm.
@@ -20,6 +21,8 @@ export class Hud {
   private settings: HTMLDialogElement | null = null;
   private readonly hooks: HudHooks;
 
+  private openSettings:(()=>void)|null=null;
+  private key=(e:KeyboardEvent)=>{if(!inputCaptured(e)&&!e.repeat&&shortcuts.matches('game.settings',e)){e.preventDefault();this.openSettings?.();}};
   constructor(host: HTMLElement, hooks: HudHooks) {
     this.hooks = hooks;
     this.stats = document.createElement("div");
@@ -35,7 +38,7 @@ export class Hud {
     const settings = document.createElement("button");
     settings.className = "hud-exit";
     settings.textContent = "Settings";
-    settings.onclick = () => {
+    settings.onclick = this.openSettings = () => {
       this.settings?.remove();
       const dialog = document.createElement("dialog");
       this.settings = dialog;
@@ -76,6 +79,7 @@ export class Hud {
     this.nav.append(exit);
 
     host.append(this.stats, this.nav);
+    window.addEventListener("keydown",this.key);
   }
 
   update(state: HudState): void {
@@ -83,6 +87,7 @@ export class Hud {
   }
 
   destroy(): void {
+    window.removeEventListener("keydown",this.key);
     this.settings?.remove();
     this.dismissConfirm();
     this.stats.remove();

@@ -210,7 +210,7 @@ export class RoomWaitScreen extends GameScreen {
   }
 
   setView(room: RoomView): void {
-    this.meta.textContent = `${occupied(room)} / ${room.slots.length} players joined`;
+    this.meta.textContent = `${occupied(room)} / ${room.slots.length} players joined${!this.hooks.load&&room.inputDelayMs!=null?` · Input buffer ${room.inputDelayMs} ms`:''}`;
     this.details.show(room.mapId, this.hooks.mapName);
     paintRoster(this.roster, room);
     this.footerText.textContent = this.hooks.load && occupied(room) < room.slots.length ? "Waiting for all saved player slots to fill" : room.state === "waiting" ? "Lobby open · Players can join until the match starts" : "Match starting…";
@@ -244,7 +244,7 @@ function paintRoster(root: HTMLElement, room: RoomView): void {
     const row = el("div", `skirmish-player ${slot.name ? "" : "mp-open-slot"}`);
     row.style.setProperty("--player-color", playerCss(slot.player));
     const name = el("div", "skirmish-player-name", slot.name || "Open slot");
-    name.append(el("small", "", slot.name ? "Connected" : "Waiting for a player"));
+    name.append(el("small", "", slot.name ? slot.roundTripMs!=null?`Connected · ${slot.roundTripMs} ms RTT`:"Connected" : "Waiting for a player"));
     row.append(el("span", "skirmish-player-marker", String(slot.player + 1)), name);
     return row;
   }));

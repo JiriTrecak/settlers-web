@@ -6,7 +6,8 @@
         "movement": {
           "speed": 4,
           "walkSpeed": 2,
-          "idleWander": true
+          "idleWander": true,
+          "turnRate": 720
         },
         "playerControl": {},
         "work": {
@@ -28,7 +29,8 @@
       "id": "behavior-set.ground-army",
       "behaviors": {
         "movement": {
-          "speed": 4
+          "speed": 4,
+          "turnRate": 720
         },
         "playerControl": {}
       }
@@ -37,7 +39,8 @@
       "id": "behavior-set.neutral",
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 8,
+          "turnRate": 720
         },
         "campDefense": {}
       }
@@ -75,6 +78,7 @@
       "file": "assets/ant-colony/characters/archer.glb",
       "healthHeight": 2.3,
       "projectile": "arrow",
+      "projectileSocket": "socket_handL",
       "character": "archer"
     },
     {
@@ -280,6 +284,7 @@
       "id": "asset.ants.marshal",
       "file": "assets/ant-colony/characters/marshal.glb",
       "character": "marshal",
+      "castContact": 0.68,
       "scale": 1,
       "healthHeight": 2.8
     },
@@ -638,6 +643,26 @@
         "description": "Cancel this research and refund its full price.",
         "icon": "icon.action.cancel",
         "priority": 20
+      },
+      "hold": {
+        "name": "Hold Position",
+        "description": "Stand your ground. Attack enemies within weapon range without chasing.",
+        "icon": "icon.action.stop",
+        "priority": 79,
+        "hotkey": "H"
+      },
+      "patrol": {
+        "name": "Patrol",
+        "description": "Patrol between the current position and a destination. Engage enemies, then resume patrol.",
+        "icon": "icon.action.move",
+        "priority": 78,
+        "hotkey": "P"
+      },
+      "follow": {
+        "name": "Follow",
+        "description": "Follow a friendly unit. Right-click a friendly unit to follow it.",
+        "icon": "icon.action.move",
+        "priority": 0
       }
     },
     "overrides": {
@@ -3403,7 +3428,8 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 3
+          "speed": 3,
+          "turnRate": 720
         },
         "combat": {
           "damage": 42,

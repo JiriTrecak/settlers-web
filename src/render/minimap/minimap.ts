@@ -95,6 +95,7 @@ export class Minimap {
       size?: number;
       viewport: () => { w: number; h: number };
       onLookAt: (x: number, z: number) => void;
+      onOrder?: (x:number,z:number,right:boolean,shift:boolean)=>boolean;
     },
   ) {
     this.root = document.createElement("div");
@@ -116,6 +117,8 @@ export class Minimap {
     this.clock.root.style.left = "-66px";
     host.append(this.root);
     this.onDown = (e) => {
+      if(e.button!==0&&e.button!==2)return;
+      const point=this.point(e);if(point&&this.spec.onOrder?.(point[0],point[1],e.button===2,e.shiftKey)){e.preventDefault();return;}
       if (e.button !== 0) return;
       this.dragging = true;
       this.canvas.style.cursor = "grabbing";
@@ -131,6 +134,7 @@ export class Minimap {
       if (this.canvas.hasPointerCapture(e.pointerId))
         this.canvas.releasePointerCapture(e.pointerId);
     };
+    this.canvas.addEventListener("contextmenu",this.contextMenu);
     this.canvas.addEventListener("pointerdown", this.onDown);
     this.canvas.addEventListener("pointermove", this.onMove);
     this.canvas.addEventListener("pointerup", this.onUp);
@@ -276,6 +280,7 @@ export class Minimap {
   }
 
   destroy(): void {
+    this.canvas.removeEventListener("contextmenu",this.contextMenu);
     this.canvas.removeEventListener("pointerdown", this.onDown);
     this.canvas.removeEventListener("pointermove", this.onMove);
     this.canvas.removeEventListener("pointerup", this.onUp);
@@ -294,15 +299,17 @@ export class Minimap {
     return [(nx * 0.5 + 0.5) * w, (0.5 - ny * 0.5) * h];
   }
 
-  private scrub(e: PointerEvent): void {
+  private contextMenu=(e:Event)=>e.preventDefault();
+  private scrub(e:PointerEvent):void {const p=this.point(e);if(p)this.spec.onLookAt(p[0],p[1]);}
+  private point(e: PointerEvent): [number,number]|null {
     const rect = this.canvas.getBoundingClientRect();
-    if (rect.width < 1 || rect.height < 1) return;
+    if (rect.width < 1 || rect.height < 1) return null;
     const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = 1 - ((e.clientY - rect.top) / rect.height) * 2;
     const size = this.height?.size ?? this.spec.size ?? MAP_SIZE;
     const [x, z] = ndcToWorld(ndcX, ndcY, size);
     const max = size - 0.01;
-    this.spec.onLookAt(clamp(x, 0, max), clamp(z, 0, max));
+    return [clamp(x, 0, max), clamp(z, 0, max)];
   }
 }
 

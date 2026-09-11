@@ -334,7 +334,10 @@ export function commandCard(
       type: "stop",
       actors: movers.map((e) => e.id),
     });
-    const caster=controlled.find(e=>e.spellcasting);
+    add("hold",movers,undefined,{type:"hold",actors:movers.map(e=>e.id)});
+    add("patrol",movers);
+    add("follow",movers);
+    const caster=controlled.filter(e=>e.definition===focus.definition).find(e=>e.spellcasting);
     if(caster?.spellcasting){
       const state=caster.spellcasting,policy=registry.get(caster.definition).behaviors.spellcasting!;
       const level=caster.stats?.level??1,points=level-Object.values(state.learned).reduce((n,r)=>n+r,0);
@@ -357,7 +360,7 @@ export function commandCard(
       }
     }
     const buildIds = new Set(
-      units.flatMap(
+      units.filter(e=>e.definition===focus.definition).flatMap(
         (e) => registry.get(e.definition).behaviors.work?.builds ?? [],
       ),
     );

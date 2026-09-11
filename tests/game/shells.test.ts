@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import {expect,it} from 'vitest';
 import type {Rules} from '../../src/content/schema';
 import {game,placed,run} from './helpers';
@@ -10,6 +11,7 @@ function scene(windupTicks=1){
  (s.rules as Rules).research['research.test.shells']={name:'Test shells',description:'',icon:'icon.ants.archer',priority:1,items:[],workTicks:1,effects:[{units:[definition],splashRadius:3,splashSlowPermille:350}]};
  });
  const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!,friend=g.entities.find(e=>e.placement==='friend')!;
+ a.rotation=heading(a,b);
  // Test the shell system with stationary recipients independently from target acquisition.
  g.combat.shells.launch(a,b);
  return {g,a,b,friend};

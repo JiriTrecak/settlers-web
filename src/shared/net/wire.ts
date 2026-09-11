@@ -39,9 +39,10 @@ export type RoomView = {
   name: string;
   mapId: string;
   host: string;
-  slots: { player: number; name: string | null }[];
+  slots: { player: number; name: string | null; roundTripMs?:number }[];
   spectators: number;
   tick?: number;
+  inputDelayMs?:number;
 };
 
 export type CreateRoom = {
@@ -58,6 +59,7 @@ export type JoinRoom = {
 };
 
 export type ClientMsg =
+  | {type:'latencyReply';id:string}
   | { type: "chat"; text: string }
   | { type: "hello"; token: string }
   | { type: "ready" }
@@ -68,6 +70,7 @@ export type ClientMsg =
   | { type: "restart" };
 
 export type ServerMsg =
+  | {type:'latencyProbe';id:string}
   | { type: "chat"; message: import("../chat/chat").ChatMessage }
   | { type: "welcome"; you: ClientIdentity; room: RoomView }
   | { type: "room"; room: RoomView }

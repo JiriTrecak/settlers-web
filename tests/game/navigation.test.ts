@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { describe, expect, it } from "vitest";
 import { Navigation, canTraverse } from "../../src/sim/game/navigation";
 import { cell } from "../../src/sim/game/spatial";
@@ -54,7 +55,7 @@ describe("eight-direction navigation", () => {
   it("charges diagonal distance and rechecks a newly obstructed corner at execution", () => {
     for (const diagonal of [false, true]) {
       const g = game(), w = worker(g);
-      w.x = 100; w.y = 100;
+      w.x = 100; w.y = 100;w.rotation=heading(w,{x:110,y:diagonal?110:100});
       expect(g.context.spatial.route(w, {x: 110, y: diagonal ? 110 : 100})).toBe(true);
       let ticks = 0;
       while (w.unit!.route.length && ticks < 100) {g.context.move(); ticks++;}
@@ -89,4 +90,16 @@ it('rejects a small enclosed goal region, while allowing its exit to reopen',()=
  const nav=new Navigation(n,()=>{probes++;return true});
  expect(nav.path(0,goal,ring)).toBeNull();expect(probes).toBeLessThan(5000);
  ring.delete(goal-4*n);expect(nav.path(0,goal,ring)?.at(-1)).toBe(goal);
+});
+
+it('bounds a traffic detour without restricting the underlying terrain route',()=>{
+ const size=64,start=32*size+10,goal=32*size+50,door=32*size+30;
+ let probes=0;
+ const nav=new Navigation(size,(_a,b)=>{probes++;return b%size!==30||b===door||Math.floor(b/size)===0;});
+ const normal=nav.path(start,goal)!;expect(normal).toContain(door);
+ // A temporarily occupied door has an alternative around the distant wall end.
+ expect(nav.path(start,goal,new Set([door]))).not.toBeNull();probes=0;
+ expect(nav.path(start,goal,new Set([door]),44000)).toBeNull();
+ expect(probes).toBeLessThan(16000);
+ expect(nav.path(start,goal,undefined,44000)).toEqual(normal);
 });

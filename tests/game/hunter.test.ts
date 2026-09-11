@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import {expect, it} from 'vitest';
 import {game, placed, run} from './helpers';
 import {precise} from '../../src/sim/game/motion';
@@ -8,6 +9,7 @@ const hunter = 'unit.ants.hunter';
 function duel(researched=false) {
  const g=game([placed('hunter',hunter,205,210), {...placed('target','unit.ants.warrior',211,210),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='hunter')!,b=g.entities.find(e=>e.placement==='target')!;
+ a.rotation=heading(a,b);
  if(researched)g.state.research[a.owner]=['research.ants.driving-spear'];
  run(g,1);
  expect(g.command(a.owner,{type:'attack',actors:[a.id],target:b.id,force:false}).accepted).toBe(true);

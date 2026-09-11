@@ -57,3 +57,23 @@ Worker work clips are connected through creation.workAnimation. Constructed buil
 `SettlementLayer` calls `batchCharacterMaterials` once per loaded character source, before creating instances. Compatible sibling skinned surfaces share one standard PBR material with vertex colors and a tiny nearest-filtered roughness/metalness palette. `TC_TeamColor` remains separate. No geometry simplification or animation changes occur. Textured, morphing, directly animated mesh nodes and non-standard materials are left untouched. The layer owns palette disposal; instance materials still use the normal character factory lifecycle.
 
 Tree work cycles use `creation.impactTick` (22 of 40 ticks). The final swing completes its follow-through while the worker waits for the fall; no eleventh strike is played. Other work and ordinary movement retain their existing playback. Animated vegetation uses its own 1× controller, independent of the ants’ 1.5× playback default.
+
+### Engine cast timing
+
+The game renderer uses observed `unit.casting.startTick` / `resolveTick` to seek
+through a cast windup, then plays visual recovery after release. Asset definitions
+can set `castContact` (normalized 0–1 clip phase; fallback 0.55). Marshal uses 0.68,
+the end of the authored release gesture. This metadata aligns the pose only:
+simulation remains authoritative for effects and damage. An interrupted pre-release
+cast exits immediately; new movement/attacks can interrupt recovery. Studio playback
+continues to use the controller's ordinary playback speed.
+
+### Projectile launch sockets
+
+An asset's `projectileSocket` names a GLB node sampled in world space after posing.
+The archer uses `socket_handL` (bow grip); the bombardier uses `socket_muzzle`.
+A fresh observed flight captures this once, then remains independent of its shooter.
+Late/missing/hidden sources use the simulation's recorded origin with the projectile
+renderer’s fallback height. This is visual metadata and does not launch projectiles,
+change their authoritative timing or control damage. No socket lookup reads hidden
+simulation entities.

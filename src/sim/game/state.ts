@@ -1,4 +1,5 @@
 import { missileSchema } from "./missileState";
+import {worldPointSchema} from './coordinates';
 import { shellSchema } from "./shellState";
 import { itemRuntimeSchema, itemStatusSchema } from "../../content/items";
 import { visualCueSchema } from "./visualCues";
@@ -15,6 +16,9 @@ const positive = z.number().int().positive(),
 const point = pointSchema;
 export const MAX_QUEUED_ORDERS = 16;
 export const orderSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("hold")}).strict(),
+  z.object({type:z.literal("patrol"),destination:point,origin:point.optional()}).strict(),
+  z.object({type:z.literal("follow"),target:positive}).strict(),
   z.object({ type: z.literal("construct"), target: positive }).strict(),
   z.object({ type: z.literal("gather"), target: positive }).strict(),
   z.object({ type: z.literal("pickup"), target: positive }).strict(),
@@ -77,7 +81,8 @@ export const entitySchema = z
           .object({
             ability: idSchema,
             rank: positive.max(3),
-            point,
+            point:worldPointSchema,
+            startTick: natural,
             resolveTick: natural,
           })
           .strict()
@@ -113,6 +118,13 @@ export const entitySchema = z
         order: orderSchema.nullable(),
         orderQueue: z.array(orderSchema).max(MAX_QUEUED_ORDERS),
         route: z.array(natural.max(262143)),
+        lastMovedTick: natural.optional(),
+        detour: z.object({
+          goal:natural.max(262143),
+          waypoint:natural.max(262143),
+          yielding:z.object({leader:positive,until:natural}).strict().optional(),
+          points:z.array(z.object({x:natural.max(511000),y:natural.max(511000)}).strict()).min(1).max(256),
+        }).strict().optional(),
         goal: natural.max(262143).nullable(),
         position: z
           .object({ x: natural.max(511000), y: natural.max(511000) })
@@ -139,8 +151,9 @@ export const entitySchema = z
         contained: positive.nullable(),
         release: point.nullable(),
         target: positive.nullable(),
+        pursuit: z.object({target:positive,position:point,seenTick:natural}).strict().optional(),
         cooldown: natural,
-        attack: z.object({target: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
+        attack: z.object({target: positive, cycleTicks: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
         charge: z.object({readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
         camp: z.string().nullable(),
         returning: z.boolean(),

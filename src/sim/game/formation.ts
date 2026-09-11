@@ -3,8 +3,25 @@ type Member=Point & {id:number};
 /** Compact walkable destinations, assigned spatially rather than by selection order.
  * Pair exchanges reduce travel/crossing without an unbounded per-order assignment solver.
  */
-export function formationDestinations(members:readonly Member[], destination:Point, size:number, walkable:(p:Point)=>boolean):Map<number,Point>{
+export function formationDestinations(members:readonly Member[], destination:Point, size:number, walkable:(p:Point)=>boolean,straight:(from:Point,to:Point)=>boolean=()=>true):Map<number,Point>{
  const result=new Map<number,Point>();if(!members.length)return result;
+ // Preserve an already compact footprint through a clear translation. A
+ // routine micro order should not reshuffle neighbors into a new diamond.
+ if(members.length>1){
+  const actors=[...members].sort((a,b)=>a.x-b.x||a.y-b.y||a.id-b.id);
+  const rounded=actors.map(a=>({x:Math.round(a.x),y:Math.round(a.y)}));
+  const width=Math.max(...rounded.map(p=>p.x))-Math.min(...rounded.map(p=>p.x))+1;
+  const height=Math.max(...rounded.map(p=>p.y))-Math.min(...rounded.map(p=>p.y))+1;
+  const maxSpan=Math.ceil(Math.sqrt(actors.length))*2;
+  if(width*height<=actors.length*2&&width<=maxSpan&&height<=maxSpan){
+   const center={x:Math.round(actors.reduce((sum,a)=>sum+a.x,0)/actors.length),y:Math.round(actors.reduce((sum,a)=>sum+a.y,0)/actors.length)};
+   const translated=rounded.map(p=>({x:p.x+destination.x-center.x,y:p.y+destination.y-center.y}));
+   if(new Set(translated.map(p=>p.y*size+p.x)).size===actors.length&&translated.every((p,i)=>
+    p.x>=0&&p.y>=0&&p.x<size&&p.y<size&&walkable(p)&&straight(actors[i],p))){
+    actors.forEach((a,i)=>result.set(a.id,translated[i]));return result;
+   }
+  }
+ }
  const slots:Point[]=[];
  const searchRadius=Math.min(size-1,Math.max(12,Math.ceil(Math.sqrt(members.length))*3));
  for(let radius=0;slots.length<members.length && radius<=searchRadius;radius++){

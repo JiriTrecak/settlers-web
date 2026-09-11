@@ -13,6 +13,10 @@ export class WebSocketChannel implements Channel {
     this.ws = new WebSocket(url);
     this.ws.addEventListener("message", (ev) => {
       const msg = JSON.parse(String(ev.data)) as ServerMsg;
+      if(msg.type==='latencyProbe'){
+        if(typeof msg.id==='string'&&msg.id.length<=128)this.send({type:'latencyReply',id:msg.id});
+        return;
+      }
       if (this.fns.length === 0) this.buf.push(msg);
       else for (const fn of this.fns) fn(msg);
     });

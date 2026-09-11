@@ -8,7 +8,7 @@ describe("command categories", () => {
     const g = game(), w = worker(g);
     const bindings = commandCard(g.view("player.1"), [w.id], "player.1", g.registry);
     const root = commandMenu(bindings, null, g.registry).entries;
-    expect(root.map(b => b.id)).toEqual(["move", "stop", "category:category.build", "category:category.build-advanced"]);
+    expect(root.map(b => b.id)).toEqual(["move", "stop", "hold", "patrol", "category:category.build", "category:category.build-advanced", "follow"]);
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
     expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Mound"});
     const basic = commandMenu(bindings, "category.build", g.registry).entries;

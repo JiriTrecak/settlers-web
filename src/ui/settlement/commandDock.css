@@ -238,3 +238,7 @@
 
 .rts-command kbd{top:auto;bottom:6px;right:7px;font:600 12px system-ui;color:#fff1be;text-shadow:0 1px 3px #000;pointer-events:none}.rts-command[aria-disabled="true"]{opacity:.4;cursor:default}
 .rts-error{position:absolute;bottom:calc(clamp(156px,21.667vw,260px) + 20px);left:50%;transform:translateX(-50%);width:min(90vw,800px);text-align:center;color:#ff5252;font:600 17px system-ui;text-shadow:0 2px 4px #000;opacity:0;transition:opacity .3s;pointer-events:none}.rts-error.visible{opacity:1;transition:none}
+
+.rts-control-groups{position:absolute;bottom:70%;left:37.5%;display:flex;gap:4px;pointer-events:auto;max-width:36%;overflow-x:auto;padding:4px;background:#10171bce;border:1px solid #667279;border-radius:4px}
+.rts-control-groups[hidden]{display:none}.rts-control-groups button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:32px;height:36px;padding:2px 6px;background:#263238d9;border:1px solid #56646b;color:#e9eded;cursor:pointer;font:12px system-ui}
+.rts-control-groups button[aria-pressed=true]{border-color:#ecdda8;background:#48514c}.rts-control-groups button:hover{background:#52626b}.rts-control-groups kbd{font:11px system-ui;color:#ead39d}.rts-control-groups button span{font-size:10px;color:#bcc9ce}

@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import {describe, expect, it} from 'vitest';
 import {content} from '../../src/content/builtin';
 import {ContentRegistry} from '../../src/content/registry';
@@ -52,7 +53,7 @@ describe('first combat balance', () => {
     expect(g.context.stats(h).level).toBe(2);expect(h.hp).toBe(575);expect(h.spellcasting!.mana).toBe(115);
     h.progression!.experience=3200;
     target.x=h.x+1;target.y=h.y;g.observation.update();g.state.tick++;
-    h.unit!.target=target.id;const before=target.hp!;
+    h.rotation=heading(h,target);h.unit!.target=target.id;const before=target.hp!;
     g.combat.resolve();
     expect(target.hp).toBe(before);expect(h.unit!.cooldown).toBe(60);
     g.state.tick=h.unit!.attack!.impact;g.combat.resolve();
@@ -63,7 +64,7 @@ describe('first combat balance', () => {
     const targets=Array.from({length:8},(_,i)=>g.context.create({...placed(`t${i}`,i===6?'unit.ants.marshal':i===7?'building.ants.barracks':'unit.ants.warrior',225+i%3,228+Math.floor(i/3)),owner:'player.2'}));
     g.spells.learn(h,spell('crownfall'));h.spellcasting!.mana=420;
     expect(g.spells.cast(h,spell('crownfall'),{x:226,y:229})).toBeNull();
-    g.state.tick+=40;
+    g.state.tick=h.spellcasting!.pending!.resolveTick;
     const hits=g.spells.resolve();
     expect(hits).toHaveLength(8);
     expect(hits.every(hit=>hit.damage===210)).toBe(true);
@@ -79,7 +80,7 @@ describe('first combat balance', () => {
     const g=game([],draft => (draft.rules as Rules).damageMultipliers.spell.hero=0),h=heroOf(g);
     h.progression!.experience=3200;h.spellcasting!.mana=420;g.spells.learn(h,spell('crownfall'));
     for(let i=0;i<7;i++)g.context.create({...placed(`t${i}`,i===6?'unit.ants.marshal':'unit.ants.warrior',225+i%3,228+Math.floor(i/3)),owner:'player.2'});
-    g.spells.cast(h,spell('crownfall'),{x:226,y:229});g.state.tick+=40;
+    g.spells.cast(h,spell('crownfall'),{x:226,y:229});g.state.tick=h.spellcasting!.pending!.resolveTick;
     const hits=g.spells.resolve();expect(hits).toHaveLength(6);expect(hits.every(hit=>hit.damage===280)).toBe(true);
     expect(areaDamageScale(6,3)).toBe(1);
   });

@@ -56,14 +56,14 @@ export type EntityView = {
     moving: boolean;
     strolling?: boolean;
     charging?: boolean;
-    casting?: { ability: string; resolveTick: number };
+    casting?: { ability: string; startTick: number; resolveTick: number };
     contained: boolean;
     cargo: NonNullable<Entity["unit"]>["cargo"];
     target: number | null;
     commandedTarget?: number | null;
     work?: { animation: "build" | "chop"; x: number; y: number; cycle?: {ticks: number; progress: number} };
     cooldown: number;
-    attack?: NonNullable<Entity["unit"]>["attack"];
+    attack?: Omit<NonNullable<NonNullable<Entity["unit"]>["attack"]>,"target"> & {target:number|null};
 
   };
   production?: Entity["production"];
@@ -274,13 +274,14 @@ export class Observation {
     };
     if (e.unit)
       result.unit = {
-        moving: e.unit.route.length > 0,
+        moving: e.unit.lastMovedTick === this.c.state.tick,
         strolling: !!e.unit.idle?.walking,
         charging: e.unit.charge?.target != null && e.unit.charge.expires > this.c.state.tick,
-        ...(e.spellcasting?.pending
+        ...(e.spellcasting?.pending && e.spellcasting.pending.startTick<=this.c.state.tick
           ? {
               casting: {
                 ability: e.spellcasting.pending.ability,
+                startTick: e.spellcasting.pending.startTick,
                 resolveTick: e.spellcasting.pending.resolveTick,
               },
             }
@@ -293,13 +294,13 @@ export class Observation {
             ? e.unit.order.target
             : null,
         cooldown: e.unit.cooldown,
-        ...(e.unit.attack ? {attack: {...e.unit.attack}} : {}),
+        ...(e.unit.attack ? {attack: {...e.unit.attack,target:privateData || (observer && this.c.get(e.unit.attack.target) && this.visible(observer,this.c.get(e.unit.attack.target)!)) ? e.unit.attack.target : null}} : {}),
 
       };
     if (
       e.unit &&
       result.unit &&
-      !result.unit.moving &&
+      !e.unit.route.length &&
       !result.unit.contained &&
       (e.unit.goal === null ||
         atPoint(e, {

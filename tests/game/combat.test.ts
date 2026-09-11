@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { precise } from "../../src/sim/game/motion";
 import { describe, it, expect } from "vitest";
 import { game, placed, run, slots } from "./helpers";
@@ -16,6 +17,7 @@ describe("combat, knowledge and deterministic navigation", () => {
         a = g.entities.find(
           (e) => e.placement === (owner === "player.1" ? "a" : "b"),
         )!;
+      a.rotation=heading(a,target);
       target.hp = 1;
       expect(
         g.command(owner, {
@@ -92,7 +94,7 @@ describe("combat, knowledge and deterministic navigation", () => {
     const neutral = g.entities.find((e) => e.placement === "wolf")!,
       soldier = g.entities.find((e) => e.placement === "warrior")!,
       hp = soldier.hp!;
-    run(g, 15);
+    run(g, 30);
     expect(soldier.hp!).toBeLessThan(hp);
     neutral.x = 170;
     neutral.y = 230;

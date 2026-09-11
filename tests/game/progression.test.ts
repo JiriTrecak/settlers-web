@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { describe, it, expect } from "vitest";
 import { Game } from "../../src/sim/game/game";
 import { ContentRegistry } from "../../src/content/registry";
@@ -23,7 +24,7 @@ function setup() {
 describe("hero leveling",()=>{
   it("shares XP deterministically and exposes derived level/health/damage without exposing enemy XP",()=>{
     const g=setup(),h=g.entities.find(e=>e.placement==="hero1")!,h2=g.entities.find(e=>e.placement==="hero2")!;
-    h.hp=70; h.unit!.target=g.entities.find(e=>e.placement==="victim")!.id;
+    h.rotation=heading(h,g.entities.find(e=>e.placement==="victim")!);h.hp=70; h.unit!.target=g.entities.find(e=>e.placement==="victim")!.id;
     for(let t=0;t<=g.registry.get(h.definition).behaviors.combat!.attack.windupTicks;t++)g.tick();
     expect(h.progression!.experience).toBe(18);expect(h2.progression!.experience).toBe(17);
     expect(g.context.stats(h)).toMatchObject({level:2,maxHp:120,damage:35,armor:1});
@@ -39,7 +40,7 @@ describe("hero leveling",()=>{
     const g=setup(),h=g.entities.find(e=>e.placement==="hero1")!;
     const victim=g.entities.find(e=>e.definition==="unit.ants.settler"&&e.owner==="player.1")!;
     victim.x=h.x+1;victim.y=h.y;victim.hp=1;
-    h.unit!.order={type:"attack",target:victim.id,force:true};h.unit!.target=victim.id;
+    h.rotation=heading(h,victim);h.unit!.order={type:"attack",target:victim.id,force:true};h.unit!.target=victim.id;
     // Keep the neutral alive outside combat range.
     const wolf=g.entities.find(e=>e.placement==="victim")!;wolf.x=100;wolf.y=100;
     for(let t=0;t<=g.registry.get(h.definition).behaviors.combat!.attack.windupTicks;t++)g.tick();

@@ -1,3 +1,4 @@
+import {shortcuts,inputCaptured} from '../shared/input/shortcuts';
 export type MatchDebugControls = {
   reveal: boolean;
   speed: number;
@@ -109,7 +110,7 @@ class PerformanceDebug {
   private lastFrame = 0;
   private refs = 0;
   private key = (e: KeyboardEvent) => {
-    if (e.code === "F3") {
+    if (!inputCaptured(e) && !e.repeat && shortcuts.matches("debug.toggle",e)) {
       e.preventDefault();
       this.toggle();
     }
@@ -126,7 +127,7 @@ class PerformanceDebug {
     root.style.cssText =
       "position:fixed;right:12px;top:48px;z-index:10000;color:#dce8e9;font:12px/1.5 monospace;pointer-events:auto";
     const toggle = document.createElement("button");
-    toggle.textContent = "Debug · F3";
+    toggle.textContent = "Debug";
     toggle.onclick = () => this.toggle();
     toggle.style.cssText =
       "padding:5px 9px;color:#dce8e9;background:#182628;border:1px solid #53676b;cursor:pointer";

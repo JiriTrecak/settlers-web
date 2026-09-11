@@ -42,3 +42,5 @@ Asset authoring: [team-color material contract](team-color.md). Only `TC_TeamCol
 The [implemented opponent AI](../ai/implementation.md) coordinates economy, hero and army planning from authorized map knowledge and live observations. Its [design rationale](../ai/README.md) includes the declarative policy and adversarial acceptance scenarios. The implementation document distinguishes shipped behavior from the remaining adversarial playtesting backlog.
 
 Current economy: [amber, wood and living workers](../game/economy.md). This supersedes the historical production-chain sections of the reviewed design proposals.
+
+Input and army handling: [RTS controls, bindings and control groups](rts-controls.md).

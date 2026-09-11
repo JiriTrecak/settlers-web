@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { describe,it,expect } from "vitest";
 import { game,placed } from "./helpers";
 import { inventoryCard } from "../../src/presentation/commands";
@@ -69,6 +70,7 @@ it('revives the same hero with items, XP and skills after real combat death and 
  victim.equipment!.fill('item.test-ring');victim.progression!.experience=100;
  expect(g.spells.learn(victim,'spell.marshal.faultline')).toBeNull();
  g.tick();
+ attacker.rotation=heading(attacker,victim);
  expect(g.command('player.1',{type:'attack',actors:[attacker.id],target:victim.id,force:true}).accepted).toBe(true);
  for(let t=0;t<=g.registry.get(attacker.definition).behaviors.combat!.attack.windupTicks;t++)g.tick();
  expect(victim.fallen).toBe(true);expect(victim.hp).toBe(0);

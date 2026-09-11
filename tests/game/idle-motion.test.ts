@@ -1,3 +1,4 @@
+import {heading} from '../../src/sim/game/facing';
 import { expect, it } from "vitest";
 import { game, worker } from "./helpers";
 import { idleMotion } from "../../src/sim/game/idleMotion";
@@ -12,6 +13,7 @@ it("strolls at half speed near its resting point and immediately yields to an or
     if (w.unit!.idle?.walking) break;
   }
   expect(w.unit!.idle?.walking).toBe(true);
+  w.rotation=heading(w,g.context.spatial.point(w.unit!.route[0]));
   const before = precise(w);
   g.context.move();
   const after = precise(w);

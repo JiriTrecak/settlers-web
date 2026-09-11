@@ -1,3 +1,6 @@
+import {routeToAttack} from './attackApproach';
+import {attackTiming} from './attackTiming';
+import {facing} from "./facing";
 import { Missiles } from "./missiles";
 import { ShellCombat } from "./shellCombat";
 import { maintainCharge, startCharge, chargeDamage } from "./charge";
@@ -62,6 +65,7 @@ export class Combat {
       maintainCharge(c, e);
       if (u.attack) {
         const victim = c.get(u.attack.target);
+        if(victim && alive(victim) && this.perceives(e,victim))this.rememberTarget(e,victim);
         if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || u.target !== victim.id ||
             isStunned(e,c.registry) || e.spellcasting?.pending || !this.perceives(e,victim)) delete u.attack;
         else if (!u.attack.released) {
@@ -71,11 +75,12 @@ export class Combat {
         }
       }
       if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
-      if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") continue;
+      if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") {delete u.pursuit;continue;}
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
       if (camp && (distance2(precise(e), camp.home) > camp.leash ** 2 || u.returning)) {
         u.returning = true;
+        delete u.pursuit;
         u.target = null;
         u.order = null;
         if (distance2(precise(e), camp.home) <= 1) {
@@ -90,11 +95,25 @@ export class Combat {
         continue;
       }
       if (order?.type === "move" && !order.attackMove) {
+        delete u.pursuit;
         u.target = null;
         this.moveOrder(e, order.destination);
         continue;
       }
-      let target = c.get(order?.type === "attack" ? order.target : u.target);
+      if(order?.type==='patrol')order.origin??={x:e.x,y:e.y};
+      if(order?.type==='follow'){
+        const leader=c.get(order.target);u.target=null;
+        if(!leader||!alive(leader)||leader.owner!==e.owner||leader.unit?.contained||!this.perceives(e,leader)){u.order=null;u.route=[];u.goal=null;continue;}
+        if(c.spatial.range(e,leader)<=4){u.route=[];u.goal=null;}else if(u.retryAt<=c.state.tick){const goal=c.spatial.nearest(leader,8,e.id);if(goal)c.spatial.route(e,goal);u.retryAt=c.state.tick+12;}
+        continue;
+      }
+      if(order?.type==='hold'){u.route=[];u.goal=null;if(u.target){const t=c.get(u.target);if(!t||!combat||c.spatial.range(e,t)>combat.range**2)u.target=null;}}
+      let target = c.get(order?.type === "attack" ? order.target : u.target ?? (order?.type==='hold'?undefined:u.pursuit?.target));
+      if(combat && order?.type!=='hold' && u.pursuit && (!target || !this.perceives(e,target))){
+        const replacement=order?.type==='attack'?undefined:this.closestTarget(e,targets,combat.aggroRange);
+        if(replacement){target=replacement;delete u.pursuit;u.route=[];u.goal=null;u.retryAt=c.state.tick;}
+        else {this.searchLastSeen(e);continue;}
+      }
       if (
         target &&
         (!alive(target) ||
@@ -106,12 +125,27 @@ export class Combat {
             !this.hostile(e, target)))
       ) {
         target = undefined;
+        delete u.pursuit;
         u.target = null;
         u.route = [];
         u.goal = null;
         if (order?.type === "attack") u.order = null;
       }
-      // A destroyed or no-longer-observed explicit target completes this order.
+      // Automatic pursuit must not pull a crowded front line past an enemy it
+      // can already hit. Keep explicit focus and committed attacks unchanged.
+      if (target && combat && order?.type !== "attack" && !u.attack &&
+          c.state.tick % 8 === e.id % 8 && c.spatial.range(e, target) > combat.range ** 2) {
+        const immediate = this.closestTarget(e, targets, combat.range);
+        if (immediate) {
+          target = immediate;
+          u.target = immediate.id;
+          delete u.pursuit;
+          u.route = [];
+          u.goal = null;
+          u.retryAt = c.state.tick;
+        }
+      }
+      // A witnessed destruction or exhausted search completes an explicit attack.
       // Do not let automatic acquisition hold up the next player waypoint.
       if (!target && order?.type === "attack") {
         u.order = null;
@@ -126,19 +160,11 @@ export class Combat {
         (c.state.tick % 8 === e.id % 8 ||
           (order?.type === "move" && order.attackMove))
       ) {
-        target = targets
-          .filter(
-            (t) =>
-              this.hostile(e, t) &&
-              c.spatial.range(e, t) <= combat.aggroRange ** 2 &&
-              this.perceives(e, t),
-          )
-          .sort(
-            (a, b) =>
-              c.spatial.range(e, a) - c.spatial.range(e, b) || a.id - b.id,
-          )[0];
+        target = this.closestTarget(e,targets,order?.type==='hold'?combat.range:combat.aggroRange);
       }
       if (target && combat) {
+        if(u.target===null&&u.pursuit){u.route=[];u.goal=null;u.retryAt=c.state.tick;}
+        this.rememberTarget(e,target);
         u.target = target.id;
         maintainCharge(c, e);
         if (c.spatial.range(e, target) <= combat.range ** 2) {
@@ -147,16 +173,40 @@ export class Combat {
           if (!u.attack && !u.cooldown) this.beginAttack(e, target);
           continue;
         }
-        const staleGoal = u.goal !== null && c.spatial.pointRange(c.spatial.point(u.goal),target) > Math.max(1,combat.range * .75) ** 2;
+        if(order?.type==='hold'){u.target=null;continue;}
+        const staleGoal = u.goal !== null && c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2;
         if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
-          const goal = c.spatial.nearest(target, 12, e.id);
-          if (goal) c.spatial.route(e, goal);
+          routeToAttack(c,e,target);
           u.retryAt = c.state.tick + 6;
         }
         startCharge(c, e, target);
         continue;
       }
       if (u.order?.type === "move") this.moveOrder(e, u.order.destination);
+      else if(order?.type==='patrol'){
+        order.origin??={x:e.x,y:e.y};
+        const arrived=this.moveOrder(e,order.destination);
+        if(arrived){const next=order.origin;order.origin=order.destination;order.destination=next;u.order=order;u.retryAt=c.state.tick+1;}
+      }
+    }
+  }
+  private closestTarget(actor:Entity,targets:readonly Entity[],range:number){
+    return targets.filter(t=>this.hostile(actor,t)&&this.c.spatial.range(actor,t)<=range**2&&this.perceives(actor,t))
+      .sort((a,b)=>this.c.spatial.range(actor,a)-this.c.spatial.range(actor,b)||a.id-b.id)[0];
+  }
+  private rememberTarget(actor:Entity,target:Entity){
+    actor.unit!.pursuit={target:target.id,position:{x:target.x,y:target.y},seenTick:this.c.state.tick};
+  }
+  private searchLastSeen(actor:Entity){
+    const u=actor.unit!,memory=u.pursuit!;
+    delete u.attack;
+    if(u.target!==null){u.target=null;u.route=[];u.goal=null;u.retryAt=this.c.state.tick;}
+    const finish=()=>{delete u.pursuit;u.route=[];u.goal=null;if(u.order?.type==='attack')u.order=null;};
+    if(atPoint(actor,memory.position)||(!u.route.length&&u.goal!==null&&atPoint(actor,this.c.spatial.point(u.goal)))){finish();return;}
+    if(!u.route.length&&u.retryAt<=this.c.state.tick){
+      const goal=this.c.spatial.nearest(memory.position,2,actor.id);
+      if(!goal||!this.c.spatial.route(actor,goal,false)){finish();return;}
+      u.retryAt=this.c.state.tick+6;
     }
   }
   private moveOrder(e: Entity, destination: { x: number; y: number }) {
@@ -167,7 +217,7 @@ export class Combat {
     ) {
       u.order = null;
       u.goal = null;
-      return;
+      return true;
     }
     if (!u.route.length && u.retryAt <= this.c.state.tick) {
       const goal = this.c.spatial.nearest(destination, 8, e.id);
@@ -181,10 +231,11 @@ export class Combat {
     }
   }
   private beginAttack(a: Entity, b: Entity) {
-    const u = a.unit!, policy = this.c.def(a).behaviors.combat!.attack;
-    u.attack = {target: b.id, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
+    if(!facing(a,precise(b)))return;
+    const u = a.unit!, cycleTicks=this.c.stats(a).cooldownTicks, policy=attackTiming(this.c.def(a).behaviors.combat!,cycleTicks);
+    u.attack = {target: b.id, cycleTicks, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
       ends: this.c.state.tick + policy.windupTicks + policy.recoveryTicks, released: false};
-    u.cooldown = this.c.stats(a).cooldownTicks;
+    u.cooldown = cycleTicks;
     u.route = []; u.goal = null;
   }
   private damage(target:Entity,raw:number,type:string){
@@ -238,6 +289,10 @@ export class Combat {
       const target = this.c.get(id)!;
       target.hp = Math.max(0, target.hp! - damage);
       if (!target.hp && !this.items.rescue(target)) dead.push(target);
+    }
+    // A witnessed death completes pursuit; an unseen removal must not disclose it.
+    for(const target of dead)for(const actor of this.c.activeUnits()){
+      if(actor.unit!.pursuit?.target===target.id&&this.perceives(actor,target))delete actor.unit!.pursuit;
     }
     const progression = new Progression(this.c);
     for (const target of dead) if (contested.has(target.id))
