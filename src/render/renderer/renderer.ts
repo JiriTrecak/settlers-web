@@ -1,3 +1,5 @@
+import {SelectionPortrait} from '../portrait/selectionPortrait';
+import {ownerSlot,type Owner} from '../../content/schema';
 import {bridgeSurfaces,bridgeHeight} from '../../shared/map/bridgeSurface';
 import {SceneryLights} from '../prop/sceneryLights';
 import type { AbilityAim } from "../settlement/abilityTarget";
@@ -59,6 +61,10 @@ import { WaterLayer } from "../water/waterLayer";
 const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 
 export class Renderer {
+  private readonly portrait: SelectionPortrait;
+  gamePortrait(host:HTMLElement, definition:string|null, owner:Owner){
+    this.portrait.set(host,definition ? `${definition}/${owner}` : '',()=>definition ? this.settlement?.createPortrait(definition,ownerSlot(owner)) ?? null : null);
+  }
   private destroyed = false;
   gameTimeScale = 1;
   private visualClock = 0;
@@ -181,6 +187,7 @@ export class Renderer {
     this.display = new Display(canvas, () => this.present());
     this.reflections = forestEnvironment(this.display.gl);
     this.scene.environment = this.reflections.texture;
+    this.portrait = new SelectionPortrait(this.reflections.texture);
     this.scene.environmentIntensity = 0.75;
     this.props = new PropField(this.scene, assets);
     this.brush = new BrushLayer(this.scene);
@@ -581,7 +588,7 @@ export class Renderer {
     this.meadow.updateLOD(cam);
     this.water?.updateVisibility(cam);
     perf.end("Camera / atmosphere", camera);
-    this.display.render(this.scene, cam);
+    this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now));
     perf.end("Present total (CPU)", total);
   }
 
@@ -661,6 +668,7 @@ export class Renderer {
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);
     this.props.destroy();
+    this.portrait.destroy();
     this.settlement?.destroy(this.scene);
     this.fog?.dispose();
     window.removeEventListener(

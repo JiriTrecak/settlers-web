@@ -1,3 +1,4 @@
+import {terrainPixel,sceneryKind} from './terrainStyle';
 import { entityMarker } from "./presentation";
 import { sampleCurve, type Landscape } from "../../shared/landscape/curve";
 import { content } from "../../content/builtin";
@@ -13,8 +14,8 @@ import type { SkyState } from "../sky/sky";
 import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
 
-const PX = 264;
-const LAND = "#62543a";
+const PX = 384;
+const LAND = "#7b7751";
 const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
@@ -41,7 +42,9 @@ export class Minimap {
   private readonly canvas: HTMLCanvasElement;
   private readonly clock: DayNightIndicator;
   private readonly ctx: CanvasRenderingContext2D;
-  private dots: { x: number; z: number; fill: string }[] = [];
+  private stamps: readonly MapStamp[]=[];
+  private sceneryDirty=true;
+  private readonly sceneryCanvas=document.createElement("canvas");
   private starts: readonly PlayerStart[] = [];
   setPlayerStarts(starts: readonly PlayerStart[]): void {
     if(starts.length === this.starts.length && starts.every((start,index)=>start===this.starts[index])) return;
@@ -145,19 +148,16 @@ export class Minimap {
   mountGame(host: HTMLElement, clockHost: HTMLElement): void {
     this.root.className = "";
     this.root.style.cssText =
-      "position:relative;width:100%;height:100%;pointer-events:auto;overflow:hidden;border:1px solid #a9946655;background:#000";
+      "position:relative;width:100%;height:100%;pointer-events:auto;overflow:hidden;background:#080c07";
     host.append(this.root);
     clockHost.append(this.clock.root);
     this.clock.root.style.left = "0";
   }
 
   setStamps(stamps: readonly MapStamp[]): void {
-    this.dots = stamps.map((s) => ({
-      x: s.x + 0.5,
-      z: s.y + 0.5,
-      fill: tint(s.asset),
-    }));
-    this.dirty = true;
+    if(this.stamps===stamps)return;
+    this.stamps=stamps;
+    this.sceneryDirty=this.dirty=true;
   }
 
   setHeight(field: HeightField | null): void {
@@ -185,14 +185,8 @@ export class Minimap {
     const w = this.canvas.width;
     const h = this.canvas.height;
     if(this.terrainDirty) this.paintTerrain(size);
-    ctx.drawImage(this.terrainCanvas,0,0,w,h);
-    ctx.globalAlpha = 0.18;
-    for (const d of this.dots) {
-      const [px, py] = this.project(d.x, d.z, size, w, h);
-      ctx.fillStyle = d.fill;
-      ctx.fillRect(px - 0.5, py - 0.5, 1, 1);
-    }
-    ctx.globalAlpha = 1;
+    if(this.sceneryDirty)this.paintScenery(size);
+    ctx.drawImage(this.sceneryCanvas,0,0,w,h);
     if (this.fogState?.fog) {
       ctx.save();
       ctx.transform(w / size, 0, 0, h / size, 0, 0);
@@ -231,8 +225,9 @@ export class Minimap {
       else ctx.lineTo(px, py);
     }
     ctx.closePath();
+    ctx.strokeStyle="#10150ecc";ctx.lineWidth=3;ctx.stroke();
     ctx.strokeStyle = VIEW;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.4;
     ctx.stroke();
     const o = RING / 2;
     ctx.beginPath();
@@ -246,17 +241,19 @@ export class Minimap {
 
   /** Static terrain is rasterized only when map geometry/paint changes. */
   private paintTerrain(size:number):void {
-    this.terrainDirty=false;
+    this.terrainDirty=false;this.sceneryDirty=true;
     const canvas=this.terrainCanvas;canvas.width=canvas.height=PX;
     const ctx=canvas.getContext('2d')!, scale=PX/size;
     ctx.fillStyle=LAND;ctx.fillRect(0,0,PX,PX);
     const coverColors={meadow:'#64723d',straw:'#80764b',ochre:'#7b6238',sage:'#65715a',forest:'#465735'};
     for(const patch of this.landscape?.cover??[]) {
-      ctx.fillStyle=coverColors[patch.palette??'meadow'];
+      const radius=Math.max(1,patch.radius*scale);
+      const gradient=ctx.createRadialGradient(patch.x*scale,patch.z*scale,0,patch.x*scale,patch.z*scale,radius);
+      gradient.addColorStop(0,coverColors[patch.palette??'meadow']);gradient.addColorStop(.6,coverColors[patch.palette??'meadow']);gradient.addColorStop(1,'transparent');ctx.fillStyle=gradient;
       ctx.globalAlpha=Math.min(.85,patch.density*.35);
       ctx.beginPath();ctx.arc(patch.x*scale,patch.z*scale,patch.radius*scale,0,Math.PI*2);ctx.fill();
     }
-    const colors={road:'#aa8152',grass:'#64703e',sand:'#978252',mud:'#61513b',rock:'#727671',snow:'#b5b9b1'};
+    const colors={road:'#b59b6a',grass:'#788352',sand:'#ada578',mud:'#635947',rock:'#81857b',snow:'#c6cbbc'};
     for(const stroke of this.landscape?.strokes??[]) {
       ctx.fillStyle=colors[stroke.layer];ctx.globalAlpha=stroke.opacity;
       // Fill one unioned path so overlapping samples don't amplify opacity.
@@ -267,16 +264,37 @@ export class Minimap {
       ctx.fill();
     }
     ctx.globalAlpha=1;
-    if(!this.height)return;
     const field=this.height,data=ctx.getImageData(0,0,PX,PX);
     for(let py=0;py<PX;py++)for(let px=0;px<PX;px++) {
-      const x=(px+.5)/scale,z=(py+.5)/scale,y=field.sample(x,z),i=(py*PX+px)*4;
-      if(y<field.waterLevel){data.data[i]=64;data.data[i+1]=94;data.data[i+2]=102;continue;}
-      const dx=field.sample(x+1,z)-field.sample(x-1,z),dz=field.sample(x,z+1)-field.sample(x,z-1);
-      const shade=clamp(1+(y-field.waterLevel)*.009-(dx+dz)*.07,.68,1.16);
-      for(let c=0;c<3;c++)data.data[i+c]=data.data[i+c]!*shade;
+      const x=(px+.5)/scale,z=(py+.5)/scale,y=field?.sample(x,z)??1,i=(py*PX+px)*4;
+      const dx=field?field.sample(x+1,z)-field.sample(x-1,z):0,dz=field?field.sample(x,z+1)-field.sample(x,z-1):0;
+      const color=terrainPixel([data.data[i],data.data[i+1],data.data[i+2]],y,field?.waterLevel??0,dx,dz,px,py);
+      for(let c=0;c<3;c++)data.data[i+c]=color[c];
     }
     ctx.putImageData(data,0,0);
+  }
+
+  /** Tree silhouettes are cached separately so chopping a tree never re-rasterizes elevation. */
+  private paintScenery(size:number):void{
+    this.sceneryDirty=false;
+    const canvas=this.sceneryCanvas;canvas.width=canvas.height=PX;
+    const ctx=canvas.getContext('2d')!,scale=PX/size;
+    ctx.drawImage(this.terrainCanvas,0,0);
+    const stamps=this.stamps.filter(s=>sceneryKind(s.asset)).slice().sort((a,b)=>a.y-b.y);
+    for(const s of stamps){
+      const kind=sceneryKind(s.asset),x=(s.x+.5)*scale,y=(s.y+.5)*scale;
+      const radius=Math.max(.8,Math.min(5,(s.scale??1)*(s.widthScale??1)*1.8*scale));
+      if(kind==='tree'){
+        ctx.fillStyle='#17251485';ctx.beginPath();ctx.ellipse(x+radius*.35,y+radius*.45,radius*1.15,radius*.8,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=s.variant==='gold'?'#796e30':s.variant==='red'?'#774a2a':'#344c2a';ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=s.variant==='gold'?'#9a9146':'#687a40';ctx.beginPath();ctx.ellipse(x-radius*.22,y-radius*.22,radius*.57,radius*.65,-.3,0,Math.PI*2);ctx.fill();
+      }else{
+        ctx.fillStyle='#363e3480';ctx.fillRect(x-radius,y-radius*.5,radius*2.3,radius*1.8);
+        ctx.fillStyle='#999b80';ctx.beginPath();ctx.moveTo(x-radius,y);ctx.lineTo(x-radius*.5,y-radius);ctx.lineTo(x+radius*.7,y-radius*.7);ctx.lineTo(x+radius,y+radius*.55);ctx.lineTo(x,y+radius*.75);ctx.closePath();ctx.fill();
+      }
+    }
+    const vignette=ctx.createRadialGradient(PX/2,PX/2,PX*.3,PX/2,PX/2,PX*.72);
+    vignette.addColorStop(0,'transparent');vignette.addColorStop(1,'#14201955');ctx.fillStyle=vignette;ctx.fillRect(0,0,PX,PX);
   }
 
   destroy(): void {
@@ -311,10 +329,6 @@ export class Minimap {
     const max = size - 0.01;
     return [clamp(x, 0, max), clamp(z, 0, max)];
   }
-}
-
-function tint(_id: string): string {
-  return "#26351f";
 }
 
 function clamp(n: number, lo: number, hi: number): number {

@@ -1,3 +1,4 @@
+import {readHudLayout,setHudLayout,type HudLayout} from '../../shared/settings/hud';
 import {keyboardControls} from './keyboardControls';
 import {SHADOW_MODES,readShadowMode,setShadowMode,type ShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_SCALES,readResolutionScale,setResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
@@ -21,6 +22,11 @@ export function graphicsControls():HTMLElement {
  shadows.value=readShadowMode();shadows.onchange=()=>setShadowMode(shadows.value as ShadowMode);
  shadowLabel.append(shadows);group.append(shadowLabel);
  const shadowNote=document.createElement('p');shadowNote.className='canopy-settings-status';shadowNote.textContent='Filtered shadows use sharper edges and skip the soft-shadow blur passes. Applies immediately and is saved.';group.append(shadowNote);
+ const hudLabel=document.createElement('label');hudLabel.textContent='HUD layout';
+ const hudLayout=document.createElement('select');hudLayout.style.cssText=select.style.cssText;
+ for(const [value,text] of [['spread','Spread · screen edges'],['compact','Compact · centered']]){const o=document.createElement('option');o.value=value;o.textContent=text;hudLayout.append(o);}
+ hudLayout.value=readHudLayout();hudLayout.onchange=()=>setHudLayout(hudLayout.value as HudLayout);
+ hudLabel.append(hudLayout);group.append(hudLabel);
  group.append(keyboardControls());
  return group;
 }

@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-11",
+  "tool": "image_gen.imagegen",
+  "approvedReference": "docs/art/woodland-hud-reference.png",
+  "entries": [
+    {
+      "file": "selection.png",
+      "source": "exec-d62f3da6-d83f-4b90-ad9e-1f51d9ce5aeb.png",
+      "prompt": "Correct the attached UI asset. Its gray checkerboard outside the shaped twig frame is incorrectly painted into pixels. REMOVE that checkerboard and replace it with REAL TRANSPARENT ALPHA pixels. Preserve the twig-and-leaf frame and the opaque nearly black bark panel interior exactly. No content added. Need production PNG with genuinely transparent exterior, including the entire area above both low side wings and around central crest and below bottom edge. Do NOT draw or paint a checkerboard, output alpha channel. Same wide 3:1 image and same panel."
+    },
+    {
+      "file": "map-frame.png",
+      "source": "exec-ce45ef2a-7f0d-4605-995d-c93770a0a600.png",
+      "prompt": "Production game UI texture, matching attached subtle ant woodland frame. Generate ONE square minimap outer FRAME only: thin dark twigs lashed at corners, a few small muted olive leaves, tiny dark amber joints, beautiful restrained hand-crafted fantasy RTS style. Border occupies just 5 percent of image width. Interior is a perfectly square completely EMPTY transparent window (90 percent width). Exterior beyond twig silhouette also true transparent alpha. No content, no map, no text, no grid, no vignette across center, no painted checkerboard; real transparency. Frame fills square canvas nearly edge to edge. Straight-on, consistent thickness, game-ready PNG asset."
+    },
+    {
+      "file": "slot.png",
+      "source": "exec-5db67519-1d52-4f72-ac86-19ae6854d613.png",
+      "prompt": "Game-ready square UI button/slot texture matching attached ant woodland HUD. ONE single slot, exactly square, straight-on. Extremely thin dark twig border, fine fiber joins, one or two tiny muted resin pin joints, no leaves larger than corner, absolutely no bright ornament. Border inset 2% from canvas edge, dark nearly-black subtly textured leaf interior, completely EMPTY. No icons, no text, no labels, no other slots. Opaque dark background, no transparency checker. Slot's purpose is to hold a 128px item/command icon with thin wood frame overlaid by CSS. Painted realistic fantasy RTS material matching reference. Entire square fits canvas; slim edge not bulky picture frame."
+    },
+    {
+      "file": "satchel.png",
+      "source": "exec-dcb39804-b39a-4e0e-ad4e-2cfee94febe5.png",
+      "prompt": "Create a square game UI texture: a barely visible dark aged brown leather satchel backing, seen straight on, entirely flat, for four item slots that will be overlaid by code. No items, no grid, no text, no buttons, no metal frame, no straps covering the middle. Just a broad nearly black soft leather patch with very subtle stitched edge and a hint of a folded lip at top. Low contrast, sober, unobtrusive. The leather fills most of the square with a soft irregular edge. Transparent background, real alpha channel. Game HUD handmade woodland ant civilization aesthetic. Painterly 3D texture."
+    }
+  ]
+}

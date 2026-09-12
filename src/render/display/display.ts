@@ -65,7 +65,7 @@ export class Display {
     this.gl.setSize(this.width, this.height, false);
   }
 
-  render(scene: Scene, camera: Camera): void {
+  render(scene: Scene, camera: Camera, after?:()=>void): void {
     // Hidden multiplayer tabs keep simulating, but need no GPU presentation.
     if(document.hidden)return;
     const ctx=this.gl.getContext() as WebGL2RenderingContext;
@@ -82,6 +82,7 @@ export class Display {
     this.gl.info.reset();
     perf.resetCounts();
     this.gl.render(scene, camera);
+    after?.();
     perf.finishCounts();
     perf.end('WebGL submit (CPU)',start);
     if(q){ctx.endQuery(ext!.TIME_ELAPSED_EXT);this.queries.push(q);}

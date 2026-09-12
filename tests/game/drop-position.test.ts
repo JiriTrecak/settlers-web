@@ -7,10 +7,10 @@ it('keeps a full dropped inventory separated, reachable and deterministic after 
  const definition=g.registry.definitions.find(d=>d.itemEffect)?.id;
  expect(definition).toBeDefined();hero.equipment!.fill(definition!);
  const saved=g.snapshot(),restored=game([]);restored.restore(saved);
- for(let slot=0;slot<6;slot++){g.inventory.drop(hero,slot);restored.inventory.drop(restored.context.get(hero.id)!,slot);}
+ for(let slot=0;slot<hero.equipment!.length;slot++){g.inventory.drop(hero,slot);restored.inventory.drop(restored.context.get(hero.id)!,slot);}
  expect(restored.snapshot()).toEqual(g.snapshot());
  const drops=g.entities.filter(e=>e.definition===definition&&e.item);
- expect(drops).toHaveLength(6);
+ expect(drops).toHaveLength(hero.equipment!.length);
  for(let i=0;i<drops.length;i++)for(let j=i+1;j<drops.length;j++)expect((drops[i].x-drops[j].x)**2+(drops[i].y-drops[j].y)**2).toBeGreaterThanOrEqual(4);
  expect(hero.equipment!.every(e=>e===null)).toBe(true);
 });

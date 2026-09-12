@@ -1,0 +1,760 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-12T04:10:20.172577+00:00",
+  "scope": {
+    "inventory": "All regular files in assets/, experiments/, inspiration/, original/, output/; recognized media elsewhere. No symlinks followed.",
+    "excluded": [
+      ".cursor",
+      ".git",
+      "build",
+      "dist",
+      "keys",
+      "node_modules",
+      "experiments/assets/buildings/lumberjack-workshop/__pycache__",
+      "experiments/assets/buildings/rootbound-hall/__pycache__",
+      "experiments/assets/characters/__pycache__",
+      "experiments/assets/characters/amberjaw-staglord/__pycache__",
+      "experiments/assets/characters/thornblade-matriarch/__pycache__",
+      "experiments/building-studio/__pycache__",
+      "scripts/ant-colony/__pycache__",
+      "src-tauri/.xwin-cache",
+      "src-tauri/target",
+      "tmp/asset-audit",
+      "tmp/ant-colony/chrome-preview",
+      "tooling/dist",
+      "wiki/.generated",
+      "wiki/.vitepress"
+    ],
+    "byteMeaning": "Logical file bytes, not allocated disk blocks. No claim about GPU memory or download size.",
+    "referenceLimits": "Direct content/catalog/character/model URI edges; four map stamp/entity IDs; literal source paths and glob locations. Dynamic paths, script outputs and semantic use need human review.",
+    "modelLimits": "GLTF JSON/accessor census, stored triangles before scene instancing. Not a full GLTF or Blender validation.",
+    "alphaLimits": "PNG headers everywhere; actual 8-bit non-interlaced alpha decoded only under assets/ui/. No perceptual quality judgement."
+  },
+  "total": {
+    "files": 168901,
+    "bytes": 2093991524,
+    "trackedFiles": 1241,
+    "extensions": {
+      ".png": 167656,
+      ".map": 250,
+      ".gltf": 222,
+      ".json": 192,
+      ".glb": 150,
+      ".dat": 94,
+      ".jpg": 83,
+      ".log": 45,
+      ".py": 40,
+      ".svg": 35,
+      ".blend": 31,
+      ".md": 30,
+      ".blend1": 22,
+      ".utcmap": 14,
+      ".ogg": 13,
+      ".swatch": 10,
+      ".html": 4,
+      ".mjs": 3,
+      ".webp": 2,
+      ".txt": 1,
+      ".js": 1,
+      ".ts": 1,
+      ".jpeg": 1,
+      ".tga": 1
+    }
+  },
+  "roots": {
+    "assets": {
+      "files": 167647,
+      "bytes": 527053914,
+      "trackedFiles": 549,
+      "extensions": {
+        ".png": 167232,
+        ".gltf": 221,
+        ".glb": 115,
+        ".svg": 32,
+        ".json": 18,
+        ".md": 15,
+        ".blend": 7,
+        ".utcmap": 4,
+        ".html": 1,
+        ".blend1": 1,
+        ".jpg": 1
+      }
+    },
+    "docs": {
+      "files": 45,
+      "bytes": 92482792,
+      "trackedFiles": 44,
+      "extensions": {
+        ".png": 42,
+        ".svg": 3
+      }
+    },
+    "experiments": {
+      "files": 593,
+      "bytes": 385183501,
+      "trackedFiles": 550,
+      "extensions": {
+        ".png": 230,
+        ".json": 174,
+        ".log": 45,
+        ".py": 40,
+        ".glb": 35,
+        ".blend": 24,
+        ".blend1": 21,
+        ".md": 15,
+        ".html": 3,
+        ".mjs": 3,
+        ".txt": 1,
+        ".js": 1,
+        ".ts": 1
+      }
+    },
+    "inspiration": {
+      "files": 82,
+      "bytes": 56591517,
+      "trackedFiles": 82,
+      "extensions": {
+        ".png": 63,
+        ".swatch": 10,
+        ".jpg": 5,
+        ".webp": 2,
+        ".jpeg": 1,
+        ".tga": 1
+      }
+    },
+    "original": {
+      "files": 357,
+      "bytes": 793651457,
+      "trackedFiles": 0,
+      "extensions": {
+        ".map": 250,
+        ".dat": 94,
+        ".ogg": 13
+      }
+    },
+    "output": {
+      "files": 1,
+      "bytes": 20380,
+      "trackedFiles": 1,
+      "extensions": {
+        ".png": 1
+      }
+    },
+    "src-tauri": {
+      "files": 15,
+      "bytes": 978026,
+      "trackedFiles": 15,
+      "extensions": {
+        ".png": 15
+      }
+    },
+    "tmp": {
+      "files": 161,
+      "bytes": 238029937,
+      "trackedFiles": 0,
+      "extensions": {
+        ".jpg": 77,
+        ".png": 73,
+        ".utcmap": 10,
+        ".gltf": 1
+      }
+    }
+  },
+  "assetFolders": {
+    "assets/ant-colony": {
+      "files": 73,
+      "bytes": 102901176,
+      "trackedFiles": 73,
+      "extensions": {
+        ".glb": 58,
+        ".json": 6,
+        ".blend": 4,
+        ".md": 3,
+        ".png": 2
+      }
+    },
+    "assets/environment": {
+      "files": 50,
+      "bytes": 8885664,
+      "trackedFiles": 50,
+      "extensions": {
+        ".glb": 43,
+        ".json": 4,
+        ".png": 3
+      }
+    },
+    "assets/game_data": {
+      "files": 1,
+      "bytes": 289945,
+      "trackedFiles": 1,
+      "extensions": {
+        ".json": 1
+      }
+    },
+    "assets/graphics": {
+      "files": 167088,
+      "bytes": 241546227,
+      "trackedFiles": 0,
+      "extensions": {
+        ".png": 167085,
+        ".json": 2,
+        ".html": 1
+      }
+    },
+    "assets/landscape": {
+      "files": 11,
+      "bytes": 290491,
+      "trackedFiles": 11,
+      "extensions": {
+        ".gltf": 11
+      }
+    },
+    "assets/maps": {
+      "files": 7,
+      "bytes": 6425262,
+      "trackedFiles": 5,
+      "extensions": {
+        ".utcmap": 4,
+        ".md": 2,
+        ".json": 1
+      }
+    },
+    "assets/props": {
+      "files": 32,
+      "bytes": 17399603,
+      "trackedFiles": 32,
+      "extensions": {
+        ".glb": 14,
+        ".gltf": 13,
+        ".blend": 3,
+        ".blend1": 1,
+        ".png": 1
+      }
+    },
+    "assets/synty": {
+      "files": 200,
+      "bytes": 115849755,
+      "trackedFiles": 200,
+      "extensions": {
+        ".gltf": 197,
+        ".md": 1,
+        ".json": 1,
+        ".png": 1
+      }
+    },
+    "assets/terrain": {
+      "files": 7,
+      "bytes": 2931778,
+      "trackedFiles": 7,
+      "extensions": {
+        ".png": 7
+      }
+    },
+    "assets/ui": {
+      "files": 165,
+      "bytes": 24903249,
+      "trackedFiles": 157,
+      "extensions": {
+        ".png": 127,
+        ".svg": 32,
+        ".md": 5,
+        ".json": 1
+      }
+    },
+    "assets/visual_tests": {
+      "files": 10,
+      "bytes": 5549589,
+      "trackedFiles": 10,
+      "extensions": {
+        ".png": 6,
+        ".md": 3,
+        ".jpg": 1
+      }
+    }
+  },
+  "gameAssets": 113,
+  "catalogEntries": 208,
+  "archiveCatalogEntries": 218,
+  "models": {
+    "inAssets": 336,
+    "bytes": 171317219,
+    "linkedByCurrentContentOrCatalog": 216,
+    "globIncludedWithoutCurrentContentOrCatalog": [
+      "assets/ant-colony/archer.glb",
+      "assets/ant-colony/barracks.glb",
+      "assets/ant-colony/fort.glb",
+      "assets/ant-colony/lumberjack.glb",
+      "assets/ant-colony/pine-1-lod.glb",
+      "assets/ant-colony/pine-1.glb",
+      "assets/ant-colony/pine-2-lod.glb",
+      "assets/ant-colony/pine-2.glb",
+      "assets/ant-colony/pine-3-lod.glb",
+      "assets/ant-colony/pine-3.glb",
+      "assets/ant-colony/warrior.glb",
+      "assets/landscape/reference-rock.gltf",
+      "assets/props/boulder.gltf",
+      "assets/props/rock-cleft.gltf",
+      "assets/props/rock-slab.gltf",
+      "assets/props/rock.gltf",
+      "assets/synty/synty-plant-01.gltf",
+      "assets/synty/synty-plant-02.gltf",
+      "assets/synty/synty-plant-03.gltf",
+      "assets/synty/synty-plant-04.gltf",
+      "assets/synty/synty-plant-05.gltf",
+      "assets/synty/synty-plant-06.gltf",
+      "assets/synty/synty-plant-07.gltf",
+      "assets/synty/synty-plant-bush-01.gltf",
+      "assets/synty/synty-plant-bush-03.gltf",
+      "assets/synty/synty-plant-fern-leaves-01.gltf",
+      "assets/synty/synty-plant-fern-leaves-02.gltf",
+      "assets/synty/synty-plant-grass-01.gltf",
+      "assets/synty/synty-plant-grass-03.gltf",
+      "assets/synty/synty-plant-grass-04.gltf",
+      "assets/synty/synty-plant-grass-05.gltf",
+      "assets/synty/synty-plant-hedge-bush-01.gltf",
+      "assets/synty/synty-plant-hedge-bush-02.gltf",
+      "assets/synty/synty-plant-mushrooms-02.gltf",
+      "assets/synty/synty-plant-mushrooms-03.gltf",
+      "assets/synty/synty-plant-mushrooms-04.gltf",
+      "assets/synty/synty-plant-mushrooms-05.gltf",
+      "assets/synty/synty-plant-mushrooms-06.gltf",
+      "assets/synty/synty-plant-palmbush-01.gltf",
+      "assets/synty/synty-plant-purpleflower-01.gltf",
+      "assets/synty/synty-plant-undergrowth-01.gltf",
+      "assets/synty/synty-prop-arrow-01.gltf",
+      "assets/synty/synty-prop-brick-01.gltf",
+      "assets/synty/synty-prop-brick-02.gltf",
+      "assets/synty/synty-prop-campfire-01.gltf",
+      "assets/synty/synty-prop-chest-wood-01.gltf",
+      "assets/synty/synty-prop-cloud-01.gltf",
+      "assets/synty/synty-prop-cloud-02.gltf",
+      "assets/synty/synty-prop-cloud-03.gltf",
+      "assets/synty/synty-prop-grave-03.gltf",
+      "assets/synty/synty-prop-skeleton-ground-01.gltf",
+      "assets/synty/synty-prop-skull-01.gltf",
+      "assets/synty/synty-prop-torchstick-01.gltf",
+      "assets/synty/synty-rock-01.gltf",
+      "assets/synty/synty-rock-04.gltf",
+      "assets/synty/synty-rock-caveentrance-01.gltf",
+      "assets/synty/synty-rock-caveentrance-02.gltf",
+      "assets/synty/synty-rock-caveinterior-01.gltf",
+      "assets/synty/synty-rock-caveinterior-02.gltf",
+      "assets/synty/synty-rock-rounded-01.gltf",
+      "assets/synty/synty-swamp-root-01.gltf",
+      "assets/synty/synty-swamp-root-02.gltf",
+      "assets/synty/synty-terrain-dustpile-long-01.gltf",
+      "assets/synty/synty-terrain-dustpile-small-01.gltf",
+      "assets/synty/synty-terrain-dustpile-small-02.gltf",
+      "assets/synty/synty-terrain-ground-mound-large-01.gltf",
+      "assets/synty/synty-terrain-ground-mound-large-02.gltf",
+      "assets/synty/synty-terrain-ground-mound-small-01.gltf",
+      "assets/synty/synty-terrain-ground-mound-small-02.gltf",
+      "assets/synty/synty-terrain-ice-01.gltf",
+      "assets/synty/synty-terrain-mountain-02.gltf",
+      "assets/synty/synty-terrain-mountain-03.gltf",
+      "assets/synty/synty-terrain-rubble-pebbles-01.gltf",
+      "assets/synty/synty-terrain-rubble-pebbles-02.gltf",
+      "assets/synty/synty-terrain-rubble-pebbles-03.gltf",
+      "assets/synty/synty-terrain-swamp-growth-01.gltf",
+      "assets/synty/synty-terrain-swamp-growth-02.gltf",
+      "assets/synty/synty-terrain-swamp-growth-03.gltf",
+      "assets/synty/synty-tree-01.gltf",
+      "assets/synty/synty-tree-02.gltf",
+      "assets/synty/synty-tree-03.gltf",
+      "assets/synty/synty-tree-04.gltf",
+      "assets/synty/synty-tree-branch-01.gltf",
+      "assets/synty/synty-tree-dead-01.gltf",
+      "assets/synty/synty-tree-dead-02.gltf",
+      "assets/synty/synty-tree-dead-03.gltf",
+      "assets/synty/synty-tree-polypine-01.gltf",
+      "assets/synty/synty-tree-polypine-02.gltf",
+      "assets/synty/synty-tree-polypine-03.gltf",
+      "assets/synty/synty-tree-polypine-sparse-01.gltf",
+      "assets/synty/synty-tree-polypine-sparse-02.gltf",
+      "assets/synty/synty-tree-polypine-sparse-03.gltf",
+      "assets/synty/synty-tree-round-01.gltf",
+      "assets/synty/synty-tree-round-02.gltf",
+      "assets/synty/synty-tree-round-03.gltf",
+      "assets/synty/synty-tree-round-04.gltf",
+      "assets/synty/synty-tree-round-05.gltf",
+      "assets/synty/synty-tree-stump-02.gltf",
+      "assets/synty/synty-tree-stump-03.gltf",
+      "assets/synty/synty-tree-stump-04.gltf",
+      "assets/synty/synty-tree-swamp-01.gltf",
+      "assets/synty/synty-tree-swamp-02.gltf",
+      "assets/synty/synty-tree-swamp-03.gltf",
+      "assets/synty/synty-tree-swamp-04.gltf",
+      "assets/synty/synty-tree-swamp-branch-01.gltf",
+      "assets/synty/synty-tree-swamp-branch-02.gltf",
+      "assets/synty/synty-tree-swamp-root-01.gltf",
+      "assets/synty/synty-tree-swamp-root-02.gltf",
+      "assets/synty/synty-tree-swamp-stump-01.gltf",
+      "assets/synty/synty-tree-swamp-stump-02.gltf",
+      "assets/synty/synty-tree-tallround-01.gltf",
+      "assets/synty/synty-tree-twig-01.gltf",
+      "assets/synty/synty-tree-twig-02.gltf",
+      "assets/synty/synty-tree-twig-03.gltf",
+      "assets/synty/synty-tree-twig-04.gltf",
+      "assets/synty/synty-tree-twig-05.gltf",
+      "assets/synty/synty-tree-vines-01.gltf",
+      "assets/synty/synty-tree-vines-02.gltf",
+      "assets/synty/synty-tree-vines-03.gltf",
+      "assets/synty/synty-tree-vines-04.gltf"
+    ],
+    "sourceExportHashMatches": 23,
+    "glbCount": 115
+  },
+  "icons": {
+    "pngCount": 112,
+    "declaredImagePaths": 75,
+    "notDeclaredInContent": [
+      "assets/ui/icons/ants-v1/barkguard.png",
+      "assets/ui/icons/ants-v1/heartseed.png",
+      "assets/ui/icons/ants-v1/moon-dew.png",
+      "assets/ui/icons/ants-v1/resin-salve.png",
+      "assets/ui/icons/ants-v1/royal-crest.png",
+      "assets/ui/icons/ants-v1/stone.png",
+      "assets/ui/icons/ants-v1/thornband.png",
+      "assets/ui/icons/items-v1/amber-carapace.png",
+      "assets/ui/icons/items-v1/amber-hourglass.png",
+      "assets/ui/icons/items-v1/ancient-heartwood.png",
+      "assets/ui/icons/items-v1/barkguard.png",
+      "assets/ui/icons/items-v1/broodkeeper-lantern.png",
+      "assets/ui/icons/items-v1/canopy-aegis.png",
+      "assets/ui/icons/items-v1/deep-moon-scepter.png",
+      "assets/ui/icons/items-v1/endless-brood-banner.png",
+      "assets/ui/icons/items-v1/firefly-pendant.png",
+      "assets/ui/icons/items-v1/first-queen-crown.png",
+      "assets/ui/icons/items-v1/heartseed.png",
+      "assets/ui/icons/items-v1/moon-dew.png",
+      "assets/ui/icons/items-v1/moonwell-chalice.png",
+      "assets/ui/icons/items-v1/mossweave-wraps.png",
+      "assets/ui/icons/items-v1/phoenix-chrysalis.png",
+      "assets/ui/icons/items-v1/predator-talon.png",
+      "assets/ui/icons/items-v1/quickstep-spurs.png",
+      "assets/ui/icons/items-v1/reaper-mandible.png",
+      "assets/ui/icons/items-v1/resin-salve.png",
+      "assets/ui/icons/items-v1/restoration-draught.png",
+      "assets/ui/icons/items-v1/rootbinder-idol.png",
+      "assets/ui/icons/items-v1/royal-crest.png",
+      "assets/ui/icons/items-v1/scout-whistle.png",
+      "assets/ui/icons/items-v1/stormwing-spurs.png",
+      "assets/ui/icons/items-v1/tempest-antennae.png",
+      "assets/ui/icons/items-v1/thornband.png",
+      "assets/ui/icons/items-v1/trailkeeper-flask.png",
+      "assets/ui/icons/items-v1/warcaller-standard.png",
+      "assets/ui/icons/items-v1/winter-heart.png",
+      "assets/ui/icons/items-v1/worldroot-heart.png"
+    ],
+    "dimensionViolations": []
+  },
+  "runtimeSourceFiles": [
+    "assets/ant-colony/Ant-colony-source.blend",
+    "assets/ant-colony/Ant-forest-source.blend",
+    "assets/ant-colony/Ant-military-source.blend",
+    "assets/ant-colony/Neutral-creatures-source.blend",
+    "assets/props/settlement/Fort-Forestry-source.blend",
+    "assets/props/settlement/Fort-Forestry-source.blend1",
+    "assets/props/settlement/Settlement-source.blend",
+    "assets/props/vivid/Flora-source.blend"
+  ],
+  "woodlandImages": [
+    {
+      "path": "assets/ui/woodland/map-frame.png",
+      "width": 512,
+      "height": 512,
+      "bitDepth": 8,
+      "colorType": 6,
+      "alpha": {
+        "inspection": "decoded",
+        "transparent": 228896,
+        "partial": 31980,
+        "opaque": 1268
+      }
+    },
+    {
+      "path": "assets/ui/woodland/satchel.png",
+      "width": 256,
+      "height": 256,
+      "bitDepth": 8,
+      "colorType": 6,
+      "alpha": {
+        "inspection": "decoded",
+        "transparent": 10195,
+        "partial": 54674,
+        "opaque": 667
+      }
+    },
+    {
+      "path": "assets/ui/woodland/selection.png",
+      "width": 1440,
+      "height": 480,
+      "bitDepth": 8,
+      "colorType": 2,
+      "alpha": {
+        "inspection": "decoded",
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 691200
+      }
+    },
+    {
+      "path": "assets/ui/woodland/slot.png",
+      "width": 128,
+      "height": 128,
+      "bitDepth": 8,
+      "colorType": 2,
+      "alpha": {
+        "inspection": "decoded",
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 16384
+      }
+    }
+  ],
+  "missingStructuredFiles": [],
+  "mapReferenceErrors": [],
+  "maps": [
+    {
+      "path": "assets/maps/campaign/vanguard-prologue.utcmap",
+      "name": "Vanguard Prologue",
+      "size": 256,
+      "stamps": 478,
+      "scenery": {
+        "lowpolymushroom_09": 193,
+        "lantern-post": 46,
+        "splitrail-fence": 26,
+        "ant-rock": 139,
+        "synty-plant-flowerpatch-01": 74
+      },
+      "entities": {
+        "unit.ants.marshal": 1,
+        "unit.ants.warrior": 2,
+        "unit.ants.archer": 2,
+        "unit.neutral.wolf": 9,
+        "unit.neutral.ogre": 2,
+        "resource.forest.tree": 2200
+      }
+    },
+    {
+      "path": "assets/maps/skirmish/four-crowns.utcmap",
+      "name": "Four Crowns",
+      "size": 512,
+      "stamps": 2149,
+      "scenery": {
+        "lowpolymushroom_20": 194,
+        "ant-fern": 599,
+        "lowpolymushroom_09": 164,
+        "lowpolymushroom_01": 174,
+        "synty-plant-flowerpatch-01": 193,
+        "ant-rock": 456,
+        "ant-reeds": 111,
+        "ant-lily": 66,
+        "lantern-post": 72,
+        "splitrail-fence": 40,
+        "waystone-outcrop": 44,
+        "ant-driftwood": 36
+      },
+      "entities": {
+        "building.neutral.amber-mine": 16,
+        "unit.neutral.amberjaw-staglord": 4,
+        "unit.neutral.elder-thornspitter": 20,
+        "unit.neutral.ogre": 36,
+        "unit.neutral.thornspitter": 36,
+        "building.neutral.corrupted-root": 12,
+        "unit.neutral.thornblade-matriarch": 4,
+        "unit.neutral.wolf": 52,
+        "resource.forest.tree": 7175
+      }
+    },
+    {
+      "path": "assets/maps/skirmish/terrain-proving-ground.utcmap",
+      "name": "Terrain Proving Ground",
+      "size": 256,
+      "stamps": 0,
+      "scenery": {},
+      "entities": {
+        "unit.ants.archer": 1,
+        "unit.ants.warrior": 1,
+        "building.neutral.amber-mine": 2
+      }
+    },
+    {
+      "path": "assets/maps/skirmish/worldroot-hollow.utcmap",
+      "name": "Worldroot Hollow",
+      "size": 256,
+      "stamps": 969,
+      "scenery": {
+        "ant-reeds": 107,
+        "ant-rock": 179,
+        "ant-lily": 8,
+        "ant-broadleaf": 102,
+        "lowpolymushroom_20": 24,
+        "synty-plant-flowerpatch-01": 211,
+        "ant-fern": 154,
+        "lowpolymushroom_01": 38,
+        "lowpolymushroom_03": 20,
+        "ant-driftwood": 41,
+        "lowpolymushroom_09": 37,
+        "lantern-post": 13,
+        "splitrail-fence": 26,
+        "waystone-outcrop": 8,
+        "timber-bridge": 1
+      },
+      "entities": {
+        "building.neutral.amber-mine": 3,
+        "unit.neutral.wolf": 8,
+        "unit.neutral.thornspitter": 12,
+        "unit.neutral.ogre": 4,
+        "unit.neutral.amberjaw-staglord": 1,
+        "unit.neutral.elder-thornspitter": 4,
+        "unit.neutral.thornblade-matriarch": 1,
+        "building.neutral.corrupted-root": 2,
+        "resource.forest.tree": 2667
+      }
+    }
+  ],
+  "inspectionErrors": [],
+  "duplicateGroupCount": 23742,
+  "duplicateBytesBeyondFirst": 105691159,
+  "largestDuplicateGroups": [
+    {
+      "sha256": "365e75fb3f409c66ec236b2f03875181fd5a2ac4ae5320a0ba32e828ab82613f",
+      "bytesEach": 1678366,
+      "paths": [
+        "experiments/assets/buildings/bombardier-workshop/reference.png",
+        "experiments/assets/buildings/ironroot-forge/reference.png",
+        "experiments/assets/buildings/player-stonemason/reference.png",
+        "experiments/assets/buildings/rootworks/reference.png"
+      ]
+    },
+    {
+      "sha256": "4da443a68f3ee9f06610dabf5f63dfb3125414f8572a781113bede0c90e0ba93",
+      "bytesEach": 4291368,
+      "paths": [
+        "assets/ant-colony/great-mound.glb",
+        "experiments/assets/buildings/great-mound/model.glb"
+      ]
+    },
+    {
+      "sha256": "7d3df3b857b9fef3177d2dfb4ffd73a9544f5311441c8962807418aa967a41f6",
+      "bytesEach": 3910455,
+      "paths": [
+        "tmp/ant-colony/pass-38.png",
+        "tmp/visual-audit/latest.jpg"
+      ]
+    },
+    {
+      "sha256": "321c3fa652982f8a776f21ef7e1afdf2980fc2c5c495e7cc75662457151ff4b9",
+      "bytesEach": 3875449,
+      "paths": [
+        "tmp/ant-colony/pass-33.png",
+        "tmp/ant-colony/pass-35.png"
+      ]
+    },
+    {
+      "sha256": "8534dd191d018c57ea7cc1aa4a93400905c87d7266adca7067ce5e8881e882c6",
+      "bytesEach": 1690127,
+      "paths": [
+        "experiments/assets/buildings/amber-sanctuary/samples.png",
+        "experiments/assets/buildings/great-mound/samples.png",
+        "experiments/assets/buildings/rootbound-hall/samples.png"
+      ]
+    },
+    {
+      "sha256": "e736bbc2f98872de6e68a1f437888c46ce2bd379c5a20b2f8c7d31a802215f04",
+      "bytesEach": 1679976,
+      "paths": [
+        "experiments/assets/buildings/bombardier-workshop/samples.png",
+        "experiments/assets/buildings/ironroot-forge/samples.png",
+        "experiments/assets/buildings/rootworks/samples.png"
+      ]
+    },
+    {
+      "sha256": "6ffd8901a8661a2103ec1f310def09b65681d8b73882771d93d1b16a06906de9",
+      "bytesEach": 3213443,
+      "paths": [
+        "tmp/ant-colony/optimized-final-compare.png",
+        "tmp/editor-shot.png"
+      ]
+    },
+    {
+      "sha256": "560c18525bd0d578e2fa670d1866a17fb1334c45c2e3f6dbcdf461c5b3c4db38",
+      "bytesEach": 1542477,
+      "paths": [
+        "experiments/assets/characters/ant-bombardier/reference.png",
+        "experiments/assets/characters/ant-family/reference.png",
+        "experiments/assets/characters/ant-hunter/reference.png"
+      ]
+    },
+    {
+      "sha256": "e77012a6edce1fa0e5cad395379daa2f332de69e8d6dcfbc8edd2f124a33e8f2",
+      "bytesEach": 2498582,
+      "paths": [
+        "tmp/ant-colony/direct-39.png",
+        "tmp/ant-colony/pass-40-direct.png"
+      ]
+    },
+    {
+      "sha256": "b4087c1938aa12d6878ee6c97ffb3b539af32bb929449ac2f0287c03b2bd4a06",
+      "bytesEach": 2437150,
+      "paths": [
+        "docs/endgame/worldroot-overview.png",
+        "tmp/worldroot-overview.png"
+      ]
+    },
+    {
+      "sha256": "bc6ab1e8016593396c8e84b43015f36f2b998ee690cb68d8e92ec581ff4e2470",
+      "bytesEach": 2174924,
+      "paths": [
+        "assets/ant-colony/lumberjack-workshop.glb",
+        "experiments/assets/buildings/lumberjack-workshop/model.glb"
+      ]
+    },
+    {
+      "sha256": "6d3a2881d9a54ae1780cd5aea7925663d7e4066a0d2cd5343b9c97433f05f979",
+      "bytesEach": 2123892,
+      "paths": [
+        "assets/ant-colony/amber-seam.glb",
+        "experiments/assets/buildings/amber-seam/model.glb"
+      ]
+    }
+  ],
+  "globs": [
+    {
+      "source": "src/reference-stage.ts",
+      "line": 4,
+      "text": "const mapSources = import.meta.glob('../assets/maps/**/*.utcmap', {query:'?raw', import:'default', eager:true}) as Record<string,string>;"
+    },
+    {
+      "source": "src/vegetation-gallery.ts",
+      "line": 5,
+      "text": "const urls=import.meta.glob('../assets/environment/coniferous-pack/*.glb',{query:'?url',import:'default',eager:true}) as Record<string,string>;"
+    },
+    {
+      "source": "src/render/settlement/statusBadges.ts",
+      "line": 5,
+      "text": "const images = import.meta.glob(\"../../../assets/ui/icons/**/*.png\", {query:\"?url\",import:\"default\",eager:true}) as Record<string,string>;"
+    },
+    {
+      "source": "src/shared/assets/project.ts",
+      "line": 7,
+      "text": "const meshes = import.meta.glob(\"../../../assets/**/*.{gltf,glb}\", {"
+    },
+    {
+      "source": "src/shared/map/library.ts",
+      "line": 3,
+      "text": "const sources = import.meta.glob(\"../../../assets/maps/**/*.utcmap\", {"
+    },
+    {
+      "source": "src/ui/settlement/commandArt.ts",
+      "line": 4,
+      "text": "const images = import.meta.glob(\"../../../assets/ui/icons/**/*.png\", {"
+    },
+    {
+      "source": "src/ui/settlement/commandArt.ts",
+      "line": 18,
+      "text": "const hudImages = import.meta.glob(\"../../../assets/ui/woodland/*.png\", {query: \"?url\", import: \"default\", eager: true}) as Record<string,string>;"
+    }
+  ]
+}

@@ -215,6 +215,17 @@ export async function generate() {
       rel === "expansion/hero-economy.md" ||
       ["reference-landscapes.md", "vivid-landscapes.md"].includes(rel);
     let md = await readFile(file, "utf8");
+    // Technical illustrations are copied only when the page references them,
+    // preserving relative URLs without publishing the entire authoring library.
+    for (const match of md.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)) {
+      const href = match[1]!.replace(/^<|>$/g, "");
+      if (/^(https?:|data:|\/|#)/.test(href)) continue;
+      const image = path.resolve(path.dirname(file), href.split("#")[0]!);
+      if (!image.startsWith(path.join(root, "docs") + path.sep) ||
+          !/\.(png|webp|jpg|jpeg|svg)$/i.test(image)) continue;
+      const imageKey = path.relative(path.join(root, "docs"), image);
+      files.set(`development/${imageKey}`, await readFile(image));
+    }
     // References outside docs point to repository sources, not imaginary static pages.
     md = md.replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
@@ -345,6 +356,15 @@ export async function generate() {
         { text: "Performance & loading", link: "/development/performance" },
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
         { text: "First combat balance baseline", link: "/development/first-balance-pass" },
+        {
+          text: "Asset Studio — proposal",
+          collapsed: false,
+          items: [
+            { text: "Structure & workflow", link: "/development/asset-pipeline/proposal" },
+            { text: "Current asset audit", link: "/development/asset-pipeline/audit" },
+            { text: "Generation & validation", link: "/development/asset-pipeline/pipeline" },
+          ],
+        },
         ...[
           "declarations/README.md",
           "declarations/behaviors.md",

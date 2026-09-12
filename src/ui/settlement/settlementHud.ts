@@ -1,3 +1,5 @@
+import {HUD_CHANGED,readHudLayout} from '../../shared/settings/hud';
+import {workplaceCard} from '../../presentation/workplace';
 import {prioritizeSelection,cycleSelection} from "../../presentation/selection";
 import {ControlGroups} from "../../presentation/controlGroups";
 import {shortcuts,keyLabel,authoredKey,commandShortcut,inputCaptured,SHORTCUTS_CHANGED} from "../../shared/input/shortcuts";
@@ -58,6 +60,10 @@ export class SettlementHud {
   private readonly hint = document.createElement("p");
   private readonly cards = document.createElement("div");
   private readonly grid = document.createElement("div");
+  private readonly activeTask = document.createElement("div");
+  private readonly workplaceSummary = document.createElement("div");
+  private readonly selection = document.createElement("section");
+  private readonly syncLayout=()=>{this.root.dataset.layout=readHudLayout();};
   private readonly queues = document.createElement("div");
   private readonly statuses = document.createElement("div");
   private statusSignature = "";
@@ -195,7 +201,7 @@ export class SettlementHud {
       const next=cycleSelection(this.selectedIds,view.entities,content,shortcuts.matches('selection.previous',e));
       if(next!==undefined)this.setSelection(this.selectedIds,next);return;
     }
-    for(let slot=0;slot<6;slot++)if(shortcuts.matches(`inventory.${slot}`,e)){
+    for(let slot=0;slot<4;slot++)if(shortcuts.matches(`inventory.${slot}`,e)){
       e.preventDefault();if(view){const entry=inventoryCard(view,this.selectedIds[0],this.owner,content,this.readOnly)[slot];if(entry?.use)this.hooks.action(entry.use);}return;
     }
     if (shortcuts.matches('target.cancel',e) && this.targeting) {e.preventDefault();this.clearMode();this.tooltips.hide();return;}
@@ -215,6 +221,7 @@ export class SettlementHud {
       mode: () => void;
       home: () => void;
       focus: (id: number, group?: readonly number[]) => void;
+      portrait?: (host:HTMLElement,definition:string|null,owner:Owner)=>void;
       lookAt?: (x:number,y:number)=>void;
     },
   ) {
@@ -235,7 +242,7 @@ export class SettlementHud {
     label.append(this.mapLabel);
     this.minimapHost.className = "rts-map-slot";
     map.append(label, this.minimapHost);
-    const selection = document.createElement("section");
+    const selection = this.selection;
     selection.className = "rts-selection";
     this.portrait.className = "rts-portrait";
     this.portrait.tabIndex = 0;
@@ -257,18 +264,12 @@ export class SettlementHud {
     this.inventory.className = "rts-inventory";
     this.orders.className = "rts-order-queue";
     this.orders.setAttribute("aria-label", "Queued unit orders");
-    copy.append(
-      this.heading,
-      this.level,
-      this.experience,
-      this.info,
-      this.statuses,
-      this.inventory,
-      this.orders,
-      this.cards,
-      this.queues,
-      this.hint,
-    );
+    const vitals=document.createElement("div");vitals.className="rts-vitals";
+    this.activeTask.className="rts-active-task";
+    this.workplaceSummary.className="rts-workplace-summary";
+    vitals.append(this.statuses,this.portraitHp,this.portraitMana,this.activeTask);
+    copy.append(this.heading,this.info,vitals);
+    selection.append(this.level,this.experience,this.inventory,this.queues,this.workplaceSummary,this.orders,this.cards,this.hint);
     this.clockHost.className = "rts-clock-slot";
     selection.append(this.portrait, copy, this.clockHost);
     const actions = document.createElement("section");
@@ -279,6 +280,8 @@ export class SettlementHud {
     this.groupBar.className="rts-control-groups";this.groupBar.setAttribute("aria-label","Army control groups");
     dock.append(map, selection, actions,this.groupBar);
     this.root.append(this.heroes.root, dock);
+    this.syncLayout();
+    window.addEventListener(HUD_CHANGED,this.syncLayout);
     host.append(this.root);
     this.tooltips = new CommandTooltips(host);
     window.addEventListener("keydown", this.onKey);
@@ -488,6 +491,9 @@ export class SettlementHud {
     }
     this.heading.textContent = focus ? content.get(focus.definition).name : "";
     this.portrait.hidden = !focus;
+    this.selection.dataset.kind=focus?content.get(focus.definition).kind:"empty";
+    this.portraitHp.hidden=!focus;
+    this.portraitMana.hidden=!focus;
     this.hint.hidden = !focus;
     this.level.hidden = !focus;
     this.info.hidden = !focus;
@@ -514,32 +520,38 @@ export class SettlementHud {
         });
       }
       this.level.textContent =
-        d.level === undefined ? "" : `Level ${focus.stats?.level ?? d.level}`;
+        d.level === undefined ? "" : String(focus.stats?.level ?? d.level);
+      this.level.hidden=d.level===undefined || d.kind==="building";
+      this.level.setAttribute("aria-label",`Level ${focus.stats?.level ?? d.level ?? 1}`);
+      this.portrait.dataset.kind=d.kind;
       if (this.portraitDefinition !== d.id) {
         this.portraitDefinition = d.id;
         this.portrait.innerHTML = iconArt(d.icon);
-        this.portrait.append(this.portraitHp, this.portraitMana);
+
       }
       Object.assign(this.portrait.dataset, {
         tipName: d.name,
         tipDescription: d.description,
         tipCosts: JSON.stringify(costs(content, d.id)),
       });
+      this.hooks.portrait?.(this.portrait,d.id,focus.owner);
       this.portrait.dataset.mana = String(!!focus.spellcasting);
       this.portraitMana.hidden = !focus.spellcasting;
       this.portraitMana.textContent = focus.spellcasting
         ? `${focus.spellcasting.mana} / ${focus.stats!.maxMana}`
         : "";
+      if(focus.spellcasting)this.portraitMana.style.setProperty('--fill',`${Math.max(0,Math.min(1,focus.spellcasting.mana/Math.max(1,focus.stats!.maxMana)))*100}%`);
       this.portraitHp.hidden = !d.body;
       if (d.body) {
         this.portraitHp.textContent = `${focus.hp ?? 0} / ${focus.stats?.maxHp ?? d.body.maxHp}`;
-        this.portraitHp.style.color = `#${healthPipState(
+        this.portraitHp.style.setProperty('--fill',`${Math.max(0,Math.min(1,(focus.hp??0)/Math.max(1,focus.stats?.maxHp??d.body.maxHp)))*100}%`);
+        this.portraitHp.style.setProperty('--bar-color', `#${healthPipState(
           focus.hp ?? 0,
           focus.stats?.maxHp ?? d.body.maxHp,
           d.kind === "building",
         )
           .color.toString(16)
-          .padStart(6, "0")}`;
+          .padStart(6, "0")}`);
       }
       const statKey = `${d.id}/${focus.stats?.damage}/${focus.stats?.armor}/${focus.stats?.cooldownTicks}`;
       if (this.info.dataset.definition !== statKey) {
@@ -563,6 +575,7 @@ export class SettlementHud {
               description: `${armor.name}. Armor points reduce ordinary attack damage by ${((1-armorMultiplier(content.rules,focus.stats?.armor ?? d.body.armor))*100).toFixed(1)}%.\n${Object.entries(content.rules.damageTypes).map(([id,t]) => `${t.name}: ${content.rules.damageMultipliers[id][d.body!.armorType]/10}% class damage${t.appliesArmor ? " before armor" : "; bypasses armor points"}`).join("\n")}`,
             },
           ]) {
+            if(d.kind==="building" && stat.name==="Damage")continue;
             const row = document.createElement("div");
             row.className = "rts-selection-stat";
             row.innerHTML = iconArt(stat.icon);
@@ -583,6 +596,7 @@ export class SettlementHud {
         }
       }
     } else {
+      this.hooks.portrait?.(this.portrait,null,this.owner);
       this.portraitDefinition = "";
       this.portrait.replaceChildren();
       for (const key of Object.keys(this.portrait.dataset))
@@ -716,87 +730,45 @@ export class SettlementHud {
         this.inventory.append(button);
       }
     }
-    const queue = queueCard(
-        view,
-        focus?.id,
-        this.owner,
-        content,
-        this.readOnly,
-      ),
-      queueKey = JSON.stringify([
-        focus?.id,
-        queue.map(q => ({...q, progress: undefined})),
-        focus?.production?.status,
-        Math.floor((focus?.production?.active?.progress ?? 0) / 40),
-        focus?.gathering,
-        focus?.resource?.amount,
-        focus?.upgrade?.target,
-        Math.floor((focus?.upgrade?.progress ?? 0) / 40),
-      ]);
-    if (queueKey !== this.queueSignature) {
-      this.queueSignature = queueKey;
-      this.queues.replaceChildren();
-      if (focus && !focus.remembered) {
-        const summary = document.createElement("span");
-        summary.className = "rts-production-summary";
-        const production = content.get(focus.definition).behaviors.production;
-        if (focus.upgrade) {
-          const recipe = content.get(focus.definition).upgrade!;
-          summary.textContent = `${content.get(focus.upgrade.target).name} · ${Math.floor(focus.upgrade.progress / 40)}/${recipe.workTicks / 40}s · Worker spawning paused`;
-        } else if (focus.production && production) {
-          const population = production.population;
-          summary.textContent = population
-            ? `${focus.production.status} · ${Math.floor((focus.production.active?.progress ?? 0) / 40)}/${population.intervalTicks / 40}s · +${population.capacity} worker capacity`
-            : queue.length
-              ? focus.production.status
-              : "";
-        } else if (focus.gathering) {
-          const resource = content.definitions.find(
-            (d) =>
-              d.creation?.method === "harvest" &&
-              d.creation.source === focus.definition,
-          );
-          summary.textContent = `${focus.gathering.workers}/${focus.gathering.capacity} workers · ${focus.resource?.amount ?? 0} ${resource?.name ?? "resources"} remaining`;
-        }
-        if (summary.textContent) this.queues.append(summary);
+    const queue=queueCard(view,focus?.id,this.owner,content,this.readOnly);
+    const workplace=workplaceCard(focus,queue,content);
+    const taskKey=JSON.stringify([focus?.id,workplace.active?.key,queue.map(q=>({...q,progress:undefined}))]);
+    this.activeTask.hidden=!workplace.active;
+    this.queues.hidden=!focus || content.get(focus.definition).kind!=="building" || !(content.get(focus.definition).behaviors.production?.mode === "queued" || focus.research || focus.revival);
+    this.workplaceSummary.hidden=!workplace.summary || !!workplace.active;
+    this.workplaceSummary.textContent=workplace.summary;
+    if(taskKey!==this.queueSignature){
+      this.queueSignature=taskKey;
+      this.queues.replaceChildren();this.activeTask.replaceChildren();
+      const tile=(q:typeof queue[number])=>{
+        const button=document.createElement("button");button.className="rts-queued-task";button.type="button";
+        button.innerHTML=iconArt(q.icon);button.disabled=!q.cancel;
+        button.setAttribute("aria-label",`${q.cancel?"Cancel ":""}${q.name}`);
+        Object.assign(button.dataset,{tipName:q.name,tipDescription:q.cancel?"Click to cancel and refund the reserved resources.":"Queued task.",tipCosts:JSON.stringify(q.costs)});
+        button.onclick=()=>{if(q.cancel)this.hooks.action(q.cancel);};return button;
+      };
+      if(workplace.active){
+        const a=workplace.active;
+        const icon=a.task?tile(a.task):document.createElement("span");
+        if(!a.task){icon.innerHTML=iconArt(a.icon);icon.className="rts-queued-task";icon.tabIndex=0;icon.dataset.tipName=a.name;}
+        const meter=document.createElement("div");meter.className="rts-task-meter";meter.setAttribute("role","progressbar");
+        const name=document.createElement("span");name.textContent=a.name;meter.append(name);
+        this.activeTask.append(icon,meter);
       }
-      for (const q of queue) {
-        const button = document.createElement("button");
-        button.className = "rts-queued-task";
-        button.innerHTML = iconArt(q.icon);
-        button.setAttribute("aria-label", q.cancel ? `Cancel ${q.name}` : q.name);
-        if (q.progress !== null) {
-          const meter = document.createElement("span");
-          meter.className = "rts-queued-progress";
-          button.append(meter);
-        }
-        button.disabled = !q.cancel;
-        Object.assign(button.dataset, {
-          tipName: q.cancel ? `Cancel ${q.name}` : q.name,
-          tipDescription: q.cancel
-            ? q.cancel.type === "cancelResearch" ? "Cancel this research and refund its full price to the Mound." : "Cancel this recruit. Reserved resources return to the Mound and the worker is released."
-            : "Queued task. This workplace cannot receive player commands.",
-          tipCosts: JSON.stringify(q.costs),
-        });
-        button.onclick = () => {
-          if (q.cancel) this.hooks.action(q.cancel);
-        };
-        this.queues.append(button);
+      for(let index=0;index<Math.max(5,workplace.waiting.length);index++){
+        const q=workplace.waiting[index];
+        if(q)this.queues.append(tile(q));else{const well=document.createElement("span");well.className="rts-queue-well";well.setAttribute("aria-hidden","true");this.queues.append(well);}
       }
     }
-    // Keep the target button stable while progress advances: rebuilding it can lose
-    // a pointer-down, keyboard focus or an open cancellation tooltip.
-    const taskButtons = this.queues.querySelectorAll<HTMLButtonElement>(".rts-queued-task");
-    queue.forEach((q, index) => {
-      const button = taskButtons[index];
-      const meter = button?.querySelector<HTMLElement>(".rts-queued-progress");
-      if (meter && q.progress !== null) {
-        const percent = Math.floor(q.progress * 100);
-        meter.style.width = `${percent}%`;
-        button.setAttribute("aria-label", `${q.cancel ? "Cancel " : ""}${q.name} · ${percent}%`);
-        button.dataset.tipName = `${q.cancel ? "Cancel " : ""}${q.name} · ${percent}%`;
-      }
-    });
+    const meter=this.activeTask.querySelector<HTMLElement>('.rts-task-meter');
+    if(meter && workplace.active){
+      const percent=Math.floor(Math.max(0,Math.min(1,workplace.active.progress??0))*100);
+      meter.style.setProperty('--fill',`${percent}%`);
+      meter.classList.toggle('is-waiting',workplace.active.progress===null);
+      meter.setAttribute('aria-valuenow',String(percent));meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax','100');
+      meter.setAttribute('aria-label',`${workplace.active.name}: ${workplace.active.progress===null?workplace.summary:percent+'%'}`);
+      Object.assign(meter.dataset,{tipName:workplace.active.name,tipDescription:workplace.summary});
+    }
     const stockSignature = JSON.stringify([view.goods, view.population]);
     if (this.stockSignature !== stockSignature) {
       this.stockSignature = stockSignature;
@@ -879,6 +851,8 @@ export class SettlementHud {
   }
   destroy() {
     clearTimeout(this.errorTimer);
+    window.removeEventListener(HUD_CHANGED,this.syncLayout);
+    this.hooks.portrait?.(this.portrait,null,this.owner);
     window.removeEventListener("keydown", this.onKey);
     window.removeEventListener(SHORTCUTS_CHANGED,this.bindingsChanged);
     this.tooltips.destroy();

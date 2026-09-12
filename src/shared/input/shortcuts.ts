@@ -22,7 +22,7 @@ export const globalShortcuts:Shortcut[]=[
  {id:'target.cancel',name:'Cancel targeting',key:'Escape',scope:'global'},
  {id:'placement.rotate',name:'Rotate building clockwise',key:'KeyR',scope:'command'},
  {id:'placement.reverse',name:'Rotate building counterclockwise',key:'Shift+KeyR',scope:'command'},
- ...[7,8,4,5,1,2].map((n,i)=>({id:`inventory.${i}`,name:`Use inventory slot ${i+1}`,key:`Numpad${n}`,scope:'global' as const})),
+ ...[7,8,4,5].map((n,i)=>({id:`inventory.${i}`,name:`Use inventory slot ${i+1}`,key:`Numpad${n}`,scope:'global' as const})),
  {id:'camera.selection',name:'Center selection',key:'Home',scope:'global'},
  {id:'health.all',name:'Show all visible health bars (hold)',key:'Alt',scope:'global'},
  {id:'health.friendly',name:'Show friendly health bars (hold)',key:'BracketLeft',scope:'global'},

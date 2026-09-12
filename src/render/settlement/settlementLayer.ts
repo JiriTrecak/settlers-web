@@ -242,6 +242,18 @@ export class SettlementLayer {
     }
     return this.warmModels;
   }
+  /** HUD previews share loaded geometry/textures, but own their skeleton and materials. */
+  createPortrait(definition: string, owner: number) {
+    const asset = content.get(definition).asset;
+    const source = this.characterSources.get(asset);
+    const character = source ? createCharacterInstance(source, content.asset(asset).character) : null;
+    const root = character?.root ?? this.clone(asset);
+    if (!root) return null;
+    applyPlayerMaterials(root, owner);
+    root.traverse(o => { if(o instanceof Mesh){o.castShadow=false;o.receiveShadow=false;} });
+    return { root, update: (dt:number) => character?.player.update(dt),
+      dispose: () => character ? character.dispose() : this.disposeInstance(root) };
+  }
   private clone(asset: string) {
     const proto = this.prototypes.get(asset);
     if (!proto) return null;

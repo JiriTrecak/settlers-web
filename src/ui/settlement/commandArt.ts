@@ -15,6 +15,8 @@ export function iconArt(id: string): string {
   return `<span class="rts-art" style="background-image:url(&quot;${escaped}&quot;)" aria-hidden="true"></span>`;
 }
 
+const hudImages = import.meta.glob("../../../assets/ui/woodland/*.png", {query: "?url", import: "default", eager: true}) as Record<string,string>;
+
 // Keep decoded command art ready for unopened build/research/inventory cards.
 let preparedArt: Promise<HTMLImageElement[]> | undefined;
 export function preloadCommandArt(): Promise<HTMLImageElement[]> {
@@ -22,7 +24,7 @@ export function preloadCommandArt(): Promise<HTMLImageElement[]> {
     const url=images[`../../../${a.image}`];
     if(!url)throw Error(`Missing declared icon image: ${a.id}`);
     return url;
-  }))].map(async url=>{
+  }).concat(Object.values(hudImages)))].map(async url=>{
     const image=new Image();image.src=url;
     await image.decode();return image;
   })).catch(error=>{preparedArt=undefined;throw error;});

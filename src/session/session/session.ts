@@ -305,6 +305,7 @@ export class Session {
     });
     this.economyHud = new SettlementHud(this.config.host, this.config.player, {
       action: (action) => this.send(action),
+      portrait: (host,definition,owner)=>renderer.gamePortrait(host,definition,owner),
       mode: () => {
         if (this.placementPointer) this.onHover(this.placementPointer);
         else {

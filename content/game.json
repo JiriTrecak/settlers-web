@@ -1923,7 +1923,7 @@
             "unit.ants.hunter"
           ],
           "workerSlots": 0,
-          "queueCapacity": 12
+          "queueCapacity": 6
         }
       },
       "category": "category.build-advanced",
@@ -2278,7 +2278,7 @@
           ]
         },
         "inventory": {
-          "slots": 6,
+          "slots": 4,
           "pickupRange": 1.5
         },
         "spellcasting": {
@@ -3542,7 +3542,7 @@
             "unit.ants.bombardier"
           ],
           "workerSlots": 0,
-          "queueCapacity": 12
+          "queueCapacity": 6
         },
         "storage": {
           "capacity": 500,

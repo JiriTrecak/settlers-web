@@ -10,7 +10,8 @@ export function footprintPixels(footprint: {width:number;depth:number}, rotation
 export function entityMarker(entity: EntityView, definition: {id:string;kind:string;footprint?:{width:number;depth:number}}, mapSize:number, pixels:number) {
   if(entity.unit?.contained || definition.kind==='item') return null;
   const amber=definition.id==='building.neutral.amber-mine';
-  if(entity.resource && (!amber || entity.resource.amount<=0)) return null;
+  const root=definition.id==='building.neutral.corrupted-root';
+  if(entity.resource && (!(amber||root) || entity.resource.amount<=0)) return null;
   const owner=ownerSlot(entity.owner);
   const dimensions=definition.kind==='building'&&definition.footprint
     ? footprintPixels(definition.footprint,entity.rotation,mapSize,pixels)
@@ -19,6 +20,6 @@ export function entityMarker(entity: EntityView, definition: {id:string;kind:str
   // Lift faction luminance on muted terrain without changing model materials.
   const bright=(channel:number)=>Math.min(255,Math.round(channel*1.4));
   const playerColor=(bright(faction>>16)<<16)|(bright((faction>>8)&255)<<8)|bright(faction&255);
-  const color=amber?0xffd43b:owner<0?0xa99c78:playerColor;
+  const color=amber?0xffd43b:root?0xb995d1:owner<0?0xa99c78:playerColor;
   return {width:dimensions[0]!,height:dimensions[1]!,fill:'#'+color.toString(16).padStart(6,'0'),alpha:entity.remembered?0.5:1};
 }
