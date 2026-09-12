@@ -5,7 +5,7 @@ import { createCharacterInstance } from '../../src/render/characters/character-p
 import { Mesh, MeshStandardMaterial, SkinnedMesh, Vector3 } from 'three';
 
 async function asset() {
-  const bytes = readFileSync('experiments/assets/characters/ant-family/model.glb');
+  const bytes = readFileSync('art/sources/characters/ant-family/model.glb');
   return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 }
 function team(root: import('three').Object3D) {

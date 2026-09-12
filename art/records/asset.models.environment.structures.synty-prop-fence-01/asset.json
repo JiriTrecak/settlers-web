@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-fence-01",
+  "name": "Prop Fence 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-fence-01/model.glb",
+      "sha256": "e260a8bca1f227318b7ce7e5cafe54e835cc844eb2121e748324807b811cb3fe",
+      "bytes": 505944
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-fence-01",
+      "name": "Prop Fence 01",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/environment/structures/synty-prop-fence-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-fence-01/source.gltf",
+    "sha256": "ac60709893d463eba7b961bb151df3885007eec269faf1e5058660a5bda3bc53",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-fence-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

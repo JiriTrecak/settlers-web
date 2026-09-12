@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-hunter",
+  "name": "Hunter",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-ants-hunter.png",
+      "sha256": "66cffe95ddb5cd266009f586029eea4aed847877f72c8c41ab8b1899d9a7aa1d",
+      "bytes": 14684,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.hunter",
+      "image": "assets/icons/unit-ants-hunter.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-ants-hunter/source.png",
+    "sha256": "66cffe95ddb5cd266009f586029eea4aed847877f72c8c41ab8b1899d9a7aa1d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/hunter.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

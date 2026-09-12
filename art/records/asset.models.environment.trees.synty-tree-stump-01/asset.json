@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-stump-01",
+  "name": "Tree Stump 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-stump-01/model.glb",
+      "sha256": "b9047a3d814ad9280a014c93d772d25cd87fccd8136f5a8d3814bed2236cc1db",
+      "bytes": 19984
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-stump-01",
+      "name": "Tree Stump 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-stump-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-stump-01/source.gltf",
+    "sha256": "4c1382a4607239f39d0fa4bb4639128ef97662c4774db878b44c40b63c5264ba",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-stump-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

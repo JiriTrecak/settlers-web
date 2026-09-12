@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.items.item-stone",
+  "name": "Dressed stone",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/item-stone/model.glb",
+      "sha256": "9e33564c3134d4186c142ecb8a0e515fc25de555811d80914a31b47e62af74d8",
+      "bytes": 8820
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.item.amber",
+      "file": "assets/models/items/item-stone/model.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.58,
+      "stackColumns": 2
+    }
+  ],
+  "scenery": [
+    {
+      "id": "item-stone",
+      "name": "Dressed stone",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/items/item-stone/model.glb"
+    },
+    {
+      "id": "ant-item-stone",
+      "name": "Ant colony \u00b7 Item Stone",
+      "category": "other",
+      "type": "prop",
+      "file": "models/items/item-stone/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.items.item-stone/source.glb",
+    "sha256": "9e33564c3134d4186c142ecb8a0e515fc25de555811d80914a31b47e62af74d8",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/item-stone.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

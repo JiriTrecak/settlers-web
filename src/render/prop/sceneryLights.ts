@@ -1,5 +1,5 @@
 import {PointLight, type Scene} from 'three';
-import catalogJson from '../../../assets/catalog.json';
+import {sceneryCatalogue as catalogJson} from '../../shared/assets/manifest';
 import {parseCatalogue} from '../../shared/asset/catalog';
 import type {HeightField} from '../../shared/map/height';
 import type {MapStamp} from '../../shared/map/utcmap';

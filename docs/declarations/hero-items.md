@@ -26,7 +26,7 @@ Pools declare `maxTier`; validation rejects entries above it. Easy camps draw T1
 
 ## Icons and checks
 
-All thirty icons ship as painted 128 × 128 PNGs on black backgrounds in `assets/ui/icons/items-v2/`. High-resolution masters, generation prompts and a contact sheet live in `experiments/assets/item-icons/painted-v2/`. Re-export with `python3 scripts/items/export-painted.py` (requires Pillow). The older `items-v1` SVG pipeline is retained only as a legacy source; it does not overwrite the painted set.
+All thirty icons ship as painted 128 × 128 PNGs on black backgrounds in `assets/ui/icons/items-v2/`. High-resolution masters, generation prompts and a contact sheet live in `art/sources/item-icons/painted-v2/`. Re-export with `python3 scripts/items/export-painted.py` (requires Pillow). The older `items-v1` SVG pipeline is retained only as a legacy source; it does not overwrite the painted set.
 
 Coverage: `tests/game/hero-items.test.ts` exercises every item, aura relationships/range/death, charges, drop/pickup, save/load determinism, shields, roots, immunity, rescue, triggers, lifesteal, cooldowns and UI state. `tests/game/item-assets.test.ts` checks the actual PNGs and legendary map restrictions. Existing inventory, spells, balance, AI and camp tests remain relevant.
 

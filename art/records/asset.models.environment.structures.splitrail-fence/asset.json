@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.splitrail-fence",
+  "name": "Split-rail fence",
+  "kind": "model",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/splitrail-fence/model.glb",
+      "sha256": "dac09e5d567207d1be8570eab971d9e84a61b8fedee5a98d695c81149a1e82c9",
+      "bytes": 10860
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "splitrail-fence",
+      "name": "Split-rail fence",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/structures/splitrail-fence/model.glb",
+      "blocker": {
+        "width": 3.2,
+        "depth": 0.25
+      }
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.splitrail-fence/source.glb",
+    "sha256": "dac09e5d567207d1be8570eab971d9e84a61b8fedee5a98d695c81149a1e82c9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/splitrail-fence.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

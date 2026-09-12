@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.tuft",
+  "name": "Tuft",
+  "kind": "texture",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/tuft.png",
+      "sha256": "6e7b35122b243798f5ba5275c0d48002924e79ac044ea12e887ed608568f9142",
+      "bytes": 184828,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.terrain.tuft/source.png",
+    "sha256": "6e7b35122b243798f5ba5275c0d48002924e79ac044ea12e887ed608568f9142",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/terrain/tuft.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

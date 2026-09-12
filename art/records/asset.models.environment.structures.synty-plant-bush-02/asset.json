@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-bush-02",
+  "name": "Plant Bush 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-plant-bush-02/model.glb",
+      "sha256": "84e08a5c12cf4c1a2652322d6c97ee7b028434b0190a1b8021404ba5504756aa",
+      "bytes": 47368
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-bush-02",
+      "name": "Plant Bush 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/synty-plant-bush-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-plant-bush-02/source.gltf",
+    "sha256": "531b353b8b1d99788175145ab22001428acf91a5601915404bc14878066928ca",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-bush-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

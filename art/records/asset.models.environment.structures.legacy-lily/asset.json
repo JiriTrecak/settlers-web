@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.legacy-lily",
+  "name": "Lily",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/legacy-lily/model.glb",
+      "sha256": "7f5ce6ef5ef44d6c7bc2beaaa037d607f5d5b6aa53553ae97d559d6bd6e7e871",
+      "bytes": 3304
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lily",
+      "name": "Lily",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/legacy-lily/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.legacy-lily/source.gltf",
+    "sha256": "067f05920ed66de56b4dc82425a5fe2db415e58f9b77a3cd469ac857c7125d92",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/lily.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:50:03.435554+00:00",
+    "warnings": [
+      "Editable master not yet linked."
+    ]
+  }
+}

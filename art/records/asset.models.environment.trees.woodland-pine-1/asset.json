@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.woodland-pine-1",
+  "name": "Woodland pine 1",
+  "kind": "model",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/woodland-pine-1/model.glb",
+      "sha256": "351718e96de6d43569d91932e8708419ddf9d16933f152a0648d2e3200104ee4",
+      "bytes": 12976
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "woodland-pine-1",
+      "name": "Woodland pine 1",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/woodland-pine-1/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.woodland-pine-1/source.gltf",
+    "sha256": "c51e53838cb0161f0c72eda50649897ace7ff22f28404b759ecece648ca5cd99",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/landscape/woodland-pine-1.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

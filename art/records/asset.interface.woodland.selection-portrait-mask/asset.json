@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.selection-portrait-mask",
+  "name": "Selection Portrait Mask",
+  "kind": "interface",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/selection-portrait-mask.svg",
+      "sha256": "686b6ac60b0394f263dc305590af0b6589ca69e9f1332e60a9eec3965c1ab2d7",
+      "bytes": 682
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.woodland.selection-portrait-mask/source.svg",
+    "sha256": "686b6ac60b0394f263dc305590af0b6589ca69e9f1332e60a9eec3965c1ab2d7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/woodland/selection-portrait-mask.svg"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

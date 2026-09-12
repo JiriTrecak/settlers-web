@@ -6,7 +6,7 @@ describe('purchased grass render LODs',()=>{
   it(`${name} retains a grounded colored silhouette at lower cost`,()=>{
    let previous:number=sourceTriangles;
    for(const level of ['medium','far']){
-    const geometry=new BufferGeometryLoader().parse(JSON.parse(readFileSync(`assets/environment/coniferous-pack/${name}-${level}.json`,'utf8')));
+    const geometry=new BufferGeometryLoader().parse(JSON.parse(readFileSync(`assets/textures/vegetation/coniferous/${name}-${level}.json`,'utf8')));
     const count=(geometry.index?.count??geometry.attributes.position!.count)/3;
     expect(count).toBeGreaterThan(10);expect(count).toBeLessThan(previous*.6);previous=count;
     expect(geometry.attributes.color!.count).toBe(geometry.attributes.position!.count);

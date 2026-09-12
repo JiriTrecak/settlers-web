@@ -97,7 +97,7 @@ export async function generate() {
     imageAssets,
     catalog,
     fragments,
-  } = buildCatalog(source);
+  } = buildCatalog({...source,assets:JSON.parse(await readFile(path.join(root,"assets/manifest.json"),"utf8")).records.flatMap((r:{render:unknown[]})=>r.render)});
   const files = new Map<string, string | Buffer>(pages);
   const authored = path.join(root, "docs/wiki");
   for (const file of await paths(authored)) {
@@ -357,9 +357,10 @@ export async function generate() {
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
         { text: "First combat balance baseline", link: "/development/first-balance-pass" },
         {
-          text: "Asset Studio — proposal",
+          text: "Asset Studio",
           collapsed: false,
           items: [
+            { text: "Using Asset Studio", link: "/development/asset-pipeline/studio" },
             { text: "Structure & workflow", link: "/development/asset-pipeline/proposal" },
             { text: "Current asset audit", link: "/development/asset-pipeline/audit" },
             { text: "Generation & validation", link: "/development/asset-pipeline/pipeline" },
@@ -428,7 +429,7 @@ export async function generate() {
   }
   files.set(
     "public/media/forest-heroes.png",
-    await readFile(path.join(root, "assets/ui/main-menu/forest-heroes.png")),
+    await readFile(path.join(root, "assets/interface/main-menu/forest-heroes.png")),
   );
   await writeGenerated(destination, files);
   console.log(
@@ -484,9 +485,7 @@ async function cli() {
     for (const dir of [
       "content",
       "docs",
-      "assets/maps/showcase",
-      "assets/maps/skirmish",
-      "assets/ui",
+      "assets",
     ])
       watchers.push(
         watch(path.join(root, dir), { recursive: true }, () => {

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "image.item-heart-of-the-forest",
+  "name": "Heart of the Forest",
+  "kind": "icon",
+  "tags": [
+    "item",
+    "painted-items"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-heart-of-the-forest.png",
+      "sha256": "60ec12aa7770bb6f9b39348af1b77f164036156d7e4db0f235f9036c5abb31b7",
+      "bytes": 21127,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.heart-of-the-forest",
+      "image": "assets/icons/item-heart-of-the-forest.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/image.item-heart-of-the-forest/revisions/1/source.png",
+    "sha256": "3aaf3cbdbbd54c284bce7d9ddfe0f5ecff8711d9d07585d8e2b589a8e9710b6b",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai",
+    "job": "art/records/image.item-heart-of-the-forest/revisions/1/job/job.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T05:03:05.355Z",
+    "warnings": []
+  }
+}

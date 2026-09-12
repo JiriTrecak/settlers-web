@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-large-01",
+  "name": "Tree Large 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-large-01/model.glb",
+      "sha256": "e09d4b4c2528188c04fc577374563fda2c00069e7c3e9c9beb0e407f9cb6565a",
+      "bytes": 1715524
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-large-01",
+      "name": "Tree Large 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-large-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-large-01/source.gltf",
+    "sha256": "89a10d4a996b7e87e4c141f4158889b51938098e849d3a61b0c3dc0f2ae220f5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-large-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

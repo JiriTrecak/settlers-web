@@ -43,3 +43,9 @@ assets/maps/*
 # Authored campaign missions include their Lua source.
 !assets/maps/campaign/
 !assets/maps/campaign/*.utcmap
+
+# Local Asset Studio jobs, credentials and recovery journals
+/.asset-work/
+
+__pycache__/
+*.pyc

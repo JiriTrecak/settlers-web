@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lily-chunky",
+  "name": "Lily \u2014 chunky pads",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/lily-chunky/model.glb",
+      "sha256": "a94bef30ab8a49bc31f63c24ce7b6eee879b921bc00382541bfae2a519fbce8e",
+      "bytes": 12060
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lily-chunky",
+      "name": "Lily \u2014 chunky pads",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/lily-chunky/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.lily-chunky/source.glb",
+    "sha256": "a94bef30ab8a49bc31f63c24ce7b6eee879b921bc00382541bfae2a519fbce8e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/lily-chunky.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 import { readFile, mkdtemp, writeFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import source from "../../content/game.json";
+import raw from "../../content/game.json";
+import {renderAssets} from "../../src/shared/assets/manifest";
+const source={...raw,assets:renderAssets};
 import {
   buildCatalog,
   definitionPath,

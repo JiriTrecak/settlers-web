@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => ({
     host: "127.0.0.1",
     port: 5173,
     strictPort: true,
+    fs: {deny:["**/.asset-work/**", "**/.env*", "**/*.{crt,pem}", "**/.git/**"]},
     watch: {
       ignored: ["**/src-tauri/**"],
     },

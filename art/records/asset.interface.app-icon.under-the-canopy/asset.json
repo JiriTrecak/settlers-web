@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.app-icon.under-the-canopy",
+  "name": "Under The Canopy",
+  "kind": "interface",
+  "tags": [
+    "app-icon",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/app-icon/under-the-canopy.png",
+      "sha256": "b2e10d98f24addc3f34ac89e15864f92d0bf8e93f556797184f57664d3b3ad71",
+      "bytes": 1938054,
+      "width": 1254,
+      "height": 1254
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.app-icon.under-the-canopy/source.png",
+    "sha256": "b2e10d98f24addc3f34ac89e15864f92d0bf8e93f556797184f57664d3b3ad71",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/app-icon/under-the-canopy.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

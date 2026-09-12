@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.lumberjack-workshop",
+  "name": "Lumberjack hut",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/lumberjack-workshop/model.glb",
+      "sha256": "bc6ab1e8016593396c8e84b43015f36f2b998ee690cb68d8e92ec581ff4e2470",
+      "bytes": 2174924
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.lumberjack",
+      "file": "assets/models/buildings/ants/lumberjack-workshop/model.glb",
+      "healthHeight": 6.2
+    }
+  ],
+  "scenery": [
+    {
+      "id": "lumberjack-hut",
+      "name": "Lumberjack hut",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/lumberjack-workshop/model.glb"
+    },
+    {
+      "id": "ant-lumberjack",
+      "name": "Ant colony \u00b7 Lumberjack",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/lumberjack-workshop/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/buildings/lumberjack-workshop/lumberjack-workshop.blend",
+    "sha256": "995a1b1128d415e799d9d32efd9bcba0bbb4b3a78d19c7bf311d243f152199a4",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/lumberjack-workshop.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

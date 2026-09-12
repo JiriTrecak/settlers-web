@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-marshal",
+  "name": "Marshal",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-ants-marshal.png",
+      "sha256": "3f111a9fcde9c7ddb11423398d074041852ae5b37acbc2dea418f41d5f7a88ac",
+      "bytes": 36103,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.marshal",
+      "image": "assets/icons/unit-ants-marshal.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-ants-marshal/source.png",
+    "sha256": "3f111a9fcde9c7ddb11423398d074041852ae5b37acbc2dea418f41d5f7a88ac",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/marshal.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

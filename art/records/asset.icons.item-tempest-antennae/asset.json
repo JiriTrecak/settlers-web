@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-tempest-antennae",
+  "name": "Tempest Antennae",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-tempest-antennae.png",
+      "sha256": "3007e7b40271e8af56e01d1d694fe8f73acc49b1db3417f0547602011b2a6adc",
+      "bytes": 12454,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.tempest-antennae",
+      "image": "assets/icons/item-tempest-antennae.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-tempest-antennae/source.png",
+    "sha256": "3007e7b40271e8af56e01d1d694fe8f73acc49b1db3417f0547602011b2a6adc",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/tempest-antennae.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

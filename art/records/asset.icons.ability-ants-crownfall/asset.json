@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.ability-ants-crownfall",
+  "name": "Crownfall",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/ability-ants-crownfall.png",
+      "sha256": "f33abd30b03f25931e29bc74f52bbebcd0e98a068e4870bc2a119a37dc73330a",
+      "bytes": 39666,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.spell.crownfall",
+      "image": "assets/icons/ability-ants-crownfall.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.ability-ants-crownfall/source.png",
+    "sha256": "f33abd30b03f25931e29bc74f52bbebcd0e98a068e4870bc2a119a37dc73330a",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/crownfall.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

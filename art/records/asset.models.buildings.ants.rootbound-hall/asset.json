@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.rootbound-hall",
+  "name": "Main fort",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/rootbound-hall/model.glb",
+      "sha256": "09c0d8121db5e79836a3569b66dc217ca26a034f4670802b8c1913e45049cdf2",
+      "bytes": 5707136
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.fort",
+      "file": "assets/models/buildings/ants/rootbound-hall/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "main-fort",
+      "name": "Main fort",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/buildings/ants/rootbound-hall/model.glb"
+    },
+    {
+      "id": "ant-fort",
+      "name": "Ant colony \u00b7 Fort",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/rootbound-hall/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.buildings.ants.rootbound-hall/source.glb",
+    "sha256": "09c0d8121db5e79836a3569b66dc217ca26a034f4670802b8c1913e45049cdf2",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/rootbound-hall.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

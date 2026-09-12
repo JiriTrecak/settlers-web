@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.grass",
+  "name": "Ant colony \u00b7 Grass",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/grass/model.glb",
+      "sha256": "7275cdd10bacdf650643df24311d7f01809b6677d831e71f47c7c911c5ede5e4",
+      "bytes": 15396
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-grass",
+      "name": "Ant colony \u00b7 Grass",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/grass/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.grass/source.glb",
+    "sha256": "7275cdd10bacdf650643df24311d7f01809b6677d831e71f47c7c911c5ede5e4",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/grass.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

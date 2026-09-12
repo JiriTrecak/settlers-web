@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-pine-base-01",
+  "name": "Tree Pine Base 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-pine-base-01/model.glb",
+      "sha256": "82871426b0b30c627750943c5edc2fc9e33152896fdf0a7ca76131c4f0330b76",
+      "bytes": 1327440
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-pine-base-01",
+      "name": "Tree Pine Base 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-pine-base-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-pine-base-01/source.gltf",
+    "sha256": "9c1e6a4edad565a68c7a615cf03776a4d9c181a430cdd62b1b5942e03d5d2f74",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-pine-base-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

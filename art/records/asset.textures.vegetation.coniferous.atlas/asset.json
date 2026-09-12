@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.vegetation.coniferous.atlas",
+  "name": "Atlas",
+  "kind": "texture",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/vegetation/coniferous/atlas.png",
+      "sha256": "47a6d5c3c92c647758aa554a27ef9114f909c709fad635599c492d9a6e535409",
+      "bytes": 5285482,
+      "width": 4096,
+      "height": 4096
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.vegetation.coniferous.atlas/source.png",
+    "sha256": "47a6d5c3c92c647758aa554a27ef9114f909c709fad635599c492d9a6e535409",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/atlas.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

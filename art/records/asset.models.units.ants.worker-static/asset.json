@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.worker-static",
+  "name": "Ant colony \u00b7 Worker",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/worker-static/model.glb",
+      "sha256": "2a25e849736959e93827dcb3f7bf6d158131ebdc0742f3937cc5e106a9023599",
+      "bytes": 289804
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-worker",
+      "name": "Ant colony \u00b7 Worker",
+      "category": "other",
+      "type": "prop",
+      "file": "models/units/ants/worker-static/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.units.ants.worker-static/source.glb",
+    "sha256": "2a25e849736959e93827dcb3f7bf6d158131ebdc0742f3937cc5e106a9023599",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/worker.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

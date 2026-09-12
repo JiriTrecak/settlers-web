@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.items.item-plank",
+  "name": "Plank",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/item-plank/model.glb",
+      "sha256": "7d4beeeb3ab66b84395385aa80956749242e9fa7119cfdef4d3ca8cbc13235d5",
+      "bytes": 10408
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.item.plank",
+      "file": "assets/models/items/item-plank/model.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.19,
+      "stackColumns": 1
+    }
+  ],
+  "scenery": [
+    {
+      "id": "item-plank",
+      "name": "Plank",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/items/item-plank/model.glb"
+    },
+    {
+      "id": "ant-item-plank",
+      "name": "Ant colony \u00b7 Item Plank",
+      "category": "other",
+      "type": "prop",
+      "file": "models/items/item-plank/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.items.item-plank/source.glb",
+    "sha256": "7d4beeeb3ab66b84395385aa80956749242e9fa7119cfdef4d3ca8cbc13235d5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/item-plank.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.roads.road-normal",
+  "name": "Road Normal",
+  "kind": "texture",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/roads/road-normal.png",
+      "sha256": "fb07715faf27081f3201527af171a02e6fd8f8945ab2dec36e2bc7176df920cb",
+      "bytes": 196810,
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.roads.road-normal/source.png",
+    "sha256": "fb07715faf27081f3201527af171a02e6fd8f8945ab2dec36e2bc7176df920cb",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/road-normal.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.amberjaw-staglord",
+  "name": "Amberjaw Staglord",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/neutral/amberjaw-staglord/model.glb",
+      "sha256": "438294d2c6b4841dc4f0d467ae5defd5e1376617b80f1a4d5f045a204ec8f4b8",
+      "bytes": 243200
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.neutral.amberjaw-staglord",
+      "file": "assets/models/units/neutral/amberjaw-staglord/model.glb",
+      "character": "amberjaw-staglord",
+      "healthHeight": 2.8
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/amberjaw-staglord/amberjaw-staglord.blend",
+    "sha256": "12051874c0db3c3c3ca376b9294cac6e06a11bb743893fff2ccccabc3cb21f8d",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/amberjaw-staglord.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

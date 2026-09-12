@@ -1,6 +1,6 @@
 import {GameScreen} from '../screen/screen';
 import {missionMaps} from '../../shared/map/library';
-import forest from '../../../assets/ui/main-menu/forest-heroes.png';
+import forest from '../../../assets/interface/main-menu/forest-heroes.png';
 import {content} from '../../content/builtin';
 import {iconArt} from '../settlement/commandArt';
 import '../campaign/campaign.css';

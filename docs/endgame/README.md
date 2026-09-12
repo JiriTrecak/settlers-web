@@ -8,7 +8,7 @@ The complete catalog, values, stacking rules and effect vocabulary are documente
 
 `src/content/items.ts` defines the schema; `src/sim/game/itemEffects.ts` interprets it without item-ID dispatch. Equipment runtime stores remaining charges, cooldown ticks and hit counters. Timed statuses, queued damage and consumed rescue charges survive save/load. `itemValidation.ts` rejects forged runtime metadata. Percentage bonuses are bounded, matching auras do not stack, and triggered attack powers cannot recursively trigger themselves.
 
-Affected units expose statuses through observation. `src/render/settlement/statusBadges.ts` renders recipient badges above units; `src/presentation/itemStatus.ts` supplies center-panel icons and explanatory tooltips. Inventory cards display tier, charges and cooldown. All thirty icons ship as painted 128 × 128 PNGs on black backgrounds in `assets/ui/icons/items-v2/`. High-resolution masters, generation prompts and a contact sheet live in `experiments/assets/item-icons/painted-v2/`. Re-export with `python3 scripts/items/export-painted.py` (requires Pillow). The older `items-v1` SVG pipeline is retained only as a legacy source; it does not overwrite the painted set.
+Affected units expose statuses through observation. `src/render/settlement/statusBadges.ts` renders recipient badges above units; `src/presentation/itemStatus.ts` supplies center-panel icons and explanatory tooltips. Inventory cards display tier, charges and cooldown. All thirty icons ship as painted 128 × 128 PNGs on black backgrounds in `assets/ui/icons/items-v2/`. High-resolution masters, generation prompts and a contact sheet live in `art/sources/item-icons/painted-v2/`. Re-export with `python3 scripts/items/export-painted.py` (requires Pillow). The older `items-v1` SVG pipeline is retained only as a legacy source; it does not overwrite the painted set.
 
 ## Map
 
@@ -30,8 +30,8 @@ Both neutral characters use the existing generic character runtime. Their GLBs e
 **Amberjaw Staglord — animated neutral creature**
 
 - **What it is:** Copper-armored six-legged beetle with articulated amber-edged pincers.
-- **Asset folder:** [amberjaw-staglord](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord>).
-- **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord/amberjaw-staglord.blend>), [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/ant-colony/characters/amberjaw-staglord.glb>), [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/amberjaw-staglord/comparison.png>).
+- **Asset folder:** [amberjaw-staglord](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/amberjaw-staglord>).
+- **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/amberjaw-staglord/amberjaw-staglord.blend>), [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/ant-colony/characters/amberjaw-staglord.glb>), [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/amberjaw-staglord/comparison.png>).
 - **Live preview:** http://127.0.0.1:8770/ (restart command below).
 - **Geometry:** 4,356 exported triangles. 17 bones; source has 68 editable meshes and 7 materials. Source object counts are not runtime draw counts.
 - **Runtime features:** Six states listed above; no team-color surfaces.
@@ -42,8 +42,8 @@ Both neutral characters use the existing generic character runtime. Their GLBs e
 **Thornblade Matriarch — animated neutral creature**
 
 - **What it is:** Leaf-armored mantis with four walking legs and paired serrated scythes.
-- **Asset folder:** [thornblade-matriarch](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/thornblade-matriarch>).
-- **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/thornblade-matriarch/thornblade-matriarch.blend>), [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/ant-colony/characters/thornblade-matriarch.glb>), [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/experiments/assets/characters/thornblade-matriarch/comparison.png>).
+- **Asset folder:** [thornblade-matriarch](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/thornblade-matriarch>).
+- **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/thornblade-matriarch/thornblade-matriarch.blend>), [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/ant-colony/characters/thornblade-matriarch.glb>), [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/thornblade-matriarch/comparison.png>).
 - **Live preview:** http://127.0.0.1:8771/ (restart command below).
 - **Geometry:** 3,680 exported triangles. 16 bones; source has 69 editable meshes and 7 materials. Source object counts are not runtime draw counts.
 - **Runtime features:** Six states listed above; no team-color surfaces.
@@ -51,7 +51,7 @@ Both neutral characters use the existing generic character runtime. Their GLBs e
 - **Game integration:** `unit.neutral.thornblade-matriarch`; 1,850 HP, armor 4, melee damage 58, cooldown 40 ticks, level 8. Southern legendary camp.
 - **Limitations:** Simplified colored geometry without baked texture detail; unseen anatomy inferred from the concept. Single LOD.
 
-Each asset folder includes the reference, measured palette, sample coordinates, recipe, configuration, saved scene, exports and comparison. Recipes share `experiments/assets/characters/endgame_rig.py`. Runtime icons are rendered directly from the saved scenes with `scripts/items/render-neutral-icon.py`; they live under `assets/ui/icons/neutral-v1/`.
+Each asset folder includes the reference, measured palette, sample coordinates, recipe, configuration, saved scene, exports and comparison. Recipes share `art/sources/characters/endgame_rig.py`. Runtime icons are rendered directly from the saved scenes with `scripts/items/render-neutral-icon.py`; they live under `assets/ui/icons/neutral-v1/`.
 
 ```sh
 node experiments/building-studio/launch.mjs serve amberjaw-staglord --category characters --port 8770

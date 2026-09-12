@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.pebbles",
+  "name": "Pebbles",
+  "kind": "texture",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/pebbles.png",
+      "sha256": "63508b9bba2a0d031aa676aa9a64669397a130a269283f78edc3669330851106",
+      "bytes": 520313,
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.terrain.pebbles/source.png",
+    "sha256": "63508b9bba2a0d031aa676aa9a64669397a130a269283f78edc3669330851106",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/terrain/pebbles.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

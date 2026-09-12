@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.great-mound",
+  "name": "Great Mound",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/great-mound/model.glb",
+      "sha256": "4da443a68f3ee9f06610dabf5f63dfb3125414f8572a781113bede0c90e0ba93",
+      "bytes": 4291368
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.great-mound",
+      "file": "assets/models/buildings/ants/great-mound/model.glb",
+      "healthHeight": 5.6
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/great-mound/great-mound.blend",
+    "sha256": "edc3781f2f7bc68b5887edbfa1d52c1f5c84228ea5626bd74481d2873576be63",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/great-mound.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

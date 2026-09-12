@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-house",
+  "name": "House",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-house.png",
+      "sha256": "1cd968cc0b9a79ba639244f5fc0320409fa20b3639b86ff5a4a56b3884abc5ab",
+      "bytes": 30779,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.house",
+      "image": "assets/icons/building-ants-house.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-house/source.png",
+    "sha256": "1cd968cc0b9a79ba639244f5fc0320409fa20b3639b86ff5a4a56b3884abc5ab",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/house.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

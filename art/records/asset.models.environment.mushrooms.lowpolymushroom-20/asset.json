@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.lowpolymushroom-20",
+  "name": "Lowpolymushroom 20",
+  "kind": "model",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/mushrooms/lowpolymushroom-20/model.glb",
+      "sha256": "c8bdb0cffa4da7b49df6ca6c405804d10539ff41bca15b7d23d128dcec1b85e8",
+      "bytes": 13676
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lowpolymushroom_20",
+      "name": "Lowpolymushroom 20",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/mushrooms/lowpolymushroom-20/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/coniferous-pack/source.blend",
+    "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/lowpolymushroom_20.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

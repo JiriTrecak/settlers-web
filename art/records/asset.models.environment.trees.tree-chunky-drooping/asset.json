@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-chunky-drooping",
+  "name": "Broadleaf \u2014 hanging sprays",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/tree-chunky-drooping/model.glb",
+      "sha256": "7a21a7cb3820e475632edd680b0acd91d048078f401a6fb0d6aaf52f25e8e8a3",
+      "bytes": 3840740
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "tree-chunky-drooping",
+      "name": "Broadleaf \u2014 hanging sprays",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/tree-chunky-drooping/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.tree-chunky-drooping/source.glb",
+    "sha256": "7a21a7cb3820e475632edd680b0acd91d048078f401a6fb0d6aaf52f25e8e8a3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/tree-chunky-drooping.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

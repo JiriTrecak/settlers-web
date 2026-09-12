@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-log-02",
+  "name": "Tree Log 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-log-02/model.glb",
+      "sha256": "aabdce05afa762f630a5319f6768d0d2b62dce3c72d5387a307f8840c928fc1b",
+      "bytes": 37736
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-log-02",
+      "name": "Tree Log 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-log-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-log-02/source.gltf",
+    "sha256": "cb864e11234e6424f6e4893355373f32b509676fe30b782b5278870669285a0b",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-log-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

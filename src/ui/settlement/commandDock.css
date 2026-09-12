@@ -1,17 +1,17 @@
 /* Independent woodland HUD islands. No baked grid: every usable slot owns its frame. */
-.rts-hud{position:absolute;inset:0;pointer-events:none;color:#e7e4cf;font-family:Outfit,system-ui,sans-serif;--wood-slot:url('../../../assets/ui/woodland/slot.png');--wood-line:#75613d;--gold:#d8c58c}
+.rts-hud{position:absolute;inset:0;pointer-events:none;color:#e7e4cf;font-family:Outfit,system-ui,sans-serif;--wood-slot:url('../../../assets/interface/woodland/slot.png');--wood-line:#75613d;--gold:#d8c58c}
 .rts-hud *,.rts-tooltip{box-sizing:border-box}
 .rts-hud [hidden]{display:none!important}
 .rts-art{display:inline-block;background-size:cover;background-position:center;background-repeat:no-repeat;flex:none}
 .rts-dock{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);display:flex;justify-content:space-between;align-items:flex-end;gap:10px;pointer-events:none}
 .rts-hud[data-layout=compact] .rts-dock{max-width:1240px}
 .rts-map{position:relative;width:19%;max-width:266px;aspect-ratio:1;flex:none;pointer-events:auto;filter:drop-shadow(0 4px 6px #0009)}
-.rts-map::after{content:'';position:absolute;inset:0;z-index:2;background:url('../../../assets/ui/woodland/map-frame.png') center/100% 100% no-repeat;pointer-events:none}
+.rts-map::after{content:'';position:absolute;inset:0;z-index:2;background:url('../../../assets/interface/woodland/map-frame.png') center/100% 100% no-repeat;pointer-events:none}
 .rts-map-slot{position:absolute;inset:7%;background:#080c07;overflow:hidden;border-radius:4%}
 .rts-map-label{position:absolute;bottom:0;left:10%;right:10%;text-align:center;color:#c6c3a0;font:10px Georgia,serif;text-shadow:0 1px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:3}
 .rts-selection{position:relative;width:53%;max-width:830px;aspect-ratio:3;flex:none;container-type:inline-size;isolation:isolate;pointer-events:none;filter:drop-shadow(0 3px 4px #0009)}
-.rts-selection::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(#0005,#0005),url('../../../assets/ui/woodland/selection.png') center/100% 100% no-repeat;mask:url('../../../assets/ui/woodland/selection-mask.svg') center/100% 100% no-repeat;pointer-events:auto;clip-path:polygon(3% 32%,29% 32%,36% 17%,50% 1%,66% 17%,71% 32%,97% 32%,99% 44%,99% 86%,97% 93%,3% 93%,1% 86%,1% 44%)}
-.rts-selection:not([data-kind=empty])::before{mask-image:url('../../../assets/ui/woodland/selection-portrait-mask.svg')}
+.rts-selection::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(#0005,#0005),url('../../../assets/interface/woodland/selection.png') center/100% 100% no-repeat;mask:url('../../../assets/interface/woodland/selection-mask.svg') center/100% 100% no-repeat;pointer-events:auto;clip-path:polygon(3% 32%,29% 32%,36% 17%,50% 1%,66% 17%,71% 32%,97% 32%,99% 44%,99% 86%,97% 93%,3% 93%,1% 86%,1% 44%)}
+.rts-selection:not([data-kind=empty])::before{mask-image:url('../../../assets/interface/woodland/selection-portrait-mask.svg')}
 .rts-portrait{position:absolute;left:5%;top:37.0833%;width:24.0278%;height:52.0833%;border-radius:5px;background:#090c07;pointer-events:auto;overflow:hidden}
 .rts-portrait>.rts-art{width:100%;height:100%;background-size:contain}
 .rts-portrait[data-live=true]{background:transparent}
@@ -89,6 +89,6 @@
 .rts-tooltip[hidden]{display:none}.rts-tooltip strong{display:block;color:#e6d596;font:600 17px Georgia,serif}.rts-tooltip p{margin:8px 0 0;overflow-wrap:anywhere;white-space:pre-line}.rts-tooltip small{display:block;margin-top:7px;color:#b4b793;font-size:10px}.rts-tooltip-costs{display:flex;gap:16px;margin-top:8px;color:#eee0ac}.rts-tooltip-costs:empty{display:none}.rts-tooltip-costs>span{display:flex;align-items:center;gap:5px}.rts-tooltip .rts-art{height:24px;width:24px}
 @media(max-width:900px){.rts-dock{width:calc(100% - 12px);gap:5px}.rts-selection{width:54%}.rts-map{width:19%}.rts-actions{width:23%}.rts-selection h2{font-size:14px;margin-bottom:3.5cqw}.rts-info{gap:1cqw}.rts-selection-stat span:not(.rts-art){display:none}.rts-inventory{gap:2px;padding:2px}.rts-resources{height:30px}.rts-map-label{font-size:8px}.rts-clock-slot{transform:scale(.4)}.rts-command-grid{--command-gap:3px}.rts-control-groups button{min-width:22px;padding:1px 4px}}
 @media(prefers-reduced-motion:reduce){.rts-error{transition:none}}
-.rts-inventory::before{background:url('../../../assets/ui/woodland/satchel.png') center/100% 100% no-repeat;opacity:.3;border:0;inset:-14% -13%;transform:rotate(-2deg)}
-.rts-resources{height:42px;border:5px solid transparent;border-image:url('../../../assets/ui/woodland/map-frame.png') 65 / 8px / 3px stretch;background-color:#11180c}
-.rts-command-banner{border:4px solid transparent;border-image:url('../../../assets/ui/woodland/map-frame.png') 65 / 6px / 1px stretch}
+.rts-inventory::before{background:url('../../../assets/interface/woodland/satchel.png') center/100% 100% no-repeat;opacity:.3;border:0;inset:-14% -13%;transform:rotate(-2deg)}
+.rts-resources{height:42px;border:5px solid transparent;border-image:url('../../../assets/interface/woodland/map-frame.png') 65 / 8px / 3px stretch;background-color:#11180c}
+.rts-command-banner{border:4px solid transparent;border-image:url('../../../assets/interface/woodland/map-frame.png') 65 / 6px / 1px stretch}

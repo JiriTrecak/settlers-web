@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-pile-02",
+  "name": "Rock Pile 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-pile-02/model.glb",
+      "sha256": "a1bf10982b300571d57b61bf0744f3ddaf10839c911c6bdb08c20630e8b4a12e",
+      "bytes": 1385176
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-pile-02",
+      "name": "Rock Pile 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-pile-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-pile-02/source.gltf",
+    "sha256": "c99faed769672389541905bdfcbe2b9ccd7987965006cc8bbbba08d9cf68afb9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-pile-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

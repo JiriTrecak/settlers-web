@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.logo-iron-wordmark",
+  "name": "Logo Iron Wordmark",
+  "kind": "interface",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/main-menu/logo-iron-wordmark.png",
+      "sha256": "b5d55fff4fbd8c8b20b573193e3356e112439f56a6f26c218b7d08869dfef425",
+      "bytes": 1924515,
+      "width": 1774,
+      "height": 887
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.main-menu.logo-iron-wordmark/source.png",
+    "sha256": "b5d55fff4fbd8c8b20b573193e3356e112439f56a6f26c218b7d08869dfef425",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/main-menu/logo-iron-wordmark.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

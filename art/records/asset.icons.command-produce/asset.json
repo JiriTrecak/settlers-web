@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-produce",
+  "name": "Produce",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-produce.png",
+      "sha256": "838b0bccf735acbad44998fa298187981d252c9aac8405c44c4138ba07182861",
+      "bytes": 32235,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.produce",
+      "image": "assets/icons/command-produce.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-produce/source.png",
+    "sha256": "838b0bccf735acbad44998fa298187981d252c9aac8405c44c4138ba07182861",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/produce.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

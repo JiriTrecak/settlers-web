@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.ogre-static",
+  "name": "Ogre",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/neutral/ogre-static/model.glb",
+      "sha256": "776fe637b823d09f9fc4e5ba36957b8b3293dacacbfd78f4aed6f0a704a820a6",
+      "bytes": 165884
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.neutral.ogre",
+      "file": "assets/models/units/neutral/ogre-static/model.glb",
+      "healthHeight": 3.3
+    }
+  ],
+  "scenery": [
+    {
+      "id": "neutral-ogre",
+      "name": "Ogre",
+      "category": "units",
+      "type": "prop",
+      "file": "models/units/neutral/ogre-static/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.units.neutral.ogre-static/source.glb",
+    "sha256": "776fe637b823d09f9fc4e5ba36957b8b3293dacacbfd78f4aed6f0a704a820a6",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/ogre.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-single-purple",
+  "name": "Wildflower \u2014 single purple",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-single-purple/model.glb",
+      "sha256": "28c2e8098a6e650d83084081688331befcb2a0e85c914463f91a0587c673a07d",
+      "bytes": 17540
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-single-purple",
+      "name": "Wildflower \u2014 single purple",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-single-purple/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-single-purple/source.glb",
+    "sha256": "28c2e8098a6e650d83084081688331befcb2a0e85c914463f91a0587c673a07d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-single-purple.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

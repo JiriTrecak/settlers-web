@@ -6,7 +6,7 @@ import { createCharacterInstance, type AntState } from "../../src/render/charact
 import { game } from "../game/helpers";
 
 it("loads the actual marshal rig and all declared poses, including mace and cast",async()=>{
-  const bytes=readFileSync("assets/ant-colony/characters/marshal.glb");
+  const bytes=readFileSync("assets/models/units/ants/marshal/model.glb");
   const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),"");
   const a=createCharacterInstance(gltf,"marshal"), b=createCharacterInstance(gltf,"marshal");
   let triangles=0;

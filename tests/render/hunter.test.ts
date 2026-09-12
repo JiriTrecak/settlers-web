@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SkinnedMesh,Mesh,MeshStandardMaterial} from 'three';
 import {createCharacterInstance, type AntState} from '../../src/render/characters/character-player.js';
-async function load(){const b=readFileSync('assets/ant-colony/characters/hunter.glb');return new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');}
+async function load(){const b=readFileSync('assets/models/units/ants/hunter/model.glb');return new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');}
 it('exports a skinned Hunter with distinct locomotion, charge and spear attack clips',async()=>{
  const gltf=await load();let skins=0;gltf.scene.traverse(o=>{if(o instanceof SkinnedMesh)skins++});expect(skins).toBeGreaterThan(0);
  const c=createCharacterInstance(gltf,'hunter');

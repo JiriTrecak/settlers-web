@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-birch-02",
+  "name": "Tree Birch Autumn",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-birch-02/model.glb",
+      "sha256": "52bef735d988347769a2b03b5141e73941e16f6003bf11fb44d787c69dcfad99",
+      "bytes": 800312
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-birch-02",
+      "name": "Tree Birch Autumn",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-birch-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-birch-02/source.gltf",
+    "sha256": "705264870dd29fc411551ba166af2ec457a9ff0452ec3c3cb7e6f72f8f05efd5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-birch-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

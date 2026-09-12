@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-willow-small-01",
+  "name": "Tree Willow Small 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-willow-small-01/model.glb",
+      "sha256": "b7822a4d843f6e87631d5aff6fc9cb9380dd03c1ce788a96b315c34662fb74a6",
+      "bytes": 460996
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-willow-small-01",
+      "name": "Tree Willow Small 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-willow-small-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-willow-small-01/source.gltf",
+    "sha256": "0331c93b8d433f2e69387ff042b4119a4c7b0b7a8b3909b9e6f591f0dd71aef5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-willow-small-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

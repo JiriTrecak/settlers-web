@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-first-queen-crown",
+  "name": "First Queen Crown",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-first-queen-crown.png",
+      "sha256": "a1b37f7f9a9c1a840d91bd228a0ad10d71b444de6050ee3492628d1441902a1e",
+      "bytes": 24281,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.first-queen-crown",
+      "image": "assets/icons/item-first-queen-crown.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-first-queen-crown/source.png",
+    "sha256": "a1b37f7f9a9c1a840d91bd228a0ad10d71b444de6050ee3492628d1441902a1e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/first-queen-crown.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

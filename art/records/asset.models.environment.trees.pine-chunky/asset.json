@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.pine-chunky",
+  "name": "Pine \u2014 chunky emerald",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/pine-chunky/model.glb",
+      "sha256": "b23eea74f81d22f741c6e9399f71a110f170a526bd168f9141a16fa9ed806c62",
+      "bytes": 86480
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "pine-chunky",
+      "name": "Pine \u2014 chunky emerald",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/pine-chunky/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.pine-chunky/source.glb",
+    "sha256": "b23eea74f81d22f741c6e9399f71a110f170a526bd168f9141a16fa9ed806c62",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/pine-chunky.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

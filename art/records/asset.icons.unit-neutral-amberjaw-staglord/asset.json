@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-amberjaw-staglord",
+  "name": "Amberjaw Staglord",
+  "kind": "icon",
+  "tags": [
+    "neutral-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-neutral-amberjaw-staglord.png",
+      "sha256": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c",
+      "bytes": 12656,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.neutral.amberjaw-staglord",
+      "image": "assets/icons/unit-neutral-amberjaw-staglord.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-neutral-amberjaw-staglord/source.png",
+    "sha256": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/neutral-v1/amberjaw-staglord.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

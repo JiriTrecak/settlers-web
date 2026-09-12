@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02",
+  "name": "Prop Pillar Arch Broken Moss 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-pillar-arch-broken-moss-02/model.glb",
+      "sha256": "943892d1375b903913b3e8b727ac47ad7bb38560a7c0430631306ca6672da8ed",
+      "bytes": 52372
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-pillar-arch-broken-moss-02",
+      "name": "Prop Pillar Arch Broken Moss 02",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/environment/structures/synty-prop-pillar-arch-broken-moss-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02/source.gltf",
+    "sha256": "16c674901df57f1562f9436454c63270047facab288560a2b186150bbd198031",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-pillar-arch-broken-moss-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

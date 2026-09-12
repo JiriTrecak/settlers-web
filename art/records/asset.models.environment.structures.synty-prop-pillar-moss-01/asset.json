@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-moss-01",
+  "name": "Prop Pillar Moss 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-pillar-moss-01/model.glb",
+      "sha256": "c08414cc4f5538979a2bb97a8c59c61090c7e381d214334c1f9580a8f6c96e96",
+      "bytes": 79784
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-pillar-moss-01",
+      "name": "Prop Pillar Moss 01",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/environment/structures/synty-prop-pillar-moss-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-pillar-moss-01/source.gltf",
+    "sha256": "6a58f1acd8e9b1ae93cf2eec6ba811196666263bedb843ab27515874f5545a2d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-pillar-moss-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -16,7 +16,7 @@ Choose **3D viewer** to inspect the real model: left-drag rotates, the wheel zoo
 
 ## What is saved
 
-Each asset lives in `experiments/assets/buildings/<name>/`:
+Each asset lives in `art/sources/buildings/<name>/`:
 
 - `<name>.blend`: editable model, named part collections, camera, lights, materials, and packed reference image.
 - `reference.png`: the supplied source image.

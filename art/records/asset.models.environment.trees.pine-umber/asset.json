@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.pine-umber",
+  "name": "Pine umber",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/pine-umber/model.glb",
+      "sha256": "0066af1f33621a402e2475f22406897ca3661db23469307b312a02159bb7a6c5",
+      "bytes": 4796
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "pine-umber",
+      "name": "Pine umber",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/pine-umber/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.pine-umber/source.gltf",
+    "sha256": "1da04873e3342841e5a1014906b44da9a25a301067b80cffd027b4fb2af26ef8",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/pine-umber.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

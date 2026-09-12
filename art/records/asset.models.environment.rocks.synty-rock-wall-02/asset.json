@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-wall-02",
+  "name": "Rock Wall 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-wall-02/model.glb",
+      "sha256": "27d10c23b305953995ac8209fd280276ec26641e63f211a3c564e7632fed4078",
+      "bytes": 1410468
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-wall-02",
+      "name": "Rock Wall 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-wall-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-wall-02/source.gltf",
+    "sha256": "6194a42a043a30d98f9f5a2c6090bee85dfbdd5c7a9d410774744e5f2ddf03a6",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-wall-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

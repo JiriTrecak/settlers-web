@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.olive-pine-animated",
+  "name": "Olive Pine Animated",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/olive-pine-animated/model.glb",
+      "sha256": "508c21173b84687e71860f16986c54b87d9c90cda49e18e9872a4fe489d52b69",
+      "bytes": 140964
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/olive-pine/olive-pine-animated.blend",
+    "sha256": "47f84b6b3f2b13b5a815665d75ec4c1f571026b094398238288ec98ec418e335",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/olive-pine-animated.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

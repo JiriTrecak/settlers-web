@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.map-frame",
+  "name": "Map Frame",
+  "kind": "interface",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/map-frame.png",
+      "sha256": "42d1d258ceac8233f029194fcc13b6b4656556661d87f178bacfe5610a3c1706",
+      "bytes": 104820,
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.woodland.map-frame/source.png",
+    "sha256": "42d1d258ceac8233f029194fcc13b6b4656556661d87f178bacfe5610a3c1706",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/woodland/map-frame.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

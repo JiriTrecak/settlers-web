@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.items.log-stack",
+  "name": "Ant colony \u00b7 Log Stack",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/log-stack/model.glb",
+      "sha256": "8f54c4614a679b979256ac3b5ed67468307ca64b8d51710a4f5f4ef704ba1f8c",
+      "bytes": 777636
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-log-stack",
+      "name": "Ant colony \u00b7 Log Stack",
+      "category": "other",
+      "type": "prop",
+      "file": "models/items/log-stack/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.items.log-stack/source.glb",
+    "sha256": "8f54c4614a679b979256ac3b5ed67468307ca64b8d51710a4f5f4ef704ba1f8c",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/log-stack.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

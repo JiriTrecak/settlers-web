@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-build",
+  "name": "Build",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-build.png",
+      "sha256": "2f7157b6afe19a9e12e8124362de28850d18ce523035df48a1291268398282db",
+      "bytes": 32460,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.build",
+      "image": "assets/icons/command-build.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-build/source.png",
+    "sha256": "2f7157b6afe19a9e12e8124362de28850d18ce523035df48a1291268398282db",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/build.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

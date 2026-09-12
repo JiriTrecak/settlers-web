@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-generic-giant-01",
+  "name": "Tree Generic Giant 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-generic-giant-01/model.glb",
+      "sha256": "28bdace75eceb48bacec100f656249c7b00567087527e3c9dcf60f30a4bfe4e0",
+      "bytes": 2792108
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-generic-giant-01",
+      "name": "Tree Generic Giant 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-generic-giant-01/model.glb"
+    },
+    {
+      "id": "synty-tree-generic-giant-01-open",
+      "name": "Ancient broadleaf \u2014 open crown",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-generic-giant-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-generic-giant-01/source.gltf",
+    "sha256": "98a3c0125dc8cde10c0acf3a3b4c7353c2f789950cd85e7c78de79bcb34f8a79",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-generic-giant-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

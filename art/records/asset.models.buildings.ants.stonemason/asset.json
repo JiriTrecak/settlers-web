@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.stonemason",
+  "name": "Ant colony \u00b7 Stonemason",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/stonemason/model.glb",
+      "sha256": "ff982a07c782d91aa35392f2cd26646ea90110e5595d091d85fd0d4f5bdd63cb",
+      "bytes": 1153440
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-stonemason",
+      "name": "Ant colony \u00b7 Stonemason",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/stonemason/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.buildings.ants.stonemason/source.glb",
+    "sha256": "ff982a07c782d91aa35392f2cd26646ea90110e5595d091d85fd0d4f5bdd63cb",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/stonemason.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lantern-post",
+  "name": "Wayfarer lantern",
+  "kind": "model",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/lantern-post/model.glb",
+      "sha256": "7da7f944d819d50e6fac0732a20006a5ec9eb687d26cb45b27764e4c87a6f7cf",
+      "bytes": 25972
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lantern-post",
+      "name": "Wayfarer lantern",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/structures/lantern-post/model.glb",
+      "light": {
+        "x": 0.78,
+        "y": 2.85,
+        "z": 0,
+        "color": "#FFC16B",
+        "intensity": 9,
+        "range": 8
+      }
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.lantern-post/source.glb",
+    "sha256": "7da7f944d819d50e6fac0732a20006a5ec9eb687d26cb45b27764e4c87a6f7cf",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/lantern-post.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

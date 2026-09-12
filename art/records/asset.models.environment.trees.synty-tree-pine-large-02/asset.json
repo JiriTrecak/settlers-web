@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-pine-large-02",
+  "name": "Tree Pine Large 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-pine-large-02/model.glb",
+      "sha256": "87454f9573ba46b283e979955f8ba47047232aee5c9d68a25f7965920150194f",
+      "bytes": 513516
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-pine-large-02",
+      "name": "Tree Pine Large 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-pine-large-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-pine-large-02/source.gltf",
+    "sha256": "36c1d00f0997ee626f98f9893c5958d6aed7c8b7c0a155e34ea31ab165ee7ca9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-pine-large-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

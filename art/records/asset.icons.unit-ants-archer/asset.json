@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-archer",
+  "name": "Archer",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-ants-archer.png",
+      "sha256": "f3d2ae709bafeae0aeeb4e6037d354aebd7e6af6b0d0ac9ec5c3527f3fc711bf",
+      "bytes": 33990,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.archer",
+      "image": "assets/icons/unit-ants-archer.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-ants-archer/source.png",
+    "sha256": "f3d2ae709bafeae0aeeb4e6037d354aebd7e6af6b0d0ac9ec5c3527f3fc711bf",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/archer.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-mound",
+  "name": "Fort",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-mound.png",
+      "sha256": "f297acfbd3986303f559d353c788170adc27160f0d38ffedc224a29048d27c56",
+      "bytes": 31567,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.fort",
+      "image": "assets/icons/building-ants-mound.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-mound/source.png",
+    "sha256": "f297acfbd3986303f559d353c788170adc27160f0d38ffedc224a29048d27c56",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/fort.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

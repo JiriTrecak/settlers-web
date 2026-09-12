@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.worker-carry-static",
+  "name": "Ant colony \u00b7 Worker Carry",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/worker-carry-static/model.glb",
+      "sha256": "9d6bdb0d00e411d0f7dbcfd88376158dc6385bc5bd1fb600eccd578b229d4959",
+      "bytes": 289808
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-worker-carry",
+      "name": "Ant colony \u00b7 Worker Carry",
+      "category": "other",
+      "type": "prop",
+      "file": "models/units/ants/worker-carry-static/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.units.ants.worker-carry-static/source.glb",
+    "sha256": "9d6bdb0d00e411d0f7dbcfd88376158dc6385bc5bd1fb600eccd578b229d4959",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/worker-carry.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

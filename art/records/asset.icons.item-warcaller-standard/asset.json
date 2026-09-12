@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-warcaller-standard",
+  "name": "Warcaller Standard",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-warcaller-standard.png",
+      "sha256": "c55101b81bb3a01b68ed5a7ad132da4b5703f21463004342432ab16d34233165",
+      "bytes": 20620,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.warcaller-standard",
+      "image": "assets/icons/item-warcaller-standard.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-warcaller-standard/source.png",
+    "sha256": "c55101b81bb3a01b68ed5a7ad132da4b5703f21463004342432ab16d34233165",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/warcaller-standard.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

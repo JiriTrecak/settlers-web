@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-secondary",
+  "name": "Tree Secondary",
+  "kind": "model",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/tree-secondary/model.glb",
+      "sha256": "1739960582f0125b6b099d723213b72a0632d02858e843ee11fa4c180740ebdd",
+      "bytes": 79076
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.resource.tree-secondary",
+      "file": "assets/models/environment/trees/tree-secondary/model.glb",
+      "sceneryAsset": "tree_secondary",
+      "harvestAnimation": "assets/models/environment/trees/tree-secondary/model.glb"
+    }
+  ],
+  "scenery": [
+    {
+      "id": "tree_secondary",
+      "name": "Tree Secondary",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/tree-secondary/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/coniferous-pack/source.blend",
+    "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/tree_secondary.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

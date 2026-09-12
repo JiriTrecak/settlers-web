@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.marshal",
+  "name": "Marshal",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/marshal/model.glb",
+      "sha256": "526619b9374222e606d4f3a3b8bb17bdac3231a033afad96bfd7be1e975bd89e",
+      "bytes": 351896
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.marshal",
+      "file": "assets/models/units/ants/marshal/model.glb",
+      "character": "marshal",
+      "castContact": 0.68,
+      "scale": 1,
+      "healthHeight": 2.8
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/ant-marshal/ant-marshal.blend",
+    "sha256": "2beb2d43c56df3cbbea31f0fb027353622659b0e767efc4e42f44b7688bc7a17",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/marshal.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

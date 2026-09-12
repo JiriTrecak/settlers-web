@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.profiles.character",
+  "name": "Character",
+  "kind": "data",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "data",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/models/units/ants/profiles/character.json",
+      "sha256": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3",
+      "bytes": 1562
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.models.units.ants.profiles.character/source.json",
+    "sha256": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/character.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.player-barracks",
+  "name": "Player Barracks",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/player-barracks/model.glb",
+      "sha256": "cceebbe141088faa1348762ee906ff7eb8e51a736573ee9805ca14cbb1a60acb",
+      "bytes": 1264344
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.barracks",
+      "file": "assets/models/buildings/ants/player-barracks/model.glb",
+      "healthHeight": 6.4
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/player-barracks/player-barracks.blend",
+    "sha256": "9a96a4bdc45b9d8f2a7a03eb6fee35cbd0520a399a79c18e44ea4321b4d2f98d",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/player-barracks.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

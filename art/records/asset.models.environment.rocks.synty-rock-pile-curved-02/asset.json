@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-pile-curved-02",
+  "name": "Rock Pile Curved 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-pile-curved-02/model.glb",
+      "sha256": "952640888ba0736671bd06c0bfc307905984bd694bc61a756ff08d5b0325a09d",
+      "bytes": 1412724
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-pile-curved-02",
+      "name": "Rock Pile Curved 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-pile-curved-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-pile-curved-02/source.gltf",
+    "sha256": "ea9a0ca0847aeef3765ff2059c7febec3deea3aa0c3986ffa286b9c707528321",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-pile-curved-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

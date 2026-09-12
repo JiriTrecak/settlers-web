@@ -1,5 +1,5 @@
 import { LinearMipmapLinearFilter, SRGBColorSpace, TextureLoader, type Texture } from 'three';
-import atlasUrl from '../../../assets/ant-colony/materials/surface-atlas.png?url';
+import atlasUrl from '../../../assets/textures/materials/ants/surface-atlas.png?url';
 
 /** Shared original material atlas. Quadrant UVs are sampled in shaders, without
  * cropping or duplicating the texture. Top: timber/shell; bottom: stone/soil. */

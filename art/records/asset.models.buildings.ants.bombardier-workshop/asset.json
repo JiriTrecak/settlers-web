@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.bombardier-workshop",
+  "name": "Bombardier Workshop",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/bombardier-workshop/model.glb",
+      "sha256": "cd11bfbf9261cdf89950351a821e46fafeeffcc1b1fa1e079e2c5a8c5c49acb3",
+      "bytes": 1245508
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.bombardier-workshop",
+      "file": "assets/models/buildings/ants/bombardier-workshop/model.glb",
+      "scale": 1.0,
+      "healthHeight": 6
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/bombardier-workshop/bombardier-workshop.blend",
+    "sha256": "b51265b743dcdb403bf834479d7da6cb5821b29907dfed3afe39390ba1e42a3a",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/bombardier-workshop.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

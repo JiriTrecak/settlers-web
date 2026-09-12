@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-chunky-purple",
+  "name": "Flower \u2014 chunky violet",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-chunky-purple/model.glb",
+      "sha256": "24d0f0aa615ab460bb1459886d6aa3bf2461d1637e47e6e9874b227217229110",
+      "bytes": 46240
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-chunky-purple",
+      "name": "Flower \u2014 chunky violet",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-chunky-purple/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-chunky-purple/source.glb",
+    "sha256": "24d0f0aa615ab460bb1459886d6aa3bf2461d1637e47e6e9874b227217229110",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-chunky-purple.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

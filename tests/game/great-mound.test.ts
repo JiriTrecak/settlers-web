@@ -36,5 +36,5 @@ it("gathers contested Root, upgrades the actual Mound, and unlocks persistent Ma
   // A living tier-two building gates purchases, but completed knowledge survives it.
   g.economy.remove(mound);
   expect(g.state.research[w.owner]).toContain(research);
-  expect(g.registry.asset(g.registry.get("building.ants.great-mound").asset).file).toBe("assets/ant-colony/great-mound.glb");
+  expect(g.registry.asset(g.registry.get("building.ants.great-mound").asset).file).toBe("assets/models/buildings/ants/great-mound/model.glb");
 });

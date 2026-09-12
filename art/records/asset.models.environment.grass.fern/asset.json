@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.fern",
+  "name": "Ant colony \u00b7 Fern",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/fern/model.glb",
+      "sha256": "54199d4045bbcb319450e1360d5bca1065398f4f8e93fcdd1840b92dfa908e85",
+      "bytes": 200068
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-fern",
+      "name": "Ant colony \u00b7 Fern",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/fern/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.fern/source.glb",
+    "sha256": "54199d4045bbcb319450e1360d5bca1065398f4f8e93fcdd1840b92dfa908e85",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/fern.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

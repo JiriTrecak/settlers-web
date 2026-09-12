@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-thornspitter",
+  "name": "Thornspitter",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-neutral-thornspitter.png",
+      "sha256": "e707f096c787280cb0068fdbb614cf65138ae8ac770d4f14b618b3b72e5fe160",
+      "bytes": 24413,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.neutral.thornspitter",
+      "image": "assets/icons/unit-neutral-thornspitter.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-neutral-thornspitter/source.png",
+    "sha256": "e707f096c787280cb0068fdbb614cf65138ae8ac770d4f14b618b3b72e5fe160",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/thornspitter.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

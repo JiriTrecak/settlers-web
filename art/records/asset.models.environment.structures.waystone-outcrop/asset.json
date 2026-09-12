@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.waystone-outcrop",
+  "name": "Waystone outcrop",
+  "kind": "model",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/waystone-outcrop/model.glb",
+      "sha256": "b6c53e309de0d619b22208db581eaecaca0d63322e9cc1614143828d29bd419e",
+      "bytes": 18132
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "waystone-outcrop",
+      "name": "Waystone outcrop",
+      "type": "span",
+      "category": "terrain",
+      "file": "models/environment/structures/waystone-outcrop/model.glb",
+      "blocker": {
+        "width": 5.8,
+        "depth": 4.2
+      }
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.waystone-outcrop/source.glb",
+    "sha256": "b6c53e309de0d619b22208db581eaecaca0d63322e9cc1614143828d29bd419e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/waystone-outcrop.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

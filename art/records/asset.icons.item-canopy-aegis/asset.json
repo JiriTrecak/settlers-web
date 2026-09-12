@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-canopy-aegis",
+  "name": "Canopy Aegis",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-canopy-aegis.png",
+      "sha256": "57f8ab8aa401ddef5751f2b6ae22cdb570c4fa38b8b137e22cda1d52ffb0ddbe",
+      "bytes": 22256,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.canopy-aegis",
+      "image": "assets/icons/item-canopy-aegis.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-canopy-aegis/source.png",
+    "sha256": "57f8ab8aa401ddef5751f2b6ae22cdb570c4fa38b8b137e22cda1d52ffb0ddbe",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/canopy-aegis.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

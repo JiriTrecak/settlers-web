@@ -1,5 +1,5 @@
 import {batchStaticMaterials} from './staticBatch';
-import pineLod from '../../../assets/ant-colony/olive-pine.glb?url';
+import pineLod from '../../../assets/models/environment/trees/olive-pine/model.glb?url';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prepareAntMaterials } from './antMaterials';

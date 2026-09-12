@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.logo-metal",
+  "name": "Logo Metal",
+  "kind": "interface",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/main-menu/logo-metal.png",
+      "sha256": "9a5f6fd22f6d49cdb1e69a01b50306bc17d765fa062daa93c1e5105cbc823ff1",
+      "bytes": 2841600,
+      "width": 1536,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.main-menu.logo-metal/source.png",
+    "sha256": "9a5f6fd22f6d49cdb1e69a01b50306bc17d765fa062daa93c1e5105cbc823ff1",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/main-menu/logo-metal.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

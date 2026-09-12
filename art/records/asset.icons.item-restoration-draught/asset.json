@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-restoration-draught",
+  "name": "Restoration Draught",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-restoration-draught.png",
+      "sha256": "daf2e611415d99046d6c891437977bf48c5fd321bf42e6b338c30c56c7f6c3d8",
+      "bytes": 18946,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.restoration-draught",
+      "image": "assets/icons/item-restoration-draught.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-restoration-draught/source.png",
+    "sha256": "daf2e611415d99046d6c891437977bf48c5fd321bf42e6b338c30c56c7f6c3d8",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/restoration-draught.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

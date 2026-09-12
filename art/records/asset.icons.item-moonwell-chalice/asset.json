@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-moonwell-chalice",
+  "name": "Moonwell Chalice",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-moonwell-chalice.png",
+      "sha256": "13a52d01992d044e37239781d49c4f4039ef54e3dce0717210c4c8fd8f23c16d",
+      "bytes": 22504,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.moonwell-chalice",
+      "image": "assets/icons/item-moonwell-chalice.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-moonwell-chalice/source.png",
+    "sha256": "13a52d01992d044e37239781d49c4f4039ef54e3dce0717210c4c8fd8f23c16d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/moonwell-chalice.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

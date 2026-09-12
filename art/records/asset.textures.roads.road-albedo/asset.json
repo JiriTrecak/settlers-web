@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.roads.road-albedo",
+  "name": "Road Albedo",
+  "kind": "texture",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/roads/road-albedo.png",
+      "sha256": "8b07ffcd6902c57ca5d112fd0850704a53df5616dab4d6d9de7bc22498eac4b3",
+      "bytes": 232325,
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.roads.road-albedo/source.png",
+    "sha256": "8b07ffcd6902c57ca5d112fd0850704a53df5616dab4d6d9de7bc22498eac4b3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/road-albedo.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

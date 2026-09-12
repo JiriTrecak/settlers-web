@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-sawmill",
+  "name": "Sawmill",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-sawmill.png",
+      "sha256": "3f34b36a1a025a4a2c8fbc2e5a332193e809e54030967a01f877ac01a6116a44",
+      "bytes": 32992,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.sawmill",
+      "image": "assets/icons/building-ants-sawmill.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-sawmill/source.png",
+    "sha256": "3f34b36a1a025a4a2c8fbc2e5a332193e809e54030967a01f877ac01a6116a44",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/sawmill.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-bush-leaves-02",
+  "name": "Plant Bush Leaves 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-plant-bush-leaves-02/model.glb",
+      "sha256": "51677223e53afa7458a4f5ab51ca1bc92cf6c13deee79d0c9a6fc2d70858e13d",
+      "bytes": 522336
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-bush-leaves-02",
+      "name": "Plant Bush Leaves 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/synty-plant-bush-leaves-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-plant-bush-leaves-02/source.gltf",
+    "sha256": "5518bb837a0b5b866efe806360d3648f0dc39faae4427cd7c2b8acadf50837c0",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-bush-leaves-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

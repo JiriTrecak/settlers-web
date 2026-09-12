@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.sawmill",
+  "name": "Sawmill",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/sawmill/model.glb",
+      "sha256": "319d01cdc3254ddf5217a30cccf5df0c222f47bae0ce7c0f55c3de42e8733827",
+      "bytes": 2309716
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.sawmill",
+      "file": "assets/models/buildings/ants/sawmill/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "sawmill",
+      "name": "Sawmill",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/sawmill/model.glb"
+    },
+    {
+      "id": "ant-sawmill",
+      "name": "Ant colony \u00b7 Sawmill",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/sawmill/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.buildings.ants.sawmill/source.glb",
+    "sha256": "319d01cdc3254ddf5217a30cccf5df0c222f47bae0ce7c0f55c3de42e8733827",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/sawmill.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

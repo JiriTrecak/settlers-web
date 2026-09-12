@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.materials.synty.Water_Normal",
+  "name": "Water Normal",
+  "kind": "texture",
+  "tags": [
+    "tex",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/materials/synty/Water_Normal.png",
+      "sha256": "ff38f4ed839c53c5b4fc2b4cc7d33fa18cebb42a26f663e150c009830b3fd4e7",
+      "bytes": 268212,
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.materials.synty.Water_Normal/source.png",
+    "sha256": "ff38f4ed839c53c5b4fc2b4cc7d33fa18cebb42a26f663e150c009830b3fd4e7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/tex/Water_Normal.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

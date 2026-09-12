@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.neutral.corrupted-root",
+  "name": "Corrupted Root",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/neutral/corrupted-root/model.glb",
+      "sha256": "a293dc682f765605de27b78719b8d3a98c1ff4c96150c2cedc9819d91fc1921c",
+      "bytes": 745340
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.resource.corrupted-root",
+      "file": "assets/models/buildings/neutral/corrupted-root/model.glb",
+      "scale": 0.85,
+      "healthHeight": 4.8
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/corrupted-root/corrupted-root.blend",
+    "sha256": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/corrupted-root.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

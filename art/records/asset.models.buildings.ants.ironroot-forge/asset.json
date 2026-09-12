@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.ironroot-forge",
+  "name": "Ironroot Forge",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/ironroot-forge/model.glb",
+      "sha256": "8653276490a91ba19970300d6a6e85eaa3142faa2ffdb046f8b92f12262285a0",
+      "bytes": 877272
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.ironroot-forge",
+      "file": "assets/models/buildings/ants/ironroot-forge/model.glb",
+      "scale": 1.1,
+      "healthHeight": 5.5
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/ironroot-forge/ironroot-forge.blend",
+    "sha256": "3d442ad853cbb01e79fcf49ae5c36385c0ffd03fb19d3495a4e83179eb9a304d",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/ironroot-forge.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

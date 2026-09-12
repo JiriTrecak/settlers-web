@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-chunky-blue",
+  "name": "Flower \u2014 chunky blue",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-chunky-blue/model.glb",
+      "sha256": "8817f238909b52d804e246fd9df4c86eae96a7acd9a168285cb18d7c0d1c897a",
+      "bytes": 46236
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-chunky-blue",
+      "name": "Flower \u2014 chunky blue",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-chunky-blue/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-chunky-blue/source.glb",
+    "sha256": "8817f238909b52d804e246fd9df4c86eae96a7acd9a168285cb18d7c0d1c897a",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-chunky-blue.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

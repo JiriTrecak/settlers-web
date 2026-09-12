@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.pebbles-pale",
+  "name": "Pebbles \u2014 pale meadow stones",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/pebbles-pale/model.glb",
+      "sha256": "f9172ec220b483f911aa7095c734ea0c3755298246a45401593e97e424ce7fad",
+      "bytes": 11756
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "pebbles-pale",
+      "name": "Pebbles \u2014 pale meadow stones",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/structures/pebbles-pale/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.pebbles-pale/source.glb",
+    "sha256": "f9172ec220b483f911aa7095c734ea0c3755298246a45401593e97e424ce7fad",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/pebbles-pale.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

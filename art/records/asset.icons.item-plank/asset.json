@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-plank",
+  "name": "Plank",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-plank.png",
+      "sha256": "8a326d5d5e3dbf922b706fd7ddd8b549c3e43487550fb77a69b10c85bf279894",
+      "bytes": 28628,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.plank",
+      "image": "assets/icons/item-plank.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-plank/source.png",
+    "sha256": "8a326d5d5e3dbf922b706fd7ddd8b549c3e43487550fb77a69b10c85bf279894",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/plank.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.loot-chest",
+  "name": "Loot Chest",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/loot-chest/model.glb",
+      "sha256": "6c39eb3eab5c71f69666056cebce2a0ff14838c5e8fae6a688c76ebbfbbc467e",
+      "bytes": 244960
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.item.chest",
+      "file": "assets/models/environment/structures/loot-chest/model.glb",
+      "scale": 0.38
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/colony-loot-chest/colony-loot-chest.blend",
+    "sha256": "25d1e985d515e045f79a810d7b38eaca3e9f7f545ddcdb7fe8da33831dc402a3",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/props/loot-chest.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

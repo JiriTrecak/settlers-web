@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.grass-v5-02",
+  "name": "Grass V5 02",
+  "kind": "model",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/grass-v5-02/model.glb",
+      "sha256": "bdb10cc57ae421e84ba445a7ff0d272b982eee7e1d83778672fcc4e376db4142",
+      "bytes": 22216
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "grass_v5_02",
+      "name": "Grass V5 02",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/grass-v5-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/coniferous-pack/source.blend",
+    "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/grass_v5_02.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

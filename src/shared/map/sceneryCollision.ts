@@ -1,4 +1,4 @@
-import catalogJson from '../../../assets/catalog.json';
+import {sceneryCatalogue as catalogJson} from '../assets/manifest';
 import {parseCatalogue, type CatalogEntry} from '../asset/catalog';
 import type {UtcMap} from './utcmap';
 const catalog=parseCatalogue(catalogJson);

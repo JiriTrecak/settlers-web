@@ -20,7 +20,7 @@ import {
   type Material,
   type Object3D,
 } from "three";
-import looks from "../../../assets/synty/looks.json";
+import looks from "../../../assets/textures/materials/synty/looks.json";
 
 type SlotKind = "leaf" | "trunk" | "vine" | "dead" | "plant" | "atlas";
 type SlotLook = {

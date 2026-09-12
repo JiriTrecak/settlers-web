@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-ironroot-forge",
+  "name": "Ironroot Forge",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-ironroot-forge.png",
+      "sha256": "14a18f9251c7fd323ec765d88d3037d638dd15c50591d03bfed7baaf70e27d49",
+      "bytes": 16723,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.ironroot-forge",
+      "image": "assets/icons/building-ants-ironroot-forge.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-ironroot-forge/source.png",
+    "sha256": "14a18f9251c7fd323ec765d88d3037d638dd15c50591d03bfed7baaf70e27d49",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/ironroot-forge.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

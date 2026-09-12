@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-roadsign-01",
+  "name": "Prop RoadSign 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-roadsign-01/model.glb",
+      "sha256": "b1757cad1050726e4a8cac9cfa223bfdca64bffdd44bb28a0ecd1eda3401bf56",
+      "bytes": 37544
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-roadsign-01",
+      "name": "Prop RoadSign 01",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/environment/structures/synty-prop-roadsign-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-roadsign-01/source.gltf",
+    "sha256": "f4f83c499c39087b4147d2f1ec785dffd2d4870434e2e9e2a24fb1969e26c21e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-roadsign-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

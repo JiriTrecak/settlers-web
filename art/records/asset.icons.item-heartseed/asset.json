@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-heartseed",
+  "name": "Heartseed",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-heartseed.png",
+      "sha256": "132c527a2d20e404c48817edbfcbf7f91df4ba150106914d7fb2a7af3669c07a",
+      "bytes": 20349,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.heartseed",
+      "image": "assets/icons/item-heartseed.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-heartseed/source.png",
+    "sha256": "132c527a2d20e404c48817edbfcbf7f91df4ba150106914d7fb2a7af3669c07a",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/heartseed.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

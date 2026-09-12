@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-terrain-riverside-corner-01",
+  "name": "Terrain RiverSide Corner 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-terrain-riverside-corner-01/model.glb",
+      "sha256": "fdd32b6cef5c2d06ab9a1a0c25404aa7248fc046d7305e6e9aa79402fba98d47",
+      "bytes": 31028
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-terrain-riverside-corner-01",
+      "name": "Terrain RiverSide Corner 01",
+      "category": "terrain",
+      "type": "prop",
+      "file": "models/environment/structures/synty-terrain-riverside-corner-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-terrain-riverside-corner-01/source.gltf",
+    "sha256": "e78b450e75102d7614d219e00123625ccf1f456e4e809b2e88eb5958010be84e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-terrain-riverside-corner-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

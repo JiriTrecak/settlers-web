@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-flowerpatch-01",
+  "name": "Plant FlowerPatch 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-plant-flowerpatch-01/model.glb",
+      "sha256": "73ebf58c0bb535855b8ecd904a54ff698b8e95e3375434b77281af5ab9c0b05d",
+      "bytes": 359500
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-flowerpatch-01",
+      "name": "Plant FlowerPatch 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/synty-plant-flowerpatch-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-plant-flowerpatch-01/source.gltf",
+    "sha256": "35359a02f3ef3c430f2e5f89c5e6642e0a624036199d7b3a3214ab0ae53fcbb3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-flowerpatch-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.rootworks",
+  "name": "Rootworks",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/rootworks/model.glb",
+      "sha256": "59cd46167a803981d4dc0b3b29ffaac1d9dfe2ee35feb153487ae77bef3147a8",
+      "bytes": 810696
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.rootworks",
+      "file": "assets/models/buildings/ants/rootworks/model.glb",
+      "scale": 1.1,
+      "healthHeight": 5.2
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/rootworks/rootworks.blend",
+    "sha256": "810caa7e813734648b24464609eef55566ed70b6df15a34b83b928059a274249",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/rootworks.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

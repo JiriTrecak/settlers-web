@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-resin-salve",
+  "name": "Resin Salve",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-resin-salve.png",
+      "sha256": "e2e1c664e462e3f1d43cfbd1e2049944159913ecbb2502ca2849934773ad7b7c",
+      "bytes": 21227,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.resin-salve",
+      "image": "assets/icons/item-resin-salve.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-resin-salve/source.png",
+    "sha256": "e2e1c664e462e3f1d43cfbd1e2049944159913ecbb2502ca2849934773ad7b7c",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/resin-salve.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

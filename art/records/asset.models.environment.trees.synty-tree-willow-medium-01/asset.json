@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-willow-medium-01",
+  "name": "Tree Willow Medium 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-willow-medium-01/model.glb",
+      "sha256": "e5d07e79dd15cfa51d4d36bcd61640638a8305ef65d63ad7266fe077ae14a169",
+      "bytes": 658124
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-willow-medium-01",
+      "name": "Tree Willow Medium 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-willow-medium-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-willow-medium-01/source.gltf",
+    "sha256": "ebbc64e0865658f17ba08d0ab5863d7f39c522234035f033a68d4d5850e2cf8d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-willow-medium-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

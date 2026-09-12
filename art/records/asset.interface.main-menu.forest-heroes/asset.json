@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.forest-heroes",
+  "name": "Forest Heroes",
+  "kind": "interface",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/main-menu/forest-heroes.png",
+      "sha256": "dd1afc6203e5f85d934ea39c88d7c1d795b83a0c436b87fa62025403b4cfa938",
+      "bytes": 2021856,
+      "width": 1672,
+      "height": 941
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.main-menu.forest-heroes/source.png",
+    "sha256": "dd1afc6203e5f85d934ea39c88d7c1d795b83a0c436b87fa62025403b4cfa938",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/main-menu/forest-heroes.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -6,7 +6,7 @@
   color: #e7e4d5;
   background:
     linear-gradient(100deg, #080f13ed, #111c21e6),
-    url("../../../assets/ui/main-menu/forest-heroes.png") center/cover fixed;
+    url("../../../assets/interface/main-menu/forest-heroes.png") center/cover fixed;
   font:
     15px/1.5 system-ui,
     sans-serif;

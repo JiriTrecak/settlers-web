@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.broadleaf",
+  "name": "Ant colony \u00b7 Broadleaf",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/broadleaf/model.glb",
+      "sha256": "45dbdb6fee12ea63fd5f15cf14071b33280942d6eb10beef4523846d5c04ab9a",
+      "bytes": 69584
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-broadleaf",
+      "name": "Ant colony \u00b7 Broadleaf",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/broadleaf/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.broadleaf/source.glb",
+    "sha256": "45dbdb6fee12ea63fd5f15cf14071b33280942d6eb10beef4523846d5c04ab9a",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/broadleaf.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

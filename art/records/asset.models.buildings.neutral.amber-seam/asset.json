@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.neutral.amber-seam",
+  "name": "Amber Seam",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/neutral/amber-seam/model.glb",
+      "sha256": "6d3a2881d9a54ae1780cd5aea7925663d7e4066a0d2cd5343b9c97433f05f979",
+      "bytes": 2123892
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.resource.amber-seam",
+      "file": "assets/models/buildings/neutral/amber-seam/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "amber-seam",
+      "name": "Amber Seam",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/buildings/neutral/amber-seam/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/buildings/amber-seam/amber-seam.blend",
+    "sha256": "d89292a7e536cfb793c4af29623190ced9bea36444e5e1a70556d9e9c972965a",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/amber-seam.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.mushroom-chunky-red",
+  "name": "Mushroom \u2014 chunky red",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/mushrooms/mushroom-chunky-red/model.glb",
+      "sha256": "997b454fdf4d13e5692cba117c455ccb2c37c75869d94e86c9a0fe1e5362d88b",
+      "bytes": 47524
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "mushroom-chunky-red",
+      "name": "Mushroom \u2014 chunky red",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/mushrooms/mushroom-chunky-red/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.mushrooms.mushroom-chunky-red/source.glb",
+    "sha256": "997b454fdf4d13e5692cba117c455ccb2c37c75869d94e86c9a0fe1e5362d88b",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/mushroom-chunky-red.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

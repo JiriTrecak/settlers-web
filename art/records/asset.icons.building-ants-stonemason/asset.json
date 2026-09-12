@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-stonemason",
+  "name": "Stonemason",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-stonemason.png",
+      "sha256": "596f4e677907818dfb9b4aa875d9d6b64300344fbb2eaae5008a8d9410463bf1",
+      "bytes": 33249,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.stonemason",
+      "image": "assets/icons/building-ants-stonemason.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-stonemason/source.png",
+    "sha256": "596f4e677907818dfb9b4aa875d9d6b64300344fbb2eaae5008a8d9410463bf1",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/stonemason.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

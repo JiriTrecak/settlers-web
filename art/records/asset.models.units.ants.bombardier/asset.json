@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.bombardier",
+  "name": "Bombardier",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/bombardier/model.glb",
+      "sha256": "5b6b496ffa2feeb5d7c1c6e8d52750d115426c2ce67f6be62586c021dacafd5a",
+      "bytes": 268332
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.bombardier",
+      "file": "assets/models/units/ants/bombardier/model.glb",
+      "projectileSocket": "socket_muzzle",
+      "healthHeight": 2.4,
+      "character": "bombardier"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/ant-bombardier/ant-bombardier.blend",
+    "sha256": "83c0f4555e3cc7f6b7fd71e2a352c407862a30621d4eed02fff8980581ea05bc",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/bombardier.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

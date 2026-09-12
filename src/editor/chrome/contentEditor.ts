@@ -24,7 +24,6 @@ export class ContentEditor {
     for (const category of [
       "definitions",
       "behaviorSets",
-      "assets",
       "actions",
       "rules",
     ]) {

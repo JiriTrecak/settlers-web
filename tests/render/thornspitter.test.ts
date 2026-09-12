@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SkinnedMesh,Vector3} from 'three';
 import {createCharacterInstance,type AntState} from '../../src/render/characters/character-player.js';
 it('exports a natural-color quadruped with distinct locomotion and a timed ranged release',async()=>{
- const bytes=readFileSync('assets/ant-colony/characters/thornspitter.glb');
+ const bytes=readFileSync('assets/models/units/neutral/thornspitter/model.glb');
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
  const a=createCharacterInstance(gltf,'thornspitter');let triangles=0,team=false;
  a.root.traverse(o=>{if(o instanceof SkinnedMesh){triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;for(const m of Array.isArray(o.material)?o.material:[o.material])team ||= m.name==='TC_TeamColor';}});

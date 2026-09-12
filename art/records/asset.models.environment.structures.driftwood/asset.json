@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.driftwood",
+  "name": "Ant colony \u00b7 Driftwood",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/driftwood/model.glb",
+      "sha256": "d90bce21b07bd68d318d42c4c5f42ad937d235952bf0effdabaf7bf18d52d6c6",
+      "bytes": 49204
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-driftwood",
+      "name": "Ant colony \u00b7 Driftwood",
+      "category": "other",
+      "type": "prop",
+      "file": "models/environment/structures/driftwood/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.driftwood/source.glb",
+    "sha256": "d90bce21b07bd68d318d42c4c5f42ad937d235952bf0effdabaf7bf18d52d6c6",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/driftwood.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

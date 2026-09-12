@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-lumberjack",
+  "name": "Lumberjack",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-lumberjack.png",
+      "sha256": "056a11ee8a3534d28bba572a3f84824cb589d8ff6f93be58aba177f5de5e5c5f",
+      "bytes": 32928,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.lumberjack",
+      "image": "assets/icons/building-ants-lumberjack.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-lumberjack/source.png",
+    "sha256": "056a11ee8a3534d28bba572a3f84824cb589d8ff6f93be58aba177f5de5e5c5f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/lumberjack.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-bombardier",
+  "name": "Bombardier",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-ants-bombardier.png",
+      "sha256": "8454662921a0573d5b78469162d0c81621846a495572fed6d04c4eb8016379ed",
+      "bytes": 13714,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.bombardier",
+      "image": "assets/icons/unit-ants-bombardier.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-ants-bombardier/source.png",
+    "sha256": "8454662921a0573d5b78469162d0c81621846a495572fed6d04c4eb8016379ed",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/bombardier.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

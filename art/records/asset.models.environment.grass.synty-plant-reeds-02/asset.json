@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-plant-reeds-02",
+  "name": "Plant Reeds 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/synty-plant-reeds-02/model.glb",
+      "sha256": "4db6a71c19cc1adf0fd92e968a11e204b9cb6e3a76170282743f7e7464506ecf",
+      "bytes": 176764
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-reeds-02",
+      "name": "Plant Reeds 02",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/grass/synty-plant-reeds-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.synty-plant-reeds-02/source.gltf",
+    "sha256": "bdc25ff00505c7ba41da56f34ba451d1b5d6ee473960a537057e8fcc85b0e2bc",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-reeds-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

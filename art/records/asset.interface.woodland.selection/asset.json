@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.selection",
+  "name": "Selection",
+  "kind": "interface",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/selection.png",
+      "sha256": "19cde114f0eb707ce8969e58a497c850803627efc52443f7933fa2485a7a0d03",
+      "bytes": 1059274,
+      "width": 1440,
+      "height": 480
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.woodland.selection/source.png",
+    "sha256": "19cde114f0eb707ce8969e58a497c850803627efc52443f7933fa2485a7a0d03",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/woodland/selection.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

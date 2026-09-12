@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.items.plank-stack",
+  "name": "Ant colony \u00b7 Plank Stack",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/plank-stack/model.glb",
+      "sha256": "d64aa81c1bec511f311510c1949b23cd5a3bd3703426f183aac9eb748afcf6dd",
+      "bytes": 148700
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-plank-stack",
+      "name": "Ant colony \u00b7 Plank Stack",
+      "category": "other",
+      "type": "prop",
+      "file": "models/items/plank-stack/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.items.plank-stack/source.glb",
+    "sha256": "d64aa81c1bec511f311510c1949b23cd5a3bd3703426f183aac9eb748afcf6dd",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/plank-stack.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

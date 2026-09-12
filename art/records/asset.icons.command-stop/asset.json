@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-stop",
+  "name": "Stop",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-stop.png",
+      "sha256": "039f94a34c5dc73a3b5e5002387b3e3bd670652ad57fe3b4bfae57647dcb3d0f",
+      "bytes": 40740,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.stop",
+      "image": "assets/icons/command-stop.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-stop/source.png",
+    "sha256": "039f94a34c5dc73a3b5e5002387b3e3bd670652ad57fe3b4bfae57647dcb3d0f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/stop.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

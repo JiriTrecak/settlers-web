@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.hunter",
+  "name": "Hunter",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/hunter/model.glb",
+      "sha256": "fd6b608030053e2ebcf2f8d664ba5fcea53b53a15209ee5092453f0a5c56b289",
+      "bytes": 265468
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.hunter",
+      "file": "assets/models/units/ants/hunter/model.glb",
+      "healthHeight": 2.3,
+      "character": "hunter"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/ant-hunter/ant-hunter.blend",
+    "sha256": "f56cc6133e6cad3fafcd2e6f90d5b17ba532de5168a7673afae9074574115910",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/hunter.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

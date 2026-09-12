@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.sand",
+  "name": "Sand",
+  "kind": "texture",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/sand.png",
+      "sha256": "f63a6a46ec750f4e8f340e16988170565f4f69bbd1191fd0f32fe82e82cc25a8",
+      "bytes": 438001,
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.terrain.sand/source.png",
+    "sha256": "f63a6a46ec750f4e8f340e16988170565f4f69bbd1191fd0f32fe82e82cc25a8",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/terrain/sand.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

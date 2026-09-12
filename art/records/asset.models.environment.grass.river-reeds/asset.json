@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.river-reeds",
+  "name": "River reeds \u00b7 repaired",
+  "kind": "model",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/river-reeds/model.glb",
+      "sha256": "7006730b7b30639fc1629da3614d93dc37e1a7fce3611b942e9bb2c57a4cabb0",
+      "bytes": 154072
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "river-reeds",
+      "name": "River reeds \u00b7 repaired",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/grass/river-reeds/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.river-reeds/source.gltf",
+    "sha256": "8647125262c974352025333f2feb6ac410b56af52cc2c63ac6b4f516ccce3311",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/landscape/river-reeds.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

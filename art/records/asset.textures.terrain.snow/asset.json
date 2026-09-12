@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.snow",
+  "name": "Snow",
+  "kind": "texture",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/snow.png",
+      "sha256": "f284497002aa2f005335656df283cfde7f60b80dcc500a6e2cbe0a3072c23ae9",
+      "bytes": 217133,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.terrain.snow/source.png",
+    "sha256": "f284497002aa2f005335656df283cfde7f60b80dcc500a6e2cbe0a3072c23ae9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/terrain/snow.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

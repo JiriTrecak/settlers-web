@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-rootbinder-idol",
+  "name": "Rootbinder Idol",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-rootbinder-idol.png",
+      "sha256": "76e61ca2b40a24766904bfb2f1e22054a4cda5f777402018ea537d519e66be88",
+      "bytes": 23227,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.rootbinder-idol",
+      "image": "assets/icons/item-rootbinder-idol.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-rootbinder-idol/source.png",
+    "sha256": "76e61ca2b40a24766904bfb2f1e22054a4cda5f777402018ea537d519e66be88",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/rootbinder-idol.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

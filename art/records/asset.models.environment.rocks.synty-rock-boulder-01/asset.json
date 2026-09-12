@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-boulder-01",
+  "name": "Rock Boulder 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-boulder-01/model.glb",
+      "sha256": "e0300476751e1a9eb90e67adc243f331293bcb34e22d30563a107209ff622d8e",
+      "bytes": 1366204
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-boulder-01",
+      "name": "Rock Boulder 01",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-boulder-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-boulder-01/source.gltf",
+    "sha256": "c81de60650d03b958e729ef066511c3a15d48cce80f1a9aad55988cf7cadc90f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-boulder-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

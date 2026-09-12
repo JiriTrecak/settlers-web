@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.stat-armor-light",
+  "name": "Armor Light",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/stat-armor-light.png",
+      "sha256": "ce49c638e6100891a0214b592bc4bd6674a7956bb325338c1dfaed2b7a745fbd",
+      "bytes": 31192,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.armor.light",
+      "image": "assets/icons/stat-armor-light.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.stat-armor-light/source.png",
+    "sha256": "ce49c638e6100891a0214b592bc4bd6674a7956bb325338c1dfaed2b7a745fbd",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/armor-light.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

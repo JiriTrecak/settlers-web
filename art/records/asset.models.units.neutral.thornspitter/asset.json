@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.thornspitter",
+  "name": "Thornspitter",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/neutral/thornspitter/model.glb",
+      "sha256": "415b7a91fc4c53cd817c1f7b99b0fc8632f8cf1620f4ed8a2aca9e9f4badbb9a",
+      "bytes": 249128
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.neutral.thornspitter",
+      "file": "assets/models/units/neutral/thornspitter/model.glb",
+      "character": "thornspitter",
+      "healthHeight": 2.5,
+      "projectile": "thorn"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/thornspitter/thornspitter.blend",
+    "sha256": "d1dace86ef03e753d628a150d51f8858a1b897679d45b0581b4bd03b11c4a5b3",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/thornspitter.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

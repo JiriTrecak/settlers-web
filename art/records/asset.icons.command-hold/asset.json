@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-hold",
+  "name": "Hold",
+  "kind": "icon",
+  "tags": [
+    "ants-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-hold.png",
+      "sha256": "a3ab4eeab947b87418400debaf34a3666e81762b6ce2e3fe8b09c8fdaa50146f",
+      "bytes": 36855,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.hold",
+      "image": "assets/icons/command-hold.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-hold/source.png",
+    "sha256": "a3ab4eeab947b87418400debaf34a3666e81762b6ce2e3fe8b09c8fdaa50146f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v2/hold.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-endless-brood-banner",
+  "name": "Endless Brood Banner",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-endless-brood-banner.png",
+      "sha256": "ec6d89f276cc3ac53cfad2b67226c6669ab58ede3b2761c1e3afc3a565d704e2",
+      "bytes": 22440,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.endless-brood-banner",
+      "image": "assets/icons/item-endless-brood-banner.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-endless-brood-banner/source.png",
+    "sha256": "ec6d89f276cc3ac53cfad2b67226c6669ab58ede3b2761c1e3afc3a565d704e2",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/endless-brood-banner.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

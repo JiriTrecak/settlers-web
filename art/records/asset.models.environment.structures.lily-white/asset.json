@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lily-white",
+  "name": "Lily white",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/lily-white/model.glb",
+      "sha256": "810a028381f8b8ac24d08745247e1b907f593fba61a19b045d77733fc97f0acc",
+      "bytes": 3300
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lily-white",
+      "name": "Lily white",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/lily-white/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.lily-white/source.gltf",
+    "sha256": "215ffbfe9c2fe317078ad3d99a47e6985d883be376ca547007462e4e82b532ca",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/lily-white.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

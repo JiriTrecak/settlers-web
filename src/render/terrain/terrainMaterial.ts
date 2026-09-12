@@ -1,15 +1,15 @@
-import roadUrl from '../../../assets/environment/wayfarer/road-albedo.png?url';
-import mossUrl from '../../../assets/ant-colony/materials/moss-surface.png?url';
+import roadUrl from '../../../assets/textures/roads/road-albedo.png?url';
+import mossUrl from '../../../assets/textures/materials/ants/moss-surface.png?url';
 import type {CoverPatch} from '../../shared/landscape/curve';
 import { getAntSurfaceAtlas } from '../prop/antSurfaceAtlas';
 import { DataTexture, RedFormat, LinearFilter, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader, Color } from 'three';
 import { HEIGHT_ORIGIN, MAP_SIZE, MAP_HALO, type HeightField } from '../../shared';
 import { rasterizeCurve, sampleCurve, type TerrainStroke } from '../../shared/landscape/curve';
-import pebbleUrl from '../../../assets/terrain/pebbles.png?url';
-import snowUrl from '../../../assets/terrain/snow.png?url';
-import sandUrl from '../../../assets/terrain/sand.png?url';
-import mudUrl from '../../../assets/terrain/mud.png?url';
-import rockUrl from '../../../assets/terrain/rock.png?url';
+import pebbleUrl from '../../../assets/textures/terrain/pebbles.png?url';
+import snowUrl from '../../../assets/textures/terrain/snow.png?url';
+import sandUrl from '../../../assets/textures/terrain/sand.png?url';
+import mudUrl from '../../../assets/textures/terrain/mud.png?url';
+import rockUrl from '../../../assets/textures/terrain/rock.png?url';
 export class TerrainMaterial extends MeshStandardMaterial {
   private readonly coverMask=new DataTexture(new Uint8Array(512*512),512,512,RedFormat);
   private readonly moss=new TextureLoader().load(mossUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});

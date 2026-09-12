@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-mossweave-wraps",
+  "name": "Mossweave Wraps",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-mossweave-wraps.png",
+      "sha256": "fe9d0ca79ae4521568567befa78364d8196a41ff544cd76b8f170c3ba3654043",
+      "bytes": 24751,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.mossweave-wraps",
+      "image": "assets/icons/item-mossweave-wraps.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-mossweave-wraps/source.png",
+    "sha256": "fe9d0ca79ae4521568567befa78364d8196a41ff544cd76b8f170c3ba3654043",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/mossweave-wraps.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

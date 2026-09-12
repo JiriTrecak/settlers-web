@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.house",
+  "name": "Ant colony \u00b7 House",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/house/model.glb",
+      "sha256": "4ee7a8d7b55a194f21566c1f16dafd8e410d7a1219fd950430a78430b9b3d897",
+      "bytes": 1353820
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.house",
+      "file": "assets/models/buildings/ants/house/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "ant-house",
+      "name": "Ant colony \u00b7 House",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/house/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.buildings.ants.house/source.glb",
+    "sha256": "4ee7a8d7b55a194f21566c1f16dafd8e410d7a1219fd950430a78430b9b3d897",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/house.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

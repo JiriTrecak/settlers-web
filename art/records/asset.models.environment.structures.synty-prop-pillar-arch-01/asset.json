@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-arch-01",
+  "name": "Prop Pillar Arch 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-pillar-arch-01/model.glb",
+      "sha256": "d582db08e6dfb0c783571bb8ab7db920898cd7b72933ea235a66a0b8dffa8fb3",
+      "bytes": 79776
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-pillar-arch-01",
+      "name": "Prop Pillar Arch 01",
+      "category": "landmark",
+      "type": "prop",
+      "file": "models/environment/structures/synty-prop-pillar-arch-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-pillar-arch-01/source.gltf",
+    "sha256": "ddc7c66f8bc7d24d6e1afe66f2525c7df32db3aaecadf2d330a0b0406c40ba61",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-pillar-arch-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

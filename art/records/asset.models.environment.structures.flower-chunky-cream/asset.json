@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-chunky-cream",
+  "name": "Flower \u2014 chunky cream",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-chunky-cream/model.glb",
+      "sha256": "bd51c51fd87e72e7a36006ea4c8d2c82021da7e4ad0fb682cb849462cf8ab250",
+      "bytes": 46220
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-chunky-cream",
+      "name": "Flower \u2014 chunky cream",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-chunky-cream/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-chunky-cream/source.glb",
+    "sha256": "bd51c51fd87e72e7a36006ea4c8d2c82021da7e4ad0fb682cb849462cf8ab250",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-chunky-cream.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

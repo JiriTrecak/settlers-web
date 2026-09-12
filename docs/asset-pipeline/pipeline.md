@@ -1,6 +1,6 @@
 # Asset generation and validation pipeline
 
-**Proposed contract.** This describes the system to implement after reviewing the [structure proposal](proposal.md). It is not a description of currently available Studio features.
+**Design contract.** The image workflow and runtime migration are implemented. See the [Studio guide](studio.md) for the exact current surface and limitations; model-provider publication and polygon-mask authoring remain later work.
 
 ## Job lifecycle
 

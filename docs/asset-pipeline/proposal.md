@@ -1,6 +1,6 @@
 # Asset Studio: structure and publication proposal
 
-**Status: proposed for review, not implemented.** Audited 11 September 2026. This pass adds an audit and design documents; it does not move assets, change gameplay, or call a paid generation API.
+**Status: approved and implemented for the image workflow and runtime migration.** See the [Studio guide](studio.md) for current behavior, commands, validation and remaining model-provider work. The following is the reviewed design; aspirational details beyond the first version remain explicitly scoped in that guide.
 
 Read this first, then the [audit findings](audit.md) and [generation pipeline](pipeline.md).
 

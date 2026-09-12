@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.rock",
+  "name": "Ant colony \u00b7 Rock",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/rock/model.glb",
+      "sha256": "2143c2c88dfd0d2fcc76778bc38bb357e8c36040fcdee304b56db80134744f69",
+      "bytes": 15616
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.resource.ant-stone-deposit",
+      "file": "assets/models/environment/rocks/rock/model.glb",
+      "sceneryAsset": "ant-stone-deposit"
+    }
+  ],
+  "scenery": [
+    {
+      "id": "ant-rock",
+      "name": "Ant colony \u00b7 Rock",
+      "category": "other",
+      "type": "prop",
+      "file": "models/environment/rocks/rock/model.glb"
+    },
+    {
+      "id": "ant-stone-deposit",
+      "name": "Ant colony \u00b7 Harvestable stone deposit",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/environment/rocks/rock/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.rock/source.glb",
+    "sha256": "2143c2c88dfd0d2fcc76778bc38bb357e8c36040fcdee304b56db80134744f69",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/rock.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

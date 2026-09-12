@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.mud",
+  "name": "Mud",
+  "kind": "texture",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/mud.png",
+      "sha256": "dba2686f6331eb033d98bf5729523274f957667706ff6a73b7ea4d3af2c06790",
+      "bytes": 486630,
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.terrain.mud/source.png",
+    "sha256": "dba2686f6331eb033d98bf5729523274f957667706ff6a73b7ea4d3af2c06790",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/terrain/mud.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

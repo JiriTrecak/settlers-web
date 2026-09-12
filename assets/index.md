@@ -1,31 +1,7 @@
-# assets
+# Published game assets
 
-Project catalogue: [`catalog.json`](catalog.json). Mesh files live next to it (`props/pine.gltf`). `file` paths are relative to this folder.
+`manifest.json` is the runtime listing. Asset Studio compiles it from `art/records/<asset-id>/asset.json` and emits exact Vite URL imports. The game/editor do not scan arbitrary folders or fall back to archived catalogs.
 
-The editor opens this file by default. Open another `.json` to point at a different pack.
+Use `npm run dev:tools` to open Asset Studio on port 5175. See [the Studio guide](../docs/asset-pipeline/studio.md) for generation, imports, references, validation, approval and publication.
 
-First wave — landscape only. Readable from iso. No units or buildings yet.
-
-Synty POLYGON Nature is imported as `synty-*` (`assets/synty/`). Building blocks, restyle later. Re-run `npm run import:synty`.
-
-| Id | Category | Why |
-|---|---|---|
-| `pine` | foliage | Forest mass, green. **In.** |
-| `pine-dark` | foliage | Darker needles. **In.** |
-| `pine-umber` | foliage | Brown-olive. **In.** |
-| oak | foliage | Deciduous contrast |
-| `boulder` | terrain | Occupy-a-cell rock. **In.** |
-| `rock` | terrain | Block-sized mound (~16 cells). **In.** |
-| `rock-cleft` | terrain | Split pair, same span. **In.** |
-| `rock-slab` | terrain | Flat table rock, same span. **In.** |
-| `lily` | water | Pond flower, pink. Type `water` — wet cells only. **In.** |
-| `lily-white` | water | Same pad, white blossom. **In.** |
-| `lily-gold` | water | Same pad, gold blossom. **In.** |
-| `bridge-8` | landmark | Wood/stone span, 8×4. Type `span`. **In.** |
-| `bridge-16` | landmark | Same, 16×4. **In.** |
-| `bridge-32` | landmark | Same, 32×4. **In.** |
-| fern | foliage | Understory |
-| mushroom | landmark | Insect-world flavor |
-| log | terrain | Breaks the grid |
-| berry | resource | Future resource, still a prop |
-| burrow | landmark | Race landmark later |
+Runtime folders: `icons/`, `interface/`, `models/`, `textures/`, `maps/`. Editable Blender work and image masters live in `art/`, outside the game build.

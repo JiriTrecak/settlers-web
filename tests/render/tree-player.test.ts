@@ -5,7 +5,7 @@ import { Box3, Vector3 } from 'three';
 import { TreePlayer } from '../../src/render/prop/treePlayer';
 
 it('samples actual hit/fall/decay clips at 1x, sinks at full size, and keeps instances independent', async () => {
-  const b = readFileSync('assets/ant-colony/olive-pine-animated.glb');
+  const b = readFileSync('assets/models/environment/trees/olive-pine-animated/model.glb');
   const g = await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset, b.byteOffset+b.byteLength), '');
   const a = g.scene.clone(true), untouched = g.scene.clone(true), player = new TreePlayer(a, g.animations);
   const standing = new Box3().setFromObject(untouched);

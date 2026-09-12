@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.coniferous-trees-18",
+  "name": "Coniferous Trees 18",
+  "kind": "model",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/coniferous-trees-18/model.glb",
+      "sha256": "b5b0a64662f4998ef5bf68407114f7c078fce65ca83b39cc18106e3729d4041f",
+      "bytes": 148288
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "coniferous_trees_18",
+      "name": "Coniferous Trees 18",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/coniferous-trees-18/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/coniferous-pack/source.blend",
+    "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/coniferous_trees_18.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-cluster-large-01",
+  "name": "Rock Cluster Large 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-cluster-large-01/model.glb",
+      "sha256": "f281a271ca69a92e9558c8421d63efefcb7d3d318daa9d32973bc80ec83decf2",
+      "bytes": 1414564
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-cluster-large-01",
+      "name": "Rock Cluster Large 01",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-cluster-large-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-cluster-large-01/source.gltf",
+    "sha256": "c4840170278fdbdc04f1481bddf478aa27b4f4b8de62179bf0ec242454faff8b",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-cluster-large-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -72,7 +72,7 @@ matches its studio variant. Team surfaces use exactly `TC_TeamColor`.
 - Bombardier: 5,008 triangles; studio http://127.0.0.1:8806/
 
 All studio identities and served GLBs were checked. Sources live under
-`experiments/assets/buildings` or `experiments/assets/characters`; game exports
+`art/sources/buildings` or `art/sources/characters`; game exports
 live under `assets/ant-colony`. Player ants have native rigs, distinct movement
 and combat clips, independent ownership colors and death playback. Buildings
 retain their static material/style simplifications described in their reports.

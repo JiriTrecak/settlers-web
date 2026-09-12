@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lily",
+  "name": "Ant colony \u00b7 Lily",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/lily/model.glb",
+      "sha256": "705b1aaa6d940696d25d71feecad535663de9c40394cdb081cb7f467d8b8cd4f",
+      "bytes": 3324
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-lily",
+      "name": "Ant colony \u00b7 Lily",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/lily/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.lily/source.glb",
+    "sha256": "705b1aaa6d940696d25d71feecad535663de9c40394cdb081cb7f467d8b8cd4f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/lily.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

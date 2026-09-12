@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-wolf",
+  "name": "Wolf",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-neutral-wolf.png",
+      "sha256": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d",
+      "bytes": 31839,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.neutral.wolf",
+      "image": "assets/icons/unit-neutral-wolf.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-neutral-wolf/source.png",
+    "sha256": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/wolf.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

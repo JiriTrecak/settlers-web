@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-barkguard",
+  "name": "Barkguard",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-barkguard.png",
+      "sha256": "dcd9d34cbc9cb556bfcac26a8f15dc2fe11216a474674f1a9a8def5a82952f9e",
+      "bytes": 20052,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.barkguard",
+      "image": "assets/icons/item-barkguard.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-barkguard/source.png",
+    "sha256": "dcd9d34cbc9cb556bfcac26a8f15dc2fe11216a474674f1a9a8def5a82952f9e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/barkguard.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-thornblade-matriarch",
+  "name": "Thornblade Matriarch",
+  "kind": "icon",
+  "tags": [
+    "neutral-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-neutral-thornblade-matriarch.png",
+      "sha256": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac",
+      "bytes": 11820,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.neutral.thornblade-matriarch",
+      "image": "assets/icons/unit-neutral-thornblade-matriarch.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-neutral-thornblade-matriarch/source.png",
+    "sha256": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/neutral-v1/thornblade-matriarch.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

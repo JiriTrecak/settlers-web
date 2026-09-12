@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-moon-dew",
+  "name": "Moon Dew",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-moon-dew.png",
+      "sha256": "52e4b4aafe531e78e91691cb4391b6743be6afdf69431d23b7680686b31939b4",
+      "bytes": 19964,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.moon-dew",
+      "image": "assets/icons/item-moon-dew.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-moon-dew/source.png",
+    "sha256": "52e4b4aafe531e78e91691cb4391b6743be6afdf69431d23b7680686b31939b4",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/moon-dew.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

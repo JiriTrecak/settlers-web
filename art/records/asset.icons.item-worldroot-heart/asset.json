@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-worldroot-heart",
+  "name": "Worldroot Heart",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-worldroot-heart.png",
+      "sha256": "c3e35bf839370688545de4580449107613f0905606033926318f69f1fb56d5ca",
+      "bytes": 20070,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.worldroot-heart",
+      "image": "assets/icons/item-worldroot-heart.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-worldroot-heart/source.png",
+    "sha256": "c3e35bf839370688545de4580449107613f0905606033926318f69f1fb56d5ca",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/worldroot-heart.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

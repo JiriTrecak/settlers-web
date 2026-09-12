@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-generic-dead-01",
+  "name": "Tree Generic Dead 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-generic-dead-01/model.glb",
+      "sha256": "f1d4a49bb20e34e3ed1454d50de91a0c880fa37a1d56bf8b1de4c8c66ebc68a5",
+      "bytes": 697396
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-generic-dead-01",
+      "name": "Tree Generic Dead 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-generic-dead-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-generic-dead-01/source.gltf",
+    "sha256": "a4c00a4bed791f1726eda959280eb47a147420ea96f4dd699b524d299ae793d7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-generic-dead-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

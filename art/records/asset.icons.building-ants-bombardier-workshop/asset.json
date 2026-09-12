@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-bombardier-workshop",
+  "name": "Bombardier Workshop",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-bombardier-workshop.png",
+      "sha256": "ed28ad92ee5cfb1466e09979c425bf81fa629e702ea6bf1711941c8414ef4d32",
+      "bytes": 22161,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.bombardier-workshop",
+      "image": "assets/icons/building-ants-bombardier-workshop.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-bombardier-workshop/source.png",
+    "sha256": "ed28ad92ee5cfb1466e09979c425bf81fa629e702ea6bf1711941c8414ef4d32",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/bombardier-workshop.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

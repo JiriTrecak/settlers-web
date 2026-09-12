@@ -4,7 +4,7 @@ Worldroot Hollow is the shipped 256×256 forest battlefield. Its two starting po
 
 ## Purchased vegetation
 
-The retained source is `experiments/assets/environment/coniferous-pack/source.blend`, byte-identical to the supplied pack. Its 38 mesh objects are individually exported and catalogued: 21 trees,10 grasses,7 mushrooms. `exports.json` maps source names to files and measured dimensions; `validation.json` verifies every loaded GLB. Tree 14 is `tree_primary` (1365 triangles); tree 13 is `tree_secondary` (740). Worldroot contains 1778 primary and 889 secondary trees.
+The retained source is `art/sources/environment/coniferous-pack/source.blend`, byte-identical to the supplied pack. Its 38 mesh objects are individually exported and catalogued: 21 trees,10 grasses,7 mushrooms. `exports.json` maps source names to files and measured dimensions; `validation.json` verifies every loaded GLB. Tree 14 is `tree_primary` (1365 triangles); tree 13 is `tree_secondary` (740). Worldroot contains 1778 primary and 889 secondary trees.
 
 The source palette atlas is retained and baked to vertex colors for runtime, avoiding repeated embedded 4K textures. Within-face gradients are approximated. All authored geometry remains available in the original Blender file. Grass brush forest cover uses grass_v5_03 and grass_v5_06. Their full/medium/far triangle counts are 504/122/35 and 734/269/99. The terrain toolbar offers “Forest grass · pack 3 + 6”; curve/freehand strokes create spaced persistent forest cover patches in one commit. The foliage eraser recognizes all imported names. Instances are spatially batched and sway through a shared shader clock, with no grass shadow casting.
 
@@ -12,7 +12,7 @@ Primary and secondary trees use the actual TreePlayer harvest controller, with h
 
 ## Original wayfarer kit
 
-Editable source, palette samples, recipe, comparison and export manifest are in `experiments/assets/buildings/woodland-wayfarer-kit`. Runtime files are in `assets/environment/wayfarer`.
+Editable source, palette samples, recipe, comparison and export manifest are in `art/sources/buildings/woodland-wayfarer-kit`. Runtime files are in `assets/environment/wayfarer`.
 
 - Timber bridge: 2168 triangles; individual planks, rails and submerged supports.
 - Lantern post: 336 triangles; wood, metal fittings and emissive amber glass.

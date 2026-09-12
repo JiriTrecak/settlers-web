@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.timber-bridge",
+  "name": "Timber bridge",
+  "kind": "model",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/timber-bridge/model.glb",
+      "sha256": "3854bf3742f0e4894ef975c3d648e0b8f1be8a013a7041a155b51808012e73e4",
+      "bytes": 159652
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "timber-bridge",
+      "name": "Timber bridge",
+      "type": "span",
+      "category": "landmark",
+      "file": "models/environment/structures/timber-bridge/model.glb",
+      "deck": {
+        "width": 3.3,
+        "depth": 8,
+        "height": 0.61,
+        "arch": 0.35
+      }
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.timber-bridge/source.glb",
+    "sha256": "3854bf3742f0e4894ef975c3d648e0b8f1be8a013a7041a155b51808012e73e4",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/timber-bridge.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

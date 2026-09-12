@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-firefly-pendant",
+  "name": "Firefly Pendant",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-firefly-pendant.png",
+      "sha256": "8134779020fe911d469780ae30f98e30e54e43667c4be4d1f99f458d5242ff0c",
+      "bytes": 14361,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.firefly-pendant",
+      "image": "assets/icons/item-firefly-pendant.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-firefly-pendant/source.png",
+    "sha256": "8134779020fe911d469780ae30f98e30e54e43667c4be4d1f99f458d5242ff0c",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/firefly-pendant.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.guard-static",
+  "name": "Ant colony \u00b7 Guard",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/guard-static/model.glb",
+      "sha256": "992815c6b3a414b4afd16c7f54cefb62cdec542a0d0e5b7db51e77b7973c0d06",
+      "bytes": 324368
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-guard",
+      "name": "Ant colony \u00b7 Guard",
+      "category": "other",
+      "type": "prop",
+      "file": "models/units/ants/guard-static/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.units.ants.guard-static/source.glb",
+    "sha256": "992815c6b3a414b4afd16c7f54cefb62cdec542a0d0e5b7db51e77b7973c0d06",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/guard.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

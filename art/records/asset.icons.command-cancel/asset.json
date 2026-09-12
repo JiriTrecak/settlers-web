@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-cancel",
+  "name": "Cancel",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-cancel.png",
+      "sha256": "1471f5cd72a31c6bb693109c41ce7e3f80f4f3ec5da0cc113e7c0c3fce450615",
+      "bytes": 17209,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.cancel",
+      "image": "assets/icons/command-cancel.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-cancel/source.png",
+    "sha256": "1471f5cd72a31c6bb693109c41ce7e3f80f4f3ec5da0cc113e7c0c3fce450615",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/cancel.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

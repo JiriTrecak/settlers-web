@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-chunky-broadleaf",
+  "name": "Broadleaf \u2014 chunky emerald",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/tree-chunky-broadleaf/model.glb",
+      "sha256": "ef95068c95f52f3c74b6d3a1587df086f5cb57323e60235bf2b59b06fdb05984",
+      "bytes": 237276
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "tree-chunky-broadleaf",
+      "name": "Broadleaf \u2014 chunky emerald",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/tree-chunky-broadleaf/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.tree-chunky-broadleaf/source.glb",
+    "sha256": "ef95068c95f52f3c74b6d3a1587df086f5cb57323e60235bf2b59b06fdb05984",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/tree-chunky-broadleaf.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

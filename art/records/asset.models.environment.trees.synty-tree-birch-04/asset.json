@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-birch-04",
+  "name": "Tree Birch Lime",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-birch-04/model.glb",
+      "sha256": "0aaa282ecaabba1e54abab8f23b46de60c91afc903ae4eb1fd4e618fa5c133b0",
+      "bytes": 686368
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-birch-04",
+      "name": "Tree Birch Lime",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-birch-04/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-birch-04/source.gltf",
+    "sha256": "e7b814db55d341982c665faafa6f111fdf179a197cac07c23c651e87b0d98ac3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-birch-04.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

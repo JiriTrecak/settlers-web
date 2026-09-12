@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-generic-01",
+  "name": "Tree Generic 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-generic-01/model.glb",
+      "sha256": "cd1d2d12d2f5f12b5d4629082c40698e8cdcd9d651c831e37d5fb1cfe60970a3",
+      "bytes": 879508
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-generic-01",
+      "name": "Tree Generic 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-generic-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-generic-01/source.gltf",
+    "sha256": "932aa86a8865013107b15af552a33b94386870de1a50b149b7063161c343a2b7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-generic-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

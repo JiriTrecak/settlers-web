@@ -1,4 +1,4 @@
-import catalogJson from '../../../assets/catalog.json';
+import {sceneryCatalogue as catalogJson} from '../assets/manifest';
 import {parseCatalogue} from '../asset/catalog';
 import type {MapStamp} from './utcmap';
 const definitions=new Map(parseCatalogue(catalogJson)!.assets.filter(e=>e.deck).map(e=>[e.id,e.deck!]));

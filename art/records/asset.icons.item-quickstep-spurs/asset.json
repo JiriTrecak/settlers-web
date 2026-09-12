@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-quickstep-spurs",
+  "name": "Quickstep Spurs",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-quickstep-spurs.png",
+      "sha256": "66ea19243ab2d3ed415dc599661f6734166764f90f4bc39cef6086e2cecba60e",
+      "bytes": 18813,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.quickstep-spurs",
+      "image": "assets/icons/item-quickstep-spurs.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-quickstep-spurs/source.png",
+    "sha256": "66ea19243ab2d3ed415dc599661f6734166764f90f4bc39cef6086e2cecba60e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/quickstep-spurs.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

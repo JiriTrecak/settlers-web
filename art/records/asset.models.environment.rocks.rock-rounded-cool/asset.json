@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.rock-rounded-cool",
+  "name": "Boulder \u2014 rounded cool stone",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/rock-rounded-cool/model.glb",
+      "sha256": "b66536ed1eff40d65b366f74f82655c1946219a0141d557e9ed5f39b09da12b9",
+      "bytes": 3772
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "rock-rounded-cool",
+      "name": "Boulder \u2014 rounded cool stone",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/rock-rounded-cool/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.rock-rounded-cool/source.glb",
+    "sha256": "b66536ed1eff40d65b366f74f82655c1946219a0141d557e9ed5f39b09da12b9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/rock-rounded-cool.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

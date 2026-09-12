@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "id": "e0cfdc5c-bee2-4a11-9a2c-38d75f136926",
+  "createdAt": "2026-09-12T04:54:50.836Z",
+  "updatedAt": "2026-09-12T05:02:49.121Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "fc1f0947-cd84-4b47-8a94-26917c1a29a1",
+    "name": "Heart of the Forest",
+    "slug": "heart-of-the-forest",
+    "category": "item",
+    "profile": "icon",
+    "width": 128,
+    "height": 128,
+    "style": "painted-items",
+    "prompt": "Heart of the Forest: a small ancient living heart-shaped amber gem, cradled in curling dark roots, a few deep green leaves and soft emerald light. A treasured magical item for an ant marshal in a woodland RTS. Match the supplied inventory art treatment, but make a distinct new object. Centered and readable, no letters, no border.",
+    "references": [
+      {
+        "id": "asset.icons.item-amber-carapace",
+        "role": "style"
+      },
+      {
+        "id": "asset.icons.item-amber-hourglass",
+        "role": "style"
+      },
+      {
+        "id": "asset.icons.item-ancient-heartwood",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1024x1024",
+      "quality": "medium",
+      "background": "opaque",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "contain",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Heart of the Forest: a small ancient living heart-shaped amber gem, cradled in curling dark roots, a few deep green leaves and soft emerald light. A treasured magical item for an ant marshal in a woodland RTS. Match the supplied inventory art treatment, but make a distinct new object. Centered and readable, no letters, no border.\n\nRich painterly fantasy RTS inventory icon. Natural amber, bark, aged metal and emerald foliage. Strong readable silhouette, dramatic warm light, dark unobtrusive background. Small handcrafted object, clear at 64px.\n\nOne readable subject, generous breathing room, no text, hotkeys, border or interface frame. Painted fantasy RTS icon.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.\n\nReference 2: style. Use material, lighting and paint treatment, not its subject.\n\nReference 3: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "asset.icons.item-amber-carapace",
+      "role": "style",
+      "revision": 1,
+      "sha256": "51e1e4b0aa13c0532cd6a399a845684a7655077d319b9d51644540415abd04e8",
+      "path": "art/records/image.item-heart-of-the-forest/revisions/1/job/reference-0.png"
+    },
+    {
+      "id": "asset.icons.item-amber-hourglass",
+      "role": "style",
+      "revision": 1,
+      "sha256": "185b5c57be6e7a0bc2594acff071bbff9473cd2a48f4edb5d9202cfd8d41b970",
+      "path": "art/records/image.item-heart-of-the-forest/revisions/1/job/reference-1.png"
+    },
+    {
+      "id": "asset.icons.item-ancient-heartwood",
+      "role": "style",
+      "revision": 1,
+      "sha256": "607d41480bcd3a90e94ec3db1739d75c5e96991006a9f5dfd77a11134e65519a",
+      "path": "art/records/image.item-heart-of-the-forest/revisions/1/job/reference-2.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.item-heart-of-the-forest/revisions/1/job/original-0",
+      "sourceHash": "3aaf3cbdbbd54c284bce7d9ddfe0f5ecff8711d9d07585d8e2b589a8e9710b6b",
+      "output": "art/records/image.item-heart-of-the-forest/revisions/1/job/candidate-0.png",
+      "outputHash": "60ec12aa7770bb6f9b39348af1b77f164036156d7e4db0f235f9036c5abb31b7",
+      "errors": [],
+      "warnings": [],
+      "width": 128,
+      "height": 128,
+      "bytes": 21127,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 16384
+      },
+      "approval": "bc2548acef02b99fe35df3f52f67b73ecf1755cdd2f8eba78dde0c1a536e87fe"
+    }
+  ],
+  "requestId": "req_9771a32581064491aef6e5978957a97c",
+  "usage": {
+    "input_tokens": 389,
+    "input_tokens_details": {
+      "image_tokens": 192,
+      "text_tokens": 197
+    },
+    "output_tokens": 1756,
+    "output_tokens_details": {
+      "image_tokens": 1756,
+      "text_tokens": 0
+    },
+    "total_tokens": 2145
+  }
+}

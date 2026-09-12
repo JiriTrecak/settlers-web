@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.synty-plant-mushrooms-01",
+  "name": "Plant Mushrooms 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/mushrooms/synty-plant-mushrooms-01/model.glb",
+      "sha256": "1857b2280270c89487774100dce03078c2fc8ef23e83ab3bd305c52021ea5a79",
+      "bytes": 64684
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-mushrooms-01",
+      "name": "Plant Mushrooms 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/mushrooms/synty-plant-mushrooms-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.mushrooms.synty-plant-mushrooms-01/source.gltf",
+    "sha256": "afe9d9cd45924b010ebee0b46d04048bae01e899e756cba431ade73822a830dc",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-mushrooms-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

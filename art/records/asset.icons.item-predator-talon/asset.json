@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-predator-talon",
+  "name": "Predator Talon",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-predator-talon.png",
+      "sha256": "f99f88b08625898b27b44b55275e11d08bafbf69a260a4585d79dcf4c8d1a8b5",
+      "bytes": 14133,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.predator-talon",
+      "image": "assets/icons/item-predator-talon.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-predator-talon/source.png",
+    "sha256": "f99f88b08625898b27b44b55275e11d08bafbf69a260a4585d79dcf4c8d1a8b5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/predator-talon.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

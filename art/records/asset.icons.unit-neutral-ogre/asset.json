@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-ogre",
+  "name": "Ogre",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-neutral-ogre.png",
+      "sha256": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0",
+      "bytes": 34405,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.neutral.ogre",
+      "image": "assets/icons/unit-neutral-ogre.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-neutral-ogre/source.png",
+    "sha256": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/ogre.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

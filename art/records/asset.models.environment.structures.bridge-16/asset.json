@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.bridge-16",
+  "name": "Bridge 16",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/bridge-16/model.glb",
+      "sha256": "6d87de438cd175886b6c6182e0a1b31b23d0ba7f31bcb5eccd643c441fdaa088",
+      "bytes": 20016
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "bridge-16",
+      "name": "Bridge 16",
+      "category": "landmark",
+      "type": "span",
+      "file": "models/environment/structures/bridge-16/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.bridge-16/source.gltf",
+    "sha256": "dec707d59e5ad4f45731b0a1de6773235a4e63999c9075450ce295ef013669e7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/bridge-16.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

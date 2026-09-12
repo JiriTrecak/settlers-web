@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-build-advanced",
+  "name": "Build Advanced",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-build-advanced.png",
+      "sha256": "eb24982848dbcebd8df9533cc56257d44e9b8dafde92f934329f1ee4e5b13c16",
+      "bytes": 32537,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.build-advanced",
+      "image": "assets/icons/command-build-advanced.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-build-advanced/source.png",
+    "sha256": "eb24982848dbcebd8df9533cc56257d44e9b8dafde92f934329f1ee4e5b13c16",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/build-advanced.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

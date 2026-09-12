@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.elephant-leaf",
+  "name": "Ant colony \u00b7 Elephant Leaf",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/elephant-leaf/model.glb",
+      "sha256": "e10ec5a0b7a5bbedd77d83c7b02ed628144f773f36c4ec0cb914ac51d0ac160f",
+      "bytes": 97464
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-elephant-leaf",
+      "name": "Ant colony \u00b7 Elephant Leaf",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/elephant-leaf/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.elephant-leaf/source.glb",
+    "sha256": "e10ec5a0b7a5bbedd77d83c7b02ed628144f773f36c4ec0cb914ac51d0ac160f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/elephant-leaf.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

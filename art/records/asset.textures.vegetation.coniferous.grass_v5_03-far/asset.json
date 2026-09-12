@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "asset.textures.vegetation.coniferous.grass_v5_03-far",
+  "name": "Grass V5 03 Far",
+  "kind": "data",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "data",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/vegetation/coniferous/grass_v5_03-far.json",
+      "sha256": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e",
+      "bytes": 10129
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.vegetation.coniferous.grass_v5_03-far/source.json",
+    "sha256": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/coniferous-pack/grass_v5_03-far.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

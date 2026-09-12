@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-royal-crest",
+  "name": "Royal Crest",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-royal-crest.png",
+      "sha256": "fed2081ee4ab26b1560200cc24a018f20abdde0e1d11263e3a5817f4f4ac955d",
+      "bytes": 21422,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.royal-crest",
+      "image": "assets/icons/item-royal-crest.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-royal-crest/source.png",
+    "sha256": "fed2081ee4ab26b1560200cc24a018f20abdde0e1d11263e3a5817f4f4ac955d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/royal-crest.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

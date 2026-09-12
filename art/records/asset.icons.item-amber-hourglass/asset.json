@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-amber-hourglass",
+  "name": "Amber Hourglass",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-amber-hourglass.png",
+      "sha256": "185b5c57be6e7a0bc2594acff071bbff9473cd2a48f4edb5d9202cfd8d41b970",
+      "bytes": 19044,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.amber-hourglass",
+      "image": "assets/icons/item-amber-hourglass.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-amber-hourglass/source.png",
+    "sha256": "185b5c57be6e7a0bc2594acff071bbff9473cd2a48f4edb5d9202cfd8d41b970",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/amber-hourglass.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-thornband",
+  "name": "Thornband",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-thornband.png",
+      "sha256": "0bc02dda48373b388ade89e094b14d05836f476a6d38ece4e02b858474f1334f",
+      "bytes": 14871,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.thornband",
+      "image": "assets/icons/item-thornband.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-thornband/source.png",
+    "sha256": "0bc02dda48373b388ade89e094b14d05836f476a6d38ece4e02b858474f1334f",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/thornband.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reeds",
+  "name": "Ant colony \u00b7 Reeds",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reeds/model.glb",
+      "sha256": "c63037bce36764da118ddd890d69ac11f03876efb7a71e0bca289206eb65e4be",
+      "bytes": 18220
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ant-reeds",
+      "name": "Ant colony \u00b7 Reeds",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reeds/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.reeds/source.glb",
+    "sha256": "c63037bce36764da118ddd890d69ac11f03876efb7a71e0bca289206eb65e4be",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/reeds.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

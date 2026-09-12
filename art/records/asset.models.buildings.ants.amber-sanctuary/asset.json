@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.amber-sanctuary",
+  "name": "Amber Sanctuary",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/amber-sanctuary/model.glb",
+      "sha256": "91aa31184d321daa1d4cfe01fa473d289be62aafc5cf26de1dad6ae82b496f93",
+      "bytes": 580712
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.sanctuary",
+      "file": "assets/models/buildings/ants/amber-sanctuary/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/amber-sanctuary/amber-sanctuary.blend",
+    "sha256": "cd3c85d43ef552138df32f5f5d9efc5ce1a28d850032c92838a4e5fe6b74349b",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/amber-sanctuary.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

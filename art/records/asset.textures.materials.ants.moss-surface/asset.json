@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.materials.ants.moss-surface",
+  "name": "Moss Surface",
+  "kind": "texture",
+  "tags": [
+    "materials",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/materials/ants/moss-surface.png",
+      "sha256": "cedf12c9697782baa36558c15723ccee310d75872bcc7a1ed26bd54a5fb69a44",
+      "bytes": 3062554,
+      "width": 1254,
+      "height": 1254
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.materials.ants.moss-surface/source.png",
+    "sha256": "cedf12c9697782baa36558c15723ccee310d75872bcc7a1ed26bd54a5fb69a44",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/materials/moss-surface.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

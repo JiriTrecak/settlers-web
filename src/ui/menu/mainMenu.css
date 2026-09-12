@@ -12,7 +12,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: url("../../../assets/ui/main-menu/forest-heroes.png") center/cover;
+  background: url("../../../assets/interface/main-menu/forest-heroes.png") center/cover;
   filter: blur(24px) brightness(0.35);
   pointer-events: none;
 }
@@ -86,7 +86,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: url("../../../assets/ui/main-menu/buttons.png") center -21px /
+  background: url("../../../assets/interface/main-menu/buttons.png") center -21px /
     328px 219px no-repeat;
 }
 .canopy-action:hover::before,

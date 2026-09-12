@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.warrior",
+  "name": "Warrior",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/warrior/model.glb",
+      "sha256": "fb5e1eb9184da357f8865006c1ce9a33d7377f0b75896db6e5e4c2790148286a",
+      "bytes": 355320
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.warrior",
+      "file": "assets/models/units/ants/warrior/model.glb",
+      "healthHeight": 2.3,
+      "character": "warrior"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/ant-family/ant-family.blend",
+    "sha256": "4942d6adbf90ef0a2012a8f7a37f875f40cd5a3f6e88147f28814772f09f5936",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/warrior.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

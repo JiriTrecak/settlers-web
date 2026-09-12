@@ -1,6 +1,6 @@
 # Animated ant characters
 
-Three compatible variants are exported to `assets/ant-colony/characters/`: `base.glb`, `warrior.glb`, `archer.glb`. The master editable source is `experiments/assets/characters/ant-family/ant-family.blend`; its recipe defines the common anatomy first, then warrior equipment, then archer equipment. `model.glb` in that source folder contains all three equipment groups for the studio. Per-role files contain only that role's geometry, sharing the same skeleton and clip names.
+Three compatible variants are exported to `assets/models/units/ants/`: `worker/model.glb`, `warrior/model.glb`, `archer/model.glb`. The master editable source is `art/sources/characters/ant-family/ant-family.blend`; its recipe defines the common anatomy first, then warrior equipment, then archer equipment. `model.glb` in that source folder contains all three equipment groups for the studio. Per-role files contain only that role's geometry, sharing the same skeleton and clip names.
 
 These are an original low-poly interpretation and first animation pass. They prioritize head/antenna silhouette and role readability over the portrait's scratches and small armor details. Skinning uses rigid shell segments appropriate to an exoskeleton. Feet are at zero, glTF is Y up / forward +Z, and standing antenna height is about 2 scene units. Check `Beside workshop` in the studio for authored scale. No weapon is baked into the base body.
 

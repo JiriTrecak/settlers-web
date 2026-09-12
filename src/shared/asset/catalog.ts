@@ -2,7 +2,7 @@
  * Asset catalogue file. JSON; `v` is the schema. `file` is relative to the catalogue.
  */
 export const CATALOGUE_VERSION = 1;
-export const PROJECT_CATALOG_PATH = "assets/catalog.json";
+export const PROJECT_CATALOG_PATH = "assets/manifest.json";
 
 export const ASSET_TYPES = ["prop", "water", "span", "ground"] as const;
 export type AssetType = (typeof ASSET_TYPES)[number];

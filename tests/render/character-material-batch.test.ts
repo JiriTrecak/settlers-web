@@ -6,7 +6,7 @@ import {batchCharacterMaterials} from '../../src/render/characters/materialBatch
 import {createCharacterInstance} from '../../src/render/characters/character-player.js';
 
 for(const variant of ['base','warrior','archer','marshal'] as const) it(`batches ${variant} without changing skinned vertices, PBR factors or ownership`,async()=>{
- const bytes=readFileSync(`assets/ant-colony/characters/${variant}.glb`);
+ const bytes=readFileSync(`assets/models/units/ants/${variant==='base'?'worker':variant}/model.glb`);
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
  const surfaces=(root:typeof gltf.scene)=>{const rows:string[]=[];root.traverse(o=>{if(o instanceof SkinnedMesh){const m=o.material as MeshStandardMaterial,g=o.geometry;for(let i=0;i<g.attributes.position.count;i++){let c=m.color.toArray(),r=m.roughness,t=m.metalness;if(m.vertexColors){c=[g.attributes.color.getX(i),g.attributes.color.getY(i),g.attributes.color.getZ(i)];const palette=m.roughnessMap!.image as {data:Float32Array;height:number};const index=Math.floor(g.attributes.uv.getY(i)*palette.height)*4;r=palette.data[index+1];t=palette.data[index+2];}rows.push([...new Vector3().fromBufferAttribute(g.attributes.position,i).toArray(),...c,r,t].map(n=>n.toFixed(5)).join(','));}}});return rows.sort();};
  const authored=surfaces(gltf.scene);

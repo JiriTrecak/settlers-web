@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-terrain-mountain-01",
+  "name": "Terrain Mountain 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-terrain-mountain-01/model.glb",
+      "sha256": "1d109da0dbe2dfdfc16cdbd435ab4e115cb2a57472ce9a92c59c306cdceddcf9",
+      "bytes": 1409464
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-terrain-mountain-01",
+      "name": "Terrain Mountain 01",
+      "category": "terrain",
+      "type": "prop",
+      "file": "models/environment/rocks/synty-terrain-mountain-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-terrain-mountain-01/source.gltf",
+    "sha256": "9624ef9c5a3801b9cec50dfc0738459291321ef1a611d25bd6ec40c4ac7272f8",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-terrain-mountain-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

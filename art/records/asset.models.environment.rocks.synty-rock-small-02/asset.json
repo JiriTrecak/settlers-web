@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-small-02",
+  "name": "Rock Small 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-small-02/model.glb",
+      "sha256": "ef29f1f435f22f1b1438bc062c8da8647e0cf6415fa8645693e64a8fe40d4e76",
+      "bytes": 1317436
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-small-02",
+      "name": "Rock Small 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-small-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-small-02/source.gltf",
+    "sha256": "a4057c713132938d37455fa7a63e32689f06c91f45faa2331404d75635498d17",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-small-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

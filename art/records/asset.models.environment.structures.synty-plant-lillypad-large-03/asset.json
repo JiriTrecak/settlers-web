@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-lillypad-large-03",
+  "name": "Plant Lillypad Large 03",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-plant-lillypad-large-03/model.glb",
+      "sha256": "777c29b65a299fa7a8c089e6824fb04263e29911e0a2e80e4e1e66d39d0e0948",
+      "bytes": 16828
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-plant-lillypad-large-03",
+      "name": "Plant Lillypad Large 03",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/synty-plant-lillypad-large-03/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-plant-lillypad-large-03/source.gltf",
+    "sha256": "37eb66b15911ea01d56337492f6b18728302ee3e18159c25bc3fb3f10c7c3195",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-plant-lillypad-large-03.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

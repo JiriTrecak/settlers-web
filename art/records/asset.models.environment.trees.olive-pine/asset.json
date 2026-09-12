@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.olive-pine",
+  "name": "Ant colony \u00b7 Pine 1",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/olive-pine/model.glb",
+      "sha256": "c7f9021c14f1b6a7069f5d205b3da99987d187e440f2034f91b753a977f2b4a1",
+      "bytes": 146728
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.resource.ant-pine-1",
+      "file": "assets/models/environment/trees/olive-pine/model.glb",
+      "sceneryAsset": "ant-pine-1",
+      "harvestAnimation": "assets/models/environment/trees/olive-pine-animated/model.glb"
+    },
+    {
+      "id": "asset.resource.ant-pine-2",
+      "file": "assets/models/environment/trees/olive-pine/model.glb",
+      "sceneryAsset": "ant-pine-2",
+      "harvestAnimation": "assets/models/environment/trees/olive-pine-animated/model.glb"
+    },
+    {
+      "id": "asset.resource.ant-pine-3",
+      "file": "assets/models/environment/trees/olive-pine/model.glb",
+      "sceneryAsset": "ant-pine-3",
+      "harvestAnimation": "assets/models/environment/trees/olive-pine-animated/model.glb"
+    }
+  ],
+  "scenery": [
+    {
+      "id": "ant-pine-1",
+      "name": "Ant colony \u00b7 Pine 1",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/olive-pine/model.glb"
+    },
+    {
+      "id": "ant-pine-2",
+      "name": "Ant colony \u00b7 Pine 2",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/olive-pine/model.glb"
+    },
+    {
+      "id": "ant-pine-3",
+      "name": "Ant colony \u00b7 Pine 3",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/olive-pine/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/buildings/olive-pine/olive-pine-animated.blend",
+    "sha256": "47f84b6b3f2b13b5a815665d75ec4c1f571026b094398238288ec98ec418e335",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/olive-pine.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

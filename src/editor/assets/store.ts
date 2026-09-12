@@ -11,7 +11,6 @@ import {
   type Catalogue,
 } from "../../shared";
 import { pickCatalogueDir, pickCatalogueFile, readDirFile, writeCatalogueDir, type DirHandle } from "./catDisk";
-import archived from "../../../assets/catalog-archive.json";
 import { projectCatalogue, projectMeshUrl } from "./project";
 
 export type CatalogSource = { kind: "project"; path: string } | { kind: "file"; path: string };
@@ -47,10 +46,9 @@ export class CatalogueStore {
     return out;
   }
 
-  /** Hidden legacy assets still resolve in existing maps after catalogue curation. */
+  /** Only published scenery is available in the project catalogue. */
   private resolvedAssets(): readonly CatalogEntry[] {
-    if (this.source.kind !== 'project') return this.doc.assets;
-    return [...(parseCatalogue(archived)?.assets ?? []), ...this.doc.assets];
+    return this.doc.assets;
   }
 
   async openFile(): Promise<"ok" | "cancel" | "fail"> {

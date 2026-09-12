@@ -2,7 +2,7 @@ import { Group, Sprite, SpriteMaterial, TextureLoader, SRGBColorSpace, type Obje
 import { content } from "../../content/builtin";
 import { itemStatusCard } from "../../presentation/itemStatus";
 import type { EntityView } from "../../sim/game/observation";
-const images = import.meta.glob("../../../assets/ui/icons/**/*.png", {query:"?url",import:"default",eager:true}) as Record<string,string>;
+import {assetUrls as images} from "../../shared/assets/urls.generated";
 /** Small world-space badges above each observed recipient, not just the aura bearer. */
 export class StatusBadges {
   private readonly materials = new Map<string, SpriteMaterial>();
@@ -22,7 +22,7 @@ export class StatusBadges {
       let material=this.materials.get(s.icon);
       if(!material){
         const path=content.asset(s.icon).image;
-        const map=new TextureLoader().load(images[`../../../${path}`]);map.colorSpace=SRGBColorSpace;
+        const map=new TextureLoader().load(images[path!]);map.colorSpace=SRGBColorSpace;
         material=new SpriteMaterial({map,depthTest:false,depthWrite:false,toneMapped:false});
         this.materials.set(s.icon,material);
       }

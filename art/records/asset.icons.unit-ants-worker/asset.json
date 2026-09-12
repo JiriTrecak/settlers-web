@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-worker",
+  "name": "Settler",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/unit-ants-worker.png",
+      "sha256": "d6926b485107ad84237eb4a7ec26f6d45b25f66b8446d0b49377e24069a0b263",
+      "bytes": 32276,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.settler",
+      "image": "assets/icons/unit-ants-worker.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.unit-ants-worker/source.png",
+    "sha256": "d6926b485107ad84237eb4a7ec26f6d45b25f66b8446d0b49377e24069a0b263",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/settler.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

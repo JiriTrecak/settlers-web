@@ -18,5 +18,5 @@ it("builds the authored Forge and purchases its permanent Warrior research", () 
   expect(g.state.research[w.owner]).toContain(id);
   const warrior = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.warrior")!;
   expect(g.context.stats(warrior).maxHp).toBe(g.registry.get(warrior.definition).body!.maxHp + 150);
-  expect(g.registry.asset(g.registry.get(definition).asset).file).toBe("assets/ant-colony/ironroot-forge.glb");
+  expect(g.registry.asset(g.registry.get(definition).asset).file).toBe("assets/models/buildings/ants/ironroot-forge/model.glb");
 });

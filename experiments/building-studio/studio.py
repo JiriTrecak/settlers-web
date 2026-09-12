@@ -19,14 +19,14 @@ from compare import comparison
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-ASSETS = ROOT / 'experiments/assets/buildings'
+ASSETS = ROOT / 'art/sources/buildings'
 
 
 def asset_path(name, category="buildings"):
     if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', name):
         raise ValueError('Asset names use lowercase letters, digits and hyphens')
     if category not in ('buildings','characters'):raise ValueError('Unknown asset category')
-    base=ASSETS if category=='buildings' else ROOT/'experiments/assets/characters'
+    base=ASSETS if category=='buildings' else ROOT/'art/sources/characters'
     path = (base / name).resolve()
     if path.parent != base.resolve():
         raise ValueError('Asset path leaves buildings folder')
@@ -255,7 +255,7 @@ class Handler(SimpleHTTPRequestHandler):
         elif route=='/character-player.js':
             path=ROOT/'src/render/characters/character-player.js'
         elif route=='/scale-building.glb':
-            path=ROOT/'experiments/assets/buildings/lumberjack-workshop/model.glb'
+            path=ROOT/'art/sources/buildings/lumberjack-workshop/model.glb'
             if not path.is_file():return self.send_error(404)
         elif route=='/viewer.js':
             path=HERE/'viewer.js'

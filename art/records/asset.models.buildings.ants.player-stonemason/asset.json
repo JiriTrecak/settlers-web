@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.player-stonemason",
+  "name": "Player Stonemason",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/player-stonemason/model.glb",
+      "sha256": "669adf3890b588dc2698386421a428377a236f63db3de4757809794376abdeb6",
+      "bytes": 603952
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.stonemason",
+      "file": "assets/models/buildings/ants/player-stonemason/model.glb",
+      "scale": 0.85,
+      "healthHeight": 4.2
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/player-stonemason/player-stonemason.blend",
+    "sha256": "a2a8407f775a10d6d85ca62ab09adc35933bfd5898e0c80437469328ae94a02a",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/player-stonemason.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

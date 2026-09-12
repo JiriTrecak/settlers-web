@@ -4,7 +4,7 @@ import {Box3} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {TreePlayer} from '../../src/render/prop/treePlayer';
 for(const id of ['tree_primary','tree_secondary'])it(`${id} plays the game's felling sequence without shrinking`,async()=>{
- const bytes=readFileSync(`assets/environment/coniferous-pack/${id}.glb`);
+ const bytes=readFileSync(`assets/models/environment/trees/${id.replaceAll('_','-')}/model.glb`);
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
  const player=new TreePlayer(gltf.scene,gltf.animations),f={hp:0,lastHitTick:0,fallTick:0,direction:{x:0,y:1}};
  player.sample(f,0,72,240);const initial=new Box3().setFromObject(gltf.scene,true);

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.command-patrol",
+  "name": "Patrol",
+  "kind": "icon",
+  "tags": [
+    "ants-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/command-patrol.png",
+      "sha256": "8497af4a4bbef1f1719442ffa544fa3d904be5494c0f9ace6cc22de13a5e0136",
+      "bytes": 16344,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.action.patrol",
+      "image": "assets/icons/command-patrol.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.command-patrol/source.png",
+    "sha256": "8497af4a4bbef1f1719442ffa544fa3d904be5494c0f9ace6cc22de13a5e0136",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v2/patrol.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

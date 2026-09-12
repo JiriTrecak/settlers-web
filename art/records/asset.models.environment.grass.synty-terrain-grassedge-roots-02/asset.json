@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-02",
+  "name": "Terrain GrassEdge Roots 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/synty-terrain-grassedge-roots-02/model.glb",
+      "sha256": "fc4bcb5b8edbd87eb6eff074de4b8337010884ac10cdb72555db00778e04cd8d",
+      "bytes": 347604
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-terrain-grassedge-roots-02",
+      "name": "Terrain GrassEdge Roots 02",
+      "category": "terrain",
+      "type": "prop",
+      "file": "models/environment/grass/synty-terrain-grassedge-roots-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.synty-terrain-grassedge-roots-02/source.gltf",
+    "sha256": "b7f481e7afa11b0a6bccf103dfc12ed8f357d44682b6e40ec0f3aef1befdca51",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-terrain-grassedge-roots-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

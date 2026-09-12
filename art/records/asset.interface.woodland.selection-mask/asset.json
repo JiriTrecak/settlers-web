@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.selection-mask",
+  "name": "Selection Mask",
+  "kind": "interface",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/selection-mask.svg",
+      "sha256": "c911530c61e7eb3242e9c2564d588c1ee0b96daaee58044a6a8ab4fc646406b2",
+      "bytes": 520
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.woodland.selection-mask/source.svg",
+    "sha256": "c911530c61e7eb3242e9c2564d588c1ee0b96daaee58044a6a8ab4fc646406b2",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/woodland/selection-mask.svg"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

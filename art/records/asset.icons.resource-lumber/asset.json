@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.resource-lumber",
+  "name": "Log",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/resource-lumber.png",
+      "sha256": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7",
+      "bytes": 31198,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.wood",
+      "image": "assets/icons/resource-lumber.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.resource-lumber/source.png",
+    "sha256": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/log.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

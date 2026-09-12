@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.stat-armor-structure",
+  "name": "Armor Structure",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/stat-armor-structure.png",
+      "sha256": "de5856324d023f1b0df26fc086f4f3a5c49aaa8d70da50dae9d777edab3b08c0",
+      "bytes": 28321,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.armor.structure",
+      "image": "assets/icons/stat-armor-structure.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.stat-armor-structure/source.png",
+    "sha256": "de5856324d023f1b0df26fc086f4f3a5c49aaa8d70da50dae9d777edab3b08c0",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/armor-structure.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

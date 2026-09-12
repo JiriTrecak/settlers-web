@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.slot",
+  "name": "Slot",
+  "kind": "interface",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/slot.png",
+      "sha256": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d",
+      "bytes": 21115,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.interface.woodland.slot/source.png",
+    "sha256": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/woodland/slot.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

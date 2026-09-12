@@ -10,11 +10,11 @@
       "dist",
       "keys",
       "node_modules",
-      "experiments/assets/buildings/lumberjack-workshop/__pycache__",
-      "experiments/assets/buildings/rootbound-hall/__pycache__",
-      "experiments/assets/characters/__pycache__",
-      "experiments/assets/characters/amberjaw-staglord/__pycache__",
-      "experiments/assets/characters/thornblade-matriarch/__pycache__",
+      "art/sources/buildings/lumberjack-workshop/__pycache__",
+      "art/sources/buildings/rootbound-hall/__pycache__",
+      "art/sources/characters/__pycache__",
+      "art/sources/characters/amberjaw-staglord/__pycache__",
+      "art/sources/characters/thornblade-matriarch/__pycache__",
       "experiments/building-studio/__pycache__",
       "scripts/ant-colony/__pycache__",
       "src-tauri/.xwin-cache",
@@ -622,10 +622,10 @@
       "sha256": "365e75fb3f409c66ec236b2f03875181fd5a2ac4ae5320a0ba32e828ab82613f",
       "bytesEach": 1678366,
       "paths": [
-        "experiments/assets/buildings/bombardier-workshop/reference.png",
-        "experiments/assets/buildings/ironroot-forge/reference.png",
-        "experiments/assets/buildings/player-stonemason/reference.png",
-        "experiments/assets/buildings/rootworks/reference.png"
+        "art/sources/buildings/bombardier-workshop/reference.png",
+        "art/sources/buildings/ironroot-forge/reference.png",
+        "art/sources/buildings/player-stonemason/reference.png",
+        "art/sources/buildings/rootworks/reference.png"
       ]
     },
     {
@@ -633,7 +633,7 @@
       "bytesEach": 4291368,
       "paths": [
         "assets/ant-colony/great-mound.glb",
-        "experiments/assets/buildings/great-mound/model.glb"
+        "art/sources/buildings/great-mound/model.glb"
       ]
     },
     {
@@ -656,18 +656,18 @@
       "sha256": "8534dd191d018c57ea7cc1aa4a93400905c87d7266adca7067ce5e8881e882c6",
       "bytesEach": 1690127,
       "paths": [
-        "experiments/assets/buildings/amber-sanctuary/samples.png",
-        "experiments/assets/buildings/great-mound/samples.png",
-        "experiments/assets/buildings/rootbound-hall/samples.png"
+        "art/sources/buildings/amber-sanctuary/samples.png",
+        "art/sources/buildings/great-mound/samples.png",
+        "art/sources/buildings/rootbound-hall/samples.png"
       ]
     },
     {
       "sha256": "e736bbc2f98872de6e68a1f437888c46ce2bd379c5a20b2f8c7d31a802215f04",
       "bytesEach": 1679976,
       "paths": [
-        "experiments/assets/buildings/bombardier-workshop/samples.png",
-        "experiments/assets/buildings/ironroot-forge/samples.png",
-        "experiments/assets/buildings/rootworks/samples.png"
+        "art/sources/buildings/bombardier-workshop/samples.png",
+        "art/sources/buildings/ironroot-forge/samples.png",
+        "art/sources/buildings/rootworks/samples.png"
       ]
     },
     {
@@ -682,9 +682,9 @@
       "sha256": "560c18525bd0d578e2fa670d1866a17fb1334c45c2e3f6dbcdf461c5b3c4db38",
       "bytesEach": 1542477,
       "paths": [
-        "experiments/assets/characters/ant-bombardier/reference.png",
-        "experiments/assets/characters/ant-family/reference.png",
-        "experiments/assets/characters/ant-hunter/reference.png"
+        "art/sources/characters/ant-bombardier/reference.png",
+        "art/sources/characters/ant-family/reference.png",
+        "art/sources/characters/ant-hunter/reference.png"
       ]
     },
     {
@@ -708,7 +708,7 @@
       "bytesEach": 2174924,
       "paths": [
         "assets/ant-colony/lumberjack-workshop.glb",
-        "experiments/assets/buildings/lumberjack-workshop/model.glb"
+        "art/sources/buildings/lumberjack-workshop/model.glb"
       ]
     },
     {
@@ -716,7 +716,7 @@
       "bytesEach": 2123892,
       "paths": [
         "assets/ant-colony/amber-seam.glb",
-        "experiments/assets/buildings/amber-seam/model.glb"
+        "art/sources/buildings/amber-seam/model.glb"
       ]
     }
   ],

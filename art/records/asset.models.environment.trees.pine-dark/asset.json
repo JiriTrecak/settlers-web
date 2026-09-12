@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.pine-dark",
+  "name": "Pine dark",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/pine-dark/model.glb",
+      "sha256": "1887890de8ac1cffe8001d73e874b0f973889d9dbe36811f641cb538e129caa8",
+      "bytes": 4796
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "pine-dark",
+      "name": "Pine dark",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/pine-dark/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.pine-dark/source.gltf",
+    "sha256": "fa888eabbb1eaf37afa225f58dc3c378415477e56163e6be85f2c0fe8a18b2be",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/pine-dark.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

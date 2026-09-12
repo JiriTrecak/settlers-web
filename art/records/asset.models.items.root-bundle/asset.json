@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "id": "asset.models.items.root-bundle",
+  "name": "Root Bundle",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/root-bundle/model.glb",
+      "sha256": "34704115e18b6893cbbaf9b169fd79b89a28eae22f1d385e1834dc5d1b417b0c",
+      "bytes": 8112
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.item.root",
+      "file": "assets/models/items/root-bundle/model.glb",
+      "healthHeight": 1,
+      "stackHeight": 0.3,
+      "stackColumns": 2
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/corrupted-root/corrupted-root.blend",
+    "sha256": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/root-bundle.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

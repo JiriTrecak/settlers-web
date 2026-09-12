@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.materials.ants.surface-atlas",
+  "name": "Surface Atlas",
+  "kind": "texture",
+  "tags": [
+    "materials",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/materials/ants/surface-atlas.png",
+      "sha256": "611e1381a68ec3473b5913831395f8903ce7441f9ba83878081f61a80e106212",
+      "bytes": 2496464,
+      "width": 1254,
+      "height": 1254
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.textures.materials.ants.surface-atlas/source.png",
+    "sha256": "611e1381a68ec3473b5913831395f8903ce7441f9ba83878081f61a80e106212",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/materials/surface-atlas.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

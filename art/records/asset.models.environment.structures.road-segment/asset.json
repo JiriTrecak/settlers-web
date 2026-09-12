@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.road-segment",
+  "name": "Packed-earth road",
+  "kind": "model",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/road-segment/model.glb",
+      "sha256": "f226245e02c474de6b2404dd2c507ab49a91f577b67410994cfd2b57197322c4",
+      "bytes": 233800
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "road-segment",
+      "name": "Packed-earth road",
+      "type": "ground",
+      "category": "terrain",
+      "file": "models/environment/structures/road-segment/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.road-segment/source.glb",
+    "sha256": "f226245e02c474de6b2404dd2c507ab49a91f577b67410994cfd2b57197322c4",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/environment/wayfarer/road-segment.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

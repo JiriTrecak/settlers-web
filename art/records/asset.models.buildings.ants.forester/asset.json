@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.forester",
+  "name": "Forester lodge",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/forester/model.glb",
+      "sha256": "2eefdd6d555e2e53afe24fbdaab9b8eb9c0e857029186c6e60ee07b0e9d46e38",
+      "bytes": 2176984
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.ants.forester",
+      "file": "assets/models/buildings/ants/forester/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "forester-lodge",
+      "name": "Forester lodge",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/forester/model.glb"
+    },
+    {
+      "id": "ant-forester",
+      "name": "Ant colony \u00b7 Forester",
+      "category": "other",
+      "type": "prop",
+      "file": "models/buildings/ants/forester/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.buildings.ants.forester/source.glb",
+    "sha256": "2eefdd6d555e2e53afe24fbdaab9b8eb9c0e857029186c6e60ee07b0e9d46e38",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/forester.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

@@ -25,10 +25,10 @@
 <li>Warm illumination, pink beige sand, rose-gray rock, lavender-brown shade and readable green canopies are matched together. Material color alone cannot reproduce the final pixel color.</li>
 </ol></details></main>
 <script type="module">
-import goldenUrl from './assets/visual_tests/golden-standard.jpg?url';
+import goldenUrl from './art/references/golden-standard.jpg?url';
 import riverUrl from './inspiration/4bb63180-5998-462e-9382-46edf761391e.jpg?url';
 import forestUrl from './inspiration/eb6097c1-09f7-4bb1-aa60-c2f022640eb1.jpg?url';
-import antUrl from './assets/visual_tests/ant-base/compare.png?url';
+import antUrl from './art/references/ant-base/compare.png?url';
 const references={ants:antUrl,river:riverUrl,forest:forestUrl,golden:goldenUrl};
 const $=s=>document.querySelector(s),ref=new Image(),live=new Image(),canvas=$('#display'),ctx=canvas.getContext('2d'),rc=document.createElement('canvas'),lc=document.createElement('canvas');let mode='side';let measuring=false,pending=null;const pairs=[];let view={x:0,y:0,size:1};
 const load=(img,url)=>new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});

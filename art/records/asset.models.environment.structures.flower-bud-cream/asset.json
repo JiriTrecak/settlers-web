@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-bud-cream",
+  "name": "Flower \u2014 upright cream heads",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-bud-cream/model.glb",
+      "sha256": "790875fbd525d1d7caccdc68c0e7116f6c40d2bb10ba910f3b6d89e8e322ff99",
+      "bytes": 20356
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-bud-cream",
+      "name": "Flower \u2014 upright cream heads",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-bud-cream/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-bud-cream/source.glb",
+    "sha256": "790875fbd525d1d7caccdc68c0e7116f6c40d2bb10ba910f3b6d89e8e322ff99",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-bud-cream.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

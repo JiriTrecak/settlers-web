@@ -23,7 +23,7 @@ it('captures the muzzle once and keeps the flight independent of the shooter',()
 });
 
 it('exports the mortar muzzle on its animated recoil bone',async()=>{
- const bytes=readFileSync('assets/ant-colony/characters/bombardier.glb');
+ const bytes=readFileSync('assets/models/units/ants/bombardier/model.glb');
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
  const ant=createCharacterInstance(gltf,'bombardier');
  const socket=ant.root.getObjectByName('socket_muzzle')!;

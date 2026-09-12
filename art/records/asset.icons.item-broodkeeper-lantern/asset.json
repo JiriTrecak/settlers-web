@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-broodkeeper-lantern",
+  "name": "Broodkeeper Lantern",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-broodkeeper-lantern.png",
+      "sha256": "f04aff7404824a362a4196390f4f32a5df7f46c99915dbb76c8bb52b4ac1ab15",
+      "bytes": 19317,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.broodkeeper-lantern",
+      "image": "assets/icons/item-broodkeeper-lantern.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-broodkeeper-lantern/source.png",
+    "sha256": "f04aff7404824a362a4196390f4f32a5df7f46c99915dbb76c8bb52b4ac1ab15",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/broodkeeper-lantern.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

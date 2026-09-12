@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.wolf-static",
+  "name": "Wolf",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/neutral/wolf-static/model.glb",
+      "sha256": "fc0389de9cf2b5a425a0ebf4c654fc6480c3b2b4b06f18b08b1267c44e103423",
+      "bytes": 76556
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.neutral.wolf",
+      "file": "assets/models/units/neutral/wolf-static/model.glb",
+      "healthHeight": 1.9
+    }
+  ],
+  "scenery": [
+    {
+      "id": "neutral-wolf",
+      "name": "Wolf",
+      "category": "units",
+      "type": "prop",
+      "file": "models/units/neutral/wolf-static/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.units.neutral.wolf-static/source.glb",
+    "sha256": "fc0389de9cf2b5a425a0ebf4c654fc6480c3b2b4b06f18b08b1267c44e103423",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/wolf.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

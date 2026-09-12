@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.river-rock-1",
+  "name": "River rock 1",
+  "kind": "model",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/river-rock-1/model.glb",
+      "sha256": "87d332bd29921f074e1d3d188baa1c40a877914ccb9241b9f714d6f3a3caf15e",
+      "bytes": 2408
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "river-rock-1",
+      "name": "River rock 1",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/river-rock-1/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.river-rock-1/source.gltf",
+    "sha256": "c701856ebaad8a0e79a61b8247356f51ecc512d2323736ef5420b7a6a384dcc9",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/landscape/river-rock-1.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

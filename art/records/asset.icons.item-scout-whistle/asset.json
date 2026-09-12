@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-scout-whistle",
+  "name": "Scout Whistle",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-scout-whistle.png",
+      "sha256": "76f0d372030b51546fe4432578ef20ebc3d8818203cf40351971035a2bb47dfb",
+      "bytes": 20021,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.scout-whistle",
+      "image": "assets/icons/item-scout-whistle.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-scout-whistle/source.png",
+    "sha256": "76f0d372030b51546fe4432578ef20ebc3d8818203cf40351971035a2bb47dfb",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/scout-whistle.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

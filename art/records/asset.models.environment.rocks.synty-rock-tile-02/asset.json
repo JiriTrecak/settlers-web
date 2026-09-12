@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-tile-02",
+  "name": "Rock Tile 02",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/synty-rock-tile-02/model.glb",
+      "sha256": "7114fd996f31ddade0663ae1de59ca6a3dc64f0b6d6ed466781be4d93d20bd74",
+      "bytes": 1540524
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-rock-tile-02",
+      "name": "Rock Tile 02",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/rocks/synty-rock-tile-02/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.rocks.synty-rock-tile-02/source.gltf",
+    "sha256": "dacd19df4dc735b5f995457e50fdcbae1a7771bbcdea929383904302b030f223",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-rock-tile-02.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

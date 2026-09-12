@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-birch-03",
+  "name": "Tree Birch Crimson",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-birch-03/model.glb",
+      "sha256": "2a071c9bd75a3019d4b09b645bf909f9ab47f09bb7d06d15b3e086fa30a06de7",
+      "bytes": 727452
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-birch-03",
+      "name": "Tree Birch Crimson",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-birch-03/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-birch-03/source.gltf",
+    "sha256": "df73ee8d5a0e56faac87816b32e809aeccce29bb59db7f2bcc6645b0fd1ab741",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-birch-03.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

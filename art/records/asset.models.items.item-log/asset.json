@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.items.item-log",
+  "name": "Log",
+  "kind": "model",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/item-log/model.glb",
+      "sha256": "98b5705fb535fdbbd21069ef6659999e83d9b6bc579d72a1167f4783391482af",
+      "bytes": 57324
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.item.wood",
+      "file": "assets/models/items/item-log/model.glb",
+      "healthHeight": 2.5,
+      "stackHeight": 0.42,
+      "stackColumns": 1
+    }
+  ],
+  "scenery": [
+    {
+      "id": "item-log",
+      "name": "Log",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/items/item-log/model.glb"
+    },
+    {
+      "id": "ant-item-log",
+      "name": "Ant colony \u00b7 Item Log",
+      "category": "other",
+      "type": "prop",
+      "file": "models/items/item-log/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.items.item-log/source.glb",
+    "sha256": "98b5705fb535fdbbd21069ef6659999e83d9b6bc579d72a1167f4783391482af",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/item-log.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

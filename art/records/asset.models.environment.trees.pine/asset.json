@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.pine",
+  "name": "Pine",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/pine/model.glb",
+      "sha256": "9ea7a270fb6cce3cf8be1264231ebcb0db1167f9f760087e3039d7d34910bb6e",
+      "bytes": 4796
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "pine",
+      "name": "Pine",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/pine/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.pine/source.gltf",
+    "sha256": "36fda5872a8a22a1f57f64c88ebbfc97150d208ee9570738b421f3a0567dd561",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/pine.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

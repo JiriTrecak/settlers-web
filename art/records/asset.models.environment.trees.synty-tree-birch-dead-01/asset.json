@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-birch-dead-01",
+  "name": "Tree Birch Dead 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/synty-tree-birch-dead-01/model.glb",
+      "sha256": "ac7e4dac0182d74d3a0f19d0e5ea069c99881788ba1a5df5d6cfdecfc0f2d0ca",
+      "bytes": 530732
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-tree-birch-dead-01",
+      "name": "Tree Birch Dead 01",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/synty-tree-birch-dead-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.trees.synty-tree-birch-dead-01/source.gltf",
+    "sha256": "30b7011cff67f16dbfb65e3c85700f541baf875c6aa658bbb0373935c591ec51",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-tree-birch-dead-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

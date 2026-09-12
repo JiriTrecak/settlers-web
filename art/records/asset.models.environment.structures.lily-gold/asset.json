@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lily-gold",
+  "name": "Lily gold",
+  "kind": "model",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/lily-gold/model.glb",
+      "sha256": "5e0ffc1c70cb3fd4a79d78f3998cb963c5019c78651470a150ba6eeda58a02cc",
+      "bytes": 3300
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lily-gold",
+      "name": "Lily gold",
+      "category": "water",
+      "type": "water",
+      "file": "models/environment/structures/lily-gold/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.lily-gold/source.gltf",
+    "sha256": "924c841c5c8b3a88bed3a0d292c83d29c3eb10cdb95b261e3045050ec451869a",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/lily-gold.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

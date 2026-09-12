@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.thornblade-matriarch",
+  "name": "Thornblade Matriarch",
+  "kind": "model",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/neutral/thornblade-matriarch/model.glb",
+      "sha256": "314996ca36344a62fe31c1ce2e29fce0938c226402b3b53b96e8b0f92023321a",
+      "bytes": 234836
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.neutral.thornblade-matriarch",
+      "file": "assets/models/units/neutral/thornblade-matriarch/model.glb",
+      "character": "thornblade-matriarch",
+      "healthHeight": 4.1
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/thornblade-matriarch/thornblade-matriarch.blend",
+    "sha256": "3cf44c9a4fc2edff600effb8b1fa4972dee7bb4cd76dcb05f8cbd9d6c0af968c",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/thornblade-matriarch.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": []
+  }
+}

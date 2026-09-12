@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.stat-armor-heavy",
+  "name": "Armor Heavy",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/stat-armor-heavy.png",
+      "sha256": "929731be3c88342eacf2b61e9767593f1e4d6b80ba57cb22a4a7a87e7dbdccde",
+      "bytes": 33139,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.armor.heavy",
+      "image": "assets/icons/stat-armor-heavy.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.stat-armor-heavy/source.png",
+    "sha256": "929731be3c88342eacf2b61e9767593f1e4d6b80ba57cb22a4a7a87e7dbdccde",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/armor-heavy.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

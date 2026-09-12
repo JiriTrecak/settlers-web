@@ -1,4 +1,4 @@
-import catalog from '../../../assets/catalog.json';
+import {sceneryCatalogue as catalog} from '../../shared/assets/manifest';
 const structuralOrigins=new Set(catalog.assets.filter(e=>'deck' in e).map(e=>e.id));
 import { Box3, type Object3D } from 'three';
 

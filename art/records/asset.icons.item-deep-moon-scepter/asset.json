@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-deep-moon-scepter",
+  "name": "Deep Moon Scepter",
+  "kind": "icon",
+  "tags": [
+    "items-v2",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/item-deep-moon-scepter.png",
+      "sha256": "e7c2ed570971f96932a04ebc9a1e2cf8b91ab6b0189de626305a38f556849a40",
+      "bytes": 12732,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.item.deep-moon-scepter",
+      "image": "assets/icons/item-deep-moon-scepter.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.item-deep-moon-scepter/source.png",
+    "sha256": "e7c2ed570971f96932a04ebc9a1e2cf8b91ab6b0189de626305a38f556849a40",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/items-v2/deep-moon-scepter.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

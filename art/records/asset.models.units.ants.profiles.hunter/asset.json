@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.profiles.hunter",
+  "name": "Hunter",
+  "kind": "data",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "data",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/models/units/ants/profiles/hunter.json",
+      "sha256": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab",
+      "bytes": 501
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.models.units.ants.profiles.hunter/source.json",
+    "sha256": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ant-colony/characters/hunter.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

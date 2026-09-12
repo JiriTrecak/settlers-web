@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-bridge-curved-01",
+  "name": "Prop Bridge Curved 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/synty-prop-bridge-curved-01/model.glb",
+      "sha256": "83427a81d6abf6e011ebd857460b248eb5fa029070629bdc39adf06b7356cbfc",
+      "bytes": 161792
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-prop-bridge-curved-01",
+      "name": "Prop Bridge Curved 01",
+      "category": "landmark",
+      "type": "span",
+      "file": "models/environment/structures/synty-prop-bridge-curved-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.synty-prop-bridge-curved-01/source.gltf",
+    "sha256": "96fe1d6ee3de11be6038f7c6bd98583c0d57320bee5ea9e6aa72c399626bf558",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-prop-bridge-curved-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

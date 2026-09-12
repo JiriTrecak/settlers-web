@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-terrain-grassedge-01",
+  "name": "Terrain GrassEdge 01",
+  "kind": "model",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/synty-terrain-grassedge-01/model.glb",
+      "sha256": "e337f806c6f494808d9564ee2606f0daa762116a3a37d9869344ca134e8e8216",
+      "bytes": 43516
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "synty-terrain-grassedge-01",
+      "name": "Terrain GrassEdge 01",
+      "category": "terrain",
+      "type": "prop",
+      "file": "models/environment/grass/synty-terrain-grassedge-01/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.grass.synty-terrain-grassedge-01/source.gltf",
+    "sha256": "4d9642fbf475c969242d05e83052dec0137b8a304a34fe1c265722885bca4ecc",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/synty/synty-terrain-grassedge-01.gltf"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

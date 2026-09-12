@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-great-mound",
+  "name": "Great Mound",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-great-mound.png",
+      "sha256": "bea7d88d0ecfad37002e2e97665ac6b3cad997b9ed6ed38871d72c6032ebd5eb",
+      "bytes": 10985,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.great-mound",
+      "image": "assets/icons/building-ants-great-mound.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-great-mound/source.png",
+    "sha256": "bea7d88d0ecfad37002e2e97665ac6b3cad997b9ed6ed38871d72c6032ebd5eb",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/great-mound.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

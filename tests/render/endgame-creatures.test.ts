@@ -6,8 +6,8 @@ import { createCharacterInstance } from '../../src/render/characters/character-p
 
 for (const species of ['amberjaw-staglord','thornblade-matriarch']) describe(species, () => {
  it('exports a compact neutral rig, isolated instances and six functional states', async () => {
-  const bytes=readFileSync(`assets/ant-colony/characters/${species}.glb`);
-  expect(bytes.equals(readFileSync(`experiments/assets/characters/${species}/${species}.glb`))).toBe(true);
+  const bytes=readFileSync(`assets/models/units/neutral/${species}/model.glb`);
+  expect(bytes.equals(readFileSync(`art/sources/characters/${species}/${species}.glb`))).toBe(true);
   const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
   expect(gltf.animations.map(c=>c.name).sort()).toEqual(['attack','death','hit','idle','run','walk']);
   let triangles=0,skins=0;

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-rootworks",
+  "name": "Rootworks",
+  "kind": "icon",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/building-ants-rootworks.png",
+      "sha256": "c25e59e76516a9d2f0577ca53cc79af4ddcbb56dd039b6801f65fd99d0bd0be7",
+      "bytes": 15316,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.ants.rootworks",
+      "image": "assets/icons/building-ants-rootworks.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/records/asset.icons.building-ants-rootworks/source.png",
+    "sha256": "c25e59e76516a9d2f0577ca53cc79af4ddcbb56dd039b6801f65fd99d0bd0be7",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/ui/icons/ants-v1/rootworks.png"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}

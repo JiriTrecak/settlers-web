@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-single-cream",
+  "name": "Wildflower \u2014 single cream",
+  "kind": "model",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/flower-single-cream/model.glb",
+      "sha256": "2eb2e1270455037ad751de21ad363104a93da61577dfe925b0b729d5383107bc",
+      "bytes": 17520
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "flower-single-cream",
+      "name": "Wildflower \u2014 single cream",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/structures/flower-single-cream/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/records/asset.models.environment.structures.flower-single-cream/source.glb",
+    "sha256": "2eb2e1270455037ad751de21ad363104a93da61577dfe925b0b729d5383107bc",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "migration",
+    "previousPath": "assets/props/vivid/flower-single-cream.glb"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "warnings": [
+      "Editable master has not yet been linked. Exact runtime original retained."
+    ]
+  }
+}
