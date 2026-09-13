@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "image.woodland-mana-fill",
+  "name": "Woodland Mana Fill",
+  "kind": "interface",
+  "tags": [
+    "interface",
+    "woodland-interface"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-fill",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/woodland-mana-fill.png",
+      "sha256": "2c725158fe5d0a9dfca8fd979b0d347d25804e2f61c4fddf69589ebdad3ae1dd",
+      "bytes": 193332,
+      "width": 768,
+      "height": 128
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/image.woodland-mana-fill/revisions/1/source.png",
+    "sha256": "81abfcdd9e6167fc906c9f5063d798413375e81942d575b0d540fb2d8ef6bc76",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai",
+    "job": "art/records/image.woodland-mana-fill/revisions/1/job/job.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T05:58:30.111Z",
+    "warnings": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "image.woodland-connected-hud",
+  "name": "Woodland Connected HUD",
+  "kind": "interface",
+  "tags": [
+    "interface",
+    "woodland-interface"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-image",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/woodland-connected-hud.png",
+      "sha256": "6f1ae313757adc1d33c2005c618feb7263969401cde6984ce08e179944184281",
+      "bytes": 2077750,
+      "width": 2160,
+      "height": 720
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/image.woodland-connected-hud/revisions/1/source.png",
+    "sha256": "c815ee0eb63861564fdbaf43353ae40ffa466043324e46256f0f0ffd46d89706",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai",
+    "job": "art/records/image.woodland-connected-hud/revisions/1/job/job.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T06:50:32.894Z",
+    "warnings": []
+  }
+}

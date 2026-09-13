@@ -21,7 +21,8 @@ export function assetStudio(root:string):Plugin {
     const url=new URL(req.url||'/',`http://${host}`);
     if(req.method==='GET'&&url.pathname==='/bootstrap'){res.end(JSON.stringify({token,credentials:await credentials.status()}));return;}
     if(req.method==='POST'&&url.pathname==='/credentials'){const data=await body(req,2048);if(typeof data.key!=='string')throw Error('Key is required');await credentials.set(data.key);res.end(JSON.stringify(await credentials.status()));return;}
-    if(req.method==='GET'&&url.pathname==='/library'){res.end(JSON.stringify({assets:await service.snapshot(),styles:await service.styles()}));return;}
+    if(req.method==='GET'&&url.pathname==='/library'){res.end(JSON.stringify({assets:await service.snapshot(),styles:await service.styles(),uploads:await service.references()}));return;}
+    if(req.method==='POST'&&url.pathname==='/references'){res.end(JSON.stringify(await service.uploadReference(await body(req,28*1024*1024))));return;}
     if(req.method==='GET'&&url.pathname==='/jobs'){res.end(JSON.stringify(service.list()));return;}
     if(req.method==='GET'&&url.pathname==='/assignments'){res.end(JSON.stringify(await service.assignmentTargets()));return;}
     if(req.method==='POST'&&url.pathname==='/assignments'){const data=await body(req);res.end(JSON.stringify(await service.assign(data.asset,data.definition,data.revision)));return;}
@@ -31,7 +32,7 @@ export function assetStudio(root:string):Plugin {
     const match=/^\/jobs\/([a-f0-9-]+)\/(process|approve|publish|cancel)$/.exec(url.pathname);
     if(req.method==='POST'&&match){const data=await body(req),id=match[1];let result;
      if(match[2]==='cancel')result=await service.cancel(id);
-     if(match[2]==='process')result=await service.process(id,data.candidate,data.transform);
+     if(match[2]==='process')result=await service.process(id,data.candidate,data.transform,data.export);
      if(match[2]==='approve')result=await service.approve(id,data.candidate,data.outputHash);
      if(match[2]==='publish')result=await service.publish(id,data.candidate);
      res.end(JSON.stringify(result));return;

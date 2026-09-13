@@ -2,11 +2,12 @@ import path from 'node:path';
 import {ContentRegistry} from '../../../src/content/registry';
 import {readFile,cp} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
-import {jobRequestSchema,transformSchema,type Job,type AssetRecord,type Style} from '../shared/schema';
+import {jobRequestSchema,transformSchema,exportEditSchema,type Job,type AssetRecord,type Style} from '../shared/schema';
 import {atomic,filesIn,hash,json,saveJson,within} from './storage';
 import {compile,records,urlModule,validateFiles} from './manifest';
 import {commitFiles,recoverTransactions} from './transaction';
 import {Credentials} from './credentials';
+import {uploadReference,uploadedReferences} from './references';
 import {approvalHash,processImage} from './images';
 import {AmbiguousGeneration,openAIProvider,type Provider} from './provider';
 export class StudioService {
@@ -22,6 +23,8 @@ export class StudioService {
  }
  async library(){if(!this.libraryCache||Date.now()>this.libraryUntil){this.libraryUntil=Date.now()+1000;this.libraryCache=records(this.root);}return this.libraryCache;}
  async snapshot(){await this.lock;return this.library();}
+ async references(){return uploadedReferences(this.root);}
+ async uploadReference(input:unknown){return this.serial(()=>uploadReference(this.root,input));}
  async styles():Promise<Style[]>{const styles:Style[]=[];for(const f of await filesIn(path.join(this.root,'art/styles')))if(f.endsWith('.json'))styles.push(await json<Style>(f));return styles;}
  list(){return [...this.jobs.values()].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));}
  get(id:string){const job=this.jobs.get(id);if(!job)throw Error('Job not found');return job;}
@@ -32,12 +35,15 @@ export class StudioService {
   const all=await this.library(),style=(await this.styles()).find(s=>s.id===request.style);
   const id=randomUUID(),dir=`.asset-work/jobs/${id}`,references:Job['references']=[];
   for(const [index,ref] of request.references.entries()){
-   const record=all.find(a=>a.id===ref.id&&a.status==='published');if(!record||!['icon','interface'].includes(record.kind))throw Error('Reference must be a published image.');
-   const source=record.source.quality==='master'?record.source.path:record.outputs[0].path;
+   const upload=ref.source==='upload'?(await this.references()).find(r=>r.id===ref.id):undefined;
+   const record=ref.source==='upload'?undefined:all.find(a=>a.id===ref.id&&a.status==='published');
+   if(!upload&&(!record||!['icon','interface'].includes(record.kind)))throw Error('Reference must be an uploaded image or a published image.');
+   const source=upload?.path??(record!.source.quality==='master'?record!.source.path:record!.outputs[0].path);
    const bytes=await readFile(await within(this.root,source));
    if(bytes.length>50*1024*1024)throw Error('Reference exceeds 50 MiB');
+   if(upload&&hash(bytes)!==upload.sha256)throw Error('Uploaded reference changed. Upload it again.');
    const retained=`${dir}/reference-${index}${path.extname(source)}`;await atomic(await within(this.root,retained),bytes);
-   references.push({id:record.id,role:ref.role,revision:record.revision,sha256:hash(bytes),path:retained});
+   references.push({id:ref.id,role:ref.role,revision:record?.revision??1,sha256:hash(bytes),path:retained});
   }
   const guidance=request.profile==='icon'?'One readable subject, generous breathing room, no text, hotkeys, border or interface frame. Painted fantasy RTS icon.':'UI component only. Do not paint text, numbers, icons or game scenery.';
   const prompt=[request.prompt,style?.description,guidance,request.profile==='interface-rim'?'Real transparent background outside the rim AND inside its opening. Render ONLY the rim.':null,...references.map((r,i)=>`Reference ${i+1}: ${r.role}. ${r.role==='style'?'Use material, lighting and paint treatment, not its subject.':r.role==='layout'?'Follow its arrangement and proportions.':'Use its subject as visual reference.'}`)].filter(Boolean).join('\n\n');
@@ -66,7 +72,7 @@ export class StudioService {
   finally{clearTimeout(deadline);this.controllers.delete(job.id);await this.save(job);}
  }}finally{this.busy=false;}}
  async cancel(id:string){const job=this.get(id);if(!['queued','generating'].includes(job.state))throw Error('Only pending jobs can be canceled.');const remote=job.state==='generating';job.state='canceled';job.error=remote?'Stopped waiting locally. OpenAI may still finish and bill this request.':'Canceled before provider submission.';this.controllers.get(id)?.abort();await this.save(job);return job;}
- async process(id:string,candidateId:string,transform:unknown){return this.serial(async()=>{const job=this.get(id);if(job.state!=='ready')throw Error('Job is not editable.');const old=job.candidates.find(c=>c.id===candidateId);if(!old)throw Error('Candidate missing');const request={...job.request,transform:transformSchema.parse(transform)};const candidates=[];for(const c of job.candidates)candidates.push(await processImage(this.root,c.source,c.output??`.asset-work/jobs/${id}/${c.id}.png`,request));job.request=request;job.candidates=candidates;await this.save(job);return job;});}
+ async process(id:string,candidateId:string,transform:unknown,output?:unknown){return this.serial(async()=>{const job=this.get(id);if(job.state!=='ready')throw Error('Job is not editable.');const old=job.candidates.find(c=>c.id===candidateId);if(!old)throw Error('Candidate missing');const request=jobRequestSchema.parse({...job.request,...exportEditSchema.parse(output??{}),transform:transformSchema.parse(transform)});const candidates=[];for(const c of job.candidates)candidates.push(await processImage(this.root,c.source,c.output??`.asset-work/jobs/${id}/${c.id}.png`,request));job.request=request;job.candidates=candidates;await this.save(job);return job;});}
  async approve(id:string,candidateId:string,outputHash:string){return this.serial(async()=>{const job=this.get(id),candidate=job.candidates.find(c=>c.id===candidateId);if(job.state!=='ready'||!candidate||candidate.errors.length||!candidate.outputHash||candidate.outputHash!==outputHash)throw Error('Review the current valid export before approving.');candidate.approval=approvalHash(candidate,job.request);await this.save(job);return job;});}
  async publish(id:string,candidateId:string){return this.serial(async()=>{
   const job=this.get(id),candidate=job.candidates.find(c=>c.id===candidateId);if(job.state!=='ready'||!candidate?.output||candidate.errors.length||candidate.approval!==approvalHash(candidate,job.request))throw Error('Approve this exact export before publishing.');
@@ -99,7 +105,7 @@ export class StudioService {
   await this.lock;
   const outputs=(await this.library()).flatMap(r=>r.outputs.map(o=>o.path));
   const candidates=this.list().flatMap(j=>[...j.candidates.flatMap(c=>[c.output,c.source]),...j.references.map(r=>r.path),`.asset-work/jobs/${j.id}/partial.png`]);
-  if(!outputs.includes(file)&&!candidates.includes(file))throw Error('Image is not in the library or a job.');
+  if(!outputs.includes(file)&&!candidates.includes(file)&&!(await this.references()).some(r=>r.path===file))throw Error('Image is not in the library or a job.');
   const bytes=await readFile(await within(this.root,file));const sharp=(await import('sharp')).default;const meta=await sharp(bytes,{limitInputPixels:40_000_000}).metadata();if(!['png','jpeg','webp'].includes(meta.format||''))throw Error('Not an image');return {bytes,mime:'image/'+meta.format};
  }
 }

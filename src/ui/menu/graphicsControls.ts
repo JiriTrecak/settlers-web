@@ -1,4 +1,4 @@
-import {readHudLayout,setHudLayout,type HudLayout} from '../../shared/settings/hud';
+import {readHudLayout,setHudLayout,readHudScale,setHudScale,type HudLayout} from '../../shared/settings/hud';
 import {keyboardControls} from './keyboardControls';
 import {SHADOW_MODES,readShadowMode,setShadowMode,type ShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_SCALES,readResolutionScale,setResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
@@ -27,6 +27,16 @@ export function graphicsControls():HTMLElement {
  for(const [value,text] of [['spread','Spread · screen edges'],['compact','Compact · centered']]){const o=document.createElement('option');o.value=value;o.textContent=text;hudLayout.append(o);}
  hudLayout.value=readHudLayout();hudLayout.onchange=()=>setHudLayout(hudLayout.value as HudLayout);
  hudLabel.append(hudLayout);group.append(hudLabel);
+ const scaleLabel=document.createElement('label');
+ const scaleTitle=document.createElement('span');scaleTitle.textContent='HUD size';
+ const scaleValue=document.createElement('output');scaleValue.style.cssText='margin-left:auto;font-variant-numeric:tabular-nums;color:#ead6ae';
+ const scaleHeading=document.createElement('span');scaleHeading.style.cssText='display:flex;justify-content:space-between;gap:12px';scaleHeading.append(scaleTitle,scaleValue);
+ const hudScale=document.createElement('input');hudScale.type='range';hudScale.min='30';hudScale.max='100';hudScale.step='1';hudScale.value=String(readHudScale());
+ hudScale.setAttribute('aria-label','HUD size');hudScale.style.cssText='width:100%;margin:12px 0;accent-color:#c9a864;cursor:pointer';
+ const updateScaleLabel=()=>{scaleValue.value=`${hudScale.value}%`;hudScale.setAttribute('aria-valuetext',`${hudScale.value}%`);};
+ updateScaleLabel();hudScale.oninput=()=>{setHudScale(Number(hudScale.value));updateScaleLabel();};
+ scaleLabel.append(scaleHeading,hudScale);group.append(scaleLabel);
+ const scaleNote=document.createElement('p');scaleNote.className='canopy-settings-status';scaleNote.textContent='30–100%. Resizes the minimap, selection panel and commands together. Applies immediately and is saved. Default: 65%.';group.append(scaleNote);
  group.append(keyboardControls());
  return group;
 }

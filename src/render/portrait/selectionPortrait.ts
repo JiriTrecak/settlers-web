@@ -1,8 +1,10 @@
-import { AmbientLight, Box3, Color, DirectionalLight, OrthographicCamera, Scene, Vector3, Vector4, type Object3D, type Texture, type WebGLRenderer } from 'three';
+import connectedHudUrl from '../../../assets/interface/woodland/woodland-connected-hud.png?url';
+import { AmbientLight, TextureLoader, SRGBColorSpace, LinearFilter, Box3, Color, DirectionalLight, OrthographicCamera, Scene, Vector3, Vector4, type Object3D, type Texture, type WebGLRenderer } from 'three';
 export type PortraitInstance = {root:Object3D;update:(dt:number)=>void;dispose:()=>void};
 /** A tiny scissored pass on the existing game canvas. No second context or pixel readbacks. */
 export class SelectionPortrait {
   private scene = new Scene();
+  private readonly backdrop = new TextureLoader().load(connectedHudUrl);
   private camera = new OrthographicCamera();
   private instance:PortraitInstance|null=null;
   private key='';
@@ -16,7 +18,10 @@ export class SelectionPortrait {
   private scissor=new Vector4();
   private clear=new Color();
   constructor(environment:Texture){
-    this.scene.background=new Color('#090c07');this.scene.environment=environment;this.scene.environmentIntensity=.7;
+    // Match the portrait cutout in commandDock.css; reuse the approved panel texture.
+    this.backdrop.colorSpace=SRGBColorSpace;this.backdrop.generateMipmaps=false;this.backdrop.minFilter=LinearFilter;
+    this.backdrop.offset.set(.2494,.3304);this.backdrop.repeat.set(.1128,.336);
+    this.scene.background=this.backdrop;this.scene.environment=environment;this.scene.environmentIntensity=.7;
     this.scene.add(new AmbientLight(0xffefd5,1.2));
     const light=new DirectionalLight(0xffe2b3,3.2);light.position.set(-4,7,6);this.scene.add(light);
     const rim=new DirectionalLight(0x93afcf,1.3);rim.position.set(4,3,-3);this.scene.add(rim);
@@ -59,5 +64,5 @@ export class SelectionPortrait {
     gl.render(this.scene,this.camera);
     gl.setViewport(this.viewport);gl.setScissor(this.scissor);gl.setScissorTest(scissorTest);gl.autoClear=auto;gl.shadowMap.enabled=shadows;gl.setClearColor(this.clear,alpha);
   }
-  destroy(){this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();}
+  destroy(){this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();this.backdrop.dispose();}
 }

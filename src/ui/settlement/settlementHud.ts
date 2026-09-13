@@ -1,4 +1,4 @@
-import {HUD_CHANGED,readHudLayout} from '../../shared/settings/hud';
+import {HUD_CHANGED,readHudLayout,readHudScale} from '../../shared/settings/hud';
 import {workplaceCard} from '../../presentation/workplace';
 import {prioritizeSelection,cycleSelection} from "../../presentation/selection";
 import {ControlGroups} from "../../presentation/controlGroups";
@@ -63,7 +63,10 @@ export class SettlementHud {
   private readonly activeTask = document.createElement("div");
   private readonly workplaceSummary = document.createElement("div");
   private readonly selection = document.createElement("section");
-  private readonly syncLayout=()=>{this.root.dataset.layout=readHudLayout();};
+  private readonly syncLayout=()=>{
+    this.root.dataset.layout=readHudLayout();
+    this.root.style.setProperty("--hud-scale",String(readHudScale()/100));
+  };
   private readonly queues = document.createElement("div");
   private readonly statuses = document.createElement("div");
   private statusSignature = "";
@@ -72,7 +75,6 @@ export class SettlementHud {
   private ordersSignature = "";
   private inventorySignature = "";
   private readonly pages = document.createElement("div");
-  private readonly mapLabel = document.createElement("span");
   private readonly tooltips: CommandTooltips;
   private readonly owner: Owner;
   private readonly readOnly: boolean;
@@ -237,11 +239,8 @@ export class SettlementHud {
     dock.className = "rts-dock";
     const map = document.createElement("section");
     map.className = "rts-map";
-    const label = document.createElement("div");
-    label.className = "rts-map-label";
-    label.append(this.mapLabel);
     this.minimapHost.className = "rts-map-slot";
-    map.append(label, this.minimapHost);
+    map.append(this.minimapHost);
     const selection = this.selection;
     selection.className = "rts-selection";
     this.portrait.className = "rts-portrait";
@@ -255,6 +254,10 @@ export class SettlementHud {
     this.experience.setAttribute("role", "progressbar");
     this.portraitMana.className = "rts-portrait-mana";
     this.portraitHp.className = "rts-portrait-health";
+    for (const bar of [this.portraitHp,this.portraitMana]) {
+      const value=document.createElement('span');value.className='rts-bar-value';bar.append(value);
+      bar.setAttribute('role','meter');bar.setAttribute('aria-valuemin','0');
+    }
     this.hint.className = "rts-notice";
     this.hint.role = "status";
     this.cards.className = "rts-unit-cards";
@@ -276,10 +279,10 @@ export class SettlementHud {
     actions.className = "rts-actions";
     this.grid.className = "rts-command-grid declarative-commands";
     this.pages.className = "rts-command-pages";
-    actions.append(this.stock, this.grid, this.pages);
+    actions.append(this.grid, this.pages);
     this.groupBar.className="rts-control-groups";this.groupBar.setAttribute("aria-label","Army control groups");
     dock.append(map, selection, actions,this.groupBar);
-    this.root.append(this.heroes.root, dock);
+    this.root.append(this.heroes.root, dock, this.stock);
     this.syncLayout();
     window.addEventListener(HUD_CHANGED,this.syncLayout);
     host.append(this.root);
@@ -294,9 +297,6 @@ export class SettlementHud {
   }
   saveControls(){return Array.from({length:10},(_,i)=>[...this.controlGroups.members(i)]);}
   restoreControls(groups:readonly (readonly number[])[]=[]){this.controlGroups.clear();groups.forEach((ids,i)=>this.controlGroups.assign(i,ids));this.groupSignature='';this.previousAlerts=null;this.alerts=[];this.current=null;this.setSelection([]);}
-  setMapName(name: string) {
-    this.mapLabel.textContent = name;
-  }
   private navigate(category: string | null) {
     this.category = category;
     this.page = 0;
@@ -382,11 +382,6 @@ export class SettlementHud {
     if (signature !== this.commandSignature) {
       this.commandSignature = signature;
       this.grid.replaceChildren();
-      for(let slot=0;slot<12;slot++){
-        const well=document.createElement("span");well.className="rts-command-well";well.setAttribute("aria-hidden","true");
-        well.style.gridColumn=String(1+slot%4);well.style.gridRow=String(1+Math.floor(slot/4));this.grid.append(well);
-      }
-      this.grid.classList.toggle("has-banner",this.menuEntries.some(b=>b.placement==="banner"));
       for (const { binding: b, column, row } of commandPage(
         this.menuEntries,
         this.page,
@@ -394,8 +389,10 @@ export class SettlementHud {
         const button = document.createElement("button");
         button.className = "rts-command";
         button.setAttribute("aria-disabled", String(!b.enabled));
-        button.style.gridColumn = b.placement === "banner" ? "1 / -1" : String(column);
-        button.style.gridRow = String(row);
+        if (b.placement !== "banner") {
+          button.style.gridColumn = String(column);
+          button.style.gridRow = String(row);
+        }
         button.innerHTML = iconArt(b.icon);
         if(b.placement==="banner"){
           button.classList.add("rts-command-banner");const label=document.createElement("span");label.className="rts-banner-label";label.textContent=b.name;button.append(label);
@@ -537,13 +534,15 @@ export class SettlementHud {
       this.hooks.portrait?.(this.portrait,d.id,focus.owner);
       this.portrait.dataset.mana = String(!!focus.spellcasting);
       this.portraitMana.hidden = !focus.spellcasting;
-      this.portraitMana.textContent = focus.spellcasting
+      this.portraitMana.firstChild!.textContent = focus.spellcasting
         ? `${focus.spellcasting.mana} / ${focus.stats!.maxMana}`
         : "";
+      if(focus.spellcasting){this.portraitMana.setAttribute('aria-label','Mana');this.portraitMana.setAttribute('aria-valuenow',String(focus.spellcasting.mana));this.portraitMana.setAttribute('aria-valuemax',String(focus.stats!.maxMana));}
       if(focus.spellcasting)this.portraitMana.style.setProperty('--fill',`${Math.max(0,Math.min(1,focus.spellcasting.mana/Math.max(1,focus.stats!.maxMana)))*100}%`);
       this.portraitHp.hidden = !d.body;
       if (d.body) {
-        this.portraitHp.textContent = `${focus.hp ?? 0} / ${focus.stats?.maxHp ?? d.body.maxHp}`;
+        this.portraitHp.setAttribute('aria-label','Health');this.portraitHp.setAttribute('aria-valuenow',String(focus.hp??0));this.portraitHp.setAttribute('aria-valuemax',String(focus.stats?.maxHp??d.body.maxHp));
+        this.portraitHp.firstChild!.textContent = `${focus.hp ?? 0} / ${focus.stats?.maxHp ?? d.body.maxHp}`;
         this.portraitHp.style.setProperty('--fill',`${Math.max(0,Math.min(1,(focus.hp??0)/Math.max(1,focus.stats?.maxHp??d.body.maxHp)))*100}%`);
         this.portraitHp.style.setProperty('--bar-color', `#${healthPipState(
           focus.hp ?? 0,

@@ -9357,6 +9357,167 @@
         }
       ],
       "scenery": []
+    },
+    {
+      "id": "image.woodland-bar-rim",
+      "name": "Woodland Bar Rim",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-rim",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-bar-rim.png",
+          "sha256": "f55ff14de01adf9a50e27dd6c6ddece464c08a9c76bb05baf363df3dfa2907ae",
+          "bytes": 78667,
+          "width": 768,
+          "height": 160
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-connected-hud",
+      "name": "Woodland Connected HUD",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-connected-hud.png",
+          "sha256": "6f1ae313757adc1d33c2005c618feb7263969401cde6984ce08e179944184281",
+          "bytes": 2077750,
+          "width": 2160,
+          "height": 720
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-health-fill",
+      "name": "Woodland Health Fill",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-fill",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-health-fill.png",
+          "sha256": "24815f4d8f16bdeaecd53d1a1529a3ee4b26b09ca25aa3714451df0681b9ac59",
+          "bytes": 232384,
+          "width": 768,
+          "height": 128
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-mana-fill",
+      "name": "Woodland Mana Fill",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-fill",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-mana-fill.png",
+          "sha256": "2c725158fe5d0a9dfca8fd979b0d347d25804e2f61c4fddf69589ebdad3ae1dd",
+          "bytes": 193332,
+          "width": 768,
+          "height": 128
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-satchel",
+      "name": "Woodland Satchel",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-satchel.png",
+          "sha256": "8dc7f34433712dca7c401790814c43684cff9b11d2adb9b2605aa4c71e18a057",
+          "bytes": 438684,
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-selection-rim",
+      "name": "Woodland Selection Rim",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-rim",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-selection-rim.png",
+          "sha256": "5bcf88fb0b94d8f8c330017d38af284bda1e9297840aeda53ce2a3aac3f49db7",
+          "bytes": 329273,
+          "width": 1536,
+          "height": 512
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "image.woodland-square-rim",
+      "name": "Woodland Square Rim",
+      "kind": "interface",
+      "tags": [
+        "interface",
+        "woodland-interface"
+      ],
+      "revision": 1,
+      "profile": "interface-rim",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/interface/woodland/woodland-square-rim.png",
+          "sha256": "9180138b2598db6bb95da9b934a60af4b9daab7e7ae8445609420e87a08418c7",
+          "bytes": 172462,
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "render": [],
+      "scenery": []
     }
   ]
 }

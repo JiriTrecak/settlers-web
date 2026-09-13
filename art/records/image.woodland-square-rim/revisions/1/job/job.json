@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "04e962f8-ffaa-4f85-8714-83ce78f6d5e4",
+  "createdAt": "2026-09-12T05:46:28.435Z",
+  "updatedAt": "2026-09-12T05:50:55.687Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "d480bbfc-3a1f-4065-b128-edddee3c63cb",
+    "name": "Woodland Square Rim",
+    "slug": "woodland-square-rim",
+    "category": "interface",
+    "profile": "interface-rim",
+    "width": 512,
+    "height": 512,
+    "opening": {
+      "x": 0.16,
+      "y": 0.16,
+      "width": 0.68,
+      "height": 0.68
+    },
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY a square perimeter frame used for minimap and item slots. Outer bounds x=30 to994,y=30 to994. Organic nearly straight chunky dark wooden branch sides around 40px thick. Corner joins up to70px with small olive leaf accents. Broad square empty center fully transparent and exterior transparent. Uniform visual strength on four sides. No interior grid, no black fill. Practical reusable frame, leaves never invade center.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1024x1024",
+      "quality": "high",
+      "background": "transparent",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "cover",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY a square perimeter frame used for minimap and item slots. Outer bounds x=30 to994,y=30 to994. Organic nearly straight chunky dark wooden branch sides around 40px thick. Corner joins up to70px with small olive leaf accents. Broad square empty center fully transparent and exterior transparent. Uniform visual strength on four sides. No interior grid, no black fill. Practical reusable frame, leaves never invade center.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReal transparent background outside the rim AND inside its opening. Render ONLY the rim.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-square-rim/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-square-rim/revisions/1/job/original-0",
+      "sourceHash": "2fe35fb30a741ddaf5c197095d8d05ea77252f7f1770784cb774e328aab34782",
+      "output": "art/records/image.woodland-square-rim/revisions/1/job/candidate-0.png",
+      "outputHash": "9180138b2598db6bb95da9b934a60af4b9daab7e7ae8445609420e87a08418c7",
+      "errors": [],
+      "warnings": [],
+      "width": 512,
+      "height": 512,
+      "bytes": 172462,
+      "alpha": {
+        "transparent": 208575,
+        "partial": 51190,
+        "opaque": 2379
+      },
+      "approval": "9a873833b0cf46c170f2b4403122d6f6493d8a7025c496e76059616164aed1f8"
+    }
+  ],
+  "requestId": "req_d6d6450f528f4f688be734dd606e19e3",
+  "usage": {
+    "input_tokens": 1731,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 279
+    },
+    "output_tokens": 7024,
+    "output_tokens_details": {
+      "image_tokens": 7024,
+      "text_tokens": 0
+    },
+    "total_tokens": 8755
+  }
+}

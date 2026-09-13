@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "image.woodland-selection-rim",
+  "name": "Woodland Selection Rim",
+  "kind": "interface",
+  "tags": [
+    "interface",
+    "woodland-interface"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-rim",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/woodland-selection-rim.png",
+      "sha256": "5bcf88fb0b94d8f8c330017d38af284bda1e9297840aeda53ce2a3aac3f49db7",
+      "bytes": 329273,
+      "width": 1536,
+      "height": 512
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/image.woodland-selection-rim/revisions/1/source.png",
+    "sha256": "6675ed735c3bbfe03a4751f8ee81116af69f8e45e54f58852f2f6159c3980618",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai",
+    "job": "art/records/image.woodland-selection-rim/revisions/1/job/job.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T05:58:28.108Z",
+    "warnings": []
+  }
+}

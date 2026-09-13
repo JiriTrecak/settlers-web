@@ -36,3 +36,55 @@ describe('provider lifecycle',()=>{
  it('marks interrupted jobs unknown without calling the provider',async()=>{const root=await workspace();await mkdir(path.join(root,'.asset-work/jobs/x'),{recursive:true});await saveJson(path.join(root,'.asset-work/jobs/x/job.json'),{version:1,id:'x',state:'generating',createdAt:'now',updatedAt:'now',request:request(),references:[],candidates:[],prompt:'hello'});const provider=vi.fn(),service=new StudioService(root,provider);await service.init();expect(service.get('x').state).toBe('unknown');expect(provider).not.toHaveBeenCalled();});
  it('sends the exact supported generation parameters without leaking credentials into metadata',async()=>{const root=await workspace(),bytes=await png();let sent:any;const transport=vi.fn(async(_url:any,init:any)=>{sent=JSON.parse(init.body);return new Response(JSON.stringify({data:[{b64_json:bytes.toString('base64')}]}),{status:200,headers:{'x-request-id':'req-test'}});});const input=request({parameters:{background:'transparent',quality:'medium'}});const job:any={request:input,prompt:'actual assembled prompt',references:[]};const result=await openAIProvider(root,transport as typeof fetch)(job,'never-log-this-key',new AbortController().signal,async()=>{});expect(sent.background).toBe('transparent');expect(sent.input_fidelity).toBeUndefined();expect(sent.partial_images).toBeUndefined();expect(JSON.stringify(job)).not.toContain('never-log-this-key');expect(result.requestId).toBe('req-test');});
 });
+
+describe('uploaded style references',()=>{
+ it('validates images locally without a provider request and restores the reusable reference shelf',async()=>{
+  const root=await workspace(),provider=vi.fn(),service=new StudioService(root,provider);await service.init();
+  const bytes=await png(600,300),ref=await service.uploadReference({name:'Interface screenshot.png',data:bytes.toString('base64')});
+  expect(ref.width).toBe(600);expect(ref.height).toBe(300);expect(provider).not.toHaveBeenCalled();expect(await service.library()).toHaveLength(0);
+  expect((await service.image(ref.path)).bytes.equals(bytes)).toBe(true);
+  const reopened=new StudioService(root,provider);await reopened.init();expect(await reopened.references()).toEqual([ref]);
+  await expect(service.uploadReference({name:'bad.png',data:Buffer.from('not an image').toString('base64')})).rejects.toThrow();
+  await expect(service.uploadReference({name:'vector.svg',data:Buffer.from('<svg width="20" height="20"></svg>').toString('base64')})).rejects.toThrow('single-frame');
+  await expect(service.uploadReference({name:'bad.png',data:'%%%'})).rejects.toThrow('encoding');
+ });
+ it('snapshots mixed upload/library references, sends exact bytes to edits, and retains them after publication',async()=>{
+  vi.stubEnv('OPENAI_API_KEY','test-upload-key');const root=await workspace(),original=await png(500,250);let payload:any,endpoint='';
+  const transport=vi.fn(async(url:any,options:any)=>{endpoint=url;payload=JSON.parse(options.body);return new Response(JSON.stringify({data:[{b64_json:(await png()).toString('base64')}]}),{status:200});});
+  const service=new StudioService(root,openAIProvider(root,transport as typeof fetch));await service.init();
+  const imported=await service.create(request(),await png());await service.approve(imported.id,imported.candidates[0].id,imported.candidates[0].outputHash!);await service.publish(imported.id,imported.candidates[0].id);
+  const asset=(await service.library())[0],upload=await service.uploadReference({name:'UI screenshot.png',data:original.toString('base64')});
+  const job=await service.create(request({slug:'uploaded-heart',references:[{source:'upload',id:upload.id,role:'layout'},{source:'library',id:asset.id,role:'style'}]}));
+  await vi.waitFor(()=>expect(job.state).toBe('ready'));
+  expect(endpoint).toBe('https://api.openai.com/v1/images/edits');expect(payload.images).toHaveLength(2);expect(payload.images[0].image_url).toBe('data:image/png;base64,'+original.toString('base64'));expect(job.prompt).toContain('Reference 1: layout');
+  await rm(path.join(root,'.asset-work/references'),{recursive:true});expect((await service.image(job.references[0].path)).bytes.equals(original)).toBe(true);
+  await service.approve(job.id,job.candidates[0].id,job.candidates[0].outputHash!);await service.publish(job.id,job.candidates[0].id);
+  const record=(await service.library()).find(r=>r.id===job.publishedId)!;const retained=JSON.parse(await readFile(path.join(root,record.origin.job!),'utf8'));
+  expect((await readFile(path.join(root,retained.references[0].path))).equals(original)).toBe(true);expect(retained.request.references[0].source).toBe('upload');expect(transport).toHaveBeenCalledTimes(1);
+ });
+ it('rejects missing or modified uploads and the combined 16-reference limit before provider submission',async()=>{
+  vi.stubEnv('OPENAI_API_KEY','test-upload-key');const root=await workspace(),provider=vi.fn(),service=new StudioService(root,provider);await service.init();
+  const ref=await service.uploadReference({name:'UI.png',data:(await png()).toString('base64')});
+  await expect(service.create(request({references:[{source:'upload',id:'../../credentials.local',role:'style'}]}))).rejects.toThrow('Reference');
+  await atomic(path.join(root,ref.path),await png(256,256,'#ffffff'));
+  await expect(service.create(request({references:[{source:'upload',id:ref.id,role:'style'}]}))).rejects.toThrow('changed');
+  expect(()=>request({references:Array.from({length:17},()=>({source:'upload',id:ref.id,role:'style'}))})).toThrow();expect(provider).not.toHaveBeenCalled();
+ });
+});
+
+describe('interface export refinement',()=>{
+ it('adds real transparent padding while preserving the requested final dimensions',async()=>{
+  const root=await workspace();await atomic(path.join(root,'source'),await png());
+  const c=await processImage(root,'source','out.png',request({transform:{padding:8}}));
+  expect([c.width,c.height]).toEqual([128,128]);expect(c.alpha!.transparent).toBe(128*128-112*112);
+  expect(()=>request({transform:{padding:64}})).toThrow('Padding');
+ });
+ it('revises export dimensions and opening from originals, invalidates approval and rejects unrelated edits',async()=>{
+  const root=await workspace(),service=new StudioService(root);await service.init();
+  const job=await service.create(request({profile:'interface-image',category:'interface'}),await png(512,256));const c=job.candidates[0];await service.approve(job.id,c.id,c.outputHash!);
+  await service.process(job.id,c.id,{padding:4,fit:'contain'},{width:256,height:128});
+  expect([job.candidates[0].width,job.candidates[0].height]).toEqual([256,128]);expect(job.candidates[0].approval).toBeUndefined();
+  await expect(service.process(job.id,c.id,{}, {slug:'silently-change-destination'})).rejects.toThrow();
+  await expect(service.publish(job.id,c.id)).rejects.toThrow('Approve');
+ });
+});

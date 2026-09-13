@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "777627b1-6ffa-4837-8688-07d02a6434c1",
+  "createdAt": "2026-09-12T05:46:29.214Z",
+  "updatedAt": "2026-09-12T05:58:29.805Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "39167c80-7c92-4ab9-85ed-39cef8351d2e",
+    "name": "Woodland Mana Fill",
+    "slug": "woodland-mana-fill",
+    "category": "interface",
+    "profile": "interface-fill",
+    "width": 768,
+    "height": 128,
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. A single luminous deep cobalt-blue mana-energy fill texture, ENTIRE canvas edge-to-edge opaque. No frame or margins. Deep rich sapphire at left transitioning to luminous azure at right. Fine magical liquid turbulence, tiny blue speckles, subdued wisps, horizontal flow, stronger luminous highlights along upper quarter and darker lower quarter. Legible white numeric text will later overlay center. No distinct objects or symbols. This is the BLUE MANA BAR FILL only.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1536x512",
+      "quality": "high",
+      "background": "opaque",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "cover",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. A single luminous deep cobalt-blue mana-energy fill texture, ENTIRE canvas edge-to-edge opaque. No frame or margins. Deep rich sapphire at left transitioning to luminous azure at right. Fine magical liquid turbulence, tiny blue speckles, subdued wisps, horizontal flow, stronger luminous highlights along upper quarter and darker lower quarter. Legible white numeric text will later overlay center. No distinct objects or symbols. This is the BLUE MANA BAR FILL only.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-mana-fill/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-mana-fill/revisions/1/job/original-0",
+      "sourceHash": "81abfcdd9e6167fc906c9f5063d798413375e81942d575b0d540fb2d8ef6bc76",
+      "output": "art/records/image.woodland-mana-fill/revisions/1/job/candidate-0.png",
+      "outputHash": "2c725158fe5d0a9dfca8fd979b0d347d25804e2f61c4fddf69589ebdad3ae1dd",
+      "errors": [],
+      "warnings": [],
+      "width": 768,
+      "height": 128,
+      "bytes": 193332,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 98304
+      },
+      "approval": "b20517beb6f53a694ca463a242902a817b1bc824cb040b618ad80139ca997c57"
+    }
+  ],
+  "requestId": "req_0355b57fe815427c99480895a6ee201e",
+  "usage": {
+    "input_tokens": 1720,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 268
+    },
+    "output_tokens": 2140,
+    "output_tokens_details": {
+      "image_tokens": 2140,
+      "text_tokens": 0
+    },
+    "total_tokens": 3860
+  }
+}

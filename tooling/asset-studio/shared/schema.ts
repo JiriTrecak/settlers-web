@@ -23,7 +23,7 @@ export const generationSchema=z.object({model:z.enum(['gpt-image-2','gpt-image-2
  if(v.output_compression!==undefined&&v.output_format==='png')ctx.addIssue({code:'custom',message:'PNG does not accept output_compression.'});
  if(!v.stream&&v.partial_images)ctx.addIssue({code:'custom',message:'Partial previews require streaming.'});
 });
-export const transformSchema=z.object({fit:z.enum(['contain','cover']).default('contain'),background:z.string().regex(/^#[a-fA-F0-9]{6}(?:[a-fA-F0-9]{2})?$/).default('#00000000'),crop:z.object({left:z.number().int().nonnegative(),top:z.number().int().nonnegative(),width:z.number().int().positive(),height:z.number().int().positive()}).optional()}).strict();
+export const transformSchema=z.object({fit:z.enum(['contain','cover']).default('contain'),padding:z.number().int().min(0).max(256).optional(),background:z.string().regex(/^#[a-fA-F0-9]{6}(?:[a-fA-F0-9]{2})?$/).default('#00000000'),crop:z.object({left:z.number().int().nonnegative(),top:z.number().int().nonnegative(),width:z.number().int().positive(),height:z.number().int().positive()}).optional()}).strict();
 export const jobRequestSchema=z.object({
  submissionId:z.string().uuid(),name:z.string().min(1).max(100),slug:z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
  category:z.enum(['item','command','unit-ants','building-ants','resource','stat','ability-ants','research-ants','interface']),
@@ -31,11 +31,14 @@ export const jobRequestSchema=z.object({
  width:z.number().int().min(16).max(4096).default(128),height:z.number().int().min(16).max(4096).default(128),
  opening:z.object({x:z.number().min(0).max(1),y:z.number().min(0).max(1),width:z.number().positive().max(1),height:z.number().positive().max(1)}).optional(),
  style:z.string().default('painted-items'),prompt:z.string().min(1).max(24000),
- references:z.array(z.object({id:z.string(),role:z.enum(['style','subject','layout'])})).max(16).default([]),
+ references:z.array(z.object({id:z.string(),source:z.enum(['library','upload']).optional(),role:z.enum(['style','subject','layout'])})).max(16).default([]),
  replaceId:z.string().optional(),expectedRevision:z.number().int().positive().optional(),
  parameters:generationSchema,transform:transformSchema.default({fit:'contain',background:'#00000000'}),
-}).strict().superRefine((v,c)=>{if(v.profile==='icon'&&(v.width!==imageProfiles.icon.width||v.height!==imageProfiles.icon.height))c.addIssue({code:'custom',message:'Icons publish at exactly 128 × 128.'});if(v.profile==='interface-rim'&&!v.opening)c.addIssue({code:'custom',message:'Rims require a transparent opening rectangle.'});if(v.opening&&(v.opening.x+v.opening.width>1||v.opening.y+v.opening.height>1))c.addIssue({code:'custom',message:'Opening extends outside image.'});});
+}).strict().superRefine((v,c)=>{if((v.transform.padding??0)*2>=Math.min(v.width,v.height))c.addIssue({code:'custom',message:'Padding must leave space for the image.'});if(v.profile==='icon'&&(v.width!==imageProfiles.icon.width||v.height!==imageProfiles.icon.height))c.addIssue({code:'custom',message:'Icons publish at exactly 128 × 128.'});if(v.profile==='interface-rim'&&!v.opening)c.addIssue({code:'custom',message:'Rims require a transparent opening rectangle.'});if(v.opening&&(v.opening.x+v.opening.width>1||v.opening.y+v.opening.height>1))c.addIssue({code:'custom',message:'Opening extends outside image.'});});
 export type JobRequest=z.infer<typeof jobRequestSchema>;
 export type Candidate={id:string;source:string;sourceHash:string;output?:string;outputHash?:string;approval?:string;errors:string[];warnings:string[];width?:number;height?:number;bytes?:number;alpha?:{transparent:number;partial:number;opaque:number}};
 export type Job={version:1;method?:'import'|'openai';id:string;createdAt:string;updatedAt:string;state:'draft'|'queued'|'generating'|'ready'|'failed'|'unknown'|'canceled'|'published';request:JobRequest;prompt:string;references:{id:string;role:string;revision:number;sha256:string;path:string}[];candidates:Candidate[];mask?:{path:string;sha256:string};error?:string;requestId?:string;usage?:unknown;publishedId?:string};
 export type Style={id:string;name:string;description:string;references:string[]};
+export type UploadedReference={id:string;name:string;path:string;sha256:string;bytes:number;width:number;height:number};
+
+export const exportEditSchema=z.object({width:z.number().int().min(16).max(4096).optional(),height:z.number().int().min(16).max(4096).optional(),opening:z.object({x:z.number().min(0).max(1),y:z.number().min(0).max(1),width:z.number().positive().max(1),height:z.number().positive().max(1)}).optional()}).strict();

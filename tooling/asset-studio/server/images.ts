@@ -9,12 +9,13 @@ export async function processImage(root:string,source:string,destination:string,
  const decoder=sharp(original,{limitInputPixels:40_000_000,failOn:'error'}),meta=await decoder.metadata();
  if(!['png','jpeg','webp'].includes(meta.format||''))throw Error('Use PNG, JPEG or WebP.');
  if((meta.pages??1)>1)throw Error('Animated images are not supported.');
- const crop=request.transform.crop;
+ const crop=request.transform.crop,padding=request.transform.padding??0;
+ if(padding*2>=Math.min(request.width,request.height))throw Error("Padding must leave space for the image.");
  const width=crop?.width??meta.width!,height=crop?.height??meta.height!;
  if(width<request.width||height<request.height)throw Error('Source is smaller than the export. Upscaling is not allowed.');
  let pipeline=decoder.rotate().toColourspace('srgb');
  if(crop)pipeline=pipeline.extract(crop);
- const data=await pipeline.resize(request.width,request.height,{fit:request.transform.fit,background:request.transform.background,kernel:sharp.kernel.lanczos3,withoutEnlargement:true}).png({compressionLevel:9,palette:false}).toBuffer();
+ const data=await pipeline.resize(request.width-padding*2,request.height-padding*2,{fit:request.transform.fit,background:request.transform.background,kernel:sharp.kernel.lanczos3,withoutEnlargement:true}).extend({top:padding,bottom:padding,left:padding,right:padding,background:'#00000000'}).png({compressionLevel:9,palette:false}).toBuffer();
  const {data:pixels,info}=await sharp(data).ensureAlpha().raw().toBuffer({resolveWithObject:true});
  const errors:string[]=[],warnings:string[]=[];let transparent=0,partial=0,opaque=0,openingPixels=0,openingBad=0,edgeBad=0,edges=0;
  for(let y=0;y<info.height;y++)for(let x=0;x<info.width;x++){

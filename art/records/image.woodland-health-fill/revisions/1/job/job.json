@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "d796bb9e-54b7-4c27-9d2d-4731997e5c89",
+  "createdAt": "2026-09-12T05:46:28.957Z",
+  "updatedAt": "2026-09-12T05:58:29.144Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "a94eb706-be9b-4eb4-9273-1545347b3fa9",
+    "name": "Woodland Health Fill",
+    "slug": "woodland-health-fill",
+    "category": "interface",
+    "profile": "interface-fill",
+    "width": 768,
+    "height": 128,
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. A single luminous forest-green vital-energy fill texture, ENTIRE canvas edge-to-edge opaque. No frame or margins. Rich emerald left gradually transitioning to golden spring green right. Fine liquid sap turbulence with tiny flecks and leaf vein wisps, subdued details, horizontal flow, stronger luminous highlights along upper quarter and darker lower quarter, high quality fantasy painted texture. Legible white numeric text will later overlay its center. No distinct objects or symbols. This is the green HEALTH BAR FILL only.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1536x512",
+      "quality": "high",
+      "background": "opaque",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "cover",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. A single luminous forest-green vital-energy fill texture, ENTIRE canvas edge-to-edge opaque. No frame or margins. Rich emerald left gradually transitioning to golden spring green right. Fine liquid sap turbulence with tiny flecks and leaf vein wisps, subdued details, horizontal flow, stronger luminous highlights along upper quarter and darker lower quarter, high quality fantasy painted texture. Legible white numeric text will later overlay its center. No distinct objects or symbols. This is the green HEALTH BAR FILL only.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-health-fill/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-health-fill/revisions/1/job/original-0",
+      "sourceHash": "9a53b192cdeb1736285f94f8adfba8e35b1c3675de0c98f7ba93d14a644cf86c",
+      "output": "art/records/image.woodland-health-fill/revisions/1/job/candidate-0.png",
+      "outputHash": "24815f4d8f16bdeaecd53d1a1529a3ee4b26b09ca25aa3714451df0681b9ac59",
+      "errors": [],
+      "warnings": [],
+      "width": 768,
+      "height": 128,
+      "bytes": 232384,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 98304
+      },
+      "approval": "24c063b70f6f73374dadcd3e946c4a7360bebe8f8cc14b01ca46907ac27856b5"
+    }
+  ],
+  "requestId": "req_45465c9fac214e83bbcfb3466dd02006",
+  "usage": {
+    "input_tokens": 1727,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 275
+    },
+    "output_tokens": 2140,
+    "output_tokens_details": {
+      "image_tokens": 2140,
+      "text_tokens": 0
+    },
+    "total_tokens": 3867
+  }
+}

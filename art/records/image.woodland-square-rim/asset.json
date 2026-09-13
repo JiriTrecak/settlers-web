@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "id": "image.woodland-square-rim",
+  "name": "Woodland Square Rim",
+  "kind": "interface",
+  "tags": [
+    "interface",
+    "woodland-interface"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "interface-rim",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/interface/woodland/woodland-square-rim.png",
+      "sha256": "9180138b2598db6bb95da9b934a60af4b9daab7e7ae8445609420e87a08418c7",
+      "bytes": 172462,
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/records/image.woodland-square-rim/revisions/1/source.png",
+    "sha256": "2fe35fb30a741ddaf5c197095d8d05ea77252f7f1770784cb774e328aab34782",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai",
+    "job": "art/records/image.woodland-square-rim/revisions/1/job/job.json"
+  },
+  "validation": {
+    "checkedAt": "2026-09-12T05:50:56.017Z",
+    "warnings": []
+  }
+}

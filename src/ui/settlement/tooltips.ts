@@ -46,16 +46,15 @@ export class CommandTooltips {
     }
     this.box.replaceChildren(name, costs, description);
     this.box.hidden = false;
-    // Commands and resource badges share a shelf above the resource strip.
+    // Commands sit above their grid; top resource badges open their tooltip below.
     const actions = target.closest<HTMLElement>(".rts-actions");
     const grid = actions?.querySelector<HTMLElement>(".rts-command-grid");
-    const resources = actions?.querySelector<HTMLElement>(".rts-resources:not([hidden])");
     const rect = (grid ?? target).getBoundingClientRect();
-    const shelfTop = Math.min(rect.top, resources?.getBoundingClientRect().top ?? rect.top);
+    const shelfTop = rect.top;
     this.box.style.width = grid ? `${rect.width}px` : "320px";
     const height = this.box.offsetHeight, width = this.box.offsetWidth;
     this.box.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, grid ? rect.left : rect.right - width))}px`;
-    this.box.style.top = `${grid ? Math.max(8, shelfTop - height - 12) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
+    this.box.style.top = `${grid ? Math.max(8, shelfTop - height - 20) : rect.top > height + 32 ? rect.top - height - 30 : Math.min(innerHeight - height - 8, rect.bottom + 10)}px`;
 
   };
   refresh(target: HTMLElement) {

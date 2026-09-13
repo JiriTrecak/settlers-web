@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "bd33c6f8-3d06-49cd-9d73-c6fbeb45e410",
+  "createdAt": "2026-09-12T05:46:29.511Z",
+  "updatedAt": "2026-09-12T05:58:30.450Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "3adac835-a000-4cf3-a350-730cab9d42ee",
+    "name": "Woodland Satchel",
+    "slug": "woodland-satchel",
+    "category": "interface",
+    "profile": "interface-image",
+    "width": 512,
+    "height": 512,
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. One modest empty dark umber natural leather satchel backing for a four-slot inventory. Front-on square open worn leather bag silhouette, soft stitched leather folds and small wooden toggle near top. Near-black suede center kept plain, no pockets dividing center, no items, no grid. Bag fits within x=80..944 y=80..944. Low-contrast desaturated brown, restrained rim highlights: the inventory icons added later must dominate. Transparent exterior background.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1024x1024",
+      "quality": "high",
+      "background": "transparent",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "cover",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. One modest empty dark umber natural leather satchel backing for a four-slot inventory. Front-on square open worn leather bag silhouette, soft stitched leather folds and small wooden toggle near top. Near-black suede center kept plain, no pockets dividing center, no items, no grid. Bag fits within x=80..944 y=80..944. Low-contrast desaturated brown, restrained rim highlights: the inventory icons added later must dominate. Transparent exterior background.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-satchel/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-satchel/revisions/1/job/original-0",
+      "sourceHash": "56007b817d557d3ec976955af3719fcab40876e8b9f0883972e641db8865bff6",
+      "output": "art/records/image.woodland-satchel/revisions/1/job/candidate-0.png",
+      "outputHash": "8dc7f34433712dca7c401790814c43684cff9b11d2adb9b2605aa4c71e18a057",
+      "errors": [],
+      "warnings": [],
+      "width": 512,
+      "height": 512,
+      "bytes": 438684,
+      "alpha": {
+        "transparent": 80292,
+        "partial": 180637,
+        "opaque": 1215
+      },
+      "approval": "2d542ad0611ecdfc152056003374b9af49454992d96f5f330de1fde3e8676c9b"
+    }
+  ],
+  "requestId": "req_400ca16da1364b72ba5de16b3746330a",
+  "usage": {
+    "input_tokens": 1721,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 269
+    },
+    "output_tokens": 7024,
+    "output_tokens_details": {
+      "image_tokens": 7024,
+      "text_tokens": 0
+    },
+    "total_tokens": 8745
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "651078ca-1b84-458e-981b-cf143816917f",
+  "createdAt": "2026-09-12T06:48:06.151Z",
+  "updatedAt": "2026-09-12T06:50:18.184Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "a4c0967a-e421-409e-8fff-9764da68888f",
+    "name": "Woodland Connected HUD",
+    "slug": "woodland-connected-hud",
+    "category": "interface",
+    "profile": "interface-image",
+    "width": 2160,
+    "height": 720,
+    "style": "woodland-interface",
+    "prompt": "Use case: precise-object-edit / background-extraction.\nInput image 1 is the approved HUD to edit. Preserve its exact connected layout, proportions, outline, bark branches, amber resin knots, lush stylized olive leaves, shading, and fine painted detail. Do not redesign it.\nMake ONLY these changes:\n1. Replace ALL checkerboard outside the outer wooden/leaf HUD silhouette with actual transparent alpha. No baked checkerboard, white background, gray background, or opaque rectangle. Preserve clean antialiased leaf and twig edges.\n2. Remove the illustrated forest map from the LEFT minimap opening and replace it with the SAME opaque subtle near-black charcoal textured background used in the large middle panel and command cells. Keep its wooden frame unchanged.\nKeep the middle panel completely solid opaque dark textured charcoal, one uninterrupted interior with NO divider. Keep all twelve command-cell interiors opaque dark charcoal, with the exact FOUR columns and THREE rows. Keep every existing branch and resin grid separator. The minimap, middle panel and all twelve cells must have matching dark background texture and brightness. Do NOT make any of these interiors transparent.\nThe entire HUD must be visible with clear transparent margins on all four sides. Maintain the exact wide 3:1 canvas composition of the supplied image. No text, icons, maps, portraits, symbols, health bars or new decoration. This is a production game UI PNG, with transparency ONLY outside the silhouette.",
+    "references": [
+      {
+        "id": "7eb5e7eb-f4dd-428a-b3f2-d1f68ba226c5",
+        "source": "upload",
+        "role": "layout"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "2304x768",
+      "quality": "high",
+      "background": "transparent",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "contain",
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Use case: precise-object-edit / background-extraction.\nInput image 1 is the approved HUD to edit. Preserve its exact connected layout, proportions, outline, bark branches, amber resin knots, lush stylized olive leaves, shading, and fine painted detail. Do not redesign it.\nMake ONLY these changes:\n1. Replace ALL checkerboard outside the outer wooden/leaf HUD silhouette with actual transparent alpha. No baked checkerboard, white background, gray background, or opaque rectangle. Preserve clean antialiased leaf and twig edges.\n2. Remove the illustrated forest map from the LEFT minimap opening and replace it with the SAME opaque subtle near-black charcoal textured background used in the large middle panel and command cells. Keep its wooden frame unchanged.\nKeep the middle panel completely solid opaque dark textured charcoal, one uninterrupted interior with NO divider. Keep all twelve command-cell interiors opaque dark charcoal, with the exact FOUR columns and THREE rows. Keep every existing branch and resin grid separator. The minimap, middle panel and all twelve cells must have matching dark background texture and brightness. Do NOT make any of these interiors transparent.\nThe entire HUD must be visible with clear transparent margins on all four sides. Maintain the exact wide 3:1 canvas composition of the supplied image. No text, icons, maps, portraits, symbols, health bars or new decoration. This is a production game UI PNG, with transparency ONLY outside the silhouette.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReference 1: layout. Follow its arrangement and proportions.",
+  "references": [
+    {
+      "id": "7eb5e7eb-f4dd-428a-b3f2-d1f68ba226c5",
+      "role": "layout",
+      "revision": 1,
+      "sha256": "2eae2fbf3c16b3aefd57cc5de00bf99244e608bf6e404e006475229b3546a08a",
+      "path": "art/records/image.woodland-connected-hud/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-connected-hud/revisions/1/job/original-0",
+      "sourceHash": "c815ee0eb63861564fdbaf43353ae40ffa466043324e46256f0f0ffd46d89706",
+      "output": "art/records/image.woodland-connected-hud/revisions/1/job/candidate-0.png",
+      "outputHash": "6f1ae313757adc1d33c2005c618feb7263969401cde6984ce08e179944184281",
+      "errors": [],
+      "warnings": [],
+      "width": 2160,
+      "height": 720,
+      "bytes": 2077750,
+      "alpha": {
+        "transparent": 598082,
+        "partial": 956546,
+        "opaque": 572
+      },
+      "approval": "7d425e79366db394b79a3bc99119abdd170a88a5cde8709db9f2c9bed2fb1128"
+    }
+  ],
+  "requestId": "req_1e2844beb9bf4d9683d390ee07acd70e",
+  "usage": {
+    "input_tokens": 1804,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 352
+    },
+    "output_tokens": 2895,
+    "output_tokens_details": {
+      "image_tokens": 2895,
+      "text_tokens": 0
+    },
+    "total_tokens": 4699
+  }
+}

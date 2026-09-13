@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "8354c911-0d57-4935-a73c-62fd927657df",
+  "createdAt": "2026-09-12T05:46:07.939Z",
+  "updatedAt": "2026-09-12T05:58:27.782Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "f0f40cfa-df39-4c24-b4fd-465c7e152be2",
+    "name": "Woodland Selection Rim",
+    "slug": "woodland-selection-rim",
+    "category": "interface",
+    "profile": "interface-rim",
+    "width": 1536,
+    "height": 512,
+    "opening": {
+      "x": 0.08,
+      "y": 0.4,
+      "width": 0.84,
+      "height": 0.42
+    },
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY the perimeter rim of the central wide selection panel in the reference. Use the ENTIRE 1536 by 512 canvas: outer bounds x=20 to1516, bottom y=492. Lower left and right wings have flat tops at y=160. The central third rises into a graceful broad arch peaking y=20; shoulder transitions near x=490 and1046. The left and right wing tops connect seamlessly to the central arch. ONE continuous unified opening, no vertical partitions. Bark branch thickness about 16 pixels, chunky carved joints up to 30 pixels, a few olive leaves only at corners and crown. All empty interior AND all exterior fully alpha transparent. Body is not filled black. Perimeter alone. Asymmetric subtle leaves but balanced structure.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1536x512",
+      "quality": "high",
+      "background": "transparent",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "contain",
+      "padding": 12,
+      "background": "#00000000"
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY the perimeter rim of the central wide selection panel in the reference. Use the ENTIRE 1536 by 512 canvas: outer bounds x=20 to1516, bottom y=492. Lower left and right wings have flat tops at y=160. The central third rises into a graceful broad arch peaking y=20; shoulder transitions near x=490 and1046. The left and right wing tops connect seamlessly to the central arch. ONE continuous unified opening, no vertical partitions. Bark branch thickness about 16 pixels, chunky carved joints up to 30 pixels, a few olive leaves only at corners and crown. All empty interior AND all exterior fully alpha transparent. Body is not filled black. Perimeter alone. Asymmetric subtle leaves but balanced structure.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReal transparent background outside the rim AND inside its opening. Render ONLY the rim.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-selection-rim/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-selection-rim/revisions/1/job/original-0",
+      "sourceHash": "6675ed735c3bbfe03a4751f8ee81116af69f8e45e54f58852f2f6159c3980618",
+      "output": "art/records/image.woodland-selection-rim/revisions/1/job/candidate-0.png",
+      "outputHash": "5bcf88fb0b94d8f8c330017d38af284bda1e9297840aeda53ce2a3aac3f49db7",
+      "errors": [],
+      "warnings": [],
+      "width": 1536,
+      "height": 512,
+      "bytes": 329273,
+      "alpha": {
+        "transparent": 668359,
+        "partial": 116975,
+        "opaque": 1098
+      },
+      "approval": "e5f5abd03bca6631143d6314a5c0c8eba18fc148954d7a522390f7eb7fa29829"
+    }
+  ],
+  "requestId": "req_465321fedd914798b241fcac2065ffcb",
+  "usage": {
+    "input_tokens": 1800,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 348
+    },
+    "output_tokens": 2140,
+    "output_tokens_details": {
+      "image_tokens": 2140,
+      "text_tokens": 0
+    },
+    "total_tokens": 3940
+  }
+}

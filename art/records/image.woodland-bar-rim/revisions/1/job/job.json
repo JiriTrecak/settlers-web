@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "method": "openai",
+  "id": "58f64cbb-4a59-45e4-a168-a390ab0e6bb3",
+  "createdAt": "2026-09-12T05:46:28.696Z",
+  "updatedAt": "2026-09-12T05:58:28.487Z",
+  "state": "ready",
+  "request": {
+    "submissionId": "8bd683cb-455b-4fa7-bfc1-6fbcaf3a9d07",
+    "name": "Woodland Bar Rim",
+    "slug": "woodland-bar-rim",
+    "category": "interface",
+    "profile": "interface-rim",
+    "width": 768,
+    "height": 160,
+    "opening": {
+      "x": 0.12,
+      "y": 0.3,
+      "width": 0.76,
+      "height": 0.4
+    },
+    "style": "woodland-interface",
+    "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY a simple horizontal rectangular bark perimeter frame. Outer bounds 24,40 to1512,472. Branch rails around20 pixels thick, rectangular empty transparent interior, straight parallel top/bottom rails. Small faceted amber knot centered on each short end and restrained olive corner leaves. This border will be sliced to make long slender health/mana bars, resource strip and new-spell button: keep long rails simple repeatable straight bark; all decorations confined to corners and short ends. No content or black fill.",
+    "references": [
+      {
+        "id": "196106ec-ada7-480e-a493-923166a3a350",
+        "source": "upload",
+        "role": "style"
+      }
+    ],
+    "parameters": {
+      "model": "gpt-image-2",
+      "size": "1536x512",
+      "quality": "high",
+      "background": "transparent",
+      "output_format": "png",
+      "n": 1,
+      "moderation": "auto",
+      "stream": false,
+      "partial_images": 0
+    },
+    "transform": {
+      "fit": "contain",
+      "padding": 2,
+      "background": "#00000000",
+      "crop": {
+        "left": 0,
+        "top": 24,
+        "width": 1536,
+        "height": 320
+      }
+    }
+  },
+  "prompt": "Create a production game UI texture, not a mockup. Match the supplied woodland ant RTS interface: dimensional warm dark bark, hand-carved irregular branches, ochre cut edges, tiny amber knots, a few olive leaves, restrained warm highlights. Chonky believable craftsmanship with readable clear silhouette; no wispy vines, no gold metal filigree. Straight-on screen view, no perspective. No text, portraits, icons, numbers or scenery. True alpha transparency, never a checkerboard painted into the image. ONLY a simple horizontal rectangular bark perimeter frame. Outer bounds 24,40 to1512,472. Branch rails around20 pixels thick, rectangular empty transparent interior, straight parallel top/bottom rails. Small faceted amber knot centered on each short end and restrained olive corner leaves. This border will be sliced to make long slender health/mana bars, resource strip and new-spell button: keep long rails simple repeatable straight bark; all decorations confined to corners and short ends. No content or black fill.\n\nHandcrafted ant-colony interface: detailed gnarled twigs, small leaves, amber bindings, subtly weathered wood. Restrained decoration so game information stays dominant.\n\nUI component only. Do not paint text, numbers, icons or game scenery.\n\nReal transparent background outside the rim AND inside its opening. Render ONLY the rim.\n\nReference 1: style. Use material, lighting and paint treatment, not its subject.",
+  "references": [
+    {
+      "id": "196106ec-ada7-480e-a493-923166a3a350",
+      "role": "style",
+      "revision": 1,
+      "sha256": "40ef8f42f8aefbf8741011929589a5d8a36216806676966bd95f48453b446d23",
+      "path": "art/records/image.woodland-bar-rim/revisions/1/job/reference-0.png"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-0",
+      "source": "art/records/image.woodland-bar-rim/revisions/1/job/original-0",
+      "sourceHash": "099b4b467ac6f51aaaee7eb43554cf00ad238c12dfc485d18f08d85e98f8bcbc",
+      "output": "art/records/image.woodland-bar-rim/revisions/1/job/candidate-0.png",
+      "outputHash": "f55ff14de01adf9a50e27dd6c6ddece464c08a9c76bb05baf363df3dfa2907ae",
+      "errors": [],
+      "warnings": [],
+      "width": 768,
+      "height": 160,
+      "bytes": 78667,
+      "alpha": {
+        "transparent": 95266,
+        "partial": 25411,
+        "opaque": 2203
+      },
+      "approval": "5756411629392729310cc1f0753a2b84f31deed512b299e572505bb68cbc4e90"
+    }
+  ],
+  "requestId": "req_b0ffe7872f654b98ad65ecba70d83678",
+  "usage": {
+    "input_tokens": 1747,
+    "input_tokens_details": {
+      "image_tokens": 1452,
+      "text_tokens": 295
+    },
+    "output_tokens": 2140,
+    "output_tokens_details": {
+      "image_tokens": 2140,
+      "text_tokens": 0
+    },
+    "total_tokens": 3887
+  }
+}

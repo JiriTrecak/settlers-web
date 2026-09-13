@@ -329,9 +329,6 @@ export class Session {
       },
     });
     if(map.mission) this.missionHud=new MissionHud(this.config.host,()=>this.config.hooks.onMissionLeave?.());
-    this.economyHud.setMapName(
-      this.observing ? "Observing · " + map.name : map.name,
-    );
     this.canvas.addEventListener("pointermove", this.onHover);
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
