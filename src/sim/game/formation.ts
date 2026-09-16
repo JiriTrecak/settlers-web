@@ -15,7 +15,7 @@ export function formationDestinations(members:readonly Member[], destination:Poi
   const maxSpan=Math.ceil(Math.sqrt(actors.length))*2;
   if(width*height<=actors.length*2&&width<=maxSpan&&height<=maxSpan){
    const center={x:Math.round(actors.reduce((sum,a)=>sum+a.x,0)/actors.length),y:Math.round(actors.reduce((sum,a)=>sum+a.y,0)/actors.length)};
-   const translated=rounded.map(p=>({x:p.x+destination.x-center.x,y:p.y+destination.y-center.y}));
+   const translated=rounded.map(p=>({x:p.x+destination.x-center.x,y:p.y+destination.y-center.y,...(destination.surface?{surface:destination.surface}:{})}));
    if(new Set(translated.map(p=>p.y*size+p.x)).size===actors.length&&translated.every((p,i)=>
     p.x>=0&&p.y>=0&&p.x<size&&p.y<size&&walkable(p)&&straight(actors[i],p))){
     actors.forEach((a,i)=>result.set(a.id,translated[i]));return result;
@@ -27,7 +27,7 @@ export function formationDestinations(members:readonly Member[], destination:Poi
  for(let radius=0;slots.length<members.length && radius<=searchRadius;radius++){
   const ring:Point[]=[];
   const consider=(x:number,y:number)=>{
-   const p={x:destination.x+x,y:destination.y+y};
+   const p={x:destination.x+x,y:destination.y+y,...(destination.surface?{surface:destination.surface}:{})};
    if(p.x>=0&&p.y>=0&&p.x<size&&p.y<size&&walkable(p))ring.push(p);
   };
   if(radius===0)consider(0,0);

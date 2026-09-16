@@ -83,6 +83,7 @@ export class GameContext {
     return alive(e) && e.readyTick <= this.state.tick;
   }
   create(p: Placement, complete = true): Entity {
+    if(!this.spatial.validPoint(p.position))throw new Error("Placement is not on a declared walk surface");
     const d = this.registry.get(p.definition),
       initial = p.initialState,
       e: Entity = {
@@ -93,12 +94,14 @@ export class GameContext {
         owner: p.owner,
         x: p.position.x,
         y: p.position.y,
+        ...(p.position.surface?{surface:p.position.surface}:{}),
         rotation: p.rotation,
         hp: d.body ? (initial?.health ?? d.body.maxHp) : null,
         inventory: { ...initial?.inventory },
         ...(p.appearance ? { appearance: { ...p.appearance } } : {}),
       };
     if (d.kind === "unit") { e.unit = this.freshUnit(); e.regeneration = { health: 0, mana: 0 }; }
+    if (d.behaviors.progression) e.progression = { experience: initial?.experience ?? 0 };
     if (d.behaviors.spellcasting)
       e.spellcasting = {
         mana: this.stats(e).maxMana,
@@ -106,7 +109,6 @@ export class GameContext {
         cooldowns: {},
         pending: null,
       };
-    if (d.behaviors.progression) e.progression = { experience: 0 };
     if (d.behaviors.inventory)
       e.equipment = Array(d.behaviors.inventory.slots).fill(null);
     if (d.kind === "building" && !complete) {
@@ -214,6 +216,7 @@ export class GameContext {
     if (pos) {
       e.x = pos.x;
       e.y = pos.y;
+      if(pos.surface)e.surface=pos.surface;else delete e.surface;
       e.unit.release = null;
     } else e.unit.release = { ...at };
   }
@@ -240,6 +243,7 @@ export class GameContext {
         if (p) {
           e.x = p.x;
           e.y = p.y;
+          if(p.surface)e.surface=p.surface;else delete e.surface;
           u.position = null;
           u.segment = null;
           u.release = null;
@@ -279,7 +283,7 @@ export class GameContext {
         // the facing gate for the actual next leg.
         while (u.route.length) {
           const anchor = fixed(this.spatial.point(u.route[0]));
-          if (anchor.x !== u.position.x || anchor.y !== u.position.y) break;
+          if (anchor.x !== u.position.x || anchor.y !== u.position.y || anchor.surface!==u.position.surface) break;
           u.route.shift();
           u.segment = null;
         }
@@ -289,10 +293,7 @@ export class GameContext {
         while (budget > 0 && u.route.length) {
           const current: FixedPoint = u.position!;
           const next = u.route[0],
-            goal = fixed({
-              x: next % this.spatial.size,
-              y: Math.floor(next / this.spatial.size),
-            });
+            goal = fixed(this.spatial.point(next));
           if (!u.segment || u.segment.to !== next) {
             const length = lengthCeil(goal.x - current.x, goal.y - current.y);
             if (!length) {
@@ -321,6 +322,7 @@ export class GameContext {
                       ((goal.y - segment.from.y) * progress) / segment.length,
                     ),
                 };
+          this.spatial.adoptSurface(current,proposed,goal);
           if (!this.spatial.clearSegment(current, proposed)) {
             u.route = [];
             u.segment = null;
@@ -334,10 +336,7 @@ export class GameContext {
             if (this.state.tick >= u.retryAt && u.goal !== null) {
               const request=(requests??=trafficRequests(this,units)).get(e.id);
               if(request&&this.beginTrafficYield(e,request,occupied))break;
-              const desired = {
-                x: u.goal % this.spatial.size,
-                y: Math.floor(u.goal / this.spatial.size),
-              };
+              const desired = this.spatial.point(u.goal);
               const target = this.spatial.nearest(desired, 3, e.id);
               if (units.some(b => b.id !== e.id && b.owner === e.owner && !b.unit!.route.length && Math.hypot(b.x-e.x, b.y-e.y) <= 2) &&
                 this.beginLocalDetour(e, units, target)) break;
@@ -362,7 +361,7 @@ export class GameContext {
                     { x: e.x - 1, y: e.y },
                     { x: e.x + 1, y: e.y },
                     { x: e.x, y: e.y + 1 },
-                  ].find(
+                  ].map(p=>({...p,...(e.surface?{surface:e.surface}:{})})).find(
                     (p) =>
                       this.spatial.free(p, e.id) &&
                       this.spatial.clearSegment(
@@ -386,6 +385,7 @@ export class GameContext {
           if(proposed.x!==current.x||proposed.y!==current.y)u.lastMovedTick=this.state.tick;
           segment.progress = progress;
           u.position = proposed;
+          if(proposed.surface)e.surface=proposed.surface;else delete e.surface;
           const index = motionCell(proposed, this.spatial.size);
           e.x = index % this.spatial.size;
           e.y = Math.floor(index / this.spatial.size);
@@ -432,7 +432,7 @@ export class GameContext {
     const reservations=this.localReservations(e,units), edge=(this.spatial.size-1)*POSITION_SCALE;
     const projected={x:current.x/1000+dx/distance*3,y:current.y/1000+dy/distance*3};
     const center={x:Math.round(projected.x),y:Math.round(projected.y)};
-    const candidates=distance<=4 ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x,y:center.y+y})))
+    const candidates=distance<=4 ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
       .sort((a,b)=>(a.x-projected.x)**2+(a.y-projected.y)**2-((b.x-projected.x)**2+(b.y-projected.y)**2)||a.y-b.y||a.x-b.x);
     // Rounding a point on a clear diagonal can move it across a wall corner.
     // Choose a nearby grid anchor with a checked continuation before searching.
@@ -442,7 +442,7 @@ export class GameContext {
     // A packed destination can fill the entire 3×3 projection. Check one
     // outer ring before giving up; retain the same local radius/search budget.
     const fallback=()=>[-2,-1,0,1,2].flatMap(y=>[-2,-1,0,1,2]
-      .filter(x=>Math.abs(x)===2||Math.abs(y)===2).map(x=>({x:center.x+x,y:center.y+y})))
+      .filter(x=>Math.abs(x)===2||Math.abs(y)===2).map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
       .sort((a,b)=>(a.x-projected.x)**2+(a.y-projected.y)**2-((b.x-projected.x)**2+(b.y-projected.y)**2)||a.y-b.y||a.x-b.x)
       .find(usable);
     const target=candidates.find(usable) ?? (distance>4?fallback():undefined);
@@ -480,6 +480,7 @@ export class GameContext {
       x:current.x + Math.round((target.x-current.x)*travel/length),
       y:current.y + Math.round((target.y-current.y)*travel/length),
     };
+    if(current.surface)(proposed as FixedPoint).surface=current.surface;
     if (!this.spatial.clearSegment(current,proposed,this.localReservations(e,units)) ||
       !this.spatial.unitSegmentClear(current,proposed,e.id)) {
       delete u.detour;
@@ -487,6 +488,7 @@ export class GameContext {
       return;
     }
     if (proposed.x !== current.x || proposed.y !== current.y) u.lastMovedTick = this.state.tick;
+    if(current.surface)proposed.surface=current.surface;
     u.position = proposed;
     u.segment = null;
     const index = motionCell(proposed,this.spatial.size);

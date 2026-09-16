@@ -26,8 +26,8 @@ export class HeightField {
     this.samples = new Float32Array(this.verts * this.verts);
   }
   waterLevel = 0;
-  walkSurface?: (x:number,z:number)=>number|undefined;
-  walkSample(x:number,z:number):number {return this.walkSurface?.(x,z) ?? this.sample(x,z);}
+  walkSurface?: (x:number,z:number,surface:string)=>number|undefined;
+  walkSample(x:number,z:number,surface?:string):number {return surface ? this.walkSurface?.(x,z,surface) ?? this.sample(x,z) : this.sample(x,z); }
 
   load(samples: ArrayLike<number>, waterLevel = 0): void {
     const n = Math.min(this.samples.length, samples.length);

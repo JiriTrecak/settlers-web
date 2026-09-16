@@ -88,3 +88,7 @@ Run `python -m unittest discover -s experiments/building-studio -p 'test_*.py'` 
 The actual Blender file can also be checked using Blender's background mode with `--python experiments/building-studio/validate_blend.py`. Adding `-- --resave` performs a real save for an end-to-end watcher check. The validation checks finite mesh coordinates, face indices, the black studio, a camera, and the packed reference image.
 
 The server binds only to `127.0.0.1`. On macOS, Blender needs normal graphics-device access even for background rendering; a restrictive execution sandbox can crash it during Metal initialization. Run the local studio with that access. Nothing is uploaded or published.
+
+### Runtime texture encoding
+
+For an asset with `preserve_textures: true`, `asset.json` may set `texture_format` to `AUTO` (default), `JPEG`, or `WEBP`, and `texture_quality` to 1–100 (default 90). This affects the exported viewer/runtime GLB, not the packed Blender source or source images. JPEG export retains PNG for images requiring alpha, as handled by Blender's glTF exporter. Inspect the GLB after changing encoding; compression reduces transfer size, not decoded texture memory. Hollow Stump Gate uses JPEG at quality 90.

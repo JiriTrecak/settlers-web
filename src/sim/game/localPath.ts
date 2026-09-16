@@ -10,7 +10,7 @@ const offsets=[[-1,0],[0,-1],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean):FixedPoint[]|null {
  if(Math.hypot(to.x-from.x,to.y-from.y)>4000)return null;
  if(clear(from,to))return [{...to}];
- const position=(id:number)=>({x:from.x+(id%WIDTH-RADIUS)*SPACING,y:from.y+(Math.floor(id/WIDTH)-RADIUS)*SPACING});
+ const position=(id:number)=>({x:from.x+(id%WIDTH-RADIUS)*SPACING,y:from.y+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})});
  const start=RADIUS*WIDTH+RADIUS;
  const cost=new Map<number,number>([[start,0]]),previous=new Map<number,number>();
  const open=[{id:start,g:0,h:lengthCeil(to.x-from.x,to.y-from.y)}],closed=new Set<number>();

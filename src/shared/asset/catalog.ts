@@ -10,6 +10,7 @@ export type AssetType = (typeof ASSET_TYPES)[number];
 export const ASSET_CATEGORIES = ["units", "foliage", "terrain", "water", "landmark", "resource", "other"] as const;
 export type AssetCategory = (typeof ASSET_CATEGORIES)[number];
 
+export type SceneryBlocker={readonly width:number;readonly depth:number;readonly shape?:'ellipse';readonly x?:number;readonly z?:number;readonly yaw?:number};
 export type CatalogEntry = {
   readonly id: string;
   readonly name: string;
@@ -17,9 +18,10 @@ export type CatalogEntry = {
   readonly type: AssetType;
   readonly file: string;
   /** Ground-plane collision in asset-local metres, independent of visual mesh. */
-  readonly deck?: { readonly width: number; readonly depth: number; readonly height: number; readonly arch: number };
+  readonly deck?: { readonly width: number; readonly depth: number; readonly height: number; readonly arch: number; readonly thickness?: number; readonly rise?:number; readonly level: number; readonly connections?: {readonly start?:number;readonly end?:number} };
   readonly light?: { readonly x: number; readonly y: number; readonly z: number; readonly color: string; readonly intensity: number; readonly range: number };
-  readonly blocker?: { readonly width: number; readonly depth: number };
+  readonly blocker?: SceneryBlocker;
+  readonly blockers?: readonly SceneryBlocker[];
 };
 
 export type Catalogue = {
@@ -79,13 +81,18 @@ function parseEntry(raw: unknown): CatalogEntry | null {
   if (typeof o.name !== "string" || !o.name.trim()) return null;
   if (typeof o.file !== "string" || !o.file.trim()) return null;
   if (!isCategory(o.category) || !isType(o.type)) return null;
-  let blocker: CatalogEntry["blocker"];
-  if (o.blocker !== undefined) {
-    if (!o.blocker || typeof o.blocker !== "object") return null;
-    const b = o.blocker as Record<string, unknown>;
-    if (typeof b.width !== "number" || !Number.isFinite(b.width) || b.width <= 0 ||
-        typeof b.depth !== "number" || !Number.isFinite(b.depth) || b.depth <= 0) return null;
-    blocker = { width: b.width, depth: b.depth };
+  const parseBlocker=(raw:unknown):SceneryBlocker|null=>{
+    if(!raw||typeof raw!=="object")return null;const b=raw as Record<string,unknown>;
+    if(typeof b.width!=="number"||!Number.isFinite(b.width)||b.width<=0||typeof b.depth!=="number"||!Number.isFinite(b.depth)||b.depth<=0)return null;
+    if(b.shape!==undefined&&b.shape!=='ellipse')return null;
+    for(const key of ['x','z','yaw'])if(b[key]!==undefined&&(typeof b[key]!=="number"||!Number.isFinite(b[key])))return null;
+    return {width:b.width,depth:b.depth,...(b.shape==='ellipse'?{shape:'ellipse' as const}:{}),...(b.x!==undefined?{x:b.x as number}:{}),...(b.z!==undefined?{z:b.z as number}:{}),...(b.yaw!==undefined?{yaw:b.yaw as number}:{})};
+  };
+  const blocker=o.blocker===undefined?undefined:parseBlocker(o.blocker);if(blocker===null)return null;
+  let blockers:SceneryBlocker[]|undefined;
+  if(o.blockers!==undefined){
+    if(!Array.isArray(o.blockers)||o.blockers.length>128)return null;blockers=[];
+    for(const raw of o.blockers){const b=parseBlocker(raw);if(!b)return null;blockers.push(b);}
   }
   let deck: CatalogEntry["deck"];
   if (o.deck !== undefined) {
@@ -93,7 +100,11 @@ function parseEntry(raw: unknown): CatalogEntry | null {
     const d=o.deck as Record<string,unknown>;
     if (![d.width,d.depth,d.height,d.arch].every(v=>typeof v === "number" && Number.isFinite(v)) ||
         (d.width as number)<=0 || (d.depth as number)<=0 || (d.arch as number)<0) return null;
-    deck={width:d.width as number,depth:d.depth as number,height:d.height as number,arch:d.arch as number};
+    if(d.thickness!==undefined && (typeof d.thickness!=='number'||!Number.isFinite(d.thickness)||d.thickness<=0||d.thickness>12))return null;
+    if(d.rise!==undefined&&(typeof d.rise!=="number"||!Number.isFinite(d.rise)||Math.abs(d.rise)>32))return null;
+    if(!Number.isInteger(d.level)||(d.level as number)<1||(d.level as number)>31)return null;
+    if(d.connections!==undefined&&(!d.connections||typeof d.connections!=="object"||Object.entries(d.connections).some(([k,v])=>!["start","end"].includes(k)||!Number.isInteger(v)||(v as number)<0||(v as number)>31)))return null;
+    deck={level:d.level as number,...(d.rise!==undefined?{rise:d.rise as number}:{}),...(d.connections?{connections:d.connections as {start?:number;end?:number}}:{}),width:d.width as number,depth:d.depth as number,height:d.height as number,arch:d.arch as number,...(d.thickness!==undefined?{thickness:d.thickness as number}:{})};
   }
   let light: CatalogEntry["light"];
   if (o.light !== undefined) {
@@ -107,6 +118,7 @@ function parseEntry(raw: unknown): CatalogEntry | null {
     ...(deck ? { deck } : {}),
     ...(light ? { light } : {}),
     ...(blocker ? { blocker } : {}),
+    ...(blockers ? { blockers } : {}),
     id: o.id.trim(),
     name: o.name.trim(),
     category: o.category,

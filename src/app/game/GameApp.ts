@@ -400,6 +400,7 @@ export class GameApp {
     const entry=getMap(mapId),mode=entry.map.mission?'campaign':'skirmish';
     if(entry.revision!==match.mapRevision)throw new Error('The scenario changed since this match began. Open the updated map to start a new match.');
     if(save)restoreSavedWorld(save,entry.map);
+    const address=new URL(location.href);address.searchParams.set("map",mapId);address.searchParams.delete("screen");history.replaceState(null,"",address);
     const gen=++this.playGen;
     const play = new PlayScreen(this.canvas, {
       mapId,
@@ -407,6 +408,12 @@ export class GameApp {
       match,
       save,
       onRestart:()=>this.launchLocal(mapId,structuredClone(match),player),
+      onContinue:(nextId,company)=>{
+        const next=getMap(nextId);
+        if(!entry.map.mission||next.map.mission?.campaign!==entry.map.mission.campaign)throw new Error('The next chapter must belong to this campaign');
+        const nextMatch={...createMissionMatch(nextId,next.map,next.revision),company};
+        this.launchLocal(nextId,nextMatch,0);
+      },
       onLoadSave:raw=>{const target=getMap(raw.mapId),loaded=validateSaveDestination(raw,mode,target);this.launchLocal(loaded.mapId,loaded.match,loaded.player,loaded);},
       onLeave: () => entry.map.mission ? this.showCampaign(true) : this.showMapPicker(),
     });

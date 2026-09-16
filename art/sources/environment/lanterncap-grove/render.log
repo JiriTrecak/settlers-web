@@ -1,0 +1,14 @@
+00:00.314  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/lanterncap-grove/lanterncap-grove.blend"
+00:03.899  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/lanterncap-grove/.render-1789536370782890000.png'
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+22:26:14 | INFO: Starting glTF 2.0 export
+22:26:14 | INFO: Extracting primitive: Spreading deadwood root 0.001
+22:26:14 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+22:26:15 | INFO: Primitives created: 6
+22:26:15 | INFO: Finished glTF 2.0 export in 0.17472314834594727 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/lanterncap-grove/.render-1789536370782890000.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

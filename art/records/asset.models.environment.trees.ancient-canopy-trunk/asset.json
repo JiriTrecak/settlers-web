@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.ancient-canopy-trunk",
+  "name": "Ancient Canopy Trunk",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "permanent-obstacle"
+  ],
+  "status": "published",
+  "revision": 2,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/ancient-canopy-trunk/model.glb",
+      "sha256": "e70a62cecc3d9862a91bd535188c81620f23e8a8490a687adfd268b56ab22c3a",
+      "bytes": 3020712,
+      "triangles": 1432,
+      "primitives": 6
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "ancient-canopy-trunk",
+      "name": "Ancient Canopy Trunk",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/trees/ancient-canopy-trunk/model.glb",
+      "blocker": {
+        "width": 14,
+        "depth": 14,
+        "shape": "ellipse"
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/ancient-canopy-trunk/ancient-canopy-trunk.blend",
+    "sha256": "c7ffd617eddbda5eea4a435dfe683add01e1d34f11858d3ae13dcf3b316bf0f3",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T08:33:40.792Z",
+    "warnings": [
+      "Trunk base only; crown remains above gameplay camera. Flat-ground root contact."
+    ]
+  }
+}

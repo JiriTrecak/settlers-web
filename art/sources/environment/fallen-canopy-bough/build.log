@@ -1,0 +1,6 @@
+/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/fallen-canopy-bough/model.py:11: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  rgb=[int(h[i:i+2],16)/255 for i in (0,2,4)];rgb=[v/12.92 if v<.04045 else ((v+.055)/1.055)**2.4 for v in rgb];m=bpy.data.materials.new(n);m.use_nodes=True;m.diffuse_color=(*rgb,1);bs=m.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=(*rgb,1);bs.inputs['Roughness'].default_value=.96;return m
+Info: Saved as "fallen-canopy-bough.blend"
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

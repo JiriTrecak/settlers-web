@@ -66,7 +66,7 @@ export class Sky {
   private last = 0;
   private readonly ambient = new AmbientLight(0x8aa0b8, 0.45);
   private readonly hemi = new HemisphereLight(0x9ab4c8, 0x353330, 0.35);
-  private readonly sun = new DirectionalLight(0xfff2d6, 2.2);
+  readonly sun = new DirectionalLight(0xfff2d6, 2.2);
   private readonly haze = new Fog(0x9bc9cd, 80, 200);
   private hazeDepth = 80;
   private readonly bg = new Color(0x2a2a2a);

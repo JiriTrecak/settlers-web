@@ -1,3 +1,4 @@
+import type {MapStamp} from '../../shared/map/utcmap';
 /**
  * Sibling dock for the select tool: name, yaw, move/rotate hints.
  */
@@ -6,10 +7,12 @@ import { sheet } from "../../ui";
 export type SelectDockState = {
   name: string | null;
   yaw: number;
+  walk?:NonNullable<MapStamp["walk"]>;
 };
 
 export type SelectDockHooks = {
   onYaw(rad: number): void;
+  onWalk(walk:NonNullable<MapStamp["walk"]>):void;
 };
 
 export class SelectDock {
@@ -17,6 +20,8 @@ export class SelectDock {
   private readonly name: HTMLElement;
   private readonly yaw: HTMLInputElement;
   private readonly yawVal: HTMLElement;
+  private readonly walkSection=document.createElement('div');
+  private readonly walkFields=new Map<string,HTMLInputElement>();
 
   constructor(host: HTMLElement, private readonly hooks: SelectDockHooks) {
     this.root = document.createElement("div");
@@ -35,11 +40,23 @@ export class SelectDock {
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
     hint.textContent = "Drag move · Shift-drag rotate · Q/E 15° · R 90° · Del";
-    this.root.append(title, this.name, yawRow, hint);
+    this.walkSection.className='flex flex-col gap-2 border-t border-white/10 pt-2';
+    for(const [key,label,min,max] of [['level','Navigation level',1,31],['height','Center height (m)',-16,64],['start','Start connects to level',0,31],['end','End connects to level',0,31]] as const){
+      const input=document.createElement('input');input.type='number';input.min=String(min);input.max=String(max);input.step=key==='height'?'.1':'1';
+      input.placeholder=key==='height'?'Asset placement':'No connection';input.className='w-full rounded bg-black/30 px-2 py-1 text-xs text-canopy/80';input.setAttribute('aria-label',label);
+      input.onchange=()=>this.changeWalk();this.walkFields.set(key,input);const field=row(label);field.append(input);this.walkSection.append(field);
+    }
+    this.root.append(title, this.name, yawRow, this.walkSection, hint);
     this.root.classList.add("hidden");
     host.append(this.root);
   }
 
+  private changeWalk(){
+    const n=(key:string)=>{const el=this.walkFields.get(key)!;return el.value===''?undefined:Number(el.value);};
+    if([...this.walkFields.values()].some(el=>!el.checkValidity())||n('level')===undefined)return;
+    const height=n('height'),start=n('start'),end=n('end');
+    this.hooks.onWalk({level:n('level')!,...(height!==undefined?{height}:{}),connections:{...(start!==undefined?{start}:{}),...(end!==undefined?{end}:{})}});
+  }
   setOpen(on: boolean): void {
     this.root.classList.toggle("hidden", !on);
   }
@@ -50,6 +67,10 @@ export class SelectDock {
     this.yaw.value = String(deg);
     this.yawVal.textContent = `${deg}°`;
     this.yaw.disabled = !state.name;
+    this.walkSection.hidden=!state.walk;
+    if(state.walk)for(const [key,value] of Object.entries({level:state.walk.level,height:state.walk.height,start:state.walk.connections?.start,end:state.walk.connections?.end})){
+      const input=this.walkFields.get(key)!;if(document.activeElement!==input)input.value=value===undefined?'':String(value);
+    }
   }
 
   destroy(): void {

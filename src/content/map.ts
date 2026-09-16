@@ -2,6 +2,17 @@ import {missionSchema} from "../shared/scenario/schema";
 import type { ContentRegistry } from "./registry";
 import { placementSchema, campSchema, type Placement } from "./schema";
 import type { UtcMap } from "../shared/map/utcmap";
+import {HeightField,decodeHeight} from '../shared/map/height';
+import {bridgeSurfaces,surfaceHeight} from '../shared/map/bridgeSurface';
+
+function placementFloors(map:UtcMap){
+ const field=new HeightField(map.size);if(map.height)field.load(decodeHeight(map.height,map.size)??[],map.waterLevel??0);
+ const decks=new Map(bridgeSurfaces(map.stamps,(x,z)=>field.sample(x,z)).map(d=>[d.id,d]));
+ return (p:Placement['position'])=>{
+  if(!p.surface)return field.sample(p.x,p.y);
+  const deck=decks.get(p.surface);return deck?surfaceHeight(deck,p.x,p.y):undefined;
+ };
+}
 
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
 export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
@@ -40,9 +51,16 @@ export function validatePlacements(
   map: UtcMap,
   registry: ContentRegistry,
 ): void {
-  if(map.mission) missionSchema.parse(map.mission);
+  if(map.mission) {
+    missionSchema.parse(map.mission);
+    for(const tag of map.mission.company??[]){
+      const p=map.entities.find(p=>p.id===tag);
+      if(!p||p.activation||p.owner!=='player.1'||registry.get(p.definition).kind!=='unit')throw new Error(`Invalid campaign company slot: ${tag}`);
+    }
+  }
   const all = expandMap(map, registry),
     ids = new Set<string>();
+  const floor=all.some(p=>p.position.surface)?placementFloors(map):undefined;
   for (const raw of all) {
     const p = placementSchema.parse(raw),
       d = registry.get(p.definition),
@@ -56,12 +74,20 @@ export function validatePlacements(
     ids.add(p.id);
     if (p.position.x >= map.size || p.position.y >= map.size)
       throw new Error(`${p.id}: outside map bounds`);
+    if(p.position.surface){
+      if(floor!(p.position)===undefined)throw new Error(`${p.id}: unknown or out-of-bounds walk surface`);
+      if(d.kind==='building'||d.kind==='resource')throw new Error(`${p.id}: buildings and harvestable resources currently require ground`);
+    }
     if (
       p.owner !== "none" &&
       !map.playerStarts.some((s) => p.owner === `player.${s.player}`)
     )
       throw new Error(`${p.id}: missing owner slot`);
-    if (state?.health !== undefined && (!d.body || state.health > d.body.maxHp))
+    const levels = d.behaviors.progression?.levels;
+    if (state?.experience !== undefined && (!levels || state.experience > levels[Math.min(levels.length, map.mission?.heroLevelCap ?? levels.length)-1].experience))
+      throw new Error(`${p.id}: initial experience exceeds hero or mission limit`);
+    const initialLevel = levels?.filter(l => l.experience <= (state?.experience ?? 0)).at(-1);
+    if (state?.health !== undefined && (!d.body || state.health > (initialLevel?.maxHp ?? d.body.maxHp)))
       throw new Error(`${p.id}: invalid initial health`);
     if (state?.amount !== undefined && (!d.yield || state.amount > d.yield))
       throw new Error(`${p.id}: invalid initial yield`);
@@ -158,8 +184,9 @@ export function placementOccupancyError(
   map: UtcMap,
   registry: ContentRegistry,
 ): string | null {
-  const occupied = new Map<number, string>();
-  for (const p of expandMap(map, registry)) {
+  const occupied = new Map<number, {id:string;height:number}[]>();
+  const placements=expandMap(map,registry),floor=placements.some(p=>p.position.surface)?placementFloors(map):undefined;
+  for (const p of placements) {
     const d = registry.get(p.definition);
     if (
       d.kind === "item" ||
@@ -181,10 +208,10 @@ export function placementOccupancyError(
       ) {
         if (x < 0 || x >= map.size || y < 0 || y >= map.size)
           return `${p.id}: footprint is outside the playable map`;
-        const cell = y * map.size + x,
-          other = occupied.get(cell);
-        if (other) return `${p.id}: overlaps ${other}`;
-        occupied.set(cell, p.id);
+        const cell = y * map.size + x, height=floor?.({...p.position,x,y})??0;
+        const column=occupied.get(cell)??[],other=column.find(e=>Math.abs(e.height-height)<2);
+        if (other) return `${p.id}: overlaps ${other.id}`;
+        column.push({id:p.id,height});occupied.set(cell,column);
       }
   }
   return null;

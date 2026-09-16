@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-15T22:46:09-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 24.03,
+  "blend_mtime_ns": 1789537546185687512,
+  "config": {
+    "name": "Bitter Heart",
+    "blend": "bitter-heart.blend",
+    "recipe": "model.py",
+    "seed": 83,
+    "camera": {
+      "azimuth": 12,
+      "elevation": 23,
+      "scale": 17.8,
+      "target": [
+        0,
+        0,
+        4.7
+      ]
+    },
+    "render": {
+      "width": 1400,
+      "height": 1100,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 650,
+      "fill_energy": 300,
+      "rim_energy": 850
+    },
+    "preserve_textures": true,
+    "texture_format": "JPEG",
+    "texture_quality": 90,
+    "viewer_light_scale": 0.4
+  }
+}

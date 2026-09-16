@@ -42,7 +42,7 @@ export class SpellEffects {
    }
    const rank=spell.ranks[cue.rank-1],line=spell.effect==='line';
    const center=cue.phase==='cast'||!line?cue.target:{x:cue.origin.x+(cue.target.x-cue.origin.x)*t,y:cue.origin.y+(cue.target.y-cue.origin.y)*t};
-   const base=field.sample(center.x,center.y)+.12;
+   const base=field.walkSample(center.x,center.y,center.surface)+.12;
    entry.root.position.set(center.x,base,center.y);
    const radius=spell.effect==='guard'?1.5:Math.max(1,rank.radius);
    entry.ring.scale.setScalar(cue.phase==='cast'?radius:radius*(.2+t*1.4));
@@ -53,7 +53,7 @@ export class SpellEffects {
     for(let i=0;i<entry.particles.count;i++){
      const a=i*2.3999632297+cue.id*.41,spread=radius*(.15+t)*(0.4+(i%5)/8);
      const x=Math.cos(a)*spread,z=Math.sin(a)*spread;
-     this.position.set(x,field.sample(center.x+x,center.y+z)-base+.16+Math.sin(Math.PI*t)*visual.rise*(.5+(i%7)/12),z);
+     this.position.set(x,field.walkSample(center.x+x,center.y+z,center.surface)-base+.16+Math.sin(Math.PI*t)*visual.rise*(.5+(i%7)/12),z);
      this.quaternion.setFromEuler(this.rotation.set(t*7+i,t*5+i*.5,t*3));
      this.scale.setScalar(visual.particleSize*(1-t*.6));
      entry.particles.setMatrixAt(i,this.matrix.compose(this.position,this.quaternion,this.scale));

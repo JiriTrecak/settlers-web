@@ -1,0 +1,19 @@
+{
+  "method": "built-in imagegen",
+  "concept": {
+    "prompt": "Use case: stylized-concept. Asset type: reference for an editable low-poly 3D environment landmark in an ant-scale RTS called Under the Canopy. Generate one isolated 'Lanterncap Grove': a cohesive cluster of six giant woodland mushrooms growing from a low mossy deadwood root base. Three large asymmetric umbrella caps staggered in height, three small caps around the base. Highest cap left of center, second to the right, a wide low cap in front. Thick gently bent pale ochre stems. Broad earthy desaturated blue-green caps, softly rippled margins, a warm parchment rim, clearly sculpted radial gills beneath glowing a restrained pale teal. A few large irregular tan scars on cap tops. Tangled broad low roots and chunky moss cushions; no thin twigs. Match a premium stylized RTS game asset, broad readable shapes, modest polygon count, hand-painted material shading, actual geometry rather than painterly illustration. Pure black background, isolated with no floor plane, orthographic 3/4 view at 28 degrees elevation showing caps, gills, full base and silhouette with generous margins. Natural warm key light, subtle cool underside glow. No particles, no bloom cloud, no text, no creatures, no tiny high-frequency filigree. The asset must be practical to reconstruct as a game mesh, not a hyperrealistic sculpture.",
+    "source": "reference.png"
+  },
+  "texture": {
+    "prompt": "Use case: stylized-concept. Asset type: seamless game albedo texture for the tops of large woodland mushrooms in a premium stylized RTS. Square image, orthographic flat surface only, edge-to-edge material, no mushroom silhouette, no gills, no background, no objects, no text, no baked directional lighting or shadows. Earthy muted blue-green mushroom skin with broad hand-painted mottling, irregular warm parchment scars and a few softly outlined shallow cracks. Predominantly subdued slate sage teal; tan scars cover about 15 percent in uneven clustered areas. Broad painterly color transitions at readable game scale, subtle fibrous texture, limited fine detail. Avoid saturated neon, metallic reflections and photographic noise. Tileable surface in both axes, no border.",
+    "source": "lanterncap-skin-source.png",
+    "runtime": "lanterncap-skin.png",
+    "processing": "Resized to 1024x1024 using Sharp for the shared cap albedo."
+  },
+  "stemTexture": {
+    "prompt": "Use case: stylized-concept. Asset type: UV albedo texture for a giant woodland mushroom stalk in a stylized RTS. Square texture image covering the entire frame. NO mushroom outline, NO cap, NO object silhouette, NO ground, NO background, NO text, NO directional light or shadow. A flat unwrap of fibrous mushroom stem skin: predominantly warm muted ivory and pale ochre, with broad subtle vertical fibers and occasional slender brown scars. The bottom 20% blends organically into dark olive moss and brown aging, irregular ragged boundary; upper 80% pale creamy stem. Continuous and seamless across the left and right edges for wrapping a cylinder. Hand-painted broad readable forms with restrained fine texture, premium stylized game art. No photographic noise, no neon, no highlights, no border.",
+    "source": "lanterncap-stem-source.png",
+    "runtime": "lanterncap-stem.png",
+    "processing": "Resized to 1024x1024 using Sharp; cylindrical UVs preserve vertical stalk fibres."
+  }
+}

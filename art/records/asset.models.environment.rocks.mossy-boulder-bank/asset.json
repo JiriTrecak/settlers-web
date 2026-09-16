@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.mossy-boulder-bank",
+  "name": "Mossy Boulder Bank",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "permanent-obstacle"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/rocks/mossy-boulder-bank/model.glb",
+      "sha256": "54d47eba3bb1cdaaa80d2bba7fb366c59263ee891f2bdf598bdf32412cd9b52a",
+      "bytes": 41572,
+      "triangles": 400,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "mossy-boulder-bank",
+      "name": "Mossy Boulder Bank",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/rocks/mossy-boulder-bank/model.glb",
+      "blocker": {
+        "width": 9.5,
+        "depth": 6,
+        "shape": "ellipse"
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/mossy-boulder-bank/mossy-boulder-bank.blend",
+    "sha256": "8dd003845804a6dbf4d518d2544ed7b530fb976b039b284987c83a04cf959c67",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T08:33:40.822Z",
+    "warnings": [
+      "Static environment model; flat-ground contact."
+    ]
+  }
+}

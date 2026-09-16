@@ -1,0 +1,28 @@
+{
+  "name": "Fallen Acorn",
+  "blend": "fallen-acorn.blend",
+  "recipe": "model.py",
+  "kit_kind": "acorn",
+  "seed": 1202,
+  "merge_static_materials": true,
+  "camera": {
+    "azimuth": 20,
+    "elevation": 32,
+    "scale": 3.5,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "render": {
+    "width": 800,
+    "height": 650,
+    "samples": 20
+  },
+  "light": {
+    "key_energy": 900,
+    "fill_energy": 250,
+    "rim_energy": 600
+  }
+}

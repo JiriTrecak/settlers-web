@@ -1,3 +1,4 @@
+import type {CampaignCompany} from '../../shared/scenario/company';
 import { PlayerAI } from "../ai/playerAI";
 import { createMapBriefing } from "../ai/briefing";
 import { Geography } from "../ai/frame";
@@ -40,6 +41,7 @@ export type WorldOpts = {
   map: UtcMap;
   slots: readonly Slot[];
   seed: number;
+  company?: CampaignCompany;
 };
 
 export class World {
@@ -71,7 +73,7 @@ export class World {
       )
     )
       throw new Error("Match slots must match the authored player starts");
-    this.settlement = new Game(opts.map, this.slots, undefined, opts.seed);
+    this.settlement = new Game(opts.map, this.slots, undefined, opts.seed, opts.company);
     this.rng = seedRng(opts.seed);
     if (this.slots.some((s) => s.kind === "ai")) {
       const geography = new Geography(

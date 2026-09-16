@@ -10,6 +10,7 @@ import {
   ownerSchema,
   idSchema,
   pointSchema,
+  surfaceSchema,
 } from "../../content/schema";
 
 const positive = z.number().int().positive(),
@@ -52,6 +53,7 @@ export const entitySchema = z
     owner: ownerSchema,
     x: z.number().int().min(0).max(511),
     y: z.number().int().min(0).max(511),
+    surface: surfaceSchema.optional(),
     rotation: z.number().finite(),
     hp: natural.nullable(),
     inventory: stockSchema,
@@ -118,25 +120,25 @@ export const entitySchema = z
       .object({
         order: orderSchema.nullable(),
         orderQueue: z.array(orderSchema).max(MAX_QUEUED_ORDERS),
-        route: z.array(natural.max(262143)),
+        route: z.array(natural.max(1048575)),
         lastMovedTick: natural.optional(),
         detour: z.object({
-          goal:natural.max(262143),
-          waypoint:natural.max(262143),
+          goal:natural.max(1048575),
+          waypoint:natural.max(1048575),
           yielding:z.object({leader:positive,until:natural}).strict().optional(),
-          points:z.array(z.object({x:natural.max(511000),y:natural.max(511000)}).strict()).min(1).max(256),
+          points:z.array(z.object({x:natural.max(511000),y:natural.max(511000),surface:surfaceSchema.optional()}).strict()).min(1).max(256),
         }).strict().optional(),
-        goal: natural.max(262143).nullable(),
+        goal: natural.max(1048575).nullable(),
         position: z
-          .object({ x: natural.max(511000), y: natural.max(511000) })
+          .object({ x: natural.max(511000), y: natural.max(511000), surface: surfaceSchema.optional() })
           .strict()
           .nullable(),
         segment: z
           .object({
             from: z
-              .object({ x: natural.max(511000), y: natural.max(511000) })
+              .object({ x: natural.max(511000), y: natural.max(511000), surface: surfaceSchema.optional() })
               .strict(),
-            to: natural.max(262143),
+            to: natural.max(1048575),
             length: positive,
             progress: natural,
           })

@@ -153,6 +153,7 @@ export class EditorScreen extends GameScreen {
       onSculptMode: (mode) => this.editor.setSculptMode(mode),
       onApplySculpt: () => this.editor.applySculpt(),
       onYaw: (rad) => this.editor.setSelectedYaw(rad),
+      onWalk: walk=>{const s=this.editor.selectedStamp();if(s)this.editor.setStampWalk(s.id,walk);},
       onName: (name) => this.editor.rename(name),
     });
     this.chrome.setTool(this.editor.tool);
@@ -320,6 +321,7 @@ export class EditorScreen extends GameScreen {
         ? (this.library.entry(stamp.asset)?.name ?? stamp.asset)
         : null,
       yaw: stamp?.yaw ?? 0,
+      walk:stamp&&this.library.entry(stamp.asset)?.deck ? stamp.walk??{level:this.library.entry(stamp.asset)!.deck!.level,connections:this.library.entry(stamp.asset)!.deck!.connections} : undefined,
     });
   }
 

@@ -1,3 +1,6 @@
+import {walkStampSchema} from '../../shared/map/utcmap';
+import {canopySchema} from '../../shared/landscape/canopy';
+import {atmosphereSchema} from '../../shared/landscape/atmosphere';
 import {missionSchema,type MissionDefinition} from "../../shared/scenario/schema";
 import {renameEntity} from "./entityAuthoring";
 import {validatePlacements} from "../../content/map";
@@ -344,6 +347,15 @@ export class WorldEditor {
     this.hooks.onSelect?.();
   }
 
+  setStampWalk(id:string,raw:unknown):void {
+    const walk=raw===null?undefined:walkStampSchema.parse(raw);
+    if(!this.map.stamps.some(s=>s.id===id))throw new Error('Unknown walk surface stamp');
+    this.map={...this.map,stamps:this.map.stamps.map(s=>{
+      if(s.id!==id)return s;
+      const {walk:previous,...base}=s;return {...base,...(walk?{walk}:{})};
+    })};
+    this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();
+  }
   selectedStamp(): MapStamp | null {
     const id = this.select.id;
     return id ? (this.map.stamps.find((s) => s.id === id) ?? null) : null;
@@ -690,6 +702,8 @@ export class WorldEditor {
   }
 
   environment(settings: Partial<EnvironmentState>): void {
+    if(settings.canopy)canopySchema.parse(settings.canopy);
+    if(settings.atmosphere)atmosphereSchema.parse(settings.atmosphere);
     const landscape = this.map.landscape ?? emptyLandscape();
     // Keep the live clock when editing weather/season rather than rewinding to
     // the hour last stored in the map. An explicit time edit still wins.

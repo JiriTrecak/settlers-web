@@ -3707,6 +3707,146 @@
       ]
     },
     {
+      "id": "asset.models.environment.ground.curled-forest-leaf",
+      "name": "Curled Forest Leaf",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/ground/curled-forest-leaf/model.glb",
+          "sha256": "a880688c5e06e0a6b34bee7272cb31124cc469325649dcfe1c0011987005a148",
+          "bytes": 19312,
+          "triangles": 272,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "curled-forest-leaf",
+          "name": "Curled Forest Leaf",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/ground/curled-forest-leaf/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.fallen-acorn",
+      "name": "Fallen Acorn",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/ground/fallen-acorn/model.glb",
+          "sha256": "1629a0b48ead69e334ceca17fd939704ed7b0f39a8e71c88cfe806c88bcb643d",
+          "bytes": 42172,
+          "triangles": 456,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "fallen-acorn",
+          "name": "Fallen Acorn",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/ground/fallen-acorn/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.forest-splinter-pile",
+      "name": "Forest Splinter Pile",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/ground/forest-splinter-pile/model.glb",
+          "sha256": "f7ed37e489227d4e9487c3d6dfc8337af3f1bf0e80b0480a4101148e52240bc2",
+          "bytes": 15236,
+          "triangles": 220,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "forest-splinter-pile",
+          "name": "Forest Splinter Pile",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/ground/forest-splinter-pile/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lanterncap-grove",
+      "name": "Lanterncap Grove",
+      "kind": "model",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/mushrooms/lanterncap-grove/model.glb",
+          "sha256": "753da8885fd070c5661b77b558dd36ed24076945b391d84bef963b6f23e0f57b",
+          "bytes": 2004408,
+          "triangles": 12792,
+          "primitives": 6
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "lanterncap-grove",
+          "name": "Lanterncap Grove",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/mushrooms/lanterncap-grove/model.glb",
+          "blocker": {
+            "width": 10.5,
+            "depth": 8.5,
+            "shape": "ellipse"
+          },
+          "light": {
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "color": "#a7cfbf",
+            "intensity": 14,
+            "range": 14
+          }
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.mushrooms.lowpolymushroom-01",
       "name": "Lowpolymushroom 01",
       "kind": "model",
@@ -3939,6 +4079,38 @@
       ]
     },
     {
+      "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
+      "name": "Ochre Mushroom Colony",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb",
+          "sha256": "2e7699424fc8f3f8c076b2a3a680c5b5acafd2ee652516a65ca7ed544dc35de5",
+          "bytes": 80332,
+          "triangles": 1092,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "ochre-mushroom-colony",
+          "name": "Ochre Mushroom Colony",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/mushrooms/ochre-mushroom-colony/model.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.mushrooms.synty-plant-mushrooms-01",
       "name": "Plant Mushrooms 01",
       "kind": "model",
@@ -3964,6 +4136,43 @@
           "category": "foliage",
           "type": "prop",
           "file": "models/environment/mushrooms/synty-plant-mushrooms-01/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.mossy-boulder-bank",
+      "name": "Mossy Boulder Bank",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/rocks/mossy-boulder-bank/model.glb",
+          "sha256": "54d47eba3bb1cdaaa80d2bba7fb366c59263ee891f2bdf598bdf32412cd9b52a",
+          "bytes": 41572,
+          "triangles": 400,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "mossy-boulder-bank",
+          "name": "Mossy Boulder Bank",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/rocks/mossy-boulder-bank/model.glb",
+          "blocker": {
+            "width": 9.5,
+            "depth": 6,
+            "shape": "ellipse"
+          }
         }
       ]
     },
@@ -4909,6 +5118,197 @@
       ]
     },
     {
+      "id": "asset.models.environment.shrubs.bramble-thicket",
+      "name": "Bramble Thicket",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/shrubs/bramble-thicket/model.glb",
+          "sha256": "37a32e62d043f3e6731077b81b7bf1eeb2c061edce7ea39cf25673539c4eefb6",
+          "bytes": 128164,
+          "triangles": 1760,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "bramble-thicket",
+          "name": "Bramble Thicket",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/shrubs/bramble-thicket/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shrubs.fern-thicket",
+      "name": "Fern Thicket",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/shrubs/fern-thicket/model.glb",
+          "sha256": "f80a3d94ad6fe5f207ac31258cfa06f84e2829522bd69a130306e33b0d984542",
+          "bytes": 557440,
+          "triangles": 7128,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "fern-thicket",
+          "name": "Fern Thicket",
+          "type": "prop",
+          "category": "foliage",
+          "file": "models/environment/shrubs/fern-thicket/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.amber-resin-sconce",
+      "name": "Amber Resin Sconce",
+      "kind": "model",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/amber-resin-sconce/model.glb",
+          "sha256": "a9d89b33e508c4e6f49d7258f9eeaef06964eaa4d66fc283b3d667b975b4dd44",
+          "bytes": 344600,
+          "triangles": 1042,
+          "primitives": 6
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "amber-resin-sconce",
+          "name": "Amber Resin Sconce",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/amber-resin-sconce/model.glb",
+          "light": {
+            "x": 1.2,
+            "y": 4.2,
+            "z": 1,
+            "color": "#ffb347",
+            "intensity": 24,
+            "range": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.arched-root-walkway",
+      "name": "Arched Root Walkway",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/arched-root-walkway/model.glb",
+          "sha256": "441be94e5a9a92638d305145799d9b5627fbba50ef4be05890a3bd6063c8fc9e",
+          "bytes": 571512,
+          "triangles": 1304,
+          "primitives": 5
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "arched-root-walkway",
+          "name": "Arched Root Walkway",
+          "type": "span",
+          "category": "landmark",
+          "file": "models/environment/structures/arched-root-walkway/model.glb",
+          "deck": {
+            "width": 5.4,
+            "depth": 24,
+            "height": 0,
+            "arch": 6,
+            "thickness": 2.6,
+            "level": 1,
+            "connections": {
+              "start": 0,
+              "end": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.bitter-heart",
+      "name": "Bitter Heart",
+      "kind": "model",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/bitter-heart/model.glb",
+          "sha256": "89b270c043ba60be21401ecd7b2ca12420dc95d488ffeec4b889ec057872d549",
+          "bytes": 1637980,
+          "triangles": 14804,
+          "primitives": 6
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "bitter-heart",
+          "name": "Bitter Heart",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/bitter-heart/model.glb",
+          "blocker": {
+            "width": 14.2,
+            "depth": 10.5,
+            "shape": "ellipse"
+          },
+          "light": {
+            "x": 0,
+            "y": 4,
+            "z": 1,
+            "color": "#ed713f",
+            "intensity": 45,
+            "range": 24
+          }
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.structures.bridge-16",
       "name": "Bridge 16",
       "kind": "model",
@@ -5050,6 +5450,42 @@
           "category": "foliage",
           "type": "prop",
           "file": "models/environment/structures/elephant-leaf/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.fallen-canopy-bough",
+      "name": "Fallen Canopy Bough",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/fallen-canopy-bough/model.glb",
+          "sha256": "5124127d36a3daa85ad521a1e9321c0cbc95700c440c8fe63d0a153d36e51dcb",
+          "bytes": 2994852,
+          "triangles": 537,
+          "primitives": 7
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "fallen-canopy-bough",
+          "name": "Fallen Canopy Bough",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/fallen-canopy-bough/model.glb",
+          "blocker": {
+            "width": 16,
+            "depth": 2.8
+          }
         }
       ]
     },
@@ -5253,6 +5689,447 @@
           "category": "foliage",
           "type": "prop",
           "file": "models/environment/structures/flower-single-purple/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.heartwood-resin-font",
+      "name": "Living Resin Wellspring",
+      "kind": "model",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/heartwood-resin-font/model.glb",
+          "sha256": "a05beb6950a498aeb552232eacda9577c29003816e6bbef2c6789a9c8b980628",
+          "bytes": 784012,
+          "triangles": 4960,
+          "primitives": 10
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "heartwood-resin-font",
+          "name": "Living Resin Wellspring",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/heartwood-resin-font/model.glb",
+          "blocker": {
+            "width": 6.6,
+            "depth": 5.2,
+            "shape": "ellipse"
+          },
+          "light": {
+            "x": 0,
+            "y": 1.8,
+            "z": 0,
+            "color": "#ffc064",
+            "intensity": 20,
+            "range": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.heartwood-wall",
+      "name": "Heartwood Wall",
+      "kind": "model",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/heartwood-wall/model.glb",
+          "sha256": "bb713ee31b6b87f41649fc079895e2792bef1e79476ff937c80dc0615536cc03",
+          "bytes": 902268,
+          "triangles": 3276,
+          "primitives": 6
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "heartwood-wall",
+          "name": "Heartwood Wall",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/heartwood-wall/model.glb",
+          "blocker": {
+            "width": 16,
+            "depth": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.hollow-stump-gate",
+      "name": "Hollow Stump Gate",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "hollow-tree",
+        "mission-entrance",
+        "permanent-obstacle"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/hollow-stump-gate/model.glb",
+          "sha256": "5cbb59afd7723220794d6950d6ddfbc8f8969b7cdefd0568eeba3d6d1dfde538",
+          "bytes": 917544,
+          "triangles": 4690,
+          "primitives": 11
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "hollow-stump-gate",
+          "name": "Hollow Stump Gate",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/hollow-stump-gate/model.glb",
+          "blockers": [
+            {
+              "x": 8.2,
+              "z": 0,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 1.5707963267948966
+            },
+            {
+              "x": 8.075423574700105,
+              "z": -1.4239150568688286,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 1.7453292519943295
+            },
+            {
+              "x": 7.705479490444448,
+              "z": -2.804565175270483,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 1.9198621771937625
+            },
+            {
+              "x": 7.1014083110323964,
+              "z": -4.099999999999999,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.0943951023931953
+            },
+            {
+              "x": 6.281564433575619,
+              "z": -5.270858399429621,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.2689280275926285
+            },
+            {
+              "x": 5.270858399429622,
+              "z": -6.281564433575619,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.443460952792061
+            },
+            {
+              "x": 4.1000000000000005,
+              "z": -7.101408311032396,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.617993877991494
+            },
+            {
+              "x": 2.804565175270484,
+              "z": -7.705479490444447,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.792526803190927
+            },
+            {
+              "x": 1.4239150568688292,
+              "z": -8.075423574700105,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 2.9670597283903604
+            },
+            {
+              "x": 5.021051876504147e-16,
+              "z": -8.2,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 3.141592653589793
+            },
+            {
+              "x": -1.4239150568688284,
+              "z": -8.075423574700105,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 3.316125578789226
+            },
+            {
+              "x": -2.8045651752704814,
+              "z": -7.705479490444448,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 3.4906585039886586
+            },
+            {
+              "x": -4.099999999999998,
+              "z": -7.1014083110323964,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 3.665191429188092
+            },
+            {
+              "x": -5.270858399429622,
+              "z": -6.281564433575619,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 3.839724354387525
+            },
+            {
+              "x": -6.2815644335756184,
+              "z": -5.270858399429623,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.014257279586958
+            },
+            {
+              "x": -7.101408311032395,
+              "z": -4.100000000000002,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.1887902047863905
+            },
+            {
+              "x": -7.705479490444447,
+              "z": -2.8045651752704845,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.363323129985824
+            },
+            {
+              "x": -8.075423574700105,
+              "z": -1.4239150568688281,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.537856055185257
+            },
+            {
+              "x": -8.2,
+              "z": -1.0042103753008295e-15,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.71238898038469
+            },
+            {
+              "x": -8.075423574700107,
+              "z": 1.4239150568688261,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 4.886921905584122
+            },
+            {
+              "x": -7.705479490444448,
+              "z": 2.8045651752704828,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 5.061454830783555
+            },
+            {
+              "x": -7.101408311032396,
+              "z": 4.1000000000000005,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 5.235987755982989
+            },
+            {
+              "x": -6.281564433575622,
+              "z": 5.270858399429619,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 5.410520681182421
+            },
+            {
+              "x": -5.270858399429623,
+              "z": 6.2815644335756184,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 5.585053606381854
+            },
+            {
+              "x": 5.270858399429621,
+              "z": 6.28156443357562,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 6.981317007977318
+            },
+            {
+              "x": 6.281564433575618,
+              "z": 5.270858399429624,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 7.155849933176751
+            },
+            {
+              "x": 7.101408311032397,
+              "z": 4.099999999999997,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 7.3303828583761845
+            },
+            {
+              "x": 7.705479490444448,
+              "z": 2.8045651752704823,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 7.504915783575617
+            },
+            {
+              "x": 8.075423574700105,
+              "z": 1.423915056868829,
+              "width": 1.6,
+              "depth": 3,
+              "yaw": 7.67944870877505
+            },
+            {
+              "x": 11,
+              "z": 0,
+              "width": 2,
+              "depth": 6,
+              "yaw": 1.5707963267948966,
+              "shape": "ellipse"
+            },
+            {
+              "x": 9.740016282185309,
+              "z": -5.111954892481454,
+              "width": 2,
+              "depth": 6,
+              "yaw": 2.0541182735010186,
+              "shape": "ellipse"
+            },
+            {
+              "x": 6.248712214042715,
+              "z": -9.05282252483022,
+              "width": 2,
+              "depth": 6,
+              "yaw": 2.5374402202071407,
+              "shape": "ellipse"
+            },
+            {
+              "x": 1.325903482808553,
+              "z": -10.919797615078593,
+              "width": 2,
+              "depth": 6,
+              "yaw": 3.0207621669132627,
+              "shape": "ellipse"
+            },
+            {
+              "x": -3.90065375746789,
+              "z": -10.285178669539564,
+              "width": 2,
+              "depth": 6,
+              "yaw": 3.5040841136193848,
+              "shape": "ellipse"
+            },
+            {
+              "x": -8.233618229882113,
+              "z": -7.294349240648748,
+              "width": 2,
+              "depth": 6,
+              "yaw": 3.987406060325507,
+              "shape": "ellipse"
+            },
+            {
+              "x": -10.680359991686572,
+              "z": -2.6324723071631344,
+              "width": 2,
+              "depth": 6,
+              "yaw": 4.470728007031629,
+              "shape": "ellipse"
+            },
+            {
+              "x": -10.680359991686574,
+              "z": 2.6324723071631317,
+              "width": 2,
+              "depth": 6,
+              "yaw": 4.9540499537377505,
+              "shape": "ellipse"
+            },
+            {
+              "x": -8.233618229882115,
+              "z": 7.294349240648745,
+              "width": 2,
+              "depth": 6,
+              "yaw": 5.437371900443873,
+              "shape": "ellipse"
+            },
+            {
+              "x": 9.74001628218531,
+              "z": 5.111954892481452,
+              "width": 2,
+              "depth": 6,
+              "yaw": 7.370659687268361,
+              "shape": "ellipse"
+            }
+          ],
+          "light": {
+            "x": 0,
+            "y": 4,
+            "z": 5,
+            "color": "#ffb357",
+            "intensity": 5,
+            "range": 16
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.interwoven-root-bank",
+      "name": "Interwoven Root Bank",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/interwoven-root-bank/model.glb",
+          "sha256": "71d6a9b3594040773a4d6cba8f0cd936bda9d47f466500f1e2bc64fd06b897df",
+          "bytes": 3115484,
+          "triangles": 2108,
+          "primitives": 8
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "interwoven-root-bank",
+          "name": "Interwoven Root Bank",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/structures/interwoven-root-bank/model.glb",
+          "blocker": {
+            "width": 12,
+            "depth": 3
+          }
         }
       ]
     },
@@ -5464,6 +6341,76 @@
         }
       ],
       "scenery": []
+    },
+    {
+      "id": "asset.models.environment.structures.moss-stone-bridge",
+      "name": "Moss Stone Bridge",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/moss-stone-bridge/model.glb",
+          "sha256": "542883a9419899cf78067cddd0ef623a295b048bc67c3026ed3c0cccffae95e9",
+          "bytes": 445984,
+          "triangles": 6144,
+          "primitives": 7
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "moss-stone-bridge",
+          "name": "Moss Stone Bridge",
+          "type": "span",
+          "category": "landmark",
+          "file": "models/environment/structures/moss-stone-bridge/model.glb",
+          "deck": {
+            "width": 6,
+            "depth": 18,
+            "height": 0.35,
+            "arch": 2.2,
+            "thickness": 0.8,
+            "level": 1,
+            "connections": {
+              "start": 0,
+              "end": 0
+            }
+          },
+          "blockers": [
+            {
+              "x": -4,
+              "z": -8.5,
+              "width": 1.5,
+              "depth": 2.3
+            },
+            {
+              "x": -4,
+              "z": 8.5,
+              "width": 1.5,
+              "depth": 2.3
+            },
+            {
+              "x": 4,
+              "z": -8.5,
+              "width": 1.5,
+              "depth": 2.3
+            },
+            {
+              "x": 4,
+              "z": 8.5,
+              "width": 1.5,
+              "depth": 2.3
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "asset.models.environment.structures.pebbles-pale",
@@ -6514,7 +7461,12 @@
             "width": 3.3,
             "depth": 8,
             "height": 0.61,
-            "arch": 0.35
+            "arch": 0.35,
+            "level": 1,
+            "connections": {
+              "start": 0,
+              "end": 0
+            }
           }
         }
       ]
@@ -6548,6 +7500,125 @@
           "blocker": {
             "width": 5.8,
             "depth": 4.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.woodland-timber-bridge",
+      "name": "Woodland Timber Bridge",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/structures/woodland-timber-bridge/model.glb",
+          "sha256": "2b774e6b805b440e561518da7f5c3b56b05efd987c53579ef4d058e084466913",
+          "bytes": 1013848,
+          "triangles": 4232,
+          "primitives": 5
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "woodland-timber-bridge",
+          "name": "Woodland Timber Bridge",
+          "type": "span",
+          "category": "landmark",
+          "file": "models/environment/structures/woodland-timber-bridge/model.glb",
+          "deck": {
+            "width": 5.6,
+            "depth": 18,
+            "height": 0.25,
+            "arch": 1.5,
+            "thickness": 0.85,
+            "level": 1,
+            "connections": {
+              "start": 0,
+              "end": 0
+            }
+          },
+          "blockers": [
+            {
+              "x": -3.35,
+              "z": -8.5,
+              "width": 0.45,
+              "depth": 0.45
+            },
+            {
+              "x": -3.35,
+              "z": 0,
+              "width": 0.45,
+              "depth": 0.45
+            },
+            {
+              "x": -3.35,
+              "z": 8.5,
+              "width": 0.45,
+              "depth": 0.45
+            },
+            {
+              "x": 3.35,
+              "z": -8.5,
+              "width": 0.45,
+              "depth": 0.45
+            },
+            {
+              "x": 3.35,
+              "z": 0,
+              "width": 0.45,
+              "depth": 0.45
+            },
+            {
+              "x": 3.35,
+              "z": 8.5,
+              "width": 0.45,
+              "depth": 0.45
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.ancient-canopy-trunk",
+      "name": "Ancient Canopy Trunk",
+      "kind": "model",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/trees/ancient-canopy-trunk/model.glb",
+          "sha256": "e70a62cecc3d9862a91bd535188c81620f23e8a8490a687adfd268b56ab22c3a",
+          "bytes": 3020712,
+          "triangles": 1432,
+          "primitives": 6
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "ancient-canopy-trunk",
+          "name": "Ancient Canopy Trunk",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/trees/ancient-canopy-trunk/model.glb",
+          "blocker": {
+            "width": 14,
+            "depth": 14,
+            "shape": "ellipse"
           }
         }
       ]
@@ -9057,6 +10128,144 @@
           "bytes": 196810,
           "width": 512,
           "height": 512
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.ancient-bark",
+      "name": "Ancient Bark",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "bark"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/ancient-bark.png",
+          "sha256": "48ebd9212c843db49a04f65656c2be8986634572adf8774c195aff446737030a",
+          "bytes": 2951460,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.forest-floor",
+      "name": "Forest Floor",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "forest-floor"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/forest-floor.png",
+          "sha256": "6ce67b4bb630c4b0dc7f43aa8566ab9f13c625c087f52f94fad7bea26d7570b2",
+          "bytes": 2467767,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.heartwood-floor",
+      "name": "Worn heartwood floor",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "heartwood"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/heartwood-floor.png",
+          "sha256": "0aab8e8e21b23938759b730f3ca2d0e6b02ef4aa40e6f6b5ecad58f770d43e0f",
+          "bytes": 2622071,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.heartwood-grain",
+      "name": "heartwood grain",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "heartwood"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/heartwood-grain.png",
+          "sha256": "c3ad82811e73496ab9fd50ad50f3db0b7807e5599410ab1f8f47f7cb95c7eaf1",
+          "bytes": 2315617,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.heartwood-rings",
+      "name": "heartwood rings",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "heartwood"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/heartwood-rings.png",
+          "sha256": "60182afb6666452d18a87ea34c142eb3ef1a34b54af8731366a3ddb462027b17",
+          "bytes": 2966853,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.hollow-bark",
+      "name": "hollow bark",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "heartwood"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/hollow-bark.png",
+          "sha256": "e43df91d41ee70dc89ac52a86f3cd322a2273bbafc53c2b5c2fc267738b84e4e",
+          "bytes": 2540067,
+          "width": 1024,
+          "height": 1024
         }
       ],
       "render": [],

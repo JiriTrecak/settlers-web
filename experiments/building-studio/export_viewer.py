@@ -32,6 +32,9 @@ def export_viewer(asset, output):
     depsgraph=bpy.context.evaluated_depsgraph_get()
     collection=bpy.data.collections.new('Temporary viewer export')
     scene.collection.children.link(collection)
+    config=json.loads((asset/'asset.json').read_text())
+    metadata['light_scale']=max(.001,min(10,float(config.get('viewer_light_scale',1))))
+    preserve_textures=config.get('preserve_textures',False)
     materials={}
     copies=[]
     for original in originals:
@@ -40,6 +43,9 @@ def export_viewer(asset, output):
         obj=bpy.data.objects.new(original.name+' · viewer',data)
         collection.objects.link(obj)
         obj.matrix_world=original.matrix_world.copy()
+        if preserve_textures:
+            copies.append(obj)
+            continue
         # Preserve each object's Generated coordinates when joining, so procedural grain stays put.
         coords=data.attributes.new('studio_generated','FLOAT_VECTOR','POINT')
         low=Vector(tuple(min(v.co[i] for v in data.vertices) for i in range(3)))
@@ -73,7 +79,20 @@ def export_viewer(asset, output):
     bpy.context.view_layer.objects.active=copies[0]
     bpy.ops.object.join()
     merged=bpy.context.object
-    merged.name='Rootbound Hall · evaluated preview mesh'
+    merged.name=asset.name+' · evaluated preview mesh'
+    if config.get('foliage_wind'):merged['foliageWind']=config['foliage_wind']
+    if preserve_textures:
+        image_format=config.get('texture_format','AUTO')
+        if image_format not in ('AUTO','JPEG','WEBP'):raise ValueError('Invalid runtime texture_format')
+        quality=int(config.get('texture_quality',90))
+        if not 1<=quality<=100:raise ValueError('Invalid runtime texture_quality')
+        bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',use_selection=True,export_yup=True,
+                                  export_materials='EXPORT',export_animations=False,export_cameras=False,export_lights=False,export_extras=True,
+                                  export_image_format=image_format,export_image_quality=quality)
+        metadata['vertices']=len(merged.data.vertices)
+        metadata['triangles']=sum(len(p.vertices)-2 for p in merged.data.polygons)
+        metadata['note']='Evaluated static geometry with authored UVs and packed albedo textures.'
+        return metadata
     color=merged.data.color_attributes.new(name='StudioAlbedo',type='FLOAT_COLOR',domain='CORNER')
     merged.data.color_attributes.active_color=color
     scene.render.engine='CYCLES'
@@ -93,9 +112,24 @@ def export_viewer(asset, output):
         bsdf.inputs['Emission Color'].default_value=properties['emission']
         bsdf.inputs['Emission Strength'].default_value=properties['emission_strength']
         links.new(bsdf.outputs[0],out.inputs['Surface'])
+    # Explicit neutral-asset optimization: color is already baked per corner.
+    # Keep distinct roughness/metal/emissive state and ownership materials separate.
+    config=json.loads((asset/'asset.json').read_text())
+    if config.get('merge_static_materials',False):
+        slots=list(merged.data.materials);unique=[];keys={};remap={}
+        props={copied.name:properties for copied,properties in materials.values()}
+        for index,slot in enumerate(slots):
+            p=props[slot.name]
+            key=('team',index) if p['team_color'] else (p['roughness'],p['metallic'],tuple(p['emission']),p['emission_strength'])
+            if key not in keys:keys[key]=len(unique);unique.append(slot)
+            remap[index]=keys[key]
+        assignment=[remap[p.material_index] for p in merged.data.polygons]
+        merged.data.materials.clear()
+        for slot in unique:merged.data.materials.append(slot)
+        for polygon,index in zip(merged.data.polygons,assignment):polygon.material_index=index
     bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',use_selection=True,export_yup=True,
                               export_materials='EXPORT',export_vertex_color='ACTIVE',export_all_vertex_colors=False,
-                              export_animations=False,export_cameras=False,export_lights=False)
+                              export_animations=False,export_cameras=False,export_lights=False,export_extras=True)
     metadata['vertices']=len(merged.data.vertices)
     metadata['triangles']=sum(len(p.vertices)-2 for p in merged.data.polygons)
     metadata['note']='Part-specific simplified geometry with vertex-baked procedural albedo. Realtime lights approximate the Cycles studio.'

@@ -13,7 +13,7 @@ it('is playable with both routes to the shared root and every camp',()=>{
  expect(root.owner).toBe('none');expect(content.get(root.definition).gatheringCapacity).toBe(10);
  for(const start of map.playerStarts){
   const from=g.spatial.cell({x:start.x,y:start.z+8});
-  for(const target of [{x:128,y:132},...map.camps.map(c=>({x:c.home.x,y:c.home.y+7}))])expect(g.spatial.navigation.path(from,g.spatial.cell(target)),JSON.stringify({start,target})).not.toBeNull();
+  for(const target of [{x:128,y:132},...map.camps.map(c=>({x:c.home.x,y:c.home.y+7}))])expect(g.spatial.findPath(from,g.spatial.cell(target)),JSON.stringify({start,target})).not.toBeNull();
  }
  expect(map.camps.filter(c=>c.legendary)).toHaveLength(2);
  expect(map.camps.filter(c=>c.lootPool==='loot.camp.easy')).toHaveLength(4);
@@ -39,7 +39,9 @@ it('lets rival workers contest the same root and preserves their assignments',()
 it('has a traversable bridge with connected banks and a marked deck footprint',()=>{
  const g=new Game(map,slots,content);
  expect(g.spatial.decks[g.spatial.cell({x:110,y:123})]).toBe(1);
- expect(g.spatial.heights[g.spatial.cell({x:110,y:123})]).toBeGreaterThan(190);
- const route=g.spatial.navigation.path(g.spatial.cell({x:101,y:123}),g.spatial.cell({x:119,y:123}));
- expect(route).not.toBeNull();expect(route!.some(i=>g.spatial.decks[i])).toBe(true);
+ const deck=map.stamps.find(s=>s.asset==='timber-bridge')!;
+ expect(g.spatial.height({x:110,y:123,surface:deck.id})).toBeGreaterThan(1.9);
+ expect(g.spatial.heights[g.spatial.cell({x:110,y:123})]).toBeLessThan(0);
+ const route=g.spatial.findPath(g.spatial.cell({x:101,y:123}),g.spatial.cell({x:119,y:123}));
+ expect(route).not.toBeNull();expect(route!.some(i=>g.spatial.point(i).surface===deck.id)).toBe(true);
 });

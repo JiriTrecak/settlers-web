@@ -3,6 +3,8 @@ export const regionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),x:z
 export const objectiveDefinitionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),title:z.string().min(1).max(120),description:z.string().min(1).max(500),optional:z.boolean().default(false)}).strict();
 export const missionSchema=z.object({
   campaign:z.string().min(1).max(80), title:z.string().min(1).max(120), order:z.number().int().min(1).max(100),
+  nextMission:z.string().regex(/^[a-z0-9][a-z0-9-]*$/).max(100).optional(),
+  company:z.array(z.string().min(1).max(120)).min(1).max(32).refine(ids=>new Set(ids).size===ids.length,'Duplicate company tag').optional(),
   objectives:z.array(objectiveDefinitionSchema).max(64).optional(),
   heroLevelCap:z.number().int().min(1).max(10).optional(),
   script:z.string().min(1).max(64000), regions:z.array(regionSchema).max(128),

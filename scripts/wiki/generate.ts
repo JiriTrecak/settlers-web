@@ -353,6 +353,7 @@ export async function generate() {
       items: [
         { text: "Authoring the wiki", link: "/development/" },
         { text: "Mission scripting & Lua", link: "/development/mission-scripting" },
+        { text: "Canopy environment", link: "/development/canopy-environment" },
         { text: "Performance & loading", link: "/development/performance" },
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
         { text: "First combat balance baseline", link: "/development/first-balance-pass" },
@@ -378,6 +379,7 @@ export async function generate() {
           "expansion/hero-revival.md",
           "expansion/spell-effects.md",
           "expansion/weather.md",
+          "expansion/volumetric-atmosphere.md",
           "expansion/graphics-settings.md",
         ].map((rel) => ({
           text: (
@@ -393,6 +395,7 @@ export async function generate() {
               "expansion/hero-revival.md": "Targeting & hero revival",
               "expansion/spell-effects.md": "Spell effects",
               "expansion/weather.md": "Weather",
+              "expansion/volumetric-atmosphere.md": "Volumetric atmosphere",
               "expansion/graphics-settings.md": "Graphics settings",
             } as Record<string, string>
           )[rel],

@@ -1,6 +1,9 @@
+import {WalkSurfacePicker} from '../terrain/walkSurfacePicker';
+import {SceneryCutaway} from '../visibility/sceneryCutaway';
+import {CanopyLayer} from '../atmosphere/canopyLayer';
 import {SelectionPortrait} from '../portrait/selectionPortrait';
 import {ownerSlot,type Owner} from '../../content/schema';
-import {bridgeSurfaces,bridgeHeight} from '../../shared/map/bridgeSurface';
+import {bridgeSurfaces,surfaceHeight} from '../../shared/map/bridgeSurface';
 import {SceneryLights} from '../prop/sceneryLights';
 import type { AbilityAim } from "../settlement/abilityTarget";
 import type { CommandFeedback } from "../../presentation/commandFeedback";
@@ -133,11 +136,13 @@ export class Renderer {
   private readonly lines = new Group();
   private curvePreview: Line | null = null;
   readonly sky: Sky;
+  private readonly canopy: CanopyLayer;
   private readonly weather = new WeatherLayer(this.scene);
   private landscape: Landscape = emptyLandscape();
   private readonly meadow: Meadow;
   private readonly decals: DecalLayer;
   private settlement: SettlementLayer | null = null;
+  private readonly cutaway=new SceneryCutaway();
   private fog: FogOfWar | null = null;
   gamePreview(
     kind: string | null,
@@ -179,6 +184,7 @@ export class Renderer {
   };
   gridOn = true;
   gridMode: GridMode = "tiles";
+  private readonly interiorCutaway={value:0};
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -189,9 +195,10 @@ export class Renderer {
     this.scene.environment = this.reflections.texture;
     this.portrait = new SelectionPortrait(this.reflections.texture);
     this.scene.environmentIntensity = 0.75;
-    this.props = new PropField(this.scene, assets);
+    this.props = new PropField(this.scene, assets,this.cutaway);
     this.brush = new BrushLayer(this.scene);
     this.sky = new Sky(this.scene);
+    this.canopy = new CanopyLayer(this.scene);
     this.refreshEnvironment();
     window.addEventListener("utc-environment-presets", this.refreshEnvironment);
     window.addEventListener("storage", this.presetStorage);
@@ -224,6 +231,7 @@ export class Renderer {
       if (animationTime !== undefined) {
         this.water?.tick(animationTime * 1000);
         this.meadow.tick(animationTime * 1000);
+        this.props.tick(animationTime * 1000);
       }
       const cam = this.threeCam();
       this.camera.applyTo(cam, w, h);
@@ -239,7 +247,8 @@ export class Renderer {
       this.meadow.updateLOD(cam);
       this.water?.updateVisibility(cam);
       gl.setRenderTarget(target);
-      gl.render(this.scene, cam);
+      this.cutaway.update(cam,this.settlement?.cutawaySubjects()??[]);
+      this.display.drawWorld(this.scene,cam,this.atmosphereFrame(animationTime===undefined?this.visualClock:animationTime*1000));
       const bytes = new Uint8Array(w * h * 4);
       gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
       // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
@@ -304,13 +313,16 @@ export class Renderer {
     const presetChanged =
       this.landscape.environment.preset !== landscape.environment.preset;
     this.landscape = landscape;
+    this.interiorCutaway.value=landscape.environment.interior?1:0;
     this.weather.configure(landscape.environment.weather);
+    this.canopy.configure(landscape.environment.canopy,this.height?.size??256);
     if (presetChanged) this.refreshEnvironment();
     this.sky.setHour(landscape.environment.hour);
     this.sky.setPlaying(landscape.environment.playing);
     this.props.setSeason(landscape.environment.season);
     if (this.terrain && this.height) {
       const mat = this.terrain.material as TerrainMaterial;
+      mat.setFloor(landscape.environment.floorMaterial);
       if (rebuild) {
         mat.update(this.height, landscape.strokes);
         mat.setCover(landscape.cover);
@@ -323,7 +335,7 @@ export class Renderer {
     await Promise.all([this.props.ready(),this.meadow.ready]);
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
-    this.settlement ??= new SettlementLayer(this.scene);
+    this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
     await Promise.all([this.props.preload(stamps), this.gameReady(), this.ready()]);
   }
   private warming: Promise<void> | null = null;
@@ -453,6 +465,7 @@ export class Renderer {
       addSunAndGrid(this.scene, snapshot.size, this.lines, this.gridMode);
       this.sky.resize(snapshot.size);
       this.terrain = new HeightMesh(this.scene, snapshot.size);
+      this.cutaway.attach(this.terrain.material,16,this.interiorCutaway);
       this.water = new WaterLayer(this.scene, snapshot.size);
       this.water.setStyle(this.landscape.water);
       this.water.setFlow(this.landscape.rivers ?? []);
@@ -469,15 +482,16 @@ export class Renderer {
         (this.terrain.material as TerrainMaterial).setSeason(
           this.landscape.environment.season,
         );
+        (this.terrain.material as TerrainMaterial).setFloor(this.landscape.environment.floorMaterial);
         this.meadow.rebuild(this.height, this.landscape);
       }
       this.lines.visible = this.gridOn;
       this.refreshGrid();
     }
-    if(this.height && this.bridgeStamps !== stamps){this.bridgeStamps=stamps;const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));field.walkSurface=(x,z)=>bridgeHeight(surfaces,x,z);}
+    if(this.height && this.bridgeStamps !== stamps){this.bridgeStamps=stamps;const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));const byId=new Map(surfaces.map(b=>[b.id,b]));field.walkSurface=(x,z,id)=>{const b=byId.get(id);return b?surfaceHeight(b,x,z):undefined;};this.walkPicker.set(surfaces);}
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
-      this.settlement ??= new SettlementLayer(this.scene);
+      this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
       this.settlement.update(
         snapshot.settlement,
         this.height,
@@ -500,6 +514,7 @@ export class Renderer {
       this.props.contactRevision,
       this.props.contacts,
     );
+    if(this.height&&this.landscape.environment.interior)(this.terrain?.material as TerrainMaterial|undefined)?.setGroundLights(this.sceneryLights.groundSources,this.height);
     this.present();
   }
 
@@ -518,6 +533,12 @@ export class Renderer {
     return resource ? Number(resource[1]) : null;
   }
 
+  private readonly walkPicker=new WalkSurfacePicker();
+  pickWalk(clientX:number,clientY:number){
+    const ground=this.pickGround(clientX,clientY);if(!ground)return null;
+    const distance=this.ray.ray.origin.distanceTo(new Vector3(ground.x,ground.y,ground.z));
+    return this.walkPicker.pick(this.ray,distance)??ground;
+  }
   pickStamp(clientX: number, clientY: number): string | null {
     if (!this.aim(clientX, clientY)) return null;
     return this.props.pick(this.ray);
@@ -562,6 +583,8 @@ export class Renderer {
     const total = perf.start(),
       environment = perf.start();
     this.sky.tick(now);
+    this.canopy.tick(now);
+    this.sky.sun.intensity*=this.canopy.sunTransmission;
     this.sky.focus(
       this.camera.targetX,
       this.camera.targetZ,
@@ -571,12 +594,14 @@ export class Renderer {
     );
     this.water?.tick(now);
     this.meadow.tick(now);
+    this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
     perf.end("Sky / water / wind", environment);
     const camera = perf.start();
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
     this.updateAtmosphere(cam);
+    this.cutaway.update(cam,this.settlement?.cutawaySubjects()??[]);
     this.weather.update(
       now,
       this.camera.targetX,
@@ -588,8 +613,15 @@ export class Renderer {
     this.meadow.updateLOD(cam);
     this.water?.updateVisibility(cam);
     perf.end("Camera / atmosphere", camera);
-    this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now));
+    this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now),this.atmosphereFrame(now));
     perf.end("Present total (CPU)", total);
+  }
+
+  private atmosphereFrame(now:number){
+    const weather=this.landscape.environment.weather;
+    return {settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+      waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
+      rain:weather?.kind==='rain'?weather.intensity:0};
   }
 
   private updateAtmosphere(cam: OrthographicCamera | PerspectiveCamera): void {
@@ -663,11 +695,14 @@ export class Renderer {
     this.previewCurve([]);
     this.meadow.destroy();
     this.weather.dispose();
+    this.canopy.dispose();
+    this.cutaway.dispose();
     this.sceneryLights.dispose();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);
     this.props.destroy();
+    this.walkPicker.dispose();
     this.portrait.destroy();
     this.settlement?.destroy(this.scene);
     this.fog?.dispose();

@@ -39,7 +39,7 @@ export class Spellcasting {
   if((state.cooldowns[id]??0)>this.c.state.tick)return 'Ability is cooling down';
   if(state.mana<rank.mana)return 'Not enough mana';
   if(spell.target==='point' && !point)return 'Choose a ground target';
-  const target=spell.target==='self'?{x:precise(e).x,y:precise(e).y}:point!;
+  const target=spell.target==='self'?precise(e):point!;
   if(distance2(precise(e),target)>rank.range**2 && spell.target==='point')return 'Target is out of range';
   state.mana-=rank.mana;state.cooldowns[id]=this.c.state.tick+Math.max(1, Math.round(rank.cooldownTicks*(1000-this.c.stats(e).cooldownReductionPermille)/1000));
   const turnTicks=spell.target==='self'?0:Math.ceil(Math.abs(turnDifference(e.rotation,heading(e,target)))/((this.c.def(e).behaviors.movement?.turnRate??720)*TICK_MS/1000));
@@ -52,7 +52,7 @@ export class Spellcasting {
   return null;
  }
  private cue(caster:Entity,ability:string,rank:number,target:Point,phase:VisualCue['phase'],durationTicks:number){
-  const position=precise(caster),origin={x:position.x,y:position.y};
+  const origin=precise(caster);
   const viewers=Object.keys(this.c.state.objectives).filter(owner=>owner===caster.owner ||
     (this.vision.visible(owner as Entity['owner'],caster) && this.vision.currentlyVisible(owner as Entity['owner'],[motionCell(fixed(target),this.c.spatial.size)]))) as Entity['owner'][];
   this.c.state.visuals.push({id:this.c.state.nextVisual++,tick:this.c.state.tick,ability,rank,phase,origin,target,durationTicks,viewers});
@@ -87,6 +87,7 @@ export class Spellcasting {
     else if(this.combat.hostile(caster,target)){
      affected=spellAreaContains(spell.effect,origin,pending.point,rank.radius,p);
     }
+    if(affected&&this.c.spatial.layers&&!this.c.spatial.layers.shotClear(spell.effect==='blast'?pending.point:origin,p))affected=false;
     if(affected)targets.push(target);
    }
    const eligible = targets.filter(t => this.c.registry.rules.damageMultipliers[spell.damageType][this.c.def(t).body!.armorType] > 0);

@@ -1,6 +1,6 @@
 import { parseUtcMap, type UtcMap } from "./utcmap";
 import { mapRevision, playableMapError, type PlayableMap } from "./playable";
-const sources = import.meta.glob("../../../assets/maps/**/*.utcmap", {
+const sources = import.meta.glob("../../../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap", {
   query: "?raw",
   import: "default",
   eager: true,

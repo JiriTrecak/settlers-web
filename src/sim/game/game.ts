@@ -1,3 +1,5 @@
+import type {CampaignCompany} from '../../shared/scenario/company';
+import {companyForMap,restoreCompanyMember} from '../scenario/company';
 import {Mission} from "../scenario/mission";
 import {MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {attackTiming} from './attackTiming';
@@ -38,7 +40,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-42";
+export const SIMULATION_BUILD = "declarative-sim-44";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -78,6 +80,7 @@ export class Game {
     readonly slots: readonly Slot[],
     readonly registry: ContentRegistry = content,
     seed?: number,
+    company?: CampaignCompany,
   ) {
     validatePlacements(map, registry);
     this.state.random =
@@ -86,11 +89,14 @@ export class Game {
         : seed >>> 0) || 1;
     this.owners = slots.map((s) => slotOwner(s.player));
     this.context = new GameContext(this.state, registry, map);
+    const arrivals=company?companyForMap(this.context,company):undefined;
     for (const p of expandMap(map, registry)) {
+      if(arrivals&&map.mission?.company?.includes(p.id)&&!arrivals.has(p.id))continue;
       if(p.activation === "script") continue;
       if (p.owner !== "none" && !this.owners.includes(p.owner))
         throw new Error(`Placement owner ${p.owner} has no match slot`);
       const e = this.context.create(p);
+      if(arrivals?.has(p.id))restoreCompanyMember(this.context,e,arrivals.get(p.id)!);
       e.readyTick = 0;
       const camp = map.camps.find((c) => c.members.includes(p.id));
       if (camp && e.unit) e.unit.camp = camp.id;
@@ -232,6 +238,8 @@ export class Game {
     if (this.state.outcome) return reject("Match has ended");
     if(this.isDefeated(owner))return reject("Your colony has been defeated");
     const action = parsed.data;
+    const destination="destination" in action?action.destination:"position" in action?action.position:"point" in action?action.point:undefined;
+    if(destination&&!this.spatial.validPoint(destination))return reject("Destination is not on a declared walk surface");
     if (action.type === "noop" || action.type === "ping")
       return { accepted: true, actors: [] };
     const ids =
@@ -287,9 +295,9 @@ export class Game {
         return reject("Target is not visible and damageable");
       const destinations = action.type === "move" ? formationDestinations(
         eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
-          .map(e=>({id:e.id,x:precise(e).x,y:precise(e).y})), action.destination, this.spatial.size,
+          .map(e=>({id:e.id,...precise(e)})), action.destination, this.spatial.size,
         p=>this.spatial.walkable(this.spatial.cell(p)),
-        (from,to)=>this.spatial.clearSegment({x:Math.round(from.x*1000),y:Math.round(from.y*1000)},{x:to.x*1000,y:to.y*1000}),
+        (from,to)=>this.spatial.clearSegment(fixed(from),fixed(to)),
       ) : null;
       const applied: number[] = [];
       for (const e of eligible) {
@@ -378,7 +386,7 @@ export class Game {
     if (action.type === "cast") {
       if (
         action.point &&
-        !this.observation.explored(owner, [this.spatial.cell(action.point)])
+        !this.observation.explored(owner, [action.point.y*this.spatial.size+action.point.x])
       )
         return reject("Explore the target first");
       const error = this.spells.cast(actor, action.ability, action.point);
@@ -591,7 +599,7 @@ export class Game {
       if (!this.registry.get(missile.definition).behaviors.combat?.projectile ||
           missile.launched > state.tick || missile.impact <= missile.launched ||
           !this.registry.rules.damageTypes[missile.damageType] ||
-          [missile.origin,missile.destination].some(p=>p.x>=this.map.size || p.y>=this.map.size))
+          [missile.origin,missile.destination].some(p=>!this.spatial.validPoint(p)))
         throw new Error("Invalid saved missile");
     }
     if (new Set(state.shells.map(s => s.id)).size !== state.shells.length ||
@@ -662,11 +670,12 @@ export class Game {
     if (new Set(queuedHeroes).size !== queuedHeroes.length)
       throw new Error("Duplicate hero revival");
     for (const e of state.entities) {
+      if(e.surface&&!this.spatial.validPoint(e)||e.unit?.position&&e.unit.position.surface!==e.surface)throw new Error("Invalid saved walk surface");
       if (
         e.x >= this.map.size ||
         e.y >= this.map.size ||
-        e.unit?.route.some((i) => i >= this.map.size ** 2) ||
-        (e.unit?.goal != null && e.unit.goal >= this.map.size ** 2) ||
+        e.unit?.route.some((i) => !this.spatial.validNode(i)) ||
+        (e.unit?.goal != null && !this.spatial.validNode(e.unit.goal)) ||
         (e.unit?.position &&
           (e.unit.position.x > (this.map.size - 1) * 1000 ||
             e.unit.position.y > (this.map.size - 1) * 1000))
@@ -733,16 +742,19 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
+        const points=[u.pendingMove,u.release,u.idle?.home].filter(p=>p!=null);
+        if(points.some(p=>!this.spatial.validPoint(p)))throw new Error('Invalid saved order surface');
+        if(u.segment&&(!this.spatial.validNode(u.segment.to)||!this.spatial.validPoint({x:u.segment.from.x/1000,y:u.segment.from.y/1000,surface:u.segment.from.surface})))throw new Error('Invalid saved segment surface');
         if (u.detour) {
           const end = u.detour.points.at(-1)!;
           if(u.detour.yielding&&(u.detour.yielding.leader===e.id||u.detour.yielding.until>state.tick+120))throw new Error('Invalid saved yielding maneuver');
           if (!u.position || u.segment || u.goal !== u.detour.goal ||
-            !u.route.length || u.route[0] !== u.detour.waypoint || u.goal >= this.map.size**2 || u.detour.waypoint >= this.map.size**2 ||
+            !u.route.length || u.route[0] !== u.detour.waypoint || !this.spatial.validNode(u.goal) || !this.spatial.validNode(u.detour.waypoint) ||
             u.detour.points.some(p => p.x > (this.map.size-1)*1000 || p.y > (this.map.size-1)*1000) ||
-            end.x !== (u.detour.waypoint%this.map.size)*1000 || end.y !== Math.floor(u.detour.waypoint/this.map.size)*1000)
+            end.x !== this.spatial.point(u.detour.waypoint).x*1000 || end.y !== this.spatial.point(u.detour.waypoint).y*1000)
             throw new Error('Invalid saved local detour');
         }
-        if(u.pursuit&&(!d.behaviors.combat||u.pursuit.seenTick>state.tick||u.pursuit.position.x>=this.map.size||u.pursuit.position.y>=this.map.size))throw new Error("Invalid saved pursuit");
+        if(u.pursuit&&(!d.behaviors.combat||u.pursuit.seenTick>state.tick||!this.spatial.validPoint(u.pursuit.position)))throw new Error("Invalid saved pursuit");
         const timing=d.behaviors.combat&&u.attack?attackTiming(d.behaviors.combat,u.attack.cycleTicks):null;
         if(u.lastMovedTick!==undefined&&u.lastMovedTick>state.tick)throw new Error("Invalid saved movement tick");
         if (u.attack && (!d.behaviors.combat || u.attack.started > state.tick ||
@@ -754,7 +766,7 @@ export class Game {
           u.charge.expires > state.tick + d.behaviors.combat.charge.durationTicks))
           throw new Error("Invalid saved charge state");
         for (const order of [u.order, ...u.orderQueue]) {
-          if ((order?.type === "move" || order?.type === "patrol") && (order.destination.x >= this.map.size || order.destination.y >= this.map.size))
+          if ((order?.type === "move" || order?.type === "patrol") && (!this.spatial.validPoint(order.destination)))
             throw new Error("Saved order outside map");
           if(order?.type==='patrol'&&order.origin&&(order.origin.x>=this.map.size||order.origin.y>=this.map.size))throw new Error('Saved patrol origin outside map');
         }
@@ -766,10 +778,7 @@ export class Game {
           throw new Error("Invalid saved precise position");
         if (u.segment) {
           const segment = u.segment,
-            goal = fixed({
-              x: segment.to % this.spatial.size,
-              y: Math.floor(segment.to / this.spatial.size),
-            });
+            goal = fixed(this.spatial.point(segment.to));
           const dx = goal.x - segment.from.x,
             dy = goal.y - segment.from.y;
           if (

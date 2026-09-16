@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.shrubs.fern-thicket",
+  "name": "Fern Thicket",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/shrubs/fern-thicket/model.glb",
+      "sha256": "f80a3d94ad6fe5f207ac31258cfa06f84e2829522bd69a130306e33b0d984542",
+      "bytes": 557440,
+      "triangles": 7128,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "fern-thicket",
+      "name": "Fern Thicket",
+      "type": "prop",
+      "category": "foliage",
+      "file": "models/environment/shrubs/fern-thicket/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/fern-thicket/fern-thicket.blend",
+    "sha256": "cebf9eb3bfb37db50725a0b75766f4a042eeb735de7f252f9031605233fd5395",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T08:33:40.814Z",
+    "warnings": [
+      "Static environment model; flat-ground contact."
+    ]
+  }
+}

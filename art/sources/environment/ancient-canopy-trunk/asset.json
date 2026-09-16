@@ -1,0 +1,29 @@
+{
+  "name": "Ancient Canopy Trunk",
+  "blend": "ancient-canopy-trunk.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 25,
+    "elevation": 20,
+    "scale": 30,
+    "target": [
+      0,
+      0,
+      11
+    ]
+  },
+  "render": {
+    "width": 1000,
+    "height": 1000,
+    "samples": 24
+  },
+  "light": {
+    "key_energy": 10800,
+    "fill_energy": 4200,
+    "rim_energy": 9000
+  },
+  "merge_static_materials": true,
+  "preserve_textures": true,
+  "viewer_light_scale": 0.055
+}

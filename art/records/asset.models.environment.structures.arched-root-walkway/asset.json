@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.arched-root-walkway",
+  "name": "Arched Root Walkway",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "crossing",
+    "walkable"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/arched-root-walkway/model.glb",
+      "sha256": "441be94e5a9a92638d305145799d9b5627fbba50ef4be05890a3bd6063c8fc9e",
+      "bytes": 571512,
+      "triangles": 1304,
+      "primitives": 5
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "arched-root-walkway",
+      "name": "Arched Root Walkway",
+      "type": "span",
+      "category": "landmark",
+      "file": "models/environment/structures/arched-root-walkway/model.glb",
+      "deck": {
+        "width": 5.4,
+        "depth": 24,
+        "height": 0,
+        "arch": 6,
+        "thickness": 2.6,
+        "level": 1,
+        "connections": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/arched-root-walkway/arched-root-walkway.blend",
+    "sha256": "e82029e00684b8aef672603fdff4577471ed9b6cedf661e1afdd6322c8030a2c",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T23:40:37.152Z",
+    "warnings": [
+      "Landings require authored matching bank heights; decorative supports may extend into the bank.",
+      "Navigation uses a continuous floor; small paving and plank gaps are cosmetic."
+    ]
+  }
+}

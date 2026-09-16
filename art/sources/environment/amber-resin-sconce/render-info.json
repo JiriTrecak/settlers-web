@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-15T21:16:29-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 16.79,
+  "blend_mtime_ns": 1789524251321401499,
+  "config": {
+    "name": "Amber Resin Sconce",
+    "blend": "amber-resin-sconce.blend",
+    "recipe": "model.py",
+    "seed": 7421,
+    "camera": {
+      "azimuth": 30,
+      "elevation": 25,
+      "scale": 12,
+      "target": [
+        0.5,
+        0,
+        3.2
+      ]
+    },
+    "render": {
+      "width": 1200,
+      "height": 900,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 5000,
+      "fill_energy": 2500,
+      "rim_energy": 3500
+    },
+    "kind": "sconce",
+    "preserve_textures": true,
+    "texture_format": "JPEG",
+    "texture_quality": 90,
+    "viewer_light_scale": 0.1
+  }
+}

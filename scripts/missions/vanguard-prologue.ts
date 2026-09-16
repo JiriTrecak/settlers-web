@@ -1,3 +1,6 @@
+import {clearRoadCover} from '../maps/road-cover';
+import {DEFAULT_CANOPY} from '../../src/shared/landscape/canopy';
+import {PROLOGUE_ATMOSPHERE} from '../../src/shared/landscape/atmosphere';
 /** Rebuilds the shipped map; runtime Lua is embedded in the .utcmap document. */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {HeightField,encodeHeight} from '../../src/shared/map/height';
@@ -23,7 +26,7 @@ for(let z=0;z<f.verts;z++)for(let x=0;x<f.verts;x++){
  f.samples[z*f.verts+x]=h;
 }
 const roadDistance=(x:number,z:number)=>Math.min(...routes.flatMap(route=>route.slice(1).map((b,i)=>{const a=route[i],dx=b.x-a.x,dz=b.z-a.z,t=Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a.x-t*dx,z-a.z-t*dz);})) );
-const landscape=emptyLandscape();landscape.environment={preset:'forest',hour:11,season:'summer',playing:false,weather:{kind:'rain',intensity:.7,windX:1.2,windZ:.4}};
+const landscape=emptyLandscape();landscape.environment={atmosphere:PROLOGUE_ATMOSPHERE,canopy:{...DEFAULT_CANOPY,enabled:true,height:30,scale:46,coverage:.77,seed:3981},preset:'under-canopy',hour:9.2,season:'summer',playing:false,weather:{kind:'rain',intensity:.7,windX:1.2,windZ:.4}};
 for(const points of routes)landscape.strokes.push({points,radius:points===road?3.2:2,layer:'road',opacity:points===road?.8:.5});
 const entities:Placement[]=[
  {id:'marshal',definition:'unit.ants.marshal',owner:'player.1',position:{x:208,y:213},rotation:225},
@@ -51,11 +54,11 @@ camps.find(c=>c.id==='watch-pursuer')!.aggroRange=24;
 camp('watch-wolf',82,45,['unit.neutral.wolf','unit.neutral.wolf','unit.neutral.wolf'],[],true);
 const stamps:MapStamp[]=[];
 function stamp(asset:string,x:number,y:number,scale=1,yaw=0){stamps.push({id:`prologue.prop.${stamps.length}`,asset,x,y,scale,yaw});}
-for(let z=18;z<243;z+=3)for(let x=48;x<240;x+=3){
- const xx=Math.round(x+random()*1.5),zz=Math.round(z+random()*1.5),path=roadDistance(xx,zz),clearing=clearings.some(c=>Math.hypot(xx-c.x,zz-c.z)<c.r);
- if(path<6||clearing||f.sample(xx,zz)<.6||random()<.12 || path>35)continue;
- entities.push({id:`tree.${entities.length}`,definition:'resource.forest.tree',owner:'none',position:{x:xx,y:zz},rotation:random()*360,appearance:{asset:random()<.7?'asset.resource.tree-primary':'asset.resource.tree-secondary',scale:.8+random()*.25}});
- if(random()<.09)stamp('lowpolymushroom_09',xx+.8,zz+.6,.7+random()*.4);
+for(let z=18;z<243;z+=2)for(let x=48;x<240;x+=2){
+ const xx=x+Math.floor(random()*2),zz=z+Math.floor(random()*2),path=roadDistance(xx,zz),clearing=clearings.some(c=>Math.hypot(xx-c.x,zz-c.z)<c.r);
+ if(path<6||clearing||f.sample(xx,zz)<.6||random()<.22 || path>35)continue;
+ entities.push({id:`tree.${entities.length}`,definition:'resource.forest.tree',owner:'none',position:{x:xx,y:zz},rotation:random()*360,appearance:{asset:random()<.7?'asset.resource.tree-primary':'asset.resource.tree-secondary',scale:.43+random()*.18}});
+ if(random()<.035)stamp('ochre-mushroom-colony',xx+.8,zz+.6,.7+random()*.4);
 }
 for(const route of routes)for(let i=0;i<route.length-1;i++){
  const p=route[i],q=route[i+1],a=Math.atan2(q.z-p.z,q.x-p.x),nx=-Math.sin(a),nz=Math.cos(a);
@@ -83,6 +86,42 @@ for(const c of clearings){
  stamp('synty-plant-flowerpatch-01',c.x+6,c.z-3,.9);
 }
 for(let i=0;i<36;i++){const a=i*Math.PI*2/36;stamp('ant-rock',207+Math.cos(a)*24,117+Math.sin(a)*21,.7+random()*.9,a);}
+// Ancient forest structure: giant trunks frame the trail rather than filling it.
+const trunks:{x:number,z:number,s:number}[]=[];
+for(const route of routes)for(let i=0;i<route.length-1;i++){
+ const p=route[i],q=route[i+1],a=Math.atan2(q.z-p.z,q.x-p.x);
+ for(const side of [-1,1]){
+  const x=Math.round(p.x-Math.sin(a)*side*19),z=Math.round(p.z+Math.cos(a)*side*19),s=.8+random()*.3;
+  if(x<16||z<16||x>240||z>240||f.sample(x,z)<.7||roadDistance(x,z)<14||clearings.some(c=>Math.hypot(x-c.x,z-c.z)<c.r+9)||trunks.some(t=>Math.hypot(x-t.x,z-t.z)<19))continue;
+  trunks.push({x,z,s});stamp('ancient-canopy-trunk',x,z,s,random()*6.28);
+ }
+}
+for(let i=entities.length-1;i>=0;i--){const e=entities[i];if(e.definition==='resource.forest.tree'&&trunks.some(t=>Math.hypot(e.position.x-t.x,e.position.y-t.z)<8*t.s))entities.splice(i,1);}
+for(const t of trunks){
+ for(let j=0;j<9;j++){
+  const a=random()*6.28,r=8*t.s+random()*3,x=t.x+Math.cos(a)*r,z=t.z+Math.sin(a)*r;
+  if(f.sample(x,z)<.5||roadDistance(x,z)<5)continue;
+  stamp(['fern-thicket','bramble-thicket','ochre-mushroom-colony','curled-forest-leaf','fallen-acorn'][j%5],x,z,.55+random()*.6,random()*6.28);
+ }
+}
+// Recognizable landmarks distinguish the three detours at ant scale.
+stamp('fallen-canopy-bough',209,178,.8,.6);
+stamp('interwoven-root-bank',101,177,.8,.1);
+stamp('mossy-boulder-bank',213,77,1.0,-.6);
+stamp('curled-forest-leaf',198,169,1.2,1.1);
+stamp('forest-splinter-pile',201,162,.75,.7);
+stamp('ochre-mushroom-colony',101,160,1.3,.4);
+stamp('fern-thicket',108,158,1.1,1.2);
+stamp('fallen-acorn',207,83,1.1,.6);
+for(const route of routes)for(let i=0;i<route.length-1;i++){
+ const p=route[i],q=route[i+1],a=Math.atan2(q.z-p.z,q.x-p.x);
+ for(const side of [-1,1])for(let j=0;j<3;j++){
+  const t=(j+.5)/3,x=p.x+(q.x-p.x)*t-Math.sin(a)*side*(6+random()*2),z=p.z+(q.z-p.z)*t+Math.cos(a)*side*(6+random()*2);
+  if(f.sample(x,z)<.5||clearings.some(c=>Math.hypot(x-c.x,z-c.z)<c.r*.8))continue;
+  stamp(j%2?'fern-thicket':'bramble-thicket',x,z,.65+random()*.4,random()*6.28);
+ }
+}
+clearRoadCover(landscape.cover,landscape.strokes);
 const map:UtcMap={...emptyUtcMap(),name:'Vanguard Prologue',description:'Follow the lantern road from the southern gate to the lost northern watch. Leave the main trail to discover a moss shrine, an abandoned convoy, and a dangerous lakeside den — each with a guaranteed reward.',playerStarts:[{player:1,x:190,z:195,setup:'setup.ants',mainFort:'marshal'}],waterLevel:0,height:encodeHeight(f.samples,f.size),landscape,entities,stamps,
  camps,
  mission:{campaign:'vanguard',title:'Mission 1 — Prologue',order:1,heroLevelCap:2,objectives:[

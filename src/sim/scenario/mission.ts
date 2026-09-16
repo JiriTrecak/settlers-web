@@ -28,7 +28,26 @@ export class Mission {
       tick:()=>g.state.tick,
       get:key=>Object.hasOwn(draft.variables,string(key))?draft.variables[string(key)]:null,
       set:(key,value)=>{const k=string(key);if(value===null)delete draft.variables[k];else Object.defineProperty(draft.variables,k,{value,writable:true,enumerable:true,configurable:true});},
+      count:(rawOwner,rawDefinition)=>{
+        const owner=ownerSchema.parse(rawOwner),definition=string(rawDefinition),d=g.registry.find(definition);
+        if(!d||!['unit','building'].includes(d.kind))throw new Error('Count requires a unit or building definition');
+        return g.entities.filter(e=>e.owner===owner&&e.definition===definition&&g.context.ready(e)&&!e.construction&&!e.fallen).length;
+      },
+      stock:(rawOwner,rawItem)=>{
+        const owner=ownerSchema.parse(rawOwner),item=string(rawItem),d=g.registry.find(item);
+        if(!d||d.kind!=='item'||!d.currency)throw new Error('Stock requires an economy currency item');
+        return g.entities.filter(e=>e.owner===owner&&alive(e)).reduce((sum,e)=>sum+g.economy.available(e,item),0);
+      },
       alive:id=>{const e=entity(id);return !!e&&alive(e);},
+      recover:id=>{
+        const p=placement(id);
+        if(g.registry.get(p.definition).kind!=='unit')throw new Error('Recovery requires a unit');
+        operations.push(()=>{
+          const e=entity(id);if(!e?.unit||!alive(e)||e.fallen)return;
+          const stats=g.context.stats(e);e.hp=stats.maxHp;
+          if(e.spellcasting)e.spellcasting.mana=stats.maxMana;
+        });
+      },
       begin_scene:(x,y)=>{draft.scene={x:number(x),y:number(y)};},
       end_scene:()=>{draft.scene=null;},
       arrived:(id,x,y)=>{const e=entity(id);if(!e?.unit||!alive(e))return false;const p=precise(e);return !e.unit.order&&Math.hypot(p.x-number(x),p.y-number(y))<.5;},
@@ -50,6 +69,12 @@ export class Mission {
         const p=placement(id),destination={x:Math.round(number(x)),y:Math.round(number(y))};
         if(!g.registry.get(p.definition).behaviors.movement)throw new Error(`${p.id} cannot move`);
         operations.push(()=>{const e=entity(id);if(e&&alive(e))g.orders.issue(e,{type:'move',destination,attackMove:false});});
+      },
+      attack_move:(id,x,y)=>{
+        const p=placement(id),destination={x:Math.round(number(x)),y:Math.round(number(y))};
+        const behavior=g.registry.get(p.definition).behaviors;
+        if(!behavior.combat||!behavior.movement)throw new Error(`${p.id} cannot attack-move`);
+        operations.push(()=>{const e=entity(id);if(e?.unit&&alive(e))g.orders.issue(e,{type:'move',destination,attackMove:true});});
       },
       attack:(id,target)=>{placement(id);placement(target);operations.push(()=>{const e=entity(id),t=entity(target);if(e?.unit&&t&&alive(e)&&alive(t))g.orders.issue(e,{type:'attack',target:t.id,force:true});});},
       transfer:(id,rawOwner)=>{

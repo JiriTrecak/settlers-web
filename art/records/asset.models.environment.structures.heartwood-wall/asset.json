@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.heartwood-wall",
+  "name": "Heartwood Wall",
+  "kind": "model",
+  "tags": [
+    "heartwood",
+    "interior"
+  ],
+  "status": "published",
+  "revision": 2,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/heartwood-wall/model.glb",
+      "sha256": "bb713ee31b6b87f41649fc079895e2792bef1e79476ff937c80dc0615536cc03",
+      "bytes": 902268,
+      "triangles": 3276,
+      "primitives": 6
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "heartwood-wall",
+      "name": "Heartwood Wall",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/structures/heartwood-wall/model.glb",
+      "blocker": {
+        "width": 16,
+        "depth": 4
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/heartwood-wall/heartwood-wall.blend",
+    "sha256": "f24638a9c71de88a4671d34ef23c42bde6ea8dd90c25f3c163bc3ccff9ccf4ac",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T05:46:47.116Z",
+    "warnings": [
+      "Modular interpretation of the Heartwood Vault concept; rear faces inferred.",
+      "Static geometry. Local lights share the renderer’s four-nearest-light budget."
+    ]
+  }
+}

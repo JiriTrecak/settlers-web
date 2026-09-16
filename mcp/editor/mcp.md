@@ -86,3 +86,7 @@ renderer counters, and loaded asset diagnostics. Enable **Debug** in the game fi
 to collect timing samples. It neither advances the match nor changes its settings.
 CPU scopes are nested; do not add every row together. GPU timing may be unavailable
 on a browser that does not expose timer queries.
+
+## Volumetric atmosphere
+
+`editor_landscape` with `action: "environment"` accepts `atmosphere` (complete settings from `src/shared/landscape/atmosphere.ts`) and `weather`. Atmosphere supports bounded global height fog, sun scattering, drifting noise and up to 16 uniquely named ellipsoidal mist regions. Values are saved with the map. See `docs/expansion/volumetric-atmosphere.md` for a complete example.

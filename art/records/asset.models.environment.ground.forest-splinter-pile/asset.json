@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.forest-splinter-pile",
+  "name": "Forest Splinter Pile",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/ground/forest-splinter-pile/model.glb",
+      "sha256": "f7ed37e489227d4e9487c3d6dfc8337af3f1bf0e80b0480a4101148e52240bc2",
+      "bytes": 15236,
+      "triangles": 220,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "forest-splinter-pile",
+      "name": "Forest Splinter Pile",
+      "type": "prop",
+      "category": "foliage",
+      "file": "models/environment/ground/forest-splinter-pile/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/forest-splinter-pile/forest-splinter-pile.blend",
+    "sha256": "aa5928785a53fdc5a13a3d7d64d5ff21589af364675916ead12248dddc23a13b",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T08:33:40.826Z",
+    "warnings": [
+      "Static environment model; flat-ground contact."
+    ]
+  }
+}

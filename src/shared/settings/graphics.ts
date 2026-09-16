@@ -26,3 +26,17 @@ export function setShadowMode(mode:ShadowMode):void {
  try{localStorage.setItem(SHADOW_KEY,mode);}catch{}
  window.dispatchEvent(new CustomEvent(SHADOWS_CHANGED));
 }
+
+export const ATMOSPHERE_QUALITIES=['off','low','medium','high'] as const;
+export type AtmosphereQuality=typeof ATMOSPHERE_QUALITIES[number];
+export const ATMOSPHERE_KEY='utc.graphics.atmosphere';
+export const ATMOSPHERE_CHANGED='utc-atmosphere-changed';
+export function readAtmosphereQuality():AtmosphereQuality {
+ try{const v=localStorage.getItem(ATMOSPHERE_KEY);if(ATMOSPHERE_QUALITIES.includes(v as AtmosphereQuality))return v as AtmosphereQuality;}catch{}
+ return 'medium';
+}
+export function setAtmosphereQuality(value:AtmosphereQuality):void {
+ if(!ATMOSPHERE_QUALITIES.includes(value))return;
+ try{localStorage.setItem(ATMOSPHERE_KEY,value);}catch{}
+ window.dispatchEvent(new CustomEvent(ATMOSPHERE_CHANGED));
+}

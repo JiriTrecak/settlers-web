@@ -16,12 +16,13 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity): bo
   const candidates: {point: Point; score: number}[] = [];
   for (let y = Math.max(0, Math.ceil(center.y - halfY - range)); y <= Math.min(c.spatial.size - 1, Math.floor(center.y + halfY + range)); y++) {
     for (let x = Math.max(0, Math.ceil(center.x - halfX - range)); x <= Math.min(c.spatial.size - 1, Math.floor(center.x + halfX + range)); x++) {
-      const point = {x, y};
+      for(const point of c.spatial.pointsAt(x,y)){
       const dx = Math.max(0, Math.abs(x - center.x) - halfX);
       const dy = Math.max(0, Math.abs(y - center.y) - halfY);
       if (dx * dx + dy * dy > range * range || !c.spatial.walkable(c.spatial.cell(point))) continue;
       if(!c.spatial.attackClear(point,target,!!(combat.projectile||combat.shell)))continue;
       candidates.push({point, score: Math.hypot(x - origin.x, y - origin.y) + (reservations.has(c.spatial.cell(point)) ? 4 : 0)});
+      }
     }
   }
   candidates.sort((a, b) => a.score - b.score || a.point.y - b.point.y || a.point.x - b.point.x);

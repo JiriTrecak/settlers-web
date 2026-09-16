@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.curled-forest-leaf",
+  "name": "Curled Forest Leaf",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/ground/curled-forest-leaf/model.glb",
+      "sha256": "a880688c5e06e0a6b34bee7272cb31124cc469325649dcfe1c0011987005a148",
+      "bytes": 19312,
+      "triangles": 272,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "curled-forest-leaf",
+      "name": "Curled Forest Leaf",
+      "type": "prop",
+      "category": "foliage",
+      "file": "models/environment/ground/curled-forest-leaf/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/curled-forest-leaf/curled-forest-leaf.blend",
+    "sha256": "461c9b12f3aa59337e14ee3970b79a328f2077feef89ccb30fa181599871d881",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T08:33:40.824Z",
+    "warnings": [
+      "Static environment model; flat-ground contact."
+    ]
+  }
+}

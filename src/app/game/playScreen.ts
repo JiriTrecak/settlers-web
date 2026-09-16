@@ -1,3 +1,4 @@
+import type {CampaignCompany} from '../../shared/scenario/company';
 import {GameMenu} from '../../ui/menu/gameMenu';
 import {getMap} from '../../shared/map/library';
 import type {LocalSave} from '../../shared/save/localSave';
@@ -25,6 +26,7 @@ export class PlayScreen extends GameScreen {
     hooks: {
       onLeave: () => void;
       onRestart?:()=>void;
+      onContinue?:(mapId:string,company:CampaignCompany)=>void;
       onLoadSave?:(save:LocalSave)=>void;
       save?:LocalSave;
       mapId: string;
@@ -49,7 +51,7 @@ export class PlayScreen extends GameScreen {
       host: this.root,
       channel: hooks.channel,
       match: hooks.match,
-      hooks: { onMissionLeave: hooks.onLeave, onHud: (state) => this.hud.update(state) },
+      hooks: { onMissionLeave: hooks.onLeave, onMissionContinue:hooks.onContinue, onHud: (state) => this.hud.update(state) },
     });
     this.loading = new LoadingScreen(this.root, hooks.onLeave);
   }

@@ -29,7 +29,7 @@ export class ShellCombat {
   if(a.unit?.order?.type==='attack'&&a.unit.order.force&&!victims.includes(b.owner))victims.push(b.owner);
   const origin=precise(a),target=precise(b);
   this.c.state.shells.push({id:this.c.state.nextShell++,source:a.id,definition:a.definition,owner:a.owner,
-   origin:{x:origin.x,y:origin.y},target:{x:target.x,y:target.y},launched:this.c.state.tick,impact:this.c.state.tick+policy.flightTicks,
+   origin:{...origin},target:{...target},launched:this.c.state.tick,impact:this.c.state.tick+policy.flightTicks,
    damage:this.c.stats(a).damage,damageType:combat.damageType,radius,slowPermille,slowTicks:policy.slowTicks,victims,
    viewers:[...this.teams.keys()].filter(owner=>this.vision.visible(owner,a)&&this.vision.visible(owner,b)),resolved:false});
  }
@@ -42,6 +42,7 @@ export class ShellCombat {
     if(e.hp===null||e.unit?.contained||e.unit?.release||!shell.victims.includes(e.owner))continue;
     // Structures use their footprint distance, units their authoritative subcell position.
     if(this.c.spatial.pointRange(shell.target,e)>shell.radius**2)continue;
+    if(this.c.spatial.layers&&!this.c.spatial.layers.shotClear(shell.target,precise(e)))continue;
     hits.push({source:shell.source,owner:shell.owner,target:e.id,damage:shell.damage,damageType:shell.damageType});
     if(e.unit && shell.slowPermille && !itemFlag(e,this.c.registry,'controlImmune') && !itemFlag(e,this.c.registry,'invulnerable')){
      e.slows??=[];const existing=e.slows.find(s=>s.permille===shell.slowPermille),expires=this.c.state.tick+shell.slowTicks;

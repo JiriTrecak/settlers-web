@@ -49,13 +49,13 @@ export class ProjectileEffects {
     // Only a fresh launch can sample the animated bow. Late observations use
     // the recorded origin, never a shooter who has since moved elsewhere.
     const position=(tick<=m.launched+1?launchPosition?.(m):undefined)?.clone()
-     ?? new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y)+1.5,m.origin.y);
+     ?? new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y,m.origin.surface)+1.5,m.origin.y);
     cached={launched:m.launched,position};this.origins.set(m.id,cached);
    }
    return {
     kind:content.asset(content.get(m.definition).asset).projectile??'arrow',
     start:cached.position,
-    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y)+1,m.destination.y),
+    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+1,m.destination.y),
     tick:m.launched,duration:m.impact-m.launched,
    };
   });

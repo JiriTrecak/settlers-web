@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.lanterncap-grove",
+  "name": "Lanterncap Grove",
+  "kind": "model",
+  "tags": [
+    "heartwood",
+    "interior"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/mushrooms/lanterncap-grove/model.glb",
+      "sha256": "753da8885fd070c5661b77b558dd36ed24076945b391d84bef963b6f23e0f57b",
+      "bytes": 2004408,
+      "triangles": 12792,
+      "primitives": 6
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "lanterncap-grove",
+      "name": "Lanterncap Grove",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/mushrooms/lanterncap-grove/model.glb",
+      "blocker": {
+        "width": 10.5,
+        "depth": 8.5,
+        "shape": "ellipse"
+      },
+      "light": {
+        "x": 0,
+        "y": 3.2,
+        "z": 0,
+        "color": "#a7cfbf",
+        "intensity": 14,
+        "range": 14
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/lanterncap-grove/lanterncap-grove.blend",
+    "sha256": "6856fb28efb2335859d9e1cc5f6660653bbe9de4b049456562300fca25f0bd31",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T05:46:47.145Z",
+    "warnings": [
+      "Modular interpretation of the Heartwood Vault concept; rear faces inferred.",
+      "Static geometry. Local lights share the renderer’s four-nearest-light budget."
+    ]
+  }
+}

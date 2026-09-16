@@ -3,13 +3,17 @@ import type { Entity, Point } from './state';
 
 export const POSITION_SCALE = 1000;
 export const UNIT_RADIUS = 200;
-export type FixedPoint = {x: number; y: number};
-export const fixed = (p: Point): FixedPoint => ({x: p.x * POSITION_SCALE, y: p.y * POSITION_SCALE});
+export type FixedPoint = {x: number; y: number; surface?:string};
+export const fixed = (p: Point): FixedPoint => ({x: p.x * POSITION_SCALE, y: p.y * POSITION_SCALE, ...(p.surface?{surface:p.surface}:{})});
 export const motionCell = (p: FixedPoint,size=256) => Math.floor((p.y + 500) / 1000) * size + Math.floor((p.x + 500) / 1000);
-export const precise = (e: Entity): Point => e.unit?.position
-  ? {x: e.unit.position.x / POSITION_SCALE, y: e.unit.position.y / POSITION_SCALE} : e;
+export const precise = (e: Entity): Point => ({
+  x:e.unit?.position ? e.unit.position.x/POSITION_SCALE : e.x,
+  y:e.unit?.position ? e.unit.position.y/POSITION_SCALE : e.y,
+  ...(e.surface?{surface:e.surface}:{}),
+});
 export const atPoint = (e: Entity, p: Point) => {
   const position = e.unit?.position;
+  if(e.surface!==p.surface)return false;
   return position ? position.x === p.x * POSITION_SCALE && position.y === p.y * POSITION_SCALE : e.x === p.x && e.y === p.y;
 };
 export function lengthCeil(dx: number, dy: number) {

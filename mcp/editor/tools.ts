@@ -1,3 +1,7 @@
+import {walkStampSchema} from '../../src/shared/map/utcmap';
+import {canopySchema} from '../../src/shared/landscape/canopy';
+import {atmosphereSchema} from '../../src/shared/landscape/atmosphere';
+import {weatherSchema} from '../../src/shared/landscape/weather';
 import {campSchema} from '../../src/content/schema';
 import {missionSchema} from "../../src/shared/scenario/schema";
 import { actionSchema } from "../../src/shared/types/types";
@@ -69,7 +73,7 @@ export function editorTools(hub: EditorHub) {
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing/weather/atmosphere; map-saved volumetric density, color, height, shafts, noise, drift and up to 16 soft ellipsoid mist regions), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
@@ -93,6 +97,10 @@ export function editorTools(hub: EditorHub) {
             cloudStrength: z.number().min(0).max(0.2).optional(),
             foamStrength: z.number().min(0).max(1).optional(),
             causticStrength: z.number().min(0).max(1).optional(),
+            shallowColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+            deepColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+            clarity: z.number().min(.2).max(12).optional(),
+            flowSpeed: z.number().min(0).max(3).optional(),
             shadowStrength: z
               .number()
               .min(0)
@@ -142,9 +150,15 @@ export function editorTools(hub: EditorHub) {
           .enum(["meadow", "straw", "ochre", "sage", "forest"])
           .optional(),
         seed: z.number().optional(),
+        canopy: canopySchema.optional(),
+        atmosphere: atmosphereSchema.optional(),
+        weather: weatherSchema.optional(),
         hour: z.number().optional(),
         season: z.enum(["spring", "summer", "autumn"]).optional(),
         playing: z.boolean().optional(),
+        interior: z.boolean().optional().describe('Keep mission lighting fixed instead of running the outdoor day/night cycle.'),
+        floorMaterial: z.enum(['forest','heartwood']).optional(),
+        preset: z.string().min(1).max(128).optional(),
         radiusX: z.number().optional(),
         radiusZ: z.number().optional(),
         rotation: z.number().optional(),
@@ -278,6 +292,12 @@ export function editorTools(hub: EditorHub) {
       execute: async (input) => call("place", input),
     }),
 
+    editor_walk_surface: createTool({
+      id:'editor_walk_surface',
+      description:'Inspect or configure a walkable bridge/platform. Level 0 is the terrain; levels 1..31 are elevated surfaces. Height is the absolute center height in metres. Start/end connections declare which levels its two ends can reach. Actual landing heights must meet. Null resets to the asset declaration.',
+      inputSchema:z.object({id:z.string(),walk:walkStampSchema.nullable().optional()}),
+      execute:async input=>call('walkSurface',input),
+    }),
     editor_stamps: createTool({
       id: "editor_stamps",
       description: "List placed stamps. Optional asset filter.",

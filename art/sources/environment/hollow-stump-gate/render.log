@@ -1,0 +1,13 @@
+00:00.309  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/hollow-stump-gate/hollow-stump-gate.blend"
+00:03.474  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/hollow-stump-gate/.render-1789512775271467000.png'
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+15:52:59 | INFO: Starting glTF 2.0 export
+15:52:59 | INFO: Extracting primitive: Outer ancient bark.001
+15:52:59 | INFO: Primitives created: 11
+15:52:59 | INFO: Finished glTF 2.0 export in 0.14896798133850098 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/hollow-stump-gate/.render-1789512775271467000.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

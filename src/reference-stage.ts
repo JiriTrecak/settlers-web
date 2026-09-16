@@ -1,7 +1,8 @@
+import {EditorBridge} from './shared/control/editorBridge';
 /** Art-direction fixture: the saved map and the game's renderer, without editor chrome. */
 import { perf } from "./debug/performance";
 import { GRAPHICS_CHANGED, readResolutionScale, readShadowMode, setShadowMode } from "./shared/settings/graphics";
-const mapSources = import.meta.glob('../assets/maps/**/*.utcmap', {query:'?raw', import:'default', eager:true}) as Record<string,string>;
+const mapSources = import.meta.glob('../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap', {query:'?raw', import:'default', eager:true}) as Record<string,string>;
 import { parseUtcMap, decodeHeight, HeightField } from "./shared";
 import { emptyLandscape } from "./shared/landscape/curve";
 import { projectCatalogue, projectMeshUrl } from "./shared/assets/project";
@@ -55,8 +56,8 @@ async function start() {
   renderer.camera.pose({
     x,
     z,
-    yaw: 0,
-    pitch: (42 * Math.PI) / 180,
+    yaw: -Math.PI / 4,
+    pitch: Math.PI / 4,
     gameZoom: zoom,
   });
   const entities = editorEntities(map),
@@ -97,7 +98,7 @@ async function start() {
   const frame = (now:number) => {
     if(!benchmark&&(document.hidden||previewPaused)){requestAnimationFrame(frame);return;}
 
-    perf.frame(now);renderer.present(12_000);
+    perf.frame(now);renderer.present(benchmark?12_000:now);
     if(benchmark&&!finished){
       if(document.hidden){frames=0;intervals=[];lastFrame=0;}
       else {
@@ -114,13 +115,30 @@ async function start() {
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
+  // Opt-in read-only inspection endpoint: identical capture path to the game.
+  // Keeps visual comparisons independent of the desktop panel's aspect ratio.
+  if(params.has('inspect')){
+    const bridge=new EditorBridge({dispatch(op,p){
+      const options=(p??{}) as Record<string,unknown>;
+      if(op==='screenshot'){
+        const canvas=renderer.capture(Number(options.maxWidth??1600),Number(options.aspect??16/9));
+        return {data:canvas.toDataURL('image/png').split(',')[1],mime:'image/png',width:canvas.width,height:canvas.height,mapName:map.name};
+      }
+      if(op==='gameView'){
+        renderer.camera.pose({x:typeof options.x==='number'?options.x:undefined,z:typeof options.z==='number'?options.z:undefined,gameZoom:typeof options.gameZoom==='number'?options.gameZoom:undefined});
+        renderer.present(performance.now());return {x:renderer.camera.targetX,z:renderer.camera.targetZ};
+      }
+      if(op==='gamePerformance')return perf.report();
+      throw Error('Reference preview exposes screenshot, gameView and gamePerformance only');
+    }});bridge.start();window.addEventListener('beforeunload',()=>bridge.stop(),{once:true});
+  }
   document.body.dataset.ready = "true";
   document.body.dataset.map = map.name;
   document.body.dataset.capture = JSON.stringify({
     x,
     z,
-    yaw: 0,
-    pitch: 42,
+    yaw: -45,
+    pitch: 45,
     gameZoom: zoom,
     animationTime: 12,
     stamps: map.stamps.length,

@@ -21,7 +21,7 @@ export class CommandFeedbackEffects {
     const positions = geometry.getAttribute("position");
     for (let i = 0; i < positions.count; i++) {
       const x = feedback.point.x + positions.getX(i), z = feedback.point.y + positions.getZ(i);
-      positions.setXYZ(i, x, height.sample(x, z) + .12, z);
+      positions.setXYZ(i, x, height.walkSample(x,z,feedback.point.surface) + .12, z);
     }
     positions.needsUpdate = true;
     geometry.computeBoundingSphere();

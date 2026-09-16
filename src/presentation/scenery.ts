@@ -44,6 +44,7 @@ export function editorEntities(map: UtcMap): EntityView[] {
       owner: p.owner,
       x: p.position.x,
       y: p.position.y,
+      ...(p.position.surface?{surface:p.position.surface}:{}),
       rotation: p.rotation,
       hp: d.body ? (p.initialState?.health ?? d.body.maxHp) : null,
       appearance: p.appearance,

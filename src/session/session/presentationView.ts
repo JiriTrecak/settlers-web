@@ -15,11 +15,15 @@ export class PresentationView {
       // Camera staging reveals only its set, without exploring it or giving AI vision.
       const radius=24,fog=normal.settlement.fog,key=`${visionPlayer}:${fog.revision}:${scene.x}:${scene.y}`;
       if(this.sceneWorld!==world||this.sceneKey!==key){
-        const cells=fog.cells.slice();
+        const cells=fog.cells.slice(),floorCells=fog.floors?.cells.slice();
         for(let y=Math.max(0,Math.floor(scene.y-radius));y<=Math.min(normal.size-1,scene.y+radius);y++)
           for(let x=Math.max(0,Math.floor(scene.x-radius));x<=Math.min(normal.size-1,scene.x+radius);x++)
-            if(Math.hypot(x-scene.x,y-scene.y)<=radius)cells[y*normal.size+x]=2;
-        this.sceneFog={cells,revision:--this.sceneRevision,owner:-2};this.sceneWorld=world;this.sceneKey=key;
+            if(Math.hypot(x-scene.x,y-scene.y)<=radius){cells[y*normal.size+x]=2;if(floorCells)floorCells[y*normal.size+x]=2;}
+        if(floorCells)for(let i=0;i<fog.floors!.decks.length;i++){
+          const cell=fog.floors!.decks[i]!.cell;
+          if(Math.hypot(cell%normal.size-scene.x,Math.floor(cell/normal.size)-scene.y)<=radius)floorCells[normal.size**2+i]=2;
+        }
+        this.sceneFog={cells,revision:--this.sceneRevision,owner:-2,...(floorCells?{floors:{cells:floorCells,decks:fog.floors!.decks}}:{})};this.sceneWorld=world;this.sceneKey=key;
       }
       const entities=new Map(normal.settlement.entities.map(e=>[e.id,e]));
       for(const e of world.view().settlement.entities)if(Math.hypot(e.x-scene.x,e.y-scene.y)<=radius)entities.set(e.id,e);

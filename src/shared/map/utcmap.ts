@@ -34,6 +34,8 @@ export type MapStamp = {
   readonly widthScale?: number;
   readonly depthScale?: number;
   readonly elevation?: number;
+  /** Navigation level, optional absolute center height, and explicit end connections. */
+  readonly walk?: {readonly level:number;readonly height?:number;readonly connections?:{readonly start?:number;readonly end?:number}};
   readonly variant?: "snow" | "gold" | "red" | "green" | "pink" | "slate";
 };
 
@@ -212,6 +214,8 @@ function parseName(raw: unknown): string | null {
   return name || DEFAULT_MAP_NAME;
 }
 
+const level=z.number().int().min(0).max(31);
+export const walkStampSchema=z.object({level:level.min(1),height:z.number().finite().min(-16).max(64).optional(),connections:z.object({start:level.optional(),end:level.optional()}).strict().optional()}).strict();
 function parseStamps(raw: unknown): MapStamp[] | null {
   if (raw === undefined) return [];
   if (!Array.isArray(raw)) return null;
@@ -222,6 +226,7 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     if (typeof s.id !== "string" || typeof s.asset !== "string") return null;
     if (typeof s.x !== "number" || typeof s.y !== "number") return null;
     if (!Number.isFinite(s.x) || !Number.isFinite(s.y)) return null;
+    const walk=walkStampSchema.optional().safeParse(s.walk);if(!walk.success)return null;
     const yaw = s.yaw;
     const scale = s.scale;
     for (const axis of [s.heightScale, s.widthScale, s.depthScale])
@@ -265,6 +270,7 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     out.push({
       id: s.id,
       asset: s.asset,
+      ...(walk.data?{walk:walk.data}:{}),
       x: s.x,
       y: s.y,
       ...(yaw !== undefined ? { yaw } : {}),

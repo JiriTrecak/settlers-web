@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-15T00:16:47-0700",
+  "view": "saved",
+  "quick": true,
+  "seconds": 3.7,
+  "blend_mtime_ns": 1789456605029020234,
+  "config": {
+    "name": "Bramble Thicket",
+    "blend": "bramble-thicket.blend",
+    "recipe": "model.py",
+    "kit_kind": "bramble",
+    "seed": 1518,
+    "merge_static_materials": true,
+    "camera": {
+      "azimuth": 20,
+      "elevation": 32,
+      "scale": 5,
+      "target": [
+        0,
+        0,
+        1
+      ]
+    },
+    "render": {
+      "width": 800,
+      "height": 650,
+      "samples": 20
+    },
+    "light": {
+      "key_energy": 900,
+      "fill_energy": 250,
+      "rim_energy": 600
+    },
+    "foliage_wind": {
+      "amplitude": 0.16,
+      "speed": 0.18
+    }
+  }
+}

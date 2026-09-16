@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.woodland-timber-bridge",
+  "name": "Woodland Timber Bridge",
+  "kind": "model",
+  "tags": [
+    "canopy",
+    "crossing",
+    "walkable"
+  ],
+  "status": "published",
+  "revision": 2,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/woodland-timber-bridge/model.glb",
+      "sha256": "2b774e6b805b440e561518da7f5c3b56b05efd987c53579ef4d058e084466913",
+      "bytes": 1013848,
+      "triangles": 4232,
+      "primitives": 5
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "woodland-timber-bridge",
+      "name": "Woodland Timber Bridge",
+      "type": "span",
+      "category": "landmark",
+      "file": "models/environment/structures/woodland-timber-bridge/model.glb",
+      "deck": {
+        "width": 5.6,
+        "depth": 18,
+        "height": 0.25,
+        "arch": 1.5,
+        "thickness": 0.85,
+        "level": 1,
+        "connections": {
+          "start": 0,
+          "end": 0
+        }
+      },
+      "blockers": [
+        {
+          "x": -3.35,
+          "z": -8.5,
+          "width": 0.45,
+          "depth": 0.45
+        },
+        {
+          "x": -3.35,
+          "z": 0,
+          "width": 0.45,
+          "depth": 0.45
+        },
+        {
+          "x": -3.35,
+          "z": 8.5,
+          "width": 0.45,
+          "depth": 0.45
+        },
+        {
+          "x": 3.35,
+          "z": -8.5,
+          "width": 0.45,
+          "depth": 0.45
+        },
+        {
+          "x": 3.35,
+          "z": 0,
+          "width": 0.45,
+          "depth": 0.45
+        },
+        {
+          "x": 3.35,
+          "z": 8.5,
+          "width": 0.45,
+          "depth": 0.45
+        }
+      ]
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/woodland-timber-bridge/woodland-timber-bridge.blend",
+    "sha256": "6914287e5df42f6d0d899eac6d9e045ac9a1e875003d91229846ea6fb60f2f11",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T23:40:37.167Z",
+    "warnings": [
+      "Landings require authored matching bank heights; decorative supports may extend into the bank.",
+      "Navigation uses a continuous floor; small paving and plank gaps are cosmetic."
+    ]
+  }
+}

@@ -8,6 +8,7 @@ const definitions=new Map(parseCatalogue(catalogJson)!.assets.filter(e=>e.light)
 export class SceneryLights {
  private readonly pool=Array.from({length:4},()=>new PointLight(0xffffff,0,8,2));
  private sources:{x:number;y:number;z:number;color:string;intensity:number;range:number}[]=[];
+ get groundSources(){return this.sources;}
  private signature='';
  constructor(private readonly scene:Scene){for(const light of this.pool)scene.add(light);}
  sync(stamps:readonly MapStamp[],field:HeightField):void {

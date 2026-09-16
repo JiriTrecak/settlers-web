@@ -1,3 +1,4 @@
+import type {MissionDefinition} from '../../shared/scenario/schema';
 import {shortcuts} from '../../shared/input/shortcuts';
 import type {SettlementView} from '../../sim/game/observation';
 import {content} from '../../content/builtin';
@@ -7,17 +8,21 @@ export class MissionHud {
   private objective=document.createElement('aside');
   private dialogue=document.createElement('aside');
   private result=document.createElement('div');
+  private readonly continueButton=document.createElement('button');
   private key='';
   private readonly bars=document.createElement('div');
   private active=false;
   private readonly blockKey=(e:KeyboardEvent)=>{if(this.active && !document.querySelector('dialog[open]') && !shortcuts.matches('game.settings',e)){e.preventDefault();e.stopImmediatePropagation();}};
-  constructor(private readonly host:HTMLElement,onLeave:()=>void){
+  constructor(private readonly host:HTMLElement,onLeave:()=>void,private readonly definition?:MissionDefinition,onContinue?:()=>void){
     this.bars.className='mission-letterbox';host.append(this.bars);
     window.addEventListener('keydown',this.blockKey,true);
     this.objective.className='mission-objective';this.objective.setAttribute('aria-label','Mission objective');
     this.dialogue.className='mission-dialogue';this.dialogue.setAttribute('role','status');this.dialogue.setAttribute('aria-live','polite');
     this.result.className='mission-result';this.result.innerHTML='<section><h2></h2><p></p><button class="campaign-primary">Return to campaign</button></section>';
     this.result.querySelector('button')!.onclick=onLeave;
+    this.continueButton.className='campaign-primary';this.continueButton.textContent='Continue to next chapter →';
+    this.continueButton.hidden=true;
+    if(onContinue){this.continueButton.onclick=onContinue;this.result.querySelector('section')!.insertBefore(this.continueButton,this.result.querySelector('button'));}
     this.objective.hidden=this.dialogue.hidden=this.result.hidden=true;host.append(this.objective,this.dialogue,this.result);
   }
   update(view:SettlementView){
@@ -38,7 +43,7 @@ export class MissionHud {
     const d=m.dialogue;this.dialogue.hidden=!d || (d.cinematic?d.remaining===0:(view.tick??0)>=d.until);
     if(d){const portrait=document.createElement('div');portrait.className='mission-portrait';portrait.innerHTML=iconArt(content.get(d.portrait).icon);const copy=document.createElement('div');copy.className='mission-speech';const name=document.createElement('strong');name.textContent=d.speaker;const line=document.createElement('p');line.textContent=d.text;copy.append(name,line);this.dialogue.replaceChildren(portrait,copy);}
     this.result.hidden=!view.outcome;
-    if(view.outcome){const won=view.outcome.winner==='player.1';this.result.querySelector('h2')!.textContent=won?'Prologue complete':'Mission failed';this.result.querySelector('p')!.textContent=won?'Lantern Rise is secure. The northern road is open to the colony.':(m.objective || 'The Vanguard could not complete its mission. Rally and try again.');this.dialogue.hidden=true;}
+    if(view.outcome){const won=view.outcome.winner==='player.1';this.result.querySelector('h2')!.textContent=won?'Mission complete':'Mission failed';this.continueButton.hidden=!won;this.result.querySelector('p')!.textContent=won?(this.definition?.nextMission?'Your surviving company is ready to continue. Items and learned abilities travel with you.':(this.definition?.title??'The Vanguard has completed its mission.')):(m.objective || 'The Vanguard could not complete its mission. Rally and try again.');this.dialogue.hidden=true;}
   }
   destroy(){window.removeEventListener('keydown',this.blockKey,true);this.host.classList.remove('mission-cinematic');this.bars.remove();this.objective.remove();this.dialogue.remove();this.result.remove();}
 }

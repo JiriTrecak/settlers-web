@@ -49,7 +49,7 @@ export class Combat {
   }
   private perceives(a: Entity, b: Entity) {
     return a.owner === "none"
-      ? this.c.spatial.tactical.visible(a,b) && distance2(precise(a), precise(b)) <=
+      ? this.c.spatial.visible(precise(a),precise(b)) && distance2(precise(a), precise(b)) <=
           (this.camps.find((c) => c.id === a.unit?.camp)?.aggroRange ??
             this.c.def(a).behaviors.combat!.aggroRange) **
             2
@@ -206,7 +206,7 @@ export class Combat {
     return best;
   }
   private rememberTarget(actor:Entity,target:Entity){
-    actor.unit!.pursuit={target:target.id,position:{x:target.x,y:target.y},seenTick:this.c.state.tick};
+    actor.unit!.pursuit={target:target.id,position:{x:target.x,y:target.y,...(target.surface?{surface:target.surface}:{})},seenTick:this.c.state.tick};
   }
   private searchLastSeen(actor:Entity){
     const u=actor.unit!,memory=u.pursuit!;
@@ -224,7 +224,7 @@ export class Combat {
     const u = e.unit!;
     if (
       (atPoint(e, destination) && !u.route.length) ||
-      (u.goal !== null && !u.route.length && atPoint(e, {x: u.goal % this.c.spatial.size, y: Math.floor(u.goal / this.c.spatial.size)}))
+      (u.goal !== null && !u.route.length && atPoint(e, this.c.spatial.point(u.goal)))
     ) {
       u.order = null;
       u.goal = null;
@@ -233,7 +233,7 @@ export class Combat {
     if (!u.route.length && u.retryAt <= this.c.state.tick) {
       const goal = this.c.spatial.nearest(destination, 8, e.id);
       if (goal && !this.c.spatial.route(e, goal) &&
-          this.c.spatial.navigation.path(this.c.spatial.cell(e), this.c.spatial.cell(goal)) === null) {
+          this.c.spatial.findPath(this.c.spatial.cell(e), this.c.spatial.cell(goal)) === null) {
         u.order = null;
         u.goal = null;
         this.c.event(e.owner, "Move destination is unreachable", "error");

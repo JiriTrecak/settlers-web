@@ -76,9 +76,13 @@ export class Meadow {
   }
   private purchasedGrassMaterial():MeshLambertMaterial{
     const material=new MeshLambertMaterial({vertexColors:true,side:DoubleSide});
-    material.customProgramCacheKey=()=> 'purchased-grass-wind-1';
+    material.customProgramCacheKey=()=> 'purchased-grass-wind-2';
     material.onBeforeCompile=s=>{
       s.uniforms.uWind=this.time;
+      // Keep the purchased geometry's painted detail, but temper its lime-green tint.
+      s.fragmentShader=s.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+        float leafLuma=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
+        diffuseColor.rgb=mix(diffuseColor.rgb,vec3(leafLuma),.35)*vec3(1.04,.93,.81);`);
       s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nuniform float uWind;').replace('#include <begin_vertex>',`#include <begin_vertex>
         vec3 anchor=instanceMatrix[3].xyz;
         float bend=pow(max(position.y,0.0),2.0);

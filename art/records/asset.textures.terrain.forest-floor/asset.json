@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.forest-floor",
+  "name": "Forest Floor",
+  "kind": "texture",
+  "tags": [
+    "canopy",
+    "forest-floor"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/forest-floor.png",
+      "sha256": "6ce67b4bb630c4b0dc7f43aa8566ab9f13c625c087f52f94fad7bea26d7570b2",
+      "bytes": 2467767,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/forest-floor/source.png",
+    "sha256": "54786a9875a30108780e86b6da7fe16d6b1de1a96ebea1234392a5f6699d2621",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T06:24:37.845403+00:00",
+    "warnings": []
+  }
+}

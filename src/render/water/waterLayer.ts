@@ -7,7 +7,7 @@ import { Reflector } from 'three/addons/objects/Reflector.js';
  * Sunk 0.03 so dry land at 0 wins.
  */
 import {
-  ShaderChunk,
+  ShaderChunk, Color,
   ClampToEdgeWrapping,
   DataTexture,
   FloatType,
@@ -39,6 +39,7 @@ const DEEP = new Vector3(0.02, 0.045, 0.08);
 const FOAM = new Vector3(0.73, 0.77, 0.78);
 
 type WaterUniforms = {
+  uClarity:IUniform<number>;uFlowSpeed:IUniform<number>;
   uShadowStrength:IUniform<number>;
   uReflectionStrength:IUniform<number>;
   uReflection:IUniform<Texture>;
@@ -104,6 +105,7 @@ export class WaterLayer {
     this.flow.minFilter=this.flow.magFilter=LinearFilter;this.flow.needsUpdate=true;
     this.reflector=new Reflector(new PlaneGeometry(1,1),{textureWidth:768,textureHeight:768,clipBias:.003,multisample:0});
     this.uniforms = {
+      uClarity:{value:3.2},uFlowSpeed:{value:.65},
       uShadowStrength:{value:.6},
       uReflectionStrength:{value:0},
       uReflection:{value:this.reflector.getRenderTarget().texture},
@@ -114,9 +116,9 @@ export class WaterLayer {
       uWaterLevel: { value: 0 },
       uHeightOrigin: { value: HEIGHT_ORIGIN },
       uHeightVerts: { value: this.verts },
-      uShallow: { value: SHALLOW },
-      uDeep: { value: DEEP },
-      uFoam: { value: FOAM },
+      uShallow: { value: SHALLOW.clone() },
+      uDeep: { value: DEEP.clone() },
+      uFoam: { value: FOAM.clone() },
       uTime: { value: 0 },
       uRipple: { value: proceduralRipple() },
     };
@@ -129,7 +131,7 @@ export class WaterLayer {
       depthWrite: false,
     });
     mat.onBeforeCompile = (shader) => this.patch(shader);
-    mat.customProgramCacheKey = () => "utc-forest-stream-v12";
+    mat.customProgramCacheKey = () => "utc-forest-stream-v13";
     const mesh = new Mesh(new PlaneGeometry(span, span), mat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
@@ -168,6 +170,9 @@ export class WaterLayer {
   }
 
   setStyle(style:WaterStyle=DEFAULT_WATER_STYLE):void {
+    const shallow=new Color(style.shallowColor??'#668378'),deep=new Color(style.deepColor??'#102f36');
+    this.uniforms.uShallow.value.set(shallow.r,shallow.g,shallow.b);this.uniforms.uDeep.value.set(deep.r,deep.g,deep.b);
+    this.uniforms.uClarity.value=style.clarity??3.2;this.uniforms.uFlowSpeed.value=style.flowSpeed??.65;
     this.uniforms.uReflectionStrength.value=style.reflectionStrength??0;
     this.uniforms.uShadowStrength.value=style.shadowStrength??.6;
     this.uniforms.uCausticStrength.value=style.causticStrength??.4;this.uniforms.uRippleScale.value=style.rippleScale;this.uniforms.uRippleStrength.value=style.rippleStrength;this.uniforms.uCloudStrength.value=style.cloudStrength;this.uniforms.uFoamStrength.value=style.foamStrength;
@@ -262,6 +267,7 @@ varying vec4 vReflection;
 uniform sampler2D uReflection;
 uniform float uReflectionStrength;
 uniform float uShadowStrength;
+uniform float uClarity,uFlowSpeed;
 uniform sampler2D uHeight;
 uniform sampler2D uFlow;
 uniform sampler2D uRipple;
@@ -306,79 +312,54 @@ float waterCloud(vec2 p) {
   return .65*waterNoise(p)+.25*waterNoise(p*2.13+vec2(7.1,3.4))+.1*waterNoise(p*4.37);
 }
 
-float streamFilaments(vec2 drifting,vec2 flow){
-  vec2 uv=drifting*2.15;
-  vec2 warp=vec2(waterNoise(uv*.34),waterNoise(uv*.34+7.3))-.5;
-  uv+=warp*1.35;
-  // Convolve in the local current direction without rotating world coordinates.
-  // Continuous world-space samples stay coherent through a bend in the river.
-  vec2 along=flow*1.4;
-  float contour=waterNoise(uv)*.34;
-  contour+=(waterNoise(uv+along)+waterNoise(uv-along))*.23;
-  contour+=(waterNoise(uv+along*2.)+waterNoise(uv-along*2.))*.10;
-  float width=max(.004,fwidth(contour)*.7);
-  float crest=smoothstep(.55-width,.65+width,contour);
-  float patches=smoothstep(.42,.68,waterCloud(drifting*.43+vec2(7.1,3.2)));
-  float fragments=smoothstep(.32,.62,waterNoise(drifting*.9+vec2(9.1,3.4)));
-  float breakup=smoothstep(.25,.6,waterNoise(uv*1.8+vec2(3.2,7.8)));
-  return crest*patches*fragments*breakup;
+// Moving cellular edges form caustic networks instead of a crossing sine grid.
+float waterCaustic(vec2 p,float time){
+ vec2 base=floor(p),f=fract(p);float first=8.,second=8.;
+ for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){
+  vec2 offset=vec2(float(x),float(y)),cell=base+offset;
+  vec2 seed=vec2(waterHash(cell),waterHash(cell+vec2(37.,19.)));
+  vec2 site=.5+.28*sin(time*.45+seed*6.283185);
+  float d=length(offset+site-f);
+  if(d<first){second=first;first=d;}else second=min(second,d);
+ }
+ float edge=second-first,aa=max(.014,fwidth(edge));
+ return 1.-smoothstep(.015-aa,.055+aa,edge);
 }
 
 `;
 
 const WATER_LOOK = /* glsl */ `
 {
-  float depth = uWaterLevel - terrainAt(vWorldPos.xz);
-  if (depth < 0.015) discard;
-  vec2 p=vWorldPos.xz;
-  float t=uTime;
-  vec2 flow=normalize(texture2D(uFlow,(p-vec2(uHeightOrigin))/(uHeightVerts-1.0)).rg*2.0-1.0);
-  
-  // Small world-space slopes become view-space normals before Three's light evaluation.
-  float sx=sin(p.x*1.7+p.y*.7+t*.8)*.018 + sin(p.x*3.3-p.y*1.4-t*1.1)*.009;
-  float sz=cos(p.y*1.8+p.x*.8+t*.7)*.018 + cos(p.y*3.5-p.x*.9+t)*.009;
-  vec2 rippleUv=p*uRippleScale*vec2(.28,1.35);
-  vec3 rippleA=texture2D(uRipple,rippleUv-flow*t*.013).xyz*2.0-1.0;
-  vec3 rippleB=texture2D(uRipple,rippleUv*.71+flow*t*.009+vec2(.37,.63)).xyz*2.0-1.0;
-  vec3 ripple=rippleA*.65+rippleB*.35;
-  vec3 worldN=normalize(vec3((sx+ripple.x*.35)*uRippleStrength,1.0,(sz+ripple.y)*uRippleStrength));
-  normal=normalize(mat3(viewMatrix)*worldN);
-  float waterT=smoothstep(.6,2.6,depth);
-  vec3 col=mix(uShallow,uDeep,waterT);
-  float causticA=sin(p.x*3.1+sin(p.y*2.4+t*.55)+t*.35);
-  float causticB=sin(p.y*3.5+sin(p.x*2.2-t*.45)-t*.3);
-  float caustics=pow(1.0-abs(causticA*causticB),16.0);
-  // Sample along the local flow without rotating absolute world UVs;
-  // this stretches variation through bends without seams between flow cells.
-  vec2 drift=p*.18-flow*t*.006;
-  vec2 stretch=flow*.55;
-  float cloud=(waterCloud(drift)*.4+waterCloud(drift+stretch)*.3+waterCloud(drift-stretch)*.3-.5)*2.0;
-  col+=vec3(1.0,1.08,1.2)*uCloudStrength*cloud;
-  col+=vec3(.12,.2,.16)*caustics*exp(-depth*.8)*uCausticStrength;
-  // Flow-aligned, warped filaments. A broad envelope breaks the crests into
-  // short silver streaks rather than a bank-to-bank stripe pattern.
-  // Two overlapping advection phases avoid jumps and unbounded distortion.
-  float phaseA=fract(t*.035),phaseB=fract(t*.035+.5);
-  float flowBlend=abs(phaseA*2.0-1.0);
-  float glints=mix(streamFilaments(p-flow*phaseA*3.0,flow),streamFilaments(p-flow*phaseB*3.0,flow),flowBlend);
-  glints*=smoothstep(.10,.55,depth);
-  col=mix(col,vec3(.63,.72,.78),glints*(.18+sqrt(uRippleStrength)*.85));
-  float broadBands=waterCloud(p*.25-flow*t*.01);
-  col+=vec3(.45,.57,.65)*(broadBands-.5)*max(.035,uCloudStrength);
-  float foamWidth=.28+.20*waterNoise(p*1.7+flow*t*.025);
-  float foam=(1.0-smoothstep(foamWidth*.78,foamWidth,depth)) * smoothstep(.48,.72,waterCloud(p*2.1-flow*t*.03));
-  float shoreWave=(1.0-smoothstep(.1,.6,depth))*waterCloud(p*1.7-flow*t*.08)*.12;
-  vec3 V=normalize(vViewPosition);
-  float fres=pow(1.0-clamp(dot(normal,V),0.0,1.0),4.0);
-  col=mix(col,vec3(.65,.68,.75),fres*.48);
-  float foamAmount=clamp((foam+shoreWave*.4)*uFoamStrength,0.0,1.0);
-  col=mix(col,uFoam,foamAmount);
-  diffuseColor.rgb=col;
-  // Both color and coverage obey the brush's foam strength. Shallow coverage
-  // approaches zero continuously so the shore meets the bed without a rim.
-  float waterAlpha=mix(.48,.90,waterT)*smoothstep(.015,.2,depth);
-  diffuseColor.a=mix(waterAlpha,.94,foamAmount);
-  roughnessFactor=.58;
+ float depth=uWaterLevel-terrainAt(vWorldPos.xz);
+ if(depth<.015)discard;
+ vec2 p=vWorldPos.xz;float t=uTime*uFlowSpeed;
+ vec2 flow=texture2D(uFlow,(p-vec2(uHeightOrigin))/(uHeightVerts-1.)).rg*2.-1.;
+ flow=length(flow)>.01?normalize(flow):vec2(1.,0.);
+ // Two advected phases cross-fade without resetting the current at a seam.
+ float phase=fract(t*.045),other=fract(t*.045+.5),blend=abs(phase*2.-1.);
+ vec2 uv=p*uRippleScale;
+ vec2 a=texture2D(uRipple,uv-flow*phase*.45).rg*2.-1.;
+ vec2 b=texture2D(uRipple,uv-flow*other*.45+vec2(.17,.39)).rg*2.-1.;
+ vec2 small=texture2D(uRipple,p*uRippleScale*2.17+vec2(-t*.008,t*.006)).rg*2.-1.;
+ vec2 slopes=(mix(a,b,blend)*.8+small*.2)*uRippleStrength;
+ vec3 worldN=normalize(vec3(slopes.x,1.,slopes.y));
+ normal=normalize(mat3(viewMatrix)*worldN);
+ float shore=smoothstep(.015,.16,depth);
+ float opticalDepth=depth/max(.2,uClarity);
+ float absorption=1.-exp(-opticalDepth);
+ vec3 col=mix(uShallow,uDeep,1.-exp(-opticalDepth*1.6));
+ float broad=waterNoise(p*.12-flow*t*.008)-.5;
+ col+=vec3(.12,.16,.14)*broad*uCloudStrength;
+ float caustics=waterCaustic(p*.9-flow*t*.04,t);
+ col+=vec3(.18,.23,.16)*caustics*exp(-depth*.9)*uCausticStrength;
+ // Broken bank lacing stays at the waterline; open water has no painted white stripes.
+ float bankNoise=waterNoise(p*2.3-flow*t*.13);
+ float bank=(1.-smoothstep(.08,.36,depth))*smoothstep(.44,.72,bankNoise);
+ float foam=bank*uFoamStrength;
+ col=mix(col,uFoam,foam);
+ diffuseColor.rgb=max(col,vec3(0.));
+ diffuseColor.a=mix(clamp(absorption,.08,.94)*shore,.92,foam*shore);
+ roughnessFactor=mix(.23,.6,foam);
 }
 `;
 
@@ -390,7 +371,7 @@ if(uReflectionStrength>0.0){
   reflectionUv=clamp(reflectionUv+distortion,vec2(.002),vec2(.998));
   // A two-dimensional soft reflection avoids five separated copies of foliage.
   // The wide footprint reads as reflected canopy masses at the game's camera.
-  vec2 blur=vec2(.012,.009);
+  vec2 blur=vec2(.002,.002);
   vec3 reflected=texture2D(uReflection,reflectionUv).rgb*.25;
   reflected+=(texture2D(uReflection,reflectionUv+vec2(blur.x,0.0)).rgb
     +texture2D(uReflection,reflectionUv-vec2(blur.x,0.0)).rgb
@@ -401,6 +382,8 @@ if(uReflectionStrength>0.0){
     +texture2D(uReflection,reflectionUv+vec2(blur.x,-blur.y)).rgb
     +texture2D(uReflection,reflectionUv+vec2(-blur.x,blur.y)).rgb)*.0625;
   float reflectionDepth=uWaterLevel-terrainAt(vWorldPos.xz);
-  gl_FragColor.rgb=mix(gl_FragColor.rgb,reflected,uReflectionStrength*smoothstep(.1,1.0,reflectionDepth));
+  float fresnel=.02+.98*pow(1.-clamp(dot(normal,normalize(vViewPosition)),0.,1.),5.);
+  float reflection=uReflectionStrength*(.12+.88*fresnel)*smoothstep(.05,.5,reflectionDepth);
+  gl_FragColor.rgb=mix(gl_FragColor.rgb,reflected,reflection);
 }
 `;

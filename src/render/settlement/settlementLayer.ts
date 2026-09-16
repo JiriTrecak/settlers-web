@@ -1,3 +1,4 @@
+import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from '../prop/staticBatch';
 import { ShellEffects } from "./shellEffects";
 import { PresentationClock } from "./presentationClock";
@@ -28,6 +29,7 @@ import {
   Mesh,
   MeshStandardMaterial,
   BoxGeometry,
+  Box3,
   PlaneGeometry,
   MeshBasicMaterial,
   Sprite,
@@ -157,7 +159,7 @@ export class SettlementLayer {
   private readonly invalidColor = new Color(0xf26960);
   private pendingPreview: (() => void) | null = null;
   readonly ready: Promise<void>;
-  constructor(scene: Scene) {
+  constructor(scene: Scene, private readonly cutaway?:SceneryCutaway) {
     this.root.name = "game-entities";
     this.root.add(this.ghost, this.entranceGhost, this.gridLines);
     this.gridLines.visible = false;
@@ -202,6 +204,13 @@ export class SettlementLayer {
       ids === null ? [] : typeof ids === "number" ? [ids] : ids,
     );
   }
+  /** Uses presented positions and observed units, never hidden simulation entities. */
+  cutawaySubjects(){
+    const subjects:{position:Vector3;height:number}[]=[];
+    for(const root of this.entities.values())if(root.visible&&root.userData.clickableUnit)
+      subjects.push({position:root.position,height:root.userData.pickHeight??2});
+    return subjects;
+  }
   pickUnit(camera: Camera, viewport: DOMRect, x: number, y: number): number | null {
     const bodies: UnitPickBody[] = [];
     for (const [id, root] of this.entities) {
@@ -236,6 +245,7 @@ export class SettlementLayer {
       const model = character?.root ?? this.clone(asset);
       if (!model) continue;
       model.traverse(o => { if (o instanceof Mesh) {o.castShadow = true; o.receiveShadow = true;} });
+      if (!character) this.prepareCutaway(model);
       applyPlayerMaterials(model, 0);
       this.warmModels.push(model);
       this.warmDisposers.push(() => character ? character.dispose() : this.disposeInstance(model));
@@ -275,6 +285,12 @@ export class SettlementLayer {
     });
     return o;
   }
+  /** Scene instances own their materials; portrait clones keep their opaque shaders. */
+  private prepareCutaway(model:Object3D){
+    if(!this.cutaway)return;
+    const height=new Box3().setFromObject(model).getSize(new Vector3()).y;
+    model.traverse(node=>{if(node instanceof Mesh)for(const mat of Array.isArray(node.material)?node.material:[node.material])this.cutaway!.attach(mat,height);});
+  }
   private make(e: EntityView) {
     const d = content.get(e.definition),
       assetId = e.appearance?.asset ?? d.asset;
@@ -299,6 +315,7 @@ export class SettlementLayer {
         }
       });
     if (!model) return null;
+    if (d.kind === "building") this.prepareCutaway(model);
     o = new Group();
     model.name = "Body";
     o.add(model);
@@ -427,7 +444,7 @@ export class SettlementLayer {
           e.gathering.capacity,
         );
       }
-      const target = this.targetPosition.set(e.x, (e.unit?field.walkSample(e.x,e.y):field.sample(e.x, e.y)), e.y);
+      const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface), e.y);
       if (e.unit && o.userData.placed) {
         const yaw=e.rotation*Math.PI/180;
         const delta=Math.atan2(Math.sin(yaw-o.rotation.y),Math.cos(yaw-o.rotation.y));

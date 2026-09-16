@@ -1,3 +1,4 @@
+import {campaignCompanySchema} from '../scenario/company';
 /**
  * Save envelope the net layer may inspect. World blob is opaque here (sim parses it).
  * Bump `SAVE_FORMAT_VERSION` when the JSON shape changes — old files become unloadable.
@@ -112,6 +113,8 @@ export function parseMatchConfig(raw: unknown): MatchConfig | null {
     o.slots.length < 1
   )
     return null;
+  const company=o.company===undefined?undefined:campaignCompanySchema.safeParse(o.company);
+  if(company&&!company.success)return null;
   const slots: Slot[] = [];
   for (const s of o.slots) {
     if (!s || typeof s !== "object") return null;
@@ -135,6 +138,7 @@ export function parseMatchConfig(raw: unknown): MatchConfig | null {
     checksumEvery: o.checksumEvery,
     tickMs: o.tickMs as MatchConfig["tickMs"],
     slots,
+    ...(company?.success?{company:company.data}:{}),
   };
 }
 

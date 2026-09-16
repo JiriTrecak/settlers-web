@@ -7,3 +7,7 @@ The strict weather schema accepts `kind` (`clear`, `rain`, `snow`), `intensity` 
 `WeatherLayer` renders at most 768 particles in one camera-local instanced batch. Clear weather hides the batch and skips particle updates. Rain uses short narrow streaks; snow uses camera-facing flakes. The layer shares normal terrain depth testing and the game's fog material integration. Editor and gameplay use the same renderer. Existing authored maps remain clear.
 
 Validation: rain and snow previewed in the editor, then switched back to Clear; no preview changes were saved to the shipped map. Schema/range validation, camera bounds, batch counts, precipitation switching and no updates in clear mode are tested. The complete checkpoint passes 266 tests in 77 files and the production build.
+
+## Mist and sunlight shafts
+
+Maps can also author [volumetric atmosphere](./volumetric-atmosphere.md). Its density field follows weather wind, while rain reduces shaft intensity. It has separate graphics quality settings and remains cosmetic.

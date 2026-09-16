@@ -1,0 +1,8 @@
+{
+  "method": "built-in image_gen",
+  "prompt": "Create a production game environment texture, single square seamless tileable albedo texture, 1024x1024. Orthographic straight-down close-up of the worn inner heartwood floor of an immense hollow tree, seen at ant scale. Rich stylized hand-painted 3D RTS art, restrained warm honey-brown / desaturated ochre / warm umber palette. Broad gently flowing irregular growth fibres and occasional shallow narrow splits in solid continuous wood. Worn matte almost dusty walking surface, crisp fine pores and small chipped fibre edges, low-to-medium contrast suitable as a readable RTS battlefield. The grain should form broad wandering swirls rather than straight striped planks. NOT bark, no boards, no plank seams, no furniture, no objects, no mushrooms, no foliage, no border, no text. Entire square covered in one flat surface, even diffuse neutral lighting with no cast shadows or directional highlights, no perspective or horizon. Tile seamlessly on all four edges; avoid any large distinctive central knot or repeated motif. This is an actual albedo material texture, not a scene illustration.",
+  "output": "source.png",
+  "runtime": "assets/textures/terrain/heartwood-floor.png",
+  "processing": "Resized to 1024×1024 PNG using sharp; source preserved.",
+  "validation": "Visually reviewed. Exact opposing-edge pixel equality is not guaranteed."
+}

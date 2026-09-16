@@ -208,7 +208,7 @@ class PerformanceDebug {
   report() {
     return {
       note: "CPU scopes overlap; GPU is asynchronous. Timings are milliseconds over the last 120 samples. Counters describe the last frame; category triangles cover color passes, while total triangles include shadows and reflections.",
-      values: this.values,
+      values: {...this.values},
       timings: Object.fromEntries(
         [...this.rows].map(([k, a]) => {
           const b = a.slice().sort((x, y) => x - y);

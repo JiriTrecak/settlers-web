@@ -9,7 +9,7 @@ it("uses one white pulse for move and two red/green pulses for attack/gather, th
   const time = vi.spyOn(performance, "now").mockReturnValue(0);
   try {
     const root = new Group(), effects = new CommandFeedbackEffects(root);
-    const field = {sample: (x: number, y: number) => (x + y) / 10} as HeightField;
+    const field = {walkSample: (x: number, y: number) => (x + y) / 10} as HeightField;
     for (const kind of ["move", "attack", "gather"] as const) effects.show({kind, point: {x: 10, y: 10}, radius: 1}, field);
     const meshes = [...root.children] as any[];
     expect(meshes.map(m => m.material.color.getHex())).toEqual([0xffffff, 0xff4141, 0x67ff77]);

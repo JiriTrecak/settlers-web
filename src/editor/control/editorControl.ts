@@ -1,3 +1,6 @@
+import {canopySchema} from '../../shared/landscape/canopy';
+import {atmosphereSchema} from '../../shared/landscape/atmosphere';
+import {weatherSchema} from '../../shared/landscape/weather';
 import {campSchema} from '../../content/schema';
 import {missionSchema} from "../../shared/scenario/schema";
 import {validateMissionLua} from "../../shared/scenario/lua";
@@ -53,6 +56,12 @@ export class EditorControl {
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     status: () => this.status(),
+    walkSurface: params=>{
+      const p=obj(params),id=str(p.id),stamp=this.editor.map.stamps.find(s=>s.id===id);
+      if(!stamp||!this.library.entry(stamp.asset)?.deck)throw new Error('Choose a declared walkable asset');
+      if(p.walk!==undefined)this.editor.setStampWalk(stamp.id,p.walk);
+      return {stamp:this.editor.map.stamps.find(s=>s.id===id),defaults:this.library.entry(stamp.asset)?.deck};
+    },
     mission: (params)=>{const p=obj(params);if(p.action==="set"){const m=p.mission===null?undefined:missionSchema.parse(p.mission);if(m)validateMissionLua(m.script);this.editor.setMission(m,p.camps===undefined?undefined:campSchema.array().parse(p.camps));}else if(p.action!=="get")throw new Error("Mission operation must be get or set");return {mission:this.editor.map.mission??null,camps:this.editor.map.camps};},
     entities: (params) => {
       const p = obj(params);
@@ -326,6 +335,12 @@ export class EditorControl {
         settings.season = o.season as EnvironmentState["season"];
       }
       if (typeof o.playing === "boolean") settings.playing = o.playing;
+      if(o.interior!==undefined){if(typeof o.interior!=='boolean')throw new Error('Invalid interior mode');settings.interior=o.interior;}
+      if(o.floorMaterial!==undefined){if(!['forest','heartwood'].includes(String(o.floorMaterial)))throw new Error('Invalid floor material');settings.floorMaterial=o.floorMaterial as EnvironmentState['floorMaterial'];}
+      if(o.preset!==undefined){if(typeof o.preset!=='string'||!o.preset.length||o.preset.length>128)throw new Error('Invalid environment preset');settings.preset=o.preset;}
+      if(o.canopy!==undefined)settings.canopy=canopySchema.parse(o.canopy);
+      if(o.atmosphere!==undefined)settings.atmosphere=atmosphereSchema.parse(o.atmosphere);
+      if(o.weather!==undefined)settings.weather=weatherSchema.parse(o.weather);
       this.editor.environment(settings);
     } else if (action === "view") {
       if (o.grid !== undefined)

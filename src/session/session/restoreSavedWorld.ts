@@ -7,6 +7,7 @@ export function restoreSavedWorld(save:LocalSave,map:UtcMap):World {
       map: map,
       slots: save.match.slots,
       seed: save.seed,
+      company: save.match.company,
     });
     restored.restore(save.world);
     const tick = restored.clock.tickIndex,

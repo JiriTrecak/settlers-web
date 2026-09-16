@@ -1,0 +1,13 @@
+00:00.635  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/curled-forest-leaf/curled-forest-leaf.blend"
+00:01.367  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/curled-forest-leaf/.render-1789455480504615000.png'
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+23:58:02 | INFO: Starting glTF 2.0 export
+23:58:02 | INFO: Extracting primitive: Curled fallen leaf.001
+23:58:02 | INFO: Primitives created: 1
+23:58:02 | INFO: Finished glTF 2.0 export in 0.009964704513549805 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/curled-forest-leaf/.render-1789455480504615000.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

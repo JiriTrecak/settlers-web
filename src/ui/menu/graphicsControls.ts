@@ -1,3 +1,4 @@
+import {ATMOSPHERE_QUALITIES,readAtmosphereQuality,setAtmosphereQuality,type AtmosphereQuality} from '../../shared/settings/graphics';
 import {readHudLayout,setHudLayout,readHudScale,setHudScale,type HudLayout} from '../../shared/settings/hud';
 import {keyboardControls} from './keyboardControls';
 import {SHADOW_MODES,readShadowMode,setShadowMode,type ShadowMode} from '../../shared/settings/graphics';
@@ -22,6 +23,11 @@ export function graphicsControls():HTMLElement {
  shadows.value=readShadowMode();shadows.onchange=()=>setShadowMode(shadows.value as ShadowMode);
  shadowLabel.append(shadows);group.append(shadowLabel);
  const shadowNote=document.createElement('p');shadowNote.className='canopy-settings-status';shadowNote.textContent='Filtered shadows use sharper edges and skip the soft-shadow blur passes. Applies immediately and is saved.';group.append(shadowNote);
+ const atmosphereLabel=document.createElement('label');atmosphereLabel.textContent='Volumetric fog / light shafts';
+ const atmosphere=document.createElement('select');atmosphere.style.cssText=select.style.cssText;atmosphere.setAttribute('aria-label','Atmosphere quality');
+ for(const value of ATMOSPHERE_QUALITIES){const o=new Option(value[0].toUpperCase()+value.slice(1),value);atmosphere.append(o);}
+ atmosphere.value=readAtmosphereQuality();atmosphere.onchange=()=>setAtmosphereQuality(atmosphere.value as AtmosphereQuality);atmosphereLabel.append(atmosphere);group.append(atmosphereLabel);
+ const atmosphereNote=document.createElement('p');atmosphereNote.className='canopy-settings-status';atmosphereNote.textContent='Applies to maps with atmosphere enabled. Lower quality reduces GPU cost. Shadows must be enabled for light shafts. Saved on this device.';group.append(atmosphereNote);
  const hudLabel=document.createElement('label');hudLabel.textContent='HUD layout';
  const hudLayout=document.createElement('select');hudLayout.style.cssText=select.style.cssText;
  for(const [value,text] of [['spread','Spread · screen edges'],['compact','Compact · centered']]){const o=document.createElement('option');o.value=value;o.textContent=text;hudLayout.append(o);}

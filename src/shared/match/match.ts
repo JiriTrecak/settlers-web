@@ -1,3 +1,4 @@
+import type {CampaignCompany} from '../scenario/company';
 /**
  * Frozen match start. Same object on every peer; no process-wide statics.
  * D is ticks ahead of `tickIndex`. SP (MemoryChannel) uses 1.
@@ -27,6 +28,7 @@ export type MatchConfig = {
   checksumEvery: number;
   tickMs: typeof TICK_MS;
   slots: Slot[];
+  company?: CampaignCompany;
 };
 
 /** SP / vitest: one human slot + AI for the rest. `me` is the local human. */

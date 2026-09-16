@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.heartwood-rings",
+  "name": "heartwood rings",
+  "kind": "texture",
+  "tags": [
+    "canopy",
+    "heartwood"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/heartwood-rings.png",
+      "sha256": "60182afb6666452d18a87ea34c142eb3ef1a34b54af8731366a3ddb462027b17",
+      "bytes": 2966853,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/heartwood-rings/source.png",
+    "sha256": "617b4755200a519e32eadb0436e4e6fc81b9d66b8f8bd1f9335b7fbcced2c97d",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T22:54:40.688Z",
+    "warnings": [
+      "Unique planar end-grain texture, not intended to tile."
+    ]
+  }
+}

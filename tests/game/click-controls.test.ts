@@ -12,7 +12,7 @@ function setup() {
   };
   const session = Object.assign(Object.create(Session.prototype), {
     world: {settlement: g}, me: 0, config: {player: 0}, economyHud: hud,
-    renderer: { pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
+    renderer: { pickWalk: () => ({x:245,z:245}), pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
     send: vi.fn(),
   });
   return {g, unit, hud, session};

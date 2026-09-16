@@ -1,3 +1,5 @@
+import {GpuTimings} from './gpuTimings';
+import {AtmospherePass,type AtmosphereFrame} from '../atmosphere/atmospherePass';
 import {SHADOW_KEY,SHADOWS_CHANGED,readShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_KEY,GRAPHICS_CHANGED,readResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
 import {perf} from '../../debug/performance';
@@ -9,8 +11,8 @@ import { ACESFilmicToneMapping, PCFShadowMap, VSMShadowMap, SRGBColorSpace, WebG
 
 export class Display {
   readonly gl: WebGLRenderer;
-  private timer: {TIME_ELAPSED_EXT:number;GPU_DISJOINT_EXT:number}|null=null;
-  private queries:WebGLQuery[]=[];
+  private atmosphere:AtmospherePass|null=null;
+  private readonly gpu:GpuTimings;
   private scale=readResolutionScale();
   private readonly graphicsChanged=(e:Event)=>{if(e instanceof StorageEvent&&e.key&&e.key!==RESOLUTION_KEY)return;if(e instanceof CustomEvent)this.scale=e.detail as ResolutionScale;else this.scale=readResolutionScale();this.onResize();};
   private readonly shadowsChanged=(event:Event)=>{
@@ -33,7 +35,7 @@ export class Display {
     this.gl = new WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
     this.gl.info.autoReset=false;
     perf.attach();
-    this.timer=this.gl.getContext().getExtension('EXT_disjoint_timer_query_webgl2');
+    this.gpu=new GpuTimings(this.gl.getContext() as WebGL2RenderingContext);
     this.gl.setClearColor(0x1a2430, 1);
     this.gl.outputColorSpace = SRGBColorSpace;
     this.gl.toneMapping = ACESFilmicToneMapping;
@@ -65,35 +67,33 @@ export class Display {
     this.gl.setSize(this.width, this.height, false);
   }
 
-  render(scene: Scene, camera: Camera, after?:()=>void): void {
+  render(scene: Scene, camera: Camera, after?:()=>void, atmosphere?:AtmosphereFrame): void {
     // Hidden multiplayer tabs keep simulating, but need no GPU presentation.
     if(document.hidden)return;
-    const ctx=this.gl.getContext() as WebGL2RenderingContext;
-    const ext=this.timer;
-    if(ext&&this.queries.length){
-      const disjoint=ctx.getParameter(ext.GPU_DISJOINT_EXT);
-      while(this.queries.length&&(disjoint||ctx.getQueryParameter(this.queries[0]!,ctx.QUERY_RESULT_AVAILABLE))){
-        const q=this.queries.shift()!;if(!disjoint)perf.sample('GPU frame',ctx.getQueryParameter(q,ctx.QUERY_RESULT)/1e6);ctx.deleteQuery(q);
-      }
-    }
-    const q=perf.enabled&&ext&&this.queries.length<4?ctx.createQuery():null;
-    if(q)ctx.beginQuery(ext!.TIME_ELAPSED_EXT,q);
+    this.gpu.begin();
     const start=perf.start();
     this.gl.info.reset();
     perf.resetCounts();
-    this.gl.render(scene, camera);
-    after?.();
+    try{
+      this.drawWorld(scene,camera,atmosphere,(label,draw)=>this.gpu.measure(label,draw));
+      if(after)this.gpu.measure('GPU portrait',after);
+    }finally{this.gpu.end();}
     perf.finishCounts();
     perf.end('WebGL submit (CPU)',start);
-    if(q){ctx.endQuery(ext!.TIME_ELAPSED_EXT);this.queries.push(q);}
     if(perf.enabled){
       perf.value('Shadows',readShadowMode());
-      perf.value('GPU timer',ext?'Supported':'Unavailable in this browser');
+      perf.value('GPU timer',this.gpu.supported?'Supported':'Unavailable in this browser');
       perf.value('Draw calls',this.gl.info.render.calls);perf.value('Triangles (all passes)',this.gl.info.render.triangles.toLocaleString());
       perf.value('Textures',this.gl.info.memory.textures);perf.value('Geometries',this.gl.info.memory.geometries);
       perf.value('Canvas',`${this.canvas.width} × ${this.canvas.height} @ ${this.gl.getPixelRatio()} DPR`);
 
     }
+  }
+
+  /** Also used by editor captures; the caller owns the destination target. */
+  drawWorld(scene:Scene,camera:Camera,atmosphere?:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()){
+    if(atmosphere?.settings?.enabled){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
+    else {perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>this.gl.render(scene,camera));}
   }
 
   destroy(): void {
@@ -102,8 +102,9 @@ export class Display {
     window.removeEventListener("storage",this.shadowsChanged);
     window.removeEventListener(GRAPHICS_CHANGED,this.graphicsChanged);
     window.removeEventListener("storage",this.graphicsChanged);
-    for(const q of this.queries)(this.gl.getContext() as WebGL2RenderingContext).deleteQuery(q);
+    this.gpu.dispose();
     perf.detach();
+    this.atmosphere?.dispose();
     this.gl.dispose();
   }
 }

@@ -2,7 +2,7 @@ import type { ContentRegistry } from "../content/registry";
 import type { Action } from "../shared/types/types";
 import type { SettlementView } from "../sim/game/observation";
 
-export type CommandFeedback = {kind: "move" | "attack" | "gather"; point: {x: number; y: number}; radius: number};
+export type CommandFeedback = {kind: "move" | "attack" | "gather"; point: {x: number; y: number;surface?:string}; radius: number};
 export const commandFeedbackStyles = {
   move: {color: 0xffffff, pulses: 1},
   attack: {color: 0xff4141, pulses: 2},
@@ -19,7 +19,7 @@ export function commandFeedback(action: Action, view: SettlementView, registry: 
   const footprint = registry.get(target.definition).footprint;
   return {
     kind: (action.type === "pickup" || action.type === "follow") ? "move" : action.type,
-    point: {x: target.x, y: target.y},
+    point: {x: target.x, y: target.y,...(target.surface?{surface:target.surface}:{})},
     radius: footprint ? Math.hypot(footprint.width, footprint.depth) / 2 + .25 : action.type === "gather" ? 1.25 : .85,
   };
 }

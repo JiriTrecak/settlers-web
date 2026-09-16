@@ -1,4 +1,4 @@
-import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
+import {bridgeSurfaces,type BridgeSurface} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import { fingerprint, type ContentRegistry } from "../../content/registry";
 import type { UtcMap } from "../../shared/map/utcmap";
@@ -21,6 +21,7 @@ export type MapBriefing = Readonly<{
   fingerprint: string;
   heights: readonly number[];
   land: readonly number[];
+  surfaces: readonly BridgeSurface[];
   starts: readonly Point[];
   camps: readonly CampSite[];
   resources: readonly ResourceSite[];
@@ -43,7 +44,7 @@ export function createMapBriefing(
       heights.push(n);
       land.push(n >= sea - WADING_DEPTH_CM ? 1 : 0);
     }
-  applyBridgeSurfaces(map.size,bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,map.size):0),land,heights);
+  const surfaces=bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,map.size):0);
   applySceneryBlockers(map, land);
   const placements = new Map(map.entities.map((p) => [p.id, p]));
   const camps = map.camps
@@ -81,6 +82,7 @@ export function createMapBriefing(
     size: map.size,
     heights: Object.freeze(heights),
     land: Object.freeze(land),
+    surfaces: Object.freeze(surfaces),
     starts: Object.freeze(starts),
     camps: Object.freeze(camps),
     resources: Object.freeze(resources),

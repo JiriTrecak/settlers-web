@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-15T00:27:34-0700",
+  "view": "saved",
+  "quick": true,
+  "seconds": 2.35,
+  "blend_mtime_ns": 1789457253028630312,
+  "config": {
+    "name": "Interwoven Root Bank",
+    "blend": "interwoven-root-bank.blend",
+    "recipe": "model.py",
+    "kit_kind": "rootwall",
+    "seed": 2059,
+    "merge_static_materials": true,
+    "camera": {
+      "azimuth": 20,
+      "elevation": 32,
+      "scale": 15,
+      "target": [
+        0,
+        0,
+        1
+      ]
+    },
+    "render": {
+      "width": 800,
+      "height": 650,
+      "samples": 20
+    },
+    "light": {
+      "key_energy": 900,
+      "fill_energy": 250,
+      "rim_energy": 600
+    },
+    "preserve_textures": true
+  }
+}

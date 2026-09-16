@@ -46,7 +46,11 @@ For a timer, save a deadline such as `mission.tick() + 240`, then compare the cu
 
 - `mission.get(key)` / `mission.set(key, value)`: persistent scalar state. Setting `nil` removes the key. Maximum 128 keys; strings up to 2,000 characters.
 - `mission.tick()`: authoritative simulation tick.
+- `mission.count(owner, definition)`: living, completed, ready units/buildings of an exact definition. Foundations and fallen heroes do not count. Useful for training and construction objectives.
+- `mission.stock(owner, item)`: available economy currency in the owner’s completed drop-off stores; carried cargo and unfinished stores do not count. This includes Root held at Rootworks. Both calls read authoritative simulation state and are deterministic.
 - `mission.alive(id)`: true for an existing living entity; false before a deferred spawn or after death. Unknown authored IDs are errors.
+- `mission.attack_move(id, x, y)`: move a military unit toward a map position, engaging visible enemies along the way. Use this for approaching reinforcements; a direct attack still obeys visibility and can end if its target is unseen.
+- `mission.recover(id)`: restore a surviving unit's health and mana to its current maximum. Dead, missing or fallen members stay lost; items, cooldowns, orders and temporary effects remain unchanged. Call once from a saved stage transition for a recovery checkpoint, as in the Heartwood Vault's secured resin chamber.
 - `mission.position(id)`: returns `x, y`, or `nil, nil` if the entity does not exist.
 - `mission.in_region(id, regionId)`: tests a living entity's current cell against a named circle.
 - `mission.spawn(id)`: activates a pre-authored entity marked `activation: "script"`. Each ID may spawn once. This permits preloading its model and validating definitions, ownership, camp membership and placement before a mission starts.
@@ -66,7 +70,7 @@ A callback is limited to 20,000 Lua instructions and 256 API calls. Strings in e
 
 Mission variables, spawn history, objective, dialogue deadline and errors are explicit simulation state, included in snapshots and checksums. Map revision includes the Lua source and regions. Save/load recreates interpreter execution from that source and saved state. Mission simulation tests compare checksums after restoring during the ambush.
 
-The runtime can therefore execute the same script on every lockstep peer. Player commands still travel through the normal network command stream; script-generated orders are derived locally on each peer and must not be separately broadcast. Camera, portrait layout and presentation remain local. The current campaign launcher is single-player; campaign networking, synchronized dialogue choices/skipping and cross-mission progression need their own implementation.
+The runtime can therefore execute the same script on every lockstep peer. Player commands still travel through the normal network command stream; script-generated orders are derived locally on each peer and must not be separately broadcast. Camera, portrait layout and presentation remain local. The current campaign launcher is single-player; campaign networking and synchronized dialogue choices/skipping need their own implementation. Authored chapter transfer is described below.
 
 ## Editor bridge
 
@@ -75,6 +79,10 @@ The existing editor control bridge supports `mission` with `action: "get"` or `a
 ## Validation
 
 The regression suite covers syntax errors, unavailable capabilities, instruction limits, the three-unit start, dormant enemies, actual movement to the crossing and combat through victory, hero defeat, mid-ambush save/load checksum agreement, script failure without partial spawning, ID renaming and skirmish rejection of deferred entities.
+
+## Authored starting levels
+
+A hero placement may set `initialState.experience`, for example `{"experience":450}` for a level-four Marshal. Health and mana initialize at that level, and unspent skill points remain available. Validation rejects XP on a non-hero or above the mission cap. The Entities panel’s **Instance initial state JSON** and normal entity bridge accept this field. Mission 2 starts at level 2 (cap 4); mission 3 starts at level 4 (cap 6). These are authored starts when launched directly from the mission menu. Chapters with an explicit travelling-company connection can instead inherit survivors and hero development.
 
 ## Level limits and guaranteed rewards
 
@@ -126,3 +134,16 @@ Use `mission.begin_scene(x, y)` to pin the camera to a ground point, show cinema
 The prologue uses three stages before handing over control: entrance orders, inward turns around `(190, 195)`, then the paused opening dialogue. The walk-in takes roughly seven seconds. Scene framing, pending turns, and Lua stages survive saves; unit navigation and animation use the normal engine systems. Do not start a paused dialogue until the pending movement and turns finish. The presentation temporarily reveals a 24-cell circle around the scene camera. This does not explore the map, grant simulation/AI vision, or alter combat rules; normal fog returns at scene end.
 
 Rain is authored in `landscape.environment.weather` (`kind: "rain"`, intensity `0.7`, wind X `1.2`, Z `0.4`). It uses the existing bounded, instanced weather renderer. The shared default day/night period is 600 seconds, including editor previews and ordinary matches.
+
+
+## Travelling between chapters
+
+A mission may declare `nextMission: "vanguard-heartwood-vault"` and a `company` list of entity Script IDs. The destination declares the matching company IDs and unit definitions at its arrival positions. The Mission & Lua editor exposes both fields; the complete mission MCP declaration uses the same schema.
+
+After victory, **Continue to next chapter** starts that destination. Only living Player 1 units in the source company travel. Missing companions are removed from the destination's default party, so death is not silently undone. The receiving company must contain a living hero. The destination must belong to the same campaign, and its hero cap must accommodate the incoming XP.
+
+The chapter checkpoint retains hero experience, learned ability ranks, inventory slot order and remaining item charges. Survivors recover health and mana. Combat orders, surface IDs, temporary effects, cooldowns and partial item-trigger counters reset. The destination supplies positions and facing; no coordinates from the previous map are reused. Colony research and resource stockpiles do not transfer in this first travelling-party implementation.
+
+The incoming company is part of the frozen `MatchConfig`, not browser-only state. It survives local saves and **Restart scenario**, which recreates the original chapter-start company. Validation rejects unknown arrival IDs, mismatched unit definitions, invalid equipment or skill ranks, and incompatible caps. The simulation can construct identical starts from the same declaration on multiple peers; a network campaign lobby/transition protocol is still unimplemented.
+
+The Hollow Gate currently connects to The Heartwood Vault. Earlier chapters remain independent authored starts. Launching the Vault directly uses its default eight-ant party; continuing from the Gate uses the survivors you actually brought.

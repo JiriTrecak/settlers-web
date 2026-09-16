@@ -1,0 +1,19 @@
+{
+  "method": "built-in imagegen",
+  "concept": {
+    "source": "reference.png",
+    "prompt": "Use case: stylized-concept. Asset type: reference for a game-ready 3D environment landmark in an ant-scale fantasy RTS, Under the Canopy. Create one isolated 'Bitter Heart': a large corrupted living-tree root organ, inside a hollow tree. Three massive asymmetric curled dark roots rise around a central split woody seed-shaped heart, open at the front. Highest root behind left curls inward like a crooked arch, shorter right root curls forward, a third buttress supports the back. The central heart is an upright swollen wooden pod, cracked into five chunky pointed bark plates, revealing a narrow glowing copper-red resin core. Broad branching roots spread low and firmly along the ground into a single cohesive base. Deep bark grooves, muted slate-brown wood with a subtle plum cast, warm exposed torn heartwood, small desaturated ochre shelf fungi and sparse dark moss at feet. Broad bold readable silhouette, premium hand-painted stylized 3D game asset, practical low-poly construction, no thin filigree, no many tiny spikes, no eyes or mouth, no skull, no stone temple, no chains, no circular platform. The core is resin, not a faceted crystal. Roughly 13 units wide, 9 deep, 11 high. Black background, no floor plane, isolated with generous margin, orthographic three-quarter front view from 25 degrees elevation. Soft warm key, cooler fill, restrained internal red glow; retain all geometry in shadows. No text or UI, no creatures. Show a coherent sculptural organic form that can be faithfully reconstructed with curved root meshes and chunky bark plates."
+  },
+  "bark": {
+    "source": "bitter-bark-source.png",
+    "runtime": "bitter-bark.png",
+    "prompt": "Use case: stylized-concept. Asset type: seamless game albedo texture, square edge-to-edge material only. A flat unwrap of old deeply fissured tree-root bark for an organic dark woodland landmark. Broad irregular vertical braided grain in muted charcoal brown, dusky plum-gray and weathered warm gray ridges, occasional warm reddish exposed wood scars. Hand-painted stylized RTS texture with chunky readable forms, restrained fine detail. No tree silhouette, no objects, no moss, no glowing cracks, no directional illumination or shadows, no border, no text. Seamless in both axes, predominantly dark warm slate-brown, varied rough grain, NOT stone or reptile skin.",
+    "processing": "Sharp resize to 1024x1024."
+  },
+  "resin": {
+    "source": "bitter-resin-source.png",
+    "runtime": "bitter-resin.png",
+    "prompt": "Use case: stylized-concept. Asset type: game albedo texture for a glowing red resin heart, square material only. Edge-to-edge flat surface of translucent thick copper-red tree sap, deep wine-red and burnt orange with a few delicate golden fissures and cloudy amber inclusions. Organic viscous resin, broad irregular lobes and strands that flow generally vertically, not crystal facets, not lava, not blood. Premium hand-painted stylized RTS material, subtle fine detail and strong broad color variation, tileable in both axes. No object silhouette, no lighting, no external shadows, no sphere, no background, no frame, no text. Predominantly deep red-brown, no brilliant white patches.",
+    "processing": "Sharp resize to 512x512."
+  }
+}

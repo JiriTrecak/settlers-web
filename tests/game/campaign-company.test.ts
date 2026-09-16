@@ -1,0 +1,37 @@
+import {readFileSync} from 'node:fs';
+import {it,expect} from 'vitest';
+import {Game} from '../../src/sim/game/game';
+import {captureCompany} from '../../src/sim/scenario/company';
+import {parseUtcMap} from '../../src/shared/map/utcmap';
+import {parseMatchConfig} from '../../src/shared/save/save';
+import {localMatch} from '../../src/shared/match/match';
+const read=(id:string)=>parseUtcMap(JSON.parse(readFileSync(`assets/maps/campaign/${id}.utcmap`,'utf8')))!;
+const source=()=>new Game(read('vanguard-hollow-gate'),[{player:0,kind:'human'}]);
+const target=()=>read('vanguard-heartwood-vault');
+it('carries survivors, hero experience, learned ranks and spent item charges into a fresh chapter and restart',()=>{
+ const g=source(),hero=g.entities.find(e=>e.placement==='marshal')!;
+ const ability=g.registry.get(hero.definition).behaviors.spellcasting!.abilities[0];
+ hero.spellcasting!.learned[ability]=2;hero.progression!.experience=1200;
+ hero.equipment![0]='item.barkguard';hero.hp=10;
+ const charged=g.registry.definitions.find(d=>d.itemEffect?.active?.charges)!;
+ hero.equipment![1]=charged.id;hero.equipmentState=hero.equipment!.map((_,i)=>i===1?{charges:1,readyTick:999,hits:0}:null);
+ g.entities.find(e=>e.placement==='guard-1')!.hp=0;
+ g.state.outcome={winner:'player.1',defeated:[]};
+ const company=captureCompany(g);expect(company).toHaveLength(7);
+ const next=new Game(target(),g.slots,undefined,123,company),restart=new Game(target(),g.slots,undefined,123,company);
+ expect(next.checksum()).toBe(restart.checksum());
+ expect(next.entities.some(e=>e.placement==='guard-1')).toBe(false);
+ const arriving=next.entities.find(e=>e.placement==='marshal')!;
+ expect(arriving.progression!.experience).toBe(1200);expect(arriving.spellcasting!.learned[ability]).toBe(2);
+ expect(arriving.equipment).toEqual(hero.equipment);expect(arriving.equipmentState![1]).toEqual({charges:1,readyTick:0,hits:0});
+ expect(arriving.hp).toBe(next.context.stats(arriving).maxHp);expect(arriving.unit!.order).toBeNull();
+ next.tick();restart.restore(next.snapshot());expect(restart.checksum()).toBe(next.checksum());
+ const match={...localMatch({mapId:'vanguard-heartwood-vault',mapRevision:'test',seed:123,slotCount:1,me:0}),company};
+ expect(parseMatchConfig(JSON.parse(JSON.stringify(match)))?.company).toEqual(company);
+});
+it('refuses premature travel, an invented arrival slot, missing heroes and incompatible level caps',()=>{
+ const g=source();expect(()=>captureCompany(g)).toThrow('Complete');g.state.outcome={winner:'player.1',defeated:[]};const company=captureCompany(g);
+ expect(()=>new Game(target(),g.slots,undefined,1,[...company,{...company[0],tag:'intruder'}])).toThrow('arrival slot');
+ expect(()=>new Game(target(),g.slots,undefined,1,company.filter(e=>e.tag!=='marshal'))).toThrow('hero');
+ const capped=target();capped.mission!.heroLevelCap=2;expect(()=>new Game(capped,g.slots,undefined,1,company)).toThrow();
+});

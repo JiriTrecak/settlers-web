@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.heartwood-floor",
+  "name": "Worn heartwood floor",
+  "kind": "texture",
+  "tags": [
+    "canopy",
+    "heartwood"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/heartwood-floor.png",
+      "sha256": "0aab8e8e21b23938759b730f3ca2d0e6b02ef4aa40e6f6b5ecad58f770d43e0f",
+      "bytes": 2622071,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/heartwood-floor/source.png",
+    "sha256": "83ecd014b4a3df35fa681f80b192b720a0fba9e126feb7dfc61143eec1ebb8f9",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T02:02:08.004831+00:00",
+    "warnings": [
+      "Generated albedo; exact pixel edge tiling has not been verified."
+    ]
+  }
+}

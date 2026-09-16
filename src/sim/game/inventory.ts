@@ -23,7 +23,7 @@ export class Inventory {
       const target=this.c.get(order.target),error=this.pickupError(hero,target);
       if(error){this.stop(hero,error);continue;}
       if(isStunned(hero,this.c.registry)||hero.spellcasting?.pending)continue;
-      if(distance2(precise(hero),target!)<=this.c.def(hero).behaviors.inventory!.pickupRange**2){
+      if(this.withinReach(hero,target!)){
         hero.unit!.route=[];hero.unit!.goal=null;delete hero.unit!.detour;continue;
       }
       if(!hero.unit!.route.length && hero.unit!.retryAt<=this.c.state.tick) {
@@ -41,7 +41,7 @@ export class Inventory {
       const target=this.c.get(order.target);
       if(this.pickupError(hero,target))continue;
       if(isStunned(hero,this.c.registry)||hero.spellcasting?.pending)continue;
-      if(distance2(precise(hero),target!)>this.c.def(hero).behaviors.inventory!.pickupRange**2)continue;
+      if(!this.withinReach(hero,target!))continue;
       const slot = hero.equipment!.indexOf(null);
       hero.equipment![slot]=target!.definition;
       hero.equipmentState ??= hero.equipment!.map(() => null);
@@ -49,6 +49,10 @@ export class Inventory {
       this.c.remove(target!);
       this.stop(hero);
     }
+  }
+  private withinReach(hero:Entity,target:Entity):boolean {
+    return distance2(precise(hero),target)<=this.c.def(hero).behaviors.inventory!.pickupRange**2&&
+      (this.c.spatial.layers?.meleeClear(precise(hero),target)??true);
   }
   private stop(hero:Entity,message?:string) {
     hero.unit!.order=null;hero.unit!.route=[];hero.unit!.goal=null;

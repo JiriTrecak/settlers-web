@@ -6,7 +6,7 @@ import { summarizeGoods, type GoodsSummary } from "./goodsView";
 import { simulationHash } from "./checksum";
 import { z } from "zod";
 import type { Owner, Stock } from "../../content/schema";
-import { ownerSchema, ownerSlot } from "../../content/schema";
+import { ownerSchema, ownerSlot, surfaceSchema } from "../../content/schema";
 import { GameContext } from "./context";
 import { fellingStateSchema, type Entity, type Fact, type GameState } from "./state";
 import { resolvedStatsSchema, type entityStats } from "./stats";
@@ -37,6 +37,7 @@ export type EntityView = {
   owner: Owner;
   x: number;
   y: number;
+  surface?:string;
   rotation: number;
   hp: number | null;
   stats?: ReturnType<typeof entityStats>;
@@ -70,7 +71,13 @@ export type EntityView = {
   revival?: Entity["revival"];
   job?: string;
 };
-export type FogView = { cells: Uint8Array; revision: number; owner: number };
+export type FogDeckNode = {cell:number;height:number};
+export type FogView = {
+  /** Union for the flat minimap and atmospheric mask. */
+  cells: Uint8Array; revision: number; owner: number;
+  /** Ground first, followed by sparse deck nodes; height is in centimetres. */
+  floors?: {cells:Uint8Array;decks:readonly FogDeckNode[]};
+};
 const observedDeathSchema = z
   .object({
     id: z.int().positive(),
@@ -113,6 +120,7 @@ type Memory = {
 };
 const memoryEntity = z
   .object({
+    surface: surfaceSchema.optional(),
     id: z.number().int().positive(),
     definition: z.string(),
     owner: ownerSchema,
@@ -148,7 +156,7 @@ export const knowledgeSchema = z.array(
   z
     .object({
       owner: ownerSchema,
-      cells: z.array(z.number().int().min(0).max(2)).max(262144),
+      cells: z.array(z.number().int().min(0).max(2)).max(8388608),
       entities: z.array(memoryEntity),
       observedDeaths: z.array(observedDeathSchema).max(1280),
     })
@@ -189,15 +197,18 @@ export class Observation {
     this.cache.clear();
   }
   private readonly cache = new Map<Owner | undefined, SettlementView>();
+  private readonly fogProjection = new WeakMap<Uint8Array,Pick<FogView,'cells'|'floors'>>();
+  private readonly deckNodes: readonly FogDeckNode[];
   constructor(
     private readonly c: GameContext,
     owners: readonly Owner[],
     private readonly available: (e: Entity, item: string) => number,
     private readonly hostility?: (owner: Owner, e: Entity) => boolean,
   ) {
+    this.deckNodes=this.c.spatial.layers?.nodes.slice(this.c.spatial.size**2).map(n=>({cell:n.cell,height:n.height}))??[];
     this.memories = owners.map((owner) => ({
       owner,
-      cells: new Uint8Array(this.c.spatial.size ** 2),
+      cells: new Uint8Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size ** 2),
       visibleCells: [],
       entities: new Map(),
       observedDeaths: [],
@@ -208,6 +219,10 @@ export class Observation {
   }
   visible(owner: Owner, e: Entity): boolean {
     if(e.owner===owner)return true;
+    if(this.c.spatial.layers){
+      return this.c.liveSensors().some(sensor=>this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
+        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),precise(e)));
+    }
     const cells=this.c.spatial.footprint(e);
     return this.c.liveSensors().some(sensor=>this.sharesVision(owner,sensor) && !sensor.unit?.contained && !sensor.unit?.release &&
       cells.some(i=>i>=0 && ((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2 &&
@@ -216,6 +231,7 @@ export class Observation {
   previouslyVisible(owner: Owner, e: Entity): boolean {
     if (e.owner === owner) return true;
     const m = this.memories.find((p) => p.owner === owner);
+    if(this.c.spatial.layers)return !!m&&this.c.spatial.footprint(e).some(i=>i>=0&&m.cells[i]===2)&&this.visible(owner,e);
     return (
       !!m && this.c.spatial.footprint(e).some((i) => i >= 0 && m.cells[i] === 2)
     );
@@ -233,7 +249,7 @@ export class Observation {
   private readonly privateResourceViews=new WeakMap<EntityView,EntityView>();
   private readonly hostileResourceViews=new WeakMap<EntityView,EntityView>();
   private readonly rememberedViews=new WeakMap<EntityView,EntityView>();
-  private staticRecords = new Map<number, {definition:string;x:number;y:number;rotation:number}>();
+  private staticRecords = new Map<number, {definition:string;x:number;y:number;rotation:number;surface?:string}>();
   private staticOverlaps = new Map<number, number[]>();
   private resourceOwnerView(view:EntityView,observer?:Owner):EntityView {
     if (!observer) return view;
@@ -277,6 +293,7 @@ export class Observation {
       owner: e.owner,
       x: precise(e).x,
       y: precise(e).y,
+      ...(e.surface?{surface:e.surface}:{}),
       rotation: e.rotation,
       hp: e.hp,
       ...(observer ? { hostile: this.hostility?.(observer, e) ?? false } : {}),
@@ -342,10 +359,7 @@ export class Observation {
       !e.unit.route.length &&
       !result.unit.contained &&
       (e.unit.goal === null ||
-        atPoint(e, {
-          x: e.unit.goal % this.c.spatial.size,
-          y: Math.floor(e.unit.goal / this.c.spatial.size),
-        }))
+        atPoint(e, this.c.spatial.point(e.unit.goal)))
     ) {
       const job = this.c.state.jobs.find((j) => j.id === e.unit!.job);
       const workplace = this.c.get(job?.target);
@@ -423,6 +437,9 @@ export class Observation {
     }
     return result;
   }
+  private fogFootprint(e:Pick<Entity,"definition"|"x"|"y"|"rotation"|"surface">):number[]{
+    return this.c.spatial.footprint(e);
+  }
   update() {
     this.cache.clear();
     for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
@@ -431,16 +448,16 @@ export class Observation {
       this.c.state.tick - this.deathCues[0].tick > 80
     )
       this.deathCues.shift();
-    const live=this.c.live(),staticCells=this.staticCells??=new Int32Array(this.c.spatial.size**2);
+    const live=this.c.live(),staticCells=this.staticCells??=new Int32Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size**2);
     const stationary = live.filter(e => !e.unit && (e.resource || this.c.def(e).kind === "building"));
     if (stationary.length !== this.staticRecords.size || stationary.some(e => {
       const old=this.staticRecords.get(e.id);
-      return !old || old.x!==e.x || old.y!==e.y || old.rotation!==e.rotation || old.definition!==e.definition;
+      return !old || old.x!==e.x || old.y!==e.y || old.rotation!==e.rotation || old.definition!==e.definition || old.surface!==e.surface;
     })) {
       staticCells.fill(0); this.staticOverlaps.clear(); this.staticRecords.clear();
       for (const e of stationary) {
-        this.staticRecords.set(e.id,{definition:e.definition,x:e.x,y:e.y,rotation:e.rotation});
-        for(const cell of this.c.spatial.footprint(e))if(cell>=0){
+        this.staticRecords.set(e.id,{definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,surface:e.surface});
+        for(const cell of this.fogFootprint(e))if(cell>=0){
           if(staticCells[cell]){const ids=this.staticOverlaps.get(cell)??[staticCells[cell]];ids.push(e.id);this.staticOverlaps.set(cell,ids);}
           else staticCells[cell]=e.id;
         }
@@ -455,7 +472,7 @@ export class Observation {
           (e) => this.sharesVision(m.owner,e) && !e.unit?.contained && !e.unit?.release,
         );
       const signature = sensors
-        .map((e) => `${e.id}:${e.x}:${e.y}:${this.c.def(e).vision ?? 0}`)
+        .map((e) => `${e.id}:${e.x}:${e.y}:${e.surface??""}:${this.c.def(e).vision ?? 0}`)
         .join(";");
       const visionChanged = this.sensorSignatures.get(m.owner) !== signature;
       this.sensorSignatures.set(m.owner, signature);
@@ -465,7 +482,7 @@ export class Observation {
         m.visibleCells = [];
         for (const sensor of sensors) {
           const r = this.c.def(sensor).vision ?? 0;
-          for(const i of this.c.spatial.tactical.visibleCells(sensor,r)){
+          for(const i of this.c.spatial.visibleNodes(sensor,r)){
             if(m.cells[i]!==2){m.cells[i]=2;m.visibleCells.push(i);}
           }
         }
@@ -476,8 +493,9 @@ export class Observation {
         for(const extra of overlaps.get(cell)??[])observedStatic.add(extra);
       }
       for(const [id,e] of m.entities)
-        if(!observedStatic.has(id)&&this.c.spatial.footprint(e).some(i=>i>=0&&m.cells[i]===2))m.entities.delete(id);
-      for(const id of observedStatic)m.entities.set(id,this.describe(this.c.get(id)!,false));
+        if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
+          (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),e))))m.entities.delete(id);
+      for(const id of observedStatic){const e=this.c.get(id)!;if(!this.c.spatial.layers||this.visible(m.owner,e))m.entities.set(id,this.describe(e,false));}
     }
   }
   view(owner?: Owner): SettlementView {
@@ -533,7 +551,7 @@ export class Observation {
       ...(m
         ? {
             fog: {
-              cells: m.cells,
+              ...this.projectFog(m.cells),
               revision: this.c.state.tick,
               owner: ownerSlot(m.owner),
             },
@@ -549,6 +567,16 @@ export class Observation {
         : { ...this.c.state.objectives },
     };
     this.cache.set(owner, result);
+    return result;
+  }
+  private projectFog(nodes:Uint8Array):Pick<FogView,'cells'|'floors'>{
+    if(!this.deckNodes.length)return {cells:nodes};
+    let result=this.fogProjection.get(nodes);
+    if(!result){
+      const count=this.c.spatial.size**2,cells=nodes.slice(0,count);
+      for(let i=0;i<this.deckNodes.length;i++){const cell=this.deckNodes[i]!.cell;cells[cell]=Math.max(cells[cell]!,nodes[count+i]!);}
+      result={cells,floors:{cells:nodes,decks:this.deckNodes}};this.fogProjection.set(nodes,result);
+    }
     return result;
   }
   checksum() {
@@ -575,13 +603,13 @@ export class Observation {
     )
       throw new Error("Invalid knowledge owners");
     for (const row of rows) {
-      if (row.cells.length !== this.c.spatial.size ** 2)
+      if (row.cells.length !== (this.c.spatial.layers?.nodes.length??this.c.spatial.size ** 2))
         throw new Error("Invalid knowledge dimensions");
       const ids = new Set<number>();
       for (const e of row.entities) {
         const d = this.c.registry.get(e.definition);
         if (
-          ids.has(e.id) ||
+          ids.has(e.id) || !this.c.spatial.validPoint(e) ||
           !["resource", "building"].includes(d.kind) ||
           (e.hp !== null && (!d.body || e.hp > d.body.maxHp))
         )

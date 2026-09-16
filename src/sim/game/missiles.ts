@@ -13,7 +13,7 @@ export class Missiles {
   const distance=Math.hypot(destination.x-origin.x,destination.y-origin.y);
   const flight=Math.max(1,Math.ceil(distance/weapon.projectile!.speed*1000/TICK_MS));
   this.c.state.missiles.push({id:this.c.state.nextMissile++,source:a.id,target:b.id,definition:a.definition,owner:a.owner,
-   origin:{x:origin.x,y:origin.y},destination:{x:destination.x,y:destination.y},launched:this.c.state.tick,impact:this.c.state.tick+flight,
+   origin:{...origin},destination:{...destination},launched:this.c.state.tick,impact:this.c.state.tick+flight,
    damage,damageType:weapon.damageType,resolved:false,
    viewers:this.owners.filter(owner=>this.vision.visible(owner,a)&&this.vision.visible(owner,b))});
  }
@@ -23,11 +23,11 @@ export class Missiles {
   for(const m of this.c.state.missiles){
    if(m.resolved)continue;
    const target=this.c.get(m.target);
-   if(target && alive(target)){const p=precise(target);m.destination={x:p.x,y:p.y};}
+   if(target && alive(target)){const p=precise(target);m.destination={...p};}
    if(this.c.state.tick<m.impact)continue;
    m.resolved=true;
    if(!target||!alive(target)||target.hp===null||target.unit?.contained||target.unit?.release)continue;
-   if(!this.c.spatial.tactical.shotClear(m.origin,m.destination))continue;
+   if(!(this.c.spatial.layers??this.c.spatial.tactical).shotClear(m.origin,m.destination))continue;
    hits.push({source:m.source,owner:m.owner,target:target.id,damage:m.damage,damageType:m.damageType,weapon:true});
   }
   return hits;

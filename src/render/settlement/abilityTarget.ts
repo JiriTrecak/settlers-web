@@ -1,7 +1,7 @@
 import {BufferGeometry,Float32BufferAttribute,Group,LineBasicMaterial,LineSegments,Mesh,MeshBasicMaterial,DoubleSide} from 'three';
 import type {Spell} from '../../content/spells';
 import type {HeightField} from '../../shared/map/height';
-type Point={x:number;y:number};
+type Point={x:number;y:number;surface?:string};
 export type AbilityAim={spell:Spell;rank:number;origin:Point;point:Point;valid:boolean};
 /** Geometry reflects the simulation's flat-ended line or radial impact footprint. */
 export function abilityOutline(aim:AbilityAim):Point[]{
@@ -26,7 +26,7 @@ export class AbilityTarget {
   const key=JSON.stringify(aim);if(key===this.key)return;this.key=key;
   this.fill.material.color.set(aim.valid?0x68dac9:0xef514b);this.edge.material.color.set(aim.valid?0xbefff0:0xff7770);
   const outline=abilityOutline(aim),positions:number[]=[],edges:number[]=[],range:number[]=[];
-  const xyz=(p:Point)=>[p.x,height.sample(p.x,p.y)+.12,p.y];
+  const xyz=(p:Point)=>[p.x,height.walkSample(p.x,p.y,aim.spell.effect==='blast'?aim.point.surface:aim.origin.surface)+.12,p.y];
   const center=outline.reduce((p,q)=>({x:p.x+q.x/outline.length,y:p.y+q.y/outline.length}),{x:0,y:0});
   for(let i=0;i<outline.length;i++){
    const a=outline[i],b=outline[(i+1)%outline.length],steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)));

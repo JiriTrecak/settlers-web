@@ -8,9 +8,9 @@ export function trafficEscape(c:GameContext,e:Entity,parent:Entity,occupied:Read
  const from=e.unit!.position??fixed(e),other=parent.unit!.position??fixed(parent);
  const dx=from.x-other.x,dy=from.y-other.y,length=Math.hypot(dx,dy);
  if(!length||e.unit!.goal===null)return null;
- const candidates:{x:number;y:number}[]=[];
+ const candidates:import("./state").Point[]=[];
  for(let y=-3;y<=3;y++)for(let x=-3;x<=3;x++){
-  const p={x:e.x+x,y:e.y+y},qx=p.x*1000-from.x,qy=p.y*1000-from.y;
+  const p={x:e.x+x,y:e.y+y,...(e.surface?{surface:e.surface}:{})},qx=p.x*1000-from.x,qy=p.y*1000-from.y;
   if(Math.hypot(qx,qy)>3500||Math.abs(qx*dy-qy*dx)/length<1000||qx*dx+qy*dy<0||!c.spatial.free(p,e.id))continue;
   if(!c.spatial.clearSegment(fixed(p),fixed(p),occupied)||!c.spatial.unitSegmentClear(fixed(p),fixed(p),e.id))continue;
   candidates.push(p);

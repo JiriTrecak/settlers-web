@@ -8,10 +8,12 @@ export const ownerSchema = z.union([
   z.string().regex(/^player\.[1-8]$/),
 ]);
 export type Owner = z.infer<typeof ownerSchema>;
+export const surfaceSchema = z.string().min(1).max(160);
 export const pointSchema = z
   .object({
     x: z.number().int().min(0).max(511),
     y: z.number().int().min(0).max(511),
+    surface: surfaceSchema.optional(),
   })
   .strict();
 const natural = z.number().int().nonnegative();
@@ -483,6 +485,7 @@ export const placementSchema = z
     initialState: z
       .object({
         health: positive.optional(),
+        experience: natural.optional(),
         construction: z.literal("complete").optional(),
         amount: natural.optional(),
         inventory: stockSchema.optional(),

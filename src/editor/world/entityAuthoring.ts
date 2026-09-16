@@ -88,6 +88,6 @@ export function renameEntity(map:UtcMap,id:string,nextId:string):UtcMap {
   if(nextId===id)return map;
   if(!map.entities.some(p=>p.id===id))throw new Error("Select an authored entity.");
   if(expandMap(map,content).some(p=>p.id===nextId))throw new Error("That entity ID already exists.");
-  const next={...map,entities:map.entities.map(p=>p.id===id?{...p,id:nextId}:p),camps:map.camps.map(c=>({...c,members:c.members.map(m=>m===id?nextId:m)})),playerStarts:map.playerStarts.map(s=>s.mainFort===id?{...s,mainFort:nextId}:s)};
+  const next={...map,...(map.mission?.company?{mission:{...map.mission,company:map.mission.company.map(tag=>tag===id?nextId:tag)}}:{}),entities:map.entities.map(p=>p.id===id?{...p,id:nextId}:p),camps:map.camps.map(c=>({...c,members:c.members.map(m=>m===id?nextId:m)})),playerStarts:map.playerStarts.map(s=>s.mainFort===id?{...s,mainFort:nextId}:s)};
   validatePlacements(next,content);return next;
 }

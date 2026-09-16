@@ -1,3 +1,4 @@
+import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
@@ -13,6 +14,7 @@ export const distance = (a: Point, b: Point) =>
 export const integerPoint = (p: Point): Point => ({
   x: Math.round(p.x),
   y: Math.round(p.y),
+  ...(p.surface?{surface:p.surface}:{}),
 });
 export function entrance(d: Definition, p: Point, r = 0): Point {
   const o = d.entrance ?? { x: 0, y: 0 },
@@ -52,6 +54,7 @@ export function playerObservation(
             owner: e.owner,
             x: e.x,
             y: e.y,
+            ...(e.surface?{surface:e.surface}:{}),
             rotation: e.rotation,
             hp: e.hp,
             stats: e.stats,
@@ -78,9 +81,14 @@ export function playerObservation(
 /** Static, authorized geography. Components use the same slopes/corner rules as movement. */
 export class Geography {
   readonly regions: Int32Array;
+  readonly layers?: WalkSurfaces;
   constructor(readonly map: MapBriefing) {
     const { size, land, heights } = map;
     this.regions = new Int32Array(size * size);
+    if(map.surfaces.length){
+      this.layers=new WalkSurfaces(size,Int16Array.from(heights),Uint8Array.from(land),map.surfaces);
+      return;
+    }
     let region = 0;
     const queue = new Int32Array(size * size);
     for (let start = 0; start < land.length; start++) {
@@ -122,6 +130,10 @@ export class Geography {
     return p.x >= 0 && p.y >= 0 && p.x < this.map.size && p.y < this.map.size;
   }
   connected(a: Point, b: Point) {
+    if(this.layers){
+      const from=this.layers.node(integerPoint(a)),to=this.layers.node(integerPoint(b));
+      return from!==undefined&&to!==undefined&&this.layers.connected(from,to);
+    }
     return (
       this.inside(a) &&
       this.inside(b) &&
@@ -266,7 +278,7 @@ export class Frame {
         for (let x = base.x - r; x <= base.x + r; x++) {
           if (r && Math.abs(x - base.x) !== r && Math.abs(y - base.y) !== r)
             continue;
-          const q = { x, y };
+          const q = { x, y, ...(base.surface?{surface:base.surface}:{}) };
           if (
             this.geo.inside(q) &&
             this.geo.connected(this.home, q) &&
@@ -278,7 +290,7 @@ export class Frame {
   }
   /** Local placement view: no authoritative canBuild query, including resource buffers and entrances. */
   placeable(d: Definition, p: Point, r: number) {
-    if (!this.available(d)) return false;
+    if (!this.available(d) || p.surface) return false;
     if (d.placementNear && !this.resources.some(e => !e.remembered && e.definition === d.placementNear!.source && distance(e,p) <= d.placementNear!.radius)) return false;
     const cells = footprint(d, p, r),
       heights = this.geo.map.heights;
@@ -287,6 +299,7 @@ export class Frame {
         (q) =>
           !this.geo.inside(q) ||
           !this.geo.map.land[this.geo.index(q)] ||
+          (this.geo.layers?.at(q.x,q.y).length ?? 1)>1 ||
           this.blocked.has(this.geo.index(q)) ||
           !this.view.fog?.cells[this.geo.index(q)],
       )

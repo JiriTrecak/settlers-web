@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.bitter-heart",
+  "name": "Bitter Heart",
+  "kind": "model",
+  "tags": [
+    "heartwood",
+    "interior"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/bitter-heart/model.glb",
+      "sha256": "89b270c043ba60be21401ecd7b2ca12420dc95d488ffeec4b889ec057872d549",
+      "bytes": 1637980,
+      "triangles": 14804,
+      "primitives": 6
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "bitter-heart",
+      "name": "Bitter Heart",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/structures/bitter-heart/model.glb",
+      "blocker": {
+        "width": 14.2,
+        "depth": 10.5,
+        "shape": "ellipse"
+      },
+      "light": {
+        "x": 0,
+        "y": 4,
+        "z": 1,
+        "color": "#ed713f",
+        "intensity": 45,
+        "range": 24
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/bitter-heart/bitter-heart.blend",
+    "sha256": "cc2f011a713813d20a2ae68e1dfe638af6a5a836534af77c7a8788e0193385b3",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T05:46:47.154Z",
+    "warnings": [
+      "Modular interpretation of the Heartwood Vault concept; rear faces inferred.",
+      "Static geometry. Local lights share the renderer’s four-nearest-light budget."
+    ]
+  }
+}

@@ -1,3 +1,5 @@
+import {captureCompany} from '../../sim/scenario/company';
+import type {CampaignCompany} from '../../shared/scenario/company';
 import {restoreSavedWorld} from "./restoreSavedWorld";
 import {MissionHud} from "../../ui/campaign/missionHud";
 import {createMissionMatch} from "../../shared/scenario/match";
@@ -46,6 +48,7 @@ import type { HudState } from "../../ui";
 export type SessionHooks = {
   onHud: (state: HudState) => void;
   onMissionLeave?:()=>void;
+  onMissionContinue?:(mapId:string,company:CampaignCompany)=>void;
 };
 
 export type SessionConfig = {
@@ -130,7 +133,7 @@ export class Session {
   private placementPointer: { clientX: number; clientY: number } | null = null;
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
     this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
-    const hit = this.renderer?.pickGround(e.clientX, e.clientY),
+    const hit = this.economyHud?.mode ? this.renderer?.pickGround(e.clientX,e.clientY) : this.renderer?.pickWalk(e.clientX,e.clientY),
       kind = this.economyHud?.mode;
     const binding = this.economyHud?.targeting,
       sim = this.world?.settlement;
@@ -144,12 +147,12 @@ export class Session {
       : 0;
     if (hit && caster && spell && rank) {
       const origin = precise(caster),
-        point = { x: Math.round(hit.x), y: Math.round(hit.z) };
+        point = { x: Math.round(hit.x), y: Math.round(hit.z), ...("surface" in hit&&typeof hit.surface==="string"?{surface:hit.surface}:{}) };
       const valid =
         Math.hypot(point.x - origin.x, point.y - origin.y) <=
           spell.ranks[rank - 1].range &&
         !!sim?.observation.explored(slotOwner(this.me), [
-          sim.spatial.cell(point),
+          point.y*sim.spatial.size+point.x,
         ]);
       this.renderer?.gameAbilityTarget({ spell, rank, origin, point, valid });
     } else this.renderer?.gameAbilityTarget(null);
@@ -242,6 +245,7 @@ export class Session {
     this.world = new World({
       slots: match.slots,
       seed: match.seed,
+      company: match.company,
       map,
     });
     if (this.observing) {
@@ -328,7 +332,10 @@ export class Session {
         if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
-    if(map.mission) this.missionHud=new MissionHud(this.config.host,()=>this.config.hooks.onMissionLeave?.());
+    if(map.mission) this.missionHud=new MissionHud(this.config.host,()=>this.config.hooks.onMissionLeave?.(),map.mission,
+      !this.config.channel&&map.mission.nextMission&&this.config.hooks.onMissionContinue?()=>{
+        this.config.hooks.onMissionContinue!(map.mission!.nextMission!,captureCompany(this.world!.settlement));
+      }:undefined);
     this.canvas.addEventListener("pointermove", this.onHover);
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
@@ -375,7 +382,7 @@ export class Session {
     renderer.present();
     assets.close(); this.assetLoading = null;
     this.acc = 0;
-    renderer.sky.setPlaying(true);
+    renderer.sky.setPlaying(!map.landscape?.environment.interior);
     this.started = true;
     if (this.config.channel) this.armConfirms(match);
     this.unbindDebug = perf.bindMatch({
@@ -688,7 +695,7 @@ export class Session {
     for (const channel of this.channels) channel.destroy();
     this.channels.length = 0;
     this.locksteps.clear();
-    this.match = { ...this.match, seed: save.seed };
+    this.match = structuredClone(save.match);
     this.bindLockstep(this.match);
     this.room!.resume(pipeline);
     for (const client of save.clients)
@@ -724,7 +731,7 @@ export class Session {
     sameType = false,
   ) {
     const sim = this.world?.settlement,
-      hit = this.renderer?.pickGround(clientX, clientY),
+      hit = this.economyHud?.mode ? this.renderer?.pickGround(clientX,clientY) : this.renderer?.pickWalk(clientX, clientY),
       hud = this.economyHud;
     if (right && hud?.targeting) {
       hud.clearMode();
@@ -734,7 +741,7 @@ export class Session {
     const x = Math.round(hit.x),
       z = Math.round(hit.z);
     const owner = slotOwner(this.me),
-      position = { x, y: z },
+      position = { x, y: z, ...("surface" in hit && typeof hit.surface==="string"?{surface:hit.surface}:{}) },
       binding = hud.targeting;
     if (hud.rallyMode && binding) {
       this.send({

@@ -9,7 +9,7 @@ import {slots} from '../game/helpers';
 import {createMapBriefing} from '../../src/sim/ai/briefing';
 const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/worldroot-hollow.utcmap','utf8')))!;
 it('ships the current library and round trips Worldroot starts and landscape',()=>{
- expect(readdirSync('assets/maps',{recursive:true}).filter(f=>String(f).endsWith('.utcmap')).sort()).toEqual(['campaign/vanguard-prologue.utcmap','skirmish/four-crowns.utcmap','skirmish/terrain-proving-ground.utcmap','skirmish/worldroot-hollow.utcmap']);
+ expect(readdirSync('assets/maps',{recursive:true}).filter(f=>/^(campaign|skirmish|showcase)\//.test(String(f))&&String(f).endsWith('.utcmap')).sort()).toEqual(['campaign/vanguard-hearth.utcmap','campaign/vanguard-heartwood-vault.utcmap','campaign/vanguard-hollow-gate.utcmap','campaign/vanguard-prologue.utcmap','campaign/vanguard-root.utcmap','skirmish/canopy-clearing.utcmap','skirmish/four-crowns.utcmap','skirmish/terrain-proving-ground.utcmap','skirmish/worldroot-hollow.utcmap']);
  expect(playableMapError(map)).toBeNull();
  const restored=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
  expect(restored.playerStarts).toEqual(map.playerStarts);expect(restored.landscape).toEqual(map.landscape);
@@ -31,7 +31,7 @@ it('keeps home construction ground dry, with a complete scenery palette and clus
  for(const s of map.playerStarts)for(let dy=-7;dy<=7;dy++)for(let dx=-7;dx<=7;dx++)expect(g.spatial.heights[(s.z+dy)*map.size+s.x+dx]).toBeGreaterThan(10);
  const trees=map.entities.filter(e=>e.definition==='resource.forest.tree');
  expect(trees.length).toBeGreaterThan(2000);
- for(const id of ['ant-rock','ant-reeds','ant-lily','ant-fern','synty-plant-flowerpatch-01','ant-driftwood'])expect(map.stamps.some(s=>s.asset===id)).toBe(true);
+ for(const id of ['ant-rock','ant-reeds','ant-lily','fern-thicket','synty-plant-flowerpatch-01','ant-driftwood'])expect(map.stamps.some(s=>s.asset===id)).toBe(true);
 });
 it('does not permit construction on otherwise walkable shallow ground',()=>{
  const g=new Game(map,slots,content);

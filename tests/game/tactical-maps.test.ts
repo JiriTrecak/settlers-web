@@ -1,3 +1,4 @@
+import {dressCanopyMap} from '../../scripts/maps/canopy-dressing';
 import {fourCrowns} from '../../scripts/maps/tactical-maps';
 import {it,expect} from 'vitest';
 import {readFileSync} from 'node:fs';
@@ -9,7 +10,7 @@ import {canTraverse} from '../../src/sim/game/navigation';
 const load=(id:string)=>parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${id}.utcmap`,'utf8')))!;
 it('ships a playable terrain lab and a four-player 512² FFA with 48 camps and eight T3 encounters',()=>{
  for(const id of ['terrain-proving-ground','four-crowns'])expect(playableMapError(load(id))).toBeNull();
- const map=load('four-crowns');expect(stringifyUtcMap(parseUtcMap(JSON.parse(stringifyUtcMap(fourCrowns())))!)).toBe(stringifyUtcMap(map));expect(map.size).toBe(512);expect(map.playerStarts).toHaveLength(4);expect(map.camps).toHaveLength(48);
+ const map=load('four-crowns');expect(stringifyUtcMap(parseUtcMap(JSON.parse(stringifyUtcMap(dressCanopyMap(fourCrowns()))))!)).toBe(stringifyUtcMap(map));expect(map.size).toBe(512);expect(map.playerStarts).toHaveLength(4);expect(map.camps).toHaveLength(48);
  expect(map.camps.filter(c=>c.legendary)).toHaveLength(8);
  expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(16);
  expect(map.entities.filter(e=>e.definition==='building.neutral.corrupted-root')).toHaveLength(12);

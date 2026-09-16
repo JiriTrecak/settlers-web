@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.heartwood-resin-font",
+  "name": "Living Resin Wellspring",
+  "kind": "model",
+  "tags": [
+    "heartwood",
+    "interior"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/structures/heartwood-resin-font/model.glb",
+      "sha256": "a05beb6950a498aeb552232eacda9577c29003816e6bbef2c6789a9c8b980628",
+      "bytes": 784012,
+      "triangles": 4960,
+      "primitives": 10
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "heartwood-resin-font",
+      "name": "Living Resin Wellspring",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/structures/heartwood-resin-font/model.glb",
+      "blocker": {
+        "width": 6.6,
+        "depth": 5.2,
+        "shape": "ellipse"
+      },
+      "light": {
+        "x": 0,
+        "y": 1.8,
+        "z": 0,
+        "color": "#ffc064",
+        "intensity": 20,
+        "range": 14
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/heartwood-resin-font/heartwood-resin-font.blend",
+    "sha256": "51a9188ed78ca640832f317a0a104e8b322230b182f6fcb060bc0363d1013bb1",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T05:46:47.134Z",
+    "warnings": [
+      "Modular interpretation of the Heartwood Vault concept; rear faces inferred.",
+      "Static geometry. Local lights share the renderer’s four-nearest-light budget."
+    ]
+  }
+}

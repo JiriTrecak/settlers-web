@@ -1,3 +1,4 @@
+import {campaignCompanySchema} from '../scenario/company';
 import { z } from "zod";
 import { actionSchema } from "../types/types";
 import { pipelineSchema } from "./save";
@@ -7,6 +8,7 @@ export type SaveMode=z.infer<typeof saveModeSchema>;
 const natural = z.number().int().nonnegative();
 const savedMatch = z.object({
   v: z.literal(1),
+  company:campaignCompanySchema.optional(),
   roomId: z.string(),
   mapId: z.string(),
   mapRevision: z.string(),

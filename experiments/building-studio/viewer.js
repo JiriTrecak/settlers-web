@@ -189,9 +189,9 @@ export class BuildingViewer {
         const color = new THREE.Color().setRGB(...source.color, THREE.LinearSRGBColorSpace);
         let light;
         if (source.type === 'POINT') {
-          light = new THREE.PointLight(color, source.energy * .09, 4, 2);
+          light = new THREE.PointLight(color, source.energy * .09 * (metadata.light_scale ?? 1), 4, 2);
         } else {
-          light = new THREE.DirectionalLight(color, source.energy / 340);
+          light = new THREE.DirectionalLight(color, source.energy / 340 * (metadata.light_scale ?? 1));
           light.castShadow = true;
           light.shadow.mapSize.set(2048, 2048);
           Object.assign(light.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7, near: .1, far: 30 });

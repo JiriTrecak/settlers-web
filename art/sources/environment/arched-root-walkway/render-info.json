@@ -1,0 +1,50 @@
+{
+  "at": "2026-09-15T16:16:53-0700",
+  "view": "saved",
+  "quick": false,
+  "seconds": 3.47,
+  "blend_mtime_ns": 1789514211300504399,
+  "config": {
+    "name": "Arched Root Walkway",
+    "blend": "arched-root-walkway.blend",
+    "recipe": "model.py",
+    "seed": 7321,
+    "camera": {
+      "azimuth": 55,
+      "elevation": 28,
+      "scale": 30,
+      "target": [
+        0,
+        0,
+        1.8
+      ]
+    },
+    "render": {
+      "width": 1200,
+      "height": 900,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 7000,
+      "fill_energy": 3200,
+      "rim_energy": 4500
+    },
+    "kind": "root",
+    "deck": {
+      "width": 5.4,
+      "depth": 24,
+      "height": 0,
+      "arch": 6,
+      "thickness": 2.6,
+      "level": 1,
+      "connections": {
+        "start": 0,
+        "end": 0
+      }
+    },
+    "preserve_textures": true,
+    "texture_format": "JPEG",
+    "texture_quality": 90,
+    "viewer_light_scale": 0.1
+  }
+}

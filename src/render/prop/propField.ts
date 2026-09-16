@@ -1,3 +1,7 @@
+import {bridgePlacementHeight} from '../../shared/map/bridgeSurface';
+import {foliageWind,FoliageWindLayer} from './foliageWind';
+import {ResinShimmerLayer} from './resinShimmer';
+import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from './staticBatch';
 import pineLod from '../../../assets/models/environment/trees/olive-pine/model.glb?url';
 import {perf} from '../../debug/performance';
@@ -14,6 +18,9 @@ import type { MapStamp } from "../../shared";
 import { flattenPolygon } from "./polygonLook";
 
 export class PropField {
+  private readonly wind=new FoliageWindLayer();
+  private readonly resin=new ResinShimmerLayer();
+  tick(now:number){this.wind.tick(now);this.resin.tick(now);}
   private readonly loader = new GLTFLoader();
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
@@ -51,6 +58,7 @@ export class PropField {
   constructor(
     private readonly scene: Scene,
     private urls: ReadonlyMap<string, string>,
+    private readonly cutaway?:SceneryCutaway,
   ) {}
 
   async ready():Promise<void>{await Promise.all(this.protos.values());}
@@ -70,6 +78,7 @@ export class PropField {
       if(keys.has(key))return;keys.add(key);
       for(const geometry of [o.geometry,this.lodByGeometry.get(o.geometry.uuid)].filter((g):g is Mesh['geometry']=>!!g)){
         const mesh=new InstancedMesh(geometry,o.material,1);
+        mesh.customDepthMaterial=o.customDepthMaterial;
         mesh.castShadow=mesh.receiveShadow=true;
         this.warmMeshes.push(mesh);
       }
@@ -183,7 +192,7 @@ export class PropField {
   }
 
   destroy(): void {
-    this.destroyed=true;
+    this.destroyed=true;this.wind.dispose();
     for(const dispose of this.batchDisposers)dispose();this.batchDisposers.length=0;
     for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
     this.gen++;
@@ -231,6 +240,8 @@ export class PropField {
   private async load(url: string, asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
     try {
       const gltf = await this.loader.loadAsync(url);
+      let wind:ReturnType<typeof foliageWind>=null;
+      gltf.scene.traverse(node=>{wind??=foliageWind(node.userData.foliageWind);});
       if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
       const lodUrl=({'ant-pine-1':pineLod,'ant-pine-2':pineLod,'ant-pine-3':pineLod} as Record<string,string>)[asset];
       if(lodUrl){
@@ -250,7 +261,10 @@ export class PropField {
       }
       gltf.scene.updateMatrixWorld(true);
       const box=prototypeBounds(gltf.scene);
+      if(wind)this.wind.attach(gltf.scene,wind,box.max.y-box.min.y);
+      this.resin.attach(gltf.scene);
       this.bounds.set(asset,{minY:box.min.y,height:box.max.y-box.min.y});
+      gltf.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])this.cutaway?.attach(m,box.max.y-box.min.y);});
       const root=new Object3D();
       // Trees use zero as their soil line; negative vertices are buried roots, not a pivot error.
       // Positive-only offsets still need normalization.
@@ -271,7 +285,8 @@ export class PropField {
     mesh.userData.asset = stamp.asset;
     mesh.userData.stamp = stamp.id;
     mesh.userData.elevation=stamp.elevation??0;
-    mesh.position.set(x, this.sitY(stamp.asset, x, z)+(stamp.elevation??0), z);
+    mesh.userData.walkStamp=stamp.walk?.height!==undefined?stamp:undefined;
+    mesh.position.set(x, stamp.walk?.height!==undefined?bridgePlacementHeight(stamp,()=>0):this.sitY(stamp.asset, x, z)+(stamp.elevation??0), z);
     mesh.rotation.set(stamp.pitch ?? 0, stamp.yaw ?? 0, stamp.roll ?? 0, "ZXY");
     mesh.scale.set(s*(stamp.widthScale??1),s*(stamp.heightScale??1),s*(stamp.depthScale??1));
   }
@@ -284,7 +299,7 @@ export class PropField {
   private relift(): void {
     for (const mesh of this.placed.values()) {
       const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
-      mesh.position.y = this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0);
+      mesh.position.y = mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0);
     }
     this.queueBatches();
     this.syncMark();
@@ -324,6 +339,7 @@ export class PropField {
       if(b&&capacity<g.poses.length){this.scene.remove(b);b.dispose();b=undefined;}
       if(!b){
         b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
+        b.customDepthMaterial=g.source.customDepthMaterial;
         b.userData.batchKey=key;
         b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
         let trianglesBefore=0;
@@ -345,7 +361,7 @@ export class PropField {
       b.userData.category=String(this.placed.get(g.ids[0])?.userData.asset).includes('pine')?'Tree triangles':'Other prop triangles';
       if(changed||!b.boundingSphere){
         b.instanceMatrix.needsUpdate=true;
-        const displayed=b.geometry;b.geometry=g.source.geometry;b.computeBoundingSphere();b.geometry=displayed;
+        const displayed=b.geometry;b.geometry=g.source.geometry;b.computeBoundingSphere();if(b.boundingSphere)b.boundingSphere.radius+=.5;b.geometry=displayed;
       }
       this.batches.push(b);
     }

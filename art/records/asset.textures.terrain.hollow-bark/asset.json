@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.hollow-bark",
+  "name": "hollow bark",
+  "kind": "texture",
+  "tags": [
+    "canopy",
+    "heartwood"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/hollow-bark.png",
+      "sha256": "e43df91d41ee70dc89ac52a86f3cd322a2273bbafc53c2b5c2fc267738b84e4e",
+      "bytes": 2540067,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/hollow-bark/source.png",
+    "sha256": "1849f7009b53c33c7562dd76755ee2b8598a654fe41a1d9026c2e9679534e5a7",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-15T22:54:40.681Z",
+    "warnings": [
+      "Generated albedo; exact pixel edge tiling has not been verified."
+    ]
+  }
+}

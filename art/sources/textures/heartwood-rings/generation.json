@@ -1,0 +1,10 @@
+{
+  "method": "builtin-imagegen",
+  "created": "2026-09-15",
+  "sourceFile": "exec-6f1f6bdd-6090-4819-b6b6-8a41807585c7.png",
+  "prompt": "Use case: stylized-concept. Asset type: game albedo texture for the exposed broken crown of an enormous hollow stump. Square flat orthographic material image, entirely filled with warm muted medium brown end-grain wood. Many fine irregular concentric annual growth rings centered in the middle, undulating organically, natural radial splits only in a few places. Soft weathering and restrained painted detail, tactile stylized game look. No object silhouette, no outer bark rim, no background, no perspective, no lighting or shadows, no moss, no leaves, no text. Rings must continue all the way beyond the square edges. Desaturated ochre, walnut, warm taupe brown palette; avoid yellow/orange brightness. This is a UV texture for the irregular cut edge of a hollow tree, not a picture of a tree or a circular slice on a background.",
+  "processing": "Sharp resize to 1024x1024 PNG; original retained.",
+  "limitations": [
+    "Unique planar end-grain texture; not intended to tile."
+  ]
+}

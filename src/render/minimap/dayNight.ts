@@ -41,7 +41,7 @@ export class DayNightIndicator {
     this.moon.style.display = view.day ? 'none' : '';
     this.ring.setAttribute('stroke-dasharray', `${view.progress} 1`);
     this.time.textContent = view.time;
-    const label = `${state.label} · ${view.time}${state.playing ? '' : ' · Paused'}`;
+    const label = `${state.label} · ${view.time}${state.playing ? '' : ' · Day cycle paused'}`;
     this.root.title = label;
     this.root.setAttribute('aria-label', label);
   }
