@@ -9,13 +9,13 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
-      "sha256": "267ebecaf3f26800e08d5a32aa8ead09a6ba554ded56f965116b77b0f60e52b6",
+      "sha256": "d41691c6cb7a8938bd908dd2010e1b997d4f1ac8699f6b4ea8e42660afa94309",
       "bytes": 42068,
       "triangles": 708,
       "primitives": 8
@@ -43,16 +43,16 @@
   ],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.412Z",
+    "checkedAt": "2026-09-18T20:25:58.728Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

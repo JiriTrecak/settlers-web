@@ -1,6 +1,6 @@
 # The Defense of Briarwatch
 
-Status: in development. An ant-world reference mission, separate from the existing Vanguard chapters.
+Status: playable and verified. An ant-world reference mission, separate from the existing Vanguard chapters.
 
 ## Intent
 
@@ -54,4 +54,23 @@ Sources disagree on some unit counts and labels across original/Reforged difficu
 
 ## Evidence log
 
-Research and engine audit complete. Implementation, model production and gameplay validation are pending. This document is not a completion report.
+The mission is authored in `scripts/missions/vanguard-briarwatch.ts` and `.lua`; its generated map is `assets/maps/campaign/vanguard-briarwatch.utcmap`. It appears as a separate campaign reference chapter and is excluded from skirmish.
+
+Two full playthroughs use ordinary movement, attack, pickup and drop commands. No health edits, teleports or forced kills are used in those runs. The direct route won in 5m49s including dialogue, with seven survivors and 340 hero health. The optional route won in 7m20s with both optional quests completed, eight survivors, the armor ring, and the permanent 25 HP / 1 damage seed bonus. These are scripted route timings, not estimates for a first-time player exploring the map. No learned abilities or consumable activations were needed for these baseline wins. The driver asserts that the captain is visible when his briefing begins.
+
+Evidence: `artifacts/briarwatch/direct-playthrough.json`, `optional-playthrough.json`, `animation-validation.json`, and `opening-performance.json`. The final full suite passed 936 tests across 223 files; branch tests cover hero death/restart, caretaker and youngling loss, merchant loss, full reward inventories, dropped/recovered ledgers, one-time returns, surviving defenders, and cinematic restore. Exchange, power-up, scripted-destruction and escort tests cover the new engine APIs. Snapshot checkpoints on the real optional route compare deterministic checksums.
+
+The production build and generated wiki build both passed.
+
+Three saved Blender sources passed packed-reference and geometry validation. Four skinned GLBs load in Three.js and every animation is sampled at 13 poses with finite bounds. Live previews checked walking, running, bow release and team recoloring; saved pose renders cover melee contact, the captain rear and death. The rear check found and fixed cloak intersection. Source recipes, GLBs, icon crops, palettes and asset records are retained.
+
+The opening performance capture is a 10-second sample on this Mac at 1337×1204, medium atmosphere. It recorded 2.42 ms mean main-thread work (4.10 ms p95) and 6.32 ms mean GPU frame time (7.07 ms p95). Presentation averaged roughly 109 FPS, with an 8.3 ms median and 16.7 ms p95 interval. It is not a whole-mission or slower-hardware guarantee. There were other development tasks active during this capture; do not add overlapping GPU/CPU scopes together.
+
+## Deliberate adaptation differences
+
+- The army is our Marshal and ant Warriors, not a new Paladin/Footman faction. The Marshal retains his own learned abilities, armor system and attack timings. This makes the mission useful for testing our actual army; it is not a Holy Light balance reproduction.
+- Four inventory slots replace Warcraft's larger inventory. Full inventories therefore explicitly delay quest reward delivery. The vigor reward gives concrete permanent bonuses rather than introducing Strength/Agility/Intelligence.
+- Routes preserve the major branch arrangement and encounters, not a tile-for-tile terrain copy. New canopy foliage, a layered bridge, bark houses, twig cage, leaf cart and ant raiders replace human/orc assets.
+- Dialogue is original, covering corresponding dramatic beats. There is no imported Blizzard dialogue, voice track or ripped art.
+- Cache secrets and fixed drops are included; the original cosmetic night-ghost Easter egg is not reproduced. House collapse uses ordinary destruction followed by a ruin; it does not yet have a bespoke collapse animation or fire simulation.
+- The source guides cover different releases/difficulties. Enemy health and damage are a normal-difficulty first pass for our army; direct and optional routes both remain winnable without debug assistance.

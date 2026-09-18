@@ -158,3 +158,17 @@ mission.say('Marshal', 'unit.ants.marshal', 'Keep to the amber lights.', 10, tru
 ```
 
 Shots follow rendered movement and raised walk surfaces. Their declarations are validated and saved; interpolation stays local. The Heartwood Vault opening demonstrates this view. The editor's Lua reference lists the parameters and ranges. Player-controlled views use the spyglass command or **J**, with **Escape** returning to RTS.
+
+## Inventory exchanges, escorts, and destructibles
+
+Briarwatch demonstrates several reusable quest operations:
+
+- `mission.has_item(heroId, definition)` checks carried equipment. `mission.take_item` removes one copy and returns whether it succeeded. `mission.give_item` returns false when the inventory is full; it never overwrites a slot or silently drops a reward. These calls see earlier inventory changes in the same callback and roll back when callback validation fails. Keep a quest active until its reward is delivered.
+- `mission.follow(npcId, leaderId)` creates a scripted escort. It supports a neutral civilian following a player hero, even across the civilian's lack of a combat sensor. It does not give the player command permission. Ordinary player Follow remains restricted to friendly visible units.
+- `mission.transform(id, definition, owner, optionalCamp)` changes an ordinary unit while preserving its identity, location and health fraction. It clears old orders and role state. Heroes, inventories, casters and contained units cannot be transformed. A camp-creature target requires an existing, uncleared camp and neutral ownership. This supports a disguised civilian revealing itself as a hostile bandit, with normal camp combat and loot.
+- `mission.damage(id, amount, optionalSource)` queues integer damage through ordinary combat destruction on the next unpaused tick. It preserves death cues, cleanup and fixed loot, and the queued damage survives saving. It is appropriate for a collapsing cottage; use ordinary attack orders for fights.
+- `mission.dialogue_busy()` prevents independent encounters from overwriting active speech. Cinematic countdowns and inline dialogue deadlines are both respected.
+
+Deferred placements may overlap initial placements, allowing a ruin to replace a destroyed cottage. Bounds are still checked. The author must spawn the replacement only after the original obstruction is gone; initial buildings still cannot overlap.
+
+Consumable item definitions can declare `permanent: {maxHp, damage, armor, maxMana}`. Optional `onPickup: true` applies such a power-up immediately, even with a full satchel. Bonuses are saved on hero progression, survive death, and travel with the campaign company. Ordinary equipment still occupies a slot. Briarwatch's vigor seed grants 25 maximum health and 1 damage; it is an explicit reward rather than an inferred Strength attribute.

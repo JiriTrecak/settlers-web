@@ -9,14 +9,14 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/briarwatch/merchant-cart/model.glb",
-      "sha256": "876cfea6cf650bed963c2e1625d37c4794bd140b51d4fdcd070cd58edf26950d",
-      "bytes": 128364,
+      "sha256": "79306db8101dc6c5f373665afabdc8370148ac58161229e54cf9fe96ce5223c0",
+      "bytes": 128360,
       "triangles": 2350,
       "primitives": 11
     }
@@ -43,16 +43,16 @@
   ],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.423Z",
+    "checkedAt": "2026-09-18T20:25:58.734Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

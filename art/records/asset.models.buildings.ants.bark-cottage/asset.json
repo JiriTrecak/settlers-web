@@ -9,14 +9,14 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/bark-cottage/model.glb",
-      "sha256": "31911c11a1754e81d989f2a7d9b1c882140d3d56a65f366aff2f910d60d46c29",
-      "bytes": 229652,
+      "sha256": "28566ed2596f3aa1162cbb11119547f818ed0b8a84888aeae32eaeece2dc6dc6",
+      "bytes": 229644,
       "triangles": 4173,
       "primitives": 13
     }
@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.418Z",
+    "checkedAt": "2026-09-18T20:25:58.730Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

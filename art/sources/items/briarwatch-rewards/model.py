@@ -1,5 +1,5 @@
-"""Briarwatch bark cottage, twig cage, merchant cart and breakable supply crate.
-Original geometry from the approved generated cast-and-village reference sheet.
+"""Briarwatch quest ledger, vigor seed, ring, draughts and scroll.
+Original geometry from the generated item reference sheet; sampled material colors.
 """
 import bpy,bmesh,math,json,random,sys,struct
 from pathlib import Path

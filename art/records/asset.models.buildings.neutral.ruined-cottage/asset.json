@@ -9,13 +9,13 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/neutral/ruined-cottage/model.glb",
-      "sha256": "7ed59e689dd81ff9575b7a5677228f6fa62d085bb8d529994b34aa6cfcebdd95",
+      "sha256": "5b42bebcdeb2a67cd881c99f910faa430196f95c3b241a40346db7479ba1c032",
       "bytes": 36848,
       "triangles": 626,
       "primitives": 5
@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.414Z",
+    "checkedAt": "2026-09-18T20:25:58.729Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

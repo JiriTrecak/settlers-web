@@ -304,7 +304,7 @@ for sign,side in [(1,'L'),(-1,'R')]:
     ell('Captain heavy shoulder '+side,(sign*.30,.01,1.14),(.22,.17,.13),STEEL,'upper_arm.'+side,8,4)
     for j in range(3):tube('Captain chitin spike',[(sign*(.20+j*.08),.03,1.21),(sign*(.23+j*.10),.035,1.38-j*.025)],[.045,.001],BRONZE,'upper_arm.'+side,6)
 vs=[]
-for j,(z,w,y) in enumerate([(1.17,.25,.18),(.92,.30,.30),(.63,.32,.39),(.25,.39,.42)]):
+for j,(z,w,y) in enumerate([(1.17,.25,.22),(.92,.30,.39),(.63,.34,.56),(.25,.39,.59)]):
     for i in range(5):vs.append(((i/4*2-1)*w,y+(.03 if i%2 else 0),z+(.035 if j==3 and i%2 else 0)))
 mesh('Captain folded ochre cloak',vs,[(j*5+i,j*5+i+1,(j+1)*5+i+1,(j+1)*5+i) for j in range(3) for i in range(4)],OCHRE,'spine')
 for sign in [-1,1]:ell('Captain resin cloak clasp',(sign*.17,-.16,1.12),(.035,.02,.04),BRONZE,'spine',7,4)

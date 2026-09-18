@@ -5,8 +5,8 @@
     "defeated": []
   },
   "error": null,
-  "transport": 17040,
-  "simTick": 13400,
+  "transport": 17592,
+  "simTick": 13672,
   "trace": [
     {
       "transport": 1,
@@ -218,7 +218,7 @@
       "tick": 2611
     },
     {
-      "checkpoint": 3134916492,
+      "checkpoint": 2585190156,
       "tick": 2624
     },
     {
@@ -264,7 +264,7 @@
       "alive": 7
     },
     {
-      "checkpoint": 2635674405,
+      "checkpoint": 1630397658,
       "tick": 3002
     },
     {
@@ -314,8 +314,8 @@
         101,
         173
       ],
-      "elapsed": 2505,
-      "hp": 508,
+      "elapsed": 2512,
+      "hp": 533,
       "position": [
         100,
         171
@@ -335,17 +335,17 @@
         128,
         174
       ],
-      "elapsed": 621,
-      "hp": 520,
+      "elapsed": 581,
+      "hp": 543,
       "position": [
         126,
-        173
+        172
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 128,
-          "y": 173
+          "x": 127,
+          "y": 172
         },
         "attackMove": true
       },
@@ -356,16 +356,16 @@
         140,
         185
       ],
-      "elapsed": 221,
-      "hp": 529,
+      "elapsed": 245,
+      "hp": 553,
       "position": [
-        138,
+        139,
         183
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 139,
+          "x": 140,
           "y": 184
         },
         "attackMove": true
@@ -377,16 +377,16 @@
         152,
         205
       ],
-      "elapsed": 246,
-      "hp": 539,
+      "elapsed": 255,
+      "hp": 563,
       "position": [
-        150,
+        151,
         203
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 151,
+          "x": 152,
           "y": 204
         },
         "attackMove": true
@@ -398,17 +398,17 @@
         169,
         207
       ],
-      "elapsed": 807,
-      "hp": 507,
+      "elapsed": 791,
+      "hp": 595,
       "position": [
-        167,
+        168,
         205
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 168,
-          "y": 207
+          "x": 169,
+          "y": 206
         },
         "attackMove": true
       },
@@ -424,25 +424,25 @@
       ]
     },
     {
-      "checkpoint": 3995781276,
-      "tick": 7477
+      "checkpoint": 1241855362,
+      "tick": 7439
     },
     {
       "waypoint": [
         152,
         205
       ],
-      "elapsed": 132,
-      "hp": 514,
+      "elapsed": 162,
+      "hp": 602,
       "position": [
         154,
-        205
+        203
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 151,
-          "y": 205
+          "x": 152,
+          "y": 204
         },
         "attackMove": true
       },
@@ -453,17 +453,17 @@
         140,
         185
       ],
-      "elapsed": 257,
-      "hp": 524,
+      "elapsed": 241,
+      "hp": 611,
       "position": [
-        141,
+        142,
         187
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 139,
-          "y": 185
+          "x": 140,
+          "y": 184
         },
         "attackMove": true
       },
@@ -474,17 +474,17 @@
         128,
         174
       ],
-      "elapsed": 452,
-      "hp": 531,
+      "elapsed": 487,
+      "hp": 620,
       "position": [
         130,
-        176
+        175
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 127,
-          "y": 174
+          "x": 128,
+          "y": 173
         },
         "attackMove": true
       },
@@ -506,25 +506,25 @@
       }
     },
     {
-      "checkpoint": 69206135,
-      "tick": 8075
+      "checkpoint": 2184586207,
+      "tick": 8093
     },
     {
       "waypoint": [
         153,
         170
       ],
-      "elapsed": 250,
-      "hp": 568,
+      "elapsed": 303,
+      "hp": 658,
       "position": [
         151,
-        170
+        169
       ],
       "order": {
         "type": "move",
         "destination": {
           "x": 152,
-          "y": 170
+          "y": 169
         },
         "attackMove": true
       },
@@ -535,17 +535,17 @@
         183,
         166
       ],
-      "elapsed": 338,
-      "hp": 581,
+      "elapsed": 307,
+      "hp": 671,
       "position": [
         181,
-        166
+        165
       ],
       "order": {
         "type": "move",
         "destination": {
           "x": 181,
-          "y": 166
+          "y": 165
         },
         "attackMove": true
       },
@@ -556,8 +556,8 @@
         183,
         129
       ],
-      "elapsed": 369,
-      "hp": 596,
+      "elapsed": 359,
+      "hp": 685,
       "position": [
         182,
         131
@@ -566,7 +566,7 @@
         "type": "move",
         "destination": {
           "x": 182,
-          "y": 129
+          "y": 128
         },
         "attackMove": true
       },
@@ -577,17 +577,17 @@
         183,
         113
       ],
-      "elapsed": 806,
-      "hp": 628,
+      "elapsed": 842,
+      "hp": 719,
       "position": [
-        184,
+        181,
         115
       ],
       "order": {
         "type": "move",
         "destination": {
           "x": 182,
-          "y": 113
+          "y": 112
         },
         "attackMove": true
       },
@@ -598,8 +598,8 @@
         157,
         102
       ],
-      "elapsed": 781,
-      "hp": 659,
+      "elapsed": 1060,
+      "hp": 752,
       "position": [
         159,
         100
@@ -607,22 +607,22 @@
       "order": {
         "type": "move",
         "destination": {
-          "x": 158,
-          "y": 101
+          "x": 156,
+          "y": 102
         },
         "attackMove": true
       },
-      "alive": 7
+      "alive": 10
     },
     {
       "waypoint": [
         183,
         96
       ],
-      "elapsed": 616,
-      "hp": 674,
+      "elapsed": 464,
+      "hp": 764,
       "position": [
-        181,
+        184,
         98
       ],
       "order": {
@@ -640,17 +640,17 @@
         201,
         96
       ],
-      "elapsed": 881,
-      "hp": 710,
+      "elapsed": 216,
+      "hp": 773,
       "position": [
-        200,
+        199,
         94
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 200,
-          "y": 97
+          "x": 201,
+          "y": 94
         },
         "attackMove": true
       },
@@ -661,103 +661,111 @@
         183,
         96
       ],
-      "elapsed": 158,
-      "hp": 716,
+      "elapsed": 956,
+      "hp": 731,
       "position": [
         185,
-        96
+        94
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 182,
-          "y": 97
+          "x": 183,
+          "y": 94
         },
         "attackMove": true
       },
       "alive": 10
-    },
-    {
-      "transport": 14812,
-      "tick": 12212,
-      "stage": "captain-scene",
-      "hp": 723,
-      "x": 181,
-      "y": 85
-    },
-    {
-      "transport": 15056,
-      "tick": 12216,
-      "stage": "captain-fight",
-      "hp": 723,
-      "x": 181,
-      "y": 85
     },
     {
       "waypoint": [
         181,
         77
       ],
-      "elapsed": 476,
-      "hp": 725,
+      "elapsed": 150,
+      "hp": 737,
       "position": [
-        180,
+        181,
         79
       ],
       "order": {
         "type": "move",
         "destination": {
           "x": 180,
-          "y": 78
+          "y": 76
         },
         "attackMove": true
       },
       "alive": 10
     },
     {
-      "transport": 16228,
-      "tick": 13388,
+      "transport": 15216,
+      "tick": 12616,
+      "stage": "captain-scene",
+      "hp": 741,
+      "x": 177,
+      "y": 71
+    },
+    {
+      "transport": 15460,
+      "tick": 12620,
+      "stage": "captain-fight",
+      "hp": 741,
+      "x": 177,
+      "y": 70
+    },
+    {
+      "transport": 16496,
+      "tick": 13656,
       "stage": "victory-scene",
-      "hp": 770,
-      "x": 174,
-      "y": 68
-    },
-    {
-      "transport": 16472,
-      "tick": 13392,
-      "stage": "aftermath",
-      "hp": 770,
-      "x": 174,
-      "y": 68
-    },
-    {
-      "transport": 16756,
-      "tick": 13396,
-      "stage": "victory",
-      "hp": 770,
-      "x": 174,
+      "hp": 400,
+      "x": 176,
       "y": 67
+    },
+    {
+      "transport": 16740,
+      "tick": 13660,
+      "stage": "aftermath",
+      "hp": 400,
+      "x": 176,
+      "y": 67
+    },
+    {
+      "transport": 17024,
+      "tick": 13664,
+      "stage": "victory",
+      "hp": 400,
+      "x": 176,
+      "y": 67
+    },
+    {
+      "transport": 17308,
+      "tick": 13668,
+      "stage": "messenger-briefing",
+      "hp": 400,
+      "x": 176,
+      "y": 66
     },
     {
       "waypoint": [
         174,
         63
       ],
-      "elapsed": 1930,
-      "hp": 771,
+      "elapsed": 2482,
+      "hp": 400,
       "position": [
-        174,
-        67
+        176,
+        66
       ],
       "order": {
         "type": "move",
         "destination": {
-          "x": 173,
-          "y": 63
+          "x": 174,
+          "y": 61
         },
         "attackMove": true
       },
-      "alive": 7
+      "alive": 8
     }
   ],
   "objectives": {
@@ -767,7 +775,7 @@
     "captain": "completed"
   },
   "variables": {
-    "stage": "victory",
+    "stage": "messenger-briefing",
     "start-protection-opened": true,
     "start-heal-opened": true,
     "volunteers": true,
@@ -784,7 +792,7 @@
     "house-collapsed": true
   },
   "hero": {
-    "hp": 771,
+    "hp": 400,
     "experience": 100,
     "bonuses": {
       "maxHp": 25,
@@ -795,46 +803,52 @@
   },
   "survivors": [
     {
-      "tag": "defender-0",
-      "hp": 33,
+      "tag": "defender-1",
+      "hp": 44,
+      "x": 175,
+      "y": 65
+    },
+    {
+      "tag": "defender-2",
+      "hp": 220,
+      "x": 177,
+      "y": 67
+    },
+    {
+      "tag": "guard-0",
+      "hp": 256,
       "x": 176,
       "y": 65
     },
     {
-      "tag": "guard-0",
-      "hp": 90,
-      "x": 176,
+      "tag": "guard-1",
+      "hp": 73,
+      "x": 178,
       "y": 67
     },
     {
-      "tag": "guard-1",
-      "hp": 194,
+      "tag": "guard-3",
+      "hp": 300,
+      "x": 174,
+      "y": 65
+    },
+    {
+      "tag": "marshal",
+      "hp": 400,
       "x": 176,
       "y": 66
     },
     {
-      "tag": "guard-2",
-      "hp": 74,
+      "tag": "volunteer-one",
+      "hp": 160,
       "x": 176,
       "y": 67
     },
     {
-      "tag": "marshal",
-      "hp": 771,
-      "x": 174,
-      "y": 67
-    },
-    {
-      "tag": "volunteer-one",
-      "hp": 300,
-      "x": 175,
-      "y": 67
-    },
-    {
       "tag": "volunteer-two",
-      "hp": 146,
-      "x": 175,
-      "y": 65
+      "hp": 219,
+      "x": 183,
+      "y": 132
     }
   ]
 }

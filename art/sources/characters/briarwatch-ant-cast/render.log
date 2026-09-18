@@ -1,49 +1,49 @@
-00:00.307  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend"
-00:01.195  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/.render-1789757597176236000.png'
+00:00.341  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend"
+00:03.869  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/.render-1789762212972157000.png'
 INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
 INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
-20:53:18 | INFO: Starting glTF 2.0 export
-20:53:18 | INFO: Extracting primitive: Pelvis shell.001
-20:53:18 | INFO: Primitives created: 10
-20:53:18 | INFO: Extracting primitive: Open linen vest.002
-20:53:18 | INFO: Primitives created: 4
-20:53:19 | INFO: Finished glTF 2.0 export in 0.5986969470977783 s
+22:10:17 | INFO: Starting glTF 2.0 export
+22:10:17 | INFO: Extracting primitive: Pelvis shell.001
+22:10:17 | INFO: Primitives created: 10
+22:10:17 | INFO: Extracting primitive: Open linen vest.002
+22:10:17 | INFO: Primitives created: 4
+22:10:17 | INFO: Finished glTF 2.0 export in 0.7848520278930664 s
 
-20:53:19 | INFO: Starting glTF 2.0 export
-20:53:19 | INFO: Extracting primitive: Pelvis shell.001
-20:53:19 | INFO: Primitives created: 10
-20:53:19 | INFO: Extracting primitive: Breastplate.003
-20:53:19 | INFO: Primitives created: 6
-20:53:19 | INFO: Finished glTF 2.0 export in 0.5536000728607178 s
+22:10:17 | INFO: Starting glTF 2.0 export
+22:10:17 | INFO: Extracting primitive: Pelvis shell.001
+22:10:17 | INFO: Primitives created: 10
+22:10:17 | INFO: Extracting primitive: Breastplate.003
+22:10:17 | INFO: Primitives created: 6
+22:10:18 | INFO: Finished glTF 2.0 export in 0.8043839931488037 s
 
-20:53:19 | INFO: Starting glTF 2.0 export
-20:53:19 | INFO: Extracting primitive: Archer leather vest.001
-20:53:19 | INFO: Primitives created: 7
-20:53:19 | INFO: Extracting primitive: Pelvis shell.001
-20:53:19 | INFO: Primitives created: 10
-20:53:20 | INFO: Finished glTF 2.0 export in 0.5937678813934326 s
+22:10:18 | INFO: Starting glTF 2.0 export
+22:10:18 | INFO: Extracting primitive: Archer leather vest.001
+22:10:18 | INFO: Primitives created: 7
+22:10:18 | INFO: Extracting primitive: Pelvis shell.001
+22:10:18 | INFO: Primitives created: 10
+22:10:19 | INFO: Finished glTF 2.0 export in 0.8708820343017578 s
 
-20:53:20 | INFO: Starting glTF 2.0 export
-20:53:20 | INFO: Extracting primitive: Pelvis shell.001
-20:53:20 | INFO: Primitives created: 10
-20:53:20 | INFO: Extracting primitive: Breastplate.002
-20:53:20 | INFO: Primitives created: 5
-20:53:20 | INFO: Finished glTF 2.0 export in 0.5480351448059082 s
+22:10:19 | INFO: Starting glTF 2.0 export
+22:10:19 | INFO: Extracting primitive: Pelvis shell.001
+22:10:19 | INFO: Primitives created: 10
+22:10:19 | INFO: Extracting primitive: Breastplate.002
+22:10:19 | INFO: Primitives created: 5
+22:10:20 | INFO: Finished glTF 2.0 export in 0.6534771919250488 s
 
-20:53:20 | INFO: Starting glTF 2.0 export
-20:53:20 | INFO: Extracting primitive: Archer leather vest.001
-20:53:20 | INFO: Primitives created: 7
-20:53:20 | INFO: Extracting primitive: Pelvis shell.001
-20:53:20 | INFO: Primitives created: 10
-20:53:20 | INFO: Extracting primitive: Breastplate.002
-20:53:20 | INFO: Primitives created: 5
-20:53:20 | INFO: Extracting primitive: Open linen vest.002
-20:53:20 | INFO: Primitives created: 4
-20:53:20 | INFO: Extracting primitive: Breastplate.003
-20:53:20 | INFO: Primitives created: 6
-20:53:21 | INFO: Finished glTF 2.0 export in 0.5965330600738525 s
+22:10:20 | INFO: Starting glTF 2.0 export
+22:10:20 | INFO: Extracting primitive: Archer leather vest.001
+22:10:20 | INFO: Primitives created: 7
+22:10:20 | INFO: Extracting primitive: Pelvis shell.001
+22:10:20 | INFO: Primitives created: 10
+22:10:20 | INFO: Extracting primitive: Breastplate.002
+22:10:20 | INFO: Primitives created: 5
+22:10:20 | INFO: Extracting primitive: Open linen vest.002
+22:10:20 | INFO: Primitives created: 4
+22:10:20 | INFO: Extracting primitive: Breastplate.003
+22:10:20 | INFO: Primitives created: 6
+22:10:20 | INFO: Finished glTF 2.0 export in 0.6495449542999268 s
 
-BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/.render-1789757597176236000.png
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/briarwatch-ant-cast/.render-1789762212972157000.png
 Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
 
 Blender quit

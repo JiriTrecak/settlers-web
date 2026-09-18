@@ -9,14 +9,14 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/neutral/supply-crate/model.glb",
-      "sha256": "53c8bf5f0ba3db6422b13b39daeaae8d5addd6b54dc1e3f13cd7f6611b756752",
-      "bytes": 19344,
+      "sha256": "23b6b6ad368e4622fb7aec042d12b1bef1b692f772ddfdc8624de10d3e93b0b1",
+      "bytes": 19340,
       "triangles": 280,
       "primitives": 5
     }
@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.426Z",
+    "checkedAt": "2026-09-18T20:25:58.735Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

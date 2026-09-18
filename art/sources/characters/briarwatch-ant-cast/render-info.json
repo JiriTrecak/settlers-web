@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-18T20:53:21+0200",
+  "at": "2026-09-18T22:10:21+0200",
   "view": "saved",
-  "quick": true,
-  "seconds": 5.53,
-  "blend_mtime_ns": 1789757597135387711,
+  "quick": false,
+  "seconds": 9.23,
+  "blend_mtime_ns": 1789762212915093448,
   "config": {
     "name": "Briarwatch Ant Cast",
     "blend": "briarwatch-ant-cast.blend",

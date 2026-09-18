@@ -7,7 +7,7 @@ const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-bri
 const g=new Game(map,[{player:0,kind:'human'}]),hero=g.entities.find(e=>e.placement==='marshal')!;
 const trace:unknown[]=[];let transport=0,lastStage='';
 const actors=()=>g.entities.filter(e=>e.unit&&e.owner==='player.1'&&e.hp!>0).map(e=>e.id);
-function tick(){g.tick();transport++;const stage=String(g.state.mission?.variables.stage);if(stage!==lastStage){trace.push({transport,tick:g.state.tick,stage,hp:hero.hp,x:hero.x,y:hero.y});lastStage=stage;}if(g.state.mission?.error)throw new Error(g.state.mission.error);}
+function tick(){g.tick();transport++;const stage=String(g.state.mission?.variables.stage);if(stage!==lastStage){const captain=g.entities.find(e=>e.placement==='captain-0');if(stage==='captain-scene'&&(!captain||!g.observation.visible('player.1',captain)))throw Error('Captain briefing triggered outside player visibility');trace.push({transport,tick:g.state.tick,stage,hp:hero.hp,x:hero.x,y:hero.y,...(stage==='captain-scene'?{captainVisible:true}:{})});lastStage=stage;}if(g.state.mission?.error)throw new Error(g.state.mission.error);}
 function until(test:()=>boolean,max=6000){const start=transport;while(!test()&&!g.state.outcome&&transport-start<max)tick();if(!test()&&!g.state.outcome)throw new Error(`Timed out at ${hero.x},${hero.y}: ${JSON.stringify(g.state.mission?.variables)}`);}
 function ready(){until(()=>!g.state.mission?.dialogue?.remaining&&!g.state.mission?.scene);}
 function stop(){g.command('player.1',{type:'stop',actors:actors()});}

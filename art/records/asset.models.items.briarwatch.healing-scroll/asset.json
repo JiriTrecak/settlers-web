@@ -9,14 +9,14 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/items/briarwatch/healing-scroll/model.glb",
-      "sha256": "569f1b15da651da8ade566790515e5a7fddbb9380aaf6b01b80ba6d87cb661a3",
-      "bytes": 24572,
+      "sha256": "84e77b8b6e7265603725a3ac6e1fe068cad9198b168c9bb4563d43371275c35f",
+      "bytes": 24588,
       "triangles": 384,
       "primitives": 6
     }
@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/items/briarwatch-rewards/briarwatch-rewards.blend",
-    "sha256": "c6e26285588a2bcd90256632429146ba9508d454860fdcef06344191f847e00e",
+    "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.410Z",
+    "checkedAt": "2026-09-18T20:25:58.726Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

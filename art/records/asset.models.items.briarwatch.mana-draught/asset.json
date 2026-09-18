@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/items/briarwatch-rewards/briarwatch-rewards.blend",
-    "sha256": "c6e26285588a2bcd90256632429146ba9508d454860fdcef06344191f847e00e",
+    "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.408Z",
+    "checkedAt": "2026-09-18T20:25:58.723Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

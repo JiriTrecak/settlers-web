@@ -9,20 +9,20 @@ sys.path.insert(0,str(ROOT/'experiments/building-studio'))
 from stage import create_stage,aim
 if not bpy.app.background:raise RuntimeError('Build in background Blender')
 bpy.ops.wm.read_factory_settings(use_empty=True)
-C=json.loads((A/'asset.json').read_text());rng=random.Random(91826)
+C=json.loads((A/'asset.json').read_text());rng=random.Random(91826);P=json.loads((A/'palette.json').read_text())['samples']
 origins={'bark-cottage':(-5,0,0),'twig-cage':(1,0,0),'merchant-cart':(6,0,0),'supply-crate':(1,-5,0),'watch-bivouac':(-5,-6,0),'ruined-cottage':(6,-6,0)}
 cols={}
 for name in [*origins,'Studio']:
  c=bpy.data.collections.new(name);bpy.context.scene.collection.children.link(c);cols[name]=c
 current=None;offset=Vector((0,0,0))
 def material(name,color,rough=.85,emit=0):
- rgb=[int(color[i:i+2],16)/255 for i in (0,2,4)];linear=[v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4 for v in rgb]
+ rgb=[int(color[i:i+2],16)/255 for i in (0,2,4)] if color not in P else P[color]['representative']['rgb'];linear=[v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4 for v in rgb] if color not in P else P[color]['representative']['linear_rgb']
  m=bpy.data.materials.new(name);m.use_nodes=True;m.diffuse_color=(*linear,1);p=m.node_tree.nodes.get('Principled BSDF');p.inputs['Base Color'].default_value=(*linear,1);p.inputs['Roughness'].default_value=rough
  if emit:p.inputs['Emission Color'].default_value=(*linear,1);p.inputs['Emission Strength'].default_value=emit
  return m
-bark=[material('Bark shadow','49301f'),material('Bark warm','704b30'),material('Bark ridges','93683f')]
-wood=material('Honey heartwood','b28952');cut=material('Pale cut ends','c8a874');dark=material('Recessed openings','201b14');shell=material('Seed shell plaster','b8a27b')
-rope=material('Woven root fibre','967e50');resin=material('Amber resin joints','b96e21',.35);glow=material('Warm lantern resin','f2b34d',.3,.45)
+bark=[material('Bark shadow','49301f'),material('Bark warm','bark'),material('Bark ridges','93683f')]
+wood=material('Honey heartwood','wood');cut=material('Pale cut ends','c8a874');dark=material('Recessed openings','201b14');shell=material('Seed shell plaster','shell')
+rope=material('Woven root fibre','967e50');resin=material('Amber resin joints','resin',.35);glow=material('Warm lantern resin','f2b34d',.3,.45)
 leaves=[material('Leaf shade','344622'),material('Leaf green','5d7033'),material('Leaf veins','8c944b')]
 team=material('TC_TeamColor','a83f2e');iron=material('Weathered latch','575247',.62)
 def mesh(name,vs,fs,mats,indices=None):

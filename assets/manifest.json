@@ -2633,14 +2633,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/bark-cottage/model.glb",
-          "sha256": "31911c11a1754e81d989f2a7d9b1c882140d3d56a65f366aff2f910d60d46c29",
-          "bytes": 229652,
+          "sha256": "28566ed2596f3aa1162cbb11119547f818ed0b8a84888aeae32eaeece2dc6dc6",
+          "bytes": 229644,
           "triangles": 4173,
           "primitives": 13
         }
@@ -3159,13 +3159,13 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/neutral/ruined-cottage/model.glb",
-          "sha256": "7ed59e689dd81ff9575b7a5677228f6fa62d085bb8d529994b34aa6cfcebdd95",
+          "sha256": "5b42bebcdeb2a67cd881c99f910faa430196f95c3b241a40346db7479ba1c032",
           "bytes": 36848,
           "triangles": 626,
           "primitives": 5
@@ -3189,14 +3189,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/neutral/supply-crate/model.glb",
-          "sha256": "53c8bf5f0ba3db6422b13b39daeaae8d5addd6b54dc1e3f13cd7f6611b756752",
-          "bytes": 19344,
+          "sha256": "23b6b6ad368e4622fb7aec042d12b1bef1b692f772ddfdc8624de10d3e93b0b1",
+          "bytes": 19340,
           "triangles": 280,
           "primitives": 5
         }
@@ -3219,14 +3219,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/neutral/twig-cage/model.glb",
-          "sha256": "ff87030d5dd6044cf9fc5b5b7ad2cf459bfd34a9eba88cc2d999247866d398f2",
-          "bytes": 89656,
+          "sha256": "1c18106b0c28637c52888087f3d0a06bfdd9261fb2bb383de4b4fd258189c500",
+          "bytes": 89652,
           "triangles": 1696,
           "primitives": 6
         }
@@ -3249,14 +3249,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/briarwatch/merchant-cart/model.glb",
-          "sha256": "876cfea6cf650bed963c2e1625d37c4794bd140b51d4fdcd070cd58edf26950d",
-          "bytes": 128364,
+          "sha256": "79306db8101dc6c5f373665afabdc8370148ac58161229e54cf9fe96ce5223c0",
+          "bytes": 128360,
           "triangles": 2350,
           "primitives": 11
         }
@@ -3291,13 +3291,13 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
-          "sha256": "267ebecaf3f26800e08d5a32aa8ead09a6ba554ded56f965116b77b0f60e52b6",
+          "sha256": "d41691c6cb7a8938bd908dd2010e1b997d4f1ac8699f6b4ea8e42660afa94309",
           "bytes": 42068,
           "triangles": 708,
           "primitives": 8
@@ -9770,14 +9770,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/items/briarwatch/healing-scroll/model.glb",
-          "sha256": "569f1b15da651da8ade566790515e5a7fddbb9380aaf6b01b80ba6d87cb661a3",
-          "bytes": 24572,
+          "sha256": "84e77b8b6e7265603725a3ac6e1fe068cad9198b168c9bb4563d43371275c35f",
+          "bytes": 24588,
           "triangles": 384,
           "primitives": 6
         }
@@ -9800,14 +9800,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/items/briarwatch/leaf-ledger/model.glb",
-          "sha256": "c3f6f5fc8459a485f639f799c783816132d0ed7f819da986b6758ae4342ef7fa",
-          "bytes": 37988,
+          "sha256": "8f80e7c7ddbe7a6c1ee6f588fe520b871e0e6d12822d7ccbae114ffab8deefbd",
+          "bytes": 38000,
           "triangles": 592,
           "primitives": 6
         }
@@ -10215,14 +10215,14 @@
         "campaign",
         "original"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/briar-captain/model.glb",
-          "sha256": "43b5764f535789aa145a6b05f6d1b35c79d5a2512c5f4366cb92f459273f312c",
-          "bytes": 380460,
+          "sha256": "62c4b662e9be7215a44d1c053c04d7644427c65d59e066a7cd505974981c4aa1",
+          "bytes": 380452,
           "triangles": 5377,
           "primitives": 15
         }

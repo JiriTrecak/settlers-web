@@ -353,6 +353,7 @@ export async function generate() {
       items: [
         { text: "Authoring the wiki", link: "/development/" },
         { text: "Mission scripting & Lua", link: "/development/mission-scripting" },
+        { text: "Briarwatch reference mission", link: "/development/briarwatch-reference" },
         { text: "Canopy environment", link: "/development/canopy-environment" },
         { text: "Performance & loading", link: "/development/performance" },
         { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },

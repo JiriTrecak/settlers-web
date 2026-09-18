@@ -38,16 +38,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend",
-    "sha256": "9a5a9b83b639d09b6c39aa87a6baf3a40e465be181442f57ccb2ef162bfb3f44",
+    "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.432Z",
+    "checkedAt": "2026-09-18T20:25:58.740Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

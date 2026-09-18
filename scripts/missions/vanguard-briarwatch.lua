@@ -36,7 +36,7 @@ function on_tick()
   mission.set('stage','intro-marshal')
   speaker('Marshal',hero,'Then take the ridge. I will reach Briarwatch before they carry anyone away. Guards, stay together. We may be all the help that village gets.',7,true,'marshal');return
  elseif stage=='intro-marshal' then
-  mission.end_scene();mission.move('elder',29,72);mission.set('stage','road');return
+  mission.end_scene();mission.move('elder',19,51);mission.set('stage','road');return
  elseif stage=='captain-scene' then
   mission.end_scene();mission.set('stage','captain-fight');return
  elseif stage=='victory-scene' then
@@ -45,7 +45,10 @@ function on_tick()
  elseif stage=='aftermath' then
   mission.set('stage','victory')
   speaker('Marshal',hero,'We will find them. Tend the wounded and light the watch lamps. Briarwatch stands, and no one here will face the dark alone.',7,true,'marshal');return
- elseif stage=='victory' then mission.end_scene();mission.win();return end
+ elseif stage=='victory' then
+  mission.set('stage','messenger-briefing')
+  speaker('Ridge Messenger',villager,'Marshal! Elder Rusk has broken the ridge camp. He needs you on the north road. The raiders have something larger waiting beyond the roots.',7,true,'messenger');return
+ elseif stage=='messenger-briefing' then mission.end_scene();mission.win();return end
 
  -- The volunteers join as the same entities; wounded volunteers retain their injuries.
  if not flag('volunteers') and mission.in_region('marshal','hamlet') then

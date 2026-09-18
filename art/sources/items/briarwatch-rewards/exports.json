@@ -4,7 +4,7 @@
     "triangles": 592,
     "meshes": 1,
     "materials": 6,
-    "bytes": 37988
+    "bytes": 38000
   },
   {
     "id": "vigor-seed",
@@ -39,6 +39,6 @@
     "triangles": 384,
     "meshes": 1,
     "materials": 6,
-    "bytes": 24572
+    "bytes": 24588
   }
 ]

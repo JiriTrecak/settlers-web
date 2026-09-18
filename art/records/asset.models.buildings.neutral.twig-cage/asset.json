@@ -9,14 +9,14 @@
     "original"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/neutral/twig-cage/model.glb",
-      "sha256": "ff87030d5dd6044cf9fc5b5b7ad2cf459bfd34a9eba88cc2d999247866d398f2",
-      "bytes": 89656,
+      "sha256": "1c18106b0c28637c52888087f3d0a06bfdd9261fb2bb383de4b4fd258189c500",
+      "bytes": 89652,
       "triangles": 1696,
       "primitives": 6
     }
@@ -31,16 +31,16 @@
   "scenery": [],
   "source": {
     "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
-    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
     "quality": "shared"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-18T19:50:01.421Z",
+    "checkedAt": "2026-09-18T20:25:58.732Z",
     "warnings": [
-      "Campaign art pass in progress; final full-orbit and animation review pending."
+      "Original stylized geometry; unseen rear/underside details are interpreted from a single concept."
     ]
   }
 }

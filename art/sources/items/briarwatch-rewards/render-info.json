@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-18T21:48:45+0200",
+  "at": "2026-09-18T22:22:45+0200",
   "view": "saved",
   "quick": false,
-  "seconds": 9.24,
-  "blend_mtime_ns": 1789760917695084266,
+  "seconds": 5.08,
+  "blend_mtime_ns": 1789762960869854403,
   "config": {
     "name": "Briarwatch Quest Rewards",
     "blend": "briarwatch-rewards.blend",

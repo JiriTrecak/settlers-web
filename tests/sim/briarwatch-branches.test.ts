@@ -47,3 +47,14 @@ it('restores an in-progress opening cinematic without changing its timeline',()=
  const a=new Game(source,[{player:0,kind:'human'}]);advance(a,80);const b=new Game(source,a.slots);b.restore(a.snapshot());
  for(let i=0;i<620;i++){a.tick();b.tick();}expect(b.checksum()).toBe(a.checksum());expect(a.state.mission?.variables.stage).toBe('road');
 });
+it('does not turn a dropped ledger into quest credit until it is picked up again',()=>{
+ const g=fixture(),m=g.state.mission!,hero=actor(g,'marshal');m.variables['ledger-started']=true;m.objectiveStates.ledger='active';moveFixture(g,'marshal',127,174);hero.equipment![0]='item.briar-ledger';
+ expect(g.command('player.1',{type:'dropItem',actor:hero.id,slot:0}).accepted).toBe(true);advance(g);expect(g.state.mission?.objectiveStates.ledger).toBe('active');
+ const ledger=g.entities.find(e=>e.definition==='item.briar-ledger'&&e.item)!;expect(ledger).toBeTruthy();
+ expect(g.command('player.1',{type:'pickup',actor:hero.id,target:ledger.id}).accepted).toBe(true);advance(g,120);
+ expect(g.state.mission?.objectiveStates.ledger).toBe('completed');expect(g.entities.filter(e=>e.placement==='merchant-reward')).toHaveLength(1);
+});
+it('recruits only surviving town defenders',()=>{
+ const g=fixture();g.state.mission!.variables.town=true;g.economy.remove(actor(g,'defender-1'));moveFixture(g,'marshal',157,102);advance(g);
+ expect(actor(g,'defender-0').owner).toBe('player.1');expect(actor(g,'defender-2').owner).toBe('player.1');expect(actor(g,'defender-1')).toBeUndefined();
+});
