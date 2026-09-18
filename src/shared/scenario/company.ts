@@ -1,9 +1,10 @@
 import {z} from 'zod';
 import {idSchema} from '../../content/schema';
-import {itemRuntimeSchema} from '../../content/items';
+import {permanentBonusesSchema,itemRuntimeSchema} from '../../content/items';
 /** Chapter-start state, shared by every peer and retained for restart/save. */
 export const companyMemberSchema=z.object({
  tag:z.string().min(1).max(120),definition:idSchema,
+ bonuses:permanentBonusesSchema.optional(),
  experience:z.number().int().nonnegative().optional(),
  learned:z.record(idSchema,z.number().int().min(1).max(3)).optional(),
  equipment:z.array(idSchema.nullable()).max(12).optional(),

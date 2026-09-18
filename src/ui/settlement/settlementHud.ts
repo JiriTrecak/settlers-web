@@ -1,3 +1,4 @@
+import type {UnitCameraMode} from '../../shared/camera/modes';
 import {HUD_CHANGED,readHudLayout,readHudScale} from '../../shared/settings/hud';
 import {workplaceCard} from '../../presentation/workplace';
 import {prioritizeSelection,cycleSelection} from "../../presentation/selection";
@@ -15,6 +16,7 @@ import { content } from "../../content/builtin";
 import { slotOwner, type Owner } from "../../content/schema";
 import {
   commandCard,
+  unitCameraCommand,
   inventoryCard,
   commandPage,
   queueCard,
@@ -207,6 +209,7 @@ export class SettlementHud {
       e.preventDefault();if(view){const entry=inventoryCard(view,this.selectedIds[0],this.owner,content,this.readOnly)[slot];if(entry?.use)this.hooks.action(entry.use);}return;
     }
     if (shortcuts.matches('target.cancel',e) && this.targeting) {e.preventDefault();this.clearMode();this.tooltips.hide();return;}
+    if(shortcuts.matches('target.cancel',e)&&(this.hooks.cameraMode?.()??'rts')!=='rts'){e.preventDefault();this.hooks.resetCamera?.();if(this.current)this.update(this.current,true);return;}
     if (this.mode && (shortcuts.matches('placement.rotate',e)||shortcuts.matches('placement.reverse',e))) {
       e.preventDefault();this.placementRotation=(this.placementRotation+(shortcuts.matches('placement.reverse',e)?270:90))%360;this.placement(null);this.hooks.mode();return;
     }
@@ -220,6 +223,9 @@ export class SettlementHud {
     owner: number | null,
     private readonly hooks: {
       action: (action: Action) => void;
+      cameraMode?:()=>UnitCameraMode;
+      cycleCamera?:()=>void;
+      resetCamera?:()=>void;
       mode: () => void;
       home: () => void;
       focus: (id: number, group?: readonly number[]) => void;
@@ -310,6 +316,7 @@ export class SettlementHud {
       this.navigate(binding.destination);
       return;
     }
+    if(binding.type==='camera'){this.clearMode();this.hooks.cycleCamera?.();if(this.current)this.update(this.current,true);return;}
     if (binding.immediate) {
       this.hooks.action(append&&binding.immediate.type==='hold'?{...binding.immediate,append:true}:binding.immediate);
       return;
@@ -356,6 +363,7 @@ export class SettlementHud {
     this.bindings = this.readOnly
       ? []
       : commandCard(view, this.selectedIds, this.owner, content);
+    if(this.hooks.cycleCamera)this.bindings.push(...unitCameraCommand(view,focus?.id,content,this.hooks.cameraMode?.()??'rts'));
     if (
       this.targeting &&
       !this.bindings.some(

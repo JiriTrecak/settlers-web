@@ -39,7 +39,7 @@ export type TerrainLayer = 'grass' | 'sand' | 'road' | 'mud' | 'rock' | 'snow';
 export type TerrainStroke = { points: CurvePoint[]; radius: number; layer: TerrainLayer; opacity: number };
 export type CoverExclusion = { x: number; z: number; radius: number };
 export type CoverPatch = { exclusions?: CoverExclusion[]; x: number; z: number; radius: number; density: number; seed: number; flowers: number; grassScale?: number; broadRatio?: number; palette?: 'meadow' | 'straw' | 'ochre' | 'sage' | 'forest' };
-export type EnvironmentState = { interior?:boolean; floorMaterial?:'forest'|'heartwood'; canopy?: CanopySettings; atmosphere?: AtmosphereSettings; weather?: WeatherSettings; preset?: string; hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
+export type EnvironmentState = { interior?:boolean; ceilingHeight?:number; floorMaterial?:'forest'|'heartwood'; canopy?: CanopySettings; atmosphere?: AtmosphereSettings; weather?: WeatherSettings; preset?: string; hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
 export type Landscape = { decals?: GroundDecal[]; water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
 export const emptyLandscape = (): Landscape => ({ strokes: [], cover: [], environment: { hour: 10, season: 'summer', playing: false } });
 /** Strict persisted scene validation: malformed new fields never break legacy maps. */
@@ -55,6 +55,7 @@ export function parseLandscape(raw: unknown): Landscape | undefined {
   if(o.rivers!==undefined && (!Array.isArray(o.rivers)||!o.rivers.every(r=>r&&typeof r==='object'&&finite(r.depth)&&finite(r.radius)&&r.radius>0&&r.radius<=64&&Array.isArray(r.points)&&r.points.length>0&&r.points.length<=128&&r.points.every(p=>p&&finite(p.x)&&finite(p.z)&&(p.radius===undefined||(finite(p.radius)&&p.radius>0&&p.radius<=64))))))return undefined;
   if (!finite(o.environment.hour)||!['spring','summer','autumn'].includes(o.environment.season)||typeof o.environment.playing!=='boolean') return undefined;
   if(o.environment.interior!==undefined&&typeof o.environment.interior!=='boolean')return undefined;
+  if(o.environment.ceilingHeight!==undefined&&(!finite(o.environment.ceilingHeight)||o.environment.ceilingHeight<1||o.environment.ceilingHeight>128))return undefined;
   if(o.environment.floorMaterial!==undefined&&!['forest','heartwood'].includes(o.environment.floorMaterial))return undefined;
   if(o.environment.canopy!==undefined&&!canopySchema.safeParse(o.environment.canopy).success)return undefined;
   if(o.environment.atmosphere!==undefined&&!atmosphereSchema.safeParse(o.environment.atmosphere).success)return undefined;

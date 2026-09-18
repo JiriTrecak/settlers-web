@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.briarwatch.watch-bivouac",
+  "name": "Watch Bivouac",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
+      "sha256": "267ebecaf3f26800e08d5a32aa8ead09a6ba554ded56f965116b77b0f60e52b6",
+      "bytes": 42068,
+      "triangles": 708,
+      "primitives": 8
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.watch-bivouac",
+      "file": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
+      "healthHeight": 2.5
+    }
+  ],
+  "scenery": [
+    {
+      "id": "briarwatch-watch-bivouac",
+      "name": "Watch Bivouac",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/briarwatch/watch-bivouac/model.glb",
+      "blocker": {
+        "width": 4,
+        "depth": 3.5
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
+    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.412Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

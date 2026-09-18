@@ -5,14 +5,14 @@ import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {playableMapError} from '../../src/shared/map/playable';
 import {precise,fixed} from '../../src/sim/game/motion';
 const map=()=>parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-heartwood-vault.utcmap','utf8')))!;
-it('keeps every camp spawn reachable around the fungal groves and resin wellspring',()=>{
+it('keeps every camp spawn reachable around the room landmarks',()=>{
  const m=map(),g=new Game(m,[{player:0,kind:'human'}]),s=g.spatial;
  const hero=g.entities.find(e=>e.placement==='marshal')!;
  for(const e of g.entities.filter(e=>e.unit)){
   expect(s.walkable(s.cell(e)),e.placement??String(e.id)).toBe(true);
   expect(s.findPath(s.cell(hero),s.cell(e)),e.placement??String(e.id)).not.toBeNull();
  }
- for(const id of ['vault-fungal-grove','vault-fungal-nursery','vault-wellspring']){
+ for(const id of ['vault-fungal-grove','vault-fungal-nursery','vault-wellspring','vault-bitter-heart']){
   const p=m.stamps.find(s=>s.id===id)!;
   expect(s.walkable(s.cell({x:Math.round(p.x),y:Math.round(p.y)})),id+' blocks its solid base').toBe(false);
  }

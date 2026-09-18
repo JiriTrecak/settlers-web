@@ -22,6 +22,7 @@ export class WalkSurfaces {
  private readonly seen:Uint32Array;
  private readonly closed:Uint32Array;
  private search=0;
+ lastExpanded=0;
  private readonly regions:Int32Array;
  private readonly regionLinks=new Map<number,Set<number>>();
  private readonly components:number[]=[0];
@@ -157,6 +158,7 @@ export class WalkSurfaces {
  }
  /** Integer A*, stable ties. The optional occupancy query is layer-specific. */
  path(from:SurfacePoint,to:SurfacePoint,blocked?:(node:SurfaceNode)=>boolean,maxCost=Infinity):SurfaceNode[]|null {
+  this.lastExpanded=0;
   const start=this.node(from),goal=this.node(to);
   if(start===undefined||goal===undefined||!this.walkable(goal)||blocked?.(this.nodes[goal]!))return null;
   if(start===goal)return [];
@@ -173,7 +175,7 @@ export class WalkSurfaces {
   cost[start]=0;seen[start]=search;push({id:start,g:0,h:heuristic(start)});
   while(heap.length){const cur=pop();if(closed[cur.id]===search||cost[cur.id]!==cur.g)continue;
    if(cur.id===goal){const route:SurfaceNode[]=[];for(let at=goal;at!==start;at=prev[at]!)route.push(this.nodes[at]!);return route.reverse();}
-   closed[cur.id]=search;const a=this.nodes[cur.id]!;
+   closed[cur.id]=search;this.lastExpanded++;const a=this.nodes[cur.id]!;
    for(const id of this.neighbors(cur.id,blocked)){
     if(closed[id]===search)continue;const b=this.nodes[id]!,g=cur.g+(a.x!==b.x&&a.y!==b.y?1414:1000);
     const h=heuristic(id);if(g+h>maxCost||seen[id]===search&&g>=cost[id]!)continue;

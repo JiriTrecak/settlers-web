@@ -309,7 +309,7 @@ export const actionMetaSchema = z
 export const actionsSchema = z
   .object({
     navigation: z
-      .object({ back: actionMetaSchema.omit({ category: true }) })
+      .object({ back: actionMetaSchema.omit({ category: true }), camera:actionMetaSchema.omit({category:true}).optional() })
       .strict(),
     categories: z
       .record(
@@ -349,6 +349,7 @@ export const assetSchema = z
     character: idSchema.optional(),
     scale: z.number().positive().optional(),
     healthHeight: z.number().positive().optional(),
+    cameraAnchor:z.object({height:z.number().positive().max(40),forward:z.number().min(-5).max(5).default(0),distance:z.number().min(1).max(40).default(7)}).strict().optional(),
     stackHeight: z.number().positive().optional(),
     stackColumns: positive.optional(),
     projectile: z.enum(["arrow", "thorn"]).optional(),

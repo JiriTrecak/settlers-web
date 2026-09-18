@@ -1,0 +1,2 @@
+import {expect,it} from 'vitest';import {TimingWindow} from '../../src/debug/timingWindow';
+it('keeps ordered recent samples in bounded memory and measures tail latency',()=>{const t=new TimingWindow(4);for(const n of [1,2,3,4,50])t.add(n);t.add(NaN);t.add(-1);expect(t.values()).toEqual([2,3,4,50]);expect(t.stats()).toMatchObject({mean:14.75,p95:50,p99:50,max:50,over16ms:1,over33ms:1,samples:4});});

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.textures.decals.mycelium-bed",
+  "name": "Damp mycelium bed",
+  "kind": "texture",
+  "tags": [
+    "heartwood",
+    "decal",
+    "moss",
+    "fungi"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/decals/mycelium-bed.png",
+      "sha256": "2e5b169d5bc0276f99d156f7608c96798d67844b520bd5ec7c4aceff81005d58",
+      "bytes": 1475606,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/mycelium-bed/source.png",
+    "sha256": "644630b94e13b915f9d95dce49e5941f56c63ad42f0df3322ffc2dcc6cc0e91e",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T07:36:15.592693+00:00",
+    "warnings": [
+      "Painted surface detail only; no geometry or navigation obstacle.",
+      "Generated edge has trace alpha; runtime shader fades the outer 2% to zero."
+    ]
+  }
+}

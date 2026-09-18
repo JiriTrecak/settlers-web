@@ -62,6 +62,7 @@ export class BuildingViewer {
     this.lastFrame = now;
     if (!this.visible) return;
     this.player?.update(dt);
+    this.player?.speak(document.getElementById('speechPreview')?.checked ? Math.max(0,Math.sin(performance.now()*.015))*.8 : 0);
     if (this.player?.action) {
       document.getElementById('animationTime').value = this.player.action.time / this.player.action.getClip().duration;
       document.getElementById('animationState').value = this.player.state;

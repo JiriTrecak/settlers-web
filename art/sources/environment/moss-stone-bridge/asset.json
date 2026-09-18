@@ -39,5 +39,6 @@
   "preserve_textures": true,
   "texture_format": "JPEG",
   "texture_quality": 90,
-  "viewer_light_scale": 0.1
+  "viewer_light_scale": 0.1,
+  "stone_texture": "assets/textures/terrain/weathered-limestone.png"
 }

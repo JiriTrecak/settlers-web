@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.briarwatch.merchant-cart",
+  "name": "Merchant Cart",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/briarwatch/merchant-cart/model.glb",
+      "sha256": "876cfea6cf650bed963c2e1625d37c4794bd140b51d4fdcd070cd58edf26950d",
+      "bytes": 128364,
+      "triangles": 2350,
+      "primitives": 11
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.merchant-cart",
+      "file": "assets/models/environment/briarwatch/merchant-cart/model.glb",
+      "healthHeight": 3
+    }
+  ],
+  "scenery": [
+    {
+      "id": "briarwatch-merchant-cart",
+      "name": "Merchant Cart",
+      "type": "prop",
+      "category": "landmark",
+      "file": "models/environment/briarwatch/merchant-cart/model.glb",
+      "blocker": {
+        "width": 2.8,
+        "depth": 4.2
+      }
+    }
+  ],
+  "source": {
+    "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
+    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.423Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

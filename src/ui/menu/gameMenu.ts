@@ -4,7 +4,7 @@ import {SaveLibrary,validateSaveDestination,type SavedGame} from '../../shared/s
 import {localSaveSchema,type LocalSave,type SaveMode} from '../../shared/save/localSave';
 import {getMap} from '../../shared/map/library';
 import './gameMenu.css';
-type MenuHooks={pause:(paused:boolean)=>void;leave:()=>void;snapshot?:()=>LocalSave;restart?:()=>void;load?:(save:LocalSave)=>void};
+type MenuHooks={pause:(paused:boolean)=>void;leave:()=>void;snapshot?:()=>LocalSave|Promise<LocalSave>;restart?:()=>void;load?:(save:LocalSave)=>void};
 export class GameMenu {
  private dialog:HTMLDialogElement|null=null;
  private status:HTMLElement|null=null;
@@ -37,7 +37,7 @@ export class GameMenu {
   this.button('Exit to menu',()=>{this.page('Leave this scenario?','Unsaved progress will be lost.');if(this.hooks.snapshot)this.button('Save and exit',async()=>{await this.save(this.mapName);this.hooks.leave();});this.button('Exit without saving',()=>this.hooks.leave());this.button('Cancel',()=>this.main());});
  }
  private nameField(){const label=document.createElement('label');label.textContent='Save name';const input=document.createElement('input');input.maxLength=100;input.value=this.mapName;label.append(input);this.dialog!.append(label);return input;}
- private async save(name:string){return this.library.save(name,this.mapName,this.hooks.snapshot!());}
+ private async save(name:string){return this.library.save(name,this.mapName,await this.hooks.snapshot!());}
  private savePage(){
   this.page(`${this.mode==='campaign'?'Campaign':'Skirmish'} saves`,'Saved on this device. Campaign and skirmish saves are kept separate.');const input=this.nameField();
   this.button('Save',async()=>{const record=await this.save(input.value);this.main();this.status!.textContent=`Saved “${record.name}”.`;});this.button('Back',()=>this.main());
@@ -55,7 +55,7 @@ export class GameMenu {
   const saves=await this.library.list(this.mode);if(!this.dialog||!list.isConnected)return;
   if(!saves.length){list.textContent='No saves yet.';return;}
   for(const record of saves){const row=document.createElement('article'),name=document.createElement('strong'),detail=document.createElement('small');name.textContent=record.name;detail.textContent=`${record.mapName} · ${new Date(record.savedAt).toLocaleString()}`;row.append(name,detail);list.append(row);
-   this.button('Load',()=>{const save=validateSaveDestination(record.data,this.mode,getMap(record.data.mapId));this.hooks.load!(save);},row);
+   this.button('Load',()=>{const save=validateSaveDestination(record.data,this.mode,getMap(record.data.mapId));return this.hooks.load!(save);},row);
    this.button('Export',()=>this.export(record),row);
   }
  }

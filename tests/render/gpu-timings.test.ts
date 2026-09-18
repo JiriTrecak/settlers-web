@@ -23,3 +23,8 @@ it('discards disjoint samples and records whole-frame measurements independently
  expect(sample).toHaveBeenCalledWith('GPU frame',2);sample.mockClear();timers.measure('GPU atmosphere',()=>{});timers.end();d.setDisjoint(true);timers.begin();timers.end();
  expect(sample).not.toHaveBeenCalled();timers.dispose();
 });
+it('samples portrait work and skips driver polling completely when disabled and idle',()=>{
+ const d=driver(),sample=vi.spyOn(perf,'sample');perf.enabled=false;const timer=new GpuTimings(d.gl);timer.begin();expect(d.spy.createQuery).not.toHaveBeenCalled();perf.enabled=true;
+ for(let i=0;i<8;i++){timer.begin();timer.measure('GPU scene',()=>{});timer.measure('GPU atmosphere',()=>{});timer.measure('GPU portrait',()=>{});timer.end();}
+ expect(sample).toHaveBeenCalledWith('GPU portrait',2);timer.dispose();
+});

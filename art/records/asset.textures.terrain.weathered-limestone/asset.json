@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.weathered-limestone",
+  "name": "Weathered limestone",
+  "kind": "texture",
+  "tags": [
+    "canopy",
+    "stone",
+    "bridge"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "texture",
+  "outputs": [
+    {
+      "role": "data",
+      "path": "assets/textures/terrain/weathered-limestone.png",
+      "sha256": "dd16c5b7dacd00c513003479627df925773c4b66a57ff8324e596fa7fdad44bb",
+      "bytes": 2387683,
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "render": [],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/textures/weathered-limestone/source.png",
+    "sha256": "9d8299c40c1cb10cbd2248acbd21ea59db7761f72afbc645cb09e42b299f42cf",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-16T06:46:57.256683+00:00",
+    "warnings": [
+      "Generated albedo; exact edge tiling is not guaranteed. UVs break at individual stone boundaries."
+    ]
+  }
+}

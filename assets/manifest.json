@@ -86,6 +86,174 @@
       "scenery": []
     },
     {
+      "id": "asset.icons.briar-family-ring",
+      "name": "Family Ring",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-family-ring.png",
+          "sha256": "d724066a305e43439088a2c1fb18251e20db0e4672f071b98b1abfeb004999f1",
+          "bytes": 23959,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.family-ring",
+          "image": "assets/icons/briar-family-ring.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.briar-healing-draught",
+      "name": "Healing Draught",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-healing-draught.png",
+          "sha256": "7ca6120988eb3d440998278ccf0d12070ab19a6dd0366d9de52d90f5e0c1b376",
+          "bytes": 26426,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.healing-draught",
+          "image": "assets/icons/briar-healing-draught.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.briar-healing-scroll",
+      "name": "Healing Scroll",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-healing-scroll.png",
+          "sha256": "d26017a7f74973851da8f22cabf9bd525ee3f06947697712f0b68a7a8d5dd03b",
+          "bytes": 24759,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.healing-scroll",
+          "image": "assets/icons/briar-healing-scroll.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.briar-leaf-ledger",
+      "name": "Leaf Ledger",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-leaf-ledger.png",
+          "sha256": "6ff4cb53c5bfc5d3a2300844bfca99be21acbcf90a4af19c034e3e77b11ac4ff",
+          "bytes": 31391,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.leaf-ledger",
+          "image": "assets/icons/briar-leaf-ledger.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.briar-mana-draught",
+      "name": "Mana Draught",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-mana-draught.png",
+          "sha256": "44f1fcbbc2bcdab0155f7e5163d0f5d3c5f9d09a8fbbee3eddf5c351e3819f82",
+          "bytes": 27060,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.mana-draught",
+          "image": "assets/icons/briar-mana-draught.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.briar-vigor-seed",
+      "name": "Vigor Seed",
+      "kind": "icon",
+      "tags": [
+        "briarwatch",
+        "item"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/briar-vigor-seed.png",
+          "sha256": "cd7ebde90a7602abe8fa4740bac1158a7c1dd4dd0f063d33e45d367a0fcc471b",
+          "bytes": 24240,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.briar.vigor-seed",
+          "image": "assets/icons/briar-vigor-seed.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.icons.building-ants-barracks",
       "name": "Barracks",
       "kind": "icon",
@@ -501,6 +669,35 @@
         {
           "id": "icon.action.build-advanced",
           "image": "assets/icons/command-build-advanced.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.command-camera",
+      "name": "Cycle camera",
+      "kind": "icon",
+      "tags": [
+        "command",
+        "camera",
+        "ants"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/icons/command-camera.png",
+          "sha256": "e2b94117d9f7292aa11e018e3ea9227dafe571fa50b8dfb5de2036c71a1fa258",
+          "bytes": 30481,
+          "width": 128,
+          "height": 128
+        }
+      ],
+      "render": [
+        {
+          "id": "icon.action.camera",
+          "image": "assets/icons/command-camera.png"
         }
       ],
       "scenery": []
@@ -2428,6 +2625,36 @@
       "scenery": []
     },
     {
+      "id": "asset.models.buildings.ants.bark-cottage",
+      "name": "Bark Cottage",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/buildings/ants/bark-cottage/model.glb",
+          "sha256": "31911c11a1754e81d989f2a7d9b1c882140d3d56a65f366aff2f910d60d46c29",
+          "bytes": 229652,
+          "triangles": 4173,
+          "primitives": 13
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.cottage",
+          "file": "assets/models/buildings/ants/bark-cottage/model.glb",
+          "healthHeight": 5
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.buildings.ants.bombardier-workshop",
       "name": "Bombardier Workshop",
       "kind": "model",
@@ -2922,6 +3149,180 @@
         }
       ],
       "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.neutral.ruined-cottage",
+      "name": "Ruined Cottage",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/buildings/neutral/ruined-cottage/model.glb",
+          "sha256": "7ed59e689dd81ff9575b7a5677228f6fa62d085bb8d529994b34aa6cfcebdd95",
+          "bytes": 36848,
+          "triangles": 626,
+          "primitives": 5
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.ruined-cottage",
+          "file": "assets/models/buildings/neutral/ruined-cottage/model.glb",
+          "healthHeight": 2
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.neutral.supply-crate",
+      "name": "Supply Crate",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/buildings/neutral/supply-crate/model.glb",
+          "sha256": "53c8bf5f0ba3db6422b13b39daeaae8d5addd6b54dc1e3f13cd7f6611b756752",
+          "bytes": 19344,
+          "triangles": 280,
+          "primitives": 5
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.supply-crate",
+          "file": "assets/models/buildings/neutral/supply-crate/model.glb",
+          "healthHeight": 1.3
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.neutral.twig-cage",
+      "name": "Twig Cage",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/buildings/neutral/twig-cage/model.glb",
+          "sha256": "ff87030d5dd6044cf9fc5b5b7ad2cf459bfd34a9eba88cc2d999247866d398f2",
+          "bytes": 89656,
+          "triangles": 1696,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.cage",
+          "file": "assets/models/buildings/neutral/twig-cage/model.glb",
+          "healthHeight": 3
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.environment.briarwatch.merchant-cart",
+      "name": "Merchant Cart",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/briarwatch/merchant-cart/model.glb",
+          "sha256": "876cfea6cf650bed963c2e1625d37c4794bd140b51d4fdcd070cd58edf26950d",
+          "bytes": 128364,
+          "triangles": 2350,
+          "primitives": 11
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.merchant-cart",
+          "file": "assets/models/environment/briarwatch/merchant-cart/model.glb",
+          "healthHeight": 3
+        }
+      ],
+      "scenery": [
+        {
+          "id": "briarwatch-merchant-cart",
+          "name": "Merchant Cart",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/briarwatch/merchant-cart/model.glb",
+          "blocker": {
+            "width": 2.8,
+            "depth": 4.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.briarwatch.watch-bivouac",
+      "name": "Watch Bivouac",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
+          "sha256": "267ebecaf3f26800e08d5a32aa8ead09a6ba554ded56f965116b77b0f60e52b6",
+          "bytes": 42068,
+          "triangles": 708,
+          "primitives": 8
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.watch-bivouac",
+          "file": "assets/models/environment/briarwatch/watch-bivouac/model.glb",
+          "healthHeight": 2.5
+        }
+      ],
+      "scenery": [
+        {
+          "id": "briarwatch-watch-bivouac",
+          "name": "Watch Bivouac",
+          "type": "prop",
+          "category": "landmark",
+          "file": "models/environment/briarwatch/watch-bivouac/model.glb",
+          "blocker": {
+            "width": 4,
+            "depth": 3.5
+          }
+        }
+      ]
     },
     {
       "id": "asset.models.environment.grass.broadleaf",
@@ -6351,15 +6752,15 @@
         "crossing",
         "walkable"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/structures/moss-stone-bridge/model.glb",
-          "sha256": "542883a9419899cf78067cddd0ef623a295b048bc67c3026ed3c0cccffae95e9",
-          "bytes": 445984,
-          "triangles": 6144,
+          "sha256": "cfccb819a1bbda276c83de6010a52f77789ed815bf9d46f710c776e00812878d",
+          "bytes": 806172,
+          "triangles": 6684,
           "primitives": 7
         }
       ],
@@ -9301,6 +9702,186 @@
       ]
     },
     {
+      "id": "asset.models.items.briarwatch.family-ring",
+      "name": "Family Ring",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/family-ring/model.glb",
+          "sha256": "7db09578eee100e35be62a29f0202f5f72d1c5eab7d9a721b40e88c9cc87f4ad",
+          "bytes": 33416,
+          "triangles": 628,
+          "primitives": 3
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.family-ring",
+          "file": "assets/models/items/briarwatch/family-ring/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.items.briarwatch.healing-draught",
+      "name": "Healing Draught",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/healing-draught/model.glb",
+          "sha256": "c29c91272c5d8e358975793a7c16b4828f6a6b913efed04e34e830218e43467d",
+          "bytes": 49204,
+          "triangles": 892,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.healing-draught",
+          "file": "assets/models/items/briarwatch/healing-draught/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.items.briarwatch.healing-scroll",
+      "name": "Healing Scroll",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/healing-scroll/model.glb",
+          "sha256": "569f1b15da651da8ade566790515e5a7fddbb9380aaf6b01b80ba6d87cb661a3",
+          "bytes": 24572,
+          "triangles": 384,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.healing-scroll",
+          "file": "assets/models/items/briarwatch/healing-scroll/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.items.briarwatch.leaf-ledger",
+      "name": "Leaf Ledger",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/leaf-ledger/model.glb",
+          "sha256": "c3f6f5fc8459a485f639f799c783816132d0ed7f819da986b6758ae4342ef7fa",
+          "bytes": 37988,
+          "triangles": 592,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.leaf-ledger",
+          "file": "assets/models/items/briarwatch/leaf-ledger/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.items.briarwatch.mana-draught",
+      "name": "Mana Draught",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/mana-draught/model.glb",
+          "sha256": "3c856f07c7ec5e07637187f8d5191c1aa57bbe72aa3ac25a3d7d7251d4d6af5a",
+          "bytes": 49200,
+          "triangles": 892,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.mana-draught",
+          "file": "assets/models/items/briarwatch/mana-draught/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.items.briarwatch.vigor-seed",
+      "name": "Vigor Seed",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/items/briarwatch/vigor-seed/model.glb",
+          "sha256": "8f9264728856907a9336aed119f2636a8b144244a85d04da14a0aff708cab741",
+          "bytes": 32248,
+          "triangles": 512,
+          "primitives": 6
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.vigor-seed",
+          "file": "assets/models/items/briarwatch/vigor-seed/model.glb",
+          "healthHeight": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.items.item-log",
       "name": "Log",
       "kind": "model",
@@ -9527,14 +10108,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/archer/model.glb",
-          "sha256": "d4775919476d9baf97cf18805d02053ba50bf74efb1e49fbe915a92a92e36404",
-          "bytes": 324660
+          "sha256": "9a20ee5846a2391a2705c1e4cf27ab39be1c869e5fbde8bc967ac2e17ad1c529",
+          "bytes": 334828
         }
       ],
       "render": [
@@ -9543,6 +10124,11 @@
           "file": "assets/models/units/ants/archer/model.glb",
           "character": "archer",
           "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          },
           "projectile": "arrow",
           "projectileSocket": "socket_handL"
         }
@@ -9557,14 +10143,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/bombardier/model.glb",
-          "sha256": "5b6b496ffa2feeb5d7c1c6e8d52750d115426c2ce67f6be62586c021dacafd5a",
-          "bytes": 268332
+          "sha256": "d589557c338642aecf2d70e33e16f9eb137b6ea32b4cb6703ce58bb850348c6e",
+          "bytes": 274896
         }
       ],
       "render": [
@@ -9573,7 +10159,160 @@
           "file": "assets/models/units/ants/bombardier/model.glb",
           "character": "bombardier",
           "healthHeight": 2.4,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          },
           "projectileSocket": "socket_muzzle"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants.briar-archer",
+      "name": "Briar Poacher",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/units/ants/briar-archer/model.glb",
+          "sha256": "c9780cb88a9cb62335f937c18e33e5fd38d51c2f9b05e635d17ad26d628dfda0",
+          "bytes": 342968,
+          "triangles": 4322,
+          "primitives": 17
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.archer",
+          "file": "assets/models/units/ants/briar-archer/model.glb",
+          "character": "archer",
+          "scale": 1,
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants.briar-captain",
+      "name": "Briar Captain",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/units/ants/briar-captain/model.glb",
+          "sha256": "43b5764f535789aa145a6b05f6d1b35c79d5a2512c5f4366cb92f459273f312c",
+          "bytes": 380460,
+          "triangles": 5377,
+          "primitives": 15
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.captain",
+          "file": "assets/models/units/ants/briar-captain/model.glb",
+          "character": "captain",
+          "scale": 1.4,
+          "healthHeight": 3.2199999999999998,
+          "cameraAnchor": {
+            "height": 2.0999999999999996,
+            "forward": 0.15,
+            "distance": 7
+          }
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants.briar-civilian",
+      "name": "Briarwatch Villager",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/units/ants/briar-civilian/model.glb",
+          "sha256": "7d7f6e0d2182a00a12ba98a89bb0afa22ac69fe79eb411be3f46c65ac1b5239f",
+          "bytes": 333236,
+          "triangles": 4140,
+          "primitives": 14
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.civilian",
+          "file": "assets/models/units/ants/briar-civilian/model.glb",
+          "character": "civilian",
+          "scale": 1,
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants.briar-warrior",
+      "name": "Briar Raider",
+      "kind": "model",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/units/ants/briar-warrior/model.glb",
+          "sha256": "a63b8df39b9641d642f3ce75e9c18201855cffb1c53af17adbc287f8fb48c832",
+          "bytes": 369416,
+          "triangles": 5017,
+          "primitives": 16
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.briar.warrior",
+          "file": "assets/models/units/ants/briar-warrior/model.glb",
+          "character": "warrior",
+          "scale": 1,
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
         }
       ],
       "scenery": []
@@ -9615,14 +10354,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/hunter/model.glb",
-          "sha256": "fd6b608030053e2ebcf2f8d664ba5fcea53b53a15209ee5092453f0a5c56b289",
-          "bytes": 265468
+          "sha256": "f3a022faf96d4700d83660f902a1f95c2f27762384ad06066bd3095fdcaf47fa",
+          "bytes": 272928
         }
       ],
       "render": [
@@ -9630,7 +10369,12 @@
           "id": "asset.ants.hunter",
           "file": "assets/models/units/ants/hunter/model.glb",
           "character": "hunter",
-          "healthHeight": 2.3
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
         }
       ],
       "scenery": []
@@ -9643,14 +10387,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/marshal/model.glb",
-          "sha256": "526619b9374222e606d4f3a3b8bb17bdac3231a033afad96bfd7be1e975bd89e",
-          "bytes": 351896
+          "sha256": "bd41c080d5d38473198b099809c791a9930dfdf25136a4a51b33a1d01ef17132",
+          "bytes": 359552
         }
       ],
       "render": [
@@ -9660,6 +10404,11 @@
           "character": "marshal",
           "scale": 1,
           "healthHeight": 2.8,
+          "cameraAnchor": {
+            "height": 1.85,
+            "forward": 0.15,
+            "distance": 7
+          },
           "castContact": 0.68
         }
       ],
@@ -9736,14 +10485,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/warrior/model.glb",
-          "sha256": "fb5e1eb9184da357f8865006c1ce9a33d7377f0b75896db6e5e4c2790148286a",
-          "bytes": 355320
+          "sha256": "e805fc285ec4cfc66f3c3772e0a4c8eaec2721864ccb23f9f147c4e62274434e",
+          "bytes": 365484
         }
       ],
       "render": [
@@ -9751,7 +10500,12 @@
           "id": "asset.ants.warrior",
           "file": "assets/models/units/ants/warrior/model.glb",
           "character": "warrior",
-          "healthHeight": 2.3
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
         }
       ],
       "scenery": []
@@ -9764,14 +10518,14 @@
         "characters",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/worker/model.glb",
-          "sha256": "a3188b8fdb716fedafccf4b18cf4592f446e15f020553882f3667c5c304fa9ea",
-          "bytes": 305024
+          "sha256": "2609ab1184a2414f368059dca1d44becc107325df16c67d547f28da0ef0671e0",
+          "bytes": 315176
         }
       ],
       "render": [
@@ -9779,7 +10533,12 @@
           "id": "asset.ants.settler",
           "file": "assets/models/units/ants/worker/model.glb",
           "character": "base",
-          "healthHeight": 2.3
+          "healthHeight": 2.3,
+          "cameraAnchor": {
+            "height": 1.5,
+            "forward": 0.15,
+            "distance": 7
+          }
         }
       ],
       "scenery": []
@@ -9996,6 +10755,55 @@
           "file": "models/units/neutral/wolf-static/model.glb"
         }
       ]
+    },
+    {
+      "id": "asset.textures.decals.mycelium-bed",
+      "name": "Damp mycelium bed",
+      "kind": "texture",
+      "tags": [
+        "heartwood",
+        "decal",
+        "moss",
+        "fungi"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/decals/mycelium-bed.png",
+          "sha256": "2e5b169d5bc0276f99d156f7608c96798d67844b520bd5ec7c4aceff81005d58",
+          "bytes": 1475606,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.decals.root-rot",
+      "name": "Spreading root rot",
+      "kind": "texture",
+      "tags": [
+        "heartwood",
+        "decal",
+        "corruption"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/decals/root-rot.png",
+          "sha256": "70bd6cc4d99b33f5896cda72ab904d7d383c46c088f196a02812c7f564c58d24",
+          "bytes": 832025,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
     },
     {
       "id": "asset.textures.materials.ants.moss-surface",
@@ -10425,6 +11233,30 @@
           "path": "assets/textures/terrain/tuft-broad.png",
           "sha256": "d276b25df665f4bc7c08f39da4cda4cf014505adee6976a347922b5139a8b9f4",
           "bytes": 152881,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.terrain.weathered-limestone",
+      "name": "Weathered limestone",
+      "kind": "texture",
+      "tags": [
+        "canopy",
+        "stone",
+        "bridge"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/textures/terrain/weathered-limestone.png",
+          "sha256": "dd16c5b7dacd00c513003479627df925773c4b66a57ff8324e596fa7fdad44bb",
+          "bytes": 2387683,
           "width": 1024,
           "height": 1024
         }

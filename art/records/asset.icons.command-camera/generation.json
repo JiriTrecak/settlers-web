@@ -1,0 +1,7 @@
+{
+  "method": "built-in imagegen",
+  "prompt": "Create a single square fantasy RTS command icon for 'change camera view': one sturdy brass and amber-resin spyglass with a deep blue glass lens, tilted diagonally from lower left to upper right, chunky carved dark wood handle and subtle leaf detail. Hand-painted Warcraft-style game inventory icon, crisp exaggerated silhouette readable at 128x128, rich gold/brown highlights, dark nearly black background. Object fills 80 percent of canvas, no border, no text, no letters, no UI, no multiple items, no camera photography device. This is for an ant forest RTS called Under the Canopy. Single polished game-ready icon.",
+  "source": "source.png",
+  "output": "assets/icons/command-camera.png",
+  "transform": {"width":128,"height":128,"fit":"contain","background":"#080a08"}
+}

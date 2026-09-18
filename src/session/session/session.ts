@@ -1,6 +1,5 @@
-import {captureCompany} from '../../sim/scenario/company';
+import {UNIT_CAMERA_MODES,nextCameraMode,type UnitCameraMode} from '../../shared/camera/modes';
 import type {CampaignCompany} from '../../shared/scenario/company';
-import {restoreSavedWorld} from "./restoreSavedWorld";
 import {MissionHud} from "../../ui/campaign/missionHud";
 import {createMissionMatch} from "../../shared/scenario/match";
 import {preloadCommandArt} from '../../ui/settlement/commandArt';
@@ -8,15 +7,12 @@ import type {LoadProgress} from '../../shared/loading';
 import {AssetLoading,loadingPaint} from '../../render/loading/assetLoading';
 import { GameChat } from "../../ui/chat/chat";
 import { commandFeedback } from "../../presentation/commandFeedback";
-import {
-  ObserverIncome,
-  observerStats,
-} from "../../presentation/observerStats";
 import { ObserverPanel } from "../../ui/observer/observerPanel";
-import { PresentationView, matchSpeed } from "./presentationView";
+import { matchSpeed } from "./presentationView";
+import {SimulationClient} from "../worker/client";
+import type {RuntimeFrame} from "../worker/runtime";
+import type {LocalSave} from "../../shared/save/localSave";
 import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
-import { precise } from "../../sim/game/motion";
-import { localSaveSchema, LOCAL_SAVE_FORMAT_VERSION } from "../../shared/save/localSave";
 import { areaSelection } from "../../presentation/commands";
 import { resourceStamps, ResourceScenery } from "../../presentation/scenery";
 import { content } from "../../content/builtin";
@@ -40,9 +36,8 @@ import { SettlementHud } from "../../ui/settlement/settlementHud";
  * One match: transport, fixed-step simulation, input and presentation orchestration.
  */
 import { type MatchConfig } from "../../shared";
-import { Lockstep, MemoryChannel, Room, type Channel } from "../../net";
+import type {Channel} from "../../net";
 import { MapInput, Minimap, Renderer } from "../../render";
-import { World } from "../../sim/world/world";
 import type { HudState } from "../../ui";
 
 export type SessionHooks = {
@@ -61,33 +56,26 @@ export type SessionConfig = {
 };
 
 export class Session {
+  private unitCameraMode:UnitCameraMode='rts';
+  private cinematicFocus:{x:number;z:number}|null=null;
   private chat: GameChat | null = null;
-  private readonly aiGreeted = new Set<number>();
   private loadedMap: MapEntry | null = null;
-  private world: World | null = null;
-  private room: Room | null = null;
+  private worker: SimulationClient | null = null;
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
-  private readonly locksteps = new Map<number, Lockstep>();
-  private readonly channels: MemoryChannel[] = [];
-  private match: MatchConfig | null = null;
   private menuPaused = false;
-  setMenuPaused(paused:boolean):void {if(this.config.channel)return;this.menuPaused=paused;this.acc=0;this.input?.reset();}
-  private acc = 0;
+  setMenuPaused(paused:boolean):void {if(this.config.channel)return;this.menuPaused=paused;this.input?.reset();const worker=this.worker;void worker?.request("pause",paused).catch(error=>{if(worker===this.worker)this.workerError(error);});}
   private fps = 60;
   private fpsFrames = 0;
   private fpsMs = 0;
-  private confirmTimer: ReturnType<typeof setInterval> | null = null;
   private desynced = false;
   /** Transport mailbox, not authority. An observer borrows an empty local mailbox. */
   private readonly me: number;
-  private presentation = new PresentationView();
   private reveal = false;
   private speed = 1;
   private visionPlayer: number;
   private observerPanel: ObserverPanel | null = null;
-  private observerIncome: ObserverIncome | null = null;
   private observerStatsTick = -1;
   private unbindDebug: (() => void) | null = null;
   private get observing(): boolean {
@@ -96,18 +84,26 @@ export class Session {
   private get simulationSpeed(): number {
     return matchSpeed(this.speed, !!this.config.channel);
   }
-  private visualView() {
-    return (this.presentation ??= new PresentationView()).project(
-      this.world!,
-      this.visionPlayer ?? this.me,
-      this.reveal,
-    );
+  private visualView() {return this.worker!.latest!.visual;}
+  private selectionView() {return this.worker!.latest!.selection.settlement;}
+  private workerProfiling=false;
+  private configureWorker(){const worker=this.worker;void worker?.request('configure',{speed:this.simulationSpeed,reveal:this.reveal,visionPlayer:this.visionPlayer,profiling:perf.enabled}).catch(error=>{if(worker===this.worker)this.workerError(error);});}
+  private workerError(error:unknown){console.error(error);this.economyHud?.showError(`Simulation stopped: ${error instanceof Error?error.message:String(error)}`);}
+  private acceptFrame(frame:RuntimeFrame){
+    this.desynced=frame.desynced;
+    for(const [name,ms] of frame.profileSamples)perf.sample(name,ms);
+    for(const [name,ms] of Object.entries(frame.timings))if(name!=='simulation')perf.sample(`Worker · ${name}`,ms);
+    if(perf.enabled){
+      perf.value('Navigation searches (match)',frame.routing.searches);
+      perf.value('Navigation cells expanded (match)',frame.routing.expanded);
+      perf.value('Navigation sector regions expanded (match)',frame.routing.coarseExpanded);
+      perf.value('Navigation corridor fallbacks (match)',frame.routing.fallbacks);
+      perf.value('Worker profiling samples dropped',frame.droppedSamples);
+    }
+    if(frame.observer&&frame.observer.tick!==this.observerStatsTick){this.observerStatsTick=frame.observer.tick;this.observerPanel?.update(frame.observer);}
+    if(this.economyHud?.mode&&this.placementPointer){this.placementResult=undefined;this.onHover(this.placementPointer);}
   }
-  private selectionView() {
-    return this.observing
-      ? this.visualView().settlement!
-      : this.world!.settlement!.view(this.me);
-  }
+  private explored(x:number,y:number){const view=this.selectionView(),size=this.visualView().size;return x>=0&&y>=0&&x<size&&y<size&&!!view.fog?.cells[y*size+x];}
 
   private bridge: EditorBridge | null = null;
   private terrain = new HeightField();
@@ -136,9 +132,9 @@ export class Session {
     const hit = this.economyHud?.mode ? this.renderer?.pickGround(e.clientX,e.clientY) : this.renderer?.pickWalk(e.clientX,e.clientY),
       kind = this.economyHud?.mode;
     const binding = this.economyHud?.targeting,
-      sim = this.world?.settlement;
+      sim = this.worker?.latest?.selection.settlement;
     const caster =
-      binding?.type === "cast" ? sim?.context.get(binding.actors[0]) : null;
+      binding?.type === "cast" ? sim?.entities.find(e=>e.id===binding.actors[0]) : null;
     const spell = binding?.ability
       ? content.rules.spells[binding.ability]
       : null;
@@ -146,40 +142,44 @@ export class Session {
       ? caster?.spellcasting?.learned[binding.ability]
       : 0;
     if (hit && caster && spell && rank) {
-      const origin = precise(caster),
+      const origin = caster,
         point = { x: Math.round(hit.x), y: Math.round(hit.z), ...("surface" in hit&&typeof hit.surface==="string"?{surface:hit.surface}:{}) };
       const valid =
         Math.hypot(point.x - origin.x, point.y - origin.y) <=
           spell.ranks[rank - 1].range &&
-        !!sim?.observation.explored(slotOwner(this.me), [
-          point.y*sim.spatial.size+point.x,
-        ]);
+        this.explored(point.x,point.y);
       this.renderer?.gameAbilityTarget({ spell, rank, origin, point, valid });
     } else this.renderer?.gameAbilityTarget(null);
     if (!hit || !kind) {
+      this.placementLatest=undefined;
       this.renderer?.gamePreview(null);
       return;
     }
-    const x = Math.round(hit.x),
-      z = Math.round(hit.z),
-      error =
-        this.world?.settlement?.canBuild(
-          slotOwner(this.me),
-          kind,
-          { x, y: z },
-          this.economyHud?.buildingActor,
-          this.economyHud?.placementRotation ?? 0,
-        ) ?? null;
-    this.renderer?.gamePreview(
-      kind,
-      x,
-      z,
-      !error,
-      this.economyHud?.placementRotation ?? 0,
-      this.me,
-    );
-    this.economyHud?.placement(error);
+    const x=Math.round(hit.x),z=Math.round(hit.z),rotation=this.economyHud?.placementRotation??0;
+    const query={definition:kind,position:{x,y:z},actor:this.economyHud?.buildingActor,rotation};
+    const key=JSON.stringify(query);
+    this.placementLatest={key,query};
+    // Display the cursor immediately; authoritative placement validation arrives
+    // asynchronously, with at most one query in flight and stale results ignored.
+    this.renderer?.gamePreview(kind,x,z,this.placementResult?.key===key&&!this.placementResult.error,rotation,this.me);
+    this.pumpPlacement();
   };
+  private placementLatest:{key:string;query:{definition:string;position:{x:number;y:number};actor?:number;rotation:number}}|undefined;
+  private placementResult:{key:string;error:string|null}|undefined;
+  private placementBusy=false;
+  private pumpPlacement(){
+    const pending=this.placementLatest,worker=this.worker;
+    if(!pending||!worker||this.placementBusy||this.placementResult?.key===pending.key)return;
+    this.placementBusy=true;
+    void worker.request('placement',pending.query).then(error=>{
+      if(worker!==this.worker)return;
+      if(this.placementLatest?.key===pending.key&&this.economyHud?.mode===pending.query.definition){
+        this.placementResult={key:pending.key,error};
+        this.renderer?.gamePreview(pending.query.definition,pending.query.position.x,pending.query.position.y,!error,pending.query.rotation,this.me);
+        this.economyHud?.placement(error);
+      }
+    }).catch(error=>{if(worker===this.worker)this.workerError(error);}).finally(()=>{this.placementBusy=false;if(worker===this.worker&&this.placementLatest?.key!==pending.key)this.pumpPlacement();});
+  }
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -216,9 +216,7 @@ export class Session {
         map.playerStarts,
         loaded.revision,
       ).match);
-    this.match = match;
     this.chat?.destroy();
-    this.aiGreeted.clear();
     this.chat = new GameChat(this.config.host, text => {
       if (this.config.channel) this.config.channel.send({type: "chat", text});
       else this.chat?.receive({text, player: this.observing ? null : this.me,
@@ -238,21 +236,14 @@ export class Session {
       throw new Error(
         "The local controller must match the lobby's player slots.",
       );
-    // Receive remote commits during loading; confirmations start only when ready.
-    if (this.config.channel) this.bindRemote(match, this.config.channel);
     report({stage:"Preparing simulation and terrain"});
     await loadingPaint(); check();
-    this.world = new World({
-      slots: match.slots,
-      seed: match.seed,
-      company: match.company,
-      map,
-    });
-    if (this.observing) {
-      this.observerIncome = new ObserverIncome();
-      this.observerPanel = new ObserverPanel(this.config.host);
-      this.updateObserverStats();
-    }
+    const worker=this.worker=new SimulationClient({
+      frame:frame=>this.acceptFrame(frame),chat:message=>this.chat?.receive(message),
+      learned:()=>this.economyHud?.learnedAbility(),error:error=>{this.desynced=true;this.workerError(error);},sample:(name,ms)=>perf.sample(name,ms),
+    },this.config.channel);
+    const initial=await worker.request('init',{map,match,player:this.config.player,remote:!!this.config.channel});check();
+    if(this.observing){this.observerPanel=new ObserverPanel(this.config.host);if(worker.latest?.observer)this.observerPanel.update(worker.latest.observer);}
     const catalog = projectCatalogue(),
       urls = new Map(
         catalog.assets.flatMap((a) => {
@@ -289,7 +280,7 @@ export class Session {
       onRightClick: (x, y, shift) => this.click(x, y, shift, true),
       onSelectArea: (rect, shift) => {
         const hud = this.economyHud,
-          state = this.world ? this.selectionView() : undefined;
+          state = this.worker?.latest ? this.selectionView() : undefined;
         if (!hud || !state) return;
         const inside = new Set(
           renderer.unitsInScreenRect(
@@ -309,6 +300,9 @@ export class Session {
     });
     this.economyHud = new SettlementHud(this.config.host, this.config.player, {
       action: (action) => this.send(action),
+      cameraMode:()=>this.unitCameraMode,
+      cycleCamera:()=>{this.unitCameraMode=nextCameraMode(this.unitCameraMode);},
+      resetCamera:()=>{this.unitCameraMode='rts';renderer.unitCamera(null);},
       portrait: (host,definition,owner)=>renderer.gamePortrait(host,definition,owner),
       mode: () => {
         if (this.placementPointer) this.onHover(this.placementPointer);
@@ -317,7 +311,7 @@ export class Session {
           renderer.gameAbilityTarget(null);
         }
       },
-      lookAt:(x,y)=>{renderer.camera.lookAt(x,y);this.present();},
+      lookAt:(x,y)=>{this.unitCameraMode='rts';renderer.unitCamera(null);renderer.camera.lookAt(x,y);this.present();},
       focus: (id, group) => {
         const visible=this.selectionView().entities.filter(e=>(group??[id]).includes(e.id)&&!e.unit?.contained&&!e.remembered);
         if(!visible.length)return;
@@ -325,16 +319,14 @@ export class Session {
         this.present();
       },
       home: () => {
-        const game = this.world?.settlement,
-          home = game?.entities.find(
-            (e) => e.id === game.state.objectives[slotOwner(this.me)],
-          );
+        const game = this.worker?.latest?.selection.settlement,
+          home = game?.entities.find(e=>e.id===game.objectives[slotOwner(this.me)]);
         if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
     if(map.mission) this.missionHud=new MissionHud(this.config.host,()=>this.config.hooks.onMissionLeave?.(),map.mission,
       !this.config.channel&&map.mission.nextMission&&this.config.hooks.onMissionContinue?()=>{
-        this.config.hooks.onMissionContinue!(map.mission!.nextMission!,captureCompany(this.world!.settlement));
+        void worker.request('company',undefined).then(company=>{if(worker===this.worker)this.config.hooks.onMissionContinue!(map.mission!.nextMission!,company);}).catch(error=>this.workerError(error));
       }:undefined);
     this.canvas.addEventListener("pointermove", this.onHover);
     this.mini = new Minimap(this.config.host, {
@@ -361,7 +353,6 @@ export class Session {
       },
     });
     this.mini.mountGame(this.economyHud.minimapHost, this.economyHud.clockHost);
-    if (!this.config.channel) this.bindLockstep(match);
     this.mini.setHeight(this.terrain);
     this.mini.setLandscape(map.landscape);
     this.mini.setStamps(this.stamps);
@@ -372,7 +363,7 @@ export class Session {
     if(map.mission)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
     renderer.draw(initialView, this.stamps);
     // Include scenery variants outside current fog, without revealing entities.
-    await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(this.world.view().settlement!.entities)]), preloadCommandArt(), document.fonts.ready]); check();
+    await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
     await assets.ready(); check();
     report({stage:"Preparing graphics and shaders"});
     await loadingPaint(); check();
@@ -381,10 +372,9 @@ export class Session {
     await assets.ready(); check();
     renderer.present();
     assets.close(); this.assetLoading = null;
-    this.acc = 0;
     renderer.sky.setPlaying(!map.landscape?.environment.interior);
     this.started = true;
-    if (this.config.channel) this.armConfirms(match);
+    await worker.request("start",undefined);check();
     this.unbindDebug = perf.bindMatch({
       reveal: this.reveal,
       speed: this.simulationSpeed,
@@ -393,12 +383,12 @@ export class Session {
       players: match.slots,
       onReveal: (value) => {
         if (!this.config.channel) {
-          this.reveal = value;
+          this.reveal = value;this.configureWorker();
           this.resourceEntities = undefined;
         }
       },
       onSpeed: (value) => {
-        this.speed = matchSpeed(value, !!this.config.channel);
+        this.speed = matchSpeed(value, !!this.config.channel);this.configureWorker();
         renderer.gameTimeScale = this.simulationSpeed;
       },
       onVision: (player) => {
@@ -406,7 +396,7 @@ export class Session {
           !this.config.channel &&
           match.slots.some((s) => s.player === player)
         ) {
-          this.visionPlayer = player;
+          this.visionPlayer = player;this.configureWorker();
           this.resourceEntities = undefined;
           this.economyHud?.setSelection([]);
         }
@@ -422,11 +412,10 @@ export class Session {
             revision: match.mapRevision,
             player: this.config.player,
             observing: this.observing,
+            cameraMode:this.unitCameraMode,
             speed: this.simulationSpeed,
             reveal: this.reveal,
-            tick: this.world!.clock.tickIndex,
-            checksum: this.world!.checksum(),
-            settlement: this.world!.settlement!.view(this.me),
+            ...await worker.request('status',undefined),
             desynced: this.desynced,
             hud: {
               text: this.economyHud?.root.innerText,
@@ -439,10 +428,10 @@ export class Session {
               })),
             },
           };
-        if (op === "gamePerformance") return {timings:perf.report(),renderer:renderer.diagnostics(),tick:this.world!.clock.tickIndex};
+        if (op === "gamePerformance") return {timings:perf.report(),renderer:renderer.diagnostics(),tick:worker.latest!.tick};
         if (op === "gameSave") return this.snapshotLocal();
         if (op === "gameLoad") {
-          this.restoreLocal(o.save);
+          await this.restoreLocal(o.save);
           return { restored: true };
         }
         if (op === "gameSelection") {
@@ -462,12 +451,22 @@ export class Session {
           return { queued: true, player: this.me };
         }
         if (op === "gameView") {
+          if(o.cameraMode!==undefined){
+            if(!UNIT_CAMERA_MODES.includes(o.cameraMode as UnitCameraMode))throw new Error('Invalid camera mode');
+            const id=typeof o.subject==='number'?o.subject:this.economyHud?.selectedIds[0];
+            const subject=this.selectionView().entities.find(e=>e.id===id);
+            if(o.cameraMode!=='rts'&&(!subject?.unit||subject.remembered||subject.unit.contained||(subject.hp!==null&&subject.hp<=0)))throw new Error('Camera requires a visible living unit');
+            if(o.subject!==undefined&&subject)this.economyHud?.setSelection([subject.id]);
+            this.unitCameraMode=o.cameraMode as UnitCameraMode;
+            if(this.unitCameraMode==='rts')renderer.unitCamera(null);
+          }else if(o.x!==undefined||o.z!==undefined){this.unitCameraMode='rts';renderer.unitCamera(null);}
+
           if (typeof o.x === "number" && typeof o.z === "number")
             renderer.camera.lookAt(o.x, o.z);
           if (typeof o.gameZoom === "number")
             renderer.camera.pose({ gameZoom: o.gameZoom });
           this.present();
-          return { x: renderer.camera.targetX, z: renderer.camera.targetZ };
+          return { x: renderer.camera.targetX, z: renderer.camera.targetZ, cameraMode:this.unitCameraMode };
         }
         if (op === "screenshot") {
           await renderer.ready();
@@ -506,75 +505,10 @@ export class Session {
 
   tick(dtMs: number, _nowMs: number): void {
     const renderer = this.renderer;
-    const world = this.world;
-    if (!this.started || !renderer || !world) return;
-    const simulation = perf.start();
-    const remote = this.config.channel != null;
-    if (remote && !this.desynced) this.pulseConfirm();
-    this.acc += this.menuPaused ? 0 : Math.max(0, dtMs) * this.simulationSpeed;
-    const step = world.clock.tickMs;
-    // Two ticks per frame throttles a remote match below 40 Hz whenever
-    // rendering falls below 20 FPS. Catch up in bounded batches without
-    // discarding any authoritative remote commits.
-    const cap = 8 * this.simulationSpeed;
-    let n = 0;
-    while (this.acc >= step && n < cap) {
-      const next = world.clock.tickIndex + 1;
-      if (!remote) for (const ls of this.locksteps.values()) ls.confirm(next, next);
-      const commit = this.locksteps.get(this.me)?.take(next);
-      if (!commit) {
-        if (remote) this.acc = Math.min(this.acc, step);
-        break;
-      }
-      for (const slot of commit.slots) {
-        for (let i = 0; i < slot.actions.length; i++) {
-          world.enqueue(slot.actions[i]!, next, {
-            player: slot.player,
-            seq: i,
-          });
-        }
-      }
-      this.acc -= step;
-      for (const [id, peer] of this.locksteps)
-        if (id !== this.me) peer.take(next);
-      world.tick();
-      if (!document.hidden) for (const receipt of world.commandReceipts) {
-        if (this.observing || receipt.player !== this.me) continue;
-        if (receipt.action.type === "learnAbility") this.economyHud?.learnedAbility();
-      }
-      if (!remote) for (const slot of this.match?.slots ?? []) {
-        if (slot.kind !== "ai" || this.aiGreeted.has(slot.player)) continue;
-        const game = world.settlement;
-        const hall = game.entities.find(e => e.id === game.state.objectives[slotOwner(slot.player)]);
-        const max = hall && content.get(hall.definition).body?.maxHp;
-        if ((hall && max && hall.hp !== null && hall.hp <= max * .15) || game.isDefeated(slotOwner(slot.player))) {
-          this.aiGreeted.add(slot.player);
-          this.chat?.receive({name: slot.name ?? `Player ${slot.player + 1}`, player: slot.player, text: "gg"});
-        }
-      }
-      this.observerIncome?.record(next, world.settlement.economy.deliveries);
-      for (const [name, ms] of Object.entries(world.settlement?.timings ?? {}))
-        perf.sample(`Sim · ${name}`, ms);
-      if (perf.enabled)
-        for (const [name, ms] of Object.entries(world.aiTimings ?? {}))
-          perf.sample(`AI decision · ${name}`, ms);
-      if (perf.enabled && next % 40 === 0)
-        for (const ai of world.aiSummary()) {
-          perf.value(`AI ${ai.owner}`, `${ai.mission} · ${ai.economy}`);
-          perf.value(`AI ${ai.owner} reason`, ai.reason);
-          perf.value(
-            `AI ${ai.owner} commands`,
-            `${ai.metrics.accepted} accepted / ${ai.metrics.rejected} rejected`,
-          );
-        }
-      const ch = this.config.channel;
-      if (ch && next % matchChecksumEvery(this.match) === 0) {
-        ch.send({ type: "hash", tick: next, checksum: world.checksum() });
-      }
-      n++;
-    }
-    if (n >= cap && !remote) this.acc %= step;
-    perf.end("Simulation / lockstep", simulation);
+    const worker=this.worker;
+    if(!this.started||!renderer||!worker?.latest)return;
+    if(this.workerProfiling!==perf.enabled){this.workerProfiling=perf.enabled;this.configureWorker();}
+    if(perf.enabled)perf.value('Worker snapshot age (ms)',performance.now()-worker.receivedAt);
     // Keep the authoritative match and network running in a hidden tab, but
     // defer snapshots, DOM, animation, minimap and GPU work until it is visible.
     // This also prevents a stale edge-hover from moving an unseen camera.
@@ -583,11 +517,11 @@ export class Session {
       this.fpsMs = 0;
       return;
     }
-    this.updateObserverStats();
     const input = perf.start();
-    const scene=world.settlement.state.mission?.scene;
-    const cinematic=!!scene || !!world.settlement.state.mission?.dialogue?.remaining;
-    if(scene && (renderer.camera.targetX!==scene.x || renderer.camera.targetZ!==scene.y))renderer.camera.lookAt(scene.x,scene.y);
+    const state=worker.latest.visual.settlement,scene=state.mission?.scene;
+    const cinematic=(!state.outcome&&!state.mission?.error) && (!!scene || !!state.mission?.dialogue?.remaining);
+    if(cinematic&&!this.cinematicFocus)this.cinematicFocus={x:renderer.camera.targetX,z:renderer.camera.targetZ};
+    if(!cinematic&&this.cinematicFocus){renderer.unitCamera(null);renderer.camera.lookAt(this.cinematicFocus.x,this.cinematicFocus.z);this.cinematicFocus=null;}
     if(cinematic || this.menuPaused)this.input?.reset();else this.input?.tick(dtMs);
     renderer.camera.cinematic(cinematic,dtMs);
     perf.end("Input", input);
@@ -608,6 +542,14 @@ export class Session {
     perf.end("Economy HUD / minimap data", hud);
     if (this.economyHud?.targeting?.type === "cast" && this.placementPointer)
       this.onHover(this.placementPointer);
+    const focus=view.settlement?.entities.find(e=>e.id===this.economyHud?.selectedIds[0]);
+    if(!focus?.unit||focus.remembered||focus.unit.contained||(focus.hp!==null&&focus.hp<=0))this.unitCameraMode='rts';
+    const shot=cinematic?scene?.camera:undefined;
+    if(shot&&shot.mode!=='rts'){
+      const entity=worker.latest.targets.find(e=>e.tag===shot.entity),target=worker.latest.targets.find(e=>e.tag===shot.lookAt);
+      renderer.unitCamera(entity?{...shot,mode:shot.mode,entity:entity.id,lookAt:target?.id}:null);
+    }else if(!cinematic&&this.unitCameraMode!=='rts'&&focus){renderer.unitCamera({mode:this.unitCameraMode,entity:focus.id});}
+    else {renderer.unitCamera(null);if(cinematic&&scene){const target=shot&&worker.latest.targets.find(e=>e.tag===shot.entity);renderer.camera.lookAt(target?.x??scene.x,target?.y??scene.y);}}
     renderer.draw(view, this.stamps);
     const minimap = perf.start();
     this.mini?.paint();
@@ -622,105 +564,23 @@ export class Session {
     this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.distance });
   }
 
-  private updateObserverStats(force = false): void {
-    if (
-      !this.observerPanel ||
-      !this.observerIncome ||
-      !this.world ||
-      !this.match
-    )
-      return;
-    const tick = this.world.clock.tickIndex;
-    // One projection per game second; the receipt collector still runs every simulation tick.
-    if (
-      !force &&
-      this.observerStatsTick >= 0 &&
-      tick - this.observerStatsTick < 40
-    )
-      return;
-    this.observerStatsTick = tick;
-    this.observerPanel.update(
-      observerStats(
-        this.world.settlement.state,
-        this.match.slots,
-        content,
-        this.observerIncome,
-      ),
-    );
+  async snapshotLocal():Promise<LocalSave>{
+    if(!this.worker||this.config.channel)throw Error('Local saves require a singleplayer match');
+    const controls=this.economyHud?.saveControls(),save=await this.worker.request('save',undefined);
+    return {...save,controlGroups:controls};
   }
-
-  snapshotLocal() {
-    if (!this.room || !this.world || !this.match || this.config.channel)
-      throw new Error("Local saves require a singleplayer match");
-    const local = this.locksteps.get(this.me)!;
-    return {
-      v: LOCAL_SAVE_FORMAT_VERSION as typeof LOCAL_SAVE_FORMAT_VERSION,
-      mode: this.loadedMap?.map.mission ? "campaign" as const : "skirmish" as const,
-      player:this.config.player,
-      match:structuredClone(this.match),
-      remote: false as const,
-      mapId: this.match.mapId,
-      mapRevision: this.match.mapRevision,
-      seed: this.match.seed,
-      world: this.world.snapshot(),
-      controlGroups:this.economyHud?.saveControls(),
-      pipeline: {
-        ...this.room.snapshot(),
-        commits: local.peek(),
-        sentThrough: local.sent(),
-      },
-      clients: [...this.locksteps].map(([player, peer]) => ({
-        player,
-        sentThrough: peer.sent(),
-        outbox: peer.outbox(),
-      })),
-    };
+  async restoreLocal(raw:unknown){
+    if(!this.worker||this.config.channel)throw Error('Local load requires a singleplayer match');
+    const worker=this.worker;await worker.load(raw);if(worker!==this.worker)return;
+    this.unitCameraMode='rts';this.cinematicFocus=null;this.renderer?.unitCamera(null);
+    this.resourceEntities=undefined;this.placementResult=undefined;
+    this.economyHud?.restoreControls((raw as LocalSave).controlGroups);
   }
-  restoreLocal(raw: unknown) {
-    if (this.config.channel || !this.match || !this.loadedMap)
-      throw new Error("Local load requires a singleplayer match");
-    const save = localSaveSchema.parse(raw);
-    if(save.mode!==(this.loadedMap.map.mission?"campaign":"skirmish"))throw new Error("This save belongs to a different game mode.");
-    if(save.player!==this.config.player || save.match.slots.length!==this.match.slots.length || save.match.slots.some((slot,i)=>{const current=this.match!.slots[i];return slot.player!==current.player||slot.kind!==current.kind||slot.team!==current.team||slot.name!==current.name;}))throw new Error("Load this save with its original player setup.");
-    if (
-      save.mapId !== this.match.mapId ||
-      save.mapRevision !== this.match.mapRevision
-    )
-      throw new Error(
-        "Open the same map and content revision before loading this save.",
-      );
-    if(save.match.mapId!==save.mapId||save.match.mapRevision!==save.mapRevision||save.match.seed!==save.seed)throw new Error("Saved match metadata does not match the scenario.");
-    const restored = restoreSavedWorld(save,this.loadedMap.map);
-    const pipeline=save.pipeline;
-    for (const channel of this.channels) channel.destroy();
-    this.channels.length = 0;
-    this.locksteps.clear();
-    this.match = structuredClone(save.match);
-    this.bindLockstep(this.match);
-    this.room!.resume(pipeline);
-    for (const client of save.clients)
-      this.locksteps
-        .get(client.player)!
-        .restore(pipeline.commits, client.sentThrough, client.outbox);
-    this.world = restored;
-    this.observerIncome?.reset(restored.clock.tickIndex);
-    this.updateObserverStats(true);
-    this.acc = 0;
-    this.resourceEntities = undefined;
-    this.economyHud?.restoreControls(save.controlGroups);
-  }
-  private send(action: Action): boolean {
-    if (this.observing) return false;
-    const peer = this.locksteps.get(this.me);
-    if (!peer) return false;
-    peer.send(action);
-    // Send remote orders now; do not wait for the periodic heartbeat. Local
-    // orders enter the very next simulation tick through the same Room channel.
-    if (this.config.channel && this.world && !this.desynced) this.pulseConfirm();
-    if (this.world && this.renderer) {
-      const feedback = commandFeedback(action, this.world.settlement.view(this.me), content);
-      if (feedback) this.renderer.gameCommandFeedback(feedback);
-    }
+  private send(action:Action):boolean{
+    if(this.observing||this.desynced||!this.worker?.latest)return false;
+    if(!this.worker.send(action))return false;
+    const feedback=commandFeedback(action,this.selectionView(),content);
+    if(feedback)this.renderer?.gameCommandFeedback(feedback);
     return true;
   }
   private click(
@@ -730,7 +590,7 @@ export class Session {
     right = false,
     sameType = false,
   ) {
-    const sim = this.world?.settlement,
+    const sim = this.worker?.latest?.selection.settlement,
       hit = this.economyHud?.mode ? this.renderer?.pickGround(clientX,clientY) : this.renderer?.pickWalk(clientX, clientY),
       hud = this.economyHud;
     if (right && hud?.targeting) {
@@ -753,18 +613,9 @@ export class Session {
       return;
     }
     if (hud.mode) {
-      const error = sim.canBuild(
-        owner,
-        hud.mode,
-        position,
-        hud.buildingActor,
-        hud.placementRotation,
-      );
-      if (error) {
-        hud.showError(error);
-        hud.placement(error);
-        return;
-      }
+      const key=JSON.stringify({definition:hud.mode,position,actor:hud.buildingActor,rotation:hud.placementRotation});
+      const error=this.placementResult?.key===key?this.placementResult.error:null;
+      if(error){hud.showError(error);hud.placement(error);return;}
       const action: Extract<Action, { type: "build" }> = {
         type: "build",
         actors: hud.targeting!.actors,
@@ -843,17 +694,17 @@ export class Session {
       return;
     }
     if (binding?.type === "cast" && binding.ability) {
-      const caster = sim.context.get(binding.actors[0]),
+      const caster = sim.entities.find(e=>e.id===binding.actors[0]),
         spell = content.rules.spells[binding.ability],
         rank = caster?.spellcasting?.learned[binding.ability];
       if (
         !caster ||
         !rank ||
         Math.hypot(
-          position.x - precise(caster).x,
-          position.y - precise(caster).y,
+          position.x - caster.x,
+          position.y - caster.y,
         ) > spell.ranks[rank - 1].range ||
-        !sim.observation.explored(owner, [sim.spatial.cell(position)])
+        !this.explored(position.x,position.y)
       )
         return;
       this.send({
@@ -982,12 +833,9 @@ export class Session {
     this.assetLoading = null;
     this.observerPanel?.destroy();
     this.observerPanel = null;
-    this.observerIncome = null;
     this.unbindDebug?.();
     this.unbindDebug = null;
     this.canvas.style.cursor = "";
-    if (this.confirmTimer != null) clearInterval(this.confirmTimer);
-    this.confirmTimer = null;
     this.canvas.removeEventListener("pointermove", this.onHover);
     this.chat?.destroy();
     this.chat = null;
@@ -1002,61 +850,6 @@ export class Session {
     this.renderer = null;
     this.bridge?.stop();
     this.bridge = null;
-    this.world = null;
-    this.locksteps.clear();
-    for (const channel of this.channels) channel.destroy();
-    this.channels.length = 0;
+    this.worker?.stop();this.worker=null;
   }
-
-  private bindLockstep(match: MatchConfig): void {
-    const room = (this.room = new Room(match));
-    for (const slot of match.slots) {
-      const ch = new MemoryChannel(room, slot.player);
-      this.channels.push(ch);
-      this.locksteps.set(
-        slot.player,
-        new Lockstep(ch, slot.player, match.delay),
-      );
-    }
-  }
-
-  private bindRemote(match: MatchConfig, channel: Channel): void {
-    const wrapped: Channel = {
-      send: (msg) => channel.send(msg),
-      onMessage: (fn) => {
-        channel.onMessage((msg) => {
-          if (msg.type === "chat") this.chat?.receive(msg.message);
-          if (msg.type === "desync") this.desynced = true;
-          fn(msg);
-        });
-      },
-    };
-    this.locksteps.set(this.me, new Lockstep(wrapped, this.me, match.delay));
-  }
-
-  private armConfirms(match: MatchConfig): void {
-    if (this.confirmTimer != null) clearInterval(this.confirmTimer);
-    this.confirmTimer = setInterval(() => this.pulseConfirm(), match.tickMs);
-    this.pulseConfirm();
-  }
-
-  private pulseConfirm(): void {
-    const world = this.world;
-    if (!world || this.desynced) return;
-    for (const ls of this.locksteps.values()) {
-      // A confirmation is an irrevocable promise: new input must follow it.
-      // Base the pipeline on simulated time, never wall time. Otherwise a
-      // suspended/slow client promises seconds of empty turns ahead of the
-      // battlefield it can see, making every subsequent click feel delayed.
-      const through = world.clock.tickIndex + Math.max(1, ls.delay);
-      // The first click flushes immediately. Further clicks in the same
-      // simulation beat share the next packet instead of each reserving a new
-      // future tick. Even a burst during a stall cannot inflate input delay.
-      if (ls.sent() <= through) ls.confirm(through);
-    }
-  }
-}
-
-function matchChecksumEvery(match: MatchConfig | null): number {
-  return match?.checksumEvery ?? 8;
 }

@@ -43,6 +43,9 @@ for side,sign in [('L',1),('R',-1)]:
 spec['socket_back']=((0,.13,.94),'spine')
 spec['mortar']=((-.35,.26,.95),'socket_back')
 spec['socket_muzzle']=((-.42,-.08,1.93),'mortar')
+spec['mandible.L']=((.105,-.195,1.30),'head')
+spec['mandible.R']=((-.105,-.195,1.30),'head')
+rig['speechRig']={'left':'mandible.L','right':'mandible.R','axis':'z','angle':.24}
 for name,(pos,parent) in spec.items():
     b=arm.edit_bones.new(name);b.head=pos;b.tail=Vector(pos)+Vector((0,.10,0))
     if parent:b.parent=arm.edit_bones[parent]
@@ -102,7 +105,7 @@ ell('Head carapace',(0,-.035,1.435),(.265,.22,.285),TEAM,'head',16,10)
 # Forehead/clypeus shells have distinct broad planes rather than engraved microdetails.
 mesh('Forehead shield',[(-.14,-.23,1.59),(0,-.274,1.65),(.14,-.23,1.59),(.105,-.271,1.44),(0,-.296,1.40),(-.105,-.271,1.44)],[(0,1,2,3,4,5)],TEAM,'head')
 for side,sign in [('L',1),('R',-1)]:
-    tube('Curved mandible '+side,[(sign*.105,-.195,1.30),(sign*.14,-.28,1.23),(sign*.11,-.34,1.16),(sign*.035,-.34,1.21)],[.052,.048,.029,.003],TEAM,'head')
+    tube('Curved mandible '+side,[(sign*.105,-.195,1.30),(sign*.14,-.28,1.23),(sign*.11,-.34,1.16),(sign*.035,-.34,1.21)],[.052,.048,.029,.003],TEAM,'mandible.'+side)
     tube('Antenna stalk '+side,[(sign*.13,-.045,1.63),(sign*.17,-.025,1.82),(sign*.24,-.065,1.99)],[.025,.023,.027],TEAM,'antenna.'+side)
     tube('Antenna elbow '+side,[(sign*.24,-.065,1.99),(sign*.27,-.15,1.98),(sign*.30,-.28,1.90),(sign*.32,-.36,1.83)],[.031,.029,.025,.017],TEAM,'antenna.'+side)
     ell('Shoulder joint '+side,(sign*.27,0,1.06),(.095,.092,.10),JOINT,'upper_arm.'+side,10,6)

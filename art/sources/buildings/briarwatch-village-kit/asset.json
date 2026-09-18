@@ -1,0 +1,26 @@
+{
+  "name": "Briarwatch Village Kit",
+  "blend": "briarwatch-village-kit.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 12,
+    "elevation": 35,
+    "scale": 21,
+    "target": [
+      0,
+      -2,
+      1.6
+    ]
+  },
+  "render": {
+    "width": 1920,
+    "height": 1280,
+    "samples": 48
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 300,
+    "rim_energy": 1000
+  }
+}

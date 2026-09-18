@@ -16,7 +16,7 @@
       "archer-2"
     ],
     "order": 5,
-    "title": "Mission 5 — The Heartwood Vault",
+    "title": "Mission 5 \u2014 The Heartwood Vault",
     "heroLevelCap": 8,
     "regions": [
       {
@@ -67,7 +67,7 @@
         "optional": true
       }
     ],
-    "script": "function on_start()\n mission.set('stage','gallery');mission.begin_objective('gallery')\n mission.say('Marshal','unit.ants.marshal','No wind. No sky. Only the tree around us. Keep to the amber lights. We find what poisons these roots, then we find our way home.',10,true)\nend\nfunction on_tick()\n if not mission.alive('marshal') then mission.lose();return end\n local stage=mission.get('stage')\n if stage=='gallery' and mission.in_region('marshal','gallery') then\n  mission.complete_objective('gallery');mission.begin_objective('resin-room');mission.set('stage','resin')\n  mission.say('Vanguard scout','unit.ants.archer','The root rises above the gallery. Archers can take its crown while the shields cover the lower passage. I see amber burning in a chamber to the east.',10,true)\n elseif stage=='resin' and not mission.alive('resin-guard.0') and not mission.alive('resin-guard.1') then\n  mission.complete_objective('resin-room');mission.begin_objective('heart');mission.set('stage','heart')\n  mission.recover('marshal')\n  for i=0,3 do mission.recover('guard-'..i) end\n  for i=0,2 do mission.recover('archer-'..i) end\n  mission.say('Marshal','unit.ants.marshal','The living resin restores our strength. Tend the wounded while we can. Something has nested around its source. Take the northern passage. No one goes alone.',10,true)\n elseif stage=='heart' and not mission.alive('heart-keeper.0') and not mission.alive('heart-keeper.1') and not mission.alive('heart-keeper.2') then\n  mission.complete_objective('heart');mission.set('stage','victory')\n  mission.say('Marshal','unit.ants.marshal','The Keeper is fallen. This is more than a mine, more than another resource to claim. The whole forest drinks from these roots. We must tell the colony.',11,true)\n elseif stage=='victory' then mission.win() end\n if not mission.get('cache') and mission.in_region('marshal','fungal-cache') then mission.set('cache','seen');mission.begin_objective('fungal-cache') end\n if mission.get('cache')=='seen' and not mission.alive('fungal-cache.0') and not mission.alive('fungal-cache.1') then mission.set('cache','done');mission.complete_objective('fungal-cache') end\nend\n"
+    "script": "function on_start()\n mission.set('stage','gallery');mission.begin_objective('gallery')\n mission.camera('first-person','archer-1','marshal',nil,1.5,55,0.6)\n mission.set('intro-camera',true)\n mission.say('Marshal','unit.ants.marshal','No wind. No sky. Only the tree around us. Keep to the amber lights. We find what poisons these roots, then we find our way home.',10,true, 'marshal')\nend\nfunction on_tick()\n if mission.get('intro-camera') then mission.end_scene();mission.set('intro-camera',nil) end\n if not mission.alive('marshal') then mission.lose();return end\n local stage=mission.get('stage')\n if stage=='gallery' and mission.in_region('marshal','gallery') then\n  mission.complete_objective('gallery');mission.begin_objective('resin-room');mission.set('stage','resin')\n  mission.say('Vanguard scout','unit.ants.archer','The root rises above the gallery. Archers can take its crown while the shields cover the lower passage. I see amber burning in a chamber to the east.',10,true, 'archer-1')\n elseif stage=='resin' and not mission.alive('resin-guard.0') and not mission.alive('resin-guard.1') then\n  mission.complete_objective('resin-room');mission.begin_objective('heart');mission.set('stage','heart')\n  mission.recover('marshal')\n  for i=0,3 do mission.recover('guard-'..i) end\n  for i=0,2 do mission.recover('archer-'..i) end\n  mission.say('Marshal','unit.ants.marshal','The living resin restores our strength. Tend the wounded while we can. Something has nested around its source. Take the northern passage. No one goes alone.',10,true, 'marshal')\n elseif stage=='heart' and not mission.alive('heart-keeper.0') and not mission.alive('heart-keeper.1') and not mission.alive('heart-keeper.2') then\n  mission.complete_objective('heart');mission.set('stage','victory')\n  mission.say('Marshal','unit.ants.marshal','The Keeper is fallen. This is more than a mine, more than another resource to claim. The whole forest drinks from these roots. We must tell the colony.',11,true, 'marshal')\n elseif stage=='victory' then mission.win() end\n if not mission.get('cache') and mission.in_region('marshal','fungal-cache') then mission.set('cache','seen');mission.begin_objective('fungal-cache') end\n if mission.get('cache')=='seen' and not mission.alive('fungal-cache.0') and not mission.alive('fungal-cache.1') then mission.set('cache','done');mission.complete_objective('fungal-cache') end\nend\n"
   },
   "stamps": [
     {
@@ -99,7 +99,7 @@
       "y": 188,
       "scale": 0.8,
       "yaw": -1.5707963267948966,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.3",
@@ -118,7 +118,7 @@
       "y": 197.40456403667957,
       "scale": 0.8,
       "yaw": -2.199114857512855,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.5",
@@ -137,7 +137,7 @@
       "y": 203.21690426072246,
       "scale": 0.8,
       "yaw": -2.827433388230814,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.7",
@@ -156,7 +156,7 @@
       "y": 203.21690426072246,
       "scale": 0.8,
       "yaw": -3.4557519189487724,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.9",
@@ -175,7 +175,7 @@
       "y": 197.40456403667957,
       "scale": 0.8,
       "yaw": -4.084070449666731,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.11",
@@ -194,7 +194,7 @@
       "y": 188,
       "scale": 0.8,
       "yaw": -4.71238898038469,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.13",
@@ -213,7 +213,7 @@
       "y": 178.59543596332043,
       "scale": 0.8,
       "yaw": -5.340707511102648,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.15",
@@ -232,7 +232,7 @@
       "y": 172.78309573927754,
       "scale": 0.8,
       "yaw": -5.969026041820607,
-      "elevation": -9.536743128535363e-8
+      "elevation": -9.536743128535363e-08
     },
     {
       "id": "vault.prop.17",
@@ -251,7 +251,7 @@
       "y": 172.78309573927754,
       "scale": 0.8,
       "yaw": -6.5973445725385655,
-      "elevation": -9.536743128535363e-8
+      "elevation": -9.536743128535363e-08
     },
     {
       "id": "vault.prop.19",
@@ -270,7 +270,7 @@
       "y": 154.7616794338192,
       "scale": 0.8,
       "yaw": -1.9896753472735356,
-      "elevation": -9.536743217353205e-8
+      "elevation": -9.536743217353205e-08
     },
     {
       "id": "vault.prop.21",
@@ -289,7 +289,7 @@
       "y": 162.83547581145746,
       "scale": 0.8,
       "yaw": -2.4085543677521746,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.23",
@@ -308,7 +308,7 @@
       "y": 167.8253563910837,
       "scale": 0.8,
       "yaw": -2.827433388230814,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.25",
@@ -327,7 +327,7 @@
       "y": 140.01011942037377,
       "scale": 0.8,
       "yaw": -4.921828490624009,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.27",
@@ -346,7 +346,7 @@
       "y": 130.89315394498064,
       "scale": 0.8,
       "yaw": -5.340707511102648,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.29",
@@ -365,7 +365,7 @@
       "y": 136,
       "scale": 0.8,
       "yaw": -1.5707963267948966,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.31",
@@ -384,7 +384,7 @@
       "y": 145.99234928897204,
       "scale": 0.8,
       "yaw": -2.199114857512855,
-      "elevation": -9.536743217353205e-8
+      "elevation": -9.536743217353205e-08
     },
     {
       "id": "vault.prop.33",
@@ -403,7 +403,7 @@
       "y": 152.1679607770176,
       "scale": 0.8,
       "yaw": -2.827433388230814,
-      "elevation": -9.536743217353205e-8
+      "elevation": -9.536743217353205e-08
     },
     {
       "id": "vault.prop.35",
@@ -422,7 +422,7 @@
       "y": 119.83203922298239,
       "scale": 0.8,
       "yaw": -5.969026041820607,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.37",
@@ -441,7 +441,7 @@
       "y": 126.00765071102795,
       "scale": 0.8,
       "yaw": -7.225663103256524,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.39",
@@ -470,7 +470,7 @@
       "y": 87,
       "scale": 0.8,
       "yaw": -2.0943951023931953,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.42",
@@ -489,7 +489,7 @@
       "y": 97,
       "scale": 0.8,
       "yaw": -3.141592653589793,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.44",
@@ -508,7 +508,7 @@
       "y": 94.32050807568878,
       "scale": 0.8,
       "yaw": -3.665191429188092,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.46",
@@ -527,7 +527,7 @@
       "y": 87,
       "scale": 0.8,
       "yaw": -4.188790204786391,
-      "elevation": -9.536743172944284e-8
+      "elevation": -9.536743172944284e-08
     },
     {
       "id": "vault.prop.48",
@@ -8240,16 +8240,17 @@
     ],
     "environment": {
       "interior": true,
+      "ceilingHeight": 18,
       "floorMaterial": "heartwood",
       "preset": "heartwood-interior",
       "hour": 10,
       "season": "summer",
       "playing": false,
       "weather": {
-        "kind": "clear",
-        "intensity": 0,
-        "windX": 0,
-        "windZ": 0
+        "kind": "spores",
+        "intensity": 0.5,
+        "windX": 0.12,
+        "windZ": -0.08
       },
       "atmosphere": {
         "enabled": true,
@@ -8852,6 +8853,240 @@
         "size": 2.5159805840812624,
         "rotation": 9.693685602396727,
         "opacity": 0.25
+      },
+      {
+        "id": "vault-mycelium-79-0",
+        "kind": "mycelium-bed",
+        "x": 95.49767114997013,
+        "z": 191.01418796382495,
+        "size": 13.708497217157856,
+        "rotation": 180.77252715826035,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-1",
+        "kind": "mycelium-bed",
+        "x": 90.48195397764694,
+        "z": 199.6507626961421,
+        "size": 13.274341298965737,
+        "rotation": 297.4320581741631,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-2",
+        "kind": "mycelium-bed",
+        "x": 81.08052064312464,
+        "z": 203.8371420733923,
+        "size": 10.300233598100021,
+        "rotation": 180.7356457784772,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-3",
+        "kind": "mycelium-bed",
+        "x": 70.88439913722453,
+        "z": 201.97427146326766,
+        "size": 10.635748471831903,
+        "rotation": 29.189942087978125,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-4",
+        "kind": "mycelium-bed",
+        "x": 63.788161321776684,
+        "z": 194.77370412219247,
+        "size": 11.01858975016512,
+        "rotation": 308.46480913460255,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-5",
+        "kind": "mycelium-bed",
+        "x": 62.50232885002986,
+        "z": 184.98581203617505,
+        "size": 14.880683951778337,
+        "rotation": 117.73250648751855,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-6",
+        "kind": "mycelium-bed",
+        "x": 67.51804602235306,
+        "z": 176.34923730385793,
+        "size": 13.685355653287843,
+        "rotation": 201.53727438300848,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-7",
+        "kind": "mycelium-bed",
+        "x": 76.91947935687536,
+        "z": 172.1628579266077,
+        "size": 11.064261769643053,
+        "rotation": 108.17675767466426,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-79-8",
+        "kind": "mycelium-bed",
+        "x": 87.11560086277547,
+        "z": 174.02572853673234,
+        "size": 10.035456815967336,
+        "rotation": 355.4595284163952,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-1",
+        "kind": "mycelium-bed",
+        "x": 150.04938647527433,
+        "z": 157.97178725618693,
+        "size": 12.729469033656642,
+        "rotation": 44.89827739074826,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-2",
+        "kind": "mycelium-bed",
+        "x": 141.8899598766339,
+        "z": 164.41731491272446,
+        "size": 12.641087576048449,
+        "rotation": 178.406057395041,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-5",
+        "kind": "mycelium-bed",
+        "x": 110.40546165104925,
+        "z": 162.14633326182678,
+        "size": 14.273193761473522,
+        "rotation": 289.8832735978067,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-8",
+        "kind": "mycelium-bed",
+        "x": 103.23601740735107,
+        "z": 136.17970182551736,
+        "size": 14.457914714002982,
+        "rotation": 120.21592877805233,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-9",
+        "kind": "mycelium-bed",
+        "x": 109.6288736357649,
+        "z": 128.44365301074546,
+        "size": 11.44213552470319,
+        "rotation": 130.6509437598288,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-128-13",
+        "kind": "mycelium-bed",
+        "x": 149.4351495636495,
+        "z": 131.31488575439886,
+        "size": 12.32147637871094,
+        "rotation": 118.77218585461378,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-0",
+        "kind": "mycelium-bed",
+        "x": 198.32255470746864,
+        "z": 139.17282943560522,
+        "size": 14.411723905941471,
+        "rotation": 65.87115062400699,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-1",
+        "kind": "mycelium-bed",
+        "x": 193.77153119062098,
+        "z": 147.58846838840714,
+        "size": 11.971901325741783,
+        "rotation": 16.889054775238037,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-2",
+        "kind": "mycelium-bed",
+        "x": 185.1656367600784,
+        "z": 152.32485050809473,
+        "size": 14.15116976830177,
+        "rotation": 146.80241050198674,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-5",
+        "kind": "mycelium-bed",
+        "x": 163.44054665635056,
+        "z": 137.60362352506974,
+        "size": 13.43507346813567,
+        "rotation": 132.83196408301592,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-7",
+        "kind": "mycelium-bed",
+        "x": 172.1738968306899,
+        "z": 121.45413063768991,
+        "size": 14.027774337446317,
+        "rotation": 162.6751940511167,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-mycelium-181-10",
+        "kind": "mycelium-bed",
+        "x": 197.37378950001784,
+        "z": 129.74983955514014,
+        "size": 11.838366739684716,
+        "rotation": 257.59537674486637,
+        "opacity": 0.72
+      },
+      {
+        "id": "vault-nursery-bed-0",
+        "kind": "mycelium-bed",
+        "x": 70,
+        "z": 119,
+        "size": 13,
+        "rotation": 0,
+        "opacity": 0.85
+      },
+      {
+        "id": "vault-nursery-bed-1",
+        "kind": "mycelium-bed",
+        "x": 85,
+        "z": 116,
+        "size": 11,
+        "rotation": 113,
+        "opacity": 0.85
+      },
+      {
+        "id": "vault-nursery-bed-2",
+        "kind": "mycelium-bed",
+        "x": 81,
+        "z": 101,
+        "size": 12,
+        "rotation": 226,
+        "opacity": 0.85
+      },
+      {
+        "id": "vault-heart-rot",
+        "kind": "root-rot",
+        "x": 166,
+        "z": 67,
+        "size": 28,
+        "rotation": 18,
+        "opacity": 0.85
+      },
+      {
+        "id": "vault-heart-rot-trail",
+        "kind": "root-rot",
+        "x": 165,
+        "z": 79,
+        "size": 16,
+        "rotation": 117,
+        "opacity": 0.35
       }
     ]
   },

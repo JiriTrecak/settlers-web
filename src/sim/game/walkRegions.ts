@@ -5,11 +5,29 @@ export class WalkRegions {
   private readonly labels: Int32Array;
   private readonly queue: Int32Array;
   private dirty = true;
+  private regionCount=0;
   constructor(private readonly size:number,private readonly walkable:(cell:number)=>boolean,
     private readonly heights:Int16Array,private readonly maxStep:number) {
     this.labels=new Int32Array(size*size);this.queue=new Int32Array(size*size);
   }
   invalidate(){this.dirty=true;}
+  /** Ordinary tree removal opens cells into the same surrounding component.
+   * Patch those locally. A merge of different regions falls back to the full
+   * flood fill, as does inserting any new obstacle through invalidate(). */
+  open(cells:Iterable<number>){
+    if(this.dirty)return;
+    const n=this.size;
+    for(const cell of cells){
+      if(!this.walkable(cell))continue;
+      const x=cell%n,y=Math.floor(cell/n);let label=0;
+      for(const other of [x>0?cell-1:-1,x+1<n?cell+1:-1,y>0?cell-n:-1,y+1<n?cell+n:-1]){
+        if(other<0||Math.abs(this.heights[cell]!-this.heights[other]!)>this.maxStep)continue;
+        const adjacent=this.labels[other]!;if(!adjacent)continue;
+        if(label&&adjacent!==label){this.dirty=true;return;}label=adjacent;
+      }
+      this.labels[cell]=label||++this.regionCount;
+    }
+  }
   connected(start:number,goal:number):boolean {
     if(this.dirty)this.rebuild();
     const destination=this.labels[goal];if(!destination)return false;
@@ -38,5 +56,6 @@ export class WalkRegions {
         }
       }
     }
+    this.regionCount=region;
   }
 }

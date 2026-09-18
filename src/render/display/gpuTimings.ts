@@ -13,7 +13,7 @@ export class GpuTimings {
  constructor(private readonly gl:WebGL2RenderingContext){this.extension=gl.getExtension('EXT_disjoint_timer_query_webgl2');}
  get supported(){return !!this.extension;}
  begin(){
-  const ext=this.extension;if(!ext)return;
+  const ext=this.extension;if(!ext||(!perf.enabled&&!this.pending.length))return;
   const disjoint=this.gl.getParameter(ext.GPU_DISJOINT_EXT);
   while(this.pending.length){
    const sample=this.pending[0];
@@ -22,7 +22,7 @@ export class GpuTimings {
    this.gl.deleteQuery(sample.query);this.pending.shift();
   }
   this.active=perf.enabled&&this.pending.length<4;
-  this.scope=['GPU frame','GPU atmosphere','GPU frame','GPU scene'][this.frame++%4];
+  this.scope=['GPU frame','GPU atmosphere','GPU frame','GPU scene','GPU frame','GPU portrait'][this.frame++%6];
   if(this.active&&this.scope==='GPU frame')this.start(this.scope);
  }
  private start(label:string){const query=this.gl.createQuery();if(!query||!this.extension)return;this.current={query,label};this.gl.beginQuery(this.extension.TIME_ELAPSED_EXT,query);}

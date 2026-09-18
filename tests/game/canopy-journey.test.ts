@@ -17,6 +17,8 @@ for(const id of ['vanguard-hollow-gate','vanguard-heartwood-vault']){
  for(let tick=0;tick<16000&&!g.state.outcome;tick++){
   // Dialogue presentation is covered separately; skip its real-time duration.
   g.state.mission!.dialogue=null;
+  // Let authored scene cleanup run before issuing player commands.
+  if(g.state.mission!.scene){g.tick();continue;}
   const current=String(g.state.mission!.variables.stage??'');
   if(stage!==current){stage=current;trace.push({stage,tick,army:g.entities.filter(e=>e.owner==='player.1'&&e.unit&&e.hp!>0).length,hp:hero.hp});const p=goals[stage];if(p)g.command('player.1',{type:'move',actors:g.entities.filter(e=>e.owner==='player.1'&&e.unit&&e.hp!>0).map(e=>e.id),destination:p,attackMove:true});}
   if(hero.hp!>0){
@@ -37,7 +39,7 @@ for(const id of ['vanguard-hollow-gate','vanguard-heartwood-vault']){
   }
   g.tick();expect(g.state.mission?.error).toBeNull();
  }
- expect(g.state.outcome?.winner,JSON.stringify({id,stage,trace})).toBe('player.1');
+ expect(g.state.outcome?.winner,JSON.stringify({id,stage,trace,survivors:g.entities.filter(e=>e.unit&&e.hp!>0).map(e=>({tag:e.placement,hp:e.hp,x:e.x,y:e.y,order:e.unit?.order}))})).toBe('player.1');
  expect(hero.hp).toBeGreaterThan(0);
  company=captureCompany(g);
 }

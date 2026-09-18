@@ -1,7 +1,8 @@
+import {missionInventory} from "./inventory";
 import {turnToward} from "../game/facing";
 import {precise} from "../game/motion";
 import {runMissionLua,type Scalar,type LuaHost} from '../../shared/scenario/lua';
-import {emptyMissionState,missionStateSchema} from '../../shared/scenario/schema';
+import {emptyMissionState,missionStateSchema,missionCameraSchema} from '../../shared/scenario/schema';
 import {ownerSchema} from '../../content/schema';
 import {alive} from '../game/state';
 import type {Game} from '../game/game';
@@ -25,6 +26,8 @@ export class Mission {
     const objective=(id:Scalar)=>{const o=definition.objectives?.find(o=>o.id===string(id));if(!o)throw new Error(`Unknown objective: ${id}`);return o;};
     let calls=0;
     const host:LuaHost={
+      ...missionInventory(g,entity,operations),
+      dialogue_busy:()=>!!draft.dialogue&&(draft.dialogue.cinematic?draft.dialogue.remaining>0:draft.dialogue.until>g.state.tick),
       tick:()=>g.state.tick,
       get:key=>Object.hasOwn(draft.variables,string(key))?draft.variables[string(key)]:null,
       set:(key,value)=>{const k=string(key);if(value===null)delete draft.variables[k];else Object.defineProperty(draft.variables,k,{value,writable:true,enumerable:true,configurable:true});},
@@ -39,6 +42,15 @@ export class Mission {
         return g.entities.filter(e=>e.owner===owner&&alive(e)).reduce((sum,e)=>sum+g.economy.available(e,item),0);
       },
       alive:id=>{const e=entity(id);return !!e&&alive(e);},
+      damage:(id,amount,source)=>{
+        const target=entity(id),attacker=source==null?undefined:entity(source);
+        const damage=number(amount,1,100000);
+        if(!Number.isInteger(damage))throw new Error('Damage must be an integer');
+        if(!target||!alive(target)||target.hp===null)return false;
+        if(source!=null&&(!attacker||!alive(attacker)))return false;
+        draft.pendingDamage.push({target:target.id,source:attacker?.id??0,damage,damageType:'spell',owner:'none'});
+        return true;
+      },
       recover:id=>{
         const p=placement(id);
         if(g.registry.get(p.definition).kind!=='unit')throw new Error('Recovery requires a unit');
@@ -50,6 +62,13 @@ export class Mission {
       },
       begin_scene:(x,y)=>{draft.scene={x:number(x),y:number(y)};},
       end_scene:()=>{draft.scene=null;},
+      camera:(mode,id,lookAt,distance,height,fov,seconds)=>{
+        const p=placement(id),subject=entity(id);
+        if(g.registry.get(p.definition).kind!=='unit')throw new Error('Camera subject must be a unit');
+        if(lookAt!==undefined&&lookAt!==null){const target=placement(lookAt);if(g.registry.get(target.definition).kind!=='unit')throw new Error('Camera look-at must be a unit');}
+        const shot=missionCameraSchema.parse({mode,entity:p.id,...(lookAt!=null?{lookAt}:{}),...(distance!=null?{distance}:{}),...(height!=null?{height}:{}),...(fov!=null?{fov}:{}),transitionMs:seconds==null?350:number(seconds,0,5)*1000});
+        draft.scene={x:subject?.x??p.position.x,y:subject?.y??p.position.y,camera:shot};
+      },
       arrived:(id,x,y)=>{const e=entity(id);if(!e?.unit||!alive(e))return false;const p=precise(e);return !e.unit.order&&Math.hypot(p.x-number(x),p.y-number(y))<.5;},
       face:(id,x,y)=>{
         const p=placement(id),target={id:p.id,x:number(x),y:number(y)};
@@ -76,13 +95,39 @@ export class Mission {
         if(!behavior.combat||!behavior.movement)throw new Error(`${p.id} cannot attack-move`);
         operations.push(()=>{const e=entity(id);if(e?.unit&&alive(e))g.orders.issue(e,{type:'move',destination,attackMove:true});});
       },
+      follow:(id,target)=>{
+        const p=placement(id);placement(target);
+        if(!g.registry.get(p.definition).behaviors.movement)throw new Error(`${p.id} cannot follow`);
+        operations.push(()=>{const e=entity(id),t=entity(target);if(e?.unit&&t&&alive(e)&&alive(t))g.orders.issue(e,{type:'follow',target:t.id,escort:true});});
+      },
       attack:(id,target)=>{placement(id);placement(target);operations.push(()=>{const e=entity(id),t=entity(target);if(e?.unit&&t&&alive(e)&&alive(t))g.orders.issue(e,{type:'attack',target:t.id,force:true});});},
       transfer:(id,rawOwner)=>{
-        const p=placement(id),owner=ownerSchema.parse(rawOwner),d=g.registry.get(p.definition),e=entity(id);
+        const p=placement(id),owner=ownerSchema.parse(rawOwner),e=entity(id),d=g.registry.get(e?.definition??p.definition);
         if(owner!=='none'&&!g.map.playerStarts.some(s=>owner===`player.${s.player}`))throw new Error('Missing owner slot');
         if(d.kind!=='unit'||d.behaviors.campDefense||d.behaviors.work)throw new Error('Transfer requires a non-camp military unit');
         if(e?.unit?.contained||e?.unit?.release)throw new Error('Cannot transfer a contained unit');
         operations.push(()=>{const unit=entity(id);if(unit?.unit&&alive(unit)){g.economy.interrupt(unit);unit.owner=owner;}});
+      },
+      transform:(id,rawDefinition,rawOwner,rawCamp)=>{
+        placement(id);
+        const e=entity(id),target=g.registry.find(string(rawDefinition)),owner=ownerSchema.parse(rawOwner);
+        if(owner!=='none'&&!g.map.playerStarts.some(s=>owner===`player.${s.player}`))throw new Error('Missing owner slot');
+        const camp=rawCamp==null?undefined:g.map.camps.find(c=>c.id===string(rawCamp));
+        if(rawCamp!=null&&(!camp||owner!=='none'||g.state.clearedCamps.includes(camp.id)))throw new Error('Transformation requires an uncleared neutral camp');
+        if(!target||target.kind!=='unit'||target.hero||target.behaviors.progression||target.behaviors.inventory||target.behaviors.spellcasting|| (!!target.behaviors.campDefense!==!!camp))throw new Error('Transformation target must be an ordinary unit with a matching camp assignment');
+        if(!e?.unit||!alive(e))return false;
+        const source=g.registry.get(e.definition);
+        if(source.hero||source.behaviors.progression||e.equipment||e.spellcasting||source.behaviors.campDefense||e.unit.contained||e.unit.release)throw new Error('Transformation requires an ordinary uncontained unit');
+        operations.push(()=>{
+          const fraction=e.hp!/g.context.stats(e).maxHp,position=e.unit!.position;
+          g.economy.interrupt(e);
+          e.definition=target.id;e.owner=owner;e.unit=g.context.freshUnit();e.unit.position=position;if(camp)e.unit.camp=camp.id;
+          delete e.appearance;delete e.effects;delete e.itemStatuses;delete e.slows;
+          e.hp=Math.max(1,Math.round(g.context.stats(e).maxHp*fraction));
+          e.regeneration={health:0,mana:0};
+          g.context.reindex();
+        });
+        return true;
       },
       begin_objective:id=>{
         const o=objective(id);if(draft.objectiveStates[o.id])throw new Error(`Objective already started: ${o.id}`);
@@ -92,10 +137,12 @@ export class Mission {
       complete_objective:id=>{const o=objective(id);if(draft.objectiveStates[o.id]!=='active')throw new Error(`Objective is not active: ${o.id}`);draft.objectiveStates[o.id]='completed';},
       fail_objective:id=>{const o=objective(id);if(draft.objectiveStates[o.id]!=='active')throw new Error(`Objective is not active: ${o.id}`);draft.objectiveStates[o.id]='failed';},
       objective:text=>{draft.objective=string(text,500);},
-      say:(speaker,portrait,text,seconds,cinematic)=>{
+      say:(speaker,portrait,text,seconds,cinematic,actor)=>{
         if(cinematic !== undefined && cinematic !== null && typeof cinematic !== "boolean") throw new Error("Cinematic must be a boolean");
         const d=g.registry.find(string(portrait));if(!d)throw new Error('Portrait must be an entity definition ID');
-        draft.dialogue={id:draft.nextDialogue++,speaker:string(speaker,80),portrait:d.id,text:string(text,2000),cinematic:cinematic===true,remaining:cinematic===true?Math.round(number(seconds,1,60)*40):0,until:g.state.tick+Math.round(number(seconds,1,60)*40)};
+        const subject=actor==null?undefined:entity(actor);
+        if(actor!=null&&(!subject?.unit||!alive(subject)||subject.definition!==d.id))throw new Error('Dialogue actor must be a living unit matching the portrait');
+        draft.dialogue={actor:subject?.id,durationTicks:Math.round(number(seconds,1,60)*40),id:draft.nextDialogue++,speaker:string(speaker,80),portrait:d.id,text:string(text,2000),cinematic:cinematic===true,remaining:cinematic===true?Math.round(number(seconds,1,60)*40):0,until:g.state.tick+Math.round(number(seconds,1,60)*40)};
       },
       win:()=>operations.push(()=>{g.state.outcome={winner:'player.1',defeated:[]};}),
       lose:()=>operations.push(()=>{g.state.outcome={winner:null,defeated:['player.1']};}),

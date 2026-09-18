@@ -43,6 +43,10 @@
     }
   },
   "attackEvents": {
+    "base": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    },
     "warrior": {
       "normalizedTime": 0.55,
       "event": "hit"

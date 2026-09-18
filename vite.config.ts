@@ -9,6 +9,7 @@ export default defineConfig(({ command }) => ({
   clearScreen: false,
   optimizeDeps: {rolldownOptions: {plugins:[fengariBrowser()]}},
   plugins: [fengariBrowser(), tailwindcss(), contentAuthoring()],
+  worker: { plugins: () => [fengariBrowser()] },
   server: {
     host: "127.0.0.1",
     port: 5173,

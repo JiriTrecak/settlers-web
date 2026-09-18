@@ -1,3 +1,5 @@
+import {InteriorCeiling,ceilingY} from '../terrain/interiorCeiling';
+import {unitCameraPose,type UnitShot} from '../camera/unitCamera';
 import {WalkSurfacePicker} from '../terrain/walkSurfacePicker';
 import {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {CanopyLayer} from '../atmosphere/canopyLayer';
@@ -24,6 +26,7 @@ import { emptyLandscape, type Landscape } from "../../shared/landscape/curve";
  * Height mesh, water, scenery and observed declarative gameplay entities.
  */
 import {
+  Color,
   WebGLRenderTarget,
   SRGBColorSpace,
   BufferGeometry,
@@ -73,9 +76,33 @@ export class Renderer {
   private visualClock = 0;
   private visualLast: number | null = null;
   readonly camera = new Camera();
+  private unitShot:UnitShot|null=null;
+  private cameraLast=0;
+  private readonly indoorBackground=new Color('#080909');
+  private readonly cameraRay=new Raycaster();
+  unitCamera(shot:UnitShot|null):void {this.unitShot=shot;if(!shot){this.camera.setClosePose(null);this.settlement?.hideCameraBody(null);}}
+  private updateUnitCamera():void {
+    const now=performance.now(),dt=this.cameraLast?Math.min(100,now-this.cameraLast):16;this.cameraLast=now;
+    const shot=this.unitShot,subject=shot&&this.settlement?.cameraSubject(shot.entity);
+    if(!shot||!subject){this.camera.setClosePose(null);this.settlement?.hideCameraBody(null);return;}
+    const aim=shot.lookAt===undefined?undefined:this.settlement?.cameraSubject(shot.lookAt);
+    const lookAt=aim?.position.clone().add(new Vector3(0,aim.eyeHeight,0));
+    const pose=unitCameraPose(subject,shot,lookAt);
+    if(shot.mode==='third-person'){
+      const direction=pose.eye.clone().sub(pose.focus),distance=direction.length();direction.normalize();
+      this.cameraRay.set(pose.focus,direction);this.cameraRay.near=.05;this.cameraRay.far=distance;
+      let allowed=Math.min(this.props.cameraObstruction(this.cameraRay),this.settlement?.cameraObstruction(this.cameraRay)??distance);
+      // Sample terrain along the short boom, including steep ramp/cliff faces.
+      for(let d=.15;d<allowed;d+=.15){const p=pose.focus.clone().addScaledVector(direction,d);if(p.y<(this.height?.sample(p.x,p.z)??0)+.2||(this.landscape.environment.interior&&this.landscape.environment.ceilingHeight!==undefined&&p.y>ceilingY(p.x,p.z,this.landscape.environment.ceilingHeight)-.3)){allowed=d;break;}}
+      pose.eye.copy(pose.focus).addScaledVector(direction,Math.max(.1,allowed-.25));
+    }
+    this.settlement?.hideCameraBody(shot.mode==='first-person'?shot.entity:null);
+    this.camera.setClosePose(pose,dt);
+  }
   private readonly display: Display;
   private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
+  private readonly ceiling = new InteriorCeiling(this.scene);
   private readonly sceneryLights = new SceneryLights(this.scene);
   private readonly ortho = new OrthographicCamera();
   private readonly persp = new PerspectiveCamera();
@@ -235,7 +262,8 @@ export class Renderer {
       }
       const cam = this.threeCam();
       this.camera.applyTo(cam, w, h);
-      this.updateAtmosphere(cam);
+      this.settlement?.cameraOverlays(cam,this.display.canvas.clientHeight,this.camera.followingUnit);
+    this.updateAtmosphere(cam);
       this.weather.update(
         animationTime === undefined ? performance.now() : animationTime * 1000,
         this.camera.targetX,
@@ -247,7 +275,9 @@ export class Renderer {
       this.meadow.updateLOD(cam);
       this.water?.updateVisibility(cam);
       gl.setRenderTarget(target);
-      this.cutaway.update(cam,this.settlement?.cutawaySubjects()??[]);
+      // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
+    // Close views use the physical camera boom/near plane instead.
+    this.cutaway.update(cam,this.camera.followingUnit?[]:this.settlement?.cutawaySubjects()??[]);
       this.display.drawWorld(this.scene,cam,this.atmosphereFrame(animationTime===undefined?this.visualClock:animationTime*1000));
       const bytes = new Uint8Array(w * h * 4);
       gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
@@ -314,6 +344,7 @@ export class Renderer {
       this.landscape.environment.preset !== landscape.environment.preset;
     this.landscape = landscape;
     this.interiorCutaway.value=landscape.environment.interior?1:0;
+    this.ceiling.configure(this.size||256,landscape.environment);
     this.weather.configure(landscape.environment.weather);
     this.canopy.configure(landscape.environment.canopy,this.height?.size??256);
     if (presetChanged) this.refreshEnvironment();
@@ -427,6 +458,7 @@ export class Renderer {
   ): void {
     const timing = perf.start();
     this.height = field;
+    this.sceneryLights.invalidate();
     this.bridgeStamps = null;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
@@ -457,6 +489,7 @@ export class Renderer {
   draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
     if (this.size !== snapshot.size) {
       this.size = snapshot.size;
+      this.ceiling.configure(this.size,this.landscape.environment);
       this.lines.clear();
       this.terrain?.destroy(this.scene);
       this.water?.destroy(this.scene);
@@ -580,9 +613,15 @@ export class Renderer {
         Math.max(0, now - this.visualLast) * this.gameTimeScale;
     this.visualLast = now;
     now = this.visualClock;
+    this.updateUnitCamera();
+    this.ceiling.update(this.camera.followingUnit);
+    const mode=this.camera.followingUnit?this.unitShot!.mode:'rts',phase=this.camera.closeTransitionComplete?'settled':'moving';
+    if(this.display.canvas.dataset.cameraMode!==mode)this.display.canvas.dataset.cameraMode=mode;
+    if(this.display.canvas.dataset.cameraTransition!==phase)this.display.canvas.dataset.cameraTransition=phase;
     const total = perf.start(),
       environment = perf.start();
     this.sky.tick(now);
+    if(this.landscape.environment.interior)this.scene.background=this.indoorBackground;
     this.canopy.tick(now);
     this.sky.sun.intensity*=this.canopy.sunTransmission;
     this.sky.focus(
@@ -600,8 +639,11 @@ export class Renderer {
     const camera = perf.start();
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
+    this.settlement?.cameraOverlays(cam,this.display.canvas.clientHeight,this.camera.followingUnit);
     this.updateAtmosphere(cam);
-    this.cutaway.update(cam,this.settlement?.cutawaySubjects()??[]);
+    // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
+    // Close views use the physical camera boom/near plane instead.
+    this.cutaway.update(cam,this.camera.followingUnit?[]:this.settlement?.cutawaySubjects()??[]);
     this.weather.update(
       now,
       this.camera.targetX,
@@ -696,6 +738,7 @@ export class Renderer {
     this.meadow.destroy();
     this.weather.dispose();
     this.canopy.dispose();
+    this.ceiling.dispose();
     this.cutaway.dispose();
     this.sceneryLights.dispose();
     this.brush.destroy(this.scene);

@@ -1,0 +1,20 @@
+import type {Action,ClientMsg,ServerMsg} from '../../shared';
+import type {EntityView} from '../../sim/game/observation';
+import type {LocalSave} from '../../shared/save/localSave';
+import type {CampaignCompany} from '../../shared/scenario/company';
+import type {ChatMessage} from '../../shared/chat/chat';
+import type {RuntimeOptions,SimulationRuntime} from './runtime';
+import type {FramePacket} from './snapshots';
+export type Requests={
+ init:{input:RuntimeOptions;output:{resources:EntityView[]}};
+ start:{input:undefined;output:void};
+ pause:{input:boolean;output:void};
+ configure:{input:{speed:number;reveal:boolean;visionPlayer:number;profiling?:boolean};output:void};
+ save:{input:undefined;output:LocalSave};
+ load:{input:unknown;output:void};
+ placement:{input:{definition:string;position:{x:number;y:number};actor?:number;rotation:number};output:string|null};
+ company:{input:undefined;output:CampaignCompany};
+ status:{input:undefined;output:ReturnType<SimulationRuntime['status']>};
+};
+export type WorkerInput={type:'request';id:number;method:keyof Requests;params:unknown}|{type:'command';action:Action;id:number;sentAt:number}|{type:'network';message:ServerMsg}|{type:'ack';sequence:number};
+export type WorkerOutput={type:'reply';id:number;value?:unknown;error?:string}|{type:'frame';packet:FramePacket}|{type:'network';message:ClientMsg}|{type:'chat';message:ChatMessage}|{type:'learned'}|{type:'applied';id:number;tick:number;sentAt:number}|{type:'fatal';error:string};

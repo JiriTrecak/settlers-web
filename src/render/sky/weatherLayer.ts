@@ -10,30 +10,42 @@ export class WeatherLayer {
  private settings:WeatherSettings=CLEAR_WEATHER;
  private readonly rain=new BoxGeometry(.025,.85,.025);
  private readonly snow=new PlaneGeometry(.14,.14);
+ private readonly spore=new PlaneGeometry(.18,.18);
+ private readonly softParticle={value:0};
  private readonly material=new MeshBasicMaterial({color:0xc5d9e2,transparent:true,opacity:.24,depthWrite:false,side:DoubleSide});
  private readonly matrix=new Matrix4();
  private readonly position=new Vector3();
  private readonly direction=new Vector3();
  private readonly rotation=new Quaternion();
  private readonly seeds=Array.from({length:COUNT},(_,i)=>[seed(i,123),seed(i,721),seed(i,983)]);
- constructor(scene:Scene){this.mesh=new InstancedMesh(this.rain,this.material,COUNT);this.mesh.name='weather';this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);this.mesh.frustumCulled=false;this.mesh.count=0;this.mesh.visible=false;scene.add(this.mesh);}
+ constructor(scene:Scene){
+  this.material.onBeforeCompile=shader=>{
+   shader.uniforms.uSoftWeather=this.softParticle;
+   shader.vertexShader='varying vec2 vWeatherUv;\n'+shader.vertexShader;
+   shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvWeatherUv=uv;');
+   shader.fragmentShader='varying vec2 vWeatherUv; uniform float uSoftWeather;\n'+shader.fragmentShader;
+   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nif(uSoftWeather>.5){float r=length(vWeatherUv-.5)*2.;diffuseColor.a*=pow(max(0.,1.-r),1.5);}');
+  };
+  this.material.customProgramCacheKey=()=> 'weather-soft-motes-v1';
+  this.mesh=new InstancedMesh(this.rain,this.material,COUNT);this.mesh.name='weather';this.mesh.renderOrder=4;this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);this.mesh.frustumCulled=false;this.mesh.count=0;this.mesh.visible=false;scene.add(this.mesh);}
  configure(settings?:WeatherSettings){
-  this.settings=settings??CLEAR_WEATHER;const snow=this.settings.kind==='snow';
-  this.mesh.geometry=snow?this.snow:this.rain;this.material.color.set(snow?0xe6edf1:0xb5cbd9);this.material.opacity=snow?.65:.24;
+  this.settings=settings??CLEAR_WEATHER;const snow=this.settings.kind==='snow',spores=this.settings.kind==='spores';
+  this.softParticle.value=spores?1:0;
+  this.mesh.geometry=spores?this.spore:snow?this.snow:this.rain;this.material.color.set(spores?0xd6d5ad:snow?0xe6edf1:0xb5cbd9);this.material.opacity=spores?.6:snow?.65:.24;
   this.mesh.count=this.settings.kind==='clear'?0:Math.round(COUNT*this.settings.intensity);this.mesh.visible=this.mesh.count>0;
  }
  update(now:number,x:number,z:number,camera:Camera,field:HeightField|null){
   if(!this.mesh.visible)return;
-  const time=now/1000,snow=this.settings.kind==='snow',speed=snow?2.4:23;
-  if(snow)camera.getWorldQuaternion(this.rotation);else this.rotation.setFromUnitVectors(UP,this.direction.set(-this.settings.windX,speed,-this.settings.windZ).normalize());
+  const time=now/1000,snow=this.settings.kind==='snow',spores=this.settings.kind==='spores',speed=spores?-.18:snow?2.4:23;
+  if(snow||spores)camera.getWorldQuaternion(this.rotation);else this.rotation.setFromUnitVectors(UP,this.direction.set(-this.settings.windX,speed,-this.settings.windZ).normalize());
   for(let i=0;i<this.mesh.count;i++){
    const [a,b,c]=this.seeds[i];
-   const wx=x-SPAN/2+wrap(a*SPAN+time*this.settings.windX+(snow?Math.sin(time*.7+i)*1.5:0)-x+SPAN/2,SPAN);
-   const wz=z-SPAN/2+wrap(b*SPAN+time*this.settings.windZ-z+SPAN/2,SPAN);
-   this.position.set(wx,(field?.sample(wx,wz)??0)+wrap(c*HEIGHT-time*speed,HEIGHT),wz);
+   const wx=x-SPAN/2+wrap(a*SPAN+time*this.settings.windX+(spores?Math.sin(time*.28+i)*1.1:snow?Math.sin(time*.7+i)*1.5:0)-x+SPAN/2,SPAN);
+   const wz=z-SPAN/2+wrap(b*SPAN+time*this.settings.windZ+(spores?Math.cos(time*.21+i)*.7:0)-z+SPAN/2,SPAN);
+   this.position.set(wx,Math.max(field?.sample(wx,wz)??0,field?.waterLevel??0)+(spores?1+wrap(c*6-time*speed,6):wrap(c*HEIGHT-time*speed,HEIGHT)),wz);
    this.matrix.compose(this.position,this.rotation,ONE);this.mesh.setMatrixAt(i,this.matrix);
   }
   this.mesh.instanceMatrix.needsUpdate=true;
  }
- dispose(){this.mesh.removeFromParent();this.mesh.dispose();this.rain.dispose();this.snow.dispose();this.material.dispose();}
+ dispose(){this.mesh.removeFromParent();this.mesh.dispose();this.rain.dispose();this.snow.dispose();this.spore.dispose();this.material.dispose();}
 }

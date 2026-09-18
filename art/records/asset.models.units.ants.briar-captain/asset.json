@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-captain",
+  "name": "Briar Captain",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/briar-captain/model.glb",
+      "sha256": "43b5764f535789aa145a6b05f6d1b35c79d5a2512c5f4366cb92f459273f312c",
+      "bytes": 380460,
+      "triangles": 5377,
+      "primitives": 15
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.captain",
+      "file": "assets/models/units/ants/briar-captain/model.glb",
+      "character": "captain",
+      "scale": 1.4,
+      "healthHeight": 3.2199999999999998,
+      "cameraAnchor": {
+        "height": 2.0999999999999996,
+        "forward": 0.15,
+        "distance": 7
+      }
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend",
+    "sha256": "9a5a9b83b639d09b6c39aa87a6baf3a40e465be181442f57ccb2ef162bfb3f44",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.438Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

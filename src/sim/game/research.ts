@@ -11,7 +11,7 @@ export class Research {
     if (!policy?.outputs.includes(id) || !recipe || !building.research || building.construction)
       return "Select a completed research building";
     if (this.c.state.research[building.owner]?.includes(id)) return "Already researched";
-    if (this.c.live().some(e => e.owner === building.owner && e.research?.queue.some(q => q.id === id)))
+    if (this.c.liveBuildings().some(e => e.owner === building.owner && e.research?.queue.some(q => q.id === id)))
       return "Research already queued";
     if (building.research.queue.length >= policy.queueCapacity) return "Research queue is full";
     const reason = prerequisiteReason(recipe, building.owner, this.c.state.entities, this.c.registry);
@@ -32,7 +32,7 @@ export class Research {
     return null;
   }
   tick() {
-    for (const building of this.c.live()) {
+    for (const building of this.c.liveBuildings()) {
       const entry = building.research?.queue[0];
       if (!entry || building.construction || building.upgrade || !this.c.ready(building)) continue;
       if (++entry.progress < this.c.registry.rules.research[entry.id].workTicks) continue;

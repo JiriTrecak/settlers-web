@@ -144,3 +144,13 @@ it('revives a hero killed on a bridge onto the sanctuary landing',()=>{
  revival.tick();expect(hero.fallen).toBeUndefined();expect(hero.surface).toBeUndefined();
  expect(c.spatial.validPoint(hero)).toBe(true);expect(c.spatial.height(hero)).toBe(0);
 });
+
+it('routes a distant unit through sector portals onto the upper floor',()=>{
+ const c=setup(),e=c.create(placed('distant','unit.ants.warrior',100,40));c.spatial.rebuild();
+ const goal={x:40,y:40,surface:'arch'},start=c.spatial.cell(e),end=c.spatial.cell(goal);
+ const corridor=c.spatial.sectors.corridor(start,end);expect(corridor).toBeTruthy();
+ const path=c.spatial.findPath(start,end)!;expect(path.at(-1)).toBe(end);
+ let prior=start;for(const next of path){expect(c.spatial.layers!.neighbors(prior).includes(next)).toBe(true);prior=next;}
+ expect(path.some(id=>c.spatial.point(id).surface==='arch')).toBe(true);
+ expect(c.spatial.route(e,goal,false)).toBe(true);move(c,3800);expect(precise(e)).toEqual(goal);
+});

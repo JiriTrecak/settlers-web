@@ -1,7 +1,13 @@
 /**
  * Select / move / rotate authored stamps. Drag moves; Shift-drag orbits yaw around the stamp.
  */
-import { inStamp, type MapStamp } from "../../shared";
+import { inStamp, type MapStamp, type CatalogEntry } from "../../shared";
+
+/** Show inherited links before the inspector commits an explicit override. */
+export function selectedWalk(stamp:MapStamp,deck:CatalogEntry['deck']):NonNullable<MapStamp['walk']>|undefined {
+  if(!deck)return undefined;
+  return {level:stamp.walk?.level??deck.level,...(stamp.walk?.height!==undefined?{height:stamp.walk.height}:{}),connections:stamp.walk?.connections??deck.connections};
+}
 
 export const YAW_STEP = Math.PI / 12;
 

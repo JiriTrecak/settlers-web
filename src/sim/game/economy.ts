@@ -396,8 +396,7 @@ export class Economy {
         u.order = null;
         continue;
       }
-      const candidates = this.c
-        .live()
+      const candidates = (this.c.def(origin).gatheringCapacity ? [origin] : this.c.nearbyResources(origin,32))
         .filter(
           (e) =>
             e.definition === origin.definition &&
@@ -416,7 +415,7 @@ export class Economy {
       // Failed candidate probes do not mutate stores or jobs. Resolve the same
       // drop-off once for this worker, not again for every nearby forest tree.
       const hall = candidates.length ? this.hall(w, item) : undefined;
-      if (!candidates.some((r) => this.startHarvest(w, r, item, hall)))
+      if (!this.c.spatial.routeBatch(w,()=>candidates.some((r) => this.startHarvest(w, r, item, hall))))
         if (!candidates.length && u.orderQueue.length) u.order = null;
         else u.retryAt = this.s.tick + 40;
     }
@@ -460,6 +459,7 @@ export class Economy {
       if (job.progress !== creation.impactTick) return;
       const hitDamage = Math.max(1, ...(this.s.research[w.owner] ?? []).flatMap(id =>
         this.c.registry.rules.research[id].effects.filter(e => e.units.includes(w.definition)).map(e => e.treeHitDamage ?? 1)));
+      this.c.resourceChanged(resource);
       felling.hp = Math.max(0, felling.hp - hitDamage);
       felling.lastHitTick = this.s.tick;
       if (felling.hp > 0) return;
@@ -472,6 +472,7 @@ export class Economy {
     }
     const amount = Math.min(creation.amount, job.amount - (u.cargo?.amount ?? 0), resource.resource.amount);
     resource.resource.amount -= amount;
+    this.c.resourceChanged(resource);
     u.cargo = { item: job.item!, amount: (u.cargo?.amount ?? 0) + amount };
     this.c.event(w.owner, "Harvested", "produced", job.item!, amount);
     if (!resource.resource.amount) this.c.spatial.rebuild();
@@ -837,6 +838,7 @@ export class Economy {
         job.progress++;
         if (job.progress >= creation.workTicks) {
           resource.resource.growingUntil = this.s.tick + target.regrowthTicks!;
+          this.c.resourceChanged(resource);
           this.eraseJob(job);
           this.finishCycle(b);
         }
@@ -889,6 +891,7 @@ export class Economy {
           );
         })
       ) {
+        this.c.resourceChanged(r);
         r.resource!.amount = this.c.def(r).yield!;
         r.resource!.growingUntil = null;
         if (this.c.def(r).felling) r.resource!.felling = {

@@ -11,7 +11,7 @@ const target=()=>read('vanguard-heartwood-vault');
 it('carries survivors, hero experience, learned ranks and spent item charges into a fresh chapter and restart',()=>{
  const g=source(),hero=g.entities.find(e=>e.placement==='marshal')!;
  const ability=g.registry.get(hero.definition).behaviors.spellcasting!.abilities[0];
- hero.spellcasting!.learned[ability]=2;hero.progression!.experience=1200;
+ hero.spellcasting!.learned[ability]=2;hero.progression!.experience=1200;hero.progression!.bonuses={maxHp:25,damage:1};
  hero.equipment![0]='item.barkguard';hero.hp=10;
  const charged=g.registry.definitions.find(d=>d.itemEffect?.active?.charges)!;
  hero.equipment![1]=charged.id;hero.equipmentState=hero.equipment!.map((_,i)=>i===1?{charges:1,readyTick:999,hits:0}:null);
@@ -22,7 +22,7 @@ it('carries survivors, hero experience, learned ranks and spent item charges int
  expect(next.checksum()).toBe(restart.checksum());
  expect(next.entities.some(e=>e.placement==='guard-1')).toBe(false);
  const arriving=next.entities.find(e=>e.placement==='marshal')!;
- expect(arriving.progression!.experience).toBe(1200);expect(arriving.spellcasting!.learned[ability]).toBe(2);
+ expect(arriving.progression!.experience).toBe(1200);expect(arriving.progression!.bonuses).toEqual({maxHp:25,damage:1});expect(arriving.spellcasting!.learned[ability]).toBe(2);
  expect(arriving.equipment).toEqual(hero.equipment);expect(arriving.equipmentState![1]).toEqual({charges:1,readyTick:0,hits:0});
  expect(arriving.hp).toBe(next.context.stats(arriving).maxHp);expect(arriving.unit!.order).toBeNull();
  next.tick();restart.restore(next.snapshot());expect(restart.checksum()).toBe(next.checksum());

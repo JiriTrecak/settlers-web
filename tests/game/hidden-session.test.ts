@@ -1,19 +1,18 @@
 import {afterEach,expect,it,vi} from 'vitest';
 import {Session} from '../../src/session/session/session';
 afterEach(()=>vi.unstubAllGlobals());
-it('advances hidden match commits without snapshots, input or presentation and resumes on visibility',()=>{
+it('does no presentation work while hidden and resumes using the latest worker snapshot',()=>{
  const doc={hidden:true};vi.stubGlobal('document',doc);
- const clock={tickMs:25,tickIndex:0},world={clock,settlement:{state:{}},commandReceipts:[],enqueue:vi.fn(),tick:vi.fn(()=>clock.tickIndex++),view:vi.fn(()=>({}))};
- const lock={confirm:vi.fn(),take:vi.fn(()=>({slots:[]}))};
- const renderer={draw:vi.fn(),camera:{distance:40,cinematic:vi.fn()}},input={tick:vi.fn()},mini={paint:vi.fn()},onHud=vi.fn();
- const session=Object.assign(Object.create(Session.prototype),{started:true,world,renderer,input,mini,config:{hooks:{onHud}},me:0,locksteps:new Map([[0,lock]]),acc:0,fpsFrames:0,fpsMs:0,stamps:[]});
- session.tick(50,50);expect(world.tick).toHaveBeenCalledTimes(2);expect(lock.confirm).toHaveBeenCalledTimes(2);
- expect(world.view).not.toHaveBeenCalled();expect(input.tick).not.toHaveBeenCalled();expect(renderer.draw).not.toHaveBeenCalled();expect(mini.paint).not.toHaveBeenCalled();
- doc.hidden=false;session.tick(25,75);expect(clock.tickIndex).toBe(3);expect(world.view).toHaveBeenCalledOnce();expect(input.tick).toHaveBeenCalledOnce();expect(renderer.draw).toHaveBeenCalledOnce();expect(mini.paint).toHaveBeenCalledOnce();
+ const visual={tick:10,size:256,settlement:{entities:[],objectives:{}}},request=vi.fn();
+ const worker={latest:{visual,selection:visual},receivedAt:0,request};
+ const renderer={draw:vi.fn(),unitCamera:vi.fn(),gameSelect:vi.fn(),camera:{distance:40,cinematic:vi.fn()}},input={tick:vi.fn()},mini={paint:vi.fn(),setFog:vi.fn()},onHud=vi.fn();
+ const session=Object.assign(Object.create(Session.prototype),{started:true,canvas:{style:{}},worker,workerProfiling:false,renderer,input,mini,config:{hooks:{onHud}},me:0,fpsFrames:0,fpsMs:0,stamps:[],updateResourceStamps:vi.fn()});
+ session.tick(50,50);expect(input.tick).not.toHaveBeenCalled();expect(renderer.draw).not.toHaveBeenCalled();expect(mini.paint).not.toHaveBeenCalled();expect(renderer.unitCamera).not.toHaveBeenCalled();
+ // Authoritative time advances independently; no main-thread tick/confirm calls.
+ visual.tick=80;doc.hidden=false;session.tick(25,75);
+ expect(renderer.draw).toHaveBeenCalledWith(visual,[]);expect(input.tick).toHaveBeenCalledOnce();expect(mini.paint).toHaveBeenCalledOnce();expect(request).not.toHaveBeenCalled();
 });
-
-it('does not accumulate simulation time or send confirmations while assets load',()=>{
- const world={clock:{tickMs:25},tick:vi.fn()},lock={confirm:vi.fn()};
- const session=Object.assign(Object.create(Session.prototype),{started:false,world,renderer:{},acc:0,locksteps:new Map([[0,lock]])});
- session.tick(5000,5000);expect(session.acc).toBe(0);expect(world.tick).not.toHaveBeenCalled();expect(lock.confirm).not.toHaveBeenCalled();
+it('does not start or pump the worker from render frames while assets load',()=>{
+ const worker={request:vi.fn()},session=Object.assign(Object.create(Session.prototype),{started:false,worker,renderer:{}});
+ session.tick(5000,5000);expect(worker.request).not.toHaveBeenCalled();
 });

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.icons.briar-vigor-seed",
+  "name": "Vigor Seed",
+  "kind": "icon",
+  "tags": [
+    "briarwatch",
+    "item"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/briar-vigor-seed.png",
+      "sha256": "cd7ebde90a7602abe8fa4740bac1158a7c1dd4dd0f063d33e45d367a0fcc471b",
+      "bytes": 24240,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.briar.vigor-seed",
+      "image": "assets/icons/briar-vigor-seed.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/items/briarwatch-rewards/reference.png",
+    "sha256": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:42:37.337Z",
+    "warnings": []
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "id": "asset.icons.briar-family-ring",
+  "name": "Family Ring",
+  "kind": "icon",
+  "tags": [
+    "briarwatch",
+    "item"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "icon",
+  "outputs": [
+    {
+      "role": "image",
+      "path": "assets/icons/briar-family-ring.png",
+      "sha256": "d724066a305e43439088a2c1fb18251e20db0e4672f071b98b1abfeb004999f1",
+      "bytes": 23959,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "render": [
+    {
+      "id": "icon.briar.family-ring",
+      "image": "assets/icons/briar-family-ring.png"
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/items/briarwatch-rewards/reference.png",
+    "sha256": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "openai"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:42:37.355Z",
+    "warnings": []
+  }
+}

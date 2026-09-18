@@ -19,3 +19,17 @@ it('bounds weather to one camera-local instance batch, switches precipitation an
  weather.configure();const version=weather.mesh.instanceMatrix.version;weather.update(14000,300,300,camera,field);expect(weather.mesh.visible).toBe(false);expect(weather.mesh.instanceMatrix.version).toBe(version);
  weather.dispose();expect(scene.children).toHaveLength(0);
 });
+
+it('keeps spores slow, reproducible, above the water and in a single bounded batch',()=>{
+ const scene=new Scene(),weather=new WeatherLayer(scene),camera=new OrthographicCamera(),field=new HeightField();field.waterLevel=3;
+ const settings={kind:'spores' as const,intensity:.5,windX:.12,windZ:-.08};
+ const landscape=emptyLandscape();landscape.environment.weather=settings;expect(parseLandscape(JSON.parse(JSON.stringify(landscape)))).toEqual(landscape);
+ weather.configure(settings);weather.update(10000,100,100,camera,field);
+ expect(scene.children).toHaveLength(1);expect(weather.mesh.count).toBe(384);expect(weather.mesh.renderOrder).toBeGreaterThan(2);
+ const matrix=new Matrix4(),before=new Vector3(),after=new Vector3();weather.mesh.getMatrixAt(0,matrix);before.setFromMatrixPosition(matrix);
+ for(let i=0;i<weather.mesh.count;i++){weather.mesh.getMatrixAt(i,matrix);after.setFromMatrixPosition(matrix);expect(after.y).toBeGreaterThanOrEqual(4);expect(after.y).toBeLessThan(10);}
+ weather.update(11000,100,100,camera,field);weather.mesh.getMatrixAt(0,matrix);after.setFromMatrixPosition(matrix);
+ expect(after.y-before.y).toBeCloseTo(.18,4);expect(after.distanceTo(before)).toBeLessThan(1);
+ weather.update(10000,100,100,camera,field);weather.mesh.getMatrixAt(0,matrix);after.setFromMatrixPosition(matrix);expect(after).toEqual(before);
+ weather.configure();expect(weather.mesh.visible).toBe(false);weather.dispose();expect(scene.children).toHaveLength(0);
+});

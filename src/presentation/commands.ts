@@ -1,3 +1,4 @@
+import {cameraModeName,nextCameraMode,type UnitCameraMode} from '../shared/camera/modes';
 import {prioritizeSelection} from "./selection";
 import type { ContentRegistry } from "../content/registry";
 import { prerequisiteReason } from "../content/prerequisites";
@@ -41,7 +42,7 @@ export function inventoryCard(view:SettlementView,focusId:number|undefined,owner
 }
 export type CommandBinding = {
   id: string;
-  type: ActionName | "cast" | "learnAbility" | "revive" | "upgrade" | "cancelUpgrade";
+  type: ActionName | "cast" | "learnAbility" | "revive" | "upgrade" | "cancelUpgrade" | "camera";
   ability?:string;
   name: string;
   description: string;
@@ -65,6 +66,12 @@ export type NavigationBinding = Omit<CommandBinding, "type" | "immediate"> & {
 };
 export type CommandEntry = CommandBinding | NavigationBinding;
 
+/** Camera controls remain available when inspecting a visible unit as an observer. */
+export function unitCameraCommand(view:SettlementView,focusId:number|undefined,registry:ContentRegistry,mode:UnitCameraMode):CommandBinding[] {
+  const focus=view.entities.find(e=>e.id===focusId),meta=registry.actions.navigation.camera;
+  if(!meta||!focus?.unit||focus.remembered||focus.unit.contained||(focus.hp!==null&&focus.hp<=0))return [];
+  return [{...meta,id:'camera',type:'camera',name:`Camera: ${cameraModeName[mode]}`,description:`${meta.description}\nNext: ${cameraModeName[nextCameraMode(mode)]}.`,costs:[],actors:[focus.id],enabled:true}];
+}
 /** Local presentation navigation; these entries never become simulation commands. */
 export function commandMenu(
   bindings: readonly CommandBinding[],

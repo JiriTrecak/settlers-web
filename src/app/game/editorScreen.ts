@@ -1,3 +1,4 @@
+import {selectedWalk} from '../../editor/select/select';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
 import { SpellWorkbench } from "../../editor/chrome/spellWorkbench";
@@ -220,6 +221,8 @@ export class EditorScreen extends GameScreen {
   }
 
   override tick(dtMs: number, _nowMs: number): void {
+    // The modal has its own preview renderer; freeze the covered map canvas.
+    if(this.spellWorkbench?.isOpen)return;
     this.editor.tick(dtMs);
     if (this.skyOpen && this.editor.sky?.playing) this.syncSky();
   }
@@ -321,7 +324,7 @@ export class EditorScreen extends GameScreen {
         ? (this.library.entry(stamp.asset)?.name ?? stamp.asset)
         : null,
       yaw: stamp?.yaw ?? 0,
-      walk:stamp&&this.library.entry(stamp.asset)?.deck ? stamp.walk??{level:this.library.entry(stamp.asset)!.deck!.level,connections:this.library.entry(stamp.asset)!.deck!.connections} : undefined,
+      walk:stamp?selectedWalk(stamp,this.library.entry(stamp.asset)?.deck):undefined,
     });
   }
 

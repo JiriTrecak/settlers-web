@@ -8,14 +8,14 @@
     "migrated"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/hunter/model.glb",
-      "sha256": "fd6b608030053e2ebcf2f8d664ba5fcea53b53a15209ee5092453f0a5c56b289",
-      "bytes": 265468
+      "sha256": "f3a022faf96d4700d83660f902a1f95c2f27762384ad06066bd3095fdcaf47fa",
+      "bytes": 272928
     }
   ],
   "render": [
@@ -23,13 +23,18 @@
       "id": "asset.ants.hunter",
       "file": "assets/models/units/ants/hunter/model.glb",
       "healthHeight": 2.3,
-      "character": "hunter"
+      "character": "hunter",
+      "cameraAnchor": {
+        "height": 1.5,
+        "forward": 0.15,
+        "distance": 7
+      }
     }
   ],
   "scenery": [],
   "source": {
     "path": "art/sources/characters/ant-hunter/ant-hunter.blend",
-    "sha256": "f56cc6133e6cad3fafcd2e6f90d5b17ba532de5168a7673afae9074574115910",
+    "sha256": "03c11abe0751b6ce6452e366b18043ba9fdbfcba9c13d32660716d40d02939f4",
     "quality": "shared"
   },
   "origin": {
@@ -37,7 +42,7 @@
     "previousPath": "assets/ant-colony/characters/hunter.glb"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "checkedAt": "2026-09-16T12:21:28.996138+00:00",
     "warnings": []
   }
 }

@@ -12,7 +12,7 @@ const world=new World({map,slots:map.playerStarts.map((_,i)=>({player:i,kind:'ai
 const resume=option('--resume','');if(resume)world.restore(JSON.parse(readFileSync(resume,'utf8')));
 const checkpoint=Number(option('--checkpoint','-1'));
 let navCalls=0,navMs=0;
-if(args.includes('--trace-navigation')) {
+if(args.includes('--trace-navigation')||args.includes('--trace-routes')) {
  const navigation=world.settlement.spatial.navigation, path=navigation.path.bind(navigation);
  navigation.path=(...parameters:Parameters<typeof path>)=>{
   const start=performance.now(),result=path(...parameters),ms=performance.now()-start;
@@ -21,18 +21,29 @@ if(args.includes('--trace-navigation')) {
   return result;
  };
 }
+const routeStats=new Map<number,{calls:number;failed:number;ms:number;navigationMs:number;from:unknown;goal:unknown}>();
+if(args.includes('--trace-routes')){
+ const spatial=world.settlement.spatial,route=spatial.route.bind(spatial);
+ spatial.route=(...parameters:Parameters<typeof route>)=>{
+  const [entity,destination]=parameters,begin=performance.now(),navigationBefore=navMs,result=route(...parameters),ms=performance.now()-begin;
+  const row=routeStats.get(entity.id)??{calls:0,failed:0,ms:0,navigationMs:0,from:entity.unit?.position??{x:entity.x,y:entity.y},goal:destination};
+  row.calls++;row.failed+=result?0:1;row.ms+=ms;row.navigationMs+=navMs-navigationBefore;routeStats.set(entity.id,row);return result;
+ };
+}
 const initialize=performance.now()-start,samples:Record<string,number[]>={},windows:unknown[]=[];
 const sample=(key:string,ms:number)=>(samples[key]??=[]).push(ms);
 const stats=(values:number[])=>{const sorted=[...values].sort((a,b)=>a-b);return {mean:values.reduce((a,b)=>a+b,0)/values.length,p95:sorted[Math.floor(sorted.length*.95)],p99:sorted[Math.floor(sorted.length*.99)],max:sorted.at(-1)};};
 for(let i=0;i<ticks;i++){
- navCalls=0;navMs=0;
+ navCalls=0;navMs=0;routeStats.clear();
  if(world.clock.tickIndex===checkpoint)writeFileSync('/tmp/simulation-checkpoint.json',JSON.stringify(world.snapshot()));
  const begin=performance.now();world.tick();const simulated=performance.now();
  world.view();const observed=performance.now();
  if(args.includes('--trace-navigation') && world.settlement.timings['Work assignment']!>40)
    console.log(JSON.stringify({tick:world.clock.tickIndex,assignmentMs:world.settlement.timings['Work assignment'],navCalls,navMs,jobs:world.settlement.state.jobs.length}));
+ if(args.includes('--trace-routes'))for(const [entity,row] of routeStats)if(row.ms>10)console.log(JSON.stringify({tick:world.clock.tickIndex,entity,...row}));
+ if(args.includes('--trace-slow')&&simulated-begin>12)console.log(JSON.stringify({slowTick:world.clock.tickIndex,ms:simulated-begin,scopes:world.settlement.timings,ai:world.aiTimings}));
  if(i>=200){sample('simulation',simulated-begin);sample('observerView',observed-simulated);for(const [name,ms] of Object.entries(world.settlement.timings))sample(name,ms);for(const [name,ms] of Object.entries(world.aiTimings))sample(name,ms);}
  if((i+1)%1200===0){const entry={tick:i+1,units:world.settlement.context.liveUnits().length,sim:stats(samples.simulation.slice(-1200)),view:stats(samples.observerView.slice(-1200))};windows.push(entry);console.log(JSON.stringify(entry));}
 }
-const report={map:mapId,ticks,seed:731942,initialize,wallMs:performance.now()-start,checksum:world.checksum(),timings:Object.fromEntries(Object.entries(samples).map(([k,v])=>[k,stats(v)])),windows,ai:world.aiSummary()};
+const report={map:mapId,ticks,seed:731942,initialize,wallMs:performance.now()-start,checksum:world.checksum(),timings:Object.fromEntries(Object.entries(samples).map(([k,v])=>[k,stats(v)])),windows,routing:world.settlement.spatial.routing,ai:world.aiSummary()};
 const path=option('--output','/tmp/simulation-benchmark.json');writeFileSync(path,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({path,simulation:report.timings.simulation,observer:report.timings.observerView,wallMs:report.wallMs}));

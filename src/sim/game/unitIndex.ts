@@ -1,6 +1,6 @@
 import { alive, type Entity } from './state';
 
-/** Ephemeral broad phase for one movement pass; never part of saved state. */
+/** Ephemeral broad phase for one planning or movement pass; never part of saved state. */
 export class UnitIndex {
   private readonly buckets = new Map<number, Set<Entity>>();
   private readonly cells = new Map<number, number>();

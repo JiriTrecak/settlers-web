@@ -45,10 +45,20 @@ export class ItemEffects {
       if (e.spellcasting) e.spellcasting.mana = Math.min(e.spellcasting.mana, stats.maxMana);
     }
   }
+  applyPowerup(hero:Entity,definition:string):boolean {
+    const effect=this.c.registry.get(definition).itemEffect;
+    if(!alive(hero)||!hero.progression||effect?.type!=="consumable"||!effect.permanent)return false;
+    const bonuses=hero.progression.bonuses??={};
+    for(const key of ["maxHp","damage","armor","maxMana"] as const)bonuses[key]=(bonuses[key]??0)+(effect.permanent[key]??0);
+    hero.hp=Math.min(this.c.stats(hero).maxHp,hero.hp!+(effect.permanent.maxHp??0));
+    if(hero.spellcasting)hero.spellcasting.mana=Math.min(this.c.stats(hero).maxMana,hero.spellcasting.mana+(effect.permanent.maxMana??0));
+    return true;
+  }
   use(hero: Entity, slot: number): string | null {
     const id = hero.equipment?.[slot], effect = id && this.c.registry.get(id).itemEffect;
     if (!id || !effect || (!effect.active && effect.type !== "consumable")) return "This item cannot be used";
     if (!alive(hero) || isStunned(hero, this.c.registry) || hero.spellcasting?.pending) return "Cannot use items while busy or stunned";
+    if(effect.type==="consumable"&&effect.permanent){if(!this.applyPowerup(hero,id))return "Only a hero can use this item";this.consume(hero,slot);return null;}
     const active = effect.active;
     const runtime = this.runtime(hero, slot);
     if (runtime.readyTick > this.c.state.tick) return "Item is cooling down";

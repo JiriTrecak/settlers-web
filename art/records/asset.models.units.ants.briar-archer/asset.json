@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-archer",
+  "name": "Briar Poacher",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/briar-archer/model.glb",
+      "sha256": "c9780cb88a9cb62335f937c18e33e5fd38d51c2f9b05e635d17ad26d628dfda0",
+      "bytes": 342968,
+      "triangles": 4322,
+      "primitives": 17
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.archer",
+      "file": "assets/models/units/ants/briar-archer/model.glb",
+      "character": "archer",
+      "scale": 1,
+      "healthHeight": 2.3,
+      "cameraAnchor": {
+        "height": 1.5,
+        "forward": 0.15,
+        "distance": 7
+      }
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend",
+    "sha256": "9a5a9b83b639d09b6c39aa87a6baf3a40e465be181442f57ccb2ef162bfb3f44",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.435Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

@@ -57,8 +57,8 @@ export class PlayScreen extends GameScreen {
   }
 
   start(): void {
-    void this.session.start(p => this.loading.update(p)).then(() => {
-      if (!this.destroyed) {if(this.initialSave)this.session.restoreLocal(this.initialSave);this.ready=true;this.loading.destroy();}
+    void this.session.start(p => this.loading.update(p)).then(async () => {
+      if (!this.destroyed) {if(this.initialSave)await this.session.restoreLocal(this.initialSave);if(!this.destroyed){this.ready=true;this.loading.destroy();}}
     }).catch(error => {
       if (!this.destroyed) {this.session.stop();this.loading.error(error);console.error(error);}
     });

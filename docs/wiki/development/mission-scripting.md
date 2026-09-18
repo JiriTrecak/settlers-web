@@ -57,7 +57,7 @@ For a timer, save a deadline such as `mission.tick() + 240`, then compare the cu
 - `mission.move(id, x, y)`: submits an ordinary movement order through the native order system. Integer cell coordinates; bounds checked.
 - `mission.attack(id, targetId)`: submits a forced attack order through the native order system.
 - `mission.objective(text)`: replaces the displayed objective.
-- `mission.say(speaker, portraitDefinition, text, seconds, cinematic)`: shows portrait dialogue for 1–60 seconds at the current simulation speed. Omit the final argument (or use `false`) for inline speech while units keep moving. Use `true` for a cinematic pause: small black bars, the HUD slides out, and the camera lens eases in by 8%. Camera position, selection, and player zoom are retained and restored automatically. A new line replaces the current one.
+- `mission.say(speaker, portraitDefinition, text, seconds, cinematic, actorTag)`: shows portrait dialogue for 1–60 seconds at the current simulation speed. Omit `cinematic` (or use `false`) for inline speech while units keep moving. Use `true` for a cinematic pause: small black bars, the HUD slides out, and the camera lens eases in by 8%. Camera position, selection, and player zoom are retained and restored automatically. A new line replaces the current one. Optional `actorTag` identifies the living speaker and must match the portrait definition. Ant mandibles articulate with the text timing, including pauses at punctuation; without a tag, only a unique visible matching unit is animated. This is silent articulation, not voice or phoneme synchronization. Actor identity and duration survive save/load.
 - `mission.win()` / `mission.lose()`: ends the mission with Player 1 victory or defeat.
 
 Queries read the current simulation. Mutations are buffered in callback order, then applied after the callback succeeds. A spawn followed by an attack can reference that new entity. Queries within that callback still see the state before those buffered operations. Script errors discard the buffered operations and variable changes, stop further callbacks, and display the error above the battlefield.
@@ -147,3 +147,14 @@ The chapter checkpoint retains hero experience, learned ability ranks, inventory
 The incoming company is part of the frozen `MatchConfig`, not browser-only state. It survives local saves and **Restart scenario**, which recreates the original chapter-start company. Validation rejects unknown arrival IDs, mismatched unit definitions, invalid equipment or skill ranks, and incompatible caps. The simulation can construct identical starts from the same declaration on multiple peers; a network campaign lobby/transition protocol is still unimplemented.
 
 The Hollow Gate currently connects to The Heartwood Vault. Earlier chapters remain independent authored starts. Launching the Vault directly uses its default eight-ant party; continuing from the Gate uses the survivors you actually brought.
+
+## First- and third-person shots
+
+`mission.camera(mode, subjectId, lookAtId, distance, height, fov, transitionSeconds)` starts a scene attached to a named unit. Modes are `rts`, `third-person` and `first-person`; optional arguments can be `nil`. A look-at ID points toward another unit. Call `mission.end_scene()` in the next stage to release control and restore the player's camera.
+
+```lua
+mission.camera('first-person', 'archer-1', 'marshal', nil, 1.5, 55, 0.6)
+mission.say('Marshal', 'unit.ants.marshal', 'Keep to the amber lights.', 10, true)
+```
+
+Shots follow rendered movement and raised walk surfaces. Their declarations are validated and saved; interpolation stays local. The Heartwood Vault opening demonstrates this view. The editor's Lua reference lists the parameters and ranges. Player-controlled views use the spyglass command or **J**, with **Escape** returning to RTS.

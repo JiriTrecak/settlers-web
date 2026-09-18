@@ -1,0 +1,44 @@
+[
+  {
+    "id": "bark-cottage",
+    "triangles": 4173,
+    "meshes": 1,
+    "materials": 13,
+    "bytes": 229652
+  },
+  {
+    "id": "twig-cage",
+    "triangles": 1696,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 89656
+  },
+  {
+    "id": "merchant-cart",
+    "triangles": 2350,
+    "meshes": 1,
+    "materials": 11,
+    "bytes": 128364
+  },
+  {
+    "id": "supply-crate",
+    "triangles": 280,
+    "meshes": 1,
+    "materials": 5,
+    "bytes": 19344
+  },
+  {
+    "id": "watch-bivouac",
+    "triangles": 708,
+    "meshes": 1,
+    "materials": 8,
+    "bytes": 42068
+  },
+  {
+    "id": "ruined-cottage",
+    "triangles": 626,
+    "meshes": 1,
+    "materials": 5,
+    "bytes": 36848
+  }
+]

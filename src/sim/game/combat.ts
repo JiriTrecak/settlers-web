@@ -13,7 +13,7 @@ import type { Camp, Owner } from "../../content/schema";
 import { GameContext } from "./context";
 import { Observation } from "./observation";
 import { distance2 } from "./spatial";
-import { alive, type Entity } from "./state";
+import { alive, type Entity, type Point } from "./state";
 import { Progression } from "./progression";
 
 export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string;weapon?:boolean};
@@ -47,21 +47,28 @@ export class Combat {
       camp = this.camps.find((c) => c.id === neutral.unit?.camp);
     return camp?.aggression === "players";
   }
+  private planningSight:Map<string,boolean>|null=null;
   private perceives(a: Entity, b: Entity) {
-    return a.owner === "none"
-      ? this.c.spatial.visible(precise(a),precise(b)) && distance2(precise(a), precise(b)) <=
-          (this.camps.find((c) => c.id === a.unit?.camp)?.aggroRange ??
-            this.c.def(a).behaviors.combat!.aggroRange) **
-            2
-      : this.vision.visible(a.owner, b);
+    if(a.owner==='none')return this.c.spatial.visible(precise(a),precise(b))&&distance2(precise(a),precise(b))<=
+      (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat!.aggroRange)**2;
+    const key=`${a.owner}:${b.id}`,cached=this.planningSight?.get(key);
+    if(cached!==undefined)return cached;
+    const visible=this.vision.visible(a.owner,b);this.planningSight?.set(key,visible);return visible;
   }
   private terrainClear(a:Entity,b:Entity){
     const combat=this.c.def(a).behaviors.combat!;
     return this.c.spatial.attackClear(precise(a),b,!!(combat.projectile||combat.shell));
   }
   plan() {
+    // Positions/vision do not change during planning. Reuse spatial buckets and
+    // shared colony sight only for this pass, then discard before movement.
+    this.planningSight=new Map();this.c.spatial.beginUnitMovement();
+    try{this.planUnits();}finally{this.planningSight=null;this.c.spatial.endUnitMovement();}
+  }
+  private planUnits() {
     const c = this.c;
     this.shells.expire();
+    const approaches=new Map<string, readonly Point[]>();
     const targets=new TargetIndex(c.liveBodies(), c.registry);
     for (const e of c.activeUnits()) {
       const u = e.unit!,
@@ -108,7 +115,7 @@ export class Combat {
       if(order?.type==='patrol')order.origin??={x:e.x,y:e.y};
       if(order?.type==='follow'){
         const leader=c.get(order.target);u.target=null;
-        if(!leader||!alive(leader)||leader.owner!==e.owner||leader.unit?.contained||!this.perceives(e,leader)){u.order=null;u.route=[];u.goal=null;continue;}
+        if(!leader||!alive(leader)||leader.unit?.contained||(!order.escort&&(leader.owner!==e.owner||!this.perceives(e,leader)))){u.order=null;u.route=[];u.goal=null;continue;}
         if(c.spatial.range(e,leader)<=4){u.route=[];u.goal=null;}else if(u.retryAt<=c.state.tick){const goal=c.spatial.nearest(leader,8,e.id);if(goal)c.spatial.route(e,goal);u.retryAt=c.state.tick+12;}
         continue;
       }
@@ -181,7 +188,7 @@ export class Combat {
         if(order?.type==='hold'){u.target=null;continue;}
         const staleGoal = u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear(c.spatial.point(u.goal),target,!!(combat.projectile||combat.shell)));
         if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
-          routeToAttack(c,e,target);
+          routeToAttack(c,e,target,approaches);
           u.retryAt = c.state.tick + 6;
         }
         startCharge(c, e, target);

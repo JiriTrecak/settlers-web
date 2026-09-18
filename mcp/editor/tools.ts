@@ -1,4 +1,6 @@
+import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {walkStampSchema} from '../../src/shared/map/utcmap';
+import {DECAL_KINDS} from '../../src/shared/landscape/decal';
 import {canopySchema} from '../../src/shared/landscape/canopy';
 import {atmosphereSchema} from '../../src/shared/landscape/atmosphere';
 import {weatherSchema} from '../../src/shared/landscape/weather';
@@ -157,6 +159,7 @@ export function editorTools(hub: EditorHub) {
         season: z.enum(["spring", "summer", "autumn"]).optional(),
         playing: z.boolean().optional(),
         interior: z.boolean().optional().describe('Keep mission lighting fixed instead of running the outdoor day/night cycle.'),
+        ceilingHeight: z.number().min(1).max(128).nullable().optional().describe('Absolute minimum ceiling height for interior close camera views; keep above all walkable decks and actors. Null removes the ceiling.'),
         floorMaterial: z.enum(['forest','heartwood']).optional(),
         preset: z.string().min(1).max(128).optional(),
         radiusX: z.number().optional(),
@@ -177,7 +180,7 @@ export function editorTools(hub: EditorHub) {
       inputSchema: z.object({
         action: z.enum(["list", "place", "update", "delete", "config"]),
         id: z.string().optional(),
-        kind: z.enum(["leaf-litter", "tiny-flowers", "pebbles"]).optional(),
+        kind: z.enum(DECAL_KINDS).optional(),
         x: z.number().optional(),
         z: z.number().optional(),
         size: z.number().min(0.5).max(32).optional(),
@@ -209,11 +212,13 @@ export function editorTools(hub: EditorHub) {
     game_view: createTool({
       id: "game_view",
       description:
-        "Move the gameplay camera for inspection; does not change the simulation.",
+        "Move the gameplay camera or follow a visible unit in rts, third-person or first-person mode; does not change the simulation.",
       inputSchema: z.object({
         x: z.number().optional(),
         z: z.number().optional(),
         gameZoom: z.number().min(0.5).max(2).optional(),
+        cameraMode:z.enum(UNIT_CAMERA_MODES).optional(),
+        subject:z.number().int().positive().optional(),
       }),
       execute: async (input) => call("gameView", input),
     }),

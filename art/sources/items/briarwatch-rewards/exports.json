@@ -1,0 +1,44 @@
+[
+  {
+    "id": "leaf-ledger",
+    "triangles": 592,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 37988
+  },
+  {
+    "id": "vigor-seed",
+    "triangles": 512,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 32248
+  },
+  {
+    "id": "family-ring",
+    "triangles": 628,
+    "meshes": 1,
+    "materials": 3,
+    "bytes": 33416
+  },
+  {
+    "id": "healing-draught",
+    "triangles": 892,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 49204
+  },
+  {
+    "id": "mana-draught",
+    "triangles": 892,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 49200
+  },
+  {
+    "id": "healing-scroll",
+    "triangles": 384,
+    "meshes": 1,
+    "materials": 6,
+    "bytes": 24572
+  }
+]

@@ -1,14 +1,13 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { Session } from "../../src/session/session/session";
-import { World } from "../../src/sim/world/world";
+import {SimulationRuntime} from "../../src/session/worker/runtime";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { localMatch, type ServerMsg } from "../../src/shared";
-import { Lockstep, Room, type Channel } from "../../src/net";
+import { Room, type Channel } from "../../src/net";
 import {connectionDelay} from '../../src/net/latency';
 
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
-/** Real Session tick/input paths and Room/Lockstep, with ordered delayed wires. */
+/** Worker-owned match tick/input paths and Room/Lockstep, with ordered delayed wires. */
 function fixture(latency: (packet: number) => number = () => 0, delay=8) {
   vi.stubGlobal("document", { hidden: true });
   const match = localMatch({ mapId: "test", mapRevision: "test", seed: 1, slotCount: 2, me: 0, delay });
@@ -38,16 +37,8 @@ function fixture(latency: (packet: number) => number = () => 0, delay=8) {
       },
       onMessage(fn) { receive = fn; },
     };
-    const world = new World({ map, slots: match.slots, seed: 1 });
-    const lockstep = new Lockstep(channel, me, match.delay);
-    const session = Object.assign(Object.create(Session.prototype), {
-    started: true,
-      world, me, visionPlayer: me, match,
-      config: { channel, player: me, hooks: { onHud: vi.fn() } },
-      renderer: { gameCommandFeedback: vi.fn() },
-      locksteps: new Map([[me, lockstep]]), acc: 0, speed: 1, desynced: false,
-    });
-    return { world, session, lockstep };
+    const runtime=new SimulationRuntime({map,match,player:me,remote:true},channel);
+    return {world:runtime.world,runtime,lockstep:runtime.locksteps.get(me)!};
   });
   function deliver(time = now) {
     now = time;
@@ -71,11 +62,11 @@ it.each([5,25,75,150])('executes movement promptly and identically with a pipeli
     time.mockReturnValue(ms);deliver(ms);
     if(ms===1000){
       const destination=peers[0].world.settlement.spatial.nearest({x:actors[0].x+4,y:actors[0].y+2},8,actors[0].id)!;
-      peers[0].session.send({type:'move',actors:[actors[0].id],destination});
+      peers[0].runtime.send({type:'move',actors:[actors[0].id],destination});
     }
     for(const [i,p] of peers.entries()){
-      if(ms%25===0)p.session.pulseConfirm();
-      if(ms>0&&ms%10===0)p.session.tick(10,ms);
+      if(ms%25===0)p.runtime.pulseConfirm();
+      if(ms>0&&ms%10===0)p.runtime.advance(10);
       if(ms>=1000&&!responded[i]&&actors[i].rotation!==rotations[i])responded[i]=ms;
     }
   }
@@ -87,25 +78,24 @@ it.each([5,25,75,150])('executes movement promptly and identically with a pipeli
 });
 
 it("does not promise extra empty turns while the displayed match is suspended", () => {
-  const { peers, deliver, match } = fixture();
+  const { peers, deliver } = fixture();
   const time = vi.spyOn(performance, "now").mockReturnValue(0);
-  for (const p of peers) p.session.armConfirms(match);
+  for (const p of peers) p.runtime.pulseConfirm();
   // Timers can wake while no render/simulation frames run.
   for (let ms = 25; ms <= 10000; ms += 25) {
     time.mockReturnValue(ms);
-    for (const p of peers) p.session.pulseConfirm();
+    for (const p of peers) p.runtime.pulseConfirm();
     deliver(ms);
   }
   for (const p of peers) {
-    clearInterval(p.session.confirmTimer);
     expect(p.world.clock.tickIndex).toBe(0);
     expect(p.lockstep.sent()).toBe(8);
   }
-  peers[0].session.send({ type: "ping" });
+  peers[0].runtime.send({ type: "ping" });
   deliver();
   expect(peers[0].lockstep.sent()).toBe(9);
   for (let tick = 1; tick <= 12; tick++) {
-    for (const p of peers) { p.session.tick(25, tick * 25); deliver(); }
+    for (const p of peers) { p.runtime.advance(25); deliver(); }
   }
   expect(peers[0].world.log()).toEqual([{ tick: 9, player: 0, action: { type: "ping" } }]);
   expect(peers[1].world.log()).toEqual(peers[0].world.log());
@@ -114,33 +104,33 @@ it("does not promise extra empty turns while the displayed match is suspended", 
 
 it("keeps the 40 Hz simulation at 10 FPS and limits a single catch-up batch", () => {
   const { peers, deliver } = fixture();
-  for (const p of peers) p.session.pulseConfirm();
+  for (const p of peers) p.runtime.pulseConfirm();
   deliver();
   for (let frame = 1; frame <= 20; frame++) {
-    for (const p of peers) { p.session.tick(100, frame * 100); deliver(); }
+    for (const p of peers) { p.runtime.advance(100); deliver(); }
   }
   expect(peers.map(p => p.world.clock.tickIndex)).toEqual([80, 80]);
   expect(peers[0].world.checksum()).toBe(peers[1].world.checksum());
-  for (const p of peers) p.session.pulseConfirm();
+  for (const p of peers) p.runtime.pulseConfirm();
   deliver();
-  for (const p of peers) { p.session.tick(10000, 12000); deliver(); }
+  for (const p of peers) { p.runtime.advance(10000); deliver(); }
   expect(peers.map(p => p.world.clock.tickIndex)).toEqual([88, 88]);
   expect(peers[0].world.checksum()).toBe(peers[1].world.checksum());
 });
 
 it("bounds the input frontier during a large burst and drains all batches in order", () => {
   const { peers, deliver, match } = fixture();
-  for (const p of peers) p.session.pulseConfirm();
+  for (const p of peers) p.runtime.pulseConfirm();
   deliver();
   for (let n = 0; n < 150; n++) {
-    peers[0].session.send({ type: "move", actors: [1], destination: { x: n + 1, y: 10 } });
+    peers[0].runtime.send({ type: "move", actors: [1], destination: { x: n + 1, y: 10 } });
     deliver();
   }
   expect(peers[0].lockstep.sent()).toBe(match.delay + 1);
   expect(peers[0].lockstep.outbox()).toHaveLength(149);
   for (let tick = 1; tick <= 20; tick++) {
     for (const p of peers) {
-      p.session.tick(25, tick * 25);
+      p.runtime.advance(25);
       deliver();
       expect(p.lockstep.sent() - p.world.clock.tickIndex).toBeLessThanOrEqual(match.delay + 1);
     }
@@ -162,14 +152,14 @@ it.each([connectionDelay([150]),8])("retains every burst order with jitter, uneq
     deliver(ms);
     if (ms === 1000) {
       // Separate immediate flushes must neither overwrite nor duplicate input.
-      for (let i = 0; i < 6; i++) peers[0].session.send({ type: "ping" });
-      peers[1].session.send({ type: "ping" });
+      for (let i = 0; i < 6; i++) peers[0].runtime.send({ type: "ping" });
+      peers[1].runtime.send({ type: "ping" });
     }
     for (const [i, p] of peers.entries()) {
-      p.session.pulseConfirm();
+      p.runtime.pulseConfirm();
       for (const commit of p.lockstep.peek()) received[i].set(commit.tick, JSON.stringify(commit));
       const suspended = i === 1 && ms >= 800 && ms < 1600;
-      if (!suspended && ms > 0 && ms % (i ? 100 : 25) === 0) p.session.tick(i ? 100 : 25, ms);
+      if (!suspended && ms > 0 && ms % (i ? 100 : 25) === 0) p.runtime.advance(i ? 100 : 25);
     }
   }
   expect(peers.map(p => p.world.log().length)).toEqual([7, 7]);
@@ -181,8 +171,8 @@ it.each([connectionDelay([150]),8])("retains every burst order with jitter, uneq
   const furthest = Math.max(...peers.map(p => p.world.clock.tickIndex));
   deliver(5100);
   for (const p of peers) {
-    p.session.acc = 0;
-    for (let n = 0; n < 20 && p.world.clock.tickIndex < furthest; n++) p.session.tick(25, 5100);
+    p.runtime.acc = 0;
+    for (let n = 0; n < 20 && p.world.clock.tickIndex < furthest; n++) p.runtime.advance(25);
     expect(p.world.clock.tickIndex).toBe(furthest);
   }
   expect(peers[0].world.checksum()).toBe(peers[1].world.checksum());

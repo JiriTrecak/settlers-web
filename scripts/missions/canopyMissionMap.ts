@@ -15,7 +15,7 @@ type Clearing=Point&{r:number};
 export interface Chapter {
  id:string;name:string;description:string;seed:number;start:Point;routes:Point[][];clearings:Clearing[];
  lakes:(Point&{rx:number;rz:number})[];entities:Placement[];camps:UtcMap['camps'];
- objectives:NonNullable<UtcMap['mission']>['objectives'];regions:NonNullable<UtcMap['mission']>['regions'];order:number;cap:number;
+ objectives:NonNullable<UtcMap['mission']>['objectives'];regions:NonNullable<UtcMap['mission']>['regions'];order:number;cap:number;decorate?:(map:UtcMap)=>void;
 }
 export const entity=(id:string,definition:string,x:number,y:number,owner:Placement['owner']='player.1',extra:Partial<Placement>={}):Placement=>({id,definition,owner,position:{x,y},rotation:0,...extra});
 export function buildChapter(c:Chapter){
@@ -66,6 +66,7 @@ export function buildChapter(c:Chapter){
  for(const p of c.clearings){prop('lantern-post',p.x-6,p.z+6,.8);prop('splitrail-fence',p.x-8,p.z+5,.7,Math.PI/2);prop('synty-plant-flowerpatch-01',p.x+9,p.z+4,.9);}
  clearRoadCover(landscape.cover,landscape.strokes);
 const map:UtcMap={...emptyUtcMap(),name:c.name,description:c.description,height:encodeHeight(f.samples,f.size),waterLevel:0,playerStarts:[{player:1,x:c.start.x,z:c.start.z,setup:'setup.ants',mainFort:'mound'}],landscape,entities,stamps,camps:c.camps,mission:{campaign:'vanguard',title:`Mission ${c.order} — ${c.name}`,order:c.order,heroLevelCap:c.cap,objectives:c.objectives,regions:c.regions,script:readFileSync(new URL(`./${c.id}.lua`,import.meta.url),'utf8')}};
+ c.decorate?.(map);
  const parsed=parseUtcMap(map);if(!parsed)throw new Error(`Invalid map ${c.id}`);validatePlacements(parsed,content);const error=playableMapError(parsed);if(error)throw new Error(`${c.id}: ${error}`);
  writeFileSync(new URL(`../../assets/maps/campaign/${c.id}.utcmap`,import.meta.url),stringifyUtcMap(map));console.log(`${c.name}: ${entities.length} entities, ${stamps.length} props.`);
 }

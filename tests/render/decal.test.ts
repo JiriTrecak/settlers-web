@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { HeightField, emptyUtcMap, parseUtcMap, stringifyUtcMap, HEIGHT_ORIGIN, HEIGHT_VERTS } from '../../src/shared';
 import { decalAt, type GroundDecal } from '../../src/shared/landscape/decal';
+import { emptyLandscape } from '../../src/shared/landscape/curve';
 import { decalGeometry } from '../../src/render/decal/decalLayer';
 const decal:GroundDecal={id:'leaf-1',kind:'leaf-litter',x:10.3,z:12.8,size:5,rotation:37,opacity:.8};
 describe('ground decals',()=>{
@@ -14,6 +15,11 @@ describe('ground decals',()=>{
   it('picks the uppermost overlapping rotated patch without selecting an outside point',()=>{
     expect(decalAt([decal,{...decal,id:'top'}],decal.x,decal.z)?.id).toBe('top');
     expect(decalAt([decal],decal.x+5,decal.z)).toBeUndefined();
+  });
+  it.each(['root-rot','mycelium-bed'] as const)('retains authored %s through map serialization',kind=>{
+    const rot:GroundDecal={id:'rot',kind,x:64,z:65,size:28,rotation:18,opacity:.85};
+    const map={...emptyUtcMap(),landscape:{...emptyLandscape(),decals:[rot]}};
+    expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.landscape?.decals).toEqual([rot]);
   });
   it('matches terrain vertices and diagonal before and after a height edit',()=>{
     const field=new HeightField();

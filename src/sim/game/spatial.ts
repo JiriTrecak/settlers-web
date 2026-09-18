@@ -1,5 +1,5 @@
+import {SectorNavigation} from './sectorNavigation';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
-import {WalkRegions} from './walkRegions';
 import {TacticalTerrain,MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {UnitIndex} from "./unitIndex";
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
@@ -26,7 +26,7 @@ export const distance2 = (a: Point, b: Point) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 export class Spatial {
   private unitIndex:UnitIndex|null=null;
-  /** Scoped to synchronous movement: queries outside the scope use live entities. */
+  /** Scoped to one synchronous planning or movement pass; other queries use live entities. */
   beginUnitMovement(){this.unitIndex=new UnitIndex(this.units(),this.size,this.ignoresUnits);}
   updateUnitMovement(e:Entity){this.unitIndex?.update(e);}
   endUnitMovement(){this.unitIndex=null;}
@@ -40,8 +40,10 @@ export class Spatial {
   readonly occupied: Int32Array;
   readonly resources: Int32Array;
   readonly navigation: Navigation;
-  readonly regions: WalkRegions;
+  readonly sectors: SectorNavigation;
+  readonly routing={searches:0,expanded:0,coarseExpanded:0,fallbacks:0};
   readonly tactical: TacticalTerrain;
+  private blockedCells=new Set<number>();
   constructor(
     map: UtcMap,
     readonly registry: ContentRegistry,
@@ -77,12 +79,15 @@ export class Spatial {
     const capacity=this.layers?.nodes.length ?? this.size*this.size;
     this.occupied=new Int32Array(capacity);this.resources=new Int32Array(capacity);
     this.tactical=new TacticalTerrain(this.size,this.heights);
-    this.regions = new WalkRegions(this.size, i=>this.walkable(i),this.heights,MAX_GROUND_STEP_CM);
+    this.sectors = new SectorNavigation(this.size,i=>this.walkable(i),(a,b)=>this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM,
+      this.layers?{count:this.layers.nodes.length,cell:id=>this.layers!.nodes[id]!.cell,
+        neighbors:id=>this.layers!.neighbors(id,n=>!!this.occupied[n.id]||!!this.resources[n.id])}:undefined);
     this.navigation = new Navigation(
       this.size,
       (a, b) =>
         this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= MAX_GROUND_STEP_CM,
-      (a,b)=>this.regions.connected(a,b),
+      (a,b)=>this.sectors.connected(a,b),
+      true,
     );
   }
   attackClear(origin:Point,target:Entity,ranged:boolean):boolean {
@@ -105,13 +110,37 @@ export class Spatial {
   }
   validNode(id:number):boolean {return Number.isInteger(id)&&id>=0&&id<this.occupied.length;}
   findPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity):number[]|null {
-    if(!this.layers)return this.navigation.path(start,goal,blocked,maxCost);
-    if(start<0||goal<0)return null;
-    return this.layers.path(this.point(start),this.point(goal),n=>!!this.occupied[n.id]||!!this.resources[n.id]||!!blocked?.has(n.id),maxCost)?.map(n=>n.id)??null;
+    if(!this.validNode(start)||!this.validNode(goal))return null;
+    if(!this.layers){
+      const dx=Math.abs(start%this.size-goal%this.size),dy=Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size));
+      const corridor=Math.max(dx,dy)>=32?this.sectors.corridor(start,goal):undefined;
+      this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
+      if(corridor===null)return null;
+      this.routing.searches++;
+      const route=this.navigation.path(start,goal,blocked,maxCost,corridor);
+      this.routing.expanded+=this.navigation.lastExpanded;
+      if(route!==null||!corridor)return route;
+      // Temporary traffic may block every portal on the preferred corridor.
+      // Preserve reachability with a full search instead of reporting failure.
+      this.routing.fallbacks++;this.routing.searches++;
+      const fallback=this.navigation.path(start,goal,blocked,maxCost);
+      this.routing.expanded+=this.navigation.lastExpanded;return fallback;
+    }
+    const from=this.point(start),to=this.point(goal),corridor=Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))>=32?this.sectors.corridor(start,goal):undefined;
+    if(corridor===null)return null;
+    this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
+    const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!!this.occupied[n.id]||!!this.resources[n.id]||!!blocked?.has(n.id);
+    this.routing.searches++;
+    const route=this.layers.path(from,to,n=>blockedNode(n)||!!corridor&&!corridor[this.sectors.sector(n.id)],maxCost);
+    this.routing.expanded+=this.layers.lastExpanded;
+    if(route!==null||!corridor)return route?.map(n=>n.id)??null;
+    this.routing.fallbacks++;this.routing.searches++;
+    const fallback=this.layers.path(from,to,blockedNode,maxCost);this.routing.expanded+=this.layers.lastExpanded;
+    return fallback?.map(n=>n.id)??null;
   }
   visible(a:Point,b:Point){return (this.layers??this.tactical).visible(a,b);}
   private readonly layerViews=new Map<string,readonly number[]>();
-  visibleNodes(origin:Point,radius:number):readonly number[]{
+  visibleNodes(origin:Point,radius:number):readonly number[]|Uint32Array{
     if(!this.layers)return this.tactical.visibleCells(origin,radius);
     const key=`${origin.x}:${origin.y}:${origin.surface??""}:${radius}`,cached=this.layerViews.get(key);if(cached)return cached;
     const out:number[]=[];
@@ -150,18 +179,23 @@ export class Spatial {
     return { x: e.x + x, y: e.y + y };
   }
   rebuild() {
-    this.regions.invalidate();
+    const previous=this.blockedCells,next=new Set<number>();
     this.occupied.fill(0);
     this.resources.fill(0);
     for (const e of this.entities())
       if (alive(e)) {
         if (this.registry.get(e.definition).kind === "building")
           for (const i of this.footprint(e))
-            if (i >= 0) this.occupied[i] = e.id;
+            if (i >= 0) {this.occupied[i] = e.id;next.add(i);}
         if (e.resource && e.resource.amount > 0)
           for (const i of this.footprint(e))
-            if (i >= 0) this.resources[i] = e.id;
+            if (i >= 0) {this.resources[i] = e.id;next.add(i);}
       }
+    this.blockedCells=next;
+    const added=[...next].filter(cell=>!previous.has(cell)),removed=[...previous].filter(cell=>!next.has(cell));
+    this.navigation.invalidate([...added,...removed]);
+    this.sectors.invalidate([...added,...removed]);
+    this.sectors.prepare();
   }
   walkable(i: number) {
     return (
@@ -204,6 +238,25 @@ export class Spatial {
           }
     return null;
   }
+  private probes:{entity:Entity;blocked?:Set<number>;pocket?:ReadonlySet<number>|null}|undefined;
+  /** Only failed candidate probes may repeat inside this synchronous scope.
+   * Jobs/units must not change before the successful final probe ends it. */
+  routeBatch<T>(entity:Entity,query:()=>T):T {
+    const previous=this.probes;this.probes={entity};
+    try{return query();}finally{this.probes=previous;}
+  }
+  private routeBlockers(entity:Entity,avoidUnits:boolean):Set<number> {
+    if(!avoidUnits||this.ignoresUnits(entity))return new Set();
+    if(this.probes?.entity===entity&&this.probes.blocked)return this.probes.blocked;
+    const blocked=new Set<number>();
+    for(const unit of this.units()){
+      if(unit.id===entity.id||!unit.unit||!alive(unit)||unit.unit.contained||unit.unit.release||this.ignoresUnits(unit))continue;
+      blocked.add(this.cell(unit));
+      if(unit.unit.detour?.yielding)blocked.add(unit.unit.detour.waypoint);
+    }
+    if(this.probes?.entity===entity)this.probes.blocked=blocked;
+    return blocked;
+  }
   route(e: Entity, destination: Point, avoidUnits = e.unit?.order?.type !== "move" && e.unit?.order?.type !== "attack", maxCost = Infinity): boolean {
     if (
       !e.unit ||
@@ -215,20 +268,7 @@ export class Spatial {
       return false;
     if (e.unit.idle) e.unit.idle.walking = false;
     if(this.cell(destination)<0||this.cell(e)<0)return false;
-    const goal = this.cell(destination),
-      blocked = new Set(
-        (avoidUnits && !this.ignoresUnits(e) ? this.units() : [])
-          .filter(
-            (u) =>
-              avoidUnits && u.id !== e.id &&
-              u.unit &&
-              alive(u) &&
-              !u.unit.contained &&
-              !u.unit.release &&
-              !this.ignoresUnits(e) && !this.ignoresUnits(u),
-          )
-          .flatMap(e => e.unit!.detour?.yielding ? [this.cell(e),e.unit!.detour.waypoint] : [this.cell(e)]),
-      );
+    const goal=this.cell(destination),blocked=this.routeBlockers(e,avoidUnits);
     const from = e.unit.position ?? fixed(e);
     if(avoidUnits&&Number.isFinite(maxCost)){
       // Recompute the terrain-only budget so successive traffic retries cannot
@@ -240,6 +280,10 @@ export class Spatial {
       maxCost=Math.min(maxCost,Math.ceil(length*1.25/1000+4)*1000);
     }
     const direct = this.clearSegment(from, fixed(destination), blocked);
+    if(!direct&&!this.layers&&this.probes?.entity===e&&avoidUnits){
+      if(this.probes.pocket===undefined)this.probes.pocket=this.navigation.reachablePocket(this.cell(e),blocked);
+      if(this.probes.pocket&&!this.probes.pocket.has(goal))return false;
+    }
     // Every A* route starts at one of the eight neighboring cell centers.
     // If an interrupted sub-cell position cannot join any of those (or its own
     // center), all resulting routes would be rejected by the smoothing loop.

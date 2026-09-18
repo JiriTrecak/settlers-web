@@ -8,17 +8,30 @@ function setup() {
   const hud = {
     selectedIds: [unit.id], selected: unit.id as number | null,
     targeting: null as any, mode: null, attackMode: false, rallyMode: false,
-    clearMode: vi.fn(), setSelection: vi.fn(),
+    clearMode: vi.fn(), setSelection: vi.fn(), placement:vi.fn(), showError:vi.fn(),
   };
-  const session = Object.assign(Object.create(Session.prototype), {
-    world: {settlement: g}, me: 0, config: {player: 0}, economyHud: hud,
-    renderer: { pickWalk: () => ({x:245,z:245}), pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
+  const session = Object.assign(new Session({} as HTMLCanvasElement,{player:0,mapId:"test",host:{} as HTMLElement,hooks:{onHud:()=>{}}}), {
+    worker: {get latest(){const view={size:g.spatial.size,tick:g.state.tick,settlement:g.view("player.1")};return {selection:view,visual:view};},request:vi.fn(async (_method:string,p:any)=>g.canBuild("player.1",p.definition,p.position,p.actor,p.rotation))}, economyHud: hud,
+    renderer: {gamePreview:vi.fn(),gameAbilityTarget:vi.fn(), pickWalk: () => ({x:245,z:245}), pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
     send: vi.fn(),
   });
-  return {g, unit, hud, session};
+  return {g, unit, hud, session:session as any};
 }
 
 describe("RTS click intentions", () => {
+  it('coalesces placement queries and never paints a stale validation over the current cursor',async()=>{
+    const {session,hud,unit}=setup();
+    Object.assign(hud,{mode:'building.ants.barracks',targeting:{type:'build',actors:[unit.id]},buildingActor:unit.id,placementRotation:0});
+    const replies:((error:string|null)=>void)[]=[];
+    session.worker.request.mockImplementation(()=>new Promise(resolve=>replies.push(resolve)));
+    session.onHover({clientX:0,clientY:0});
+    session.renderer.pickGround=()=>({x:244,z:245});session.onHover({clientX:1,clientY:0});
+    expect(session.worker.request).toHaveBeenCalledTimes(1);
+    replies[0](null);await vi.waitFor(()=>expect(session.worker.request).toHaveBeenCalledTimes(2));
+    expect(session.renderer.gamePreview.mock.calls.some((args:any[])=>args[1]===245&&args[3]===true)).toBe(false);
+    replies[1]('Blocked');await vi.waitFor(()=>expect(hud.placement).toHaveBeenCalledWith('Blocked'));
+    expect(session.renderer.gamePreview).toHaveBeenLastCalledWith('building.ants.barracks',244,245,false,0,0);
+  });
   it("routes right-button gestures to commands in play and retains editor orbit", () => {
     vi.stubGlobal("window", new EventTarget());
     vi.stubGlobal("document", { createElement: () => ({style: {}, remove() {}}), body: {append() {}} });
@@ -46,10 +59,11 @@ describe("RTS click intentions", () => {
       }
     } finally { vi.unstubAllGlobals(); }
   });
-  it("submits and validates the chosen building orientation", () => {
+  it("submits the chosen building orientation and validates its preview through the worker", async () => {
     const {session, hud, g, unit} = setup();
     Object.assign(hud, { mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 270 });
     const validate = vi.spyOn(g, "canBuild").mockReturnValue(null);
+    session.onHover({clientX:0,clientY:0});await Promise.resolve();
     session.click(0, 0);
     expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245, y: 245}, unit.id, 270);
     expect(session.send).toHaveBeenCalledWith({

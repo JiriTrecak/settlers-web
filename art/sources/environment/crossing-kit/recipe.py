@@ -23,7 +23,15 @@ def build(A):
  wood=mat('Weathered heartwood','976d43','assets/textures/terrain/heartwood-grain.png')
  cut=mat('Cut annual rings','887257','assets/textures/terrain/heartwood-rings.png')
  moss=[mat('Moss cushion '+str(i),c) for i,c in enumerate(['46542b','59683a','718147'])]
- stones=[mat('Weathered limestone '+str(i),c) for i,c in enumerate(['6b7063','818777','999c86','747a67'])]
+ stones=[mat('Weathered limestone '+str(i),c,C.get('stone_texture'),rough=.83+i*.04) for i,c in enumerate(['6b7063','818777','999c86','747a67'])]
+ if C.get('stone_texture'):
+  # glTF preserves image × constant as baseColorTexture + baseColorFactor.
+  # Modest block-to-block values retain readable masonry under canopy shadows.
+  for m,tint in zip(stones,[.58,.78,1,.7]):
+   nodes,links=m.node_tree.nodes,m.node_tree.links;p=nodes.get('Principled BSDF');image=next(n for n in nodes if n.type=='TEX_IMAGE')
+   multiply=nodes.new('ShaderNodeMix');multiply.data_type='RGBA';multiply.blend_type='MULTIPLY';multiply.inputs[0].default_value=1
+   a=next(s for s in multiply.inputs if s.name=='A' and s.type=='RGBA');b=next(s for s in multiply.inputs if s.name=='B' and s.type=='RGBA');b.default_value=(tint,tint*.99,tint*.95,1)
+   links.new(image.outputs['Color'],a);links.new(next(s for s in multiply.outputs if s.type=='RGBA'),p.inputs['Base Color'])
  rope=mat('Twisted fibre','78634a');resin=mat('Warm resin lamp','efa336',rough=.35,emit=.8)
  def mesh(name,vs,fs,mats,inds=None,uv='wood',smooth=False):
   me=bpy.data.meshes.new(name);me.from_pydata(vs,[],fs);me.update();ob=bpy.data.objects.new(name,me);geo.objects.link(ob)
@@ -34,7 +42,14 @@ def build(A):
   for p in me.polygons:
    for li in p.loop_indices:
     v=me.vertices[me.loops[li].vertex_index].co
-    if uv=='cross':co=(v.x/8+.5,v.z/6+.7)
+    if C.get('stone_texture') and mats[p.material_index] in stones:
+     # One material tile spans several blocks. World-space projection keeps the
+     # paving's scale consistent; per-part offsets avoid obvious copied cracks.
+     offset=(sum(map(ord,name))%43)/43
+     if abs(p.normal.z)>.6:co=(v.x*.21+offset,v.y*.21)
+     elif abs(p.normal.x)>.6:co=(v.y*.21+offset,v.z*.21)
+     else:co=(v.x*.21+offset,v.z*.21)
+    elif uv=='cross':co=(v.x/8+.5,v.z/6+.7)
     elif abs(p.normal.z)>.6:co=(v.y*.4+(sum(map(ord,name))%37)/37,v.x*.18) if mats[p.material_index]==wood else (v.x*.16,v.y*.13)
     elif abs(p.normal.x)>.6:co=(v.y*.13,v.z*.22)
     else:co=(v.x*.16,v.z*.22)
@@ -115,8 +130,11 @@ def build(A):
   rows=18;dy=D['depth']/rows
   for i in range(rows):
    y=-half+i*dy
-   for j in range(3):
-    x=-3+j*2;stagger=.06*math.sin(i*1.7+j);strip('Worn paving %02d.%s'%(i,j),x+.045+stagger,x+1.955+stagger,y+.04,y+dy-.04,.14,stones[(i+j)%4],offset=.035,segments=2)
+   # Alternating long/short stones form a bonded pavement instead of a chessboard.
+   # Heights and the six-metre playable width remain identical to the walk profile.
+   cuts=[-3,-1,1,3] if i%2==0 else [-3,-2,0,2,3]
+   for j,(left,right) in enumerate(zip(cuts,cuts[1:])):
+    strip('Worn paving %02d.%s'%(i,j),left+.035,right-.035,y+.035,y+dy-.035,.14,stones[(i+j)%4],offset=.035,segments=2)
   for side in [-1,1]:
    for i in range(12):
     y=-half+i*D['depth']/12+.05;end=y+D['depth']/12-.1

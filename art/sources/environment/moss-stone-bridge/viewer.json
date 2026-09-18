@@ -65,7 +65,7 @@
     }
   ],
   "light_scale": 0.1,
-  "vertices": 3304,
-  "triangles": 6144,
+  "vertices": 3592,
+  "triangles": 6684,
   "note": "Evaluated static geometry with authored UVs and packed albedo textures."
 }

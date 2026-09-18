@@ -14,7 +14,7 @@
   {
     "asset": "moss-stone-bridge",
     "samples": 54,
-    "maxFloorErrorMetres": 0.03500346536717425,
-    "evaluatedTriangles": 6144
+    "maxFloorErrorMetres": 0.035001558018541434,
+    "evaluatedTriangles": 6684
   }
 ]

@@ -18,6 +18,17 @@ import type { MapStamp } from "../../shared";
 import { flattenPolygon } from "./polygonLook";
 
 export class PropField {
+  /** Raycast only nearby static bounds, then exact geometry. No scene-wide triangle scan. */
+  cameraObstruction(ray:Raycaster):number {
+    let distance=ray.far;
+    const point=new Vector3();
+    for(const root of this.placed.values()){
+      const bounds=root.userData.cameraBounds as Box3|undefined;
+      if(!bounds||!ray.ray.intersectBox(bounds,point)||point.distanceTo(ray.ray.origin)>distance)continue;
+      for(const hit of ray.intersectObject(root,true))if(hit.distance<distance)distance=hit.distance;
+    }
+    return distance;
+  }
   private readonly wind=new FoliageWindLayer();
   private readonly resin=new ResinShimmerLayer();
   tick(now:number){this.wind.tick(now);this.resin.tick(now);}
@@ -317,6 +328,7 @@ export class PropField {
     const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[]}>();
     for(const [id,root] of this.placed){
       root.updateMatrixWorld(true);
+      root.userData.cameraBounds=new Box3().setFromObject(root);
       const asset=String(root.userData.asset);
       if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
         const box=new Box3().setFromObject(root);

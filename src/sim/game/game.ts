@@ -40,7 +40,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-44";
+export const SIMULATION_BUILD = "declarative-sim-45";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -487,39 +487,46 @@ export class Game {
   tick(tick = this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1) {
     if (tick !== this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1)
       throw new Error("Ticks must advance exactly once");
-    const mission = this.state.mission;
-    if (mission?.dialogue?.cinematic && mission.dialogue.remaining > 0 && !this.state.outcome) {
-      mission.pausedTicks++;
-      if (--mission.dialogue.remaining === 0) mission.dialogue.until = this.state.tick;
-      this.observation.update();
-      return;
-    }
-    this.state.tick = tick - (mission?.pausedTicks ?? 0);
-    if (this.state.outcome) {
-      this.observation.update();
-      return;
-    }
+    for (const name in this.timings) this.timings[name] = 0;
     const measure = (name: string, fn: () => void) => {
       const t = performance.now();
       fn();
       this.timings[name] = performance.now() - t;
     };
+    const observe = () => {
+      measure("Observation", () => this.observation.update(true));
+      Object.assign(this.timings, this.observation.timings);
+    };
+    const mission = this.state.mission;
+    if (mission?.dialogue?.cinematic && mission.dialogue.remaining > 0 && !this.state.outcome) {
+      mission.pausedTicks++;
+      if (--mission.dialogue.remaining === 0) mission.dialogue.until = this.state.tick;
+      observe();
+      return;
+    }
+    this.state.tick = tick - (mission?.pausedTicks ?? 0);
+    if (this.state.outcome) {
+      observe();
+      return;
+    }
     measure("Spell timers", () => this.spells.tick());
     measure("Item effects", () => this.combat.items.tick());
     measure("Regeneration", () => new Regeneration(this.context).tick());
     measure("Work assignment", () => {
-      this.orders.advance((e, order) => this.activateQueuedOrder(e, order));
-      this.economy.assign();
+      measure("Assignment · queued orders", () => this.orders.advance((e, order) => this.activateQueuedOrder(e, order)));
+      measure("Assignment · workers", () => this.economy.assign());
     });
     measure("Orders / navigation", () => {
-      this.inventory.plan();
-      this.combat.plan();
-      idleMotion(this.context);
-      this.context.move();
+      measure("Orders · inventory", () => this.inventory.plan());
+      measure("Orders · combat planning", () => this.combat.plan());
+      measure("Orders · idle motion", () => idleMotion(this.context));
+      measure("Orders · movement", () => this.context.move());
     });
     this.combat.items.tick();
     measure("Combat", () => {
-      for (const dead of this.combat.resolve(this.spells.resolve())) {
+      const scripted=this.state.mission?.pendingDamage??[];
+      if(this.state.mission)this.state.mission.pendingDamage=[];
+      for (const dead of this.combat.resolve([...this.spells.resolve(),...scripted])) {
         this.campLoot.onDeath(dead);
         if (!this.context.def(dead).hero) this.inventory.onDeath(dead);
         this.observation.recordDeath(dead);
@@ -536,9 +543,7 @@ export class Game {
       this.research.tick();
     });
     if(this.mission) measure("Mission Lua",()=>this.mission!.tick());
-    measure("Observation", () => {
-      this.observation.update();
-    });
+    observe();
     if(this.mission) return;
     const defeated=this.owners.filter(owner=>this.isDefeated(owner));
     if(defeated.length){
@@ -585,6 +590,7 @@ export class Game {
     this.observation.validateSnapshot(saved.knowledge);
     if (!!saved.state.mission !== !!this.map.mission) throw new Error("Mission state mismatch");
     if(saved.state.mission && (new Set(saved.state.mission.spawned).size!==saved.state.mission.spawned.length || saved.state.mission.spawned.some(id=>!this.map.entities.some(p=>p.id===id&&p.activation==="script")))) throw new Error("Invalid mission spawn history");
+    if(saved.state.mission?.pendingDamage.some(hit=>!this.registry.rules.damageTypes[hit.damageType]))throw new Error('Unknown scripted damage type');
     if(saved.state.mission && Object.keys(saved.state.mission.objectiveStates).some(id=>!this.map.mission?.objectives?.some(o=>o.id===id)))throw new Error('Unknown saved mission objective');
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),

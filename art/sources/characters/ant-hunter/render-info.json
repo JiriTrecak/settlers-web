@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-10T02:01:43-0700",
+  "at": "2026-09-16T05:25:35-0700",
   "view": "saved",
   "quick": false,
-  "seconds": 4.61,
-  "blend_mtime_ns": 1789030899640292976,
+  "seconds": 4.14,
+  "blend_mtime_ns": 1789561194950519095,
   "config": {
     "name": "Ant Hunter",
     "blend": "ant-hunter.blend",

@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-15T16:18:55-0700",
+  "at": "2026-09-15T23:54:40-0700",
   "view": "saved",
   "quick": false,
-  "seconds": 3.5,
-  "blend_mtime_ns": 1789514332820001719,
+  "seconds": 5.61,
+  "blend_mtime_ns": 1789541675653317094,
   "config": {
     "name": "Moss Stone Bridge",
     "blend": "moss-stone-bridge.blend",
@@ -45,6 +45,7 @@
     "preserve_textures": true,
     "texture_format": "JPEG",
     "texture_quality": 90,
-    "viewer_light_scale": 0.1
+    "viewer_light_scale": 0.1,
+    "stone_texture": "assets/textures/terrain/weathered-limestone.png"
   }
 }

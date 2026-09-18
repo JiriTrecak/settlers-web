@@ -67,7 +67,7 @@ export class SelectDock {
     this.yaw.value = String(deg);
     this.yawVal.textContent = `${deg}°`;
     this.yaw.disabled = !state.name;
-    this.walkSection.hidden=!state.walk;
+    this.walkSection.classList.toggle('hidden',!state.walk);this.walkSection.classList.toggle('flex',!!state.walk);
     if(state.walk)for(const [key,value] of Object.entries({level:state.walk.level,height:state.walk.height,start:state.walk.connections?.start,end:state.walk.connections?.end})){
       const input=this.walkFields.get(key)!;if(document.activeElement!==input)input.value=value===undefined?'':String(value);
     }

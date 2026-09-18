@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.neutral.supply-crate",
+  "name": "Supply Crate",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/neutral/supply-crate/model.glb",
+      "sha256": "53c8bf5f0ba3db6422b13b39daeaae8d5addd6b54dc1e3f13cd7f6611b756752",
+      "bytes": 19344,
+      "triangles": 280,
+      "primitives": 5
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.supply-crate",
+      "file": "assets/models/buildings/neutral/supply-crate/model.glb",
+      "healthHeight": 1.3
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
+    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.426Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

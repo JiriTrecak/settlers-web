@@ -34,6 +34,7 @@ export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipme
     healthRegenPerSecond: level?.healthRegenPerSecond ?? 0,
     manaRegenPerSecond: level?.manaRegenPerSecond ?? d.behaviors.spellcasting?.manaRegenPerSecond ?? 0,
   };
+  for(const key of ["maxHp","damage","armor","maxMana"] as const) result[key]+=e.progression?.bonuses?.[key]??0;
   for (const id of e.equipment ?? []) {
     const effect = id && registry?.get(id).itemEffect;
     if (effect && effect.type === "equipment") {

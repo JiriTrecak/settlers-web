@@ -3,7 +3,7 @@ import {authoredMaps,missionMaps,playableMaps} from '../../src/shared/map/librar
 import {createMissionMatch} from '../../src/shared/scenario/match';
 it('keeps missions in the editor and campaign, out of skirmish',()=>{
  const entry=authoredMaps().find(m=>m.id==='vanguard-prologue');expect(entry).toBeTruthy();
- expect(missionMaps('vanguard').map(m=>m.id)).toEqual(['vanguard-prologue','vanguard-hearth','vanguard-root','vanguard-hollow-gate','vanguard-heartwood-vault']);
+ expect(missionMaps('vanguard').map(m=>m.id)).toEqual(['vanguard-prologue','vanguard-hearth','vanguard-root','vanguard-hollow-gate','vanguard-heartwood-vault','vanguard-briarwatch']);
  for(const mission of missionMaps('vanguard'))expect(playableMaps().some(m=>m.id===mission.id)).toBe(false);
  expect(createMissionMatch(entry!.id,entry!.map,entry!.revision).slots).toEqual([{player:0,kind:'human',name:'Vanguard'}]);
 });

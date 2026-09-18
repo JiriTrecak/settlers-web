@@ -13,7 +13,7 @@ export function captureCompany(game:Game):CampaignCompany {
  if(!tags?.length)throw new Error('This mission has no travelling company');
  return campaignCompanySchema.parse(tags.flatMap(tag=>{
   const e=game.entities.find(e=>e.placement===tag&&e.owner==='player.1'&&e.unit&&alive(e));
-  return e?[{tag,definition:e.definition,...(e.progression?{experience:e.progression.experience}:{}),
+  return e?[{tag,definition:e.definition,...(e.progression?{experience:e.progression.experience,...(e.progression.bonuses?{bonuses:{...e.progression.bonuses}}:{})}:{}),
    ...(e.spellcasting?{learned:{...e.spellcasting.learned}}:{}),
    ...(e.equipment?{equipment:[...e.equipment]}:{}),
    ...(e.equipmentState?{equipmentState:e.equipmentState.map(s=>s?{...s,readyTick:0,hits:0}:null)}:{})}]:[];
@@ -35,8 +35,9 @@ export function restoreCompanyMember(c:GameContext,e:Entity,m:CampaignCompany[nu
  if(m.experience!==undefined){
   const cap=levels?.[Math.min(levels.length,c.map.mission?.heroLevelCap??levels.length)-1]?.experience;
   if(cap===undefined||m.experience>cap)throw new Error('Company experience exceeds the destination level cap');
-  e.progression={experience:m.experience};
+  e.progression={experience:m.experience,...(m.bonuses?{bonuses:{...m.bonuses}}:{})};
  }
+ if(m.bonuses&&!e.progression)throw new Error("Permanent bonuses require a hero progression");
  if(m.equipment){
   if(m.equipment.length!==d.behaviors.inventory?.slots||m.equipment.some(id=>id&&!c.registry.find(id)?.itemEffect))throw new Error('Invalid company inventory');
   e.equipment=[...m.equipment];

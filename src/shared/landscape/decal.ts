@@ -1,5 +1,5 @@
 /** Painted surface details; coordinates and size are in world metres, rotation in degrees. */
-export const DECAL_KINDS = ['leaf-litter', 'tiny-flowers', 'pebbles'] as const;
+export const DECAL_KINDS = ['leaf-litter', 'tiny-flowers', 'pebbles', 'root-rot', 'mycelium-bed'] as const;
 export type DecalKind = typeof DECAL_KINDS[number];
 export type GroundDecal = { id: string; kind: DecalKind; x: number; z: number; size: number; rotation: number; opacity: number };
 export function validDecal(raw: unknown): raw is GroundDecal {

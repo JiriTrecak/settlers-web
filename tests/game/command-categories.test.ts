@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ContentRegistry } from "../../src/content/registry";
-import { commandCard, commandMenu, commandPage, commandPageCount, shortcutCommand } from "../../src/presentation/commands";
+import { unitCameraCommand, commandCard, commandMenu, commandPage, commandPageCount, shortcutCommand } from "../../src/presentation/commands";
 import { game, source, worker } from "./helpers";
 
 describe("command categories", () => {
@@ -114,12 +114,15 @@ it('keeps all learned abilities on the bottom row independently of movement comm
   const abilities=g.context.def(hero).behaviors.spellcasting!.abilities;
   for(const ability of abilities)expect(g.spells.learn(hero,ability)).toBeNull();
   g.observation.update();
-  const root=commandMenu(commandCard(g.view('player.1'),[hero.id],'player.1',g.registry),null,g.registry).entries;
+  const view=g.view('player.1');
+  const root=commandMenu([...commandCard(view,[hero.id],'player.1',g.registry),...unitCameraCommand(view,hero.id,g.registry,'rts')],null,g.registry).entries;
   const slots=commandPage(root,0);
   expect(slots.filter(s=>s.row===3).map(s=>s.binding.ability)).toEqual(abilities);
   expect(slots.filter(s=>s.row===3).map(s=>s.column)).toEqual([1,2,3,4]);
   expect(slots.find(s=>s.binding.placement==='banner')?.row).toBe(4);
-  expect(slots.filter(s=>s.binding.type==='move'||s.binding.type==='follow').every(s=>s.row<3)).toBe(true);
+  expect(slots.filter(s=>s.binding.type==='move'||s.binding.type==='follow'||s.binding.type==='camera').every(s=>s.row<3)).toBe(true);
+  expect(slots.find(s=>s.binding.type==='camera')?.binding).not.toHaveProperty('immediate');
+  expect(unitCameraCommand({...view,entities:view.entities.map(e=>e.id===hero.id?{...e,hp:0}:e)},hero.id,g.registry,'first-person')).toEqual([]);
 });
 
 it('preserves declared ability columns when only skills one and three are learned',()=>{

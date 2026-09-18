@@ -9,12 +9,15 @@ export class SceneryLights {
  private readonly pool=Array.from({length:4},()=>new PointLight(0xffffff,0,8,2));
  private sources:{x:number;y:number;z:number;color:string;intensity:number;range:number}[]=[];
  get groundSources(){return this.sources;}
- private signature='';
+ private stamps:readonly MapStamp[]|null=null;
+ private field:HeightField|null=null;
+ private lastX=NaN;private lastZ=NaN;
+ invalidate(){this.stamps=null;this.lastX=NaN;}
  constructor(private readonly scene:Scene){for(const light of this.pool)scene.add(light);}
  sync(stamps:readonly MapStamp[],field:HeightField):void {
+  if(this.stamps===stamps&&this.field===field)return;
+  this.stamps=stamps;this.field=field;this.lastX=NaN;
   const selected=stamps.filter(s=>definitions.has(s.asset));
-  const signature=JSON.stringify(selected.map(s=>[s,field.sample(s.x+.5,s.y+.5)]));
-  if(signature===this.signature)return;this.signature=signature;
   this.sources=selected.map(s=>{
    const d=definitions.get(s.asset)!,scale=s.scale??1,c=Math.cos(s.yaw??0),r=Math.sin(s.yaw??0);
    const x=d.x*scale*(s.widthScale??1),z=d.z*scale*(s.depthScale??1);
@@ -22,6 +25,7 @@ export class SceneryLights {
   });
  }
  update(x:number,z:number):void {
+  if(x===this.lastX&&z===this.lastZ)return;this.lastX=x;this.lastZ=z;
   const nearest=this.sources.filter(s=>(s.x-x)**2+(s.z-z)**2<45**2).sort((a,b)=>(a.x-x)**2+(a.z-z)**2-((b.x-x)**2+(b.z-z)**2)).slice(0,this.pool.length);
   this.pool.forEach((light,i)=>{const source=nearest[i];light.intensity=source?.intensity??0;if(source){light.position.set(source.x,source.y,source.z);light.color.set(source.color);light.distance=source.range;}});
  }

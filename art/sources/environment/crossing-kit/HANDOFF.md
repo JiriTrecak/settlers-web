@@ -44,7 +44,7 @@ The assets are published and integrated. The levels remain under visual and game
 
 ## Moss Stone Bridge
 
-**What it is:** A broad low-poly stone arch with parapets, paving blocks and four abutments.
+**What it is:** A broad stone arch refined with weathered limestone, restrained block tints and staggered paving; the walking profile is unchanged.
 
 **Asset folder:** [moss-stone-bridge](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/moss-stone-bridge>).
 
@@ -52,15 +52,17 @@ The assets are published and integrated. The levels remain under visual and game
 
 **Live preview:** [Studio](http://127.0.0.1:8896).
 
-**Geometry:** 6,144 exported triangles, 7 material primitives. Source recipe and editable master retained.
+**Geometry:** 6,684 exported triangles; one mesh, seven material primitives; one 1024² albedo image; 806,172 bytes. Source recipe and editable master retained.
 
 **Runtime features:** 6 × 18 m deck, 2.2 m arch, 0.8 m slab; four separate abutment blockers. No animations or team-color surface.
 
-**Validation:** 54 ray samples remain within 3.6 cm of the declared floor. All eight ants crossed in simulation and live browser checks. Finite vertices, nondegenerate faces, material assignment and packed-image checks passed. Source reference, sampled palette and saved render retained.
+**Validation:** Final saved Blender validation and full 1200 × 900 render passed. Exported GLB loaded and inspected from top, back and low side; final in-level view inspected. All four stone tint factors verified in the GLB. 54 ray samples remain within 3.5002 cm of the declared floor. Eight focused crossing/chapter/journey tests passed. Prior eight-ant browser traversal predates this material/paving refinement; navigation declarations are unchanged. Source reference and sampled palette retained.
 
-**Game integration:** Published through the asset manifest; used in The Hollow Gate and/or The Heartwood Vault. Navigation and rendering use the same declared crossing profile where applicable.
+**Game integration:** Published through the asset manifest; the outdoor Hollow Gate crossing uses this runtime GLB. Navigation and rendering share the declared crossing profile.
 
-**Limitations:** Paving is 3.5 cm above the continuous navigation profile; gaps are cosmetic. Banks must meet the landings. These assets do not by themselves establish final level quality or balance.
+**Limitations:** Paving is 3.5 cm above the continuous navigation profile; gaps are cosmetic. Banks must meet the landings. Exact texture edge tiling is not guaranteed; stone UV boundaries interrupt repetition. Moss remains simplified geometry. This refinement is not a claim of final level quality or balance.
+
+The limestone was generated with the built-in imagegen tool; the exact prompt and provenance are retained in `art/sources/textures/weathered-limestone/generation.json`. Source image is retained at full resolution, with a Lanczos-resized 1024² runtime PNG and JPEG embedded in the GLB. Blender 5.2 exports the modern Mix/RGBA/Multiply node as a base-color factor; the older MixRGB node dropped the tint in the GLB and is not used.
 
 ## Heartwood Wall
 
@@ -129,3 +131,17 @@ The assets are published and integrated. The levels remain under visual and game
 - **Validation:** Saved Blender geometry, packed images, downward underside normals, full-resolution comparison, GLB load and orbit checked. In-game alcove rendering and route/spawn tests pass.
 - **Game integration:** Two scaled instances frame the optional fungal reward fight in The Heartwood Vault; published through the asset catalogue.
 - **Limitations:** Hidden surfaces inferred; fine gills and moss simplified. Four-nearest-light budget applies; static geometry. Further level art polish remains.
+
+## Bitter Heart
+
+**Bitter Heart — environment landmark**
+
+- **What it is:** A split copper-red resin pod framed by asymmetric hooked roots, torn bark plates, moss and aged shelf fungi.
+- **Asset folder:** [bitter-heart](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/bitter-heart>).
+- **Files:** [Blender](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/bitter-heart/bitter-heart.blend>) · [Game GLB](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/assets/models/environment/structures/bitter-heart/model.glb>) · [Comparison](</Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/bitter-heart/comparison.png>).
+- **Live preview:** [Studio](http://127.0.0.1:8901).
+- **Geometry:** 14,804 triangles; one mesh, six materials/primitives; 1,637,980 bytes.
+- **Runtime features:** Static; no animation clips or team-color surfaces. Shared-clock resin shimmer, declared copper-red light and elliptical ground blocker.
+- **Validation:** Saved Blender validation, nondegenerate geometry, packed textures, full-resolution comparison, GLB loading and orbit inspection passed. In-game chamber, route/spawn checks and normal-order campaign journey checked.
+- **Game integration:** Anchors the final Heart Keeper encounter in The Heartwood Vault. Root-rot ground decals connect it to the floor.
+- **Limitations:** Concealed surfaces inferred; fine relief simplified. Four-nearest-light budget applies. No animated mesh or destruction state.

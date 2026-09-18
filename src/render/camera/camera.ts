@@ -1,10 +1,11 @@
+import {viewRotation,type ClosePose} from './unitCamera';
 /**
  * Look-at on the XZ plane.
  * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
  * 32° FoV, 45° pitch, -45° yaw, terrain-following distance zoom, pan only, view half a block past the red.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
-import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
+import { OrthographicCamera, PerspectiveCamera, Quaternion, Vector3 } from "three";
 import { MAP_BLOCK, MAP_SIZE } from "../../shared";
 
 /** True-iso yaw / pitch. Preview snapshots and the editor free-cam use this pair. */
@@ -23,6 +24,24 @@ const PITCH_MAX = Math.PI / 2 - 0.04;
 const ORBIT = 0.007;
 
 export class Camera {
+  private closePose:ClosePose|null=null;
+  private savedFocus:{x:number;z:number}|null=null;
+  private closeElapsed=0;
+  private readonly lastEye=new Vector3();
+  private readonly lastRotation=new Quaternion();
+  private lastFov=GAME_FOV;
+  private fromEye=new Vector3();
+  private fromRotation=new Quaternion();
+  private fromFov=GAME_FOV;
+  get closeTransitionComplete():boolean{return !this.closePose||this.closeElapsed>=this.closePose.transitionMs;}
+  get followingUnit():boolean{return this.closePose!==null;}
+  setClosePose(pose:ClosePose|null,dtMs=0):void {
+    if(!pose){if(!this.closePose)return;this.closePose=null;if(this.savedFocus){this.targetX=this.savedFocus.x;this.targetZ=this.savedFocus.z;}this.savedFocus=null;this.touch();return;}
+    if(!this.closePose)this.savedFocus={x:this.targetX,z:this.targetZ};
+    if(this.closePose?.key!==pose.key){this.closeElapsed=0;this.fromEye.copy(this.lastEye);this.fromRotation.copy(this.lastRotation);this.fromFov=this.lastFov;}
+    this.closeElapsed+=Math.max(0,dtMs);this.closePose=pose;
+    this.targetX=pose.focus.x;this.targetZ=pose.focus.z;this.touch();
+  }
   private cinematicBlend = 0;
   cinematic(on:boolean,dtMs:number):void {
     const next=this.cinematicBlend+((on?1:0)-this.cinematicBlend)*(1-Math.exp(-Math.max(0,dtMs)/220));
@@ -65,6 +84,7 @@ export class Camera {
 
   /** Play pose: fixed perspective, default distance 40, pan to half a block past the red. */
   setGame(on: boolean, size = MAP_SIZE): void {
+    this.setClosePose(null);
     this.game = on;
     this.locked = on;
     this.bound = on ? size : 0;
@@ -106,6 +126,7 @@ export class Camera {
 
   /** Screen-pixel drag → XZ. `screenH` converts pixels to world units. */
   panScreen(dx: number, dy: number, screenH: number): void {
+    if(this.followingUnit)return;
     if (this.game) this.panPersp(dx, dy, screenH);
     else this.panOrtho(dx, dy, screenH);
     this.clamp();
@@ -114,6 +135,7 @@ export class Camera {
 
   /** Positive right/forward moves the camera toward screen-right/screen-top on XZ. */
   panWorld(right: number, forward: number): void {
+    if(this.followingUnit)return;
     const { rx, rz, fx, fz } = basis(this.yaw);
     // basis.f points from the target toward the eye, opposite to forward travel.
     this.targetX += right * rx - forward * fx;
@@ -131,6 +153,7 @@ export class Camera {
   }
 
   zoomBy(factor: number): void {
+    if(this.followingUnit)return;
     if (!Number.isFinite(factor) || factor <= 0) return;
     if (this.game) {
       this.distance = clamp(this.distance * factor, this.gameDistance * .5, this.gameDistance * 1.5);
@@ -166,7 +189,7 @@ export class Camera {
 
   /** Keep the active footprint inside the red plus half a block (mid-halo). */
   private clamp(): void {
-    if (this.bound <= 0) return;
+    if (this.followingUnit || this.bound <= 0) return;
     const pad = MAP_BLOCK / 2;
     const lo = -pad;
     const hi = this.bound + pad;
@@ -220,6 +243,11 @@ export class Camera {
     const a = this.rayA.set(ndcX, ndcY, -1).unproject(cam);
     const b = this.rayB.set(ndcX, ndcY, 1).unproject(cam);
     const dy = b.y - a.y;
+    if(this.closePose){
+      const direction=b.clone().sub(a).normalize();
+      const t=direction.y<-.0001?Math.max(0,(this.closePose.focus.y-a.y)/direction.y):100;
+      return [a.x+direction.x*Math.min(100,t),a.z+direction.z*Math.min(100,t)];
+    }
     const planeY = this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : 0;
     const t = Math.abs(dy) < 1e-8 ? 0 : (planeY - a.y) / dy;
     return [a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t];
@@ -227,6 +255,14 @@ export class Camera {
 
   applyTo(cam: OrthographicCamera | PerspectiveCamera, width: number, height: number): void {
     const aspect = Math.max(1, width) / Math.max(1, height);
+    if(this.closePose && cam instanceof PerspectiveCamera){
+      const p=this.closePose,t=p.transitionMs===0?1:Math.min(1,this.closeElapsed/p.transitionMs),blend=t*t*(3-2*t);
+      cam.position.lerpVectors(this.fromEye,p.eye,blend);
+      cam.quaternion.copy(this.fromRotation).slerp(viewRotation(p.eye,p.target),blend);
+      cam.fov=this.fromFov+(p.fov-this.fromFov)*blend;cam.aspect=aspect;cam.near=.08;cam.far=180;cam.updateProjectionMatrix();
+      if(!this.internal(cam)){this.lastEye.copy(cam.position);this.lastRotation.copy(cam.quaternion);this.lastFov=cam.fov;}
+      return;
+    }
     if (!this.internal(cam)) {
       this.lastAspect = aspect;
       this.clamp();
@@ -240,6 +276,7 @@ export class Camera {
       cam.near = 1;
       cam.far = dist + reach + SLACK;
       cam.updateProjectionMatrix();
+      if(!this.internal(cam)){this.lastEye.copy(cam.position);this.lastRotation.copy(cam.quaternion);this.lastFov=cam.fov;}
       return;
     }
     cam.left = -this.zoom * aspect;

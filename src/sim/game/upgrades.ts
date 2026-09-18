@@ -28,7 +28,7 @@ export class BuildingUpgrades {
     return null;
   }
   tick() {
-    for (const building of this.c.live()) {
+    for (const building of this.c.liveBuildings()) {
       if (!building.upgrade || !this.c.ready(building)) continue;
       const old = this.c.def(building), task = building.upgrade;
       if (++task.progress < old.upgrade!.workTicks) continue;
@@ -37,6 +37,7 @@ export class BuildingUpgrades {
         this.c.event(building.owner, "Building upgrade completed", "consumed", p.item, p.amount);
       building.hp = building.hp! + target.body!.maxHp - old.body!.maxHp;
       building.definition = target.id;
+      this.c.observationRevision++;
       delete building.upgrade;
       this.c.event(building.owner, `${target.name} completed`);
     }

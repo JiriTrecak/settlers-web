@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-civilian",
+  "name": "Briarwatch Villager",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/units/ants/briar-civilian/model.glb",
+      "sha256": "7d7f6e0d2182a00a12ba98a89bb0afa22ac69fe79eb411be3f46c65ac1b5239f",
+      "bytes": 333236,
+      "triangles": 4140,
+      "primitives": 14
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.civilian",
+      "file": "assets/models/units/ants/briar-civilian/model.glb",
+      "character": "civilian",
+      "scale": 1,
+      "healthHeight": 2.3,
+      "cameraAnchor": {
+        "height": 1.5,
+        "forward": 0.15,
+        "distance": 7
+      }
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/characters/briarwatch-ant-cast/briarwatch-ant-cast.blend",
+    "sha256": "9a5a9b83b639d09b6c39aa87a6baf3a40e465be181442f57ccb2ef162bfb3f44",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.428Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

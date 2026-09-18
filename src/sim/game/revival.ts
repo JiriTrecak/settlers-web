@@ -21,7 +21,7 @@ export class Revival {
   if(!queue||index<0)return 'Hero is not queued here';queue.splice(index,1);return null;
  }
  tick(){
-  for(const building of this.c.live()){
+  for(const building of this.c.liveBuildings()){
    const queue=building.revival?.queue,entry=queue?.[0],policy=this.c.def(building).behaviors.revival;
    if(!entry||!policy||building.construction||!this.c.ready(building))continue;
    const hero=this.c.get(entry.hero);if(!hero?.fallen){queue!.shift();continue;}

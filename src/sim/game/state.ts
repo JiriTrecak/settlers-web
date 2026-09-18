@@ -2,7 +2,7 @@ import {missionStateSchema} from "../../shared/scenario/schema";
 import { missileSchema } from "./missileState";
 import {worldPointSchema} from './coordinates';
 import { shellSchema } from "./shellState";
-import { itemRuntimeSchema, itemStatusSchema } from "../../content/items";
+import { permanentBonusesSchema, itemRuntimeSchema, itemStatusSchema } from "../../content/items";
 import { visualCueSchema } from "./visualCues";
 import { z } from "zod";
 import {
@@ -20,7 +20,7 @@ export const MAX_QUEUED_ORDERS = 16;
 export const orderSchema = z.discriminatedUnion("type", [
   z.object({type:z.literal("hold")}).strict(),
   z.object({type:z.literal("patrol"),destination:point,origin:point.optional()}).strict(),
-  z.object({type:z.literal("follow"),target:positive}).strict(),
+  z.object({type:z.literal("follow"),target:positive,escort:z.literal(true).optional()}).strict(),
   z.object({ type: z.literal("construct"), target: positive }).strict(),
   z.object({ type: z.literal("gather"), target: positive }).strict(),
   z.object({ type: z.literal("pickup"), target: positive }).strict(),
@@ -60,7 +60,7 @@ export const entitySchema = z
     slows: z.array(z.object({permille: positive.max(800), expires: natural}).strict()).max(800).optional(),
     upgrade: z.object({target: idSchema, progress: natural}).strict().optional(),
     research: z.object({queue: z.array(z.object({id: idSchema, progress: natural}).strict()).max(12)}).strict().optional(),
-    progression: z.object({ experience: natural }).strict().optional(),
+    progression: z.object({ experience: natural, bonuses:permanentBonusesSchema.optional() }).strict().optional(),
     regeneration: z.object({ health: natural.max(39999), mana: natural.max(39999) }).strict().optional(),
     fallen: z.literal(true).optional(),
     revival: z

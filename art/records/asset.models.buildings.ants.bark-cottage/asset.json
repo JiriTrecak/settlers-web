@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.bark-cottage",
+  "name": "Bark Cottage",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/buildings/ants/bark-cottage/model.glb",
+      "sha256": "31911c11a1754e81d989f2a7d9b1c882140d3d56a65f366aff2f910d60d46c29",
+      "bytes": 229652,
+      "triangles": 4173,
+      "primitives": 13
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.cottage",
+      "file": "assets/models/buildings/ants/bark-cottage/model.glb",
+      "healthHeight": 5
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/buildings/briarwatch-village-kit/briarwatch-village-kit.blend",
+    "sha256": "a087bfec09a0e594be3a4abf4f65db90fdec49ae08a0a23ab9cbd4f913e02856",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.418Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

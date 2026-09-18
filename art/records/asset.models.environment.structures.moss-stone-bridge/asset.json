@@ -9,15 +9,15 @@
     "walkable"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/structures/moss-stone-bridge/model.glb",
-      "sha256": "542883a9419899cf78067cddd0ef623a295b048bc67c3026ed3c0cccffae95e9",
-      "bytes": 445984,
-      "triangles": 6144,
+      "sha256": "cfccb819a1bbda276c83de6010a52f77789ed815bf9d46f710c776e00812878d",
+      "bytes": 806172,
+      "triangles": 6684,
       "primitives": 7
     }
   ],
@@ -71,14 +71,14 @@
   ],
   "source": {
     "path": "art/sources/environment/moss-stone-bridge/moss-stone-bridge.blend",
-    "sha256": "150c1938810181c5d247671c7efd0bb467212a17b5c63b6a1c069674ccb75397",
+    "sha256": "a2b4883839832f03f746b34b7488b883324eb0819e2d1c184fd03b2a63e60f35",
     "quality": "master"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-15T23:40:37.181Z",
+    "checkedAt": "2026-09-16T06:55:37.530791+00:00",
     "warnings": [
       "Landings require authored matching bank heights; decorative supports may extend into the bank.",
       "Navigation uses a continuous floor; small paving and plank gaps are cosmetic."

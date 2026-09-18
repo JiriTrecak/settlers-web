@@ -1,3 +1,4 @@
+import {effectLayerSchema} from './effectLayers';
 import {z} from 'zod';
 const n=z.number().int().nonnegative(),positive=z.number().int().positive();
 /** A small set of explicit effect algorithms, parameterized by authored ranks. */
@@ -15,5 +16,5 @@ export const spellSchema=z.object({
 }).strict();
 export type Spell= z.infer<typeof spellSchema>;
 
-export const spellVisualSchema=z.object({color:z.string().regex(/^#[0-9a-fA-F]{6}$/),accent:z.string().regex(/^#[0-9a-fA-F]{6}$/),durationTicks:positive.max(200),particles:n.max(64),particleSize:z.number().positive().max(1),rise:z.number().nonnegative().max(10)}).strict();
+export const spellVisualSchema=z.object({color:z.string().regex(/^#[0-9a-fA-F]{6}$/),accent:z.string().regex(/^#[0-9a-fA-F]{6}$/),durationTicks:positive.max(200),particles:n.max(64),particleSize:z.number().positive().max(1),rise:z.number().nonnegative().max(10),layers:z.array(effectLayerSchema).max(8).refine(layers=>new Set(layers.map(l=>l.id)).size===layers.length,'Layer IDs must be unique').optional()}).strict().refine(visual=>!visual.layers?.some(layer=>layer.enabled&&layer.phase==='impact'&&layer.delay+layer.duration>visual.durationTicks),'Impact layers must finish within the visual duration');
 export type SpellVisual = z.infer<typeof spellVisualSchema>;

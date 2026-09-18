@@ -1,0 +1,2 @@
+import {expect,it} from 'vitest';import {RepeatWrapping,RedFormat} from 'three';import {createAtmosphereNoise} from '../../src/render/atmosphere/noiseVolume';
+it('uses a deterministic bounded repeating 3D density lattice',()=>{const a=createAtmosphereNoise(),b=createAtmosphereNoise();expect(a.image.data).toHaveLength(32768);expect(a.image.data).toEqual(b.image.data);expect(a.format).toBe(RedFormat);expect(a.wrapR).toBe(RepeatWrapping);expect(new Set(a.image.data).size).toBeGreaterThan(200);a.dispose();b.dispose();});

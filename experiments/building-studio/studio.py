@@ -25,7 +25,7 @@ ASSETS = ROOT / 'art/sources/buildings'
 def asset_path(name, category="buildings"):
     if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', name):
         raise ValueError('Asset names use lowercase letters, digits and hyphens')
-    if category not in ('buildings','characters','environment'):raise ValueError('Unknown asset category')
+    if category not in ('buildings','characters','environment','items'):raise ValueError('Unknown asset category')
     base=ASSETS if category=='buildings' else ROOT/'art/sources'/category
     path = (base / name).resolve()
     if path.parent != base.resolve():
@@ -307,7 +307,7 @@ def main():
     parser.add_argument('--quick',action='store_true')
     parser.add_argument('--view',choices=['saved','reference','front','right','back'],default='saved')
     parser.add_argument('--reference',type=Path)
-    parser.add_argument('--category',choices=['buildings','characters','environment'],default='buildings')
+    parser.add_argument('--category',choices=['buildings','characters','environment','items'],default='buildings')
     args=parser.parse_args()
     if args.command=='init':
         if not args.reference or not args.reference.is_file():parser.error('init requires --reference /path/image.png')

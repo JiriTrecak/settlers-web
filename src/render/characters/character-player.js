@@ -1,5 +1,5 @@
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
-import { AnimationMixer, LoopOnce, LoopRepeat } from 'three';
+import { AnimationMixer, LoopOnce, LoopRepeat, Quaternion, Vector3 } from 'three';
 
 const ONE_SHOT = new Set(['attack', 'cast', 'hit', 'death']);
 /** Shared by the studio and game. Call update(dt) with seconds from the game clock. */
@@ -16,6 +16,10 @@ export class CharacterPlayer {
       if (e.action === this.action && this.state !== 'death') this.setState('idle');
     });
     this.setVariant(variant); this.setState('idle');
+    this.speechBones=[];this.speechRotation=new Quaternion();this.speechAxis=new Vector3(0,0,1);
+    root.traverse(o=>{if(o.userData.speechRig){const spec=o.userData.speechRig;
+      for(const [name,sign] of [[spec.left,1],[spec.right,-1]]){const bone=root.getObjectByName(name)||root.getObjectByName(name.replaceAll('.',''));if(bone)this.speechBones.push({bone,sign,rest:bone.quaternion.clone(),angle:spec.angle??.24});}
+    }});
   }
   setVariant(variant) {
     if (!Object.hasOwn(this.profile.variants, variant)) throw new Error(`Unknown character variant: ${variant}`);
@@ -53,6 +57,10 @@ export class CharacterPlayer {
     this.action.stopFading(); this.action.setEffectiveWeight(1);
     this.action.time = Math.max(0, Math.min(.999999, normalized)) * this.action.getClip().duration;
     this.action.paused = false; this.mixer.update(0);
+  }
+  speak(amount) {
+    const weight=this.state==='death'?0:Math.max(0,Math.min(1,Number.isFinite(amount)?amount:0));
+    for(const {bone,sign,rest,angle} of this.speechBones)bone.quaternion.copy(rest).multiply(this.speechRotation.setFromAxisAngle(this.speechAxis,weight*sign*angle));
   }
   setTeamColor(color) {
     this.root.traverse(o => {

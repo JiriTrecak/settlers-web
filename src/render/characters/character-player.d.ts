@@ -11,6 +11,7 @@ export class CharacterPlayer {
   update(dt: number): void;
   attackContact(): number;
   seek(normalized: number): void;
+  speak(amount:number): void;
   setTeamColor(color: ColorRepresentation | 'default'): void;
   dispose(): void;
 }

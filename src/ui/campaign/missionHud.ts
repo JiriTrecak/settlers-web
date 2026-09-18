@@ -27,7 +27,7 @@ export class MissionHud {
   }
   update(view:SettlementView){
     const m=view.mission;if(!m)return;
-    this.active=(!!m.scene || (!!m.dialogue?.cinematic && m.dialogue.remaining>0)) && !view.outcome;
+    this.active=(!!m.scene || (!!m.dialogue?.cinematic && m.dialogue.remaining>0)) && !view.outcome && !m.error;
     this.host.classList.toggle('mission-cinematic',this.active);
     this.bars.classList.toggle('active',this.active);
     const key=JSON.stringify([{...m,pausedTicks:0,dialogue:m.dialogue?{...m.dialogue,remaining:0}:null},this.active,!!view.outcome,view.outcome?.winner,m.dialogue && (m.dialogue.cinematic?m.dialogue.remaining>0:(view.tick??0)<m.dialogue.until)]);if(key===this.key)return;this.key=key;

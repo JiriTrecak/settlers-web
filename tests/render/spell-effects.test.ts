@@ -9,7 +9,7 @@ it('uses draft declarations in the gameplay renderer and rebuilds them on replay
  const rules=structuredClone(content.rules),parent=new Group(),effects=new SpellEffects(parent,()=>rules),field=new HeightField();
  const ability=Object.keys(rules.spells).find(id=>rules.spells[id].effect==='blast')!;
  const spell=rules.spells[ability],visual=rules.spellVisuals[spell.visual];
- visual.color='#123456';visual.particles=7;
+ delete visual.layers;visual.color='#123456';visual.particles=7;
  const cue:VisualCue={id:1,ability,rank:1,phase:'impact',tick:0,durationTicks:40,origin:{x:100,y:100},target:{x:100,y:100},viewers:[]};
  effects.update([cue],field,10);
  const root=parent.children[0],burst=root.children[0];

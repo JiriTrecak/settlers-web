@@ -1,3 +1,4 @@
+import {continuesOrder,orderIntent} from './orderContinuity';
 import { canonical, type ContentRegistry } from "../../content/registry";
 import type { Owner } from "../../content/schema";
 import type { Action } from "../../shared/types/types";
@@ -116,7 +117,7 @@ export class PlayerAI {
         if (!available.length) return false;
         action = { ...action, actors: available };
       }
-      const ids = actors(action),
+      let ids = actors(action),
         signature = canonical(action);
       if (
         output.length >= rules.limits.commandsPerBeat ||
@@ -137,41 +138,15 @@ export class PlayerAI {
         action.type === "gather" ||
         action.type === "pickup"
       ) {
-        if (
-          ids.every((id) => {
-            const e = f.byId.get(id),
-              old = s.orders[id];
-            if (!e || !old || old.signature !== signature) return false;
-            if (action.type === "move" && distance(e, action.destination) < 2)
-              return true;
-            if (
-              action.type === "gather" &&
-              e.control?.order?.type === "gather" &&
-              e.control.order.target === action.target
-            )
-              return true;
-            if (
-              action.type === "attack" &&
-              e.control?.order?.type === "attack" &&
-              e.control.order.target === action.target
-            )
-              return true;
-            if (
-              action.type === "pickup" &&
-              e.control?.order?.type === "pickup" &&
-              e.control.order.target === action.target &&
-              tick - old.tick < 400
-            )
-              return true;
-            if (e.unit?.moving && distance(old.point, e) > 1) {
-              old.point = integerPoint(e);
-              old.tick = tick;
-              return true;
-            }
-            return tick - old.tick < Math.max(rules.orderIntervalTicks, 160);
-          })
-        )
-          return false;
+        const intent=orderIntent(action);
+        const remaining=ids.filter(id=>{
+          if(!continuesOrder(f.byId.get(id),s.orders[id],action,intent,tick,rules.orderIntervalTicks))return true;
+          // Continuing a higher-priority action also claims this actor for the beat.
+          claimed.add(id);return false;
+        });
+        if(!remaining.length)return false;
+        if('actors' in action)action={...action,actors:remaining};
+        ids=remaining;signature=canonical(action);
       }
       for (const id of ids) {
         const e = f.byId.get(id);
@@ -182,7 +157,7 @@ export class PlayerAI {
         claimed.add(id);
         const e = f.byId.get(id)!;
         s.orders[id] = {
-          signature,
+          signature:orderIntent(action),
           tick,
           point: integerPoint(e),
           hp: e.hp ?? 0,

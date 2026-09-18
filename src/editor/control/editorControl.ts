@@ -336,6 +336,8 @@ export class EditorControl {
       }
       if (typeof o.playing === "boolean") settings.playing = o.playing;
       if(o.interior!==undefined){if(typeof o.interior!=='boolean')throw new Error('Invalid interior mode');settings.interior=o.interior;}
+      if(o.ceilingHeight===null)settings.ceilingHeight=undefined;
+      else if(o.ceilingHeight!==undefined){const h=num(o.ceilingHeight);if(h===undefined||h<1||h>128)throw new Error('Invalid ceiling height');settings.ceilingHeight=h;}
       if(o.floorMaterial!==undefined){if(!['forest','heartwood'].includes(String(o.floorMaterial)))throw new Error('Invalid floor material');settings.floorMaterial=o.floorMaterial as EnvironmentState['floorMaterial'];}
       if(o.preset!==undefined){if(typeof o.preset!=='string'||!o.preset.length||o.preset.length>128)throw new Error('Invalid environment preset');settings.preset=o.preset;}
       if(o.canopy!==undefined)settings.canopy=canopySchema.parse(o.canopy);

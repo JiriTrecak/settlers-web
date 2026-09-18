@@ -1,0 +1,526 @@
+{
+  "route": "direct",
+  "outcome": {
+    "winner": "player.1",
+    "defeated": []
+  },
+  "error": null,
+  "transport": 12980,
+  "simTick": 10100,
+  "trace": [
+    {
+      "transport": 1,
+      "tick": 1,
+      "stage": "intro-elder",
+      "hp": 700,
+      "x": 43,
+      "y": 48
+    },
+    {
+      "transport": 284,
+      "tick": 4,
+      "stage": "intro-marshal",
+      "hp": 700,
+      "x": 43,
+      "y": 48
+    },
+    {
+      "transport": 568,
+      "tick": 8,
+      "stage": "road",
+      "hp": 700,
+      "x": 43,
+      "y": 48
+    },
+    {
+      "waypoint": [
+        43,
+        75
+      ],
+      "elapsed": 284,
+      "hp": 700,
+      "position": [
+        43,
+        73
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 43,
+          "y": 74
+        },
+        "attackMove": true
+      },
+      "alive": 5
+    },
+    {
+      "waypoint": [
+        49,
+        99
+      ],
+      "elapsed": 275,
+      "hp": 700,
+      "position": [
+        49,
+        97
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 49,
+          "y": 98
+        },
+        "attackMove": true
+      },
+      "alive": 5
+    },
+    {
+      "waypoint": [
+        44,
+        123
+      ],
+      "elapsed": 616,
+      "hp": 700,
+      "position": [
+        44,
+        121
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 44,
+          "y": 122
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        48,
+        139
+      ],
+      "elapsed": 462,
+      "hp": 700,
+      "position": [
+        48,
+        137
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 48,
+          "y": 138
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        56,
+        163
+      ],
+      "elapsed": 358,
+      "hp": 700,
+      "position": [
+        55,
+        161
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 56,
+          "y": 163
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        77,
+        173
+      ],
+      "elapsed": 292,
+      "hp": 700,
+      "position": [
+        75,
+        171
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 77,
+          "y": 172
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        101,
+        173
+      ],
+      "elapsed": 2496,
+      "hp": 471,
+      "position": [
+        100,
+        171
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 101,
+          "y": 172
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        128,
+        174
+      ],
+      "elapsed": 616,
+      "hp": 482,
+      "position": [
+        126,
+        172
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 127,
+          "y": 172
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        153,
+        170
+      ],
+      "elapsed": 285,
+      "hp": 494,
+      "position": [
+        151,
+        169
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 152,
+          "y": 169
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        183,
+        166
+      ],
+      "elapsed": 331,
+      "hp": 507,
+      "position": [
+        181,
+        165
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 183,
+          "y": 165
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        183,
+        129
+      ],
+      "elapsed": 363,
+      "hp": 522,
+      "position": [
+        183,
+        131
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 183,
+          "y": 128
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        183,
+        113
+      ],
+      "elapsed": 679,
+      "hp": 499,
+      "position": [
+        182,
+        115
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 183,
+          "y": 112
+        },
+        "attackMove": true
+      },
+      "alive": 7
+    },
+    {
+      "waypoint": [
+        157,
+        102
+      ],
+      "elapsed": 1149,
+      "hp": 535,
+      "position": [
+        159,
+        101
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 157,
+          "y": 101
+        },
+        "attackMove": true
+      },
+      "alive": 10
+    },
+    {
+      "waypoint": [
+        183,
+        96
+      ],
+      "elapsed": 449,
+      "hp": 553,
+      "position": [
+        184,
+        98
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 184,
+          "y": 97
+        },
+        "attackMove": true
+      },
+      "alive": 10
+    },
+    {
+      "waypoint": [
+        201,
+        96
+      ],
+      "elapsed": 1240,
+      "hp": 603,
+      "position": [
+        201,
+        94
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 201,
+          "y": 95
+        },
+        "attackMove": true
+      },
+      "alive": 9
+    },
+    {
+      "waypoint": [
+        183,
+        96
+      ],
+      "elapsed": 209,
+      "hp": 611,
+      "position": [
+        185,
+        95
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 183,
+          "y": 95
+        },
+        "attackMove": true
+      },
+      "alive": 9
+    },
+    {
+      "transport": 10792,
+      "tick": 8952,
+      "stage": "captain-scene",
+      "hp": 616,
+      "x": 183,
+      "y": 84
+    },
+    {
+      "transport": 11036,
+      "tick": 8956,
+      "stage": "captain-fight",
+      "hp": 616,
+      "x": 183,
+      "y": 84
+    },
+    {
+      "waypoint": [
+        181,
+        77
+      ],
+      "elapsed": 408,
+      "hp": 618,
+      "position": [
+        182,
+        79
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 181,
+          "y": 76
+        },
+        "attackMove": true
+      },
+      "alive": 9
+    },
+    {
+      "transport": 12168,
+      "tick": 10088,
+      "stage": "victory-scene",
+      "hp": 466,
+      "x": 176,
+      "y": 68
+    },
+    {
+      "transport": 12412,
+      "tick": 10092,
+      "stage": "aftermath",
+      "hp": 466,
+      "x": 176,
+      "y": 67
+    },
+    {
+      "transport": 12696,
+      "tick": 10096,
+      "stage": "victory",
+      "hp": 467,
+      "x": 176,
+      "y": 67
+    },
+    {
+      "waypoint": [
+        174,
+        63
+      ],
+      "elapsed": 1900,
+      "hp": 467,
+      "position": [
+        176,
+        67
+      ],
+      "order": {
+        "type": "move",
+        "destination": {
+          "x": 175,
+          "y": 62
+        },
+        "attackMove": true
+      },
+      "alive": 8
+    }
+  ],
+  "objectives": {
+    "defend": "completed",
+    "rescue": "active",
+    "ledger": "active",
+    "captain": "completed"
+  },
+  "variables": {
+    "stage": "victory",
+    "volunteers": true,
+    "rescue-started": true,
+    "ambush": true,
+    "ledger-started": true,
+    "gate": true,
+    "town": true,
+    "defenders": true,
+    "house": true,
+    "house-collapsed": true
+  },
+  "hero": {
+    "hp": 467,
+    "experience": 100
+  },
+  "survivors": [
+    {
+      "tag": "defender-1",
+      "hp": 10,
+      "x": 177,
+      "y": 67
+    },
+    {
+      "tag": "defender-2",
+      "hp": 220,
+      "x": 175,
+      "y": 67
+    },
+    {
+      "tag": "guard-0",
+      "hp": 245,
+      "x": 175,
+      "y": 68
+    },
+    {
+      "tag": "guard-1",
+      "hp": 300,
+      "x": 176,
+      "y": 66
+    },
+    {
+      "tag": "guard-2",
+      "hp": 245,
+      "x": 176,
+      "y": 65
+    },
+    {
+      "tag": "guard-3",
+      "hp": 300,
+      "x": 174,
+      "y": 65
+    },
+    {
+      "tag": "marshal",
+      "hp": 467,
+      "x": 176,
+      "y": 67
+    },
+    {
+      "tag": "volunteer-one",
+      "hp": 76,
+      "x": 174,
+      "y": 66
+    }
+  ]
+}

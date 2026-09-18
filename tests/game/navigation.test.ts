@@ -92,6 +92,16 @@ it('rejects a small enclosed goal region, while allowing its exit to reopen',()=
  ring.delete(goal-4*n);expect(nav.path(0,goal,ring)?.at(-1)).toBe(goal);
 });
 
+it('rejects an enclosed start before searching each candidate destination',()=>{
+ const size=512,start=256*size+256;let probes=0,globalChecks=0;
+ const nav=new Navigation(size,()=>{probes++;return true;},()=>{globalChecks++;return true;});
+ const blocked=new Set([start-1,start+1,start-size,start+size]);
+ for(const goal of [1,50,500,1000])expect(nav.path(start,goal,blocked)).toBeNull();
+ expect(globalChecks).toBe(4);expect(probes).toBeLessThan(40);
+ blocked.delete(start-1);expect(nav.path(start,start-2,blocked)).toEqual([start-1,start-2]);
+ expect(globalChecks).toBe(5);
+});
+
 it('bounds a traffic detour without restricting the underlying terrain route',()=>{
  const size=64,start=32*size+10,goal=32*size+50,door=32*size+30;
  let probes=0;
@@ -102,4 +112,21 @@ it('bounds a traffic detour without restricting the underlying terrain route',()
  expect(nav.path(start,goal,new Set([door]),44000)).toBeNull();
  expect(probes).toBeLessThan(16000);
  expect(nav.path(start,goal,undefined,44000)).toEqual(normal);
+});
+
+it('reuses terrain edges without caching bodies, and invalidates changed diagonal corners',()=>{
+ const size=32,walls=new Set<number>();let probes=0;
+ const step=(_a:number,b:number)=>{probes++;return !walls.has(b);};
+ const cached=new Navigation(size,step,undefined,true),plain=new Navigation(size,step);
+ const start=5*size+5,goal=22*size+24;
+ expect(cached.path(start,goal)).toEqual(plain.path(start,goal));
+ probes=0;cached.path(start,goal);expect(probes).toBe(0);
+ for(let turn=0;turn<20;turn++){
+  const changed=10*size+10+turn;
+  walls.add(changed);cached.invalidate([changed]);
+  const bodies=new Set([start+1+turn,goal-size-1]);
+  expect(cached.path(start,goal,bodies)).toEqual(plain.path(start,goal,bodies));
+  walls.delete(changed);cached.invalidate([changed]);
+  expect(cached.path(start,goal)).toEqual(plain.path(start,goal));
+ }
 });

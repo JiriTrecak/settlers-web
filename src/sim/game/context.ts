@@ -1,3 +1,4 @@
+import {SectorIndex} from '../../shared/spatial/sectors';
 import {trafficEscape} from './trafficEscape';
 import {trafficRequests} from './trafficRequests';
 import {turnToward} from "./facing";
@@ -29,6 +30,14 @@ import {
 /** Shared native services; never exposed to HUD, player commands, or content JSON. */
 export class GameContext {
   readonly spatial: Spatial;
+  /** Derived presentation invalidation, excluded from saves and lockstep hashes. */
+  observationRevision=0;
+  motionRevision=0;
+  readonly changedResources=new Set<Entity>();
+  private readonly resourceSectors=new SectorIndex<Entity>();
+  private indexResource(e:Entity){if(e.resource)this.resourceSectors.set(e.id,e,{minX:e.x,minY:e.y,maxX:e.x,maxY:e.y});}
+  nearbyResources(p:Point,radius:number){return [...this.resourceSectors.query({minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius})].filter(alive);}
+  resourceChanged(e:Entity){this.changedResources.add(e);this.indexResource(e);}
   private index = new Map<number, Entity>();
   // Structural indexes include dead/contained entities; callers still evaluate
   // current life/readiness. Recruitment and revival retain entity identity.
@@ -56,7 +65,9 @@ export class GameContext {
     }, () => this.unitEntities);
   }
   reindex() {
+    this.observationRevision++;this.changedResources.clear();
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
+    this.resourceSectors.clear();for(const e of this.state.entities)this.indexResource(e);
     this.unitEntities = this.state.entities.filter(e => e.unit);
     this.bodyEntities = this.state.entities.filter(e => e.hp !== null);
     this.buildingEntities = this.state.entities.filter(e => this.def(e).kind === "building");
@@ -139,8 +150,9 @@ export class GameContext {
     if (d.kind === "item") e.item = { quantity: initial?.quantity ?? 1 };
     if (d.behaviors.research) e.research = {queue: []};
     if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
+    this.observationRevision++;
     this.state.entities.push(e);
-    this.index.set(e.id, e);
+    this.index.set(e.id, e);this.indexResource(e);
     if(e.unit)this.unitEntities.push(e);
     if(e.hp!==null)this.bodyEntities.push(e);
     if(d.kind === "building")this.buildingEntities.push(e);
@@ -170,8 +182,9 @@ export class GameContext {
     };
   }
   remove(e: Entity) {
+    this.observationRevision++;this.changedResources.delete(e);
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
-    this.index.delete(e.id);
+    this.index.delete(e.id);this.resourceSectors.delete(e.id);
     if(e.unit)this.unitEntities.splice(this.unitEntities.indexOf(e),1);
     if(e.hp!==null)this.bodyEntities.splice(this.bodyEntities.indexOf(e),1);
     const buildingIndex=this.buildingEntities.indexOf(e);if(buildingIndex>=0)this.buildingEntities.splice(buildingIndex,1);
@@ -214,6 +227,7 @@ export class GameContext {
     e.unit.goal = null;
     const pos = this.spatial.nearest(at, 12, e.id);
     if (pos) {
+      this.motionRevision++;
       e.x = pos.x;
       e.y = pos.y;
       if(pos.surface)e.surface=pos.surface;else delete e.surface;
@@ -227,7 +241,7 @@ export class GameContext {
   }
   move() {
     this.spatial.beginUnitMovement();
-    try {this.moveUnits();} finally {this.spatial.endUnitMovement();}
+    try {this.moveUnits();} finally {this.spatial.endUnitMovement();this.motionRevision++;}
   }
   private moveUnits() {
     const units = this.activeUnits();

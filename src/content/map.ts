@@ -208,6 +208,9 @@ export function placementOccupancyError(
       ) {
         if (x < 0 || x >= map.size || y < 0 || y >= map.size)
           return `${p.id}: footprint is outside the playable map`;
+        // Deferred spawns can deliberately replace destroyed scenery or emerge from a cage.
+        // Validate their bounds, but only simultaneous starting entities occupy this grid.
+        if(p.activation==="script")continue;
         const cell = y * map.size + x, height=floor?.({...p.position,x,y})??0;
         const column=occupied.get(cell)??[],other=column.find(e=>Math.abs(e.height-height)<2);
         if (other) return `${p.id}: overlaps ${other.id}`;

@@ -136,6 +136,8 @@ export class WaterLayer {
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
     mesh.receiveShadow = true;
+    // Ground paint belongs below the transparent water, including submerged decals.
+    mesh.renderOrder = 2;
     // VSM renders receivers into its depth pass even with castShadow=false.
     // A transparent water surface must not occlude the riverbed below it.
     const shadowDepth = new MeshDepthMaterial();

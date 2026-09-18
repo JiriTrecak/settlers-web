@@ -7,8 +7,6 @@ import {
   fingerprint,
   type ContentSource,
 } from "../../src/content/registry";
-import { validatePlacements } from "../../src/content/map";
-import { parseUtcMap } from "../../src/shared/map/utcmap";
 
 async function readSource(file:string):Promise<ContentSource>{const raw=JSON.parse(await readFile(file,'utf8'));const manifest=JSON.parse(await readFile(resolve(file,'../../assets/manifest.json'),'utf8'));return {...raw,assets:manifest.records.flatMap((r:{render:unknown[]})=>r.render)};}
 async function validateModels(root: string, registry: ContentRegistry) {
@@ -132,6 +130,13 @@ export function contentAuthoring(): Plugin {
             const source = body.source as ContentSource,
               registry = new ContentRegistry(source);
             await validateModels(server.config.root, registry);
+            // Map validation reads the current scenery catalogue. Loading it
+            // through Vite keeps runtime asset data out of the config bundle:
+            // a publication must invalidate modules, not restart the server.
+            const [{validatePlacements},{parseUtcMap}] = await Promise.all([
+              server.ssrLoadModule('/src/content/map.ts'),
+              server.ssrLoadModule('/src/shared/map/utcmap.ts'),
+            ]);
             const dir = resolve(server.config.root, "assets/maps");
             for (const name of await readdir(dir, {recursive:true})) {
               if (!name.endsWith(".utcmap")) continue;

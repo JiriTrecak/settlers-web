@@ -8,14 +8,14 @@
     "migrated"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/marshal/model.glb",
-      "sha256": "526619b9374222e606d4f3a3b8bb17bdac3231a033afad96bfd7be1e975bd89e",
-      "bytes": 351896
+      "sha256": "bd41c080d5d38473198b099809c791a9930dfdf25136a4a51b33a1d01ef17132",
+      "bytes": 359552
     }
   ],
   "render": [
@@ -25,13 +25,18 @@
       "character": "marshal",
       "castContact": 0.68,
       "scale": 1,
-      "healthHeight": 2.8
+      "healthHeight": 2.8,
+      "cameraAnchor": {
+        "height": 1.85,
+        "forward": 0.15,
+        "distance": 7
+      }
     }
   ],
   "scenery": [],
   "source": {
     "path": "art/sources/characters/ant-marshal/ant-marshal.blend",
-    "sha256": "2beb2d43c56df3cbbea31f0fb027353622659b0e767efc4e42f44b7688bc7a17",
+    "sha256": "bd66128ef30c5a10117931c8c97315e900f26f45038ac521b72c4f48b9293759",
     "quality": "shared"
   },
   "origin": {
@@ -39,7 +44,7 @@
     "previousPath": "assets/ant-colony/characters/marshal.glb"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "checkedAt": "2026-09-16T12:21:28.994868+00:00",
     "warnings": []
   }
 }

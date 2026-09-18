@@ -13,6 +13,8 @@ export class Inventory {
     if(!hero.equipment || !this.c.def(hero).behaviors.inventory) return "This unit has no inventory";
     if(!target?.item || !this.c.def(target).itemEffect || target.item.quantity!==1 ||
       (target.owner!=="none" && target.owner!==hero.owner)) return "Cannot pick up this item";
+    const effect=this.c.def(target).itemEffect!;
+    if(effect.type==="consumable"&&effect.onPickup)return hero.progression?null:"Only a hero can use this item";
     if(!hero.equipment.includes(null)) return "Inventory is full";
     return null;
   }
@@ -42,6 +44,11 @@ export class Inventory {
       if(this.pickupError(hero,target))continue;
       if(isStunned(hero,this.c.registry)||hero.spellcasting?.pending)continue;
       if(!this.withinReach(hero,target!))continue;
+      const effect=this.c.def(target!).itemEffect!;
+      if(effect.type==="consumable"&&effect.onPickup){
+        if(this.items.applyPowerup(hero,target!.definition)){this.c.remove(target!);this.stop(hero);}
+        continue;
+      }
       const slot = hero.equipment!.indexOf(null);
       hero.equipment![slot]=target!.definition;
       hero.equipmentState ??= hero.equipment!.map(() => null);

@@ -7,7 +7,10 @@ export type TerrainPoint = {x:number;y:number};
 /** Immutable match terrain. Shares the movement grid, including bridge decks.
  * Visibility caches are derived, bounded, and deliberately absent from saves. */
 export class TacticalTerrain {
-  private readonly views = new Map<string, readonly number[]>();
+  private readonly views = new Map<string, Uint32Array>();
+  private cachedCells=0;
+  // Bounded by bytes as well as entries: at most 4 MiB of cell IDs.
+  private readonly cacheCellBudget=1024*1024;
   private readonly flat:boolean;
   private readonly blocks:Int16Array;
   private readonly blockSize:number;
@@ -63,9 +66,9 @@ export class TacticalTerrain {
     }
     return true;
   }
-  visibleCells(a:TerrainPoint,radius:number):readonly number[]{
+  visibleCells(a:TerrainPoint,radius:number):Uint32Array{
     const x=Math.round(a.x),y=Math.round(a.y),r=Math.ceil(radius),key=`${x}:${y}:${radius}`;
-    const cached=this.views.get(key);if(cached)return cached;
+    const cached=this.views.get(key);if(cached){this.views.delete(key);this.views.set(key,cached);return cached;}
     const cells:number[]=[];
     for(let dy=-r;dy<=r;dy++){
       if(y+dy<0||y+dy>=this.size||dy*dy>radius*radius)continue;
@@ -73,7 +76,13 @@ export class TacticalTerrain {
       for(let xx=Math.max(0,x-span);xx<=Math.min(this.size-1,x+span);xx++)
         if(this.visible({x,y},{x:xx,y:y+dy}))cells.push((y+dy)*this.size+xx);
     }
-    if(this.views.size>=256)this.views.delete(this.views.keys().next().value!);
-    this.views.set(key,cells);return cells;
+    const result=Uint32Array.from(cells);
+    if(result.length<=this.cacheCellBudget){
+      while(this.views.size&&(this.views.size>=4096||this.cachedCells+result.length>this.cacheCellBudget)){
+        const oldest=this.views.keys().next().value!;this.cachedCells-=this.views.get(oldest)!.length;this.views.delete(oldest);
+      }
+      this.views.set(key,result);this.cachedCells+=result.length;
+    }
+    return result;
   }
 }

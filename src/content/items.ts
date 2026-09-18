@@ -1,5 +1,6 @@
 import { z } from "zod";
 const n = z.number().int().nonnegative();
+export const permanentBonusesSchema=z.object({maxHp:n.optional(),damage:n.optional(),armor:n.optional(),maxMana:n.optional()}).strict();
 /** Reusable item effect vocabulary. No simulation or UI dispatches on item IDs. */
 export const itemModifiersSchema = z.object({
   maxHp: n.optional(), maxMana: n.optional(), damage: n.optional(), armor: n.optional(),
@@ -26,7 +27,10 @@ const extras = {
 };
 export const itemEffectSchema = z.discriminatedUnion("type", [
   z.object({type: z.literal("equipment"), damage: n, armor: n, maxHp: n, ...extras}).strict(),
-  z.object({type: z.literal("consumable"), heal: n, ...extras}).strict(),
+  z.object({type: z.literal("consumable"), heal: n, ...extras,
+    permanent: permanentBonusesSchema.optional(),
+    onPickup: z.boolean().optional(),
+  }).strict().refine(e=>!e.onPickup||!!e.permanent, "Pickup consumables require permanent bonuses"),
 ]);
 export const itemRuntimeSchema = z.object({charges: n.optional(), readyTick: n, hits: n}).strict();
 export const itemStatusSchema = z.object({item: z.string(), source: n.positive(), kind: z.enum(["aura", "active", "rescue"]), expires: n, shield: n.optional()}).strict();

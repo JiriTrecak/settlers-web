@@ -18,4 +18,13 @@ describe('static navigation regions',()=>{
   expect(regions.connected(0,3)).toBe(true);expect(regions.connected(3,7)).toBe(false);
   for(let x=0;x<n;x++)h[4*n+x]=x*60;regions.invalidate();expect(regions.connected(3,7)).toBe(true);
  });
+ it('updates tree holes locally and rebuilds safely when an opening joins islands',()=>{
+  const n=64,blocked=new Set([1000]);let probes=0;
+  const regions=new WalkRegions(n,i=>{probes++;return !blocked.has(i);},new Int16Array(n*n),90);
+  expect(regions.connected(0,n*n-1)).toBe(true);probes=0;
+  blocked.delete(1000);regions.open([1000]);expect(regions.connected(0,1000)).toBe(true);expect(probes).toBeLessThan(10);
+  for(let y=0;y<n;y++)blocked.add(y*n+32);regions.invalidate();expect(regions.connected(0,63)).toBe(false);
+  const door=32*n+32;blocked.delete(door);regions.open([door]);expect(regions.connected(0,63)).toBe(true);
+  blocked.add(door);regions.invalidate();expect(regions.connected(0,63)).toBe(false);
+ });
 });

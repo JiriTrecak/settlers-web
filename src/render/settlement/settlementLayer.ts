@@ -1,3 +1,8 @@
+import {ImpactEffects} from './impactEffects';
+import {speechEnvelope} from '../characters/speech';
+import {perf} from '../../debug/performance';
+import {firstPersonBody} from '../camera/firstPersonBody';
+import type {CameraSubject} from '../camera/unitCamera';
 import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from '../prop/staticBatch';
 import { ShellEffects } from "./shellEffects";
@@ -53,6 +58,41 @@ import { placementGrid } from "./placementGrid";
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private cameraHidden:number|null=null;
+  private readonly cameraPrepared=new WeakSet<Object3D>();
+  private hiddenSprites:Array<[Sprite,boolean]>=[];
+  private restoreCameraSprites(){for(const [sprite,visible] of this.hiddenSprites)sprite.visible=visible;this.hiddenSprites=[];}
+  hideCameraBody(id:number|null){
+    this.restoreCameraSprites();this.cameraHidden=id;
+    if(id!==null)this.entities.get(id)?.traverse(o=>{if(o instanceof Sprite){this.hiddenSprites.push([o,o.visible]);o.visible=false;}});
+  }
+  cameraObstruction(ray:Raycaster):number {
+    let distance=ray.far;
+    for(const [id,root] of this.entities){if(!root.visible||this.observedById.get(id)?.unit)continue;
+      for(const hit of ray.intersectObject(this.parts.get(root)!.body,true))distance=Math.min(distance,hit.distance);
+    }
+    return distance;
+  }
+  private overlaysClose=false;
+  cameraOverlays(camera:Camera,height:number,close:boolean):void {
+    if(!close&&!this.overlaysClose)return;
+    this.overlaysClose=close;
+    const world=new Vector3(),view=new Vector3();camera.updateMatrixWorld();
+    for(const root of this.entities.values())if(root.visible)root.traverse(o=>{
+      if(!(o instanceof Sprite))return;
+      const base=(o.userData.cameraBaseScale??=o.scale.clone()) as Vector3;
+      if(!close){o.scale.copy(base);return;}
+      o.getWorldPosition(world);view.copy(world).applyMatrix4(camera.matrixWorldInverse);
+      const pixels=base.y*height*.5*camera.projectionMatrix.elements[5]!/Math.max(.1,-view.z);
+      o.scale.copy(base).multiplyScalar(Math.min(1,18/Math.max(.001,pixels)));
+    });
+  }
+  cameraSubject(id:number):CameraSubject|null {
+    const root=this.entities.get(id),e=this.observedById.get(id);
+    if(!root?.visible||!e?.unit||e.remembered||e.unit.contained||(e.hp!==null&&e.hp<=0))return null;
+    const asset=content.asset(content.get(e.definition).asset),anchor=asset.cameraAnchor;
+    return {position:root.position.clone(),yaw:root.rotation.y,eyeHeight:anchor?.height??Math.max(.65,(asset.healthHeight??2.5)*.65),eyeForward:anchor?.forward??0,distance:anchor?.distance??7};
+  }
   private observedEntities: readonly EntityView[] | undefined;
   private modelEntities: readonly EntityView[] = [];
   private observedById = new Map<number,EntityView>();
@@ -66,6 +106,7 @@ export class SettlementLayer {
   targetAbility(aim: AbilityAim | null, height: HeightField) {
     this.abilityTarget.update(aim, height);
   }
+  private readonly impacts = new ImpactEffects(this.root);
   private readonly spellEffects = new SpellEffects(this.root);
   private readonly characterSources = new Map<string, GLTF>();
   private readonly characters = new Map<
@@ -207,7 +248,7 @@ export class SettlementLayer {
   /** Uses presented positions and observed units, never hidden simulation entities. */
   cutawaySubjects(){
     const subjects:{position:Vector3;height:number}[]=[];
-    for(const root of this.entities.values())if(root.visible&&root.userData.clickableUnit)
+    for(const [id,root] of this.entities)if(id!==this.cameraHidden&&root.visible&&root.userData.clickableUnit)
       subjects.push({position:root.position,height:root.userData.pickHeight??2});
     return subjects;
   }
@@ -414,6 +455,7 @@ export class SettlementLayer {
       this.modelEntities=state.entities.filter(e=>content.get(e.definition).kind!=="resource");
       this.observedById=new Map(this.modelEntities.map(e=>[e.id,e]));
     }
+    this.restoreCameraSprites();
     const now = performance.now();
     const heldHealth = this.healthKeys.active();
     this.commandEffects.update(now);
@@ -426,6 +468,13 @@ export class SettlementLayer {
         .map((e) => e.unit?.commandedTarget)
         .filter((id): id is number => id != null),
     );
+    const dialogue=state.mission?.dialogue;
+    const speaking=dialogue&&!state.outcome&&!state.mission?.error&&(dialogue.cinematic?dialogue.remaining>0:tick<dialogue.until);
+    const candidates=speaking&&!dialogue.actor?this.modelEntities.filter(e=>e.definition===dialogue.portrait&&!e.remembered&&!e.unit?.contained):[];
+    const speaker=speaking?(dialogue.actor??(candidates.length===1?candidates[0]!.id:undefined)):undefined;
+    const duration=dialogue?.durationTicks??Math.max(40,(dialogue?.text.length??0)/12*40);
+    const speech=speaking?speechEnvelope(dialogue.text,(duration-(dialogue.cinematic?dialogue.remaining:dialogue.until-tick))/40,duration/40):0;
+    const animationTiming=perf.start();
     const byId = this.observedById;
     const seen = new Set<number>();
     for (const e of this.modelEntities) {
@@ -433,6 +482,7 @@ export class SettlementLayer {
       seen.add(e.id);
       const o = this.make(e);
       if (!o) continue;
+      if(!this.cameraPrepared.has(o)){firstPersonBody(o,()=>this.cameraHidden===e.id);this.cameraPrepared.add(o);}
       o.visible = !e.unit?.contained;
       o.userData.clickableUnit = d.kind === "unit" && !e.remembered && (e.hp === null || e.hp > 0);
       applyPlayerMaterials(o, ownerSlot(e.owner));
@@ -522,6 +572,7 @@ export class SettlementLayer {
           const restarted = castStarted || (hurt && character.player.state === "hit");
           character.player.update(previousState === character.player.state && !restarted ? dt : 0);
         }
+        character.player.speak(e.id===speaker?speech:0);
         o.userData.animationHp = e.hp;
       }
       const { carry, body } = parts;
@@ -550,8 +601,12 @@ export class SettlementLayer {
         e.hp !== null &&
         o.userData.previousHealth !== undefined &&
         e.hp < o.userData.previousHealth
-      )
+      ) {
         o.userData.lastDamageTick = tick;
+        const attacker=this.modelEntities.find(a=>a.unit?.attack?.target===e.id&&a.unit.attack.released);
+        const angle=attacker?Math.atan2(e.x-attacker.x,e.y-attacker.y):o.rotation.y;
+        this.impacts.hit(e.id,o.position.x,o.position.y+(d.kind==='building'?1.7:1.1),o.position.z,renderTick,angle,d.hero?1.4:1);
+      }
       o.userData.previousHealth = e.hp;
       hp.visible =
         !!d.body &&
@@ -593,6 +648,10 @@ export class SettlementLayer {
               : 0;
         });
     }
+    this.impacts.update(renderTick,seen);
+    perf.end('Units · pose and overlays',animationTiming);
+    perf.value('Animated units',this.characters.size);
+    const projectileTiming=perf.start();
     const launchPosition = (shot: {source:number}) => {
       const source = this.entities.get(shot.source);
       const observed = byId.get(shot.source);
@@ -602,6 +661,7 @@ export class SettlementLayer {
     };
     this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
     this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
+    perf.end('Projectiles / shell effects',projectileTiming);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
         const character = this.characters.get(id);
@@ -748,6 +808,7 @@ export class SettlementLayer {
     this.gridLines.geometry.dispose();
     this.gridLines.material.dispose();
     this.spellEffects.dispose();
+    this.impacts.dispose();
     this.commandEffects.dispose();
     this.harvestTrees.dispose();
     this.abilityTarget.dispose();

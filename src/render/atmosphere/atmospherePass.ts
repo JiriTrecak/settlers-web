@@ -1,3 +1,4 @@
+import {createAtmosphereNoise} from './noiseVolume';
 import {Color,DepthTexture,HalfFloatType,Matrix4,Mesh,NearestFilter,OrthographicCamera,PCFShadowMap,PlaneGeometry,Scene,ShaderMaterial,UnsignedIntType,Vector2,Vector3,Vector4,WebGLRenderTarget,type Camera,type DirectionalLight,type Texture,type WebGLRenderer} from 'three';
 import {DEFAULT_SHAFT_TINT,type AtmosphereSettings} from '../../shared/landscape/atmosphere';
 import {readAtmosphereQuality,type AtmosphereQuality} from '../../shared/settings/graphics';
@@ -8,6 +9,7 @@ export const atmosphereQualitySpec=(quality:AtmosphereQuality)=>quality==='high'
 export type AtmosphereFrame={settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
 /** Bounded raymarch and depth-aware filter, then full-resolution composite. No history buffer. */
 export class AtmospherePass {
+ private readonly noiseVolume=createAtmosphereNoise();
  private readonly sceneTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:true,samples:2});
  private readonly fogTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:false,minFilter:NearestFilter,magFilter:NearestFilter});
  private readonly filteredTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:false,minFilter:NearestFilter,magFilter:NearestFilter});
@@ -16,7 +18,7 @@ export class AtmospherePass {
  private readonly geometry=new PlaneGeometry(2,2);
  private readonly shared={sceneDepth:{value:null as Texture|null},inverseProjection:{value:new Matrix4()},cameraWorld:{value:new Matrix4()},waterLevel:{value:0},visibilityMap:{value:null as Texture|null},hasVisibility:{value:false},mapSize:{value:256}};
  private readonly march=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:marchFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,
-  sunShadow:{value:null as Texture|null},shadowMatrix:{value:new Matrix4()},hasShadow:{value:false},
+  noiseVolume:{value:this.noiseVolume},sunShadow:{value:null as Texture|null},shadowMatrix:{value:new Matrix4()},hasShadow:{value:false},
   density:{value:0},baseHeight:{value:0},heightFalloff:{value:4},sunStrength:{value:1},noiseScale:{value:.1},noiseStrength:{value:.6},time:{value:0},driftSpeed:{value:.3},wind:{value:new Vector2()},
   fogColor:{value:new Color()},sunColor:{value:new Color()},sunDirection:{value:new Vector3()},regionCount:{value:0},regions:{value:Array.from({length:16},()=>new Vector4())},regionShapes:{value:Array.from({length:16},()=>new Vector4())},
  }});
@@ -63,5 +65,5 @@ export class AtmospherePass {
    perf.end('Atmosphere submit (CPU)',start);perf.value('Atmosphere',`${quality} · ${width} × ${height} · ${steps} samples`);
   }finally{gl.setRenderTarget(previous);gl.autoClear=autoClear;gl.shadowMap.autoUpdate=shadowAuto;}
  }
- dispose(){this.sceneTarget.dispose();this.fogTarget.dispose();this.filteredTarget.dispose();this.geometry.dispose();this.march.dispose();this.filter.dispose();this.composite.dispose();}
+ dispose(){this.noiseVolume.dispose();this.sceneTarget.dispose();this.fogTarget.dispose();this.filteredTarget.dispose();this.geometry.dispose();this.march.dispose();this.filter.dispose();this.composite.dispose();}
 }

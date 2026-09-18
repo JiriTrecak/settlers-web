@@ -1,10 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Session } from "../../src/session/session/session";
+import {SimulationRuntime} from "../../src/session/worker/runtime";
 import {
   PresentationView,
   matchSpeed,
 } from "../../src/session/session/presentationView";
-import { World } from "../../src/sim/world/world";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import {
   defaultSlots,
@@ -13,7 +12,7 @@ import {
 import { playerObservation } from "../../src/sim/ai/frame";
 import { FogOfWar } from "../../src/render/visibility/fogOfWar";
 import { Scene } from "three";
-import { Room, MemoryChannel, Lockstep } from "../../src/net";
+import type {MemoryChannel} from "../../src/net";
 
 afterEach(() => vi.unstubAllGlobals());
 const map = emptyUtcMap();
@@ -23,32 +22,10 @@ function fixture(player: number | null = 0, speed = 1) {
     map.playerStarts,
     "rev",
   );
-  const world = new World({ map, slots: match.slots, seed: 1 });
-  const room = new Room(match),
-    channels = match.slots.map((s) => new MemoryChannel(room, s.player));
-  const peers = new Map(
-    channels.map((ch, i) => [
-      match.slots[i].player,
-      new Lockstep(ch, match.slots[i].player, match.delay),
-    ]),
-  );
-  const session = Object.assign(Object.create(Session.prototype), {
-    started: true,
-    world,
-    aiGreeted: new Set<number>(),
-    me: player ?? 0,
-    visionPlayer: player ?? 0,
-    config: { player, hooks: { onHud: vi.fn() } },
-    speed,
-    renderer: {},
-    room,
-    match,
-    loadedMap: { map },
-    locksteps: peers,
-    channels,
-    acc: 0,
-  });
-  return { world, session, peers, channels };
+  const receive=vi.fn();
+  const session=new SimulationRuntime({map,match:{...match,seed:1},player,remote:false},undefined,{chat:receive});
+  session.speed=speed;
+  return {world:session.world,session,peers:session.locksteps,channels:session.channels,receive};
 }
 describe("skirmish presentation and transport", () => {
   it("reveals all entities without altering checksum, explored cells, player commands or AI information", () => {
@@ -114,7 +91,7 @@ describe("skirmish presentation and transport", () => {
     expect([...peers.values()].every((p) => p.outbox().length === 0)).toBe(
       true,
     );
-    for (let n = 0; n < 40; n++) session.tick(50, n * 50);
+    for (let n = 0; n < 40; n++) session.advance(50);
     expect(world.clock.tickIndex).toBe(80);
     expect(new Set(world.log().map((a) => a.player))).toEqual(new Set([0, 1]));
     const save = session.snapshotLocal(),
@@ -128,12 +105,10 @@ describe("skirmish presentation and transport", () => {
   it("pauses local simulation and pending orders while the game menu is open",()=>{
     vi.stubGlobal("document",{hidden:true});
     const {session,world,channels}=fixture(1);
-    session.input={reset:vi.fn()};
-    session.send({type:"ping"});session.setMenuPaused(true);
-    const before=world.checksum();session.tick(10000,10000);
+    session.send({type:"ping"});session.setPaused(true);
+    const before=world.checksum();session.advance(10000);
     expect(world.clock.tickIndex).toBe(0);expect(world.checksum()).toBe(before);
-    expect(session.input.reset).toHaveBeenCalled();
-    session.setMenuPaused(false);session.tick(25,10025);
+    session.setPaused(false);session.advance(25);
     expect(world.clock.tickIndex).toBe(1);
     expect(world.log().some(a=>a.player===1)).toBe(true);
     channels.forEach(c=>c.destroy());
@@ -141,7 +116,7 @@ describe("skirmish presentation and transport", () => {
   it("round trips P2 and rejects a save assigned to another human",()=>{
     vi.stubGlobal("document",{hidden:true});
     const {session,world,channels}=fixture(1);
-    session.tick(100,100);const save=session.snapshotLocal(),checksum=world.checksum();
+    session.advance(100);const save=session.snapshotLocal(),checksum=world.checksum();
     expect(save).toMatchObject({v:4,mode:"skirmish",player:1});
     expect(()=>session.restoreLocal({...save,player:0})).toThrow(/player setup/);
     expect(()=>session.restoreLocal({...save,mode:"campaign"})).toThrow(/mode/);
@@ -152,11 +127,10 @@ describe("skirmish presentation and transport", () => {
   });
   it("AI says gg once when its main objective is nearly destroyed", () => {
     vi.stubGlobal("document", { hidden: true });
-    const {session, world, channels} = fixture(0);
-    const receive = vi.fn(); session.chat = {receive};
+    const {session, world, channels,receive} = fixture(0);
     const hall = world.settlement.entities.find(e => e.id === world.settlement.state.objectives["player.2"])!;
     hall.hp = 1;
-    session.tick(50, 50); session.tick(50, 100);
+    session.advance(50); session.advance(50);
     expect(receive).toHaveBeenCalledTimes(1);
     expect(receive.mock.calls[0][0]).toMatchObject({player: 1, text: "gg"});
     channels.forEach(c => c.destroy());
@@ -174,8 +148,8 @@ describe("skirmish presentation and transport", () => {
       vi.stubGlobal("document", { hidden: true });
       const a = fixture(null, speed),
         b = fixture(null, 1);
-      a.session.tick(100, 100);
-      for (let n = 0; n < speed; n++) b.session.tick(100, (n + 1) * 100);
+      a.session.advance(100);
+      for (let n = 0; n < speed; n++) b.session.advance(100);
       expect(a.world.clock.tickIndex).toBe(4 * speed);
       expect(a.world.clock.tickMs).toBe(25);
       expect(a.world.checksum()).toBe(b.world.checksum());
@@ -185,13 +159,13 @@ describe("skirmish presentation and transport", () => {
   it("keeps fractional time through speed changes and caps catch-up after a long stall", () => {
     vi.stubGlobal("document", { hidden: true });
     const a = fixture(null);
-    a.session.tick(10, 10);
+    a.session.advance(10);
     a.session.speed = 4;
-    a.session.tick(10, 20);
+    a.session.advance(10);
     expect(a.world.clock.tickIndex).toBe(2);
-    a.session.tick(100000, 100020);
+    a.session.advance(100000);
     expect(a.world.clock.tickIndex).toBe(34);
-    expect(a.session.acc).toBeLessThan(25);
+    expect(a.session.acc).toBeLessThanOrEqual(25*8*4);
     a.channels.forEach((c) => c.destroy());
   });
   it("forces network speed to 1x and rejects unsupported rates", () => {

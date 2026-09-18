@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "asset.models.items.briarwatch.healing-scroll",
+  "name": "Healing Scroll",
+  "kind": "model",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/items/briarwatch/healing-scroll/model.glb",
+      "sha256": "569f1b15da651da8ade566790515e5a7fddbb9380aaf6b01b80ba6d87cb661a3",
+      "bytes": 24572,
+      "triangles": 384,
+      "primitives": 6
+    }
+  ],
+  "render": [
+    {
+      "id": "asset.briar.healing-scroll",
+      "file": "assets/models/items/briarwatch/healing-scroll/model.glb",
+      "healthHeight": 1
+    }
+  ],
+  "scenery": [],
+  "source": {
+    "path": "art/sources/items/briarwatch-rewards/briarwatch-rewards.blend",
+    "sha256": "c6e26285588a2bcd90256632429146ba9508d454860fdcef06344191f847e00e",
+    "quality": "shared"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-18T19:50:01.410Z",
+    "warnings": [
+      "Campaign art pass in progress; final full-orbit and animation review pending."
+    ]
+  }
+}

@@ -1,4 +1,6 @@
-import { BufferGeometry, Float32BufferAttribute, CanvasTexture, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene } from 'three';
+import { BufferGeometry, Float32BufferAttribute, CanvasTexture, TextureLoader, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene, type Texture } from 'three';
+import myceliumUrl from '../../../assets/textures/decals/mycelium-bed.png?url';
+import rootRotUrl from '../../../assets/textures/decals/root-rot.png?url';
 import { HEIGHT_ORIGIN, type HeightField } from '../../shared';
 import { DECAL_KINDS, type DecalKind, type GroundDecal } from '../../shared/landscape/decal';
 
@@ -33,6 +35,16 @@ export class DecalLayer {
     this.clear();
     for(const d of decals){
       const mat=new MeshStandardMaterial({map:this.textures.get(d.kind),transparent:true,opacity:d.opacity,depthWrite:false,roughness:1,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+      if(d.kind==='mycelium-bed'){
+        mat.onBeforeCompile=shader=>{
+          shader.uniforms.uBedWater={value:field.waterLevel};
+          shader.vertexShader='varying vec2 vBedSurface;\n'+shader.vertexShader;
+          shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvBedSurface=vec2(normal.y,position.y);');
+          shader.fragmentShader='varying vec2 vBedSurface; uniform float uBedWater;\n'+shader.fragmentShader;
+          shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\nfloat decalEdge=min(min(vMapUv.x,vMapUv.y),min(1.-vMapUv.x,1.-vMapUv.y));diffuseColor.a*=smoothstep(0.,.02,decalEdge)*smoothstep(.7,.96,vBedSurface.x)*smoothstep(uBedWater+.1,uBedWater+.5,vBedSurface.y);');
+        };
+        mat.customProgramCacheKey=()=> 'porous-mycelium-v2';
+      }
       if(d.kind==='leaf-litter')mat.color.set(season==='autumn'?0xe1b35b:season==='spring'?0xc2ec9b:0xffffff);
       const mesh=new Mesh(decalGeometry(d,field),mat);mesh.name=`decal:${d.id}`;mesh.receiveShadow=true;mesh.customDepthMaterial=this.depth;mesh.renderOrder=1+this.group.children.length*.0001;this.group.add(mesh);
     }
@@ -42,7 +54,10 @@ export class DecalLayer {
 }
 
 /** Small vector-painted patches with transparent borders; no baked directional shadows. */
-function texture(kind: DecalKind): CanvasTexture {
+function texture(kind: DecalKind): Texture {
+  if(kind==='root-rot'||kind==='mycelium-bed'){
+    const t=new TextureLoader().load(kind==='root-rot'?rootRotUrl:myceliumUrl);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
+  }
   const canvas=document.createElement('canvas');canvas.width=canvas.height=512;
   const ctx=canvas.getContext('2d')!;
   let seed=173;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};

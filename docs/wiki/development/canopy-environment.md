@@ -63,7 +63,7 @@ These are warmed fixed-scene observations from September 15, 2026, not a live ca
 
 Deterministic recipes are `scripts/missions/hollow-gate.ts` and `scripts/missions/heartwood-vault.ts`, with Lua beside them. Both declare staged objectives and a travelling company. Continue from the outdoor victory screen to retain surviving companions, XP, learned abilities and items.
 
-The additional neutral assets are Hollow Stump Gate, Arched Root Walkway, Woodland Timber Bridge, Moss Stone Bridge, Heartwood Wall, Amber Resin Sconce and Living Resin Wellspring. Sources, comparisons and geometry reports live under `art/sources/environment/<slug>/`. Crossings publish through `scripts/assets/publish-crossing-kit.ts`; interior pieces through `scripts/assets/publish-heartwood-kit.ts`; then run `npm run assets:compile`. Their real exported triangle counts are 4,690 / 1,304 / 4,232 / 6,144 / 3,276 / 1,042 / 4,960 respectively. Paving gaps are cosmetic; the declared navigation floors are continuous.
+The additional neutral assets are Hollow Stump Gate, Arched Root Walkway, Woodland Timber Bridge, Moss Stone Bridge, Heartwood Wall, Amber Resin Sconce and Living Resin Wellspring. Sources, comparisons and geometry reports live under `art/sources/environment/<slug>/`. Crossings publish through `scripts/assets/publish-crossing-kit.ts`; interior pieces through `scripts/assets/publish-heartwood-kit.ts`; then run `npm run assets:compile`. Their real exported triangle counts are 4,690 / 1,304 / 4,232 / 6,684 / 3,276 / 1,042 / 4,960 respectively. Paving gaps are cosmetic; the declared navigation floors are continuous.
 
 The wellspring marks the eastern chamber's recovery beat with a root basin, a textured amber pool, moss and shelf fungi. Its basin has a neutral elliptical blocker and a warm light declaration. The optional material extra `resinShimmer: {strength, speed}` animates highlights using the shared prop clock; it adds no texture sampler, geometry, light or simulation work. It is not a fluid simulation.
 
@@ -97,4 +97,46 @@ Lanterncap Grove gives the optional western chamber a distinct teal silhouette a
 
 The exported asset contains 12,792 triangles, one mesh and six material primitives (2,004,408 bytes). Source, reference samples, exact image prompts, recipe, comparison and validation are retained under `art/sources/environment/lanterncap-grove/`. The live studio is on port 8900. Its elliptical blocker is declared alongside its light in the asset catalogue.
 
-A new regression checks that every unit spawn remains walkable and reachable from the entrance, while the two grove bases and resin wellspring remain solid. The full ordinary-order two-chapter combat journey also passes with this dressing. The fungal room was inspected in the actual game renderer. The final chamber still needs a stronger custom landmark; enlarged legacy root-bank props were rejected during visual review.
+A new regression checks that every unit spawn remains walkable and reachable from the entrance, while the two grove bases and resin wellspring remain solid. The full ordinary-order two-chapter combat journey also passes with this dressing. The fungal room was inspected in the actual game renderer. The final chamber received the dedicated Bitter Heart landmark described below; enlarged legacy root-bank props were rejected during visual review.
+
+### The Bitter Heart
+
+The final chamber now has a dedicated corrupted-heart landmark at its northern end. A split red resin pod sits between two uneven root curls, backed by a third buttress, with broad roots spreading onto the floor. It replaces the incidental neutral mine in this army-only chapter. The Heart Keeper remains the combat objective; the landmark is scenery. Northern amber sconces are omitted so its copper-red light can define this end of the room.
+
+The editable master, concept, sampled colors, exact generation prompts and comparison live under `art/sources/environment/bitter-heart/`. The published GLB is 14,804 triangles, one mesh and six material primitives, 1,637,980 bytes. Its resin material uses the existing declarative shared-clock shimmer. Its solid footprint is an ellipse in the scenery catalogue. The map now has 614 scenery stamps and 18 entity placements.
+
+The new `root-rot` decal is a generated RGBA surface stain with fully transparent outer edges, resized to 1024² with its aspect ratio preserved. It follows the exact terrain triangles, receives ordinary lighting and creates no navigation obstacle. It is available through the editor's decal pattern list and `editor_decals`; the MCP enum now consumes the shared pattern declaration. Two patches blend the heart into its chamber. Original image and prompt: `art/sources/textures/root-rot/`.
+
+Blender geometry/image validation, front/rear orbit, actual game rendering, every unit spawn and authored landmark collision, ordinary-order campaign combat, resin material behavior and decal serialization are checked. The model is static geometry; it has no destruction animation.
+
+The warmed, fixed final-chamber rendering benchmark measured GPU mean/p95 of 10.03/12.25 ms with full-scale soft shadows and 3.36/4.20 ms at half scale. Filtered shadows measured 9.74/11.80 ms and 3.38/4.26 ms respectively. CPU means ranged from 1.19–1.69 ms. These are local fixed-scene measurements, not a live battle or multiplayer benchmark; original rendering settings were restored.
+
+### Unit-scale inspection
+
+A spyglass command now cycles RTS, third-person and first-person views of a selected unit. The Heartwood Vault opening uses a scripted first-person shot from an archer toward the Marshal. This also exposed and fixed oversized close-up health labels, indoor sky leakage and floor holes caused by applying the overhead cutaway mask at eye level. Close views follow the rendered pose on raised surfaces; local camera changes leave gameplay visibility and orders intact. These views make low-poly character detail easier to inspect. The authored indoor ceiling is described below.
+
+### Stone crossing material pass
+
+The outdoor stone bridge now uses a generated weathered-limestone albedo, staggered paving and modest block-to-block tints. Its 6,684 triangles and single 1024² image export to an 806,172-byte GLB. The broad walk profile is unchanged: 54 Blender ray samples stay within 3.5002 cm of it. The final GLB was inspected in the studio and in the level, including verification that Blender’s tint multipliers survive export. Eight focused crossing and campaign tests pass, including the normal-orders two-chapter journey. The full imagegen prompt and unmodified source are retained under `art/sources/textures/weathered-limestone/`.
+
+
+### Current integration and rendering check
+
+A two-peer Room/Lockstep integration test exercises the published arched root: a lower walker travels underneath, an archer climbs onto it, upper-floor arrows damage a lower target, visibility differs by floor, and one peer resumes a JSON save mid-climb. Peer checksums and both players’ floor visibility arrays remain equal throughout 1,100 ticks. This complements the ordinary-order two-chapter campaign journey test.
+
+The current broad regression run covered 848 tests: 845 passed initially; the three failures were stale renderer mocks missing `unitCamera`. Those fixtures were corrected and their tests rerun successfully, including explicit camera reset on save load and no camera work while the page is hidden. The four socket tests also passed separately. Subsequent targeted tests cover ceiling geometry, declaration validation, camera poses, mission shots and the new layered lockstep case.
+
+Fixed-view, warmed rendering measurements at a 2560×1440 drawing buffer (1280×720 CSS) used the last 120 samples of 360-frame runs. Hollow Gate at the stone crossing averaged **6.11 ms GPU**, **6.74 ms p95**, and **2.04 ms measured CPU scopes** with full resolution and soft shadows. Heartwood Vault at the northern chamber averaged **4.39 ms GPU**, **5.47 ms p95**, and **1.73 ms CPU scopes** under the same mode. These are scene measurements, not battle benchmarks or a guarantee for other hardware. They were collected before adding the close-camera ceiling, which remains hidden in these RTS views.
+
+Interior close views now support a map-authored `environment.ceilingHeight`. The Vault uses 18 metres, above the elevated root walkway. The ribbed heartwood underside appears only in first/third person and obeys normal fog; RTS retains its open cutaway. This closes the camera-facing enclosure without adding navigation surfaces or simulation work.
+
+
+### Living ground and final validation
+
+Twenty-four irregular mycelium beds now connect the smaller foliage clusters around the Vault’s room margins. Their generated 1024² RGBA texture retains its master, exact prompt and asset record under `art/sources/textures/mycelium-bed/` and `art/records/asset.textures.decals.mycelium-bed/`. The detail remains porous, fades off steep faces and water, and creates no navigation blocker. It is available in the ordinary decal picker and MCP declaration. Drifting spores give the indoor air slow movement in one bounded batch of 384 billboards.
+
+The final gallery measurement at `(130,144)`, zoom 1.4, 2560×1440 buffer and full-scale soft shadows was **4.26 ms mean / 4.81 ms p95 GPU**, with **2.00 ms measured CPU scopes**. This is a fixed-view local measurement, not a battle benchmark. No shader errors were reported. The normal rendering settings were restored afterwards.
+
+The final complete suite passed **859 tests in 204 files**. A subsequent editor regression exposed and fixed inherited bridge links disappearing when a height-only override was edited; the 11 relevant editor/selection/crossing tests then passed, including the added regression. Production build and all 19 editable environment-master checks pass. The published catalogue validates all 362 current records. See [the goal validation record](/development/expansion/canopy-goal-validation) for requirement-specific evidence and limitations.
+
+Asset publication no longer restarts the dev server: the authoring endpoint loads map validators through Vite’s module loader so the runtime manifest is not bundled into the server configuration. A controlled publication and an unchanged authoring save both passed. This follows the separation between [Vite’s bundled config dependencies](https://vite.dev/config/) and runtime modules.

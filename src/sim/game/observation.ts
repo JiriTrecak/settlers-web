@@ -1,4 +1,6 @@
-import { workerPopulation, gathererCount } from "./population";
+import {SectorIndex} from '../../shared/spatial/sectors';
+import {VisionMask} from './visionMask';
+import { workerPopulation } from "./population";
 import type { VisualCue } from "./visualCues";
 import { isStunned } from "./effects";
 import { atPoint, precise } from "./motion";
@@ -8,8 +10,14 @@ import { z } from "zod";
 import type { Owner, Stock } from "../../content/schema";
 import { ownerSchema, ownerSlot, surfaceSchema } from "../../content/schema";
 import { GameContext } from "./context";
-import { fellingStateSchema, type Entity, type Fact, type GameState } from "./state";
+import { alive, fellingStateSchema, type Entity, type Fact, type GameState, type Job, type UnitOrder } from "./state";
 import { resolvedStatsSchema, type entityStats } from "./stats";
+
+function copyOrder(order:UnitOrder):UnitOrder {
+  if(order.type==='move')return {...order,destination:{...order.destination}};
+  if(order.type==='patrol')return {...order,destination:{...order.destination},...(order.origin?{origin:{...order.origin}}:{})};
+  return {...order};
+}
 
 export type EntityView = {
   /** Owner-private control state, shared by command adapters; never parse job labels. */
@@ -114,7 +122,7 @@ export type SettlementView = {
 type Memory = {
   owner: Owner;
   cells: Uint8Array;
-  visibleCells: number[];
+  visibleCells: Set<number>;
   entities: Map<number, EntityView>;
   observedDeaths: ObservedDeath[];
 };
@@ -165,8 +173,9 @@ export const knowledgeSchema = z.array(
 
 /** Simulation-owned knowledge. No UI consumer receives authoritative entity objects. */
 export class Observation {
+  readonly timings:Record<string,number>={};
   private readonly memories: Memory[];
-  private readonly sensorSignatures = new Map<Owner, string>();
+  private readonly masks = new Map<Owner, VisionMask>();
   private readonly deathCues: {
     entity: EntityView;
     tick: number;
@@ -197,6 +206,27 @@ export class Observation {
     this.cache.clear();
   }
   private readonly cache = new Map<Owner | undefined, SettlementView>();
+  private actors:Entity[]=[];
+  private forest:EntityView[]=[];
+  private readonly forestSlots=new Map<number,number>();
+  private stationary:Entity[]=[];
+  private structureRevision=-1;
+  private readonly jobs=new Map<number,Job>();
+  private readonly gatherers=new Map<number,number>();
+  private projectWork(){
+    this.jobs.clear();this.gatherers.clear();
+    const sources=new Map<number,number|null>();
+    for(const job of this.c.state.jobs){this.jobs.set(job.id,job);if(job.type==='harvest')sources.set(job.worker,job.source);}
+    for(const worker of this.c.liveUnits()){
+      const source=sources.get(worker.id),order=worker.unit!.order,target=order?.type==='gather'?order.target:null;
+      if(source!=null)this.gatherers.set(source,(this.gatherers.get(source)??0)+1);
+      if(target!=null&&target!==source)this.gatherers.set(target,(this.gatherers.get(target)??0)+1);
+    }
+  }
+  private job(id:number|null|undefined){return id==null?undefined:this.jobs.get(id)??this.c.state.jobs.find(j=>j.id===id);}
+  private readonly forestIds=new Set<number>();
+  private readonly visibleStatics=new Map<Owner,Set<number>>();
+  private readonly staticCoverage=new Map<Owner,Map<number,number>>();
   private readonly fogProjection = new WeakMap<Uint8Array,Pick<FogView,'cells'|'floors'>>();
   private readonly deckNodes: readonly FogDeckNode[];
   constructor(
@@ -209,7 +239,7 @@ export class Observation {
     this.memories = owners.map((owner) => ({
       owner,
       cells: new Uint8Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size ** 2),
-      visibleCells: [],
+      visibleCells: new Set(),
       entities: new Map(),
       observedDeaths: [],
     }));
@@ -217,16 +247,36 @@ export class Observation {
   private sharesVision(owner:Owner,sensor:Entity):boolean {
     return sensor.owner===owner || (sensor.owner!=="none" && this.hostility?.(owner,sensor)===false);
   }
+  private readonly sightSectors=new SectorIndex<Entity>();
+  private sightStamp='';
+  private nearbySensors(e:Entity):Iterable<Entity> {
+    const stamp=`${this.c.state.tick}:${this.c.observationRevision}:${this.c.motionRevision}`;
+    if(stamp!==this.sightStamp){
+      const ids=new Set<number>();
+      for(const sensor of this.c.liveSensors()){
+        const p=precise(sensor),radius=(this.c.def(sensor).vision??0)+1;
+        this.sightSectors.set(sensor.id,sensor,{minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius});ids.add(sensor.id);
+      }
+      for(const id of this.sightSectors.ids())if(!ids.has(id))this.sightSectors.delete(id);
+      this.sightStamp=stamp;
+    }
+    const p=precise(e),f=this.c.def(e).footprint,rotated=Math.round(e.rotation/90)%2!==0;
+    const x=f?(rotated?f.depth:f.width)/2:0,y=f?(rotated?f.width:f.depth)/2:0;
+    return this.sightSectors.query({minX:p.x-x-1,minY:p.y-y-1,maxX:p.x+x+1,maxY:p.y+y+1});
+  }
   visible(owner: Owner, e: Entity): boolean {
     if(e.owner===owner)return true;
+    const candidates=this.nearbySensors(e);
     if(this.c.spatial.layers){
-      return this.c.liveSensors().some(sensor=>this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
-        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),precise(e)));
+      for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
+        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),precise(e)))return true;
+      return false;
     }
     const cells=this.c.spatial.footprint(e);
-    return this.c.liveSensors().some(sensor=>this.sharesVision(owner,sensor) && !sensor.unit?.contained && !sensor.unit?.release &&
-      cells.some(i=>i>=0 && ((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2 &&
-        this.c.spatial.tactical.visible(sensor,this.c.spatial.point(i))));
+    for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
+      cells.some(i=>i>=0&&((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2&&
+        this.c.spatial.tactical.visible(sensor,this.c.spatial.point(i))))return true;
+    return false;
   }
   previouslyVisible(owner: Owner, e: Entity): boolean {
     if (e.owner === owner) return true;
@@ -260,14 +310,16 @@ export class Observation {
   /** Neutral foliage changes only on harvest/regrowth. Reuse immutable projections
    * until a source value changes; remembered fog keeps the previous projection. */
   private cachedResource(e:Entity,observer?:Owner):EntityView|undefined {
-    if(e.owner!=="none"||!e.resource||e.unit||this.c.def(e).kind!=="resource"||this.c.def(e).body||this.c.def(e).gatheringCapacity||e.item||e.construction||e.itemStatuses?.length||e.effects?.length)return undefined;
+    if(e.owner!=="none"||!e.resource||e.unit||e.item||e.construction||e.itemStatuses?.length||e.effects?.length)return undefined;
+    const definition=this.c.def(e);
+    if(definition.kind!=="resource"||definition.body||definition.gatheringCapacity)return undefined;
     const old=this.resourceViews.get(e.id),r=e.resource,f=r.felling,previous=old?.resource,of=previous?.felling;
     const appearance=e.appearance,oa=old?.appearance;
-    if(old&&old.definition===e.definition&&old.x===e.x&&old.y===e.y&&old.rotation===e.rotation&&old.hp===e.hp&&
+    if(old&&old.definition===e.definition&&old.x===e.x&&old.y===e.y&&old.surface===e.surface&&old.rotation===e.rotation&&old.hp===e.hp&&
       previous?.amount===r.amount&&previous.growingUntil===r.growingUntil&&f?.hp===of?.hp&&f?.lastHitTick===of?.lastHitTick&&f?.fallTick===of?.fallTick&&f?.direction.x===of?.direction.x&&f?.direction.y===of?.direction.y&&
       appearance?.asset===oa?.asset&&appearance?.scale===oa?.scale)return this.resourceOwnerView(old,observer);
     const view:EntityView={id:e.id,definition:e.definition,owner:e.owner,x:e.x,y:e.y,rotation:e.rotation,hp:e.hp,
-      resource:{...r,...(f?{felling:{...f,direction:{...f.direction}}}:{})},
+      ...(e.surface?{surface:e.surface}:{}),resource:{...r,...(f?{felling:{...f,direction:{...f.direction}}}:{})},
       ...(appearance?{appearance:{...appearance}}:{}),...(e.effects?{effects:[]} : {}),...(e.itemStatuses?{itemStatuses:[]} : {})};
     this.resourceViews.set(e.id,view);return this.resourceOwnerView(view,observer);
   }
@@ -283,21 +335,29 @@ export class Observation {
     const resource=(!privateData || foliagePrivate)?this.cachedResource(e,observer):undefined;
     if(resource){
       if(!privateData)return resource;
-      let privateView=this.privateResourceViews.get(resource);
-      if(!privateView){privateView={...resource,inventory:{},job:"Available"};this.privateResourceViews.set(resource,privateView);}
-      return privateView;
+      return this.privateForestView(resource);
     }
+    return this.describeActor(e,privateData,observer);
+  }
+  private privateForestView(resource:EntityView):EntityView {
+    let view=this.privateResourceViews.get(resource);
+    if(!view){view={...resource,inventory:{},job:"Available"};this.privateResourceViews.set(resource,view);}
+    return view;
+  }
+  /** Keep the forest projection fast path small; actors have richer private state. */
+  private describeActor(e:Entity,privateData:boolean,observer?:Owner):EntityView {
+    const position=precise(e),definition=this.c.def(e);
     const result: EntityView = {
       id: e.id,
       definition: e.definition,
       owner: e.owner,
-      x: precise(e).x,
-      y: precise(e).y,
+      x: position.x,
+      y: position.y,
       ...(e.surface?{surface:e.surface}:{}),
       rotation: e.rotation,
       hp: e.hp,
       ...(observer ? { hostile: this.hostility?.(observer, e) ?? false } : {}),
-      ...(this.c.def(e).body ? { stats: this.c.stats(e) } : {}),
+      ...(definition.body ? { stats: this.c.stats(e) } : {}),
       ...(privateData && e.revival
         ? { revival: structuredClone(e.revival) }
         : {}),
@@ -318,11 +378,11 @@ export class Observation {
       ...(privateData && e.upgrade ? {upgrade: {...e.upgrade}} : {}),
       ...(privateData && e.research ? {research: structuredClone(e.research)} : {}),
       ...(e.resource ? { resource: structuredClone(e.resource) } : {}),
-      ...(this.c.def(e).gatheringCapacity
+      ...(definition.gatheringCapacity
         ? {
             gathering: {
-              workers: gathererCount(this.c.state, e.id, undefined, this.c.liveUnits()),
-              capacity: this.c.def(e).gatheringCapacity!,
+              workers: this.gatherers.get(e.id)??0,
+              capacity: definition.gatheringCapacity!,
             },
           }
         : {}),
@@ -361,7 +421,7 @@ export class Observation {
       (e.unit.goal === null ||
         atPoint(e, this.c.spatial.point(e.unit.goal)))
     ) {
-      const job = this.c.state.jobs.find((j) => j.id === e.unit!.job);
+      const job = this.job(e.unit!.job);
       const workplace = this.c.get(job?.target);
       const creation =
         job?.type === "construct" || job?.type === "repair"
@@ -391,12 +451,11 @@ export class Observation {
         };
     }
     if (privateData) {
-      if (e.effects) result.effects = structuredClone(e.effects);
       if (e.unit) {
-        const j = this.c.state.jobs.find((j) => j.id === e.unit!.job);
+        const j = this.job(e.unit!.job);
         result.control = {
-          order: structuredClone(e.unit.order),
-          orderQueue: structuredClone(e.unit.orderQueue),
+          order: e.unit.order?copyOrder(e.unit.order):null,
+          orderQueue: e.unit.orderQueue.map(copyOrder),
           employment: e.unit.employment,
           job: j
             ? {
@@ -414,7 +473,7 @@ export class Observation {
       }
       result.inventory = { ...e.inventory };
       if (e.production) result.production = structuredClone(e.production);
-      const job = this.c.state.jobs.find((j) => j.id === e.unit?.job),
+      const job = this.job(e.unit?.job),
         workplace = this.c.get(e.unit?.employment),
         label = workplace
           ? this.c.def(workplace).behaviors.production?.jobName
@@ -440,20 +499,45 @@ export class Observation {
   private fogFootprint(e:Pick<Entity,"definition"|"x"|"y"|"rotation"|"surface">):number[]{
     return this.c.spatial.footprint(e);
   }
-  update() {
+  private projectEntities(live=this.c.state.entities):Entity[] {
+    const stationary:Entity[]=[];
+    this.actors=[];this.forest=[];this.forestIds.clear();this.forestSlots.clear();
+    for(const e of live){
+      if(alive(e)&&!e.unit&&(e.resource||this.c.def(e).kind==="building"))stationary.push(e);
+      const resource=e.resource&&!e.progression&&!e.spellcasting&&!e.equipment&&!e.equipmentState&&
+        !e.production&&!e.revival&&!e.upgrade&&!e.research&&Object.keys(e.inventory).length===0?this.cachedResource(e):undefined;
+      if(resource){this.forestSlots.set(e.id,this.forest.length);this.forest.push(this.privateForestView(resource));this.forestIds.add(e.id);}
+      else this.actors.push(e);
+    }
+    return stationary;
+  }
+  /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
+  update(incremental=false) {
+    this.sightStamp="";
+    const started=performance.now();let maskMs=0,knowledgeMs=0;
     this.cache.clear();
-    for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
     while (
       this.deathCues.length &&
       this.c.state.tick - this.deathCues[0].tick > 80
     )
       this.deathCues.shift();
-    const live=this.c.live(),staticCells=this.staticCells??=new Int32Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size**2);
-    const stationary = live.filter(e => !e.unit && (e.resource || this.c.def(e).kind === "building"));
-    if (stationary.length !== this.staticRecords.size || stationary.some(e => {
+    const changedResources=new Set([...this.c.changedResources].map(e=>e.id));
+    const rebuild=!incremental||this.structureRevision!==this.c.observationRevision;
+    if(rebuild){
+      this.stationary=this.projectEntities();this.structureRevision=this.c.observationRevision;
+      for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
+    }else for(const e of this.c.changedResources){
+      const index=this.forestSlots.get(e.id);
+      if(index!==undefined)this.forest[index]=this.privateForestView(this.cachedResource(e)!);
+    }
+    this.c.changedResources.clear();this.projectWork();
+    const initializeStatic=!this.staticCells;
+    const stationary=this.stationary,staticCells=this.staticCells??=new Int32Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size**2);
+    const staticChanged=rebuild&&(initializeStatic || stationary.length !== this.staticRecords.size || stationary.some(e => {
       const old=this.staticRecords.get(e.id);
       return !old || old.x!==e.x || old.y!==e.y || old.rotation!==e.rotation || old.definition!==e.definition || old.surface!==e.surface;
-    })) {
+    }));
+    if(staticChanged) {
       staticCells.fill(0); this.staticOverlaps.clear(); this.staticRecords.clear();
       for (const e of stationary) {
         this.staticRecords.set(e.id,{definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,surface:e.surface});
@@ -463,40 +547,59 @@ export class Observation {
         }
       }
     }
+    this.timings['Observation · static index']=performance.now()-started;
     const overlaps=this.staticOverlaps;
     for (const m of this.memories) {
+      const maskStarted=performance.now();
       m.observedDeaths = m.observedDeaths.filter(
         (d) => this.c.state.tick - d.tick <= 400,
       );
       const sensors = this.c.liveSensors().filter(
           (e) => this.sharesVision(m.owner,e) && !e.unit?.contained && !e.unit?.release,
         );
-      const signature = sensors
-        .map((e) => `${e.id}:${e.x}:${e.y}:${e.surface??""}:${this.c.def(e).vision ?? 0}`)
-        .join(";");
-      const visionChanged = this.sensorSignatures.get(m.owner) !== signature;
-      this.sensorSignatures.set(m.owner, signature);
-      if (visionChanged) {
-        m.cells = m.cells.slice();
-        for (const i of m.visibleCells) m.cells[i] = 1;
-        m.visibleCells = [];
-        for (const sensor of sensors) {
-          const r = this.c.def(sensor).vision ?? 0;
-          for(const i of this.c.spatial.visibleNodes(sensor,r)){
-            if(m.cells[i]!==2){m.cells[i]=2;m.visibleCells.push(i);}
+      let mask=this.masks.get(m.owner);
+      if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
+      const visionChanged=mask.update(sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,radius:this.c.def(e).vision??0})),sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
+      m.cells=mask.cells;m.visibleCells=mask.visible;
+      maskMs+=performance.now()-maskStarted;
+      const knowledgeStarted=performance.now();
+      let observedStatic=this.visibleStatics.get(m.owner),coverage=this.staticCoverage.get(m.owner);
+      const refresh=new Set(changedResources);
+      if(!observedStatic||!coverage||staticChanged){
+        observedStatic=new Set<number>();coverage=new Map<number,number>();
+        for(const cell of m.visibleCells){
+          const ids=overlaps.get(cell),id=staticCells[cell];
+          if(ids)for(const id of ids)coverage.set(id,(coverage.get(id)??0)+1);
+          else if(id)coverage.set(id,(coverage.get(id)??0)+1);
+        }
+        for(const id of coverage.keys()){observedStatic.add(id);refresh.add(id);}
+        this.visibleStatics.set(m.owner,observedStatic);this.staticCoverage.set(m.owner,coverage);
+      }else if(visionChanged){
+        for(const cell of mask.changedCells){
+          const ids=overlaps.get(cell),id=staticCells[cell],delta=m.cells[cell]===2?1:-1;
+          for(const key of ids??(id?[id]:[])){
+            const count=(coverage.get(key)??0)+delta;
+            if(count>0){coverage.set(key,count);if(!observedStatic.has(key)){observedStatic.add(key);refresh.add(key);}}
+            else{coverage.delete(key);observedStatic.delete(key);}
           }
         }
       }
-      const observedStatic=new Set<number>();
-      for(const cell of m.visibleCells){
-        const id=staticCells[cell];if(id)observedStatic.add(id);
-        for(const extra of overlaps.get(cell)??[])observedStatic.add(extra);
+      if(visionChanged||staticChanged)
+        for(const [id,e] of m.entities)
+          if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
+            (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),e))))m.entities.delete(id);
+      // Actors/buildings can change every tick. Forest resources only change on
+      // harvest/regrowth, structural edits, or newly revealed coverage.
+      if(rebuild||this.c.spatial.layers)for(const id of observedStatic)refresh.add(id);
+      for(const e of this.actors)if(!e.unit&&observedStatic.has(e.id))refresh.add(e.id);
+      for(const id of refresh)if(observedStatic.has(id)){
+        const e=this.c.get(id)!;
+        if(!this.c.spatial.layers||this.visible(m.owner,e))m.entities.set(id,this.forestIds.has(id)?this.resourceViews.get(id)!:this.describe(e,false));
       }
-      for(const [id,e] of m.entities)
-        if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
-          (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),e))))m.entities.delete(id);
-      for(const id of observedStatic){const e=this.c.get(id)!;if(!this.c.spatial.layers||this.visible(m.owner,e))m.entities.set(id,this.describe(e,false));}
+      knowledgeMs+=performance.now()-knowledgeStarted;
     }
+    this.timings['Observation · sight masks']=maskMs;
+    this.timings['Observation · scenery knowledge']=knowledgeMs;
   }
   view(owner?: Owner): SettlementView {
     const cached = this.cache.get(owner);
@@ -505,8 +608,9 @@ export class Observation {
       known = new Map<number, EntityView>();
     if (owner !== undefined && !m) throw new Error("Unknown observation owner");
     const visible = new Map<number, EntityView>();
-    const full: EntityView[] = [];
-    for (const e of this.c.live()) {
+    const full: EntityView[] = owner ? [] : [...this.forest];
+    const actors=this.actors.filter(alive);
+    for (const e of actors) {
       if (!owner) full.push(this.describe(e, true));
       else if (e.owner === owner || this.previouslyVisible(owner, e))
         visible.set(e.id, this.describe(e, e.owner === owner, owner));
@@ -514,6 +618,7 @@ export class Observation {
     if (m)
       for (const [id, e] of m.entities) {
         let observed=visible.get(id);
+        if(!observed&&this.forestIds.has(id)&&this.previouslyVisible(owner!,this.c.get(id)!))observed=this.resourceOwnerView(this.resourceViews.get(id)!,owner);
         if(!observed){
           observed=this.rememberedViews.get(e);
           if(!observed){observed={...structuredClone(e),remembered:true};this.rememberedViews.set(e,observed);}
@@ -539,7 +644,7 @@ export class Observation {
         ? {
             population: workerPopulation(this.c.populationCandidates(), owner, this.c.registry),
             goods: summarizeGoods(
-              this.c.live(),
+              actors,
               owner,
               this.c.registry,
               this.available,
@@ -621,16 +726,17 @@ export class Observation {
   }
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
-    this.sensorSignatures.clear();
-    this.staticRecords.clear();
+    this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.structureRevision=-1;
+    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightStamp="";
     this.resourceViews.clear();
+    this.projectEntities();this.projectWork();
     this.deathCues.length = 0;
     for (const m of this.memories) {
       const row = rows.find((r) => r.owner === m.owner)!;
       m.cells = Uint8Array.from(row.cells);
-      m.visibleCells = [];
+      m.visibleCells = new Set();
       for (let i = 0; i < m.cells.length; i++)
-        if (m.cells[i] === 2) m.visibleCells.push(i);
+        if (m.cells[i] === 2) m.visibleCells.add(i);
       m.entities = new Map(row.entities.map((e) => [e.id, e]));
       m.observedDeaths = row.observedDeaths.map((d) => ({ ...d }));
     }

@@ -87,5 +87,5 @@
   ],
   "height": 2.03,
   "forward": "+Z",
-  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips. Scale matches workshop units."
+  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips."
 }

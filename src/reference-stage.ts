@@ -102,7 +102,7 @@ async function start() {
     if(benchmark&&!finished){
       if(document.hidden){frames=0;intervals=[];lastFrame=0;}
       else {
-        frames++;if(frames>120&&lastFrame)intervals.push(now-lastFrame);lastFrame=now;
+        frames++;if(frames===120)perf.resetTimings();if(frames>120&&lastFrame)intervals.push(now-lastFrame);lastFrame=now;
         output.textContent='Fixed scene · 11:00 · '+map.name+'\n'+JSON.stringify(modes[mode])+' · '+frames+'/360 frames\n'+JSON.stringify(summary(),null,2);
         if(frames>=360){
           const sorted=intervals.slice().sort((a,b)=>a-b),mean=intervals.reduce((a,b)=>a+b,0)/intervals.length;
