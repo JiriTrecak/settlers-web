@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.canopy-twig-log",
+  "name": "Twig Log",
+  "kind": "model",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/ground/canopy-twig-log/model.glb",
+      "sha256": "b3078c240ea042e33cd39656891f0fd1fc4a309aaa00c2b3ae61768f3b26e97c",
+      "bytes": 32752,
+      "triangles": 106,
+      "primitives": 3
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "canopy-twig-log",
+      "name": "Twig Log",
+      "category": "terrain",
+      "type": "ground",
+      "file": "models/environment/ground/canopy-twig-log/model.glb"
+    }
+  ],
+  "source": {
+    "path": "art/sources/environment/canopy-twig-log/canopy-twig-log.blend",
+    "sha256": "df2aad81e4607ea220beac31068b5072d61a23c5f8ca63518b1388e3c0dbc09e",
+    "quality": "master"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-19T01:17:28.565Z",
+    "warnings": [
+      "Flat-ground contact; match terrain placement when dressing slopes."
+    ]
+  }
+}

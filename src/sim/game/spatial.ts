@@ -90,7 +90,7 @@ export class Spatial {
       true,
     );
   }
-  attackClear(origin:Point,target:Entity,ranged:boolean):boolean {
+  attackClear(origin:Point & {elevation?:number},target:Entity,ranged:boolean):boolean {
     const center=precise(target),f=this.registry.get(target.definition).footprint;
     const rotated=Math.round(target.rotation/90)%2!==0;
     const halfX=f?(rotated?f.depth:f.width)/2:0,halfY=f?(rotated?f.width:f.depth)/2:0;
@@ -138,11 +138,11 @@ export class Spatial {
     const fallback=this.layers.path(from,to,blockedNode,maxCost);this.routing.expanded+=this.layers.lastExpanded;
     return fallback?.map(n=>n.id)??null;
   }
-  visible(a:Point,b:Point){return (this.layers??this.tactical).visible(a,b);}
+  visible(a:Point & {elevation?:number},b:Point & {elevation?:number}){return (this.layers??this.tactical).visible(a,b);}
   private readonly layerViews=new Map<string,readonly number[]>();
-  visibleNodes(origin:Point,radius:number):readonly number[]|Uint32Array{
+  visibleNodes(origin:Point & {elevation?:number},radius:number):readonly number[]|Uint32Array{
     if(!this.layers)return this.tactical.visibleCells(origin,radius);
-    const key=`${origin.x}:${origin.y}:${origin.surface??""}:${radius}`,cached=this.layerViews.get(key);if(cached)return cached;
+    const key=`${origin.x}:${origin.y}:${origin.surface??""}:${radius}:${origin.elevation??0}`,cached=this.layerViews.get(key);if(cached)return cached;
     const out:number[]=[];
     for(let y=Math.max(0,Math.ceil(origin.y-radius));y<=Math.min(this.size-1,Math.floor(origin.y+radius));y++)
       for(let x=Math.max(0,Math.ceil(origin.x-radius));x<=Math.min(this.size-1,Math.floor(origin.x+radius));x++){

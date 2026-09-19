@@ -1,0 +1,5 @@
+
+> assets:compile
+> node --import tsx scripts/assets/compile.ts
+
+Validated 388 published asset records.

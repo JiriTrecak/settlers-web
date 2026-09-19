@@ -5,46 +5,50 @@
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/archer/model.glb",
-      "sha256": "9a20ee5846a2391a2705c1e4cf27ab39be1c869e5fbde8bc967ac2e17ad1c529",
-      "bytes": 334828
+      "sha256": "66ca8e19951c66f200a182b5945328d9e4dab24266acbfa2bff3c4cc188eb07b",
+      "bytes": 482284,
+      "triangles": 4482,
+      "primitives": 16
     }
   ],
   "render": [
     {
       "id": "asset.ants.archer",
       "file": "assets/models/units/ants/archer/model.glb",
-      "healthHeight": 2.3,
-      "projectile": "arrow",
-      "projectileSocket": "socket_handL",
       "character": "archer",
+      "healthHeight": 2.3,
       "cameraAnchor": {
         "height": 1.5,
         "forward": 0.15,
         "distance": 7
-      }
+      },
+      "projectile": "arrow",
+      "projectileSocket": "socket_handL"
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-family/ant-family.blend",
-    "sha256": "669cc2babebf6a207415b1c476f5649618c0db47c60bdc71ce76b79087c65c64",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/archer.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.993080+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.535Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

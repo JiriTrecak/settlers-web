@@ -4,26 +4,29 @@
   "name": "Tree Secondary",
   "kind": "model",
   "tags": [
-    "coniferous-pack",
-    "migrated"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/trees/tree-secondary/model.glb",
-      "sha256": "1739960582f0125b6b099d723213b72a0632d02858e843ee11fa4c180740ebdd",
-      "bytes": 79076
+      "sha256": "c27978921248fd02f92776f674e40834978ca8fd5ba56b0f99796de0108035be",
+      "bytes": 99444,
+      "triangles": 948,
+      "primitives": 5
     }
   ],
   "render": [
     {
       "id": "asset.resource.tree-secondary",
       "file": "assets/models/environment/trees/tree-secondary/model.glb",
-      "sceneryAsset": "tree_secondary",
-      "harvestAnimation": "assets/models/environment/trees/tree-secondary/model.glb"
+      "harvestAnimation": "assets/models/environment/trees/tree-secondary/model.glb",
+      "sceneryAsset": "tree_secondary"
     }
   ],
   "scenery": [
@@ -36,16 +39,17 @@
     }
   ],
   "source": {
-    "path": "art/sources/environment/coniferous-pack/source.blend",
-    "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
-    "quality": "shared"
+    "path": "art/sources/environment/canopy-tree-secondary/canopy-tree-secondary.blend",
+    "sha256": "f3fc23fb5e65fc908da9da631701f7bd150cb061e2bfcd23676e2a3ae7cac7ca",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/environment/coniferous-pack/tree_secondary.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.552Z",
+    "warnings": [
+      "Flat-ground contact; match terrain placement when dressing slopes."
+    ]
   }
 }

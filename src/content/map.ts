@@ -17,7 +17,7 @@ function placementFloors(map:UtcMap){
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
 export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
   const result = [...map.entities];
-  for (const s of map.mission ? [] : map.playerStarts) {
+  for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const setup = registry.rules.startingSetup;
     if (s.setup !== setup.id)
       throw new Error(`Player ${s.player}: unknown setup ${s.setup}`);
@@ -168,7 +168,7 @@ export function validatePlacements(
   for (const p of all)
     if (registry.get(p.definition).behaviors.campDefense && !members.has(p.id))
       throw new Error(`${p.id}: camp defense requires an authored camp`);
-  for (const s of map.mission ? [] : map.playerStarts) {
+  for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const p = all.find((p) => p.id === s.mainFort);
     if (
       !p ||

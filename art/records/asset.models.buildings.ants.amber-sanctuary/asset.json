@@ -5,38 +5,42 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/amber-sanctuary/model.glb",
-      "sha256": "91aa31184d321daa1d4cfe01fa473d289be62aafc5cf26de1dad6ae82b496f93",
-      "bytes": 580712
+      "sha256": "71d2dfd5a647fa44882fe13beff813c7b862cd9551b47ea44a4393893a754aaf",
+      "bytes": 226680,
+      "triangles": 2122,
+      "primitives": 9
     }
   ],
   "render": [
     {
       "id": "asset.ants.sanctuary",
       "file": "assets/models/buildings/ants/amber-sanctuary/model.glb",
-      "healthHeight": 5
+      "healthHeight": 4.9
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/buildings/amber-sanctuary/amber-sanctuary.blend",
-    "sha256": "cd3c85d43ef552138df32f5f5d9efc5ce1a28d850032c92838a4e5fe6b74349b",
-    "quality": "shared"
+    "path": "art/sources/buildings/canopy-sanctuary/canopy-sanctuary.blend",
+    "sha256": "e216694840d8e44e3ec57c688de0437668355af17f17a4d5043ecb8989be81e0",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/amber-sanctuary.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.508Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

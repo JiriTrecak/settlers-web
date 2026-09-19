@@ -9,6 +9,8 @@ const actors = z
   .refine((xs) => new Set(xs).size === xs.length, "Duplicate actors");
 /** The only client-writable gameplay intentions. Costs, damage, ownership and job internals never cross here. */
 export const actionSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("garrison"),actors,target:actor,append:z.boolean().optional()}).strict(),
+  z.object({type:z.literal("unload"),actor}).strict(),
   z.object({type:z.literal("research"),actor,research:idSchema}).strict(),
   z.object({type:z.literal("cancelResearch"),actor,research:idSchema}).strict(),
   z.object({type:z.literal("upgrade"),actor}).strict(),

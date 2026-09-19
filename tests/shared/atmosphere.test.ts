@@ -9,9 +9,10 @@ describe('map atmosphere',()=>{
  it('accepts older maps without enabling a new visual effect',()=>{expect(parseLandscape(emptyLandscape())?.environment.atmosphere).toBeUndefined();expect(DEFAULT_ATMOSPHERE.enabled).toBe(false);});
  it('roundtrips the prologue regions through the actual map format',()=>{
   const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-prologue.utcmap','utf8')))!;
-  expect(map.landscape?.environment.atmosphere).toEqual(PROLOGUE_ATMOSPHERE);
+  expect(map.landscape?.environment.atmosphere?.regions).toEqual(PROLOGUE_ATMOSPHERE.regions);
+  expect(map.landscape?.environment.atmosphere?.sunTint).toBe('#ffe0a6');
   const copy=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
-  expect(copy.landscape?.environment.atmosphere).toEqual(PROLOGUE_ATMOSPHERE);
+  expect(copy.landscape?.environment.atmosphere).toEqual(map.landscape?.environment.atmosphere);
   expect(copy.mission).toEqual(map.mission);
  });
  it.each([

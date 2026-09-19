@@ -1,3 +1,4 @@
+import {forestWarfareDressing} from '../maps/forest-warfare-dressing';
 import {clearRoadCover} from '../maps/road-cover';
 import {DEFAULT_CANOPY} from '../../src/shared/landscape/canopy';
 import {PROLOGUE_ATMOSPHERE} from '../../src/shared/landscape/atmosphere';
@@ -136,5 +137,5 @@ const map:UtcMap={...emptyUtcMap(),name:'Vanguard Prologue',description:'Follow 
  ],regions:[{id:'old-crossing',x:121,y:128,radius:6},{id:'watch-rescue',x:134,y:106,radius:10},{id:'lantern-rise',x:86,y:48,radius:9},{id:'lost-convoy',x:204,y:165,radius:16},{id:'moss-shrine',x:105,y:164,radius:16},{id:'stone-den',x:204,y:87,radius:17}],script:readFileSync(new URL('./vanguard-prologue.lua',import.meta.url),'utf8')},
 };
 if(!parseUtcMap(map))throw new Error('Invalid serialized map');const error=playableMapError(map);if(error)throw new Error(error);
-writeFileSync(new URL('../../assets/maps/campaign/vanguard-prologue.utcmap',import.meta.url),stringifyUtcMap(map));
+writeFileSync(new URL('../../assets/maps/campaign/vanguard-prologue.utcmap',import.meta.url),stringifyUtcMap(forestWarfareDressing(map)));
 console.log(`Vanguard prologue: ${entities.length} entities, ${stamps.length} props.`);

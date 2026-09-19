@@ -17,7 +17,7 @@ def camera_view(scene, config, azimuth=None, elevation=None):
     el = math.radians(c['elevation'] if elevation is None else elevation)
     target = Vector(c['target'])
     cam = scene.camera
-    cam.location = target + Vector((math.sin(az)*math.cos(el), -math.cos(az)*math.cos(el), math.sin(el))) * 20
+    cam.location = target + Vector((math.sin(az)*math.cos(el), -math.cos(az)*math.cos(el), math.sin(el))) * c.get('distance', 20)
     aim(cam, target)
     cam.data.type = 'ORTHO'
     cam.data.ortho_scale = c['scale']
@@ -37,13 +37,15 @@ def create_stage(config, collection):
     lights = [('Warm key', (-3, -4, 8), config['light']['key_energy'], 5.0, (1, .84, .67)),
               ('Soft front fill', (1, -6, 5), config['light']['fill_energy'], 6, (.78, .84, 1)),
               ('Amber right rim', (5, 3, 7), config['light']['rim_energy'], 4, (1, .74, .47))]
+    light_scale = config['light'].get('scale', 1)
+    light_target = Vector(config['light'].get('target', (0, 0, 1.8)))
     for name, position, energy, size, color in lights:
         data = bpy.data.lights.new(name, 'AREA')
-        data.energy, data.shape, data.size, data.color = energy, 'DISK', size, color
+        data.energy, data.shape, data.size, data.color = energy * light_scale ** 2, 'DISK', size * light_scale, color
         light = bpy.data.objects.new(name, data)
         collection.objects.link(light)
-        light.location = position
-        aim(light, (0, 0, 1.8))
+        light.location = (Vector(position) - Vector((0, 0, 1.8))) * light_scale + light_target
+        aim(light, light_target)
     scene.render.engine = 'CYCLES'
     scene.cycles.samples = config['render']['samples']
     scene.cycles.use_denoising = True

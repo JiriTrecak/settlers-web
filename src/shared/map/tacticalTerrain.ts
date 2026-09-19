@@ -2,7 +2,7 @@
 export const SIGHT_HEIGHT_CM = 120;
 export const MAX_GROUND_STEP_CM = 90;
 export const MAX_FOUNDATION_RELIEF_CM = 50;
-export type TerrainPoint = {x:number;y:number};
+export type TerrainPoint = {x:number;y:number;elevation?:number};
 
 /** Immutable match terrain. Shares the movement grid, including bridge decks.
  * Visibility caches are derived, bounded, and deliberately absent from saves. */
@@ -31,14 +31,14 @@ export class TacticalTerrain {
    * The same rule reveals progressively while climbing a ramp. */
   visible(a:TerrainPoint,b:TerrainPoint):boolean {
     if(this.flat)return true;
-    if(this.height(b)>this.height(a)+SIGHT_HEIGHT_CM)return false;
+    if(this.height(b)+(b.elevation??0)*100>this.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM)return false;
     return this.shotClear(a,b);
   }
   /** Straight weapon corridor, not a visibility test. Allied scouts can provide
    * vision uphill, but intermediate terrain still intercepts a shot. */
   shotClear(a:TerrainPoint,b:TerrainPoint):boolean {
     if(this.flat)return true;
-    const from=this.height(a)+SIGHT_HEIGHT_CM,to=this.height(b)+SIGHT_HEIGHT_CM;
+    const from=this.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,to=this.height(b)+(b.elevation??0)*100+SIGHT_HEIGHT_CM;
     // Most RTS sight rays cross a level shelf. A conservative block maximum
     // rejects the expensive ray march without admitting any hidden terrain.
     let maximum=-32768;
@@ -67,14 +67,14 @@ export class TacticalTerrain {
     return true;
   }
   visibleCells(a:TerrainPoint,radius:number):Uint32Array{
-    const x=Math.round(a.x),y=Math.round(a.y),r=Math.ceil(radius),key=`${x}:${y}:${radius}`;
+    const x=Math.round(a.x),y=Math.round(a.y),r=Math.ceil(radius),key=`${x}:${y}:${radius}:${a.elevation??0}`;
     const cached=this.views.get(key);if(cached){this.views.delete(key);this.views.set(key,cached);return cached;}
     const cells:number[]=[];
     for(let dy=-r;dy<=r;dy++){
       if(y+dy<0||y+dy>=this.size||dy*dy>radius*radius)continue;
       const span=Math.floor(Math.sqrt(radius*radius-dy*dy));
       for(let xx=Math.max(0,x-span);xx<=Math.min(this.size-1,x+span);xx++)
-        if(this.visible({x,y},{x:xx,y:y+dy}))cells.push((y+dy)*this.size+xx);
+        if(this.visible({x,y,elevation:a.elevation},{x:xx,y:y+dy}))cells.push((y+dy)*this.size+xx);
     }
     const result=Uint32Array.from(cells);
     if(result.length<=this.cacheCellBudget){

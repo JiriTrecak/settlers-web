@@ -57,6 +57,7 @@ export class GameContext {
   ) {
     this.reindex();
     this.spatial = new Spatial(map, registry, () => state.entities, e => {
+      if(e.unit?.garrison)return true;
       if (!e.unit || !this.def(e).behaviors.work) return false;
       const job = e.unit.job == null ? undefined : state.jobs.find(j => j.id === e.unit!.job);
       const source = job?.type === "harvest" ? this.get(job.source)
@@ -182,6 +183,7 @@ export class GameContext {
     };
   }
   remove(e: Entity) {
+    for(const occupant of this.liveUnits())if(occupant.unit?.garrison?.building===e.id)this.release(occupant,this.spatial.entrance(e));
     this.observationRevision++;this.changedResources.delete(e);
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
     this.index.delete(e.id);this.resourceSectors.delete(e.id);
@@ -215,6 +217,8 @@ export class GameContext {
   }
   release(e: Entity, at: Point) {
     if (!e.unit) return;
+    delete e.unit.garrison;delete e.unit.attack;delete e.unit.pursuit;
+    e.unit.target=null;this.observationRevision++;
     delete e.unit.detour;
     e.unit.idle = null;
     e.unit.position = null;
@@ -280,7 +284,7 @@ export class GameContext {
       const speed = u.idle?.walking
         ? (movement?.walkSpeed ?? movement?.speed)
         : movement?.speed;
-      if (!speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !itemFlag(e, this.registry, "controlImmune"))) continue;
+      if (u.garrison || !speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !itemFlag(e, this.registry, "controlImmune"))) continue;
       const ignoresUnits = this.spatial.ignoresUnits(e);
       if (!ignoresUnits) {occupied.delete(this.spatial.cell(e));if(u.detour?.yielding)occupied.delete(u.detour.waypoint);}
       try {

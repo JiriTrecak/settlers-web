@@ -1,0 +1,23 @@
+{
+  "assets": 27,
+  "method": "Live Three.js gallery: GLB loading, orbit and silhouette inspection; ownership colors red/blue/green; character attacks, carry run, charge and cast. Automated all-state finite-pose and event tests supplement visual samples.",
+  "mapsReviewed": [
+    "worldroot-hollow",
+    "four-crowns",
+    "canopy-clearing",
+    "terrain-proving-ground",
+    "vanguard-briarwatch",
+    "vanguard-hearth",
+    "vanguard-heartwood-vault",
+    "vanguard-hollow-gate",
+    "vanguard-prologue",
+    "vanguard-root"
+  ],
+  "gameplay": "Actual UI: group garrison admits one Archer; unload returns it to ground. Automated height/combat/save/queue/destruction tests passed.",
+  "limitations": [
+    "Simpler materials and geometric foliage than concept art",
+    "No ladder climbing animation",
+    "No two-computer multiplayer test",
+    "Performance measured on this Mac only"
+  ]
+}

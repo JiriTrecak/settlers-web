@@ -1,0 +1,191 @@
+[
+  {
+    "name": "Amber Sanctuary",
+    "url": "/assets/models/buildings/ants/amber-sanctuary/model.glb",
+    "source": "/art/sources/buildings/canopy-sanctuary",
+    "triangles": 2122,
+    "primitives": 9
+  },
+  {
+    "name": "Bombardier Workshop",
+    "url": "/assets/models/buildings/ants/bombardier-workshop/model.glb",
+    "source": "/art/sources/buildings/canopy-bombardier-workshop",
+    "triangles": 15990,
+    "primitives": 10
+  },
+  {
+    "name": "Forester lodge",
+    "url": "/assets/models/buildings/ants/forester/model.glb",
+    "source": "/art/sources/buildings/canopy-forester",
+    "triangles": 16422,
+    "primitives": 8
+  },
+  {
+    "name": "Great Mound",
+    "url": "/assets/models/buildings/ants/great-mound/model.glb",
+    "source": "/art/sources/buildings/canopy-great-mound",
+    "triangles": 41946,
+    "primitives": 10
+  },
+  {
+    "name": "House",
+    "url": "/assets/models/buildings/ants/house/model.glb",
+    "source": "/art/sources/buildings/canopy-house",
+    "triangles": 10102,
+    "primitives": 7
+  },
+  {
+    "name": "Ironroot Forge",
+    "url": "/assets/models/buildings/ants/ironroot-forge/model.glb",
+    "source": "/art/sources/buildings/canopy-ironroot-forge",
+    "triangles": 11736,
+    "primitives": 12
+  },
+  {
+    "name": "Player Barracks",
+    "url": "/assets/models/buildings/ants/player-barracks/model.glb",
+    "source": "/art/sources/buildings/canopy-barracks",
+    "triangles": 16230,
+    "primitives": 9
+  },
+  {
+    "name": "Main fort",
+    "url": "/assets/models/buildings/ants/rootbound-hall/model.glb",
+    "source": "/art/sources/buildings/canopy-mound",
+    "triangles": 34024,
+    "primitives": 10
+  },
+  {
+    "name": "Rootworks",
+    "url": "/assets/models/buildings/ants/rootworks/model.glb",
+    "source": "/art/sources/buildings/canopy-rootworks",
+    "triangles": 11992,
+    "primitives": 10
+  },
+  {
+    "name": "Tower",
+    "url": "/assets/models/buildings/ants/tower/model.glb",
+    "source": "/art/sources/buildings/canopy-watchtower",
+    "triangles": 12940,
+    "primitives": 8
+  },
+  {
+    "name": "Amber Outcrop",
+    "url": "/assets/models/buildings/neutral/amber-seam/model.glb",
+    "source": "/art/sources/environment/canopy-amber-outcrop",
+    "triangles": 2008,
+    "primitives": 7
+  },
+  {
+    "name": "Corrupted Root",
+    "url": "/assets/models/buildings/neutral/corrupted-root/model.glb",
+    "source": "/art/sources/environment/canopy-corrupted-root",
+    "triangles": 1184,
+    "primitives": 2
+  },
+  {
+    "name": "Short Grass",
+    "url": "/assets/models/environment/grass/canopy-short-grass/model.glb",
+    "source": "/art/sources/environment/canopy-short-grass",
+    "triangles": 102,
+    "primitives": 2
+  },
+  {
+    "name": "Forest Leaves",
+    "url": "/assets/models/environment/ground/canopy-forest-leaves/model.glb",
+    "source": "/art/sources/environment/canopy-forest-leaves",
+    "triangles": 720,
+    "primitives": 1
+  },
+  {
+    "name": "Twig Log",
+    "url": "/assets/models/environment/ground/canopy-twig-log/model.glb",
+    "source": "/art/sources/environment/canopy-twig-log",
+    "triangles": 106,
+    "primitives": 3
+  },
+  {
+    "name": "Tiny Mushrooms",
+    "url": "/assets/models/environment/mushrooms/canopy-tiny-mushrooms/model.glb",
+    "source": "/art/sources/environment/canopy-tiny-mushrooms",
+    "triangles": 732,
+    "primitives": 2
+  },
+  {
+    "name": "Mushroom Cluster",
+    "url": "/assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb",
+    "source": "/art/sources/environment/canopy-mushroom-cluster",
+    "triangles": 732,
+    "primitives": 2
+  },
+  {
+    "name": "Pebble Cluster",
+    "url": "/assets/models/environment/structures/pebbles-pale/model.glb",
+    "source": "/art/sources/environment/canopy-pebble-cluster",
+    "triangles": 168,
+    "primitives": 2
+  },
+  {
+    "name": "Ancient Tree",
+    "url": "/assets/models/environment/trees/ancient-canopy-trunk/model.glb",
+    "source": "/art/sources/environment/canopy-ancient-tree",
+    "triangles": 2876,
+    "primitives": 4
+  },
+  {
+    "name": "Tree Primary",
+    "url": "/assets/models/environment/trees/tree-primary/model.glb",
+    "source": "/art/sources/environment/canopy-tree-primary",
+    "triangles": 948,
+    "primitives": 5
+  },
+  {
+    "name": "Tree Secondary",
+    "url": "/assets/models/environment/trees/tree-secondary/model.glb",
+    "source": "/art/sources/environment/canopy-tree-secondary",
+    "triangles": 948,
+    "primitives": 5
+  },
+  {
+    "name": "Archer",
+    "url": "/assets/models/units/ants/archer/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 4482,
+    "primitives": 16
+  },
+  {
+    "name": "Bombardier",
+    "url": "/assets/models/units/ants/bombardier/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 5470,
+    "primitives": 15
+  },
+  {
+    "name": "Hunter",
+    "url": "/assets/models/units/ants/hunter/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 5120,
+    "primitives": 15
+  },
+  {
+    "name": "Marshal",
+    "url": "/assets/models/units/ants/marshal/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 6314,
+    "primitives": 14
+  },
+  {
+    "name": "Warrior",
+    "url": "/assets/models/units/ants/warrior/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 5488,
+    "primitives": 15
+  },
+  {
+    "name": "Worker",
+    "url": "/assets/models/units/ants/worker/model.glb",
+    "source": "/art/sources/characters/canopy-ant-company",
+    "triangles": 3834,
+    "primitives": 10
+  }
+]

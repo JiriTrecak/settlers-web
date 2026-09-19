@@ -212,6 +212,7 @@ const rawBehaviors = z
   .strict();
 const fields = {
   id: idSchema,
+  garrison: z.object({capacity:z.literal(1),accepts:z.array(idSchema).min(1),height:z.number().positive().max(32)}).strict().optional(),
   requires: z.array(idSchema).min(1).optional(),
   upgrade: z.object({target: idSchema, items: priceSchema, workTicks: work}).strict().optional(),
   category: idSchema.optional(),
@@ -282,6 +283,8 @@ export const actionNames = [
   "hold",
   "patrol",
   "follow",
+  "garrison",
+  "unload",
   "build",
   "produce",
   "cancel",

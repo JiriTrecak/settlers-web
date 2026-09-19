@@ -5,45 +5,49 @@
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/bombardier/model.glb",
-      "sha256": "d589557c338642aecf2d70e33e16f9eb137b6ea32b4cb6703ce58bb850348c6e",
-      "bytes": 274896
+      "sha256": "f9ab9aa7e84938b4d96abf7b946b934e70d326b0dfcb8ef2f1eda39476308ba8",
+      "bytes": 514620,
+      "triangles": 5470,
+      "primitives": 15
     }
   ],
   "render": [
     {
       "id": "asset.ants.bombardier",
       "file": "assets/models/units/ants/bombardier/model.glb",
-      "projectileSocket": "socket_muzzle",
-      "healthHeight": 2.4,
       "character": "bombardier",
+      "healthHeight": 2.3,
       "cameraAnchor": {
         "height": 1.5,
         "forward": 0.15,
         "distance": 7
-      }
+      },
+      "projectileSocket": "socket_muzzle"
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-bombardier/ant-bombardier.blend",
-    "sha256": "dfdd482b72eaee66dfcc412c31042edd55019744087779f56642cbc01bba8789",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/bombardier.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.997488+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.543Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

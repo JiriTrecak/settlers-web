@@ -5,17 +5,20 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/ironroot-forge/model.glb",
-      "sha256": "8653276490a91ba19970300d6a6e85eaa3142faa2ffdb046f8b92f12262285a0",
-      "bytes": 877272
+      "sha256": "e7358040d4d644d570c1baea2e9c13e89c7610b9473a4a1a8720d80bd427d8d8",
+      "bytes": 971156,
+      "triangles": 11736,
+      "primitives": 12
     }
   ],
   "render": [
@@ -23,21 +26,22 @@
       "id": "asset.ants.ironroot-forge",
       "file": "assets/models/buildings/ants/ironroot-forge/model.glb",
       "scale": 1.1,
-      "healthHeight": 5.5
+      "healthHeight": 4.6
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/buildings/ironroot-forge/ironroot-forge.blend",
-    "sha256": "3d442ad853cbb01e79fcf49ae5c36385c0ffd03fb19d3495a4e83179eb9a304d",
-    "quality": "shared"
+    "path": "art/sources/buildings/canopy-ironroot-forge/canopy-ironroot-forge.blend",
+    "sha256": "b2d6159ca9a758a32b113b7a09d5c99cc1b9fa38913d25de84e2b53d3117fe08",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/ironroot-forge.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.511Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

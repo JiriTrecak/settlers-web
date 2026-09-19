@@ -176,10 +176,12 @@ export class Sky {
     this.sun.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.sunTint),daylight));
     this.sun.intensity*=1+(this.light.sunStrength-1)*daylight;
     this.ambient.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.ambientTint),daylight));
-    this.ambient.intensity*=1+(this.light.ambientStrength-1)*daylight;
+    // Authored indirect fill also belongs to moonlit shade. Dropping it at
+    // night made canopy maps lose silhouettes even under the same sky light.
+    this.ambient.intensity*=this.light.ambientStrength;
     this.hemi.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.skyTint),daylight));
     this.hemi.groundColor.multiply(tint.set('#ffffff').lerp(new Color(this.light.bounceTint),daylight));
-    this.hemi.intensity*=1+(this.light.fillStrength-1)*daylight;
+    this.hemi.intensity*=this.light.fillStrength;
     this.haze.color.set(this.light.hazeColor);
     this.sun.shadow.radius=this.light.shadowSoftness;
 

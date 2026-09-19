@@ -5,39 +5,43 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/bombardier-workshop/model.glb",
-      "sha256": "cd11bfbf9261cdf89950351a821e46fafeeffcc1b1fa1e079e2c5a8c5c49acb3",
-      "bytes": 1245508
+      "sha256": "93bce18b438bb4a6d915022ffd724b92f1a4b866c6cda60524d76427c4428412",
+      "bytes": 1250248,
+      "triangles": 15990,
+      "primitives": 10
     }
   ],
   "render": [
     {
       "id": "asset.ants.bombardier-workshop",
       "file": "assets/models/buildings/ants/bombardier-workshop/model.glb",
-      "scale": 1.0,
-      "healthHeight": 6
+      "scale": 1,
+      "healthHeight": 4.7
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/buildings/bombardier-workshop/bombardier-workshop.blend",
-    "sha256": "b51265b743dcdb403bf834479d7da6cb5821b29907dfed3afe39390ba1e42a3a",
-    "quality": "shared"
+    "path": "art/sources/buildings/canopy-bombardier-workshop/canopy-bombardier-workshop.blend",
+    "sha256": "5a1b94be40787c4345ab43e29836ecb60f5975ded08224756f34834b6c11aa35",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/bombardier-workshop.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.519Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

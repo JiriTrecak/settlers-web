@@ -34,7 +34,7 @@ export class ShellEffects {
     if(!cached||cached.launched!==shell.launched){
      // Sample once: a flying shell must not follow its moving or dying shooter.
      const position=(tick<=shell.launched+1?launchPosition?.(shell):undefined)?.clone()
-      ?? new Vector3(shell.origin.x,field.walkSample(shell.origin.x,shell.origin.y,shell.origin.surface)+2.1,shell.origin.y);
+      ?? new Vector3(shell.origin.x,field.walkSample(shell.origin.x,shell.origin.y,shell.origin.surface)+2.1+(shell.origin.elevation??0),shell.origin.y);
      cached={launched:shell.launched,position};this.origins.set(shell.id,cached);
     }
     const origin=cached.position;

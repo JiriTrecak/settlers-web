@@ -1,46 +1,48 @@
 {
   "version": 1,
   "id": "asset.models.environment.structures.pebbles-pale",
-  "name": "Pebbles \u2014 pale meadow stones",
+  "name": "Pebble Cluster",
   "kind": "model",
   "tags": [
-    "vivid",
-    "migrated"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/structures/pebbles-pale/model.glb",
-      "sha256": "f9172ec220b483f911aa7095c734ea0c3755298246a45401593e97e424ce7fad",
-      "bytes": 11756
+      "sha256": "7c55bb5b2e6e5fa6d693857871e5227c0b26d56fb17819b3d185aa098a180479",
+      "bytes": 9512,
+      "triangles": 168,
+      "primitives": 2
     }
   ],
   "render": [],
   "scenery": [
     {
       "id": "pebbles-pale",
-      "name": "Pebbles \u2014 pale meadow stones",
+      "name": "Pebbles — pale meadow stones",
       "category": "terrain",
       "type": "ground",
       "file": "models/environment/structures/pebbles-pale/model.glb"
     }
   ],
   "source": {
-    "path": "art/records/asset.models.environment.structures.pebbles-pale/source.glb",
-    "sha256": "f9172ec220b483f911aa7095c734ea0c3755298246a45401593e97e424ce7fad",
-    "quality": "runtime-only"
+    "path": "art/sources/environment/canopy-pebble-cluster/canopy-pebble-cluster.blend",
+    "sha256": "749259ad0b14f83d5cc6fc1bb439c5ff96867074de6267b698f51c268d69991a",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/props/vivid/pebbles-pale.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "checkedAt": "2026-09-19T01:17:28.567Z",
     "warnings": [
-      "Editable master has not yet been linked. Exact runtime original retained."
+      "Flat-ground contact; match terrain placement when dressing slopes."
     ]
   }
 }

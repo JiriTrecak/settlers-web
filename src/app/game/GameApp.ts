@@ -196,7 +196,7 @@ export class GameApp {
     this.playGen++;
     this.hideCanvas();
     const screen = new MultiplayerScreen({
-      maps: playableMaps().filter((m) => m.source === "project"),
+      maps: playableMaps().filter((m) => m.source === "project" && !m.map.sandbox),
       mapName: (id) => getMap(id).name,
       name: this.guestName === "player" ? "" : this.guestName,
       error,
@@ -390,6 +390,7 @@ export class GameApp {
       entry.map.playerStarts,
       entry.revision,
       this.guestName,
+      1, !!entry.map.sandbox,
     );
     this.skirmishSetup = chosen;
     this.launchLocal(mapId,match,player);

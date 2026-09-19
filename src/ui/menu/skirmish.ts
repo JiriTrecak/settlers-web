@@ -104,12 +104,17 @@ export class SkirmishScreen extends GameScreen {
         launch.textContent = "No maps available";
         return;
       }
+      if (selected.map.sandbox) slots = defaultSlots(selected.map.playerStarts);
       const human = slots.find((s) => s.kind === "human")?.player ?? null;
       preview.replaceChildren(
         mapPreview(selected.map, human, terrain(selected)),
       );
       title.textContent = selected.name;
       meta.textContent = `${selected.map.size} × ${selected.map.size} · ${slots.length} players · ${selected.map.camps.length} neutral camps`;
+      if (selected.map.sandbox) meta.textContent = `${selected.map.size} × ${selected.map.size} · Single-player testbed`;
+      hint.textContent = selected.map.sandbox ? "One hero. Full visibility. No opponents." : "Choose your starting position, or set every player to AI to watch the match.";
+      rules.replaceChildren(el("span", "", selected.map.sandbox ? "TESTBED" : "VICTORY"), el("p", "", selected.map.sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy rival Mounds. The last surviving side wins."));
+      footer.firstElementChild!.textContent = selected.map.sandbox ? "Local terrain and texture testbed" : "Local match · All map positions are occupied";
       description.textContent =
         selected.map.description ??
         "A frontier beneath the canopy. Establish your colony, explore the wilds, and overcome your rivals.";
@@ -151,6 +156,7 @@ export class SkirmishScreen extends GameScreen {
           select.append(option);
         }
         select.value = slot.kind;
+        select.disabled = !!selected.map.sandbox;
         select.onchange = () => {
           slots = setLocalController(
             slots,
@@ -168,7 +174,7 @@ export class SkirmishScreen extends GameScreen {
           : "Playing as Player " + (human + 1);
       observer.dataset.observer = String(human === null);
       launch.textContent =
-        human === null ? "Watch match →" : "Start skirmish →";
+        selected.map.sandbox ? "Open testbed →" : human === null ? "Watch match →" : "Start skirmish →";
     };
     for (const map of maps) {
       const button = el("button", "skirmish-map");

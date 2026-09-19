@@ -151,6 +151,18 @@
         "description": "Follow a friendly unit. Right-click a friendly unit to follow it.",
         "icon": "icon.action.follow",
         "priority": 150
+      },
+      "unload": {
+        "name": "Leave watchtower",
+        "description": "Release the archer at the tower entrance. A move order also leaves the lookout.",
+        "icon": "icon.action.move",
+        "priority": 100
+      },
+      "garrison": {
+        "name": "Enter watchtower",
+        "description": "Walk to a friendly watchtower and occupy its single lookout.",
+        "icon": "icon.ants.tower",
+        "priority": 100
       }
     },
     "overrides": {
@@ -170,7 +182,8 @@
         "priority": 70
       },
       "build:building.ants.tower": {
-        "hidden": true
+        "priority": 90,
+        "category": "category.build-advanced"
       },
       "build:building.ants.ironroot-forge": {
         "priority": 30,
@@ -1635,7 +1648,7 @@
       "id": "building.ants.great-mound",
       "kind": "building",
       "name": "Great Mound",
-      "description": "The colony\u2019s fortified tier-two heart. Unlocks advanced troops and research; retains Mound worker births and amber/wood drop-off.",
+      "description": "The colony’s fortified tier-two heart. Unlocks advanced troops and research; retains Mound worker births and amber/wood drop-off.",
       "asset": "asset.ants.great-mound",
       "icon": "icon.ants.great-mound",
       "body": {
@@ -1855,7 +1868,7 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "Provides sight over the surrounding forest. Does not fire at enemies.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1892,7 +1905,14 @@
       ],
       "behaviors": {},
       "category": "category.build-advanced",
-      "level": 1
+      "level": 1,
+      "garrison": {
+        "capacity": 1,
+        "accepts": [
+          "unit.ants.archer"
+        ],
+        "height": 4.9
+      }
     },
     {
       "id": "item.wood",
@@ -2374,7 +2394,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper\u2019s Flask",
+      "name": "Trailkeeper’s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -2458,7 +2478,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout\u2019s Whistle",
+      "name": "Scout’s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -2526,7 +2546,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator\u2019s Talon",
+      "name": "Predator’s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -2573,7 +2593,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper\u2019s Lantern",
+      "name": "Broodkeeper’s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -2597,7 +2617,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller\u2019s Standard",
+      "name": "Warcaller’s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2665,7 +2685,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder\u2019s Idol",
+      "name": "Rootbinder’s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2746,7 +2766,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper\u2019s Mandible",
+      "name": "Reaper’s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -3190,7 +3210,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3\u20137 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3–7 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -3722,7 +3742,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant\u2019s Leaf Ledger",
+      "name": "Merchant’s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3817,7 +3837,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker\u2019s Ring",
+      "name": "Caretaker’s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",

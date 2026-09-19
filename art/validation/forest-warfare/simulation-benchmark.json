@@ -1,0 +1,604 @@
+{
+  "map": "four-crowns",
+  "ticks": 12000,
+  "seed": 731942,
+  "initialize": 370.766041,
+  "wallMs": 58833.965458,
+  "checksum": 2909042237,
+  "timings": {
+    "simulation": {
+      "mean": 3.9868458629661205,
+      "p95": 7.292749999998705,
+      "p99": 16.823834000002535,
+      "max": 66.30887500000244
+    },
+    "observerView": {
+      "mean": 0.8993889297457558,
+      "p95": 1.5639999999984866,
+      "p99": 2.059792000000016,
+      "max": 4.633999999998196
+    },
+    "Spell timers": {
+      "mean": 0.14090237499999606,
+      "p95": 0.1917500000054133,
+      "p99": 0.5987500000010186,
+      "max": 2.4895829999950365
+    },
+    "Item effects": {
+      "mean": 0.15096353677967708,
+      "p95": 0.24920799999927112,
+      "p99": 0.7587920000005397,
+      "max": 3.0686249999998836
+    },
+    "Regeneration": {
+      "mean": 0.08462258728816902,
+      "p95": 0.12695800000074087,
+      "p99": 0.532374999998865,
+      "max": 2.129041000000143
+    },
+    "Assignment · queued orders": {
+      "mean": 0.026190342542389968,
+      "p95": 0.0406669999974838,
+      "p99": 0.08487500000046566,
+      "max": 1.2585419999995793
+    },
+    "Assignment · workers": {
+      "mean": 0.16105612152540605,
+      "p95": 0.5736250000009022,
+      "p99": 1.039333999999144,
+      "max": 3.0074169999988953
+    },
+    "Work assignment": {
+      "mean": 0.1885258805084828,
+      "p95": 0.6129169999985606,
+      "p99": 1.0868750000008731,
+      "max": 3.02941600000122
+    },
+    "Orders · garrisons": {
+      "mean": 0.010512027796632222,
+      "p95": 0.016166000001248904,
+      "p99": 0.022415999999793712,
+      "max": 0.5656659999986005
+    },
+    "Orders · inventory": {
+      "mean": 0.014233959576282934,
+      "p95": 0.021916999998211395,
+      "p99": 0.033250000000407454,
+      "max": 3.133791000000201
+    },
+    "Orders · combat planning": {
+      "mean": 0.8438335196610426,
+      "p95": 1.4012499999989814,
+      "p99": 10.512667000002693,
+      "max": 62.6182919999992
+    },
+    "Orders · idle motion": {
+      "mean": 0.062041899237294765,
+      "p95": 0.10520900000119582,
+      "p99": 0.17525000000023283,
+      "max": 3.268415999998979
+    },
+    "Orders · movement": {
+      "mean": 0.5714597416101638,
+      "p95": 1.1134170000004815,
+      "p99": 2.171291999999994,
+      "max": 36.82575000000361
+    },
+    "Orders / navigation": {
+      "mean": 1.5045458146610293,
+      "p95": 2.7582079999992857,
+      "p99": 13.95254200000636,
+      "max": 63.39987499999552
+    },
+    "Combat": {
+      "mean": 0.20383556949151965,
+      "p95": 0.3763330000001588,
+      "p99": 0.7874169999995502,
+      "max": 3.383875000000444
+    },
+    "Economy": {
+      "mean": 0.32815213050845793,
+      "p95": 0.7137499999953434,
+      "p99": 2.3435409999947296,
+      "max": 5.210292000003392
+    },
+    "Observation": {
+      "mean": 0.7946199462712121,
+      "p95": 1.6047920000055456,
+      "p99": 2.6140830000003916,
+      "max": 12.435707999999977
+    },
+    "Observation · static index": {
+      "mean": 0.05492511533898458,
+      "p95": 0.04950000000098953,
+      "p99": 1.7335840000005192,
+      "max": 11.646875000000364
+    },
+    "Observation · sight masks": {
+      "mean": 0.5668746229661079,
+      "p95": 1.1759989999991376,
+      "p99": 1.55525100000159,
+      "max": 3.887082000001101
+    },
+    "Observation · scenery knowledge": {
+      "mean": 0.17042227338981414,
+      "p95": 0.36499999999796273,
+      "p99": 0.7384170000004815,
+      "max": 2.0130419999995866
+    },
+    "Player 2": {
+      "mean": 1.0373306737288348,
+      "p95": 1.9517500000001746,
+      "p99": 3.328709000001254,
+      "max": 10.081958000002487
+    },
+    "Player 3": {
+      "mean": 1.0610328169492071,
+      "p95": 2.1121669999993173,
+      "p99": 4.0995419999962905,
+      "max": 9.94012500000099
+    },
+    "Player 4": {
+      "mean": 1.0309517084747002,
+      "p95": 1.8948749999981374,
+      "p99": 2.6302079999950365,
+      "max": 8.364041000000725
+    },
+    "Player 1": {
+      "mean": 0.9425187932204159,
+      "p95": 1.6884579999968992,
+      "p99": 2.845083000000159,
+      "max": 9.959834000001138
+    }
+  },
+  "windows": [
+    {
+      "tick": 1200,
+      "units": 190,
+      "sim": {
+        "mean": 1.976589079000012,
+        "p95": 3.2575829999998405,
+        "p99": 6.649167000000034,
+        "max": 18.72354200000018
+      },
+      "view": {
+        "mean": 0.5479677499999893,
+        "p95": 0.9079999999999018,
+        "p99": 1.5512920000001031,
+        "max": 3.6908339999999953
+      }
+    },
+    {
+      "tick": 2400,
+      "units": 200,
+      "sim": {
+        "mean": 2.241414609166655,
+        "p95": 3.6103750000002037,
+        "p99": 8.177832999999737,
+        "max": 18.949124999999185
+      },
+      "view": {
+        "mean": 0.61882740916666,
+        "p95": 1.073790999999801,
+        "p99": 1.3595840000007229,
+        "max": 3.2650830000002316
+      }
+    },
+    {
+      "tick": 3600,
+      "units": 213,
+      "sim": {
+        "mean": 2.806449863333334,
+        "p95": 4.712584000000788,
+        "p99": 8.993375000000015,
+        "max": 20.570666999999958
+      },
+      "view": {
+        "mean": 0.742957548333327,
+        "p95": 1.2483750000001237,
+        "p99": 1.8019999999996799,
+        "max": 2.1974579999987327
+      }
+    },
+    {
+      "tick": 4800,
+      "units": 220,
+      "sim": {
+        "mean": 3.0897091625000077,
+        "p95": 5.504750000000058,
+        "p99": 10.059792000000016,
+        "max": 18.106250000000728
+      },
+      "view": {
+        "mean": 0.7499285475000048,
+        "p95": 1.2582089999996242,
+        "p99": 1.5289579999989655,
+        "max": 3.5407500000001164
+      }
+    },
+    {
+      "tick": 6000,
+      "units": 222,
+      "sim": {
+        "mean": 3.5652027066666627,
+        "p95": 5.928959000000759,
+        "p99": 14.00591600000189,
+        "max": 26.388457999997627
+      },
+      "view": {
+        "mean": 0.8275232541666931,
+        "p95": 1.3012920000001031,
+        "p99": 1.7962919999990845,
+        "max": 3.412333000000217
+      }
+    },
+    {
+      "tick": 7200,
+      "units": 230,
+      "sim": {
+        "mean": 3.798408212499953,
+        "p95": 7.298750000001746,
+        "p99": 14.272917000002053,
+        "max": 32.821749999999156
+      },
+      "view": {
+        "mean": 0.8655017308333511,
+        "p95": 1.4249159999999392,
+        "p99": 1.944500000001426,
+        "max": 3.720958999998402
+      }
+    },
+    {
+      "tick": 8400,
+      "units": 237,
+      "sim": {
+        "mean": 5.150393681666722,
+        "p95": 8.759000000001834,
+        "p99": 28.120041999998648,
+        "max": 36.80120899999747
+      },
+      "view": {
+        "mean": 1.052404861666661,
+        "p95": 1.6457080000000133,
+        "p99": 2.0737500000032014,
+        "max": 4.633999999998196
+      }
+    },
+    {
+      "tick": 9600,
+      "units": 245,
+      "sim": {
+        "mean": 5.097404243333428,
+        "p95": 8.15008300000045,
+        "p99": 19.517916000004334,
+        "max": 55.663250000005064
+      },
+      "view": {
+        "mean": 1.0848212524998173,
+        "p95": 1.7012089999989257,
+        "p99": 2.190708000001905,
+        "max": 3.031083000001672
+      }
+    },
+    {
+      "tick": 10800,
+      "units": 248,
+      "sim": {
+        "mean": 5.753598353333376,
+        "p95": 9.18800000000192,
+        "p99": 20.074625000001106,
+        "max": 66.30887500000244
+      },
+      "view": {
+        "mean": 1.1772782691666543,
+        "p95": 1.7938329999960843,
+        "p99": 2.271500000002561,
+        "max": 2.99158300000272
+      }
+    },
+    {
+      "tick": 12000,
+      "units": 251,
+      "sim": {
+        "mean": 6.05424592083337,
+        "p95": 9.962458000001789,
+        "p99": 23.277290999998513,
+        "max": 43.28175000000192
+      },
+      "view": {
+        "mean": 1.2681084775001061,
+        "p95": 1.9184170000007725,
+        "p99": 2.372457999998005,
+        "max": 4.594208000002254
+      }
+    }
+  ],
+  "routing": {
+    "searches": 4238,
+    "expanded": 4369531,
+    "coarseExpanded": 21266,
+    "fallbacks": 4
+  },
+  "ai": [
+    {
+      "owner": "player.1",
+      "mission": "camp: crown.3.camp.5.easy",
+      "workers": 19,
+      "army": 28,
+      "heroLevel": 2,
+      "heroXpNeeded": 75,
+      "economy": "20 workers, 13 army; 0 training orders",
+      "reason": "Secure a contested resource at crown.3.camp.5.easy",
+      "metrics": {
+        "issued": 566,
+        "accepted": 556,
+        "rejected": 10,
+        "builds": 6,
+        "recruits": 11,
+        "casts": 9,
+        "pickups": 3,
+        "revivals": 0
+      },
+      "trace": [
+        {
+          "tick": 10890,
+          "reason": "Assign an available worker to item.wood",
+          "action": "gather",
+          "accepted": true
+        },
+        {
+          "tick": 10890,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11200,
+          "reason": "Preserve a badly wounded fighter",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11450,
+          "reason": "Move an exhausted harvesting assignment to an observed resource",
+          "action": "gather",
+          "accepted": false
+        },
+        {
+          "tick": 11530,
+          "reason": "Release a harvesting assignment with no known source",
+          "action": "stop",
+          "accepted": true
+        },
+        {
+          "tick": 11610,
+          "reason": "Research Reinforced Carapace for the current force",
+          "action": "research",
+          "accepted": true
+        },
+        {
+          "tick": 11690,
+          "reason": "Assign an available worker to item.amber",
+          "action": "gather",
+          "accepted": false
+        },
+        {
+          "tick": 11770,
+          "reason": "Assign an available worker to item.wood",
+          "action": "gather",
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "owner": "player.2",
+      "mission": "camp: crown.2.camp.3.medium",
+      "workers": 18,
+      "army": 28,
+      "heroLevel": 2,
+      "heroXpNeeded": 110,
+      "economy": "20 workers, 9 army; 0 training orders",
+      "reason": "Earn useful hero experience at crown.2.camp.3.medium",
+      "metrics": {
+        "issued": 271,
+        "accepted": 270,
+        "rejected": 1,
+        "builds": 6,
+        "recruits": 6,
+        "casts": 11,
+        "pickups": 3,
+        "revivals": 0
+      },
+      "trace": [
+        {
+          "tick": 11802,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11802,
+          "reason": "Approach the selected camp as a group",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11842,
+          "reason": "Assign an available worker to item.wood",
+          "action": "gather",
+          "accepted": true
+        },
+        {
+          "tick": 11842,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11882,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11922,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11962,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11962,
+          "reason": "Keep a small guard near the workers",
+          "action": "move",
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "owner": "player.3",
+      "mission": "camp: crown.2.camp.7.medium",
+      "workers": 18,
+      "army": 28,
+      "heroLevel": 2,
+      "heroXpNeeded": 40,
+      "economy": "20 workers, 9 army; 1 training orders",
+      "reason": "Earn useful hero experience at crown.2.camp.7.medium",
+      "metrics": {
+        "issued": 224,
+        "accepted": 221,
+        "rejected": 3,
+        "builds": 6,
+        "recruits": 7,
+        "casts": 8,
+        "pickups": 3,
+        "revivals": 0
+      },
+      "trace": [
+        {
+          "tick": 11005,
+          "reason": "Withdraw from a visibly unfavorable fight",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11045,
+          "reason": "Assign an available worker to item.wood",
+          "action": "gather",
+          "accepted": true
+        },
+        {
+          "tick": 11165,
+          "reason": "Advance the operation as a group",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11245,
+          "reason": "Advance the operation as a group",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11325,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11605,
+          "reason": "Approach the selected camp as a group",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11845,
+          "reason": "Train Archer; workforce remains above its floor",
+          "action": "produce",
+          "accepted": true
+        },
+        {
+          "tick": 11925,
+          "reason": "Release one worker for construction or recruitment",
+          "action": "stop",
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "owner": "player.4",
+      "mission": "camp: crown.0.camp.5.easy",
+      "workers": 19,
+      "army": 28,
+      "heroLevel": 2,
+      "heroXpNeeded": 50,
+      "economy": "20 workers, 12 army; 0 training orders",
+      "reason": "Secure a contested resource at crown.0.camp.5.easy",
+      "metrics": {
+        "issued": 550,
+        "accepted": 546,
+        "rejected": 4,
+        "builds": 6,
+        "recruits": 9,
+        "casts": 10,
+        "pickups": 3,
+        "revivals": 0
+      },
+      "trace": [
+        {
+          "tick": 11807,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11847,
+          "reason": "Assign an available worker to item.amber",
+          "action": "gather",
+          "accepted": false
+        },
+        {
+          "tick": 11847,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11887,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11927,
+          "reason": "Assign an available worker to item.wood",
+          "action": "gather",
+          "accepted": true
+        },
+        {
+          "tick": 11927,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11967,
+          "reason": "Send reinforcements to the active army",
+          "action": "move",
+          "accepted": true
+        },
+        {
+          "tick": 11967,
+          "reason": "Keep a small guard near the workers",
+          "action": "move",
+          "accepted": true
+        }
+      ]
+    }
+  ]
+}

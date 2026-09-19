@@ -1,0 +1,71 @@
+{
+  "camera": {
+    "position": [
+      27.449861526489258,
+      51.5,
+      58.86642074584961
+    ],
+    "target": [
+      0.0,
+      14.000003814697266,
+      -3.814697265625e-06
+    ],
+    "up": [
+      -0.21130914986133575,
+      0.866025447845459,
+      -0.4531538188457489
+    ],
+    "scale": 48.0
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -15.0,
+        45.0,
+        20.0
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 12000.0
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        5.0,
+        30.0,
+        30.0
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 6000.0
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        25.0,
+        40.0,
+        -15.0
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 8250.0
+    }
+  ],
+  "light_scale": 1.0,
+  "vertices": 1512,
+  "triangles": 2876,
+  "note": "Evaluated static geometry with authored UVs and packed albedo textures."
+}

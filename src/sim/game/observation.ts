@@ -1,3 +1,4 @@
+import {elevatedPoint} from './garrisons';
 import {SectorIndex} from '../../shared/spatial/sectors';
 import {VisionMask} from './visionMask';
 import { workerPopulation } from "./population";
@@ -67,6 +68,7 @@ export type EntityView = {
     charging?: boolean;
     casting?: { ability: string; startTick: number; resolveTick: number };
     contained: boolean;
+    garrison?:NonNullable<Entity["unit"]>["garrison"];
     cargo: NonNullable<Entity["unit"]>["cargo"];
     target: number | null;
     commandedTarget?: number | null;
@@ -269,13 +271,13 @@ export class Observation {
     const candidates=this.nearbySensors(e);
     if(this.c.spatial.layers){
       for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
-        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),precise(e)))return true;
+        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(elevatedPoint(sensor),precise(e)))return true;
       return false;
     }
     const cells=this.c.spatial.footprint(e);
     for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
       cells.some(i=>i>=0&&((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2&&
-        this.c.spatial.tactical.visible(sensor,this.c.spatial.point(i))))return true;
+        this.c.spatial.tactical.visible(elevatedPoint(sensor),this.c.spatial.point(i))))return true;
     return false;
   }
   previouslyVisible(owner: Owner, e: Entity): boolean {
@@ -403,6 +405,7 @@ export class Observation {
             }
           : {}),
         contained: !!(e.unit.contained || e.unit.release),
+        ...(e.unit.garrison?{garrison:{...e.unit.garrison}}:{}),
         cargo: e.unit.cargo ? { ...e.unit.cargo } : null,
         target: privateData ? e.unit.target : null,
         commandedTarget:
@@ -559,7 +562,7 @@ export class Observation {
         );
       let mask=this.masks.get(m.owner);
       if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
-      const visionChanged=mask.update(sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,radius:this.c.def(e).vision??0})),sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
+      const visionChanged=mask.update(sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:e.unit?.garrison?.height,radius:this.c.def(e).vision??0})),sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
       m.cells=mask.cells;m.visibleCells=mask.visible;
       maskMs+=performance.now()-maskStarted;
       const knowledgeStarted=performance.now();
@@ -587,7 +590,7 @@ export class Observation {
       if(visionChanged||staticChanged)
         for(const [id,e] of m.entities)
           if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
-            (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(precise(sensor),e))))m.entities.delete(id);
+            (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(elevatedPoint(sensor),e))))m.entities.delete(id);
       // Actors/buildings can change every tick. Forest resources only change on
       // harvest/regrowth, structural edits, or newly revealed coverage.
       if(rebuild||this.c.spatial.layers)for(const id of observedStatic)refresh.add(id);

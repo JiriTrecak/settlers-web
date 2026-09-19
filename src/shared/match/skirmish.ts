@@ -37,11 +37,12 @@ export function createSkirmishMatch(
   revision: string,
   name = "",
   seed = 1,
+  sandbox = false,
 ): { match: MatchConfig; player: number | null } {
   const ids = starts.map((s) => s.player - 1),
     humans = setup.slots.filter((s) => s.kind === "human");
   if (
-    ids.length < 2 ||
+    (sandbox ? ids.length !== 1 || humans.length !== 1 : ids.length < 2) ||
     ids.length > 8 ||
     new Set(ids).size !== ids.length ||
     setup.slots.length !== ids.length ||

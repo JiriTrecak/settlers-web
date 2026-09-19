@@ -19,3 +19,13 @@ describe('preview day/night clock', () => {
     sky.tick(650000); expect(sky.hour).toBeCloseTo(21);
   });
 });
+
+it('retains authored indirect fill in moonlit canopy shade',()=>{
+ const sky=new Sky(new Scene());sky.setHour(22);
+ const base=sky.lightingDiagnostics();
+ sky.setGlobalLight({...base.preset,ambientStrength:3,fillStrength:3});
+ const shade=sky.lightingDiagnostics();
+ expect(shade.ambientIntensity).toBeCloseTo(base.ambientIntensity*3/base.preset.ambientStrength);
+ expect(shade.fillIntensity).toBeCloseTo(base.fillIntensity*3/base.preset.fillStrength);
+ expect(shade.sunIntensity).toBeCloseTo(base.sunIntensity);
+});

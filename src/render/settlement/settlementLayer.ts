@@ -494,8 +494,8 @@ export class SettlementLayer {
           e.gathering.capacity,
         );
       }
-      const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface), e.y);
-      if (e.unit && o.userData.placed) {
+      const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.unit?.garrison?.height??0), e.y);
+      if (e.unit && o.userData.placed && o.userData.garrison===e.unit.garrison?.building) {
         const yaw=e.rotation*Math.PI/180;
         const delta=Math.atan2(Math.sin(yaw-o.rotation.y),Math.cos(yaw-o.rotation.y));
         const blend=timeScale===0?1:1-Math.exp(-smoothingDelta*60);
@@ -506,6 +506,7 @@ export class SettlementLayer {
         o.rotation.y = (e.rotation * Math.PI) / 180;
         o.userData.placed = true;
       }
+      o.userData.garrison=e.unit?.garrison?.building;
       o.userData.observedX = e.x;
       o.userData.observedZ = e.y;
       const character = this.characters.get(e.id);
@@ -534,8 +535,10 @@ export class SettlementLayer {
 
         } else if (hurt && !e.unit.moving && !e.unit.work?.cycle)
           character.player.setState("hit", { restart: true });
-        else if (e.unit.moving)
-          character.player.setState(e.unit.charging ? "charge" : e.unit.strolling ? "walk" : "run");
+        else if (e.unit.moving) {
+          const carrying=e.unit.strolling ? "carry_walk" : "carry_run";
+          character.player.setState(e.unit.charging ? "charge" : e.unit.cargo && character.player.hasState(carrying) ? carrying : e.unit.strolling ? "walk" : "run");
+        }
         else if (character.player.state === "cast" && o.userData.castTimeline && tick < o.userData.castTimeline.resolveTick)
           character.player.setState("idle", {fade:.05});
         else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.05});

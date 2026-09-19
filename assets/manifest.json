@@ -2603,23 +2603,26 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/amber-sanctuary/model.glb",
-          "sha256": "91aa31184d321daa1d4cfe01fa473d289be62aafc5cf26de1dad6ae82b496f93",
-          "bytes": 580712
+          "sha256": "71d2dfd5a647fa44882fe13beff813c7b862cd9551b47ea44a4393893a754aaf",
+          "bytes": 226680,
+          "triangles": 2122,
+          "primitives": 9
         }
       ],
       "render": [
         {
           "id": "asset.ants.sanctuary",
           "file": "assets/models/buildings/ants/amber-sanctuary/model.glb",
-          "healthHeight": 5
+          "healthHeight": 4.9
         }
       ],
       "scenery": []
@@ -2660,16 +2663,19 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/bombardier-workshop/model.glb",
-          "sha256": "cd11bfbf9261cdf89950351a821e46fafeeffcc1b1fa1e079e2c5a8c5c49acb3",
-          "bytes": 1245508
+          "sha256": "93bce18b438bb4a6d915022ffd724b92f1a4b866c6cda60524d76427c4428412",
+          "bytes": 1250248,
+          "triangles": 15990,
+          "primitives": 10
         }
       ],
       "render": [
@@ -2677,7 +2683,7 @@
           "id": "asset.ants.bombardier-workshop",
           "file": "assets/models/buildings/ants/bombardier-workshop/model.glb",
           "scale": 1,
-          "healthHeight": 6
+          "healthHeight": 4.7
         }
       ],
       "scenery": []
@@ -2688,23 +2694,26 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/forester/model.glb",
-          "sha256": "2eefdd6d555e2e53afe24fbdaab9b8eb9c0e857029186c6e60ee07b0e9d46e38",
-          "bytes": 2176984
+          "sha256": "57a8d5a231df2a2c12b9c7fd19d2fb7ea5a74acacd09c0f367386aa9d3f31aa2",
+          "bytes": 1321744,
+          "triangles": 16422,
+          "primitives": 8
         }
       ],
       "render": [
         {
           "id": "asset.ants.forester",
           "file": "assets/models/buildings/ants/forester/model.glb",
-          "healthHeight": 5
+          "healthHeight": 3.2
         }
       ],
       "scenery": [
@@ -2730,50 +2739,56 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/great-mound/model.glb",
-          "sha256": "4da443a68f3ee9f06610dabf5f63dfb3125414f8572a781113bede0c90e0ba93",
-          "bytes": 4291368
+          "sha256": "70ee350e4d68fca597385629adef6b59430756bf7279bf222ef62758a2a9cdf1",
+          "bytes": 2989052,
+          "triangles": 41946,
+          "primitives": 10
         }
       ],
       "render": [
         {
           "id": "asset.ants.great-mound",
           "file": "assets/models/buildings/ants/great-mound/model.glb",
-          "healthHeight": 5.6
+          "healthHeight": 7
         }
       ],
       "scenery": []
     },
     {
       "id": "asset.models.buildings.ants.house",
-      "name": "Ant colony · House",
+      "name": "House",
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/house/model.glb",
-          "sha256": "4ee7a8d7b55a194f21566c1f16dafd8e410d7a1219fd950430a78430b9b3d897",
-          "bytes": 1353820
+          "sha256": "43f3988bfc532c9b556aa7283ec14fe2e3911b679c39dfd67d488971000464c5",
+          "bytes": 828808,
+          "triangles": 10102,
+          "primitives": 7
         }
       ],
       "render": [
         {
           "id": "asset.ants.house",
           "file": "assets/models/buildings/ants/house/model.glb",
-          "healthHeight": 5
+          "healthHeight": 3.5
         }
       ],
       "scenery": [
@@ -2792,16 +2807,19 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/ironroot-forge/model.glb",
-          "sha256": "8653276490a91ba19970300d6a6e85eaa3142faa2ffdb046f8b92f12262285a0",
-          "bytes": 877272
+          "sha256": "e7358040d4d644d570c1baea2e9c13e89c7610b9473a4a1a8720d80bd427d8d8",
+          "bytes": 971156,
+          "triangles": 11736,
+          "primitives": 12
         }
       ],
       "render": [
@@ -2809,7 +2827,7 @@
           "id": "asset.ants.ironroot-forge",
           "file": "assets/models/buildings/ants/ironroot-forge/model.glb",
           "scale": 1.1,
-          "healthHeight": 5.5
+          "healthHeight": 4.6
         }
       ],
       "scenery": []
@@ -2862,23 +2880,26 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/player-barracks/model.glb",
-          "sha256": "cceebbe141088faa1348762ee906ff7eb8e51a736573ee9805ca14cbb1a60acb",
-          "bytes": 1264344
+          "sha256": "d76e08cae87b16dd213617f3c3c79dd5abeec06fdb059c252b2ad655f3fcb23a",
+          "bytes": 1273376,
+          "triangles": 16230,
+          "primitives": 9
         }
       ],
       "render": [
         {
           "id": "asset.ants.barracks",
           "file": "assets/models/buildings/ants/player-barracks/model.glb",
-          "healthHeight": 6.4
+          "healthHeight": 4.7
         }
       ],
       "scenery": []
@@ -2917,23 +2938,26 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 4,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/rootbound-hall/model.glb",
-          "sha256": "09c0d8121db5e79836a3569b66dc217ca26a034f4670802b8c1913e45049cdf2",
-          "bytes": 5707136
+          "sha256": "91103c21ab8e08e84a1c3ab479736111511422f0463ad6a31d922892d612e248",
+          "bytes": 2413988,
+          "triangles": 34024,
+          "primitives": 10
         }
       ],
       "render": [
         {
           "id": "asset.ants.fort",
           "file": "assets/models/buildings/ants/rootbound-hall/model.glb",
-          "healthHeight": 5
+          "healthHeight": 5.8
         }
       ],
       "scenery": [
@@ -2959,16 +2983,19 @@
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/rootworks/model.glb",
-          "sha256": "59cd46167a803981d4dc0b3b29ffaac1d9dfe2ee35feb153487ae77bef3147a8",
-          "bytes": 810696
+          "sha256": "15ee2cc9599dafee51e6fd42a042e3f5795991c3881b598a3e3bb9d8525f55d7",
+          "bytes": 936632,
+          "triangles": 11992,
+          "primitives": 10
         }
       ],
       "render": [
@@ -2976,7 +3003,7 @@
           "id": "asset.ants.rootworks",
           "file": "assets/models/buildings/ants/rootworks/model.glb",
           "scale": 1.1,
-          "healthHeight": 5.2
+          "healthHeight": 3.7
         }
       ],
       "scenery": []
@@ -3054,27 +3081,31 @@
     },
     {
       "id": "asset.models.buildings.ants.tower",
-      "name": "Ant colony · Tower",
+      "name": "Tower",
       "kind": "model",
       "tags": [
         "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 1,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/ants/tower/model.glb",
-          "sha256": "bf892dce261454f02120a220ded103a8fba4ca2f10d4681fc194762fff06c090",
-          "bytes": 1434640
+          "sha256": "58edc5b469e3b80ca469326ffd52c5e161846831a2aa6761c462ad96a2371b0d",
+          "bytes": 982000,
+          "triangles": 12940,
+          "primitives": 8
         }
       ],
       "render": [
         {
           "id": "asset.ants.tower",
           "file": "assets/models/buildings/ants/tower/model.glb",
-          "healthHeight": 5
+          "scale": 1,
+          "healthHeight": 8.3
         }
       ],
       "scenery": [
@@ -3089,20 +3120,23 @@
     },
     {
       "id": "asset.models.buildings.neutral.amber-seam",
-      "name": "Amber Seam",
+      "name": "Amber Outcrop",
       "kind": "model",
       "tags": [
-        "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/neutral/amber-seam/model.glb",
-          "sha256": "6d3a2881d9a54ae1780cd5aea7925663d7e4066a0d2cd5343b9c97433f05f979",
-          "bytes": 2123892
+          "sha256": "ebce8526ab93be85cc27edaf19cd0d68ec086a3e824161402a1a9899b1350487",
+          "bytes": 111700,
+          "triangles": 2008,
+          "primitives": 7
         }
       ],
       "render": [
@@ -3127,17 +3161,20 @@
       "name": "Corrupted Root",
       "kind": "model",
       "tags": [
-        "ant-colony",
-        "migrated"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/buildings/neutral/corrupted-root/model.glb",
-          "sha256": "a293dc682f765605de27b78719b8d3a98c1ff4c96150c2cedc9819d91fc1921c",
-          "bytes": 745340
+          "sha256": "31f4c6c9d7906b3e1e26aacd946ddfd4a5fd2041bcdd6ff2102467fcd901618e",
+          "bytes": 54304,
+          "triangles": 1184,
+          "primitives": 2
         }
       ],
       "render": [
@@ -3148,7 +3185,15 @@
           "healthHeight": 4.8
         }
       ],
-      "scenery": []
+      "scenery": [
+        {
+          "id": "canopy-corrupted-root",
+          "name": "Corrupted Root",
+          "category": "resource",
+          "type": "prop",
+          "file": "models/buildings/neutral/corrupted-root/model.glb"
+        }
+      ]
     },
     {
       "id": "asset.models.buildings.neutral.ruined-cottage",
@@ -3350,6 +3395,38 @@
           "category": "foliage",
           "type": "prop",
           "file": "models/environment/grass/broadleaf/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.canopy-short-grass",
+      "name": "Short Grass",
+      "kind": "model",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/grass/canopy-short-grass/model.glb",
+          "sha256": "ff0a35b9c02352d7d50199f46515968994602dd79ae6993cb77cd3c6009c44fa",
+          "bytes": 10492,
+          "triangles": 102,
+          "primitives": 2
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "canopy-short-grass",
+          "name": "Short Grass",
+          "category": "foliage",
+          "type": "prop",
+          "file": "models/environment/grass/canopy-short-grass/model.glb"
         }
       ]
     },
@@ -4108,6 +4185,70 @@
       ]
     },
     {
+      "id": "asset.models.environment.ground.canopy-forest-leaves",
+      "name": "Forest Leaves",
+      "kind": "model",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/ground/canopy-forest-leaves/model.glb",
+          "sha256": "71665cdf5c8095b87d8376456e56d881c0f1679522ec33b8151a7c139b672d05",
+          "bytes": 51724,
+          "triangles": 720,
+          "primitives": 1
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "canopy-forest-leaves",
+          "name": "Forest Leaves",
+          "category": "foliage",
+          "type": "prop",
+          "file": "models/environment/ground/canopy-forest-leaves/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.canopy-twig-log",
+      "name": "Twig Log",
+      "kind": "model",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/ground/canopy-twig-log/model.glb",
+          "sha256": "b3078c240ea042e33cd39656891f0fd1fc4a309aaa00c2b3ae61768f3b26e97c",
+          "bytes": 32752,
+          "triangles": 106,
+          "primitives": 3
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "canopy-twig-log",
+          "name": "Twig Log",
+          "category": "terrain",
+          "type": "ground",
+          "file": "models/environment/ground/canopy-twig-log/model.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.ground.curled-forest-leaf",
       "name": "Curled Forest Leaf",
       "kind": "model",
@@ -4200,6 +4341,38 @@
           "type": "prop",
           "category": "foliage",
           "file": "models/environment/ground/forest-splinter-pile/model.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.canopy-tiny-mushrooms",
+      "name": "Tiny Mushrooms",
+      "kind": "model",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/models/environment/mushrooms/canopy-tiny-mushrooms/model.glb",
+          "sha256": "c02f102becf8c577fc5d7684d316f5508f29555c64f73ad0af95199d3fbb5f36",
+          "bytes": 37560,
+          "triangles": 732,
+          "primitives": 2
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "canopy-tiny-mushrooms",
+          "name": "Tiny Mushrooms",
+          "category": "foliage",
+          "type": "prop",
+          "file": "models/environment/mushrooms/canopy-tiny-mushrooms/model.glb"
         }
       ]
     },
@@ -4481,23 +4654,23 @@
     },
     {
       "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
-      "name": "Ochre Mushroom Colony",
+      "name": "Mushroom Cluster",
       "kind": "model",
       "tags": [
-        "canopy",
-        "forest-floor",
-        "ground-detail"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb",
-          "sha256": "2e7699424fc8f3f8c076b2a3a680c5b5acafd2ee652516a65ca7ed544dc35de5",
-          "bytes": 80332,
-          "triangles": 1092,
-          "primitives": 1
+          "sha256": "6f8b82339f38cac717e5f6cd33f55d4ab59d0e1ff2f7b952121d2e51373765aa",
+          "bytes": 37552,
+          "triangles": 732,
+          "primitives": 2
         }
       ],
       "render": [],
@@ -6815,20 +6988,23 @@
     },
     {
       "id": "asset.models.environment.structures.pebbles-pale",
-      "name": "Pebbles — pale meadow stones",
+      "name": "Pebble Cluster",
       "kind": "model",
       "tags": [
-        "vivid",
-        "migrated"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/structures/pebbles-pale/model.glb",
-          "sha256": "f9172ec220b483f911aa7095c734ea0c3755298246a45401593e97e424ce7fad",
-          "bytes": 11756
+          "sha256": "7c55bb5b2e6e5fa6d693857871e5227c0b26d56fb17819b3d185aa098a180479",
+          "bytes": 9512,
+          "triangles": 168,
+          "primitives": 2
         }
       ],
       "render": [],
@@ -7989,23 +8165,23 @@
     },
     {
       "id": "asset.models.environment.trees.ancient-canopy-trunk",
-      "name": "Ancient Canopy Trunk",
+      "name": "Ancient Tree",
       "kind": "model",
       "tags": [
-        "canopy",
-        "forest-floor",
-        "permanent-obstacle"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/trees/ancient-canopy-trunk/model.glb",
-          "sha256": "e70a62cecc3d9862a91bd535188c81620f23e8a8490a687adfd268b56ab22c3a",
-          "bytes": 3020712,
-          "triangles": 1432,
-          "primitives": 6
+          "sha256": "35a97acfa7963bad7b71199a2490e78483543a70a195be8fe6b367b75715f58f",
+          "bytes": 144588,
+          "triangles": 2876,
+          "primitives": 4
         }
       ],
       "render": [],
@@ -9547,17 +9723,20 @@
       "name": "Tree Primary",
       "kind": "model",
       "tags": [
-        "coniferous-pack",
-        "migrated"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/trees/tree-primary/model.glb",
-          "sha256": "63f3ee898621b31c2e9561d8cb564c0582c3e7c9c36566b51c3a9cd2e2b69d5e",
-          "bytes": 139160
+          "sha256": "1689895d0e88778dcdeec450e91e23715ccef191803ab3d5f3273dbd0c6558b9",
+          "bytes": 99440,
+          "triangles": 948,
+          "primitives": 5
         }
       ],
       "render": [
@@ -9583,17 +9762,20 @@
       "name": "Tree Secondary",
       "kind": "model",
       "tags": [
-        "coniferous-pack",
-        "migrated"
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/environment/trees/tree-secondary/model.glb",
-          "sha256": "1739960582f0125b6b099d723213b72a0632d02858e843ee11fa4c180740ebdd",
-          "bytes": 79076
+          "sha256": "c27978921248fd02f92776f674e40834978ca8fd5ba56b0f99796de0108035be",
+          "bytes": 99444,
+          "triangles": 948,
+          "primitives": 5
         }
       ],
       "render": [
@@ -10106,16 +10288,19 @@
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/archer/model.glb",
-          "sha256": "9a20ee5846a2391a2705c1e4cf27ab39be1c869e5fbde8bc967ac2e17ad1c529",
-          "bytes": 334828
+          "sha256": "66ca8e19951c66f200a182b5945328d9e4dab24266acbfa2bff3c4cc188eb07b",
+          "bytes": 482284,
+          "triangles": 4482,
+          "primitives": 16
         }
       ],
       "render": [
@@ -10141,16 +10326,19 @@
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/bombardier/model.glb",
-          "sha256": "d589557c338642aecf2d70e33e16f9eb137b6ea32b4cb6703ce58bb850348c6e",
-          "bytes": 274896
+          "sha256": "f9ab9aa7e84938b4d96abf7b946b934e70d326b0dfcb8ef2f1eda39476308ba8",
+          "bytes": 514620,
+          "triangles": 5470,
+          "primitives": 15
         }
       ],
       "render": [
@@ -10158,7 +10346,7 @@
           "id": "asset.ants.bombardier",
           "file": "assets/models/units/ants/bombardier/model.glb",
           "character": "bombardier",
-          "healthHeight": 2.4,
+          "healthHeight": 2.3,
           "cameraAnchor": {
             "height": 1.5,
             "forward": 0.15,
@@ -10352,16 +10540,19 @@
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/hunter/model.glb",
-          "sha256": "f3a022faf96d4700d83660f902a1f95c2f27762384ad06066bd3095fdcaf47fa",
-          "bytes": 272928
+          "sha256": "ba541d8a5d0522d09d2c70ce7e13636fa5241b8e1cc8672c51d5ec65223da25f",
+          "bytes": 503256,
+          "triangles": 5120,
+          "primitives": 15
         }
       ],
       "render": [
@@ -10369,7 +10560,7 @@
           "id": "asset.ants.hunter",
           "file": "assets/models/units/ants/hunter/model.glb",
           "character": "hunter",
-          "healthHeight": 2.3,
+          "healthHeight": 2.7,
           "cameraAnchor": {
             "height": 1.5,
             "forward": 0.15,
@@ -10385,16 +10576,19 @@
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/marshal/model.glb",
-          "sha256": "bd41c080d5d38473198b099809c791a9930dfdf25136a4a51b33a1d01ef17132",
-          "bytes": 359552
+          "sha256": "ab1623be902075eb59e83c73a8565158dc23574aa658ed38c107f8b6257f4ac4",
+          "bytes": 545356,
+          "triangles": 6314,
+          "primitives": 14
         }
       ],
       "render": [
@@ -10402,7 +10596,7 @@
           "id": "asset.ants.marshal",
           "file": "assets/models/units/ants/marshal/model.glb",
           "character": "marshal",
-          "scale": 1,
+          "scale": 1.25,
           "healthHeight": 2.8,
           "cameraAnchor": {
             "height": 1.85,
@@ -10483,16 +10677,19 @@
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/warrior/model.glb",
-          "sha256": "e805fc285ec4cfc66f3c3772e0a4c8eaec2721864ccb23f9f147c4e62274434e",
-          "bytes": 365484
+          "sha256": "9a3763c6ab868d0e06a471c6a780ff17fb251260f27df64ff0a4cc2e5cc67ebf",
+          "bytes": 517992,
+          "triangles": 5488,
+          "primitives": 15
         }
       ],
       "render": [
@@ -10512,20 +10709,23 @@
     },
     {
       "id": "asset.models.units.ants.worker",
-      "name": "Base",
+      "name": "Worker",
       "kind": "model",
       "tags": [
         "characters",
-        "migrated"
+        "forest-warfare",
+        "natural-materials"
       ],
-      "revision": 3,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
           "role": "model",
           "path": "assets/models/units/ants/worker/model.glb",
-          "sha256": "2609ab1184a2414f368059dca1d44becc107325df16c67d547f28da0ef0671e0",
-          "bytes": 315176
+          "sha256": "7f2711a45040cd766426405c83caf9e4d636e1063600a16a825798b8c90da94a",
+          "bytes": 450596,
+          "triangles": 3834,
+          "primitives": 10
         }
       ],
       "render": [

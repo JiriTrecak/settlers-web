@@ -237,6 +237,10 @@ export class ContentRegistry {
       const fail = (text: string): never => {
         throw new Error(`${d.id}: ${text}`);
       };
+      if(d.garrison){
+        if(d.kind!=='building'||!d.footprint||!d.entrance)fail('garrison requires a building footprint and entrance');
+        for(const id of d.garrison.accepts){const unit=expect(id,'unit');if(!unit.behaviors.movement||!(unit.behaviors.combat?.projectile||unit.behaviors.combat?.shell))fail('garrison accepts mobile projectile units');}
+      }
       if (d.requires) {
         if (new Set(d.requires).size !== d.requires.length) fail("duplicate prerequisite");
         for (const id of d.requires) {

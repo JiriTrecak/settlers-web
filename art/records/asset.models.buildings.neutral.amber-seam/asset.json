@@ -1,21 +1,24 @@
 {
   "version": 1,
   "id": "asset.models.buildings.neutral.amber-seam",
-  "name": "Amber Seam",
+  "name": "Amber Outcrop",
   "kind": "model",
   "tags": [
-    "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/neutral/amber-seam/model.glb",
-      "sha256": "6d3a2881d9a54ae1780cd5aea7925663d7e4066a0d2cd5343b9c97433f05f979",
-      "bytes": 2123892
+      "sha256": "ebce8526ab93be85cc27edaf19cd0d68ec086a3e824161402a1a9899b1350487",
+      "bytes": 111700,
+      "triangles": 2008,
+      "primitives": 7
     }
   ],
   "render": [
@@ -35,16 +38,17 @@
     }
   ],
   "source": {
-    "path": "art/sources/buildings/amber-seam/amber-seam.blend",
-    "sha256": "d89292a7e536cfb793c4af29623190ced9bea36444e5e1a70556d9e9c972965a",
-    "quality": "shared"
+    "path": "art/sources/environment/canopy-amber-outcrop/canopy-amber-outcrop.blend",
+    "sha256": "d8eb9c880c1b3c401d8e8bc7c618640e71bdd7a580ac6d303f544c922ca4aec0",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/amber-seam.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.556Z",
+    "warnings": [
+      "Flat-ground contact; match terrain placement when dressing slopes."
+    ]
   }
 }

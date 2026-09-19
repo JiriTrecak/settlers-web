@@ -27,6 +27,7 @@ export class CharacterPlayer {
     this.root.traverse(o => { if (o.userData.role) o.visible = o.userData.role === 'base' || o.userData.role === variant; });
     if (this.state) this.setState(this.profile.variants[variant].states[this.state] ? this.state : 'idle', {restart:true});
   }
+  hasState(state) { return this.actions.has(this.profile.variants[this.variant].states[state]); }
   setState(state, { restart = false, fade = .12 } = {}) {
     if (this.state === state && !restart) return;
     const name = this.profile.variants[this.variant].states[state];

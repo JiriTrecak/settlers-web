@@ -272,6 +272,8 @@ export function commandCard(
       add("cancel", [focus], undefined, { type: "cancel", actor: focus.id });
       return result;
     }
+    if(d.garrison&&view.entities.some(e=>e.unit?.garrison?.building===focus.id))
+      add('unload',[focus],undefined,{type:'unload',actor:focus.id});
     if (d.upgrade) {
       const target = registry.get(d.upgrade.target);
       const reason = prerequisiteReason(target, owner, view.entities, registry) ??

@@ -25,7 +25,7 @@ export function playableMapError(
   if (!starts.length) return "Place a player start.";
   if (map.mission?.regions.some(r=>r.x>=map.size||r.y>=map.size)) return "Mission region outside map.";
   if (
-    requirePlayers && !map.mission &&
+    requirePlayers && !map.mission && !map.sandbox &&
     (!starts.some((s) => s.player === 1) || !starts.some((s) => s.player === 2))
   )
     return "Place Player 1 and Player 2 start points.";

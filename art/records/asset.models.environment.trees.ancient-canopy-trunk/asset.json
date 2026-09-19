@@ -1,24 +1,24 @@
 {
   "version": 1,
   "id": "asset.models.environment.trees.ancient-canopy-trunk",
-  "name": "Ancient Canopy Trunk",
+  "name": "Ancient Tree",
   "kind": "model",
   "tags": [
-    "canopy",
-    "forest-floor",
-    "permanent-obstacle"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 2,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/trees/ancient-canopy-trunk/model.glb",
-      "sha256": "e70a62cecc3d9862a91bd535188c81620f23e8a8490a687adfd268b56ab22c3a",
-      "bytes": 3020712,
-      "triangles": 1432,
-      "primitives": 6
+      "sha256": "35a97acfa7963bad7b71199a2490e78483543a70a195be8fe6b367b75715f58f",
+      "bytes": 144588,
+      "triangles": 2876,
+      "primitives": 4
     }
   ],
   "render": [],
@@ -37,17 +37,17 @@
     }
   ],
   "source": {
-    "path": "art/sources/environment/ancient-canopy-trunk/ancient-canopy-trunk.blend",
-    "sha256": "c7ffd617eddbda5eea4a435dfe683add01e1d34f11858d3ae13dcf3b316bf0f3",
+    "path": "art/sources/environment/canopy-ancient-tree/canopy-ancient-tree.blend",
+    "sha256": "2664c23fb1d1f6ef416154023ebe84e4567964d516372bdd2ff3705dee1d11ef",
     "quality": "master"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-15T08:33:40.792Z",
+    "checkedAt": "2026-09-19T01:17:28.554Z",
     "warnings": [
-      "Trunk base only; crown remains above gameplay camera. Flat-ground root contact."
+      "Boundary trunk: crown intentionally above the gameplay camera; flat-ground buttress roots."
     ]
   }
 }

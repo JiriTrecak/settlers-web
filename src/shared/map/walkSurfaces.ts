@@ -2,7 +2,7 @@ import {surfaceHeight,type BridgeSurface} from './bridgeSurface';
 import {MAX_GROUND_STEP_CM,SIGHT_HEIGHT_CM,TacticalTerrain} from './tacticalTerrain';
 
 /** Stable map stamp identity selects a deck. Omitted surface means the ground. */
-export type SurfacePoint={x:number;y:number;surface?:string};
+export type SurfacePoint={x:number;y:number;surface?:string;elevation?:number};
 export type SurfaceNode=SurfacePoint & {id:number;cell:number;height:number;level:number};
 const DIRECTIONS=[[0,-1],[-1,0],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 const BODY_CLEARANCE_CM=200;
@@ -194,7 +194,7 @@ export class WalkSurfaces {
  shotClear(a:SurfacePoint,b:SurfacePoint):boolean {
   if(!a.surface&&!b.surface&&!this.crossesSurface(a,b))return this.groundTactical.shotClear(a,b);
   const ah=this.height(a),bh=this.height(b);if(ah===undefined||bh===undefined)return false;
-  const from=ah+SIGHT_HEIGHT_CM/100,to=bh+SIGHT_HEIGHT_CM/100,steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y,to-from)*4));
+  const from=ah+(a.elevation??0)+SIGHT_HEIGHT_CM/100,to=bh+(b.elevation??0)+SIGHT_HEIGHT_CM/100,steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y,to-from)*4));
   if(this.intersectsDeck(a,b,from,to))return false;
   for(let i=1;i<steps;i++){
    const t=i/steps,x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t,height=from+(to-from)*t;
@@ -229,7 +229,7 @@ export class WalkSurfaces {
  }
  visible(a:SurfacePoint,b:SurfacePoint):boolean {
   if(!a.surface&&!b.surface&&!this.crossesSurface(a,b))return this.groundTactical.visible(a,b);
-  const ah=this.height(a),bh=this.height(b);return ah!==undefined&&bh!==undefined&&bh<=ah+SIGHT_HEIGHT_CM/100&&this.shotClear(a,b);
+  const ah=this.height(a),bh=this.height(b);return ah!==undefined&&bh!==undefined&&bh+(b.elevation??0)<=ah+(a.elevation??0)+SIGHT_HEIGHT_CM/100&&this.shotClear(a,b);
  }
  meleeClear(a:SurfacePoint,b:SurfacePoint):boolean {
   if(!a.surface&&!b.surface&&!this.crossesSurface(a,b))return this.groundTactical.meleeClear(a,b);

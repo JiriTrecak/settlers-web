@@ -5,25 +5,28 @@
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/hunter/model.glb",
-      "sha256": "f3a022faf96d4700d83660f902a1f95c2f27762384ad06066bd3095fdcaf47fa",
-      "bytes": 272928
+      "sha256": "ba541d8a5d0522d09d2c70ce7e13636fa5241b8e1cc8672c51d5ec65223da25f",
+      "bytes": 503256,
+      "triangles": 5120,
+      "primitives": 15
     }
   ],
   "render": [
     {
       "id": "asset.ants.hunter",
       "file": "assets/models/units/ants/hunter/model.glb",
-      "healthHeight": 2.3,
       "character": "hunter",
+      "healthHeight": 2.7,
       "cameraAnchor": {
         "height": 1.5,
         "forward": 0.15,
@@ -33,16 +36,17 @@
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-hunter/ant-hunter.blend",
-    "sha256": "03c11abe0751b6ce6452e366b18043ba9fdbfcba9c13d32660716d40d02939f4",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/hunter.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.996138+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.538Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

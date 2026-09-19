@@ -26,6 +26,7 @@ import type { Slot } from "../../shared/match/match";
 import { GameContext } from "./context";
 import { Economy } from "./economy";
 import { UnitOrders } from "./unitOrders";
+import {Garrisons} from './garrisons';
 import { Combat } from "./combat";
 import { CampLoot } from "./campLoot";
 import { entityStats } from "./stats";
@@ -40,7 +41,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-45";
+export const SIMULATION_BUILD = "declarative-sim-46";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -66,6 +67,7 @@ export class Game {
   readonly upgrades: BuildingUpgrades;
   readonly research: Research;
   readonly orders: UnitOrders;
+  readonly garrisons:Garrisons;
   readonly observation: Observation;
   readonly combat: Combat;
   readonly campLoot: CampLoot;
@@ -101,7 +103,7 @@ export class Game {
       const camp = map.camps.find((c) => c.members.includes(p.id));
       if (camp && e.unit) e.unit.camp = camp.id;
     }
-    for (const s of map.mission ? [] : map.playerStarts) {
+    for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
       const e = this.state.entities.find((e) => e.placement === s.mainFort);
       if (!e) throw new Error("Missing main fort");
       this.state.objectives[`player.${s.player}`] = e.id;
@@ -111,6 +113,7 @@ export class Game {
     this.upgrades = new BuildingUpgrades(this.context, this.economy);
     this.research = new Research(this.context, this.economy);
     this.orders = new UnitOrders(this.context, this.economy);
+    this.garrisons = new Garrisons(this.context);
     this.campLoot = new CampLoot(this.context, map.camps);
     this.revival = new Revival(this.context);
     this.observation = new Observation(
@@ -136,7 +139,7 @@ export class Game {
     this.inventory = new Inventory(this.context, this.combat.items);
     this.spells = new Spellcasting(this.context, this.combat, this.observation);
     if(map.mission) this.mission=new Mission(this);
-    else this.economy.startGathering();
+    else if(!map.sandbox) this.economy.startGathering();
     this.observation.update();
   }
   get entities() {
@@ -264,6 +267,18 @@ export class Game {
           !e.unit?.release,
       );
     if (!eligible.length) return reject("No eligible controlled actors");
+    if(action.type==='garrison'){
+      const host=this.context.get(action.target);
+      if(!host||!this.observation.previouslyVisible(owner,host))return reject('No visible friendly watchtower');
+      const e=eligible.find(e=>e.unit&&!e.unit.garrison&&this.orders.canIssue(e,action.append)&&this.garrisons.available(e,host));
+      if(!e)return reject('The watchtower needs one available Archer and an empty lookout');
+      if(!action.append)this.spells.cancel(e);
+      this.orders.issue(e,{type:'garrison',target:host.id},action.append);
+      return {accepted:true,actors:[e.id]};
+    }
+    if(action.type==='unload'){
+      return this.garrisons.unload(eligible[0])?{accepted:true,actors:[eligible[0].id]}:reject('The watchtower is empty');
+    }
     if(action.type==='hold'||action.type==='patrol'||action.type==='follow'){
       const target=action.type==='follow'?this.context.get(action.target):null;
       if(action.type==='follow'&&(!target||!alive(target)||target.owner!==owner||!target.unit||target.unit.contained||target.unit.release||!this.observation.previouslyVisible(owner,target)))return reject('Follow requires a visible friendly unit');
@@ -290,6 +305,7 @@ export class Game {
           !alive(target) ||
           !this.observation.previouslyVisible(owner, target) ||
           target.unit?.contained ||
+          target.unit?.garrison ||
           target.unit?.release)
       )
         return reject("Target is not visible and damageable");
@@ -517,6 +533,7 @@ export class Game {
       measure("Assignment · workers", () => this.economy.assign());
     });
     measure("Orders / navigation", () => {
+      measure("Orders · garrisons", () => this.garrisons.tick());
       measure("Orders · inventory", () => this.inventory.plan());
       measure("Orders · combat planning", () => this.combat.plan());
       measure("Orders · idle motion", () => idleMotion(this.context));
@@ -544,7 +561,7 @@ export class Game {
     });
     if(this.mission) measure("Mission Lua",()=>this.mission!.tick());
     observe();
-    if(this.mission) return;
+    if(this.mission || this.map.sandbox) return;
     const defeated=this.owners.filter(owner=>this.isDefeated(owner));
     if(defeated.length){
       // Losing a Mound eliminates that colony, not the entire FFA. Remove its
@@ -561,6 +578,7 @@ export class Game {
     }
   }
   isDefeated(owner:Owner):boolean {
+    if(this.map.sandbox) return false;
     if(this.mission) return this.state.outcome?.defeated.includes(owner) ?? false;
     const objective=this.context.get(this.state.objectives[owner]);
     return !objective || !alive(objective);
@@ -621,6 +639,16 @@ export class Game {
           (shell.owner !== "none" && !this.owners.includes(shell.owner)) ||
           [shell.origin, shell.target].some(p => p.x >= this.map.size || p.y >= this.map.size))
         throw new Error("Invalid saved shell");
+    }
+    const occupiedLookouts = new Set<number>();
+    for(const e of state.entities){
+      const u=e.unit;if(!u?.garrison)continue;
+      const host=state.entities.find(h=>h.id===u.garrison!.building),policy=host&&this.registry.get(host.definition).garrison;
+      if(!host||!alive(host)||!alive(e)||host.construction||host.owner!==e.owner||!policy?.accepts.includes(e.definition)||
+        policy.height!==u.garrison.height||occupiedLookouts.has(host.id)||u.contained||u.release||u.cargo||u.job||u.employment||
+        u.route.length||u.segment||u.position||u.goal!==null||e.x!==host.x||e.y!==host.y||e.surface!==host.surface||
+        (u.order&&u.order.type!=='hold'&&u.order.type!=='attack'))throw new Error('Invalid saved lookout occupant');
+      occupiedLookouts.add(host.id);
     }
     const pendingResearch = new Set<string>();
     for (const e of state.entities) {

@@ -1,3 +1,4 @@
+import {forestWarfareDressing} from '../maps/forest-warfare-dressing';
 import {clearRoadCover} from '../maps/road-cover';
 /** Shared terrain/forest authoring for the Vanguard's settlement chapters. */
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -68,5 +69,5 @@ export function buildChapter(c:Chapter){
 const map:UtcMap={...emptyUtcMap(),name:c.name,description:c.description,height:encodeHeight(f.samples,f.size),waterLevel:0,playerStarts:[{player:1,x:c.start.x,z:c.start.z,setup:'setup.ants',mainFort:'mound'}],landscape,entities,stamps,camps:c.camps,mission:{campaign:'vanguard',title:`Mission ${c.order} — ${c.name}`,order:c.order,heroLevelCap:c.cap,objectives:c.objectives,regions:c.regions,script:readFileSync(new URL(`./${c.id}.lua`,import.meta.url),'utf8')}};
  c.decorate?.(map);
  const parsed=parseUtcMap(map);if(!parsed)throw new Error(`Invalid map ${c.id}`);validatePlacements(parsed,content);const error=playableMapError(parsed);if(error)throw new Error(`${c.id}: ${error}`);
- writeFileSync(new URL(`../../assets/maps/campaign/${c.id}.utcmap`,import.meta.url),stringifyUtcMap(map));console.log(`${c.name}: ${entities.length} entities, ${stamps.length} props.`);
+ writeFileSync(new URL(`../../assets/maps/campaign/${c.id}.utcmap`,import.meta.url),stringifyUtcMap(forestWarfareDressing(map)));console.log(`${c.name}: ${entities.length} entities, ${stamps.length} props.`);
 }

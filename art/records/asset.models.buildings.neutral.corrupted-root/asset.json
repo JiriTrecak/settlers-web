@@ -4,18 +4,21 @@
   "name": "Corrupted Root",
   "kind": "model",
   "tags": [
-    "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/neutral/corrupted-root/model.glb",
-      "sha256": "a293dc682f765605de27b78719b8d3a98c1ff4c96150c2cedc9819d91fc1921c",
-      "bytes": 745340
+      "sha256": "31f4c6c9d7906b3e1e26aacd946ddfd4a5fd2041bcdd6ff2102467fcd901618e",
+      "bytes": 54304,
+      "triangles": 1184,
+      "primitives": 2
     }
   ],
   "render": [
@@ -26,18 +29,27 @@
       "healthHeight": 4.8
     }
   ],
-  "scenery": [],
+  "scenery": [
+    {
+      "id": "canopy-corrupted-root",
+      "name": "Corrupted Root",
+      "category": "resource",
+      "type": "prop",
+      "file": "models/buildings/neutral/corrupted-root/model.glb"
+    }
+  ],
   "source": {
-    "path": "art/sources/buildings/corrupted-root/corrupted-root.blend",
-    "sha256": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461",
-    "quality": "shared"
+    "path": "art/sources/environment/canopy-corrupted-root/canopy-corrupted-root.blend",
+    "sha256": "2f9cc422689aaa5ed51d3c8efceebfc209f383b3107fd559c2597f5824ee915f",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/corrupted-root.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.558Z",
+    "warnings": [
+      "Flat-ground contact; match terrain placement when dressing slopes."
+    ]
   }
 }

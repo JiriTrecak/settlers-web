@@ -1,3 +1,4 @@
+import {forestWarfareDressing} from './forest-warfare-dressing';
 import {clearRoadCover} from './road-cover';
 /** A reproducible environment pass over an authored strategic layout. */
 import {HeightField,decodeHeight} from '../../src/shared/map/height';
@@ -46,5 +47,5 @@ export function dressCanopyMap(source:UtcMap,seed=7143):UtcMap {
  for(const cover of landscape.cover){cover.density=Math.min(2.4,Math.max(1.8,cover.density));cover.grassScale=.7;cover.broadRatio=.8;cover.flowers=Math.min(.06,cover.flowers);}
  landscape.environment={...landscape.environment,preset:'under-canopy',hour:10,canopy:{...DEFAULT_CANOPY,enabled:true,height:map.size===512?46:30,scale:48,coverage:.75,seed:7143},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:true,color:'#a5b3a5',density:.0035,heightFalloff:10,sunStrength:2.4,noiseStrength:.45,driftSpeed:.45}};
  clearRoadCover(landscape.cover,landscape.strokes);
- return {...map,entities,stamps,landscape};
+ return forestWarfareDressing({...map,entities,stamps,landscape});
 }

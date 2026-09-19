@@ -206,6 +206,7 @@ export class Session {
       this.config.match?.mapId ?? this.config.mapId,
     ));
     const map = requirePlayableMap(loaded.map);
+    this.reveal = this.observing || !!map.sandbox;
     const match =
       this.config.match ??
       (map.mission ? createMissionMatch(loaded.id,map,loaded.revision) : createSkirmishMatch(
@@ -215,6 +216,7 @@ export class Session {
         },
         map.playerStarts,
         loaded.revision,
+        "", 1, !!map.sandbox,
       ).match);
     this.chat?.destroy();
     this.chat = new GameChat(this.config.host, text => {
@@ -360,7 +362,7 @@ export class Session {
     const initialView = this.visualView();
     this.mini.setFog(initialView.settlement!);
     this.economyHud.update(this.selectionView());
-    if(map.mission)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
+    if(map.mission || map.sandbox)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
     renderer.draw(initialView, this.stamps);
     // Include scenery variants outside current fog, without revealing entities.
     await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
@@ -372,7 +374,7 @@ export class Session {
     await assets.ready(); check();
     renderer.present();
     assets.close(); this.assetLoading = null;
-    renderer.sky.setPlaying(!map.landscape?.environment.interior);
+    renderer.sky.setPlaying(!map.sandbox && !map.landscape?.environment.interior);
     this.started = true;
     await worker.request("start",undefined);check();
     this.unbindDebug = perf.bindMatch({
@@ -636,7 +638,7 @@ export class Session {
       (e) =>
         !e.unit?.contained && content.get(e.definition).selectable !== false,
     );
-    const target =
+    let target =
       selectable.find((e) => e.id === picked) ??
       selectable.find((e) => {
         const d = content.get(e.definition),
@@ -645,6 +647,10 @@ export class Session {
             : 0.8;
         return Math.abs(e.x - hit.x) <= r && Math.abs(e.y - hit.z) <= r;
       });
+    // An enemy on a lookout is protected by the tower. Clicking its visible
+    // silhouette attacks that structure; friendly occupants remain selectable.
+    if(target?.unit?.garrison&&target.owner!==owner&&(right||hud.attackMode))
+      target=known.entities.find(e=>e.id===target!.unit!.garrison!.building)??target;
     if(!right&&!binding&&sameType&&target&&target.owner===owner&&target.unit){
       const screen=new Set(this.renderer!.unitsInScreenRect(selectable.filter(e=>e.unit),{left:0,top:0,right:innerWidth,bottom:innerHeight}));
       const ids=selectable.filter(e=>e.definition===target.definition&&e.owner===owner&&screen.has(e.id)).map(e=>e.id);
@@ -731,6 +737,10 @@ export class Session {
       return;
     }
     if (target) {
+      if(right&&target.owner===owner&&!target.remembered&&content.get(target.definition).garrison){
+        const actors=selected.filter(e=>content.get(target.definition).garrison!.accepts.includes(e.definition));
+        if(actors.length){this.send({type:'garrison',actors:actors.map(e=>e.id),target:target.id,...(shift?{append:true}:{})});return;}
+      }
       if(right&&target.unit&&target.owner===owner&&!target.remembered){const followers=selected.filter(e=>e.id!==target.id);if(followers.length)this.send({type:'follow',actors:followers.map(e=>e.id),target:target.id,...(shift?{append:true}:{})});return;}
       if (right && target.resource && !target.remembered) {
         const workers = selected.filter((e) =>

@@ -1,0 +1,1128 @@
+[
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-barracks/canopy-barracks.blend",
+    "meshes": 439,
+    "objects": 443,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-bombardier-workshop/canopy-bombardier-workshop.blend",
+    "meshes": 432,
+    "objects": 436,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-forester/canopy-forester.blend",
+    "meshes": 419,
+    "objects": 423,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-great-mound/canopy-great-mound.blend",
+    "meshes": 1099,
+    "objects": 1103,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-house/canopy-house.blend",
+    "meshes": 279,
+    "objects": 283,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-ironroot-forge/canopy-ironroot-forge.blend",
+    "meshes": 290,
+    "objects": 294,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-mound/canopy-mound.blend",
+    "meshes": 850,
+    "objects": 854,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-rootworks/canopy-rootworks.blend",
+    "meshes": 293,
+    "objects": 297,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-sanctuary/canopy-sanctuary.blend",
+    "meshes": 48,
+    "objects": 52,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/canopy-watchtower/canopy-watchtower.blend",
+    "meshes": 343,
+    "objects": 348,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Protective dried leaves \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "TC_TeamColor \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-amber-outcrop/canopy-amber-outcrop.blend",
+    "meshes": 36,
+    "objects": 40,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-ancient-tree/canopy-ancient-tree.blend",
+    "meshes": 37,
+    "objects": 41,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-corrupted-root/canopy-corrupted-root.blend",
+    "meshes": 21,
+    "objects": 25,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-forest-leaves/canopy-forest-leaves.blend",
+    "meshes": 5,
+    "objects": 9,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-mushroom-cluster/canopy-mushroom-cluster.blend",
+    "meshes": 9,
+    "objects": 13,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-pebble-cluster/canopy-pebble-cluster.blend",
+    "meshes": 4,
+    "objects": 8,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-short-grass/canopy-short-grass.blend",
+    "meshes": 34,
+    "objects": 38,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-tiny-mushrooms/canopy-tiny-mushrooms.blend",
+    "meshes": 9,
+    "objects": 13,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-tree-primary/canopy-tree-primary.blend",
+    "meshes": 12,
+    "objects": 17,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-tree-secondary/canopy-tree-secondary.blend",
+    "meshes": 12,
+    "objects": 17,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/canopy-twig-log/canopy-twig-log.blend",
+    "meshes": 2,
+    "objects": 6,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "Acorn shell \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "Dark bark \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "Warm timber \u00b7 painted grain",
+        "packed_files": 1,
+        "size": [
+          256,
+          256
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "meshes": 180,
+    "objects": 185,
+    "reference_packed": true,
+    "images": [
+      {
+        "name": "reference.png",
+        "packed_files": 1,
+        "size": [
+          1672,
+          941
+        ]
+      }
+    ],
+    "camera": "Reference camera",
+    "resolution": [
+      1100,
+      1100
+    ]
+  }
+]

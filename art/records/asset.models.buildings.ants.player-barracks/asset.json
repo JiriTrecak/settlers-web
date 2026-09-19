@@ -5,38 +5,42 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/player-barracks/model.glb",
-      "sha256": "cceebbe141088faa1348762ee906ff7eb8e51a736573ee9805ca14cbb1a60acb",
-      "bytes": 1264344
+      "sha256": "d76e08cae87b16dd213617f3c3c79dd5abeec06fdb059c252b2ad655f3fcb23a",
+      "bytes": 1273376,
+      "triangles": 16230,
+      "primitives": 9
     }
   ],
   "render": [
     {
       "id": "asset.ants.barracks",
       "file": "assets/models/buildings/ants/player-barracks/model.glb",
-      "healthHeight": 6.4
+      "healthHeight": 4.7
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/buildings/player-barracks/player-barracks.blend",
-    "sha256": "9a96a4bdc45b9d8f2a7a03eb6fee35cbd0520a399a79c18e44ea4321b4d2f98d",
-    "quality": "shared"
+    "path": "art/sources/buildings/canopy-barracks/canopy-barracks.blend",
+    "sha256": "a2ae7329a388090c4cde8a3c269411210d07f9a96efa9c415904a17ced933f9b",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/player-barracks.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.501Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

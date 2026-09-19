@@ -1,3 +1,4 @@
+import {elevatedPoint} from './garrisons';
 import {TargetIndex} from './targetIndex';
 import {routeToAttack} from './attackApproach';
 import {attackTiming} from './attackTiming';
@@ -33,7 +34,7 @@ export class Combat {
       a.id === b.id ||
       b.hp === null ||
       !alive(b) ||
-      b.unit?.contained ||
+      b.unit?.contained || b.unit?.garrison ||
       b.unit?.release
     )
       return false;
@@ -57,7 +58,7 @@ export class Combat {
   }
   private terrainClear(a:Entity,b:Entity){
     const combat=this.c.def(a).behaviors.combat!;
-    return this.c.spatial.attackClear(precise(a),b,!!(combat.projectile||combat.shell));
+    return this.c.spatial.attackClear(elevatedPoint(a),b,!!(combat.projectile||combat.shell));
   }
   plan() {
     // Positions/vision do not change during planning. Reuse spatial buckets and
@@ -87,7 +88,7 @@ export class Combat {
         }
       }
       if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
-      if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct") {delete u.pursuit;continue;}
+      if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct" || order?.type === "garrison") {delete u.pursuit;continue;}
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
       if (camp && (distance2(precise(e), camp.home) > camp.leash ** 2 || u.returning)) {
@@ -119,9 +120,9 @@ export class Combat {
         if(c.spatial.range(e,leader)<=4){u.route=[];u.goal=null;}else if(u.retryAt<=c.state.tick){const goal=c.spatial.nearest(leader,8,e.id);if(goal)c.spatial.route(e,goal);u.retryAt=c.state.tick+12;}
         continue;
       }
-      if(order?.type==='hold'){u.route=[];u.goal=null;if(u.target){const t=c.get(u.target);if(!t||!combat||c.spatial.range(e,t)>combat.range**2)u.target=null;}}
-      let target = c.get(order?.type === "attack" ? order.target : u.target ?? (order?.type==='hold'?undefined:u.pursuit?.target));
-      if(combat && order?.type!=='hold' && u.pursuit && (!target || !this.perceives(e,target))){
+      if(order?.type==='hold'||u.garrison){u.route=[];u.goal=null;if(u.target){const t=c.get(u.target);if(!t||!combat||c.spatial.range(e,t)>combat.range**2)u.target=null;}}
+      let target = c.get(order?.type === "attack" ? order.target : u.target ?? (order?.type==='hold'||u.garrison?undefined:u.pursuit?.target));
+      if(combat && order?.type!=='hold' && !u.garrison && u.pursuit && (!target || !this.perceives(e,target))){
         const replacement=order?.type==='attack'?undefined:this.closestTarget(e,targets,combat.aggroRange);
         if(replacement){target=replacement;delete u.pursuit;u.route=[];u.goal=null;u.retryAt=c.state.tick;}
         else {this.searchLastSeen(e);continue;}
@@ -130,7 +131,7 @@ export class Combat {
         target &&
         (!alive(target) ||
           target.hp === null ||
-          target.unit?.contained ||
+          target.unit?.contained || target.unit?.garrison ||
           target.unit?.release ||
           !this.perceives(e, target) ||
           (!(order?.type === "attack" && order.force) &&
@@ -172,7 +173,7 @@ export class Combat {
         (c.state.tick % 8 === e.id % 8 ||
           (order?.type === "move" && order.attackMove))
       ) {
-        target = this.closestTarget(e,targets,order?.type==='hold'?combat.range:combat.aggroRange);
+        target = this.closestTarget(e,targets,order?.type==='hold'||u.garrison?combat.range:combat.aggroRange);
       }
       if (target && combat) {
         if(u.target===null&&u.pursuit){u.route=[];u.goal=null;u.retryAt=c.state.tick;}
@@ -185,7 +186,7 @@ export class Combat {
           if (!u.attack && !u.cooldown) this.beginAttack(e, target);
           continue;
         }
-        if(order?.type==='hold'){u.target=null;continue;}
+        if(order?.type==='hold'||u.garrison){u.target=null;continue;}
         const staleGoal = u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear(c.spatial.point(u.goal),target,!!(combat.projectile||combat.shell)));
         if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
           routeToAttack(c,e,target,approaches);
@@ -296,7 +297,7 @@ export class Combat {
     }
     for(const hit of extra){
       const a=this.c.get(hit.source),b=this.c.get(hit.target);
-      if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null)continue;
+      if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null||b.unit?.garrison)continue;
       const damage=this.damage(b,hit.damage,hit.damageType);
       if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,damage,hit.damageType));
       hits.set(b.id,(hits.get(b.id)??0)+damage);

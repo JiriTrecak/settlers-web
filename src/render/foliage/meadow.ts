@@ -1,12 +1,8 @@
 import {CurveIndex} from '../../shared/landscape/curveIndex';
-import grass3MediumUrl from '../../../assets/textures/vegetation/coniferous/grass_v5_03-medium.json?url';
-import grass3FarUrl from '../../../assets/textures/vegetation/coniferous/grass_v5_03-far.json?url';
-import grass6MediumUrl from '../../../assets/textures/vegetation/coniferous/grass_v5_06-medium.json?url';
-import grass6FarUrl from '../../../assets/textures/vegetation/coniferous/grass_v5_06-far.json?url';
-import grass3Url from '../../../assets/models/environment/grass/grass-v5-03/model.glb?url';
-import grass6Url from '../../../assets/models/environment/grass/grass-v5-06/model.glb?url';
+import forestGrassUrl from '../../../assets/models/environment/grass/canopy-short-grass/model.glb?url';
+import {forestGrassGeometry} from './forestGrass';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {Mesh, BufferGeometryLoader} from 'three';
+import {Mesh} from 'three';
 import type {Camera} from 'three';
 import {perf} from '../../debug/performance';
 import mossUrl from '../../../assets/textures/materials/ants/moss-surface.png?url';
@@ -61,33 +57,26 @@ export class Meadow {
   private readonly packMaterial=this.purchasedGrassMaterial();
   constructor(private readonly scene:Scene){
     const loader=new GLTFLoader();
-    this.ready=Promise.all([grass3Url,grass6Url].map(async url=>{
-      const gltf=await loader.loadAsync(url);gltf.scene.updateMatrixWorld(true);
-      let geometry:BufferGeometry|undefined;
-      gltf.scene.traverse(o=>{if(o instanceof Mesh){geometry=o.geometry.clone().applyMatrix4(o.matrixWorld);o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();}});
-      if(!geometry)throw Error('Grass export has no mesh');return geometry;
-    })).then(async geometries=>{
-      const geometryLoader=new BufferGeometryLoader();
-      const lods=await Promise.all([[grass3MediumUrl,grass3FarUrl],[grass6MediumUrl,grass6FarUrl]].map(urls=>Promise.all(urls.map(url=>geometryLoader.loadAsync(url)))));
+    this.ready=loader.loadAsync(forestGrassUrl).then(gltf=>{
+      const geometries=[forestGrassGeometry(gltf.scene),forestGrassGeometry(gltf.scene).rotateY(.83)];
+      const lods=[0,1].map(phase=>[forestGrassGeometry(gltf.scene,2,phase),forestGrassGeometry(gltf.scene,4,phase)]);
+      gltf.scene.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();}});
       if(this.dead){[...geometries,...lods.flat()].forEach(g=>g.dispose());return;}
       this.packGeometry=geometries;this.packLODs=lods;
       if(this.lastCover)this.rebuild(this.lastCover.field,this.lastCover.landscape);
     });
   }
+
   private purchasedGrassMaterial():MeshLambertMaterial{
     const material=new MeshLambertMaterial({vertexColors:true,side:DoubleSide});
-    material.customProgramCacheKey=()=> 'purchased-grass-wind-2';
+    material.customProgramCacheKey=()=> 'forest-grass-wind-1';
     material.onBeforeCompile=s=>{
       s.uniforms.uWind=this.time;
-      // Keep the purchased geometry's painted detail, but temper its lime-green tint.
-      s.fragmentShader=s.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-        float leafLuma=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
-        diffuseColor.rgb=mix(diffuseColor.rgb,vec3(leafLuma),.35)*vec3(1.04,.93,.81);`);
       s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nuniform float uWind;').replace('#include <begin_vertex>',`#include <begin_vertex>
         vec3 anchor=instanceMatrix[3].xyz;
         float bend=pow(max(position.y,0.0),2.0);
-        transformed.x+=sin(uWind*1.35+anchor.x*.7+anchor.z*.43)*bend*.085;
-        transformed.z+=cos(uWind*1.05+anchor.z*.61)*bend*.045;`);
+        transformed.x+=sin(uWind*1.35+anchor.x*.7+anchor.z*.43)*bend*.23;
+        transformed.z+=cos(uWind*1.05+anchor.z*.61)*bend*.15;`);
     };return material;
   }
   private material(grass:boolean,broad=false,forest=false):MeshLambertMaterial {

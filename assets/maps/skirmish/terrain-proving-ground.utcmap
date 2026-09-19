@@ -6,18 +6,18 @@
   "stamps": [
     {
       "id": "canopy.dressing.0",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 74.51316105288299,
       "y": 140.3601923333871,
-      "scale": 0.9762892331928015,
+      "scale": 0.7724278279813006,
       "yaw": 0.47582676111720507
     },
     {
       "id": "canopy.dressing.1",
-      "asset": "curled-forest-leaf",
+      "asset": "canopy-forest-leaves",
       "x": 70.30981209016132,
       "y": 151.70581781345663,
-      "scale": 0.908212434221059,
+      "scale": 0.7753575858543627,
       "yaw": 1.5150342608988285
     },
     {
@@ -30,26 +30,26 @@
     },
     {
       "id": "canopy.dressing.3",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 47.0375163890372,
       "y": 156.12334756511277,
-      "scale": 0.8403576630167663,
+      "scale": 0.7694980701082386,
       "yaw": 2.0953247016482055
     },
     {
       "id": "canopy.dressing.4",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 36.42017614196095,
       "y": 150.7904415234148,
-      "scale": 1.0776881925761699,
+      "scale": 0.7841468594735488,
       "yaw": 5.230848103715107
     },
     {
       "id": "canopy.dressing.5",
-      "asset": "curled-forest-leaf",
+      "asset": "canopy-forest-leaves",
       "x": 29.177161331587165,
       "y": 141.47247445065418,
-      "scale": 1.0550002397038043,
+      "scale": 0.7870766173466108,
       "yaw": 1.074196573458612
     },
     {
@@ -62,18 +62,18 @@
     },
     {
       "id": "canopy.dressing.7",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 28.347547422535467,
       "y": 118.12800454733684,
-      "scale": 0.8870148777030408,
+      "scale": 0.7812171016004867,
       "yaw": 3.669652738068253
     },
     {
       "id": "canopy.dressing.8",
-      "asset": "curled-forest-leaf",
+      "asset": "canopy-forest-leaves",
       "x": 46.795795389088255,
       "y": 102.81760353723615,
-      "scale": 1.0320920976810157,
+      "scale": 0.795865890965797,
       "yaw": 1.4651190049760043
     },
     {
@@ -86,58 +86,58 @@
     },
     {
       "id": "canopy.dressing.10",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 68.31121608300354,
       "y": 110.80034231053025,
-      "scale": 1.0352555708028377,
+      "scale": 0.7673481608391739,
       "yaw": 2.722659183852375
     },
     {
       "id": "canopy.dressing.11",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 77.42408150966722,
       "y": 118.237982257258,
-      "scale": 0.747026146762073,
+      "scale": 0.7644184029661119,
       "yaw": 4.574451361605898
     },
     {
       "id": "canopy.dressing.12",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 157.91017828509212,
       "y": 116,
-      "scale": 0.7552266254089772,
+      "scale": 0.773207676585298,
       "yaw": 3.0314512523449957
     },
     {
       "id": "canopy.dressing.13",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 155.87733664388196,
       "y": 127.4987192924165,
-      "scale": 0.9832688365131617,
+      "scale": 0.7702779187122359,
       "yaw": 2.4260308749135584
     },
     {
       "id": "canopy.dressing.14",
-      "asset": "curled-forest-leaf",
+      "asset": "canopy-forest-leaves",
       "x": 149.3607023975722,
       "y": 137.76963224052133,
-      "scale": 1.0191316572017968,
+      "scale": 0.7790671923314221,
       "yaw": 4.963256855532527
     },
     {
       "id": "canopy.dressing.15",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 125.81929780995317,
       "y": 143.07942562897458,
-      "scale": 1.005381450150162,
+      "scale": 0.77613743445836,
       "yaw": 5.537992683909834
     },
     {
       "id": "canopy.dressing.16",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 114.86262235431454,
       "y": 137.489591859237,
-      "scale": 0.7759434549137949,
+      "scale": 0.7849267080775462,
       "yaw": 4.297365907886997
     },
     {
@@ -150,26 +150,26 @@
     },
     {
       "id": "canopy.dressing.18",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 110.03966277709881,
       "y": 105.42445897299659,
-      "scale": 1.019281345885247,
+      "scale": 0.7439100978546775,
       "yaw": 4.34398322923109
     },
     {
       "id": "canopy.dressing.19",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 115.78969069911473,
       "y": 95.67291507544505,
-      "scale": 0.7080193020403385,
+      "scale": 0.7409803399816155,
       "yaw": 0.36354737262241543
     },
     {
       "id": "canopy.dressing.20",
-      "asset": "curled-forest-leaf",
+      "asset": "canopy-forest-leaves",
       "x": 126.76634285481558,
       "y": 93.069849820818,
-      "scale": 0.7570343718864023,
+      "scale": 1.0895264528691768,
       "yaw": 0.5069750277325511
     },
     {
@@ -182,18 +182,18 @@
     },
     {
       "id": "canopy.dressing.22",
-      "asset": "fern-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 147.14852528979992,
       "y": 97.00435011251048,
-      "scale": 0.7058944865129888,
+      "scale": 1.095385968615301,
       "yaw": 0.22906648272648455
     },
     {
       "id": "canopy.dressing.23",
-      "asset": "bramble-thicket",
+      "asset": "canopy-forest-leaves",
       "x": 155.91417217331792,
       "y": 104.48354165153681,
-      "scale": 0.8255123797804117,
+      "scale": 1.098315726488363,
       "yaw": 2.957584509616718
     }
   ],
@@ -214,6 +214,36 @@
     }
   ],
   "entities": [
+    {
+      "id": "lab.lookout",
+      "definition": "building.ants.tower",
+      "position": {
+        "x": 63,
+        "y": 120
+      },
+      "rotation": 0,
+      "owner": "player.1"
+    },
+    {
+      "id": "lab.lookout-archer",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 63,
+        "y": 125
+      },
+      "rotation": 0,
+      "owner": "player.1"
+    },
+    {
+      "id": "lab.spare-archer",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 66,
+        "y": 125
+      },
+      "rotation": 0,
+      "owner": "player.1"
+    },
     {
       "id": "lab.low-archer",
       "definition": "unit.ants.archer",
@@ -284,31 +314,32 @@
     ],
     "cover": [],
     "environment": {
-      "preset": "under-canopy",
+      "preset": "forest-warfare",
       "hour": 10,
       "season": "summer",
       "playing": false,
       "canopy": {
         "enabled": true,
         "height": 30,
-        "scale": 48,
-        "coverage": 0.75,
+        "scale": 42,
+        "coverage": 0.56,
         "sway": 1.2,
         "speed": 0.35,
-        "cloudShadow": 0.3,
+        "cloudShadow": 0.18,
         "seed": 7143
       },
       "atmosphere": {
         "enabled": true,
-        "color": "#a5b3a5",
-        "density": 0.0035,
+        "color": "#b9b59e",
+        "density": 0.0018,
         "baseHeight": 1,
         "heightFalloff": 10,
-        "sunStrength": 2.4,
+        "sunStrength": 1.65,
         "noiseScale": 0.09,
         "noiseStrength": 0.45,
         "driftSpeed": 0.45,
-        "regions": []
+        "regions": [],
+        "sunTint": "#ffe0a6"
       }
     }
   },

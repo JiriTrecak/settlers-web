@@ -1,0 +1,8 @@
+{
+  "meshes": 21,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Studio"
+  ]
+}

@@ -5,17 +5,20 @@
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/marshal/model.glb",
-      "sha256": "bd41c080d5d38473198b099809c791a9930dfdf25136a4a51b33a1d01ef17132",
-      "bytes": 359552
+      "sha256": "ab1623be902075eb59e83c73a8565158dc23574aa658ed38c107f8b6257f4ac4",
+      "bytes": 545356,
+      "triangles": 6314,
+      "primitives": 14
     }
   ],
   "render": [
@@ -23,28 +26,29 @@
       "id": "asset.ants.marshal",
       "file": "assets/models/units/ants/marshal/model.glb",
       "character": "marshal",
-      "castContact": 0.68,
-      "scale": 1,
+      "scale": 1.25,
       "healthHeight": 2.8,
       "cameraAnchor": {
         "height": 1.85,
         "forward": 0.15,
         "distance": 7
-      }
+      },
+      "castContact": 0.68
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-marshal/ant-marshal.blend",
-    "sha256": "bd66128ef30c5a10117931c8c97315e900f26f45038ac521b72c4f48b9293759",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/marshal.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.994868+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.547Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

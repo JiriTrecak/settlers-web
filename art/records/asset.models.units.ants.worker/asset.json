@@ -1,29 +1,32 @@
 {
   "version": 1,
   "id": "asset.models.units.ants.worker",
-  "name": "Base",
+  "name": "Worker",
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/worker/model.glb",
-      "sha256": "2609ab1184a2414f368059dca1d44becc107325df16c67d547f28da0ef0671e0",
-      "bytes": 315176
+      "sha256": "7f2711a45040cd766426405c83caf9e4d636e1063600a16a825798b8c90da94a",
+      "bytes": 450596,
+      "triangles": 3834,
+      "primitives": 10
     }
   ],
   "render": [
     {
       "id": "asset.ants.settler",
       "file": "assets/models/units/ants/worker/model.glb",
-      "healthHeight": 2.3,
       "character": "base",
+      "healthHeight": 2.3,
       "cameraAnchor": {
         "height": 1.5,
         "forward": 0.15,
@@ -33,16 +36,17 @@
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-family/ant-family.blend",
-    "sha256": "669cc2babebf6a207415b1c476f5649618c0db47c60bdc71ce76b79087c65c64",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/base.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.989759+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.527Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

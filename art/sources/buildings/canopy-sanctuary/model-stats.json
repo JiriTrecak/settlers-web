@@ -1,0 +1,9 @@
+{
+  "meshes": 48,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Round shrine foundation",
+    "Studio"
+  ]
+}

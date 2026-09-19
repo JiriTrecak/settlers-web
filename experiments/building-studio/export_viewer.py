@@ -4,6 +4,7 @@ Runs only in the disposable render process. The editable .blend is never modifie
 """
 import json
 import math
+import struct
 from pathlib import Path
 
 import bpy
@@ -20,7 +21,8 @@ def export_viewer(asset, output):
     camera=scene.camera
     position=camera.matrix_world.translation
     forward=camera.matrix_world.to_quaternion() @ Vector((0,0,-1))
-    metadata={'camera':{'position':yup(position),'target':yup(position+forward*20),
+    config=json.loads((asset/'asset.json').read_text())
+    metadata={'camera':{'position':yup(position),'target':yup(position+forward*config['camera'].get('distance',20)),
                         'up':yup(camera.matrix_world.to_quaternion() @ Vector((0,1,0))),
                         'scale':camera.data.ortho_scale},'lights':[]}
     for obj in scene.objects:
@@ -82,13 +84,43 @@ def export_viewer(asset, output):
     merged.name=asset.name+' · evaluated preview mesh'
     if config.get('foliage_wind'):merged['foliageWind']=config['foliage_wind']
     if preserve_textures:
+        # Broad contact shading keeps overlaps readable under moving canopy
+        # shadows. It is neutral grayscale, so ownership can still be recolored.
+        if config.get('bake_vertex_ao',False):
+            for obj in originals:obj.hide_render=True
+            color=merged.data.color_attributes.new(name='ForestContact',type='FLOAT_COLOR',domain='CORNER')
+            merged.data.color_attributes.active_color=color
+            scene.render.engine='CYCLES';scene.cycles.samples=16
+            bpy.ops.object.bake(type='AO',target='VERTEX_COLORS',use_clear=True)
+            for datum in color.data:
+                shade=.50+.50*max(0,min(1,datum.color[0]))**.65
+                datum.color=(shade,shade,shade,1)
+        # Blender's MixRGB exporter bakes the ownership tint into the bitmap.
+        # Export its neutral pattern instead, then restore the red factor in GLB.
+        team_factors={}
+        for material in merged.data.materials:
+            if material and material.name=='TC_TeamColor' and material.get('ownership_texture_neutral'):
+                bsdf=material.node_tree.nodes.get('Principled BSDF')
+                texture=next(n for n in material.node_tree.nodes if n.type=='TEX_IMAGE')
+                material.node_tree.links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])
+                team_factors[material.name]=list(material.diffuse_color)
         image_format=config.get('texture_format','AUTO')
         if image_format not in ('AUTO','JPEG','WEBP'):raise ValueError('Invalid runtime texture_format')
         quality=int(config.get('texture_quality',90))
         if not 1<=quality<=100:raise ValueError('Invalid runtime texture_quality')
         bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',use_selection=True,export_yup=True,
                                   export_materials='EXPORT',export_animations=False,export_cameras=False,export_lights=False,export_extras=True,
+                                  export_vertex_color='ACTIVE',export_all_vertex_colors=False,
                                   export_image_format=image_format,export_image_quality=quality)
+        if team_factors:
+            raw=Path(output).read_bytes();size=struct.unpack_from('<I',raw,12)[0]
+            document=json.loads(raw[20:20+size])
+            for material in document.get('materials',[]):
+                if material.get('name') in team_factors:
+                    material.setdefault('pbrMetallicRoughness',{})['baseColorFactor']=team_factors[material['name']]
+            encoded=json.dumps(document,separators=(',',':')).encode();encoded+=b' '*((-len(encoded))%4)
+            remainder=raw[20+size:]
+            Path(output).write_bytes(struct.pack('<III',0x46546c67,2,20+len(encoded)+len(remainder))+struct.pack('<II',len(encoded),0x4e4f534a)+encoded+remainder)
         metadata['vertices']=len(merged.data.vertices)
         metadata['triangles']=sum(len(p.vertices)-2 for p in merged.data.polygons)
         metadata['note']='Evaluated static geometry with authored UVs and packed albedo textures.'

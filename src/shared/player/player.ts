@@ -2,7 +2,7 @@
  * Eight player tints shared by menu swatches, faction materials and map markers.
  */
 export const PLAYER_COLORS = [
-  0xa04b31, // Red: authored ant color
+  0xbe343d, // Broad red leaf roofs and armor; distinct from natural brown chitin.
   0x2878df, // Blue
   0x34a853, // Green
   0xf2cf35, // Yellow

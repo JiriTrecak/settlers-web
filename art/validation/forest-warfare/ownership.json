@@ -1,0 +1,218 @@
+[
+  {
+    "asset": "Amber Sanctuary",
+    "triangles": 2122,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Bombardier Workshop",
+    "triangles": 15990,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Forester lodge",
+    "triangles": 16422,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Great Mound",
+    "triangles": 41946,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "House",
+    "triangles": 10102,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Ironroot Forge",
+    "triangles": 11736,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Player Barracks",
+    "triangles": 16230,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Main fort",
+    "triangles": 34024,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Rootworks",
+    "triangles": 11992,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Tower",
+    "triangles": 12940,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Amber Outcrop",
+    "triangles": 2008,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Corrupted Root",
+    "triangles": 1184,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Short Grass",
+    "triangles": 102,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Forest Leaves",
+    "triangles": 720,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Twig Log",
+    "triangles": 106,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Tiny Mushrooms",
+    "triangles": 732,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Mushroom Cluster",
+    "triangles": 732,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Pebble Cluster",
+    "triangles": 168,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Ancient Tree",
+    "triangles": 2876,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Tree Primary",
+    "triangles": 948,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Tree Secondary",
+    "triangles": 948,
+    "teamMaterials": 0,
+    "teamPrimitives": 0,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Archer",
+    "triangles": 4482,
+    "teamMaterials": 1,
+    "teamPrimitives": 2,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Bombardier",
+    "triangles": 5470,
+    "teamMaterials": 1,
+    "teamPrimitives": 2,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Hunter",
+    "triangles": 5120,
+    "teamMaterials": 1,
+    "teamPrimitives": 2,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Marshal",
+    "triangles": 6314,
+    "teamMaterials": 1,
+    "teamPrimitives": 2,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Warrior",
+    "triangles": 5488,
+    "teamMaterials": 1,
+    "teamPrimitives": 2,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  },
+  {
+    "asset": "Worker",
+    "triangles": 3834,
+    "teamMaterials": 1,
+    "teamPrimitives": 1,
+    "neutralOwnershipVertexColors": true,
+    "neutralOwnershipTexture": true
+  }
+]

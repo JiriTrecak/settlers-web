@@ -3,7 +3,7 @@ import { Group, Mesh, BoxGeometry, MeshStandardMaterial } from "three";
 import { playerCss, playerRgb } from "../../src/shared/player/player";
 import { applyPlayerMaterials, TEAM_COLOR_MATERIAL } from "../../src/render/settlement/playerMaterials";
 it("uses the requested slot order consistently for UI and model materials", () => {
-  const colors = ["a04b31", "2878df", "34a853", "f2cf35", "ed842a", "9656cf", "36cbd0", "eeeeee"];
+  const colors = ["be343d", "2878df", "34a853", "f2cf35", "ed842a", "9656cf", "36cbd0", "eeeeee"];
   const root = new Group(), material = new MeshStandardMaterial({color: 0xa04b31});
   material.name = TEAM_COLOR_MATERIAL;
   const geometry = new BoxGeometry();

@@ -18,6 +18,7 @@ const positive = z.number().int().positive(),
 const point = pointSchema;
 export const MAX_QUEUED_ORDERS = 16;
 export const orderSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("garrison"),target:positive}).strict(),
   z.object({type:z.literal("hold")}).strict(),
   z.object({type:z.literal("patrol"),destination:point,origin:point.optional()}).strict(),
   z.object({type:z.literal("follow"),target:positive,escort:z.literal(true).optional()}).strict(),
@@ -152,6 +153,7 @@ export const entitySchema = z
           .nullable(),
         pendingMove: point.nullable(),
         contained: positive.nullable(),
+        garrison: z.object({building:positive,height:z.number().positive().max(32)}).strict().optional(),
         release: point.nullable(),
         target: positive.nullable(),
         pursuit: z.object({target:positive,position:point,seenTick:natural}).strict().optional(),

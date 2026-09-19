@@ -218,7 +218,7 @@
       "tick": 2611
     },
     {
-      "checkpoint": 2585190156,
+      "checkpoint": 2526256673,
       "tick": 2624
     },
     {
@@ -264,7 +264,7 @@
       "alive": 7
     },
     {
-      "checkpoint": 1630397658,
+      "checkpoint": 3597510486,
       "tick": 3002
     },
     {
@@ -424,7 +424,7 @@
       ]
     },
     {
-      "checkpoint": 1241855362,
+      "checkpoint": 1910901708,
       "tick": 7439
     },
     {
@@ -506,7 +506,7 @@
       }
     },
     {
-      "checkpoint": 2184586207,
+      "checkpoint": 310823848,
       "tick": 8093
     },
     {
@@ -704,7 +704,8 @@
       "stage": "captain-scene",
       "hp": 741,
       "x": 177,
-      "y": 71
+      "y": 71,
+      "captainVisible": true
     },
     {
       "transport": 15460,

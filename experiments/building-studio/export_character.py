@@ -53,7 +53,7 @@ def export_character(asset,output):
         bpy.context.view_layer.objects.active=rigs[0]
         bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_yup=True,
             export_animations=True,export_animation_mode='ACTIONS',export_force_sampling=True,
-            export_skins=True,export_def_bones=False,export_extras=True,export_cameras=False,export_lights=False)
+            export_vertex_color='ACTIVE',export_all_vertex_colors=False,export_skins=True,export_def_bones=False,export_extras=True,export_cameras=False,export_lights=False)
     for role in meta['variants']:
         temp=asset/f'.{role}-export.glb';write(temp,role);temp.replace(asset/f'{role}.glb')
     write(output)

@@ -1,6 +1,7 @@
 import type { GameContext } from "./context";
 import type { Economy } from "./economy";
 import { isStunned } from "./effects";
+import {leaveGarrison} from './garrisons';
 import { MAX_QUEUED_ORDERS, type Entity, type UnitOrder } from "./state";
 
 /** Per-unit intentions, separate from transport packets and building production. */
@@ -21,6 +22,7 @@ export class UnitOrders {
       u.orderQueue.push(order);
       return true;
     }
+    if(u.garrison && order.type!=='hold' && order.type!=='attack')leaveGarrison(this.c,e);
     this.economy.interrupt(e, order.type === "move" ? order.destination : undefined);
     u.order = order;
     u.target = order.type === "attack" && !u.cargo ? order.target : null;

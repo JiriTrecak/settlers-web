@@ -5,24 +5,27 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 4,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/rootbound-hall/model.glb",
-      "sha256": "09c0d8121db5e79836a3569b66dc217ca26a034f4670802b8c1913e45049cdf2",
-      "bytes": 5707136
+      "sha256": "91103c21ab8e08e84a1c3ab479736111511422f0463ad6a31d922892d612e248",
+      "bytes": 2413988,
+      "triangles": 34024,
+      "primitives": 10
     }
   ],
   "render": [
     {
       "id": "asset.ants.fort",
       "file": "assets/models/buildings/ants/rootbound-hall/model.glb",
-      "healthHeight": 5
+      "healthHeight": 5.8
     }
   ],
   "scenery": [
@@ -35,25 +38,24 @@
     },
     {
       "id": "ant-fort",
-      "name": "Ant colony \u00b7 Fort",
+      "name": "Ant colony · Fort",
       "category": "other",
       "type": "prop",
       "file": "models/buildings/ants/rootbound-hall/model.glb"
     }
   ],
   "source": {
-    "path": "art/records/asset.models.buildings.ants.rootbound-hall/source.glb",
-    "sha256": "09c0d8121db5e79836a3569b66dc217ca26a034f4670802b8c1913e45049cdf2",
-    "quality": "runtime-only"
+    "path": "art/sources/buildings/canopy-mound/canopy-mound.blend",
+    "sha256": "708956663777c5ae139c1f5bde291a89655f724ec35cfa82ae0870324535cd98",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/rootbound-hall.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "checkedAt": "2026-09-19T01:17:28.486Z",
     "warnings": [
-      "Editable master has not yet been linked. Exact runtime original retained."
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
     ]
   }
 }

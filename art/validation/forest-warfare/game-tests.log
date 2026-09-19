@@ -1,0 +1,13 @@
+
+> test
+> vitest run
+
+
+ RUN  v4.1.10 /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web
+
+
+ Test Files  228 passed (228)
+      Tests  965 passed (965)
+   Start at  03:20:27
+   Duration  74.31s (transform 2.17s, setup 0ms, import 23.90s, tests 105.42s, environment 10ms)
+

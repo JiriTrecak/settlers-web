@@ -1,3 +1,4 @@
+import {forestWarfareDressing} from './forest-warfare-dressing';
 /** Reproducible playable art-direction showcase: ant-scale settlement under a giant forest. */
 import {writeFileSync} from 'node:fs';
 import {HeightField,encodeHeight} from '../../src/shared/map/height';
@@ -80,4 +81,4 @@ add('canopy.rootworks','building.ants.rootworks',142,187,'player.1');
 for(const p of starts){stamp('lantern-post',p.x+4,p.z+11,.8);stamp('splitrail-fence',p.x+15,p.z+15,.9,0);}
 const map:UtcMap={...emptyUtcMap(256),name:'Canopy Clearing',description:'An ant colony beneath ancient buttress roots. Low timber groves and amber seams supply the clearings; two paths circle a forest puddle toward contested corrupted roots. A playable lighting and environment showcase.',playerStarts:starts.map((p,i)=>({player:i+1,...p,setup:'setup.ants',mainFort:`start.player.${i+1}/main-fort`})),waterLevel:0,height:encodeHeight(f.samples,256),landscape,entities,stamps,camps:[]};
 if(!parseUtcMap(map))throw Error('Invalid map schema');const error=playableMapError(map);if(error)throw Error(error);
-writeFileSync('assets/maps/skirmish/canopy-clearing.utcmap',stringifyUtcMap(map));console.log({entities:entities.length,stamps:stamps.length,cover:landscape.cover.length});
+writeFileSync('assets/maps/skirmish/canopy-clearing.utcmap',stringifyUtcMap(forestWarfareDressing(map)));console.log({entities:entities.length,stamps:stamps.length,cover:landscape.cover.length});

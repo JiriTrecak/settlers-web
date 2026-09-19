@@ -1,0 +1,14 @@
+{
+  "meshes": 850,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Foundation pebbles",
+    "Bound stick structure",
+    "Brown protective leaf walls",
+    "Great seed heart",
+    "Functional team leaf roof",
+    "Bound roof frame",
+    "Studio"
+  ]
+}

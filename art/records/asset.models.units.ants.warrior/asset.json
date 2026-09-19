@@ -5,25 +5,28 @@
   "kind": "model",
   "tags": [
     "characters",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 3,
+  "revision": 6,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/units/ants/warrior/model.glb",
-      "sha256": "e805fc285ec4cfc66f3c3772e0a4c8eaec2721864ccb23f9f147c4e62274434e",
-      "bytes": 365484
+      "sha256": "9a3763c6ab868d0e06a471c6a780ff17fb251260f27df64ff0a4cc2e5cc67ebf",
+      "bytes": 517992,
+      "triangles": 5488,
+      "primitives": 15
     }
   ],
   "render": [
     {
       "id": "asset.ants.warrior",
       "file": "assets/models/units/ants/warrior/model.glb",
-      "healthHeight": 2.3,
       "character": "warrior",
+      "healthHeight": 2.3,
       "cameraAnchor": {
         "height": 1.5,
         "forward": 0.15,
@@ -33,16 +36,17 @@
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/characters/ant-family/ant-family.blend",
-    "sha256": "669cc2babebf6a207415b1c476f5649618c0db47c60bdc71ce76b79087c65c64",
+    "path": "art/sources/characters/canopy-ant-company/canopy-ant-company.blend",
+    "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
     "quality": "shared"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/characters/warrior.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-16T12:21:28.991604+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.530Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

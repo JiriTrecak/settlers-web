@@ -59,6 +59,8 @@ export type UtcMap = {
   readonly name: string;
   readonly description?: string;
   readonly mission?: MissionDefinition;
+  /** Local, fully revealed testbed: authored entities only, no opponents or victory rules. */
+  readonly sandbox?: boolean;
   readonly stamps: readonly MapStamp[];
   readonly waterLevel?: number;
   readonly height?: string;
@@ -97,6 +99,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
           "name",
           "description",
           "mission",
+          "sandbox",
           "stamps",
           "playerStarts",
           "entities",
@@ -112,7 +115,10 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return null;
-  const starts = z.array(startSchema).min(mission.data ? 1 : 2).max(8).safeParse(o.playerStarts);
+  if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return null;
+  if (o.sandbox && mission.data) return null;
+  const starts = z.array(startSchema).min(mission.data || o.sandbox ? 1 : 2).max(o.sandbox ? 1 : 8).safeParse(o.playerStarts);
+  if (o.sandbox && starts.success && starts.data[0].player !== 1) return null;
   const placements = z.array(placementSchema).safeParse(o.entities),
     camps = z.array(campSchema).safeParse(o.camps);
   if (!starts.success || !placements.success || !camps.success) return null;
@@ -146,6 +152,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     name,
     ...(description ? { description } : {}),
     ...(mission.data ? {mission:mission.data} : {}),
+    ...(o.sandbox ? {sandbox:true} : {}),
     stamps,
     playerStarts,
     entities: placements.data,
@@ -169,6 +176,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       name: map.name,
       ...(map.description ? { description: map.description } : {}),
       ...(map.mission ? {mission:map.mission} : {}),
+      ...(map.sandbox ? {sandbox:true} : {}),
       stamps: map.stamps,
       playerStarts: map.playerStarts,
       entities: map.entities,

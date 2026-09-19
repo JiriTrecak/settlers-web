@@ -1,52 +1,54 @@
 {
   "version": 1,
   "id": "asset.models.buildings.ants.house",
-  "name": "Ant colony \u00b7 House",
+  "name": "House",
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/house/model.glb",
-      "sha256": "4ee7a8d7b55a194f21566c1f16dafd8e410d7a1219fd950430a78430b9b3d897",
-      "bytes": 1353820
+      "sha256": "43f3988bfc532c9b556aa7283ec14fe2e3911b679c39dfd67d488971000464c5",
+      "bytes": 828808,
+      "triangles": 10102,
+      "primitives": 7
     }
   ],
   "render": [
     {
       "id": "asset.ants.house",
       "file": "assets/models/buildings/ants/house/model.glb",
-      "healthHeight": 5
+      "healthHeight": 3.5
     }
   ],
   "scenery": [
     {
       "id": "ant-house",
-      "name": "Ant colony \u00b7 House",
+      "name": "Ant colony · House",
       "category": "other",
       "type": "prop",
       "file": "models/buildings/ants/house/model.glb"
     }
   ],
   "source": {
-    "path": "art/records/asset.models.buildings.ants.house/source.glb",
-    "sha256": "4ee7a8d7b55a194f21566c1f16dafd8e410d7a1219fd950430a78430b9b3d897",
-    "quality": "runtime-only"
+    "path": "art/sources/buildings/canopy-house/canopy-house.blend",
+    "sha256": "710b393ddb579f1b0fa059a7fa98912ec148e40d58e10ac8e105f837ba2ccb43",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/house.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
+    "checkedAt": "2026-09-19T01:17:28.496Z",
     "warnings": [
-      "Editable master has not yet been linked. Exact runtime original retained."
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
     ]
   }
 }

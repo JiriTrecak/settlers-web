@@ -15,7 +15,8 @@ describe("command categories", () => {
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
       ["house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),
     );
-    expect(bindings.some(b => ["building.ants.forester", "building.ants.tower"].includes(b.targetDefinition ?? ""))).toBe(false);
+    expect(bindings.some(b => b.targetDefinition === "building.ants.forester")).toBe(false);
+    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.some(b => b.targetDefinition === "building.ants.tower")).toBe(true);
     const barracks = basic.find(b => b.targetDefinition === "building.ants.barracks")!;
     expect(barracks.actors).toEqual([w.id]);
     expect(barracks.costs.map(c => c.amount)).toEqual([160, 60]);

@@ -1,3 +1,4 @@
+import {elevatedPoint} from './garrisons';
 import type {Owner} from '../../content/schema';
 import type {GameContext} from './context';
 import type {Observation} from './observation';
@@ -9,7 +10,7 @@ import {TICK_MS} from '../../shared/match/match';
 export class Missiles {
  constructor(private c:GameContext,private vision:Observation,private owners:readonly Owner[]){}
  launch(a:Entity,b:Entity,damage:number){
-  const weapon=this.c.def(a).behaviors.combat!,origin=precise(a),destination=precise(b);
+  const weapon=this.c.def(a).behaviors.combat!,origin=elevatedPoint(a),destination=precise(b);
   const distance=Math.hypot(destination.x-origin.x,destination.y-origin.y);
   const flight=Math.max(1,Math.ceil(distance/weapon.projectile!.speed*1000/TICK_MS));
   this.c.state.missiles.push({id:this.c.state.nextMissile++,source:a.id,target:b.id,definition:a.definition,owner:a.owner,
@@ -26,7 +27,7 @@ export class Missiles {
    if(target && alive(target)){const p=precise(target);m.destination={...p};}
    if(this.c.state.tick<m.impact)continue;
    m.resolved=true;
-   if(!target||!alive(target)||target.hp===null||target.unit?.contained||target.unit?.release)continue;
+   if(!target||!alive(target)||target.hp===null||target.unit?.contained||target.unit?.garrison||target.unit?.release)continue;
    if(!(this.c.spatial.layers??this.c.spatial.tactical).shotClear(m.origin,m.destination))continue;
    hits.push({source:m.source,owner:m.owner,target:target.id,damage:m.damage,damageType:m.damageType,weapon:true});
   }

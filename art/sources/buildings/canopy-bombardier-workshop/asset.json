@@ -1,0 +1,30 @@
+{
+  "name": "Canopy Bombardier Workshop",
+  "blend": "canopy-bombardier-workshop.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 30,
+    "elevation": 32,
+    "scale": 8.5,
+    "target": [
+      0,
+      0,
+      1.8
+    ]
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 480,
+    "fill_energy": 240,
+    "rim_energy": 330
+  },
+  "preserve_textures": true,
+  "design": "forest-warfare-05",
+  "role": "bombardier-workshop",
+  "bake_vertex_ao": true
+}

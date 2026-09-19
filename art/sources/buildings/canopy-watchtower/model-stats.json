@@ -1,0 +1,14 @@
+{
+  "meshes": 343,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Foundation pebbles",
+    "Tripod tower frame",
+    "Acorn lookout bowl",
+    "Functional team leaf roof",
+    "Bound roof frame",
+    "Gameplay sockets",
+    "Studio"
+  ]
+}

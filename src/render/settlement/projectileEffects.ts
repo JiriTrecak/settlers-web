@@ -49,7 +49,7 @@ export class ProjectileEffects {
     // Only a fresh launch can sample the animated bow. Late observations use
     // the recorded origin, never a shooter who has since moved elsewhere.
     const position=(tick<=m.launched+1?launchPosition?.(m):undefined)?.clone()
-     ?? new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y,m.origin.surface)+1.5,m.origin.y);
+     ?? new Vector3(m.origin.x,field.walkSample(m.origin.x,m.origin.y,m.origin.surface)+1.5+(m.origin.elevation??0),m.origin.y);
     cached={launched:m.launched,position};this.origins.set(m.id,cached);
    }
    return {

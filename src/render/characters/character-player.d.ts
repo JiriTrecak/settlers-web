@@ -1,12 +1,13 @@
 import type { Object3D, AnimationClip, AnimationAction, AnimationMixer, ColorRepresentation } from 'three';
 export type AntVariant = string;
-export type AntState = 'idle' | 'walk' | 'run' | 'charge' | 'build' | 'chop' | 'carry' | 'attack' | 'cast' | 'hit' | 'death';
+export type AntState = 'idle' | 'walk' | 'run' | 'charge' | 'build' | 'chop' | 'carry' | 'carry_walk' | 'carry_run' | 'attack' | 'cast' | 'hit' | 'death';
 export class CharacterPlayer {
   constructor(root: Object3D, clips: AnimationClip[], variant?: AntVariant);
   root: Object3D; mixer: AnimationMixer; variant: AntVariant; state: AntState;
   action: AnimationAction; paused: boolean; speed: number;
   onEvent: ((event: {type: 'hit' | 'release'; variant: AntVariant}) => void) | null;
   setVariant(variant: AntVariant): void;
+  hasState(state: AntState): boolean;
   setState(state: AntState, options?: {restart?: boolean; fade?: number}): void;
   update(dt: number): void;
   attackContact(): number;

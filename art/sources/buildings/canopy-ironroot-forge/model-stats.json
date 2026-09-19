@@ -1,0 +1,13 @@
+{
+  "meshes": 290,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Foundation pebbles",
+    "Bound stick structure",
+    "Brown protective leaf walls",
+    "Functional team leaf roof",
+    "Stone kiln",
+    "Studio"
+  ]
+}

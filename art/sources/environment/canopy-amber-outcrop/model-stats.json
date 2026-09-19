@@ -1,0 +1,10 @@
+{
+  "meshes": 36,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Foundation pebbles",
+    "Exposed amber deposit",
+    "Studio"
+  ]
+}

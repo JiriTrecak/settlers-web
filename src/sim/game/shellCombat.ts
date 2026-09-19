@@ -3,6 +3,7 @@ import type {Observation} from './observation';
 import type {Entity} from './state';
 import type {Owner} from '../../content/schema';
 import type {DamageHit} from './combat';
+import {elevatedPoint} from './garrisons';
 import {precise} from './motion';
 import {itemFlag} from './itemModifiers';
 
@@ -27,7 +28,7 @@ export class ShellCombat {
   // Neutral camps may be hit when explicitly targeted; ordinary scenery is not a faction victim.
   if(b.owner==='none' || this.c.live().some(e=>e.owner==='none'&&this.hostile(a,e)))victims.push('none');
   if(a.unit?.order?.type==='attack'&&a.unit.order.force&&!victims.includes(b.owner))victims.push(b.owner);
-  const origin=precise(a),target=precise(b);
+  const origin=elevatedPoint(a),target=precise(b);
   this.c.state.shells.push({id:this.c.state.nextShell++,source:a.id,definition:a.definition,owner:a.owner,
    origin:{...origin},target:{...target},launched:this.c.state.tick,impact:this.c.state.tick+policy.flightTicks,
    damage:this.c.stats(a).damage,damageType:combat.damageType,radius,slowPermille,slowTicks:policy.slowTicks,victims,
@@ -39,7 +40,7 @@ export class ShellCombat {
    if(shell.resolved||shell.impact>this.c.state.tick)continue;
    shell.resolved=true;
    for(const e of this.c.live()){
-    if(e.hp===null||e.unit?.contained||e.unit?.release||!shell.victims.includes(e.owner))continue;
+    if(e.hp===null||e.unit?.contained||e.unit?.garrison||e.unit?.release||!shell.victims.includes(e.owner))continue;
     // Structures use their footprint distance, units their authoritative subcell position.
     if(this.c.spatial.pointRange(shell.target,e)>shell.radius**2)continue;
     if(this.c.spatial.layers&&!this.c.spatial.layers.shotClear(shell.target,precise(e)))continue;

@@ -1,0 +1,11 @@
+{
+  "meshes": 279,
+  "materials": 17,
+  "collections": [
+    "Structure",
+    "Foundation pebbles",
+    "Functional team leaf roof",
+    "Bound roof frame",
+    "Studio"
+  ]
+}

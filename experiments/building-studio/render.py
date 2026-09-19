@@ -30,6 +30,8 @@ scene.render.filepath = str(args.output)
 bpy.ops.render.render(write_still=True)
 if config.get('kind')=='character':
     from export_character import export_character as export_viewer
+elif config.get('kind')=='vegetation':
+    from export_vegetation import export_vegetation as export_viewer
 else:
     from export_viewer import export_viewer
 metadata=export_viewer(args.asset,args.output.with_suffix('.glb'))

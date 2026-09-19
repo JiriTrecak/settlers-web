@@ -1,24 +1,24 @@
 {
   "version": 1,
   "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
-  "name": "Ochre Mushroom Colony",
+  "name": "Mushroom Cluster",
   "kind": "model",
   "tags": [
-    "canopy",
-    "forest-floor",
-    "ground-detail"
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 2,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb",
-      "sha256": "2e7699424fc8f3f8c076b2a3a680c5b5acafd2ee652516a65ca7ed544dc35de5",
-      "bytes": 80332,
-      "triangles": 1092,
-      "primitives": 1
+      "sha256": "6f8b82339f38cac717e5f6cd33f55d4ab59d0e1ff2f7b952121d2e51373765aa",
+      "bytes": 37552,
+      "triangles": 732,
+      "primitives": 2
     }
   ],
   "render": [],
@@ -32,17 +32,17 @@
     }
   ],
   "source": {
-    "path": "art/sources/environment/ochre-mushroom-colony/ochre-mushroom-colony.blend",
-    "sha256": "8cfdeb0cb64a21792a4bc2d0649a0468817942205d26be041eb9ebcc06f111cf",
+    "path": "art/sources/environment/canopy-mushroom-cluster/canopy-mushroom-cluster.blend",
+    "sha256": "31d6004fc8e406aa4e5a02f37d35d6155097ade072a32050d8f0117300f81379",
     "quality": "master"
   },
   "origin": {
     "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-15T08:33:40.819Z",
+    "checkedAt": "2026-09-19T01:17:28.561Z",
     "warnings": [
-      "Static environment model; flat-ground contact."
+      "Flat-ground contact; match terrain placement when dressing slopes."
     ]
   }
 }

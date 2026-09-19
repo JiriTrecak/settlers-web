@@ -1,7 +1,7 @@
 import {BufferAttribute,DataTexture,FloatType,MeshStandardMaterial,NearestFilter,RGBAFormat,SkinnedMesh,type AnimationClip,type Object3D} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
-/** Consolidate flat untextured materials within a rig group without changing its bones.
+/** Consolidate untextured materials within a rig group without changing its bones.
  * Team surfaces remain separate. Authored color becomes vertex color; exact PBR
  * factors occupy a nearest-filtered palette. Textured/morphed assets are untouched.
  */
@@ -15,7 +15,10 @@ export function batchCharacterMaterials(root:Object3D,clips:readonly AnimationCl
   for(const child of parent.children){
    if(!(child instanceof SkinnedMesh)||!(child.material instanceof MeshStandardMaterial))continue;
    const m=child.material,g=child.geometry;
-   if(child.children.length||animatedNames.has(child.name)||m.type!=='MeshStandardMaterial'||m.name==='TC_TeamColor'||m.transparent||m.opacity!==1||m.alphaTest||m.emissive.getHex()||m.map||m.normalMap||m.roughnessMap||m.metalnessMap||m.aoMap||m.emissiveMap||m.bumpMap||m.displacementMap||m.alphaMap||m.envMap||child.morphTargetInfluences||g.groups.length||g.attributes.uv||g.attributes.color)continue;
+   if(child.children.length||animatedNames.has(child.name)||m.type!=='MeshStandardMaterial'||m.name==='TC_TeamColor'||m.transparent||m.opacity!==1||m.alphaTest||m.emissive.getHex()||m.map||m.normalMap||m.roughnessMap||m.metalnessMap||m.aoMap||m.emissiveMap||m.bumpMap||m.displacementMap||m.alphaMap||m.envMap||child.morphTargetInfluences||g.groups.length||g.attributes.uv)continue;
+   // Preserve vertex alpha rather than silently turning translucent paint opaque.
+   const paint=g.attributes.color;
+   if(m.vertexColors&&paint?.itemSize===4&&Array.from({length:paint.count},(_,i)=>paint.getW(i)).some(a=>a!==1))continue;
    const key=[child.skeleton.uuid,child.matrix.elements.join(','),child.bindMatrix.elements.join(','),child.bindMode,m.side,m.flatShading,m.depthTest,m.depthWrite,child.visible,child.renderOrder,child.layers.mask,child.frustumCulled].join('|');
    const list=groups.get(key)??[];list.push(child);groups.set(key,list);
   }
@@ -23,7 +26,8 @@ export function batchCharacterMaterials(root:Object3D,clips:readonly AnimationCl
    if(meshes.length<2)continue;
    const data=new Float32Array(meshes.length*4),pieces=meshes.map((mesh,i)=>{
     const m=mesh.material as MeshStandardMaterial,g=mesh.geometry.clone(),n=g.attributes.position.count,colors=new Float32Array(n*3),uv=new Float32Array(n*2);
-    for(let v=0;v<n;v++){colors.set([m.color.r,m.color.g,m.color.b],v*3);uv[v*2]=.5;uv[v*2+1]=(i+.5)/meshes.length;}
+    const paint=m.vertexColors?g.attributes.color:undefined;
+    for(let v=0;v<n;v++){colors.set([m.color.r*(paint?.getX(v)??1),m.color.g*(paint?.getY(v)??1),m.color.b*(paint?.getZ(v)??1)],v*3);uv[v*2]=.5;uv[v*2+1]=(i+.5)/meshes.length;}
     data.set([1,m.roughness,m.metalness,1],i*4);g.setAttribute('color',new BufferAttribute(colors,3));g.setAttribute('uv',new BufferAttribute(uv,2));return g;
    });
    const geometry=mergeGeometries(pieces);pieces.forEach(g=>g.dispose());if(!geometry)continue;

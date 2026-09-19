@@ -5,38 +5,42 @@
   "kind": "model",
   "tags": [
     "ant-colony",
-    "migrated"
+    "forest-warfare",
+    "natural-materials"
   ],
   "status": "published",
-  "revision": 1,
+  "revision": 3,
   "profile": "model",
   "outputs": [
     {
       "role": "model",
       "path": "assets/models/buildings/ants/great-mound/model.glb",
-      "sha256": "4da443a68f3ee9f06610dabf5f63dfb3125414f8572a781113bede0c90e0ba93",
-      "bytes": 4291368
+      "sha256": "70ee350e4d68fca597385629adef6b59430756bf7279bf222ef62758a2a9cdf1",
+      "bytes": 2989052,
+      "triangles": 41946,
+      "primitives": 10
     }
   ],
   "render": [
     {
       "id": "asset.ants.great-mound",
       "file": "assets/models/buildings/ants/great-mound/model.glb",
-      "healthHeight": 5.6
+      "healthHeight": 7
     }
   ],
   "scenery": [],
   "source": {
-    "path": "art/sources/buildings/great-mound/great-mound.blend",
-    "sha256": "edc3781f2f7bc68b5887edbfa1d52c1f5c84228ea5626bd74481d2873576be63",
-    "quality": "shared"
+    "path": "art/sources/buildings/canopy-great-mound/canopy-great-mound.blend",
+    "sha256": "029002622977b0bde0c251727f56bb35043595255254dad0c4072a715ed6c82a",
+    "quality": "master"
   },
   "origin": {
-    "method": "migration",
-    "previousPath": "assets/ant-colony/great-mound.glb"
+    "method": "import"
   },
   "validation": {
-    "checkedAt": "2026-09-12T04:47:01.854179+00:00",
-    "warnings": []
+    "checkedAt": "2026-09-19T01:17:28.492Z",
+    "warnings": [
+      "Hidden sides inferred from the approved forest-warfare concept; final in-game art review tracked separately."
+    ]
   }
 }

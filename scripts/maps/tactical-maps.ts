@@ -1,3 +1,4 @@
+import {forestWarfareDressing} from './forest-warfare-dressing';
 /** Reproducible tactical elevation lab and four-player FFA. Run with npx tsx. */
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
@@ -18,7 +19,10 @@ export function terrainLab():UtcMap {
  landscape.strokes=[{points:[{x:50,z:130},{x:85,z:130},{x:118,z:130},{x:135,z:130}],radius:4,layer:'road',opacity:.8}];
  return {...emptyUtcMap(),name:'Terrain Proving Ground',description:'A focused cliff, ramp and ridge laboratory. Player 1 starts below; Player 2 holds the upper plateau. Use debug reveal to compare terrain with tactical vision.',waterLevel:0,height:encodeHeight(f.samples,f.size),landscape,
  playerStarts:[{player:1,x:53,z:130,setup:'setup.ants',mainFort:'start.player.1/main-fort'},{player:2,x:132,z:116,setup:'setup.ants',mainFort:'start.player.2/main-fort'}],
- entities:[{id:'lab.low-archer',definition:'unit.ants.archer',position:{x:97,y:106},rotation:90,owner:'player.1'},
+ entities:[{id:'lab.lookout',definition:'building.ants.tower',position:{x:63,y:120},rotation:0,owner:'player.1'},
+ {id:'lab.lookout-archer',definition:'unit.ants.archer',position:{x:63,y:125},rotation:0,owner:'player.1'},
+ {id:'lab.spare-archer',definition:'unit.ants.archer',position:{x:66,y:125},rotation:0,owner:'player.1'},
+ {id:'lab.low-archer',definition:'unit.ants.archer',position:{x:97,y:106},rotation:90,owner:'player.1'},
  {id:'lab.high-warrior',definition:'unit.ants.warrior',position:{x:100,y:106},rotation:270,owner:'player.2'},
  {id:'lab.low-mine',definition:'building.neutral.amber-mine',position:{x:42,y:114},rotation:0,owner:'none'},
  {id:'lab.high-mine',definition:'building.neutral.amber-mine',position:{x:133,y:137},rotation:0,owner:'none'}]};
@@ -212,9 +216,9 @@ export function fourCrowns():UtcMap {
 if(process.argv[1]===fileURLToPath(import.meta.url)){
  mkdirSync('assets/maps/skirmish',{recursive:true});
  for(const [id,map] of [['terrain-proving-ground',terrainLab()],['four-crowns',fourCrowns()]] as const){
-  if(!parseUtcMap(JSON.parse(stringifyUtcMap(map))))throw new Error(`${id}: invalid serialized map schema`);
+  if(!parseUtcMap(JSON.parse(stringifyUtcMap(forestWarfareDressing(map)))))throw new Error(`${id}: invalid serialized map schema`);
   const error=playableMapError(map);if(error)throw new Error(`${id}: ${error}`);
-  writeFileSync(`assets/maps/skirmish/${id}.utcmap`,stringifyUtcMap(map)+'\n');
+  writeFileSync(`assets/maps/skirmish/${id}.utcmap`,stringifyUtcMap(forestWarfareDressing(map))+'\n');
   console.log(`${id}: ${map.size}², ${map.playerStarts.length} players, ${map.entities.length} entities, ${map.stamps.length} scenery, ${map.camps.length} camps`);
  }
 }
