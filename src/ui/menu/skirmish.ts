@@ -114,6 +114,7 @@ export class SkirmishScreen extends GameScreen {
       if (selected.map.sandbox) meta.textContent = `${selected.map.size} × ${selected.map.size} · Single-player testbed`;
       hint.textContent = selected.map.sandbox ? "One hero. Full visibility. No opponents." : "Choose your starting position, or set every player to AI to watch the match.";
       rules.replaceChildren(el("span", "", selected.map.sandbox ? "TESTBED" : "VICTORY"), el("p", "", selected.map.sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy rival Mounds. The last surviving side wins."));
+      if (!selected.map.sandbox) rules.append(el("span", "", "OPPONENT"), el("p", "", "AI builds its economy, leads its hero, and commands its own army."));
       footer.firstElementChild!.textContent = selected.map.sandbox ? "Local terrain and texture testbed" : "Local match · All map positions are occupied";
       description.textContent =
         selected.map.description ??
@@ -189,7 +190,7 @@ export class SkirmishScreen extends GameScreen {
         el(
           "small",
           "",
-          `${map.players} players · ${map.map.size} × ${map.map.size}`,
+          `${map.map.sandbox ? "Single-player testbed" : `${map.players} players`} · ${map.map.size} × ${map.map.size}`,
         ),
       );
       button.append(thumb, name);

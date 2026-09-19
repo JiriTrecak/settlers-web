@@ -124,12 +124,30 @@ ${reconstruct}
 uniform sampler2D sceneColor,fogTexture,visibilityMap;
 #include <tonemapping_pars_fragment>
 uniform vec2 fogSize;
-uniform bool hasVisibility;
-uniform float mapSize;
+uniform bool hasVolumetrics,hasDaytimeFog,hasVisibility;
+uniform float mapSize,daytimeLutBlend;
+uniform highp sampler3D daytimeLutFrom,daytimeLutTo;
+uniform vec3 daytimeFogColor;
+uniform float daytimeFogDensity,daytimeFogDispersion,daytimeFogStart,daytimeFogHeight;
+// Common.fxh / ComputeFog, recovered from the supplied shader cache.
+// Preserve the source's base-2 extinction and height integral (including epsilon).
+float daytimeHeightIntegral(float scale,float low,float high){
+ return scale>.00001?(exp(-scale*low)-exp(-scale*high))/scale:high-low;
+}
+float daytimeOpacity(vec3 surface){
+ vec3 eye=cameraWorld[3].xyz;
+ float distance=length(eye-surface),high=max(eye.y,surface.y),low=min(eye.y,surface.y);
+ float upper1=max(high-daytimeFogHeight,0.),upper0=max(low-daytimeFogHeight,0.);
+ float lower0=min(high-daytimeFogHeight,0.),lower1=min(low-daytimeFogHeight,0.);
+ float integral=daytimeHeightIntegral(0.,-lower0,-lower1)+daytimeHeightIntegral(daytimeFogDispersion,upper0,upper1);
+ integral*=daytimeFogDensity*max(distance-daytimeFogStart,0.)/(high-low+.00001);
+ return 1.-exp2(-integral);
+}
 void main(){
  vec3 surface=surfaceAt(vUv);
  vec2 pixel=vUv*fogSize-.5,base=floor(pixel),f=fract(pixel);
- vec4 fog=vec4(0.);float sum=0.;
+ vec4 fog=vec4(0.,0.,0.,1.);float sum=0.;
+ if(hasVolumetrics){fog=vec4(0.);
  for(int y=0;y<2;y++)for(int x=0;x<2;x++){
   vec2 offset=vec2(float(x),float(y));vec2 uv=(base+offset+.5)/fogSize;
   vec2 bilinear=mix(1.-f,f,offset);
@@ -138,13 +156,22 @@ void main(){
   fog+=texture2D(fogTexture,uv)*weight;sum+=weight;
  }
  fog/=sum;
+ }
  // Full-resolution visibility keeps upsampling from lighting unexplored edges.
  float visibility=1.;
  if(hasVisibility){vec2 uv=(surface.xz+.5)/mapSize;visibility=texture2D(visibilityMap,clamp(uv,0.,1.)).r;
  if(any(lessThan(uv,vec2(0.)))||any(greaterThan(uv,vec2(1.))))visibility=0.;}
  vec3 color=texture2D(sceneColor,vUv).rgb;
  gl_FragColor=vec4(color*mix(1.,fog.a,visibility)+fog.rgb*visibility,1.);
+ if(hasDaytimeFog && texture2D(sceneDepth,vUv).r<.999999)gl_FragColor.rgb=mix(gl_FragColor.rgb,daytimeFogColor,daytimeOpacity(surface)*visibility);
  gl_FragColor.rgb=ACESFilmicToneMapping(gl_FragColor.rgb);
  #include <colorspace_fragment>
+ // PostProcess.fx samples both volumes at the input RGB directly (no half-texel remap).
+ // Our adapter supplies display RGB after ACES/sRGB; the source render-target encoding
+ // is not contained in the shader cache. Keep this choice explicit in sky.md.
+ if(hasDaytimeFog){
+  vec3 graded=mix(texture(daytimeLutFrom,gl_FragColor.rgb).rgb,texture(daytimeLutTo,gl_FragColor.rgb).rgb,daytimeLutBlend);
+  gl_FragColor.rgb=mix(gl_FragColor.rgb,graded,visibility);
+ }
 }
 `;

@@ -1,0 +1,22 @@
+<CombineXMesh>
+	<Material
+		AlbedoMap="plants/stumps_fir__d_a.tga"
+		Name="wood"
+	/>
+	<Material
+		AlbedoMap="plants/stumps_fir__d_a.tga"
+		IsAlphaKill="true"
+		Name="leaves"
+	/>
+	<Material
+		AlbedoMap="plants/underlay_stump__d_a.tga"
+		Blending="alpha"
+		Name="underlay"
+	>
+		<PlantMaterial
+			IsDrawBeforeOthers="true"
+			IsSnapToTerrain="true"
+			IsDisableSnowOverlay="true"
+		/>
+	</Material>
+</CombineXMesh>

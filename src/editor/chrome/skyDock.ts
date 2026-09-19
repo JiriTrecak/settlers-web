@@ -12,9 +12,9 @@ export type SkyDockHooks = {
 };
 
 const BEATS: { name: string; hour: number }[] = [
-  { name: "Dawn", hour: 6.3 },
-  { name: "Noon", hour: 12 },
-  { name: "Dusk", hour: 18.1 },
+  { name: "Dawn", hour: 6 },
+  { name: "Day", hour: 12 },
+  { name: "Dusk", hour: 18 },
   { name: "Night", hour: 22 },
 ];
 
@@ -60,8 +60,8 @@ export class SkyDock {
     spd.className = "flex flex-col gap-1";
     const cap = document.createElement("span");
     cap.className = "text-[10px] font-medium tracking-[0.12em] text-canopy/40 uppercase";
-    cap.textContent = "Day length";
-    this.speed = slider(20, 300, 5);
+    cap.textContent = "Full cycle";
+    this.speed = slider(20, 600, 5);
     this.speedVal = document.createElement("span");
     this.speedVal.className = "text-[11px] tabular-nums tracking-wide text-canopy/70";
     const row = document.createElement("div");
@@ -71,7 +71,7 @@ export class SkyDock {
     spd.append(cap, row);
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
-    hint.textContent = "Sun walks east → west. Shadows and color grade with the hour.";
+    hint.textContent = "Day and night hold their colors. Short dawn/dusk transitions blend lighting and shadows (45% / 5% / 45% / 5%).";
     const seasons=document.createElement('div');seasons.className='grid grid-cols-3 gap-1';
     for(const season of ['spring','summer','autumn'] as const){const b=document.createElement('button');b.type='button';b.className=btn;b.textContent=season[0]!.toUpperCase()+season.slice(1);b.onclick=()=>this.hooks.onSeason(season);seasons.append(b);}
     this.root.append(title, head, this.time, beats, this.play, spd, seasons, hint);

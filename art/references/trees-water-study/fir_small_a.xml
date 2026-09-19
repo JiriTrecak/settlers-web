@@ -1,0 +1,9 @@
+<PlantBrand IsDamageByCraters="true">
+	<_prebuild		
+		PlantingGroups="Bush"
+		PlantingPerpendicularity="0.2"
+		PlantingMinSpacing="1.5"
+		EraseGrassRadius="1.5"
+	/>
+	<!--<Occlusion Intensity="0.15" Size="(4.0; 4.0)" />-->
+</PlantBrand>

@@ -45,14 +45,14 @@ export class EnvironmentDock {
     const actions=document.createElement('div');actions.className='flex flex-wrap gap-1';
     const save=this.button('Save preset',()=>this.save());save.className=btnPrimary;
     actions.append(save,this.button('Reset',()=>{this.preset=environmentPreset(this.preset.id);this.draft={...this.preset.light};this.apply();this.notice.textContent='Restored saved preset.';this.sync();}),this.button('Copy settings',()=>void this.copy()));this.root.append(actions);
-    const help=document.createElement('p');help.className='text-xs leading-5 text-canopy/50';help.textContent='Live draft · Save updates this preset for maps on this device. White tints keep the existing daylight colors.';this.root.append(help);
+    const help=document.createElement('p');help.className='text-xs leading-5 text-canopy/50';help.textContent='Live draft · Save updates this preset for maps on this device. White tints and strengths of 1 preserve the imported day/night values.';this.root.append(help);
     const global=this.section('Global light',true);
     this.color(global,'Sun tint','sunTint');this.range(global,'Sun strength','sunStrength',.05);
-    this.range(global,'Sun direction offset (°)','sunDirection',1);this.range(global,'Midday sun height (°)','sunHeight',1);
+    this.range(global,'Sun direction offset (°)','sunDirection',1);this.range(global,'Sun elevation scale (60° = source)','sunHeight',1);
     this.color(global,'Ambient tint','ambientTint');this.range(global,'Ambient strength','ambientStrength',.05);
     this.color(global,'Sky fill tint','skyTint');this.color(global,'Ground bounce tint','bounceTint');this.range(global,'Sky / ground fill strength','fillStrength',.05);
     const shadows=this.section('Shadows');this.range(shadows,'Shadow softness','shadowSoftness',.25);
-    const atmosphere=this.section('Atmosphere');this.color(atmosphere,'Haze color','hazeColor');this.range(atmosphere,'Haze fade distance (m)','hazeDistance',5);
+    const atmosphere=this.section('Atmosphere');this.color(atmosphere,'Fog tint','hazeColor');this.range(atmosphere,'Fog distance scale (100 = source)','hazeDistance',5);
     this.canopy=new CanopyControls(editor);this.root.append(this.canopy.root);
     this.atmosphere=new AtmosphereControls(editor);this.root.append(this.atmosphere.root);
     this.water=new WaterControls(editor);this.root.append(this.water.root);

@@ -1,0 +1,17 @@
+<DayTimeState
+	Ambient="g(230; 230; 230) x 4"
+	SkyBloomColor="g(130; 186; 255; 180)"
+	SkyColor="g(86; 153; 243) x 4"
+	SunColor="g(247; 209; 128) x 16"
+	SunDirection="(0.5; -1.0; -0.5)"
+	TextureColorLUT="lut/day__vol_uncmp.tga"
+>
+	<Fog
+		Color="g(93; 164; 223) x 0.8"
+		Density="0.05"
+		DispersionByHeight="0.1"
+		StartDist="90"
+		StartHeight="6"
+	/>
+	<Colorize Color="g(107; 85; 51)" />
+</DayTimeState>

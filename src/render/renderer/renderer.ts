@@ -348,6 +348,7 @@ export class Renderer {
     this.weather.configure(landscape.environment.weather);
     this.canopy.configure(landscape.environment.canopy,this.height?.size??256);
     if (presetChanged) this.refreshEnvironment();
+    this.sky.setInterior(!!landscape.environment.interior);
     this.sky.setHour(landscape.environment.hour);
     this.sky.setPlaying(landscape.environment.playing);
     this.props.setSeason(landscape.environment.season);
@@ -661,7 +662,7 @@ export class Renderer {
 
   private atmosphereFrame(now:number){
     const weather=this.landscape.environment.weather;
-    return {settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    return {...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }

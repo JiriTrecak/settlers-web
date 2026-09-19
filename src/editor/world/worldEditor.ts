@@ -128,8 +128,9 @@ export class WorldEditor {
   private entityOffset = { x: 0, y: 0 };
   private entityViews = editorEntities(this.map);
   setMission(mission:MissionDefinition|undefined,camps=this.map.camps){
+    if(mission && this.map.sandbox) throw new Error("A testbed cannot also be a campaign mission.");
     const next={...this.map,camps,mission:mission ? missionSchema.parse(mission):undefined};
-    if(!mission && next.playerStarts.length<2) throw new Error("Skirmish maps need at least two player starts.");
+    if(!mission && !next.sandbox && next.playerStarts.length<2) throw new Error("Skirmish maps need at least two player starts.");
     validatePlacements(next,content);this.commitEntities(next);
   }
   renameEntity(id:string,nextId:string){this.commitEntities(renameEntity(this.map,id,nextId));this.selectEntity(nextId);}

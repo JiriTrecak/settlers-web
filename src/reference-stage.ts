@@ -63,6 +63,13 @@ async function start() {
   const entities = editorEntities(map),
     snapshot = { tick: 0, size: map.size, settlement: authoredScene(entities) },
     stamps = [...map.stamps, ...resourceStamps(entities)];
+  if(params.has('hour')){
+    const hour=Number(params.get('hour'));if(Number.isFinite(hour)){renderer.sky.setPlaying(false);renderer.sky.setHour(hour);}
+    const controls=document.createElement('nav');controls.setAttribute('aria-label','Lighting reference');controls.style.cssText='position:fixed;z-index:10;bottom:56px;left:12px;display:flex;gap:8px;background:#101820ee;color:white;padding:10px;font:14px system-ui';
+    const phase=document.createElement('span');phase.textContent=renderer.sky.snapshot().label;phase.setAttribute('role','status');controls.append(phase);
+    for(const [label,h] of [['Dawn',6],['Day',12],['Dusk',18],['Night',22]] as const){const button=document.createElement('button');button.textContent=label;button.onclick=()=>{renderer.sky.setHour(h);phase.textContent=renderer.sky.snapshot().label;renderer.present(performance.now());};controls.append(button);}
+    document.body.append(controls);
+  }
   renderer.draw(snapshot, stamps);
   await Promise.all([renderer.ready(), renderer.gameReady()]);
   renderer.draw(snapshot, stamps);

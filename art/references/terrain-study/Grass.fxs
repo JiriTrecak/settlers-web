@@ -1,0 +1,360 @@
+//--------------------------------------------------------------------------------------
+// File:		Grass.fxs
+// Description:	
+// Date:		24/10/19 10:24 AM
+//--------------------------------------------------------------------------------------
+#define HAVE_CUSTOM_BASE_INPUT
+#define DO_CUSTOM_TRANSFORM
+//
+#define HAVE_CUSTOM_BASE_OUTPUT
+#define DO_CUSTOM_SURFACE
+//
+#define FORCE_DIELECTRIC
+#define FORCE_LIGHTMAP_OCCLUSION_LEVEL0
+
+#define PERVERTEX_LIGHTING
+#define PERVERTEX_FOG
+
+#ifndef IS_LAYING_GRASS
+#	define FORCE_MAX_SHADOWMAP_FILTER_RADIUS
+#endif
+
+#include "../Common.fxh"
+#include "../Lighting.fxh"
+
+#ifndef __cplusplus	
+	struct CUSTOM_BASE_INPUT {
+		float4 vGrassData0 : BYTEDATA0;
+		float4 vGrassData1 : BYTEDATA1;
+	};
+	struct CUSTOM_BASE_OUTPUT {
+		float alpha : CUSTOM_ALPHA;
+	};
+	static float4 g_vAlbedoMult = float4(1, 1, 1, 1);
+	static float4 g_vShadingParams = float4(0, 0, 0, 1);
+	static float4 g_vLightingParams = float4(0, 0, 0, 0);
+
+#	define SSAO_FACTOR_MULT SSAO_FACTOR_GRASS
+#endif
+
+#include "Shared.fxh"
+#include "TerrainCommon.fxh"
+
+//CONST_BUFFER_BEGIN(CB_INSTANCE, SCOURING_GRASS)
+//	//DECLARE_FLOAT4(g_vGrassParams, EC_GRASS_GRASSPARAMS)
+//CONST_BUFFER_END;
+//
+//CONST_BUFFER_BEGIN(CB_SHARED, SCOURING_GRASS)
+//CONST_BUFFER_END;
+
+//--------------------------------------------------------------------------------------
+// Shader code
+//--------------------------------------------------------------------------------------
+
+// Base
+#include "Base.fxh"
+
+#ifndef __cplusplus
+
+//--------------------------------------------------------------------------------------
+// Functions   
+//static float s_fAlphaFade;
+static float s_fLocalY;
+static float s_fOcclusionMult = 1.f;
+//
+float3 GetWaterSurfaceOffset(float3 samplePos, float4 waterSim) {
+	const float disturbanceSpeed = 2.f;	
+	float3 offset = 0;
+	{
+		const float scale = .8f;
+		const float density = .015f;
+		float3 noiseTC = samplePos - AMBIENT_WIND_DIRECTION * disturbanceSpeed * g_fSceneTime;
+
+		// sum few octaves
+		int i;
+		for (i = 0; i < 2; i++) {
+			float densityOctave = pow(2.f, i);//i + 1.f;				
+			offset += (sampleLevel3D(TX_TCOMMON_WIND_NOISE, noiseTC * densityOctave * density).rgb - .5f) / densityOctave * scale;
+		}
+	}
+	float waterDisturbance = length(UnpackNormal2(WATER_SIM_DISTURBANCE(waterSim)));
+	const float ambientDisturbance = .25f;
+
+	offset *= max(waterDisturbance, ambientDisturbance);
+/*
+	const float scaleDynamicFlow = .8f;
+	{
+		float flowLength = length(waterFlow);
+
+		float2 dir1, dir2;
+		float angT;
+		float lin0, lin1, linT;
+		DiscretizeWaves(waterFlow, flowLength, dir1, dir2, angT, lin0, lin1, linT);
+
+		float2 angTC1 = float2(
+			dot(float2(+dir1.x, +dir1.y), samplePos.xz),
+			dot(float2(-dir1.y, +dir1.x), samplePos.xz));
+		float2 angTC2 = float2(
+			dot(float2(+dir2.x, +dir2.y), samplePos.xz),
+			dot(float2(-dir2.y, +dir2.x), samplePos.xz));
+
+		float2 tcScroll = float2(-20.f, 0) * g_fSceneTime + float2(0.f, 23.723f);
+		const float tcScale = .02f;
+
+		float3 noise0, noise1;
+		noise0 = lerp(
+			sampleLevel3D(TX_TCOMMON_WIND_NOISE, float3((angTC1 + tcScroll * lin0) * tcScale, samplePos.y).xzy).rgb,
+			sampleLevel3D(TX_TCOMMON_WIND_NOISE, float3((angTC2 + tcScroll * lin0) * tcScale, samplePos.y).xzy).rgb, angT);
+		noise1 = lerp(
+			sampleLevel3D(TX_TCOMMON_WIND_NOISE, float3((angTC1 + tcScroll * lin1) * tcScale, samplePos.y).xzy).rgb,
+			sampleLevel3D(TX_TCOMMON_WIND_NOISE, float3((angTC2 + tcScroll * lin1) * tcScale, samplePos.y).xzy).rgb, angT);
+		float3 noise = lerp(noise0, noise1, linT);
+
+		// sum with ambient wind
+		offset += (float3(waterFlow.x, 0, waterFlow.y) * .25f + (noise - .5f) * flowLength) * scaleDynamicFlow;
+	}
+*/
+	return offset;
+}//
+//-------------------------------------------------------------------------------------
+
+void DoCustomTransform(inout float3 localPos, inout float3 localNormal, inout float3 localTangent, 
+	in float2 texCoord, in float userData, in CUSTOM_BASE_INPUT cbi, in WORLD_TRANSFORM wtm)
+{
+	const float2 block_xz = cbi.vGrassData0.bg;
+	const float2 pos_xz = cbi.vGrassData0.ra;
+	const float instanceOrient = cbi.vGrassData1.b;
+	const float instanceScale = cbi.vGrassData1.g;	
+
+	float3 instancePos;
+	instancePos.xz = g_vTerrainPosData.xy + (block_xz * 255.f + pos_xz) * TERRAIN_BLOCK_SIZE;
+	
+	float3 right;
+	right.y = 0;
+	sincos(instanceOrient * _PI * 2.f, right.x, right.z);
+
+	#ifdef IS_LAYING_GRASS		
+		{
+			float3 normal = _UP;
+			float3 tangent = normalize(cross(normal, right));
+			float3x3 tm = float3x3(
+				tangent,
+				normal,
+				cross(tangent, normal)
+			);
+			localPos = mul(localPos, tm);
+		}
+	#else
+		// make foliage normals (ignore mesh)
+		localNormal = normalize(float3(localPos.x, localPos.y + 1.f, localPos.z));
+		localTangent = normalize(cross(localNormal, float3(1, 0, 0)));		
+	#endif
+	
+	float3 terrainNormal;
+	#ifdef IS_WATER_GRASS
+		terrainNormal = _UP;
+	#else		
+		terrainNormal = GetTerrainNormal(instancePos.xz);
+		terrainNormal = lerp(terrainNormal, _UP, .5f);
+	#endif
+	{		
+		float3 tangent = normalize(cross(terrainNormal, right));
+		float3x3 tm = float3x3(
+			tangent,
+			terrainNormal,
+			cross(tangent, terrainNormal)
+		);
+		#ifndef IS_LAYING_GRASS
+			localPos = mul(localPos, tm);		
+		#endif
+		localNormal = mul(localNormal, tm);
+		localTangent = mul(localTangent, tm);
+	}
+	localPos *= UnpackScale(instanceScale);	
+	float4 bend = sampleLevel2D(TX_TCOMMON_FOLIAGE_BEND, (instancePos.xz + localPos.xz - g_vVisiblePosData.xy) * g_vVisiblePosData.zw);
+
+#ifndef IS_WATER_GRASS
+	#ifdef IS_LAYING_GRASS
+		instancePos.y = GetTerrainHeight(localPos.xz + instancePos.xz);
+	#else	
+		instancePos.y = GetTerrainHeight(instancePos.xz);
+	#endif
+
+	float grassBend = 0;
+	#ifndef IS_LAYING_GRASS
+	{
+		grassBend = bend.b;
+		// add occlusion
+		s_fOcclusionMult = 1.f - min(grassBend / .5f, 1.f) * .1f;
+
+		float minHeight = min(localPos.y, .03f);
+		{			
+			// bend position	
+			float l = length(localPos);
+			float d = dot(localPos, terrainNormal);
+
+			float bendT = min(grassBend / .75f, 1.f);
+			localPos = localPos - terrainNormal * min(d * bendT, d - minHeight);
+
+			float3 n = normalize(localPos);
+			localPos = n * l;
+		}
+		/*{
+			// deflect position
+			float2 bendDir = UnpackNormal2(bend.rg);
+			float t = saturate((localPos.y - 0) / .4f); // only the tops
+			t = .5f + t * .5f;
+			localPos.xz -= bendDir * t * 1.f;
+			//localPos.y = max(localPos.y - deflectT * .95f, minHeight);
+		}*/
+	}
+	{
+		// wind animation	
+		float windMask = saturate(localPos.y / .5f);
+		windMask *= 1.f - grassBend;
+
+		// scale wind mask by occlusion
+		float lightMapOcclusion0 = GetLightMapOcclusionAt(instancePos).r;
+		localPos += GetWindOffset(localPos + instancePos, instancePos, windMask, lightMapOcclusion0);
+	}
+	#endif	
+#else // IS_WATER_GRASS
+	const float instanceHeight16_low = cbi.vGrassData1.r;
+	const float instanceHeight16_high = cbi.vGrassData1.a;
+	instancePos.y = UnpackHeight((instanceHeight16_high * 255.f + instanceHeight16_low) * 256.f / 65535.f);
+	//#ifdef IS_LAYING_GRASS
+	//	instancePos.y = GetMergedTerrainHeight(localPos.xz + instancePos.xz);
+	//#else	
+	//	instancePos.y = GetMergedTerrainHeight(instancePos.xz);
+	//#endif	
+	#ifdef IS_LAYING_GRASS
+		// water surface grass
+		float2 simTC = (instancePos.xz - g_vVisiblePosData.xy) * g_vVisiblePosData.zw;
+		localPos += GetWaterSurfaceOffset(localPos + instancePos, sampleLevel2D(TX_TCOMMON_WATERSIM, simTC));
+	#else
+		// underwater grass
+		{
+			const float speed = .25f;
+			const float scale = .4f;
+			const float density = .01f;
+
+			float3 noiseTC = localPos + instancePos - AMBIENT_WIND_DIRECTION * speed * g_fSceneTime;
+			float3 offset = 0;
+			// sum 4 octaves
+			int i;
+			for (i = 0; i < 4; i++) {
+				float densityOctave = pow(2.f, i);//i + 1.f;				
+				offset += (sampleLevel3D(TX_TCOMMON_WIND_NOISE, noiseTC * densityOctave * density).rgb - .5f) / densityOctave * scale;
+			}
+			localPos.xz += offset.xz * 8.f;
+		}
+	#endif
+
+	{
+		// deflect position
+		float2 bendDir = UnpackNormal2(bend.rg);
+
+		// extra bend for water grass
+		localPos.xz -= bendDir * 2.f;
+	}
+#endif
+
+	// save local pos
+	s_fLocalY = localPos.y;
+	localPos += instancePos;
+
+	//const float deltaFade = 16.f;
+	//float deltaOffset = (1.f - instanceScale) * 16.f + 64.f * instanceOrient;
+	//s_fAlphaFade = saturate(1.f - (length(instancePos - g_vEyePos) - g_fDistBlocksVeryFar + deltaOffset) / deltaFade);
+
+	//// Early clip before rasterization
+	//if (s_fAlphaFade <= 1.f / 255.f) {
+	//	localPos = 0;
+	//}
+	//if (/*g_vGrassParams.z > 0 && */grassBend >= GRASS_BEND_REMOVE_THRESHOLD) {
+	//	// removed grass
+	//	localPos = 0;
+	//}
+	if (GetUnderlaysMaskAt(instancePos.xz) > .5f) {
+		// remove by underlay
+		localPos.x = instancePos.x;
+		localPos.y = 0;
+		localPos.z = instancePos.y;
+	}
+}//
+//--------------------------------------------------------------------------------------
+void SaveCustomBaseOutput(out CUSTOM_BASE_OUTPUT cbo, out float4 customSurfaceData, 
+	in float3 localPos, in float3 worldPos, in float userData, in CUSTOM_BASE_INPUT cbi, in WORLD_TRANSFORM wtm)
+{
+	cbo.alpha = 1;// s_fAlphaFade;
+
+	customSurfaceData.x = s_fLocalY;
+	customSurfaceData.y = s_fOcclusionMult;	
+	customSurfaceData.zw = 0;
+}//
+//-------------------------------------------------------------------------------------
+void DoCustomSurface(uniform bool isZFill, inout SURFACE_DESC surface, inout float alpha,
+	in float2 texCoord, 
+#ifndef PERVERTEX_LIGHTING
+	in TANGENT_SPACE_DATA tsd,
+#endif	
+	in CUSTOM_BASE_OUTPUT cbo, in float4 customSurfaceData, in float2 screenPos, uniform bool isVertexShader)
+{
+	alpha *= cbo.alpha;
+	//if (isZFill) {
+	//	clip(-1);
+	//}
+	//if (isZFill) {
+	//	// fade out because grass is not present in last sm split
+	//	// TODO: explicit sm split index and fade range here?
+	//	float splitsDistances[4] = (float[4])g_vSMSplitsDistances;
+	//	float fadeRange = 64.f;
+	//	float fadeStart = splitsDistances[1] - fadeRange * .5f;
+	//	
+	//	float distToCamera = length(surface.worldPos - g_vEyePos);
+	//	alpha *= 1.f - saturate((distToCamera - fadeStart) / fadeRange);
+
+	//	// increase alpha for further splits to reduce the difference
+	//	alpha *= 1.f + g_fSMSplitIndex * .25f;
+	//}
+	float2 terrainTC = (surface.worldPos.xz - g_vTerrainPosData.xy) * g_vTerrainPosData.zw;
+	//float2 wetness_tint = sampleLevel2D(TX_TCOMMON_BLOCKSMAP, terrainTC).rg;
+	//if (!isVertexShader) {
+	//	float3 tintColor = lerp(TERRAIN_TINT_GRASS, TERRAIN_TINT_DIRT, g_vGrassParams.x);
+	//	surface.albedo.rgb *= lerp(float3(1, 1, 1), tintColor, wetness_tint.y * g_vGrassParams.y);
+	//}
+//#ifndef _EDITOR
+//	{
+//		float roadsMap = sampleLevel2D(TX_TCOMMON_ROADSMAP, terrainTC).r;
+//		alpha *= 1.f - roadsMap;
+//	}
+//#endif
+#ifdef IS_USE_GROUND_COLOR
+	// ground color doesnt work with pervertex lighting properly
+	{
+		float4 groundMap = sampleLevel2D(TX_TCOMMON_GROUNDMAP, terrainTC);
+		//surface.albedo.rgb = surface.albedo.rgb * normalize(groundMap.rgb);
+		surface.albedo.rgb *= groundMap.rgb * 2.f;
+	}
+#endif
+	// darken the allbedo which is not correct
+	surface.albedo *= customSurfaceData.y;
+
+	//#ifndef IS_WATER_GRASS
+	//	ApplyWetness(surface, isVertexShader);
+	//#endif
+	if (!isVertexShader) {
+		// only applying in pixel shader
+		ApplyMacroColor(surface);
+	}
+}//
+//-------------------------------------------------------------------------------------
+#endif //__cplusplus
+
+//--------------------------------------------------------------------------------------
+// Techniques
+//-------------------------- ------------------------------------------------------------
+DECLARE_TECHNIQUE(Color, baseVS, basePS); 
+DECLARE_TECHNIQUE(ZFill, baseZFillVS, baseZFillPS);
+
+//EOF

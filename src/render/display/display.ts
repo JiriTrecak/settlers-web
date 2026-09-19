@@ -92,8 +92,14 @@ export class Display {
 
   /** Also used by editor captures; the caller owns the destination target. */
   drawWorld(scene:Scene,camera:Camera,atmosphere?:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()){
-    if(atmosphere?.settings?.enabled){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
+    // Imported HDR multipliers stay literal; exposure is the renderer adapter,
+    // shared by every phase, never an automatic day/night brightness correction.
+    const exposure=this.gl.toneMappingExposure;
+    if(atmosphere?.daytime)this.gl.toneMappingExposure=.28;
+    try {
+    if(atmosphere?.settings?.enabled||atmosphere?.daytime){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
     else {perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>this.gl.render(scene,camera));}
+    }finally{this.gl.toneMappingExposure=exposure;}
   }
 
   destroy(): void {

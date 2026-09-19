@@ -42,7 +42,7 @@ export class SimulationRuntime {
  private droppedSamples=0;
  constructor(readonly options:RuntimeOptions,private readonly remoteChannel?:Channel,private readonly hooks:RuntimeHooks={}){
   this.match=options.match;this.me=options.player??options.match.slots[0]!.player;
-  this.visionPlayer=this.me;this.reveal=options.player===null;
+  this.visionPlayer=this.me;this.reveal=options.player===null || (!options.remote && !!options.map.sandbox);
   this.world=new World({map:options.map,slots:this.match.slots,seed:this.match.seed,company:this.match.company});
   if(options.remote){
    if(!remoteChannel||options.player===null)throw Error('Remote match requires a player channel');

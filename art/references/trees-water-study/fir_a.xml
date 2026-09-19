@@ -1,0 +1,25 @@
+<PlantBrand
+	FallEvent="Tree"
+	FallEventAt="0.8"
+	HitEvent="Tree"
+	IsDamageByCraters="true"
+	IsSortByDistance="true"
+	StumpBrand="stump_fir_a"
+>
+	<_prebuild
+		EraseGrassRadius="3.5"
+		NoWaterCheckRadius="2.0"
+		PlantingGroups="Tree"
+		PlantingMinSpacing="3.2"
+	/>
+	<Sounds>
+		<Sound__0 File="env/wood_chop" Name="Hit" />
+		<Sound__1 File="env/tree_fall" Name="Fall" />
+	</Sounds>
+	<Occlusion Intensity="0.75" ObscureInfluence="0.5" Size="(18.0; 18.0)" />
+	<GameData
+		CollisionRadius="2.0"
+		ForestRadius="4.0"
+		LumberAmount="60"
+	/>
+</PlantBrand>

@@ -5,15 +5,15 @@ export type GlobalLight = {
   hazeColor:string; hazeDistance:number; shadowSoftness:number;
 };
 export type EnvironmentPreset={id:string;name:string;light:GlobalLight};
-export const FOREST:EnvironmentPreset={id:'forest',name:'Forest',light:{sunTint:'#ffedcf',sunStrength:1.45,sunDirection:10,sunHeight:58,ambientTint:'#b5c3c9',ambientStrength:1.1,skyTint:'#b7c7cc',bounceTint:'#b09b72',fillStrength:1.1,hazeColor:'#8c9586',hazeDistance:260,shadowSoftness:2}};
-/** Warm canopy openings with a neutral cool fill to keep shaded armies readable. */
-export const UNDER_CANOPY:EnvironmentPreset={id:'under-canopy',name:'Under the Canopy',light:{sunTint:'#ffebc2',sunStrength:1.35,sunDirection:-35,sunHeight:65,ambientTint:'#e4e1d9',ambientStrength:3,skyTint:'#d6dcda',bounceTint:'#c5b89c',fillStrength:3,hazeColor:'#728078',hazeDistance:420,shadowSoftness:5}};
-/** Fixed indirect fill and a low key light; authored resin lamps provide local warmth. */
+/** Outdoor presets modify the imported cycle. Neutral defaults preserve its source values. */
+const CYCLE_LIGHT:GlobalLight={sunTint:'#ffffff',sunStrength:1,sunDirection:0,sunHeight:60,ambientTint:'#ffffff',ambientStrength:1,skyTint:'#ffffff',bounceTint:'#ffffff',fillStrength:1,hazeColor:'#ffffff',hazeDistance:100,shadowSoftness:3};
+export const FOREST:EnvironmentPreset={id:'forest',name:'Forest',light:{...CYCLE_LIGHT}};
+export const UNDER_CANOPY:EnvironmentPreset={id:'under-canopy',name:'Under the Canopy',light:{...CYCLE_LIGHT}};
+export const FOREST_WARFARE:EnvironmentPreset={id:'forest-warfare',name:'Forest warfare',light:{...CYCLE_LIGHT}};
+/** Interiors have fixed authored lighting, independent of the outdoor cycle. */
 export const HEARTWOOD_INTERIOR:EnvironmentPreset={id:'heartwood-interior',name:'Heartwood interior',light:{sunTint:'#cfbd9c',sunStrength:.55,sunDirection:-35,sunHeight:65,ambientTint:'#d4c4b3',ambientStrength:3,skyTint:'#c0c9d1',bounceTint:'#957151',fillStrength:2.8,hazeColor:'#252329',hazeDistance:140,shadowSoftness:5}};
-/** Readable warm leaf roofs against quiet olive ground; canopy still animates. */
-export const FOREST_WARFARE:EnvironmentPreset={id:'forest-warfare',name:'Forest warfare',light:{sunTint:'#ffeac9',sunStrength:1.15,sunDirection:-15,sunHeight:58,ambientTint:'#fff6e8',ambientStrength:3,skyTint:'#e0e7df',bounceTint:'#c7a876',fillStrength:3,hazeColor:'#959d87',hazeDistance:480,shadowSoftness:3}};
 const BUILT_INS=[FOREST,UNDER_CANOPY,HEARTWOOD_INTERIOR,FOREST_WARFARE];
-export const PRESET_KEY='utc.environment-presets.v1';
+export const PRESET_KEY='utc.environment-presets.v2';
 export const LIGHT_RANGES={sunStrength:[0,3],sunDirection:[-180,180],sunHeight:[15,85],ambientStrength:[0,3],fillStrength:[0,3],hazeDistance:[40,600],shadowSoftness:[0,8]} as const;
 export function validLight(raw:unknown):raw is GlobalLight{
   if(!raw||typeof raw!=='object')return false;const o=raw as Record<string,unknown>;

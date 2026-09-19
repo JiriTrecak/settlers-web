@@ -1,0 +1,11 @@
+<PlantBrand
+	IsDontRemoveByHarvesting="true"
+	IsNoWindAnimation="true"	
+>
+	<_prebuild
+		EraseGrassRadius="3.5"
+		PlantingGroups="Bush,Tree"
+		PlantingPerpendicularity="1.0"
+		PlantingMinSpacing="2.0"
+	/>
+</PlantBrand>

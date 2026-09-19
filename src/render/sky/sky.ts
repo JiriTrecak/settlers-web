@@ -1,22 +1,21 @@
+import {sampleDaytime,daytimeLabel,wrap24,DAY_CYCLE_SECONDS,type DaytimeColor,type DaytimeSample} from '../../shared/environment/dayCycle';
+export {DAY_CYCLE_SECONDS} from '../../shared/environment/dayCycle';
 import { FOREST, type GlobalLight } from '../../shared/environment/presets';
 /**
- * Moving key light + graded ambient for a 24h cycle.
+ * Four held/authored lighting looks over a 24h clock.
  * Hour is authored (editor dock); play just ticks whatever is set.
- * Sun stays a DirectionalLight so tree / rock shadows swing with the clock.
+ * Sun direction blends during dawn/dusk; stable phases reuse their lighting.
  */
 import {
   AmbientLight,
   Color,
   DirectionalLight,
   HemisphereLight,
-  Fog,
+  Fog, Vector3, SRGBColorSpace,
   type Scene,
 } from "three";
 import { MAP_FRINGE, MAP_HALO } from "../../shared";
 
-
-/** One complete daylight + night loop in real seconds. */
-export const DAY_CYCLE_SECONDS = 600;
 
 export type SkyState = {
   hour: number;
@@ -25,45 +24,28 @@ export type SkyState = {
   label: string;
 };
 
-type Stop = {
-  hour: number;
-  sun: number;
-  sunI: number;
-  amb: number;
-  ambI: number;
-  hemi: number;
-  ground: number;
-  bg: number;
-  /** Multiply on MeshBasic leaf cards — same clock, no Lambert mud. */
-  paint: number;
-};
-
-/** Keyframes wrap at 24. Dawn / noon / dusk / night are the readable beats. */
-const STOPS: readonly Stop[] = [
-  { hour: 0, sun: 0x83b4ff, sunI: 0.95, amb: 0x729fee, ambI: 0.2, hemi: 0x93b8ff, ground: 0x12110e, bg: 0x0c1018, paint: 0x3d4c68 },
-  { hour: 5.2, sun: 0xff6a3a, sunI: 0.55, amb: 0x3a2a40, ambI: 0.28, hemi: 0x5a3a50, ground: 0x2a2018, bg: 0x1a1218, paint: 0xff7a48 },
-  { hour: 6.4, sun: 0xff9a5c, sunI: 1.35, amb: 0x6a5a70, ambI: 0.36, hemi: 0xc47860, ground: 0x3a3028, bg: 0x2a2430, paint: 0xffa070 },
-  { hour: 8, sun: 0xfff3d9, sunI: 1.9, amb: 0x7a90a8, ambI: 0.42, hemi: 0x8ab0c8, ground: 0x3a3830, bg: 0x2c343c, paint: 0xffe4c4 },
-  { hour: 12, sun: 0xfff8e9, sunI: 2.2, amb: 0x8aa0b8, ambI: 0.48, hemi: 0x9ab4c8, ground: 0x353330, bg: 0x2e3844, paint: 0xfff6ec },
-  { hour: 16.5, sun: 0xffc078, sunI: 1.85, amb: 0x8a7868, ambI: 0.4, hemi: 0xd4a070, ground: 0x3a3028, bg: 0x3a3438, paint: 0xffc888 },
-  { hour: 18.2, sun: 0xff7040, sunI: 1.1, amb: 0x5a3a48, ambI: 0.32, hemi: 0xc05040, ground: 0x2a2018, bg: 0x241820, paint: 0xff6a40 },
-  { hour: 20, sun: 0x83b4ff, sunI: 0.9, amb: 0x729fee, ambI: 0.24, hemi: 0x93b8ff, ground: 0x141410, bg: 0x0e121c, paint: 0x455572 },
-  { hour: 24, sun: 0x83b4ff, sunI: 0.95, amb: 0x729fee, ambI: 0.2, hemi: 0x93b8ff, ground: 0x12110e, bg: 0x0c1018, paint: 0x3d4c68 },
-];
-
-const DEG = Math.PI / 180;
-const PEAK = 60 * DEG;
-const MOON = 16 * DEG;
 const SCRUB = 9.5;
+const UP = new Vector3(0, 1, 0);
+function color(target:Color, value:DaytimeColor):Color {
+  return target.setRGB(value.rgb[0]/255,value.rgb[1]/255,value.rgb[2]/255,SRGBColorSpace);
+}
 
 export class Sky {
   hour = SCRUB;
   playing = false;
   daySeconds = DAY_CYCLE_SECONDS;
   private light:GlobalLight={...FOREST.light};
-  setGlobalLight(light:GlobalLight):void {this.light={...light};this.apply();}
+  setGlobalLight(light:GlobalLight):void {this.light={...light};this.applied=null;this.apply();}
   private size = 256;
-  private last = 0;
+  private last: number | null = null;
+  private interior = false;
+  private current:DaytimeSample=sampleDaytime(SCRUB);
+  private applied:DaytimeSample|null=null;
+  private readonly tint=new Color();
+  private readonly direction=new Vector3();
+  setInterior(on:boolean){this.interior=on;this.applied=null;this.scene.fog=on?this.haze:null;this.apply();}
+  daytime(){return this.interior?undefined:this.current;}
+  fogModifiers(){return {daytimeFogTint:this.light.hazeColor,daytimeFogDistanceScale:this.light.hazeDistance/100};}
   private readonly ambient = new AmbientLight(0x8aa0b8, 0.45);
   private readonly hemi = new HemisphereLight(0x9ab4c8, 0x353330, 0.35);
   readonly sun = new DirectionalLight(0xfff2d6, 2.2);
@@ -75,7 +57,7 @@ export class Sky {
     private readonly scene: Scene,
     size = 256,
   ) {
-    this.scene.fog = this.haze;
+    this.scene.fog = null;
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.radius = 3;
@@ -100,7 +82,7 @@ export class Sky {
     cam.far = size * 2.4;
     cam.updateProjectionMatrix();
     this.sun.target.position.set(size / 2, 0, size / 2);
-    this.apply();
+    this.applied=null;this.apply();
   }
 
   focus(x:number,z:number,extent=70):void {
@@ -116,9 +98,8 @@ export class Sky {
   }
 
   private updateAtmosphere(): void {
-    const daylight = Math.min(1, Math.max(0, Math.sin((this.hour - 6) / 12 * Math.PI) * 3));
     this.haze.near = Math.max(1, this.hazeDepth - 5);
-    this.haze.far = this.haze.near + this.light.hazeDistance / Math.max(.001, daylight);
+    this.haze.far = this.haze.near + this.light.hazeDistance;
   }
 
   setHour(hour: number): void {
@@ -128,7 +109,7 @@ export class Sky {
 
   setPlaying(on: boolean): void {
     this.playing = on;
-    this.last = 0;
+    this.last = null;
   }
 
   setDaySeconds(n: number): void {
@@ -137,7 +118,7 @@ export class Sky {
 
   tick(now: number): void {
     if (this.playing) {
-      const prev = this.last || now;
+      const prev = this.last ?? now;
       this.hour = wrap24(this.hour + ((now - prev) / 1000 / this.daySeconds) * 24);
     }
     this.last = now;
@@ -145,7 +126,7 @@ export class Sky {
   }
 
   lightingDiagnostics() {
-    return { preset:{...this.light},sunIntensity:this.sun.intensity,sunColor:this.sun.color.getHexString(),ambientIntensity:this.ambient.intensity,fillIntensity:this.hemi.intensity };
+    return { phase:this.current.phase,source:this.current.look,lutWeights:this.current.lutWeights,pendingAttributes:["SkyBloomColor (mask generation)", "Colorize (runtime uniform defaults)"],preset:{...this.light},sunIntensity:this.sun.intensity,sunColor:this.sun.color.getHexString(),ambientIntensity:this.ambient.intensity,fillIntensity:this.hemi.intensity };
   }
 
   snapshot(): SkyState {
@@ -157,111 +138,35 @@ export class Sky {
     };
   }
 
-  /** Place the key light on a solar arc; below the horizon it becomes a low moon so shadows stay. */
+  /** Held looks never drift with the clock. Directions interpolate only during transitions. */
   private apply(): void {
+    const sample=sampleDaytime(this.hour);this.current=sample;
+    if(sample===this.applied)return;
+    this.applied=sample;
+    const look=sample.look,light=this.light,tint=this.tint;
     this.updateAtmosphere();
-    const look = sample(this.hour);
-    this.sun.color.copy(look.sun);
-    this.sun.intensity = look.sunI;
-    const daylight = Math.min(1, Math.max(0, Math.sin((this.hour - 6) / 12 * Math.PI) * 3));
-    // Neutral sky fill lets the authored Forest palette control the scene.
-    this.ambient.color.copy(look.amb);
-    this.ambient.intensity = look.ambI;
-    this.hemi.color.copy(look.hemi);
-    this.hemi.groundColor.copy(look.ground);
-    this.hemi.intensity = .55;
-    this.bg.copy(look.bg);
-    this.scene.background = this.bg;
-    const tint=new Color();
-    this.sun.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.sunTint),daylight));
-    this.sun.intensity*=1+(this.light.sunStrength-1)*daylight;
-    this.ambient.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.ambientTint),daylight));
-    // Authored indirect fill also belongs to moonlit shade. Dropping it at
-    // night made canopy maps lose silhouettes even under the same sky light.
-    this.ambient.intensity*=this.light.ambientStrength;
-    this.hemi.color.multiply(tint.set('#ffffff').lerp(new Color(this.light.skyTint),daylight));
-    this.hemi.groundColor.multiply(tint.set('#ffffff').lerp(new Color(this.light.bounceTint),daylight));
-    this.hemi.intensity*=this.light.fillStrength;
-    this.haze.color.set(this.light.hazeColor);
-    this.sun.shadow.radius=this.light.shadowSoftness;
-
-
-    const elev = elevation(this.hour) * this.light.sunHeight / 60;
-    const moon = elev < 4 * DEG;
-    const e = moon ? MOON : elev;
-    // Preserve the daylight exposure on flat ground while lowering the sun
-    // to give the reference's longer, diagonal tree shadows.
-    if (!moon) this.sun.intensity *= 1 + daylight * (Math.sin(elevation(this.hour) * 78 / 60) / Math.sin(elev) - 1);
-    const az = azimuth(this.hour)+this.light.sunDirection*DEG*daylight;
-    const r = this.size * 0.85;
-    const cx = this.sun.target.position.x;
-    const cz = this.sun.target.position.z;
-    this.sun.position.set(cx + r * Math.cos(e) * Math.sin(az), r * Math.sin(e), cz + r * Math.cos(e) * Math.cos(az));
+    if(this.interior){
+      this.sun.color.set(light.sunTint);this.sun.intensity=light.sunStrength;
+      this.ambient.color.set(light.ambientTint);this.ambient.intensity=light.ambientStrength;
+      this.hemi.color.set(light.skyTint);this.hemi.groundColor.set(light.bounceTint);this.hemi.intensity=light.fillStrength;
+      this.bg.set(light.hazeColor);this.haze.color.copy(this.bg);
+      const e=light.sunHeight*Math.PI/180,a=light.sunDirection*Math.PI/180;
+      this.direction.set(Math.cos(e)*Math.sin(a),Math.sin(e),Math.cos(e)*Math.cos(a));
+    }else{
+      color(this.sun.color,look.sunColor).multiply(tint.set(light.sunTint));this.sun.intensity=look.sunColor.multiplier*light.sunStrength;
+      color(this.ambient.color,look.ambient).multiply(tint.set(light.ambientTint));this.ambient.intensity=look.ambient.multiplier*light.ambientStrength;
+      color(this.hemi.color,look.skyColor).multiply(tint.set(light.skyTint));this.hemi.groundColor.set(light.bounceTint).multiplyScalar(.15);this.hemi.intensity=look.skyColor.multiplier*light.fillStrength;
+      color(this.bg,look.skyColor).multiplyScalar(look.skyColor.multiplier);
+      // XML direction describes travelling light rays; Three positions the light toward their source.
+      this.direction.fromArray(look.sunDirection).negate().normalize().applyAxisAngle(UP,light.sunDirection*Math.PI/180);
+      if(light.sunHeight!==60){const elevation=Math.asin(this.direction.y),az=Math.atan2(this.direction.x,this.direction.z),e=Math.min(1.48,elevation*light.sunHeight/60);this.direction.set(Math.cos(e)*Math.sin(az),Math.sin(e),Math.cos(e)*Math.cos(az));}
+    }
+    this.scene.background=this.bg;this.sun.shadow.radius=light.shadowSoftness;
+    this.sun.position.copy(this.direction).multiplyScalar(this.size*.85).add(this.sun.target.position);
     this.sun.target.updateMatrixWorld();
   }
 }
-
-function elevation(hour: number): number {
-  return Math.sin(((hour - 6) / 12) * Math.PI) * PEAK;
-}
-
-/** The solar arc is oriented so morning light enters the reference camera from upper left. */
-function azimuth(hour: number): number {
-  const daylight = Math.min(1, Math.max(0, Math.sin((hour - 6) / 12 * Math.PI) * 3));
-  return ((hour - 6) / 12) * Math.PI - 235 * DEG + 110 * DEG * daylight;
-}
-
-function sample(hour: number): {
-  sun: Color;
-  sunI: number;
-  amb: Color;
-  ambI: number;
-  hemi: Color;
-  ground: Color;
-  bg: Color;
-  paint: Color;
-} {
-  const h = wrap24(hour);
-  let i = 0;
-  while (i < STOPS.length - 1 && STOPS[i + 1]!.hour <= h) i += 1;
-  const lo = STOPS[i]!;
-  const hi = STOPS[i + 1] ?? STOPS[0]!;
-  const span = hi.hour - lo.hour || 1;
-  const t = smooth((h - lo.hour) / span);
-  return {
-    sun: mix(lo.sun, hi.sun, t),
-    sunI: lo.sunI + (hi.sunI - lo.sunI) * t,
-    amb: mix(lo.amb, hi.amb, t),
-    ambI: lo.ambI + (hi.ambI - lo.ambI) * t,
-    hemi: mix(lo.hemi, hi.hemi, t),
-    ground: mix(lo.ground, hi.ground, t),
-    bg: mix(lo.bg, hi.bg, t),
-    paint: mix(lo.paint, hi.paint, t),
-  };
-}
-
-function mix(a: number, b: number, t: number): Color {
-  return new Color(a).lerp(new Color(b), t);
-}
-
-function smooth(t: number): number {
-  const x = Math.min(1, Math.max(0, t));
-  return x * x * (3 - 2 * x);
-}
-
-function wrap24(hour: number): number {
-  return ((hour % 24) + 24) % 24;
-}
-
-export function periodOf(hour: number): string {
-  const h = wrap24(hour);
-  if (h >= 5 && h < 7) return "Dawn";
-  if (h >= 7 && h < 11) return "Morning";
-  if (h >= 11 && h < 15) return "Noon";
-  if (h >= 15 && h < 17.5) return "Afternoon";
-  if (h >= 17.5 && h < 20) return "Dusk";
-  return "Night";
-}
+export const periodOf=daytimeLabel;
 
 export function formatHour(hour: number): string {
   const h = wrap24(hour);
