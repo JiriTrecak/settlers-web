@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-captain",
+  "name": "Briar Captain",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "62c4b662e9be7215a44d1c053c04d7644427c65d59e066a7cd505974981c4aa1",
+      "bytes": 380452
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+      "bytes": 2282832
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.captain",
+        "character": "captain",
+        "scale": 1.4,
+        "healthHeight": 3.2199999999999998,
+        "cameraAnchor": {
+          "height": 2.0999999999999996,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants.briar-captain"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111"
+  }
+}

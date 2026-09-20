@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.textures.reference.scouring.occlusion-sprite.json",
+  "name": "occlusion-sprite",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "6d3e249330ac7019170ee250254857b78512cebb74838b2ed47349efdeba64c4",
+      "bytes": 331
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

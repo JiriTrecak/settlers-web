@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-neutral-troll-cave",
+  "name": "Reference · neutral troll cave",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7c7b46cf14586b4c909c5385e789595d83e97608fc1847c8d17fe2a196c37b16",
+      "bytes": 3923308
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-neutral-troll-cave",
+        "name": "Reference · neutral troll cave",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "7c7b46cf14586b4c909c5385e789595d83e97608fc1847c8d17fe2a196c37b16"
+  }
+}

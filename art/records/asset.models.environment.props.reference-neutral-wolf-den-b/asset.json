@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-neutral-wolf-den-b",
+  "name": "Reference · neutral wolf den b",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-neutral-wolf-den-b/model.glb",
+      "sha256": "34e5cfff0897e66d4cc3c20cb9f6b62201a8e5add4c7d801514b0edd04b094a6",
+      "bytes": 15277840,
+      "triangles": 2378,
+      "primitives": 3
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-neutral-wolf-den-b",
+      "name": "Reference · neutral wolf den b",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-neutral-wolf-den-b/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-neutral-wolf-den-b/model.glb",
+    "sha256": "34e5cfff0897e66d4cc3c20cb9f6b62201a8e5add4c7d801514b0edd04b094a6",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.152Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

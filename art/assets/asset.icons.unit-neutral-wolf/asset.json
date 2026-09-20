@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-wolf",
+  "name": "Wolf",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d",
+      "bytes": 31839
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.neutral.wolf",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-neutral-wolf"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d"
+  }
+}

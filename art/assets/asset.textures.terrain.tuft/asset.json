@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.tuft",
+  "name": "Tuft",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "6e7b35122b243798f5ba5275c0d48002924e79ac044ea12e887ed608568f9142",
+      "bytes": 184828
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "texture",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "6e7b35122b243798f5ba5275c0d48002924e79ac044ea12e887ed608568f9142"
+  }
+}

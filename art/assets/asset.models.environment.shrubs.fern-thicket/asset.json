@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.shrubs.fern-thicket",
+  "name": "Fern Thicket",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f80a3d94ad6fe5f207ac31258cfa06f84e2829522bd69a130306e33b0d984542",
+      "bytes": 557440
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "cebf9eb3bfb37db50725a0b75766f4a042eeb735de7f252f9031605233fd5395",
+      "bytes": 3319634
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "fern-thicket",
+        "name": "Fern Thicket",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "cebf9eb3bfb37db50725a0b75766f4a042eeb735de7f252f9031605233fd5395"
+  }
+}

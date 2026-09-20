@@ -1,0 +1,14 @@
+{
+  "map":"scouring-eldenvale",
+  "camera":{"x":291,"z":254,"zoom":1.2,"yawDegrees":-45,"pitchDegrees":45},
+  "hour":11,
+  "animationTime":12,
+  "source":"reference-stage benchmark; local Codex browser; original settings restored",
+  "note":"Same camera and resolution modes as brdf-benchmark.json. Sequential browser runs are noisy: soft-shadow GPU time fell, full-resolution filtered-shadow time rose. Do not claim a general speedup from these samples. FPS rounded from the displayed benchmark; timings are last-120-sample means/p95.",
+  "modes":[
+    {"scale":1,"shadows":"soft","canvas":[2674,2408],"dpr":2,"fps":76,"frameP95Ms":16.9,"gpuMeanMs":7.8569793416666664,"gpuP95Ms":8.689749,"cpuMeanMs":3.1258333285649615,"cpuP95Ms":3.3000000715255737},
+    {"scale":0.5,"shadows":"soft","canvas":[1337,1204],"dpr":1,"fps":117,"frameP95Ms":10.2,"gpuMeanMs":3.9984908583333327,"gpuP95Ms":4.514916,"cpuMeanMs":2.899166676402092,"cpuP95Ms":3.100000023841858},
+    {"scale":1,"shadows":"filtered","canvas":[2674,2408],"dpr":2,"fps":75,"frameP95Ms":17,"gpuMeanMs":8.396847050000002,"gpuP95Ms":8.745666,"cpuMeanMs":2.9600000023841857,"cpuP95Ms":3.200000047683716},
+    {"scale":0.5,"shadows":"filtered","canvas":[1337,1204],"dpr":1,"fps":120,"frameP95Ms":8.7,"gpuMeanMs":4.419738391666666,"gpuP95Ms":6.234541,"cpuMeanMs":2.8408333311478295,"cpuP95Ms":3.0999999046325684}
+  ]
+}

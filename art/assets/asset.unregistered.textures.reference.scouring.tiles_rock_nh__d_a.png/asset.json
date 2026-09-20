@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.textures.reference.scouring.tiles_rock_nh__d_a.png",
+  "name": "tiles_rock_nh__d_a",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "65eb33b05e23c4c73abd82e8414c21551425d86199cdfa0611d33cbe007bd54f",
+      "bytes": 2138596
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

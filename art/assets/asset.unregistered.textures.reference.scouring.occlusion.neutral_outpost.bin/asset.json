@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.textures.reference.scouring.occlusion.neutral_outpost.bin",
+  "name": "neutral_outpost",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "cd00ef50cbc4bd0bca63850ffd68fd3c90f216b4ea0660c05b98e9b70e404931",
+      "bytes": 14246
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

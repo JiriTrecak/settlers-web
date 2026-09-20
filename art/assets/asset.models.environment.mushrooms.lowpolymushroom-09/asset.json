@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.lowpolymushroom-09",
+  "name": "Lowpolymushroom 09",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "3a3b1883c0c3c535b8e2bbb1ecf847f5a5ed7c3fd7172f9c2f69f5023ffed5c9",
+      "bytes": 29236
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+      "bytes": 5369111
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "lowpolymushroom_09",
+        "name": "Lowpolymushroom 09",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac"
+  }
+}

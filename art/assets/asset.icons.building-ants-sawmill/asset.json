@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-sawmill",
+  "name": "Sawmill",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3f34b36a1a025a4a2c8fbc2e5a332193e809e54030967a01f877ac01a6116a44",
+      "bytes": 32992
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.sawmill",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.building-ants-sawmill"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "3f34b36a1a025a4a2c8fbc2e5a332193e809e54030967a01f877ac01a6116a44"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.bombardier",
+  "name": "Bombardier",
+  "kind": "unit",
+  "revision": 6,
+  "status": "published",
+  "tags": [
+    "characters",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f9ab9aa7e84938b4d96abf7b946b934e70d326b0dfcb8ef2f1eda39476308ba8",
+      "bytes": 514620
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+      "bytes": 3734368
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.bombardier",
+        "character": "bombardier",
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "projectileSocket": "socket_muzzle",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants.bombardier"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+  }
+}

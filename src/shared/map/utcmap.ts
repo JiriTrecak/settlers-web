@@ -1,4 +1,5 @@
 import {missionSchema, type MissionDefinition} from "../scenario/schema";
+import {authoringSceneSchema,type AuthoringScene} from '../authoring/layers';
 import { z } from "zod";
 import {
   placementSchema,
@@ -34,8 +35,10 @@ export type MapStamp = {
   readonly widthScale?: number;
   readonly depthScale?: number;
   readonly elevation?: number;
+  /** Authored source transform; avoids re-grounding imported models or losing quaternion precision. */
+  readonly sourceTransform?: {height:number;quaternion:[number,number,number,number];packedUserData?:[number,number,number]};
   /** Navigation level, optional absolute center height, and explicit end connections. */
-  readonly walk?: {readonly level:number;readonly height?:number;readonly connections?:{readonly start?:number;readonly end?:number}};
+  readonly walk?: {readonly mesh?:{positions:[number,number,number][];indices:number[]};readonly level:number;readonly height?:number;readonly connections?:{readonly start?:number;readonly end?:number}};
   readonly variant?: "snow" | "gold" | "red" | "green" | "pink" | "slate";
 };
 
@@ -65,6 +68,8 @@ export type UtcMap = {
   readonly waterLevel?: number;
   readonly height?: string;
   readonly landscape?: Landscape;
+  /** Editable recipes and shapes; generated output is rebuilt from the base height. */
+  readonly authoring?: AuthoringScene;
 };
 
 export function emptyUtcMap(size: 256 | 512 = 256): UtcMap {
@@ -107,6 +112,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
           "waterLevel",
           "height",
           "landscape",
+          "authoring",
         ].includes(k),
     )
   )
@@ -115,6 +121,8 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return null;
+  const authoring=authoringSceneSchema.optional().safeParse(o.authoring);
+  if(!authoring.success)return null;
   if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return null;
   if (o.sandbox && mission.data) return null;
   const starts = z.array(startSchema).min(mission.data || o.sandbox ? 1 : 2).max(o.sandbox ? 1 : 8).safeParse(o.playerStarts);
@@ -158,6 +166,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     entities: placements.data,
     camps: camps.data,
     ...(landscape ? { landscape } : {}),
+    ...(authoring.data?{authoring:authoring.data}:{}),
     ...(waterLevel !== undefined ? { waterLevel } : {}),
     ...(height !== undefined ? { height } : {}),
   };
@@ -182,6 +191,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       entities: map.entities,
       camps: map.camps,
       ...(map.landscape ? { landscape: map.landscape } : {}),
+      ...(map.authoring?{authoring:map.authoring}:{}),
       ...(waterLevel !== undefined ? { waterLevel } : {}),
       ...(height ? { height } : {}),
     },
@@ -223,7 +233,8 @@ function parseName(raw: unknown): string | null {
 }
 
 const level=z.number().int().min(0).max(31);
-export const walkStampSchema=z.object({level:level.min(1),height:z.number().finite().min(-16).max(64).optional(),connections:z.object({start:level.optional(),end:level.optional()}).strict().optional()}).strict();
+const walkMeshSchema=z.object({positions:z.array(z.tuple([z.number().finite(),z.number().finite(),z.number().finite()])).min(3).max(4096),indices:z.array(z.number().int().nonnegative()).min(3).max(24576)}).strict().refine(m=>m.indices.length%3===0&&m.indices.every(i=>i<m.positions.length));
+export const walkStampSchema=z.object({mesh:walkMeshSchema.optional(),level:level.min(1),height:z.number().finite().min(-16).max(64).optional(),connections:z.object({start:level.optional(),end:level.optional()}).strict().optional()}).strict();
 function parseStamps(raw: unknown): MapStamp[] | null {
   if (raw === undefined) return [];
   if (!Array.isArray(raw)) return null;
@@ -235,6 +246,8 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     if (typeof s.x !== "number" || typeof s.y !== "number") return null;
     if (!Number.isFinite(s.x) || !Number.isFinite(s.y)) return null;
     const walk=walkStampSchema.optional().safeParse(s.walk);if(!walk.success)return null;
+    const sourceTransform=z.object({packedUserData:z.tuple([z.number().int().min(0).max(255),z.number().int().min(0).max(255),z.number().int().min(0).max(255)]).optional(),height:z.number().finite(),quaternion:z.tuple([z.number().finite(),z.number().finite(),z.number().finite(),z.number().finite()]).refine(q=>Math.abs(Math.hypot(...q)-1)<.001)}).strict().optional().safeParse(s.sourceTransform);
+    if(!sourceTransform.success)return null;
     const yaw = s.yaw;
     const scale = s.scale;
     for (const axis of [s.heightScale, s.widthScale, s.depthScale])
@@ -279,6 +292,7 @@ function parseStamps(raw: unknown): MapStamp[] | null {
       id: s.id,
       asset: s.asset,
       ...(walk.data?{walk:walk.data}:{}),
+      ...(sourceTransform.data?{sourceTransform:sourceTransform.data}:{}),
       x: s.x,
       y: s.y,
       ...(yaw !== undefined ? { yaw } : {}),

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.textures.reference.scouring.tiles_grass_ar__d_a.rgba.bin",
+  "name": "tiles_grass_ar__d_a.rgba",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "a5c4db927d51ba30d08ceff72c1fee77f2bef9a6ec4fe9c7f7993bf7cf4c8b4b",
+      "bytes": 1274272
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

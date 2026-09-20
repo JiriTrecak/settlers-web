@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-gold-vein-a",
+  "name": "Reference · gold vein a",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-gold-vein-a/model.glb",
+      "sha256": "869635c1f54d5c263fd3ca9c62733095aab018516548bbb63736f8d7c5f9e781",
+      "bytes": 1213648,
+      "triangles": 822,
+      "primitives": 2
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-gold-vein-a",
+      "name": "Reference · gold vein a",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-gold-vein-a/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-gold-vein-a/model.glb",
+    "sha256": "869635c1f54d5c263fd3ca9c62733095aab018516548bbb63736f8d7c5f9e781",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.132Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

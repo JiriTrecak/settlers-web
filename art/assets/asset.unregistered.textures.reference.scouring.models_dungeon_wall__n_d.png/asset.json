@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.textures.reference.scouring.models_dungeon_wall__n_d.png",
+  "name": "models_dungeon_wall__n_d",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "45e1484fcc49bbe7cf32f729c6871a18c277e308c0e4c00b3f38e9a47da5ccbe",
+      "bytes": 5646083
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

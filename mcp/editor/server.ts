@@ -1,3 +1,4 @@
+import {assetTools} from './assetTools';
 /**
  * Mastra MCPServer for the world editor. Tools talk to the open editor tab.
  */
@@ -6,7 +7,7 @@ import type { EditorHub } from "./hub";
 import { editorTools } from "./tools";
 
 export function createEditorMcp(hub: EditorHub): MCPServer {
-  const tools = editorTools(hub);
+  const tools = {...editorTools(hub),...assetTools()};
   return new MCPServer({
     id: "utc-editor",
     name: "Under the Canopy Editor",

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-low",
+  "name": "Reference · grass low",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reference-grass-low/model.glb",
+      "sha256": "21baafea830efd340af451c2143ceca840a9a03b74c701ba6e77d910304f0872",
+      "bytes": 5728,
+      "triangles": 10,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-grass-low",
+      "name": "Reference · grass low",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reference-grass-low/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/grass/reference-grass-low/model.glb",
+    "sha256": "21baafea830efd340af451c2143ceca840a9a03b74c701ba6e77d910304f0872",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.130Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

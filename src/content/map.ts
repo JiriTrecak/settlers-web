@@ -1,4 +1,5 @@
 import {missionSchema} from "../shared/scenario/schema";
+import {projectScene} from '../shared/authoring/project';
 import type { ContentRegistry } from "./registry";
 import { placementSchema, campSchema, type Placement } from "./schema";
 import type { UtcMap } from "../shared/map/utcmap";
@@ -6,8 +7,8 @@ import {HeightField,decodeHeight} from '../shared/map/height';
 import {bridgeSurfaces,surfaceHeight} from '../shared/map/bridgeSurface';
 
 function placementFloors(map:UtcMap){
- const field=new HeightField(map.size);if(map.height)field.load(decodeHeight(map.height,map.size)??[],map.waterLevel??0);
- const decks=new Map(bridgeSurfaces(map.stamps,(x,z)=>field.sample(x,z)).map(d=>[d.id,d]));
+ const compiled=projectScene(map),field=compiled?.field??new HeightField(map.size);if(!compiled&&map.height)field.load(decodeHeight(map.height,map.size)??[],map.waterLevel??0,map.landscape?.importedTerrain);
+ const decks=new Map(bridgeSurfaces(compiled?.stamps??map.stamps,(x,z)=>field.sample(x,z)).map(d=>[d.id,d]));
  return (p:Placement['position'])=>{
   if(!p.surface)return field.sample(p.x,p.y);
   const deck=decks.get(p.surface);return deck?surfaceHeight(deck,p.x,p.y):undefined;

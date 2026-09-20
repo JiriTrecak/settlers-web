@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.maps.tutorial.four-crowns.utcmap",
+  "name": "four-crowns",
+  "kind": "map",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "utcmap",
+      "sha256": "d70e8f79e38d1353499dc574cd6b14e17890b9d5e40f3abb6095831717cdd60b",
+      "bytes": 3729203
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

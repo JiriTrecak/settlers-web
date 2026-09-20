@@ -1,4 +1,4 @@
-import connectedHudUrl from '../../../assets/interface/woodland/woodland-connected-hud.png?url';
+import connectedHudUrl from '../../../assets/library/image.woodland-connected-hud/image.png?url';
 import { AmbientLight, TextureLoader, SRGBColorSpace, LinearFilter, Box3, Color, DirectionalLight, OrthographicCamera, Scene, Vector3, Vector4, type Object3D, type Texture, type WebGLRenderer } from 'three';
 export type PortraitInstance = {root:Object3D;update:(dt:number)=>void;dispose:()=>void};
 /** A tiny scissored pass on the existing game canvas. No second context or pixel readbacks. */

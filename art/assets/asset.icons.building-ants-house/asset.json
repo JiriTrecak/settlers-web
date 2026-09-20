@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-house",
+  "name": "House",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "1cd968cc0b9a79ba639244f5fc0320409fa20b3639b86ff5a4a56b3884abc5ab",
+      "bytes": 30779
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.house",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.building-ants-house"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "1cd968cc0b9a79ba639244f5fc0320409fa20b3639b86ff5a4a56b3884abc5ab"
+  }
+}

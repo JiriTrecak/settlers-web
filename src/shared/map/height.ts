@@ -1,3 +1,6 @@
+import {sourceWater,type SourceWater} from './importedWater';
+import type {WatercourseIndex,Watercourse} from '../authoring/watercourses';
+import {sourceHeight,type ImportedTerrain,type SourceHeight} from './importedTerrain';
 /**
  * Per-vertex height field. One sample per cell corner (span+1).
  * Soft raise/lower; bilinear sample. File encoding is Int16 centimeters.
@@ -25,11 +28,18 @@ export class HeightField {
     this.verts = this.span + 1;
     this.samples = new Float32Array(this.verts * this.verts);
   }
+  source?: SourceHeight;
+  sourceWater?:SourceWater;
+  watercourses:Watercourse[]=[];
+  courseWater?:WatercourseIndex;
   waterLevel = 0;
   walkSurface?: (x:number,z:number,surface:string)=>number|undefined;
   walkSample(x:number,z:number,surface?:string):number {return surface ? this.walkSurface?.(x,z,surface) ?? this.sample(x,z) : this.sample(x,z); }
 
-  load(samples: ArrayLike<number>, waterLevel = 0): void {
+  load(samples: ArrayLike<number>, waterLevel = 0, imported?:ImportedTerrain): void {
+    this.watercourses=[];this.courseWater=undefined;
+    this.source=imported?sourceHeight(imported):undefined;
+    this.sourceWater=imported?sourceWater(imported):undefined;
     const n = Math.min(this.samples.length, samples.length);
     this.samples.fill(0);
     for (let i = 0; i < n; i++) this.samples[i] = clampH(samples[i]!);
@@ -37,16 +47,20 @@ export class HeightField {
   }
 
   clear(): void {
+    this.watercourses=[];this.courseWater=undefined;
+    this.source=undefined;this.sourceWater=undefined;
     this.samples.fill(0);
     this.waterLevel = 0;
   }
 
   sample(x: number, z: number): number {
-    return sampleHeight(this.samples, x, z, this.size);
+    return this.source?.sample(x,z) ?? sampleHeight(this.samples, x, z, this.size);
   }
 
+  waterAt(x:number,z:number):number{return this.courseWater?.sample(x,z)??this.sourceWater?.sample(x,z)??this.waterLevel;}
+
   wet(x: number, z: number): boolean {
-    return this.sample(x, z) < this.waterLevel;
+    return this.sample(x, z) < this.waterAt(x,z);
   }
 
   flat(): boolean {

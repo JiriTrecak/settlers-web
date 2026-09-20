@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-neutral-outpost",
+  "name": "Reference · neutral outpost",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "83ec62c92cbd2189a910deeb7f7de37d5749b2c2089e3242c604d85d146f6a8b",
+      "bytes": 33309100
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-neutral-outpost",
+        "name": "Reference · neutral outpost",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "83ec62c92cbd2189a910deeb7f7de37d5749b2c2089e3242c604d85d146f6a8b"
+  }
+}

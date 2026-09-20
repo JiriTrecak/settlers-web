@@ -53,7 +53,7 @@ export class EditorChrome {
     this.top.append(rule);
     this.file = new IconBar(this.top, { place: "inline", label: "File", items: fileTools(hooks), surface: "plain" });
     this.rail = document.createElement("div");
-    this.rail.className = "pointer-events-none absolute left-4 top-1/2 z-10 flex -translate-y-1/2 flex-row items-center gap-1.5";
+    this.rail.className = "editor-tool-rail pointer-events-none absolute left-4 top-1/2 z-10 flex -translate-y-1/2 flex-row items-center gap-1.5";
     host.append(this.rail);
     this.game = new IconBar(this.rail, { place: "col", label: "Tools", items: gameTools(hooks) });
     this.modes = new IconBar(this.rail, { place: "col", label: "Modes", items: this.game.modesOf("grid") });

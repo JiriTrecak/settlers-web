@@ -1,0 +1,10 @@
+{
+  "size": [
+    721,
+    1393
+  ],
+  "instances": 4637,
+  "density": 3,
+  "blend": "maximum-alpha",
+  "source": "Rasterized original underlay geometry and texture alpha; original RT resolution and blend state are not recorded in the map"
+}

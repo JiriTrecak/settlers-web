@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.briar-leaf-ledger",
+  "name": "Leaf Ledger",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "item"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "6ff4cb53c5bfc5d3a2300844bfca99be21acbcf90a4af19c034e3e77b11ac4ff",
+      "bytes": 31391
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455",
+      "bytes": 2388106
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.briar.leaf-ledger",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.briar-leaf-ledger"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455"
+  }
+}

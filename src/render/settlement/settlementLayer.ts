@@ -1,3 +1,6 @@
+import {geometryModel} from '../../shared/assets/models';
+import {transformedModel} from '../prop/modelTransform';
+import {prototypeBounds} from '../prop/grounding';
 import {ImpactEffects} from './impactEffects';
 import {speechEnvelope} from '../characters/speech';
 import {perf} from '../../debug/performance';
@@ -227,6 +230,8 @@ export class SettlementLayer {
               prepareAntMaterials(gltf.scene);
               this.characterBatchDisposers.push(batchStaticMaterials(gltf.scene,!!gltf.animations.length));
             }
+            const authored=geometryModel(a.file!);
+            if(authored)gltf.scene=transformedModel(gltf.scene,authored.transform,authored.groundContact==='terrain'?-prototypeBounds(gltf.scene).min.y:0);
             this.prototypes.set(a.id, gltf.scene);
             if (a.character) {
               this.characterBatchDisposers.push(

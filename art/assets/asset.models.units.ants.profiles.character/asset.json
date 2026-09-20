@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.profiles.character",
+  "name": "Character",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3",
+      "bytes": 1562
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "data",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3"
+  }
+}

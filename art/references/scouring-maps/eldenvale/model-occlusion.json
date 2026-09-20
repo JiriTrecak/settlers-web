@@ -1,0 +1,39 @@
+{
+  "size": [
+    241,
+    465
+  ],
+  "instances": 6,
+  "sources": [
+    "Media/odf/neutral_outpost",
+    "Media/odf/ruins_blocks_03",
+    "Media/odf/ruins_blocks_04",
+    "Media/odf/wooden_bridge_small"
+  ],
+  "density": 1,
+  "blend": "minimum",
+  "modelIntensity": 1,
+  "plantInstances": 2617,
+  "sprite": {
+    "source": "TextureCache/env_radial_sprite__s_d.dds",
+    "sourceSha256": "c9c63b335d8212b725e327b46b8d3a420c2478147e0522143ebde2ea08711bed",
+    "size": [
+      64,
+      64
+    ],
+    "channel": "r",
+    "colorSpace": "linear",
+    "decodedSha256": "ab1fb9da803917e07063eae9a1b5da8b68935327e15a0cc28eb8ef24dd62eaa4",
+    "decodedBytes": 4096
+  },
+  "coverage": "Static model ODF and active fir-class sprite contributions",
+  "spriteOffsetBlend": "maximum",
+  "unverified": [
+    "RT resolution",
+    "overlap blend and model/sprite priority",
+    "model intensity uniform",
+    "sprite texture binding inferred from executable reference",
+    "plant height from transformed geometry bounds",
+    "ObscureInfluence attenuation not applied; engine formula unavailable"
+  ]
+}

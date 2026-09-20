@@ -1,26 +1,34 @@
+import {ImportedTerrainMaterial} from './importedTerrainMaterial';
+import type {ImportedTerrain} from '../../shared/map/importedTerrain';
+import {ReferenceTerrain} from './referenceTerrain';
 import {bakeGroundLights,type GroundLamp} from './groundLightMap';
-import roadUrl from '../../../assets/textures/roads/road-albedo.png?url';
-import mossUrl from '../../../assets/textures/materials/ants/moss-surface.png?url';
+import roadUrl from '../../../assets/library/asset.textures.roads.road-albedo/albedo.png?url';
+import mossUrl from '../../../assets/library/asset.textures.materials.ants.moss-surface/albedo.png?url';
 import type {CoverPatch} from '../../shared/landscape/curve';
-import forestFloorUrl from '../../../assets/textures/terrain/forest-floor.png?url';
-import heartwoodUrl from '../../../assets/textures/terrain/heartwood-floor.png?url';
-import wallWoodUrl from '../../../assets/textures/terrain/heartwood-grain.png?url';
+import forestFloorUrl from '../../../assets/library/asset.textures.terrain.forest-floor/albedo.png?url';
+import heartwoodUrl from '../../../assets/library/asset.textures.terrain.heartwood-floor/albedo.png?url';
+import wallWoodUrl from '../../../assets/library/asset.textures.terrain.heartwood-grain/albedo.png?url';
 import { DataTexture, RGFormat, LinearFilter, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, TextureLoader, Color } from 'three';
 import { HEIGHT_ORIGIN, MAP_SIZE, MAP_HALO, type HeightField } from '../../shared';
 import { rasterizeCurve, sampleCurve, type TerrainStroke } from '../../shared/landscape/curve';
-import pebbleUrl from '../../../assets/textures/terrain/pebbles.png?url';
-import snowUrl from '../../../assets/textures/terrain/snow.png?url';
-import sandUrl from '../../../assets/textures/terrain/sand.png?url';
-import mudUrl from '../../../assets/textures/terrain/mud.png?url';
-import rockUrl from '../../../assets/textures/terrain/rock.png?url';
+import pebbleUrl from '../../../assets/library/asset.textures.terrain.pebbles/albedo.png?url';
+import snowUrl from '../../../assets/library/asset.textures.terrain.snow/albedo.png?url';
+import sandUrl from '../../../assets/library/asset.textures.terrain.sand/albedo.png?url';
+import mudUrl from '../../../assets/library/asset.textures.terrain.mud/albedo.png?url';
+import rockUrl from '../../../assets/library/asset.textures.terrain.rock/albedo.png?url';
 export class TerrainMaterial extends MeshStandardMaterial {
+  private readonly reference=new ReferenceTerrain();
+  private imported?:ImportedTerrainMaterial;
+  compileImportedDepth(shader:import('three').WebGLProgramParametersWithUniforms){this.imported?.compileDepth(shader);}
+  get ready():Promise<void>{return this.imported?.ready??Promise.resolve();}
+  setImported(source?:ImportedTerrain){if(this.imported?.source===source)return;this.imported?.dispose();this.imported=source?new ImportedTerrainMaterial(source):undefined;this.needsUpdate=true;}
   private readonly moss=new TextureLoader().load(mossUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private readonly forestFloor=new TextureLoader().load(forestFloorUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private readonly heartwood=new TextureLoader().load(heartwoodUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private readonly wallWood=new TextureLoader().load(wallWoodUrl,t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=8;});
   private readonly interiorFloor={value:0};
   private readonly soilAtlas={value:this.forestFloor};
-  setFloor(material:'forest'|'heartwood'='forest'){this.interiorFloor.value=material==='heartwood'?1:0;this.soilAtlas.value=material==='heartwood'?this.heartwood:this.forestFloor;this.rockAtlas.value=material==='heartwood'?this.wallWood:this.textures[2]!;}
+  setFloor(material:'forest'|'heartwood'='forest'){const next=material==='heartwood'?1:0;if(next!==this.interiorFloor.value)this.needsUpdate=true;this.interiorFloor.value=next;this.soilAtlas.value=material==='heartwood'?this.heartwood:this.forestFloor;this.rockAtlas.value=material==='heartwood'?this.wallWood:this.textures[2]!;}
   private contactRevision=-1;
   private readonly contacts=new DataTexture(new Uint8Array(1024*1024*4),1024,1024);
   private readonly weights:DataTexture;
@@ -141,7 +149,13 @@ export class TerrainMaterial extends MeshStandardMaterial {
       normal=normalize(abs(determinant)*normal-gradient);
       `);
     };
-    this.customProgramCacheKey=()=> 'landscape-terrain-heartwood-v10';
+    const interiorCompile=this.onBeforeCompile;
+    this.onBeforeCompile=(shader,renderer)=>{
+      if(this.imported)this.imported.compile(shader);
+      else if(this.interiorFloor.value>.5)interiorCompile.call(this,shader,renderer);
+      else this.reference.compile(shader,{paint:this.weights,cover:this.roadMask,contacts:this.contacts,season:this.seasonTint,sea:this.level,verts:this.verts});
+    };
+    this.customProgramCacheKey=()=> `landscape-terrain-reference-v2-${this.interiorFloor.value}-${this.imported?.source.sha256??"native"}`;
   }
   private groundLamps:readonly GroundLamp[]|undefined;
   setGroundLights(lamps:readonly GroundLamp[],field:HeightField):void {
@@ -198,6 +212,6 @@ export class TerrainMaterial extends MeshStandardMaterial {
     }
     this.weights.needsUpdate=true;this.roadMask.needsUpdate=true;
   }
-  override dispose():void{ this.roadMask.dispose(); this.moss.dispose();this.forestFloor.dispose();this.heartwood.dispose();this.wallWood.dispose();this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());super.dispose(); }
+  override dispose():void{ this.imported?.dispose();this.reference.dispose(); this.roadMask.dispose(); this.moss.dispose();this.forestFloor.dispose();this.heartwood.dispose();this.wallWood.dispose();this.weights.dispose();this.contacts.dispose();this.textures.forEach(t=>t.dispose());super.dispose(); }
 }
 const smooth=(a:number,b:number,x:number)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};

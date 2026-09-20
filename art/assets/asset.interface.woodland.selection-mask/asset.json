@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.selection-mask",
+  "name": "Selection Mask",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "svg",
+      "sha256": "c911530c61e7eb3242e9c2564d588c1ee0b96daaee58044a6a8ab4fc646406b2",
+      "bytes": 520
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c911530c61e7eb3242e9c2564d588c1ee0b96daaee58044a6a8ab4fc646406b2"
+  }
+}

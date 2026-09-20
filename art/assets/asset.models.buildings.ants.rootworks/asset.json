@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.rootworks",
+  "name": "Rootworks",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "15ee2cc9599dafee51e6fd42a042e3f5795991c3881b598a3e3bb9d8525f55d7",
+      "bytes": 936632
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "c6c9d5a8b782d1276984bf2c3056e4ecde92ff624634b5a31c55b336b75579a6",
+      "bytes": 3627539
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.rootworks",
+        "scale": 1.1,
+        "healthHeight": 3.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.rootworks"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c6c9d5a8b782d1276984bf2c3056e4ecde92ff624634b5a31c55b336b75579a6"
+  }
+}

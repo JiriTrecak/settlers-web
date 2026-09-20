@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-terrain-riverside-corner-01",
+  "name": "Terrain RiverSide Corner 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fdd32b6cef5c2d06ab9a1a0c25404aa7248fc046d7305e6e9aa79402fba98d47",
+      "bytes": 31028
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "e78b450e75102d7614d219e00123625ccf1f456e4e809b2e88eb5958010be84e",
+      "bytes": 40868
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-terrain-riverside-corner-01",
+        "name": "Terrain RiverSide Corner 01",
+        "category": "terrain",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "e78b450e75102d7614d219e00123625ccf1f456e4e809b2e88eb5958010be84e"
+  }
+}

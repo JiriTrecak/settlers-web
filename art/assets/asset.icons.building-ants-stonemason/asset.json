@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-stonemason",
+  "name": "Stonemason",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "596f4e677907818dfb9b4aa875d9d6b64300344fbb2eaae5008a8d9410463bf1",
+      "bytes": 33249
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.stonemason",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.building-ants-stonemason"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "596f4e677907818dfb9b4aa875d9d6b64300344fbb2eaae5008a8d9410463bf1"
+  }
+}

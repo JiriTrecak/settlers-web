@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.maps.skirmish.terrain-proving-ground.utcmap",
+  "name": "terrain-proving-ground",
+  "kind": "map",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "utcmap",
+      "sha256": "0449944744b8938a81fba56167c03530623ebd442ce9a536a9ffe9b2b5438358",
+      "bytes": 230856
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "boundsMin": [
+    -11.336833953857422,
+    -2.403322696685791,
+    -11.078289985656738
+  ],
+  "boundsMax": [
+    11.186031341552734,
+    9.821420669555664,
+    10.2695951461792
+  ],
+  "size": [
+    90,
+    85,
+    12
+  ],
+  "axes": [
+    "x",
+    "z",
+    "y"
+  ],
+  "format": "r8-unorm",
+  "colorSpace": "linear",
+  "source": "Media/odf/neutral_outpost",
+  "sourceSha256": "b909edf91a488b216316a825c223f86c448b5cc30cd6121df637d4a802157938",
+  "decodedSha256": "819c5bbc573e682a45d25fd4d041305dd1829470a05770bd74c10371ead0c483",
+  "decodedBytes": 91800
+}

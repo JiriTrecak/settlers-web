@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-small-rock-a",
+  "name": "Reference · small rock a",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-small-rock-a/model.glb",
+      "sha256": "a19abf99bec4814cd08e999388a4158d6faa9de7bbcba8bf58e3f44e09b5c948",
+      "bytes": 120612,
+      "triangles": 88,
+      "primitives": 2
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-small-rock-a",
+      "name": "Reference · small rock a",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-small-rock-a/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-small-rock-a/model.glb",
+    "sha256": "a19abf99bec4814cd08e999388a4158d6faa9de7bbcba8bf58e3f44e09b5c948",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.132Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

@@ -10,8 +10,8 @@ export function prototypeBounds(root:Object3D):Box3 {
 }
 
 /** Preserve the soil line of trees with buried roots; repair positive import offsets. */
-export function prototypeGroundOffset(asset:string,minY:number,floating:boolean):number {
-  if(structuralOrigins.has(asset)||floating||!Number.isFinite(minY)||asset.includes('pillar-arch'))return 0;
-  if(/tree-|pine|spruce/.test(asset)&&minY<0)return 0;
+export function prototypeGroundOffset(asset:string,minY:number,floating:boolean,preserveAuthoredOrigin=false):number {
+  if(preserveAuthoredOrigin||structuralOrigins.has(asset)||floating||!Number.isFinite(minY)||asset.includes('pillar-arch'))return 0;
+  if(/tree-|pine|spruce|reference-fir/.test(asset)&&minY<0)return 0;
   return -minY;
 }

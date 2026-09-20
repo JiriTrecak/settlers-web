@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-stonewall-03",
+  "name": "Prop StoneWall 03",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7c0778e08702552bc7ded5ed64b6996d7ece3e73e3f86239c110f83e91327759",
+      "bytes": 48952
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "d4b644385d8702e5431c9c6d5106142b6e816e94514bd705bdb4ba698b85752f",
+      "bytes": 64776
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-prop-stonewall-03",
+        "name": "Prop StoneWall 03",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d4b644385d8702e5431c9c6d5106142b6e816e94514bd705bdb4ba698b85752f"
+  }
+}

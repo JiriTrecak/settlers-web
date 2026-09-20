@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-bush-02",
+  "name": "Plant Bush 02",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "84e08a5c12cf4c1a2652322d6c97ee7b028434b0190a1b8021404ba5504756aa",
+      "bytes": 47368
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "531b353b8b1d99788175145ab22001428acf91a5601915404bc14878066928ca",
+      "bytes": 62632
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-plant-bush-02",
+        "name": "Plant Bush 02",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "531b353b8b1d99788175145ab22001428acf91a5601915404bc14878066928ca"
+  }
+}

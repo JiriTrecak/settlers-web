@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.textures.materials.synty.looks",
+  "name": "Looks",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "fdebee32d468156ab4def097e280a1e84d85571fd523e106235ab0af1e8b1e38",
+      "bytes": 52478
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "data",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "fdebee32d468156ab4def097e280a1e84d85571fd523e106235ab0af1e8b1e38"
+  }
+}

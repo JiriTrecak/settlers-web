@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.logo-metal",
+  "name": "Logo Metal",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "9a5f6fd22f6d49cdb1e69a01b50306bc17d765fa062daa93c1e5105cbc823ff1",
+      "bytes": 2841600
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "9a5f6fd22f6d49cdb1e69a01b50306bc17d765fa062daa93c1e5105cbc823ff1"
+  }
+}

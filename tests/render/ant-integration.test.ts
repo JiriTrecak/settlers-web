@@ -8,10 +8,10 @@ import { game } from "../game/helpers";
 afterEach(() => vi.restoreAllMocks());
 
 it("keeps real animation clips and combat effects on simulation time through stalls, pauses and catch-up", async () => {
-  const bytes = readFileSync('assets/models/units/ants/warrior/model.glb');
+  const bytes = readFileSync('assets/library/asset.models.units.ants.warrior/geometry.glb');
   const gltf = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
   vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async url =>
-    url.includes('units/ants/warrior/model.glb') ? gltf : {scene:new Group(),animations:[]} as any);
+    url.includes('asset.models.units.ants.warrior/geometry.glb') ? gltf : {scene:new Group(),animations:[]} as any);
   let now=0;vi.spyOn(performance,'now').mockImplementation(()=>now);
   const scene=new Scene(),layer=new SettlementLayer(scene);
   await layer.ready;
@@ -61,11 +61,11 @@ it("keeps real animation clips and combat effects on simulation time through sta
 it("uses independent animated game variants, reacts once per strike, and distinguishes fog removal from death", async () => {
   const loader = new GLTFLoader();
   const variants = await Promise.all(["base", "warrior", "archer", "marshal"].map(async variant => {
-    const bytes = readFileSync(`assets/models/units/ants/${variant==='base'?'worker':variant}/model.glb`);
+    const bytes = readFileSync(`assets/library/asset.models.units.ants.${variant==='base'?'worker':variant}/geometry.glb`);
     return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), "");
   }));
   vi.spyOn(GLTFLoader.prototype, "loadAsync").mockImplementation(async url => {
-    const index = ["base", "warrior", "archer", "marshal"].findIndex(v => url.includes(`units/ants/${v==='base'?'worker':v}/model.glb`));
+    const index = ["base", "warrior", "archer", "marshal"].findIndex(v => url.includes(`asset.models.units.ants.${v==='base'?'worker':v}/geometry.glb`));
     return index >= 0 ? variants[index] : {scene: new Group(), animations: []} as any;
   });
   const scene = new Scene(), layer = new SettlementLayer(scene);
@@ -144,9 +144,9 @@ it("uses independent animated game variants, reacts once per strike, and disting
 });
 
 for (const windup of [20,40]) it(`locks the real Marshal cast to a ${windup}-tick windup, release and interruptible recovery`,async()=>{
- const bytes=readFileSync('assets/models/units/ants/marshal/model.glb');
+ const bytes=readFileSync('assets/library/asset.models.units.ants.marshal/geometry.glb');
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
- vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async url=>url.includes('units/ants/marshal/model.glb')?gltf:{scene:new Group(),animations:[]} as any);
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async url=>url.includes('asset.models.units.ants.marshal/geometry.glb')?gltf:{scene:new Group(),animations:[]} as any);
  let now=0;vi.spyOn(performance,'now').mockImplementation(()=>now);
  const simulation=game(),checksum=simulation.checksum(),view=structuredClone(simulation.view());
  const hero=view.entities.find(e=>e.definition==='unit.ants.marshal')!;
@@ -188,9 +188,9 @@ for (const windup of [20,40]) it(`locks the real Marshal cast to a ${windup}-tic
 
 
 it('launches an actual archer projectile from its posed bow socket after world transforms',async()=>{
- const bytes=readFileSync('assets/models/units/ants/archer/model.glb');
+ const bytes=readFileSync('assets/library/asset.models.units.ants.archer/geometry.glb');
  const gltf=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
- vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async url=>url.includes('units/ants/archer/model.glb')?gltf:{scene:new Group(),animations:[]} as any);
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async url=>url.includes('asset.models.units.ants.archer/geometry.glb')?gltf:{scene:new Group(),animations:[]} as any);
  const scene=new Scene(),layer=new SettlementLayer(scene),field=new HeightField();await layer.ready;
  const view=structuredClone(game().view()),archer=view.entities.find(e=>e.definition==='unit.ants.warrior')!;
  archer.definition='unit.ants.archer';archer.rotation=137;archer.x=100;archer.y=101;archer.unit!.moving=false;

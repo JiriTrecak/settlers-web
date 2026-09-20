@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-bush-leaves-02",
+  "name": "Plant Bush Leaves 02",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "51677223e53afa7458a4f5ab51ca1bc92cf6c13deee79d0c9a6fc2d70858e13d",
+      "bytes": 522336
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "5518bb837a0b5b866efe806360d3648f0dc39faae4427cd7c2b8acadf50837c0",
+      "bytes": 695900
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-plant-bush-leaves-02",
+        "name": "Plant Bush Leaves 02",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "5518bb837a0b5b866efe806360d3648f0dc39faae4427cd7c2b8acadf50837c0"
+  }
+}

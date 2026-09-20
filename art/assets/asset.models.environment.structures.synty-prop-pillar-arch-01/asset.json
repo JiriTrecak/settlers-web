@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-arch-01",
+  "name": "Prop Pillar Arch 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d582db08e6dfb0c783571bb8ab7db920898cd7b72933ea235a66a0b8dffa8fb3",
+      "bytes": 79776
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "ddc7c66f8bc7d24d6e1afe66f2525c7df32db3aaecadf2d330a0b0406c40ba61",
+      "bytes": 105868
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-prop-pillar-arch-01",
+        "name": "Prop Pillar Arch 01",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "ddc7c66f8bc7d24d6e1afe66f2525c7df32db3aaecadf2d330a0b0406c40ba61"
+  }
+}

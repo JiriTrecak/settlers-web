@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.coniferous-trees-12",
+  "name": "Coniferous Trees 12",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "341c6a5d9c1fa4c2000c399f87db039e676707c0aa8dfe26e231b2ecbcf3974d",
+      "bytes": 71484
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+      "bytes": 5369111
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "coniferous_trees_12",
+        "name": "Coniferous Trees 12",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac"
+  }
+}

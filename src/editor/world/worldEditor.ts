@@ -1,4 +1,9 @@
 import {walkStampSchema} from '../../shared/map/utcmap';
+import {AuthoringHistory,type SceneSelection} from '../../shared/authoring/history';
+import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer} from '../../shared/authoring/layers';
+import {compileMapScene,type CompiledMapScene} from '../../shared/authoring/mapScene';
+import {landscapeAssets} from '../../shared/authoring/project';
+import {sampleBezier} from '../../shared/authoring/shapes';
 import {canopySchema} from '../../shared/landscape/canopy';
 import {atmosphereSchema} from '../../shared/landscape/atmosphere';
 import {missionSchema,type MissionDefinition} from "../../shared/scenario/schema";
@@ -116,6 +121,36 @@ export type EditorShotOpts = {
 
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
+  readonly authoringAssets=landscapeAssets;
+  layers=new AuthoringHistory({version:1,layers:[],objects:[]});
+  private compiledScene:CompiledMapScene|null=null;
+  private compiledInputs:unknown[]=[];
+  private drawingLayer:ProceduralLayer|null=null;
+  get generatedScene(){return this.compiledScene?.generated;}
+  selectLayer(selection:SceneSelection){this.layers.selection=selection;this.select.clear();this.selectedEntity=null;this.setTool('select');this.paint();this.hooks.onSelect?.();}
+  putLayer(input:unknown){const layer=proceduralLayerSchema.parse(input),scene=this.layers.scene;if(scene.layers.find(l=>l.id===layer.id)?.locked)throw Error('Layer is locked');compileMapScene({...this.map,authoring:{...scene,layers:[...scene.layers.filter(l=>l.id!==layer.id),layer]}},this.authoringAssets);this.layers.putLayer(layer);this.commitLayers();}
+  putAuthoredObject(input:unknown){const object=authoredObjectSchema.parse(input),scene=this.layers.scene;if(scene.objects.find(o=>o.id===object.id)?.locked)throw Error('Object is locked');compileMapScene({...this.map,authoring:{...scene,objects:[...scene.objects.filter(o=>o.id!==object.id),object]}},this.authoringAssets);this.layers.putObject(object);this.commitLayers();}
+  removeLayerSelection(){if(this.layers.selection)this.layers.remove(this.layers.selection);this.commitLayers();}
+  lockLayerSelection(locked:boolean){if(this.layers.selection)this.layers.setLocked(this.layers.selection,locked);this.commitLayers();}
+  bakeSelectedLayer(){if(this.layers.selection?.kind!=='layer'||!this.generatedScene)throw Error('Select a generated layer');this.layers.bake(this.layers.selection.id,this.generatedScene);this.commitLayers();}
+  undoLayers(redo=false){if(redo)this.layers.redo();else this.layers.undo();this.commitLayers();}
+  private commitLayers(){this.map={...this.map,authoring:this.layers.scene};this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}
+  authoringCamera(mode:'top'|'free'|'game'){
+    const camera=this.renderer?.camera;if(!camera)return;this.gameCam=mode==='game';camera.setGame(this.gameCam,this.map.size);
+    if(mode==='top')camera.setTopDown();else if(mode==='free')camera.pose({pitch:ISO_PITCH,yaw:ISO_YAW});
+    this.hooks.onView?.();this.draw();
+  }
+  beginLayerShape(id:string){const layer=this.layers.scene.layers.find(l=>l.id===id);if(!layer)throw Error('Layer not found');if(layer.locked)throw Error('Layer is locked');this.drawingLayer=structuredClone(layer);this.drawingLayer.shape=layer.shape.type==='region'?{type:'region',points:[]}:{type:'spline',knots:[]};this.setTool(null);this.authoringCamera('top');}
+  finishLayerShape(){if(!this.drawingLayer)return;const parsed=proceduralLayerSchema.parse(this.drawingLayer);this.drawingLayer=null;this.putLayer(parsed);}
+  cancelLayerShape(){this.drawingLayer=null;this.paint();}
+  shapeScreenPoint(x:number,z:number){return this.renderer?.screenPoint(x,this.compiledScene?.field.sample(x,z)??0,z);}
+  shapeWorldPoint(clientX:number,clientY:number){return this.renderer?.pickGround(clientX,clientY);}
+  previewLayerShape(shape:ProceduralLayer['shape']){this.renderer?.previewCurve(shape.type==='region'?[...shape.points,shape.points[0]!]:sampleBezier(shape.knots));}
+  private compiledMap():CompiledMapScene{
+    const keys=[this.map.authoring,this.map.height,this.map.waterLevel,this.map.landscape?.importedTerrain,this.map.stamps,this.map.size];
+    if(!this.compiledScene||keys.some((v,i)=>v!==this.compiledInputs[i])){this.compiledScene=compileMapScene(this.map,this.authoringAssets);this.compiledInputs=keys;this.renderer?.setTerrain(this.compiledScene.field);}
+    return this.compiledScene;
+  }
   spawnPlayer = 1;
   entityDefinition = content.definitions.find((d) => d.kind === "unit")!.id;
   entityOwner: Owner = "player.1";
@@ -251,6 +286,7 @@ export class WorldEditor {
 
   replace(map: UtcMap): void {
     this.map = map;
+    this.layers=new AuthoringHistory(map.authoring??{version:1,layers:[],objects:[]});this.compiledScene=null;this.drawingLayer=null;
     this.entityUndo = [];
     this.entityRedo = [];
     this.selectedEntity = null;
@@ -1134,7 +1170,7 @@ export class WorldEditor {
     });
     renderer.setGridMode(this.gridMode);
     this.syncPaintView();
-    renderer.setTerrain(this.height);
+    renderer.setTerrain(this.compiledMap().field);
     renderer.setLandscape(this.map.landscape ?? emptyLandscape());
     this.paint();
     this.syncPaintView();
@@ -1271,6 +1307,9 @@ export class WorldEditor {
 
   private grabDown(clientX: number, clientY: number, rotate: boolean): boolean {
     const resourceId = this.renderer?.pickStamp(clientX, clientY);
+    const owner=resourceId?this.compiledScene?.owners.get(resourceId):undefined;
+    if(owner){this.selectLayer({kind:'layer',id:owner});return true;}
+    if(resourceId&&this.map.authoring?.objects.some(o=>o.id===resourceId)){this.selectLayer({kind:'object',id:resourceId});return true;}
     const id =
         this.renderer?.pickGameEntity(clientX, clientY) ??
         (resourceId?.startsWith("resource-")
@@ -1399,6 +1438,9 @@ export class WorldEditor {
   }
 
   private click(clientX: number, clientY: number): void {
+    if(this.drawingLayer){const p=this.renderer?.pickGround(clientX,clientY);if(!p)return;const shape=this.drawingLayer.shape;
+      if(shape.type==='region')shape.points.push({x:p.x,z:p.z});else shape.knots.push({x:p.x,z:p.z,elevation:this.height.waterLevel,widthScale:1,depthScale:1,flowScale:1});
+      this.renderer?.previewCurve(shape.type==='region'?shape.points:shape.knots);this.hooks.onSelect?.();return;}
     if (this.tool === "entity") {
       const hit = this.renderer?.pickGround(clientX, clientY);
       if (!hit) return;
@@ -1459,6 +1501,7 @@ export class WorldEditor {
   }
 
   private paint(): void {
+    const compiled=this.compiledMap();
     if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id))
       this.select.clear();
     this.renderer?.setSpawnPoints(
@@ -1467,7 +1510,7 @@ export class WorldEditor {
     );
     this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
     this.entityViews = editorEntities(this.map);
-    const stamps = [...this.map.stamps, ...resourceStamps(this.entityViews)];
+    const stamps = [...compiled.stamps, ...resourceStamps(this.entityViews)];
     const selected = expandMap(this.map, content).findIndex(
       (p) => p.id === this.selectedEntity,
     );
@@ -1480,19 +1523,21 @@ export class WorldEditor {
       },
       stamps,
     );
-    this.mini?.setHeight(this.height);
+    this.mini?.setHeight(compiled.field);
     this.mini?.setStamps(stamps);
     this.mini?.setLandscape(this.map.landscape);
     this.mini?.setFog(authoredScene(this.entityViews,this.map.size));
     this.mini?.setPlayerStarts(this.map.playerStarts ?? []);
     this.mini?.paint();
+    const selectedLayer=this.layers.scene.layers.find(l=>l.id===this.layers.selection?.id);
+    if(selectedLayer){const shape=selectedLayer.shape;this.renderer?.previewCurve(shape.type==='region'?[...shape.points,shape.points[0]!]:sampleBezier(shape.knots));}
   }
 
   private loadHeight(map: UtcMap): void {
     if(this.height.size!==map.size){this.height=new HeightField(map.size);this.brush.resize(map.size);this.sculpt.mask.resize(map.size);}
     this.renderer?.camera.setGame(this.gameCam,map.size);
     const samples = map.height ? decodeHeight(map.height,map.size) : null;
-    if (samples) this.height.load(samples, map.waterLevel ?? 0);
+    if (samples) this.height.load(samples, map.waterLevel ?? 0, map.landscape?.importedTerrain);
     else {
       this.height.clear();
       this.height.waterLevel = map.waterLevel ?? 0;

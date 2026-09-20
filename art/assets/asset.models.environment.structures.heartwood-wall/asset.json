@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.heartwood-wall",
+  "name": "Heartwood Wall",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "heartwood",
+    "interior"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "bb713ee31b6b87f41649fc079895e2792bef1e79476ff937c80dc0615536cc03",
+      "bytes": 902268
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "f24638a9c71de88a4671d34ef23c42bde6ea8dd90c25f3c163bc3ccff9ccf4ac",
+      "bytes": 10714707
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "heartwood-wall",
+        "name": "Heartwood Wall",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blocker": {
+          "width": 16,
+          "depth": 4
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "f24638a9c71de88a4671d34ef23c42bde6ea8dd90c25f3c163bc3ccff9ccf4ac"
+  }
+}

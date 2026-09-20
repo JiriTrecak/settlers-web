@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-02",
+  "name": "Prop Pillar Arch Broken 02",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1f511b39fa9a2811b83179d7953420aed53598c2349a52a5a6efe553e4a81138",
+      "bytes": 42464
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "ce7d8022ea2941caadf7c649aa8c2c35ca0fec6a54191c2d887facd4b6ea86cb",
+      "bytes": 56110
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-prop-pillar-arch-broken-02",
+        "name": "Prop Pillar Arch Broken 02",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "ce7d8022ea2941caadf7c649aa8c2c35ca0fec6a54191c2d887facd4b6ea86cb"
+  }
+}

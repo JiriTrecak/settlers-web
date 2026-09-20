@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
+  "name": "Mushroom Cluster",
+  "kind": "foliage",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6f8b82339f38cac717e5f6cd33f55d4ab59d0e1ff2f7b952121d2e51373765aa",
+      "bytes": 37552
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "31d6004fc8e406aa4e5a02f37d35d6155097ade072a32050d8f0117300f81379",
+      "bytes": 3369735
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ochre-mushroom-colony",
+        "name": "Ochre Mushroom Colony",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "31d6004fc8e406aa4e5a02f37d35d6155097ade072a32050d8f0117300f81379"
+  }
+}

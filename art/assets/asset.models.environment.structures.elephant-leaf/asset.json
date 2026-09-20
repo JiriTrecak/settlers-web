@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.elephant-leaf",
+  "name": "Ant colony · Elephant Leaf",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "e10ec5a0b7a5bbedd77d83c7b02ed628144f773f36c4ec0cb914ac51d0ac160f",
+      "bytes": 97464
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-elephant-leaf",
+        "name": "Ant colony · Elephant Leaf",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "e10ec5a0b7a5bbedd77d83c7b02ed628144f773f36c4ec0cb914ac51d0ac160f"
+  }
+}

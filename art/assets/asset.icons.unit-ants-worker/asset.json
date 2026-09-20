@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-worker",
+  "name": "Settler",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d6926b485107ad84237eb4a7ec26f6d45b25f66b8446d0b49377e24069a0b263",
+      "bytes": 32276
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.settler",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-ants-worker"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d6926b485107ad84237eb4a7ec26f6d45b25f66b8446d0b49377e24069a0b263"
+  }
+}

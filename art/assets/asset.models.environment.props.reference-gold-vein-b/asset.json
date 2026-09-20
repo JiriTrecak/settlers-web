@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-gold-vein-b",
+  "name": "Reference · gold vein b",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "a88c136c32f3fb0f553d2492758e792c6bfef8557fc1df8e9cfb2c0a0819d676",
+      "bytes": 1211792
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-gold-vein-b",
+        "name": "Reference · gold vein b",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "a88c136c32f3fb0f553d2492758e792c6bfef8557fc1df8e9cfb2c0a0819d676"
+  }
+}

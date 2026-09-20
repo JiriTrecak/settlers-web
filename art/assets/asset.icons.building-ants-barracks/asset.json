@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.building-ants-barracks",
+  "name": "Barracks",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "07e261d5d350d8f2f9f5b4b4b610ac7739d8b998f0f764ac77e2a432e916cb0f",
+      "bytes": 32681
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.barracks",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.building-ants-barracks"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "07e261d5d350d8f2f9f5b4b4b610ac7739d8b998f0f764ac77e2a432e916cb0f"
+  }
+}

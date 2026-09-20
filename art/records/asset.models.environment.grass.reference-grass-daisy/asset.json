@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-daisy",
+  "name": "Reference · grass daisy",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reference-grass-daisy/model.glb",
+      "sha256": "746103be5b6069061d7bc10666214e77128c29387092bb28b4b30612c3e274b3",
+      "bytes": 11668,
+      "triangles": 26,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-grass-daisy",
+      "name": "Reference · grass daisy",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reference-grass-daisy/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/grass/reference-grass-daisy/model.glb",
+    "sha256": "746103be5b6069061d7bc10666214e77128c29387092bb28b4b30612c3e274b3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.130Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

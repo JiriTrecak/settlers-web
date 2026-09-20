@@ -5,7 +5,7 @@ import {StudioService} from './service';
 export async function body(req:IncomingMessage,limit=1024*1024){let size=0;const chunks:Buffer[]=[];for await(const chunk of req){size+=chunk.length;if(size>limit)throw Error('Request too large');chunks.push(Buffer.from(chunk));}return JSON.parse(Buffer.concat(chunks).toString('utf8')||'{}');}
 export function assetStudio(root:string):Plugin {
  const service=new StudioService(root),ready=service.init(),credentials=service.credentials,token=randomBytes(32).toString('hex');
- return {name:'asset-studio-local-api',configureServer(server){
+ return {name:'asset-studio-local-api',handleHotUpdate(context){if(context.file.includes('/assets/')||context.file.endsWith('/src/shared/assets/urls.generated.ts'))return [];},configureServer(server){
   server.middlewares.use('/__studio',async(req,res,next)=>{
    try{
     // A loopback binding alone does not prevent hostile websites from making requests.
@@ -20,6 +20,11 @@ export function assetStudio(root:string):Plugin {
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
     const url=new URL(req.url||'/',`http://${host}`);
     if(req.method==='GET'&&url.pathname==='/bootstrap'){res.end(JSON.stringify({token,credentials:await credentials.status()}));return;}
+    if(req.method==='POST'&&url.pathname==='/authoring'){res.end(JSON.stringify(await service.authorCommand(await body(req,74*1024*1024))));return;}
+    if(req.method==='GET'&&url.pathname==='/authoring/resource'){
+     const item=await service.authoring.resource(url.searchParams.get('id')||'',{role:url.searchParams.get('role') as import('../../../src/shared/authoring/asset').FileRole,index:Number(url.searchParams.get('index'))});
+     res.setHeader('Content-Type',({png:'image/png',jpeg:'image/jpeg',webp:'image/webp',svg:'image/svg+xml',glb:'model/gltf-binary'} as Record<string,string>)[item.format]??'application/octet-stream');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Content-Security-Policy',"default-src 'none'; sandbox");res.end(item.bytes);return;
+    }
     if(req.method==='POST'&&url.pathname==='/credentials'){const data=await body(req,2048);if(typeof data.key!=='string')throw Error('Key is required');await credentials.set(data.key);res.end(JSON.stringify(await credentials.status()));return;}
     if(req.method==='GET'&&url.pathname==='/library'){res.end(JSON.stringify({assets:await service.snapshot(),styles:await service.styles(),uploads:await service.references()}));return;}
     if(req.method==='POST'&&url.pathname==='/references'){res.end(JSON.stringify(await service.uploadReference(await body(req,28*1024*1024))));return;}

@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-secondary",
+  "name": "Tree Secondary",
+  "kind": "tree",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "c27978921248fd02f92776f674e40834978ca8fd5ba56b0f99796de0108035be",
+      "bytes": 99444
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "f3fc23fb5e65fc908da9da631701f7bd150cb061e2bfcd23676e2a3ae7cac7ca",
+      "bytes": 3390086
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.tree-secondary",
+        "sceneryAsset": "tree_secondary",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.tree-secondary"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.tree-secondary"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "tree_secondary",
+        "name": "Tree Secondary",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "f3fc23fb5e65fc908da9da631701f7bd150cb061e2bfcd23676e2a3ae7cac7ca"
+  }
+}

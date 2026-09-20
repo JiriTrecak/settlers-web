@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.textures.decals.mycelium-bed",
+  "name": "Damp mycelium bed",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "heartwood",
+    "decal",
+    "moss",
+    "fungi"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "2e5b169d5bc0276f99d156f7608c96798d67844b520bd5ec7c4aceff81005d58",
+      "bytes": 1475606
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "644630b94e13b915f9d95dce49e5941f56c63ad42f0df3322ffc2dcc6cc0e91e",
+      "bytes": 2120546
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "texture",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "644630b94e13b915f9d95dce49e5941f56c63ad42f0df3322ffc2dcc6cc0e91e"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.fallen-acorn",
+  "name": "Fallen Acorn",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1629a0b48ead69e334ceca17fd939704ed7b0f39a8e71c88cfe806c88bcb643d",
+      "bytes": 42172
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "616285ab95440e81def060343ed9261e2710495cb46b4a8847f9c499a713c4d2",
+      "bytes": 3009619
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "fallen-acorn",
+        "name": "Fallen Acorn",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "616285ab95440e81def060343ed9261e2710495cb46b4a8847f9c499a713c4d2"
+  }
+}

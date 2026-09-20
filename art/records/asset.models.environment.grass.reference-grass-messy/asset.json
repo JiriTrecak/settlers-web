@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-messy",
+  "name": "Reference · grass messy",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reference-grass-messy/model.glb",
+      "sha256": "d875c9fc9e38c36881d2370ee95e333ca0dbb38e311ae3c254625e3e9dd9428d",
+      "bytes": 11004,
+      "triangles": 10,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-grass-messy",
+      "name": "Reference · grass messy",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reference-grass-messy/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/grass/reference-grass-messy/model.glb",
+    "sha256": "d875c9fc9e38c36881d2370ee95e333ca0dbb38e311ae3c254625e3e9dd9428d",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.129Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

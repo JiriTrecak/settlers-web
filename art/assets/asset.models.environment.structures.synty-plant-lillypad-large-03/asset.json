@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-plant-lillypad-large-03",
+  "name": "Plant Lillypad Large 03",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "777c29b65a299fa7a8c089e6824fb04263e29911e0a2e80e4e1e66d39d0e0948",
+      "bytes": 16828
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "37eb66b15911ea01d56337492f6b18728302ee3e18159c25bc3fb3f10c7c3195",
+      "bytes": 21939
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-plant-lillypad-large-03",
+        "name": "Plant Lillypad Large 03",
+        "category": "water",
+        "type": "water",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "37eb66b15911ea01d56337492f6b18728302ee3e18159c25bc3fb3f10c7c3195"
+  }
+}

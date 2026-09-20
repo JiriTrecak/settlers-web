@@ -1,5 +1,5 @@
 import {Mesh,MeshStandardMaterial,PlaneGeometry,RepeatWrapping,SRGBColorSpace,TextureLoader,type Scene} from 'three';
-import woodUrl from '../../../assets/textures/terrain/heartwood-grain.png?url';
+import woodUrl from '../../../assets/library/asset.textures.terrain.heartwood-grain/albedo.png?url';
 import type {EnvironmentState} from '../../shared/landscape/curve';
 
 /** Lowest underside height; shallow wood ribs rise above the authored clearance. */

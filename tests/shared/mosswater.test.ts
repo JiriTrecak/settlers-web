@@ -9,7 +9,7 @@ import {slots} from '../game/helpers';
 import {createMapBriefing} from '../../src/sim/ai/briefing';
 const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/worldroot-hollow.utcmap','utf8')))!;
 it('ships the current library and round trips Worldroot starts and landscape',()=>{
- expect(readdirSync('assets/maps',{recursive:true}).filter(f=>/^(campaign|skirmish|showcase)\//.test(String(f))&&String(f).endsWith('.utcmap')).sort()).toEqual(['campaign/vanguard-briarwatch.utcmap','campaign/vanguard-hearth.utcmap','campaign/vanguard-heartwood-vault.utcmap','campaign/vanguard-hollow-gate.utcmap','campaign/vanguard-prologue.utcmap','campaign/vanguard-root.utcmap','skirmish/canopy-clearing.utcmap','skirmish/four-crowns.utcmap','skirmish/terrain-proving-ground.utcmap','skirmish/texture-test-1.utcmap','skirmish/worldroot-hollow.utcmap']);
+ expect(readdirSync('assets/maps',{recursive:true}).filter(f=>/^(campaign|skirmish|showcase)\//.test(String(f))&&String(f).endsWith('.utcmap')).sort()).toEqual(['campaign/vanguard-briarwatch.utcmap','campaign/vanguard-hearth.utcmap','campaign/vanguard-heartwood-vault.utcmap','campaign/vanguard-hollow-gate.utcmap','campaign/vanguard-prologue.utcmap','campaign/vanguard-root.utcmap','showcase/authoring-playground.utcmap','showcase/scouring-eldenvale.utcmap','skirmish/canopy-clearing.utcmap','skirmish/four-crowns.utcmap','skirmish/terrain-proving-ground.utcmap','skirmish/texture-test-1.utcmap','skirmish/worldroot-hollow.utcmap']);
  expect(playableMapError(map)).toBeNull();
  const restored=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
  expect(restored.playerStarts).toEqual(map.playerStarts);expect(restored.landscape).toEqual(map.landscape);

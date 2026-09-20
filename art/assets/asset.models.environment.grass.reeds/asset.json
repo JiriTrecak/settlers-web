@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reeds",
+  "name": "Ant colony · Reeds",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "c63037bce36764da118ddd890d69ac11f03876efb7a71e0bca289206eb65e4be",
+      "bytes": 18220
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-reeds",
+        "name": "Ant colony · Reeds",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c63037bce36764da118ddd890d69ac11f03876efb7a71e0bca289206eb65e4be"
+  }
+}

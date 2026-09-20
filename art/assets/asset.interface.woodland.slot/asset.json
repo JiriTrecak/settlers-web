@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.slot",
+  "name": "Slot",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d",
+      "bytes": 21115
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d"
+  }
+}

@@ -6,6 +6,8 @@ it('preserves buried roots while correcting floating imports',()=>{
  expect(prototypeGroundOffset('woodland-pine-1',-.2,false)).toBe(0);
  expect(prototypeGroundOffset('synty-tree-birch-01',1.2,false)).toBe(-1.2);
  expect(prototypeGroundOffset('reference-rock',-.5,false)).toBe(.5);
+ expect(prototypeGroundOffset('reference-small-rock-a',-.5,false,true)).toBe(0);
+ expect(prototypeGroundOffset('reference-wooden-bridge-small',2,false,true)).toBe(0);
  expect(prototypeGroundOffset('river-reeds',-.3,true)).toBe(0);
 });
 

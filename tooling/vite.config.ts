@@ -29,7 +29,7 @@ export default defineConfig(({ command }) => ({
     outDir: fileURLToPath(new URL("./dist", import.meta.url)),
     emptyOutDir: true,
     rollupOptions: {
-      input: fileURLToPath(new URL("./index.html", import.meta.url)),
+      input: {studio:fileURLToPath(new URL("./index.html", import.meta.url)),assets:fileURLToPath(new URL("./asset-editor.html", import.meta.url))},
     },
   },
 }));

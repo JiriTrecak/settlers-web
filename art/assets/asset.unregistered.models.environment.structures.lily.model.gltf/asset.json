@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.models.environment.structures.lily.model.gltf",
+  "name": "model",
+  "kind": "data",
+  "revision": 1,
+  "status": "draft",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "067f05920ed66de56b4dc82425a5fe2db415e58f9b77a3cd469ac857c7125d92",
+      "bytes": 3899
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

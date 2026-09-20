@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-low",
+  "name": "Reference · grass low",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "21baafea830efd340af451c2143ceca840a9a03b74c701ba6e77d910304f0872",
+      "bytes": 5728
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-grass-low",
+        "name": "Reference · grass low",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "21baafea830efd340af451c2143ceca840a9a03b74c701ba6e77d910304f0872"
+  }
+}

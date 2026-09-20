@@ -65,8 +65,8 @@ export function mapTerrain(map: UtcMap): HTMLCanvasElement {
   return canvas;
 }
 function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
-  const field = new HeightField(map.size);
-  field.load(
+  const compiled=projectScene(map),field = compiled?.field??new HeightField(map.size);
+  if(!compiled)field.load(
     map.height ? decodeHeight(map.height, map.size)! : [],
     map.waterLevel ?? 0,
   );
@@ -91,8 +91,8 @@ function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
         ],
         i,
       );
-      if (h < field.waterLevel) {
-        const depth = Math.min(1, (field.waterLevel - h) / 2.6);
+      if (h < field.waterAt(wx,wz)) {
+        const depth = Math.min(1, (field.waterAt(wx,wz) - h) / 2.6);
         water.data.set(
           [99 - depth * 64, 151 - depth * 85, 151 - depth * 76, 255],
           i,
@@ -178,3 +178,4 @@ function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
   ctx.fillStyle = fade;
   ctx.fillRect(0, 0, 512, 512);
 }
+import {projectScene} from '../../shared/authoring/project';

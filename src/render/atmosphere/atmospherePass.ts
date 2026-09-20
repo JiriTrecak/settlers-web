@@ -1,4 +1,5 @@
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
+import type {ImportedWater} from '../water/importedWater';
 import {createAtmosphereNoise} from './noiseVolume';
 import {createDaytimeLuts} from './daytimeLuts';
 import {Color,SRGBColorSpace,DepthTexture,HalfFloatType,Matrix4,Mesh,NearestFilter,OrthographicCamera,PCFShadowMap,PlaneGeometry,Scene,ShaderMaterial,UnsignedIntType,Vector2,Vector3,Vector4,WebGLRenderTarget,type Camera,type DirectionalLight,type Texture,type WebGLRenderer} from 'three';
@@ -8,7 +9,7 @@ import {perf} from '../../debug/performance';
 import {compositeFragment,filterFragment,fullscreenVertex,marchFragment} from './shaders';
 
 export const atmosphereQualitySpec=(quality:AtmosphereQuality)=>quality==='high'?{scale:.66,steps:40,maxPixels:900_000}:quality==='low'?{scale:.33,steps:16,maxPixels:180_000}:{scale:.5,steps:24,maxPixels:360_000};
-export type AtmosphereFrame={daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
+export type AtmosphereFrame={sourceWater?:ImportedWater;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
 /** Bounded raymarch and depth-aware filter, then full-resolution composite. No history buffer. */
 export class AtmospherePass {
  private readonly noiseVolume=createAtmosphereNoise();
@@ -26,7 +27,7 @@ export class AtmospherePass {
   fogColor:{value:new Color()},sunColor:{value:new Color()},sunDirection:{value:new Vector3()},regionCount:{value:0},regions:{value:Array.from({length:16},()=>new Vector4())},regionShapes:{value:Array.from({length:16},()=>new Vector4())},
  }});
  private readonly filter=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:filterFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,fogTexture:{value:this.fogTarget.texture},fogSize:{value:new Vector2()}}});
- private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
+ private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},sourceReference:{value:false},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly quad=new Mesh(this.geometry,this.march);
  private shaderKey='';
  private readonly size=new Vector2();
@@ -36,7 +37,7 @@ export class AtmospherePass {
  render(gl:WebGLRenderer,scene:Scene,camera:Camera,frame:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()):void {
   const quality=readAtmosphereQuality(),settings=frame.settings;
   const volumetrics=!!settings?.enabled&&quality!=='off';
-  if(!volumetrics&&!frame.daytime){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
+  if(!volumetrics&&!frame.daytime&&!frame.sourceWater){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
   const {scale,steps,maxPixels}=atmosphereQualitySpec(quality);const destination=gl.getRenderTarget();if(destination)this.size.set(destination.width,destination.height);else gl.getDrawingBufferSize(this.size);
   if(this.sceneTarget.width!==this.size.x||this.sceneTarget.height!==this.size.y)this.sceneTarget.setSize(this.size.x,this.size.y);
   const boundedScale=Math.min(scale,Math.sqrt(maxPixels/(this.size.x*this.size.y)));
@@ -47,6 +48,7 @@ export class AtmospherePass {
   const previous=gl.getRenderTarget(),autoClear=gl.autoClear,shadowAuto=gl.shadowMap.autoUpdate;
   try{
    gl.autoClear=true;measure('GPU scene',()=>{gl.setRenderTarget(this.sceneTarget);gl.render(scene,camera);});
+   if(frame.sourceWater)measure('GPU source water',()=>frame.sourceWater!.render(gl,this.sceneTarget,camera,frame.sun,frame.daytime));
    const start=perf.start();
    // Scene render has updated both camera matrices and the current sun shadow.
    const u=this.march.uniforms,s=this.shared;
@@ -64,9 +66,9 @@ export class AtmospherePass {
    u.sunDirection.value.subVectors(frame.sun.position,frame.sun.target.position).normalize();u.regionCount.value=settings.regions.length;
    settings.regions.forEach((r,i)=>{u.regions.value[i].set(r.x,r.y,r.z,r.density);u.regionShapes.value[i].set(r.radiusX,r.radiusY,r.radiusZ,0);});
    }
-   const composite=this.composite.uniforms;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
+   const composite=this.composite.uniforms;composite.sourceReference.value=frame.sourceHeightOffset!==undefined;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
    if(frame.daytime){const lut=this.daytimeLuts.pair(frame.daytime);composite.daytimeLutFrom.value=lut.from;composite.daytimeLutTo.value=lut.to;composite.daytimeLutBlend.value=lut.blend;}
-   if(frame.daytime){const f=frame.daytime.look.fog,scale=frame.daytimeFogDistanceScale??1;composite.daytimeFogColor.value.setRGB(f.color.rgb[0]/255,f.color.rgb[1]/255,f.color.rgb[2]/255,SRGBColorSpace).multiplyScalar(f.color.multiplier).multiply(this.fogTint.set(frame.daytimeFogTint??'#ffffff'));composite.daytimeFogDensity.value=f.density/scale;composite.daytimeFogDispersion.value=f.dispersionByHeight;composite.daytimeFogStart.value=f.startDist*scale;composite.daytimeFogHeight.value=f.startHeight;}
+   if(frame.daytime){const f=frame.daytime.look.fog,scale=frame.daytimeFogDistanceScale??1;composite.daytimeFogColor.value.setRGB(f.color.rgb[0]/255,f.color.rgb[1]/255,f.color.rgb[2]/255,SRGBColorSpace).multiplyScalar(f.color.multiplier).multiply(this.fogTint.set(frame.daytimeFogTint??'#ffffff'));composite.daytimeFogDensity.value=f.density/scale;composite.daytimeFogDispersion.value=f.dispersionByHeight;composite.daytimeFogStart.value=f.startDist*scale;composite.daytimeFogHeight.value=f.startHeight+(frame.sourceHeightOffset??0);}
    measure('GPU atmosphere',()=>{
    gl.shadowMap.autoUpdate=false;
    if(volumetrics){this.quad.material=this.march;gl.setRenderTarget(this.fogTarget);gl.render(this.quadScene,this.camera);

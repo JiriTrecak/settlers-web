@@ -1,3 +1,5 @@
+import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
+import {ImportedWater} from '../water/importedWater';
 import {InteriorCeiling,ceilingY} from '../terrain/interiorCeiling';
 import {unitCameraPose,type UnitShot} from '../camera/unitCamera';
 import {WalkSurfacePicker} from '../terrain/walkSurfacePicker';
@@ -60,7 +62,7 @@ import { Display } from "../display/display";
 import { addSunAndGrid, putGrid } from "../grid/grid";
 import { HeightMesh } from "../height/heightMesh";
 import { BrushLayer } from "../brush/brushLayer";
-import { PropField } from "../prop/propField";
+import { PropField,type PropModelOptions } from "../prop/propField";
 import { Sky } from "../sky/sky";
 import { WaterLayer } from "../water/waterLayer";
 
@@ -154,6 +156,14 @@ export class Renderer {
   readonly brush: BrushLayer;
   private terrain: HeightMesh | null = null;
   private water: WaterLayer | null = null;
+  private courses:WaterLayer[]=[];
+  private courseSource:HeightField['watercourses']|null=null;
+  private updateCourses(){
+    if(this.courseSource===this.height?.watercourses)return;
+    for(const water of this.courses)water.destroy(this.scene);this.courses=[];this.courseSource=this.height?.watercourses??null;
+    if(this.height)for(const course of this.height.watercourses){const water=new WaterLayer(this.scene,this.height.size);water.setCourse(this.height,course);this.courses.push(water);}
+  }
+  private importedWater?:ImportedWater;
   private height: HeightField | null = null;
   private readonly ray = new Raycaster();
   private readonly ndc = new Vector2();
@@ -240,6 +250,7 @@ export class Renderer {
     this.camera.applyTo(cam, 1000 * aspect, 1000);
     return this.props.landmarks(cam, ids);
   }
+  referenceWaterDiagnostics(){return this.importedWater?.diagnostics(this.display.gl)??null;}
   capture(
     width: number,
     aspect: number,
@@ -257,6 +268,8 @@ export class Renderer {
     try {
       if (animationTime !== undefined) {
         this.water?.tick(animationTime * 1000);
+        for(const water of this.courses)water.tick(animationTime*1000);
+        this.importedWater?.tick(animationTime * 1000);
         this.meadow.tick(animationTime * 1000);
         this.props.tick(animationTime * 1000);
       }
@@ -274,6 +287,7 @@ export class Renderer {
       this.props.updateLOD(cam);
       this.meadow.updateLOD(cam);
       this.water?.updateVisibility(cam);
+      for(const water of this.courses)water.updateVisibility(cam);
       gl.setRenderTarget(target);
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
@@ -299,6 +313,10 @@ export class Renderer {
       target.dispose();
       this.present();
     }
+  }
+  screenPoint(x:number,y:number,z:number):{x:number;y:number}|null{
+    const rect=this.display.canvas.getBoundingClientRect(),cam=this.threeCam();this.camera.applyTo(cam,rect.width,rect.height);cam.updateMatrixWorld();
+    const p=new Vector3(x,y,z).project(cam);if(p.z<-1||p.z>1)return null;return {x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};
   }
   previewCurve(points: readonly { x: number; z: number }[]): void {
     if (this.curvePreview) {
@@ -330,6 +348,7 @@ export class Renderer {
     if (this.landscape.rivers !== landscape.rivers)
       this.water?.setFlow(landscape.rivers ?? []);
     this.water?.setStyle(landscape.water);
+    if(this.importedWater?.source!==landscape.importedTerrain){this.importedWater?.dispose();this.importedWater=landscape.importedTerrain?new ImportedWater(this.scene,landscape.importedTerrain):undefined;}
     if (
       this.height &&
       (this.landscape.decals !== landscape.decals ||
@@ -364,7 +383,7 @@ export class Renderer {
     }
   }
   async ready(): Promise<void> {
-    await Promise.all([this.props.ready(),this.meadow.ready]);
+    await Promise.all([this.props.ready(),this.meadow.ready,this.terrain?.material.ready,this.importedWater?.ready]);
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
@@ -423,9 +442,10 @@ export class Renderer {
     };
   }
 
-  setAssets(assets: ReadonlyMap<string, string>): void {
-    this.props.setUrls(assets);
+  setAssets(assets: ReadonlyMap<string, string>,models?:ReadonlyMap<string,PropModelOptions>): void {
+    this.props.setUrls(assets,models);
   }
+  assetBounds(ids:readonly string[]){return this.props.boundsFor(ids);}
 
   setSelected(id: string | null): void {
     this.props.setSelected(id);
@@ -459,11 +479,12 @@ export class Renderer {
   ): void {
     const timing = perf.start();
     this.height = field;
+    this.updateCourses();
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
-    this.props.setHeight(sample);
+    this.props.setHeight(sample,field);
     this.props.setWaterY(field?.waterLevel ?? 0);
     this.brush.setHeight(sample, dirty);
     if (!this.terrain || !field || field.size !== this.size) {
@@ -535,6 +556,7 @@ export class Renderer {
     }
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
+    if(this.height?.source)liveSourceOcclusion(this.height.source.source).sync(stamps);
     this.props.sync(stamps);
     if(this.height)this.sceneryLights.sync(stamps,this.height);
     perf.end("Prop sync", props);
@@ -632,7 +654,8 @@ export class Renderer {
         ? Math.max(40, Math.min(110, this.camera.distance * 0.8))
         : 70,
     );
-    this.water?.tick(now);
+    this.water?.tick(now);this.importedWater?.tick(now);
+    for(const water of this.courses)water.tick(now);
     this.meadow.tick(now);
     this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
@@ -655,6 +678,7 @@ export class Renderer {
     this.props.updateLOD(cam);
     this.meadow.updateLOD(cam);
     this.water?.updateVisibility(cam);
+    for(const water of this.courses)water.updateVisibility(cam);
     perf.end("Camera / atmosphere", camera);
     this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now),this.atmosphereFrame(now));
     perf.end("Present total (CPU)", total);
@@ -662,7 +686,7 @@ export class Renderer {
 
   private atmosphereFrame(now:number){
     const weather=this.landscape.environment.weather;
-    return {...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    return {sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }
@@ -745,6 +769,8 @@ export class Renderer {
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.water?.destroy(this.scene);
+    this.importedWater?.dispose();
+    for(const water of this.courses)water.destroy(this.scene);
     this.props.destroy();
     this.walkPicker.dispose();
     this.portrait.destroy();

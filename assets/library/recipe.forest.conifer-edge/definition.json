@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "id": "recipe.forest.conifer-edge",
+  "name": "Conifer forest · soft sapling edge",
+  "kind": "landscape-recipe",
+  "revision": 6,
+  "status": "published",
+  "tags": [
+    "authoring",
+    "source-informed"
+  ],
+  "resources": [],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "recipe": {
+    "type": "forest",
+    "density": 1,
+    "species": [
+      {
+        "asset": "asset.models.environment.trees.reference-fir-a",
+        "weight": 1
+      },
+      {
+        "asset": "asset.models.environment.trees.reference-fir-b",
+        "weight": 1
+      }
+    ],
+    "spacing": 3.2,
+    "probability": 1,
+    "jitter": 0.65,
+    "scaleMin": 0.85,
+    "scaleMax": 1.15,
+    "maxSlope": 1,
+    "waterClearance": 2,
+    "objectClearance": 0,
+    "edgeFade": 1,
+    "minSpacing": 3.2,
+    "patchiness": {
+      "scale": 12,
+      "strength": 0.12
+    },
+    "interiorMargin": 3.5,
+    "edge": {
+      "species": [
+        {
+          "asset": "asset.models.environment.trees.reference-fir-small-a",
+          "weight": 1
+        }
+      ],
+      "spacing": 1.5,
+      "probability": 0.65,
+      "jitter": 0.65,
+      "scaleMin": 0.75,
+      "scaleMax": 1.1,
+      "maxSlope": 1,
+      "waterClearance": 0.5,
+      "objectClearance": 0,
+      "edgeFade": 1.5,
+      "minSpacing": 1.5,
+      "patchiness": {
+        "scale": 6,
+        "strength": 0.4
+      },
+      "width": 5
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+  }
+}

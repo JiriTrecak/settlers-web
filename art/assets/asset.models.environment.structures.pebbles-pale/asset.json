@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.pebbles-pale",
+  "name": "Pebble Cluster",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7c55bb5b2e6e5fa6d693857871e5227c0b26d56fb17819b3d185aa098a180479",
+      "bytes": 9512
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "749259ad0b14f83d5cc6fc1bb439c5ff96867074de6267b698f51c268d69991a",
+      "bytes": 3361788
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "pebbles-pale",
+        "name": "Pebbles — pale meadow stones",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "749259ad0b14f83d5cc6fc1bb439c5ff96867074de6267b698f51c268d69991a"
+  }
+}

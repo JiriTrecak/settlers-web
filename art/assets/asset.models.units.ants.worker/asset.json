@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.worker",
+  "name": "Worker",
+  "kind": "unit",
+  "revision": 6,
+  "status": "published",
+  "tags": [
+    "characters",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7f2711a45040cd766426405c83caf9e4d636e1063600a16a825798b8c90da94a",
+      "bytes": 450596
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+      "bytes": 3734368
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.settler",
+        "character": "base",
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants.worker"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+  }
+}

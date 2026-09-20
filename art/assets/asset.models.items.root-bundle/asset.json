@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.items.root-bundle",
+  "name": "Root Bundle",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "34704115e18b6893cbbaf9b169fd79b89a28eae22f1d385e1834dc5d1b417b0c",
+      "bytes": 8112
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461",
+      "bytes": 2028808
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.item.root",
+        "healthHeight": 1,
+        "stackHeight": 0.3,
+        "stackColumns": 2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.items.root-bundle"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461"
+  }
+}

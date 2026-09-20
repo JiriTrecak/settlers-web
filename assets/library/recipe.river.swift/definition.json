@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "recipe.river.swift",
+  "name": "Swift woodland river",
+  "kind": "landscape-recipe",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "authoring",
+    "source-informed"
+  ],
+  "resources": [],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "recipe": {
+    "type": "river",
+    "water": "water.clear-forest",
+    "width": 12,
+    "depth": 3,
+    "bankWidth": 4,
+    "flow": 1.8,
+    "maxUphillGrade": 0
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+  }
+}

@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {forestGrassGeometry} from '../../src/render/foliage/forestGrass';
 
 it('uses entire grounded blades in each opaque forest LOD and preserves both authored colors',async()=>{
- const bytes=readFileSync('assets/models/environment/grass/canopy-short-grass/model.glb');
+ const bytes=readFileSync('assets/library/asset.models.environment.grass.canopy-short-grass/geometry.glb');
  const {scene}=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.length),'');
  const counts:number[]=[];
  for(const stride of [1,2,4]){

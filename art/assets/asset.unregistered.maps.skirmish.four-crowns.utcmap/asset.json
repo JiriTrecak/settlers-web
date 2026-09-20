@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.maps.skirmish.four-crowns.utcmap",
+  "name": "four-crowns",
+  "kind": "map",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "utcmap",
+      "sha256": "b6ead67b9fe4fff1b7a1eeac3343f903fe428cc52025296261cf0b237eb347eb",
+      "bytes": 4261912
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

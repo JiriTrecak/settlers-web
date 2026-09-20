@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-stump-01",
+  "name": "Tree Stump 01",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "b9047a3d814ad9280a014c93d772d25cd87fccd8136f5a8d3814bed2236cc1db",
+      "bytes": 19984
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "4c1382a4607239f39d0fa4bb4639128ef97662c4774db878b44c40b63c5264ba",
+      "bytes": 26153
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-tree-stump-01",
+        "name": "Tree Stump 01",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "4c1382a4607239f39d0fa4bb4639128ef97662c4774db878b44c40b63c5264ba"
+  }
+}

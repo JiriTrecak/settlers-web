@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-boulder-01",
+  "name": "Rock Boulder 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "e0300476751e1a9eb90e67adc243f331293bcb34e22d30563a107209ff622d8e",
+      "bytes": 1366204
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "c81de60650d03b958e729ef066511c3a15d48cce80f1a9aad55988cf7cadc90f",
+      "bytes": 1821098
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-rock-boulder-01",
+        "name": "Rock Boulder 01",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c81de60650d03b958e729ef066511c3a15d48cce80f1a9aad55988cf7cadc90f"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.item-plank",
+  "name": "Plank",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "8a326d5d5e3dbf922b706fd7ddd8b549c3e43487550fb77a69b10c85bf279894",
+      "bytes": 28628
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.item.plank",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.item-plank"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "8a326d5d5e3dbf922b706fd7ddd8b549c3e43487550fb77a69b10c85bf279894"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-primary",
+  "name": "Tree Primary",
+  "kind": "tree",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1689895d0e88778dcdeec450e91e23715ccef191803ab3d5f3273dbd0c6558b9",
+      "bytes": 99440
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "c951650eaa31a6fed593c2de824f56fbf397a1b089c5a530c9a5e64a49b2589a",
+      "bytes": 3389969
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.tree-primary",
+        "sceneryAsset": "tree_primary",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.tree-primary"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.tree-primary"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "tree_primary",
+        "name": "Tree Primary",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c951650eaa31a6fed593c2de824f56fbf397a1b089c5a530c9a5e64a49b2589a"
+  }
+}

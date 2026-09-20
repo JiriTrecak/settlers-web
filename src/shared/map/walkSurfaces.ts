@@ -129,7 +129,7 @@ export class WalkSurfaces {
  private connects(n:SurfaceNode,level:number):boolean {
   if(!n.surface)return false;const b=this.decks.get(n.surface)!;
   const z=b.s*(n.x-b.x)+b.c*(n.y-b.z);
-  return z<=-b.depth/2+1.5&&b.connections?.start===level || z>=b.depth/2-1.5&&b.connections?.end===level;
+  return z<=-b.depth/2+1.5+(b.rampLengths?.[0]??0)&&b.connections?.start===level || z>=b.depth/2-1.5-(b.rampLengths?.[1]??0)&&b.connections?.end===level;
  }
  private edge(a:SurfaceNode,b:SurfaceNode,blocked?:(node:SurfaceNode)=>boolean):boolean {
   if(!this.walkable(b.id)||blocked?.(b)||Math.abs(a.height-b.height)>MAX_GROUND_STEP_CM)return false;
@@ -213,7 +213,7 @@ export class WalkSurfaces {
     enter=Math.max(enter,Math.min(t1,t2));exit=Math.min(exit,Math.max(t1,t2));
    }
    if(enter>exit)continue;
-   const signed=(t:number)=>{const z=az+dz*t;return from+(to-from)*t-(d.base+d.height+d.arch*Math.cos(z*Math.PI/d.depth)+(d.rise??0)*(z/d.depth+.5));};
+   const signed=(t:number)=>{const z=az+dz*t;return from+(to-from)*t-(d.triangles?(surfaceHeight(d,a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t)??-Infinity):(d.base+d.height+d.arch*Math.cos(z*Math.PI/d.depth)+(d.rise??0)*(z/d.depth+.5)));};
    const steps=Math.max(1,Math.ceil((exit-enter)*Math.hypot(dx,dz,to-from)*4));
    let previous=signed(enter);
    if(previous<=0&&previous>=-d.thickness)return true;
@@ -221,7 +221,7 @@ export class WalkSurfaces {
     const current=signed(enter+(exit-enter)*i/steps);
     // Crossing the whole slab between samples still counts, even for a very
     // thin plank. Point-only ray marching could miss it entirely.
-    if(Math.min(previous,current)<=0&&Math.max(previous,current)>=-d.thickness)return true;
+    if(Number.isFinite(previous)&&Number.isFinite(current)&&Math.min(previous,current)<=0&&Math.max(previous,current)>=-d.thickness)return true;
     previous=current;
    }
   }

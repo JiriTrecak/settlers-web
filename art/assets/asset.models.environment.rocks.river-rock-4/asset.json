@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.river-rock-4",
+  "name": "River rock 4",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6f8c23257fb21762df34269e615abe647dd473c53ccf50d378021029f55b4a4f",
+      "bytes": 2408
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "2c896ebfbabe1673ded4a7f30caebf3520524404dc039699b17d226a5df05710",
+      "bytes": 2904
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "river-rock-4",
+        "name": "River rock 4",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2c896ebfbabe1673ded4a7f30caebf3520524404dc039699b17d226a5df05710"
+  }
+}

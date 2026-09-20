@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-pine-small-02",
+  "name": "Tree Pine Small 02",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "ffd4271a2177023bbcd4517da2b52bc7853c3c283a5fa81bddb9c06acd69d17d",
+      "bytes": 428180
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "8e42a2fea05c506d23e73dcc9630a71b35cab2f03234a1660778c8a21e6cf4b3",
+      "bytes": 569930
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-tree-pine-small-02",
+        "name": "Tree Pine Small 02",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "8e42a2fea05c506d23e73dcc9630a71b35cab2f03234a1660778c8a21e6cf4b3"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-plant-fern-02",
+  "name": "Plant Fern 02",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "9f4aec01a1c1d6311ee47b69c0c64f634504704e8487a156d02c72afa6b32cb5",
+      "bytes": 121364
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "d3ddfb7ccde5753e06b4fe23db155607e5a0ea54bb3a2541d6d20394d7076553",
+      "bytes": 161278
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-plant-fern-02",
+        "name": "Plant Fern 02",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d3ddfb7ccde5753e06b4fe23db155607e5a0ea54bb3a2541d6d20394d7076553"
+  }
+}

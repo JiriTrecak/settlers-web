@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-high-b",
+  "name": "Reference · grass high b",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "eb1b459d0cfdc08db6ed1bbcc3baf46180769ad06cb619b2ab7e0460fcfa9985",
+      "bytes": 9888
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-grass-high-b",
+        "name": "Reference · grass high b",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "eb1b459d0cfdc08db6ed1bbcc3baf46180769ad06cb619b2ab7e0460fcfa9985"
+  }
+}

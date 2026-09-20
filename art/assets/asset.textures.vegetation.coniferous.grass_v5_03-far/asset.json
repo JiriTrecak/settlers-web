@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.textures.vegetation.coniferous.grass_v5_03-far",
+  "name": "Grass V5 03 Far",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e",
+      "bytes": 10129
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "data",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e"
+  }
+}

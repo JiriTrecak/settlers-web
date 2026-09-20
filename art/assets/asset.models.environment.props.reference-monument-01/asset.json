@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-monument-01",
+  "name": "Reference · monument 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d454477b02dadaa7b9c94da008da7006e34030cd75d3eafa11296f2c38c48ad1",
+      "bytes": 8129368
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-monument-01",
+        "name": "Reference · monument 01",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d454477b02dadaa7b9c94da008da7006e34030cd75d3eafa11296f2c38c48ad1"
+  }
+}

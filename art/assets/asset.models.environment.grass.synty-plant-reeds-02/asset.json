@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-plant-reeds-02",
+  "name": "Plant Reeds 02",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "4db6a71c19cc1adf0fd92e968a11e204b9cb6e3a76170282743f7e7464506ecf",
+      "bytes": 176764
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "bdc25ff00505c7ba41da56f34ba451d1b5d6ee473960a537057e8fcc85b0e2bc",
+      "bytes": 235119
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-plant-reeds-02",
+        "name": "Plant Reeds 02",
+        "category": "water",
+        "type": "water",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "bdc25ff00505c7ba41da56f34ba451d1b5d6ee473960a537057e8fcc85b0e2bc"
+  }
+}

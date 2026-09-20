@@ -1,8 +1,8 @@
 import { graphicsControls } from "./graphicsControls";
 /** Illustrated first screen with real, keyboard-accessible menu controls. */
 import { GameScreen } from "../screen/screen";
-import menuArt from "../../../assets/interface/main-menu/forest-heroes.png";
-import logoArt from "../../../assets/interface/main-menu/logo-iron-wordmark.png";
+import menuArt from "../../../assets/library/asset.interface.main-menu.forest-heroes/image.png";
+import logoArt from "../../../assets/library/asset.interface.main-menu.logo-iron-wordmark/image.png";
 import "./mainMenu.css";
 
 export type MainMenuHooks = {

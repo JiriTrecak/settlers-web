@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-water-leaves-b",
+  "name": "Reference · grass water leaves b",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reference-grass-water-leaves-b/model.glb",
+      "sha256": "116baee7e59efd35269d0287de534138c01811b12b7e2f76ea65ee13ac91a8da",
+      "bytes": 11160,
+      "triangles": 6,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-grass-water-leaves-b",
+      "name": "Reference · grass water leaves b",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reference-grass-water-leaves-b/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/grass/reference-grass-water-leaves-b/model.glb",
+    "sha256": "116baee7e59efd35269d0287de534138c01811b12b7e2f76ea65ee13ac91a8da",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.130Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

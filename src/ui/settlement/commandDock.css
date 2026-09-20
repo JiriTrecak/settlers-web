@@ -1,12 +1,12 @@
 /* Connected woodland skin. Openings use normalized coordinates in the 2160 × 720 master. */
-.rts-hud{position:absolute;inset:0;pointer-events:none;color:#e7e4cf;font-family:Outfit,system-ui,sans-serif;--wood-slot:url('../../../assets/interface/woodland/woodland-square-rim.png');--wood-bar:url('../../../assets/interface/woodland/woodland-bar-rim.png');--hud-scale:.65;--hud-width:calc(100vw - 12px);--hud-height:calc(var(--hud-width) / 3);--panel-color:#181818;--wood-line:#75613d;--gold:#d8c58c}
+.rts-hud{position:absolute;inset:0;pointer-events:none;color:#e7e4cf;font-family:Outfit,system-ui,sans-serif;--wood-slot:url('../../../assets/library/image.woodland-square-rim/image.png');--wood-bar:url('../../../assets/library/image.woodland-bar-rim/image.png');--hud-scale:.65;--hud-width:calc(100vw - 12px);--hud-height:calc(var(--hud-width) / 3);--panel-color:#181818;--wood-line:#75613d;--gold:#d8c58c}
 .rts-hud *,.rts-tooltip{box-sizing:border-box}
 .rts-hud [hidden]{display:none!important}
 .rts-art{display:inline-block;background-size:cover;background-position:center;background-repeat:no-repeat;flex:none}
 .rts-dock{position:absolute;bottom:calc(var(--hud-height) * -.135 * var(--hud-scale));left:50%;transform:translateX(-50%) scale(var(--hud-scale));transform-origin:bottom center;width:var(--hud-width);height:var(--hud-height);pointer-events:none;isolation:isolate}
 .rts-hud[data-layout=compact] .rts-dock{--hud-width:min(calc(100vw - 12px),1240px);--hud-height:calc(var(--hud-width) / 3)}
 
-.rts-dock::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('../../../assets/interface/woodland/woodland-connected-hud.png') center/100% 100% no-repeat}
+.rts-dock::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('../../../assets/library/image.woodland-connected-hud/image.png') center/100% 100% no-repeat}
 /* Portrait = selection (24%,30%,47%,42%) × local (2%,8%,24%,80%). */
 .rts-dock:has(.rts-portrait[data-live=true]:not([hidden]))::before{mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2160 720'%3E%3Cpath fill='white' fill-rule='evenodd' d='M0 0H2160V720H0Z M540 242V481H782V242Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .rts-command:not(.rts-command-banner)::after{content:none}
@@ -34,16 +34,16 @@
 .rts-selection-stat strong{color:#e7e5d0;font:600 clamp(12px,2.5cqw,20px)/1 Georgia,serif}
 .rts-vitals{position:absolute;bottom:0;left:3%;right:3%;display:flex;flex-direction:column;gap:3px}
 .rts-portrait-health,.rts-portrait-mana{position:relative;isolation:isolate;width:100%;height:3.5cqw;min-height:18px;background:#081008;border:0;border-radius:4px;color:#fff8e7;text-align:center;font:600 clamp(10px,1.9cqw,15px)/1.8 Georgia,serif;font-variant-numeric:tabular-nums;text-shadow:0 1px 3px #000,1px 0 2px #000}
-.rts-portrait-health::before,.rts-portrait-mana::before{content:'';position:absolute;inset:3px 5px;background:var(--bar-color,#65ef62) url('../../../assets/interface/woodland/woodland-health-fill.png') center/100% 100% no-repeat;background-blend-mode:luminosity;clip-path:inset(0 calc(100% - var(--fill,100%)) 0 0);border-radius:2px;z-index:-1}
+.rts-portrait-health::before,.rts-portrait-mana::before{content:'';position:absolute;inset:3px 5px;background:var(--bar-color,#65ef62) url('../../../assets/library/image.woodland-health-fill/image.png') center/100% 100% no-repeat;background-blend-mode:luminosity;clip-path:inset(0 calc(100% - var(--fill,100%)) 0 0);border-radius:2px;z-index:-1}
 .rts-portrait-health::after,.rts-portrait-mana::after{content:'';position:absolute;inset:-2px;pointer-events:none;border:8px solid transparent;border-image:var(--wood-bar) 70 65 / 7px 9px / 0 stretch;z-index:2}
 .rts-bar-value{position:relative;z-index:3;display:block;line-height:inherit}
 .rts-portrait-mana{height:3.1cqw;min-height:17px;font-size:clamp(9px,1.7cqw,13px)}
-.rts-portrait-mana::before{background:#125994 url('../../../assets/interface/woodland/woodland-mana-fill.png') center/100% 100% no-repeat;background-blend-mode:normal}
+.rts-portrait-mana::before{background:#125994 url('../../../assets/library/image.woodland-mana-fill/image.png') center/100% 100% no-repeat;background-blend-mode:normal}
 .rts-statuses{display:flex;justify-content:center;gap:2px;margin:0 0 -1px}
 .rts-statuses>span{position:relative;width:2.7cqw;height:2.7cqw;min-width:14px;min-height:14px;border:1px solid #827553;border-radius:3px;overflow:hidden;cursor:help}
 .rts-statuses .rts-art{position:absolute;inset:0}
 .rts-inventory{position:absolute;left:77%;top:26%;width:21%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;pointer-events:auto;isolation:isolate}
-.rts-inventory::before{content:'';position:absolute;inset:-15% -15%;z-index:-1;background:url('../../../assets/interface/woodland/woodland-satchel.png') center/100% 100% no-repeat;opacity:.5;transform:rotate(-2deg)}
+.rts-inventory::before{content:'';position:absolute;inset:-15% -15%;z-index:-1;background:url('../../../assets/library/image.woodland-satchel/image.png') center/100% 100% no-repeat;opacity:.5;transform:rotate(-2deg)}
 .rts-inventory>button,.rts-queued-task,.rts-queue-well{position:relative;border:0;border-radius:2px;aspect-ratio:1;background:#080d09;padding:12%;cursor:pointer;min-width:0;overflow:visible}
 .rts-inventory>button::after,.rts-queued-task::after,.rts-queue-well::after,.rts-command::after{content:'';position:absolute;inset:0;background:var(--wood-slot) center/100% 100% no-repeat;pointer-events:none;z-index:3}
 .rts-inventory .rts-art,.rts-queued-task .rts-art{display:block;width:100%;height:100%;border-radius:1px}

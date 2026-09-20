@@ -1,0 +1,5629 @@
+[
+  {
+    "id": "asset.models.buildings.ants.amber-sanctuary",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.amber-sanctuary/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.bark-cottage",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.bark-cottage/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.bombardier-workshop",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.bombardier-workshop/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.forester",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.forester/geometry.glb"
+    ],
+    "scenery": [
+      "forester-lodge",
+      "ant-forester"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.great-mound",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.great-mound/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.house",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.house/geometry.glb"
+    ],
+    "scenery": [
+      "ant-house"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.ironroot-forge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.ironroot-forge/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.lumberjack-workshop",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.lumberjack-workshop/geometry.glb"
+    ],
+    "scenery": [
+      "lumberjack-hut",
+      "ant-lumberjack"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.player-barracks",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.player-barracks/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.player-stonemason",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.player-stonemason/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.rootbound-hall",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.rootbound-hall/geometry.glb"
+    ],
+    "scenery": [
+      "main-fort",
+      "ant-fort"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.rootworks",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.rootworks/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants.sawmill",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.sawmill/geometry.glb"
+    ],
+    "scenery": [
+      "sawmill",
+      "ant-sawmill"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.stonemason",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.stonemason/geometry.glb"
+    ],
+    "scenery": [
+      "ant-stonemason"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.ants.tower",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.ants.tower/geometry.glb"
+    ],
+    "scenery": [
+      "ant-tower"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.neutral.amber-seam",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.neutral.amber-seam/geometry.glb"
+    ],
+    "scenery": [
+      "amber-seam"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.neutral.corrupted-root",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.neutral.corrupted-root/geometry.glb"
+    ],
+    "scenery": [
+      "canopy-corrupted-root"
+    ]
+  },
+  {
+    "id": "asset.models.buildings.neutral.ruined-cottage",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.neutral.ruined-cottage/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.neutral.supply-crate",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.neutral.supply-crate/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.neutral.twig-cage",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.buildings.neutral.twig-cage/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.environment.briarwatch.merchant-cart",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.briarwatch.merchant-cart/geometry.glb"
+    ],
+    "scenery": [
+      "briarwatch-merchant-cart"
+    ]
+  },
+  {
+    "id": "asset.models.environment.briarwatch.watch-bivouac",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.briarwatch.watch-bivouac/geometry.glb"
+    ],
+    "scenery": [
+      "briarwatch-watch-bivouac"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.broadleaf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.broadleaf/geometry.glb"
+    ],
+    "scenery": [
+      "ant-broadleaf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.canopy-short-grass",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.canopy-short-grass/geometry.glb"
+    ],
+    "scenery": [
+      "canopy-short-grass"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.fern",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.fern/geometry.glb"
+    ],
+    "scenery": [
+      "ant-fern"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass/geometry.glb"
+    ],
+    "scenery": [
+      "ant-grass"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-01/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-02/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-03/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-04/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-05",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-05/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_05"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-06",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-06/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_06"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-07",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v5-07/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v5_07"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v6-01/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v6_01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v6-02/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v6_02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.grass-v6-03/geometry.glb"
+    ],
+    "scenery": [
+      "grass_v6_03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reeds",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reeds/geometry.glb"
+    ],
+    "scenery": [
+      "ant-reeds"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-daisy",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-daisy/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-daisy"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-high-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-high-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-high-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-high-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-high-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-high-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-low",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-low/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-low"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-messy",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-messy/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-messy"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-water-leaves-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-water-leaves-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-water-leaves-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-water-leaves-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.reference-grass-water-leaves-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-grass-water-leaves-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.river-reeds",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.river-reeds/geometry.glb"
+    ],
+    "scenery": [
+      "river-reeds"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-fern-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-fern-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-fern-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-fern-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-fern-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-fern-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-grass-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-grass-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-grass-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-reeds-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-reeds-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-reeds-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-reeds-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-plant-reeds-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-reeds-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-04/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-roots-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-grassedge-roots-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.ground.canopy-forest-leaves",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.ground.canopy-forest-leaves/geometry.glb"
+    ],
+    "scenery": [
+      "canopy-forest-leaves"
+    ]
+  },
+  {
+    "id": "asset.models.environment.ground.canopy-twig-log",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.ground.canopy-twig-log/geometry.glb"
+    ],
+    "scenery": [
+      "canopy-twig-log"
+    ]
+  },
+  {
+    "id": "asset.models.environment.ground.curled-forest-leaf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.ground.curled-forest-leaf/geometry.glb"
+    ],
+    "scenery": [
+      "curled-forest-leaf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.ground.fallen-acorn",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.ground.fallen-acorn/geometry.glb"
+    ],
+    "scenery": [
+      "fallen-acorn"
+    ]
+  },
+  {
+    "id": "asset.models.environment.ground.forest-splinter-pile",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.ground.forest-splinter-pile/geometry.glb"
+    ],
+    "scenery": [
+      "forest-splinter-pile"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.canopy-tiny-mushrooms",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.canopy-tiny-mushrooms/geometry.glb"
+    ],
+    "scenery": [
+      "canopy-tiny-mushrooms"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lanterncap-grove",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lanterncap-grove/geometry.glb"
+    ],
+    "scenery": [
+      "lanterncap-grove"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-01/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-03/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-04/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-08",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-08/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_08"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-09",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-09/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_09"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-17",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-17/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_17"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-20",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.lowpolymushroom-20/geometry.glb"
+    ],
+    "scenery": [
+      "lowpolymushroom_20"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.mushroom-chunky-red",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.mushroom-chunky-red/geometry.glb"
+    ],
+    "scenery": [
+      "mushroom-chunky-red"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.ochre-mushroom-colony/geometry.glb"
+    ],
+    "scenery": [
+      "ochre-mushroom-colony"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mushrooms.synty-plant-mushrooms-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.mushrooms.synty-plant-mushrooms-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-mushrooms-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-bush-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-bush-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-bush-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-bush-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-bush-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-bush-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-dungeon-entrance",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-dungeon-entrance/geometry.glb"
+    ],
+    "scenery": [
+      "reference-dungeon-entrance"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-goblin-hut",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-goblin-hut/geometry.glb"
+    ],
+    "scenery": [
+      "reference-goblin-hut"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-gold-vein-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-gold-vein-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-gold-vein-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-gold-vein-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-gold-vein-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-gold-vein-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-lying-snag-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-lying-snag-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-lying-snag-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-lying-snag-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-lying-snag-c/geometry.glb"
+    ],
+    "scenery": [
+      "reference-lying-snag-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-d",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-lying-snag-d/geometry.glb"
+    ],
+    "scenery": [
+      "reference-lying-snag-d"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-monument-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-monument-01/geometry.glb"
+    ],
+    "scenery": [
+      "reference-monument-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-mountain-chunk-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-mountain-chunk-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-mountain-chunk-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-mountain-chunk-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-mountain-chunk-c/geometry.glb"
+    ],
+    "scenery": [
+      "reference-mountain-chunk-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-bandit-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-bandit-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-bandit-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-bandit-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-tent",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-bandit-tent/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-bandit-tent"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-goblin",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-goblin/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-goblin"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-outpost",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-outpost/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-outpost"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-troll",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-troll/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-troll"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-troll-cave",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-troll-cave/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-troll-cave"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-wolf/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-wolf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf-den-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-wolf-den-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-wolf-den-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf-den-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-neutral-wolf-den-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-neutral-wolf-den-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-ruins-blocks-03/geometry.glb"
+    ],
+    "scenery": [
+      "reference-ruins-blocks-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-ruins-blocks-04/geometry.glb"
+    ],
+    "scenery": [
+      "reference-ruins-blocks-04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-06",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-ruins-blocks-06/geometry.glb"
+    ],
+    "scenery": [
+      "reference-ruins-blocks-06"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-08",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-ruins-blocks-08/geometry.glb"
+    ],
+    "scenery": [
+      "reference-ruins-blocks-08"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-column-11",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-ruins-column-11/geometry.glb"
+    ],
+    "scenery": [
+      "reference-ruins-column-11"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-small-rock-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-small-rock-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-small-rock-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-small-rock-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-small-rock-c/geometry.glb"
+    ],
+    "scenery": [
+      "reference-small-rock-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.props.reference-wooden-bridge-small",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.props.reference-wooden-bridge-small/geometry.glb"
+    ],
+    "scenery": [
+      "reference-wooden-bridge-small"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.mossy-boulder-bank",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.mossy-boulder-bank/geometry.glb"
+    ],
+    "scenery": [
+      "mossy-boulder-bank"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-1",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-1/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-1"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-2",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-2/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-2"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-3",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-3/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-3"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-4",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-4/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-4"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-5",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-5/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-5"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-6",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.river-rock-6/geometry.glb"
+    ],
+    "scenery": [
+      "river-rock-6"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.rock",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.rock/geometry.glb"
+    ],
+    "scenery": [
+      "ant-rock",
+      "ant-stone-deposit"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.rock-rounded-cool",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.rock-rounded-cool/geometry.glb"
+    ],
+    "scenery": [
+      "rock-rounded-cool"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-boulder-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-boulder-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-boulder-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-04/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-05",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-05/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-05"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-06",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-cluster-large-06/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-cluster-large-06"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-04/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-05",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-05/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-05"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-curved-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-curved-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-curved-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-curved-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-pile-curved-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-pile-curved-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-small-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-small-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-small-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-small-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-small-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-small-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-tile-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-tile-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-tile-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-tile-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-tile-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-tile-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-wall-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-wall-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-wall-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-wall-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-rock-wall-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-rock-wall-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-terrain-mountain-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.rocks.synty-terrain-mountain-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-mountain-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shrubs.bramble-thicket",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.shrubs.bramble-thicket/geometry.glb"
+    ],
+    "scenery": [
+      "bramble-thicket"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shrubs.fern-thicket",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.shrubs.fern-thicket/geometry.glb"
+    ],
+    "scenery": [
+      "fern-thicket"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.amber-resin-sconce",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.amber-resin-sconce/geometry.glb"
+    ],
+    "scenery": [
+      "amber-resin-sconce"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.arched-root-walkway",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.arched-root-walkway/geometry.glb"
+    ],
+    "scenery": [
+      "arched-root-walkway"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.bitter-heart",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.bitter-heart/geometry.glb"
+    ],
+    "scenery": [
+      "bitter-heart"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-16",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.bridge-16/geometry.glb"
+    ],
+    "scenery": [
+      "bridge-16"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-32",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.bridge-32/geometry.glb"
+    ],
+    "scenery": [
+      "bridge-32"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-8",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.bridge-8/geometry.glb"
+    ],
+    "scenery": [
+      "bridge-8"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.driftwood",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.driftwood/geometry.glb"
+    ],
+    "scenery": [
+      "ant-driftwood"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.elephant-leaf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.elephant-leaf/geometry.glb"
+    ],
+    "scenery": [
+      "ant-elephant-leaf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.fallen-canopy-bough",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.fallen-canopy-bough/geometry.glb"
+    ],
+    "scenery": [
+      "fallen-canopy-bough"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-bud-cream",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-bud-cream/geometry.glb"
+    ],
+    "scenery": [
+      "flower-bud-cream"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-blue",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-chunky-blue/geometry.glb"
+    ],
+    "scenery": [
+      "flower-chunky-blue"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-cream",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-chunky-cream/geometry.glb"
+    ],
+    "scenery": [
+      "flower-chunky-cream"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-purple",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-chunky-purple/geometry.glb"
+    ],
+    "scenery": [
+      "flower-chunky-purple"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-blue",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-single-blue/geometry.glb"
+    ],
+    "scenery": [
+      "flower-single-blue"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-cream",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-single-cream/geometry.glb"
+    ],
+    "scenery": [
+      "flower-single-cream"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-purple",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.flower-single-purple/geometry.glb"
+    ],
+    "scenery": [
+      "flower-single-purple"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.heartwood-resin-font",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.heartwood-resin-font/geometry.glb"
+    ],
+    "scenery": [
+      "heartwood-resin-font"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.heartwood-wall",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.heartwood-wall/geometry.glb"
+    ],
+    "scenery": [
+      "heartwood-wall"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.hollow-stump-gate",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.hollow-stump-gate/geometry.glb"
+    ],
+    "scenery": [
+      "hollow-stump-gate"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.interwoven-root-bank",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.interwoven-root-bank/geometry.glb"
+    ],
+    "scenery": [
+      "interwoven-root-bank"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.lantern-post",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.lantern-post/geometry.glb"
+    ],
+    "scenery": [
+      "lantern-post"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.legacy-lily",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.legacy-lily/geometry.glb"
+    ],
+    "scenery": [
+      "lily"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.lily",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.lily/geometry.glb"
+    ],
+    "scenery": [
+      "ant-lily"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.lily-chunky",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.lily-chunky/geometry.glb"
+    ],
+    "scenery": [
+      "lily-chunky"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.lily-gold",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.lily-gold/geometry.glb"
+    ],
+    "scenery": [
+      "lily-gold"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.lily-white",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.lily-white/geometry.glb"
+    ],
+    "scenery": [
+      "lily-white"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.loot-chest",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.loot-chest/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.environment.structures.moss-stone-bridge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.moss-stone-bridge/geometry.glb"
+    ],
+    "scenery": [
+      "moss-stone-bridge"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.pebbles-pale",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.pebbles-pale/geometry.glb"
+    ],
+    "scenery": [
+      "pebbles-pale"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.road-segment",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.road-segment/geometry.glb"
+    ],
+    "scenery": [
+      "road-segment"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.splitrail-fence",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.splitrail-fence/geometry.glb"
+    ],
+    "scenery": [
+      "splitrail-fence"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-bush-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-bush-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-bush-leaves-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-bush-leaves-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-bush-leaves-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-bush-leaves-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-bush-leaves-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-bush-leaves-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-flowerpatch-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-flowerpatch-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-flowerpatch-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-flowers-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-flowers-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-flowers-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-lillypad-large-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-lillypad-large-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-lillypad-large-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-lillypad-large-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-lillypad-large-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-lillypad-large-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-small-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-plant-lillypad-small-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-plant-lillypad-small-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-bridge-curved-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-bridge-curved-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-bridge-curved-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-fence-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-fence-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-fence-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-fence-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-fence-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-fence-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-broken-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-broken-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-broken-moss-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-broken-moss-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-moss-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-arch-moss-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-arch-moss-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-broken-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-broken-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-broken-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-broken-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-broken-moss-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-broken-moss-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-moss-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-pillar-moss-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-pillar-moss-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-roadsign-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-roadsign-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-roadsign-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-stonewall-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-stonewall-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-stonewall-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-stonewall-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-prop-stonewall-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-prop-stonewall-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-terrain-riverside-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-riverside-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-corner-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-riverside-corner-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-corner-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-terrain-riverside-corner-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.timber-bridge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.timber-bridge/geometry.glb"
+    ],
+    "scenery": [
+      "timber-bridge"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.waystone-outcrop",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.waystone-outcrop/geometry.glb"
+    ],
+    "scenery": [
+      "waystone-outcrop"
+    ]
+  },
+  {
+    "id": "asset.models.environment.structures.woodland-timber-bridge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.structures.woodland-timber-bridge/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-timber-bridge"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.ancient-canopy-trunk",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.ancient-canopy-trunk/geometry.glb"
+    ],
+    "scenery": [
+      "ancient-canopy-trunk"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-05",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-05/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_05"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-06",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-06/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_06"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-07",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-07/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_07"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-08",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-08/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_08"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-09",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-09/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_09"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-10",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-10/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_10"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-11",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-11/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_11"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-12",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-12/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_12"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-16",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-16/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_16"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-17",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-17/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_17"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-18",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-18/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_18"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-19",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-19/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_19"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-20",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-20/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_20"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-21",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-21/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_21"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-22",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-22/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_22"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-23",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-23/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_23"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-24",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-24/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_24"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-25",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-25/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_25"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-26",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.coniferous-trees-26/geometry.glb"
+    ],
+    "scenery": [
+      "coniferous_trees_26"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.olive-pine",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.olive-pine/geometry.glb"
+    ],
+    "scenery": [
+      "ant-pine-1",
+      "ant-pine-2",
+      "ant-pine-3"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.olive-pine-animated",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.olive-pine-animated/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.environment.trees.pine",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.pine/geometry.glb"
+    ],
+    "scenery": [
+      "pine"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.pine-chunky",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.pine-chunky/geometry.glb"
+    ],
+    "scenery": [
+      "pine-chunky"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.pine-dark",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.pine-dark/geometry.glb"
+    ],
+    "scenery": [
+      "pine-dark"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.pine-umber",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.pine-umber/geometry.glb"
+    ],
+    "scenery": [
+      "pine-umber"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.reference-fir-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-fir-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.reference-fir-b/geometry.glb"
+    ],
+    "scenery": [
+      "reference-fir-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-small-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.reference-fir-small-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-fir-small-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.reference-stump-fir-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.reference-stump-fir-a/geometry.glb"
+    ],
+    "scenery": [
+      "reference-stump-fir-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-03",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-03/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-03"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-04",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-04/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-04"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-dead-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-dead-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-dead-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-small-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-birch-small-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-birch-small-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-generic-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-generic-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-dead-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-generic-dead-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-generic-dead-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-giant-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-generic-giant-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-generic-giant-01",
+      "synty-tree-generic-giant-01-open"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-large-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-large-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-large-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-log-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-log-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-log-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-log-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-log-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-log-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-base-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-base-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-base-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-dead-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-dead-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-dead-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-large-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-large-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-large-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-large-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-large-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-large-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-small-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-small-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-small-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-small-02",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-pine-small-02/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-pine-small-02"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-stump-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-stump-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-stump-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-large-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-willow-large-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-willow-large-01",
+      "synty-tree-willow-large-01-full"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-medium-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-willow-medium-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-willow-medium-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-small-01",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.synty-tree-willow-small-01/geometry.glb"
+    ],
+    "scenery": [
+      "synty-tree-willow-small-01"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.tree-chunky-broadleaf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.tree-chunky-broadleaf/geometry.glb"
+    ],
+    "scenery": [
+      "tree-chunky-broadleaf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.tree-chunky-drooping",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.tree-chunky-drooping/geometry.glb"
+    ],
+    "scenery": [
+      "tree-chunky-drooping"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.tree-primary",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.tree-primary/geometry.glb"
+    ],
+    "scenery": [
+      "tree_primary"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.tree-secondary",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.tree-secondary/geometry.glb"
+    ],
+    "scenery": [
+      "tree_secondary"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-1",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.woodland-pine-1/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-pine-1"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-2",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.woodland-pine-2/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-pine-2"
+    ]
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-3",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.environment.trees.woodland-pine-3/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-pine-3"
+    ]
+  },
+  {
+    "id": "asset.models.items.briarwatch.family-ring",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.family-ring/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.briarwatch.healing-draught",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.healing-draught/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.briarwatch.healing-scroll",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.healing-scroll/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.briarwatch.leaf-ledger",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.leaf-ledger/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.briarwatch.mana-draught",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.mana-draught/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.briarwatch.vigor-seed",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.briarwatch.vigor-seed/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.items.item-log",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.item-log/geometry.glb"
+    ],
+    "scenery": [
+      "item-log",
+      "ant-item-log"
+    ]
+  },
+  {
+    "id": "asset.models.items.item-plank",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.item-plank/geometry.glb"
+    ],
+    "scenery": [
+      "item-plank",
+      "ant-item-plank"
+    ]
+  },
+  {
+    "id": "asset.models.items.item-stone",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.item-stone/geometry.glb"
+    ],
+    "scenery": [
+      "item-stone",
+      "ant-item-stone"
+    ]
+  },
+  {
+    "id": "asset.models.items.log-stack",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.log-stack/geometry.glb"
+    ],
+    "scenery": [
+      "ant-log-stack"
+    ]
+  },
+  {
+    "id": "asset.models.items.plank-stack",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.plank-stack/geometry.glb"
+    ],
+    "scenery": [
+      "ant-plank-stack"
+    ]
+  },
+  {
+    "id": "asset.models.items.root-bundle",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.items.root-bundle/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.archer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.archer/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.bombardier",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.bombardier/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.briar-archer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.briar-archer/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.briar-captain",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.briar-captain/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.briar-civilian",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.briar-civilian/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.briar-warrior",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.briar-warrior/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.guard-static",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.guard-static/geometry.glb"
+    ],
+    "scenery": [
+      "ant-guard"
+    ]
+  },
+  {
+    "id": "asset.models.units.ants.hunter",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.hunter/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.marshal",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.marshal/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.warrior",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.warrior/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.worker",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.worker/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants.worker-carry-static",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.worker-carry-static/geometry.glb"
+    ],
+    "scenery": [
+      "ant-worker-carry"
+    ]
+  },
+  {
+    "id": "asset.models.units.ants.worker-static",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.ants.worker-static/geometry.glb"
+    ],
+    "scenery": [
+      "ant-worker"
+    ]
+  },
+  {
+    "id": "asset.models.units.neutral.amberjaw-staglord",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.neutral.amberjaw-staglord/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral.ogre-static",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.neutral.ogre-static/geometry.glb"
+    ],
+    "scenery": [
+      "neutral-ogre"
+    ]
+  },
+  {
+    "id": "asset.models.units.neutral.thornblade-matriarch",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.neutral.thornblade-matriarch/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral.thornspitter",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.neutral.thornspitter/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral.wolf-static",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.units.neutral.wolf-static/geometry.glb"
+    ],
+    "scenery": [
+      "neutral-wolf"
+    ]
+  }
+]

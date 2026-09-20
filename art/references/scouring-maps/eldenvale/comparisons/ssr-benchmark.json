@@ -1,0 +1,13 @@
+{
+  "map":"scouring-eldenvale",
+  "camera":{"x":291,"z":254,"zoom":1.2,"yawDegrees":-45,"pitchDegrees":45},
+  "hour":11,"animationTime":12,
+  "source":"reference-stage benchmark; local Codex browser; original settings restored",
+  "note":"Sequential runs, not an isolated cost measurement. Same viewport as grass-vertex-benchmark.json. FPS rounded from the UI; CPU/GPU last-120-sample timings. Reflections render at half width/height of the scene target.",
+  "modes":[
+    {"scale":1,"shadows":"soft","canvas":[2674,2408],"dpr":2,"fps":79,"frameP95Ms":16.9,"gpuMeanMs":7.292531825,"gpuP95Ms":8.080124,"cpuMeanMs":3.2866666624943415,"cpuP95Ms":3.5},
+    {"scale":0.5,"shadows":"soft","canvas":[1337,1204],"dpr":1,"fps":109,"frameP95Ms":16.7,"gpuMeanMs":4.492761258333334,"gpuP95Ms":4.983791,"cpuMeanMs":3.1633333285649616,"cpuP95Ms":3.399999976158142},
+    {"scale":1,"shadows":"filtered","canvas":[2674,2408],"dpr":2,"fps":70,"frameP95Ms":16.9,"gpuMeanMs":9.078221766666669,"gpuP95Ms":9.572749,"cpuMeanMs":3.1433333406845727,"cpuP95Ms":3.3000000715255737},
+    {"scale":0.5,"shadows":"filtered","canvas":[1337,1204],"dpr":1,"fps":120,"frameP95Ms":8.5,"gpuMeanMs":4.312889741666664,"gpuP95Ms":4.752208,"cpuMeanMs":2.8649999956289927,"cpuP95Ms":3.1999999284744263}
+  ]
+}

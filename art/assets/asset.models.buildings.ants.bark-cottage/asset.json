@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.bark-cottage",
+  "name": "Bark Cottage",
+  "kind": "building",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "28566ed2596f3aa1162cbb11119547f818ed0b8a84888aeae32eaeece2dc6dc6",
+      "bytes": 229644
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+      "bytes": 2186525
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.cottage",
+        "healthHeight": 5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.bark-cottage"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.resource-root",
+  "name": "Corrupted Root",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "9c907c657e73a14786b971155ab7d8bad73a37133599ef369377b62ceb7f3766",
+      "bytes": 12421
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.item.root",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.resource-root"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "9c907c657e73a14786b971155ab7d8bad73a37133599ef369377b62ceb7f3766"
+  }
+}

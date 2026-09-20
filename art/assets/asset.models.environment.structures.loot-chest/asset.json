@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.loot-chest",
+  "name": "Loot Chest",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "props",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6c39eb3eab5c71f69666056cebce2a0ff14838c5e8fae6a688c76ebbfbbc467e",
+      "bytes": 244960
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "25d1e985d515e045f79a810d7b38eaca3e9f7f545ddcdb7fe8da33831dc402a3",
+      "bytes": 1631430
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.item.chest",
+        "scale": 0.38,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.structures.loot-chest"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "25d1e985d515e045f79a810d7b38eaca3e9f7f545ddcdb7fe8da33831dc402a3"
+  }
+}

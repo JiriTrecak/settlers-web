@@ -1,779 +1,1155 @@
 /** Generated from assets/manifest.json. Run assets:compile; do not edit. */
-import a0 from "../../../assets/icons/ability-ants-carapace.png?url";
-import a1 from "../../../assets/icons/ability-ants-crownfall.png?url";
-import a2 from "../../../assets/icons/ability-ants-faultline.png?url";
-import a3 from "../../../assets/icons/briar-family-ring.png?url";
-import a4 from "../../../assets/icons/briar-healing-draught.png?url";
-import a5 from "../../../assets/icons/briar-healing-scroll.png?url";
-import a6 from "../../../assets/icons/briar-leaf-ledger.png?url";
-import a7 from "../../../assets/icons/briar-mana-draught.png?url";
-import a8 from "../../../assets/icons/briar-vigor-seed.png?url";
-import a9 from "../../../assets/icons/building-ants-barracks.png?url";
-import a10 from "../../../assets/icons/building-ants-bombardier-workshop.png?url";
-import a11 from "../../../assets/icons/building-ants-forester.png?url";
-import a12 from "../../../assets/icons/building-ants-great-mound.png?url";
-import a13 from "../../../assets/icons/building-ants-house.png?url";
-import a14 from "../../../assets/icons/building-ants-ironroot-forge.png?url";
-import a15 from "../../../assets/icons/building-ants-lumberjack.png?url";
-import a16 from "../../../assets/icons/building-ants-mound.png?url";
-import a17 from "../../../assets/icons/building-ants-rootworks.png?url";
-import a18 from "../../../assets/icons/building-ants-sawmill.png?url";
-import a19 from "../../../assets/icons/building-ants-stonemason.png?url";
-import a20 from "../../../assets/icons/building-ants-tower.png?url";
-import a21 from "../../../assets/icons/command-attack.png?url";
-import a22 from "../../../assets/icons/command-build-advanced.png?url";
-import a23 from "../../../assets/icons/command-build.png?url";
-import a24 from "../../../assets/icons/command-camera.png?url";
-import a25 from "../../../assets/icons/command-cancel.png?url";
-import a26 from "../../../assets/icons/command-follow.png?url";
-import a27 from "../../../assets/icons/command-hold.png?url";
-import a28 from "../../../assets/icons/command-move.png?url";
-import a29 from "../../../assets/icons/command-patrol.png?url";
-import a30 from "../../../assets/icons/command-pause.png?url";
-import a31 from "../../../assets/icons/command-produce.png?url";
-import a32 from "../../../assets/icons/command-rally.png?url";
-import a33 from "../../../assets/icons/command-stop.png?url";
-import a34 from "../../../assets/icons/item-amber-carapace.png?url";
-import a35 from "../../../assets/icons/item-amber-hourglass.png?url";
-import a36 from "../../../assets/icons/item-ancient-heartwood.png?url";
-import a37 from "../../../assets/icons/item-barkguard.png?url";
-import a38 from "../../../assets/icons/item-broodkeeper-lantern.png?url";
-import a39 from "../../../assets/icons/item-canopy-aegis.png?url";
-import a40 from "../../../assets/icons/item-deep-moon-scepter.png?url";
-import a41 from "../../../assets/icons/item-endless-brood-banner.png?url";
-import a42 from "../../../assets/icons/item-firefly-pendant.png?url";
-import a43 from "../../../assets/icons/item-first-queen-crown.png?url";
-import a44 from "../../../assets/icons/item-heart-of-the-forest.png?url";
-import a45 from "../../../assets/icons/item-heartseed.png?url";
-import a46 from "../../../assets/icons/item-moon-dew.png?url";
-import a47 from "../../../assets/icons/item-moonwell-chalice.png?url";
-import a48 from "../../../assets/icons/item-mossweave-wraps.png?url";
-import a49 from "../../../assets/icons/item-phoenix-chrysalis.png?url";
-import a50 from "../../../assets/icons/item-plank.png?url";
-import a51 from "../../../assets/icons/item-predator-talon.png?url";
-import a52 from "../../../assets/icons/item-quickstep-spurs.png?url";
-import a53 from "../../../assets/icons/item-reaper-mandible.png?url";
-import a54 from "../../../assets/icons/item-resin-salve.png?url";
-import a55 from "../../../assets/icons/item-restoration-draught.png?url";
-import a56 from "../../../assets/icons/item-rootbinder-idol.png?url";
-import a57 from "../../../assets/icons/item-royal-crest.png?url";
-import a58 from "../../../assets/icons/item-scout-whistle.png?url";
-import a59 from "../../../assets/icons/item-stormwing-spurs.png?url";
-import a60 from "../../../assets/icons/item-tempest-antennae.png?url";
-import a61 from "../../../assets/icons/item-thornband.png?url";
-import a62 from "../../../assets/icons/item-trailkeeper-flask.png?url";
-import a63 from "../../../assets/icons/item-warcaller-standard.png?url";
-import a64 from "../../../assets/icons/item-winter-heart.png?url";
-import a65 from "../../../assets/icons/item-worldroot-heart.png?url";
-import a66 from "../../../assets/icons/resource-amber.png?url";
-import a67 from "../../../assets/icons/resource-lumber.png?url";
-import a68 from "../../../assets/icons/resource-root.png?url";
-import a69 from "../../../assets/icons/stat-armor-heavy.png?url";
-import a70 from "../../../assets/icons/stat-armor-light.png?url";
-import a71 from "../../../assets/icons/stat-armor-structure.png?url";
-import a72 from "../../../assets/icons/unit-ants-archer.png?url";
-import a73 from "../../../assets/icons/unit-ants-bombardier.png?url";
-import a74 from "../../../assets/icons/unit-ants-hunter.png?url";
-import a75 from "../../../assets/icons/unit-ants-marshal.png?url";
-import a76 from "../../../assets/icons/unit-ants-warrior.png?url";
-import a77 from "../../../assets/icons/unit-ants-worker.png?url";
-import a78 from "../../../assets/icons/unit-neutral-amberjaw-staglord.png?url";
-import a79 from "../../../assets/icons/unit-neutral-ogre.png?url";
-import a80 from "../../../assets/icons/unit-neutral-thornblade-matriarch.png?url";
-import a81 from "../../../assets/icons/unit-neutral-thornspitter.png?url";
-import a82 from "../../../assets/icons/unit-neutral-wolf.png?url";
-import a83 from "../../../assets/interface/app-icon/under-the-canopy.png?url";
-import a84 from "../../../assets/interface/main-menu/buttons.png?url";
-import a85 from "../../../assets/interface/main-menu/chain.png?url";
-import a86 from "../../../assets/interface/main-menu/forest-heroes.png?url";
-import a87 from "../../../assets/interface/main-menu/logo-iron-wordmark.png?url";
-import a88 from "../../../assets/interface/main-menu/logo-metal.png?url";
-import a89 from "../../../assets/interface/main-menu/menu-concept.png?url";
-import a90 from "../../../assets/interface/woodland/map-frame.png?url";
-import a91 from "../../../assets/interface/woodland/satchel.png?url";
-import a92 from "../../../assets/interface/woodland/selection-mask.svg?url";
-import a93 from "../../../assets/interface/woodland/selection-portrait-mask.svg?url";
-import a94 from "../../../assets/interface/woodland/selection.png?url";
-import a95 from "../../../assets/interface/woodland/slot.png?url";
-import a96 from "../../../assets/interface/woodland/woodland-bar-rim.png?url";
-import a97 from "../../../assets/interface/woodland/woodland-connected-hud.png?url";
-import a98 from "../../../assets/interface/woodland/woodland-health-fill.png?url";
-import a99 from "../../../assets/interface/woodland/woodland-mana-fill.png?url";
-import a100 from "../../../assets/interface/woodland/woodland-satchel.png?url";
-import a101 from "../../../assets/interface/woodland/woodland-selection-rim.png?url";
-import a102 from "../../../assets/interface/woodland/woodland-square-rim.png?url";
-import a103 from "../../../assets/models/buildings/ants/amber-sanctuary/model.glb?url";
-import a104 from "../../../assets/models/buildings/ants/bark-cottage/model.glb?url";
-import a105 from "../../../assets/models/buildings/ants/bombardier-workshop/model.glb?url";
-import a106 from "../../../assets/models/buildings/ants/forester/model.glb?url";
-import a107 from "../../../assets/models/buildings/ants/great-mound/model.glb?url";
-import a108 from "../../../assets/models/buildings/ants/house/model.glb?url";
-import a109 from "../../../assets/models/buildings/ants/ironroot-forge/model.glb?url";
-import a110 from "../../../assets/models/buildings/ants/lumberjack-workshop/model.glb?url";
-import a111 from "../../../assets/models/buildings/ants/player-barracks/model.glb?url";
-import a112 from "../../../assets/models/buildings/ants/player-stonemason/model.glb?url";
-import a113 from "../../../assets/models/buildings/ants/rootbound-hall/model.glb?url";
-import a114 from "../../../assets/models/buildings/ants/rootworks/model.glb?url";
-import a115 from "../../../assets/models/buildings/ants/sawmill/model.glb?url";
-import a116 from "../../../assets/models/buildings/ants/stonemason/model.glb?url";
-import a117 from "../../../assets/models/buildings/ants/tower/model.glb?url";
-import a118 from "../../../assets/models/buildings/neutral/amber-seam/model.glb?url";
-import a119 from "../../../assets/models/buildings/neutral/corrupted-root/model.glb?url";
-import a120 from "../../../assets/models/buildings/neutral/ruined-cottage/model.glb?url";
-import a121 from "../../../assets/models/buildings/neutral/supply-crate/model.glb?url";
-import a122 from "../../../assets/models/buildings/neutral/twig-cage/model.glb?url";
-import a123 from "../../../assets/models/environment/briarwatch/merchant-cart/model.glb?url";
-import a124 from "../../../assets/models/environment/briarwatch/watch-bivouac/model.glb?url";
-import a125 from "../../../assets/models/environment/grass/broadleaf/model.glb?url";
-import a126 from "../../../assets/models/environment/grass/canopy-short-grass/model.glb?url";
-import a127 from "../../../assets/models/environment/grass/fern/model.glb?url";
-import a128 from "../../../assets/models/environment/grass/grass-v5-01/model.glb?url";
-import a129 from "../../../assets/models/environment/grass/grass-v5-02/model.glb?url";
-import a130 from "../../../assets/models/environment/grass/grass-v5-03/model.glb?url";
-import a131 from "../../../assets/models/environment/grass/grass-v5-04/model.glb?url";
-import a132 from "../../../assets/models/environment/grass/grass-v5-05/model.glb?url";
-import a133 from "../../../assets/models/environment/grass/grass-v5-06/model.glb?url";
-import a134 from "../../../assets/models/environment/grass/grass-v5-07/model.glb?url";
-import a135 from "../../../assets/models/environment/grass/grass-v6-01/model.glb?url";
-import a136 from "../../../assets/models/environment/grass/grass-v6-02/model.glb?url";
-import a137 from "../../../assets/models/environment/grass/grass-v6-03/model.glb?url";
-import a138 from "../../../assets/models/environment/grass/grass/model.glb?url";
-import a139 from "../../../assets/models/environment/grass/reeds/model.glb?url";
-import a140 from "../../../assets/models/environment/grass/river-reeds/model.glb?url";
-import a141 from "../../../assets/models/environment/grass/synty-plant-fern-01/model.glb?url";
-import a142 from "../../../assets/models/environment/grass/synty-plant-fern-02/model.glb?url";
-import a143 from "../../../assets/models/environment/grass/synty-plant-fern-03/model.glb?url";
-import a144 from "../../../assets/models/environment/grass/synty-plant-grass-02/model.glb?url";
-import a145 from "../../../assets/models/environment/grass/synty-plant-reeds-01/model.glb?url";
-import a146 from "../../../assets/models/environment/grass/synty-plant-reeds-02/model.glb?url";
-import a147 from "../../../assets/models/environment/grass/synty-terrain-grassedge-01/model.glb?url";
-import a148 from "../../../assets/models/environment/grass/synty-terrain-grassedge-02/model.glb?url";
-import a149 from "../../../assets/models/environment/grass/synty-terrain-grassedge-03/model.glb?url";
-import a150 from "../../../assets/models/environment/grass/synty-terrain-grassedge-04/model.glb?url";
-import a151 from "../../../assets/models/environment/grass/synty-terrain-grassedge-roots-01/model.glb?url";
-import a152 from "../../../assets/models/environment/grass/synty-terrain-grassedge-roots-02/model.glb?url";
-import a153 from "../../../assets/models/environment/ground/canopy-forest-leaves/model.glb?url";
-import a154 from "../../../assets/models/environment/ground/canopy-twig-log/model.glb?url";
-import a155 from "../../../assets/models/environment/ground/curled-forest-leaf/model.glb?url";
-import a156 from "../../../assets/models/environment/ground/fallen-acorn/model.glb?url";
-import a157 from "../../../assets/models/environment/ground/forest-splinter-pile/model.glb?url";
-import a158 from "../../../assets/models/environment/mushrooms/canopy-tiny-mushrooms/model.glb?url";
-import a159 from "../../../assets/models/environment/mushrooms/lanterncap-grove/model.glb?url";
-import a160 from "../../../assets/models/environment/mushrooms/lowpolymushroom-01/model.glb?url";
-import a161 from "../../../assets/models/environment/mushrooms/lowpolymushroom-03/model.glb?url";
-import a162 from "../../../assets/models/environment/mushrooms/lowpolymushroom-04/model.glb?url";
-import a163 from "../../../assets/models/environment/mushrooms/lowpolymushroom-08/model.glb?url";
-import a164 from "../../../assets/models/environment/mushrooms/lowpolymushroom-09/model.glb?url";
-import a165 from "../../../assets/models/environment/mushrooms/lowpolymushroom-17/model.glb?url";
-import a166 from "../../../assets/models/environment/mushrooms/lowpolymushroom-20/model.glb?url";
-import a167 from "../../../assets/models/environment/mushrooms/mushroom-chunky-red/model.glb?url";
-import a168 from "../../../assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb?url";
-import a169 from "../../../assets/models/environment/mushrooms/synty-plant-mushrooms-01/model.glb?url";
-import a170 from "../../../assets/models/environment/rocks/mossy-boulder-bank/model.glb?url";
-import a171 from "../../../assets/models/environment/rocks/river-rock-1/model.glb?url";
-import a172 from "../../../assets/models/environment/rocks/river-rock-2/model.glb?url";
-import a173 from "../../../assets/models/environment/rocks/river-rock-3/model.glb?url";
-import a174 from "../../../assets/models/environment/rocks/river-rock-4/model.glb?url";
-import a175 from "../../../assets/models/environment/rocks/river-rock-5/model.glb?url";
-import a176 from "../../../assets/models/environment/rocks/river-rock-6/model.glb?url";
-import a177 from "../../../assets/models/environment/rocks/rock-rounded-cool/model.glb?url";
-import a178 from "../../../assets/models/environment/rocks/rock/model.glb?url";
-import a179 from "../../../assets/models/environment/rocks/synty-rock-02/model.glb?url";
-import a180 from "../../../assets/models/environment/rocks/synty-rock-03/model.glb?url";
-import a181 from "../../../assets/models/environment/rocks/synty-rock-boulder-01/model.glb?url";
-import a182 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-01/model.glb?url";
-import a183 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-02/model.glb?url";
-import a184 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-03/model.glb?url";
-import a185 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-04/model.glb?url";
-import a186 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-05/model.glb?url";
-import a187 from "../../../assets/models/environment/rocks/synty-rock-cluster-large-06/model.glb?url";
-import a188 from "../../../assets/models/environment/rocks/synty-rock-pile-01/model.glb?url";
-import a189 from "../../../assets/models/environment/rocks/synty-rock-pile-02/model.glb?url";
-import a190 from "../../../assets/models/environment/rocks/synty-rock-pile-03/model.glb?url";
-import a191 from "../../../assets/models/environment/rocks/synty-rock-pile-04/model.glb?url";
-import a192 from "../../../assets/models/environment/rocks/synty-rock-pile-05/model.glb?url";
-import a193 from "../../../assets/models/environment/rocks/synty-rock-pile-curved-01/model.glb?url";
-import a194 from "../../../assets/models/environment/rocks/synty-rock-pile-curved-02/model.glb?url";
-import a195 from "../../../assets/models/environment/rocks/synty-rock-small-01/model.glb?url";
-import a196 from "../../../assets/models/environment/rocks/synty-rock-small-02/model.glb?url";
-import a197 from "../../../assets/models/environment/rocks/synty-rock-tile-01/model.glb?url";
-import a198 from "../../../assets/models/environment/rocks/synty-rock-tile-02/model.glb?url";
-import a199 from "../../../assets/models/environment/rocks/synty-rock-tile-03/model.glb?url";
-import a200 from "../../../assets/models/environment/rocks/synty-rock-wall-01/model.glb?url";
-import a201 from "../../../assets/models/environment/rocks/synty-rock-wall-02/model.glb?url";
-import a202 from "../../../assets/models/environment/rocks/synty-terrain-mountain-01/model.glb?url";
-import a203 from "../../../assets/models/environment/shrubs/bramble-thicket/model.glb?url";
-import a204 from "../../../assets/models/environment/shrubs/fern-thicket/model.glb?url";
-import a205 from "../../../assets/models/environment/structures/amber-resin-sconce/model.glb?url";
-import a206 from "../../../assets/models/environment/structures/arched-root-walkway/model.glb?url";
-import a207 from "../../../assets/models/environment/structures/bitter-heart/model.glb?url";
-import a208 from "../../../assets/models/environment/structures/bridge-16/model.glb?url";
-import a209 from "../../../assets/models/environment/structures/bridge-32/model.glb?url";
-import a210 from "../../../assets/models/environment/structures/bridge-8/model.glb?url";
-import a211 from "../../../assets/models/environment/structures/driftwood/model.glb?url";
-import a212 from "../../../assets/models/environment/structures/elephant-leaf/model.glb?url";
-import a213 from "../../../assets/models/environment/structures/fallen-canopy-bough/model.glb?url";
-import a214 from "../../../assets/models/environment/structures/flower-bud-cream/model.glb?url";
-import a215 from "../../../assets/models/environment/structures/flower-chunky-blue/model.glb?url";
-import a216 from "../../../assets/models/environment/structures/flower-chunky-cream/model.glb?url";
-import a217 from "../../../assets/models/environment/structures/flower-chunky-purple/model.glb?url";
-import a218 from "../../../assets/models/environment/structures/flower-single-blue/model.glb?url";
-import a219 from "../../../assets/models/environment/structures/flower-single-cream/model.glb?url";
-import a220 from "../../../assets/models/environment/structures/flower-single-purple/model.glb?url";
-import a221 from "../../../assets/models/environment/structures/heartwood-resin-font/model.glb?url";
-import a222 from "../../../assets/models/environment/structures/heartwood-wall/model.glb?url";
-import a223 from "../../../assets/models/environment/structures/hollow-stump-gate/model.glb?url";
-import a224 from "../../../assets/models/environment/structures/interwoven-root-bank/model.glb?url";
-import a225 from "../../../assets/models/environment/structures/lantern-post/model.glb?url";
-import a226 from "../../../assets/models/environment/structures/legacy-lily/model.glb?url";
-import a227 from "../../../assets/models/environment/structures/lily-chunky/model.glb?url";
-import a228 from "../../../assets/models/environment/structures/lily-gold/model.glb?url";
-import a229 from "../../../assets/models/environment/structures/lily-white/model.glb?url";
-import a230 from "../../../assets/models/environment/structures/lily/model.glb?url";
-import a231 from "../../../assets/models/environment/structures/loot-chest/model.glb?url";
-import a232 from "../../../assets/models/environment/structures/moss-stone-bridge/model.glb?url";
-import a233 from "../../../assets/models/environment/structures/pebbles-pale/model.glb?url";
-import a234 from "../../../assets/models/environment/structures/road-segment/model.glb?url";
-import a235 from "../../../assets/models/environment/structures/splitrail-fence/model.glb?url";
-import a236 from "../../../assets/models/environment/structures/synty-plant-bush-02/model.glb?url";
-import a237 from "../../../assets/models/environment/structures/synty-plant-bush-leaves-01/model.glb?url";
-import a238 from "../../../assets/models/environment/structures/synty-plant-bush-leaves-02/model.glb?url";
-import a239 from "../../../assets/models/environment/structures/synty-plant-bush-leaves-03/model.glb?url";
-import a240 from "../../../assets/models/environment/structures/synty-plant-flowerpatch-01/model.glb?url";
-import a241 from "../../../assets/models/environment/structures/synty-plant-flowers-01/model.glb?url";
-import a242 from "../../../assets/models/environment/structures/synty-plant-lillypad-large-01/model.glb?url";
-import a243 from "../../../assets/models/environment/structures/synty-plant-lillypad-large-02/model.glb?url";
-import a244 from "../../../assets/models/environment/structures/synty-plant-lillypad-large-03/model.glb?url";
-import a245 from "../../../assets/models/environment/structures/synty-plant-lillypad-small-01/model.glb?url";
-import a246 from "../../../assets/models/environment/structures/synty-prop-bridge-curved-01/model.glb?url";
-import a247 from "../../../assets/models/environment/structures/synty-prop-fence-01/model.glb?url";
-import a248 from "../../../assets/models/environment/structures/synty-prop-fence-02/model.glb?url";
-import a249 from "../../../assets/models/environment/structures/synty-prop-pillar-01/model.glb?url";
-import a250 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-01/model.glb?url";
-import a251 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-broken-01/model.glb?url";
-import a252 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-broken-02/model.glb?url";
-import a253 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-broken-moss-01/model.glb?url";
-import a254 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-broken-moss-02/model.glb?url";
-import a255 from "../../../assets/models/environment/structures/synty-prop-pillar-arch-moss-01/model.glb?url";
-import a256 from "../../../assets/models/environment/structures/synty-prop-pillar-broken-01/model.glb?url";
-import a257 from "../../../assets/models/environment/structures/synty-prop-pillar-broken-02/model.glb?url";
-import a258 from "../../../assets/models/environment/structures/synty-prop-pillar-broken-moss-01/model.glb?url";
-import a259 from "../../../assets/models/environment/structures/synty-prop-pillar-broken-moss-02/model.glb?url";
-import a260 from "../../../assets/models/environment/structures/synty-prop-pillar-moss-01/model.glb?url";
-import a261 from "../../../assets/models/environment/structures/synty-prop-roadsign-01/model.glb?url";
-import a262 from "../../../assets/models/environment/structures/synty-prop-stonewall-01/model.glb?url";
-import a263 from "../../../assets/models/environment/structures/synty-prop-stonewall-02/model.glb?url";
-import a264 from "../../../assets/models/environment/structures/synty-prop-stonewall-03/model.glb?url";
-import a265 from "../../../assets/models/environment/structures/synty-terrain-riverside-01/model.glb?url";
-import a266 from "../../../assets/models/environment/structures/synty-terrain-riverside-corner-01/model.glb?url";
-import a267 from "../../../assets/models/environment/structures/synty-terrain-riverside-corner-02/model.glb?url";
-import a268 from "../../../assets/models/environment/structures/timber-bridge/model.glb?url";
-import a269 from "../../../assets/models/environment/structures/waystone-outcrop/model.glb?url";
-import a270 from "../../../assets/models/environment/structures/woodland-timber-bridge/model.glb?url";
-import a271 from "../../../assets/models/environment/trees/ancient-canopy-trunk/model.glb?url";
-import a272 from "../../../assets/models/environment/trees/coniferous-trees-05/model.glb?url";
-import a273 from "../../../assets/models/environment/trees/coniferous-trees-06/model.glb?url";
-import a274 from "../../../assets/models/environment/trees/coniferous-trees-07/model.glb?url";
-import a275 from "../../../assets/models/environment/trees/coniferous-trees-08/model.glb?url";
-import a276 from "../../../assets/models/environment/trees/coniferous-trees-09/model.glb?url";
-import a277 from "../../../assets/models/environment/trees/coniferous-trees-10/model.glb?url";
-import a278 from "../../../assets/models/environment/trees/coniferous-trees-11/model.glb?url";
-import a279 from "../../../assets/models/environment/trees/coniferous-trees-12/model.glb?url";
-import a280 from "../../../assets/models/environment/trees/coniferous-trees-16/model.glb?url";
-import a281 from "../../../assets/models/environment/trees/coniferous-trees-17/model.glb?url";
-import a282 from "../../../assets/models/environment/trees/coniferous-trees-18/model.glb?url";
-import a283 from "../../../assets/models/environment/trees/coniferous-trees-19/model.glb?url";
-import a284 from "../../../assets/models/environment/trees/coniferous-trees-20/model.glb?url";
-import a285 from "../../../assets/models/environment/trees/coniferous-trees-21/model.glb?url";
-import a286 from "../../../assets/models/environment/trees/coniferous-trees-22/model.glb?url";
-import a287 from "../../../assets/models/environment/trees/coniferous-trees-23/model.glb?url";
-import a288 from "../../../assets/models/environment/trees/coniferous-trees-24/model.glb?url";
-import a289 from "../../../assets/models/environment/trees/coniferous-trees-25/model.glb?url";
-import a290 from "../../../assets/models/environment/trees/coniferous-trees-26/model.glb?url";
-import a291 from "../../../assets/models/environment/trees/olive-pine-animated/model.glb?url";
-import a292 from "../../../assets/models/environment/trees/olive-pine/model.glb?url";
-import a293 from "../../../assets/models/environment/trees/pine-chunky/model.glb?url";
-import a294 from "../../../assets/models/environment/trees/pine-dark/model.glb?url";
-import a295 from "../../../assets/models/environment/trees/pine-umber/model.glb?url";
-import a296 from "../../../assets/models/environment/trees/pine/model.glb?url";
-import a297 from "../../../assets/models/environment/trees/synty-tree-birch-01/model.glb?url";
-import a298 from "../../../assets/models/environment/trees/synty-tree-birch-02/model.glb?url";
-import a299 from "../../../assets/models/environment/trees/synty-tree-birch-03/model.glb?url";
-import a300 from "../../../assets/models/environment/trees/synty-tree-birch-04/model.glb?url";
-import a301 from "../../../assets/models/environment/trees/synty-tree-birch-dead-01/model.glb?url";
-import a302 from "../../../assets/models/environment/trees/synty-tree-birch-small-01/model.glb?url";
-import a303 from "../../../assets/models/environment/trees/synty-tree-generic-01/model.glb?url";
-import a304 from "../../../assets/models/environment/trees/synty-tree-generic-dead-01/model.glb?url";
-import a305 from "../../../assets/models/environment/trees/synty-tree-generic-giant-01/model.glb?url";
-import a306 from "../../../assets/models/environment/trees/synty-tree-large-01/model.glb?url";
-import a307 from "../../../assets/models/environment/trees/synty-tree-log-01/model.glb?url";
-import a308 from "../../../assets/models/environment/trees/synty-tree-log-02/model.glb?url";
-import a309 from "../../../assets/models/environment/trees/synty-tree-pine-01/model.glb?url";
-import a310 from "../../../assets/models/environment/trees/synty-tree-pine-02/model.glb?url";
-import a311 from "../../../assets/models/environment/trees/synty-tree-pine-base-01/model.glb?url";
-import a312 from "../../../assets/models/environment/trees/synty-tree-pine-dead-01/model.glb?url";
-import a313 from "../../../assets/models/environment/trees/synty-tree-pine-large-01/model.glb?url";
-import a314 from "../../../assets/models/environment/trees/synty-tree-pine-large-02/model.glb?url";
-import a315 from "../../../assets/models/environment/trees/synty-tree-pine-small-01/model.glb?url";
-import a316 from "../../../assets/models/environment/trees/synty-tree-pine-small-02/model.glb?url";
-import a317 from "../../../assets/models/environment/trees/synty-tree-stump-01/model.glb?url";
-import a318 from "../../../assets/models/environment/trees/synty-tree-willow-large-01/model.glb?url";
-import a319 from "../../../assets/models/environment/trees/synty-tree-willow-medium-01/model.glb?url";
-import a320 from "../../../assets/models/environment/trees/synty-tree-willow-small-01/model.glb?url";
-import a321 from "../../../assets/models/environment/trees/tree-chunky-broadleaf/model.glb?url";
-import a322 from "../../../assets/models/environment/trees/tree-chunky-drooping/model.glb?url";
-import a323 from "../../../assets/models/environment/trees/tree-primary/model.glb?url";
-import a324 from "../../../assets/models/environment/trees/tree-secondary/model.glb?url";
-import a325 from "../../../assets/models/environment/trees/woodland-pine-1/model.glb?url";
-import a326 from "../../../assets/models/environment/trees/woodland-pine-2/model.glb?url";
-import a327 from "../../../assets/models/environment/trees/woodland-pine-3/model.glb?url";
-import a328 from "../../../assets/models/items/briarwatch/family-ring/model.glb?url";
-import a329 from "../../../assets/models/items/briarwatch/healing-draught/model.glb?url";
-import a330 from "../../../assets/models/items/briarwatch/healing-scroll/model.glb?url";
-import a331 from "../../../assets/models/items/briarwatch/leaf-ledger/model.glb?url";
-import a332 from "../../../assets/models/items/briarwatch/mana-draught/model.glb?url";
-import a333 from "../../../assets/models/items/briarwatch/vigor-seed/model.glb?url";
-import a334 from "../../../assets/models/items/item-log/model.glb?url";
-import a335 from "../../../assets/models/items/item-plank/model.glb?url";
-import a336 from "../../../assets/models/items/item-stone/model.glb?url";
-import a337 from "../../../assets/models/items/log-stack/model.glb?url";
-import a338 from "../../../assets/models/items/plank-stack/model.glb?url";
-import a339 from "../../../assets/models/items/root-bundle/model.glb?url";
-import a340 from "../../../assets/models/units/ants/archer/model.glb?url";
-import a341 from "../../../assets/models/units/ants/bombardier/model.glb?url";
-import a342 from "../../../assets/models/units/ants/briar-archer/model.glb?url";
-import a343 from "../../../assets/models/units/ants/briar-captain/model.glb?url";
-import a344 from "../../../assets/models/units/ants/briar-civilian/model.glb?url";
-import a345 from "../../../assets/models/units/ants/briar-warrior/model.glb?url";
-import a346 from "../../../assets/models/units/ants/guard-static/model.glb?url";
-import a347 from "../../../assets/models/units/ants/hunter/model.glb?url";
-import a348 from "../../../assets/models/units/ants/marshal/model.glb?url";
-import a349 from "../../../assets/models/units/ants/profiles/bombardier.json?url";
-import a350 from "../../../assets/models/units/ants/profiles/character.json?url";
-import a351 from "../../../assets/models/units/ants/profiles/hunter.json?url";
-import a352 from "../../../assets/models/units/ants/warrior/model.glb?url";
-import a353 from "../../../assets/models/units/ants/worker-carry-static/model.glb?url";
-import a354 from "../../../assets/models/units/ants/worker-static/model.glb?url";
-import a355 from "../../../assets/models/units/ants/worker/model.glb?url";
-import a356 from "../../../assets/models/units/neutral/amberjaw-staglord/model.glb?url";
-import a357 from "../../../assets/models/units/neutral/ogre-static/model.glb?url";
-import a358 from "../../../assets/models/units/neutral/thornblade-matriarch/model.glb?url";
-import a359 from "../../../assets/models/units/neutral/thornspitter/model.glb?url";
-import a360 from "../../../assets/models/units/neutral/wolf-static/model.glb?url";
-import a361 from "../../../assets/textures/decals/mycelium-bed.png?url";
-import a362 from "../../../assets/textures/decals/root-rot.png?url";
-import a363 from "../../../assets/textures/materials/ants/moss-surface.png?url";
-import a364 from "../../../assets/textures/materials/ants/surface-atlas.png?url";
-import a365 from "../../../assets/textures/materials/synty/Water_Normal.png?url";
-import a366 from "../../../assets/textures/materials/synty/looks.json?url";
-import a367 from "../../../assets/textures/roads/road-albedo.png?url";
-import a368 from "../../../assets/textures/roads/road-normal.png?url";
-import a369 from "../../../assets/textures/terrain/ancient-bark.png?url";
-import a370 from "../../../assets/textures/terrain/forest-floor.png?url";
-import a371 from "../../../assets/textures/terrain/heartwood-floor.png?url";
-import a372 from "../../../assets/textures/terrain/heartwood-grain.png?url";
-import a373 from "../../../assets/textures/terrain/heartwood-rings.png?url";
-import a374 from "../../../assets/textures/terrain/hollow-bark.png?url";
-import a375 from "../../../assets/textures/terrain/mud.png?url";
-import a376 from "../../../assets/textures/terrain/pebbles.png?url";
-import a377 from "../../../assets/textures/terrain/rock.png?url";
-import a378 from "../../../assets/textures/terrain/sand.png?url";
-import a379 from "../../../assets/textures/terrain/snow.png?url";
-import a380 from "../../../assets/textures/terrain/tuft-broad.png?url";
-import a381 from "../../../assets/textures/terrain/tuft.png?url";
-import a382 from "../../../assets/textures/terrain/weathered-limestone.png?url";
-import a383 from "../../../assets/textures/vegetation/coniferous/atlas.png?url";
-import a384 from "../../../assets/textures/vegetation/coniferous/grass_v5_03-far.json?url";
-import a385 from "../../../assets/textures/vegetation/coniferous/grass_v5_03-medium.json?url";
-import a386 from "../../../assets/textures/vegetation/coniferous/grass_v5_06-far.json?url";
-import a387 from "../../../assets/textures/vegetation/coniferous/grass_v5_06-medium.json?url";
+import a0 from "../../../assets/library/asset.icons.ability-ants-carapace/image.png?url";
+import a1 from "../../../assets/library/asset.icons.ability-ants-crownfall/image.png?url";
+import a2 from "../../../assets/library/asset.icons.ability-ants-faultline/image.png?url";
+import a3 from "../../../assets/library/asset.icons.briar-family-ring/image.png?url";
+import a4 from "../../../assets/library/asset.icons.briar-healing-draught/image.png?url";
+import a5 from "../../../assets/library/asset.icons.briar-healing-scroll/image.png?url";
+import a6 from "../../../assets/library/asset.icons.briar-leaf-ledger/image.png?url";
+import a7 from "../../../assets/library/asset.icons.briar-mana-draught/image.png?url";
+import a8 from "../../../assets/library/asset.icons.briar-vigor-seed/image.png?url";
+import a9 from "../../../assets/library/asset.icons.building-ants-barracks/image.png?url";
+import a10 from "../../../assets/library/asset.icons.building-ants-bombardier-workshop/image.png?url";
+import a11 from "../../../assets/library/asset.icons.building-ants-forester/image.png?url";
+import a12 from "../../../assets/library/asset.icons.building-ants-great-mound/image.png?url";
+import a13 from "../../../assets/library/asset.icons.building-ants-house/image.png?url";
+import a14 from "../../../assets/library/asset.icons.building-ants-ironroot-forge/image.png?url";
+import a15 from "../../../assets/library/asset.icons.building-ants-lumberjack/image.png?url";
+import a16 from "../../../assets/library/asset.icons.building-ants-mound/image.png?url";
+import a17 from "../../../assets/library/asset.icons.building-ants-rootworks/image.png?url";
+import a18 from "../../../assets/library/asset.icons.building-ants-sawmill/image.png?url";
+import a19 from "../../../assets/library/asset.icons.building-ants-stonemason/image.png?url";
+import a20 from "../../../assets/library/asset.icons.building-ants-tower/image.png?url";
+import a21 from "../../../assets/library/asset.icons.command-attack/image.png?url";
+import a22 from "../../../assets/library/asset.icons.command-build-advanced/image.png?url";
+import a23 from "../../../assets/library/asset.icons.command-build/image.png?url";
+import a24 from "../../../assets/library/asset.icons.command-camera/image.png?url";
+import a25 from "../../../assets/library/asset.icons.command-cancel/image.png?url";
+import a26 from "../../../assets/library/asset.icons.command-follow/image.png?url";
+import a27 from "../../../assets/library/asset.icons.command-hold/image.png?url";
+import a28 from "../../../assets/library/asset.icons.command-move/image.png?url";
+import a29 from "../../../assets/library/asset.icons.command-patrol/image.png?url";
+import a30 from "../../../assets/library/asset.icons.command-pause/image.png?url";
+import a31 from "../../../assets/library/asset.icons.command-produce/image.png?url";
+import a32 from "../../../assets/library/asset.icons.command-rally/image.png?url";
+import a33 from "../../../assets/library/asset.icons.command-stop/image.png?url";
+import a34 from "../../../assets/library/asset.icons.item-amber-carapace/image.png?url";
+import a35 from "../../../assets/library/asset.icons.item-amber-hourglass/image.png?url";
+import a36 from "../../../assets/library/asset.icons.item-ancient-heartwood/image.png?url";
+import a37 from "../../../assets/library/asset.icons.item-barkguard/image.png?url";
+import a38 from "../../../assets/library/asset.icons.item-broodkeeper-lantern/image.png?url";
+import a39 from "../../../assets/library/asset.icons.item-canopy-aegis/image.png?url";
+import a40 from "../../../assets/library/asset.icons.item-deep-moon-scepter/image.png?url";
+import a41 from "../../../assets/library/asset.icons.item-endless-brood-banner/image.png?url";
+import a42 from "../../../assets/library/asset.icons.item-firefly-pendant/image.png?url";
+import a43 from "../../../assets/library/asset.icons.item-first-queen-crown/image.png?url";
+import a44 from "../../../assets/library/asset.icons.item-heartseed/image.png?url";
+import a45 from "../../../assets/library/asset.icons.item-moon-dew/image.png?url";
+import a46 from "../../../assets/library/asset.icons.item-moonwell-chalice/image.png?url";
+import a47 from "../../../assets/library/asset.icons.item-mossweave-wraps/image.png?url";
+import a48 from "../../../assets/library/asset.icons.item-phoenix-chrysalis/image.png?url";
+import a49 from "../../../assets/library/asset.icons.item-plank/image.png?url";
+import a50 from "../../../assets/library/asset.icons.item-predator-talon/image.png?url";
+import a51 from "../../../assets/library/asset.icons.item-quickstep-spurs/image.png?url";
+import a52 from "../../../assets/library/asset.icons.item-reaper-mandible/image.png?url";
+import a53 from "../../../assets/library/asset.icons.item-resin-salve/image.png?url";
+import a54 from "../../../assets/library/asset.icons.item-restoration-draught/image.png?url";
+import a55 from "../../../assets/library/asset.icons.item-rootbinder-idol/image.png?url";
+import a56 from "../../../assets/library/asset.icons.item-royal-crest/image.png?url";
+import a57 from "../../../assets/library/asset.icons.item-scout-whistle/image.png?url";
+import a58 from "../../../assets/library/asset.icons.item-stormwing-spurs/image.png?url";
+import a59 from "../../../assets/library/asset.icons.item-tempest-antennae/image.png?url";
+import a60 from "../../../assets/library/asset.icons.item-thornband/image.png?url";
+import a61 from "../../../assets/library/asset.icons.item-trailkeeper-flask/image.png?url";
+import a62 from "../../../assets/library/asset.icons.item-warcaller-standard/image.png?url";
+import a63 from "../../../assets/library/asset.icons.item-winter-heart/image.png?url";
+import a64 from "../../../assets/library/asset.icons.item-worldroot-heart/image.png?url";
+import a65 from "../../../assets/library/asset.icons.resource-amber/image.png?url";
+import a66 from "../../../assets/library/asset.icons.resource-lumber/image.png?url";
+import a67 from "../../../assets/library/asset.icons.resource-root/image.png?url";
+import a68 from "../../../assets/library/asset.icons.stat-armor-heavy/image.png?url";
+import a69 from "../../../assets/library/asset.icons.stat-armor-light/image.png?url";
+import a70 from "../../../assets/library/asset.icons.stat-armor-structure/image.png?url";
+import a71 from "../../../assets/library/asset.icons.unit-ants-archer/image.png?url";
+import a72 from "../../../assets/library/asset.icons.unit-ants-bombardier/image.png?url";
+import a73 from "../../../assets/library/asset.icons.unit-ants-hunter/image.png?url";
+import a74 from "../../../assets/library/asset.icons.unit-ants-marshal/image.png?url";
+import a75 from "../../../assets/library/asset.icons.unit-ants-warrior/image.png?url";
+import a76 from "../../../assets/library/asset.icons.unit-ants-worker/image.png?url";
+import a77 from "../../../assets/library/asset.icons.unit-neutral-amberjaw-staglord/image.png?url";
+import a78 from "../../../assets/library/asset.icons.unit-neutral-ogre/image.png?url";
+import a79 from "../../../assets/library/asset.icons.unit-neutral-thornblade-matriarch/image.png?url";
+import a80 from "../../../assets/library/asset.icons.unit-neutral-thornspitter/image.png?url";
+import a81 from "../../../assets/library/asset.icons.unit-neutral-wolf/image.png?url";
+import a82 from "../../../assets/library/asset.interface.app-icon.under-the-canopy/image.png?url";
+import a83 from "../../../assets/library/asset.interface.main-menu.buttons/image.png?url";
+import a84 from "../../../assets/library/asset.interface.main-menu.chain/image.png?url";
+import a85 from "../../../assets/library/asset.interface.main-menu.forest-heroes/image.png?url";
+import a86 from "../../../assets/library/asset.interface.main-menu.logo-iron-wordmark/image.png?url";
+import a87 from "../../../assets/library/asset.interface.main-menu.logo-metal/image.png?url";
+import a88 from "../../../assets/library/asset.interface.main-menu.menu-concept/image.png?url";
+import a89 from "../../../assets/library/asset.interface.woodland.map-frame/image.png?url";
+import a90 from "../../../assets/library/asset.interface.woodland.satchel/image.png?url";
+import a91 from "../../../assets/library/asset.interface.woodland.selection-mask/image.svg?url";
+import a92 from "../../../assets/library/asset.interface.woodland.selection-portrait-mask/image.svg?url";
+import a93 from "../../../assets/library/asset.interface.woodland.selection/image.png?url";
+import a94 from "../../../assets/library/asset.interface.woodland.slot/image.png?url";
+import a95 from "../../../assets/library/asset.models.buildings.ants.amber-sanctuary/geometry.glb?url";
+import a96 from "../../../assets/library/asset.models.buildings.ants.bark-cottage/geometry.glb?url";
+import a97 from "../../../assets/library/asset.models.buildings.ants.bombardier-workshop/geometry.glb?url";
+import a98 from "../../../assets/library/asset.models.buildings.ants.forester/geometry.glb?url";
+import a99 from "../../../assets/library/asset.models.buildings.ants.great-mound/geometry.glb?url";
+import a100 from "../../../assets/library/asset.models.buildings.ants.house/geometry.glb?url";
+import a101 from "../../../assets/library/asset.models.buildings.ants.ironroot-forge/geometry.glb?url";
+import a102 from "../../../assets/library/asset.models.buildings.ants.lumberjack-workshop/geometry.glb?url";
+import a103 from "../../../assets/library/asset.models.buildings.ants.player-barracks/geometry.glb?url";
+import a104 from "../../../assets/library/asset.models.buildings.ants.player-stonemason/geometry.glb?url";
+import a105 from "../../../assets/library/asset.models.buildings.ants.rootbound-hall/geometry.glb?url";
+import a106 from "../../../assets/library/asset.models.buildings.ants.rootworks/geometry.glb?url";
+import a107 from "../../../assets/library/asset.models.buildings.ants.sawmill/geometry.glb?url";
+import a108 from "../../../assets/library/asset.models.buildings.ants.stonemason/geometry.glb?url";
+import a109 from "../../../assets/library/asset.models.buildings.ants.tower/geometry.glb?url";
+import a110 from "../../../assets/library/asset.models.buildings.neutral.amber-seam/geometry.glb?url";
+import a111 from "../../../assets/library/asset.models.buildings.neutral.corrupted-root/geometry.glb?url";
+import a112 from "../../../assets/library/asset.models.buildings.neutral.ruined-cottage/geometry.glb?url";
+import a113 from "../../../assets/library/asset.models.buildings.neutral.supply-crate/geometry.glb?url";
+import a114 from "../../../assets/library/asset.models.buildings.neutral.twig-cage/geometry.glb?url";
+import a115 from "../../../assets/library/asset.models.environment.briarwatch.merchant-cart/geometry.glb?url";
+import a116 from "../../../assets/library/asset.models.environment.briarwatch.watch-bivouac/geometry.glb?url";
+import a117 from "../../../assets/library/asset.models.environment.grass.broadleaf/geometry.glb?url";
+import a118 from "../../../assets/library/asset.models.environment.grass.canopy-short-grass/geometry.glb?url";
+import a119 from "../../../assets/library/asset.models.environment.grass.fern/geometry.glb?url";
+import a120 from "../../../assets/library/asset.models.environment.grass.grass-v5-01/geometry.glb?url";
+import a121 from "../../../assets/library/asset.models.environment.grass.grass-v5-02/geometry.glb?url";
+import a122 from "../../../assets/library/asset.models.environment.grass.grass-v5-03/geometry.glb?url";
+import a123 from "../../../assets/library/asset.models.environment.grass.grass-v5-04/geometry.glb?url";
+import a124 from "../../../assets/library/asset.models.environment.grass.grass-v5-05/geometry.glb?url";
+import a125 from "../../../assets/library/asset.models.environment.grass.grass-v5-06/geometry.glb?url";
+import a126 from "../../../assets/library/asset.models.environment.grass.grass-v5-07/geometry.glb?url";
+import a127 from "../../../assets/library/asset.models.environment.grass.grass-v6-01/geometry.glb?url";
+import a128 from "../../../assets/library/asset.models.environment.grass.grass-v6-02/geometry.glb?url";
+import a129 from "../../../assets/library/asset.models.environment.grass.grass-v6-03/geometry.glb?url";
+import a130 from "../../../assets/library/asset.models.environment.grass.grass/geometry.glb?url";
+import a131 from "../../../assets/library/asset.models.environment.grass.reeds/geometry.glb?url";
+import a132 from "../../../assets/library/asset.models.environment.grass.reference-grass-daisy/geometry.glb?url";
+import a133 from "../../../assets/library/asset.models.environment.grass.reference-grass-high-a/geometry.glb?url";
+import a134 from "../../../assets/library/asset.models.environment.grass.reference-grass-high-b/geometry.glb?url";
+import a135 from "../../../assets/library/asset.models.environment.grass.reference-grass-low/geometry.glb?url";
+import a136 from "../../../assets/library/asset.models.environment.grass.reference-grass-messy/geometry.glb?url";
+import a137 from "../../../assets/library/asset.models.environment.grass.reference-grass-water-leaves-a/geometry.glb?url";
+import a138 from "../../../assets/library/asset.models.environment.grass.reference-grass-water-leaves-b/geometry.glb?url";
+import a139 from "../../../assets/library/asset.models.environment.grass.river-reeds/geometry.glb?url";
+import a140 from "../../../assets/library/asset.models.environment.grass.synty-plant-fern-01/geometry.glb?url";
+import a141 from "../../../assets/library/asset.models.environment.grass.synty-plant-fern-02/geometry.glb?url";
+import a142 from "../../../assets/library/asset.models.environment.grass.synty-plant-fern-03/geometry.glb?url";
+import a143 from "../../../assets/library/asset.models.environment.grass.synty-plant-grass-02/geometry.glb?url";
+import a144 from "../../../assets/library/asset.models.environment.grass.synty-plant-reeds-01/geometry.glb?url";
+import a145 from "../../../assets/library/asset.models.environment.grass.synty-plant-reeds-02/geometry.glb?url";
+import a146 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-01/geometry.glb?url";
+import a147 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-02/geometry.glb?url";
+import a148 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-03/geometry.glb?url";
+import a149 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-04/geometry.glb?url";
+import a150 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-01/geometry.glb?url";
+import a151 from "../../../assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-02/geometry.glb?url";
+import a152 from "../../../assets/library/asset.models.environment.ground.canopy-forest-leaves/geometry.glb?url";
+import a153 from "../../../assets/library/asset.models.environment.ground.canopy-twig-log/geometry.glb?url";
+import a154 from "../../../assets/library/asset.models.environment.ground.curled-forest-leaf/geometry.glb?url";
+import a155 from "../../../assets/library/asset.models.environment.ground.fallen-acorn/geometry.glb?url";
+import a156 from "../../../assets/library/asset.models.environment.ground.forest-splinter-pile/geometry.glb?url";
+import a157 from "../../../assets/library/asset.models.environment.mushrooms.canopy-tiny-mushrooms/geometry.glb?url";
+import a158 from "../../../assets/library/asset.models.environment.mushrooms.lanterncap-grove/geometry.glb?url";
+import a159 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-01/geometry.glb?url";
+import a160 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-03/geometry.glb?url";
+import a161 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-04/geometry.glb?url";
+import a162 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-08/geometry.glb?url";
+import a163 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-09/geometry.glb?url";
+import a164 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-17/geometry.glb?url";
+import a165 from "../../../assets/library/asset.models.environment.mushrooms.lowpolymushroom-20/geometry.glb?url";
+import a166 from "../../../assets/library/asset.models.environment.mushrooms.mushroom-chunky-red/geometry.glb?url";
+import a167 from "../../../assets/library/asset.models.environment.mushrooms.ochre-mushroom-colony/geometry.glb?url";
+import a168 from "../../../assets/library/asset.models.environment.mushrooms.synty-plant-mushrooms-01/geometry.glb?url";
+import a169 from "../../../assets/library/asset.models.environment.props.reference-bush-a/geometry.glb?url";
+import a170 from "../../../assets/library/asset.models.environment.props.reference-bush-b/geometry.glb?url";
+import a171 from "../../../assets/library/asset.models.environment.props.reference-dungeon-entrance/geometry.glb?url";
+import a172 from "../../../assets/library/asset.models.environment.props.reference-goblin-hut/geometry.glb?url";
+import a173 from "../../../assets/library/asset.models.environment.props.reference-gold-vein-a/geometry.glb?url";
+import a174 from "../../../assets/library/asset.models.environment.props.reference-gold-vein-b/geometry.glb?url";
+import a175 from "../../../assets/library/asset.models.environment.props.reference-lying-snag-a/geometry.glb?url";
+import a176 from "../../../assets/library/asset.models.environment.props.reference-lying-snag-b/geometry.glb?url";
+import a177 from "../../../assets/library/asset.models.environment.props.reference-lying-snag-c/geometry.glb?url";
+import a178 from "../../../assets/library/asset.models.environment.props.reference-lying-snag-d/geometry.glb?url";
+import a179 from "../../../assets/library/asset.models.environment.props.reference-monument-01/geometry.glb?url";
+import a180 from "../../../assets/library/asset.models.environment.props.reference-mountain-chunk-a/geometry.glb?url";
+import a181 from "../../../assets/library/asset.models.environment.props.reference-mountain-chunk-b/geometry.glb?url";
+import a182 from "../../../assets/library/asset.models.environment.props.reference-mountain-chunk-c/geometry.glb?url";
+import a183 from "../../../assets/library/asset.models.environment.props.reference-neutral-bandit-a/geometry.glb?url";
+import a184 from "../../../assets/library/asset.models.environment.props.reference-neutral-bandit-b/geometry.glb?url";
+import a185 from "../../../assets/library/asset.models.environment.props.reference-neutral-bandit-tent/geometry.glb?url";
+import a186 from "../../../assets/library/asset.models.environment.props.reference-neutral-goblin/geometry.glb?url";
+import a187 from "../../../assets/library/asset.models.environment.props.reference-neutral-outpost/geometry.glb?url";
+import a188 from "../../../assets/library/asset.models.environment.props.reference-neutral-troll-cave/geometry.glb?url";
+import a189 from "../../../assets/library/asset.models.environment.props.reference-neutral-troll/geometry.glb?url";
+import a190 from "../../../assets/library/asset.models.environment.props.reference-neutral-wolf-den-a/geometry.glb?url";
+import a191 from "../../../assets/library/asset.models.environment.props.reference-neutral-wolf-den-b/geometry.glb?url";
+import a192 from "../../../assets/library/asset.models.environment.props.reference-neutral-wolf/geometry.glb?url";
+import a193 from "../../../assets/library/asset.models.environment.props.reference-ruins-blocks-03/geometry.glb?url";
+import a194 from "../../../assets/library/asset.models.environment.props.reference-ruins-blocks-04/geometry.glb?url";
+import a195 from "../../../assets/library/asset.models.environment.props.reference-ruins-blocks-06/geometry.glb?url";
+import a196 from "../../../assets/library/asset.models.environment.props.reference-ruins-blocks-08/geometry.glb?url";
+import a197 from "../../../assets/library/asset.models.environment.props.reference-ruins-column-11/geometry.glb?url";
+import a198 from "../../../assets/library/asset.models.environment.props.reference-small-rock-a/geometry.glb?url";
+import a199 from "../../../assets/library/asset.models.environment.props.reference-small-rock-b/geometry.glb?url";
+import a200 from "../../../assets/library/asset.models.environment.props.reference-small-rock-c/geometry.glb?url";
+import a201 from "../../../assets/library/asset.models.environment.props.reference-wooden-bridge-small/geometry.glb?url";
+import a202 from "../../../assets/library/asset.models.environment.rocks.mossy-boulder-bank/geometry.glb?url";
+import a203 from "../../../assets/library/asset.models.environment.rocks.river-rock-1/geometry.glb?url";
+import a204 from "../../../assets/library/asset.models.environment.rocks.river-rock-2/geometry.glb?url";
+import a205 from "../../../assets/library/asset.models.environment.rocks.river-rock-3/geometry.glb?url";
+import a206 from "../../../assets/library/asset.models.environment.rocks.river-rock-4/geometry.glb?url";
+import a207 from "../../../assets/library/asset.models.environment.rocks.river-rock-5/geometry.glb?url";
+import a208 from "../../../assets/library/asset.models.environment.rocks.river-rock-6/geometry.glb?url";
+import a209 from "../../../assets/library/asset.models.environment.rocks.rock-rounded-cool/geometry.glb?url";
+import a210 from "../../../assets/library/asset.models.environment.rocks.rock/geometry.glb?url";
+import a211 from "../../../assets/library/asset.models.environment.rocks.synty-rock-02/geometry.glb?url";
+import a212 from "../../../assets/library/asset.models.environment.rocks.synty-rock-03/geometry.glb?url";
+import a213 from "../../../assets/library/asset.models.environment.rocks.synty-rock-boulder-01/geometry.glb?url";
+import a214 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-01/geometry.glb?url";
+import a215 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-02/geometry.glb?url";
+import a216 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-03/geometry.glb?url";
+import a217 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-04/geometry.glb?url";
+import a218 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-05/geometry.glb?url";
+import a219 from "../../../assets/library/asset.models.environment.rocks.synty-rock-cluster-large-06/geometry.glb?url";
+import a220 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-01/geometry.glb?url";
+import a221 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-02/geometry.glb?url";
+import a222 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-03/geometry.glb?url";
+import a223 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-04/geometry.glb?url";
+import a224 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-05/geometry.glb?url";
+import a225 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-curved-01/geometry.glb?url";
+import a226 from "../../../assets/library/asset.models.environment.rocks.synty-rock-pile-curved-02/geometry.glb?url";
+import a227 from "../../../assets/library/asset.models.environment.rocks.synty-rock-small-01/geometry.glb?url";
+import a228 from "../../../assets/library/asset.models.environment.rocks.synty-rock-small-02/geometry.glb?url";
+import a229 from "../../../assets/library/asset.models.environment.rocks.synty-rock-tile-01/geometry.glb?url";
+import a230 from "../../../assets/library/asset.models.environment.rocks.synty-rock-tile-02/geometry.glb?url";
+import a231 from "../../../assets/library/asset.models.environment.rocks.synty-rock-tile-03/geometry.glb?url";
+import a232 from "../../../assets/library/asset.models.environment.rocks.synty-rock-wall-01/geometry.glb?url";
+import a233 from "../../../assets/library/asset.models.environment.rocks.synty-rock-wall-02/geometry.glb?url";
+import a234 from "../../../assets/library/asset.models.environment.rocks.synty-terrain-mountain-01/geometry.glb?url";
+import a235 from "../../../assets/library/asset.models.environment.shrubs.bramble-thicket/geometry.glb?url";
+import a236 from "../../../assets/library/asset.models.environment.shrubs.fern-thicket/geometry.glb?url";
+import a237 from "../../../assets/library/asset.models.environment.structures.amber-resin-sconce/geometry.glb?url";
+import a238 from "../../../assets/library/asset.models.environment.structures.arched-root-walkway/geometry.glb?url";
+import a239 from "../../../assets/library/asset.models.environment.structures.bitter-heart/geometry.glb?url";
+import a240 from "../../../assets/library/asset.models.environment.structures.bridge-16/geometry.glb?url";
+import a241 from "../../../assets/library/asset.models.environment.structures.bridge-32/geometry.glb?url";
+import a242 from "../../../assets/library/asset.models.environment.structures.bridge-8/geometry.glb?url";
+import a243 from "../../../assets/library/asset.models.environment.structures.driftwood/geometry.glb?url";
+import a244 from "../../../assets/library/asset.models.environment.structures.elephant-leaf/geometry.glb?url";
+import a245 from "../../../assets/library/asset.models.environment.structures.fallen-canopy-bough/geometry.glb?url";
+import a246 from "../../../assets/library/asset.models.environment.structures.flower-bud-cream/geometry.glb?url";
+import a247 from "../../../assets/library/asset.models.environment.structures.flower-chunky-blue/geometry.glb?url";
+import a248 from "../../../assets/library/asset.models.environment.structures.flower-chunky-cream/geometry.glb?url";
+import a249 from "../../../assets/library/asset.models.environment.structures.flower-chunky-purple/geometry.glb?url";
+import a250 from "../../../assets/library/asset.models.environment.structures.flower-single-blue/geometry.glb?url";
+import a251 from "../../../assets/library/asset.models.environment.structures.flower-single-cream/geometry.glb?url";
+import a252 from "../../../assets/library/asset.models.environment.structures.flower-single-purple/geometry.glb?url";
+import a253 from "../../../assets/library/asset.models.environment.structures.heartwood-resin-font/geometry.glb?url";
+import a254 from "../../../assets/library/asset.models.environment.structures.heartwood-wall/geometry.glb?url";
+import a255 from "../../../assets/library/asset.models.environment.structures.hollow-stump-gate/geometry.glb?url";
+import a256 from "../../../assets/library/asset.models.environment.structures.interwoven-root-bank/geometry.glb?url";
+import a257 from "../../../assets/library/asset.models.environment.structures.lantern-post/geometry.glb?url";
+import a258 from "../../../assets/library/asset.models.environment.structures.legacy-lily/geometry.glb?url";
+import a259 from "../../../assets/library/asset.models.environment.structures.lily-chunky/geometry.glb?url";
+import a260 from "../../../assets/library/asset.models.environment.structures.lily-gold/geometry.glb?url";
+import a261 from "../../../assets/library/asset.models.environment.structures.lily-white/geometry.glb?url";
+import a262 from "../../../assets/library/asset.models.environment.structures.lily/geometry.glb?url";
+import a263 from "../../../assets/library/asset.models.environment.structures.loot-chest/geometry.glb?url";
+import a264 from "../../../assets/library/asset.models.environment.structures.moss-stone-bridge/geometry.glb?url";
+import a265 from "../../../assets/library/asset.models.environment.structures.pebbles-pale/geometry.glb?url";
+import a266 from "../../../assets/library/asset.models.environment.structures.road-segment/geometry.glb?url";
+import a267 from "../../../assets/library/asset.models.environment.structures.splitrail-fence/geometry.glb?url";
+import a268 from "../../../assets/library/asset.models.environment.structures.synty-plant-bush-02/geometry.glb?url";
+import a269 from "../../../assets/library/asset.models.environment.structures.synty-plant-bush-leaves-01/geometry.glb?url";
+import a270 from "../../../assets/library/asset.models.environment.structures.synty-plant-bush-leaves-02/geometry.glb?url";
+import a271 from "../../../assets/library/asset.models.environment.structures.synty-plant-bush-leaves-03/geometry.glb?url";
+import a272 from "../../../assets/library/asset.models.environment.structures.synty-plant-flowerpatch-01/geometry.glb?url";
+import a273 from "../../../assets/library/asset.models.environment.structures.synty-plant-flowers-01/geometry.glb?url";
+import a274 from "../../../assets/library/asset.models.environment.structures.synty-plant-lillypad-large-01/geometry.glb?url";
+import a275 from "../../../assets/library/asset.models.environment.structures.synty-plant-lillypad-large-02/geometry.glb?url";
+import a276 from "../../../assets/library/asset.models.environment.structures.synty-plant-lillypad-large-03/geometry.glb?url";
+import a277 from "../../../assets/library/asset.models.environment.structures.synty-plant-lillypad-small-01/geometry.glb?url";
+import a278 from "../../../assets/library/asset.models.environment.structures.synty-prop-bridge-curved-01/geometry.glb?url";
+import a279 from "../../../assets/library/asset.models.environment.structures.synty-prop-fence-01/geometry.glb?url";
+import a280 from "../../../assets/library/asset.models.environment.structures.synty-prop-fence-02/geometry.glb?url";
+import a281 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-01/geometry.glb?url";
+import a282 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-01/geometry.glb?url";
+import a283 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-01/geometry.glb?url";
+import a284 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-02/geometry.glb?url";
+import a285 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01/geometry.glb?url";
+import a286 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02/geometry.glb?url";
+import a287 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-arch-moss-01/geometry.glb?url";
+import a288 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-broken-01/geometry.glb?url";
+import a289 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-broken-02/geometry.glb?url";
+import a290 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-01/geometry.glb?url";
+import a291 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-02/geometry.glb?url";
+import a292 from "../../../assets/library/asset.models.environment.structures.synty-prop-pillar-moss-01/geometry.glb?url";
+import a293 from "../../../assets/library/asset.models.environment.structures.synty-prop-roadsign-01/geometry.glb?url";
+import a294 from "../../../assets/library/asset.models.environment.structures.synty-prop-stonewall-01/geometry.glb?url";
+import a295 from "../../../assets/library/asset.models.environment.structures.synty-prop-stonewall-02/geometry.glb?url";
+import a296 from "../../../assets/library/asset.models.environment.structures.synty-prop-stonewall-03/geometry.glb?url";
+import a297 from "../../../assets/library/asset.models.environment.structures.synty-terrain-riverside-01/geometry.glb?url";
+import a298 from "../../../assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-01/geometry.glb?url";
+import a299 from "../../../assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-02/geometry.glb?url";
+import a300 from "../../../assets/library/asset.models.environment.structures.timber-bridge/geometry.glb?url";
+import a301 from "../../../assets/library/asset.models.environment.structures.waystone-outcrop/geometry.glb?url";
+import a302 from "../../../assets/library/asset.models.environment.structures.woodland-timber-bridge/geometry.glb?url";
+import a303 from "../../../assets/library/asset.models.environment.trees.ancient-canopy-trunk/geometry.glb?url";
+import a304 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-05/geometry.glb?url";
+import a305 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-06/geometry.glb?url";
+import a306 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-07/geometry.glb?url";
+import a307 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-08/geometry.glb?url";
+import a308 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-09/geometry.glb?url";
+import a309 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-10/geometry.glb?url";
+import a310 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-11/geometry.glb?url";
+import a311 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-12/geometry.glb?url";
+import a312 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-16/geometry.glb?url";
+import a313 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-17/geometry.glb?url";
+import a314 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-18/geometry.glb?url";
+import a315 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-19/geometry.glb?url";
+import a316 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-20/geometry.glb?url";
+import a317 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-21/geometry.glb?url";
+import a318 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-22/geometry.glb?url";
+import a319 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-23/geometry.glb?url";
+import a320 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-24/geometry.glb?url";
+import a321 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-25/geometry.glb?url";
+import a322 from "../../../assets/library/asset.models.environment.trees.coniferous-trees-26/geometry.glb?url";
+import a323 from "../../../assets/library/asset.models.environment.trees.olive-pine-animated/geometry.glb?url";
+import a324 from "../../../assets/library/asset.models.environment.trees.olive-pine/geometry.glb?url";
+import a325 from "../../../assets/library/asset.models.environment.trees.pine-chunky/geometry.glb?url";
+import a326 from "../../../assets/library/asset.models.environment.trees.pine-dark/geometry.glb?url";
+import a327 from "../../../assets/library/asset.models.environment.trees.pine-umber/geometry.glb?url";
+import a328 from "../../../assets/library/asset.models.environment.trees.pine/geometry.glb?url";
+import a329 from "../../../assets/library/asset.models.environment.trees.reference-fir-a/geometry.glb?url";
+import a330 from "../../../assets/library/asset.models.environment.trees.reference-fir-b/geometry.glb?url";
+import a331 from "../../../assets/library/asset.models.environment.trees.reference-fir-small-a/geometry.glb?url";
+import a332 from "../../../assets/library/asset.models.environment.trees.reference-stump-fir-a/geometry.glb?url";
+import a333 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-01/geometry.glb?url";
+import a334 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-02/geometry.glb?url";
+import a335 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-03/geometry.glb?url";
+import a336 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-04/geometry.glb?url";
+import a337 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-dead-01/geometry.glb?url";
+import a338 from "../../../assets/library/asset.models.environment.trees.synty-tree-birch-small-01/geometry.glb?url";
+import a339 from "../../../assets/library/asset.models.environment.trees.synty-tree-generic-01/geometry.glb?url";
+import a340 from "../../../assets/library/asset.models.environment.trees.synty-tree-generic-dead-01/geometry.glb?url";
+import a341 from "../../../assets/library/asset.models.environment.trees.synty-tree-generic-giant-01/geometry.glb?url";
+import a342 from "../../../assets/library/asset.models.environment.trees.synty-tree-large-01/geometry.glb?url";
+import a343 from "../../../assets/library/asset.models.environment.trees.synty-tree-log-01/geometry.glb?url";
+import a344 from "../../../assets/library/asset.models.environment.trees.synty-tree-log-02/geometry.glb?url";
+import a345 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-01/geometry.glb?url";
+import a346 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-02/geometry.glb?url";
+import a347 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-base-01/geometry.glb?url";
+import a348 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-dead-01/geometry.glb?url";
+import a349 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-large-01/geometry.glb?url";
+import a350 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-large-02/geometry.glb?url";
+import a351 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-small-01/geometry.glb?url";
+import a352 from "../../../assets/library/asset.models.environment.trees.synty-tree-pine-small-02/geometry.glb?url";
+import a353 from "../../../assets/library/asset.models.environment.trees.synty-tree-stump-01/geometry.glb?url";
+import a354 from "../../../assets/library/asset.models.environment.trees.synty-tree-willow-large-01/geometry.glb?url";
+import a355 from "../../../assets/library/asset.models.environment.trees.synty-tree-willow-medium-01/geometry.glb?url";
+import a356 from "../../../assets/library/asset.models.environment.trees.synty-tree-willow-small-01/geometry.glb?url";
+import a357 from "../../../assets/library/asset.models.environment.trees.tree-chunky-broadleaf/geometry.glb?url";
+import a358 from "../../../assets/library/asset.models.environment.trees.tree-chunky-drooping/geometry.glb?url";
+import a359 from "../../../assets/library/asset.models.environment.trees.tree-primary/geometry.glb?url";
+import a360 from "../../../assets/library/asset.models.environment.trees.tree-secondary/geometry.glb?url";
+import a361 from "../../../assets/library/asset.models.environment.trees.woodland-pine-1/geometry.glb?url";
+import a362 from "../../../assets/library/asset.models.environment.trees.woodland-pine-2/geometry.glb?url";
+import a363 from "../../../assets/library/asset.models.environment.trees.woodland-pine-3/geometry.glb?url";
+import a364 from "../../../assets/library/asset.models.items.briarwatch.family-ring/geometry.glb?url";
+import a365 from "../../../assets/library/asset.models.items.briarwatch.healing-draught/geometry.glb?url";
+import a366 from "../../../assets/library/asset.models.items.briarwatch.healing-scroll/geometry.glb?url";
+import a367 from "../../../assets/library/asset.models.items.briarwatch.leaf-ledger/geometry.glb?url";
+import a368 from "../../../assets/library/asset.models.items.briarwatch.mana-draught/geometry.glb?url";
+import a369 from "../../../assets/library/asset.models.items.briarwatch.vigor-seed/geometry.glb?url";
+import a370 from "../../../assets/library/asset.models.items.item-log/geometry.glb?url";
+import a371 from "../../../assets/library/asset.models.items.item-plank/geometry.glb?url";
+import a372 from "../../../assets/library/asset.models.items.item-stone/geometry.glb?url";
+import a373 from "../../../assets/library/asset.models.items.log-stack/geometry.glb?url";
+import a374 from "../../../assets/library/asset.models.items.plank-stack/geometry.glb?url";
+import a375 from "../../../assets/library/asset.models.items.root-bundle/geometry.glb?url";
+import a376 from "../../../assets/library/asset.models.units.ants.archer/geometry.glb?url";
+import a377 from "../../../assets/library/asset.models.units.ants.bombardier/geometry.glb?url";
+import a378 from "../../../assets/library/asset.models.units.ants.briar-archer/geometry.glb?url";
+import a379 from "../../../assets/library/asset.models.units.ants.briar-captain/geometry.glb?url";
+import a380 from "../../../assets/library/asset.models.units.ants.briar-civilian/geometry.glb?url";
+import a381 from "../../../assets/library/asset.models.units.ants.briar-warrior/geometry.glb?url";
+import a382 from "../../../assets/library/asset.models.units.ants.guard-static/geometry.glb?url";
+import a383 from "../../../assets/library/asset.models.units.ants.hunter/geometry.glb?url";
+import a384 from "../../../assets/library/asset.models.units.ants.marshal/geometry.glb?url";
+import a385 from "../../../assets/library/asset.models.units.ants.profiles.bombardier/data.json?url";
+import a386 from "../../../assets/library/asset.models.units.ants.profiles.character/data.json?url";
+import a387 from "../../../assets/library/asset.models.units.ants.profiles.hunter/data.json?url";
+import a388 from "../../../assets/library/asset.models.units.ants.warrior/geometry.glb?url";
+import a389 from "../../../assets/library/asset.models.units.ants.worker-carry-static/geometry.glb?url";
+import a390 from "../../../assets/library/asset.models.units.ants.worker-static/geometry.glb?url";
+import a391 from "../../../assets/library/asset.models.units.ants.worker/geometry.glb?url";
+import a392 from "../../../assets/library/asset.models.units.neutral.amberjaw-staglord/geometry.glb?url";
+import a393 from "../../../assets/library/asset.models.units.neutral.ogre-static/geometry.glb?url";
+import a394 from "../../../assets/library/asset.models.units.neutral.thornblade-matriarch/geometry.glb?url";
+import a395 from "../../../assets/library/asset.models.units.neutral.thornspitter/geometry.glb?url";
+import a396 from "../../../assets/library/asset.models.units.neutral.wolf-static/geometry.glb?url";
+import a397 from "../../../assets/library/asset.textures.decals.mycelium-bed/albedo.png?url";
+import a398 from "../../../assets/library/asset.textures.decals.root-rot/albedo.png?url";
+import a399 from "../../../assets/library/asset.textures.materials.ants.moss-surface/albedo.png?url";
+import a400 from "../../../assets/library/asset.textures.materials.ants.surface-atlas/albedo.png?url";
+import a401 from "../../../assets/library/asset.textures.materials.synty.Water_Normal/albedo.png?url";
+import a402 from "../../../assets/library/asset.textures.materials.synty.looks/data.json?url";
+import a403 from "../../../assets/library/asset.textures.roads.road-albedo/albedo.png?url";
+import a404 from "../../../assets/library/asset.textures.roads.road-normal/albedo.png?url";
+import a405 from "../../../assets/library/asset.textures.terrain.ancient-bark/albedo.png?url";
+import a406 from "../../../assets/library/asset.textures.terrain.forest-floor/albedo.png?url";
+import a407 from "../../../assets/library/asset.textures.terrain.heartwood-floor/albedo.png?url";
+import a408 from "../../../assets/library/asset.textures.terrain.heartwood-grain/albedo.png?url";
+import a409 from "../../../assets/library/asset.textures.terrain.heartwood-rings/albedo.png?url";
+import a410 from "../../../assets/library/asset.textures.terrain.hollow-bark/albedo.png?url";
+import a411 from "../../../assets/library/asset.textures.terrain.mud/albedo.png?url";
+import a412 from "../../../assets/library/asset.textures.terrain.pebbles/albedo.png?url";
+import a413 from "../../../assets/library/asset.textures.terrain.rock/albedo.png?url";
+import a414 from "../../../assets/library/asset.textures.terrain.sand/albedo.png?url";
+import a415 from "../../../assets/library/asset.textures.terrain.snow/albedo.png?url";
+import a416 from "../../../assets/library/asset.textures.terrain.tuft-broad/albedo.png?url";
+import a417 from "../../../assets/library/asset.textures.terrain.tuft/albedo.png?url";
+import a418 from "../../../assets/library/asset.textures.terrain.weathered-limestone/albedo.png?url";
+import a419 from "../../../assets/library/asset.textures.vegetation.coniferous.atlas/albedo.png?url";
+import a420 from "../../../assets/library/asset.textures.vegetation.coniferous.grass_v5_03-far/data.json?url";
+import a421 from "../../../assets/library/asset.textures.vegetation.coniferous.grass_v5_03-medium/data.json?url";
+import a422 from "../../../assets/library/asset.textures.vegetation.coniferous.grass_v5_06-far/data.json?url";
+import a423 from "../../../assets/library/asset.textures.vegetation.coniferous.grass_v5_06-medium/data.json?url";
+import a424 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-briarwatch.utcmap/data.utcmap?url";
+import a425 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-hearth.utcmap/data.utcmap?url";
+import a426 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-heartwood-vault.utcmap/data.utcmap?url";
+import a427 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-hollow-gate.utcmap/data.utcmap?url";
+import a428 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-prologue.utcmap/data.utcmap?url";
+import a429 from "../../../assets/library/asset.unregistered.maps.campaign.vanguard-root.utcmap/data.utcmap?url";
+import a430 from "../../../assets/library/asset.unregistered.maps.showcase.scouring-eldenvale.utcmap/data.utcmap?url";
+import a431 from "../../../assets/library/asset.unregistered.maps.skirmish.canopy-clearing.utcmap/data.utcmap?url";
+import a432 from "../../../assets/library/asset.unregistered.maps.skirmish.four-crowns.utcmap/data.utcmap?url";
+import a433 from "../../../assets/library/asset.unregistered.maps.skirmish.terrain-proving-ground.utcmap/data.utcmap?url";
+import a434 from "../../../assets/library/asset.unregistered.maps.skirmish.texture-test-1.utcmap/data.utcmap?url";
+import a435 from "../../../assets/library/asset.unregistered.maps.skirmish.worldroot-hollow.utcmap/data.utcmap?url";
+import a436 from "../../../assets/library/asset.unregistered.maps.tutorial.four-crowns.utcmap/data.utcmap?url";
+import a437 from "../../../assets/library/asset.unregistered.textures.grading.scouring-reference-luts.json/data.json?url";
+import a438 from "../../../assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.bin/data.bin?url";
+import a439 from "../../../assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.json/data.json?url";
+import a440 from "../../../assets/library/asset.unregistered.textures.reference.scouring.env_macro_color__d.png/albedo.png?url";
+import a441 from "../../../assets/library/asset.unregistered.textures.reference.scouring.env_upvector_snow_ar__d_a.png/albedo.png?url";
+import a442 from "../../../assets/library/asset.unregistered.textures.reference.scouring.env_upvector_snow_nh__d_a.png/albedo.png?url";
+import a443 from "../../../assets/library/asset.unregistered.textures.reference.scouring.env_water_caustics__d_uncmp.png/albedo.png?url";
+import a444 from "../../../assets/library/asset.unregistered.textures.reference.scouring.env_water_waves__d_a_uncmp.png/albedo.png?url";
+import a445 from "../../../assets/library/asset.unregistered.textures.reference.scouring.grass_daisy__d_a.png/albedo.png?url";
+import a446 from "../../../assets/library/asset.unregistered.textures.reference.scouring.grass_grass_high_01__d_a.png/albedo.png?url";
+import a447 from "../../../assets/library/asset.unregistered.textures.reference.scouring.grass_grass_high_02__d_a.png/albedo.png?url";
+import a448 from "../../../assets/library/asset.unregistered.textures.reference.scouring.grass_grass_low__d_a.png/albedo.png?url";
+import a449 from "../../../assets/library/asset.unregistered.textures.reference.scouring.grass_grass_messy__d_a.png/albedo.png?url";
+import a450 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__d.png/albedo.png?url";
+import a451 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__n_d.png/albedo.png?url";
+import a452 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__sh_d.png/albedo.png?url";
+import a453 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent_underlay__d_a.png/albedo.png?url";
+import a454 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bridge__d.png/albedo.png?url";
+import a455 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_bridge__sh_d.png/albedo.png?url";
+import a456 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_entrance_underlay__d_a.png/albedo.png?url";
+import a457 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__d.png/albedo.png?url";
+import a458 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__n_d.png/albedo.png?url";
+import a459 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__sh_d.png/albedo.png?url";
+import a460 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_monument__d.png/albedo.png?url";
+import a461 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_monument__n_d.png/albedo.png?url";
+import a462 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_orc_citadel__d.png/albedo.png?url";
+import a463 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__d.png/albedo.png?url";
+import a464 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__n_d.png/albedo.png?url";
+import a465 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__sh_d.png/albedo.png?url";
+import a466 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_underlay__d_a.png/albedo.png?url";
+import a467 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_outpost__d.png/albedo.png?url";
+import a468 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_outpost__n_d.png/albedo.png?url";
+import a469 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_outpost__sh_d.png/albedo.png?url";
+import a470 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_outpost_underlay__d_a.png/albedo.png?url";
+import a471 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_rock_chunk__d.png/albedo.png?url";
+import a472 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_rock_chunk__n_d.png/albedo.png?url";
+import a473 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_ruins_blocks__d.png/albedo.png?url";
+import a474 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_ruins_column__d.png/albedo.png?url";
+import a475 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_ruins_underlay__d_a.png/albedo.png?url";
+import a476 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den__d.png/albedo.png?url";
+import a477 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den__sh_d.png/albedo.png?url";
+import a478 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den_props__d.png/albedo.png?url";
+import a479 from "../../../assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den_underlay__d_a.png/albedo.png?url";
+import a480 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion-sprite.bin/data.bin?url";
+import a481 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion-sprite.json/data.json?url";
+import a482 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.neutral_outpost.bin/data.bin?url";
+import a483 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.neutral_outpost.json/data.json?url";
+import a484 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_03.bin/data.bin?url";
+import a485 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_03.json/data.json?url";
+import a486 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_04.bin/data.bin?url";
+import a487 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_04.json/data.json?url";
+import a488 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.wooden_bridge_small.bin/data.bin?url";
+import a489 from "../../../assets/library/asset.unregistered.textures.reference.scouring.occlusion.wooden_bridge_small.json/data.json?url";
+import a490 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_bush_branch__d_a.png/albedo.png?url";
+import a491 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_fir__d_a.png/albedo.png?url";
+import a492 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_fir_trunk__d.png/albedo.png?url";
+import a493 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_gold_vein__d.png/albedo.png?url";
+import a494 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_gold_vein_underlay__d_a.png/albedo.png?url";
+import a495 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_rocks__d.png/albedo.png?url";
+import a496 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_snags__d.png/albedo.png?url";
+import a497 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_snags_underlay__d_a.png/albedo.png?url";
+import a498 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_stumps_fir__d_a.png/albedo.png?url";
+import a499 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_swamp_plants__d_a.png/albedo.png?url";
+import a500 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir__d_a.png/albedo.png?url";
+import a501 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir_small__d_a.png/albedo.png?url";
+import a502 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_rock__d_a.png/albedo.png?url";
+import a503 from "../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_stump__d_a.png/albedo.png?url";
+import a504 from "../../../assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.bin/data.bin?url";
+import a505 from "../../../assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.json/data.json?url";
+import a506 from "../../../assets/library/asset.unregistered.textures.reference.scouring.terrain-ar.png/albedo.png?url";
+import a507 from "../../../assets/library/asset.unregistered.textures.reference.scouring.terrain-nh.png/albedo.png?url";
+import a508 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_ar__d_a.png/albedo.png?url";
+import a509 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_ar__d_a.rgba.bin/data.bin?url";
+import a510 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_nh__d_a.png/albedo.png?url";
+import a511 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_nh__d_a.rgba.bin/data.bin?url";
+import a512 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkrock_ar__d_a.png/albedo.png?url";
+import a513 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darkrock_ar__d_a.rgba.bin/data.bin?url";
+import a514 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_ar__d_a.png/albedo.png?url";
+import a515 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_ar__d_a.rgba.bin/data.bin?url";
+import a516 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_nh__d_a.png/albedo.png?url";
+import a517 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_nh__d_a.rgba.bin/data.bin?url";
+import a518 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_ar__d_a.png/albedo.png?url";
+import a519 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_ar__d_a.rgba.bin/data.bin?url";
+import a520 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_nh__d_a.png/albedo.png?url";
+import a521 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_nh__d_a.rgba.bin/data.bin?url";
+import a522 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_ar__d_a.png/albedo.png?url";
+import a523 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_ar__d_a.rgba.bin/data.bin?url";
+import a524 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_nh__d_a.png/albedo.png?url";
+import a525 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_nh__d_a.rgba.bin/data.bin?url";
+import a526 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_ar__d_a.png/albedo.png?url";
+import a527 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_ar__d_a.rgba.bin/data.bin?url";
+import a528 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_nh__d_a.png/albedo.png?url";
+import a529 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_nh__d_a.rgba.bin/data.bin?url";
+import a530 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_ar__d_a.png/albedo.png?url";
+import a531 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_ar__d_a.rgba.bin/data.bin?url";
+import a532 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_displacement__a.png/albedo.png?url";
+import a533 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_displacement__a.rgba.bin/data.bin?url";
+import a534 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_nh__d_a.png/albedo.png?url";
+import a535 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_nh__d_a.rgba.bin/data.bin?url";
+import a536 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_ar__d_a.png/albedo.png?url";
+import a537 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_ar__d_a.rgba.bin/data.bin?url";
+import a538 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_nh__d_a.png/albedo.png?url";
+import a539 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_nh__d_a.rgba.bin/data.bin?url";
+import a540 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_ar__d_a.png/albedo.png?url";
+import a541 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_ar__d_a.rgba.bin/data.bin?url";
+import a542 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_nh__d_a.png/albedo.png?url";
+import a543 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_nh__d_a.rgba.bin/data.bin?url";
+import a544 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_ar__d_a.png/albedo.png?url";
+import a545 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_ar__d_a.rgba.bin/data.bin?url";
+import a546 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_nh__d_a.png/albedo.png?url";
+import a547 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_nh__d_a.rgba.bin/data.bin?url";
+import a548 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_ar__d_a.png/albedo.png?url";
+import a549 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_ar__d_a.rgba.bin/data.bin?url";
+import a550 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_nh__d_a.png/albedo.png?url";
+import a551 from "../../../assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_nh__d_a.rgba.bin/data.bin?url";
+import a552 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_bandits__d_a.png/albedo.png?url";
+import a553 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_bandits__sh.png/albedo.png?url";
+import a554 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_goblin__d_a.png/albedo.png?url";
+import a555 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_troll__d_a.png/albedo.png?url";
+import a556 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_troll__sh_d.png/albedo.png?url";
+import a557 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_wolf__d_a.png/albedo.png?url";
+import a558 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_neutral_wolf__sh_d.png/albedo.png?url";
+import a559 from "../../../assets/library/asset.unregistered.textures.reference.scouring.units_orc_goblin_archer__sh_d.png/albedo.png?url";
+import a560 from "../../../assets/library/image.item-heart-of-the-forest/image.png?url";
+import a561 from "../../../assets/library/image.woodland-bar-rim/image.png?url";
+import a562 from "../../../assets/library/image.woodland-connected-hud/image.png?url";
+import a563 from "../../../assets/library/image.woodland-health-fill/image.png?url";
+import a564 from "../../../assets/library/image.woodland-mana-fill/image.png?url";
+import a565 from "../../../assets/library/image.woodland-satchel/image.png?url";
+import a566 from "../../../assets/library/image.woodland-selection-rim/image.png?url";
+import a567 from "../../../assets/library/image.woodland-square-rim/image.png?url";
+import a568 from "../../../assets/library/recipe.foliage.riverbank/definition.json?url";
+import a569 from "../../../assets/library/recipe.forest.conifer-edge/definition.json?url";
+import a570 from "../../../assets/library/recipe.grass.meadow/definition.json?url";
+import a571 from "../../../assets/library/recipe.river.gentle/definition.json?url";
+import a572 from "../../../assets/library/recipe.river.swift/definition.json?url";
+import a573 from "../../../assets/library/recipe.terrain.hill/definition.json?url";
+import a574 from "../../../assets/library/water.clear-forest/definition.json?url";
+import a575 from "../../../assets/library/water.muddy/definition.json?url";
 export const assetUrls:Readonly<Record<string,string>> = {
-"assets/icons/ability-ants-carapace.png":a0,
-"assets/icons/ability-ants-crownfall.png":a1,
-"assets/icons/ability-ants-faultline.png":a2,
-"assets/icons/briar-family-ring.png":a3,
-"assets/icons/briar-healing-draught.png":a4,
-"assets/icons/briar-healing-scroll.png":a5,
-"assets/icons/briar-leaf-ledger.png":a6,
-"assets/icons/briar-mana-draught.png":a7,
-"assets/icons/briar-vigor-seed.png":a8,
-"assets/icons/building-ants-barracks.png":a9,
-"assets/icons/building-ants-bombardier-workshop.png":a10,
-"assets/icons/building-ants-forester.png":a11,
-"assets/icons/building-ants-great-mound.png":a12,
-"assets/icons/building-ants-house.png":a13,
-"assets/icons/building-ants-ironroot-forge.png":a14,
-"assets/icons/building-ants-lumberjack.png":a15,
-"assets/icons/building-ants-mound.png":a16,
-"assets/icons/building-ants-rootworks.png":a17,
-"assets/icons/building-ants-sawmill.png":a18,
-"assets/icons/building-ants-stonemason.png":a19,
-"assets/icons/building-ants-tower.png":a20,
-"assets/icons/command-attack.png":a21,
-"assets/icons/command-build-advanced.png":a22,
-"assets/icons/command-build.png":a23,
-"assets/icons/command-camera.png":a24,
-"assets/icons/command-cancel.png":a25,
-"assets/icons/command-follow.png":a26,
-"assets/icons/command-hold.png":a27,
-"assets/icons/command-move.png":a28,
-"assets/icons/command-patrol.png":a29,
-"assets/icons/command-pause.png":a30,
-"assets/icons/command-produce.png":a31,
-"assets/icons/command-rally.png":a32,
-"assets/icons/command-stop.png":a33,
-"assets/icons/item-amber-carapace.png":a34,
-"assets/icons/item-amber-hourglass.png":a35,
-"assets/icons/item-ancient-heartwood.png":a36,
-"assets/icons/item-barkguard.png":a37,
-"assets/icons/item-broodkeeper-lantern.png":a38,
-"assets/icons/item-canopy-aegis.png":a39,
-"assets/icons/item-deep-moon-scepter.png":a40,
-"assets/icons/item-endless-brood-banner.png":a41,
-"assets/icons/item-firefly-pendant.png":a42,
-"assets/icons/item-first-queen-crown.png":a43,
-"assets/icons/item-heart-of-the-forest.png":a44,
-"assets/icons/item-heartseed.png":a45,
-"assets/icons/item-moon-dew.png":a46,
-"assets/icons/item-moonwell-chalice.png":a47,
-"assets/icons/item-mossweave-wraps.png":a48,
-"assets/icons/item-phoenix-chrysalis.png":a49,
-"assets/icons/item-plank.png":a50,
-"assets/icons/item-predator-talon.png":a51,
-"assets/icons/item-quickstep-spurs.png":a52,
-"assets/icons/item-reaper-mandible.png":a53,
-"assets/icons/item-resin-salve.png":a54,
-"assets/icons/item-restoration-draught.png":a55,
-"assets/icons/item-rootbinder-idol.png":a56,
-"assets/icons/item-royal-crest.png":a57,
-"assets/icons/item-scout-whistle.png":a58,
-"assets/icons/item-stormwing-spurs.png":a59,
-"assets/icons/item-tempest-antennae.png":a60,
-"assets/icons/item-thornband.png":a61,
-"assets/icons/item-trailkeeper-flask.png":a62,
-"assets/icons/item-warcaller-standard.png":a63,
-"assets/icons/item-winter-heart.png":a64,
-"assets/icons/item-worldroot-heart.png":a65,
-"assets/icons/resource-amber.png":a66,
-"assets/icons/resource-lumber.png":a67,
-"assets/icons/resource-root.png":a68,
-"assets/icons/stat-armor-heavy.png":a69,
-"assets/icons/stat-armor-light.png":a70,
-"assets/icons/stat-armor-structure.png":a71,
-"assets/icons/unit-ants-archer.png":a72,
-"assets/icons/unit-ants-bombardier.png":a73,
-"assets/icons/unit-ants-hunter.png":a74,
-"assets/icons/unit-ants-marshal.png":a75,
-"assets/icons/unit-ants-warrior.png":a76,
-"assets/icons/unit-ants-worker.png":a77,
-"assets/icons/unit-neutral-amberjaw-staglord.png":a78,
-"assets/icons/unit-neutral-ogre.png":a79,
-"assets/icons/unit-neutral-thornblade-matriarch.png":a80,
-"assets/icons/unit-neutral-thornspitter.png":a81,
-"assets/icons/unit-neutral-wolf.png":a82,
-"assets/interface/app-icon/under-the-canopy.png":a83,
-"assets/interface/main-menu/buttons.png":a84,
-"assets/interface/main-menu/chain.png":a85,
-"assets/interface/main-menu/forest-heroes.png":a86,
-"assets/interface/main-menu/logo-iron-wordmark.png":a87,
-"assets/interface/main-menu/logo-metal.png":a88,
-"assets/interface/main-menu/menu-concept.png":a89,
-"assets/interface/woodland/map-frame.png":a90,
-"assets/interface/woodland/satchel.png":a91,
-"assets/interface/woodland/selection-mask.svg":a92,
-"assets/interface/woodland/selection-portrait-mask.svg":a93,
-"assets/interface/woodland/selection.png":a94,
-"assets/interface/woodland/slot.png":a95,
-"assets/interface/woodland/woodland-bar-rim.png":a96,
-"assets/interface/woodland/woodland-connected-hud.png":a97,
-"assets/interface/woodland/woodland-health-fill.png":a98,
-"assets/interface/woodland/woodland-mana-fill.png":a99,
-"assets/interface/woodland/woodland-satchel.png":a100,
-"assets/interface/woodland/woodland-selection-rim.png":a101,
-"assets/interface/woodland/woodland-square-rim.png":a102,
-"assets/models/buildings/ants/amber-sanctuary/model.glb":a103,
-"assets/models/buildings/ants/bark-cottage/model.glb":a104,
-"assets/models/buildings/ants/bombardier-workshop/model.glb":a105,
-"assets/models/buildings/ants/forester/model.glb":a106,
-"assets/models/buildings/ants/great-mound/model.glb":a107,
-"assets/models/buildings/ants/house/model.glb":a108,
-"assets/models/buildings/ants/ironroot-forge/model.glb":a109,
-"assets/models/buildings/ants/lumberjack-workshop/model.glb":a110,
-"assets/models/buildings/ants/player-barracks/model.glb":a111,
-"assets/models/buildings/ants/player-stonemason/model.glb":a112,
-"assets/models/buildings/ants/rootbound-hall/model.glb":a113,
-"assets/models/buildings/ants/rootworks/model.glb":a114,
-"assets/models/buildings/ants/sawmill/model.glb":a115,
-"assets/models/buildings/ants/stonemason/model.glb":a116,
-"assets/models/buildings/ants/tower/model.glb":a117,
-"assets/models/buildings/neutral/amber-seam/model.glb":a118,
-"assets/models/buildings/neutral/corrupted-root/model.glb":a119,
-"assets/models/buildings/neutral/ruined-cottage/model.glb":a120,
-"assets/models/buildings/neutral/supply-crate/model.glb":a121,
-"assets/models/buildings/neutral/twig-cage/model.glb":a122,
-"assets/models/environment/briarwatch/merchant-cart/model.glb":a123,
-"assets/models/environment/briarwatch/watch-bivouac/model.glb":a124,
-"assets/models/environment/grass/broadleaf/model.glb":a125,
-"assets/models/environment/grass/canopy-short-grass/model.glb":a126,
-"assets/models/environment/grass/fern/model.glb":a127,
-"assets/models/environment/grass/grass-v5-01/model.glb":a128,
-"assets/models/environment/grass/grass-v5-02/model.glb":a129,
-"assets/models/environment/grass/grass-v5-03/model.glb":a130,
-"assets/models/environment/grass/grass-v5-04/model.glb":a131,
-"assets/models/environment/grass/grass-v5-05/model.glb":a132,
-"assets/models/environment/grass/grass-v5-06/model.glb":a133,
-"assets/models/environment/grass/grass-v5-07/model.glb":a134,
-"assets/models/environment/grass/grass-v6-01/model.glb":a135,
-"assets/models/environment/grass/grass-v6-02/model.glb":a136,
-"assets/models/environment/grass/grass-v6-03/model.glb":a137,
-"assets/models/environment/grass/grass/model.glb":a138,
-"assets/models/environment/grass/reeds/model.glb":a139,
-"assets/models/environment/grass/river-reeds/model.glb":a140,
-"assets/models/environment/grass/synty-plant-fern-01/model.glb":a141,
-"assets/models/environment/grass/synty-plant-fern-02/model.glb":a142,
-"assets/models/environment/grass/synty-plant-fern-03/model.glb":a143,
-"assets/models/environment/grass/synty-plant-grass-02/model.glb":a144,
-"assets/models/environment/grass/synty-plant-reeds-01/model.glb":a145,
-"assets/models/environment/grass/synty-plant-reeds-02/model.glb":a146,
-"assets/models/environment/grass/synty-terrain-grassedge-01/model.glb":a147,
-"assets/models/environment/grass/synty-terrain-grassedge-02/model.glb":a148,
-"assets/models/environment/grass/synty-terrain-grassedge-03/model.glb":a149,
-"assets/models/environment/grass/synty-terrain-grassedge-04/model.glb":a150,
-"assets/models/environment/grass/synty-terrain-grassedge-roots-01/model.glb":a151,
-"assets/models/environment/grass/synty-terrain-grassedge-roots-02/model.glb":a152,
-"assets/models/environment/ground/canopy-forest-leaves/model.glb":a153,
-"assets/models/environment/ground/canopy-twig-log/model.glb":a154,
-"assets/models/environment/ground/curled-forest-leaf/model.glb":a155,
-"assets/models/environment/ground/fallen-acorn/model.glb":a156,
-"assets/models/environment/ground/forest-splinter-pile/model.glb":a157,
-"assets/models/environment/mushrooms/canopy-tiny-mushrooms/model.glb":a158,
-"assets/models/environment/mushrooms/lanterncap-grove/model.glb":a159,
-"assets/models/environment/mushrooms/lowpolymushroom-01/model.glb":a160,
-"assets/models/environment/mushrooms/lowpolymushroom-03/model.glb":a161,
-"assets/models/environment/mushrooms/lowpolymushroom-04/model.glb":a162,
-"assets/models/environment/mushrooms/lowpolymushroom-08/model.glb":a163,
-"assets/models/environment/mushrooms/lowpolymushroom-09/model.glb":a164,
-"assets/models/environment/mushrooms/lowpolymushroom-17/model.glb":a165,
-"assets/models/environment/mushrooms/lowpolymushroom-20/model.glb":a166,
-"assets/models/environment/mushrooms/mushroom-chunky-red/model.glb":a167,
-"assets/models/environment/mushrooms/ochre-mushroom-colony/model.glb":a168,
-"assets/models/environment/mushrooms/synty-plant-mushrooms-01/model.glb":a169,
-"assets/models/environment/rocks/mossy-boulder-bank/model.glb":a170,
-"assets/models/environment/rocks/river-rock-1/model.glb":a171,
-"assets/models/environment/rocks/river-rock-2/model.glb":a172,
-"assets/models/environment/rocks/river-rock-3/model.glb":a173,
-"assets/models/environment/rocks/river-rock-4/model.glb":a174,
-"assets/models/environment/rocks/river-rock-5/model.glb":a175,
-"assets/models/environment/rocks/river-rock-6/model.glb":a176,
-"assets/models/environment/rocks/rock-rounded-cool/model.glb":a177,
-"assets/models/environment/rocks/rock/model.glb":a178,
-"assets/models/environment/rocks/synty-rock-02/model.glb":a179,
-"assets/models/environment/rocks/synty-rock-03/model.glb":a180,
-"assets/models/environment/rocks/synty-rock-boulder-01/model.glb":a181,
-"assets/models/environment/rocks/synty-rock-cluster-large-01/model.glb":a182,
-"assets/models/environment/rocks/synty-rock-cluster-large-02/model.glb":a183,
-"assets/models/environment/rocks/synty-rock-cluster-large-03/model.glb":a184,
-"assets/models/environment/rocks/synty-rock-cluster-large-04/model.glb":a185,
-"assets/models/environment/rocks/synty-rock-cluster-large-05/model.glb":a186,
-"assets/models/environment/rocks/synty-rock-cluster-large-06/model.glb":a187,
-"assets/models/environment/rocks/synty-rock-pile-01/model.glb":a188,
-"assets/models/environment/rocks/synty-rock-pile-02/model.glb":a189,
-"assets/models/environment/rocks/synty-rock-pile-03/model.glb":a190,
-"assets/models/environment/rocks/synty-rock-pile-04/model.glb":a191,
-"assets/models/environment/rocks/synty-rock-pile-05/model.glb":a192,
-"assets/models/environment/rocks/synty-rock-pile-curved-01/model.glb":a193,
-"assets/models/environment/rocks/synty-rock-pile-curved-02/model.glb":a194,
-"assets/models/environment/rocks/synty-rock-small-01/model.glb":a195,
-"assets/models/environment/rocks/synty-rock-small-02/model.glb":a196,
-"assets/models/environment/rocks/synty-rock-tile-01/model.glb":a197,
-"assets/models/environment/rocks/synty-rock-tile-02/model.glb":a198,
-"assets/models/environment/rocks/synty-rock-tile-03/model.glb":a199,
-"assets/models/environment/rocks/synty-rock-wall-01/model.glb":a200,
-"assets/models/environment/rocks/synty-rock-wall-02/model.glb":a201,
-"assets/models/environment/rocks/synty-terrain-mountain-01/model.glb":a202,
-"assets/models/environment/shrubs/bramble-thicket/model.glb":a203,
-"assets/models/environment/shrubs/fern-thicket/model.glb":a204,
-"assets/models/environment/structures/amber-resin-sconce/model.glb":a205,
-"assets/models/environment/structures/arched-root-walkway/model.glb":a206,
-"assets/models/environment/structures/bitter-heart/model.glb":a207,
-"assets/models/environment/structures/bridge-16/model.glb":a208,
-"assets/models/environment/structures/bridge-32/model.glb":a209,
-"assets/models/environment/structures/bridge-8/model.glb":a210,
-"assets/models/environment/structures/driftwood/model.glb":a211,
-"assets/models/environment/structures/elephant-leaf/model.glb":a212,
-"assets/models/environment/structures/fallen-canopy-bough/model.glb":a213,
-"assets/models/environment/structures/flower-bud-cream/model.glb":a214,
-"assets/models/environment/structures/flower-chunky-blue/model.glb":a215,
-"assets/models/environment/structures/flower-chunky-cream/model.glb":a216,
-"assets/models/environment/structures/flower-chunky-purple/model.glb":a217,
-"assets/models/environment/structures/flower-single-blue/model.glb":a218,
-"assets/models/environment/structures/flower-single-cream/model.glb":a219,
-"assets/models/environment/structures/flower-single-purple/model.glb":a220,
-"assets/models/environment/structures/heartwood-resin-font/model.glb":a221,
-"assets/models/environment/structures/heartwood-wall/model.glb":a222,
-"assets/models/environment/structures/hollow-stump-gate/model.glb":a223,
-"assets/models/environment/structures/interwoven-root-bank/model.glb":a224,
-"assets/models/environment/structures/lantern-post/model.glb":a225,
-"assets/models/environment/structures/legacy-lily/model.glb":a226,
-"assets/models/environment/structures/lily-chunky/model.glb":a227,
-"assets/models/environment/structures/lily-gold/model.glb":a228,
-"assets/models/environment/structures/lily-white/model.glb":a229,
-"assets/models/environment/structures/lily/model.glb":a230,
-"assets/models/environment/structures/loot-chest/model.glb":a231,
-"assets/models/environment/structures/moss-stone-bridge/model.glb":a232,
-"assets/models/environment/structures/pebbles-pale/model.glb":a233,
-"assets/models/environment/structures/road-segment/model.glb":a234,
-"assets/models/environment/structures/splitrail-fence/model.glb":a235,
-"assets/models/environment/structures/synty-plant-bush-02/model.glb":a236,
-"assets/models/environment/structures/synty-plant-bush-leaves-01/model.glb":a237,
-"assets/models/environment/structures/synty-plant-bush-leaves-02/model.glb":a238,
-"assets/models/environment/structures/synty-plant-bush-leaves-03/model.glb":a239,
-"assets/models/environment/structures/synty-plant-flowerpatch-01/model.glb":a240,
-"assets/models/environment/structures/synty-plant-flowers-01/model.glb":a241,
-"assets/models/environment/structures/synty-plant-lillypad-large-01/model.glb":a242,
-"assets/models/environment/structures/synty-plant-lillypad-large-02/model.glb":a243,
-"assets/models/environment/structures/synty-plant-lillypad-large-03/model.glb":a244,
-"assets/models/environment/structures/synty-plant-lillypad-small-01/model.glb":a245,
-"assets/models/environment/structures/synty-prop-bridge-curved-01/model.glb":a246,
-"assets/models/environment/structures/synty-prop-fence-01/model.glb":a247,
-"assets/models/environment/structures/synty-prop-fence-02/model.glb":a248,
-"assets/models/environment/structures/synty-prop-pillar-01/model.glb":a249,
-"assets/models/environment/structures/synty-prop-pillar-arch-01/model.glb":a250,
-"assets/models/environment/structures/synty-prop-pillar-arch-broken-01/model.glb":a251,
-"assets/models/environment/structures/synty-prop-pillar-arch-broken-02/model.glb":a252,
-"assets/models/environment/structures/synty-prop-pillar-arch-broken-moss-01/model.glb":a253,
-"assets/models/environment/structures/synty-prop-pillar-arch-broken-moss-02/model.glb":a254,
-"assets/models/environment/structures/synty-prop-pillar-arch-moss-01/model.glb":a255,
-"assets/models/environment/structures/synty-prop-pillar-broken-01/model.glb":a256,
-"assets/models/environment/structures/synty-prop-pillar-broken-02/model.glb":a257,
-"assets/models/environment/structures/synty-prop-pillar-broken-moss-01/model.glb":a258,
-"assets/models/environment/structures/synty-prop-pillar-broken-moss-02/model.glb":a259,
-"assets/models/environment/structures/synty-prop-pillar-moss-01/model.glb":a260,
-"assets/models/environment/structures/synty-prop-roadsign-01/model.glb":a261,
-"assets/models/environment/structures/synty-prop-stonewall-01/model.glb":a262,
-"assets/models/environment/structures/synty-prop-stonewall-02/model.glb":a263,
-"assets/models/environment/structures/synty-prop-stonewall-03/model.glb":a264,
-"assets/models/environment/structures/synty-terrain-riverside-01/model.glb":a265,
-"assets/models/environment/structures/synty-terrain-riverside-corner-01/model.glb":a266,
-"assets/models/environment/structures/synty-terrain-riverside-corner-02/model.glb":a267,
-"assets/models/environment/structures/timber-bridge/model.glb":a268,
-"assets/models/environment/structures/waystone-outcrop/model.glb":a269,
-"assets/models/environment/structures/woodland-timber-bridge/model.glb":a270,
-"assets/models/environment/trees/ancient-canopy-trunk/model.glb":a271,
-"assets/models/environment/trees/coniferous-trees-05/model.glb":a272,
-"assets/models/environment/trees/coniferous-trees-06/model.glb":a273,
-"assets/models/environment/trees/coniferous-trees-07/model.glb":a274,
-"assets/models/environment/trees/coniferous-trees-08/model.glb":a275,
-"assets/models/environment/trees/coniferous-trees-09/model.glb":a276,
-"assets/models/environment/trees/coniferous-trees-10/model.glb":a277,
-"assets/models/environment/trees/coniferous-trees-11/model.glb":a278,
-"assets/models/environment/trees/coniferous-trees-12/model.glb":a279,
-"assets/models/environment/trees/coniferous-trees-16/model.glb":a280,
-"assets/models/environment/trees/coniferous-trees-17/model.glb":a281,
-"assets/models/environment/trees/coniferous-trees-18/model.glb":a282,
-"assets/models/environment/trees/coniferous-trees-19/model.glb":a283,
-"assets/models/environment/trees/coniferous-trees-20/model.glb":a284,
-"assets/models/environment/trees/coniferous-trees-21/model.glb":a285,
-"assets/models/environment/trees/coniferous-trees-22/model.glb":a286,
-"assets/models/environment/trees/coniferous-trees-23/model.glb":a287,
-"assets/models/environment/trees/coniferous-trees-24/model.glb":a288,
-"assets/models/environment/trees/coniferous-trees-25/model.glb":a289,
-"assets/models/environment/trees/coniferous-trees-26/model.glb":a290,
-"assets/models/environment/trees/olive-pine-animated/model.glb":a291,
-"assets/models/environment/trees/olive-pine/model.glb":a292,
-"assets/models/environment/trees/pine-chunky/model.glb":a293,
-"assets/models/environment/trees/pine-dark/model.glb":a294,
-"assets/models/environment/trees/pine-umber/model.glb":a295,
-"assets/models/environment/trees/pine/model.glb":a296,
-"assets/models/environment/trees/synty-tree-birch-01/model.glb":a297,
-"assets/models/environment/trees/synty-tree-birch-02/model.glb":a298,
-"assets/models/environment/trees/synty-tree-birch-03/model.glb":a299,
-"assets/models/environment/trees/synty-tree-birch-04/model.glb":a300,
-"assets/models/environment/trees/synty-tree-birch-dead-01/model.glb":a301,
-"assets/models/environment/trees/synty-tree-birch-small-01/model.glb":a302,
-"assets/models/environment/trees/synty-tree-generic-01/model.glb":a303,
-"assets/models/environment/trees/synty-tree-generic-dead-01/model.glb":a304,
-"assets/models/environment/trees/synty-tree-generic-giant-01/model.glb":a305,
-"assets/models/environment/trees/synty-tree-large-01/model.glb":a306,
-"assets/models/environment/trees/synty-tree-log-01/model.glb":a307,
-"assets/models/environment/trees/synty-tree-log-02/model.glb":a308,
-"assets/models/environment/trees/synty-tree-pine-01/model.glb":a309,
-"assets/models/environment/trees/synty-tree-pine-02/model.glb":a310,
-"assets/models/environment/trees/synty-tree-pine-base-01/model.glb":a311,
-"assets/models/environment/trees/synty-tree-pine-dead-01/model.glb":a312,
-"assets/models/environment/trees/synty-tree-pine-large-01/model.glb":a313,
-"assets/models/environment/trees/synty-tree-pine-large-02/model.glb":a314,
-"assets/models/environment/trees/synty-tree-pine-small-01/model.glb":a315,
-"assets/models/environment/trees/synty-tree-pine-small-02/model.glb":a316,
-"assets/models/environment/trees/synty-tree-stump-01/model.glb":a317,
-"assets/models/environment/trees/synty-tree-willow-large-01/model.glb":a318,
-"assets/models/environment/trees/synty-tree-willow-medium-01/model.glb":a319,
-"assets/models/environment/trees/synty-tree-willow-small-01/model.glb":a320,
-"assets/models/environment/trees/tree-chunky-broadleaf/model.glb":a321,
-"assets/models/environment/trees/tree-chunky-drooping/model.glb":a322,
-"assets/models/environment/trees/tree-primary/model.glb":a323,
-"assets/models/environment/trees/tree-secondary/model.glb":a324,
-"assets/models/environment/trees/woodland-pine-1/model.glb":a325,
-"assets/models/environment/trees/woodland-pine-2/model.glb":a326,
-"assets/models/environment/trees/woodland-pine-3/model.glb":a327,
-"assets/models/items/briarwatch/family-ring/model.glb":a328,
-"assets/models/items/briarwatch/healing-draught/model.glb":a329,
-"assets/models/items/briarwatch/healing-scroll/model.glb":a330,
-"assets/models/items/briarwatch/leaf-ledger/model.glb":a331,
-"assets/models/items/briarwatch/mana-draught/model.glb":a332,
-"assets/models/items/briarwatch/vigor-seed/model.glb":a333,
-"assets/models/items/item-log/model.glb":a334,
-"assets/models/items/item-plank/model.glb":a335,
-"assets/models/items/item-stone/model.glb":a336,
-"assets/models/items/log-stack/model.glb":a337,
-"assets/models/items/plank-stack/model.glb":a338,
-"assets/models/items/root-bundle/model.glb":a339,
-"assets/models/units/ants/archer/model.glb":a340,
-"assets/models/units/ants/bombardier/model.glb":a341,
-"assets/models/units/ants/briar-archer/model.glb":a342,
-"assets/models/units/ants/briar-captain/model.glb":a343,
-"assets/models/units/ants/briar-civilian/model.glb":a344,
-"assets/models/units/ants/briar-warrior/model.glb":a345,
-"assets/models/units/ants/guard-static/model.glb":a346,
-"assets/models/units/ants/hunter/model.glb":a347,
-"assets/models/units/ants/marshal/model.glb":a348,
-"assets/models/units/ants/profiles/bombardier.json":a349,
-"assets/models/units/ants/profiles/character.json":a350,
-"assets/models/units/ants/profiles/hunter.json":a351,
-"assets/models/units/ants/warrior/model.glb":a352,
-"assets/models/units/ants/worker-carry-static/model.glb":a353,
-"assets/models/units/ants/worker-static/model.glb":a354,
-"assets/models/units/ants/worker/model.glb":a355,
-"assets/models/units/neutral/amberjaw-staglord/model.glb":a356,
-"assets/models/units/neutral/ogre-static/model.glb":a357,
-"assets/models/units/neutral/thornblade-matriarch/model.glb":a358,
-"assets/models/units/neutral/thornspitter/model.glb":a359,
-"assets/models/units/neutral/wolf-static/model.glb":a360,
-"assets/textures/decals/mycelium-bed.png":a361,
-"assets/textures/decals/root-rot.png":a362,
-"assets/textures/materials/ants/moss-surface.png":a363,
-"assets/textures/materials/ants/surface-atlas.png":a364,
-"assets/textures/materials/synty/Water_Normal.png":a365,
-"assets/textures/materials/synty/looks.json":a366,
-"assets/textures/roads/road-albedo.png":a367,
-"assets/textures/roads/road-normal.png":a368,
-"assets/textures/terrain/ancient-bark.png":a369,
-"assets/textures/terrain/forest-floor.png":a370,
-"assets/textures/terrain/heartwood-floor.png":a371,
-"assets/textures/terrain/heartwood-grain.png":a372,
-"assets/textures/terrain/heartwood-rings.png":a373,
-"assets/textures/terrain/hollow-bark.png":a374,
-"assets/textures/terrain/mud.png":a375,
-"assets/textures/terrain/pebbles.png":a376,
-"assets/textures/terrain/rock.png":a377,
-"assets/textures/terrain/sand.png":a378,
-"assets/textures/terrain/snow.png":a379,
-"assets/textures/terrain/tuft-broad.png":a380,
-"assets/textures/terrain/tuft.png":a381,
-"assets/textures/terrain/weathered-limestone.png":a382,
-"assets/textures/vegetation/coniferous/atlas.png":a383,
-"assets/textures/vegetation/coniferous/grass_v5_03-far.json":a384,
-"assets/textures/vegetation/coniferous/grass_v5_03-medium.json":a385,
-"assets/textures/vegetation/coniferous/grass_v5_06-far.json":a386,
-"assets/textures/vegetation/coniferous/grass_v5_06-medium.json":a387,
+"assets/library/asset.icons.ability-ants-carapace/image.png":a0,
+"assets/library/asset.icons.ability-ants-crownfall/image.png":a1,
+"assets/library/asset.icons.ability-ants-faultline/image.png":a2,
+"assets/library/asset.icons.briar-family-ring/image.png":a3,
+"assets/library/asset.icons.briar-healing-draught/image.png":a4,
+"assets/library/asset.icons.briar-healing-scroll/image.png":a5,
+"assets/library/asset.icons.briar-leaf-ledger/image.png":a6,
+"assets/library/asset.icons.briar-mana-draught/image.png":a7,
+"assets/library/asset.icons.briar-vigor-seed/image.png":a8,
+"assets/library/asset.icons.building-ants-barracks/image.png":a9,
+"assets/library/asset.icons.building-ants-bombardier-workshop/image.png":a10,
+"assets/library/asset.icons.building-ants-forester/image.png":a11,
+"assets/library/asset.icons.building-ants-great-mound/image.png":a12,
+"assets/library/asset.icons.building-ants-house/image.png":a13,
+"assets/library/asset.icons.building-ants-ironroot-forge/image.png":a14,
+"assets/library/asset.icons.building-ants-lumberjack/image.png":a15,
+"assets/library/asset.icons.building-ants-mound/image.png":a16,
+"assets/library/asset.icons.building-ants-rootworks/image.png":a17,
+"assets/library/asset.icons.building-ants-sawmill/image.png":a18,
+"assets/library/asset.icons.building-ants-stonemason/image.png":a19,
+"assets/library/asset.icons.building-ants-tower/image.png":a20,
+"assets/library/asset.icons.command-attack/image.png":a21,
+"assets/library/asset.icons.command-build-advanced/image.png":a22,
+"assets/library/asset.icons.command-build/image.png":a23,
+"assets/library/asset.icons.command-camera/image.png":a24,
+"assets/library/asset.icons.command-cancel/image.png":a25,
+"assets/library/asset.icons.command-follow/image.png":a26,
+"assets/library/asset.icons.command-hold/image.png":a27,
+"assets/library/asset.icons.command-move/image.png":a28,
+"assets/library/asset.icons.command-patrol/image.png":a29,
+"assets/library/asset.icons.command-pause/image.png":a30,
+"assets/library/asset.icons.command-produce/image.png":a31,
+"assets/library/asset.icons.command-rally/image.png":a32,
+"assets/library/asset.icons.command-stop/image.png":a33,
+"assets/library/asset.icons.item-amber-carapace/image.png":a34,
+"assets/library/asset.icons.item-amber-hourglass/image.png":a35,
+"assets/library/asset.icons.item-ancient-heartwood/image.png":a36,
+"assets/library/asset.icons.item-barkguard/image.png":a37,
+"assets/library/asset.icons.item-broodkeeper-lantern/image.png":a38,
+"assets/library/asset.icons.item-canopy-aegis/image.png":a39,
+"assets/library/asset.icons.item-deep-moon-scepter/image.png":a40,
+"assets/library/asset.icons.item-endless-brood-banner/image.png":a41,
+"assets/library/asset.icons.item-firefly-pendant/image.png":a42,
+"assets/library/asset.icons.item-first-queen-crown/image.png":a43,
+"assets/library/asset.icons.item-heartseed/image.png":a44,
+"assets/library/asset.icons.item-moon-dew/image.png":a45,
+"assets/library/asset.icons.item-moonwell-chalice/image.png":a46,
+"assets/library/asset.icons.item-mossweave-wraps/image.png":a47,
+"assets/library/asset.icons.item-phoenix-chrysalis/image.png":a48,
+"assets/library/asset.icons.item-plank/image.png":a49,
+"assets/library/asset.icons.item-predator-talon/image.png":a50,
+"assets/library/asset.icons.item-quickstep-spurs/image.png":a51,
+"assets/library/asset.icons.item-reaper-mandible/image.png":a52,
+"assets/library/asset.icons.item-resin-salve/image.png":a53,
+"assets/library/asset.icons.item-restoration-draught/image.png":a54,
+"assets/library/asset.icons.item-rootbinder-idol/image.png":a55,
+"assets/library/asset.icons.item-royal-crest/image.png":a56,
+"assets/library/asset.icons.item-scout-whistle/image.png":a57,
+"assets/library/asset.icons.item-stormwing-spurs/image.png":a58,
+"assets/library/asset.icons.item-tempest-antennae/image.png":a59,
+"assets/library/asset.icons.item-thornband/image.png":a60,
+"assets/library/asset.icons.item-trailkeeper-flask/image.png":a61,
+"assets/library/asset.icons.item-warcaller-standard/image.png":a62,
+"assets/library/asset.icons.item-winter-heart/image.png":a63,
+"assets/library/asset.icons.item-worldroot-heart/image.png":a64,
+"assets/library/asset.icons.resource-amber/image.png":a65,
+"assets/library/asset.icons.resource-lumber/image.png":a66,
+"assets/library/asset.icons.resource-root/image.png":a67,
+"assets/library/asset.icons.stat-armor-heavy/image.png":a68,
+"assets/library/asset.icons.stat-armor-light/image.png":a69,
+"assets/library/asset.icons.stat-armor-structure/image.png":a70,
+"assets/library/asset.icons.unit-ants-archer/image.png":a71,
+"assets/library/asset.icons.unit-ants-bombardier/image.png":a72,
+"assets/library/asset.icons.unit-ants-hunter/image.png":a73,
+"assets/library/asset.icons.unit-ants-marshal/image.png":a74,
+"assets/library/asset.icons.unit-ants-warrior/image.png":a75,
+"assets/library/asset.icons.unit-ants-worker/image.png":a76,
+"assets/library/asset.icons.unit-neutral-amberjaw-staglord/image.png":a77,
+"assets/library/asset.icons.unit-neutral-ogre/image.png":a78,
+"assets/library/asset.icons.unit-neutral-thornblade-matriarch/image.png":a79,
+"assets/library/asset.icons.unit-neutral-thornspitter/image.png":a80,
+"assets/library/asset.icons.unit-neutral-wolf/image.png":a81,
+"assets/library/asset.interface.app-icon.under-the-canopy/image.png":a82,
+"assets/library/asset.interface.main-menu.buttons/image.png":a83,
+"assets/library/asset.interface.main-menu.chain/image.png":a84,
+"assets/library/asset.interface.main-menu.forest-heroes/image.png":a85,
+"assets/library/asset.interface.main-menu.logo-iron-wordmark/image.png":a86,
+"assets/library/asset.interface.main-menu.logo-metal/image.png":a87,
+"assets/library/asset.interface.main-menu.menu-concept/image.png":a88,
+"assets/library/asset.interface.woodland.map-frame/image.png":a89,
+"assets/library/asset.interface.woodland.satchel/image.png":a90,
+"assets/library/asset.interface.woodland.selection-mask/image.svg":a91,
+"assets/library/asset.interface.woodland.selection-portrait-mask/image.svg":a92,
+"assets/library/asset.interface.woodland.selection/image.png":a93,
+"assets/library/asset.interface.woodland.slot/image.png":a94,
+"assets/library/asset.models.buildings.ants.amber-sanctuary/geometry.glb":a95,
+"assets/library/asset.models.buildings.ants.bark-cottage/geometry.glb":a96,
+"assets/library/asset.models.buildings.ants.bombardier-workshop/geometry.glb":a97,
+"assets/library/asset.models.buildings.ants.forester/geometry.glb":a98,
+"assets/library/asset.models.buildings.ants.great-mound/geometry.glb":a99,
+"assets/library/asset.models.buildings.ants.house/geometry.glb":a100,
+"assets/library/asset.models.buildings.ants.ironroot-forge/geometry.glb":a101,
+"assets/library/asset.models.buildings.ants.lumberjack-workshop/geometry.glb":a102,
+"assets/library/asset.models.buildings.ants.player-barracks/geometry.glb":a103,
+"assets/library/asset.models.buildings.ants.player-stonemason/geometry.glb":a104,
+"assets/library/asset.models.buildings.ants.rootbound-hall/geometry.glb":a105,
+"assets/library/asset.models.buildings.ants.rootworks/geometry.glb":a106,
+"assets/library/asset.models.buildings.ants.sawmill/geometry.glb":a107,
+"assets/library/asset.models.buildings.ants.stonemason/geometry.glb":a108,
+"assets/library/asset.models.buildings.ants.tower/geometry.glb":a109,
+"assets/library/asset.models.buildings.neutral.amber-seam/geometry.glb":a110,
+"assets/library/asset.models.buildings.neutral.corrupted-root/geometry.glb":a111,
+"assets/library/asset.models.buildings.neutral.ruined-cottage/geometry.glb":a112,
+"assets/library/asset.models.buildings.neutral.supply-crate/geometry.glb":a113,
+"assets/library/asset.models.buildings.neutral.twig-cage/geometry.glb":a114,
+"assets/library/asset.models.environment.briarwatch.merchant-cart/geometry.glb":a115,
+"assets/library/asset.models.environment.briarwatch.watch-bivouac/geometry.glb":a116,
+"assets/library/asset.models.environment.grass.broadleaf/geometry.glb":a117,
+"assets/library/asset.models.environment.grass.canopy-short-grass/geometry.glb":a118,
+"assets/library/asset.models.environment.grass.fern/geometry.glb":a119,
+"assets/library/asset.models.environment.grass.grass-v5-01/geometry.glb":a120,
+"assets/library/asset.models.environment.grass.grass-v5-02/geometry.glb":a121,
+"assets/library/asset.models.environment.grass.grass-v5-03/geometry.glb":a122,
+"assets/library/asset.models.environment.grass.grass-v5-04/geometry.glb":a123,
+"assets/library/asset.models.environment.grass.grass-v5-05/geometry.glb":a124,
+"assets/library/asset.models.environment.grass.grass-v5-06/geometry.glb":a125,
+"assets/library/asset.models.environment.grass.grass-v5-07/geometry.glb":a126,
+"assets/library/asset.models.environment.grass.grass-v6-01/geometry.glb":a127,
+"assets/library/asset.models.environment.grass.grass-v6-02/geometry.glb":a128,
+"assets/library/asset.models.environment.grass.grass-v6-03/geometry.glb":a129,
+"assets/library/asset.models.environment.grass.grass/geometry.glb":a130,
+"assets/library/asset.models.environment.grass.reeds/geometry.glb":a131,
+"assets/library/asset.models.environment.grass.reference-grass-daisy/geometry.glb":a132,
+"assets/library/asset.models.environment.grass.reference-grass-high-a/geometry.glb":a133,
+"assets/library/asset.models.environment.grass.reference-grass-high-b/geometry.glb":a134,
+"assets/library/asset.models.environment.grass.reference-grass-low/geometry.glb":a135,
+"assets/library/asset.models.environment.grass.reference-grass-messy/geometry.glb":a136,
+"assets/library/asset.models.environment.grass.reference-grass-water-leaves-a/geometry.glb":a137,
+"assets/library/asset.models.environment.grass.reference-grass-water-leaves-b/geometry.glb":a138,
+"assets/library/asset.models.environment.grass.river-reeds/geometry.glb":a139,
+"assets/library/asset.models.environment.grass.synty-plant-fern-01/geometry.glb":a140,
+"assets/library/asset.models.environment.grass.synty-plant-fern-02/geometry.glb":a141,
+"assets/library/asset.models.environment.grass.synty-plant-fern-03/geometry.glb":a142,
+"assets/library/asset.models.environment.grass.synty-plant-grass-02/geometry.glb":a143,
+"assets/library/asset.models.environment.grass.synty-plant-reeds-01/geometry.glb":a144,
+"assets/library/asset.models.environment.grass.synty-plant-reeds-02/geometry.glb":a145,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-01/geometry.glb":a146,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-02/geometry.glb":a147,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-03/geometry.glb":a148,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-04/geometry.glb":a149,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-01/geometry.glb":a150,
+"assets/library/asset.models.environment.grass.synty-terrain-grassedge-roots-02/geometry.glb":a151,
+"assets/library/asset.models.environment.ground.canopy-forest-leaves/geometry.glb":a152,
+"assets/library/asset.models.environment.ground.canopy-twig-log/geometry.glb":a153,
+"assets/library/asset.models.environment.ground.curled-forest-leaf/geometry.glb":a154,
+"assets/library/asset.models.environment.ground.fallen-acorn/geometry.glb":a155,
+"assets/library/asset.models.environment.ground.forest-splinter-pile/geometry.glb":a156,
+"assets/library/asset.models.environment.mushrooms.canopy-tiny-mushrooms/geometry.glb":a157,
+"assets/library/asset.models.environment.mushrooms.lanterncap-grove/geometry.glb":a158,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-01/geometry.glb":a159,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-03/geometry.glb":a160,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-04/geometry.glb":a161,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-08/geometry.glb":a162,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-09/geometry.glb":a163,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-17/geometry.glb":a164,
+"assets/library/asset.models.environment.mushrooms.lowpolymushroom-20/geometry.glb":a165,
+"assets/library/asset.models.environment.mushrooms.mushroom-chunky-red/geometry.glb":a166,
+"assets/library/asset.models.environment.mushrooms.ochre-mushroom-colony/geometry.glb":a167,
+"assets/library/asset.models.environment.mushrooms.synty-plant-mushrooms-01/geometry.glb":a168,
+"assets/library/asset.models.environment.props.reference-bush-a/geometry.glb":a169,
+"assets/library/asset.models.environment.props.reference-bush-b/geometry.glb":a170,
+"assets/library/asset.models.environment.props.reference-dungeon-entrance/geometry.glb":a171,
+"assets/library/asset.models.environment.props.reference-goblin-hut/geometry.glb":a172,
+"assets/library/asset.models.environment.props.reference-gold-vein-a/geometry.glb":a173,
+"assets/library/asset.models.environment.props.reference-gold-vein-b/geometry.glb":a174,
+"assets/library/asset.models.environment.props.reference-lying-snag-a/geometry.glb":a175,
+"assets/library/asset.models.environment.props.reference-lying-snag-b/geometry.glb":a176,
+"assets/library/asset.models.environment.props.reference-lying-snag-c/geometry.glb":a177,
+"assets/library/asset.models.environment.props.reference-lying-snag-d/geometry.glb":a178,
+"assets/library/asset.models.environment.props.reference-monument-01/geometry.glb":a179,
+"assets/library/asset.models.environment.props.reference-mountain-chunk-a/geometry.glb":a180,
+"assets/library/asset.models.environment.props.reference-mountain-chunk-b/geometry.glb":a181,
+"assets/library/asset.models.environment.props.reference-mountain-chunk-c/geometry.glb":a182,
+"assets/library/asset.models.environment.props.reference-neutral-bandit-a/geometry.glb":a183,
+"assets/library/asset.models.environment.props.reference-neutral-bandit-b/geometry.glb":a184,
+"assets/library/asset.models.environment.props.reference-neutral-bandit-tent/geometry.glb":a185,
+"assets/library/asset.models.environment.props.reference-neutral-goblin/geometry.glb":a186,
+"assets/library/asset.models.environment.props.reference-neutral-outpost/geometry.glb":a187,
+"assets/library/asset.models.environment.props.reference-neutral-troll-cave/geometry.glb":a188,
+"assets/library/asset.models.environment.props.reference-neutral-troll/geometry.glb":a189,
+"assets/library/asset.models.environment.props.reference-neutral-wolf-den-a/geometry.glb":a190,
+"assets/library/asset.models.environment.props.reference-neutral-wolf-den-b/geometry.glb":a191,
+"assets/library/asset.models.environment.props.reference-neutral-wolf/geometry.glb":a192,
+"assets/library/asset.models.environment.props.reference-ruins-blocks-03/geometry.glb":a193,
+"assets/library/asset.models.environment.props.reference-ruins-blocks-04/geometry.glb":a194,
+"assets/library/asset.models.environment.props.reference-ruins-blocks-06/geometry.glb":a195,
+"assets/library/asset.models.environment.props.reference-ruins-blocks-08/geometry.glb":a196,
+"assets/library/asset.models.environment.props.reference-ruins-column-11/geometry.glb":a197,
+"assets/library/asset.models.environment.props.reference-small-rock-a/geometry.glb":a198,
+"assets/library/asset.models.environment.props.reference-small-rock-b/geometry.glb":a199,
+"assets/library/asset.models.environment.props.reference-small-rock-c/geometry.glb":a200,
+"assets/library/asset.models.environment.props.reference-wooden-bridge-small/geometry.glb":a201,
+"assets/library/asset.models.environment.rocks.mossy-boulder-bank/geometry.glb":a202,
+"assets/library/asset.models.environment.rocks.river-rock-1/geometry.glb":a203,
+"assets/library/asset.models.environment.rocks.river-rock-2/geometry.glb":a204,
+"assets/library/asset.models.environment.rocks.river-rock-3/geometry.glb":a205,
+"assets/library/asset.models.environment.rocks.river-rock-4/geometry.glb":a206,
+"assets/library/asset.models.environment.rocks.river-rock-5/geometry.glb":a207,
+"assets/library/asset.models.environment.rocks.river-rock-6/geometry.glb":a208,
+"assets/library/asset.models.environment.rocks.rock-rounded-cool/geometry.glb":a209,
+"assets/library/asset.models.environment.rocks.rock/geometry.glb":a210,
+"assets/library/asset.models.environment.rocks.synty-rock-02/geometry.glb":a211,
+"assets/library/asset.models.environment.rocks.synty-rock-03/geometry.glb":a212,
+"assets/library/asset.models.environment.rocks.synty-rock-boulder-01/geometry.glb":a213,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-01/geometry.glb":a214,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-02/geometry.glb":a215,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-03/geometry.glb":a216,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-04/geometry.glb":a217,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-05/geometry.glb":a218,
+"assets/library/asset.models.environment.rocks.synty-rock-cluster-large-06/geometry.glb":a219,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-01/geometry.glb":a220,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-02/geometry.glb":a221,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-03/geometry.glb":a222,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-04/geometry.glb":a223,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-05/geometry.glb":a224,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-curved-01/geometry.glb":a225,
+"assets/library/asset.models.environment.rocks.synty-rock-pile-curved-02/geometry.glb":a226,
+"assets/library/asset.models.environment.rocks.synty-rock-small-01/geometry.glb":a227,
+"assets/library/asset.models.environment.rocks.synty-rock-small-02/geometry.glb":a228,
+"assets/library/asset.models.environment.rocks.synty-rock-tile-01/geometry.glb":a229,
+"assets/library/asset.models.environment.rocks.synty-rock-tile-02/geometry.glb":a230,
+"assets/library/asset.models.environment.rocks.synty-rock-tile-03/geometry.glb":a231,
+"assets/library/asset.models.environment.rocks.synty-rock-wall-01/geometry.glb":a232,
+"assets/library/asset.models.environment.rocks.synty-rock-wall-02/geometry.glb":a233,
+"assets/library/asset.models.environment.rocks.synty-terrain-mountain-01/geometry.glb":a234,
+"assets/library/asset.models.environment.shrubs.bramble-thicket/geometry.glb":a235,
+"assets/library/asset.models.environment.shrubs.fern-thicket/geometry.glb":a236,
+"assets/library/asset.models.environment.structures.amber-resin-sconce/geometry.glb":a237,
+"assets/library/asset.models.environment.structures.arched-root-walkway/geometry.glb":a238,
+"assets/library/asset.models.environment.structures.bitter-heart/geometry.glb":a239,
+"assets/library/asset.models.environment.structures.bridge-16/geometry.glb":a240,
+"assets/library/asset.models.environment.structures.bridge-32/geometry.glb":a241,
+"assets/library/asset.models.environment.structures.bridge-8/geometry.glb":a242,
+"assets/library/asset.models.environment.structures.driftwood/geometry.glb":a243,
+"assets/library/asset.models.environment.structures.elephant-leaf/geometry.glb":a244,
+"assets/library/asset.models.environment.structures.fallen-canopy-bough/geometry.glb":a245,
+"assets/library/asset.models.environment.structures.flower-bud-cream/geometry.glb":a246,
+"assets/library/asset.models.environment.structures.flower-chunky-blue/geometry.glb":a247,
+"assets/library/asset.models.environment.structures.flower-chunky-cream/geometry.glb":a248,
+"assets/library/asset.models.environment.structures.flower-chunky-purple/geometry.glb":a249,
+"assets/library/asset.models.environment.structures.flower-single-blue/geometry.glb":a250,
+"assets/library/asset.models.environment.structures.flower-single-cream/geometry.glb":a251,
+"assets/library/asset.models.environment.structures.flower-single-purple/geometry.glb":a252,
+"assets/library/asset.models.environment.structures.heartwood-resin-font/geometry.glb":a253,
+"assets/library/asset.models.environment.structures.heartwood-wall/geometry.glb":a254,
+"assets/library/asset.models.environment.structures.hollow-stump-gate/geometry.glb":a255,
+"assets/library/asset.models.environment.structures.interwoven-root-bank/geometry.glb":a256,
+"assets/library/asset.models.environment.structures.lantern-post/geometry.glb":a257,
+"assets/library/asset.models.environment.structures.legacy-lily/geometry.glb":a258,
+"assets/library/asset.models.environment.structures.lily-chunky/geometry.glb":a259,
+"assets/library/asset.models.environment.structures.lily-gold/geometry.glb":a260,
+"assets/library/asset.models.environment.structures.lily-white/geometry.glb":a261,
+"assets/library/asset.models.environment.structures.lily/geometry.glb":a262,
+"assets/library/asset.models.environment.structures.loot-chest/geometry.glb":a263,
+"assets/library/asset.models.environment.structures.moss-stone-bridge/geometry.glb":a264,
+"assets/library/asset.models.environment.structures.pebbles-pale/geometry.glb":a265,
+"assets/library/asset.models.environment.structures.road-segment/geometry.glb":a266,
+"assets/library/asset.models.environment.structures.splitrail-fence/geometry.glb":a267,
+"assets/library/asset.models.environment.structures.synty-plant-bush-02/geometry.glb":a268,
+"assets/library/asset.models.environment.structures.synty-plant-bush-leaves-01/geometry.glb":a269,
+"assets/library/asset.models.environment.structures.synty-plant-bush-leaves-02/geometry.glb":a270,
+"assets/library/asset.models.environment.structures.synty-plant-bush-leaves-03/geometry.glb":a271,
+"assets/library/asset.models.environment.structures.synty-plant-flowerpatch-01/geometry.glb":a272,
+"assets/library/asset.models.environment.structures.synty-plant-flowers-01/geometry.glb":a273,
+"assets/library/asset.models.environment.structures.synty-plant-lillypad-large-01/geometry.glb":a274,
+"assets/library/asset.models.environment.structures.synty-plant-lillypad-large-02/geometry.glb":a275,
+"assets/library/asset.models.environment.structures.synty-plant-lillypad-large-03/geometry.glb":a276,
+"assets/library/asset.models.environment.structures.synty-plant-lillypad-small-01/geometry.glb":a277,
+"assets/library/asset.models.environment.structures.synty-prop-bridge-curved-01/geometry.glb":a278,
+"assets/library/asset.models.environment.structures.synty-prop-fence-01/geometry.glb":a279,
+"assets/library/asset.models.environment.structures.synty-prop-fence-02/geometry.glb":a280,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-01/geometry.glb":a281,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-01/geometry.glb":a282,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-01/geometry.glb":a283,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-02/geometry.glb":a284,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01/geometry.glb":a285,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02/geometry.glb":a286,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-arch-moss-01/geometry.glb":a287,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-broken-01/geometry.glb":a288,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-broken-02/geometry.glb":a289,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-01/geometry.glb":a290,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-broken-moss-02/geometry.glb":a291,
+"assets/library/asset.models.environment.structures.synty-prop-pillar-moss-01/geometry.glb":a292,
+"assets/library/asset.models.environment.structures.synty-prop-roadsign-01/geometry.glb":a293,
+"assets/library/asset.models.environment.structures.synty-prop-stonewall-01/geometry.glb":a294,
+"assets/library/asset.models.environment.structures.synty-prop-stonewall-02/geometry.glb":a295,
+"assets/library/asset.models.environment.structures.synty-prop-stonewall-03/geometry.glb":a296,
+"assets/library/asset.models.environment.structures.synty-terrain-riverside-01/geometry.glb":a297,
+"assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-01/geometry.glb":a298,
+"assets/library/asset.models.environment.structures.synty-terrain-riverside-corner-02/geometry.glb":a299,
+"assets/library/asset.models.environment.structures.timber-bridge/geometry.glb":a300,
+"assets/library/asset.models.environment.structures.waystone-outcrop/geometry.glb":a301,
+"assets/library/asset.models.environment.structures.woodland-timber-bridge/geometry.glb":a302,
+"assets/library/asset.models.environment.trees.ancient-canopy-trunk/geometry.glb":a303,
+"assets/library/asset.models.environment.trees.coniferous-trees-05/geometry.glb":a304,
+"assets/library/asset.models.environment.trees.coniferous-trees-06/geometry.glb":a305,
+"assets/library/asset.models.environment.trees.coniferous-trees-07/geometry.glb":a306,
+"assets/library/asset.models.environment.trees.coniferous-trees-08/geometry.glb":a307,
+"assets/library/asset.models.environment.trees.coniferous-trees-09/geometry.glb":a308,
+"assets/library/asset.models.environment.trees.coniferous-trees-10/geometry.glb":a309,
+"assets/library/asset.models.environment.trees.coniferous-trees-11/geometry.glb":a310,
+"assets/library/asset.models.environment.trees.coniferous-trees-12/geometry.glb":a311,
+"assets/library/asset.models.environment.trees.coniferous-trees-16/geometry.glb":a312,
+"assets/library/asset.models.environment.trees.coniferous-trees-17/geometry.glb":a313,
+"assets/library/asset.models.environment.trees.coniferous-trees-18/geometry.glb":a314,
+"assets/library/asset.models.environment.trees.coniferous-trees-19/geometry.glb":a315,
+"assets/library/asset.models.environment.trees.coniferous-trees-20/geometry.glb":a316,
+"assets/library/asset.models.environment.trees.coniferous-trees-21/geometry.glb":a317,
+"assets/library/asset.models.environment.trees.coniferous-trees-22/geometry.glb":a318,
+"assets/library/asset.models.environment.trees.coniferous-trees-23/geometry.glb":a319,
+"assets/library/asset.models.environment.trees.coniferous-trees-24/geometry.glb":a320,
+"assets/library/asset.models.environment.trees.coniferous-trees-25/geometry.glb":a321,
+"assets/library/asset.models.environment.trees.coniferous-trees-26/geometry.glb":a322,
+"assets/library/asset.models.environment.trees.olive-pine-animated/geometry.glb":a323,
+"assets/library/asset.models.environment.trees.olive-pine/geometry.glb":a324,
+"assets/library/asset.models.environment.trees.pine-chunky/geometry.glb":a325,
+"assets/library/asset.models.environment.trees.pine-dark/geometry.glb":a326,
+"assets/library/asset.models.environment.trees.pine-umber/geometry.glb":a327,
+"assets/library/asset.models.environment.trees.pine/geometry.glb":a328,
+"assets/library/asset.models.environment.trees.reference-fir-a/geometry.glb":a329,
+"assets/library/asset.models.environment.trees.reference-fir-b/geometry.glb":a330,
+"assets/library/asset.models.environment.trees.reference-fir-small-a/geometry.glb":a331,
+"assets/library/asset.models.environment.trees.reference-stump-fir-a/geometry.glb":a332,
+"assets/library/asset.models.environment.trees.synty-tree-birch-01/geometry.glb":a333,
+"assets/library/asset.models.environment.trees.synty-tree-birch-02/geometry.glb":a334,
+"assets/library/asset.models.environment.trees.synty-tree-birch-03/geometry.glb":a335,
+"assets/library/asset.models.environment.trees.synty-tree-birch-04/geometry.glb":a336,
+"assets/library/asset.models.environment.trees.synty-tree-birch-dead-01/geometry.glb":a337,
+"assets/library/asset.models.environment.trees.synty-tree-birch-small-01/geometry.glb":a338,
+"assets/library/asset.models.environment.trees.synty-tree-generic-01/geometry.glb":a339,
+"assets/library/asset.models.environment.trees.synty-tree-generic-dead-01/geometry.glb":a340,
+"assets/library/asset.models.environment.trees.synty-tree-generic-giant-01/geometry.glb":a341,
+"assets/library/asset.models.environment.trees.synty-tree-large-01/geometry.glb":a342,
+"assets/library/asset.models.environment.trees.synty-tree-log-01/geometry.glb":a343,
+"assets/library/asset.models.environment.trees.synty-tree-log-02/geometry.glb":a344,
+"assets/library/asset.models.environment.trees.synty-tree-pine-01/geometry.glb":a345,
+"assets/library/asset.models.environment.trees.synty-tree-pine-02/geometry.glb":a346,
+"assets/library/asset.models.environment.trees.synty-tree-pine-base-01/geometry.glb":a347,
+"assets/library/asset.models.environment.trees.synty-tree-pine-dead-01/geometry.glb":a348,
+"assets/library/asset.models.environment.trees.synty-tree-pine-large-01/geometry.glb":a349,
+"assets/library/asset.models.environment.trees.synty-tree-pine-large-02/geometry.glb":a350,
+"assets/library/asset.models.environment.trees.synty-tree-pine-small-01/geometry.glb":a351,
+"assets/library/asset.models.environment.trees.synty-tree-pine-small-02/geometry.glb":a352,
+"assets/library/asset.models.environment.trees.synty-tree-stump-01/geometry.glb":a353,
+"assets/library/asset.models.environment.trees.synty-tree-willow-large-01/geometry.glb":a354,
+"assets/library/asset.models.environment.trees.synty-tree-willow-medium-01/geometry.glb":a355,
+"assets/library/asset.models.environment.trees.synty-tree-willow-small-01/geometry.glb":a356,
+"assets/library/asset.models.environment.trees.tree-chunky-broadleaf/geometry.glb":a357,
+"assets/library/asset.models.environment.trees.tree-chunky-drooping/geometry.glb":a358,
+"assets/library/asset.models.environment.trees.tree-primary/geometry.glb":a359,
+"assets/library/asset.models.environment.trees.tree-secondary/geometry.glb":a360,
+"assets/library/asset.models.environment.trees.woodland-pine-1/geometry.glb":a361,
+"assets/library/asset.models.environment.trees.woodland-pine-2/geometry.glb":a362,
+"assets/library/asset.models.environment.trees.woodland-pine-3/geometry.glb":a363,
+"assets/library/asset.models.items.briarwatch.family-ring/geometry.glb":a364,
+"assets/library/asset.models.items.briarwatch.healing-draught/geometry.glb":a365,
+"assets/library/asset.models.items.briarwatch.healing-scroll/geometry.glb":a366,
+"assets/library/asset.models.items.briarwatch.leaf-ledger/geometry.glb":a367,
+"assets/library/asset.models.items.briarwatch.mana-draught/geometry.glb":a368,
+"assets/library/asset.models.items.briarwatch.vigor-seed/geometry.glb":a369,
+"assets/library/asset.models.items.item-log/geometry.glb":a370,
+"assets/library/asset.models.items.item-plank/geometry.glb":a371,
+"assets/library/asset.models.items.item-stone/geometry.glb":a372,
+"assets/library/asset.models.items.log-stack/geometry.glb":a373,
+"assets/library/asset.models.items.plank-stack/geometry.glb":a374,
+"assets/library/asset.models.items.root-bundle/geometry.glb":a375,
+"assets/library/asset.models.units.ants.archer/geometry.glb":a376,
+"assets/library/asset.models.units.ants.bombardier/geometry.glb":a377,
+"assets/library/asset.models.units.ants.briar-archer/geometry.glb":a378,
+"assets/library/asset.models.units.ants.briar-captain/geometry.glb":a379,
+"assets/library/asset.models.units.ants.briar-civilian/geometry.glb":a380,
+"assets/library/asset.models.units.ants.briar-warrior/geometry.glb":a381,
+"assets/library/asset.models.units.ants.guard-static/geometry.glb":a382,
+"assets/library/asset.models.units.ants.hunter/geometry.glb":a383,
+"assets/library/asset.models.units.ants.marshal/geometry.glb":a384,
+"assets/library/asset.models.units.ants.profiles.bombardier/data.json":a385,
+"assets/library/asset.models.units.ants.profiles.character/data.json":a386,
+"assets/library/asset.models.units.ants.profiles.hunter/data.json":a387,
+"assets/library/asset.models.units.ants.warrior/geometry.glb":a388,
+"assets/library/asset.models.units.ants.worker-carry-static/geometry.glb":a389,
+"assets/library/asset.models.units.ants.worker-static/geometry.glb":a390,
+"assets/library/asset.models.units.ants.worker/geometry.glb":a391,
+"assets/library/asset.models.units.neutral.amberjaw-staglord/geometry.glb":a392,
+"assets/library/asset.models.units.neutral.ogre-static/geometry.glb":a393,
+"assets/library/asset.models.units.neutral.thornblade-matriarch/geometry.glb":a394,
+"assets/library/asset.models.units.neutral.thornspitter/geometry.glb":a395,
+"assets/library/asset.models.units.neutral.wolf-static/geometry.glb":a396,
+"assets/library/asset.textures.decals.mycelium-bed/albedo.png":a397,
+"assets/library/asset.textures.decals.root-rot/albedo.png":a398,
+"assets/library/asset.textures.materials.ants.moss-surface/albedo.png":a399,
+"assets/library/asset.textures.materials.ants.surface-atlas/albedo.png":a400,
+"assets/library/asset.textures.materials.synty.Water_Normal/albedo.png":a401,
+"assets/library/asset.textures.materials.synty.looks/data.json":a402,
+"assets/library/asset.textures.roads.road-albedo/albedo.png":a403,
+"assets/library/asset.textures.roads.road-normal/albedo.png":a404,
+"assets/library/asset.textures.terrain.ancient-bark/albedo.png":a405,
+"assets/library/asset.textures.terrain.forest-floor/albedo.png":a406,
+"assets/library/asset.textures.terrain.heartwood-floor/albedo.png":a407,
+"assets/library/asset.textures.terrain.heartwood-grain/albedo.png":a408,
+"assets/library/asset.textures.terrain.heartwood-rings/albedo.png":a409,
+"assets/library/asset.textures.terrain.hollow-bark/albedo.png":a410,
+"assets/library/asset.textures.terrain.mud/albedo.png":a411,
+"assets/library/asset.textures.terrain.pebbles/albedo.png":a412,
+"assets/library/asset.textures.terrain.rock/albedo.png":a413,
+"assets/library/asset.textures.terrain.sand/albedo.png":a414,
+"assets/library/asset.textures.terrain.snow/albedo.png":a415,
+"assets/library/asset.textures.terrain.tuft-broad/albedo.png":a416,
+"assets/library/asset.textures.terrain.tuft/albedo.png":a417,
+"assets/library/asset.textures.terrain.weathered-limestone/albedo.png":a418,
+"assets/library/asset.textures.vegetation.coniferous.atlas/albedo.png":a419,
+"assets/library/asset.textures.vegetation.coniferous.grass_v5_03-far/data.json":a420,
+"assets/library/asset.textures.vegetation.coniferous.grass_v5_03-medium/data.json":a421,
+"assets/library/asset.textures.vegetation.coniferous.grass_v5_06-far/data.json":a422,
+"assets/library/asset.textures.vegetation.coniferous.grass_v5_06-medium/data.json":a423,
+"assets/library/asset.unregistered.maps.campaign.vanguard-briarwatch.utcmap/data.utcmap":a424,
+"assets/library/asset.unregistered.maps.campaign.vanguard-hearth.utcmap/data.utcmap":a425,
+"assets/library/asset.unregistered.maps.campaign.vanguard-heartwood-vault.utcmap/data.utcmap":a426,
+"assets/library/asset.unregistered.maps.campaign.vanguard-hollow-gate.utcmap/data.utcmap":a427,
+"assets/library/asset.unregistered.maps.campaign.vanguard-prologue.utcmap/data.utcmap":a428,
+"assets/library/asset.unregistered.maps.campaign.vanguard-root.utcmap/data.utcmap":a429,
+"assets/library/asset.unregistered.maps.showcase.scouring-eldenvale.utcmap/data.utcmap":a430,
+"assets/library/asset.unregistered.maps.skirmish.canopy-clearing.utcmap/data.utcmap":a431,
+"assets/library/asset.unregistered.maps.skirmish.four-crowns.utcmap/data.utcmap":a432,
+"assets/library/asset.unregistered.maps.skirmish.terrain-proving-ground.utcmap/data.utcmap":a433,
+"assets/library/asset.unregistered.maps.skirmish.texture-test-1.utcmap/data.utcmap":a434,
+"assets/library/asset.unregistered.maps.skirmish.worldroot-hollow.utcmap/data.utcmap":a435,
+"assets/library/asset.unregistered.maps.tutorial.four-crowns.utcmap/data.utcmap":a436,
+"assets/library/asset.unregistered.textures.grading.scouring-reference-luts.json/data.json":a437,
+"assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.bin/data.bin":a438,
+"assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.json/data.json":a439,
+"assets/library/asset.unregistered.textures.reference.scouring.env_macro_color__d.png/albedo.png":a440,
+"assets/library/asset.unregistered.textures.reference.scouring.env_upvector_snow_ar__d_a.png/albedo.png":a441,
+"assets/library/asset.unregistered.textures.reference.scouring.env_upvector_snow_nh__d_a.png/albedo.png":a442,
+"assets/library/asset.unregistered.textures.reference.scouring.env_water_caustics__d_uncmp.png/albedo.png":a443,
+"assets/library/asset.unregistered.textures.reference.scouring.env_water_waves__d_a_uncmp.png/albedo.png":a444,
+"assets/library/asset.unregistered.textures.reference.scouring.grass_daisy__d_a.png/albedo.png":a445,
+"assets/library/asset.unregistered.textures.reference.scouring.grass_grass_high_01__d_a.png/albedo.png":a446,
+"assets/library/asset.unregistered.textures.reference.scouring.grass_grass_high_02__d_a.png/albedo.png":a447,
+"assets/library/asset.unregistered.textures.reference.scouring.grass_grass_low__d_a.png/albedo.png":a448,
+"assets/library/asset.unregistered.textures.reference.scouring.grass_grass_messy__d_a.png/albedo.png":a449,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__d.png/albedo.png":a450,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__n_d.png/albedo.png":a451,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent__sh_d.png/albedo.png":a452,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bandit_tent_underlay__d_a.png/albedo.png":a453,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bridge__d.png/albedo.png":a454,
+"assets/library/asset.unregistered.textures.reference.scouring.models_bridge__sh_d.png/albedo.png":a455,
+"assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_entrance_underlay__d_a.png/albedo.png":a456,
+"assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__d.png/albedo.png":a457,
+"assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__n_d.png/albedo.png":a458,
+"assets/library/asset.unregistered.textures.reference.scouring.models_dungeon_wall__sh_d.png/albedo.png":a459,
+"assets/library/asset.unregistered.textures.reference.scouring.models_monument__d.png/albedo.png":a460,
+"assets/library/asset.unregistered.textures.reference.scouring.models_monument__n_d.png/albedo.png":a461,
+"assets/library/asset.unregistered.textures.reference.scouring.models_orc_citadel__d.png/albedo.png":a462,
+"assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__d.png/albedo.png":a463,
+"assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__n_d.png/albedo.png":a464,
+"assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_old__sh_d.png/albedo.png":a465,
+"assets/library/asset.unregistered.textures.reference.scouring.models_orc_farm_underlay__d_a.png/albedo.png":a466,
+"assets/library/asset.unregistered.textures.reference.scouring.models_outpost__d.png/albedo.png":a467,
+"assets/library/asset.unregistered.textures.reference.scouring.models_outpost__n_d.png/albedo.png":a468,
+"assets/library/asset.unregistered.textures.reference.scouring.models_outpost__sh_d.png/albedo.png":a469,
+"assets/library/asset.unregistered.textures.reference.scouring.models_outpost_underlay__d_a.png/albedo.png":a470,
+"assets/library/asset.unregistered.textures.reference.scouring.models_rock_chunk__d.png/albedo.png":a471,
+"assets/library/asset.unregistered.textures.reference.scouring.models_rock_chunk__n_d.png/albedo.png":a472,
+"assets/library/asset.unregistered.textures.reference.scouring.models_ruins_blocks__d.png/albedo.png":a473,
+"assets/library/asset.unregistered.textures.reference.scouring.models_ruins_column__d.png/albedo.png":a474,
+"assets/library/asset.unregistered.textures.reference.scouring.models_ruins_underlay__d_a.png/albedo.png":a475,
+"assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den__d.png/albedo.png":a476,
+"assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den__sh_d.png/albedo.png":a477,
+"assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den_props__d.png/albedo.png":a478,
+"assets/library/asset.unregistered.textures.reference.scouring.models_wolves_den_underlay__d_a.png/albedo.png":a479,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion-sprite.bin/data.bin":a480,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion-sprite.json/data.json":a481,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.neutral_outpost.bin/data.bin":a482,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.neutral_outpost.json/data.json":a483,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_03.bin/data.bin":a484,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_03.json/data.json":a485,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_04.bin/data.bin":a486,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.ruins_blocks_04.json/data.json":a487,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.wooden_bridge_small.bin/data.bin":a488,
+"assets/library/asset.unregistered.textures.reference.scouring.occlusion.wooden_bridge_small.json/data.json":a489,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_bush_branch__d_a.png/albedo.png":a490,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_fir__d_a.png/albedo.png":a491,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_fir_trunk__d.png/albedo.png":a492,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_gold_vein__d.png/albedo.png":a493,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_gold_vein_underlay__d_a.png/albedo.png":a494,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_rocks__d.png/albedo.png":a495,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_snags__d.png/albedo.png":a496,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_snags_underlay__d_a.png/albedo.png":a497,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_stumps_fir__d_a.png/albedo.png":a498,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_swamp_plants__d_a.png/albedo.png":a499,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir__d_a.png/albedo.png":a500,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir_small__d_a.png/albedo.png":a501,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_rock__d_a.png/albedo.png":a502,
+"assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_stump__d_a.png/albedo.png":a503,
+"assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.bin/data.bin":a504,
+"assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.json/data.json":a505,
+"assets/library/asset.unregistered.textures.reference.scouring.terrain-ar.png/albedo.png":a506,
+"assets/library/asset.unregistered.textures.reference.scouring.terrain-nh.png/albedo.png":a507,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_ar__d_a.png/albedo.png":a508,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_ar__d_a.rgba.bin/data.bin":a509,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_nh__d_a.png/albedo.png":a510,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkgrass_nh__d_a.rgba.bin/data.bin":a511,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkrock_ar__d_a.png/albedo.png":a512,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darkrock_ar__d_a.rgba.bin/data.bin":a513,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_ar__d_a.png/albedo.png":a514,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_ar__d_a.rgba.bin/data.bin":a515,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_nh__d_a.png/albedo.png":a516,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_darksoil_nh__d_a.rgba.bin/data.bin":a517,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_ar__d_a.png/albedo.png":a518,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_ar__d_a.rgba.bin/data.bin":a519,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_nh__d_a.png/albedo.png":a520,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_dirt_nh__d_a.rgba.bin/data.bin":a521,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_ar__d_a.png/albedo.png":a522,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_ar__d_a.rgba.bin/data.bin":a523,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_nh__d_a.png/albedo.png":a524,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_grass_nh__d_a.rgba.bin/data.bin":a525,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_ar__d_a.png/albedo.png":a526,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_ar__d_a.rgba.bin/data.bin":a527,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_nh__d_a.png/albedo.png":a528,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_graysoil_nh__d_a.rgba.bin/data.bin":a529,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_ar__d_a.png/albedo.png":a530,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_ar__d_a.rgba.bin/data.bin":a531,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_displacement__a.png/albedo.png":a532,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_displacement__a.rgba.bin/data.bin":a533,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_nh__d_a.png/albedo.png":a534,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rock_nh__d_a.rgba.bin/data.bin":a535,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_ar__d_a.png/albedo.png":a536,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_ar__d_a.rgba.bin/data.bin":a537,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_nh__d_a.png/albedo.png":a538,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_rockgrass_nh__d_a.rgba.bin/data.bin":a539,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_ar__d_a.png/albedo.png":a540,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_ar__d_a.rgba.bin/data.bin":a541,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_nh__d_a.png/albedo.png":a542,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_soil_nh__d_a.rgba.bin/data.bin":a543,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_ar__d_a.png/albedo.png":a544,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_ar__d_a.rgba.bin/data.bin":a545,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_nh__d_a.png/albedo.png":a546,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_stones_nh__d_a.rgba.bin/data.bin":a547,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_ar__d_a.png/albedo.png":a548,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_ar__d_a.rgba.bin/data.bin":a549,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_nh__d_a.png/albedo.png":a550,
+"assets/library/asset.unregistered.textures.reference.scouring.tiles_waterbed_nh__d_a.rgba.bin/data.bin":a551,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_bandits__d_a.png/albedo.png":a552,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_bandits__sh.png/albedo.png":a553,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_goblin__d_a.png/albedo.png":a554,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_troll__d_a.png/albedo.png":a555,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_troll__sh_d.png/albedo.png":a556,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_wolf__d_a.png/albedo.png":a557,
+"assets/library/asset.unregistered.textures.reference.scouring.units_neutral_wolf__sh_d.png/albedo.png":a558,
+"assets/library/asset.unregistered.textures.reference.scouring.units_orc_goblin_archer__sh_d.png/albedo.png":a559,
+"assets/library/image.item-heart-of-the-forest/image.png":a560,
+"assets/library/image.woodland-bar-rim/image.png":a561,
+"assets/library/image.woodland-connected-hud/image.png":a562,
+"assets/library/image.woodland-health-fill/image.png":a563,
+"assets/library/image.woodland-mana-fill/image.png":a564,
+"assets/library/image.woodland-satchel/image.png":a565,
+"assets/library/image.woodland-selection-rim/image.png":a566,
+"assets/library/image.woodland-square-rim/image.png":a567,
+"assets/library/recipe.foliage.riverbank/definition.json":a568,
+"assets/library/recipe.forest.conifer-edge/definition.json":a569,
+"assets/library/recipe.grass.meadow/definition.json":a570,
+"assets/library/recipe.river.gentle/definition.json":a571,
+"assets/library/recipe.river.swift/definition.json":a572,
+"assets/library/recipe.terrain.hill/definition.json":a573,
+"assets/library/water.clear-forest/definition.json":a574,
+"assets/library/water.muddy/definition.json":a575,
 };

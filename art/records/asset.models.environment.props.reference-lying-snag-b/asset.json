@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-lying-snag-b",
+  "name": "Reference · lying snag b",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-lying-snag-b/model.glb",
+      "sha256": "b4c34c17ccaa4c18d3b39e9bd62fd58f9c6e32aab8899e7e728c721ed7a60858",
+      "bytes": 432652,
+      "triangles": 908,
+      "primitives": 2
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-lying-snag-b",
+      "name": "Reference · lying snag b",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-lying-snag-b/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-lying-snag-b/model.glb",
+    "sha256": "b4c34c17ccaa4c18d3b39e9bd62fd58f9c6e32aab8899e7e728c721ed7a60858",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.133Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

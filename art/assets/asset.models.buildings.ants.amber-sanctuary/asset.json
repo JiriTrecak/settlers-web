@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.amber-sanctuary",
+  "name": "Amber Sanctuary",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "71d2dfd5a647fa44882fe13beff813c7b862cd9551b47ea44a4393893a754aaf",
+      "bytes": 226680
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "e216694840d8e44e3ec57c688de0437668355af17f17a4d5043ecb8989be81e0",
+      "bytes": 3475175
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.sanctuary",
+        "healthHeight": 4.9,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.amber-sanctuary"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "e216694840d8e44e3ec57c688de0437668355af17f17a4d5043ecb8989be81e0"
+  }
+}

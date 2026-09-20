@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.maps.campaign.vanguard-hearth.utcmap",
+  "name": "vanguard-hearth",
+  "kind": "map",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "utcmap",
+      "sha256": "9faf5330f6bb6ffdb5a19e58ec3db526f89037d7c50e33d117a9eaecaab7fd1f",
+      "bytes": 1817901
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

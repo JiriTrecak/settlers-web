@@ -1,4 +1,5 @@
 import {validateMissionLua} from "../scenario/lua";
+import {projectScene,landscapeAssets} from '../authoring/project';
 import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
 import {sceneryRules} from './sceneryCollision';
 import { decodeHeight, HeightField } from "./height";
@@ -34,10 +35,11 @@ export function playableMapError(
     starts.some((_, i) => !starts.some((s) => s.player === i + 1))
   )
     return "Player slots must be consecutive, starting at Player 1.";
-  const field = new HeightField(map.size);
-  if (map.height)
+  let compiled:ReturnType<typeof projectScene>;try{compiled=projectScene(map);}catch(e){return (e as Error).message;}
+  const field = compiled?.field??new HeightField(map.size);
+  if (!compiled&&map.height)
     field.load(decodeHeight(map.height,map.size) ?? [], map.waterLevel ?? 0);
-  else field.waterLevel = map.waterLevel ?? 0;
+  else if(!compiled)field.waterLevel = map.waterLevel ?? 0;
   for (const s of starts) {
     if (
       !Number.isInteger(s.x) ||
@@ -48,15 +50,16 @@ export function playableMapError(
       s.z > map.size - 9
     )
       return `Player ${s.player} needs an integer start at least 8 cells inside the map.`;
-    let lo = Infinity,
+    let dry=true,lo = Infinity,
       hi = -Infinity;
     for (let z = s.z - 5; z <= s.z + 7; z++)
       for (let x = s.x - 5; x <= s.x + 5; x++) {
         const h = field.sample(x, z);
+        if(h<=field.waterAt(x,z)+.1)dry=false;
         lo = Math.min(lo, h);
         hi = Math.max(hi, h);
       }
-    if (lo <= field.waterLevel + 0.1)
+    if (!dry)
       return `Player ${s.player} needs dry ground for the fort and workers.`;
     if (hi - lo > MAX_FOUNDATION_RELIEF_CM/100)
       return `Player ${s.player} needs flatter ground for the fort and workers.`;
@@ -77,5 +80,5 @@ export function requirePlayableMap(map: UtcMap): PlayableMap {
   return map as PlayableMap;
 }
 export function mapRevision(map: UtcMap): string {
-  return `${content.rules.id}-${content.fingerprint}-${fingerprint({map,sceneryRules})}`;
+  return `${content.rules.id}-${content.fingerprint}-${fingerprint({map,sceneryRules,...(map.authoring?{landscapeAssets}:{})})}`;
 }

@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-chunky-purple",
+  "name": "Flower — chunky violet",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "24d0f0aa615ab460bb1459886d6aa3bf2461d1637e47e6e9874b227217229110",
+      "bytes": 46240
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "flower-chunky-purple",
+        "name": "Flower — chunky violet",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "24d0f0aa615ab460bb1459886d6aa3bf2461d1637e47e6e9874b227217229110"
+  }
+}

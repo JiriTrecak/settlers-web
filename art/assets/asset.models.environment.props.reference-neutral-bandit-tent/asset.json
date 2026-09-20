@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-neutral-bandit-tent",
+  "name": "Reference · neutral bandit tent",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "2fb90a2bc18c36c7766240c4a38c0d6c4d789a25a885c5e2c9f499b8529bcbc7",
+      "bytes": 2144516
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-neutral-bandit-tent",
+        "name": "Reference · neutral bandit tent",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2fb90a2bc18c36c7766240c4a38c0d6c4d789a25a885c5e2c9f499b8529bcbc7"
+  }
+}

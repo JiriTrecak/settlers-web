@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-cluster-large-02",
+  "name": "Rock Cluster Large 02",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d406a8a4d737603c28fbb8e6e9b94bb1e05cced0c3b9fba7574825ce4dc534b7",
+      "bytes": 1515344
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "74b5539fb42f8f98f1ae26b93dfbcf53a28ed15585b237698c52e04f6b9c5fd8",
+      "bytes": 2019946
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-rock-cluster-large-02",
+        "name": "Rock Cluster Large 02",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "74b5539fb42f8f98f1ae26b93dfbcf53a28ed15585b237698c52e04f6b9c5fd8"
+  }
+}

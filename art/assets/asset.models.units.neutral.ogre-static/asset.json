@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.ogre-static",
+  "name": "Ogre",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "776fe637b823d09f9fc4e5ba36957b8b3293dacacbfd78f4aed6f0a704a820a6",
+      "bytes": 165884
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.neutral.ogre",
+        "healthHeight": 3.3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.neutral.ogre-static"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "neutral-ogre",
+        "name": "Ogre",
+        "category": "units",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "776fe637b823d09f9fc4e5ba36957b8b3293dacacbfd78f4aed6f0a704a820a6"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-generic-dead-01",
+  "name": "Tree Generic Dead 01",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f1d4a49bb20e34e3ed1454d50de91a0c880fa37a1d56bf8b1de4c8c66ebc68a5",
+      "bytes": 697396
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "a4c00a4bed791f1726eda959280eb47a147420ea96f4dd699b524d299ae793d7",
+      "bytes": 928871
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-tree-generic-dead-01",
+        "name": "Tree Generic Dead 01",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "a4c00a4bed791f1726eda959280eb47a147420ea96f4dd699b524d299ae793d7"
+  }
+}

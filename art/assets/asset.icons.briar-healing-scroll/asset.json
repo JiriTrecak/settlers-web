@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.briar-healing-scroll",
+  "name": "Healing Scroll",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "item"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d26017a7f74973851da8f22cabf9bd525ee3f06947697712f0b68a7a8d5dd03b",
+      "bytes": 24759
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455",
+      "bytes": 2388106
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.briar.healing-scroll",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.briar-healing-scroll"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "6360c9bcd1e00ab6414a7b97c66f17137dbb640e82a258fdc5f7820a5e2ac455"
+  }
+}

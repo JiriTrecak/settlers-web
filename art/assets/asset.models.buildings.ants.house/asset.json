@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.house",
+  "name": "House",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "43f3988bfc532c9b556aa7283ec14fe2e3911b679c39dfd67d488971000464c5",
+      "bytes": 828808
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "710b393ddb579f1b0fa059a7fa98912ec148e40d58e10ac8e105f837ba2ccb43",
+      "bytes": 3613641
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.house",
+        "healthHeight": 3.5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.house"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "ant-house",
+        "name": "Ant colony · House",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "710b393ddb579f1b0fa059a7fa98912ec148e40d58e10ac8e105f837ba2ccb43"
+  }
+}

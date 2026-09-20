@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-ruins-blocks-03",
+  "name": "Reference · ruins blocks 03",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-ruins-blocks-03/model.glb",
+      "sha256": "ad7546d570029a7ccaa1fe5ad9ceea344f1af3e378c8563b1d29751687726bb3",
+      "bytes": 3715796,
+      "triangles": 480,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-ruins-blocks-03",
+      "name": "Reference · ruins blocks 03",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-ruins-blocks-03/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-ruins-blocks-03/model.glb",
+    "sha256": "ad7546d570029a7ccaa1fe5ad9ceea344f1af3e378c8563b1d29751687726bb3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.138Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

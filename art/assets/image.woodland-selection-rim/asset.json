@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "image.woodland-selection-rim",
+  "name": "Woodland Selection Rim",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "interface",
+    "woodland-interface"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "5bcf88fb0b94d8f8c330017d38af284bda1e9297840aeda53ce2a3aac3f49db7",
+      "bytes": 329273
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6675ed735c3bbfe03a4751f8ee81116af69f8e45e54f58852f2f6159c3980618",
+      "bytes": 903385
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-rim",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "6675ed735c3bbfe03a4751f8ee81116af69f8e45e54f58852f2f6159c3980618"
+  }
+}

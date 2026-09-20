@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.textures.vegetation.coniferous.grass_v5_06-medium",
+  "name": "Grass V5 06 Medium",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "ea2f80cde5f1136395445199b96f7b5f4b83991fabcfacfc4ab1de625d1eb630",
+      "bytes": 95580
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "data",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "ea2f80cde5f1136395445199b96f7b5f4b83991fabcfacfc4ab1de625d1eb630"
+  }
+}

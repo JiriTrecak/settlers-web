@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "recipe.terrain.hill",
+  "name": "Soft woodland rise",
+  "kind": "landscape-recipe",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "authoring",
+    "source-informed"
+  ],
+  "resources": [],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "recipe": {
+    "type": "terrain",
+    "operation": "raise",
+    "height": 4,
+    "falloff": 8
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+  }
+}

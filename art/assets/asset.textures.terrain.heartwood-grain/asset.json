@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.heartwood-grain",
+  "name": "heartwood grain",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "heartwood"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "c3ad82811e73496ab9fd50ad50f3db0b7807e5599410ab1f8f47f7cb95c7eaf1",
+      "bytes": 2315617
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "04ee65ca670486d429d2dc81d1ce8bccb564c35a71c1225fa9ec60e31bc6336b",
+      "bytes": 1953562
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "texture",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "04ee65ca670486d429d2dc81d1ce8bccb564c35a71c1225fa9ec60e31bc6336b"
+  }
+}

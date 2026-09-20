@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.splitrail-fence",
+  "name": "Split-rail fence",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "dac09e5d567207d1be8570eab971d9e84a61b8fedee5a98d695c81149a1e82c9",
+      "bytes": 10860
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "splitrail-fence",
+        "name": "Split-rail fence",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blocker": {
+          "width": 3.2,
+          "depth": 0.25
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "dac09e5d567207d1be8570eab971d9e84a61b8fedee5a98d695c81149a1e82c9"
+  }
+}

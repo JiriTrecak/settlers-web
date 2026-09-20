@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-chunky-cream",
+  "name": "Flower — chunky cream",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "bd51c51fd87e72e7a36006ea4c8d2c82021da7e4ad0fb682cb849462cf8ab250",
+      "bytes": 46220
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "flower-chunky-cream",
+        "name": "Flower — chunky cream",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "bd51c51fd87e72e7a36006ea4c8d2c82021da7e4ad0fb682cb849462cf8ab250"
+  }
+}

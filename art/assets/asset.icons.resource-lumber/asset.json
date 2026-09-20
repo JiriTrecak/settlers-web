@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.resource-lumber",
+  "name": "Log",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7",
+      "bytes": 31198
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.item.wood",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.resource-lumber"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7"
+  }
+}

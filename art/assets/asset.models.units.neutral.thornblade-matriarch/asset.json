@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.thornblade-matriarch",
+  "name": "Thornblade Matriarch",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "314996ca36344a62fe31c1ce2e29fce0938c226402b3b53b96e8b0f92023321a",
+      "bytes": 234836
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "3cf44c9a4fc2edff600effb8b1fa4972dee7bb4cd76dcb05f8cbd9d6c0af968c",
+      "bytes": 1585246
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.neutral.thornblade-matriarch",
+        "character": "thornblade-matriarch",
+        "healthHeight": 4.1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.neutral.thornblade-matriarch"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "3cf44c9a4fc2edff600effb8b1fa4972dee7bb4cd76dcb05f8cbd9d6c0af968c"
+  }
+}

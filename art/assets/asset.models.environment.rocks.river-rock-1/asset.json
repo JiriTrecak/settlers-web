@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.river-rock-1",
+  "name": "River rock 1",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "87d332bd29921f074e1d3d188baa1c40a877914ccb9241b9f714d6f3a3caf15e",
+      "bytes": 2408
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "c701856ebaad8a0e79a61b8247356f51ecc512d2323736ef5420b7a6a384dcc9",
+      "bytes": 2903
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "river-rock-1",
+        "name": "River rock 1",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c701856ebaad8a0e79a61b8247356f51ecc512d2323736ef5420b7a6a384dcc9"
+  }
+}

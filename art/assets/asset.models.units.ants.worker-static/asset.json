@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.worker-static",
+  "name": "Ant colony · Worker",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "2a25e849736959e93827dcb3f7bf6d158131ebdc0742f3937cc5e106a9023599",
+      "bytes": 289804
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-worker",
+        "name": "Ant colony · Worker",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2a25e849736959e93827dcb3f7bf6d158131ebdc0742f3937cc5e106a9023599"
+  }
+}

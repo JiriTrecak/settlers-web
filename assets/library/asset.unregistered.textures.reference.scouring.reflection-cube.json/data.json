@@ -1,0 +1,16 @@
+{
+  "source": "env_default__d_ggxrefl.dds",
+  "sourceSha256": "d8b447beb2dc75d6feb9c7528b256766b06f0794cdb8707fa094d242269eb3c5",
+  "size": 256,
+  "levels": 7,
+  "faceOrder": [
+    "+X",
+    "-X",
+    "+Y",
+    "-Y",
+    "+Z",
+    "-Z"
+  ],
+  "decodedSha256": "b4c9f8355a744e91233056b1de03781478d9be03ee6bd9118f858ea651fb3e2e",
+  "decodedBytes": 2097024
+}

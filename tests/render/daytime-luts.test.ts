@@ -4,7 +4,7 @@ import {describe,it,expect} from 'vitest';
 import {ClampToEdgeWrapping,LinearFilter,NoColorSpace} from 'three';
 import {createDaytimeLuts} from '../../src/render/atmosphere/daytimeLuts';
 import {sampleDaytime} from '../../src/shared/environment/dayCycle';
-import source from '../../assets/textures/grading/scouring-reference-luts.json';
+import source from '../../assets/library/asset.unregistered.textures.grading.scouring-reference-luts.json/data.json';
 
 describe('reference color-grading volumes',()=>{
  it('preserves every source DDS texel and its RGB axes without a gamma conversion',()=>{

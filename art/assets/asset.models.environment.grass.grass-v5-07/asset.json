@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.grass-v5-07",
+  "name": "Grass V5 07",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "coniferous-pack",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "dc9e1b14fb70cf7866ad1b0eabd612f2806a617724bb6d18be1ee3cb73f97076",
+      "bytes": 26024
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+      "bytes": 5369111
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "grass_v5_07",
+        "name": "Grass V5 07",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.stonemason",
+  "name": "Ant colony · Stonemason",
+  "kind": "building",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "ff982a07c782d91aa35392f2cd26646ea90110e5595d091d85fd0d4f5bdd63cb",
+      "bytes": 1153440
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-stonemason",
+        "name": "Ant colony · Stonemason",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "ff982a07c782d91aa35392f2cd26646ea90110e5595d091d85fd0d4f5bdd63cb"
+  }
+}

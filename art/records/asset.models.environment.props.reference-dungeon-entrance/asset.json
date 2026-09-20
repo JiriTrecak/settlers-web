@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-dungeon-entrance",
+  "name": "Reference · dungeon entrance",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-dungeon-entrance/model.glb",
+      "sha256": "125ebbfff01942769729f2dc11dca06cbe57392fa5bb00d108b69465593454f5",
+      "bytes": 16725332,
+      "triangles": 990,
+      "primitives": 3
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-dungeon-entrance",
+      "name": "Reference · dungeon entrance",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-dungeon-entrance/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-dungeon-entrance/model.glb",
+    "sha256": "125ebbfff01942769729f2dc11dca06cbe57392fa5bb00d108b69465593454f5",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.142Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

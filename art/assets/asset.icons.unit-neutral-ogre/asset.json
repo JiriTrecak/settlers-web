@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-ogre",
+  "name": "Ogre",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0",
+      "bytes": 34405
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.neutral.ogre",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-neutral-ogre"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0"
+  }
+}

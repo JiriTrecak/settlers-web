@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.woodland.selection-portrait-mask",
+  "name": "Selection Portrait Mask",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "woodland",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "svg",
+      "sha256": "686b6ac60b0394f263dc305590af0b6589ca69e9f1332e60a9eec3965c1ab2d7",
+      "bytes": 682
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "686b6ac60b0394f263dc305590af0b6589ca69e9f1332e60a9eec3965c1ab2d7"
+  }
+}

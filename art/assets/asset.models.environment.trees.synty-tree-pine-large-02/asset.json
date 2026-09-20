@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.synty-tree-pine-large-02",
+  "name": "Tree Pine Large 02",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "87454f9573ba46b283e979955f8ba47047232aee5c9d68a25f7965920150194f",
+      "bytes": 513516
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "36c1d00f0997ee626f98f9893c5958d6aed7c8b7c0a155e34ea31ab165ee7ca9",
+      "bytes": 683702
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-tree-pine-large-02",
+        "name": "Tree Pine Large 02",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "36c1d00f0997ee626f98f9893c5958d6aed7c8b7c0a155e34ea31ab165ee7ca9"
+  }
+}

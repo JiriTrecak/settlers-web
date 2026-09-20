@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-archer",
+  "name": "Briar Poacher",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "c9780cb88a9cb62335f937c18e33e5fd38d51c2f9b05e635d17ad26d628dfda0",
+      "bytes": 342968
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+      "bytes": 2282832
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.archer",
+        "character": "archer",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants.briar-archer"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111"
+  }
+}

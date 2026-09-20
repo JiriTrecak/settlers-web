@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.items.log-stack",
+  "name": "Ant colony · Log Stack",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8f54c4614a679b979256ac3b5ed67468307ca64b8d51710a4f5f4ef704ba1f8c",
+      "bytes": 777636
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-log-stack",
+        "name": "Ant colony · Log Stack",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "8f54c4614a679b979256ac3b5ed67468307ca64b8d51710a4f5f4ef704ba1f8c"
+  }
+}

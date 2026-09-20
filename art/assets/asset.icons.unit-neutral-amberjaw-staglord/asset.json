@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-amberjaw-staglord",
+  "name": "Amberjaw Staglord",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "neutral-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c",
+      "bytes": 12656
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.neutral.amberjaw-staglord",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-neutral-amberjaw-staglord"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c"
+  }
+}

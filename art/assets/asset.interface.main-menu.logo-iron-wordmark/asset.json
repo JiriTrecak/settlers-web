@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.logo-iron-wordmark",
+  "name": "Logo Iron Wordmark",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b5d55fff4fbd8c8b20b573193e3356e112439f56a6f26c218b7d08869dfef425",
+      "bytes": 1924515
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "b5d55fff4fbd8c8b20b573193e3356e112439f56a6f26c218b7d08869dfef425"
+  }
+}

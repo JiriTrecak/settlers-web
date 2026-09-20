@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-02",
+  "name": "Terrain GrassEdge Roots 02",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fc4bcb5b8edbd87eb6eff074de4b8337010884ac10cdb72555db00778e04cd8d",
+      "bytes": 347604
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "b7f481e7afa11b0a6bccf103dfc12ed8f357d44682b6e40ec0f3aef1befdca51",
+      "bytes": 462949
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-terrain-grassedge-roots-02",
+        "name": "Terrain GrassEdge Roots 02",
+        "category": "terrain",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "b7f481e7afa11b0a6bccf103dfc12ed8f357d44682b6e40ec0f3aef1befdca51"
+  }
+}

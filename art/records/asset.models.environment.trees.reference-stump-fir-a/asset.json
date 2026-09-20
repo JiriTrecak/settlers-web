@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.reference-stump-fir-a",
+  "name": "Reference · stump fir a",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/trees/reference-stump-fir-a/model.glb",
+      "sha256": "fbad1ad8e2ebd7b16f2cf0d44f077be71d399795b3377de270ab0e11e0d35890",
+      "bytes": 661672,
+      "triangles": 689,
+      "primitives": 3
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-stump-fir-a",
+      "name": "Reference · stump fir a",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/trees/reference-stump-fir-a/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/trees/reference-stump-fir-a/model.glb",
+    "sha256": "fbad1ad8e2ebd7b16f2cf0d44f077be71d399795b3377de270ab0e11e0d35890",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.129Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

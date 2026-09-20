@@ -1,0 +1,14 @@
+{
+  "map": "scouring-eldenvale",
+  "camera": {"x":291,"z":254,"zoom":1.2,"yawDegrees":-45,"pitchDegrees":45},
+  "hour":11,
+  "animationTime":12,
+  "source": "reference-stage benchmark; local Codex browser; original settings restored",
+  "note": "360 frames per mode, 120 warmup frames. GPU/CPU summaries cover their last 120 samples (119 in the final GPU mode). This is a current baseline, not a before/after comparison or a guarantee on slower hardware.",
+  "modes": [
+    {"scale":1,"shadows":"soft","canvas":[2674,2408],"dpr":2,"fps":72.50755287009063,"frameP95Ms":17.600000000000364,"gpuMeanMs":8.403895333333335,"gpuP95Ms":9.168124,"cpuMeanMs":3.3025000045696893,"cpuP95Ms":3.600000023841858},
+    {"scale":0.5,"shadows":"soft","canvas":[1337,1204],"dpr":1,"fps":112.0657452372058,"frameP95Ms":16.299999999999272,"gpuMeanMs":4.297689783333334,"gpuP95Ms":4.801625,"cpuMeanMs":3.139166660110156,"cpuP95Ms":3.399999976158142},
+    {"scale":1,"shadows":"filtered","canvas":[2674,2408],"dpr":2,"fps":83.7550165765137,"frameP95Ms":16.899999999997817,"gpuMeanMs":7.266700925,"gpuP95Ms":7.509249,"cpuMeanMs":2.743333329757055,"cpuP95Ms":3.1999999284744263},
+    {"scale":0.5,"shadows":"filtered","canvas":[1337,1204],"dpr":1,"fps":120.02400480096028,"frameP95Ms":9.799999999999272,"gpuMeanMs":5.164514605042015,"gpuP95Ms":7.465333,"cpuMeanMs":2.807499995827675,"cpuP95Ms":3.399999976158142}
+  ]
+}

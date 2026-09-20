@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-goblin-hut",
+  "name": "Reference · goblin hut",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-goblin-hut/model.glb",
+      "sha256": "53682a452e1fd76f77d28a38b2bf0828ea7bf484f4709ce484a52b8f6b0163a3",
+      "bytes": 3483316,
+      "triangles": 3456,
+      "primitives": 5
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-goblin-hut",
+      "name": "Reference · goblin hut",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-goblin-hut/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-goblin-hut/model.glb",
+    "sha256": "53682a452e1fd76f77d28a38b2bf0828ea7bf484f4709ce484a52b8f6b0163a3",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.147Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

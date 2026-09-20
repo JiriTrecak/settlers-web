@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-archer",
+  "name": "Archer",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "f3d2ae709bafeae0aeeb4e6037d354aebd7e6af6b0d0ac9ec5c3527f3fc711bf",
+      "bytes": 33990
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.archer",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-ants-archer"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "f3d2ae709bafeae0aeeb4e6037d354aebd7e6af6b0d0ac9ec5c3527f3fc711bf"
+  }
+}

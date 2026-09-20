@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-marshal",
+  "name": "Marshal",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3f111a9fcde9c7ddb11423398d074041852ae5b37acbc2dea418f41d5f7a88ac",
+      "bytes": 36103
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.marshal",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-ants-marshal"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "3f111a9fcde9c7ddb11423398d074041852ae5b37acbc2dea418f41d5f7a88ac"
+  }
+}

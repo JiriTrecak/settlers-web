@@ -1,10 +1,15 @@
+import {assetDefinitionSchema,assetFolder,resourceFilename} from '../../../src/shared/authoring/asset';
+import {readPublished,planPublication} from './authoring/publication';
+import {compilePackageRecords,definitionBytes,readPackages} from './authoring/packages';
+import {AuthoringStore} from './authoring/store';
 import path from 'node:path';
+import {withWorkspaceWriteLock} from './writeLock';
 import {ContentRegistry} from '../../../src/content/registry';
-import {readFile,cp} from 'node:fs/promises';
+import {readFile} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {jobRequestSchema,transformSchema,exportEditSchema,type Job,type AssetRecord,type Style} from '../shared/schema';
 import {atomic,filesIn,hash,json,saveJson,within} from './storage';
-import {compile,records,urlModule,validateFiles} from './manifest';
+import {records} from './manifest';
 import {commitFiles,recoverTransactions} from './transaction';
 import {Credentials} from './credentials';
 import {uploadReference,uploadedReferences} from './references';
@@ -12,16 +17,19 @@ import {approvalHash,processImage} from './images';
 import {AmbiguousGeneration,openAIProvider,type Provider} from './provider';
 export class StudioService {
  readonly credentials:Credentials;
+ readonly authoring:AuthoringStore;
+ async authorCommand(input:unknown){return this.serial(async()=>{const result=await this.authoring.dispatch(input);this.libraryCache=undefined;return result;});}
  private libraryCache:Promise<AssetRecord[]>|undefined;private libraryUntil=0;
  private jobs=new Map<string,Job>();private busy=false;private lock:Promise<unknown>=Promise.resolve();private controllers=new Map<string,AbortController>();
- constructor(readonly root:string,private provider:Provider=openAIProvider(root)){this.credentials=new Credentials(root);}
- private serial<T>(work:()=>Promise<T>):Promise<T>{const next=this.lock.then(work,work);this.lock=next.catch(()=>{});return next;}
+ constructor(readonly root:string,private provider:Provider=openAIProvider(root)){this.credentials=new Credentials(root);this.authoring=new AuthoringStore(root);}
+ private serial<T>(work:()=>Promise<T>):Promise<T>{const guarded=()=>withWorkspaceWriteLock(this.root,work);const next=this.lock.then(guarded,guarded);this.lock=next.catch(()=>{});return next;}
  async init(){
   await recoverTransactions(this.root);
+  if(!await readPublished(this.root)&&!(await records(this.root)).length&&!(await readPackages(this.root)).some(a=>a.status==='published'))await commitFiles(this.root,(await planPublication(this.root,[],new Set())).writes);
   for(const f of await filesIn(path.join(this.root,'.asset-work/jobs')))if(f.endsWith('/job.json')){const job=await json<Job>(f);if(job.state==='generating'||job.state==='queued'){job.state='unknown';job.error='Studio restarted before completion. No paid request was retried.';await this.save(job);}this.jobs.set(job.id,job);}
   for(const r of await this.library())if(r.origin.job){const retained=await json<Job>(await within(this.root,r.origin.job));const job=this.jobs.get(retained.id);if(job&&job.state!=='published'){job.state='published';job.publishedId=r.id;await this.save(job);}}
  }
- async library(){if(!this.libraryCache||Date.now()>this.libraryUntil){this.libraryUntil=Date.now()+1000;this.libraryCache=records(this.root);}return this.libraryCache;}
+ async library(){if(!this.libraryCache||Date.now()>this.libraryUntil){this.libraryUntil=Date.now()+1000;this.libraryCache=readPublished(this.root).then(released=>released?compilePackageRecords(released):records(this.root));}return this.libraryCache;}
  async snapshot(){await this.lock;return this.library();}
  async references(){return uploadedReferences(this.root);}
  async uploadReference(input:unknown){return this.serial(()=>uploadReference(this.root,input));}
@@ -41,7 +49,7 @@ export class StudioService {
    const source=upload?.path??(record!.source.quality==='master'?record!.source.path:record!.outputs[0].path);
    const bytes=await readFile(await within(this.root,source));
    if(bytes.length>50*1024*1024)throw Error('Reference exceeds 50 MiB');
-   if(upload&&hash(bytes)!==upload.sha256)throw Error('Uploaded reference changed. Upload it again.');
+   if(hash(bytes)!==(upload?.sha256??(record!.source.quality==='master'?record!.source.sha256:record!.outputs[0].sha256)))throw Error('Uploaded reference changed. Upload it again.');
    const retained=`${dir}/reference-${index}${path.extname(source)}`;await atomic(await within(this.root,retained),bytes);
    references.push({id:ref.id,role:ref.role,revision:record?.revision??1,sha256:hash(bytes),path:retained});
   }
@@ -77,24 +85,37 @@ export class StudioService {
  async publish(id:string,candidateId:string){return this.serial(async()=>{
   const job=this.get(id),candidate=job.candidates.find(c=>c.id===candidateId);if(job.state!=='ready'||!candidate?.output||candidate.errors.length||candidate.approval!==approvalHash(candidate,job.request))throw Error('Approve this exact export before publishing.');
   const bytes=await readFile(await within(this.root,candidate.output));if(hash(bytes)!==candidate.outputHash)throw Error('Export changed after review.');
-  const all=await this.library(),request=job.request,old=request.replaceId?all.find(a=>a.id===request.replaceId):undefined;
+  const released=await readPublished(this.root);if(!released)throw Error('Initialize canonical publication with assets:publish first');
+  const request=job.request,old=request.replaceId?released.find(a=>a.id===request.replaceId):undefined;
   if(request.replaceId&&(!old||old.revision!==request.expectedRevision))throw Error('Asset changed since this draft. Reopen it before replacing.');
-  if(old&&(old.kind!==(request.profile==='icon'?'icon':'interface')||old.outputs.length!==1))throw Error('Replacement requires a compatible single image asset.');
+  if(old&&(old.kind!==(request.profile==='icon'?'icon':'interface')||old.resources.filter(r=>r.role==='image').length!==1))throw Error('Replacement requires a compatible single image asset.');
+  if(old&&(await this.authoring.get(old.id)).revision!==old.revision)throw Error('This asset has unpublished edits. Publish or resolve those edits before replacing it.');
   const slug=request.category==='interface'?request.slug:`${request.category}-${request.slug}`;
-  const output=old?.outputs[0].path??`assets/${request.profile==='icon'?'icons':'interface/woodland'}/${slug}.png`;
-  if(!old&&all.some(a=>a.outputs.some(o=>o.path.toLowerCase()===output.toLowerCase())))throw Error('That filename is already taken.');
-  const recordId=old?.id??`image.${slug}`,author=`art/records/${recordId}`,revision=(old?.revision??0)+1,source=`${author}/revisions/${revision}/source.png`;
-  // Canonical originals retain exact provider bytes; extension is based on decoded source format.
-  const sharp=(await import('sharp')).default;const original=await readFile(await within(this.root,candidate.source));const format=(await sharp(original).metadata()).format!;
-  const sourcePath=source.replace(/\.png$/,'.'+format);
-  await atomic(await within(this.root,sourcePath),original);
-  await cp(await within(this.root,`.asset-work/jobs/${id}`),await within(this.root,`${author}/revisions/${revision}/job`),{recursive:true});
-  const retainedJob=JSON.parse(JSON.stringify(job).replaceAll(`.asset-work/jobs/${id}`,`${author}/revisions/${revision}/job`));await saveJson(await within(this.root,`${author}/revisions/${revision}/job/job.json`),retainedJob);
-  const record:AssetRecord={version:1,id:recordId,name:request.name,kind:request.profile==='icon'?'icon':'interface',tags:[request.category,request.style],status:'published',revision,profile:request.profile,outputs:[{role:'image',path:output,sha256:candidate.outputHash!,bytes:bytes.length,width:candidate.width,height:candidate.height}],render:old?.render??(request.profile==='icon'?[{id:`icon.${request.category.replaceAll('-','.')}.${request.slug}`,image:output}]:[]),scenery:[],source:{path:sourcePath,sha256:candidate.sourceHash,quality:'master'},origin:{method:job.method??(job.requestId?'openai':'import'),job:`${author}/revisions/${revision}/job/job.json`},validation:{checkedAt:new Date().toISOString(),warnings:candidate.warnings}};
-  const next=[...all.filter(a=>a.id!==recordId),record],manifest=compile(next);
-  await validateFiles(this.root,compile(all));
-  const writes=[{path:output,bytes},{path:`${author}/asset.json`,bytes:Buffer.from(JSON.stringify(record,null,2)+'\n')},{path:'src/shared/assets/urls.generated.ts',bytes:Buffer.from(urlModule(manifest))},{path:'assets/manifest.json',bytes:Buffer.from(JSON.stringify(manifest,null,2)+'\n')}];
-  await commitFiles(this.root,writes);
+  const recordId=old?.id??`image.${slug}`;
+  if(!old){try{await this.authoring.get(recordId);throw Error('Asset ID is already in use');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
+  const sharp=(await import('sharp')).default,original=await readFile(await within(this.root,candidate.source)),format=(await sharp(original).metadata()).format!;
+  const image={role:'image' as const,index:1,format:'png',bytes:bytes.length,sha256:hash(bytes)},source={role:'source' as const,index:(old?.resources.filter(r=>r.role==='source').length??0)+1,format,bytes:original.length,sha256:hash(original)};
+  const staged=new Map([[assetFolder(recordId)+'/'+resourceFilename(image),bytes],[assetFolder(recordId)+'/'+resourceFilename(source),original]]);
+  const preserved=old?.resources.filter(r=>!(r.role==='image'&&r.index===1))??[];
+  const retained=structuredClone(job);retained.state='published';retained.publishedId=recordId;retained.references=[];
+  for(const ref of job.references){const data=await readFile(await within(this.root,ref.path)),format=(await sharp(data).metadata()).format!;
+   const resource={role:'reference' as const,index:preserved.filter(r=>r.role==='reference').length+1,format,bytes:data.length,sha256:hash(data)};
+   const path=assetFolder(recordId)+'/'+resourceFilename(resource);staged.set(path,data);preserved.push(resource);retained.references.push({...ref,path});
+  }
+  const preview={role:'preview' as const,index:preserved.filter(r=>r.role==='preview').length+1,format:'png',bytes:bytes.length,sha256:hash(bytes)};
+  staged.set(assetFolder(recordId)+'/'+resourceFilename(preview),bytes);preserved.push(preview);
+  retained.candidates=[{...candidate,source:assetFolder(recordId)+'/'+resourceFilename(source),output:assetFolder(recordId)+'/'+resourceFilename(preview)}];
+  if(job.mask){const bytes=await readFile(await within(this.root,job.mask.path));const resource={role:'reference' as const,index:preserved.filter(r=>r.role==='reference').length+1,format:'png',bytes:bytes.length,sha256:hash(bytes)};const path=assetFolder(recordId)+'/'+resourceFilename(resource);staged.set(path,bytes);preserved.push(resource);retained.mask={path,sha256:resource.sha256};}
+  const generationBytes=Buffer.from(JSON.stringify(retained,null,2)+'\n');
+  const generation={role:'generation' as const,index:preserved.filter(r=>r.role==='generation').length+1,format:'json',bytes:generationBytes.length,sha256:hash(generationBytes)};
+  staged.set(assetFolder(recordId)+'/'+resourceFilename(generation),generationBytes);
+  const next=assetDefinitionSchema.parse({...old,version:1,id:recordId,name:request.name,kind:request.profile==='icon'?'icon':'interface',revision:(old?.revision??0)+1,status:'published',tags:[request.category,request.style],usesGeometry:false,
+   resources:[...preserved,image,source,generation],
+   bindings:old?.bindings??{profile:request.profile,render:request.profile==='icon'?[{id:`icon.${request.category.replaceAll('-','.')}.${request.slug}`,image:{asset:recordId,role:'image',index:1}}]:[],scenery:[]},
+   provenance:{method:job.method==='import'?'import':'generated',sourceHash:hash(original),generation:{role:'generation',index:generation.index}}});
+
+  const plan=await planPublication(this.root,[...released.filter(a=>a.id!==recordId),next],new Set([recordId]),staged);
+  await commitFiles(this.root,[...[...staged].map(([path,bytes])=>({path,bytes})),{path:assetFolder(recordId)+'/asset.json',bytes:definitionBytes(next)},...plan.writes]);
   this.libraryCache=undefined;job.state='published';job.publishedId=recordId;await this.save(job);return job;
  });}
  async assignmentTargets(){const bytes=await readFile(path.join(this.root,'content/game.json'));const data=JSON.parse(bytes.toString());return {revision:hash(bytes),definitions:data.definitions.filter((d:{icon?:string})=>d.icon).map((d:{id:string;name:string;icon:string})=>({id:d.id,name:d.name,icon:d.icon}))};}

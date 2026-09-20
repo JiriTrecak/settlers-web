@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "id": "asset.textures.decals.root-rot",
+  "name": "Spreading root rot",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "heartwood",
+    "decal",
+    "corruption"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "70bd6cc4d99b33f5896cda72ab904d7d383c46c088f196a02812c7f564c58d24",
+      "bytes": 832025
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "75e17c5279e1749c106ab886644101d03bd020c03491289c82cd70b7180e93d2",
+      "bytes": 2087534
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "texture",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "75e17c5279e1749c106ab886644101d03bd020c03491289c82cd70b7180e93d2"
+  }
+}

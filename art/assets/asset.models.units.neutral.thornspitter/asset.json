@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral.thornspitter",
+  "name": "Thornspitter",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "415b7a91fc4c53cd817c1f7b99b0fc8632f8cf1620f4ed8a2aca9e9f4badbb9a",
+      "bytes": 249128
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "d1dace86ef03e753d628a150d51f8858a1b897679d45b0581b4bd03b11c4a5b3",
+      "bytes": 1633390
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.neutral.thornspitter",
+        "character": "thornspitter",
+        "healthHeight": 2.5,
+        "projectile": "thorn",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.neutral.thornspitter"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d1dace86ef03e753d628a150d51f8858a1b897679d45b0581b4bd03b11c4a5b3"
+  }
+}

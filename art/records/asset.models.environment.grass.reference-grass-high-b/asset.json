@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-high-b",
+  "name": "Reference · grass high b",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/grass/reference-grass-high-b/model.glb",
+      "sha256": "eb1b459d0cfdc08db6ed1bbcc3baf46180769ad06cb619b2ab7e0460fcfa9985",
+      "bytes": 9888,
+      "triangles": 10,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-grass-high-b",
+      "name": "Reference · grass high b",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/grass/reference-grass-high-b/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/grass/reference-grass-high-b/model.glb",
+    "sha256": "eb1b459d0cfdc08db6ed1bbcc3baf46180769ad06cb619b2ab7e0460fcfa9985",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.131Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

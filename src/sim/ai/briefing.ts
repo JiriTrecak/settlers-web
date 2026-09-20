@@ -1,3 +1,5 @@
+import {sourceHeight} from '../../shared/map/importedTerrain';
+import {sourceWater} from '../../shared/map/importedWater';
 import {bridgeSurfaces,type BridgeSurface} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import { fingerprint, type ContentRegistry } from "../../content/registry";
@@ -31,20 +33,23 @@ export function createMapBriefing(
   map: UtcMap,
   registry: ContentRegistry,
 ): MapBriefing {
+  const compiled=projectScene(map);if(compiled)map={...map,stamps:compiled.stamps};
   const heights: number[] = [],
     land: number[] = [],
     h = map.height ? decodeHeight(map.height, map.size) : null,
     vertices = map.size + 33,
     sea = Math.round((map.waterLevel ?? 0) * 100);
+  const imported=map.landscape?.importedTerrain,source=compiled?{sample:(x:number,z:number)=>compiled.field.sample(x,z)}:imported?sourceHeight(imported):undefined,water=compiled?{sample:(x:number,z:number)=>compiled.field.waterAt(x,z)}:imported?sourceWater(imported):undefined;
   for (let y = 0; y < map.size; y++)
     for (let x = 0; x < map.size; x++) {
       const n = Math.round(
-        (h?.[(y - HEIGHT_ORIGIN) * vertices + x - HEIGHT_ORIGIN] ?? 0) * 100,
+        (source?.sample(x,y)??h?.[(y - HEIGHT_ORIGIN) * vertices + x - HEIGHT_ORIGIN] ?? 0) * 100,
       );
       heights.push(n);
-      land.push(n >= sea - WADING_DEPTH_CM ? 1 : 0);
+      land.push(n >= (water?Math.round(water.sample(x,y)*100):sea) - WADING_DEPTH_CM ? 1 : 0);
     }
-  const surfaces=bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,map.size):0);
+  if(imported)for(let z=0;z<map.size;z++)for(let x=0;x<map.size;x++)if(x<imported.origin[0]||z<imported.origin[1]||x>=imported.origin[0]+imported.blocks[0]*16||z>=imported.origin[1]+imported.blocks[1]*16)land[z*map.size+x]=0;
+  const surfaces=bridgeSurfaces(map.stamps,(x,z)=>source?.sample(x,z)??(h?sampleHeight(h,x,z,map.size):0));
   applySceneryBlockers(map, land);
   const placements = new Map(map.entities.map((p) => [p.id, p]));
   const camps = map.camps
@@ -89,3 +94,4 @@ export function createMapBriefing(
   };
   return Object.freeze({ ...data, fingerprint: fingerprint(data) });
 }
+import {projectScene} from '../../shared/authoring/project';

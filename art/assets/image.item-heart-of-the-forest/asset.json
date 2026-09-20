@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "image.item-heart-of-the-forest",
+  "name": "Heart of the Forest",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "item",
+    "painted-items"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "60ec12aa7770bb6f9b39348af1b77f164036156d7e4db0f235f9036c5abb31b7",
+      "bytes": 21127
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "3aaf3cbdbbd54c284bce7d9ddfe0f5ecff8711d9d07585d8e2b589a8e9710b6b",
+      "bytes": 1162645
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.item.heart-of-the-forest",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "image.item-heart-of-the-forest"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "3aaf3cbdbbd54c284bce7d9ddfe0f5ecff8711d9d07585d8e2b589a8e9710b6b"
+  }
+}

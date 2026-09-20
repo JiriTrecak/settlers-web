@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-daisy",
+  "name": "Reference · grass daisy",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "746103be5b6069061d7bc10666214e77128c29387092bb28b4b30612c3e274b3",
+      "bytes": 11668
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-grass-daisy",
+        "name": "Reference · grass daisy",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "746103be5b6069061d7bc10666214e77128c29387092bb28b4b30612c3e274b3"
+  }
+}

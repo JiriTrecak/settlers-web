@@ -1,3 +1,4 @@
+import {importedTerrainSchema,type ImportedTerrain} from '../map/importedTerrain';
 import {canopySchema,type CanopySettings} from './canopy';
 import {atmosphereSchema,type AtmosphereSettings} from './atmosphere';
 import {weatherSchema,type WeatherSettings} from './weather';
@@ -40,12 +41,13 @@ export type TerrainStroke = { points: CurvePoint[]; radius: number; layer: Terra
 export type CoverExclusion = { x: number; z: number; radius: number };
 export type CoverPatch = { exclusions?: CoverExclusion[]; x: number; z: number; radius: number; density: number; seed: number; flowers: number; grassScale?: number; broadRatio?: number; palette?: 'meadow' | 'straw' | 'ochre' | 'sage' | 'forest' };
 export type EnvironmentState = { interior?:boolean; ceilingHeight?:number; floorMaterial?:'forest'|'heartwood'; canopy?: CanopySettings; atmosphere?: AtmosphereSettings; weather?: WeatherSettings; preset?: string; hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
-export type Landscape = { decals?: GroundDecal[]; water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
+export type Landscape = { importedTerrain?: ImportedTerrain; decals?: GroundDecal[]; water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
 export const emptyLandscape = (): Landscape => ({ strokes: [], cover: [], environment: { hour: 10, season: 'summer', playing: false } });
 /** Strict persisted scene validation: malformed new fields never break legacy maps. */
 export function parseLandscape(raw: unknown): Landscape | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   const o=raw as Landscape;
+  if(o.importedTerrain!==undefined&&!importedTerrainSchema.safeParse(o.importedTerrain).success)return undefined;
   if(o.decals!==undefined&&(!Array.isArray(o.decals)||o.decals.length>2048||!o.decals.every(validDecal)||new Set(o.decals.map(d=>d.id)).size!==o.decals.length))return undefined;
   if(o.water!==undefined&&!parseWaterStyle(o.water))return undefined;
   if (!Array.isArray(o.strokes) || !Array.isArray(o.cover) || !o.environment) return undefined;

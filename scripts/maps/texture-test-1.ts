@@ -30,7 +30,7 @@ for(let v=-32;v<18;v+=3.2)for(let u=-33;u<34;u+=3.2){
  if(edge<.8 || (edge<1.25&&rand()<.7) || (noise<-.6&&rand()<.6))continue;
  const radius=2+rand()*2;
  landscape.strokes.push({points:[p],radius:radius*1.1,layer:'grass',opacity:.48+rand()*.25});
- landscape.cover.push({...p,radius,density:4.4+rand()*2,seed:Math.floor(rand()*1000000),flowers:rand()<.13?.13:0,grassScale:1.2+rand()*.55,broadRatio:1,palette:'forest'});
+ landscape.cover.push({...p,radius,density:2.0+rand()*1.4,seed:Math.floor(rand()*1000000),flowers:rand()<.13?.13:0,grassScale:.95+rand()*.4,broadRatio:1,palette:'forest'});
 }
 const stamps:MapStamp[]=[];
 const stamp=(asset:string,u:number,v:number,scale:number)=>{const p=pos(u,v);stamps.push({id:`texture-test.prop.${stamps.length}`,asset,x:p.x,y:p.z,scale,yaw:rand()*Math.PI*2});};
@@ -39,14 +39,22 @@ for(let v=-28;v<23;v+=4)for(let u=-33;u<=34;u+=4){
  const uu=u+(rand()-.5)*2,vv=v+(rand()-.5)*2;
  const boundary=13+Math.sin(vv*.18)*2;
  if(Math.abs(uu)<boundary || vv>shore(uu)-3 || rand()<.13)continue;
- stamp(rand()<.5?'synty-tree-pine-01':'synty-tree-pine-02',uu,vv,1+rand()*.4);
+ stamp(rand()<.5?'reference-fir-a':'reference-fir-b',uu,vv,.52+rand()*.20);
 }
+for(const [u,v] of [[-11,-4],[-12,7],[12,4],[13,-11],[-17,-17],[20,10]])stamp('reference-fir-small-a',u,v,.75+rand()*.3);
+for(let i=0;i<42;i++){
+ const u=(rand()-.5)*27,v=-23+rand()*35,p=pos(u,v);
+ if(clearing(u,v)<.3||v>shore(u)-2)continue;
+ landscape.cover.push({...p,radius:.8+rand()*1.3,density:1.8,seed:Math.floor(rand()*1000000),flowers:0,grassScale:.75+rand()*.4,broadRatio:1,palette:'forest'});
+}
+// The source fir underlay replaces grass close to the trunk, exposing needle litter.
+for(const patch of landscape.cover)patch.exclusions=stamps.filter(s=>s.asset.startsWith('reference-fir')&&Math.hypot(s.x+.5-patch.x,s.y+.5-patch.z)<patch.radius+3).map(s=>({x:s.x+.5,z:s.y+.5,radius:(s.scale??1)*2.7}));
 for(let i=0;i<100;i++){
  const u=(rand()-.5)*60,v=-30+rand()*46;
  if(v>shore(u)-2||clearing(u,v)<.65)continue;
  stamp('pebbles-pale',u,v,.18+rand()*.24);
 }
-for(const [u,v] of [[-11,-8],[-14,3],[12,-14],[-8,12],[17,9]])stamp('synty-plant-flowerpatch-01',u,v,.55);
+for(const [u,v] of [[-11,-8],[-14,3],[12,-14],[-8,12],[17,9]]){const p=pos(u,v);landscape.cover.push({...p,radius:1.3,density:2.4,seed:Math.floor(rand()*1000000),flowers:.6,grassScale:.9,broadRatio:1,palette:'forest'});}
 for(const [u,v] of [[-12,-15],[13,2],[-17,8]])stamp('canopy-twig-log',u,v,.4);
 for(let i=0;i<14;i++){const u=-20+rand()*44;stamp('pebbles-pale',u,shore(u)-1.6,.25+rand()*.25);}
 const map:UtcMap={...emptyUtcMap(256),name:'Texture Test 1',description:'A quiet terrain study: warm earth, olive grass, pine groves, and a still lake. One Marshal, full visibility, fixed midday lighting. No opponents or victory conditions.',sandbox:true,playerStarts:[{player:1,x:128,z:128,setup:'setup.ants',mainFort:'unused'}],waterLevel:0,height:encodeHeight(f.samples,256),landscape,stamps,entities:[{id:'texture-test.hero',definition:'unit.ants.marshal',owner:'player.1',position:{x:128,y:128},rotation:135}],camps:[]};

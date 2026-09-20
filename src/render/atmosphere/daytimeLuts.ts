@@ -1,5 +1,5 @@
 import {ClampToEdgeWrapping,Data3DTexture,LinearFilter,NoColorSpace,RGBAFormat,UnsignedByteType} from 'three';
-import source from '../../../assets/textures/grading/scouring-reference-luts.json';
+import source from '../../../assets/library/asset.unregistered.textures.grading.scouring-reference-luts.json/data.json';
 import type {DaytimeId,DaytimeSample} from '../../shared/environment/dayCycle';
 
 /** The reference's uncompressed 16³ BGRX DDS volumes, losslessly converted to RGBA. */

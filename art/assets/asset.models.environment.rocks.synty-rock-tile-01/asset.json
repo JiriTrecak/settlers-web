@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-tile-01",
+  "name": "Rock Tile 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "9e4bfb263f6ae2e3bea97b79cf1a3796daeb387a5c47f0dfdbb152dec7a78ad5",
+      "bytes": 1540524
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "1e65cf9c3470b4298b41ac7b5f491c74db93c781af89e027d56d6e1508b0db69",
+      "bytes": 2053523
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-rock-tile-01",
+        "name": "Rock Tile 01",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "1e65cf9c3470b4298b41ac7b5f491c74db93c781af89e027d56d6e1508b0db69"
+  }
+}

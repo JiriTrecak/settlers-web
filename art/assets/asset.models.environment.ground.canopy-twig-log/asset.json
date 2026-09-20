@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.canopy-twig-log",
+  "name": "Twig Log",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "b3078c240ea042e33cd39656891f0fd1fc4a309aaa00c2b3ae61768f3b26e97c",
+      "bytes": 32752
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "df2aad81e4607ea220beac31068b5072d61a23c5f8ca63518b1388e3c0dbc09e",
+      "bytes": 3363304
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "canopy-twig-log",
+        "name": "Twig Log",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "df2aad81e4607ea220beac31068b5072d61a23c5f8ca63518b1388e3c0dbc09e"
+  }
+}

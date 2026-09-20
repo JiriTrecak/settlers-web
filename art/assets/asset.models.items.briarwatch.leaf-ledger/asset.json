@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.items.briarwatch.leaf-ledger",
+  "name": "Leaf Ledger",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8f80e7c7ddbe7a6c1ee6f588fe520b871e0e6d12822d7ccbae114ffab8deefbd",
+      "bytes": 38000
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+      "bytes": 2524662
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.leaf-ledger",
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.items.briarwatch.leaf-ledger"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826"
+  }
+}

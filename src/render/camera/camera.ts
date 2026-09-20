@@ -24,6 +24,10 @@ const PITCH_MAX = Math.PI / 2 - 0.04;
 const ORBIT = 0.007;
 
 export class Camera {
+  private topDown=false;
+  get isTopDown(){return this.topDown;}
+  /** Exact orthographic overhead editing; focus and zoom survive mode changes. */
+  setTopDown():void{this.setGame(false);this.topDown=true;this.locked=true;this.yaw=0;this.pitch=Math.PI/2;this.touch();}
   private closePose:ClosePose|null=null;
   private savedFocus:{x:number;z:number}|null=null;
   private closeElapsed=0;
@@ -49,6 +53,8 @@ export class Camera {
   }
   targetX = 0;
   targetZ = 0;
+  /** Free/top-down asset previews can orbit an elevated model's actual center. */
+  private focusHeight=0;
   yaw = ISO_YAW;
   pitch = ISO_PITCH;
   zoom = 40;
@@ -84,6 +90,8 @@ export class Camera {
 
   /** Play pose: fixed perspective, default distance 40, pan to half a block past the red. */
   setGame(on: boolean, size = MAP_SIZE): void {
+    this.topDown=false;
+    this.focusHeight=0;
     this.setClosePose(null);
     this.game = on;
     this.locked = on;
@@ -107,13 +115,14 @@ export class Camera {
   get gameZoom(): number { return this.distance / this.gameDistance; }
 
   /** One-shot look / zoom / orbit. `setGame` first if you also flip perspective. */
-  pose(next: { x?: number; z?: number; zoom?: number; gameZoom?: number; yaw?: number; pitch?: number }): void {
+  pose(next: { x?: number; z?: number; height?:number; zoom?: number; gameZoom?: number; yaw?: number; pitch?: number }): void {
     if (next.x !== undefined) this.targetX = next.x;
     if (next.z !== undefined) this.targetZ = next.z;
+    if(next.height!==undefined&&Number.isFinite(next.height))this.focusHeight=next.height;
     if (next.zoom !== undefined) this.zoom = clamp(next.zoom, this.minZoom, this.maxZoom);
     if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = this.gameDistance * clamp(next.gameZoom, .5, 1.5);
     if (next.yaw !== undefined) this.yaw = next.yaw;
-    if (next.pitch !== undefined) this.pitch = clamp(next.pitch, PITCH_MIN, PITCH_MAX);
+    if (next.pitch !== undefined) this.pitch = this.topDown?Math.PI/2:clamp(next.pitch, PITCH_MIN, PITCH_MAX);
     this.clamp();
     this.touch();
   }
@@ -248,7 +257,7 @@ export class Camera {
       const t=direction.y<-.0001?Math.max(0,(this.closePose.focus.y-a.y)/direction.y):100;
       return [a.x+direction.x*Math.min(100,t),a.z+direction.z*Math.min(100,t)];
     }
-    const planeY = this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : 0;
+    const planeY = this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : this.focusHeight;
     const t = Math.abs(dy) < 1e-8 ? 0 : (planeY - a.y) / dy;
     return [a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t];
   }
@@ -293,7 +302,7 @@ export class Camera {
   }
 
   private place(cam: OrthographicCamera | PerspectiveCamera): { dist: number; reach: number } {
-    const reach = this.game ? this.distance : this.zoom / Math.max(0.05, Math.tan(this.pitch));
+    const reach = this.topDown ? this.zoom+128 : this.game ? this.distance : this.zoom / Math.max(0.05, Math.tan(this.pitch));
     const dist = this.game ? this.distance : reach + SLACK;
     const cosP = Math.cos(this.pitch);
     const { sinY, cosY } = basis(this.yaw);
@@ -302,7 +311,8 @@ export class Camera {
       Math.sin(this.pitch) * dist,
       this.targetZ + cosY * cosP * dist,
     );
-    let targetY = 0;
+    let targetY = this.game?0:this.focusHeight;
+    cam.position.y+=targetY;
     if (this.game && this.terrain) {
       const heightAt = (x: number, z: number) => {
         const h = this.terrain!(x, z);
@@ -317,6 +327,7 @@ export class Camera {
       cam.position.y += lift;
       targetY += lift;
     }
+    cam.up.set(this.topDown?-sinY:0,this.topDown?0:1,this.topDown?-cosY:0);
     cam.lookAt(this.targetX, targetY, this.targetZ);
     return { dist, reach };
   }

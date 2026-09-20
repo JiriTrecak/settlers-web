@@ -1,4 +1,5 @@
 import {canopySchema} from '../../shared/landscape/canopy';
+import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
 import {atmosphereSchema} from '../../shared/landscape/atmosphere';
 import {weatherSchema} from '../../shared/landscape/weather';
 import {campSchema} from '../../content/schema';
@@ -55,6 +56,21 @@ export class EditorControl {
   }
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
+    scene:params=>{
+      const p=sceneCommandSchema.parse(params),e=this.editor;
+      switch(p.action){
+        case 'recipes':return e.authoringAssets.filter(a=>a.recipe||a.water);
+        case 'put-layer':e.putLayer(p.layer);break;
+        case 'put-object':e.putAuthoredObject(p.object);break;
+        case 'select':e.selectLayer({kind:p.kind,id:p.id});break;
+        case 'remove':e.selectLayer({kind:p.kind,id:p.id});e.removeLayerSelection();break;
+        case 'lock':e.selectLayer({kind:p.kind,id:p.id});e.lockLayerSelection(p.locked);break;
+        case 'bake':e.selectLayer({kind:'layer',id:p.id});e.bakeSelectedLayer();break;
+        case 'undo':e.undoLayers();break;case 'redo':e.undoLayers(true);break;
+        case 'camera':e.authoringCamera(p.mode);break;
+      }
+      return {scene:e.layers.scene,selection:e.layers.selection,generated:{objects:e.generatedScene?.objects.length??0,rivers:e.generatedScene?.rivers.length??0,issues:e.generatedScene?.issues??[]}};
+    },
     status: () => this.status(),
     walkSurface: params=>{
       const p=obj(params),id=str(p.id),stamp=this.editor.map.stamps.find(s=>s.id===id);

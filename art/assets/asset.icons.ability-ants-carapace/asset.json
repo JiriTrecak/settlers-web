@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.ability-ants-carapace",
+  "name": "Carapace",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "4a67e0126d4d4c2d5f7cd2319383f82f981c4cce72022a810f6c90baa289e873",
+      "bytes": 36180
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.spell.carapace",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.ability-ants-carapace"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "4a67e0126d4d4c2d5f7cd2319383f82f981c4cce72022a810f6c90baa289e873"
+  }
+}

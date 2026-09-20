@@ -1,4 +1,5 @@
 import {perf} from '../../debug/performance';
+import type {Watercourse} from '../../shared/authoring/watercourses';
 import { DEFAULT_WATER_STYLE, type WaterStyle } from '../../shared/landscape/waterStyle';
 import { riverFlow, type RiverStroke } from '../../shared/landscape/riverFlow';
 import { Reflector } from 'three/addons/objects/Reflector.js';
@@ -7,7 +8,7 @@ import { Reflector } from 'three/addons/objects/Reflector.js';
  * Sunk 0.03 so dry land at 0 wins.
  */
 import {
-  ShaderChunk, Color,
+  ShaderChunk, Color, BufferGeometry, Float32BufferAttribute,
   ClampToEdgeWrapping,
   DataTexture,
   FloatType,
@@ -32,6 +33,7 @@ import {
 import { HEIGHT_ORIGIN, MAP_HALO, type HeightField } from "../../shared";
 
 const SINK = 0.03;
+let reflectingWater=false;
 
 /** Linear working-space colors sampled toward the approved stream reference. */
 const SHALLOW = new Vector3(0.105, 0.22, 0.23);
@@ -67,6 +69,7 @@ export class WaterLayer {
   private readonly reflector: Reflector;
   private wetBounds:Box3[]=[];
   private field:HeightField|null=null;
+  private course:Watercourse|null=null;
   private frustum=new Frustum();
   private projection=new Matrix4();
   private lastReflection=-Infinity;
@@ -78,6 +81,7 @@ export class WaterLayer {
     perf.value('Water visible',this.mesh.visible?'Yes':'No');
   }
   private rebuildWetBounds():void {
+    if(this.course){this.mesh.geometry.computeBoundingBox();this.wetBounds=this.mesh.geometry.boundingBox?[this.mesh.geometry.boundingBox.clone()]:[];this.lastReflection=-Infinity;return;}
     const field=this.field;if(!field)return;const occupied=new Set<string>();
     for(let z=0;z<this.verts;z++)for(let x=0;x<this.verts;x++)if(field.samples[z*this.verts+x]!<=this.mesh.position.y+.08)occupied.add(`${Math.floor((x+HEIGHT_ORIGIN)/4)},${Math.floor((z+HEIGHT_ORIGIN)/4)}`);
     this.wetBounds=[...occupied].map(key=>{const [x,z]=key.split(',').map(Number);return new Box3(new Vector3(x!*4-1,this.mesh.position.y-.1,z!*4-1),new Vector3(x!*4+5,this.mesh.position.y+.1,z!*4+5));});
@@ -131,8 +135,9 @@ export class WaterLayer {
       depthWrite: false,
     });
     mat.onBeforeCompile = (shader) => this.patch(shader);
-    mat.customProgramCacheKey = () => "utc-forest-stream-v13";
+    mat.customProgramCacheKey = () => "utc-forest-stream-v14";
     const mesh = new Mesh(new PlaneGeometry(span, span), mat);
+    mesh.geometry.setAttribute('waterFlow',new Float32BufferAttribute(new Float32Array(mesh.geometry.getAttribute('position').count).fill(1),1));
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set(mid, -SINK, mid);
     mesh.receiveShadow = true;
@@ -154,7 +159,7 @@ export class WaterLayer {
     this.mesh = mesh;
     this.mat = mat;
     mesh.onBeforeRender=(renderer,renderScene,camera,geometry,material,group)=>{
-      if(this.uniforms.uReflectionStrength.value<=0)return;
+      if(this.uniforms.uReflectionStrength.value<=0||reflectingWater)return;
       const now=performance.now();
       const view=new Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
       // Update immediately when panning; static-camera reflections need only 15 Hz.
@@ -163,11 +168,12 @@ export class WaterLayer {
       const timing=perf.start();
       this.reflector.position.copy(mesh.position);
       this.reflector.quaternion.copy(mesh.quaternion);
+      if(this.course){this.reflector.rotation.set(-Math.PI/2,0,0);this.reflector.position.set(0,this.course.samples[Math.floor(this.course.samples.length/2)]!.elevation-SINK,0);}
       this.reflector.updateMatrixWorld(true);
       // The water must not appear in its own reflected scene.
-      mesh.visible=false;
+      mesh.visible=false;reflectingWater=true;
       try{this.reflector.onBeforeRender(renderer,renderScene,camera,geometry,material,group);}
-      finally{mesh.visible=true;perf.end('Water reflection (CPU)',timing);}
+      finally{mesh.visible=true;reflectingWater=false;perf.end('Water reflection (CPU)',timing);}
     };
   }
 
@@ -186,6 +192,24 @@ export class WaterLayer {
 
   setFlow(rivers:readonly RiverStroke[]):void {
     this.flow.image.data=riverFlow(rivers,128,HEIGHT_ORIGIN,this.verts-1);this.flow.needsUpdate=true;
+  }
+
+  setCourse(field:HeightField,course:Watercourse):void{
+    this.course=course;this.setFrom(field);this.setStyle(course.style);
+    const positions:number[]=[],uv:number[]=[],indices:number[]=[],flow:number[]=[],points=course.samples;
+    const across=8;
+    for(let i=0;i<points.length;i++){
+      const p=points[i]!,a=points[Math.max(0,i-1)]!,b=points[Math.min(points.length-1,i+1)]!,length=Math.hypot(b.x-a.x,b.z-a.z)||1;
+      const nx=-(b.z-a.z)/length,nz=(b.x-a.x)/length;
+      for(let j=0;j<=across;j++){const side=j/across*2-1,r=p.widthScale*course.width/2;positions.push(p.x+nx*side*r,p.elevation-SINK,p.z+nz*side*r);uv.push(j/across,p.distance);flow.push(p.flowScale);}
+      if(i>0)for(let j=0;j<across;j++){const a=(i-1)*(across+1)+j,b=i*(across+1)+j;indices.push(a,a+1,b,b,a+1,b+1);}
+    }
+    const geometry=new BufferGeometry();geometry.setAttribute('position',new Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();
+    geometry.setAttribute('waterFlow',new Float32BufferAttribute(flow,1));
+    this.mesh.geometry.dispose();this.mesh.geometry=geometry;this.mesh.position.set(0,0,0);this.mesh.rotation.set(0,0,0);
+    this.setFlow([{points:points.map(p=>({x:p.x,z:p.z})),radius:course.width/2,depth:course.depth}]);
+    this.uniforms.uFlowSpeed.value=course.flow*course.style.flowSpeed;
+    this.rebuildWetBounds();
   }
 
   setFrom(field: HeightField): void {
@@ -226,6 +250,8 @@ export class WaterLayer {
         "#include <common>",
         `#include <common>
 varying vec3 vWorldPos;
+attribute float waterFlow;
+varying float vWaterFlow;
 varying vec4 vReflection;
 uniform mat4 uReflectionMatrix;`,
       )
@@ -233,10 +259,11 @@ uniform mat4 uReflectionMatrix;`,
         "#include <project_vertex>",
         `#include <project_vertex>
 vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+vWaterFlow = waterFlow;
 vReflection = uReflectionMatrix * vec4(transformed,1.0);`,
       );
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", `${WATER_COMMON}\n#include <common>`)
+      .replace("#include <common>", `varying float vWaterFlow;\n${WATER_COMMON}\n#include <common>`)
       .replace("#include <lights_fragment_begin>", ShaderChunk.lights_fragment_begin.replaceAll("directionalLightShadow.shadowIntensity,", "directionalLightShadow.shadowIntensity * uShadowStrength,"))
       .replace("#include <opaque_fragment>", `#include <opaque_fragment>\n${WATER_REFLECTION}`)
       .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>\n${WATER_LOOK}`);
@@ -332,9 +359,9 @@ float waterCaustic(vec2 p,float time){
 
 const WATER_LOOK = /* glsl */ `
 {
- float depth=uWaterLevel-terrainAt(vWorldPos.xz);
+ float depth=vWorldPos.y+0.03-terrainAt(vWorldPos.xz);
  if(depth<.015)discard;
- vec2 p=vWorldPos.xz;float t=uTime*uFlowSpeed;
+ vec2 p=vWorldPos.xz;float t=uTime*uFlowSpeed*vWaterFlow;
  vec2 flow=texture2D(uFlow,(p-vec2(uHeightOrigin))/(uHeightVerts-1.)).rg*2.-1.;
  flow=length(flow)>.01?normalize(flow):vec2(1.,0.);
  // Two advected phases cross-fade without resetting the current at a seam.
@@ -383,7 +410,7 @@ if(uReflectionStrength>0.0){
     +texture2D(uReflection,reflectionUv-blur).rgb
     +texture2D(uReflection,reflectionUv+vec2(blur.x,-blur.y)).rgb
     +texture2D(uReflection,reflectionUv+vec2(-blur.x,blur.y)).rgb)*.0625;
-  float reflectionDepth=uWaterLevel-terrainAt(vWorldPos.xz);
+  float reflectionDepth=vWorldPos.y+0.03-terrainAt(vWorldPos.xz);
   float fresnel=.02+.98*pow(1.-clamp(dot(normal,normalize(vViewPosition)),0.,1.),5.);
   float reflection=uReflectionStrength*(.12+.88*fresnel)*smoothstep(.05,.5,reflectionDepth);
   gl_FragColor.rgb=mix(gl_FragColor.rgb,reflected,reflection);

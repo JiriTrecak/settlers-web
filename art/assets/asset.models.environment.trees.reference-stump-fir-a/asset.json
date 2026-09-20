@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.reference-stump-fir-a",
+  "name": "Reference · stump fir a",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fbad1ad8e2ebd7b16f2cf0d44f077be71d399795b3377de270ab0e11e0d35890",
+      "bytes": 661672
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-stump-fir-a",
+        "name": "Reference · stump fir a",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "fbad1ad8e2ebd7b16f2cf0d44f077be71d399795b3377de270ab0e11e0d35890"
+  }
+}

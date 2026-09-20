@@ -1,0 +1,2579 @@
+[
+  {
+    "id": "asset.models.buildings.ants.amber-sanctuary",
+    "name": "Amber Sanctuary",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.bark-cottage",
+    "name": "Bark Cottage",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.bombardier-workshop",
+    "name": "Bombardier Workshop",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.forester",
+    "name": "Forester lodge",
+    "kind": "building",
+    "scenery": "forester-lodge",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.great-mound",
+    "name": "Great Mound",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.house",
+    "name": "House",
+    "kind": "building",
+    "scenery": "ant-house",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.ironroot-forge",
+    "name": "Ironroot Forge",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.lumberjack-workshop",
+    "name": "Lumberjack hut",
+    "kind": "building",
+    "scenery": "lumberjack-hut",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.player-barracks",
+    "name": "Player Barracks",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.player-stonemason",
+    "name": "Player Stonemason",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.rootbound-hall",
+    "name": "Main fort",
+    "kind": "building",
+    "scenery": "main-fort",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.rootworks",
+    "name": "Rootworks",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.sawmill",
+    "name": "Sawmill",
+    "kind": "building",
+    "scenery": "sawmill",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.stonemason",
+    "name": "Ant colony · Stonemason",
+    "kind": "building",
+    "scenery": "ant-stonemason",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.ants.tower",
+    "name": "Tower",
+    "kind": "building",
+    "scenery": "ant-tower",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.neutral.amber-seam",
+    "name": "Amber Outcrop",
+    "kind": "building",
+    "scenery": "amber-seam",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.neutral.corrupted-root",
+    "name": "Corrupted Root",
+    "kind": "building",
+    "scenery": "canopy-corrupted-root",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.neutral.ruined-cottage",
+    "name": "Ruined Cottage",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.neutral.supply-crate",
+    "name": "Supply Crate",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.buildings.neutral.twig-cage",
+    "name": "Twig Cage",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.briarwatch.merchant-cart",
+    "name": "Merchant Cart",
+    "kind": "prop",
+    "scenery": "briarwatch-merchant-cart",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.briarwatch.watch-bivouac",
+    "name": "Watch Bivouac",
+    "kind": "prop",
+    "scenery": "briarwatch-watch-bivouac",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.broadleaf",
+    "name": "Ant colony · Broadleaf",
+    "kind": "foliage",
+    "scenery": "ant-broadleaf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.canopy-short-grass",
+    "name": "Short Grass",
+    "kind": "foliage",
+    "scenery": "canopy-short-grass",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.fern",
+    "name": "Ant colony · Fern",
+    "kind": "foliage",
+    "scenery": "ant-fern",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass",
+    "name": "Ant colony · Grass",
+    "kind": "foliage",
+    "scenery": "ant-grass",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-01",
+    "name": "Grass V5 01",
+    "kind": "foliage",
+    "scenery": "grass_v5_01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-02",
+    "name": "Grass V5 02",
+    "kind": "foliage",
+    "scenery": "grass_v5_02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-03",
+    "name": "Grass V5 03",
+    "kind": "foliage",
+    "scenery": "grass_v5_03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-04",
+    "name": "Grass V5 04",
+    "kind": "foliage",
+    "scenery": "grass_v5_04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-05",
+    "name": "Grass V5 05",
+    "kind": "foliage",
+    "scenery": "grass_v5_05",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-06",
+    "name": "Grass V5 06",
+    "kind": "foliage",
+    "scenery": "grass_v5_06",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v5-07",
+    "name": "Grass V5 07",
+    "kind": "foliage",
+    "scenery": "grass_v5_07",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-01",
+    "name": "Grass V6 01",
+    "kind": "foliage",
+    "scenery": "grass_v6_01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-02",
+    "name": "Grass V6 02",
+    "kind": "foliage",
+    "scenery": "grass_v6_02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.grass-v6-03",
+    "name": "Grass V6 03",
+    "kind": "foliage",
+    "scenery": "grass_v6_03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reeds",
+    "name": "Ant colony · Reeds",
+    "kind": "foliage",
+    "scenery": "ant-reeds",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-daisy",
+    "name": "Reference · grass daisy",
+    "kind": "foliage",
+    "scenery": "reference-grass-daisy",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-high-a",
+    "name": "Reference · grass high a",
+    "kind": "foliage",
+    "scenery": "reference-grass-high-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-high-b",
+    "name": "Reference · grass high b",
+    "kind": "foliage",
+    "scenery": "reference-grass-high-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-low",
+    "name": "Reference · grass low",
+    "kind": "foliage",
+    "scenery": "reference-grass-low",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-messy",
+    "name": "Reference · grass messy",
+    "kind": "foliage",
+    "scenery": "reference-grass-messy",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-water-leaves-a",
+    "name": "Reference · grass water leaves a",
+    "kind": "foliage",
+    "scenery": "reference-grass-water-leaves-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.reference-grass-water-leaves-b",
+    "name": "Reference · grass water leaves b",
+    "kind": "foliage",
+    "scenery": "reference-grass-water-leaves-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.river-reeds",
+    "name": "River reeds · repaired",
+    "kind": "foliage",
+    "scenery": "river-reeds",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-01",
+    "name": "Plant Fern 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-fern-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-02",
+    "name": "Plant Fern 02",
+    "kind": "foliage",
+    "scenery": "synty-plant-fern-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-fern-03",
+    "name": "Plant Fern 03",
+    "kind": "foliage",
+    "scenery": "synty-plant-fern-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-grass-02",
+    "name": "Plant Grass 02",
+    "kind": "foliage",
+    "scenery": "synty-plant-grass-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-reeds-01",
+    "name": "Plant Reeds 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-reeds-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-plant-reeds-02",
+    "name": "Plant Reeds 02",
+    "kind": "foliage",
+    "scenery": "synty-plant-reeds-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-01",
+    "name": "Terrain GrassEdge 01",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-02",
+    "name": "Terrain GrassEdge 02",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-03",
+    "name": "Terrain GrassEdge 03",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-04",
+    "name": "Terrain GrassEdge 04",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-01",
+    "name": "Terrain GrassEdge Roots 01",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-roots-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-02",
+    "name": "Terrain GrassEdge Roots 02",
+    "kind": "foliage",
+    "scenery": "synty-terrain-grassedge-roots-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.ground.canopy-forest-leaves",
+    "name": "Forest Leaves",
+    "kind": "prop",
+    "scenery": "canopy-forest-leaves",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.ground.canopy-twig-log",
+    "name": "Twig Log",
+    "kind": "prop",
+    "scenery": "canopy-twig-log",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.ground.curled-forest-leaf",
+    "name": "Curled Forest Leaf",
+    "kind": "prop",
+    "scenery": "curled-forest-leaf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.ground.fallen-acorn",
+    "name": "Fallen Acorn",
+    "kind": "prop",
+    "scenery": "fallen-acorn",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.ground.forest-splinter-pile",
+    "name": "Forest Splinter Pile",
+    "kind": "prop",
+    "scenery": "forest-splinter-pile",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.canopy-tiny-mushrooms",
+    "name": "Tiny Mushrooms",
+    "kind": "foliage",
+    "scenery": "canopy-tiny-mushrooms",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lanterncap-grove",
+    "name": "Lanterncap Grove",
+    "kind": "foliage",
+    "scenery": "lanterncap-grove",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-01",
+    "name": "Lowpolymushroom 01",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-03",
+    "name": "Lowpolymushroom 03",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-04",
+    "name": "Lowpolymushroom 04",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-08",
+    "name": "Lowpolymushroom 08",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_08",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-09",
+    "name": "Lowpolymushroom 09",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_09",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-17",
+    "name": "Lowpolymushroom 17",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_17",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.lowpolymushroom-20",
+    "name": "Lowpolymushroom 20",
+    "kind": "foliage",
+    "scenery": "lowpolymushroom_20",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.mushroom-chunky-red",
+    "name": "Mushroom — chunky red",
+    "kind": "foliage",
+    "scenery": "mushroom-chunky-red",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
+    "name": "Mushroom Cluster",
+    "kind": "foliage",
+    "scenery": "ochre-mushroom-colony",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.mushrooms.synty-plant-mushrooms-01",
+    "name": "Plant Mushrooms 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-mushrooms-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-bush-a",
+    "name": "Reference · bush a",
+    "kind": "foliage",
+    "scenery": "reference-bush-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-bush-b",
+    "name": "Reference · bush b",
+    "kind": "foliage",
+    "scenery": "reference-bush-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-dungeon-entrance",
+    "name": "Reference · dungeon entrance",
+    "kind": "prop",
+    "scenery": "reference-dungeon-entrance",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-goblin-hut",
+    "name": "Reference · goblin hut",
+    "kind": "prop",
+    "scenery": "reference-goblin-hut",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-gold-vein-a",
+    "name": "Reference · gold vein a",
+    "kind": "prop",
+    "scenery": "reference-gold-vein-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-gold-vein-b",
+    "name": "Reference · gold vein b",
+    "kind": "prop",
+    "scenery": "reference-gold-vein-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-a",
+    "name": "Reference · lying snag a",
+    "kind": "prop",
+    "scenery": "reference-lying-snag-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-b",
+    "name": "Reference · lying snag b",
+    "kind": "prop",
+    "scenery": "reference-lying-snag-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-c",
+    "name": "Reference · lying snag c",
+    "kind": "prop",
+    "scenery": "reference-lying-snag-c",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-lying-snag-d",
+    "name": "Reference · lying snag d",
+    "kind": "prop",
+    "scenery": "reference-lying-snag-d",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-monument-01",
+    "name": "Reference · monument 01",
+    "kind": "prop",
+    "scenery": "reference-monument-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-a",
+    "name": "Reference · mountain chunk a",
+    "kind": "prop",
+    "scenery": "reference-mountain-chunk-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-b",
+    "name": "Reference · mountain chunk b",
+    "kind": "prop",
+    "scenery": "reference-mountain-chunk-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-mountain-chunk-c",
+    "name": "Reference · mountain chunk c",
+    "kind": "prop",
+    "scenery": "reference-mountain-chunk-c",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-a",
+    "name": "Reference · neutral bandit a",
+    "kind": "prop",
+    "scenery": "reference-neutral-bandit-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-b",
+    "name": "Reference · neutral bandit b",
+    "kind": "prop",
+    "scenery": "reference-neutral-bandit-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-bandit-tent",
+    "name": "Reference · neutral bandit tent",
+    "kind": "prop",
+    "scenery": "reference-neutral-bandit-tent",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-goblin",
+    "name": "Reference · neutral goblin",
+    "kind": "creature",
+    "scenery": "reference-neutral-goblin",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-outpost",
+    "name": "Reference · neutral outpost",
+    "kind": "prop",
+    "scenery": "reference-neutral-outpost",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-troll",
+    "name": "Reference · neutral troll",
+    "kind": "creature",
+    "scenery": "reference-neutral-troll",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-troll-cave",
+    "name": "Reference · neutral troll cave",
+    "kind": "prop",
+    "scenery": "reference-neutral-troll-cave",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf",
+    "name": "Reference · neutral wolf",
+    "kind": "creature",
+    "scenery": "reference-neutral-wolf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf-den-a",
+    "name": "Reference · neutral wolf den a",
+    "kind": "prop",
+    "scenery": "reference-neutral-wolf-den-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-neutral-wolf-den-b",
+    "name": "Reference · neutral wolf den b",
+    "kind": "prop",
+    "scenery": "reference-neutral-wolf-den-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-03",
+    "name": "Reference · ruins blocks 03",
+    "kind": "prop",
+    "scenery": "reference-ruins-blocks-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-04",
+    "name": "Reference · ruins blocks 04",
+    "kind": "prop",
+    "scenery": "reference-ruins-blocks-04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-06",
+    "name": "Reference · ruins blocks 06",
+    "kind": "prop",
+    "scenery": "reference-ruins-blocks-06",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-blocks-08",
+    "name": "Reference · ruins blocks 08",
+    "kind": "prop",
+    "scenery": "reference-ruins-blocks-08",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-ruins-column-11",
+    "name": "Reference · ruins column 11",
+    "kind": "prop",
+    "scenery": "reference-ruins-column-11",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-a",
+    "name": "Reference · small rock a",
+    "kind": "prop",
+    "scenery": "reference-small-rock-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-b",
+    "name": "Reference · small rock b",
+    "kind": "prop",
+    "scenery": "reference-small-rock-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-small-rock-c",
+    "name": "Reference · small rock c",
+    "kind": "prop",
+    "scenery": "reference-small-rock-c",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.props.reference-wooden-bridge-small",
+    "name": "Reference · wooden bridge small",
+    "kind": "prop",
+    "scenery": "reference-wooden-bridge-small",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.mossy-boulder-bank",
+    "name": "Mossy Boulder Bank",
+    "kind": "prop",
+    "scenery": "mossy-boulder-bank",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-1",
+    "name": "River rock 1",
+    "kind": "prop",
+    "scenery": "river-rock-1",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-2",
+    "name": "River rock 2",
+    "kind": "prop",
+    "scenery": "river-rock-2",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-3",
+    "name": "River rock 3",
+    "kind": "prop",
+    "scenery": "river-rock-3",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-4",
+    "name": "River rock 4",
+    "kind": "prop",
+    "scenery": "river-rock-4",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-5",
+    "name": "River rock 5",
+    "kind": "prop",
+    "scenery": "river-rock-5",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.river-rock-6",
+    "name": "River rock 6",
+    "kind": "prop",
+    "scenery": "river-rock-6",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.rock",
+    "name": "Ant colony · Rock",
+    "kind": "prop",
+    "scenery": "ant-rock",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.rock-rounded-cool",
+    "name": "Boulder — rounded cool stone",
+    "kind": "prop",
+    "scenery": "rock-rounded-cool",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-02",
+    "name": "Rock 02",
+    "kind": "prop",
+    "scenery": "synty-rock-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-03",
+    "name": "Rock 03",
+    "kind": "prop",
+    "scenery": "synty-rock-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-boulder-01",
+    "name": "Rock Boulder 01",
+    "kind": "prop",
+    "scenery": "synty-rock-boulder-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-01",
+    "name": "Rock Cluster Large 01",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-02",
+    "name": "Rock Cluster Large 02",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-03",
+    "name": "Rock Cluster Large 03",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-04",
+    "name": "Rock Cluster Large 04",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-05",
+    "name": "Rock Cluster Large 05",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-05",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-cluster-large-06",
+    "name": "Rock Cluster Large 06",
+    "kind": "prop",
+    "scenery": "synty-rock-cluster-large-06",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-01",
+    "name": "Rock Pile 01",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-02",
+    "name": "Rock Pile 02",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-03",
+    "name": "Rock Pile 03",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-04",
+    "name": "Rock Pile 04",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-05",
+    "name": "Rock Pile 05",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-05",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-curved-01",
+    "name": "Rock Pile Curved 01",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-curved-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-pile-curved-02",
+    "name": "Rock Pile Curved 02",
+    "kind": "prop",
+    "scenery": "synty-rock-pile-curved-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-small-01",
+    "name": "Rock Small 01",
+    "kind": "prop",
+    "scenery": "synty-rock-small-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-small-02",
+    "name": "Rock Small 02",
+    "kind": "prop",
+    "scenery": "synty-rock-small-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-01",
+    "name": "Rock Tile 01",
+    "kind": "prop",
+    "scenery": "synty-rock-tile-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-02",
+    "name": "Rock Tile 02",
+    "kind": "prop",
+    "scenery": "synty-rock-tile-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-tile-03",
+    "name": "Rock Tile 03",
+    "kind": "prop",
+    "scenery": "synty-rock-tile-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-wall-01",
+    "name": "Rock Wall 01",
+    "kind": "prop",
+    "scenery": "synty-rock-wall-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-rock-wall-02",
+    "name": "Rock Wall 02",
+    "kind": "prop",
+    "scenery": "synty-rock-wall-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.rocks.synty-terrain-mountain-01",
+    "name": "Terrain Mountain 01",
+    "kind": "prop",
+    "scenery": "synty-terrain-mountain-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.shrubs.bramble-thicket",
+    "name": "Bramble Thicket",
+    "kind": "prop",
+    "scenery": "bramble-thicket",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.shrubs.fern-thicket",
+    "name": "Fern Thicket",
+    "kind": "foliage",
+    "scenery": "fern-thicket",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.amber-resin-sconce",
+    "name": "Amber Resin Sconce",
+    "kind": "prop",
+    "scenery": "amber-resin-sconce",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.arched-root-walkway",
+    "name": "Arched Root Walkway",
+    "kind": "bridge",
+    "scenery": "arched-root-walkway",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.bitter-heart",
+    "name": "Bitter Heart",
+    "kind": "prop",
+    "scenery": "bitter-heart",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-16",
+    "name": "Bridge 16",
+    "kind": "bridge",
+    "scenery": "bridge-16",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-32",
+    "name": "Bridge 32",
+    "kind": "bridge",
+    "scenery": "bridge-32",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.bridge-8",
+    "name": "Bridge 8",
+    "kind": "bridge",
+    "scenery": "bridge-8",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.driftwood",
+    "name": "Ant colony · Driftwood",
+    "kind": "prop",
+    "scenery": "ant-driftwood",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.elephant-leaf",
+    "name": "Ant colony · Elephant Leaf",
+    "kind": "prop",
+    "scenery": "ant-elephant-leaf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.fallen-canopy-bough",
+    "name": "Fallen Canopy Bough",
+    "kind": "prop",
+    "scenery": "fallen-canopy-bough",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-bud-cream",
+    "name": "Flower — upright cream heads",
+    "kind": "foliage",
+    "scenery": "flower-bud-cream",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-blue",
+    "name": "Flower — chunky blue",
+    "kind": "foliage",
+    "scenery": "flower-chunky-blue",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-cream",
+    "name": "Flower — chunky cream",
+    "kind": "foliage",
+    "scenery": "flower-chunky-cream",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-chunky-purple",
+    "name": "Flower — chunky violet",
+    "kind": "foliage",
+    "scenery": "flower-chunky-purple",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-blue",
+    "name": "Wildflower — single blue",
+    "kind": "foliage",
+    "scenery": "flower-single-blue",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-cream",
+    "name": "Wildflower — single cream",
+    "kind": "foliage",
+    "scenery": "flower-single-cream",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.flower-single-purple",
+    "name": "Wildflower — single purple",
+    "kind": "foliage",
+    "scenery": "flower-single-purple",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.heartwood-resin-font",
+    "name": "Living Resin Wellspring",
+    "kind": "prop",
+    "scenery": "heartwood-resin-font",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.heartwood-wall",
+    "name": "Heartwood Wall",
+    "kind": "prop",
+    "scenery": "heartwood-wall",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.hollow-stump-gate",
+    "name": "Hollow Stump Gate",
+    "kind": "prop",
+    "scenery": "hollow-stump-gate",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.interwoven-root-bank",
+    "name": "Interwoven Root Bank",
+    "kind": "prop",
+    "scenery": "interwoven-root-bank",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.lantern-post",
+    "name": "Wayfarer lantern",
+    "kind": "prop",
+    "scenery": "lantern-post",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.legacy-lily",
+    "name": "Lily",
+    "kind": "prop",
+    "scenery": "lily",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.lily",
+    "name": "Ant colony · Lily",
+    "kind": "prop",
+    "scenery": "ant-lily",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.lily-chunky",
+    "name": "Lily — chunky pads",
+    "kind": "prop",
+    "scenery": "lily-chunky",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.lily-gold",
+    "name": "Lily gold",
+    "kind": "prop",
+    "scenery": "lily-gold",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.lily-white",
+    "name": "Lily white",
+    "kind": "prop",
+    "scenery": "lily-white",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.loot-chest",
+    "name": "Loot Chest",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.moss-stone-bridge",
+    "name": "Moss Stone Bridge",
+    "kind": "bridge",
+    "scenery": "moss-stone-bridge",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.pebbles-pale",
+    "name": "Pebble Cluster",
+    "kind": "prop",
+    "scenery": "pebbles-pale",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.road-segment",
+    "name": "Packed-earth road",
+    "kind": "prop",
+    "scenery": "road-segment",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.splitrail-fence",
+    "name": "Split-rail fence",
+    "kind": "prop",
+    "scenery": "splitrail-fence",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-02",
+    "name": "Plant Bush 02",
+    "kind": "foliage",
+    "scenery": "synty-plant-bush-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-01",
+    "name": "Plant Bush Leaves 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-bush-leaves-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-02",
+    "name": "Plant Bush Leaves 02",
+    "kind": "foliage",
+    "scenery": "synty-plant-bush-leaves-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-bush-leaves-03",
+    "name": "Plant Bush Leaves 03",
+    "kind": "foliage",
+    "scenery": "synty-plant-bush-leaves-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-flowerpatch-01",
+    "name": "Plant FlowerPatch 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-flowerpatch-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-flowers-01",
+    "name": "Plant Flowers 01",
+    "kind": "foliage",
+    "scenery": "synty-plant-flowers-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-01",
+    "name": "Plant Lillypad Large 01",
+    "kind": "prop",
+    "scenery": "synty-plant-lillypad-large-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-02",
+    "name": "Plant Lillypad Large 02",
+    "kind": "prop",
+    "scenery": "synty-plant-lillypad-large-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-large-03",
+    "name": "Plant Lillypad Large 03",
+    "kind": "prop",
+    "scenery": "synty-plant-lillypad-large-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-plant-lillypad-small-01",
+    "name": "Plant Lillypad Small 01",
+    "kind": "prop",
+    "scenery": "synty-plant-lillypad-small-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-bridge-curved-01",
+    "name": "Prop Bridge Curved 01",
+    "kind": "bridge",
+    "scenery": "synty-prop-bridge-curved-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-fence-01",
+    "name": "Prop Fence 01",
+    "kind": "prop",
+    "scenery": "synty-prop-fence-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-fence-02",
+    "name": "Prop Fence 02",
+    "kind": "prop",
+    "scenery": "synty-prop-fence-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-01",
+    "name": "Prop Pillar 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-01",
+    "name": "Prop Pillar Arch 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-01",
+    "name": "Prop Pillar Arch Broken 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-broken-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-02",
+    "name": "Prop Pillar Arch Broken 02",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-broken-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01",
+    "name": "Prop Pillar Arch Broken Moss 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-broken-moss-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02",
+    "name": "Prop Pillar Arch Broken Moss 02",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-broken-moss-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-arch-moss-01",
+    "name": "Prop Pillar Arch Moss 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-arch-moss-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-01",
+    "name": "Prop Pillar Broken 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-broken-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-02",
+    "name": "Prop Pillar Broken 02",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-broken-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-01",
+    "name": "Prop Pillar Broken Moss 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-broken-moss-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-02",
+    "name": "Prop Pillar Broken Moss 02",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-broken-moss-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-pillar-moss-01",
+    "name": "Prop Pillar Moss 01",
+    "kind": "prop",
+    "scenery": "synty-prop-pillar-moss-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-roadsign-01",
+    "name": "Prop RoadSign 01",
+    "kind": "prop",
+    "scenery": "synty-prop-roadsign-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-01",
+    "name": "Prop StoneWall 01",
+    "kind": "prop",
+    "scenery": "synty-prop-stonewall-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-02",
+    "name": "Prop StoneWall 02",
+    "kind": "prop",
+    "scenery": "synty-prop-stonewall-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-prop-stonewall-03",
+    "name": "Prop StoneWall 03",
+    "kind": "prop",
+    "scenery": "synty-prop-stonewall-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-01",
+    "name": "Terrain RiverSide 01",
+    "kind": "prop",
+    "scenery": "synty-terrain-riverside-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-corner-01",
+    "name": "Terrain RiverSide Corner 01",
+    "kind": "prop",
+    "scenery": "synty-terrain-riverside-corner-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.synty-terrain-riverside-corner-02",
+    "name": "Terrain RiverSide Corner 02",
+    "kind": "prop",
+    "scenery": "synty-terrain-riverside-corner-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.timber-bridge",
+    "name": "Timber bridge",
+    "kind": "bridge",
+    "scenery": "timber-bridge",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.waystone-outcrop",
+    "name": "Waystone outcrop",
+    "kind": "bridge",
+    "scenery": "waystone-outcrop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.structures.woodland-timber-bridge",
+    "name": "Woodland Timber Bridge",
+    "kind": "bridge",
+    "scenery": "woodland-timber-bridge",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.ancient-canopy-trunk",
+    "name": "Ancient Tree",
+    "kind": "tree",
+    "scenery": "ancient-canopy-trunk",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-05",
+    "name": "Coniferous Trees 05",
+    "kind": "tree",
+    "scenery": "coniferous_trees_05",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-06",
+    "name": "Coniferous Trees 06",
+    "kind": "tree",
+    "scenery": "coniferous_trees_06",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-07",
+    "name": "Coniferous Trees 07",
+    "kind": "tree",
+    "scenery": "coniferous_trees_07",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-08",
+    "name": "Coniferous Trees 08",
+    "kind": "tree",
+    "scenery": "coniferous_trees_08",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-09",
+    "name": "Coniferous Trees 09",
+    "kind": "tree",
+    "scenery": "coniferous_trees_09",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-10",
+    "name": "Coniferous Trees 10",
+    "kind": "tree",
+    "scenery": "coniferous_trees_10",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-11",
+    "name": "Coniferous Trees 11",
+    "kind": "tree",
+    "scenery": "coniferous_trees_11",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-12",
+    "name": "Coniferous Trees 12",
+    "kind": "tree",
+    "scenery": "coniferous_trees_12",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-16",
+    "name": "Coniferous Trees 16",
+    "kind": "tree",
+    "scenery": "coniferous_trees_16",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-17",
+    "name": "Coniferous Trees 17",
+    "kind": "tree",
+    "scenery": "coniferous_trees_17",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-18",
+    "name": "Coniferous Trees 18",
+    "kind": "tree",
+    "scenery": "coniferous_trees_18",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-19",
+    "name": "Coniferous Trees 19",
+    "kind": "tree",
+    "scenery": "coniferous_trees_19",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-20",
+    "name": "Coniferous Trees 20",
+    "kind": "tree",
+    "scenery": "coniferous_trees_20",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-21",
+    "name": "Coniferous Trees 21",
+    "kind": "tree",
+    "scenery": "coniferous_trees_21",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-22",
+    "name": "Coniferous Trees 22",
+    "kind": "tree",
+    "scenery": "coniferous_trees_22",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-23",
+    "name": "Coniferous Trees 23",
+    "kind": "tree",
+    "scenery": "coniferous_trees_23",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-24",
+    "name": "Coniferous Trees 24",
+    "kind": "tree",
+    "scenery": "coniferous_trees_24",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-25",
+    "name": "Coniferous Trees 25",
+    "kind": "tree",
+    "scenery": "coniferous_trees_25",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.coniferous-trees-26",
+    "name": "Coniferous Trees 26",
+    "kind": "tree",
+    "scenery": "coniferous_trees_26",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.olive-pine",
+    "name": "Ant colony · Pine 1",
+    "kind": "tree",
+    "scenery": "ant-pine-1",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.olive-pine-animated",
+    "name": "Olive Pine Animated",
+    "kind": "tree",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.pine",
+    "name": "Pine",
+    "kind": "tree",
+    "scenery": "pine",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.pine-chunky",
+    "name": "Pine — chunky emerald",
+    "kind": "tree",
+    "scenery": "pine-chunky",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.pine-dark",
+    "name": "Pine dark",
+    "kind": "tree",
+    "scenery": "pine-dark",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.pine-umber",
+    "name": "Pine umber",
+    "kind": "tree",
+    "scenery": "pine-umber",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-a",
+    "name": "Reference · fir a",
+    "kind": "tree",
+    "scenery": "reference-fir-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-b",
+    "name": "Reference · fir b",
+    "kind": "tree",
+    "scenery": "reference-fir-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.reference-fir-small-a",
+    "name": "Reference · fir small a",
+    "kind": "tree",
+    "scenery": "reference-fir-small-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.reference-stump-fir-a",
+    "name": "Reference · stump fir a",
+    "kind": "tree",
+    "scenery": "reference-stump-fir-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-01",
+    "name": "Tree Birch Gold",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-02",
+    "name": "Tree Birch Autumn",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-03",
+    "name": "Tree Birch Crimson",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-03",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-04",
+    "name": "Tree Birch Lime",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-04",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-dead-01",
+    "name": "Tree Birch Dead 01",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-dead-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-birch-small-01",
+    "name": "Tree Birch Small 01",
+    "kind": "tree",
+    "scenery": "synty-tree-birch-small-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-01",
+    "name": "Tree Generic 01",
+    "kind": "tree",
+    "scenery": "synty-tree-generic-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-dead-01",
+    "name": "Tree Generic Dead 01",
+    "kind": "tree",
+    "scenery": "synty-tree-generic-dead-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-generic-giant-01",
+    "name": "Tree Generic Giant 01",
+    "kind": "tree",
+    "scenery": "synty-tree-generic-giant-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-large-01",
+    "name": "Tree Large 01",
+    "kind": "tree",
+    "scenery": "synty-tree-large-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-log-01",
+    "name": "Tree Log 01",
+    "kind": "tree",
+    "scenery": "synty-tree-log-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-log-02",
+    "name": "Tree Log 02",
+    "kind": "tree",
+    "scenery": "synty-tree-log-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-01",
+    "name": "Tree Pine 01",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-02",
+    "name": "Tree Pine 02",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-base-01",
+    "name": "Tree Pine Base 01",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-base-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-dead-01",
+    "name": "Tree Pine Dead 01",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-dead-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-large-01",
+    "name": "Tree Pine Large 01",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-large-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-large-02",
+    "name": "Tree Pine Large 02",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-large-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-small-01",
+    "name": "Tree Pine Small 01",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-small-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-pine-small-02",
+    "name": "Tree Pine Small 02",
+    "kind": "tree",
+    "scenery": "synty-tree-pine-small-02",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-stump-01",
+    "name": "Tree Stump 01",
+    "kind": "tree",
+    "scenery": "synty-tree-stump-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-large-01",
+    "name": "Tree Willow Pink",
+    "kind": "tree",
+    "scenery": "synty-tree-willow-large-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-medium-01",
+    "name": "Tree Willow Medium 01",
+    "kind": "tree",
+    "scenery": "synty-tree-willow-medium-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.synty-tree-willow-small-01",
+    "name": "Tree Willow Small 01",
+    "kind": "tree",
+    "scenery": "synty-tree-willow-small-01",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.tree-chunky-broadleaf",
+    "name": "Broadleaf — chunky emerald",
+    "kind": "tree",
+    "scenery": "tree-chunky-broadleaf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.tree-chunky-drooping",
+    "name": "Broadleaf — hanging sprays",
+    "kind": "tree",
+    "scenery": "tree-chunky-drooping",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.tree-primary",
+    "name": "Tree Primary",
+    "kind": "tree",
+    "scenery": "tree_primary",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.tree-secondary",
+    "name": "Tree Secondary",
+    "kind": "tree",
+    "scenery": "tree_secondary",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-1",
+    "name": "Woodland pine 1",
+    "kind": "tree",
+    "scenery": "woodland-pine-1",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-2",
+    "name": "Woodland pine 2",
+    "kind": "tree",
+    "scenery": "woodland-pine-2",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.trees.woodland-pine-3",
+    "name": "Woodland pine 3",
+    "kind": "tree",
+    "scenery": "woodland-pine-3",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.family-ring",
+    "name": "Family Ring",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.healing-draught",
+    "name": "Healing Draught",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.healing-scroll",
+    "name": "Healing Scroll",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.leaf-ledger",
+    "name": "Leaf Ledger",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.mana-draught",
+    "name": "Mana Draught",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.briarwatch.vigor-seed",
+    "name": "Vigor Seed",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.item-log",
+    "name": "Log",
+    "kind": "prop",
+    "scenery": "item-log",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.item-plank",
+    "name": "Plank",
+    "kind": "prop",
+    "scenery": "item-plank",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.item-stone",
+    "name": "Dressed stone",
+    "kind": "prop",
+    "scenery": "item-stone",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.log-stack",
+    "name": "Ant colony · Log Stack",
+    "kind": "prop",
+    "scenery": "ant-log-stack",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.plank-stack",
+    "name": "Ant colony · Plank Stack",
+    "kind": "prop",
+    "scenery": "ant-plank-stack",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.items.root-bundle",
+    "name": "Root Bundle",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.archer",
+    "name": "Archer",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.bombardier",
+    "name": "Bombardier",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.briar-archer",
+    "name": "Briar Poacher",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.briar-captain",
+    "name": "Briar Captain",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.briar-civilian",
+    "name": "Briarwatch Villager",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.briar-warrior",
+    "name": "Briar Raider",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.guard-static",
+    "name": "Ant colony · Guard",
+    "kind": "unit",
+    "scenery": "ant-guard",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.hunter",
+    "name": "Hunter",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.marshal",
+    "name": "Marshal",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.warrior",
+    "name": "Warrior",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.worker",
+    "name": "Worker",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.worker-carry-static",
+    "name": "Ant colony · Worker Carry",
+    "kind": "unit",
+    "scenery": "ant-worker-carry",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants.worker-static",
+    "name": "Ant colony · Worker",
+    "kind": "unit",
+    "scenery": "ant-worker",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral.amberjaw-staglord",
+    "name": "Amberjaw Staglord",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral.ogre-static",
+    "name": "Ogre",
+    "kind": "unit",
+    "scenery": "neutral-ogre",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral.thornblade-matriarch",
+    "name": "Thornblade Matriarch",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral.thornspitter",
+    "name": "Thornspitter",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral.wolf-static",
+    "name": "Wolf",
+    "kind": "unit",
+    "scenery": "neutral-wolf",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "recipe.foliage.riverbank",
+    "name": "Riverbank · broken tall grass",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "ground-cover",
+      "species": [
+        {
+          "asset": "asset.models.environment.grass.reference-grass-high-a",
+          "weight": 2
+        },
+        {
+          "asset": "asset.models.environment.grass.reference-grass-high-b",
+          "weight": 1
+        }
+      ],
+      "spacing": 0.75,
+      "probability": 0.6,
+      "jitter": 0.65,
+      "scaleMin": 0.6,
+      "scaleMax": 1.25,
+      "maxSlope": 1,
+      "waterClearance": 0.1,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 0.2,
+      "riverBank": {
+        "min": 0.1,
+        "max": 3
+      },
+      "patchiness": {
+        "scale": 4,
+        "strength": 0.75
+      }
+    }
+  },
+  {
+    "id": "recipe.forest.conifer-edge",
+    "name": "Conifer forest · soft sapling edge",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "forest",
+      "density": 1,
+      "species": [
+        {
+          "asset": "asset.models.environment.trees.reference-fir-a",
+          "weight": 1
+        },
+        {
+          "asset": "asset.models.environment.trees.reference-fir-b",
+          "weight": 1
+        }
+      ],
+      "spacing": 3.2,
+      "probability": 1,
+      "jitter": 0.65,
+      "scaleMin": 0.85,
+      "scaleMax": 1.15,
+      "maxSlope": 1,
+      "waterClearance": 2,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 3.2,
+      "patchiness": {
+        "scale": 12,
+        "strength": 0.12
+      },
+      "interiorMargin": 3.5,
+      "edge": {
+        "species": [
+          {
+            "asset": "asset.models.environment.trees.reference-fir-small-a",
+            "weight": 1
+          }
+        ],
+        "spacing": 1.5,
+        "probability": 0.65,
+        "jitter": 0.65,
+        "scaleMin": 0.75,
+        "scaleMax": 1.1,
+        "maxSlope": 1,
+        "waterClearance": 0.5,
+        "objectClearance": 0,
+        "edgeFade": 1.5,
+        "minSpacing": 1.5,
+        "patchiness": {
+          "scale": 6,
+          "strength": 0.4
+        },
+        "width": 5
+      }
+    }
+  },
+  {
+    "id": "recipe.grass.meadow",
+    "name": "Meadow · mixed low grass",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "grass",
+      "species": [
+        {
+          "asset": "asset.models.environment.grass.reference-grass-low",
+          "weight": 6
+        },
+        {
+          "asset": "asset.models.environment.grass.reference-grass-messy",
+          "weight": 3
+        },
+        {
+          "asset": "asset.models.environment.grass.reference-grass-daisy",
+          "weight": 1
+        }
+      ],
+      "spacing": 0.65,
+      "probability": 0.7,
+      "jitter": 0.65,
+      "scaleMin": 0.7,
+      "scaleMax": 1.2,
+      "maxSlope": 1,
+      "waterClearance": 0.2,
+      "objectClearance": 0,
+      "edgeFade": 2,
+      "minSpacing": 0.2,
+      "patchiness": {
+        "scale": 5,
+        "strength": 0.65
+      }
+    }
+  },
+  {
+    "id": "recipe.river.gentle",
+    "name": "Gentle forest stream",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "river",
+      "water": "water.clear-forest",
+      "width": 7,
+      "depth": 1.8,
+      "bankWidth": 3,
+      "flow": 0.6,
+      "maxUphillGrade": 0
+    }
+  },
+  {
+    "id": "recipe.river.swift",
+    "name": "Swift woodland river",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "river",
+      "water": "water.clear-forest",
+      "width": 12,
+      "depth": 3,
+      "bankWidth": 4,
+      "flow": 1.8,
+      "maxUphillGrade": 0
+    }
+  },
+  {
+    "id": "recipe.terrain.hill",
+    "name": "Soft woodland rise",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "terrain",
+      "operation": "raise",
+      "height": 4,
+      "falloff": 8
+    }
+  },
+  {
+    "id": "water.clear-forest",
+    "name": "Clear forest water",
+    "kind": "water-profile",
+    "scale": 1,
+    "clearance": 0,
+    "water": {
+      "shallowColor": "#72877a",
+      "deepColor": "#243d45",
+      "clarity": 3,
+      "rippleScale": 0.15,
+      "rippleStrength": 0.055,
+      "foamStrength": 0.3,
+      "reflectionStrength": 0.45,
+      "causticStrength": 0.3,
+      "cloudStrength": 0.03,
+      "flowSpeed": 1
+    }
+  },
+  {
+    "id": "water.muddy",
+    "name": "Muddy water",
+    "kind": "water-profile",
+    "scale": 1,
+    "clearance": 0,
+    "water": {
+      "shallowColor": "#8c8060",
+      "deepColor": "#494a35",
+      "clarity": 0.7,
+      "rippleScale": 0.18,
+      "rippleStrength": 0.045,
+      "foamStrength": 0.2,
+      "reflectionStrength": 0.3,
+      "causticStrength": 0.02,
+      "cloudStrength": 0.025,
+      "flowSpeed": 1
+    }
+  }
+]

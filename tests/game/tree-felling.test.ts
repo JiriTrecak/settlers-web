@@ -10,6 +10,21 @@ function setup() {
 }
 
 describe('tree felling', () => {
+  it('harvests imported fir appearances and returns their wood while retaining the appearance in saves', () => {
+    const appearance = {asset:'asset.resource.reference-fir-a',scale:.65};
+    const create = () => game([{...placed('reference-tree','resource.forest.tree',205,215),owner:'none',appearance}]);
+    const g = create();
+    const w=worker(g),tree=g.entities.find(e=>e.placement==='reference-tree')!;
+    const hall=g.context.get(g.state.objectives[w.owner])!,before=hall.inventory['item.wood'];
+    expect(resourceStamps(g.view(w.owner).entities).find(s=>s.id===`resource-${tree.id}`)).toMatchObject({asset:'reference-fir-a',scale:.65});
+    const restored=create();restored.restore(g.snapshot());
+    expect(restored.entities.find(e=>e.id===tree.id)?.appearance).toEqual(appearance);
+    g.command(w.owner,{type:'gather',actors:[w.id],target:tree.id});
+    for(let i=0;i<3200&&hall.inventory['item.wood']===before;i++)g.tick();
+    expect(tree.resource!.felling!.hp).toBe(0);
+    expect(hall.inventory['item.wood']).toBe(before+10);
+    expect(resourceStamps(g.view(w.owner).entities).some(s=>s.id===`resource-${tree.id}`)).toBe(false);
+  });
   it('requires exactly ten contacts, preserves one load, and waits for the fall before departure', () => {
     const {g, w, tree} = setup(), f = tree.resource!.felling!;
     const hall = g.context.get(g.state.objectives[w.owner])!, before = hall.inventory['item.wood'];

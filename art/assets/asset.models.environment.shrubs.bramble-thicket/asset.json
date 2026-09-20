@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.shrubs.bramble-thicket",
+  "name": "Bramble Thicket",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "37a32e62d043f3e6731077b81b7bf1eeb2c061edce7ea39cf25673539c4eefb6",
+      "bytes": 128164
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "58f2749962c0e46f70822d1fe183c6a712e0a3863ef4f3c7b8b520072e9fa020",
+      "bytes": 3049185
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "bramble-thicket",
+        "name": "Bramble Thicket",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "58f2749962c0e46f70822d1fe183c6a712e0a3863ef4f3c7b8b520072e9fa020"
+  }
+}

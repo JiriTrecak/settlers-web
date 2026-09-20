@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-ants-bombardier",
+  "name": "Bombardier",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "8454662921a0573d5b78469162d0c81621846a495572fed6d04c4eb8016379ed",
+      "bytes": 13714
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.ants.bombardier",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-ants-bombardier"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "8454662921a0573d5b78469162d0c81621846a495572fed6d04c4eb8016379ed"
+  }
+}

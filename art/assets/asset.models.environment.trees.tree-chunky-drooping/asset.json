@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.tree-chunky-drooping",
+  "name": "Broadleaf — hanging sprays",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7a21a7cb3820e475632edd680b0acd91d048078f401a6fb0d6aaf52f25e8e8a3",
+      "bytes": 3840740
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "tree-chunky-drooping",
+        "name": "Broadleaf — hanging sprays",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "7a21a7cb3820e475632edd680b0acd91d048078f401a6fb0d6aaf52f25e8e8a3"
+  }
+}

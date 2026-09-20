@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.woodland-pine-2",
+  "name": "Woodland pine 2",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "landscape",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "107e6721324a6d9440a2b403523ea4fdad78b9342c11c920935515b9ccf6bcf3",
+      "bytes": 12980
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "aba18b1a0f86bb91ca3d20682cbc3a6b71706855d8229957d5f71fac8ea7a907",
+      "bytes": 15828
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "woodland-pine-2",
+        "name": "Woodland pine 2",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "aba18b1a0f86bb91ca3d20682cbc3a6b71706855d8229957d5f71fac8ea7a907"
+  }
+}

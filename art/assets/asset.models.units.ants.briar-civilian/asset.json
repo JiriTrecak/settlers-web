@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.briar-civilian",
+  "name": "Briarwatch Villager",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7d7f6e0d2182a00a12ba98a89bb0afa22ac69fe79eb411be3f46c65ac1b5239f",
+      "bytes": 333236
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+      "bytes": 2282832
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.civilian",
+        "character": "civilian",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants.briar-civilian"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111"
+  }
+}

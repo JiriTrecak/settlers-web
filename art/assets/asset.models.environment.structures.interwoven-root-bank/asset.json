@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.interwoven-root-bank",
+  "name": "Interwoven Root Bank",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "permanent-obstacle"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "71d6a9b3594040773a4d6cba8f0cd936bda9d47f466500f1e2bc64fd06b897df",
+      "bytes": 3115484
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "5c93a391c8bdd38e45fd81227de42a5291b396004111c2a5c456f67f276ee2b8",
+      "bytes": 5959037
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "interwoven-root-bank",
+        "name": "Interwoven Root Bank",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blocker": {
+          "width": 12,
+          "depth": 3
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "5c93a391c8bdd38e45fd81227de42a5291b396004111c2a5c456f67f276ee2b8"
+  }
+}

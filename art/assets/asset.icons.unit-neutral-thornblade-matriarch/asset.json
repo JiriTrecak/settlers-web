@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.icons.unit-neutral-thornblade-matriarch",
+  "name": "Thornblade Matriarch",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "neutral-v1",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac",
+      "bytes": 11820
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "icon.neutral.thornblade-matriarch",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.unit-neutral-thornblade-matriarch"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac"
+  }
+}

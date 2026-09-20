@@ -1,0 +1,3711 @@
+{
+  "synty-plant-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-03": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-04": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-05": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-06": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-07": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-03": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-leaves-01": {
+    "leaf": {
+      "tint": [
+        0.8308824,
+        0.791782,
+        0.47653544
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-leaves-02": {
+    "leaf": {
+      "tint": [
+        0.8313726,
+        0.79215693,
+        0.47843134
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-bush-leaves-03": {
+    "leaf": {
+      "tint": [
+        0.8308824,
+        0.791782,
+        0.47653544
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-fern-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-fern-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-fern-03": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-fern-leaves-01": {
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-fern-leaves-02": {
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-flowerpatch-01": {
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-flowers-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-grass-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-grass-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-grass-03": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-grass-04": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-grass-05": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-hedge-bush-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-hedge-bush-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-05": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-mushrooms-06": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-palmbush-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-purpleflower-01": {
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-undergrowth-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-swamp-root-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-swamp-root-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-swamp-growth-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-swamp-growth-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-swamp-growth-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        0.9724137,
+        0
+      ],
+      "emit": [
+        0.60294116,
+        0.13722107,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.6838235,
+        0.47035402,
+        0.27654627
+      ],
+      "emit": [
+        0.32352936,
+        0.10040567,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-03": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.81617653,
+        0.1930961,
+        0
+      ],
+      "emit": [
+        0.12499998,
+        0.12499998,
+        0.12499998
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-04": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.74732435,
+        0.7941176,
+        0.3094723
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-dead-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-birch-small-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.74732435,
+        0.7941176,
+        0.3094723
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-branch-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-dead-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-dead-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-dead-03": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-generic-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.8308824,
+        0.791782,
+        0.47653544
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-generic-dead-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-generic-giant-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.8308824,
+        0.791782,
+        0.47653544
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    },
+    "dead": {
+      "tint": [
+        0.26470587,
+        0.26470587,
+        0.26470587
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-large-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-log-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-log-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        0.6592291,
+        0.2941176
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-base-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-dead-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-large-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-large-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        0.6592291,
+        0.2941176
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-small-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-pine-small-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-sparse-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-sparse-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-polypine-sparse-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-round-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-round-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-round-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-round-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-round-05": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-stump-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-stump-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-stump-03": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-stump-04": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-03": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-04": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-branch-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-branch-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-root-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-root-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-stump-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-swamp-stump-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-tallround-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-twig-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-twig-02": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-twig-03": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-twig-04": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-twig-05": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-tree-vines-01": {
+    "vine": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-vines-02": {
+    "vine": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-vines-03": {
+    "vine": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-vines-04": {
+    "vine": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-willow-large-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.9308176,
+        0.83895165,
+        0.78153545
+      ],
+      "emit": [
+        0.7735849,
+        0.124065384,
+        0.3319331
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-willow-medium-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.45117658,
+        0.49264705,
+        0.19198743
+      ],
+      "emit": [
+        0.021044616,
+        0.03676468,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-tree-willow-small-01": {
+    "trunk": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    },
+    "leaf": {
+      "tint": [
+        0.45117658,
+        0.49264705,
+        0.19198743
+      ],
+      "emit": [
+        0.021044616,
+        0.03676468,
+        0
+      ],
+      "luma": true,
+      "vertex": true,
+      "flipV": true
+    }
+  },
+  "synty-rock-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-boulder-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-caveentrance-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-caveentrance-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-caveinterior-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-caveinterior-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-05": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-cluster-large-06": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-05": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-curved-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-pile-curved-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-rounded-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-small-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-small-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-tile-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-tile-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-tile-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-wall-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-rock-wall-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-dustpile-long-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-dustpile-small-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-dustpile-small-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-04": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-roots-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-grassedge-roots-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-ground-mound-large-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-ground-mound-large-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-ground-mound-small-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-ground-mound-small-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-ice-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-mountain-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-mountain-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-mountain-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-riverside-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-riverside-corner-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-riverside-corner-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-rubble-pebbles-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-rubble-pebbles-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-terrain-rubble-pebbles-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-lillypad-large-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-lillypad-large-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-lillypad-large-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-lillypad-small-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-plant-reeds-01": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-plant-reeds-02": {
+    "plant": {
+      "tint": [
+        0.7018792,
+        0.7205882,
+        0.6358131
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": true,
+      "flipV": false
+    }
+  },
+  "synty-prop-arrow-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-brick-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-brick-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-bridge-curved-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-campfire-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-chest-wood-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-fence-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-fence-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-grave-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-broken-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-broken-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-broken-moss-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-broken-moss-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-arch-moss-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-broken-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-broken-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-broken-moss-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-broken-moss-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-pillar-moss-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-roadsign-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-skeleton-ground-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-skull-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-stonewall-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-stonewall-02": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-stonewall-03": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-torchstick-01": {
+    "atlas": {
+      "tint": [
+        1,
+        1,
+        1
+      ],
+      "emit": [
+        0,
+        0,
+        0
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-cloud-01": {
+    "atlas": {
+      "tint": [
+        0.7028547,
+        0.94533956,
+        0.9558824
+      ],
+      "emit": [
+        0.766,
+        0.766,
+        0.766
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-cloud-02": {
+    "atlas": {
+      "tint": [
+        0.7028547,
+        0.94533956,
+        0.9558824
+      ],
+      "emit": [
+        0.766,
+        0.766,
+        0.766
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  },
+  "synty-prop-cloud-03": {
+    "atlas": {
+      "tint": [
+        0.7028547,
+        0.94533956,
+        0.9558824
+      ],
+      "emit": [
+        0.766,
+        0.766,
+        0.766
+      ],
+      "luma": false,
+      "vertex": false,
+      "flipV": false
+    }
+  }
+}

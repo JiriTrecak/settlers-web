@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "recipe.river.gentle",
+  "name": "Gentle forest stream",
+  "kind": "landscape-recipe",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "authoring",
+    "source-informed"
+  ],
+  "resources": [],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "recipe": {
+    "type": "river",
+    "water": "water.clear-forest",
+    "width": 7,
+    "depth": 1.8,
+    "bankWidth": 3,
+    "flow": 0.6,
+    "maxUphillGrade": 0
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+  }
+}

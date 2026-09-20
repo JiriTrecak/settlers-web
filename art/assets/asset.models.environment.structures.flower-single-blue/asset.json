@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.flower-single-blue",
+  "name": "Wildflower — single blue",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "vivid",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fafbe6a07339a6d6ede1ea252b10217206d5ed3a13f7751c293b1e6832097bbd",
+      "bytes": 17536
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "flower-single-blue",
+        "name": "Wildflower — single blue",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "fafbe6a07339a6d6ede1ea252b10217206d5ed3a13f7751c293b1e6832097bbd"
+  }
+}

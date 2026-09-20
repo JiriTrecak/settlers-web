@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-neutral-bandit-b",
+  "name": "Reference · neutral bandit b",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-neutral-bandit-b/model.glb",
+      "sha256": "b57dcec2ce844e5b04ed0af56ee30642d98c0d301f6502f3d12be2ecb7bc1e86",
+      "bytes": 971716,
+      "triangles": 2602,
+      "primitives": 2
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-neutral-bandit-b",
+      "name": "Reference · neutral bandit b",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-neutral-bandit-b/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-neutral-bandit-b/model.glb",
+    "sha256": "b57dcec2ce844e5b04ed0af56ee30642d98c0d301f6502f3d12be2ecb7bc1e86",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.153Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

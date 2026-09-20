@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.neutral.corrupted-root",
+  "name": "Corrupted Root",
+  "kind": "building",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "31f4c6c9d7906b3e1e26aacd946ddfd4a5fd2041bcdd6ff2102467fcd901618e",
+      "bytes": 54304
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2f9cc422689aaa5ed51d3c8efceebfc209f383b3107fd559c2597f5824ee915f",
+      "bytes": 3384781
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.corrupted-root",
+        "scale": 0.85,
+        "healthHeight": 4.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.neutral.corrupted-root"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "canopy-corrupted-root",
+        "name": "Corrupted Root",
+        "category": "resource",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2f9cc422689aaa5ed51d3c8efceebfc209f383b3107fd559c2597f5824ee915f"
+  }
+}

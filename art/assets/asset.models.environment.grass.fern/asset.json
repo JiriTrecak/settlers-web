@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.fern",
+  "name": "Ant colony · Fern",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "54199d4045bbcb319450e1360d5bca1065398f4f8e93fcdd1840b92dfa908e85",
+      "bytes": 200068
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-fern",
+        "name": "Ant colony · Fern",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "54199d4045bbcb319450e1360d5bca1065398f4f8e93fcdd1840b92dfa908e85"
+  }
+}

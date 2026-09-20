@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.briarwatch.merchant-cart",
+  "name": "Merchant Cart",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "briarwatch",
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "79306db8101dc6c5f373665afabdc8370148ac58161229e54cf9fe96ce5223c0",
+      "bytes": 128360
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+      "bytes": 2186525
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.briar.merchant-cart",
+        "healthHeight": 3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.briarwatch.merchant-cart"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "briarwatch-merchant-cart",
+        "name": "Merchant Cart",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blocker": {
+          "width": 2.8,
+          "depth": 4.2
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216"
+  }
+}

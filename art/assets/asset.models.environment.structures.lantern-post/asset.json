@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.lantern-post",
+  "name": "Wayfarer lantern",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "wayfarer",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7da7f944d819d50e6fac0732a20006a5ec9eb687d26cb45b27764e4c87a6f7cf",
+      "bytes": 25972
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "lantern-post",
+        "name": "Wayfarer lantern",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "light": {
+          "x": 0.78,
+          "y": 2.85,
+          "z": 0,
+          "color": "#FFC16B",
+          "intensity": 9,
+          "range": 8
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "7da7f944d819d50e6fac0732a20006a5ec9eb687d26cb45b27764e4c87a6f7cf"
+  }
+}

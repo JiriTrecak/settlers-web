@@ -124,7 +124,7 @@ ${reconstruct}
 uniform sampler2D sceneColor,fogTexture,visibilityMap;
 #include <tonemapping_pars_fragment>
 uniform vec2 fogSize;
-uniform bool hasVolumetrics,hasDaytimeFog,hasVisibility;
+uniform bool sourceReference,hasVolumetrics,hasDaytimeFog,hasVisibility;
 uniform float mapSize,daytimeLutBlend;
 uniform highp sampler3D daytimeLutFrom,daytimeLutTo;
 uniform vec3 daytimeFogColor;
@@ -164,14 +164,20 @@ void main(){
  vec3 color=texture2D(sceneColor,vUv).rgb;
  gl_FragColor=vec4(color*mix(1.,fog.a,visibility)+fog.rgb*visibility,1.);
  if(hasDaytimeFog && texture2D(sceneDepth,vUv).r<.999999)gl_FragColor.rgb=mix(gl_FragColor.rgb,daytimeFogColor,daytimeOpacity(surface)*visibility);
- gl_FragColor.rgb=ACESFilmicToneMapping(gl_FragColor.rgb);
- #include <colorspace_fragment>
- // PostProcess.fx samples both volumes at the input RGB directly (no half-texel remap).
- // Our adapter supplies display RGB after ACES/sRGB; the source render-target encoding
- // is not contained in the shader cache. Keep this choice explicit in sky.md.
+ // The recovered source shaders leave their optional tone mapper disabled.
+ // Avoid the old hand-tuned ACES exposure when comparing original source assets.
+ if(!sourceReference)gl_FragColor.rgb=ACESFilmicToneMapping(gl_FragColor.rgb);
+ // Keep LUT input in display sRGB independently of the destination. Three's
+ // colorspace_fragment is identity for render targets; grading after it made PNG
+ // captures grade linear values while the live canvas graded sRGB values.
+ // PostProcess.fx samples directly, without a half-texel coordinate remap.
+ // The original target encoding remains an explicit assumption (see sky.md).
  if(hasDaytimeFog){
-  vec3 graded=mix(texture(daytimeLutFrom,gl_FragColor.rgb).rgb,texture(daytimeLutTo,gl_FragColor.rgb).rgb,daytimeLutBlend);
-  gl_FragColor.rgb=mix(gl_FragColor.rgb,graded,visibility);
+  vec4 displayColor=sRGBTransferOETF(gl_FragColor);
+  vec3 graded=mix(texture(daytimeLutFrom,displayColor.rgb).rgb,texture(daytimeLutTo,displayColor.rgb).rgb,daytimeLutBlend);
+  displayColor.rgb=mix(displayColor.rgb,graded,visibility);
+  gl_FragColor=sRGBTransferEOTF(displayColor);
  }
+ #include <colorspace_fragment>
 }
 `;

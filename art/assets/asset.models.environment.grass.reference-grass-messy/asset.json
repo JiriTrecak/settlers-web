@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.reference-grass-messy",
+  "name": "Reference · grass messy",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d875c9fc9e38c36881d2370ee95e333ca0dbb38e311ae3c254625e3e9dd9428d",
+      "bytes": 11004
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "reference-grass-messy",
+        "name": "Reference · grass messy",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "d875c9fc9e38c36881d2370ee95e333ca0dbb38e311ae3c254625e3e9dd9428d"
+  }
+}

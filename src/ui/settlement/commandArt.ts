@@ -1,6 +1,7 @@
 import { content } from "../../content/builtin";
 
 // Only the game-sized 128px images enter the bundle. Authoring originals live outside assets.
+import {publishedAssets} from '../../shared/assets/manifest';
 import {assetUrls as images} from "../../shared/assets/urls.generated";
 
 export function iconArt(id: string): string {
@@ -11,7 +12,7 @@ export function iconArt(id: string): string {
   return `<span class="rts-art" style="background-image:url(&quot;${escaped}&quot;)" aria-hidden="true"></span>`;
 }
 
-const hudImages=Object.fromEntries(Object.entries(images).filter(([path])=>path.startsWith("assets/interface/woodland/")&&path.endsWith(".png")));
+const hudImages=publishedAssets.filter(a=>a.kind==='interface').flatMap(a=>a.outputs.filter(o=>o.role==='image').map(o=>images[o.path]!));
 
 // Keep decoded command art ready for unopened build/research/inventory cards.
 let preparedArt: Promise<HTMLImageElement[]> | undefined;
@@ -20,7 +21,7 @@ export function preloadCommandArt(): Promise<HTMLImageElement[]> {
     const url=images[a.image!];
     if(!url)throw Error(`Missing declared icon image: ${a.id}`);
     return url;
-  }).concat(Object.values(hudImages)))].map(async url=>{
+  }).concat(hudImages))].map(async url=>{
     const image=new Image();image.src=url;
     await image.decode();return image;
   })).catch(error=>{preparedArt=undefined;throw error;});

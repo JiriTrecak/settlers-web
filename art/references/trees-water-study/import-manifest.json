@@ -1,0 +1,3691 @@
+{
+  "source": "The Scouring; supplied with permission for reference tests",
+  "meshes": {
+    "plants_fir_a": {
+      "sourceSha256": "1f6a3d659328fbb27a860e0b1ed7c7cdb872690190aa8b3cf86789168bc6b2b3",
+      "output": "assets/models/environment/trees/reference-fir-a/model.glb",
+      "outputSha256": "9b073e554c3329e300f4fc4adfeb066aee300ee51f31a762a7b22e21517d754e",
+      "triangles": 694,
+      "primitives": 3,
+      "materialOrder": [
+        "underlay",
+        "plant",
+        "trunk"
+      ],
+      "records": [
+        {
+          "offset": 5089,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 6489,
+          "nv": 624,
+          "nt": 662,
+          "stride": 40,
+          "groups": [
+            [
+              1,
+              0,
+              540
+            ],
+            [
+              2,
+              540,
+              122
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": "Static source geometry; UTC hit/fall/decay adapter clips"
+    },
+    "plants_fir_b": {
+      "sourceSha256": "44cef7625034bd42d18f9848f4a8cae287c9316cdb205db287bec1e0fad8ab81",
+      "output": "assets/models/environment/trees/reference-fir-b/model.glb",
+      "outputSha256": "8ce781aaa4d719c81e6fc7b2050e1d1cca31f4fe398a72e2bfd4cb4b8bcc7896",
+      "triangles": 1130,
+      "primitives": 4,
+      "materialOrder": [
+        "plant",
+        "trunk",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 13000,
+          "nv": 577,
+          "nt": 618,
+          "stride": 40,
+          "groups": [
+            [
+              0,
+              0,
+              480
+            ],
+            [
+              1,
+              480,
+              138
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 40090,
+          "nv": 480,
+          "nt": 480,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              480
+            ]
+          ],
+          "nodeName": "subplants",
+          "hidden": false
+        },
+        {
+          "offset": 58551,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              2,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": "Static source geometry; UTC hit/fall/decay adapter clips"
+    },
+    "plants_fir_small_a": {
+      "sourceSha256": "58b5f74aab9dd746a254011f353ea105174311abebede7416d5b3777cbf2a44e",
+      "output": "assets/models/environment/trees/reference-fir-small-a/model.glb",
+      "outputSha256": "4bab3a9f93b7c77fa8b4afb068adcf332d419019f486e921f1d99735847745e3",
+      "triangles": 152,
+      "primitives": 2,
+      "materialOrder": [
+        "plant",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 766,
+          "nv": 144,
+          "nt": 144,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              144
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 6459,
+          "nv": 9,
+          "nt": 8,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              8
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": "Static source geometry; UTC hit/fall/decay adapter clips"
+    },
+    "plants_stump_fir_a": {
+      "sourceSha256": "9de36c80d1ad76d7a5f44f50b868ebeed783c94fb478a4399e49b2d9c008c753",
+      "output": "assets/models/environment/trees/reference-stump-fir-a/model.glb",
+      "outputSha256": "fbad1ad8e2ebd7b16f2cf0d44f077be71d399795b3377de270ab0e11e0d35890",
+      "triangles": 689,
+      "primitives": 3,
+      "materialOrder": [
+        "wood",
+        "leaves",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 581,
+          "nv": 729,
+          "nt": 657,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              561
+            ],
+            [
+              1,
+              561,
+              96
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 28084,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              2,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_grass_messy": {
+      "sourceSha256": "66036496da926c9f9924ae60cc1f57ed35cfe04ad35b7bc13d3b2400f9dee1a3",
+      "output": "assets/models/environment/grass/reference-grass-messy/model.glb",
+      "outputSha256": "d875c9fc9e38c36881d2370ee95e333ca0dbb38e311ae3c254625e3e9dd9428d",
+      "triangles": 10,
+      "primitives": 1,
+      "materialOrder": [
+        "01 - Default"
+      ],
+      "records": [
+        {
+          "offset": 354,
+          "nv": 18,
+          "nt": 10,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "nodeName": "grass",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_grass_low": {
+      "sourceSha256": "fca4d7e9bdb24b3475e89b336b9e39a890529dca56142d4e8df028a46ace07de",
+      "output": "assets/models/environment/grass/reference-grass-low/model.glb",
+      "outputSha256": "21baafea830efd340af451c2143ceca840a9a03b74c701ba6e77d910304f0872",
+      "triangles": 10,
+      "primitives": 1,
+      "materialOrder": [
+        "01 - Default"
+      ],
+      "records": [
+        {
+          "offset": 352,
+          "nv": 18,
+          "nt": 10,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "nodeName": "grass",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_daisy": {
+      "sourceSha256": "2c6ebbbab7732f9fa81a8ba2099ad804c6025d845555e94438c76edce43beb8f",
+      "output": "assets/models/environment/grass/reference-grass-daisy/model.glb",
+      "outputSha256": "746103be5b6069061d7bc10666214e77128c29387092bb28b4b30612c3e274b3",
+      "triangles": 26,
+      "primitives": 1,
+      "materialOrder": [
+        "01 - Default"
+      ],
+      "records": [
+        {
+          "offset": 292,
+          "nv": 37,
+          "nt": 26,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              26
+            ]
+          ],
+          "nodeName": "grass",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_water_leaves_a": {
+      "sourceSha256": "645808726eceff779cf88e10a80a2f995cad62129c82dcb17b4418a019606576",
+      "output": "assets/models/environment/grass/reference-grass-water-leaves-a/model.glb",
+      "outputSha256": "a146f25b5dd9587be2b5fe01863dbca0d1ac44ce5b6c102eb6a87505022ce4fd",
+      "triangles": 16,
+      "primitives": 1,
+      "materialOrder": [
+        "swamp_plants"
+      ],
+      "records": [
+        {
+          "offset": 354,
+          "nv": 32,
+          "nt": 16,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "nodeName": "grass",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_water_leaves_b": {
+      "sourceSha256": "cb6a786f096b8c9f172045f87cc911fb074976710f046eeefe50be1782626862",
+      "output": "assets/models/environment/grass/reference-grass-water-leaves-b/model.glb",
+      "outputSha256": "116baee7e59efd35269d0287de534138c01811b12b7e2f76ea65ee13ac91a8da",
+      "triangles": 6,
+      "primitives": 1,
+      "materialOrder": [
+        "swamp_plants"
+      ],
+      "records": [
+        {
+          "offset": 354,
+          "nv": 12,
+          "nt": 6,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              6
+            ]
+          ],
+          "nodeName": "grass",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_grass_high_a": {
+      "sourceSha256": "0c39dd4cbbe143030f65175376a49b7d46f4d7c10cc7ed07d16c3f729c79ed75",
+      "output": "assets/models/environment/grass/reference-grass-high-a/model.glb",
+      "outputSha256": "38b85ae6825cd6ea60139a7219fbd326cdd1ba8beac4c21a3d2355c671988f75",
+      "triangles": 10,
+      "primitives": 1,
+      "materialOrder": [
+        "01 - Default"
+      ],
+      "records": [
+        {
+          "offset": 359,
+          "nv": 18,
+          "nt": 10,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "nodeName": "grass001",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "grass_grass_high_b": {
+      "sourceSha256": "55e7e71bbab587c5eaced52520e963f0ecfaacf1e075cbc506514e1162f1a65f",
+      "output": "assets/models/environment/grass/reference-grass-high-b/model.glb",
+      "outputSha256": "eb1b459d0cfdc08db6ed1bbcc3baf46180769ad06cb619b2ab7e0460fcfa9985",
+      "triangles": 10,
+      "primitives": 1,
+      "materialOrder": [
+        "01 - Default"
+      ],
+      "records": [
+        {
+          "offset": 359,
+          "nv": 18,
+          "nt": 10,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "nodeName": "grass001",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_gold_vein_a": {
+      "sourceSha256": "a97e1791496bd7ad77902bcaa0390d9aadc13ecd5c482d29e10a6a467af44e6b",
+      "output": "assets/models/environment/props/reference-gold-vein-a/model.glb",
+      "outputSha256": "869635c1f54d5c263fd3ca9c62733095aab018516548bbb63736f8d7c5f9e781",
+      "triangles": 822,
+      "primitives": 2,
+      "materialOrder": [
+        "vein",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 776,
+          "nv": 756,
+          "nt": 790,
+          "stride": 40,
+          "groups": [
+            [
+              0,
+              0,
+              790
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 36111,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_gold_vein_b": {
+      "sourceSha256": "9ca455a8e30dd14a4f51c650cf6882358120c87c643bef757b936fc10efd2e01",
+      "output": "assets/models/environment/props/reference-gold-vein-b/model.glb",
+      "outputSha256": "a88c136c32f3fb0f553d2492758e792c6bfef8557fc1df8e9cfb2c0a0819d676",
+      "triangles": 742,
+      "primitives": 2,
+      "materialOrder": [
+        "vein",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 685,
+          "nv": 733,
+          "nt": 710,
+          "stride": 40,
+          "groups": [
+            [
+              0,
+              0,
+              710
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 34554,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_small_rock_a": {
+      "sourceSha256": "21c677c3feb57205024e335ee26901deff963ad87e59803d2fc11b03c9a78738",
+      "output": "assets/models/environment/props/reference-small-rock-a/model.glb",
+      "outputSha256": "a19abf99bec4814cd08e999388a4158d6faa9de7bbcba8bf58e3f44e09b5c948",
+      "triangles": 88,
+      "primitives": 2,
+      "materialOrder": [
+        "plant",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 569,
+          "nv": 65,
+          "nt": 56,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              56
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 3206,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_small_rock_b": {
+      "sourceSha256": "04534ab2a1e6c0384756e9ee70be8eddad9ec6843bba498adeca68ce85a0073c",
+      "output": "assets/models/environment/props/reference-small-rock-b/model.glb",
+      "outputSha256": "2097b8077563f61e5167d97a4d0d34832554dc28655d31633aeb6a94a753e04d",
+      "triangles": 82,
+      "primitives": 2,
+      "materialOrder": [
+        "plant",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 569,
+          "nv": 59,
+          "nt": 50,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              50
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 2978,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_small_rock_c": {
+      "sourceSha256": "b70ddeb45a0b43762b9aed9d099176e4dde82d8e5020f8379e7bc35060cf0b25",
+      "output": "assets/models/environment/props/reference-small-rock-c/model.glb",
+      "outputSha256": "88e579acfd1f4fbc071e11382f987fad150c45486fa0983f6dcc4ed51ee8086d",
+      "triangles": 98,
+      "primitives": 2,
+      "materialOrder": [
+        "plant",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 569,
+          "nv": 77,
+          "nt": 66,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              66
+            ]
+          ],
+          "nodeName": "plant",
+          "hidden": false
+        },
+        {
+          "offset": 3650,
+          "nv": 25,
+          "nt": 32,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_lying_snag_a": {
+      "sourceSha256": "42db49daef33b3f2db3b9bc88a44e733536ef0f7d400cc94ae156f829fe1ebdf",
+      "output": "assets/models/environment/props/reference-lying-snag-a/model.glb",
+      "outputSha256": "fb28b19a62a73038d7ab1c5be893138d546615312903701aaa136dcc0da24f79",
+      "triangles": 914,
+      "primitives": 3,
+      "materialOrder": [
+        "snag",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 439,
+          "nv": 662,
+          "nt": 546,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              546
+            ]
+          ],
+          "nodeName": "Snag",
+          "hidden": false
+        },
+        {
+          "offset": 25120,
+          "nv": 45,
+          "nt": 64,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              64
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 27164,
+          "nv": 214,
+          "nt": 304,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              304
+            ]
+          ],
+          "nodeName": "overlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_lying_snag_b": {
+      "sourceSha256": "19c5387eff9bdf6a6e8b241081be954d14ab9fe614ed85097b89d085abce729d",
+      "output": "assets/models/environment/props/reference-lying-snag-b/model.glb",
+      "outputSha256": "b4c34c17ccaa4c18d3b39e9bd62fd58f9c6e32aab8899e7e728c721ed7a60858",
+      "triangles": 908,
+      "primitives": 2,
+      "materialOrder": [
+        "snag",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 528,
+          "nv": 318,
+          "nt": 296,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              296
+            ]
+          ],
+          "nodeName": "Snag",
+          "hidden": false
+        },
+        {
+          "offset": 12701,
+          "nv": 382,
+          "nt": 612,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              612
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_lying_snag_c": {
+      "sourceSha256": "aab6aad679e0df54d5d9f99d10c60800cbb18fec0e9728d750be883c32051387",
+      "output": "assets/models/environment/props/reference-lying-snag-c/model.glb",
+      "outputSha256": "f19c9c05822151f56254b716a75a901ab3c2ea64e6b532fe09f1f3946f6d89d4",
+      "triangles": 769,
+      "primitives": 3,
+      "materialOrder": [
+        "snag",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 439,
+          "nv": 636,
+          "nt": 592,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              592
+            ]
+          ],
+          "nodeName": "Snag",
+          "hidden": false
+        },
+        {
+          "offset": 24564,
+          "nv": 45,
+          "nt": 64,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              64
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 26610,
+          "nv": 78,
+          "nt": 113,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              113
+            ]
+          ],
+          "nodeName": "Object001",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_lying_snag_d": {
+      "sourceSha256": "18044d36c990a1abe3bb5fc430837a840f508d9dc5bfb1cc6fe010b53e4494b8",
+      "output": "assets/models/environment/props/reference-lying-snag-d/model.glb",
+      "outputSha256": "d02d304262f98173eb5481c1cd9e6d3ae1f2dfabcdc48f50ffbe4cf834ab2dd1",
+      "triangles": 1387,
+      "primitives": 3,
+      "materialOrder": [
+        "snag",
+        "overlay",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 631,
+          "nv": 1021,
+          "nt": 926,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              926
+            ]
+          ],
+          "nodeName": "Snag",
+          "hidden": false
+        },
+        {
+          "offset": 39079,
+          "nv": 138,
+          "nt": 200,
+          "stride": 32,
+          "groups": [
+            [
+              1,
+              0,
+              200
+            ]
+          ],
+          "nodeName": "overlay",
+          "hidden": false
+        },
+        {
+          "offset": 44916,
+          "nv": 186,
+          "nt": 261,
+          "stride": 32,
+          "groups": [
+            [
+              2,
+              0,
+              261
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_bush_a": {
+      "sourceSha256": "d1f973c6072644e6c23b62b1795b17005946d8453f225d575d3f96aa5f766c5e",
+      "output": "assets/models/environment/props/reference-bush-a/model.glb",
+      "outputSha256": "fb592958253329a8664572dbacf52f7f6bd6d34223287c6b599295bb718cb161",
+      "triangles": 310,
+      "primitives": 1,
+      "materialOrder": [
+        "branch1"
+      ],
+      "records": [
+        {
+          "offset": 564,
+          "nv": 296,
+          "nt": 310,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              310
+            ]
+          ],
+          "nodeName": "foliage",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "plants_bush_b": {
+      "sourceSha256": "1146c2c1e2de19cda846d13e902b59d87026919ff4f2d27c5a5279d8cff35447",
+      "output": "assets/models/environment/props/reference-bush-b/model.glb",
+      "outputSha256": "e73513b6f6e06bbe8fa69610f246f89e5669acecd59b665fd7d5e92a5075d202",
+      "triangles": 299,
+      "primitives": 1,
+      "materialOrder": [
+        "branch1"
+      ],
+      "records": [
+        {
+          "offset": 564,
+          "nv": 284,
+          "nt": 299,
+          "stride": 32,
+          "groups": [
+            [
+              0,
+              0,
+              299
+            ]
+          ],
+          "nodeName": "foliage",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_mountain_chunk_a": {
+      "sourceSha256": "a40ee93138836108ff1e1580c7a58c5c62bb4678deeb7949e88f9d14b1ef6d8f",
+      "output": "assets/models/environment/props/reference-mountain-chunk-a/model.glb",
+      "outputSha256": "e71c23efc543eaad9a09e78609833f54e5b500fba26f033a06b3c489022197d6",
+      "triangles": 1472,
+      "primitives": 1,
+      "materialOrder": [
+        "Material #35"
+      ],
+      "records": [
+        {
+          "offset": 421,
+          "nv": 841,
+          "nt": 1472,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1472
+            ]
+          ],
+          "nodeName": "rock_03",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_mountain_chunk_b": {
+      "sourceSha256": "d00f5fb877879b40a20f0639f818daf5c17d41772d55d385f65ba5c6da7dea4c",
+      "output": "assets/models/environment/props/reference-mountain-chunk-b/model.glb",
+      "outputSha256": "dbda4a9b279b44d0ae9979b9c4d5d0e24ea4606c8b8cc91cfe9880601493df0a",
+      "triangles": 1496,
+      "primitives": 1,
+      "materialOrder": [
+        "lambert1"
+      ],
+      "records": [
+        {
+          "offset": 421,
+          "nv": 884,
+          "nt": 1496,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1496
+            ]
+          ],
+          "nodeName": "rock_01",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_mountain_chunk_c": {
+      "sourceSha256": "71690dc26fdf6aa70bc76f796c8dc06816b1ee57b05d94480374cfe12c9ed5ed",
+      "output": "assets/models/environment/props/reference-mountain-chunk-c/model.glb",
+      "outputSha256": "7fbe778ac162f62ceaea68b6bb1c70578f01dd39082ee204c1eb902d0c64aa4b",
+      "triangles": 1438,
+      "primitives": 1,
+      "materialOrder": [
+        "lambert1"
+      ],
+      "records": [
+        {
+          "offset": 421,
+          "nv": 806,
+          "nt": 1438,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1438
+            ]
+          ],
+          "nodeName": "rock_02",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_ruins_blocks_04": {
+      "sourceSha256": "8abce87d389879c704b220a9251c00a4fd6f92e3f9bfa4abbf9941976477c57d",
+      "output": "assets/models/environment/props/reference-ruins-blocks-04/model.glb",
+      "outputSha256": "9758c4e4d85999030fc6e5522819d1122b5b32cd21ed67ac35aae5e9cd99e9a9",
+      "triangles": 581,
+      "primitives": 1,
+      "materialOrder": [
+        "model"
+      ],
+      "records": [
+        {
+          "offset": 28942,
+          "nv": 753,
+          "nt": 581,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              581
+            ]
+          ],
+          "nodeName": "ruins_blocks_04",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_ruins_blocks_06": {
+      "sourceSha256": "db4b02fd761a3d24eb50c9ff9ba948872f76b663df541c8bc32bf00c76ce376a",
+      "output": "assets/models/environment/props/reference-ruins-blocks-06/model.glb",
+      "outputSha256": "39c74a7166bcc972f451b7ff2c9b3eeab851ca173d07e4ed44dd2f06073ebb2e",
+      "triangles": 295,
+      "primitives": 1,
+      "materialOrder": [
+        "model",
+        ""
+      ],
+      "records": [
+        {
+          "offset": 383,
+          "nv": 386,
+          "nt": 295,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              295
+            ]
+          ],
+          "nodeName": "ruins_blocks_06",
+          "hidden": false
+        },
+        {
+          "offset": 13181,
+          "nv": 26,
+          "nt": 14,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              14
+            ]
+          ],
+          "nodeName": "_height",
+          "hidden": true
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_ruins_blocks_08": {
+      "sourceSha256": "a32058ef988792fb8d6be46c57977ca617155963aa5b56706d87572717b97581",
+      "output": "assets/models/environment/props/reference-ruins-blocks-08/model.glb",
+      "outputSha256": "6f718bfa942dc103bb03a047516b30d1303ec48c9d2521ca5255cec6ccdadda5",
+      "triangles": 118,
+      "primitives": 1,
+      "materialOrder": [
+        "model"
+      ],
+      "records": [
+        {
+          "offset": 9865,
+          "nv": 145,
+          "nt": 118,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              118
+            ]
+          ],
+          "nodeName": "ruins_blocks_08",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_ruins_blocks_03": {
+      "sourceSha256": "7a2e3d1a6e00d8f7f31778e2e6a85a068f1c9fe172c3b66e83ddd8fbdcd69893",
+      "output": "assets/models/environment/props/reference-ruins-blocks-03/model.glb",
+      "outputSha256": "ad7546d570029a7ccaa1fe5ad9ceea344f1af3e378c8563b1d29751687726bb3",
+      "triangles": 480,
+      "primitives": 1,
+      "materialOrder": [
+        "model"
+      ],
+      "records": [
+        {
+          "offset": 19568,
+          "nv": 623,
+          "nt": 480,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              480
+            ]
+          ],
+          "nodeName": "ruins_blocks_03",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_wooden_bridge_small": {
+      "sourceSha256": "52229682eabb4cd16a803707281cfdcaa49e3064060c56353f197433240d519f",
+      "output": "assets/models/environment/props/reference-wooden-bridge-small/model.glb",
+      "outputSha256": "aca510c44331285e362e1b63933ce37cd4482360a3ffea249a8145d75f69c469",
+      "triangles": 2843,
+      "primitives": 3,
+      "materialOrder": [
+        "model",
+        "",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 665,
+          "nv": 2439,
+          "nt": 2290,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              2290
+            ]
+          ],
+          "nodeName": "bridge",
+          "hidden": false
+        },
+        {
+          "offset": 82917,
+          "nv": 8,
+          "nt": 6,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              6
+            ]
+          ],
+          "nodeName": "_height",
+          "hidden": true
+        },
+        {
+          "offset": 83396,
+          "nv": 233,
+          "nt": 297,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              297
+            ]
+          ],
+          "nodeName": "chunks",
+          "hidden": false
+        },
+        {
+          "offset": 91923,
+          "nv": 162,
+          "nt": 256,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              256
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_ruins_column_11": {
+      "sourceSha256": "c1e97c6b3e7633507d9357ab66c5e8392dd71436fbc4d968e22e561c4685780b",
+      "output": "assets/models/environment/props/reference-ruins-column-11/model.glb",
+      "outputSha256": "a41e50e25e2621120d3971a18b57726145718af5a596e880119771369e3aedd0",
+      "triangles": 123,
+      "primitives": 1,
+      "materialOrder": [
+        "model"
+      ],
+      "records": [
+        {
+          "offset": 10176,
+          "nv": 187,
+          "nt": 123,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              123
+            ]
+          ],
+          "nodeName": "ruins_column_11",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_monument_01": {
+      "sourceSha256": "442a2a07e950ee9ef73d83dc6b21a8da8f237996e35e95fca989ef3c92da48d5",
+      "output": "assets/models/environment/props/reference-monument-01/model.glb",
+      "outputSha256": "d454477b02dadaa7b9c94da008da7006e34030cd75d3eafa11296f2c38c48ad1",
+      "triangles": 1435,
+      "primitives": 1,
+      "materialOrder": [
+        "model"
+      ],
+      "records": [
+        {
+          "offset": 7885,
+          "nv": 1063,
+          "nt": 1435,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1435
+            ]
+          ],
+          "nodeName": "monument_01",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_dungeon_entrance": {
+      "sourceSha256": "075fb28c91aaa954b0417432d94396b1ed0603620736ab12e9a76a496cb23934",
+      "output": "assets/models/environment/props/reference-dungeon-entrance/model.glb",
+      "outputSha256": "125ebbfff01942769729f2dc11dca06cbe57392fa5bb00d108b69465593454f5",
+      "triangles": 990,
+      "primitives": 3,
+      "materialOrder": [
+        "model",
+        "wall",
+        "",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 1597,
+          "nv": 1011,
+          "nt": 706,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              706
+            ]
+          ],
+          "nodeName": "entrance",
+          "hidden": false
+        },
+        {
+          "offset": 34367,
+          "nv": 248,
+          "nt": 156,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              156
+            ]
+          ],
+          "nodeName": "entrance_wall",
+          "hidden": false
+        },
+        {
+          "offset": 42472,
+          "nv": 4,
+          "nt": 2,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              2
+            ]
+          ],
+          "nodeName": "_terrain_cut",
+          "hidden": true
+        },
+        {
+          "offset": 42817,
+          "nv": 81,
+          "nt": 128,
+          "stride": 28,
+          "groups": [
+            [
+              3,
+              0,
+              128
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_neutral_outpost": {
+      "sourceSha256": "d81d35d7deb7515498c295be169b013b281e944d604e6a7ceb2ecb19fbf10161",
+      "output": "assets/models/environment/props/reference-neutral-outpost/model.glb",
+      "outputSha256": "83ec62c92cbd2189a910deeb7f7de37d5749b2c2089e3242c604d85d146f6a8b",
+      "triangles": 2242,
+      "primitives": 4,
+      "materialOrder": [
+        "model",
+        "base",
+        "",
+        "underlay",
+        "snow"
+      ],
+      "records": [
+        {
+          "offset": 39414,
+          "nv": 2484,
+          "nt": 2056,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1727
+            ],
+            [
+              1,
+              1727,
+              329
+            ]
+          ],
+          "nodeName": "model",
+          "hidden": false
+        },
+        {
+          "offset": 121532,
+          "nv": 13,
+          "nt": 8,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              8
+            ]
+          ],
+          "nodeName": "floor",
+          "hidden": true
+        },
+        {
+          "offset": 122161,
+          "nv": 66,
+          "nt": 58,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              58
+            ]
+          ],
+          "nodeName": "door",
+          "hidden": false
+        },
+        {
+          "offset": 124578,
+          "nv": 81,
+          "nt": 128,
+          "stride": 28,
+          "groups": [
+            [
+              3,
+              0,
+              128
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 127839,
+          "nv": 174,
+          "nt": 336,
+          "stride": 28,
+          "groups": [
+            [
+              4,
+              0,
+              336
+            ]
+          ],
+          "nodeName": "snow_overlay",
+          "hidden": true
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_goblin_hut": {
+      "sourceSha256": "d74df9ac85af4a663a5c2f798270e09e1e1405135ff1a89035ef607b5b4a92be",
+      "output": "assets/models/environment/props/reference-goblin-hut/model.glb",
+      "outputSha256": "53682a452e1fd76f77d28a38b2bf0828ea7bf484f4709ce484a52b8f6b0163a3",
+      "triangles": 3456,
+      "primitives": 5,
+      "materialOrder": [
+        "building",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 750,
+          "nv": 2561,
+          "nt": 2224,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              2224
+            ]
+          ],
+          "nodeName": "model",
+          "hidden": false
+        },
+        {
+          "offset": 331990,
+          "nv": 54,
+          "nt": 80,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              80
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 334199,
+          "nv": 288,
+          "nt": 168,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              168
+            ]
+          ],
+          "nodeName": "door",
+          "hidden": false
+        },
+        {
+          "offset": 343492,
+          "nv": 10,
+          "nt": 8,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "nodeName": "interior",
+          "hidden": false
+        },
+        {
+          "offset": 344052,
+          "nv": 457,
+          "nt": 623,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              623
+            ]
+          ],
+          "nodeName": "chunkholes_backside",
+          "hidden": true
+        },
+        {
+          "offset": 360803,
+          "nv": 650,
+          "nt": 976,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              976
+            ]
+          ],
+          "nodeName": "roof",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_neutral_bandit_tent": {
+      "sourceSha256": "a4f6d2399d95f9cae86a9a8004d93cbc9fa2b329affa5e50bf7b93aaf04a8bd0",
+      "output": "assets/models/environment/props/reference-neutral-bandit-tent/model.glb",
+      "outputSha256": "2fb90a2bc18c36c7766240c4a38c0d6c4d789a25a885c5e2c9f499b8529bcbc7",
+      "triangles": 1315,
+      "primitives": 5,
+      "materialOrder": [
+        "underlay",
+        "tent",
+        "barrel"
+      ],
+      "records": [
+        {
+          "offset": 833,
+          "nv": 20,
+          "nt": 24,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              24
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 1754,
+          "nv": 415,
+          "nt": 475,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              475
+            ]
+          ],
+          "nodeName": "tent",
+          "hidden": false
+        },
+        {
+          "offset": 16442,
+          "nv": 702,
+          "nt": 702,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              702
+            ]
+          ],
+          "nodeName": "staff",
+          "hidden": false
+        },
+        {
+          "offset": 40532,
+          "nv": 55,
+          "nt": 50,
+          "stride": 28,
+          "groups": [
+            [
+              1,
+              0,
+              50
+            ]
+          ],
+          "nodeName": "internals",
+          "hidden": false
+        },
+        {
+          "offset": 42591,
+          "nv": 52,
+          "nt": 64,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              64
+            ]
+          ],
+          "nodeName": "chunks",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_neutral_troll_cave": {
+      "sourceSha256": "31b0166d79ec3108f05c49fc9397e5ec00a7591e6202a94517eafa828db5ec1a",
+      "output": "assets/models/environment/props/reference-neutral-troll-cave/model.glb",
+      "outputSha256": "7c7b46cf14586b4c909c5385e789595d83e97608fc1847c8d17fe2a196c37b16",
+      "triangles": 2204,
+      "primitives": 3,
+      "materialOrder": [
+        "den",
+        "props",
+        "",
+        "underlay"
+      ],
+      "records": [
+        {
+          "offset": 697,
+          "nv": 1616,
+          "nt": 2172,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              1126
+            ],
+            [
+              1,
+              1126,
+              1046
+            ]
+          ],
+          "nodeName": "den",
+          "hidden": false
+        },
+        {
+          "offset": 59214,
+          "nv": 5,
+          "nt": 3,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              3
+            ]
+          ],
+          "nodeName": "_terrain_cut",
+          "hidden": true
+        },
+        {
+          "offset": 59593,
+          "nv": 25,
+          "nt": 32,
+          "stride": 28,
+          "groups": [
+            [
+              3,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_neutral_wolf_den_a": {
+      "sourceSha256": "df6b1caaf934b7f753b6bc0f0c97f7aad2b433a922101f083c5a34b450ed5ed6",
+      "output": "assets/models/environment/props/reference-neutral-wolf-den-a/model.glb",
+      "outputSha256": "163fc9218e2e5f7e73a1cb6725d624c963daf32ded683e2d04dc17a278dbaccc",
+      "triangles": 1540,
+      "primitives": 3,
+      "materialOrder": [
+        "den",
+        "props",
+        "underlay",
+        "",
+        "snow"
+      ],
+      "records": [
+        {
+          "offset": 1077,
+          "nv": 1134,
+          "nt": 1508,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              824
+            ],
+            [
+              1,
+              824,
+              684
+            ]
+          ],
+          "nodeName": "den",
+          "hidden": false
+        },
+        {
+          "offset": 42110,
+          "nv": 25,
+          "nt": 32,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 43227,
+          "nv": 5,
+          "nt": 3,
+          "stride": 28,
+          "groups": [
+            [
+              3,
+              0,
+              3
+            ]
+          ],
+          "nodeName": "_terrain_cut",
+          "hidden": true
+        },
+        {
+          "offset": 43610,
+          "nv": 310,
+          "nt": 616,
+          "stride": 28,
+          "groups": [
+            [
+              4,
+              0,
+              616
+            ]
+          ],
+          "nodeName": "snow_overlay",
+          "hidden": true
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "models_neutral_wolf_den_b": {
+      "sourceSha256": "3ea8d612d19aa093a449560b1e86d28566cf0c557117f9c282633867abc6ef2d",
+      "output": "assets/models/environment/props/reference-neutral-wolf-den-b/model.glb",
+      "outputSha256": "34e5cfff0897e66d4cc3c20cb9f6b62201a8e5add4c7d801514b0edd04b094a6",
+      "triangles": 2378,
+      "primitives": 3,
+      "materialOrder": [
+        "den",
+        "props",
+        "underlay",
+        "",
+        "snow"
+      ],
+      "records": [
+        {
+          "offset": 1077,
+          "nv": 1732,
+          "nt": 2346,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              494
+            ],
+            [
+              1,
+              494,
+              1852
+            ]
+          ],
+          "nodeName": "den",
+          "hidden": false
+        },
+        {
+          "offset": 63882,
+          "nv": 25,
+          "nt": 32,
+          "stride": 28,
+          "groups": [
+            [
+              2,
+              0,
+              32
+            ]
+          ],
+          "nodeName": "underlay",
+          "hidden": false
+        },
+        {
+          "offset": 64999,
+          "nv": 5,
+          "nt": 3,
+          "stride": 28,
+          "groups": [
+            [
+              3,
+              0,
+              3
+            ]
+          ],
+          "nodeName": "_terrain_cut",
+          "hidden": true
+        },
+        {
+          "offset": 65382,
+          "nv": 622,
+          "nt": 1196,
+          "stride": 28,
+          "groups": [
+            [
+              4,
+              0,
+              1196
+            ]
+          ],
+          "nodeName": "snow_overlay",
+          "hidden": true
+        }
+      ],
+      "sourceClips": null,
+      "animation": null
+    },
+    "units_neutral_goblin": {
+      "sourceSha256": "603e4bb9164dedd59dc49021ae3437c43e509db07855853f03a28c1ef8a7db0f",
+      "output": "assets/models/environment/props/reference-neutral-goblin/model.glb",
+      "outputSha256": "0891df0c9557275eddd210e33bc7216bbdf96af4d131894004df43df63a13c98",
+      "triangles": 2787,
+      "primitives": 1,
+      "materialOrder": [
+        "body"
+      ],
+      "records": [
+        {
+          "offset": 13303,
+          "nv": 2354,
+          "nt": 2787,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              2787
+            ]
+          ],
+          "nodeName": "archer_tier1",
+          "hidden": false
+        },
+        {
+          "offset": 116844,
+          "nv": 2945,
+          "nt": 3303,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              3303
+            ]
+          ],
+          "nodeName": "archer_tier2",
+          "hidden": true
+        },
+        {
+          "offset": 244757,
+          "nv": 3558,
+          "nt": 3980,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              3980
+            ]
+          ],
+          "nodeName": "archer_tier3",
+          "hidden": true
+        }
+      ],
+      "sourceClips": [
+        {
+          "name": "stand",
+          "duration": 3.299999952316284,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "idle0",
+          "duration": 1.4666666984558105,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "idle1",
+          "duration": 3.3333332538604736,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "run",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "attack",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "shoot_up",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "shoot_down",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "hit",
+          "duration": 0.5,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "death",
+          "duration": 1.399999976158142,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "knockback",
+          "duration": 0.6000000238418579,
+          "fps": 30.0,
+          "tracks": 35
+        },
+        {
+          "name": "drink",
+          "duration": 1.2666666507720947,
+          "fps": 30.0,
+          "tracks": 35
+        }
+      ],
+      "animation": "Stored stand first-key pose (static reference), tier 1"
+    },
+    "units_neutral_troll": {
+      "sourceSha256": "e0262720671728ea70a4e38bba05aa2628c65fe9edb91cf39759e574125ca708",
+      "output": "assets/models/environment/props/reference-neutral-troll/model.glb",
+      "outputSha256": "392dc980da23b885a12985421198bb8cbe6bc0368a6059eff784fd41efdf0141",
+      "triangles": 2809,
+      "primitives": 1,
+      "materialOrder": [
+        "body"
+      ],
+      "records": [
+        {
+          "offset": 5827,
+          "nv": 2055,
+          "nt": 2809,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              2809
+            ]
+          ],
+          "nodeName": "ogre",
+          "hidden": false
+        }
+      ],
+      "sourceClips": [
+        {
+          "name": "stand",
+          "duration": 3.299999952316284,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "idle0",
+          "duration": 2.5,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "idle1",
+          "duration": 2.0,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "run",
+          "duration": 0.6333333253860474,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "attack1",
+          "duration": 0.6333333253860474,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "attack2",
+          "duration": 0.5,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "hit",
+          "duration": 0.4000000059604645,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "aotm_strike1",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "aotm_strike2",
+          "duration": 0.5333333611488342,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "aotm_base",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "death1",
+          "duration": 1.600000023841858,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "death2",
+          "duration": 1.1666666269302368,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "turnleft",
+          "duration": 0.03333333507180214,
+          "fps": 30.0,
+          "tracks": 30
+        },
+        {
+          "name": "turnright",
+          "duration": 0.03333333507180214,
+          "fps": 30.0,
+          "tracks": 30
+        }
+      ],
+      "animation": "Stored stand first-key pose (static reference), tier 1"
+    },
+    "units_neutral_wolf": {
+      "sourceSha256": "4083f883dad24c6560fe94596b7c3c22e5e0b5a1cfd773d2ec486b6840d9e6f6",
+      "output": "assets/models/environment/props/reference-neutral-wolf/model.glb",
+      "outputSha256": "8b672b214140e97b542d134a17da9f2b0daa619e87da7777e7aa04776e0fde49",
+      "triangles": 1268,
+      "primitives": 1,
+      "materialOrder": [
+        "Material #4"
+      ],
+      "records": [
+        {
+          "offset": 2551,
+          "nv": 1095,
+          "nt": 1268,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              1268
+            ]
+          ],
+          "nodeName": "Wolf",
+          "hidden": false
+        }
+      ],
+      "sourceClips": [
+        {
+          "name": "stand",
+          "duration": 1.4333332777023315,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "idle0",
+          "duration": 3.5,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "run",
+          "duration": 0.9333333373069763,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "idle1",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "attack1",
+          "duration": 0.699999988079071,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "idle2",
+          "duration": 2.866666555404663,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "attack2",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "attack3",
+          "duration": 0.9333333373069763,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "hit",
+          "duration": 0.20000000298023224,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "death1",
+          "duration": 0.9333333373069763,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "turnleft",
+          "duration": 0.03333333507180214,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "turnright",
+          "duration": 0.03333333507180214,
+          "fps": 30.0,
+          "tracks": 25
+        },
+        {
+          "name": "death2",
+          "duration": 0.7666666507720947,
+          "fps": 30.0,
+          "tracks": 25
+        }
+      ],
+      "animation": "Stored stand first-key pose (static reference), tier 1"
+    },
+    "units_neutral_bandit_a": {
+      "sourceSha256": "fb0e88130293f66314c3096509e711dabe5b38b0e2bf31d175b6089a6f05c7e0",
+      "output": "assets/models/environment/props/reference-neutral-bandit-a/model.glb",
+      "outputSha256": "f8380c9c467a8557215e21b88d92e2df9d275bbb10cfc71b3e49b14ba1948396",
+      "triangles": 2384,
+      "primitives": 2,
+      "materialOrder": [
+        "body"
+      ],
+      "records": [
+        {
+          "offset": 2368,
+          "nv": 102,
+          "nt": 136,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              136
+            ]
+          ],
+          "nodeName": "Shield",
+          "hidden": false
+        },
+        {
+          "offset": 7603,
+          "nv": 1743,
+          "nt": 2248,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              2248
+            ]
+          ],
+          "nodeName": "bandit",
+          "hidden": false
+        }
+      ],
+      "sourceClips": [
+        {
+          "name": "stand",
+          "duration": 3.0,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "idle0",
+          "duration": 2.0,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "idle1",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "run",
+          "duration": 1.0333333015441895,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "attack1",
+          "duration": 0.46666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "attack2",
+          "duration": 0.46666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "hit",
+          "duration": 0.30000001192092896,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "death1",
+          "duration": 0.5666666626930237,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "death2",
+          "duration": 0.6000000238418579,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "climb",
+          "duration": 0.6333333253860474,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "defstand",
+          "duration": 1.899999976158142,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "defrun",
+          "duration": 0.9333333373069763,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "floor_attack",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "knockback",
+          "duration": 0.5333333611488342,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "deflect",
+          "duration": 0.30000001192092896,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "drink",
+          "duration": 0.8666666746139526,
+          "fps": 30.0,
+          "tracks": 29
+        }
+      ],
+      "animation": "Stored stand first-key pose (static reference), tier 1"
+    },
+    "units_neutral_bandit_b": {
+      "sourceSha256": "0b10fa6a95a03f90b0db7ce9644ef763440e2169074ecef5d18a37dda5dc4517",
+      "output": "assets/models/environment/props/reference-neutral-bandit-b/model.glb",
+      "outputSha256": "b57dcec2ce844e5b04ed0af56ee30642d98c0d301f6502f3d12be2ecb7bc1e86",
+      "triangles": 2602,
+      "primitives": 2,
+      "materialOrder": [
+        "body"
+      ],
+      "records": [
+        {
+          "offset": 2368,
+          "nv": 102,
+          "nt": 136,
+          "stride": 28,
+          "groups": [
+            [
+              0,
+              0,
+              136
+            ]
+          ],
+          "nodeName": "Shield",
+          "hidden": false
+        },
+        {
+          "offset": 7611,
+          "nv": 2012,
+          "nt": 2466,
+          "stride": 36,
+          "groups": [
+            [
+              0,
+              0,
+              2466
+            ]
+          ],
+          "nodeName": "n_bandit_low_2",
+          "hidden": false
+        }
+      ],
+      "sourceClips": [
+        {
+          "name": "stand",
+          "duration": 3.0,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "idle0",
+          "duration": 2.0,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "idle1",
+          "duration": 1.7333333492279053,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "run",
+          "duration": 1.0333333015441895,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "attack1",
+          "duration": 0.46666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "attack2",
+          "duration": 0.46666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "hit",
+          "duration": 0.30000001192092896,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "death1",
+          "duration": 0.5666666626930237,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "death2",
+          "duration": 0.6000000238418579,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "climb",
+          "duration": 0.6333333253860474,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "defstand",
+          "duration": 1.899999976158142,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "defrun",
+          "duration": 0.9333333373069763,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "floor_attack",
+          "duration": 0.6666666865348816,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "knockback",
+          "duration": 0.5333333611488342,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "deflect",
+          "duration": 0.30000001192092896,
+          "fps": 30.0,
+          "tracks": 29
+        },
+        {
+          "name": "drink",
+          "duration": 0.8666666746139526,
+          "fps": 30.0,
+          "tracks": 29
+        }
+      ],
+      "animation": "Stored stand first-key pose (static reference), tier 1"
+    }
+  },
+  "textures": {
+    "tiles_grass_ar__d_a": {
+      "sourceSha256": "dfe8ca1b3ecd0a06cd5002ba849542417313c488085c7430cc83a7fe12bbc9e0",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "4671cbb2f75c18a102763e982e8cb5deec81dd3959211b9374e58d9847f28b12"
+    },
+    "tiles_grass_nh__d_a": {
+      "sourceSha256": "0f4c11e6d55f9c4f0bfcc7e4981315a298266f5c4b4965b7837aef6af56414aa",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "4eee0d8bee08deaf56d0fd6b26b54f172331b323d05d6ecfc613cd45a1c22961"
+    },
+    "tiles_dirt_ar__d_a": {
+      "sourceSha256": "ce72e07685a79db8fb52285149b41c6251ded0abd1598616891e005d81607add",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "52a450961bd67a22270737adc6b68517faba72fbe3241d86dd4d3eb0dc1e3ecb"
+    },
+    "tiles_dirt_nh__d_a": {
+      "sourceSha256": "760fab752f2388a875d06305aad5851461ebc4080e1b59ed1f42ee6a753ff346",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "d2cb3886e467450da697cff79a269dbc1112bf54d326f6e8caa3e894f3681adf"
+    },
+    "tiles_soil_ar__d_a": {
+      "sourceSha256": "a122d6e6c2c9d3d04a5724ae414aec514e9720cda348c6167de7147626705878",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "bd4d63233fd7525ba27d8d7b47dbc805c2f3b4bc7f89ce2b4a2d0cc6b6ae14fb"
+    },
+    "tiles_soil_nh__d_a": {
+      "sourceSha256": "8b76e2c928a78e9b912a9565303e814b6c9ef35a254e11b33e4c330f812181ba",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "d1b1f69973767e0a1c0c9ab3bfd76e6eb3507668550fdf92421782df0d01706e"
+    },
+    "tiles_rockgrass_ar__d_a": {
+      "sourceSha256": "a4832367ee8ceec60f2a54f4abfc0c794b626078128f4c383a2164f13f55ca93",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "bc14886f90606498eb40d7d42bee93a51907a918834cae617c3ebc1685267c17"
+    },
+    "tiles_rockgrass_nh__d_a": {
+      "sourceSha256": "9ea5ca8868db135a1ce530baee0fa1b5a6810f0c90b6c8f667addbb6de618f9a",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "8671ccb6b759ecadc116cc68bfa9439da4e2d8fb5b95bddcf74e5023cf0a4fdd"
+    },
+    "tiles_rock_ar__d_a": {
+      "sourceSha256": "212227e25accb611d63d1cdfd400c16f1ae03bda1e5ca51042170399ba634b51",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "d8cee898fba8eccfee8873ef56f73b14ec7dc95fe3cf8eae1d6436a0a5e94c33"
+    },
+    "tiles_rock_nh__d_a": {
+      "sourceSha256": "2ce12cbe0492e91e53e70a66b84e2ca546560b30fc7818a3ee3c07df9b8ae3b9",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "65eb33b05e23c4c73abd82e8414c21551425d86199cdfa0611d33cbe007bd54f"
+    },
+    "tiles_rock_displacement__a": {
+      "sourceSha256": "51a9309b8338c0b8bf0fb4ab75b68e246b4d43160b42844ca2c3a204606686d9",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "f79fc8f9cba3eedbe9b4eee9bde5d4132ddf871263a26b0e5360536a7bb50a08"
+    },
+    "tiles_stones_ar__d_a": {
+      "sourceSha256": "f4d9e806130aec77c10700bfaa0e5ef5752450e23cb9403fe865ede91e8dfe08",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "a4427ab0d4c0489f7c53488361c08c59204cba7b53d60ea6d59b7bfacb4a8983"
+    },
+    "tiles_stones_nh__d_a": {
+      "sourceSha256": "a9364e4e7ebb2c439a9566da1a1a9263f0fffea4a9e8f9a5d8570b0edbc3f2c8",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "939ec56d4238e470049087de81f9ce7b6e94f222ae5fffc6a736e076c21d0d98"
+    },
+    "tiles_waterbed_ar__d_a": {
+      "sourceSha256": "7f23c897d2fce36be2858b79f44530fb0fa251fe4cfedbd9b9597f0dd2ffcd5e",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "dbe2b93251f9882db63d6e4988b085c398df13e0dfbeff6e436c4f46a80a44fa"
+    },
+    "tiles_waterbed_nh__d_a": {
+      "sourceSha256": "2fe3f4e9b736a2fd1ec824be40bb6572338c74e3a6e1bdecb046e0fec0bca762",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "71d51cec10b17cdee3eec0218aa3ec467a3bf67d0ae27f75adc8b0567a4dedeb"
+    },
+    "tiles_graysoil_ar__d_a": {
+      "sourceSha256": "152714c603512a71725642159eef8e55f877cb2e1ac7ef9ced498cb6f43d96f1",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "4818b7ad05f54b46340adcf48abe9a556bd73f01b44b453e9716e64e54ab611b"
+    },
+    "tiles_graysoil_nh__d_a": {
+      "sourceSha256": "a9b0afcd639a2a8644a6bf1b03c8ea2f9143c71f95756b21a2497bf68ba40863",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "581fd97e1cfd47708dbc0e3ef0d919f28b8ff51226a3fa17133d497c9b915494"
+    },
+    "tiles_darkrock_ar__d_a": {
+      "sourceSha256": "680370df174345fd4b6f4f133ed411f3cf7acc71cda72e34e540580712ee3eac",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "f6627a61bccb3f498b272386487864786b00f1d97f4313bf21aa71becec32b18"
+    },
+    "tiles_darksoil_ar__d_a": {
+      "sourceSha256": "d0015779fe3fef72d31c7d2cae778bc7156081347399ef0c1373d2abe2e0e511",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "6c440a5541e68adf50512c864225e2b43b7853305b36da2cade1a36b071c99be"
+    },
+    "tiles_darksoil_nh__d_a": {
+      "sourceSha256": "7f83870d10cbf8981b9cb985064e467a2730638946f4bd2f6b3b46cb3f69e503",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "694192a1474f924587bf586a2a0030a82e82cc17b9b26f770d362cb4bcc0a112"
+    },
+    "tiles_darkgrass_ar__d_a": {
+      "sourceSha256": "aaf62399285bb4069bd812edc7743fb02136a6e6eb469a1aac0a2423a4ff3e02",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "855b7f568eac3d1aa91078339b9821c588ff6081585d9ababdbd147d19b4ca09"
+    },
+    "tiles_darkgrass_nh__d_a": {
+      "sourceSha256": "2fe3f4e9b736a2fd1ec824be40bb6572338c74e3a6e1bdecb046e0fec0bca762",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "71d51cec10b17cdee3eec0218aa3ec467a3bf67d0ae27f75adc8b0567a4dedeb"
+    },
+    "env_macro_color__d": {
+      "sourceSha256": "8a793246d2378b90a56606fef15924a2bc074ae96413d6d7ba97a080b46c2e15",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "fe235b4fb8fd90f8f60c66a41d3feb79cf503157369fc391577807b68a3b278d"
+    },
+    "env_water_waves__d_a_uncmp": {
+      "sourceSha256": "d8d4c524b2b6d10ef62b685dd7d3a70236475b675800a534c5b206fefdc459eb",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "db10a479cb72ce3c6e886bd5afb9e0b9fa6e443e043908a52692c40f6fada2d4"
+    },
+    "env_water_caustics__d_uncmp": {
+      "sourceSha256": "710f42f7838420382b2ed2471eea22fe5e06a84e569ea01ff2b5305fafbcbc72",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "91ce94af2f87c814e7d9d158a165c09502ae2b2d42c9f7c37d6de06ba7c3a7be"
+    },
+    "plants_underlay_fir__d_a": {
+      "sourceSha256": "ce835139968cf0223767c155afb7146c251479ec78c5414c8c262d87b4b67000",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "c6456a2edf5c829b18c424e73c4e17b5d221e138232f3468d03ec73ca3948f3e"
+    },
+    "plants_fir__d_a": {
+      "sourceSha256": "13706112c3942b553d72a9a8588b7209fae8e0960a1a7dca5cacea70b1b5307b",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "ee295928d3c49f3fd77f1aad206097122acebbf18637f19948ad32e684e25a4b"
+    },
+    "plants_fir_trunk__d": {
+      "sourceSha256": "1e0e4efef97134c760f5dd3509df16b915cf77811b369d9981294afc6fb4be35",
+      "size": [
+        256,
+        512
+      ],
+      "outputSha256": "638351a7b0b80353447c106dd1966b77ff2f5d79f37cb9e4b677fa8843a88a92"
+    },
+    "plants_underlay_fir_small__d_a": {
+      "sourceSha256": "9a9e4f318ffbcddf4affc3b460928f9089e2a6b819da2f29dff0099a20685097",
+      "size": [
+        128,
+        128
+      ],
+      "outputSha256": "7a854d62394279da168872189789a797fbbbe036615cd93a007ed32b46241070"
+    },
+    "plants_stumps_fir__d_a": {
+      "sourceSha256": "91f66ace909e51cbb29820d2983f6f3785abb122b83721329cade9c6d050d5e3",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "88ea0c4f1bd2e75faaa44e7c1970df9fce87b8e4b12358b1877183cd9aa58fe0"
+    },
+    "plants_underlay_stump__d_a": {
+      "sourceSha256": "8936428fe73f0954299048fe85576ba45195b63bd336d9ef3c80b898b28bad69",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "929266a13c8ac26daa680f06ae889fb14a568fa1367796312c1f07a714fe05cf"
+    },
+    "grass_grass_messy__d_a": {
+      "sourceSha256": "6a3cde2b1c576be3157408b63ac7993c53cbde89951e38fafaa6c408aa9e3ed2",
+      "size": [
+        64,
+        64
+      ],
+      "outputSha256": "65ce3ca76cc63be02e751c170adc4b64e9968126b3013bcaaf94dfcb225c72e1"
+    },
+    "grass_grass_low__d_a": {
+      "sourceSha256": "435b18a06d0e9193e3f5b0aa70ab4af8525d1bb1845db64993b24321910bf81e",
+      "size": [
+        32,
+        32
+      ],
+      "outputSha256": "6ee932b742289ed1fbea2c804bfee149e84da0eb05aaa8cdfa249a1e5fa9d1d5"
+    },
+    "grass_daisy__d_a": {
+      "sourceSha256": "2724eef9d31e8dab9052e3e5f9a2768a6dddb339464d4f122c1018161c73ff28",
+      "size": [
+        64,
+        64
+      ],
+      "outputSha256": "244481d5ff086223520fdfec92f76029a351878d9ca87e99e605efa8511be8b5"
+    },
+    "plants_swamp_plants__d_a": {
+      "sourceSha256": "2f1abcff82e1c3e0022996d9b66fceb44879833dc7835bf8cd080c89bd32119c",
+      "size": [
+        128,
+        128
+      ],
+      "outputSha256": "330c029dcc042e6f3f3d0d327299eeed5cffb2b73ed9cbe6ca701c2fdbb691c2"
+    },
+    "grass_grass_high_01__d_a": {
+      "sourceSha256": "239db8139e787f50211c260f48f9731b781a05528c50aa8672d903759128ba2b",
+      "size": [
+        64,
+        64
+      ],
+      "outputSha256": "cafcfc18efd02f7a94c4ea5b556156ca1c0d05a6dcf451366dd0a7040f4c0b1d"
+    },
+    "grass_grass_high_02__d_a": {
+      "sourceSha256": "916b8e82655af09c91ce17ca0b82f453b227dcf4378cef808f6624e95ea68a67",
+      "size": [
+        64,
+        64
+      ],
+      "outputSha256": "621894508a50fab257af2a0303dc9905fd1e16ca82610442627a3da63f162263"
+    },
+    "plants_gold_vein__d": {
+      "sourceSha256": "a46cfdabcae676f6ae4c6dc2f72b37662d14ef641de76415a2c48d022f98490a",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "633cdee653437da5d4c4daab03d07bbdba30c164efe1284be1403a548c0a75ed"
+    },
+    "plants_gold_vein_underlay__d_a": {
+      "sourceSha256": "cabc856d0efaa34ac0c7f6b64d1029a1ee7ab00e75b60a9cd29bc328dbb8b187",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "ca2efbcdf2718301e55befb36eedcff8938423aba765527c2389228c40486918"
+    },
+    "plants_rocks__d": {
+      "sourceSha256": "d49773e9fa98f58f49ba4288bd06c30f2ffe12784675f64b484b836474a9a97d",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "f65a03d81d4eac4e571af0f52e008ceeb89ef373c1c7c1f70ef9f09f962c153d"
+    },
+    "plants_underlay_rock__d_a": {
+      "sourceSha256": "36cbc0dc67427e6b16f639e38c359c2cb03fe1983a3a8a590649d9bcd48b9dbf",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "eb0fc2096d8ac6746420da55f4728aea6ddc67e5e8d9e03db49077b6609f610d"
+    },
+    "plants_snags__d": {
+      "sourceSha256": "db51a7b8ad26a5243a997e66d69525c52aa3bfc32b5459b0bd166e7a969066c7",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "c23803061537800b98776c15e5160ab4fa5239c1bc4ffc978b4fd5d40c908783"
+    },
+    "plants_snags_underlay__d_a": {
+      "sourceSha256": "0d4f7e2b9477c9cd2090d44ed7d4aa7dfb432a71df31175794f397bd50f8b02f",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "6794001271a692d3f407c90e7dc33dd2f29a0e8a10ea7f37f8cd13d799aad8a1"
+    },
+    "plants_bush_branch__d_a": {
+      "sourceSha256": "a8d0536167a7e7bf60686ab3c215d7ca64f50ac960ef83f1ac97a31e50e03ced",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "4330c434b60888d41dcf02e1fc525026e5d0788094087c128a781b6234427999"
+    },
+    "models_rock_chunk__d": {
+      "sourceSha256": "5b3ca1323f985c8b0c27b2a79c7325de5a0b7555035a3062980612e005c0e170",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "bcef3934919938c43215416614165fa2c6cfb33ca0f8bc98564195ea55c120f8"
+    },
+    "models_rock_chunk__n_d": {
+      "sourceSha256": "f18897d928c81cae73e10cbd460c35ec05c3825ad5201f8fd2ade3e05dae1065",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "26b502a1024bcd3ba8cbb26fee31d902eb5a14b48c5e149f88f7b3bf3b71690e"
+    },
+    "models_ruins_blocks__d": {
+      "sourceSha256": "2172db6a1fb0b9e5a55d1a8c32119f856281c622462e71e2fd791e4d9bda7423",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "d64f75e22314070cf4ccd68136489051125bcd3ae1353396fc3f9bf81873d760"
+    },
+    "models_bridge__d": {
+      "sourceSha256": "161204f61fab9c35f81d44f88c96956e215e37ae7b88d7f0a3edb723819129ec",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "8cabb6823c5ae7a444f3c63c46fb0f307f47c35e6452585f97c71ab91960af0e"
+    },
+    "models_bridge__sh_d": {
+      "sourceSha256": "184f0c73e3f6db555bf7282b988712c95a086de1505006d0845fdc23127bf4ae",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "2f02eb4eee49f1def2653f26368ce4a7cdd00452b0aaba90337eea199780c81d"
+    },
+    "models_ruins_underlay__d_a": {
+      "sourceSha256": "315740eb369663c5b9edd7785bf58f46aa8af873f76a54af94f87c061f9ecd5c",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "61aa1e2904e828f48a28f8daeb5813754c525c460dcca202214527a6322fb48c"
+    },
+    "models_ruins_column__d": {
+      "sourceSha256": "9225bcb2c4b87bc4d5d169cdba2b81ec0742ea7dd73bce8f6558a9ae1c8b0f18",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "9ac8bbdf9e7ffb17fc05194312bd567ae1628e39e8d0d5d384184f939ee85c92"
+    },
+    "models_monument__d": {
+      "sourceSha256": "6c9bbe7478fabf4253e8dbfb381bf2eed319b5655b1ba38dee0be89948afee61",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "79333affa3496f3803d152a4c2f80fce9aff845bc74faa593fb4a28246724256"
+    },
+    "models_monument__n_d": {
+      "sourceSha256": "0d3a92d327d9da24488ca1f056ef54a51cd50503c017e1e295fde5df358bc33b",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "b944e79920ae1e26071896f643562837c6a9fd90f598c20c26f9e256abc584d7"
+    },
+    "models_dungeon_wall__d": {
+      "sourceSha256": "bd784e9c4b67043c2fb4e1ed6374130ab579c4de9a1c24eda5c1dce7f223da41",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "16494f6a64bd99b4d2f3532e535361f05b5d63e78fe10f351cdd6b890ae0e844"
+    },
+    "models_dungeon_wall__n_d": {
+      "sourceSha256": "01df6cb10847e937f56b10640efc83a80c8dbdd4c31ee485e0f70ea0179c17c6",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "45e1484fcc49bbe7cf32f729c6871a18c277e308c0e4c00b3f38e9a47da5ccbe"
+    },
+    "models_dungeon_wall__sh_d": {
+      "sourceSha256": "9bca71d9107b0074dd3819eae8c07658ca361060f261d6dbc91c693853fe8ede",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "01f441e1118501af2c403ed8040b4152a68da28c7b4fb25251eff6a66f9ab61d"
+    },
+    "models_dungeon_entrance_underlay__d_a": {
+      "sourceSha256": "61959ca10ae4992cfdb32028d45f3b5f2b8a24f871ec8581d4701c3f251da4ef",
+      "size": [
+        192,
+        192
+      ],
+      "outputSha256": "0af39c7b963d5e1faf8b35d20091bc2586caf25582ec4da8b23614f4ec0a12f0"
+    },
+    "models_outpost__d": {
+      "sourceSha256": "c9e70d2a7db397c048cf2ea256a8b0690f43f65100897a952a30e41f33f39b6b",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "71bc6a4570b4d006c9c697bae63d60a82c016c062f19141038572cb4830f64b6"
+    },
+    "models_outpost__n_d": {
+      "sourceSha256": "506a17248aead305ef08520c858978a83c5c8a37dd6a27bcdaad3b2d7c102612",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "a99241aa2718150b2b6da85807972ad51ade43e2504c8e4bf5ee78588a59dbd5"
+    },
+    "models_outpost__sh_d": {
+      "sourceSha256": "5e929cb90342f0b0d220bb7b8ad9e354525ded89349f0d9661735482626aae85",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "cafe77c7bfd4d43d1208413ad244df52fc859732a429e6d856ba22f4baae6d23"
+    },
+    "models_outpost_underlay__d_a": {
+      "sourceSha256": "0a62fbf9175fd5704f317cc51748d26fd2edf94028b0befb4f69e076b9e53b8a",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "784c45ba68f498e894e1af8acd1169480988b0aa6e5cb8d4ae6c795889afd501"
+    },
+    "env_upvector_snow_ar__d_a": {
+      "sourceSha256": "fe6a049463dfb45d8206947f9617f69fd6630acf0e12abaf7bb9fb7860c6728c",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "a5abde279ef80e973b3821d683532c6a677afc4e0b1c7f5a0c2a0134956825d7"
+    },
+    "env_upvector_snow_nh__d_a": {
+      "sourceSha256": "f31851d9a82bec7f91206ca5089108c4611563d8a3ed10ef412ebe0e088f6795",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "4efa889311e92598b3b6eb1b3934fcbeeeebf25983bd57ebb449fb49709db4c5"
+    },
+    "models_orc_farm_old__d": {
+      "sourceSha256": "c78b422827638508546188ddc745834779ad4284557e5c45c696583090c4f489",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "ee5b5dcb658390a2d927eafced407e18c95dfddf9fe1d1ca83b4b88037da0206"
+    },
+    "models_orc_farm_old__n_d": {
+      "sourceSha256": "5b63301becebd199e7dc379ea10bcea1b22bf12f55d7e91c6632a2ac3286b108",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "a4e628b3a16cf16b1802ebd3560a8d0c4ab6958ff70cbde8e5670a186da264bb"
+    },
+    "models_orc_farm_old__sh_d": {
+      "sourceSha256": "17e4a7954b70e7d839bbbe7f13c369f8e0d1931adb74b31bd25cb75438248442",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "ed6f59605203531141466a55ef6ee0ac06eaeeed893d2e745b651d4c0c0d3b62"
+    },
+    "models_orc_farm_underlay__d_a": {
+      "sourceSha256": "ce132025b0a03b88c2ed33067bbe50bbffd69974ef56efe80bc1d78fc3c76769",
+      "size": [
+        128,
+        128
+      ],
+      "outputSha256": "89a3056b29e9a1f4a390eef95c73000864fd5100cb7548c2a5b76ae5da895a84"
+    },
+    "models_bandit_tent_underlay__d_a": {
+      "sourceSha256": "7109c66269cde9e2175e6089ae160b52956d4629fa952386d2fa4d2e94cc38ff",
+      "size": [
+        256,
+        256
+      ],
+      "outputSha256": "8c64148e909b17525c76dd06b59438a594be7402d365542874e14668630bfbc9"
+    },
+    "models_bandit_tent__d": {
+      "sourceSha256": "b6df1a90e1c3030399df56821efd4e05fe29a94dad2d9c0376fca6578d25ee94",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "879eecc2cceb24897f2ecd583dc90b3498beda2c1afa75a3b9ea3e09cccb499b"
+    },
+    "models_bandit_tent__n_d": {
+      "sourceSha256": "55b3c4cfa84dd199ce7c118235945716ad76e97c27219c8ba3b68a34021bb1c1",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "aff859fc0ffab1f646aa19a677eb736d3ada1049c11a56358aa3f0be893aec41"
+    },
+    "models_bandit_tent__sh_d": {
+      "sourceSha256": "b22b20b7508fa2b8d753b67c5379f38ca54d61bbe63d645232890455bdeffc4e",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "8c31ee4f71bc54eecc3b35e7c7df1b86773a83489faee2808560d3c617a3556e"
+    },
+    "models_orc_citadel__d": {
+      "sourceSha256": "c354a04b53b7da2642eea877d097d9ae2b0a5c04defcc22e582fa16dc1f57cb9",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "0e1afed6565f217c709f243155bbd8ba0f367ff0e886efc777d077c9ef92e6bc"
+    },
+    "models_wolves_den__d": {
+      "sourceSha256": "6fe0c1cd22a2c38fdb8bfbffe192268d429c6d04dcf42fa8935bfd2bbfad1ddf",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "a282c46693cd85ce82ef8604e20853d05e8761f79d0699280c646efc6a43997d"
+    },
+    "models_wolves_den__sh_d": {
+      "sourceSha256": "166c54f44e43f36d9f7cd46d3d446ae0cbdfae0201b0f1a00fb011cc22d44bc1",
+      "size": [
+        2048,
+        2048
+      ],
+      "outputSha256": "f568bf3c76ed2234bf206144c4c1787113666937379916f8fa6e9073a7626408"
+    },
+    "models_wolves_den_props__d": {
+      "sourceSha256": "88d1852a335efd6dfef14238c3a88a49a2df27589e137212d20149edda357fc5",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "e7c5c7722a2754d9f4b4667c867dcb91d9753bf1362f638fcf507e9066cdef23"
+    },
+    "models_wolves_den_underlay__d_a": {
+      "sourceSha256": "7b03dc1501b3c747ce0d215e76aa69989b8a6ca10692cd4c2305e5f682db5aed",
+      "size": [
+        512,
+        512
+      ],
+      "outputSha256": "c3e37e4b8e4ca9d54b42632d44084eddde2ef5d3a64740ebca926421408dfce4"
+    },
+    "units_neutral_goblin__d_a": {
+      "sourceSha256": "dd0c89e19f1bcfa13bce806fe02f1e671088c39533c36a18b237ac23e43d8555",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "9274002e16c9cb2eeb46afea6fbf85739cd4a679126ab2f8c01f1196f2bbf85e"
+    },
+    "units_orc_goblin_archer__sh_d": {
+      "sourceSha256": "f568dde1f556576c1180f8f15832a72a51560a6fa2757cf39b92ab0fdc8f6759",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "9217d9e52686337b1861acfa4d08a706fd47bacef445016c308fe7b92e000742"
+    },
+    "units_neutral_troll__d_a": {
+      "sourceSha256": "e80386da6005360c1600630e4974c64fcf7da104ad29939f15512d1de1cea39d",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "afb7067e791beb6aa6d0adf166a13967042013211589085a2c8372b832c610ae"
+    },
+    "units_neutral_troll__sh_d": {
+      "sourceSha256": "d29b0cd0fc3d7e6272262b3dd561723bc78d2ba05d162ac996f1f28d69716993",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "699e22f3fae76324bd57e252dbbbf6f6ee654c175d89826dd417858104c4bff4"
+    },
+    "units_neutral_wolf__d_a": {
+      "sourceSha256": "db77b4a8bc24d6999c65c2a8ace38bed8efb9ed8f9e02c4b51a59f755c914401",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "17e5705011c8b0d465abb468adfdfcf70cb85fc5479239f32d12239eb6783f88"
+    },
+    "units_neutral_wolf__sh_d": {
+      "sourceSha256": "261766c7006af0ee04805211ce9a95a67736116de5ba75e4ce6440c9d80f6e68",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "8d94945d62c17eef639d6b12d9b3eaa4180bfe67936452d2d685e45e7c63205b"
+    },
+    "units_neutral_bandits__d_a": {
+      "sourceSha256": "af7de38df401dc9bfcfa963acb3bd92121c88183039bc3826c5ff35d8fe5838e",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "4c375e1a6b4fb40bfa90d1f520bc0d26378dd50300dbaf1aec922ab39f2dcb6f"
+    },
+    "units_neutral_bandits__sh": {
+      "sourceSha256": "369a9c747b7e84cd75614e7b5002d50fea087f80f4943ac3cfbcec878f7aa1fd",
+      "size": [
+        1024,
+        1024
+      ],
+      "outputSha256": "40b275be57897368c1ec071711e6e35ff4835f04c35dafa646d0cf0131e98b10"
+    }
+  },
+  "reflectionCube": {
+    "source": "env_default__d_ggxrefl.dds",
+    "sourceSha256": "d8b447beb2dc75d6feb9c7528b256766b06f0794cdb8707fa094d242269eb3c5",
+    "size": 256,
+    "levels": 7,
+    "faceOrder": [
+      "+X",
+      "-X",
+      "+Y",
+      "-Y",
+      "+Z",
+      "-Z"
+    ],
+    "decodedSha256": "b4c9f8355a744e91233056b1de03781478d9be03ee6bd9118f858ea651fb3e2e",
+    "decodedBytes": 2097024
+  },
+  "brdfLut": {
+    "source": "env_ibl_brdf_lut.dds",
+    "sourceSha256": "3e38ecd0cea35cceda157820de518e7de7a8f964c10d4fa21ba88849160fc287",
+    "width": 64,
+    "height": 64,
+    "decodedBytes": 16384,
+    "decodedSha256": "b0ce262b751826c50dbbfad310a2a5ca3e206062dbb3bfe8c2e6f303d11c17a3",
+    "colorSpace": "linear"
+  },
+  "plantOcclusion": {
+    "fir_a": {
+      "attributes": {
+        "Intensity": "0.75",
+        "ObscureInfluence": "0.5",
+        "Size": "(18.0; 18.0)"
+      },
+      "inheritance": [
+        {
+          "source": "fir_a.xml",
+          "sha256": "1a6300de45609f3c7591179ce54ee734760d6d4a21e87d0f7a46f675859fa7e8"
+        }
+      ]
+    },
+    "fir_b": {
+      "attributes": {
+        "Intensity": "0.75",
+        "ObscureInfluence": "0.5",
+        "Size": "(18.0; 18.0)"
+      },
+      "inheritance": [
+        {
+          "source": "fir_a.xml",
+          "sha256": "1a6300de45609f3c7591179ce54ee734760d6d4a21e87d0f7a46f675859fa7e8"
+        },
+        {
+          "source": "fir_b.xml",
+          "sha256": "8eac6e2eea1c313fd65f919bd1c0b552b65ba953e312c6809482d35f8e18adb8"
+        }
+      ]
+    },
+    "fir_small_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "fir_small_a.xml",
+          "sha256": "470df34542d7ada58b24a9ea6edf2f7d0f14140badf7ef6db0b153139b7e8a51"
+        }
+      ]
+    },
+    "stump_fir_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "stump_fir_a.xml",
+          "sha256": "070acf2681793da7827b1aa69f2b2a40e5cba682b53fec4e2f6c37c2c56ea8dd"
+        }
+      ]
+    },
+    "gold_vein_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "gold_vein_a.xml",
+          "sha256": "0a0dc2bc0c45807b98c98bcb278800838ec90645b6287ba08cdacf6a4838c257"
+        }
+      ]
+    },
+    "gold_vein_b": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "gold_vein_a.xml",
+          "sha256": "0a0dc2bc0c45807b98c98bcb278800838ec90645b6287ba08cdacf6a4838c257"
+        },
+        {
+          "source": "gold_vein_b.xml",
+          "sha256": "232d32eccd423df7daffdac074a50238bc5fa119ba352b9e84ee90b45e750966"
+        }
+      ]
+    },
+    "small_rock_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "small_rock_a.xml",
+          "sha256": "fa95663c54e5ba4b57f19754aa96ed9f775c2073426574de31bc8f2d58f0418e"
+        }
+      ]
+    },
+    "small_rock_b": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "small_rock_a.xml",
+          "sha256": "fa95663c54e5ba4b57f19754aa96ed9f775c2073426574de31bc8f2d58f0418e"
+        },
+        {
+          "source": "small_rock_b.xml",
+          "sha256": "1b5d48e3207b9c3fed4bbaad64080d5fc6a9ef79b591a92de3aa5ae0a6ebd861"
+        }
+      ]
+    },
+    "small_rock_c": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "small_rock_a.xml",
+          "sha256": "fa95663c54e5ba4b57f19754aa96ed9f775c2073426574de31bc8f2d58f0418e"
+        },
+        {
+          "source": "small_rock_c.xml",
+          "sha256": "1b5d48e3207b9c3fed4bbaad64080d5fc6a9ef79b591a92de3aa5ae0a6ebd861"
+        }
+      ]
+    },
+    "lying_snag_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "lying_snag_a.xml",
+          "sha256": "5f749edf724973f012740ddf11c7c8f1923feb1c281f338f9378f460b66e7496"
+        }
+      ]
+    },
+    "lying_snag_b": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "lying_snag_a.xml",
+          "sha256": "5f749edf724973f012740ddf11c7c8f1923feb1c281f338f9378f460b66e7496"
+        },
+        {
+          "source": "lying_snag_b.xml",
+          "sha256": "f8256aa1223cc6a63ca16a034a3053d7b4e5cb2af01feaed475cf74ef4505f82"
+        }
+      ]
+    },
+    "lying_snag_c": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "lying_snag_a.xml",
+          "sha256": "5f749edf724973f012740ddf11c7c8f1923feb1c281f338f9378f460b66e7496"
+        },
+        {
+          "source": "lying_snag_c.xml",
+          "sha256": "f8256aa1223cc6a63ca16a034a3053d7b4e5cb2af01feaed475cf74ef4505f82"
+        }
+      ]
+    },
+    "lying_snag_d": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "lying_snag_a.xml",
+          "sha256": "5f749edf724973f012740ddf11c7c8f1923feb1c281f338f9378f460b66e7496"
+        },
+        {
+          "source": "lying_snag_d.xml",
+          "sha256": "f8256aa1223cc6a63ca16a034a3053d7b4e5cb2af01feaed475cf74ef4505f82"
+        }
+      ]
+    },
+    "bush_a": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "bush_a.xml",
+          "sha256": "fe5dfa4e6cb7c4202b54e65bc9395ed1f8d69a2d71933c73ce59026b63e0e8b4"
+        }
+      ]
+    },
+    "bush_b": {
+      "attributes": {},
+      "inheritance": [
+        {
+          "source": "bush_a.xml",
+          "sha256": "fe5dfa4e6cb7c4202b54e65bc9395ed1f8d69a2d71933c73ce59026b63e0e8b4"
+        },
+        {
+          "source": "bush_b.xml",
+          "sha256": "040c64584f2a3a8b1918a6aa3de3f03395543f34b366f52f4ee069f64b0bc132"
+        }
+      ]
+    }
+  },
+  "occlusionSprite": {
+    "source": "TextureCache/env_radial_sprite__s_d.dds",
+    "sourceSha256": "c9c63b335d8212b725e327b46b8d3a420c2478147e0522143ebde2ea08711bed",
+    "size": [
+      64,
+      64
+    ],
+    "channel": "r",
+    "colorSpace": "linear",
+    "decodedSha256": "ab1fb9da803917e07063eae9a1b5da8b68935327e15a0cc28eb8ef24dd62eaa4",
+    "decodedBytes": 4096
+  },
+  "occlusionVolumes": {
+    "models_mountain_chunk_a": null,
+    "models_mountain_chunk_b": null,
+    "models_mountain_chunk_c": null,
+    "models_ruins_blocks_04": {
+      "boundsMin": [
+        -9.08719253540039,
+        -2.8247299194335938,
+        -8.268874168395996
+      ],
+      "boundsMax": [
+        9.08719253540039,
+        5.853753089904785,
+        9.088766098022461
+      ],
+      "size": [
+        72,
+        69,
+        8
+      ],
+      "axes": [
+        "x",
+        "z",
+        "y"
+      ],
+      "format": "r8-unorm",
+      "colorSpace": "linear",
+      "source": "Media/odf/ruins_blocks_04",
+      "sourceSha256": "6118e94134ad6c3f1d5d5560fed90d26048d3f9fa232de4c22212e6228c5417d",
+      "decodedSha256": "677e311f764915ee00f8e905684aec15834c48a541e1576626fa9b88d8044496",
+      "decodedBytes": 39744
+    },
+    "models_ruins_blocks_06": null,
+    "models_ruins_blocks_08": null,
+    "models_ruins_blocks_03": {
+      "boundsMin": [
+        -7.483338832855225,
+        -2.993773937225342,
+        -8.000762939453125
+      ],
+      "boundsMax": [
+        8.149496078491211,
+        5.731589317321777,
+        8.052101135253906
+      ],
+      "size": [
+        62,
+        64,
+        8
+      ],
+      "axes": [
+        "x",
+        "z",
+        "y"
+      ],
+      "format": "r8-unorm",
+      "colorSpace": "linear",
+      "source": "Media/odf/ruins_blocks_03",
+      "sourceSha256": "6989c3a023fc3ea0ddd6b3370ffd6b1214fadfdc1a29ca5e12a50fa7889f38a6",
+      "decodedSha256": "3d8a1836cf0982e25e63a6200f3f39852e5db69f3c8aaa06a85f77c83717af58",
+      "decodedBytes": 31744
+    },
+    "models_wooden_bridge_small": {
+      "boundsMin": [
+        -14.101880073547363,
+        -8.147597312927246,
+        -24.99092674255371
+      ],
+      "boundsMax": [
+        11.878986358642578,
+        7.292879104614258,
+        24.71088218688965
+      ],
+      "size": [
+        103,
+        198,
+        15
+      ],
+      "axes": [
+        "x",
+        "z",
+        "y"
+      ],
+      "format": "r8-unorm",
+      "colorSpace": "linear",
+      "source": "Media/odf/wooden_bridge_small",
+      "sourceSha256": "b4a42b5dc3603f8e521261dd95aea8e2e975740150735cad1865fb920013030b",
+      "decodedSha256": "e7fc14c264b376ec8995b388e4ac3fb306afdb47a3326e6c3670b8b267a433f3",
+      "decodedBytes": 305910
+    },
+    "models_ruins_column_11": null,
+    "models_monument_01": null,
+    "models_dungeon_entrance": null,
+    "models_neutral_outpost": {
+      "boundsMin": [
+        -11.336833953857422,
+        -2.403322696685791,
+        -11.078289985656738
+      ],
+      "boundsMax": [
+        11.186031341552734,
+        9.821420669555664,
+        10.2695951461792
+      ],
+      "size": [
+        90,
+        85,
+        12
+      ],
+      "axes": [
+        "x",
+        "z",
+        "y"
+      ],
+      "format": "r8-unorm",
+      "colorSpace": "linear",
+      "source": "Media/odf/neutral_outpost",
+      "sourceSha256": "b909edf91a488b216316a825c223f86c448b5cc30cd6121df637d4a802157938",
+      "decodedSha256": "819c5bbc573e682a45d25fd4d041305dd1829470a05770bd74c10371ead0c483",
+      "decodedBytes": 91800
+    },
+    "models_goblin_hut": null,
+    "models_neutral_bandit_tent": null,
+    "models_neutral_troll_cave": null,
+    "models_neutral_wolf_den_a": null,
+    "models_neutral_wolf_den_b": null
+  },
+  "grass": {
+    "grass_messy": {},
+    "grass_low": {},
+    "daisy": {},
+    "water_leaves_a": {
+      "IsWaterGrass": "true"
+    },
+    "water_leaves_b": {
+      "IsWaterGrass": "true"
+    },
+    "grass_high_a": {},
+    "grass_high_b": {}
+  },
+  "terrain": {
+    "grass": {
+      "attributes": {
+        "BlendHeightRange": "0.5",
+        "TextureAlbedoRoughness": "tiles/grass_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/grass_nh__d_a.tga",
+        "TilingScale": "0.25"
+      },
+      "prebuild": {
+        "AutoBrush": "GrassMessy",
+        "GroundBrightness": "2.5",
+        "IsGrassy": "true"
+      }
+    },
+    "dirt": {
+      "attributes": {
+        "BlendHeightRange": "0.5",
+        "TextureAlbedoRoughness": "tiles/dirt_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/dirt_nh__d_a.tga",
+        "TilingScale": "0.2"
+      },
+      "prebuild": {
+        "IsEraseWaterEdge": "true",
+        "IsNoGrass": "true"
+      }
+    },
+    "soil": {
+      "attributes": {
+        "TextureAlbedoRoughness": "tiles/soil_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/soil_nh__d_a.tga",
+        "TilingScale": "0.25"
+      },
+      "prebuild": {
+        "IsNoGrass": "true"
+      }
+    },
+    "rockgrass": {
+      "attributes": {
+        "BlendingSharpness": "1.5",
+        "TextureAlbedoRoughness": "tiles/rockgrass_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/rockgrass_nh__d_a.tga",
+        "TilingScale": "0.25",
+        "VerticalityMultiplier": "1.0"
+      },
+      "prebuild": {
+        "AutoBrush": "GrassMessy",
+        "GroundBrightness": "3.0",
+        "IsGrassy": "true"
+      }
+    },
+    "rock": {
+      "attributes": {
+        "TextureAlbedoRoughness": "tiles/rock_ar__d_a.tga",
+        "TextureDisplacement": "tiles/rock_displacement__a.tga",
+        "TextureNormalHeight": "tiles/rock_nh__d_a.tga",
+        "TilingScale": "0.16",
+        "EdgeSharpen": "1.0"
+      },
+      "prebuild": {
+        "GroundBrightness": "0.4",
+        "IsNoGrass": "true"
+      }
+    },
+    "stones": {
+      "attributes": {
+        "BlendHeightRange": "0.25",
+        "TextureAlbedoRoughness": "tiles/stones_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/stones_nh__d_a.tga",
+        "TilingScale": "0.4"
+      },
+      "prebuild": {
+        "IsNoGrass": "true"
+      }
+    },
+    "waterbed": {
+      "attributes": {
+        "TextureAlbedoRoughness": "tiles/waterbed_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/waterbed_nh__d_a.tga",
+        "TilingScale": "0.05"
+      },
+      "prebuild": {
+        "IsNoGrass": "true"
+      }
+    },
+    "graysoil": {
+      "attributes": {
+        "BaseDesaturationBrightness": "1.0",
+        "BlendHeightRange": "0.5",
+        "TextureAlbedoRoughness": "tiles/graysoil_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/graysoil_nh__d_a.tga",
+        "TilingScale": "0.2"
+      },
+      "prebuild": {
+        "IsNoGrass": "true"
+      }
+    },
+    "darkrock": {
+      "attributes": {
+        "TextureAlbedoRoughness": "tiles/darkrock_ar__d_a.tga",
+        "TextureDisplacement": "tiles/rock_displacement__a.tga",
+        "TextureNormalHeight": "tiles/rock_nh__d_a.tga",
+        "TilingScale": "0.16",
+        "EdgeSharpen": "1.0"
+      },
+      "prebuild": {
+        "GroundBrightness": "0.8",
+        "IsNoGrass": "true"
+      }
+    },
+    "darksoil": {
+      "attributes": {
+        "BlendingSharpness": "0.25",
+        "TextureAlbedoRoughness": "tiles/darksoil_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/darksoil_nh__d_a.tga",
+        "VerticalityMultiplier": "-0.25"
+      },
+      "prebuild": {
+        "GroundBrightness": "0.4",
+        "IsDontMaskOutDisplacement": "true",
+        "IsNoGrass": "true"
+      }
+    },
+    "darkgrass": {
+      "attributes": {
+        "BlendingSharpness": "0.1",
+        "TextureAlbedoRoughness": "tiles/darkgrass_ar__d_a.tga",
+        "TextureNormalHeight": "tiles/darkgrass_nh__d_a.tga",
+        "TilingScale": "0.1",
+        "VerticalityMultiplier": "1.0"
+      },
+      "prebuild": {
+        "AutoBrush": "GrassMessy",
+        "GroundBrightness": "2.0",
+        "IsGrassy": "true"
+      }
+    }
+  },
+  "groundColor": {
+    "source": "Media/levels/level_eldenvale.dds",
+    "sourceSha256": "b4a0fd234e9af3b5574cc4098b8e72f803bfaeedae31c6e154aef8790c1696fa",
+    "size": [
+      240,
+      464
+    ],
+    "rgbaSha256": "f68a45c6bbea07b303fd7f33df42bd99ccd5f0aa0da4e670c32aba7e93a6e35a"
+  }
+}

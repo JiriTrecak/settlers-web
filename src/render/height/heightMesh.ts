@@ -1,6 +1,8 @@
+import {sourceHeightGeometry} from './sourceHeightGeometry';
+import type {SourceHeight} from '../../shared/map/importedTerrain';
 import {TerrainMaterial} from '../terrain/terrainMaterial';
 import {perf} from '../../debug/performance';
-import {BufferAttribute,BufferGeometry,Group,Mesh,type Scene} from 'three';
+import {BufferAttribute,BufferGeometry,Group,Mesh,MeshDepthMaterial,RGBADepthPacking,type Scene} from 'three';
 import {HEIGHT_ORIGIN,MAP_SIZE,MAP_HALO,type HeightDirty,type HeightField} from '../../shared';
 
 export const DIRT=0x353330;
@@ -13,6 +15,9 @@ export class HeightMesh {
  readonly material:TerrainMaterial;
  private readonly patches:Patch[]=[];
  private readonly verts:number;
+ private source?:SourceHeight;
+ private sourceMeshes:Mesh[]=[];
+ private readonly sourceDepth=new MeshDepthMaterial({depthPacking:RGBADepthPacking});
  constructor(scene:Scene,size=MAP_SIZE){
   const span=size+MAP_HALO*2;this.verts=span+1;this.material=new TerrainMaterial(size);this.mesh.name='height';
   for(let z=0;z<span;z+=PATCH)for(let x=0;x<span;x+=PATCH){
@@ -31,9 +36,26 @@ export class HeightMesh {
    mesh.onBeforeRender=()=>{perf.count('Terrain patches (color passes)',1);perf.count('Terrain triangles (color passes)',indices.length/3);};
    this.patches.push({mesh,loX:x,loZ:z,width,depth});
   }
+  this.sourceDepth.onBeforeCompile=shader=>this.material.compileImportedDepth(shader);
+  this.sourceDepth.customProgramCacheKey=()=>`source-terrain-depth-${this.source?.source.sha256??'none'}`;
   scene.add(this.mesh);
  }
  setFrom(field:HeightField,dirty?:HeightDirty|null):void {
+  if(this.source!==field.source){
+   this.source=field.source;
+   for(const mesh of this.sourceMeshes){this.mesh.remove(mesh);mesh.geometry.dispose();}this.sourceMeshes=[];
+   this.material.setImported(field.source?.source);this.sourceDepth.needsUpdate=true;
+   for(const p of this.patches)p.mesh.visible=!field.source;
+   if(field.source){
+    const [nx,nz]=field.source.source.blocks;
+    for(let z=0;z<nz;z++)for(let x=0;x<nx;x++){
+     const mesh=new Mesh(sourceHeightGeometry(field.source,x,z),this.material);mesh.castShadow=mesh.receiveShadow=true;mesh.customDepthMaterial=this.sourceDepth;mesh.name=`source-height.${x}.${z}`;
+     mesh.onBeforeRender=()=>{perf.count('Terrain patches (color passes)',1);perf.count('Terrain triangles (color passes)',4608);};
+     this.mesh.add(mesh);this.sourceMeshes.push(mesh);
+    }
+   }
+  }
+  if(field.source)return;
   if(field.verts!==this.verts)throw new Error('Terrain height dimensions do not match');
   // Normal dependencies extend one vertex beyond the edited heights. Adjacent
   // patches sample the same global field, so shared boundaries remain seamless.
@@ -50,5 +72,5 @@ export class HeightMesh {
    position.needsUpdate=true;normal.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
  }
- destroy(scene:Scene):void {scene.remove(this.mesh);for(const patch of this.patches)patch.mesh.geometry.dispose();this.patches.length=0;this.material.dispose();}
+ destroy(scene:Scene):void {scene.remove(this.mesh);for(const patch of this.patches)patch.mesh.geometry.dispose();this.patches.length=0;for(const mesh of this.sourceMeshes)mesh.geometry.dispose();this.sourceMeshes=[];this.sourceDepth.dispose();this.material.dispose();}
 }

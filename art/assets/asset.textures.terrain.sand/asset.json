@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.textures.terrain.sand",
+  "name": "Sand",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "terrain",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "f63a6a46ec750f4e8f340e16988170565f4f69bbd1191fd0f32fe82e82cc25a8",
+      "bytes": 438001
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "texture",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "f63a6a46ec750f4e8f340e16988170565f4f69bbd1191fd0f32fe82e82cc25a8"
+  }
+}

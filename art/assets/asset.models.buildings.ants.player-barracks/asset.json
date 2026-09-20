@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.player-barracks",
+  "name": "Player Barracks",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d76e08cae87b16dd213617f3c3c79dd5abeec06fdb059c252b2ad655f3fcb23a",
+      "bytes": 1273376
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "a2ae7329a388090c4cde8a3c269411210d07f9a96efa9c415904a17ced933f9b",
+      "bytes": 3711136
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.barracks",
+        "healthHeight": 4.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.player-barracks"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "a2ae7329a388090c4cde8a3c269411210d07f9a96efa9c415904a17ced933f9b"
+  }
+}

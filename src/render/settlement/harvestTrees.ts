@@ -6,9 +6,17 @@ import type { EntityView } from '../../sim/game/observation';
 import type { HeightField } from '../../shared/map/height';
 import { prepareAntMaterials } from '../prop/antMaterials';
 import { TreePlayer } from '../prop/treePlayer';
+import {prepareReferencePlants} from '../prop/referencePlants';
+import {ReferenceGround} from '../prop/referenceGround';
+import {referenceTexture,macroUrl} from '../terrain/referenceTerrain';
+import {geometryModel} from '../../shared/assets/models';
+import {transformedModel} from '../prop/modelTransform';
 
 /** Standing forest stays instanced. Only damaged/falling trees acquire two-mesh proxies. */
 export class HarvestTrees {
+  private readonly referenceGround=new ReferenceGround();
+  private referenceMacro:import('three').Texture|undefined;
+  private groundField:HeightField|undefined;
   private readonly sources = new Map<string, GLTF>();
   private readonly active = new Map<number, {root: Object3D; player: TreePlayer; file: string}>();
   private dead = false;
@@ -25,10 +33,12 @@ export class HarvestTrees {
       if (this.dead) { this.disposeSource(gltf); return; }
       prepareAntMaterials(gltf.scene);
       gltf.scene.traverse(o => { if (o instanceof Mesh) o.castShadow = o.receiveShadow = true; });
+      prepareReferencePlants(gltf.scene,this.referenceGround,()=>this.referenceMacro??=referenceTexture(macroUrl,false));
       this.sources.set(file, gltf);
     })).then(() => {});
   }
   update(entities: readonly EntityView[], field: HeightField, tick: number) {
+    if(this.groundField!==field){this.groundField=field;this.referenceGround.update(field);}
     if(this.observed!==entities){this.observed=entities;this.damaged=entities.filter(e=>e.resource?.felling?.lastHitTick!=null);}
     const seen = new Set<number>();
     for (const e of this.damaged) {
@@ -42,7 +52,9 @@ export class HarvestTrees {
       let entry = this.active.get(e.id);
       if (entry && entry.file !== file) { this.remove(e.id); entry = undefined; }
       if (!entry) {
-        const root = new Group(), model = source.scene.clone(true);
+        const root = new Group(), original = source.scene.clone(true);
+        const authored=geometryModel(asset.file??file);
+        const model=authored?transformedModel(original,authored.transform):original;
         root.name = `harvest-tree-${e.id}`;
         root.add(model); this.parent.add(root);
         entry = {root, player: new TreePlayer(model, source.animations), file};
@@ -77,6 +89,7 @@ export class HarvestTrees {
   }
   dispose() {
     this.dead = true;
+    this.referenceGround.dispose();this.referenceMacro?.dispose();
     for (const id of this.active.keys()) this.remove(id);
     this.sources.forEach(s => this.disposeSource(s)); this.sources.clear();
   }

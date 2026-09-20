@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.reference-fir-a",
+  "name": "Reference · fir a",
+  "kind": "tree",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "9b073e554c3329e300f4fc4adfeb066aee300ee51f31a762a7b22e21517d754e",
+      "bytes": 635432
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.reference-fir-a",
+        "sceneryAsset": "reference-fir-a",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.reference-fir-a"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.trees.reference-fir-a"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "reference-fir-a",
+        "name": "Reference · fir a",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "9b073e554c3329e300f4fc4adfeb066aee300ee51f31a762a7b22e21517d754e"
+  }
+}

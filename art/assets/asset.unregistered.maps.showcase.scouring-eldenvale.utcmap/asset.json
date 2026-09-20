@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "asset.unregistered.maps.showcase.scouring-eldenvale.utcmap",
+  "name": "scouring-eldenvale",
+  "kind": "map",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "migrated",
+    "previously-unregistered"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "utcmap",
+      "sha256": "d9c5601c92fa8c355c21d5f1205707e1af01fae298e2f681b63a3e3abf12b4ae",
+      "bytes": 14406818
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.structures.synty-prop-pillar-arch-moss-01",
+  "name": "Prop Pillar Arch Moss 01",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "4cd4f7e76d9822ab0a3bc37365af6f23b6575e5a31e6b52796a10ddbd50d38fa",
+      "bytes": 94272
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "dc5c89a37416fddf59e91879bdcbfc332070b80de605f5ac05020f20c9cfc183",
+      "bytes": 125191
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-prop-pillar-arch-moss-01",
+        "name": "Prop Pillar Arch Moss 01",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "dc5c89a37416fddf59e91879bdcbfc332070b80de605f5ac05020f20c9cfc183"
+  }
+}

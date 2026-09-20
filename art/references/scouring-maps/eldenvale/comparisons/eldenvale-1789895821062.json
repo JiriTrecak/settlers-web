@@ -1,0 +1,29 @@
+{
+  "mime": "image/png",
+  "width": 1920,
+  "height": 1080,
+  "mapName": "Eldenvale \u00b7 Source Import",
+  "camera": {
+    "x": 291,
+    "z": 254,
+    "yaw": -0.7853981633974483,
+    "pitch": 0.7853981633974483,
+    "zoom": 1.2
+  },
+  "hour": 12,
+  "animationTime": 12,
+  "runtimeWaterDiagnostics": {
+    "width": 669,
+    "height": 602,
+    "hits": 93428,
+    "hitPercent": 23.198208264429976,
+    "maxWeight": 1,
+    "meanWeight": 0.22899367173979268,
+    "nonFinite": 0
+  },
+  "sourceMap": "assets/maps/showcase/scouring-eldenvale.utcmap",
+  "validation": {
+    "usableComparison": false,
+    "reason": "Captured during occlusion shader integration before duplicate sampler declaration was fixed; terrain shader did not compile."
+  }
+}

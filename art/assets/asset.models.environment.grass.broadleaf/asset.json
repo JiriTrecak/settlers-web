@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.grass.broadleaf",
+  "name": "Ant colony · Broadleaf",
+  "kind": "foliage",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "45dbdb6fee12ea63fd5f15cf14071b33280942d6eb10beef4523846d5c04ab9a",
+      "bytes": 69584
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ant-broadleaf",
+        "name": "Ant colony · Broadleaf",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "45dbdb6fee12ea63fd5f15cf14071b33280942d6eb10beef4523846d5c04ab9a"
+  }
+}

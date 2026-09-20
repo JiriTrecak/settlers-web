@@ -1,3 +1,6 @@
+import {sourceHeight} from '../../shared/map/importedTerrain';
+import {sourceWater} from '../../shared/map/importedWater';
+import {projectScene} from '../../shared/authoring/project';
 import {SectorNavigation} from './sectorNavigation';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {TacticalTerrain,MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
@@ -36,6 +39,7 @@ export class Spatial {
   readonly heights: Int16Array;
   readonly terrain: Uint8Array;
   readonly sea: number;
+  readonly waterHeights:Int16Array;
   readonly decks: Uint8Array;
   readonly occupied: Int32Array;
   readonly resources: Int32Array;
@@ -52,21 +56,26 @@ export class Spatial {
     private readonly units: () => readonly Entity[] = () => entities().filter(e => e.unit),
   ) {
     this.size = map.size;
+    const compiled=projectScene(map);if(compiled)map={...map,stamps:compiled.stamps};
     this.heights = new Int16Array(this.size * this.size);
+    this.waterHeights=new Int16Array(this.size*this.size);
     this.terrain = new Uint8Array(this.size * this.size);
     const verts = this.size + 33;
     const h = map.height ? decodeHeight(map.height, this.size) : null,
       sea = Math.round((map.waterLevel ?? 0) * 100);
     this.sea = sea;
+    const imported=map.landscape?.importedTerrain,source=compiled?{sample:(x:number,z:number)=>compiled.field.sample(x,z)}:imported?sourceHeight(imported):undefined,water=compiled?{sample:(x:number,z:number)=>compiled.field.waterAt(x,z)}:imported?sourceWater(imported):undefined;
     for (let y = 0; y < this.size; y++)
       for (let x = 0; x < this.size; x++) {
         const i = y * this.size + x;
         this.heights[i] = Math.round(
-          (h?.[(y - HEIGHT_ORIGIN) * verts + x - HEIGHT_ORIGIN] ?? 0) * 100,
+          (source?.sample(x,y)??h?.[(y - HEIGHT_ORIGIN) * verts + x - HEIGHT_ORIGIN] ?? 0) * 100,
         );
-        this.terrain[i] = this.heights[i] >= sea - WADING_DEPTH_CM ? 1 : 0;
+        this.waterHeights[i]=water?Math.round(water.sample(x,y)*100):sea;
+        this.terrain[i] = this.heights[i] >= this.waterHeights[i]! - WADING_DEPTH_CM ? 1 : 0;
       }
-    const surfaces=bridgeSurfaces(map.stamps,(x,z)=>h?sampleHeight(h,x,z,this.size):0);
+    if(imported)for(let z=0;z<this.size;z++)for(let x=0;x<this.size;x++)if(x<imported.origin[0]||z<imported.origin[1]||x>=imported.origin[0]+imported.blocks[0]*16||z>=imported.origin[1]+imported.blocks[1]*16)this.terrain[z*this.size+x]=0;
+    const surfaces=bridgeSurfaces(map.stamps,(x,z)=>source?.sample(x,z)??(h?sampleHeight(h,x,z,this.size):0));
     if(surfaces.length){
       applySceneryBlockers(map,this.terrain);
       this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces);

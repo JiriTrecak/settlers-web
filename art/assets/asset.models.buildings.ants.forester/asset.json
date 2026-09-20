@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants.forester",
+  "name": "Forester lodge",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "ant-colony",
+    "forest-warfare",
+    "natural-materials"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "57a8d5a231df2a2c12b9c7fd19d2fb7ea5a74acacd09c0f367386aa9d3f31aa2",
+      "bytes": 1321744
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "19721702dfea3c0547b7bf21acab79aafa92f65c46c7127f0e5f1d8d2441c607",
+      "bytes": 3700022
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.ants.forester",
+        "healthHeight": 3.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants.forester"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "forester-lodge",
+        "name": "Forester lodge",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      },
+      {
+        "id": "ant-forester",
+        "name": "Ant colony · Forester",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "19721702dfea3c0547b7bf21acab79aafa92f65c46c7127f0e5f1d8d2441c607"
+  }
+}

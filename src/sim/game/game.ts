@@ -212,7 +212,7 @@ export class Game {
         return "Leave access around the resource deposit";
     }
     const elevations = cells.map((i) => this.spatial.heights[i]);
-    if (elevations.some(h => h <= this.spatial.sea + 10))
+    if (cells.some(i => this.spatial.heights[i]! <= this.spatial.waterHeights[i]! + 10))
       return "Build on dry ground";
     if (Math.max(...elevations) - Math.min(...elevations) > MAX_FOUNDATION_RELIEF_CM)
       return "Choose flatter ground";

@@ -115,7 +115,7 @@ export class Session {
   private updateResourceStamps(entities: Parameters<typeof resourceStamps>[0]) {
     // Observation owns immutable per-update arrays. Reuse them between simulation
     // ticks, but never key by tick alone: reveal/restore can change the same tick.
-    const mapStamps=this.loadedMap!.map.stamps;
+    const mapStamps=projectScene(this.loadedMap!.map)?.stamps??this.loadedMap!.map.stamps;
     if (this.resourceEntities === entities && this.resourceMapStamps===mapStamps) return;
     this.resourceEntities = entities;
     const resources = this.resourceScenery.project(entities);
@@ -258,17 +258,19 @@ export class Session {
     const assets = this.assetLoading = new AssetLoading(report);
     const renderer = this.renderer = new Renderer(this.canvas, urls);
     renderer.setKinds(new Map(catalog.assets.map((a) => [a.id, a.type])));
-    this.terrain = new HeightField(map.size);
-    this.terrain.load(
+    const authored=projectScene(map);
+    this.terrain = authored?.field??new HeightField(map.size);
+    if(!authored)this.terrain.load(
       map.height ? decodeHeight(map.height, map.size)! : [],
       map.waterLevel ?? 0,
+      map.landscape?.importedTerrain,
     );
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
     renderer.sky.setPlaying(false);
     renderer.setGridMode("none");
     this.stamps = [
-      ...map.stamps,
+      ...(authored?.stamps??map.stamps),
       ...resourceStamps(this.visualView().settlement!.entities),
     ];
     this.renderer = renderer;
@@ -365,7 +367,7 @@ export class Session {
     if(map.mission || map.sandbox)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
     renderer.draw(initialView, this.stamps);
     // Include scenery variants outside current fog, without revealing entities.
-    await Promise.all([renderer.preload([...map.stamps, ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
+    await Promise.all([renderer.preload([...(authored?.stamps??map.stamps), ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
     await assets.ready(); check();
     report({stage:"Preparing graphics and shaders"});
     await loadingPaint(); check();
@@ -863,3 +865,4 @@ export class Session {
     this.worker?.stop();this.worker=null;
   }
 }
+import {projectScene} from '../../shared/authoring/project';

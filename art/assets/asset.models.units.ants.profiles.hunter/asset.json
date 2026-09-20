@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants.profiles.hunter",
+  "name": "Hunter",
+  "kind": "data",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "characters",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab",
+      "bytes": 501
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "data",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab"
+  }
+}

@@ -1,4 +1,5 @@
 import {selectedWalk} from '../../editor/select/select';
+import {ScenePanel} from '../../editor/chrome/scenePanel';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
 import { SpellWorkbench } from "../../editor/chrome/spellWorkbench";
@@ -29,6 +30,7 @@ import { EditorControl } from "../../editor/control/editorControl";
 import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
+  private scenePanel?:ScenePanel;
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
@@ -203,6 +205,7 @@ export class EditorScreen extends GameScreen {
     }
     this.spawnDock = new SpawnDock(this.root, this.editor);
     this.entityDock = new EntityDock(this.root, this.editor);
+    this.scenePanel=new ScenePanel(this.root,this.editor);
     // Reloads must never interrupt the live editor / MCP iteration loop.
     try {
       const draft = parseUtcMap(
@@ -228,6 +231,7 @@ export class EditorScreen extends GameScreen {
   }
 
   override destroy(): void {
+    this.scenePanel?.destroy();
     window.removeEventListener("keydown", this.onKey);
 
     this.modal?.close();
@@ -312,12 +316,13 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncSelect(): void {
+    this.scenePanel?.sync();
     this.entityDock?.setOpen(
       this.editor.tool === "entity" || !!this.editor.selectedEntity,
     );
     const stamp = this.editor.selectedStamp();
     this.chrome.setSelectOpen(
-      this.editor.tool === "select" && !this.editor.selectedEntity,
+      this.editor.tool === "select" && !this.editor.selectedEntity && !this.editor.layers.selection,
     );
     this.chrome.setSelect({
       name: stamp
@@ -537,6 +542,7 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncDoc(): void {
+    this.scenePanel?.sync();
     this.spawnDock?.sync();
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());

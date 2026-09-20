@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.props.reference-mountain-chunk-a",
+  "name": "Reference · mountain chunk a",
+  "kind": "model",
+  "tags": [
+    "reference",
+    "scouring",
+    "authorized-import"
+  ],
+  "status": "published",
+  "revision": 1,
+  "profile": "model",
+  "outputs": [
+    {
+      "role": "model",
+      "path": "assets/models/environment/props/reference-mountain-chunk-a/model.glb",
+      "sha256": "e71c23efc543eaad9a09e78609833f54e5b500fba26f033a06b3c489022197d6",
+      "bytes": 4822516,
+      "triangles": 1472,
+      "primitives": 1
+    }
+  ],
+  "render": [],
+  "scenery": [
+    {
+      "id": "reference-mountain-chunk-a",
+      "name": "Reference · mountain chunk a",
+      "category": "foliage",
+      "type": "prop",
+      "file": "models/environment/props/reference-mountain-chunk-a/model.glb"
+    }
+  ],
+  "source": {
+    "path": "assets/models/environment/props/reference-mountain-chunk-a/model.glb",
+    "sha256": "e71c23efc543eaad9a09e78609833f54e5b500fba26f033a06b3c489022197d6",
+    "quality": "runtime-only"
+  },
+  "origin": {
+    "method": "import"
+  },
+  "validation": {
+    "checkedAt": "2026-09-20T11:06:16.134Z",
+    "warnings": [
+      "Authorized reference art; cache provenance and geometry audit in art/references/trees-water-study/import-manifest.json.",
+      "Tree harvesting uses UTC adapter clips, not recovered source skeletal animation."
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.ground.curled-forest-leaf",
+  "name": "Curled Forest Leaf",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "canopy",
+    "forest-floor",
+    "ground-detail"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "a880688c5e06e0a6b34bee7272cb31124cc469325649dcfe1c0011987005a148",
+      "bytes": 19312
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "461c9b12f3aa59337e14ee3970b79a328f2077feef89ccb30fa181599871d881",
+      "bytes": 2989189
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "curled-forest-leaf",
+        "name": "Curled Forest Leaf",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "461c9b12f3aa59337e14ee3970b79a328f2077feef89ccb30fa181599871d881"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.rocks.synty-rock-pile-curved-02",
+  "name": "Rock Pile Curved 02",
+  "kind": "prop",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "synty",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "952640888ba0736671bd06c0bfc307905984bd694bc61a756ff08d5b0325a09d",
+      "bytes": 1412724
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "gltf",
+      "sha256": "ea9a0ca0847aeef3765ff2059c7febec3deea3aa0c3986ffa286b9c707528321",
+      "bytes": 1883124
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "synty-rock-pile-curved-02",
+        "name": "Rock Pile Curved 02",
+        "category": "terrain",
+        "type": "ground",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "ea9a0ca0847aeef3765ff2059c7febec3deea3aa0c3986ffa286b9c707528321"
+  }
+}

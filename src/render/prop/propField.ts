@@ -1,9 +1,17 @@
 import {bridgePlacementHeight} from '../../shared/map/bridgeSurface';
+import {sceneryModels} from '../../shared/assets/models';
+import type {ModelPlacement} from '../../shared/authoring/modelCatalogue';
+import {transformedModel} from './modelTransform';
 import {foliageWind,FoliageWindLayer} from './foliageWind';
+import {referenceMaterialPlugin} from './referenceMaterial';
+import {prepareReferencePlants} from './referencePlants';
+import {ReferenceGround} from './referenceGround';
+import {referenceTexture,macroUrl} from '../terrain/referenceTerrain';
+import type {HeightField} from '../../shared/map/height';
 import {ResinShimmerLayer} from './resinShimmer';
 import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from './staticBatch';
-import pineLod from '../../../assets/models/environment/trees/olive-pine/model.glb?url';
+import pineLod from '../../../assets/library/asset.models.environment.trees.olive-pine/geometry.glb?url';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prepareAntMaterials } from './antMaterials';
@@ -12,10 +20,13 @@ import { prototypeBounds, prototypeGroundOffset } from './grounding';
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
  */
-import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, type Raycaster, type Scene } from "three";
+import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, Texture, type Raycaster, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
 import { flattenPolygon } from "./polygonLook";
+
+/** An isolated editor alias preserves its original look without replacing map assets. */
+export type PropModelOptions=ModelPlacement&{sourceAsset:string};
 
 export class PropField {
   /** Raycast only nearby static bounds, then exact geometry. No scene-wide triangle scan. */
@@ -30,9 +41,11 @@ export class PropField {
     return distance;
   }
   private readonly wind=new FoliageWindLayer();
+  private readonly referenceGround=new ReferenceGround();
+  private referenceMacro:import('three').Texture|undefined;
   private readonly resin=new ResinShimmerLayer();
   tick(now:number){this.wind.tick(now);this.resin.tick(now);}
-  private readonly loader = new GLTFLoader();
+  private readonly loader = new GLTFLoader().register(referenceMaterialPlugin);
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private batches: InstancedMesh[]=[];
@@ -54,7 +67,8 @@ export class PropField {
     perf.value('Tree mesh instances at distant LOD',coarse);
   }
   private destroyed=false;
-  private readonly batchDisposers: (()=>void)[]=[];
+  private readonly prototypeDisposers=new Map<Object3D,()=>void>();
+  private modelOverrides:ReadonlyMap<string,PropModelOptions>=new Map();
   private lastStamps: readonly MapStamp[] | null=null;
   private height: ((x: number, z: number) => number) | null = null;
   private float = new Set<string>();
@@ -72,7 +86,7 @@ export class PropField {
     private readonly cutaway?:SceneryCutaway,
   ) {}
 
-  async ready():Promise<void>{await Promise.all(this.protos.values());}
+  async ready():Promise<void>{await Promise.all([...this.protos.values(),this.referenceGround.ready]);}
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     const unique = new Map(stamps.map(s => [`${s.asset}#${s.variant ?? "base"}`, s]));
     const results = await Promise.all([...unique.values()].map(s => this.proto(s.asset, s.variant)));
@@ -89,6 +103,7 @@ export class PropField {
       if(keys.has(key))return;keys.add(key);
       for(const geometry of [o.geometry,this.lodByGeometry.get(o.geometry.uuid)].filter((g):g is Mesh['geometry']=>!!g)){
         const mesh=new InstancedMesh(geometry,o.material,1);
+        if(o.userData.sourceTreeWind)mesh.setColorAt(0,new Color(0,1,1));
         mesh.customDepthMaterial=o.customDepthMaterial;
         mesh.castShadow=mesh.receiveShadow=true;
         this.warmMeshes.push(mesh);
@@ -97,9 +112,12 @@ export class PropField {
     return this.warmMeshes;
   }
   diagnostics() { return { loaded:this.placed.size,failed:[...this.failed],bounds:Object.fromEntries(this.bounds) }; }
+  boundsFor(ids:readonly string[]):Box3{
+    const box=new Box3();for(const id of ids){const root=this.placed.get(id);if(root){root.updateMatrixWorld(true);box.expandByObject(root,true);}}return box;
+  }
   setSeason(season:string):void { this.season=season;for(const root of this.placed.values())this.tint(root); }
   private tint(root:Object3D):void {
-    const evergreen=/pine|spruce|fern|reeds/.test(String(root.userData.asset));
+    const evergreen=/pine|spruce|fern|reeds/.test(String(root.userData.lookAsset??root.userData.asset));
     root.traverse(n=>{
       if(!(n instanceof Mesh))return;
       for(const m of (Array.isArray(n.material)?n.material:[n.material])){
@@ -113,17 +131,17 @@ export class PropField {
         const base=m.userData.foliageBase as number[]|undefined;
         if(!base||!(m instanceof MeshLambertMaterial))continue;
         const c=new Color().setRGB(base[0]!,base[1]!,base[2]!);
-        if(evergreen)c.set(/reeds/.test(String(root.userData.asset))?0xd2c589:0x286f4b);
+        if(evergreen)c.set(/reeds/.test(String(root.userData.lookAsset??root.userData.asset))?0xd2c589:0x286f4b);
         if(!evergreen){
-          const name=String(root.userData.asset);let hash=0;for(const ch of name)hash=(hash*31+ch.charCodeAt(0))>>>0;
+          const name=String(root.userData.lookAsset??root.userData.asset);let hash=0;for(const ch of name)hash=(hash*31+ch.charCodeAt(0))>>>0;
           if(this.season==='autumn')c.set([0xc99738,0xb45b32,0xd7b644,0xc68043][hash%4]!);
           else if(this.season==='spring')c.set(/willow/.test(name)?0x99d36a:0x80c653);
           else c.set(/willow/.test(name)?0x83b958:0x639f40);
         }
         const variant=root.userData.variant;
-        if(variant==='pink')c.set(/willow/.test(String(root.userData.asset))?0xffada8:0xffb1a7);
+        if(variant==='pink')c.set(/willow/.test(String(root.userData.lookAsset??root.userData.asset))?0xffada8:0xffb1a7);
         if(variant==='snow')c.set(0xe1e0ef);
-        if(variant==='gold')c.set(/willow/.test(String(root.userData.asset))?0xffbd71:0xffca0c);
+        if(variant==='gold')c.set(/willow/.test(String(root.userData.lookAsset??root.userData.asset))?0xffbd71:0xffca0c);
         if(variant==='red')c.set(0xca7648);
         if(variant==='green')c.set(0x67b04c);
         m.color.copy(c);m.emissive.copy(c);
@@ -143,12 +161,32 @@ export class PropField {
     });
   }
 
-  setUrls(urls: ReadonlyMap<string, string>): void {
+  setUrls(urls: ReadonlyMap<string, string>,models:ReadonlyMap<string,PropModelOptions>=new Map()): void {
+    const changed=new Set<string>();
+    for(const id of new Set([...this.urls.keys(),...urls.keys()])){
+      if(this.urls.get(id)!==urls.get(id)||JSON.stringify(this.modelOverrides.get(id))!==JSON.stringify(models.get(id)))changed.add(id);
+    }
     this.urls = urls;
+    this.modelOverrides=models;
+    if(!changed.size)return;
+    this.gen++;this.lastStamps=null;
+    for(const [id,root]of this.placed)if(changed.has(root.userData.asset)){root.removeFromParent();this.placed.delete(id);}
+    for(const [key,pending]of this.protos)if(changed.has(key.slice(0,key.lastIndexOf('#')))){
+      this.protos.delete(key);void pending.then(root=>{if(root)this.disposePrototype(root);});
+    }
+    for(const id of changed){this.failed.delete(id);this.bounds.delete(id);}
+    for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
+    // Remove instance buffers before releasing the shared prototype geometry.
+    this.rebuildBatches();
   }
 
-  setHeight(sample: ((x: number, z: number) => number) | null): void {
+  private modelOptions(asset:string):PropModelOptions|undefined{
+    return this.modelOverrides.get(asset)??(sceneryModels.has(asset)?{...sceneryModels.get(asset)!,sourceAsset:asset}:undefined);
+  }
+
+  setHeight(sample: ((x: number, z: number) => number) | null,field:HeightField|null=null): void {
     this.height = sample;
+    this.referenceGround.update(field);
     this.relift();
   }
 
@@ -203,17 +241,10 @@ export class PropField {
   }
 
   destroy(): void {
-    this.destroyed=true;this.wind.dispose();
-    for(const dispose of this.batchDisposers)dispose();this.batchDisposers.length=0;
+    this.destroyed=true;this.wind.dispose();this.referenceGround.dispose();this.referenceMacro?.dispose();
     for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
     this.gen++;
-    for(const pending of this.protos.values())void pending.then(root=>root?.traverse(node=>{
-      if(!(node instanceof Mesh))return;
-      node.geometry.dispose();
-      for(const mat of Array.isArray(node.material)?node.material:[node.material]){
-        const m=mat as MeshLambertMaterial;m.map?.dispose();mat.dispose();
-      }
-    }));
+    for(const pending of this.protos.values())void pending.then(root=>{if(root)this.disposePrototype(root);});
     this.protos.clear();
     for(const geometry of this.lodGeometries)geometry.dispose();this.lodGeometries.clear();this.lodByGeometry.clear();
     for (const mesh of this.placed.values()) this.scene.remove(mesh);
@@ -225,6 +256,19 @@ export class PropField {
       this.mark.geometry.dispose();
       this.mark = null;
     }
+  }
+
+  private disposePrototype(root:Object3D):void{
+    this.prototypeDisposers.get(root)?.();this.prototypeDisposers.delete(root);
+    const textures=new Set<Texture>(),materials=new Set<Mesh['material']>(),geometry=new Set<Mesh['geometry']>();
+    root.traverse(node=>{
+      if(!(node instanceof Mesh))return;
+      geometry.add(node.geometry);
+      for(const mat of Array.isArray(node.material)?node.material:[node.material]){
+        materials.add(mat);for(const value of Object.values(mat))if(value instanceof Texture)textures.add(value);
+      }
+    });
+    for(const g of geometry)g.dispose();for(const m of materials)if(!Array.isArray(m))m.dispose();for(const t of textures)t.dispose();
   }
 
   private async spawn(stamp: MapStamp, gen: number): Promise<void> {
@@ -243,14 +287,16 @@ export class PropField {
     const hit = this.protos.get(key);
     if (hit) return hit;
     const url = this.urls.get(asset);
-    const pending = url ? this.load(url, asset, variant) : Promise.resolve(null);
+    const pending = url ? this.load(url, asset, variant,this.modelOptions(asset)) : Promise.resolve(null);
     this.protos.set(key, pending);
     return pending;
   }
 
-  private async load(url: string, asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
+  private async load(url: string, id: string, variant?: MapStamp["variant"],model?:PropModelOptions): Promise<Object3D | null> {
     try {
+      const asset=model?.sourceAsset??id;
       const gltf = await this.loader.loadAsync(url);
+      let disposeBatch=()=>{};
       let wind:ReturnType<typeof foliageWind>=null;
       gltf.scene.traverse(node=>{wind??=foliageWind(node.userData.foliageWind);});
       if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
@@ -266,25 +312,28 @@ export class PropField {
         node.castShadow = true;
         node.receiveShadow = true;
       });
+      const referenceOrigin=prepareReferencePlants(gltf.scene,this.referenceGround,()=>this.referenceMacro??=referenceTexture(macroUrl,false));
+      if(referenceOrigin&&asset.startsWith('reference-fir'))wind={amplitude:.12,speed:.22};
       if(!lodUrl){
-        const dispose=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
-        if(this.destroyed)dispose();else this.batchDisposers.push(dispose);
+        disposeBatch=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
       }
       gltf.scene.updateMatrixWorld(true);
       const box=prototypeBounds(gltf.scene);
-      if(wind)this.wind.attach(gltf.scene,wind,box.max.y-box.min.y);
+      const disposeWind=wind?this.wind.attach(gltf.scene,wind,referenceOrigin?box.max.y:box.max.y-box.min.y,referenceOrigin?this.referenceGround.sourceOffset:undefined):()=>{};
       this.resin.attach(gltf.scene);
-      this.bounds.set(asset,{minY:box.min.y,height:box.max.y-box.min.y});
       gltf.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])this.cutaway?.attach(m,box.max.y-box.min.y);});
-      const root=new Object3D();
       // Trees use zero as their soil line; negative vertices are buried roots, not a pivot error.
       // Positive-only offsets still need normalization.
-      gltf.scene.position.y+=prototypeGroundOffset(asset,box.min.y,this.float.has(asset));
+      const grounding=model?.groundContact;
+      const groundOffset=grounding==='terrain'?-box.min.y:grounding?0:prototypeGroundOffset(asset,box.min.y,this.float.has(id),referenceOrigin);
+      const root=transformedModel(gltf.scene,model?.transform??{scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'},groundOffset);
+      this.prototypeDisposers.set(root,()=>{disposeBatch();disposeWind();});
+      const transformed=prototypeBounds(root);
+      this.bounds.set(id,{minY:transformed.min.y,height:transformed.max.y-transformed.min.y});
       root.userData.variant=variant;
-      root.add(gltf.scene);
       return root;
     } catch {
-      this.failed.add(asset);
+      this.failed.add(id);
       return null;
     }
   }
@@ -294,11 +343,15 @@ export class PropField {
     const x = stamp.x + 0.5;
     const z = stamp.y + 0.5;
     mesh.userData.asset = stamp.asset;
+    mesh.userData.lookAsset=this.modelOptions(stamp.asset)?.sourceAsset??stamp.asset;
     mesh.userData.stamp = stamp.id;
     mesh.userData.elevation=stamp.elevation??0;
+    mesh.userData.sourceHeight=stamp.sourceTransform?.height;
+    mesh.userData.sourceObscurance=(stamp.sourceTransform?.packedUserData?.[0]??0)/255;
     mesh.userData.walkStamp=stamp.walk?.height!==undefined?stamp:undefined;
-    mesh.position.set(x, stamp.walk?.height!==undefined?bridgePlacementHeight(stamp,()=>0):this.sitY(stamp.asset, x, z)+(stamp.elevation??0), z);
+    mesh.position.set(x, stamp.sourceTransform?.height ?? (stamp.walk?.height!==undefined?bridgePlacementHeight(stamp,()=>0):this.sitY(stamp.asset, x, z)+(stamp.elevation??0)), z);
     mesh.rotation.set(stamp.pitch ?? 0, stamp.yaw ?? 0, stamp.roll ?? 0, "ZXY");
+    if(stamp.sourceTransform)mesh.quaternion.fromArray(stamp.sourceTransform.quaternion);
     mesh.scale.set(s*(stamp.widthScale??1),s*(stamp.heightScale??1),s*(stamp.depthScale??1));
   }
 
@@ -310,7 +363,7 @@ export class PropField {
   private relift(): void {
     for (const mesh of this.placed.values()) {
       const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
-      mesh.position.y = mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0);
+      mesh.position.y = mesh.userData.sourceHeight ?? (mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0));
     }
     this.queueBatches();
     this.syncMark();
@@ -329,7 +382,7 @@ export class PropField {
     for(const [id,root] of this.placed){
       root.updateMatrixWorld(true);
       root.userData.cameraBounds=new Box3().setFromObject(root);
-      const asset=String(root.userData.asset);
+      const asset=String(root.userData.lookAsset??root.userData.asset);
       if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
         const box=new Box3().setFromObject(root);
         const tree=/tree|pine/.test(asset),spread=tree?.17:.42;
@@ -358,7 +411,7 @@ export class PropField {
         b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
         const batch=b;
         b.onAfterRender=renderer=>perf.count(batch.userData.category,renderer.info.render.triangles-trianglesBefore);
-        b.castShadow=b.receiveShadow=true;b.matrixAutoUpdate=false;b.matrixWorldAutoUpdate=false;this.scene.add(b);
+        b.castShadow=g.source.castShadow;b.receiveShadow=g.source.receiveShadow;b.renderOrder=g.source.renderOrder;b.matrixAutoUpdate=false;b.matrixWorldAutoUpdate=false;this.scene.add(b);
       }
       let changed=b.count!==g.poses.length;
       const matrices=b.instanceMatrix.array;
@@ -370,10 +423,19 @@ export class PropField {
         if(changed)b.setMatrixAt(i,g.poses[i]);
       }
       b.count=g.poses.length;b.userData.stampIds=g.ids;
-      b.userData.category=String(this.placed.get(g.ids[0])?.userData.asset).includes('pine')?'Tree triangles':'Other prop triangles';
+      if(g.source.userData.sourceTreeWind){
+        const color=new Color();let colorChanged=false;
+        for(let i=0;i<g.ids.length;i++){
+          const shelter=Math.fround(Number(this.placed.get(g.ids[i]!)?.userData.sourceObscurance)||0);
+          if(!b.instanceColor||b.instanceColor.getX(i)!==shelter){b.setColorAt(i,color.setRGB(shelter,1,1));colorChanged=true;}
+        }
+        if(colorChanged&&b.instanceColor)b.instanceColor.needsUpdate=true;
+      }
+      b.userData.category=/pine|reference-fir/.test(String(this.placed.get(g.ids[0])?.userData.asset))?'Tree triangles':'Other prop triangles';
       if(changed||!b.boundingSphere){
         b.instanceMatrix.needsUpdate=true;
-        const displayed=b.geometry;b.geometry=g.source.geometry;b.computeBoundingSphere();if(b.boundingSphere)b.boundingSphere.radius+=.5;b.geometry=displayed;
+        // Source harmonics can travel farther than the native .5-unit sway.
+        const displayed=b.geometry;b.geometry=g.source.geometry;b.computeBoundingSphere();if(b.boundingSphere)b.boundingSphere.radius+=g.source.userData.sourceTreeWind?1.25:.5;b.geometry=displayed;
       }
       this.batches.push(b);
     }

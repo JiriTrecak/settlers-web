@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.trees.ancient-canopy-trunk",
+  "name": "Ancient Tree",
+  "kind": "tree",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "forest-warfare",
+    "natural-materials",
+    "forest-floor"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "35a97acfa7963bad7b71199a2490e78483543a70a195be8fe6b367b75715f58f",
+      "bytes": 144588
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2664c23fb1d1f6ef416154023ebe84e4567964d516372bdd2ff3705dee1d11ef",
+      "bytes": 3407482
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "ancient-canopy-trunk",
+        "name": "Ancient Canopy Trunk",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blocker": {
+          "width": 14,
+          "depth": 14,
+          "shape": "ellipse"
+        }
+      }
+    ]
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "2664c23fb1d1f6ef416154023ebe84e4567964d516372bdd2ff3705dee1d11ef"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "id": "asset.interface.main-menu.chain",
+  "name": "Chain",
+  "kind": "interface",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "main-menu",
+    "migrated"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "545f002af298d62d3a238fb3404d7ae1c47ec69677f73e10695307d9fd76bfc4",
+      "bytes": 493781
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration",
+    "sourceHash": "545f002af298d62d3a238fb3404d7ae1c47ec69677f73e10695307d9fd76bfc4"
+  }
+}
