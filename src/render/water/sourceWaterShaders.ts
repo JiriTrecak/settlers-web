@@ -3,10 +3,11 @@ import {sourceWavesGLSL} from './sourceWaves';
 const common=`
 uniform float uSourceWaterTime;
 uniform sampler2D uSourceWaterFlow,uSourceWaterGround,uSourceWaterWaves;
-uniform vec2 uSourceWaterOrigin,uSourceWaterSize,uSourceWaterOffset;
+uniform vec2 uSourceWaterOrigin,uSourceWaterSize,uSourceWaterOffset,uSourceWaterGroundSize;
+uniform float uSourceWaterGroundScale;
 ${sourceWavesGLSL}
 float sourceGround(vec2 p){
- vec2 size=uSourceWaterSize*3.+1.,q=clamp((p-uSourceWaterOrigin)*3.,vec2(0.),size-1.),i=floor(q),f=fract(q),uv=(i+.5)/size,d=1./size;
+ vec2 size=uSourceWaterGroundSize,q=clamp((p-uSourceWaterOrigin)*uSourceWaterGroundScale,vec2(0.),size-1.),i=floor(q),f=fract(q),uv=(i+.5)/size,d=1./size;
  return mix(mix(texture2D(uSourceWaterGround,uv).r,texture2D(uSourceWaterGround,uv+vec2(d.x,0.)).r,f.x),mix(texture2D(uSourceWaterGround,uv+vec2(0.,d.y)).r,texture2D(uSourceWaterGround,uv+d).r,f.x),f.y);
 }
 uniform samplerCube uReflectionCube;

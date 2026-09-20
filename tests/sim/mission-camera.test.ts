@@ -1,8 +1,7 @@
 import {it,expect} from 'vitest';
-import {readFileSync} from 'node:fs';
-import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {Game} from '../../src/sim/game/game';
-function game(script:string){const source=parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-prologue.utcmap','utf8')))!;return new Game({...source,entities:source.entities.filter(e=>!e.id.startsWith('tree.')),mission:{...source.mission!,script}},[{player:0,kind:'human'}]);}
+import {missionFixture} from './mission-fixture';
+function game(script:string){return new Game(missionFixture(script),[{player:0,kind:'human'}]);}
 it('saves scripted unit shots deterministically and ends the scene',()=>{
  const script='function on_start() mission.camera("third-person", "marshal", "vanguard-scout", 6, 1.8, 60, 0.5) end\nfunction on_tick() if mission.tick() >= 12 then mission.end_scene() end end';
  const a=game(script);a.tick();expect(a.state.mission?.error).toBeNull();expect(a.state.mission?.scene?.camera).toMatchObject({entity:'marshal',lookAt:'vanguard-scout',transitionMs:500});

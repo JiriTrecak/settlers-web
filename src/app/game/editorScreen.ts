@@ -199,7 +199,7 @@ export class EditorScreen extends GameScreen {
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
     {
-      const initial = hooks.map ?? getMap("worldroot-hollow").map;
+      const initial = hooks.map ?? getMap("authoring-playground").map;
       this.saved = stringifyUtcMap(initial);
       this.editor.replace(initial);
     }
@@ -209,7 +209,7 @@ export class EditorScreen extends GameScreen {
     // Reloads must never interrupt the live editor / MCP iteration loop.
     try {
       const draft = parseUtcMap(
-        JSON.parse(sessionStorage.getItem("utc-editor-draft") ?? "null"),
+        JSON.parse(sessionStorage.getItem("utc-editor-draft-scouring-1") ?? "null"),
       );
       if (draft && !hooks.map) this.editor.replace(draft);
     } catch {
@@ -549,7 +549,7 @@ export class EditorScreen extends GameScreen {
     this.environmentDock?.sync();
     try {
       sessionStorage.setItem(
-        "utc-editor-draft",
+        "utc-editor-draft-scouring-1",
         stringifyUtcMap(this.editor.map),
       );
     } catch {

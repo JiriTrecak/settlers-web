@@ -1,0 +1,6070 @@
+{
+  "version": 1,
+  "policy": "Keep Scouring references and forest-warfare models. Archive prior styles; preserve required runtime IDs with diagnostic geometry.",
+  "placeholder": "asset.placeholder.missing-model",
+  "retired": [
+    {
+      "id": "asset.models.buildings.ants.bark-cottage",
+      "name": "Bark Cottage",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.cottage"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "28566ed2596f3aa1162cbb11119547f818ed0b8a84888aeae32eaeece2dc6dc6",
+          "bytes": 229644
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.ants.lumberjack-workshop",
+      "name": "Lumberjack hut",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.ants.lumberjack"
+      ],
+      "scenery": [
+        "lumberjack-hut",
+        "ant-lumberjack"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "bc6ab1e8016593396c8e84b43015f36f2b998ee690cb68d8e92ec581ff4e2470",
+          "bytes": 2174924
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "995a1b1128d415e799d9d32efd9bcba0bbb4b3a78d19c7bf311d243f152199a4",
+          "bytes": 1703925
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.ants.player-stonemason",
+      "name": "Player Stonemason",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.ants.stonemason"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "669adf3890b588dc2698386421a428377a236f63db3de4757809794376abdeb6",
+          "bytes": 603952
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a2a8407f775a10d6d85ca62ab09adc35933bfd5898e0c80437469328ae94a02a",
+          "bytes": 1880553
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.ants.sawmill",
+      "name": "Sawmill",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.ants.sawmill"
+      ],
+      "scenery": [
+        "sawmill",
+        "ant-sawmill"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "319d01cdc3254ddf5217a30cccf5df0c222f47bae0ce7c0f55c3de42e8733827",
+          "bytes": 2309716
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.ants.stonemason",
+      "name": "Ant colony · Stonemason",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-stonemason"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ff982a07c782d91aa35392f2cd26646ea90110e5595d091d85fd0d4f5bdd63cb",
+          "bytes": 1153440
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.neutral.ruined-cottage",
+      "name": "Ruined Cottage",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.ruined-cottage"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5b42bebcdeb2a67cd881c99f910faa430196f95c3b241a40346db7479ba1c032",
+          "bytes": 36848
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.neutral.supply-crate",
+      "name": "Supply Crate",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.supply-crate"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "23b6b6ad368e4622fb7aec042d12b1bef1b692f772ddfdc8624de10d3e93b0b1",
+          "bytes": 19340
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.buildings.neutral.twig-cage",
+      "name": "Twig Cage",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.cage"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1c18106b0c28637c52888087f3d0a06bfdd9261fb2bb383de4b4fd258189c500",
+          "bytes": 89652
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.briarwatch.merchant-cart",
+      "name": "Merchant Cart",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.merchant-cart"
+      ],
+      "scenery": [
+        "briarwatch-merchant-cart"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "79306db8101dc6c5f373665afabdc8370148ac58161229e54cf9fe96ce5223c0",
+          "bytes": 128360
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.briarwatch.watch-bivouac",
+      "name": "Watch Bivouac",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.watch-bivouac"
+      ],
+      "scenery": [
+        "briarwatch-watch-bivouac"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d41691c6cb7a8938bd908dd2010e1b997d4f1ac8699f6b4ea8e42660afa94309",
+          "bytes": 42068
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2169de334b75bb9c2b73b726068eb24b38f5c4891f5091aec29b3ba3b3afa216",
+          "bytes": 2186525
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.broadleaf",
+      "name": "Ant colony · Broadleaf",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-broadleaf"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "45dbdb6fee12ea63fd5f15cf14071b33280942d6eb10beef4523846d5c04ab9a",
+          "bytes": 69584
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.fern",
+      "name": "Ant colony · Fern",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-fern"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "54199d4045bbcb319450e1360d5bca1065398f4f8e93fcdd1840b92dfa908e85",
+          "bytes": 200068
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass",
+      "name": "Ant colony · Grass",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-grass"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7275cdd10bacdf650643df24311d7f01809b6677d831e71f47c7c911c5ede5e4",
+          "bytes": 15396
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-01",
+      "name": "Grass V5 01",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "67e1950adb8df9306dd6d40ac9d422a05daf68b03eb2022adc5a180f1909c54e",
+          "bytes": 14088
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-02",
+      "name": "Grass V5 02",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "bdb10cc57ae421e84ba445a7ff0d272b982eee7e1d83778672fcc4e376db4142",
+          "bytes": 22216
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-03",
+      "name": "Grass V5 03",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6ad42e2c47925153e97c34574dc2c3eba9dd4d2505478129e3f421bc35c19050",
+          "bytes": 35604
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-04",
+      "name": "Grass V5 04",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e303a05e9296ab0460ab9e9e3ca98010aa197e47d9c8bdf2d874740082e175bc",
+          "bytes": 18184
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-05",
+      "name": "Grass V5 05",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_05"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2fdd8544b29136b25f0510144bfac9e295f6c5c214130f0103cfe13fee5f397d",
+          "bytes": 42984
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-06",
+      "name": "Grass V5 06",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_06"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "be00b9561e2d09dd21da26513d95085c538d6132fbbfda6e6140024480baafd5",
+          "bytes": 67672
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v5-07",
+      "name": "Grass V5 07",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v5_07"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "dc9e1b14fb70cf7866ad1b0eabd612f2806a617724bb6d18be1ee3cb73f97076",
+          "bytes": 26024
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v6-01",
+      "name": "Grass V6 01",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v6_01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d23eb759cea539820227166a5068b64a591a9059731b4f712479d75b3f0562e1",
+          "bytes": 5916
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v6-02",
+      "name": "Grass V6 02",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v6_02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1eb164b8573b497438488e26e7b633e309287aac028f4536a3ac9a1b07005f77",
+          "bytes": 13716
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.grass-v6-03",
+      "name": "Grass V6 03",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "grass_v6_03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9456a858914534a95944512fb502eaef96956043b3ecf80f4a61cf0c972b335a",
+          "bytes": 23776
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.reeds",
+      "name": "Ant colony · Reeds",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-reeds"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c63037bce36764da118ddd890d69ac11f03876efb7a71e0bca289206eb65e4be",
+          "bytes": 18220
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.river-reeds",
+      "name": "River reeds · repaired",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-reeds"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7006730b7b30639fc1629da3614d93dc37e1a7fce3611b942e9bb2c57a4cabb0",
+          "bytes": 154072
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "8647125262c974352025333f2feb6ac410b56af52cc2c63ac6b4f516ccce3311",
+          "bytes": 205020
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-fern-01",
+      "name": "Plant Fern 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-fern-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "4a6c623df6285d780ba149236cbcbe8878ae5a50cb4f92b846665b8b28ca2e2e",
+          "bytes": 109776
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "780b9ec9e09d3f26b007a0911c78f880671c69bc1c6f375cd22072d615d8a354",
+          "bytes": 145824
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-fern-02",
+      "name": "Plant Fern 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-fern-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9f4aec01a1c1d6311ee47b69c0c64f634504704e8487a156d02c72afa6b32cb5",
+          "bytes": 121364
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "d3ddfb7ccde5753e06b4fe23db155607e5a0ea54bb3a2541d6d20394d7076553",
+          "bytes": 161278
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-fern-03",
+      "name": "Plant Fern 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-fern-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6ce273eeb9b2b7a6eddc1ccff9a06c754ad3817b7e586687bc379140beedecef",
+          "bytes": 109740
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "8e4602c4113e5259fc5b091a587663e21a15ebf749c90c6bd540ce4797b63530",
+          "bytes": 145791
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-grass-02",
+      "name": "Plant Grass 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-grass-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "90a50efc38f6480e9a7b18e939399f3cefe6704c6ea561867dbe4561491760a7",
+          "bytes": 351988
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3a006262a8c3ba4742b2f6fe63dc7ef8e0199e01484a7d49f4bbabd8fb051177",
+          "bytes": 468760
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-reeds-01",
+      "name": "Plant Reeds 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-reeds-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "31d4550cbd5dac9bd1bfdc65300d368df046e35b3f5ad5efd8e2dd17a24c617b",
+          "bytes": 172152
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "b7967448937dd3a12fdb24ad6bb5a7f3faffeb07bd2502f78e2a828c0d9b4e7f",
+          "bytes": 228989
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-plant-reeds-02",
+      "name": "Plant Reeds 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-reeds-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "4db6a71c19cc1adf0fd92e968a11e204b9cb6e3a76170282743f7e7464506ecf",
+          "bytes": 176764
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "bdc25ff00505c7ba41da56f34ba451d1b5d6ee473960a537057e8fcc85b0e2bc",
+          "bytes": 235119
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-01",
+      "name": "Terrain GrassEdge 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e337f806c6f494808d9564ee2606f0daa762116a3a37d9869344ca134e8e8216",
+          "bytes": 43516
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4d9642fbf475c969242d05e83052dec0137b8a304a34fe1c265722885bca4ecc",
+          "bytes": 57537
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-02",
+      "name": "Terrain GrassEdge 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "346475bddcf227de4586ca35ce9b8358a106c2bb2371500bac2e1a476f086b07",
+          "bytes": 34180
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4c16a55665176dc0b52f3c4a56317e66d053f27b263fd86f7be43122b3bca4b0",
+          "bytes": 45072
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-03",
+      "name": "Terrain GrassEdge 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "343e58bf4971be14eb78f9b63f7972394606601817169e1cb3b876fe3a15c648",
+          "bytes": 34180
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a1af5736ad7aca1a36421a5ef1f3b59a2f97eb4bd704f430a527b280fed2117d",
+          "bytes": 45072
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-04",
+      "name": "Terrain GrassEdge 04",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "8e1fcb2a864dbe197f51a2d89ac57c1c27e0720735f48b748dc9bb67d2a01962",
+          "bytes": 36428
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1db2fba3707b24b5559b604d48d693fd205ea0f147925bccf59b5689ffd90ae0",
+          "bytes": 48066
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-01",
+      "name": "Terrain GrassEdge Roots 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-roots-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f209adfc194bfae04cc998b41dc53f0412ffcde835dbe56361454af21977a54f",
+          "bytes": 365156
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a933fe54ff23239ebd7e256f4bff007fe0157a30f66d9e4308bc6d85e698080d",
+          "bytes": 486347
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.grass.synty-terrain-grassedge-roots-02",
+      "name": "Terrain GrassEdge Roots 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-grassedge-roots-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "fc4bcb5b8edbd87eb6eff074de4b8337010884ac10cdb72555db00778e04cd8d",
+          "bytes": 347604
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "b7f481e7afa11b0a6bccf103dfc12ed8f357d44682b6e40ec0f3aef1befdca51",
+          "bytes": 462949
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.curled-forest-leaf",
+      "name": "Curled Forest Leaf",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "curled-forest-leaf"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a880688c5e06e0a6b34bee7272cb31124cc469325649dcfe1c0011987005a148",
+          "bytes": 19312
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "461c9b12f3aa59337e14ee3970b79a328f2077feef89ccb30fa181599871d881",
+          "bytes": 2989189
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.fallen-acorn",
+      "name": "Fallen Acorn",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "fallen-acorn"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1629a0b48ead69e334ceca17fd939704ed7b0f39a8e71c88cfe806c88bcb643d",
+          "bytes": 42172
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "616285ab95440e81def060343ed9261e2710495cb46b4a8847f9c499a713c4d2",
+          "bytes": 3009619
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.ground.forest-splinter-pile",
+      "name": "Forest Splinter Pile",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "forest-splinter-pile"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f7ed37e489227d4e9487c3d6dfc8337af3f1bf0e80b0480a4101148e52240bc2",
+          "bytes": 15236
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "aa5928785a53fdc5a13a3d7d64d5ff21589af364675916ead12248dddc23a13b",
+          "bytes": 2986531
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lanterncap-grove",
+      "name": "Lanterncap Grove",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lanterncap-grove"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "753da8885fd070c5661b77b558dd36ed24076945b391d84bef963b6f23e0f57b",
+          "bytes": 2004408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "6856fb28efb2335859d9e1cc5f6660653bbe9de4b049456562300fca25f0bd31",
+          "bytes": 12728715
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-01",
+      "name": "Lowpolymushroom 01",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1b85c6f159172360b7478593295816098655483b12c40413e1df8fe54ebeddac",
+          "bytes": 20776
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-03",
+      "name": "Lowpolymushroom 03",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "89aa9a7f0b7e1cc96903cede4e4268ac95c39128cafd2da5d8c8a56dec442216",
+          "bytes": 21268
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-04",
+      "name": "Lowpolymushroom 04",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "98d6e51f979461757603cbc251a4212fa51b3685913c3addc3f5bb03e7f85924",
+          "bytes": 56512
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-08",
+      "name": "Lowpolymushroom 08",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_08"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "406adae7e1f69385ae662c095dc097e82de93439d628e235d59d485745764293",
+          "bytes": 236316
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-09",
+      "name": "Lowpolymushroom 09",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_09"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "3a3b1883c0c3c535b8e2bbb1ecf847f5a5ed7c3fd7172f9c2f69f5023ffed5c9",
+          "bytes": 29236
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-17",
+      "name": "Lowpolymushroom 17",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_17"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "317e575401e7868659667dc72e45833730c11cfe48ccc3137687eb7176b0478a",
+          "bytes": 58936
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.lowpolymushroom-20",
+      "name": "Lowpolymushroom 20",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lowpolymushroom_20"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c8bdb0cffa4da7b49df6ca6c405804d10539ff41bca15b7d23d128dcec1b85e8",
+          "bytes": 13676
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.mushroom-chunky-red",
+      "name": "Mushroom — chunky red",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "mushroom-chunky-red"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "997b454fdf4d13e5692cba117c455ccb2c37c75869d94e86c9a0fe1e5362d88b",
+          "bytes": 47524
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mushrooms.synty-plant-mushrooms-01",
+      "name": "Plant Mushrooms 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-mushrooms-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1857b2280270c89487774100dce03078c2fc8ef23e83ab3bd305c52021ea5a79",
+          "bytes": 64684
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "afe9d9cd45924b010ebee0b46d04048bae01e899e756cba431ade73822a830dc",
+          "bytes": 85744
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.mossy-boulder-bank",
+      "name": "Mossy Boulder Bank",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "mossy-boulder-bank"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "54d47eba3bb1cdaaa80d2bba7fb366c59263ee891f2bdf598bdf32412cd9b52a",
+          "bytes": 41572
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "8dd003845804a6dbf4d518d2544ed7b530fb976b039b284987c83a04cf959c67",
+          "bytes": 2990754
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-1",
+      "name": "River rock 1",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-1"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "87d332bd29921f074e1d3d188baa1c40a877914ccb9241b9f714d6f3a3caf15e",
+          "bytes": 2408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c701856ebaad8a0e79a61b8247356f51ecc512d2323736ef5420b7a6a384dcc9",
+          "bytes": 2903
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-2",
+      "name": "River rock 2",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-2"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f078a82b7eac4d12340d83f1178c1e778718121b29f3c7f4c355a9775ef66270",
+          "bytes": 2408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7c13a0899836a1905a96944f9d15c9cbac47ecad75fdabc235ed2a4a647f6fd0",
+          "bytes": 2904
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-3",
+      "name": "River rock 3",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-3"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "4459118c726774226381debe5f909c645b1162659979d692afe2bcf2e6135e8b",
+          "bytes": 2408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "5f0cc26c343732b0cf8abf126b4e4735fc8ed4eabac233d48c5dfc5f2800579b",
+          "bytes": 2905
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-4",
+      "name": "River rock 4",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-4"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6f8c23257fb21762df34269e615abe647dd473c53ccf50d378021029f55b4a4f",
+          "bytes": 2408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2c896ebfbabe1673ded4a7f30caebf3520524404dc039699b17d226a5df05710",
+          "bytes": 2904
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-5",
+      "name": "River rock 5",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-5"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f5f10d33f53d72dff3434aa323398cf45a54c67607c17c91b9787fdf06297541",
+          "bytes": 2408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2b0337289e3a310b056c3592cf57a5bfdfde3b915dc3b2ac202b247681c4f548",
+          "bytes": 2905
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.river-rock-6",
+      "name": "River rock 6",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "river-rock-6"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e13668d004480dc413cdcf1025963620b62bcd75b39050f3f26f18ed6979cbfa",
+          "bytes": 6732
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "cb6c081cd1c7151edc0bb584d2e37f4f2cc06d939652cfd0e5434bb8320016f6",
+          "bytes": 8668
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.rock",
+      "name": "Ant colony · Rock",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.resource.ant-stone-deposit"
+      ],
+      "scenery": [
+        "ant-rock",
+        "ant-stone-deposit"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2143c2c88dfd0d2fcc76778bc38bb357e8c36040fcdee304b56db80134744f69",
+          "bytes": 15616
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.rock-rounded-cool",
+      "name": "Boulder — rounded cool stone",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "rock-rounded-cool"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b66536ed1eff40d65b366f74f82655c1946219a0141d557e9ed5f39b09da12b9",
+          "bytes": 3772
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-02",
+      "name": "Rock 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6c44c571fb095ddc3767d3b5eae01c0063a5bbe3d3a6829adc028154493c1ba6",
+          "bytes": 1320284
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "64024bb061be01ae5959dfc8c658ec899b3d8069f4381e216334f2445e3d1c7f",
+          "bytes": 1759877
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-03",
+      "name": "Rock 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f6e2f1558ef5ae0240fba0996e9327864c3e740d673e4979fa9e97f8db9ae469",
+          "bytes": 1318448
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "f5cf1c3ea57b71e80191b2df2d3ed08eae00ad7d1eb769eddddbaa0f6c08c93b",
+          "bytes": 1757429
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-boulder-01",
+      "name": "Rock Boulder 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-boulder-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e0300476751e1a9eb90e67adc243f331293bcb34e22d30563a107209ff622d8e",
+          "bytes": 1366204
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c81de60650d03b958e729ef066511c3a15d48cce80f1a9aad55988cf7cadc90f",
+          "bytes": 1821098
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-01",
+      "name": "Rock Cluster Large 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f281a271ca69a92e9558c8421d63efefcb7d3d318daa9d32973bc80ec83decf2",
+          "bytes": 1414564
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c4840170278fdbdc04f1481bddf478aa27b4f4b8de62179bf0ec242454faff8b",
+          "bytes": 1885576
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-02",
+      "name": "Rock Cluster Large 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d406a8a4d737603c28fbb8e6e9b94bb1e05cced0c3b9fba7574825ce4dc534b7",
+          "bytes": 1515344
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "74b5539fb42f8f98f1ae26b93dfbcf53a28ed15585b237698c52e04f6b9c5fd8",
+          "bytes": 2019946
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-03",
+      "name": "Rock Cluster Large 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2f72d9603a8503ecc551266456a274c3ac7fe2fa206e6dc14ac4bf9f68cd4be8",
+          "bytes": 1415176
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c5e552a90db649b40cdeafa4fa507be253744b793d355c00e7141825189e077f",
+          "bytes": 1886392
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-04",
+      "name": "Rock Cluster Large 04",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5073a6637e8b6abfc41c9e3aa8b0aed378b8d5e409d35dd8fe918590cd3fc48e",
+          "bytes": 1412728
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "fe8613eae950049511eb5b881c9d098b2456df72855cad658806a45e7d8f57c4",
+          "bytes": 1883125
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-05",
+      "name": "Rock Cluster Large 05",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-05"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9a08ff6132b9467cbdf12765c6feeb894ea6285dc7cfe525010f6179b5ddd17d",
+          "bytes": 1414768
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "73bf9ed0c5ea68a71461ae49b8916d4500d1b421f07fc1ba683fb43dfb6fb0fa",
+          "bytes": 1885847
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-cluster-large-06",
+      "name": "Rock Cluster Large 06",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-cluster-large-06"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c85148c941dfaf695ea4633de0ee44f31aec91b57eb87d87973f2bd45d03d0cd",
+          "bytes": 1517796
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a53aabb3a9b6945fa28c83374895f205392875bfdb2419abc939d569af0cec3b",
+          "bytes": 2023213
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-01",
+      "name": "Rock Pile 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2e21d3eef85ef76eb1e9fe5b0886a279ad1ee80031a6144514df20645ba89720",
+          "bytes": 1415772
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3051e2189264d45f4c5819cb04b00f8ba94cc393379eb0caa028ab3575e82778",
+          "bytes": 1887191
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-02",
+      "name": "Rock Pile 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a1bf10982b300571d57b61bf0744f3ddaf10839c911c6bdb08c20630e8b4a12e",
+          "bytes": 1385176
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c99faed769672389541905bdfcbe2b9ccd7987965006cc8bbbba08d9cf68afb9",
+          "bytes": 1846393
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-03",
+      "name": "Rock Pile 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "89a474d38a7d1352b40b26ec3b94272eeb1aba8b8eb8bed0f4889231f2620064",
+          "bytes": 1403940
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c13217807479dae3c9603bae89dd8dcc02563bab86a442a88bcbc96fc3704f4a",
+          "bytes": 1871415
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-04",
+      "name": "Rock Pile 04",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "645f1f9011c47cb25bbcd80bf85b6f1fb8ece085f3ba198b8f9f298f94a06a85",
+          "bytes": 1362736
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3f4c13489cc03c7edc943c886be0ff0c068485c533953f838aacf1654304afee",
+          "bytes": 1816473
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-05",
+      "name": "Rock Pile 05",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-05"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ee758842664269a6a4a92eb560f93d604fd9735d7698631c069c8d6b7d1ff34d",
+          "bytes": 1389656
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "278358ec0c32cf3a2097ffe8f3f102bf3061928fc1ffcfb39aaf83c2f9f5d0ed",
+          "bytes": 1852369
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-curved-01",
+      "name": "Rock Pile Curved 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-curved-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c390a72775f22fcb09da21983b8ae9a1a8b8367e7ad93379f079d6eab880859a",
+          "bytes": 1414768
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "eee9f1dfc670e5ed59f187aeee44c34a915bbf6fcd6bd80ebb4d844252bbbba9",
+          "bytes": 1885847
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-pile-curved-02",
+      "name": "Rock Pile Curved 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-pile-curved-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "952640888ba0736671bd06c0bfc307905984bd694bc61a756ff08d5b0325a09d",
+          "bytes": 1412724
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ea9a0ca0847aeef3765ff2059c7febec3deea3aa0c3986ffa286b9c707528321",
+          "bytes": 1883124
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-small-01",
+      "name": "Rock Small 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-small-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "fc79082a83062542d0b6fe71db637402cd3955d465bd765497a76ad1f0ee7919",
+          "bytes": 1332740
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c61e1a1c25d0788394c50763cce974fa4e5c55b27d349483760b5b17f7d4c285",
+          "bytes": 1776483
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-small-02",
+      "name": "Rock Small 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-small-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ef29f1f435f22f1b1438bc062c8da8647e0cf6415fa8645693e64a8fe40d4e76",
+          "bytes": 1317436
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a4057c713132938d37455fa7a63e32689f06c91f45faa2331404d75635498d17",
+          "bytes": 1756078
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-tile-01",
+      "name": "Rock Tile 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-tile-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9e4bfb263f6ae2e3bea97b79cf1a3796daeb387a5c47f0dfdbb152dec7a78ad5",
+          "bytes": 1540524
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1e65cf9c3470b4298b41ac7b5f491c74db93c781af89e027d56d6e1508b0db69",
+          "bytes": 2053523
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-tile-02",
+      "name": "Rock Tile 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-tile-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7114fd996f31ddade0663ae1de59ca6a3dc64f0b6d6ed466781be4d93d20bd74",
+          "bytes": 1540524
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dacd19df4dc735b5f995457e50fdcbae1a7771bbcdea929383904302b030f223",
+          "bytes": 2053524
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-tile-03",
+      "name": "Rock Tile 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-tile-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a68719ee4829346439669189124dbad01770eab6a95ab72a5b2abd609e1dd46a",
+          "bytes": 1386804
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "199d792a74902d487ffdcf1bebc1710ee28da99aab5e8d016790d2f5280e7601",
+          "bytes": 1848567
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-wall-01",
+      "name": "Rock Wall 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-wall-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a32eabe8cb03f6ebb0ab065eceb06b0819c513c6dc83a11c77456f47b2fab561",
+          "bytes": 1410472
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7aaf59182bd248462d54117de0a57eabde602f66725cde82f57c35955b0a665c",
+          "bytes": 1880121
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-rock-wall-02",
+      "name": "Rock Wall 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-rock-wall-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "27d10c23b305953995ac8209fd280276ec26641e63f211a3c564e7632fed4078",
+          "bytes": 1410468
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "6194a42a043a30d98f9f5a2c6090bee85dfbdd5c7a9d410774744e5f2ddf03a6",
+          "bytes": 1880117
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.rocks.synty-terrain-mountain-01",
+      "name": "Terrain Mountain 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-mountain-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1d109da0dbe2dfdfc16cdbd435ab4e115cb2a57472ce9a92c59c306cdceddcf9",
+          "bytes": 1409464
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "9624ef9c5a3801b9cec50dfc0738459291321ef1a611d25bd6ec40c4ac7272f8",
+          "bytes": 1878775
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shrubs.bramble-thicket",
+      "name": "Bramble Thicket",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "bramble-thicket"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "37a32e62d043f3e6731077b81b7bf1eeb2c061edce7ea39cf25673539c4eefb6",
+          "bytes": 128164
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "58f2749962c0e46f70822d1fe183c6a712e0a3863ef4f3c7b8b520072e9fa020",
+          "bytes": 3049185
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shrubs.fern-thicket",
+      "name": "Fern Thicket",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "ground-detail"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "fern-thicket"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f80a3d94ad6fe5f207ac31258cfa06f84e2829522bd69a130306e33b0d984542",
+          "bytes": 557440
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "cebf9eb3bfb37db50725a0b75766f4a042eeb735de7f252f9031605233fd5395",
+          "bytes": 3319634
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.amber-resin-sconce",
+      "name": "Amber Resin Sconce",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "amber-resin-sconce"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a9d89b33e508c4e6f49d7258f9eeaef06964eaa4d66fc283b3d667b975b4dd44",
+          "bytes": 344600
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4be6cfffda1e84fbd3e7efb054cb1e46bbc06e9aa5ee8b5fd1bf90d4920a44ed",
+          "bytes": 10665964
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.arched-root-walkway",
+      "name": "Arched Root Walkway",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "arched-root-walkway"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "441be94e5a9a92638d305145799d9b5627fbba50ef4be05890a3bd6063c8fc9e",
+          "bytes": 571512
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "e82029e00684b8aef672603fdff4577471ed9b6cedf661e1afdd6322c8030a2c",
+          "bytes": 11090347
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.bitter-heart",
+      "name": "Bitter Heart",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "bitter-heart"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "89b270c043ba60be21401ecd7b2ca12420dc95d488ffeec4b889ec057872d549",
+          "bytes": 1637980
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "cc2f011a713813d20a2ae68e1dfe638af6a5a836534af77c7a8788e0193385b3",
+          "bytes": 10305481
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.bridge-16",
+      "name": "Bridge 16",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "bridge-16"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6d87de438cd175886b6c6182e0a1b31b23d0ba7f31bcb5eccd643c441fdaa088",
+          "bytes": 20016
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dec707d59e5ad4f45731b0a1de6773235a4e63999c9075450ce295ef013669e7",
+          "bytes": 26296
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.bridge-32",
+      "name": "Bridge 32",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "bridge-32"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "16fd27d6afc126b7ff6fe4d1aa0a96864f2efa06282d06eeded360724d840010",
+          "bytes": 32984
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "405567ea03e59c49580055a236e839e77792c5c294647b0505c9e270fe517778",
+          "bytes": 43584
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.bridge-8",
+      "name": "Bridge 8",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "bridge-8"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "878234265c19ff79f58f7c270ee54818a8bc23232870da379e2e28b2dd14125c",
+          "bytes": 13532
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "aa491083a4f94f4fe24cad0df0a506650f8933b17870eb6babee71b0f7c39921",
+          "bytes": 17654
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.driftwood",
+      "name": "Ant colony · Driftwood",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-driftwood"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d90bce21b07bd68d318d42c4c5f42ad937d235952bf0effdabaf7bf18d52d6c6",
+          "bytes": 49204
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.elephant-leaf",
+      "name": "Ant colony · Elephant Leaf",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-elephant-leaf"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e10ec5a0b7a5bbedd77d83c7b02ed628144f773f36c4ec0cb914ac51d0ac160f",
+          "bytes": 97464
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.fallen-canopy-bough",
+      "name": "Fallen Canopy Bough",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "fallen-canopy-bough"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5124127d36a3daa85ad521a1e9321c0cbc95700c440c8fe63d0a153d36e51dcb",
+          "bytes": 2994852
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a67e66150c10fa38266f40f89c10a0e829edecc5b6ff316ebb8ca2de48582801",
+          "bytes": 5951655
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-bud-cream",
+      "name": "Flower — upright cream heads",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-bud-cream"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "790875fbd525d1d7caccdc68c0e7116f6c40d2bb10ba910f3b6d89e8e322ff99",
+          "bytes": 20356
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-chunky-blue",
+      "name": "Flower — chunky blue",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-chunky-blue"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "8817f238909b52d804e246fd9df4c86eae96a7acd9a168285cb18d7c0d1c897a",
+          "bytes": 46236
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-chunky-cream",
+      "name": "Flower — chunky cream",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-chunky-cream"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "bd51c51fd87e72e7a36006ea4c8d2c82021da7e4ad0fb682cb849462cf8ab250",
+          "bytes": 46220
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-chunky-purple",
+      "name": "Flower — chunky violet",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-chunky-purple"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "24d0f0aa615ab460bb1459886d6aa3bf2461d1637e47e6e9874b227217229110",
+          "bytes": 46240
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-single-blue",
+      "name": "Wildflower — single blue",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-single-blue"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "fafbe6a07339a6d6ede1ea252b10217206d5ed3a13f7751c293b1e6832097bbd",
+          "bytes": 17536
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-single-cream",
+      "name": "Wildflower — single cream",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-single-cream"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2eb2e1270455037ad751de21ad363104a93da61577dfe925b0b729d5383107bc",
+          "bytes": 17520
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.flower-single-purple",
+      "name": "Wildflower — single purple",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "flower-single-purple"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "28c2e8098a6e650d83084081688331befcb2a0e85c914463f91a0587c673a07d",
+          "bytes": 17540
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.heartwood-resin-font",
+      "name": "Living Resin Wellspring",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "heartwood-resin-font"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a05beb6950a498aeb552232eacda9577c29003816e6bbef2c6789a9c8b980628",
+          "bytes": 784012
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "51a9188ed78ca640832f317a0a104e8b322230b182f6fcb060bc0363d1013bb1",
+          "bytes": 7549317
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.heartwood-wall",
+      "name": "Heartwood Wall",
+      "tags": [
+        "heartwood",
+        "interior"
+      ],
+      "revision": 2,
+      "render": [],
+      "scenery": [
+        "heartwood-wall"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "bb713ee31b6b87f41649fc079895e2792bef1e79476ff937c80dc0615536cc03",
+          "bytes": 902268
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "f24638a9c71de88a4671d34ef23c42bde6ea8dd90c25f3c163bc3ccff9ccf4ac",
+          "bytes": 10714707
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.hollow-stump-gate",
+      "name": "Hollow Stump Gate",
+      "tags": [
+        "canopy",
+        "hollow-tree",
+        "mission-entrance",
+        "permanent-obstacle"
+      ],
+      "revision": 2,
+      "render": [],
+      "scenery": [
+        "hollow-stump-gate"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5cbb59afd7723220794d6950d6ddfbc8f8969b7cdefd0568eeba3d6d1dfde538",
+          "bytes": 917544
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "44d4b38119e53b45bda2e37bc27b624f2c96029ff69291bc252290dcdac499ab",
+          "bytes": 11160777
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.interwoven-root-bank",
+      "name": "Interwoven Root Bank",
+      "tags": [
+        "canopy",
+        "forest-floor",
+        "permanent-obstacle"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "interwoven-root-bank"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "71d6a9b3594040773a4d6cba8f0cd936bda9d47f466500f1e2bc64fd06b897df",
+          "bytes": 3115484
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "5c93a391c8bdd38e45fd81227de42a5291b396004111c2a5c456f67f276ee2b8",
+          "bytes": 5959037
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.lantern-post",
+      "name": "Wayfarer lantern",
+      "tags": [
+        "wayfarer",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lantern-post"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7da7f944d819d50e6fac0732a20006a5ec9eb687d26cb45b27764e4c87a6f7cf",
+          "bytes": 25972
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.legacy-lily",
+      "name": "Lily",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lily"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7f5ce6ef5ef44d6c7bc2beaaa037d607f5d5b6aa53553ae97d559d6bd6e7e871",
+          "bytes": 3304
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "067f05920ed66de56b4dc82425a5fe2db415e58f9b77a3cd469ac857c7125d92",
+          "bytes": 3899
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.lily",
+      "name": "Ant colony · Lily",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-lily"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "705b1aaa6d940696d25d71feecad535663de9c40394cdb081cb7f467d8b8cd4f",
+          "bytes": 3324
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.lily-chunky",
+      "name": "Lily — chunky pads",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lily-chunky"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a94bef30ab8a49bc31f63c24ce7b6eee879b921bc00382541bfae2a519fbce8e",
+          "bytes": 12060
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.lily-gold",
+      "name": "Lily gold",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lily-gold"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5e0ffc1c70cb3fd4a79d78f3998cb963c5019c78651470a150ba6eeda58a02cc",
+          "bytes": 3300
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "924c841c5c8b3a88bed3a0d292c83d29c3eb10cdb95b261e3045050ec451869a",
+          "bytes": 3898
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.lily-white",
+      "name": "Lily white",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "lily-white"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "810a028381f8b8ac24d08745247e1b907f593fba61a19b045d77733fc97f0acc",
+          "bytes": 3300
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "215ffbfe9c2fe317078ad3d99a47e6985d883be376ca547007462e4e82b532ca",
+          "bytes": 3897
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.loot-chest",
+      "name": "Loot Chest",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.item.chest"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6c39eb3eab5c71f69666056cebce2a0ff14838c5e8fae6a688c76ebbfbbc467e",
+          "bytes": 244960
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "25d1e985d515e045f79a810d7b38eaca3e9f7f545ddcdb7fe8da33831dc402a3",
+          "bytes": 1631430
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.moss-stone-bridge",
+      "name": "Moss Stone Bridge",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 2,
+      "render": [],
+      "scenery": [
+        "moss-stone-bridge"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "cfccb819a1bbda276c83de6010a52f77789ed815bf9d46f710c776e00812878d",
+          "bytes": 806172
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a2b4883839832f03f746b34b7488b883324eb0819e2d1c184fd03b2a63e60f35",
+          "bytes": 13506521
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.road-segment",
+      "name": "Packed-earth road",
+      "tags": [
+        "wayfarer",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "road-segment"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f226245e02c474de6b2404dd2c507ab49a91f577b67410994cfd2b57197322c4",
+          "bytes": 233800
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.splitrail-fence",
+      "name": "Split-rail fence",
+      "tags": [
+        "wayfarer",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "splitrail-fence"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "dac09e5d567207d1be8570eab971d9e84a61b8fedee5a98d695c81149a1e82c9",
+          "bytes": 10860
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-bush-02",
+      "name": "Plant Bush 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-bush-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "84e08a5c12cf4c1a2652322d6c97ee7b028434b0190a1b8021404ba5504756aa",
+          "bytes": 47368
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "531b353b8b1d99788175145ab22001428acf91a5601915404bc14878066928ca",
+          "bytes": 62632
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-bush-leaves-01",
+      "name": "Plant Bush Leaves 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-bush-leaves-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "59e95084c2dd1b02a5d78a551ec54fc5c08af246933ea6e25a011379ae8bfcef",
+          "bytes": 530616
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "5343976df46d4de2063d0e6a8e436c7d4de56721253d8dfd4273b17f0a70085a",
+          "bytes": 706941
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-bush-leaves-02",
+      "name": "Plant Bush Leaves 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-bush-leaves-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "51677223e53afa7458a4f5ab51ca1bc92cf6c13deee79d0c9a6fc2d70858e13d",
+          "bytes": 522336
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "5518bb837a0b5b866efe806360d3648f0dc39faae4427cd7c2b8acadf50837c0",
+          "bytes": 695900
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-bush-leaves-03",
+      "name": "Plant Bush Leaves 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-bush-leaves-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "64c6d6e49ae9e5e8bd3f169d74bcd1210e911b244bd62fa8a5a6c0fc2d8ff940",
+          "bytes": 534760
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "0be34bc2ddbd408616b75214d10c6e86bed1795b23737944300b6d449f98d05f",
+          "bytes": 712466
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-flowerpatch-01",
+      "name": "Plant FlowerPatch 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-flowerpatch-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "73ebf58c0bb535855b8ecd904a54ff698b8e95e3375434b77281af5ab9c0b05d",
+          "bytes": 359500
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "35359a02f3ef3c430f2e5f89c5e6642e0a624036199d7b3a3214ab0ae53fcbb3",
+          "bytes": 478815
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-flowers-01",
+      "name": "Plant Flowers 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-flowers-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "98a87a2eeaf8284542229246a3e8b1193a3091db94cb958058eccee5e8f77d2e",
+          "bytes": 47380
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4d085c783e8fba23cd4e37c0d1d8c3cafa37a096f2efe2866907589feca64434",
+          "bytes": 62642
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-lillypad-large-01",
+      "name": "Plant Lillypad Large 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-lillypad-large-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "19ea14c83134a0d000cbcfedc4b1af82b7a4bed88de9a5980ffa8ac2c2d30fd8",
+          "bytes": 59168
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3ddf929c582bb441b194b264f21cddc75e8eb5511333a9834b0116f7b8601f1a",
+          "bytes": 78390
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-lillypad-large-02",
+      "name": "Plant Lillypad Large 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-lillypad-large-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "28b3ea5d1633050634a07d956925578779cc94e0501e65f65ce55dd8bedb4f46",
+          "bytes": 42228
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2f9a2ca3d698d02fe5d9f154b3b42774b7ed905bcfd2484ea53b656190b62402",
+          "bytes": 55809
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-lillypad-large-03",
+      "name": "Plant Lillypad Large 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-lillypad-large-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "777c29b65a299fa7a8c089e6824fb04263e29911e0a2e80e4e1e66d39d0e0948",
+          "bytes": 16828
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "37eb66b15911ea01d56337492f6b18728302ee3e18159c25bc3fb3f10c7c3195",
+          "bytes": 21939
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-plant-lillypad-small-01",
+      "name": "Plant Lillypad Small 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-plant-lillypad-small-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2e72eec8a519021bea4a854e4a79bf27de02196c350d441aae0d5617c6f62961",
+          "bytes": 51616
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c5ec745aaaec57aa17d221c49f252527b6ea49241e2b0279f6848165b09f41f5",
+          "bytes": 68325
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-bridge-curved-01",
+      "name": "Prop Bridge Curved 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-bridge-curved-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "83427a81d6abf6e011ebd857460b248eb5fa029070629bdc39adf06b7356cbfc",
+          "bytes": 161792
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "96fe1d6ee3de11be6038f7c6bd98583c0d57320bee5ea9e6aa72c399626bf558",
+          "bytes": 215217
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-fence-01",
+      "name": "Prop Fence 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-fence-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e260a8bca1f227318b7ce7e5cafe54e835cc844eb2121e748324807b811cb3fe",
+          "bytes": 505944
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ac60709893d463eba7b961bb151df3885007eec269faf1e5058660a5bda3bc53",
+          "bytes": 674094
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-fence-02",
+      "name": "Prop Fence 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-fence-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5a4291320a025b7b47f62df6ed3589bb887508521f7e7c19ae7cfaed483790cd",
+          "bytes": 510432
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7f6f51aa639925819acc5ba55b43c0f4fb42ce8a17ff76b66b245b9526341d62",
+          "bytes": 680078
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-01",
+      "name": "Prop Pillar 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d9f8f353766ecede6de1ed4b540004bc0ab263afef5289c07b60547319055f7c",
+          "bytes": 79776
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4b5c57de4f0e4435260398a6c17501218fd65b9b1078540d38dea22f38dc18cd",
+          "bytes": 105866
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-01",
+      "name": "Prop Pillar Arch 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d582db08e6dfb0c783571bb8ab7db920898cd7b72933ea235a66a0b8dffa8fb3",
+          "bytes": 79776
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ddc7c66f8bc7d24d6e1afe66f2525c7df32db3aaecadf2d330a0b0406c40ba61",
+          "bytes": 105868
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-01",
+      "name": "Prop Pillar Arch Broken 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-broken-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "83f1ae06eff428b805a49d1c00e000ac9dc18156703db74fc0a79d0e6fb03384",
+          "bytes": 22668
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dc72bc0a89f4354a5995b4c4516c987819995dfc92cbbd3574ad91e5eaab756b",
+          "bytes": 29718
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-02",
+      "name": "Prop Pillar Arch Broken 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-broken-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1f511b39fa9a2811b83179d7953420aed53598c2349a52a5a6efe553e4a81138",
+          "bytes": 42464
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ce7d8022ea2941caadf7c649aa8c2c35ca0fec6a54191c2d887facd4b6ea86cb",
+          "bytes": 56110
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-01",
+      "name": "Prop Pillar Arch Broken Moss 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-broken-moss-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f79019c60d1238650bdc078066bb469cd17bd8a9905ab4ee4a124c9b1d49f3e6",
+          "bytes": 22676
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "0e0f0bf1d2db49df2df3741294daac55bbc3978119755e8e381e602bdb083ef0",
+          "bytes": 29727
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-broken-moss-02",
+      "name": "Prop Pillar Arch Broken Moss 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-broken-moss-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "943892d1375b903913b3e8b727ac47ad7bb38560a7c0430631306ca6672da8ed",
+          "bytes": 52372
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "16c674901df57f1562f9436454c63270047facab288560a2b186150bbd198031",
+          "bytes": 69314
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-arch-moss-01",
+      "name": "Prop Pillar Arch Moss 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-arch-moss-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "4cd4f7e76d9822ab0a3bc37365af6f23b6575e5a31e6b52796a10ddbd50d38fa",
+          "bytes": 94272
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dc5c89a37416fddf59e91879bdcbfc332070b80de605f5ac05020f20c9cfc183",
+          "bytes": 125191
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-broken-01",
+      "name": "Prop Pillar Broken 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-broken-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f1743317ce4cb5234647b5da8f72f1bc69d647d334a62d601d724820a3d65170",
+          "bytes": 45920
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ecf105e616d5e1383ff1b63c9f21f6ba0dd376ae3768454fcf1985dbd17a803e",
+          "bytes": 60725
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-broken-02",
+      "name": "Prop Pillar Broken 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-broken-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "4be4eb603c7aeaa582dc3136e1df09f05b982506dc7ed5343b59d2186af71d8b",
+          "bytes": 56512
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2f95c73db7ce185fa9a1ae8e3262d0cddf2840bd9edf062865bd8948d4430db7",
+          "bytes": 74851
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-01",
+      "name": "Prop Pillar Broken Moss 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-broken-moss-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "52fcba3110a77cdbfa550047da4718ce948e01ec07ef2572619ee7b483690dcc",
+          "bytes": 55828
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7a12c51b9948689038b19852dd812b066f7166535899275afec8dea303fb8f50",
+          "bytes": 73927
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-broken-moss-02",
+      "name": "Prop Pillar Broken Moss 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-broken-moss-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6b6560c5b7712cc56c891fc17b407ccd7de29ab1f4ad337f2c13df4c5e780727",
+          "bytes": 63052
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "79301e244b9dc9c90a57f03d389edc0c82bfb8255f5d76bb24b6c4ae88143e40",
+          "bytes": 83567
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-pillar-moss-01",
+      "name": "Prop Pillar Moss 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-pillar-moss-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c08414cc4f5538979a2bb97a8c59c61090c7e381d214334c1f9580a8f6c96e96",
+          "bytes": 79784
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "6a58f1acd8e9b1ae93cf2eec6ba811196666263bedb843ab27515874f5545a2d",
+          "bytes": 105876
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-roadsign-01",
+      "name": "Prop RoadSign 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-roadsign-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b1757cad1050726e4a8cac9cfa223bfdca64bffdd44bb28a0ecd1eda3401bf56",
+          "bytes": 37544
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "f4f83c499c39087b4147d2f1ec785dffd2d4870434e2e9e2a24fb1969e26c21e",
+          "bytes": 49558
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-stonewall-01",
+      "name": "Prop StoneWall 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-stonewall-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5dd1705514c6b6dc0a16bc457ac44d9e327163ee312724fedaeaa49161e47f2f",
+          "bytes": 181356
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ece2d1d50f26528be717a8db54831d9bf70c2bff98730ba3661d379e533ec79b",
+          "bytes": 241309
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-stonewall-02",
+      "name": "Prop StoneWall 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-stonewall-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "eac76fcf9d8367da8dd1f67a70cc9e6e4cfef1043c924ee4a3065f4261565567",
+          "bytes": 136064
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "0c0944d3040e5e1887ff71c4630121654ec22934e67b5cac54ff62b40a517ad8",
+          "bytes": 180923
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-prop-stonewall-03",
+      "name": "Prop StoneWall 03",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-prop-stonewall-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7c0778e08702552bc7ded5ed64b6996d7ece3e73e3f86239c110f83e91327759",
+          "bytes": 48952
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "d4b644385d8702e5431c9c6d5106142b6e816e94514bd705bdb4ba698b85752f",
+          "bytes": 64776
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-terrain-riverside-01",
+      "name": "Terrain RiverSide 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-riverside-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "67c543e92171fdb8dfb4b279fa594f923dbfad80e6a2a656c18b01dc953b66ee",
+          "bytes": 31016
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7e188474b80371f451d8b320dd492d022acf1f5f20746b70a02f00ea95505dc5",
+          "bytes": 40855
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-terrain-riverside-corner-01",
+      "name": "Terrain RiverSide Corner 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-riverside-corner-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "fdd32b6cef5c2d06ab9a1a0c25404aa7248fc046d7305e6e9aa79402fba98d47",
+          "bytes": 31028
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "e78b450e75102d7614d219e00123625ccf1f456e4e809b2e88eb5958010be84e",
+          "bytes": 40868
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.synty-terrain-riverside-corner-02",
+      "name": "Terrain RiverSide Corner 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-terrain-riverside-corner-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "09fdfb0c82854582ca77997255e22d01ddd4619e645cdc28c22fa3dfcac948c2",
+          "bytes": 31032
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "bbe7d20f05835aa197baa63302f666c7894c49c34a4b8401aacb1d607e9c80ab",
+          "bytes": 40870
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.timber-bridge",
+      "name": "Timber bridge",
+      "tags": [
+        "wayfarer",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "timber-bridge"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "3854bf3742f0e4894ef975c3d648e0b8f1be8a013a7041a155b51808012e73e4",
+          "bytes": 159652
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.waystone-outcrop",
+      "name": "Waystone outcrop",
+      "tags": [
+        "wayfarer",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "waystone-outcrop"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b6c53e309de0d619b22208db581eaecaca0d63322e9cc1614143828d29bd419e",
+          "bytes": 18132
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.structures.woodland-timber-bridge",
+      "name": "Woodland Timber Bridge",
+      "tags": [
+        "canopy",
+        "crossing",
+        "walkable"
+      ],
+      "revision": 2,
+      "render": [],
+      "scenery": [
+        "woodland-timber-bridge"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2b774e6b805b440e561518da7f5c3b56b05efd987c53579ef4d058e084466913",
+          "bytes": 1013848
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "6914287e5df42f6d0d899eac6d9e045ac9a1e875003d91229846ea6fb60f2f11",
+          "bytes": 11124437
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-05",
+      "name": "Coniferous Trees 05",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_05"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2728da8fd5297256ec7a1d4392d2064561314834637041acaf6f6bd22f800339",
+          "bytes": 18888
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-06",
+      "name": "Coniferous Trees 06",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_06"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6fe860562008c3a3f74621a3f47cfd304d090144e3e038d0fb355baaaa154ac1",
+          "bytes": 18892
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-07",
+      "name": "Coniferous Trees 07",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_07"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d94504d52fae8fe7ccf756b9877dc8fbf9dbd22fd614b1d17384bfc967da5771",
+          "bytes": 18892
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-08",
+      "name": "Coniferous Trees 08",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_08"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "612ca821bdc348dd64c27921e26073af7fd73badd8b86a5715f1d1bdc2fbe88a",
+          "bytes": 71292
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-09",
+      "name": "Coniferous Trees 09",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_09"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "6826df97b58f2058527b90509a5e1b129d0f812d8966998fa91ad0021be37b82",
+          "bytes": 96232
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-10",
+      "name": "Coniferous Trees 10",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_10"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "09bf38150198f94c44bb20dac3a03892eb3f74e834220fa6610c00fda8ec6d2c",
+          "bytes": 72292
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-11",
+      "name": "Coniferous Trees 11",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_11"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "25e4df665975f87c5c1d1bc028b7f1a635e850d399048ddff09bd4dbc5bd59a8",
+          "bytes": 117268
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-12",
+      "name": "Coniferous Trees 12",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_12"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "341c6a5d9c1fa4c2000c399f87db039e676707c0aa8dfe26e231b2ecbcf3974d",
+          "bytes": 71484
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-16",
+      "name": "Coniferous Trees 16",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_16"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a794576673b3844efb6eaa3185e622d7b197eba2d48d56567b042bb2bda0d75b",
+          "bytes": 160208
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-17",
+      "name": "Coniferous Trees 17",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_17"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "3c1ef17a22e20e95964f5da13f066d43af2afe6d33d7401490eea760967b8667",
+          "bytes": 151076
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-18",
+      "name": "Coniferous Trees 18",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_18"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b5b0a64662f4998ef5bf68407114f7c078fce65ca83b39cc18106e3729d4041f",
+          "bytes": 148288
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-19",
+      "name": "Coniferous Trees 19",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_19"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a46f176550a558695bae43663d26d0a8e14081d39293032204926db20e8adcb2",
+          "bytes": 18888
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-20",
+      "name": "Coniferous Trees 20",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_20"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "77a83e01eaa22addbc92b4cd2d1da8b4472a0d7d9438e9b8e65a954190352db7",
+          "bytes": 40508
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-21",
+      "name": "Coniferous Trees 21",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_21"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f4ee6d09176699637789112de186088dd9565d82ac92a1a6aadc05e72275989e",
+          "bytes": 52384
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-22",
+      "name": "Coniferous Trees 22",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_22"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d6724afa7957ac23623cead7fa46a45fa227a5e23e899c2a3ed43ad706691df5",
+          "bytes": 120820
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-23",
+      "name": "Coniferous Trees 23",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_23"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "cac2f17198bbd0e755be349ec7af38ac02b5e1ab9c32e61b3df2492e42ff2d30",
+          "bytes": 94320
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-24",
+      "name": "Coniferous Trees 24",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_24"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "35e8f27b7c2e895fc05032d0741cf049fc2500ee333ca62b664c761a193e0b96",
+          "bytes": 167652
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-25",
+      "name": "Coniferous Trees 25",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_25"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "5f580e115adb73b2e291bc6d172b379c704ffdd897465f612a0a3f260ef0a343",
+          "bytes": 52276
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.coniferous-trees-26",
+      "name": "Coniferous Trees 26",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "coniferous_trees_26"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2415ac1cbe0592b10cb3eca161fbb4a22888d33b20328396e1c5ff6cd9fad6d4",
+          "bytes": 137684
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "dde15357f85030c5526a34af317d6adab633cd2f218c08cdcdeafecb7e7ef6ac",
+          "bytes": 5369111
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.olive-pine",
+      "name": "Ant colony · Pine 1",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.resource.ant-pine-1",
+        "asset.resource.ant-pine-2",
+        "asset.resource.ant-pine-3"
+      ],
+      "scenery": [
+        "ant-pine-1",
+        "ant-pine-2",
+        "ant-pine-3"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c7f9021c14f1b6a7069f5d205b3da99987d187e440f2034f91b753a977f2b4a1",
+          "bytes": 146728
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "47f84b6b3f2b13b5a815665d75ec4c1f571026b094398238288ec98ec418e335",
+          "bytes": 1344595
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.olive-pine-animated",
+      "name": "Olive Pine Animated",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "508c21173b84687e71860f16986c54b87d9c90cda49e18e9872a4fe489d52b69",
+          "bytes": 140964
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "47f84b6b3f2b13b5a815665d75ec4c1f571026b094398238288ec98ec418e335",
+          "bytes": 1344595
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.pine",
+      "name": "Pine",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "pine"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9ea7a270fb6cce3cf8be1264231ebcb0db1167f9f760087e3039d7d34910bb6e",
+          "bytes": 4796
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "36fda5872a8a22a1f57f64c88ebbfc97150d208ee9570738b421f3a0567dd561",
+          "bytes": 6014
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.pine-chunky",
+      "name": "Pine — chunky emerald",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "pine-chunky"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b23eea74f81d22f741c6e9399f71a110f170a526bd168f9141a16fa9ed806c62",
+          "bytes": 86480
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.pine-dark",
+      "name": "Pine dark",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "pine-dark"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "1887890de8ac1cffe8001d73e874b0f973889d9dbe36811f641cb538e129caa8",
+          "bytes": 4796
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "fa888eabbb1eaf37afa225f58dc3c378415477e56163e6be85f2c0fe8a18b2be",
+          "bytes": 6012
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.pine-umber",
+      "name": "Pine umber",
+      "tags": [
+        "props",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "pine-umber"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "0066af1f33621a402e2475f22406897ca3661db23469307b312a02159bb7a6c5",
+          "bytes": 4796
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1da04873e3342841e5a1014906b44da9a25a301067b80cffd027b4fb2af26ef8",
+          "bytes": 6014
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-01",
+      "name": "Tree Birch Gold",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "dfec33db2d288c36565b6ebfbfcfd5682f5c36e989561d7037965b308bbb8a93",
+          "bytes": 727408
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a51dbd863755fb8c4c31de6acab3e05a26c1c4c8cbc7bfaeacee207815935308",
+          "bytes": 968884
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-02",
+      "name": "Tree Birch Autumn",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "52bef735d988347769a2b03b5141e73941e16f6003bf11fb44d787c69dcfad99",
+          "bytes": 800312
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "705264870dd29fc411551ba166af2ec457a9ff0452ec3c3cb7e6f72f8f05efd5",
+          "bytes": 1066088
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-03",
+      "name": "Tree Birch Crimson",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-03"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2a071c9bd75a3019d4b09b645bf909f9ab47f09bb7d06d15b3e086fa30a06de7",
+          "bytes": 727452
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "df73ee8d5a0e56faac87816b32e809aeccce29bb59db7f2bcc6645b0fd1ab741",
+          "bytes": 968926
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-04",
+      "name": "Tree Birch Lime",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-04"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "0aaa282ecaabba1e54abab8f23b46de60c91afc903ae4eb1fd4e618fa5c133b0",
+          "bytes": 686368
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "e7b814db55d341982c665faafa6f111fdf179a197cac07c23c651e87b0d98ac3",
+          "bytes": 914163
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-dead-01",
+      "name": "Tree Birch Dead 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-dead-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ac7e4dac0182d74d3a0f19d0e5ea069c99881788ba1a5df5d6cfdecfc0f2d0ca",
+          "bytes": 530732
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "30b7011cff67f16dbfb65e3c85700f541baf875c6aa658bbb0373935c591ec51",
+          "bytes": 706644
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-birch-small-01",
+      "name": "Tree Birch Small 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-birch-small-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "50acfd61df1e42d99197e1f269ad8884a11e7f706208a90b3246bb9a731be9c4",
+          "bytes": 638300
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2fbed2ad499640ac671a92e43f20d3566709496728b7edc17118816399f72192",
+          "bytes": 850074
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-generic-01",
+      "name": "Tree Generic 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-generic-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "cd1d2d12d2f5f12b5d4629082c40698e8cdcd9d651c831e37d5fb1cfe60970a3",
+          "bytes": 879508
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "932aa86a8865013107b15af552a33b94386870de1a50b149b7063161c343a2b7",
+          "bytes": 1171685
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-generic-dead-01",
+      "name": "Tree Generic Dead 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-generic-dead-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "f1d4a49bb20e34e3ed1454d50de91a0c880fa37a1d56bf8b1de4c8c66ebc68a5",
+          "bytes": 697396
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "a4c00a4bed791f1726eda959280eb47a147420ea96f4dd699b524d299ae793d7",
+          "bytes": 928871
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-generic-giant-01",
+      "name": "Tree Generic Giant 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-generic-giant-01",
+        "synty-tree-generic-giant-01-open"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "28bdace75eceb48bacec100f656249c7b00567087527e3c9dcf60f30a4bfe4e0",
+          "bytes": 2792108
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "98a3c0125dc8cde10c0acf3a3b4c7353c2f789950cd85e7c78de79bcb34f8a79",
+          "bytes": 3721342
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-large-01",
+      "name": "Tree Large 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-large-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e09d4b4c2528188c04fc577374563fda2c00069e7c3e9c9beb0e407f9cb6565a",
+          "bytes": 1715524
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "89a10d4a996b7e87e4c141f4158889b51938098e849d3a61b0c3dc0f2ae220f5",
+          "bytes": 2286835
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-log-01",
+      "name": "Tree Log 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-log-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c5e9883e697ae8ed4e86b8f0070abcb9beb4af1b04cfcf963a73322c397b2cc7",
+          "bytes": 39572
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "7830ee651e60d7a79ca7caaef77931b21ccbf433976c2c149675c07f97295a48",
+          "bytes": 52268
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-log-02",
+      "name": "Tree Log 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-log-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "aabdce05afa762f630a5319f6768d0d2b62dce3c72d5387a307f8840c928fc1b",
+          "bytes": 37736
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "cb864e11234e6424f6e4893355373f32b509676fe30b782b5278870669285a0b",
+          "bytes": 49818
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-01",
+      "name": "Tree Pine 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "dd00b483a8428bd0e0bd1e71603890c0d12599c6be88c5f2ce1eaf7d57336e95",
+          "bytes": 510252
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "be4e58f98cb0555bd7f55854177319a2377cbd89f6f53ac3b9a72e3b2a650ac5",
+          "bytes": 679362
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-02",
+      "name": "Tree Pine 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "016252c8257acc2e2eb8ff451132f7e1036cb082bd4c4c55880043c05e112208",
+          "bytes": 507056
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3ec49b6cdb9830f87d2143ddc3c897741e1b2fc03bac7bfbf74a1f649cfe8995",
+          "bytes": 675082
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-base-01",
+      "name": "Tree Pine Base 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-base-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "82871426b0b30c627750943c5edc2fc9e33152896fdf0a7ca76131c4f0330b76",
+          "bytes": 1327440
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "9c1e6a4edad565a68c7a615cf03776a4d9c181a430cdd62b1b5942e03d5d2f74",
+          "bytes": 1769366
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-dead-01",
+      "name": "Tree Pine Dead 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-dead-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "323d4f7d1d737ae5327fc3b4ae24f11d48b2a7e56acae22462d64998640efb80",
+          "bytes": 51240
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "cdaddebcf5ce447f781ec30b9bed00dc3749c8886bb9f811e34bc41f55e7bfb4",
+          "bytes": 67792
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-large-01",
+      "name": "Tree Pine Large 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-large-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "0f402a606ce5ff433ecca203fe48c53f1c9090e319a12f8d1b22f7c53526e8de",
+          "bytes": 513548
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "990e41ef90ab9fed2622c641a831695c0ed49b1366d659b3d56d585025d12a28",
+          "bytes": 683734
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-large-02",
+      "name": "Tree Pine Large 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-large-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "87454f9573ba46b283e979955f8ba47047232aee5c9d68a25f7965920150194f",
+          "bytes": 513516
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "36c1d00f0997ee626f98f9893c5958d6aed7c8b7c0a155e34ea31ab165ee7ca9",
+          "bytes": 683702
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-small-01",
+      "name": "Tree Pine Small 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-small-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b9403b3b07f38da9f2304ce90e4b6c1a0a50dd9aff00acdb872e799f2d74a4be",
+          "bytes": 444384
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "9241c609a9d6645b92f1c25c3a17b048515788cdbf7fb23e082c21faa2446558",
+          "bytes": 591534
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-pine-small-02",
+      "name": "Tree Pine Small 02",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-pine-small-02"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ffd4271a2177023bbcd4517da2b52bc7853c3c283a5fa81bddb9c06acd69d17d",
+          "bytes": 428180
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "8e42a2fea05c506d23e73dcc9630a71b35cab2f03234a1660778c8a21e6cf4b3",
+          "bytes": 569930
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-stump-01",
+      "name": "Tree Stump 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-stump-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b9047a3d814ad9280a014c93d772d25cd87fccd8136f5a8d3814bed2236cc1db",
+          "bytes": 19984
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "4c1382a4607239f39d0fa4bb4639128ef97662c4774db878b44c40b63c5264ba",
+          "bytes": 26153
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-willow-large-01",
+      "name": "Tree Willow Pink",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-willow-large-01",
+        "synty-tree-willow-large-01-full"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d051e4beea0be200dda33757b494b0bfb8185e250429644d3e623c8e9dabb83c",
+          "bytes": 904364
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ca004aaf38d7381bb9a70c884370276f691c4fdb96e0b23cc9c0a95fc8fe3f70",
+          "bytes": 1204824
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-willow-medium-01",
+      "name": "Tree Willow Medium 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-willow-medium-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "e5d07e79dd15cfa51d4d36bcd61640638a8305ef65d63ad7266fe077ae14a169",
+          "bytes": 658124
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "ebbc64e0865658f17ba08d0ab5863d7f39c522234035f033a68d4d5850e2cf8d",
+          "bytes": 876504
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.synty-tree-willow-small-01",
+      "name": "Tree Willow Small 01",
+      "tags": [
+        "synty",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "synty-tree-willow-small-01"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "b7822a4d843f6e87631d5aff6fc9cb9380dd03c1ce788a96b315c34662fb74a6",
+          "bytes": 460996
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "0331c93b8d433f2e69387ff042b4119a4c7b0b7a8b3909b9e6f591f0dd71aef5",
+          "bytes": 613678
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.tree-chunky-broadleaf",
+      "name": "Broadleaf — chunky emerald",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "tree-chunky-broadleaf"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "ef95068c95f52f3c74b6d3a1587df086f5cb57323e60235bf2b59b06fdb05984",
+          "bytes": 237276
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.tree-chunky-drooping",
+      "name": "Broadleaf — hanging sprays",
+      "tags": [
+        "vivid",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "tree-chunky-drooping"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7a21a7cb3820e475632edd680b0acd91d048078f401a6fb0d6aaf52f25e8e8a3",
+          "bytes": 3840740
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.woodland-pine-1",
+      "name": "Woodland pine 1",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "woodland-pine-1"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "351718e96de6d43569d91932e8708419ddf9d16933f152a0648d2e3200104ee4",
+          "bytes": 12976
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "c51e53838cb0161f0c72eda50649897ace7ff22f28404b759ecece648ca5cd99",
+          "bytes": 15826
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.woodland-pine-2",
+      "name": "Woodland pine 2",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "woodland-pine-2"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "107e6721324a6d9440a2b403523ea4fdad78b9342c11c920935515b9ccf6bcf3",
+          "bytes": 12980
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "aba18b1a0f86bb91ca3d20682cbc3a6b71706855d8229957d5f71fac8ea7a907",
+          "bytes": 15828
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.trees.woodland-pine-3",
+      "name": "Woodland pine 3",
+      "tags": [
+        "landscape",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "woodland-pine-3"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "bb54a564f3125e3db9b14e66dca2a86da4a3aa02374bd29fb56c02459970665b",
+          "bytes": 12984
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "d2a67685e24bb1c2405c1ec5cc9e072a1cb76efa575549c68dda199207d44bef",
+          "bytes": 15831
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.family-ring",
+      "name": "Family Ring",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.family-ring"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7db09578eee100e35be62a29f0202f5f72d1c5eab7d9a721b40e88c9cc87f4ad",
+          "bytes": 33416
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.healing-draught",
+      "name": "Healing Draught",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.healing-draught"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c29c91272c5d8e358975793a7c16b4828f6a6b913efed04e34e830218e43467d",
+          "bytes": 49204
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.healing-scroll",
+      "name": "Healing Scroll",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.healing-scroll"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "84e77b8b6e7265603725a3ac6e1fe068cad9198b168c9bb4563d43371275c35f",
+          "bytes": 24588
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.leaf-ledger",
+      "name": "Leaf Ledger",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.leaf-ledger"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "8f80e7c7ddbe7a6c1ee6f588fe520b871e0e6d12822d7ccbae114ffab8deefbd",
+          "bytes": 38000
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.mana-draught",
+      "name": "Mana Draught",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.mana-draught"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "3c856f07c7ec5e07637187f8d5191c1aa57bbe72aa3ac25a3d7d7251d4d6af5a",
+          "bytes": 49200
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.briarwatch.vigor-seed",
+      "name": "Vigor Seed",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.vigor-seed"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "8f9264728856907a9336aed119f2636a8b144244a85d04da14a0aff708cab741",
+          "bytes": 32248
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "883b6649846c4cd3d2a4999120a3f35a1fcd64df81afaaf909cc23f8331b5826",
+          "bytes": 2524662
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.item-log",
+      "name": "Log",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.item.wood"
+      ],
+      "scenery": [
+        "item-log",
+        "ant-item-log"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "98b5705fb535fdbbd21069ef6659999e83d9b6bc579d72a1167f4783391482af",
+          "bytes": 57324
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.item-plank",
+      "name": "Plank",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.item.plank"
+      ],
+      "scenery": [
+        "item-plank",
+        "ant-item-plank"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7d4beeeb3ab66b84395385aa80956749242e9fa7119cfdef4d3ca8cbc13235d5",
+          "bytes": 10408
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.item-stone",
+      "name": "Dressed stone",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.item.amber"
+      ],
+      "scenery": [
+        "item-stone",
+        "ant-item-stone"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9e33564c3134d4186c142ecb8a0e515fc25de555811d80914a31b47e62af74d8",
+          "bytes": 8820
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.log-stack",
+      "name": "Ant colony · Log Stack",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-log-stack"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "8f54c4614a679b979256ac3b5ed67468307ca64b8d51710a4f5f4ef704ba1f8c",
+          "bytes": 777636
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.plank-stack",
+      "name": "Ant colony · Plank Stack",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-plank-stack"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "d64aa81c1bec511f311510c1949b23cd5a3bd3703426f183aac9eb748afcf6dd",
+          "bytes": 148700
+        }
+      ]
+    },
+    {
+      "id": "asset.models.items.root-bundle",
+      "name": "Root Bundle",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.item.root"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "34704115e18b6893cbbaf9b169fd79b89a28eae22f1d385e1834dc5d1b417b0c",
+          "bytes": 8112
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "2edec2762f66cc640855b47a4719bb4276a684255b11135b54bb0350aad8a461",
+          "bytes": 2028808
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.briar-archer",
+      "name": "Briar Poacher",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.archer"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "c9780cb88a9cb62335f937c18e33e5fd38d51c2f9b05e635d17ad26d628dfda0",
+          "bytes": 342968
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+          "bytes": 2282832
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.briar-captain",
+      "name": "Briar Captain",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 2,
+      "render": [
+        "asset.briar.captain"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "62c4b662e9be7215a44d1c053c04d7644427c65d59e066a7cd505974981c4aa1",
+          "bytes": 380452
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+          "bytes": 2282832
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.briar-civilian",
+      "name": "Briarwatch Villager",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.civilian"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "7d7f6e0d2182a00a12ba98a89bb0afa22ac69fe79eb411be3f46c65ac1b5239f",
+          "bytes": 333236
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+          "bytes": 2282832
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.briar-warrior",
+      "name": "Briar Raider",
+      "tags": [
+        "briarwatch",
+        "campaign",
+        "original"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.briar.warrior"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "a63b8df39b9641d642f3ce75e9c18201855cffb1c53af17adbc287f8fb48c832",
+          "bytes": 369416
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "1f816711624e5c0f8f3e6a568b237eb28ed2949b91984ac67ef1faca35873111",
+          "bytes": 2282832
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.guard-static",
+      "name": "Ant colony · Guard",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-guard"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "992815c6b3a414b4afd16c7f54cefb62cdec542a0d0e5b7db51e77b7973c0d06",
+          "bytes": 324368
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.worker-carry-static",
+      "name": "Ant colony · Worker Carry",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-worker-carry"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "9d6bdb0d00e411d0f7dbcfd88376158dc6385bc5bd1fb600eccd578b229d4959",
+          "bytes": 289808
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.ants.worker-static",
+      "name": "Ant colony · Worker",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [],
+      "scenery": [
+        "ant-worker"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "2a25e849736959e93827dcb3f7bf6d158131ebdc0742f3937cc5e106a9023599",
+          "bytes": 289804
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.neutral.amberjaw-staglord",
+      "name": "Amberjaw Staglord",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.neutral.amberjaw-staglord"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "438294d2c6b4841dc4f0d467ae5defd5e1376617b80f1a4d5f045a204ec8f4b8",
+          "bytes": 243200
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "12051874c0db3c3c3ca376b9294cac6e06a11bb743893fff2ccccabc3cb21f8d",
+          "bytes": 1663585
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.neutral.ogre-static",
+      "name": "Ogre",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.neutral.ogre"
+      ],
+      "scenery": [
+        "neutral-ogre"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "776fe637b823d09f9fc4e5ba36957b8b3293dacacbfd78f4aed6f0a704a820a6",
+          "bytes": 165884
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.neutral.thornblade-matriarch",
+      "name": "Thornblade Matriarch",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.neutral.thornblade-matriarch"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "314996ca36344a62fe31c1ce2e29fce0938c226402b3b53b96e8b0f92023321a",
+          "bytes": 234836
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "3cf44c9a4fc2edff600effb8b1fa4972dee7bb4cd76dcb05f8cbd9d6c0af968c",
+          "bytes": 1585246
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.neutral.thornspitter",
+      "name": "Thornspitter",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.neutral.thornspitter"
+      ],
+      "scenery": [],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "415b7a91fc4c53cd817c1f7b99b0fc8632f8cf1620f4ed8a2aca9e9f4badbb9a",
+          "bytes": 249128
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "sha256": "d1dace86ef03e753d628a150d51f8858a1b897679d45b0581b4bd03b11c4a5b3",
+          "bytes": 1633390
+        }
+      ]
+    },
+    {
+      "id": "asset.models.units.neutral.wolf-static",
+      "name": "Wolf",
+      "tags": [
+        "ant-colony",
+        "migrated"
+      ],
+      "revision": 1,
+      "render": [
+        "asset.neutral.wolf"
+      ],
+      "scenery": [
+        "neutral-wolf"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "sha256": "fc0389de9cf2b5a425a0ebf4c654fc6480c3b2b4b06f18b08b1267c44e103423",
+          "bytes": 76556
+        }
+      ]
+    }
+  ],
+  "retainedModels": [
+    "asset.models.buildings.ants.amber-sanctuary",
+    "asset.models.buildings.ants.bombardier-workshop",
+    "asset.models.buildings.ants.forester",
+    "asset.models.buildings.ants.great-mound",
+    "asset.models.buildings.ants.house",
+    "asset.models.buildings.ants.ironroot-forge",
+    "asset.models.buildings.ants.player-barracks",
+    "asset.models.buildings.ants.rootbound-hall",
+    "asset.models.buildings.ants.rootworks",
+    "asset.models.buildings.ants.tower",
+    "asset.models.buildings.neutral.amber-seam",
+    "asset.models.buildings.neutral.corrupted-root",
+    "asset.models.environment.grass.canopy-short-grass",
+    "asset.models.environment.grass.reference-grass-daisy",
+    "asset.models.environment.grass.reference-grass-high-a",
+    "asset.models.environment.grass.reference-grass-high-b",
+    "asset.models.environment.grass.reference-grass-low",
+    "asset.models.environment.grass.reference-grass-messy",
+    "asset.models.environment.grass.reference-grass-water-leaves-a",
+    "asset.models.environment.grass.reference-grass-water-leaves-b",
+    "asset.models.environment.ground.canopy-forest-leaves",
+    "asset.models.environment.ground.canopy-twig-log",
+    "asset.models.environment.mushrooms.canopy-tiny-mushrooms",
+    "asset.models.environment.mushrooms.ochre-mushroom-colony",
+    "asset.models.environment.props.reference-bush-a",
+    "asset.models.environment.props.reference-bush-b",
+    "asset.models.environment.props.reference-dungeon-entrance",
+    "asset.models.environment.props.reference-goblin-hut",
+    "asset.models.environment.props.reference-gold-vein-a",
+    "asset.models.environment.props.reference-gold-vein-b",
+    "asset.models.environment.props.reference-lying-snag-a",
+    "asset.models.environment.props.reference-lying-snag-b",
+    "asset.models.environment.props.reference-lying-snag-c",
+    "asset.models.environment.props.reference-lying-snag-d",
+    "asset.models.environment.props.reference-monument-01",
+    "asset.models.environment.props.reference-mountain-chunk-a",
+    "asset.models.environment.props.reference-mountain-chunk-b",
+    "asset.models.environment.props.reference-mountain-chunk-c",
+    "asset.models.environment.props.reference-neutral-bandit-a",
+    "asset.models.environment.props.reference-neutral-bandit-b",
+    "asset.models.environment.props.reference-neutral-bandit-tent",
+    "asset.models.environment.props.reference-neutral-goblin",
+    "asset.models.environment.props.reference-neutral-outpost",
+    "asset.models.environment.props.reference-neutral-troll",
+    "asset.models.environment.props.reference-neutral-troll-cave",
+    "asset.models.environment.props.reference-neutral-wolf",
+    "asset.models.environment.props.reference-neutral-wolf-den-a",
+    "asset.models.environment.props.reference-neutral-wolf-den-b",
+    "asset.models.environment.props.reference-ruins-blocks-03",
+    "asset.models.environment.props.reference-ruins-blocks-04",
+    "asset.models.environment.props.reference-ruins-blocks-06",
+    "asset.models.environment.props.reference-ruins-blocks-08",
+    "asset.models.environment.props.reference-ruins-column-11",
+    "asset.models.environment.props.reference-small-rock-a",
+    "asset.models.environment.props.reference-small-rock-b",
+    "asset.models.environment.props.reference-small-rock-c",
+    "asset.models.environment.props.reference-wooden-bridge-small",
+    "asset.models.environment.structures.pebbles-pale",
+    "asset.models.environment.trees.ancient-canopy-trunk",
+    "asset.models.environment.trees.reference-fir-a",
+    "asset.models.environment.trees.reference-fir-b",
+    "asset.models.environment.trees.reference-fir-small-a",
+    "asset.models.environment.trees.reference-stump-fir-a",
+    "asset.models.environment.trees.tree-primary",
+    "asset.models.environment.trees.tree-secondary",
+    "asset.models.units.ants.archer",
+    "asset.models.units.ants.bombardier",
+    "asset.models.units.ants.hunter",
+    "asset.models.units.ants.marshal",
+    "asset.models.units.ants.warrior",
+    "asset.models.units.ants.worker",
+    "asset.placeholder.missing-model"
+  ]
+}

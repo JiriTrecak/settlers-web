@@ -15,6 +15,7 @@ export function filterCatalog(assets: readonly CatalogEntry[], query: CatalogQue
   const limit = clampLimit(query.limit);
   const out: CatalogEntry[] = [];
   for (const a of assets) {
+    if(a.editorHidden)continue;
     if (query.category && a.category !== query.category) continue;
     if (query.type && a.type !== query.type) continue;
     if (needle && !a.id.includes(needle) && !a.name.toLowerCase().includes(needle)) continue;

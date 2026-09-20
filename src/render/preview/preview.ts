@@ -16,7 +16,6 @@ import {
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { ISO_PITCH, ISO_YAW } from "../camera/camera";
-import { flattenPolygon } from "../prop/polygonLook";
 
 const SIZE = 256;
 const PAD = 1.16;
@@ -62,7 +61,6 @@ export class PreviewCache {
       const gltf = await this.loader.loadAsync(url);
       if (this.dead) return null;
       root = gltf.scene;
-      if (url.includes("synty")) flattenPolygon(root, url);
       const box = new Box3().setFromObject(root);
       if (box.isEmpty()) return null;
       const center = box.getCenter(new Vector3());

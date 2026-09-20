@@ -17,7 +17,8 @@ export function recipeInputs(recipe:LandscapeRecipe):RecipeInput[]{
   const values={...object};
   if('species'in values){values.density??=1;values.pattern??=values.patchiness?'patches':'scattered';values.patchiness??={scale:12,strength:.6};}
   for(const [key,value]of Object.entries(values)){
-   const path=prefix+key,local=path.replace(/^edge\./,'');
+   const path=prefix+key,local=path.replace(/^(edge\.|details\.(banks|water)\.)/,'');
+   if(key==='details'&&value){for(const [group,settings]of Object.entries(value as Record<string,unknown>))if(settings)visit(settings as Record<string,unknown>,`details.${group}.`,group==='water'?'Water lilies · ':'Riverbank · ');continue;}
    if(key==='edge'&&value){visit(value as Record<string,unknown>,'edge.','Edge · ');continue;}
    if(['patchiness','riverBank'].includes(key)&&value){visit(value as Record<string,unknown>,path+'.',labelPrefix);continue;}
    if(typeof value==='number'&&numbers[local]){const [label,min,max,step]=numbers[local]!;result.push({path,label:labelPrefix+label,value,min:local==='width'&&prefix==='edge.'?.1:min,max:local==='width'&&prefix==='edge.'?64:max,step});}

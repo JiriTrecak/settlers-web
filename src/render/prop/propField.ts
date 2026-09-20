@@ -11,10 +11,8 @@ import type {HeightField} from '../../shared/map/height';
 import {ResinShimmerLayer} from './resinShimmer';
 import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from './staticBatch';
-import pineLod from '../../../assets/library/asset.models.environment.trees.olive-pine/geometry.glb?url';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
-import { prepareAntMaterials } from './antMaterials';
 import { prototypeBounds, prototypeGroundOffset } from './grounding';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
@@ -23,7 +21,6 @@ import { prototypeBounds, prototypeGroundOffset } from './grounding';
 import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, Texture, type Raycaster, type Scene } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
-import { flattenPolygon } from "./polygonLook";
 
 /** An isolated editor alias preserves its original look without replacing map assets. */
 export type PropModelOptions=ModelPlacement&{sourceAsset:string};
@@ -299,24 +296,14 @@ export class PropField {
       let disposeBatch=()=>{};
       let wind:ReturnType<typeof foliageWind>=null;
       gltf.scene.traverse(node=>{wind??=foliageWind(node.userData.foliageWind);});
-      if(asset.startsWith('ant-'))prepareAntMaterials(gltf.scene);
-      const lodUrl=({'ant-pine-1':pineLod,'ant-pine-2':pineLod,'ant-pine-3':pineLod} as Record<string,string>)[asset];
-      if(lodUrl){
-        const lod=await this.loader.loadAsync(lodUrl);const parts:Mesh[]=[];lod.scene.traverse(o=>{if(o instanceof Mesh)parts.push(o);});let part=0;
-        gltf.scene.traverse(o=>{if(o instanceof Mesh){const geometry=parts[part++]?.geometry;if(geometry){this.lodByGeometry.set(o.geometry.uuid,geometry);this.lodGeometries.add(geometry);}}});
-        lod.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();});
-      }
       if(/^(pine-chunky|tree-chunky-)/.test(asset))prepareVividFoliage(gltf.scene);
-      if (url.includes("synty") || asset.startsWith("synty-") || asset === "river-reeds") flattenPolygon(gltf.scene, asset,variant);
       gltf.scene.traverse((node) => {
         node.castShadow = true;
         node.receiveShadow = true;
       });
       const referenceOrigin=prepareReferencePlants(gltf.scene,this.referenceGround,()=>this.referenceMacro??=referenceTexture(macroUrl,false));
       if(referenceOrigin&&asset.startsWith('reference-fir'))wind={amplitude:.12,speed:.22};
-      if(!lodUrl){
-        disposeBatch=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
-      }
+      disposeBatch=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
       gltf.scene.updateMatrixWorld(true);
       const box=prototypeBounds(gltf.scene);
       const disposeWind=wind?this.wind.attach(gltf.scene,wind,referenceOrigin?box.max.y:box.max.y-box.min.y,referenceOrigin?this.referenceGround.sourceOffset:undefined):()=>{};

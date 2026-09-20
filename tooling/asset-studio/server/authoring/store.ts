@@ -31,7 +31,7 @@ export class AuthoringStore{
  async dispatch(input:AssetCommand|unknown):Promise<unknown>{return withWorkspaceWriteLock(this.root,()=>this.execute(input));}
  private async execute(input:AssetCommand|unknown):Promise<unknown>{
   const command=assetCommandSchema.parse(input);
-  if(command.op==='asset.list')return readPackages(this.root);
+  if(command.op==='asset.list')return (await readPackages(this.root)).filter(a=>command.includeArchived||a.status!=='archived');
   if(command.op==='asset.publication'){const released=(await readPublished(this.root))?.find(a=>a.id===command.id);return {id:command.id,revision:released?.revision??null};}
   if(command.op==='asset.get')return this.get(command.id);
   if(command.op==='asset.validate'){const a=await this.get(command.id);await validatePackage(this.root,a);const released=await readPublished(this.root);if(released)await planPublication(this.root,[...released.filter(v=>v.id!==a.id),assetDefinitionSchema.parse({...a,status:'published'})],new Set([a.id]));return {valid:true,id:a.id,revision:a.revision,resources:a.resources.length};}

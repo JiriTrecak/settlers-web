@@ -64,7 +64,6 @@ import { HeightMesh } from "../height/heightMesh";
 import { BrushLayer } from "../brush/brushLayer";
 import { PropField,type PropModelOptions } from "../prop/propField";
 import { Sky } from "../sky/sky";
-import { WaterLayer } from "../water/waterLayer";
 
 const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 
@@ -155,13 +154,9 @@ export class Renderer {
   private readonly props: PropField;
   readonly brush: BrushLayer;
   private terrain: HeightMesh | null = null;
-  private water: WaterLayer | null = null;
-  private courses:WaterLayer[]=[];
-  private courseSource:HeightField['watercourses']|null=null;
   private updateCourses(){
-    if(this.courseSource===this.height?.watercourses)return;
-    for(const water of this.courses)water.destroy(this.scene);this.courses=[];this.courseSource=this.height?.watercourses??null;
-    if(this.height)for(const course of this.height.watercourses){const water=new WaterLayer(this.scene,this.height.size);water.setCourse(this.height,course);this.courses.push(water);}
+    this.importedWater?.dispose();
+    this.importedWater=this.height?new ImportedWater(this.scene,this.height.source?.source??this.height):undefined;
   }
   private importedWater?:ImportedWater;
   private height: HeightField | null = null;
@@ -267,8 +262,6 @@ export class Renderer {
     canvas.height = h;
     try {
       if (animationTime !== undefined) {
-        this.water?.tick(animationTime * 1000);
-        for(const water of this.courses)water.tick(animationTime*1000);
         this.importedWater?.tick(animationTime * 1000);
         this.meadow.tick(animationTime * 1000);
         this.props.tick(animationTime * 1000);
@@ -286,8 +279,6 @@ export class Renderer {
       );
       this.props.updateLOD(cam);
       this.meadow.updateLOD(cam);
-      this.water?.updateVisibility(cam);
-      for(const water of this.courses)water.updateVisibility(cam);
       gl.setRenderTarget(target);
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
@@ -345,10 +336,6 @@ export class Renderer {
       this.landscape.cover !== landscape.cover ||
       this.landscape.strokes !== landscape.strokes ||
       this.landscape.environment.season !== landscape.environment.season;
-    if (this.landscape.rivers !== landscape.rivers)
-      this.water?.setFlow(landscape.rivers ?? []);
-    this.water?.setStyle(landscape.water);
-    if(this.importedWater?.source!==landscape.importedTerrain){this.importedWater?.dispose();this.importedWater=landscape.importedTerrain?new ImportedWater(this.scene,landscape.importedTerrain):undefined;}
     if (
       this.height &&
       (this.landscape.decals !== landscape.decals ||
@@ -492,7 +479,6 @@ export class Renderer {
       return;
     }
     this.terrain.setFrom(field, dirty);
-    this.water?.setFrom(field);
     (this.terrain.material as TerrainMaterial).update(
       field,
       this.landscape.strokes,
@@ -514,19 +500,14 @@ export class Renderer {
       this.ceiling.configure(this.size,this.landscape.environment);
       this.lines.clear();
       this.terrain?.destroy(this.scene);
-      this.water?.destroy(this.scene);
       this.fog?.dispose();
       this.fog = null;
       addSunAndGrid(this.scene, snapshot.size, this.lines, this.gridMode);
       this.sky.resize(snapshot.size);
       this.terrain = new HeightMesh(this.scene, snapshot.size);
       this.cutaway.attach(this.terrain.material,16,this.interiorCutaway);
-      this.water = new WaterLayer(this.scene, snapshot.size);
-      this.water.setStyle(this.landscape.water);
-      this.water.setFlow(this.landscape.rivers ?? []);
       if (this.height) {
         this.terrain.setFrom(this.height);
-        this.water.setFrom(this.height);
         (this.terrain.material as TerrainMaterial).update(
           this.height,
           this.landscape.strokes,
@@ -644,6 +625,7 @@ export class Renderer {
     const total = perf.start(),
       environment = perf.start();
     this.sky.tick(now);
+    this.importedWater?.tick(now);
     if(this.landscape.environment.interior)this.scene.background=this.indoorBackground;
     this.canopy.tick(now);
     this.sky.sun.intensity*=this.canopy.sunTransmission;
@@ -654,8 +636,6 @@ export class Renderer {
         ? Math.max(40, Math.min(110, this.camera.distance * 0.8))
         : 70,
     );
-    this.water?.tick(now);this.importedWater?.tick(now);
-    for(const water of this.courses)water.tick(now);
     this.meadow.tick(now);
     this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
@@ -677,8 +657,6 @@ export class Renderer {
     );
     this.props.updateLOD(cam);
     this.meadow.updateLOD(cam);
-    this.water?.updateVisibility(cam);
-    for(const water of this.courses)water.updateVisibility(cam);
     perf.end("Camera / atmosphere", camera);
     this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now),this.atmosphereFrame(now));
     perf.end("Present total (CPU)", total);
@@ -768,9 +746,7 @@ export class Renderer {
     this.sceneryLights.dispose();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
-    this.water?.destroy(this.scene);
     this.importedWater?.dispose();
-    for(const water of this.courses)water.destroy(this.scene);
     this.props.destroy();
     this.walkPicker.dispose();
     this.portrait.destroy();

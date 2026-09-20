@@ -12,9 +12,9 @@ import {HeightField} from '../../src/shared/map/height';
 import {prepareReferencePlants} from '../../src/render/prop/referencePlants';
 
 it('retains source BRDF coefficients, linear channels and DDS row orientation',()=>{
- const prefix='assets/textures/reference/scouring/brdf-lut';
- const bytes=gunzipSync(readFileSync(prefix+'.bin'));
- const metadata=JSON.parse(readFileSync(prefix+'.json','utf8'));
+ const prefix='assets/library/asset.unregistered.textures.reference.scouring.brdf-lut';
+ const bytes=gunzipSync(readFileSync(prefix+'.bin/data.bin'));
+ const metadata=JSON.parse(readFileSync(prefix+'.json/data.json','utf8'));
  expect(bytes.length).toBe(64*64*4);expect(metadata.colorSpace).toBe('linear');
  expect(createHash('sha256').update(bytes).digest('hex')).toBe(metadata.decodedSha256);
  // Independent samples read directly from original DDS BGRA offsets. Inverting
@@ -25,7 +25,7 @@ it('retains source BRDF coefficients, linear channels and DDS row orientation',(
 });
 
 async function load(folder:string,id:string){
- const bytes=readFileSync(`assets/models/environment/${folder}/reference-${id}/model.glb`);
+ const bytes=readFileSync(`assets/library/asset.models.environment.${folder}.reference-${id}/geometry.glb`);
  const loader=new GLTFLoader().register(referenceMaterialPlugin).register(()=>({name:'geometry-only-test-textures',loadTexture:()=>Promise.resolve(new Texture())}));
  return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }

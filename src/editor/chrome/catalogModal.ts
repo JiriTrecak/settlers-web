@@ -152,12 +152,12 @@ export class CatalogModal {
     for (const id of ["all", ...ASSET_CATEGORIES]) {
       const count =
         id === "all"
-          ? this.spec.store.doc.assets.length
-          : this.spec.store.doc.assets.filter((a) => a.category === id).length;
+          ? this.spec.store.doc.assets.filter(a=>!a.editorHidden).length
+          : this.spec.store.doc.assets.filter((a) => !a.editorHidden && a.category === id).length;
       if (id !== "all" && count === 0) continue;
       this.cats.append(this.catBtn(id, count));
     }
-    const shown = this.spec.store.doc.assets.filter((a) => this.filter === "all" || a.category === this.filter);
+    const shown = this.spec.store.doc.assets.filter((a) => !a.editorHidden && (this.filter === "all" || a.category === this.filter));
     this.cards.clear();
     this.previewIo.disconnect();
     this.grid.replaceChildren();
@@ -262,7 +262,7 @@ export class CatalogModal {
       return;
     }
     if (result === "ok") {
-      this.highlighted = this.spec.store.doc.assets[0]?.id ?? null;
+      this.highlighted = this.spec.store.doc.assets.find(a=>!a.editorHidden)?.id ?? null;
       this.spec.onLibrary();
       this.refresh();
     }
@@ -271,7 +271,7 @@ export class CatalogModal {
   private async resetProject(): Promise<void> {
     if (!(await this.ifClean())) return;
     this.spec.store.useProject();
-    this.highlighted = this.spec.store.doc.assets[0]?.id ?? null;
+    this.highlighted = this.spec.store.doc.assets.find(a=>!a.editorHidden)?.id ?? null;
     this.spec.onLibrary();
     this.refresh();
   }

@@ -1,6 +1,0 @@
-{
-  "tool": "built-in image_gen",
-  "prompt": "Use case: stylized-concept. Asset type: square seamless game albedo texture for an ancient mossy stone bridge in a readable stylized forest-floor RTS, Under the Canopy. Generate a flat orthographic top-down material swatch of weathered warm gray sandstone: large subtle irregular mineral patches, tiny pits, sparse fine hairline cracks, a few muted olive lichen stains. Hand-painted game texture, broad controlled detail, natural but not photographic. Entire square is ONE continuous stone material, NOT a brick pattern or tile grid; actual bridge stones are separate geometry. Mostly medium desaturated warm gray, with subdued beige and cool gray variation, matte. Uniform diffuse illumination, no cast shadows, no directional highlights, no perspective, no ambient occlusion, no framing, no text. Keep boundary colors and features continuous for seamless tiling. Moss/lichen only 10 percent coverage, avoid green everywhere. Detail must read attractively across beveled stone blocks at RTS distance, not look like noisy speckles.",
-  "source": "/Users/jiritrecak/.codex/generated_images/01a07a71-505e-7761-808a-5a1a189bfc6a/exec-5eada21f-6442-4396-8d1f-442a23287ac5.png",
-  "runtimeProcessing": "Lanczos resize to 1024 square, no generated content alterations"
-}

@@ -4,7 +4,6 @@ import { content } from '../../content/builtin';
 import { projectMeshUrl } from '../../shared/assets/project';
 import type { EntityView } from '../../sim/game/observation';
 import type { HeightField } from '../../shared/map/height';
-import { prepareAntMaterials } from '../prop/antMaterials';
 import { TreePlayer } from '../prop/treePlayer';
 import {prepareReferencePlants} from '../prop/referencePlants';
 import {ReferenceGround} from '../prop/referenceGround';
@@ -31,7 +30,6 @@ export class HarvestTrees {
       if (!url) throw new Error(`Missing tree animation ${file}`);
       const gltf = await loader.loadAsync(url);
       if (this.dead) { this.disposeSource(gltf); return; }
-      prepareAntMaterials(gltf.scene);
       gltf.scene.traverse(o => { if (o instanceof Mesh) o.castShadow = o.receiveShadow = true; });
       prepareReferencePlants(gltf.scene,this.referenceGround,()=>this.referenceMacro??=referenceTexture(macroUrl,false));
       this.sources.set(file, gltf);

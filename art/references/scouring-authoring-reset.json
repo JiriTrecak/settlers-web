@@ -1,0 +1,2807 @@
+{
+  "version": 1,
+  "policy": "Only Scouring models remain active, plus the diagnostic placeholder. All previous maps are removed from the runtime library; regression fixtures remain outside it.",
+  "retired": [
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.amber-sanctuary",
+      "name": "Amber Sanctuary",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "71d2dfd5a647fa44882fe13beff813c7b862cd9551b47ea44a4393893a754aaf",
+          "bytes": 226680
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "e216694840d8e44e3ec57c688de0437668355af17f17a4d5043ecb8989be81e0",
+          "bytes": 3475175
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.sanctuary",
+            "healthHeight": 4.9,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.amber-sanctuary"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "e216694840d8e44e3ec57c688de0437668355af17f17a4d5043ecb8989be81e0"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.bombardier-workshop",
+      "name": "Bombardier Workshop",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "93bce18b438bb4a6d915022ffd724b92f1a4b866c6cda60524d76427c4428412",
+          "bytes": 1250248
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5a1b94be40787c4345ab43e29836ecb60f5975ded08224756f34834b6c11aa35",
+          "bytes": 3705333
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.bombardier-workshop",
+            "scale": 1,
+            "healthHeight": 4.7,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.bombardier-workshop"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "5a1b94be40787c4345ab43e29836ecb60f5975ded08224756f34834b6c11aa35"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.forester",
+      "name": "Forester lodge",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "57a8d5a231df2a2c12b9c7fd19d2fb7ea5a74acacd09c0f367386aa9d3f31aa2",
+          "bytes": 1321744
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "19721702dfea3c0547b7bf21acab79aafa92f65c46c7127f0e5f1d8d2441c607",
+          "bytes": 3700022
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.forester",
+            "healthHeight": 3.2,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.forester"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "forester-lodge",
+            "name": "Forester lodge",
+            "category": "other",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          },
+          {
+            "id": "ant-forester",
+            "name": "Ant colony · Forester",
+            "category": "other",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "19721702dfea3c0547b7bf21acab79aafa92f65c46c7127f0e5f1d8d2441c607"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.great-mound",
+      "name": "Great Mound",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "70ee350e4d68fca597385629adef6b59430756bf7279bf222ef62758a2a9cdf1",
+          "bytes": 2989052
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "029002622977b0bde0c251727f56bb35043595255254dad0c4072a715ed6c82a",
+          "bytes": 4136672
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.great-mound",
+            "healthHeight": 7,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.great-mound"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "029002622977b0bde0c251727f56bb35043595255254dad0c4072a715ed6c82a"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.house",
+      "name": "House",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "43f3988bfc532c9b556aa7283ec14fe2e3911b679c39dfd67d488971000464c5",
+          "bytes": 828808
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "710b393ddb579f1b0fa059a7fa98912ec148e40d58e10ac8e105f837ba2ccb43",
+          "bytes": 3613641
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.house",
+            "healthHeight": 3.5,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.house"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "ant-house",
+            "name": "Ant colony · House",
+            "category": "other",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "710b393ddb579f1b0fa059a7fa98912ec148e40d58e10ac8e105f837ba2ccb43"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.ironroot-forge",
+      "name": "Ironroot Forge",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e7358040d4d644d570c1baea2e9c13e89c7610b9473a4a1a8720d80bd427d8d8",
+          "bytes": 971156
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "b2d6159ca9a758a32b113b7a09d5c99cc1b9fa38913d25de84e2b53d3117fe08",
+          "bytes": 3614190
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.ironroot-forge",
+            "scale": 1.1,
+            "healthHeight": 4.6,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.ironroot-forge"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "b2d6159ca9a758a32b113b7a09d5c99cc1b9fa38913d25de84e2b53d3117fe08"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.player-barracks",
+      "name": "Player Barracks",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "d76e08cae87b16dd213617f3c3c79dd5abeec06fdb059c252b2ad655f3fcb23a",
+          "bytes": 1273376
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a2ae7329a388090c4cde8a3c269411210d07f9a96efa9c415904a17ced933f9b",
+          "bytes": 3711136
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.barracks",
+            "healthHeight": 4.7,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.player-barracks"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "a2ae7329a388090c4cde8a3c269411210d07f9a96efa9c415904a17ced933f9b"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.rootbound-hall",
+      "name": "Main fort",
+      "kind": "building",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "91103c21ab8e08e84a1c3ab479736111511422f0463ad6a31d922892d612e248",
+          "bytes": 2413988
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "708956663777c5ae139c1f5bde291a89655f724ec35cfa82ae0870324535cd98",
+          "bytes": 3990817
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.fort",
+            "healthHeight": 5.8,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.rootbound-hall"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "main-fort",
+            "name": "Main fort",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          },
+          {
+            "id": "ant-fort",
+            "name": "Ant colony · Fort",
+            "category": "other",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "708956663777c5ae139c1f5bde291a89655f724ec35cfa82ae0870324535cd98"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.rootworks",
+      "name": "Rootworks",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "15ee2cc9599dafee51e6fd42a042e3f5795991c3881b598a3e3bb9d8525f55d7",
+          "bytes": 936632
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "c6c9d5a8b782d1276984bf2c3056e4ecde92ff624634b5a31c55b336b75579a6",
+          "bytes": 3627539
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.rootworks",
+            "scale": 1.1,
+            "healthHeight": 3.7,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.rootworks"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "c6c9d5a8b782d1276984bf2c3056e4ecde92ff624634b5a31c55b336b75579a6"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants.tower",
+      "name": "Tower",
+      "kind": "building",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "ant-colony",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "58edc5b469e3b80ca469326ffd52c5e161846831a2aa6761c462ad96a2371b0d",
+          "bytes": 982000
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "ea099b301ba173521e9079fa0d10d29256df365faf66dd64c7f3c68f063c669d",
+          "bytes": 3664637
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.tower",
+            "scale": 1,
+            "healthHeight": 8.3,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.ants.tower"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "ant-tower",
+            "name": "Ant colony · Tower",
+            "category": "other",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "ea099b301ba173521e9079fa0d10d29256df365faf66dd64c7f3c68f063c669d"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.neutral.amber-seam",
+      "name": "Amber Outcrop",
+      "kind": "building",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ebce8526ab93be85cc27edaf19cd0d68ec086a3e824161402a1a9899b1350487",
+          "bytes": 111700
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "d8eb9c880c1b3c401d8e8bc7c618640e71bdd7a580ac6d303f544c922ca4aec0",
+          "bytes": 3395512
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.amber-seam",
+            "healthHeight": 5,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.neutral.amber-seam"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "amber-seam",
+            "name": "Amber Seam",
+            "category": "resource",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "d8eb9c880c1b3c401d8e8bc7c618640e71bdd7a580ac6d303f544c922ca4aec0"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.neutral.corrupted-root",
+      "name": "Corrupted Root",
+      "kind": "building",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "31f4c6c9d7906b3e1e26aacd946ddfd4a5fd2041bcdd6ff2102467fcd901618e",
+          "bytes": 54304
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "2f9cc422689aaa5ed51d3c8efceebfc209f383b3107fd559c2597f5824ee915f",
+          "bytes": 3384781
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.corrupted-root",
+            "scale": 0.85,
+            "healthHeight": 4.8,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.buildings.neutral.corrupted-root"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "canopy-corrupted-root",
+            "name": "Corrupted Root",
+            "category": "resource",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "2f9cc422689aaa5ed51d3c8efceebfc209f383b3107fd559c2597f5824ee915f"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.grass.canopy-short-grass",
+      "name": "Short Grass",
+      "kind": "foliage",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ff0a35b9c02352d7d50199f46515968994602dd79ae6993cb77cd3c6009c44fa",
+          "bytes": 10492
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "38a39159c03fb8f828f3925f87af1f32b0a326d2ae9a6dece9cd5f146c87bc03",
+          "bytes": 3373206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "canopy-short-grass",
+            "name": "Short Grass",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "38a39159c03fb8f828f3925f87af1f32b0a326d2ae9a6dece9cd5f146c87bc03"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.ground.canopy-forest-leaves",
+      "name": "Forest Leaves",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "71665cdf5c8095b87d8376456e56d881c0f1679522ec33b8151a7c139b672d05",
+          "bytes": 51724
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "3aa3db99a9a971c4bdf9f0588c99122640e92a39129feb9e04526be6c8723a59",
+          "bytes": 3369944
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "canopy-forest-leaves",
+            "name": "Forest Leaves",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "3aa3db99a9a971c4bdf9f0588c99122640e92a39129feb9e04526be6c8723a59"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.ground.canopy-twig-log",
+      "name": "Twig Log",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "b3078c240ea042e33cd39656891f0fd1fc4a309aaa00c2b3ae61768f3b26e97c",
+          "bytes": 32752
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "df2aad81e4607ea220beac31068b5072d61a23c5f8ca63518b1388e3c0dbc09e",
+          "bytes": 3363304
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "canopy-twig-log",
+            "name": "Twig Log",
+            "category": "terrain",
+            "type": "ground",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "df2aad81e4607ea220beac31068b5072d61a23c5f8ca63518b1388e3c0dbc09e"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mushrooms.canopy-tiny-mushrooms",
+      "name": "Tiny Mushrooms",
+      "kind": "foliage",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "c02f102becf8c577fc5d7684d316f5508f29555c64f73ad0af95199d3fbb5f36",
+          "bytes": 37560
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "45cc1b938ae85a2903eebdb261e8f2bb87b3d5a8b1f01776169da760211e61c1",
+          "bytes": 3369762
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "canopy-tiny-mushrooms",
+            "name": "Tiny Mushrooms",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "45cc1b938ae85a2903eebdb261e8f2bb87b3d5a8b1f01776169da760211e61c1"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mushrooms.ochre-mushroom-colony",
+      "name": "Mushroom Cluster",
+      "kind": "foliage",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6f8b82339f38cac717e5f6cd33f55d4ab59d0e1ff2f7b952121d2e51373765aa",
+          "bytes": 37552
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "31d6004fc8e406aa4e5a02f37d35d6155097ade072a32050d8f0117300f81379",
+          "bytes": 3369735
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "ochre-mushroom-colony",
+            "name": "Ochre Mushroom Colony",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "31d6004fc8e406aa4e5a02f37d35d6155097ade072a32050d8f0117300f81379"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.structures.pebbles-pale",
+      "name": "Pebble Cluster",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "7c55bb5b2e6e5fa6d693857871e5227c0b26d56fb17819b3d185aa098a180479",
+          "bytes": 9512
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "749259ad0b14f83d5cc6fc1bb439c5ff96867074de6267b698f51c268d69991a",
+          "bytes": 3361788
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pebbles-pale",
+            "name": "Pebbles — pale meadow stones",
+            "category": "terrain",
+            "type": "ground",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "749259ad0b14f83d5cc6fc1bb439c5ff96867074de6267b698f51c268d69991a"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.trees.ancient-canopy-trunk",
+      "name": "Ancient Tree",
+      "kind": "tree",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "35a97acfa7963bad7b71199a2490e78483543a70a195be8fe6b367b75715f58f",
+          "bytes": 144588
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "2664c23fb1d1f6ef416154023ebe84e4567964d516372bdd2ff3705dee1d11ef",
+          "bytes": 3407482
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "ancient-canopy-trunk",
+            "name": "Ancient Canopy Trunk",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blocker": {
+              "width": 14,
+              "depth": 14,
+              "shape": "ellipse"
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "2664c23fb1d1f6ef416154023ebe84e4567964d516372bdd2ff3705dee1d11ef"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.trees.tree-primary",
+      "name": "Tree Primary",
+      "kind": "tree",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "1689895d0e88778dcdeec450e91e23715ccef191803ab3d5f3273dbd0c6558b9",
+          "bytes": 99440
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "c951650eaa31a6fed593c2de824f56fbf397a1b089c5a530c9a5e64a49b2589a",
+          "bytes": 3389969
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.tree-primary",
+            "sceneryAsset": "tree_primary",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.trees.tree-primary"
+            },
+            "harvestAnimation": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.trees.tree-primary"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "tree_primary",
+            "name": "Tree Primary",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "c951650eaa31a6fed593c2de824f56fbf397a1b089c5a530c9a5e64a49b2589a"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.trees.tree-secondary",
+      "name": "Tree Secondary",
+      "kind": "tree",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "forest-warfare",
+        "natural-materials",
+        "forest-floor"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "c27978921248fd02f92776f674e40834978ca8fd5ba56b0f99796de0108035be",
+          "bytes": 99444
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "f3fc23fb5e65fc908da9da631701f7bd150cb061e2bfcd23676e2a3ae7cac7ca",
+          "bytes": 3390086
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.tree-secondary",
+            "sceneryAsset": "tree_secondary",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.trees.tree-secondary"
+            },
+            "harvestAnimation": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.trees.tree-secondary"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "tree_secondary",
+            "name": "Tree Secondary",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "f3fc23fb5e65fc908da9da631701f7bd150cb061e2bfcd23676e2a3ae7cac7ca"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.archer",
+      "name": "Archer",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "66ca8e19951c66f200a182b5945328d9e4dab24266acbfa2bff3c4cc188eb07b",
+          "bytes": 482284
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.archer",
+            "character": "archer",
+            "healthHeight": 2.3,
+            "cameraAnchor": {
+              "height": 1.5,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "projectile": "arrow",
+            "projectileSocket": "socket_handL",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.archer"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.bombardier",
+      "name": "Bombardier",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "f9ab9aa7e84938b4d96abf7b946b934e70d326b0dfcb8ef2f1eda39476308ba8",
+          "bytes": 514620
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.bombardier",
+            "character": "bombardier",
+            "healthHeight": 2.3,
+            "cameraAnchor": {
+              "height": 1.5,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "projectileSocket": "socket_muzzle",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.bombardier"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.hunter",
+      "name": "Hunter",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ba541d8a5d0522d09d2c70ce7e13636fa5241b8e1cc8672c51d5ec65223da25f",
+          "bytes": 503256
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.hunter",
+            "character": "hunter",
+            "healthHeight": 2.7,
+            "cameraAnchor": {
+              "height": 1.5,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.hunter"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.marshal",
+      "name": "Marshal",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ab1623be902075eb59e83c73a8565158dc23574aa658ed38c107f8b6257f4ac4",
+          "bytes": 545356
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.marshal",
+            "character": "marshal",
+            "scale": 1.25,
+            "healthHeight": 2.8,
+            "cameraAnchor": {
+              "height": 1.85,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "castContact": 0.68,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.marshal"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.profiles.bombardier",
+      "name": "Bombardier",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "133edaea511516ac3e4e4c79551054898f5b9dc5e1d2fb53c1ef68c49fd86dfe",
+          "bytes": 490
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "133edaea511516ac3e4e4c79551054898f5b9dc5e1d2fb53c1ef68c49fd86dfe"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.profiles.character",
+      "name": "Character",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3",
+          "bytes": 1562
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "51abd90991c3680caef56f02869a4c6796a6700d9a802612d68917a6c11e7ff3"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.profiles.hunter",
+      "name": "Hunter",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "characters",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab",
+          "bytes": 501
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "cfc8b454fcc22c3a80e5791a2181a8e8d0be2ab1ef27928ef6b936944cac0fab"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.warrior",
+      "name": "Warrior",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "9a3763c6ab868d0e06a471c6a780ff17fb251260f27df64ff0a4cc2e5cc67ebf",
+          "bytes": 517992
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.warrior",
+            "character": "warrior",
+            "healthHeight": 2.3,
+            "cameraAnchor": {
+              "height": 1.5,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.warrior"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.ants.worker",
+      "name": "Worker",
+      "kind": "unit",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "characters",
+        "forest-warfare",
+        "natural-materials"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "7f2711a45040cd766426405c83caf9e4d636e1063600a16a825798b8c90da94a",
+          "bytes": 450596
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69",
+          "bytes": 3734368
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.ants.settler",
+            "character": "base",
+            "healthHeight": 2.3,
+            "cameraAnchor": {
+              "height": 1.5,
+              "forward": 0.15,
+              "distance": 7
+            },
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants.worker"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "01e42022c155f83defcb3c34df6cdf3dee1b0985dd8ad269dbabd95741b99e69"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.materials.ants.surface-atlas",
+      "name": "Surface Atlas",
+      "kind": "texture",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "materials",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "611e1381a68ec3473b5913831395f8903ce7441f9ba83878081f61a80e106212",
+          "bytes": 2496464
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "texture",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "611e1381a68ec3473b5913831395f8903ce7441f9ba83878081f61a80e106212"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.vegetation.coniferous.grass_v5_03-far",
+      "name": "Grass V5 03 Far",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e",
+          "bytes": 10129
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "84e3fede7d6ea410636a1d59d12b29f28d338fe50d07951335d1192834bd385e"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.vegetation.coniferous.grass_v5_03-medium",
+      "name": "Grass V5 03 Medium",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "f7dc73b709bcb6ece53a096bed7d8eab26e9906bf2273a2f682a7d346b367290",
+          "bytes": 27080
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "f7dc73b709bcb6ece53a096bed7d8eab26e9906bf2273a2f682a7d346b367290"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.vegetation.coniferous.grass_v5_06-far",
+      "name": "Grass V5 06 Far",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "82021abd6b78a4f62e6e880f4a7e19e4db1a15a56b3e033107f331565f7ddfd6",
+          "bytes": 35362
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "82021abd6b78a4f62e6e880f4a7e19e4db1a15a56b3e033107f331565f7ddfd6"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.vegetation.coniferous.grass_v5_06-medium",
+      "name": "Grass V5 06 Medium",
+      "kind": "data",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "coniferous-pack",
+        "migrated"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "json",
+          "sha256": "ea2f80cde5f1136395445199b96f7b5f4b83991fabcfacfc4ab1de625d1eb630",
+          "bytes": 95580
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "data",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration",
+        "sourceHash": "ea2f80cde5f1136395445199b96f7b5f4b83991fabcfacfc4ab1de625d1eb630"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-briarwatch.utcmap",
+      "name": "vanguard-briarwatch",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "0549334f49efb3fd1f9924bc9a0f61adeb1565e3bbf2a04f1a54cc503efab56f",
+          "bytes": 3747398
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-hearth.utcmap",
+      "name": "vanguard-hearth",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "9faf5330f6bb6ffdb5a19e58ec3db526f89037d7c50e33d117a9eaecaab7fd1f",
+          "bytes": 1817901
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-heartwood-vault.utcmap",
+      "name": "vanguard-heartwood-vault",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "ad9fb684c4f3cdf865e44dc7936faee43e73000f68ddec66d630886cee3d1713",
+          "bytes": 461779
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-hollow-gate.utcmap",
+      "name": "vanguard-hollow-gate",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "e3a3386fcb7eed815033935c6e3ba64d09af52ac28221554193ba3a1dd08fce6",
+          "bytes": 2452921
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-prologue.utcmap",
+      "name": "vanguard-prologue",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "e0329c399b90cef885d32a4ce5dc6e0fafd49fafeac574ae6f4c3371b9f39563",
+          "bytes": 2301695
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.campaign.vanguard-root.utcmap",
+      "name": "vanguard-root",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "1f287f4f0ffc6dff66e00f6b77695168883c1ac0b830b1ff413fd7d71eb7cfd6",
+          "bytes": 1767333
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.showcase.scouring-eldenvale.utcmap",
+      "name": "scouring-eldenvale",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "d9c5601c92fa8c355c21d5f1205707e1af01fae298e2f681b63a3e3abf12b4ae",
+          "bytes": 14406818
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.skirmish.canopy-clearing.utcmap",
+      "name": "canopy-clearing",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "1a81abda97b78030051602f53073b56e707008a11c3b63ba0e6f968ee62b4172",
+          "bytes": 760196
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.skirmish.four-crowns.utcmap",
+      "name": "four-crowns",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "b6ead67b9fe4fff1b7a1eeac3343f903fe428cc52025296261cf0b237eb347eb",
+          "bytes": 4261912
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.skirmish.terrain-proving-ground.utcmap",
+      "name": "terrain-proving-ground",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "0449944744b8938a81fba56167c03530623ebd442ce9a536a9ffe9b2b5438358",
+          "bytes": 230856
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.skirmish.texture-test-1.utcmap",
+      "name": "texture-test-1",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "5c373c9ddd3a52e3a208f17526030dca77253ae545cba3339fcf9611a47026be",
+          "bytes": 572860
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.skirmish.worldroot-hollow.utcmap",
+      "name": "worldroot-hollow",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "1c823e6c9a94fc5ba4e842f8c61785de523c88cfc63ffbcd777faca32d3efc5d",
+          "bytes": 1294415
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.unregistered.maps.tutorial.four-crowns.utcmap",
+      "name": "four-crowns",
+      "kind": "map",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "data",
+          "index": 1,
+          "format": "utcmap",
+          "sha256": "d70e8f79e38d1353499dc574cd6b14e17890b9d5e40f3abb6095831717cdd60b",
+          "bytes": 3729203
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    }
+  ],
+  "retiredDrafts": [
+    {
+      "version": 1,
+      "id": "asset.unregistered.models.environment.structures.lily.model.gltf",
+      "name": "model",
+      "kind": "data",
+      "revision": 1,
+      "status": "draft",
+      "tags": [
+        "migrated",
+        "previously-unregistered"
+      ],
+      "resources": [
+        {
+          "role": "source",
+          "index": 1,
+          "format": "gltf",
+          "sha256": "067f05920ed66de56b4dc82425a5fe2db415e58f9b77a3cd469ac857c7125d92",
+          "bytes": 3899
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "migration"
+      }
+    }
+  ],
+  "maps": [
+    {
+      "from": "assets/maps/campaign/vanguard-briarwatch.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-briarwatch.utcmap"
+    },
+    {
+      "from": "assets/maps/campaign/vanguard-hearth.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-hearth.utcmap"
+    },
+    {
+      "from": "assets/maps/campaign/vanguard-heartwood-vault.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-heartwood-vault.utcmap"
+    },
+    {
+      "from": "assets/maps/campaign/vanguard-hollow-gate.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-hollow-gate.utcmap"
+    },
+    {
+      "from": "assets/maps/campaign/vanguard-prologue.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-prologue.utcmap"
+    },
+    {
+      "from": "assets/maps/campaign/vanguard-root.utcmap",
+      "fixture": "tests/fixtures/retired-maps/campaign/vanguard-root.utcmap"
+    },
+    {
+      "from": "assets/maps/showcase/authoring-playground.utcmap",
+      "fixture": "tests/fixtures/retired-maps/showcase/authoring-playground.utcmap"
+    },
+    {
+      "from": "assets/maps/showcase/scouring-eldenvale.utcmap",
+      "fixture": "tests/fixtures/retired-maps/showcase/scouring-eldenvale.utcmap"
+    },
+    {
+      "from": "assets/maps/skirmish/canopy-clearing.utcmap",
+      "fixture": "tests/fixtures/retired-maps/skirmish/canopy-clearing.utcmap"
+    },
+    {
+      "from": "assets/maps/skirmish/four-crowns.utcmap",
+      "fixture": "tests/fixtures/retired-maps/skirmish/four-crowns.utcmap"
+    },
+    {
+      "from": "assets/maps/skirmish/terrain-proving-ground.utcmap",
+      "fixture": "tests/fixtures/retired-maps/skirmish/terrain-proving-ground.utcmap"
+    },
+    {
+      "from": "assets/maps/skirmish/texture-test-1.utcmap",
+      "fixture": "tests/fixtures/retired-maps/skirmish/texture-test-1.utcmap"
+    },
+    {
+      "from": "assets/maps/skirmish/worldroot-hollow.utcmap",
+      "fixture": "tests/fixtures/retired-maps/skirmish/worldroot-hollow.utcmap"
+    },
+    {
+      "from": "assets/maps/tutorial/four-crowns.utcmap",
+      "fixture": "tests/fixtures/retired-maps/tutorial/four-crowns.utcmap"
+    }
+  ]
+}

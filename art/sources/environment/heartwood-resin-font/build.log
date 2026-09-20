@@ -1,6 +1,0 @@
-/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/environment/heartwood-resin-font/model.py:14: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
-  m=bpy.data.materials.new(name);m.use_nodes=True;m.diffuse_color=(*rgb,1);p=m.node_tree.nodes.get('Principled BSDF');p.inputs['Base Color'].default_value=(*rgb,1);p.inputs['Roughness'].default_value=rough
-Info: Saved as "heartwood-resin-font.blend"
-Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
-
-Blender quit

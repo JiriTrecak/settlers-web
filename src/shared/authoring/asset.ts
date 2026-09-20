@@ -37,7 +37,7 @@ const linkedResource=refSchema.extend({asset:authoringId}).strict();
 const renderBinding=runtimeRenderSchema.omit({file:true,image:true,harvestAnimation:true}).extend({geometry:linkedResource.optional(),image:linkedResource.optional(),harvestAnimation:linkedResource.optional()}).strict();
 const blocker=z.object({width:finite.positive(),depth:finite.positive(),shape:z.literal('ellipse').optional(),x:finite.optional(),z:finite.optional(),yaw:finite.optional()}).strict();
 const sceneryBinding=z.object({
- id:authoringId,name:z.string().min(1),category:z.enum(['units','foliage','terrain','water','landmark','resource','other']),type:z.enum(['prop','water','span','ground']),geometry:refSchema,
+ id:authoringId,name:z.string().min(1),editorHidden:z.boolean().optional(),category:z.enum(['units','foliage','terrain','water','landmark','resource','other']),type:z.enum(['prop','water','span','ground']),geometry:refSchema,
  blocker:blocker.optional(),blockers:z.array(blocker).max(128).optional(),
  deck:z.object({width:finite.positive(),depth:finite.positive(),height:finite,arch:finite.nonnegative(),thickness:finite.positive().max(12).optional(),rise:finite.min(-32).max(32).optional(),level:z.number().int().min(1).max(31),connections:z.object({start:z.number().int().min(0).max(31).optional(),end:z.number().int().min(0).max(31).optional()}).strict().optional()}).strict().optional(),
  light:z.object({x:finite,y:finite,z:finite,color:z.string().regex(/^#[0-9a-fA-F]{6}$/),intensity:finite.nonnegative(),range:finite.positive()}).strict().optional(),

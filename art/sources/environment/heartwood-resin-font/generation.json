@@ -1,7 +1,0 @@
-{
-  "mode": "built-in imagegen",
-  "reference": "reference.png",
-  "concept": "Living root bowl with asymmetrical crescent branches, glowing sap, hanging resin drops and shelf fungi; isolated three-quarter view, inspired by the retained Heartwood Vault concept.",
-  "surface": "Seamless top-down golden amber sap, broad wavy ripples and fine caustic veins, restrained contrast, stylized hand-painted RTS albedo.",
-  "processing": "Original concept preserved as reference.png. Original sap tile preserved as resin-surface-source.png; runtime baked texture resized to 512 \u00d7 512 PNG with sharp and packed in the Blender master/GLB."
-}

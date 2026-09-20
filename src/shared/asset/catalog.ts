@@ -17,6 +17,8 @@ export type CatalogEntry = {
   readonly category: AssetCategory;
   readonly type: AssetType;
   readonly file: string;
+  /** Retired references retain gameplay geometry but cannot be placed as new art. */
+  readonly editorHidden?: boolean;
   /** Ground-plane collision in asset-local metres, independent of visual mesh. */
   readonly deck?: { readonly width: number; readonly depth: number; readonly height: number; readonly arch: number; readonly thickness?: number; readonly rise?:number; readonly level: number; readonly connections?: {readonly start?:number;readonly end?:number} };
   readonly light?: { readonly x: number; readonly y: number; readonly z: number; readonly color: string; readonly intensity: number; readonly range: number };
@@ -115,6 +117,7 @@ function parseEntry(raw: unknown): CatalogEntry | null {
     light = {x:l.x as number,y:l.y as number,z:l.z as number,color:l.color,intensity:l.intensity as number,range:l.range as number};
   }
   return {
+    ...(o.editorHidden===true?{editorHidden:true}:{}),
     ...(deck ? { deck } : {}),
     ...(light ? { light } : {}),
     ...(blocker ? { blocker } : {}),

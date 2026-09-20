@@ -1,5 +1,4 @@
 import {describe,it,expect} from 'vitest';
-import {readFileSync} from 'node:fs';
 import {parseUtcMap,stringifyUtcMap,emptyUtcMap} from '../../src/shared/map/utcmap';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
@@ -9,7 +8,7 @@ import {Camera} from '../../src/render/camera/camera';
 import {OrthographicCamera,Vector3} from 'three';
 import {Spatial} from '../../src/sim/game/spatial';
 import {content} from '../../src/content/builtin';
-const fixture=()=>parseUtcMap(JSON.parse(readFileSync('assets/maps/showcase/authoring-playground.utcmap','utf8')))!;
+import {proceduralFixture as fixture} from './fixture';
 describe('authored map compilation',()=>{
  it('serializes only authored inputs and regenerates identical trees and stream elevations on reload',()=>{
   const map=fixture(),before=stringifyUtcMap(map),a=compileMapScene(map,landscapeAssets),reloaded=parseUtcMap(JSON.parse(before))!,b=compileMapScene(reloaded,landscapeAssets);

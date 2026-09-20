@@ -55,7 +55,6 @@ import type { HeightField } from "../../shared/map/height";
 import type { EntityView, SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
-import { prepareAntMaterial, prepareAntMaterials } from "../prop/antMaterials";
 import { placementGrid } from "./placementGrid";
 
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
@@ -227,7 +226,6 @@ export class SettlementLayer {
           if (this.dead) { this.disposePrototype(gltf.scene); return; }
           if (!this.dead) {
             if (!a.character) {
-              prepareAntMaterials(gltf.scene);
               this.characterBatchDisposers.push(batchStaticMaterials(gltf.scene,!!gltf.animations.length));
             }
             const authored=geometryModel(a.file!);
@@ -323,7 +321,6 @@ export class SettlementLayer {
         ).map((m) => {
           const copy = m.clone();
           copy.onBeforeCompile=m.onBeforeCompile;copy.customProgramCacheKey=m.customProgramCacheKey;
-          if (copy instanceof MeshStandardMaterial) prepareAntMaterial(copy);
           return copy;
         });
         child.material = Array.isArray(child.material) ? mats : mats[0];

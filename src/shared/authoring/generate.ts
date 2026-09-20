@@ -80,6 +80,39 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   if(inWater(obj.x,obj.z)&&obj.heightMode==='terrain')issues.push({code:'object-water-conflict',id:obj.id,message:'A placed object overlaps a river; its authored transform was preserved'});
  }
  let candidates=0;
+ // River decoration belongs to the river layer: changing its course regenerates
+ // banks and floating leaves deterministically, after structures reserve space.
+ for(const {layer,recipe,bounds,spline} of prepared){
+  if(recipe.type!=='river'||!recipe.details||!spline)continue;
+  for(const [mode,settings] of Object.entries(recipe.details)){
+   if(!settings)continue;
+   const density=settings.density??1;if(density===0)continue;
+   const spacing=settings.spacing/Math.sqrt(density),separation=new Footprints();
+   const loX=Math.max(Math.floor(bounds.minX/spacing),Math.floor(terrain.originX/spacing)),hiX=Math.min(Math.ceil(bounds.maxX/spacing),Math.floor((terrain.originX+(terrain.width-1)*terrain.step)/spacing));
+   const loZ=Math.max(Math.floor(bounds.minZ/spacing),Math.floor(terrain.originZ/spacing)),hiZ=Math.min(Math.ceil(bounds.maxZ/spacing),Math.floor((terrain.originZ+(terrain.height-1)*terrain.step)/spacing));
+   candidates+=(hiX-loX+1)*(hiZ-loZ+1);if(candidates>2000000)throw Error('Procedural density exceeds two million candidate cells');
+   const sum=settings.species.reduce((n,s)=>n+s.weight,0);
+   for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
+    const random=(c:number)=>cellRandom(layer.seed,layer.id+'.river.'+mode,ix,iz,c);
+    const x=(ix+.5+(random(0)-.5)*settings.jitter)*spacing,z=(iz+.5+(random(1)-.5)*settings.jitter)*spacing;
+    const p=nearestSpline(x,z,spline),bank=p.offset-recipe.width*p.widthScale/2;
+    const patch=settings.patchiness?1-settings.patchiness.strength+settings.patchiness.strength*patchNoise(layer.seed,layer.id,x,z,settings.patchiness.scale):1;
+    if(random(2)>=settings.probability*patch)continue;
+    if(mode==='water'){
+     const depth=p.elevation-sample(terrain,x,z);
+     if(bank>-.5||bank< -Math.min(3,recipe.width*.4)||depth<.15||depth>2.5)continue;
+    }else if(bank<settings.waterClearance||bank>recipe.bankWidth||sample(terrain,x,z)<=p.elevation+.03)continue;
+    if(settings.minSpacing&&separation.intersects(x,z,settings.minSpacing/2))continue;
+    const dx=(sample(terrain,x+1,z)-sample(terrain,x-1,z))/2,dz=(sample(terrain,x,z+1)-sample(terrain,x,z-1))/2;
+    if(mode!=='water'&&Math.hypot(dx,dz)>settings.maxSlope)continue;
+    let weight=random(3)*sum,asset=settings.species[0]!.asset;for(const candidate of settings.species){weight-=candidate.weight;if(weight<0){asset=candidate.asset;break;}}
+    const scale=settings.scaleMin+random(4)*(settings.scaleMax-settings.scaleMin);
+    if(footprints.intersects(x,z,assets.clearance(asset)*scale+settings.objectClearance))continue;
+    objects.push({id:`generated.${layer.id.slice(0,100)}.river-${mode}.${ix}.${iz}`,asset,x,z,elevation:mode==='water'?p.elevation+.035:0,yaw:random(5)*Math.PI*2,scale,heightMode:mode==='water'?'absolute':'terrain',visible:layer.visible,locked:layer.locked,owner:layer.id});
+    if(settings.minSpacing)separation.add(x,z,settings.minSpacing/2);
+   }
+  }
+ }
  const scatterPasses=prepared.flatMap(p=>{
   if(!('species'in p.recipe))return [];
   const core={...p,recipe:p.recipe,pass:'interior',minEdge:p.recipe.type==='forest'?p.recipe.interiorMargin:0,maxEdge:Infinity};

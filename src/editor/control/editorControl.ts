@@ -385,7 +385,7 @@ export class EditorControl {
       yaw: v.yaw,
       pitch: v.pitch,
       gameCam: v.gameCam,
-      catalog: this.library.doc.assets.length,
+      catalog: this.library.doc.assets.filter(a=>!a.editorHidden).length,
       brush: {
         radius: this.editor.brush.radius,
         density: this.editor.brush.density,
@@ -408,7 +408,7 @@ export class EditorControl {
     const q = parseCatalogQuery(raw);
     const assets = filterCatalog(this.library.doc.assets, q);
     return {
-      total: this.library.doc.assets.length,
+      total: this.library.doc.assets.filter(a=>!a.editorHidden).length,
       shown: assets.length,
       assets,
     };

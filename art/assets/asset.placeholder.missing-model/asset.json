@@ -1,0 +1,680 @@
+{
+  "version": 1,
+  "id": "asset.placeholder.missing-model",
+  "name": "Missing model",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "placeholder",
+    "diagnostic"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fe7716f73a4f8fca103070d502539436fa7238c343836667043409f27f8b00d7",
+      "bytes": 8196
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "b1466a9c0160b73d2ace5ef60f3c702a648ad498079ea8a06d568de00b09674d",
+      "bytes": 5152
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.briar.cottage",
+        "scale": 1,
+        "healthHeight": 5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.lumberjack",
+        "scale": 1,
+        "healthHeight": 6.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.stonemason",
+        "scale": 1,
+        "healthHeight": 4.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.sawmill",
+        "scale": 1,
+        "healthHeight": 5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.ruined-cottage",
+        "scale": 1,
+        "healthHeight": 2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.supply-crate",
+        "scale": 1,
+        "healthHeight": 1.3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.cage",
+        "scale": 1,
+        "healthHeight": 3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.merchant-cart",
+        "scale": 1,
+        "healthHeight": 3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.watch-bivouac",
+        "scale": 1,
+        "healthHeight": 2.5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.ant-stone-deposit",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.item.chest",
+        "scale": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.ant-pine-1",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.ant-pine-2",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.ant-pine-3",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.family-ring",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.healing-draught",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.healing-scroll",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.leaf-ledger",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.mana-draught",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.vigor-seed",
+        "scale": 1,
+        "healthHeight": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.item.wood",
+        "scale": 1,
+        "healthHeight": 2.5,
+        "stackHeight": 0.42,
+        "stackColumns": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.item.plank",
+        "scale": 1,
+        "healthHeight": 2.5,
+        "stackHeight": 0.19,
+        "stackColumns": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.item.amber",
+        "scale": 1,
+        "healthHeight": 2.5,
+        "stackHeight": 0.58,
+        "stackColumns": 2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.item.root",
+        "scale": 1,
+        "healthHeight": 1,
+        "stackHeight": 0.3,
+        "stackColumns": 2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.archer",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.captain",
+        "scale": 1,
+        "healthHeight": 3.2199999999999998,
+        "cameraAnchor": {
+          "height": 2.0999999999999996,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.civilian",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.briar.warrior",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.neutral.amberjaw-staglord",
+        "scale": 1,
+        "healthHeight": 2.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.neutral.ogre",
+        "scale": 1,
+        "healthHeight": 3.3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.neutral.thornblade-matriarch",
+        "scale": 1,
+        "healthHeight": 4.1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.neutral.thornspitter",
+        "scale": 1,
+        "healthHeight": 2.5,
+        "projectile": "thorn",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.neutral.wolf",
+        "scale": 1,
+        "healthHeight": 1.9,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.sanctuary",
+        "scale": 1,
+        "healthHeight": 4.9,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.bombardier-workshop",
+        "scale": 1,
+        "healthHeight": 4.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.forester",
+        "scale": 1,
+        "healthHeight": 3.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.great-mound",
+        "scale": 1,
+        "healthHeight": 7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.house",
+        "scale": 1,
+        "healthHeight": 3.5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.ironroot-forge",
+        "scale": 1,
+        "healthHeight": 4.6,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.barracks",
+        "scale": 1,
+        "healthHeight": 4.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.fort",
+        "scale": 1,
+        "healthHeight": 5.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.rootworks",
+        "scale": 1,
+        "healthHeight": 3.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.tower",
+        "scale": 1,
+        "healthHeight": 8.3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.amber-seam",
+        "scale": 1,
+        "healthHeight": 5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.corrupted-root",
+        "scale": 1,
+        "healthHeight": 4.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.tree-primary",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.resource.tree-secondary",
+        "scale": 1,
+        "sceneryAsset": "missing-model",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.archer",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "projectile": "arrow",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.bombardier",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.hunter",
+        "scale": 1,
+        "healthHeight": 2.7,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.marshal",
+        "scale": 1,
+        "healthHeight": 2.8,
+        "cameraAnchor": {
+          "height": 1.85,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "castContact": 0.68,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.warrior",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.ants.settler",
+        "scale": 1,
+        "healthHeight": 2.3,
+        "cameraAnchor": {
+          "height": 1.5,
+          "forward": 0.15,
+          "distance": 7
+        },
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "missing-model",
+        "name": "Missing model",
+        "category": "other",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Procedural diagnostic placeholder authored for this project."
+  }
+}

@@ -1,7 +1,0 @@
-{
-  "method": "built-in imagegen",
-  "prompt": "Use case: stylized-concept. Asset type: transparent RGBA ground decal texture for a stylized forest-floor RTS. Create a single irregular patch of rotting wood fibers and thin dark root veins spreading out from a dense small central knot. Top-down orthographic FLAT surface texture, no perspective, no raised objects. The rot stains the ground in muted charcoal brown, dusky burgundy and dark warm umber, with sparse copper streaks. Roughly round organic footprint, asymmetric lobes and a few branching tendrils, a broken porous edge that gradually dissolves to genuine transparency with plenty of transparent margin on every side. The center should be darker and mostly opaque, the outer half increasingly transparent with small holes revealing the ground beneath. No white or black background: actual transparent background. Broad readable hand-painted material shapes, subtle fibrous grain, no baked directional lighting or drop shadow, no green grass, no mushrooms, no skull, no glowing lava, no text, no UI. This will be alpha-blended on existing pale heartwood terrain beneath a corrupted root shrine; retain the terrain's readability rather than a busy carpet.",
-  "source": "source.png",
-  "runtime": "assets/textures/decals/root-rot.png",
-  "processing": "Sharp resize to fit a 1024x1024 transparent canvas, preserving aspect ratio and generated alpha."
-}

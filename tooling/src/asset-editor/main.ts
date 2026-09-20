@@ -15,7 +15,7 @@ async function command(op:Record<string,unknown>){const res=await fetch('/__stud
 function work(fn:()=>Promise<void>){void fn().catch(e=>message(e instanceof Error?e.message:String(e),true));}
 function renderLibrary(){
  const search=root.querySelector<HTMLInputElement>('#search')!.value.toLowerCase();library.replaceChildren();
- for(const kind of ASSET_KINDS){const items=assets.filter(a=>a.kind===kind&&[a.name,a.id,...a.tags].join(' ').toLowerCase().includes(search));if(!items.length)continue;
+ for(const kind of ASSET_KINDS){const items=assets.filter(a=>a.status!=='archived'&&a.kind===kind&&[a.name,a.id,...a.tags].join(' ').toLowerCase().includes(search));if(!items.length)continue;
   const group=document.createElement('details');group.open=!!search||items.some(a=>a.id===selected?.id)||['tree','foliage','building','unit'].includes(kind);const summary=document.createElement('summary');summary.textContent=`${kind.replaceAll('-',' ')} · ${items.length}`;group.append(summary);
   for(const asset of items){const button=document.createElement('button');button.className='asset-row'+(selected?.id===asset.id?' active':'');button.innerHTML=`${escape(asset.name)}<small>${asset.resources.length} files · ${asset.status}</small>`;button.onclick=()=>work(()=>choose(asset));group.append(button);}library.append(group);
  }

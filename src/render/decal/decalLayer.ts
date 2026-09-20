@@ -1,6 +1,6 @@
 import { BufferGeometry, Float32BufferAttribute, CanvasTexture, TextureLoader, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene, type Texture } from 'three';
-import myceliumUrl from '../../../assets/library/asset.textures.decals.mycelium-bed/albedo.png?url';
-import rootRotUrl from '../../../assets/library/asset.textures.decals.root-rot/albedo.png?url';
+import myceliumUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir__d_a.png/albedo.png?url';
+import rootRotUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.plants_snags_underlay__d_a.png/albedo.png?url';
 import { HEIGHT_ORIGIN, type HeightField } from '../../shared';
 import { DECAL_KINDS, type DecalKind, type GroundDecal } from '../../shared/landscape/decal';
 

@@ -3,7 +3,7 @@ import {assetDefinitionSchema,FILE_ROLES} from './asset';
 import {authoringId} from './recipes';
 /** UI and MCP dispatch this same contract. Mutations use optimistic revisions. */
 export const assetCommandSchema=z.discriminatedUnion('op',[
- z.object({op:z.literal('asset.list')}).strict(),
+ z.object({op:z.literal('asset.list'),includeArchived:z.boolean().optional()}).strict(),
  z.object({op:z.literal('asset.publication'),id:authoringId}).strict(),
  z.object({op:z.literal('asset.get'),id:authoringId}).strict(),
  z.object({op:z.literal('asset.create'),definition:assetDefinitionSchema}).strict(),

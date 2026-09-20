@@ -2,142 +2,39 @@
   "v": 2,
   "size": 256,
   "name": "Authoring Playground",
-  "description": "Live procedural forest, stream and riverbank recipes. Edit the source layers; bake only when needed.",
-  "sandbox": true,
+  "description": "Blank Scouring-style canvas. Add forest, meadow and river layers; gameplay objects use diagnostic art until replacements are authored.",
   "stamps": [],
   "playerStarts": [
     {
       "player": 1,
-      "x": 96,
-      "z": 140,
+      "x": 218,
+      "z": 218,
       "setup": "setup.ants",
       "mainFort": "start.player.1/main-fort"
+    },
+    {
+      "player": 2,
+      "x": 38,
+      "z": 38,
+      "setup": "setup.ants",
+      "mainFort": "start.player.2/main-fort"
     }
   ],
   "entities": [],
   "camps": [],
+  "landscape": {
+    "strokes": [],
+    "cover": [],
+    "environment": {
+      "hour": 10,
+      "season": "summer",
+      "playing": false
+    }
+  },
   "authoring": {
     "version": 1,
-    "layers": [
-      {
-        "id": "forest",
-        "name": "Conifer grove",
-        "recipe": "recipe.forest.conifer-edge",
-        "seed": 14,
-        "enabled": true,
-        "visible": true,
-        "locked": false,
-        "order": 0,
-        "shape": {
-          "type": "region",
-          "points": [
-            {
-              "x": 105,
-              "z": 105
-            },
-            {
-              "x": 147,
-              "z": 105
-            },
-            {
-              "x": 151,
-              "z": 147
-            },
-            {
-              "x": 106,
-              "z": 151
-            }
-          ]
-        }
-      },
-      {
-        "id": "stream",
-        "name": "Woodland stream",
-        "recipe": "recipe.river.gentle",
-        "seed": 1,
-        "enabled": true,
-        "visible": true,
-        "locked": false,
-        "order": 0,
-        "shape": {
-          "type": "spline",
-          "knots": [
-            {
-              "x": 100,
-              "z": 116,
-              "elevation": -0.2,
-              "outgoing": {
-                "x": 118,
-                "z": 105
-              },
-              "widthScale": 1,
-              "depthScale": 1,
-              "flowScale": 1
-            },
-            {
-              "x": 127,
-              "z": 129,
-              "elevation": -0.2,
-              "incoming": {
-                "x": 120,
-                "z": 118
-              },
-              "outgoing": {
-                "x": 135,
-                "z": 142
-              },
-              "widthScale": 1,
-              "depthScale": 1,
-              "flowScale": 1
-            },
-            {
-              "x": 155,
-              "z": 135,
-              "elevation": -0.2,
-              "incoming": {
-                "x": 149,
-                "z": 146
-              },
-              "widthScale": 1,
-              "depthScale": 1,
-              "flowScale": 1
-            }
-          ]
-        }
-      },
-      {
-        "id": "banks",
-        "name": "Tall grass along the water",
-        "recipe": "recipe.foliage.riverbank",
-        "seed": 6,
-        "enabled": true,
-        "visible": true,
-        "locked": false,
-        "order": 0,
-        "shape": {
-          "type": "region",
-          "points": [
-            {
-              "x": 105,
-              "z": 105
-            },
-            {
-              "x": 147,
-              "z": 105
-            },
-            {
-              "x": 151,
-              "z": 147
-            },
-            {
-              "x": 106,
-              "z": 151
-            }
-          ]
-        }
-      }
-    ],
+    "layers": [],
     "objects": []
   },
-  "waterLevel": -8
+  "waterLevel": -1
 }

@@ -18,15 +18,15 @@ export class ReferenceTerrain {
  readonly ar=referenceTexture(albedoUrl);
  readonly nh=referenceTexture(normalUrl,false);
  readonly macro=referenceTexture(macroUrl,false);
- compile(shader:WebGLProgramParametersWithUniforms,inputs:{paint:Texture;cover:Texture;contacts:Texture;season:{value:Color};sea:{value:number};verts:number}){
+ compile(shader:WebGLProgramParametersWithUniforms,inputs:{paint:Texture;cover:Texture;contacts:Texture;season:{value:Color};sea:{value:number};verts:number;interior?:{value:number}}){
   const {paint,cover,contacts,season,sea,verts}=inputs;
-  Object.assign(shader.uniforms,{uReferenceAR:{value:this.ar},uReferenceNH:{value:this.nh},uReferenceMacro:{value:this.macro},uPaint:{value:paint},uRoadMask:{value:cover},uContact:{value:contacts},uSoilTint:season,uSea:sea});
+  Object.assign(shader.uniforms,{uInteriorLighting:inputs.interior??{value:0},uReferenceAR:{value:this.ar},uReferenceNH:{value:this.nh},uReferenceMacro:{value:this.macro},uPaint:{value:paint},uRoadMask:{value:cover},uContact:{value:contacts},uSoilTint:season,uSea:sea});
   shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vTerrain; varying vec3 vTerrainNormal;')
    .replace('#include <begin_vertex>','#include <begin_vertex>\nvTerrain=position; vTerrainNormal=normal;');
   shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
    varying vec3 vTerrain; varying vec3 vTerrainNormal;
    uniform sampler2D uReferenceAR,uReferenceNH,uReferenceMacro,uPaint,uRoadMask,uContact;
-   uniform vec3 uSoilTint; uniform float uSea;
+   uniform vec3 uSoilTint; uniform float uSea,uInteriorLighting;
    float refHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
    float refNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(refHash(i),refHash(i+vec2(1,0)),f.x),mix(refHash(i+vec2(0,1)),refHash(i+vec2(1)),f.x),f.y);}
    vec4 refTile(sampler2D tex,vec2 uv,vec2 tile){
@@ -53,9 +53,9 @@ export class ReferenceTerrain {
    refBlend(groundAR,groundNH,refTile(uReferenceAR,uv,vec2(1.)),refTile(uReferenceNH,uv,vec2(1.)),max(cliff,paint.b));
    groundAR.rgb=mix(groundAR.rgb,vec3(.78,.80,.83),paint.a);
    vec3 macro=texture2D(uReferenceMacro,vTerrain.xz*.02).rgb*2.;
-   float contact=texture2D(uContact,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)}))/${(verts-1).toFixed(1)}).r;
-   diffuseColor.rgb*=groundAR.rgb*4.5*macro*uSoilTint*(1.-contact);
-  `).replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(groundAR.a,.35,1.);')
+   vec4 contact=texture2D(uContact,(vTerrain.xz-vec2(${HEIGHT_ORIGIN.toFixed(1)}))/${(verts-1).toFixed(1)});
+   diffuseColor.rgb*=groundAR.rgb*4.5*macro*uSoilTint*(1.-contact.r);
+  `).replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n totalEmissiveRadiance+=groundAR.rgb*contact.gba*uInteriorLighting*.8;').replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(groundAR.a,.35,1.);')
    .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
     vec3 n=normalize((groundNH.rgb*2.-1.)*vec3(1.,1.,.25));
     vec3 up=normalize(vTerrainNormal);

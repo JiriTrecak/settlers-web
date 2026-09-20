@@ -1,3 +1,4 @@
+import type {HeightField} from '../../shared/map/height';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {AmbientLight,Color,DirectionalLight,DoubleSide,Float32BufferAttribute,InstancedMesh,Matrix4,Mesh,MeshStandardMaterial,Vector3,type Scene,type Texture,type BufferGeometry} from 'three';
 import {sourceHeight,unpackSourceBytes,type ImportedTerrain} from '../../shared/map/importedTerrain';
@@ -6,6 +7,8 @@ import {ReferenceGround} from '../prop/referenceGround';
 import {sourceGrassLighting} from './sourceGrassLighting';
 import {perf} from '../../debug/performance';
 import {assetUrls} from '../../shared/assets/urls.generated';
+export type GrassInstance={x:number;z:number;y?:number;yaw:number;scale:number};
+export type NativeGrass={field:HeightField;groups:{asset:string;water?:boolean;instances:GrassInstance[]}[]};
 /** Stored instances only: no random scatter, density budget, or scale substitution. */
 export class ImportedGrass {
  readonly ready:Promise<void>;
@@ -23,16 +26,17 @@ export class ImportedGrass {
  private sunDirection={value:new Vector3()};
  private ambientColor={value:new Color()};
  private target=new Vector3();
- constructor(private scene:Scene,readonly source:ImportedTerrain){
+ constructor(private scene:Scene,readonly source:ImportedTerrain|NativeGrass){
   this.sun=scene.children.find((o):o is DirectionalLight=>o instanceof DirectionalLight);
   this.ambient=scene.children.find((o):o is AmbientLight=>o instanceof AmbientLight);
-  this.ground.updateSource(sourceHeight(source));
+  if('field'in source)this.ground.update(source.field);else this.ground.updateSource(sourceHeight(source));
   this.ready=this.build();
  }
  private async build(){
   await this.ground.ready;
-  const field=sourceHeight(this.source),loader=new GLTFLoader();
-  for(const group of this.source.grass){
+  const source=this.source,field='field'in source?{sample:(x:number,z:number)=>source.field.sample(x,z),normal:(x:number,z:number):[number,number,number]=>{const v=new Vector3(source.field.sample(x-.5,z)-source.field.sample(x+.5,z),1,source.field.sample(x,z-.5)-source.field.sample(x,z+.5)).normalize();return v.toArray();}}:sourceHeight(source),loader=new GLTFLoader();
+  const groups='field'in source?source.groups:source.grass.map(g=>{const raw=unpackSourceBytes(g.instances),instances:GrassInstance[]=[];for(let i=0;i<raw.length;i+=8)instances.push({x:source.origin[0]+(raw[i]!+raw[i+2]!/255)*16,z:source.origin[1]+(raw[i+1]!+raw[i+3]!/255)*16,y:g.water?(raw[i+7]!+raw[i+6]!/255)*256/65535*64+source.heightOffset:undefined,yaw:raw[i+4]!/255*Math.PI*2,scale:.25+3.75*raw[i+5]!/255});return {...g,instances};});
+  for(const group of groups){
    const url=assetUrls[`assets/library/asset.models.environment.grass.${group.asset}/geometry.glb`];if(!url)throw Error(`Missing imported grass ${group.asset}`);
    const gltf=await loader.loadAsync(url),parts:Mesh[]=[];gltf.scene.updateMatrixWorld(true);gltf.scene.traverse(o=>{if(o instanceof Mesh)parts.push(o);});
    for(const part of parts){
@@ -67,17 +71,15 @@ export class ImportedGrass {
        if(texture2D(uGrassUnderlay,(maskUV*(maskSize-1.)+.5)/maskSize).r>.5)gl_Position=vec4(2.,2.,2.,1.);
       `);
     };
-    const raw=unpackSourceBytes(group.instances),chunks=new Map<number,number[]>();
-    for(let i=0;i<raw.length;i+=8){const key=raw[i+1]!*this.source.blocks[0]+raw[i]!;const indices=chunks.get(key)??[];indices.push(i);chunks.set(key,indices);}
-    for(const indices of chunks.values()){
-     const mesh=new InstancedMesh(geometry,material,indices.length),matrix=new Matrix4(),up=new Vector3(),right=new Vector3(),tangent=new Vector3(),third=new Vector3();
-     indices.forEach((i,index)=>{
-      const x=this.source.origin[0]+(raw[i]!+raw[i+2]!/255)*16,z=this.source.origin[1]+(raw[i+1]!+raw[i+3]!/255)*16;
-      const angle=raw[i+4]!/255*Math.PI*2,scale=.25+3.75*raw[i+5]!/255;
+    const chunks=new Map<string,GrassInstance[]>();
+    for(const instance of group.instances){const key=Math.floor(instance.x/16)+':'+Math.floor(instance.z/16),chunk=chunks.get(key)??[];chunk.push(instance);chunks.set(key,chunk);}
+    for(const instances of chunks.values()){
+     const mesh=new InstancedMesh(geometry,material,instances.length),matrix=new Matrix4(),up=new Vector3(),right=new Vector3(),tangent=new Vector3(),third=new Vector3();
+     instances.forEach(({x,z,y,yaw:angle,scale},index)=>{
       up.fromArray(field.normal(x,z)).lerp(new Vector3(0,1,0),.5);
       if(laying||group.water)up.set(0,1,0);
       right.set(Math.sin(angle),0,Math.cos(angle));tangent.crossVectors(up,right).normalize();third.crossVectors(tangent,up);
-      matrix.makeBasis(tangent,up,third).scale(new Vector3(scale,scale,scale));matrix.setPosition(x,group.water?(raw[i+7]!+raw[i+6]!/255)*256/65535*64+this.source.heightOffset:field.sample(x,z),z);mesh.setMatrixAt(index,matrix);
+      matrix.makeBasis(tangent,up,third).scale(new Vector3(scale,scale,scale));matrix.setPosition(x,y??field.sample(x,z),z);mesh.setMatrixAt(index,matrix);
      });
      mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();if(mesh.boundingSphere)mesh.boundingSphere.radius+=.5;
      mesh.castShadow=false;mesh.receiveShadow=material.userData.sourceAttributes?.IsDisableShadows!=='true';mesh.name=`source-grass.${group.asset}`;
@@ -86,7 +88,7 @@ export class ImportedGrass {
     }
    }
   }
-  perf.value('Source grass instances',this.source.grass.reduce((n,g)=>n+unpackSourceBytes(g.instances).length/8,0));
+  perf.value('Source grass instances',groups.reduce((n,g)=>n+g.instances.length,0));
  }
  tick(now:number){
   this.time.value=now*.001;

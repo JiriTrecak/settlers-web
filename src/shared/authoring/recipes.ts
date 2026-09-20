@@ -25,7 +25,7 @@ const scatter=z.object({
 }).strict();
 const recipeVariants=[
  z.object({type:z.literal('terrain'),operation:z.enum(['raise','lower','flatten']),height:finite.min(-128).max(128),falloff:finite.min(0).max(128)}).strict(),
- z.object({type:z.literal('river'),water:authoringId,width:finite.min(.2).max(128),depth:finite.min(.1).max(64),bankWidth:finite.min(.1).max(64),bankMaterial:authoringId.optional(),bedMaterial:authoringId.optional(),flow:finite.min(0).max(3),maxUphillGrade:finite.min(0).max(.05)}).strict(),
+ z.object({type:z.literal('river'),water:authoringId,width:finite.min(.2).max(128),depth:finite.min(.1).max(64),bankWidth:finite.min(.1).max(64),bankMaterial:authoringId.optional(),bedMaterial:authoringId.optional(),flow:finite.min(0).max(3),maxUphillGrade:finite.min(0).max(.05),details:z.object({banks:scatter.optional(),water:scatter.optional()}).strict().optional()}).strict(),
  z.object({type:z.literal('path'),material:authoringId,width:finite.min(.2).max(128),shoulder:finite.min(0).max(64),flatten:finite.min(0).max(1),vegetationClearance:finite.min(0).max(32)}).strict(),
  z.object({type:z.literal('forest'),...scatter.shape,interiorMargin:finite.min(0).max(64).default(0),edge:scatter.extend({width:finite.positive().max(64)}).strict().optional()}).strict(),
  z.object({type:z.literal('grass'),...scatter.shape}).strict(),
@@ -50,7 +50,7 @@ const scatterOverrides=scatter.partial().extend({
 });
 export const recipeOverridesSchema=z.discriminatedUnion('type',[
  recipeVariants[0].partial().extend({type:z.literal('terrain')}),
- recipeVariants[1].partial().extend({type:z.literal('river')}),
+ recipeVariants[1].partial().extend({type:z.literal('river'),details:z.object({banks:scatterOverrides.optional(),water:scatterOverrides.optional()}).strict().optional()}),
  recipeVariants[2].partial().extend({type:z.literal('path')}),
  scatterOverrides.extend({type:z.literal('forest'),interiorMargin:finite.min(0).max(64).optional(),edge:scatterOverrides.extend({width:finite.positive().max(64).optional()}).optional()}),
  scatterOverrides.extend({type:z.literal('grass')}),

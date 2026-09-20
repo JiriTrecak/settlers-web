@@ -1,8 +1,8 @@
+import {waterSurface} from './waterSurface';
+import type {HeightField} from '../../shared/map/height';
 import {BufferAttribute,BufferGeometry,Color,DataTexture,DepthTexture,FloatType,Frustum,Group,HalfFloatType,LinearFilter,Matrix4,Mesh,PCFShadowMap,RedFormat,Scene,ShaderMaterial,SRGBColorSpace,UnsignedIntType,Vector2,Vector3,WebGLRenderTarget,type Camera,type DirectionalLight,type WebGLRenderer} from 'three';
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
 import type {ImportedTerrain} from '../../shared/map/importedTerrain';
-import {sourceHeight,unpackSourceBytes} from '../../shared/map/importedTerrain';
-import {sourceWater} from '../../shared/map/importedWater';
 import {referenceTexture} from '../terrain/referenceTerrain';
 import {sourceReflection} from '../terrain/sourceReflection';
 import {sourceWaterFragment,sourceWaterVertex} from './sourceWaterShaders';
@@ -33,30 +33,23 @@ export class ImportedWater {
  private readonly ground:DataTexture;
  private readonly groundColor:DataTexture;
  private readonly waves=referenceTexture(wavesUrl,false);
- constructor(_scene:Scene,readonly source:ImportedTerrain){
-  const water=sourceWater(source),terrain=sourceHeight(source),[hw,hh]=source.heightSize;
-  this.flow=new DataTexture(water.flow,water.width,water.depth);this.flow.minFilter=this.flow.magFilter=LinearFilter;this.flow.needsUpdate=true;
-  const heights=new Float32Array(hw*hh);for(let i=0;i<heights.length;i++)heights[i]=terrain.values[i]!*64/65535+source.heightOffset;
-  this.ground=new DataTexture(heights,hw,hh,RedFormat,FloatType);this.ground.needsUpdate=true;
-  const color=source.groundColor;
-  this.groundColor=color?new DataTexture(unpackSourceBytes(color.rgba),...color.size):new DataTexture(new Uint8Array([128,128,128,255]),1,1);
+ constructor(_scene:Scene,readonly source:ImportedTerrain|HeightField){
+  const water=waterSurface(source);
+  this.flow=new DataTexture(water.flow,...water.size);this.flow.minFilter=this.flow.magFilter=LinearFilter;this.flow.needsUpdate=true;
+  this.ground=new DataTexture(water.ground,...water.groundSize,RedFormat,FloatType);this.ground.needsUpdate=true;
+  this.groundColor=water.color?new DataTexture(water.color.bytes,...water.color.size):new DataTexture(new Uint8Array([128,128,128,255]),1,1);
   this.groundColor.minFilter=this.groundColor.magFilter=LinearFilter;this.groundColor.needsUpdate=true;
   this.opaque.depthTexture=new DepthTexture(1,1,UnsignedIntType);
   this.material=new ShaderMaterial({vertexShader:sourceWaterVertex,fragmentShader:sourceWaterFragment,toneMapped:false,
    defines:{USE_SHADOWMAP:1,SHADOWMAP_TYPE_VSM:1},uniforms:{
-    uSourceWaterGroundColor:{value:this.groundColor},uUseGroundColor:{value:!!source.groundColor},uSunDirection:{value:this.sunDirection},uSourceWaterTime:this.time,uSourceWaterFlow:{value:this.flow},uSourceWaterGround:{value:this.ground},uSourceWaterWaves:{value:this.waves},
-    uSourceWaterOrigin:{value:new Vector2(...source.origin)},uSourceWaterSize:{value:new Vector2(water.width,water.depth)},uSourceWaterOffset:{value:new Vector2(source.origin[0]-source.sourceOrigin[0],source.origin[1]-source.sourceOrigin[1])},
+    uSourceWaterGroundColor:{value:this.groundColor},uUseGroundColor:{value:!!water.color},uSunDirection:{value:this.sunDirection},uSourceWaterTime:this.time,uSourceWaterFlow:{value:this.flow},uSourceWaterGround:{value:this.ground},uSourceWaterWaves:{value:this.waves},
+    uSourceWaterGroundSize:{value:new Vector2(...water.groundSize)},uSourceWaterGroundScale:{value:water.groundScale},uSourceWaterOrigin:{value:new Vector2(...water.origin)},uSourceWaterSize:{value:new Vector2(...water.size)},uSourceWaterOffset:{value:new Vector2(...water.offset)},
     uOpaqueColor:{value:this.opaque.texture},uOpaqueDepth:{value:this.opaque.depthTexture},uViewport:{value:new Vector2()},uInverseProjection:{value:new Matrix4()},uCameraWorld:{value:new Matrix4()},
-    uSourceReflections:{value:this.screenReflections.target.texture},uSourceHeightOffset:{value:source.heightOffset},uSourceCaustics:{value:this.caustics.target.texture},uCausticsView:{value:this.causticsView},uReflectionCube:{value:this.reflection.texture},uDirectLight:{value:new Color()},uAmbientLight:{value:new Color()},uViewDirection:{value:new Vector3()},
+    uSourceReflections:{value:this.screenReflections.target.texture},uSourceHeightOffset:{value:water.heightOffset},uSourceCaustics:{value:this.caustics.target.texture},uCausticsView:{value:this.causticsView},uReflectionCube:{value:this.reflection.texture},uDirectLight:{value:new Color()},uAmbientLight:{value:new Color()},uViewDirection:{value:new Vector3()},
     uSunShadow:{value:null},uShadowSize:{value:new Vector2()},uShadowMatrix:{value:new Matrix4()},uHasShadow:{value:false},uShadowBias:{value:0},uShadowRadius:{value:1},
    }});
-  for(const block of source.water){
-   const positions=new Float32Array(17*17*3),indices:number[]=[];
-   for(let z=0;z<=16;z++)for(let x=0;x<=16;x++){
-    const wx=source.origin[0]+block.x*16+x,wz=source.origin[1]+block.z*16+z,i=(z*17+x)*3;
-    positions[i]=wx;positions[i+1]=water.sample(wx,wz);positions[i+2]=wz;
-   }
-   for(let z=0;z<16;z++)for(let x=0;x<16;x++){const a=z*17+x,b=a+1,c=a+17,d=c+1;indices.push(a,c,b,b,c,d);}
+  for(const block of water.tiles){
+   const {positions,indices}=block;
    const geometry=new BufferGeometry();geometry.setAttribute('position',new BufferAttribute(positions,3));geometry.setIndex(indices);geometry.computeBoundingSphere();if(geometry.boundingSphere)geometry.boundingSphere.radius+=4;
    this.screenReflections.add(geometry);
    const mesh=new Mesh(geometry,this.material);mesh.name=`source-water.${block.x}.${block.z}`;this.group.add(mesh);

@@ -1,16 +1,16 @@
+import {missionFixture} from '../sim/mission-fixture';
 import {PresentationView} from '../../src/session/session/presentationView';
 import {describe,it,expect} from 'vitest';
-import {readFileSync} from 'node:fs';
 import {savesForMode,validateSaveDestination,type SavedGame} from '../../src/shared/save/saveLibrary';
 import {restoreSavedWorld} from '../../src/session/session/restoreSavedWorld';
 import type {LocalSave} from '../../src/shared/save/localSave';
 import {World} from '../../src/sim/world/world';
-import {emptyUtcMap,parseUtcMap} from '../../src/shared/map/utcmap';
+import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {localMatch} from '../../src/shared/match/match';
 import {emptyPipeline} from '../../src/shared/save/save';
 import type {MapEntry} from '../../src/shared/map/library';
 function fixture(campaign=false){
- const source=campaign?parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-prologue.utcmap','utf8')))!:emptyUtcMap();
+ const source=campaign?missionFixture():emptyUtcMap();
  const map={...source,entities:source.entities.filter(e=>!campaign||!e.id.startsWith('tree.'))};
  const match=localMatch({mapId:campaign?'mission':'map',mapRevision:'rev',seed:19,slotCount:campaign?1:2,me:0});
  const world=new World({map,slots:match.slots,seed:match.seed});for(let i=0;i<15;i++)world.tick();

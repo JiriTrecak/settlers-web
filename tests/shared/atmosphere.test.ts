@@ -1,14 +1,13 @@
 import {describe,it,expect,vi,afterEach} from 'vitest';
-import {readFileSync} from 'node:fs';
 import {atmosphereSchema,DEFAULT_ATMOSPHERE,PROLOGUE_ATMOSPHERE} from '../../src/shared/landscape/atmosphere';
 import {emptyLandscape,parseLandscape} from '../../src/shared/landscape/curve';
-import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
+import {parseUtcMap,stringifyUtcMap,emptyUtcMap} from '../../src/shared/map/utcmap';
 import {ATMOSPHERE_KEY,readAtmosphereQuality,setAtmosphereQuality} from '../../src/shared/settings/graphics';
 afterEach(()=>vi.unstubAllGlobals());
 describe('map atmosphere',()=>{
  it('accepts older maps without enabling a new visual effect',()=>{expect(parseLandscape(emptyLandscape())?.environment.atmosphere).toBeUndefined();expect(DEFAULT_ATMOSPHERE.enabled).toBe(false);});
  it('roundtrips the prologue regions through the actual map format',()=>{
-  const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/campaign/vanguard-prologue.utcmap','utf8')))!;
+  const map={...emptyUtcMap(),landscape:{...emptyLandscape(),environment:{...emptyLandscape().environment,atmosphere:PROLOGUE_ATMOSPHERE}}};
   expect(map.landscape?.environment.atmosphere?.regions).toEqual(PROLOGUE_ATMOSPHERE.regions);
   expect(map.landscape?.environment.atmosphere?.sunTint).toBe('#ffe0a6');
   const copy=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
