@@ -1,10 +1,7 @@
+import '../fixtures/walkableCatalogue';
 import {Revival} from '../../src/sim/game/revival';
 import {Inventory} from '../../src/sim/game/inventory';
-import {it,expect,vi} from 'vitest';
-vi.mock('../../src/shared/assets/manifest',async original=>{
- const actual=await original<typeof import('../../src/shared/assets/manifest')>();
- return {...actual,sceneryCatalogue:{...actual.sceneryCatalogue,assets:actual.sceneryCatalogue.assets.map(a=>a.id==='timber-bridge'?{...a,deck:{width:6,depth:24,height:0,arch:4,thickness:.8,level:1,connections:{start:0,end:0}}}:a)}};
-});
+import {it,expect} from 'vitest';
 import {GameContext} from '../../src/sim/game/context';
 import {emptyState} from '../../src/sim/game/state';
 import {fixed,precise} from '../../src/sim/game/motion';
@@ -17,7 +14,7 @@ import {heading} from '../../src/sim/game/facing';
 import {World} from '../../src/sim/world/world';
 import {PresentationView} from '../../src/session/session/presentationView';
 import {emptyMissionState} from '../../src/shared/scenario/schema';
-const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),stamps:[{id:'arch',asset:'timber-bridge',x:40,y:40}]});
+const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
 const setup=()=>new GameContext(emptyState(),new ContentRegistry(builtinSource),map());
 function move(c:GameContext,n=1600){for(let i=0;i<n;i++){c.state.tick++;c.move();}}
 it('moves under an occupied deck without collision or height snapping',()=>{
@@ -109,7 +106,7 @@ it('saves explored fog per floor while projecting a union for the minimap',()=>{
 });
 
 it('reveals cinematic staging on its stacked floors without unveiling remote decks or exploring the map',()=>{
- const m=map();m.stamps.push({id:'remote-arch',asset:'timber-bridge',x:100,y:100});
+ const m=map();m.stamps.push({id:'remote-arch',asset:'leafbound-twig-bridge',x:100,y:100});
  const world=new World({map:m,slots,seed:1}),g=world.settlement;
  g.state.mission={...emptyMissionState(),scene:{x:40,y:40}};
  const before=world.checksum(),normal=world.view(0).settlement.fog!,projection=new PresentationView();

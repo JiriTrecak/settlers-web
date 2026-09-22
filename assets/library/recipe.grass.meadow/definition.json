@@ -3,11 +3,11 @@
   "id": "recipe.grass.meadow",
   "name": "Meadow · mixed low grass",
   "kind": "landscape-recipe",
-  "revision": 1,
+  "revision": 3,
   "status": "published",
   "tags": [
     "authoring",
-    "source-informed"
+    "original"
   ],
   "resources": [],
   "usesGeometry": false,
@@ -31,15 +31,15 @@
     "type": "grass",
     "species": [
       {
-        "asset": "asset.models.environment.grass.reference-grass-low",
+        "asset": "asset.models.environment.woodland-grass-low",
         "weight": 6
       },
       {
-        "asset": "asset.models.environment.grass.reference-grass-messy",
+        "asset": "asset.models.environment.woodland-grass-messy",
         "weight": 3
       },
       {
-        "asset": "asset.models.environment.grass.reference-grass-daisy",
+        "asset": "asset.models.environment.woodland-daisies",
         "weight": 1
       }
     ],
@@ -60,6 +60,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+    "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
   }
 }

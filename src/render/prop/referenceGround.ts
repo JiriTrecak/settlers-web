@@ -1,6 +1,10 @@
+import {biomeById} from '../../content/biomes';
+import {referenceTexture} from '../terrain/referenceTerrain';
+import {assetUrls} from '../../shared/assets/urls.generated';
+import {nativeGroundColor} from '../terrain/nativeGroundColor';
 import {acquireSourceGround,releaseSourceGround,type SourceGroundTextures} from './sourceGroundTextures';
 import {type SourceHeight} from '../../shared/map/importedTerrain';
-import {DataTexture,FloatType,RedFormat,NearestFilter,Vector2,Vector4,type Texture,type Material,type WebGLProgramParametersWithUniforms} from 'three';
+import {DataTexture,FloatType,RedFormat,NearestFilter,LinearFilter,Vector2,Vector4,type Texture,type Material,type WebGLProgramParametersWithUniforms} from 'three';
 import type {HeightField} from '../../shared/map/height';
 import {sourceOcclusionGLSL} from './sourceOcclusion';
 import {sourceDirectLight} from './sourceDirectLight';
@@ -10,8 +14,15 @@ import {sourceReflection} from '../terrain/sourceReflection';
  * Manual bilinear filtering also works without float-linear texture support. */
 export class ReferenceGround {
  private readonly reflection=sourceReflection();
- get ready(){return this.colorEnabled.value?this.reflection.ready:Promise.resolve();}
+ private nativeReady:Promise<void>=Promise.resolve();
+ private nativeEpoch=0;
+ get ready(){return Promise.all([this.reflection.ready,this.nativeReady,this.winterMacro?.referenceReady]).then(()=>{});}
  private loading=false;
+ private winter=false;
+ private winterMacro?:ReturnType<typeof referenceTexture>;
+ private macroBindings=new Map<Texture,{value:Texture}>();
+ private setWinter(on:boolean){this.winter=on;if(on)this.winterMacro??=referenceTexture(assetUrls['assets/library/asset.texture.winter-macro/albedo.png'],false);for(const [normal,uniform]of this.macroBindings)uniform.value=on?this.winterMacro!:normal;}
+ private macroBinding(texture:Texture){let binding=this.macroBindings.get(texture);if(!binding){binding={value:this.winter?this.winterMacro!:texture};this.macroBindings.set(texture,binding);}return binding;}
  private source?:SourceHeight;
  readonly occlusionLayout={value:new Vector4(0,0,1,1)};
  readonly occlusionSize={value:new Vector2(1,1)};
@@ -31,6 +42,8 @@ export class ReferenceGround {
   else{this.texture.value.dispose();this.color.value.dispose();this.underlay.value.dispose();}
  }
  updateSource(field:SourceHeight){
+  this.setWinter(field.source.layers.some(l=>l.ar.startsWith('tiles_winter_')));
+  this.nativeEpoch++;
   if(this.source===field)return;
   this.releaseTextures();this.source=field;
   const shared=this.shared=acquireSourceGround(field);
@@ -42,6 +55,7 @@ export class ReferenceGround {
  }
  constructor(){this.texture.value.needsUpdate=true;this.color.value.needsUpdate=true;this.underlay.value.needsUpdate=true;}
  update(field:HeightField|null){
+  this.setWinter(biomeById(field?.biome).terrainSet==='winter');
   if(field?.source){this.updateSource(field.source);return;}
   if(this.shared){
    this.releaseTextures();
@@ -61,6 +75,16 @@ export class ReferenceGround {
   const data=this.texture.value.image.data as Float32Array;
   if(field)data.set(field.samples);else data.fill(0);
   this.grid.value.set(field?.origin??0,size);this.texture.value.needsUpdate=true;
+  const epoch=++this.nativeEpoch;
+  if(field)this.nativeReady=nativeGroundColor(field).then(({rgba,size})=>{
+   if(epoch!==this.nativeEpoch)return;
+   this.color.value.dispose();this.color.value=new DataTexture(rgba,size,size);
+   this.color.value.minFilter=this.color.value.magFilter=LinearFilter;this.color.value.needsUpdate=true;
+   this.colorLayout.value.set(field.origin,field.origin,1/field.span,1/field.span);this.colorEnabled.value=1;
+  });
+  // Keep the rejection available to ready(), without a detached update becoming unhandled.
+  void this.nativeReady.catch(()=>{});
+
  }
  /** Source shaders apply optional ground tint and macro color independently. */
  attachColor(material:Material,macro:Texture,useGround:boolean,groundBounce=true,vertexLighting=false){
@@ -71,12 +95,15 @@ export class ReferenceGround {
   };
   material.customProgramCacheKey=()=>key()+'/source-surface-color-'+useGround+'-'+groundBounce+'-'+vertexLighting;material.needsUpdate=true;
  }
- compileSurface(s:WebGLProgramParametersWithUniforms,macro:Texture,useGround:boolean,applyMacro=true,groundBounce=true,vertexLighting=false){
-   if(!vertexLighting)sourceDirectLight(s);
+ bindSurfaceUniforms(s:WebGLProgramParametersWithUniforms,macro:Texture){
    s.uniforms.uReferenceUnderlay=this.underlay;
    Object.assign(s.uniforms,{uReferenceOcclusionLayout:this.occlusionLayout,uReferenceOcclusionSize:this.occlusionSize});
-   if(this.colorEnabled.value&&!this.loading){this.loading=true;void this.ready.catch(error=>console.error('Reference ambient cube',error));}
-   Object.assign(s.uniforms,{uReferenceReflection:{value:this.reflection.texture},uReferenceBrdf:{value:this.reflection.brdf},uReferenceLightHeight:this.texture,uReferenceLightLayout:this.layout,uReferenceLightDimensions:this.dimensions,uReferenceColor:this.color,uReferenceColorLayout:this.colorLayout,uReferenceColorEnabled:this.colorEnabled,uReferenceSourceOffset:this.sourceOffset,uReferenceMacroScale:this.macroScale,uReferenceMacro:{value:macro}});
+   if(!this.loading){this.loading=true;void this.ready.catch(error=>console.error('Reference ambient cube',error));}
+   Object.assign(s.uniforms,{uReferenceReflection:{value:this.reflection.texture},uReferenceBrdf:{value:this.reflection.brdf},uReferenceLightHeight:this.texture,uReferenceLightLayout:this.layout,uReferenceLightDimensions:this.dimensions,uReferenceColor:this.color,uReferenceColorLayout:this.colorLayout,uReferenceColorEnabled:this.colorEnabled,uReferenceSourceOffset:this.sourceOffset,uReferenceMacroScale:this.macroScale,uReferenceMacro:this.macroBinding(macro)});
+ }
+ compileSurface(s:WebGLProgramParametersWithUniforms,macro:Texture,useGround:boolean,applyMacro=true,groundBounce=true,vertexLighting=false){
+   if(!vertexLighting)sourceDirectLight(s);
+   this.bindSurfaceUniforms(s,macro);
    s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vReferenceSurfaceXZ;varying float vReferenceSurfaceY;').replace('#include <project_vertex>',`#include <project_vertex>
     vec3 surfaceWorld=transpose(mat3(viewMatrix))*mvPosition.xyz+cameraPosition;
     vReferenceSurfaceXZ=surfaceWorld.xz;
@@ -94,7 +121,7 @@ export class ReferenceGround {
     ${applyMacro?'diffuseColor.rgb*=texture2D(uReferenceMacro,(vReferenceSurfaceXZ-uReferenceSourceOffset)*uReferenceMacroScale).rgb*2.;':''}
    `);
    if(!vertexLighting)s.fragmentShader=s.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
-    if(uReferenceColorEnabled>0.){
+    {
      vec3 worldN=inverseTransformDirection(normal,viewMatrix);
      vec3 sourceIrradiance=sqrt(textureLod(uReferenceReflection,worldN,6.).rgb);
      float sourceAO=1.;
@@ -158,5 +185,5 @@ export class ReferenceGround {
   };
   material.customProgramCacheKey=()=>key()+'/reference-ground-v2-'+sourceShader;material.needsUpdate=true;
  }
- dispose(){this.releaseTextures();this.reflection.dispose();}
+ dispose(){this.nativeEpoch++;this.releaseTextures();this.reflection.dispose();this.winterMacro?.dispose();}
 }

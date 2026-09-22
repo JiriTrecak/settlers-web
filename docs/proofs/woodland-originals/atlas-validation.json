@@ -1,0 +1,28 @@
+{
+  "woodland-pine-a": {
+    "triangles": 980,
+    "meshes": 1,
+    "materials": 3,
+    "clips": [
+      "decay",
+      "fall",
+      "hit"
+    ]
+  },
+  "woodland-pine-b": {
+    "triangles": 980,
+    "meshes": 1,
+    "materials": 3,
+    "clips": [
+      "decay",
+      "fall",
+      "hit"
+    ]
+  },
+  "woodland-pine-sapling": {
+    "triangles": 364,
+    "meshes": 1,
+    "materials": 3,
+    "clips": []
+  }
+}

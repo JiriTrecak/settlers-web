@@ -1,6 +1,4 @@
-import { BufferGeometry, Float32BufferAttribute, CanvasTexture, TextureLoader, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene, type Texture } from 'three';
-import myceliumUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.plants_underlay_fir__d_a.png/albedo.png?url';
-import rootRotUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.plants_snags_underlay__d_a.png/albedo.png?url';
+import { BufferGeometry, Float32BufferAttribute, CanvasTexture, SRGBColorSpace, MeshStandardMaterial, MeshDepthMaterial, Mesh, Group, type Scene, type Texture } from 'three';
 import { HEIGHT_ORIGIN, type HeightField } from '../../shared';
 import { DECAL_KINDS, type DecalKind, type GroundDecal } from '../../shared/landscape/decal';
 
@@ -55,13 +53,22 @@ export class DecalLayer {
 
 /** Small vector-painted patches with transparent borders; no baked directional shadows. */
 function texture(kind: DecalKind): Texture {
-  if(kind==='root-rot'||kind==='mycelium-bed'){
-    const t=new TextureLoader().load(kind==='root-rot'?rootRotUrl:myceliumUrl);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
-  }
   const canvas=document.createElement('canvas');canvas.width=canvas.height=512;
   const ctx=canvas.getContext('2d')!;
   let seed=173;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
   const ellipse=(x:number,y:number,rx:number,ry:number,a:number,color:string)=>{ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,a,0,Math.PI*2);ctx.fill();};
+  if(kind==='root-rot'||kind==='mycelium-bed'){
+    const rot=kind==='root-rot';
+    // Original radial root and fungal threads, stable across scene rebuilds.
+    for(let i=0;i<86;i++){
+      const a=random()*Math.PI*2,r=40+random()*185,x=256+Math.cos(a)*r,y=256+Math.sin(a)*r;
+      ctx.globalAlpha=(1-r/245)*.7;ctx.strokeStyle=rot?'#423840':'#aaa182';ctx.lineWidth=rot?2+random()*5:1+random()*2;
+      ctx.beginPath();ctx.moveTo(256+Math.cos(a)*25,256+Math.sin(a)*25);
+      ctx.bezierCurveTo(256+Math.cos(a+.3)*r*.45,256+Math.sin(a+.3)*r*.45,x-Math.sin(a)*18,y+Math.cos(a)*18,x,y);ctx.stroke();
+      if(i%3===0)ellipse(x,y,4+random()*9,2+random()*3,a,rot?'#63514e':'#b9ae8f');
+    }
+    const t=new CanvasTexture(canvas);t.colorSpace=SRGBColorSpace;return t;
+  }
   const count=kind==='pebbles'?36:kind==='tiny-flowers'?85:230;
   for(let i=0;i<count;i++){
     const angle=random()*Math.PI*2,r=Math.sqrt(random())*205;

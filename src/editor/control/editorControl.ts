@@ -1,3 +1,4 @@
+import {biomeById,biomeRecipes} from '../../content/biomes';
 import {canopySchema} from '../../shared/landscape/canopy';
 import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
 import {atmosphereSchema} from '../../shared/landscape/atmosphere';
@@ -59,7 +60,7 @@ export class EditorControl {
     scene:params=>{
       const p=sceneCommandSchema.parse(params),e=this.editor;
       switch(p.action){
-        case 'recipes':return e.authoringAssets.filter(a=>a.recipe||a.water);
+        case 'recipes':return e.authoringAssets.filter(a=>biomeRecipes(biomeById(e.map.biome)).some(p=>p.id===a.id));
         case 'put-layer':e.putLayer(p.layer);break;
         case 'put-object':e.putAuthoredObject(p.object);break;
         case 'select':e.selectLayer({kind:p.kind,id:p.id});break;

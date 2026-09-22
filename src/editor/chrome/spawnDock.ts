@@ -7,6 +7,7 @@ export class SpawnDock {
  private readonly buttons:HTMLButtonElement[]=[];
  constructor(host:HTMLElement,private readonly editor:WorldEditor){
   this.root.className=`pointer-events-auto absolute left-24 top-1/2 z-20 flex w-52 -translate-y-1/2 flex-col gap-3 rounded-2xl p-3 font-dock ${sheet}`;
+    this.root.classList.add('editor-properties');
   this.root.setAttribute('aria-label','Player spawn points');
   const title=document.createElement('strong');title.textContent='Spawn point';this.root.append(title);
   for(const player of [1,2]){const b=document.createElement('button');b.className=btn;b.textContent=`Player ${player}`;b.onclick=()=>{editor.spawnPlayer=player;editor.spawnMessage='';this.sync();};this.buttons.push(b);this.root.append(b);}

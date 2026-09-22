@@ -3,11 +3,11 @@
   "id": "recipe.forest.conifer-edge",
   "name": "Conifer forest · soft sapling edge",
   "kind": "landscape-recipe",
-  "revision": 6,
+  "revision": 8,
   "status": "published",
   "tags": [
     "authoring",
-    "source-informed"
+    "original"
   ],
   "resources": [],
   "usesGeometry": false,
@@ -32,11 +32,11 @@
     "density": 1,
     "species": [
       {
-        "asset": "asset.models.environment.trees.reference-fir-a",
+        "asset": "asset.models.environment.woodland-pine-a",
         "weight": 1
       },
       {
-        "asset": "asset.models.environment.trees.reference-fir-b",
+        "asset": "asset.models.environment.woodland-pine-b",
         "weight": 1
       }
     ],
@@ -58,7 +58,7 @@
     "edge": {
       "species": [
         {
-          "asset": "asset.models.environment.trees.reference-fir-small-a",
+          "asset": "asset.models.environment.woodland-pine-sapling",
           "weight": 1
         }
       ],
@@ -81,6 +81,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+    "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
   }
 }

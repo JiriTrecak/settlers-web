@@ -1,0 +1,34 @@
+{
+  "name": "Woodland Broken Trader Cart",
+  "blend": "woodland-broken-trader-cart.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "seed": 813,
+  "camera": {
+    "azimuth": 35,
+    "elevation": 32,
+    "scale": 8,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "render": {
+    "width": 1000,
+    "height": 800,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 650,
+    "rim_energy": 500,
+    "scale": 0.8888888888888888,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "design": "Original neutral scenery; construction and unseen sides independently authored. Palette reference is our own bound-twig bridge."
+}

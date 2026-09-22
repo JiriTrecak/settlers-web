@@ -1,0 +1,6 @@
+{
+  "method": "authored",
+  "originalBase": "asset.models.environment.woodland-pine-a",
+  "script": "scripts/assets/publish-original-winter.ts",
+  "treatment": "Original directional snow shader; underlying authored mesh and textures retained."
+}

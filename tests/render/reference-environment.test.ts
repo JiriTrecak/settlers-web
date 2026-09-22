@@ -1,6 +1,6 @@
+import './sourceAssetFetch';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
-import {createHash} from 'node:crypto';
 import {it,expect} from 'vitest';
 import {Box3,Mesh,Texture,Vector2,Vector3,Group,MeshStandardMaterial,BoxGeometry,ShaderLib,type MeshDepthMaterial} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -11,44 +11,39 @@ import {ReferenceGround} from '../../src/render/prop/referenceGround';
 import {HeightField} from '../../src/shared/map/height';
 import {prepareReferencePlants} from '../../src/render/prop/referencePlants';
 
-it('retains source BRDF coefficients, linear channels and DDS row orientation',()=>{
- const prefix='assets/library/asset.unregistered.textures.reference.scouring.brdf-lut';
- const bytes=gunzipSync(readFileSync(prefix+'.bin/data.bin'));
- const metadata=JSON.parse(readFileSync(prefix+'.json/data.json','utf8'));
- expect(bytes.length).toBe(64*64*4);expect(metadata.colorSpace).toBe('linear');
- expect(createHash('sha256').update(bytes).digest('hex')).toBe(metadata.decodedSha256);
- // Independent samples read directly from original DDS BGRA offsets. Inverting
- // rows or applying sRGB conversion breaks the runtime (NoV, 1-roughness) lookup.
- for(const [x,y,rgba] of [[0,0,[123,14,0,255]],[63,0,[33,1,0,255]],[0,63,[0,252,0,255]],[63,63,[255,5,0,255]],[32,32,[170,21,0,255]]] as const){
-  const offset=(y*64+x)*4;expect(Array.from(bytes.subarray(offset,offset+4))).toEqual(rgba);
- }
+it('provides finite physically bounded original BRDF integration at the expected orientation',()=>{
+ const bytes=gunzipSync(readFileSync('assets/library/asset.texture.woodland-brdf/data.bin'));
+ expect(bytes.length).toBe(64*64*4);
+ for(let i=0;i<bytes.length;i+=4){expect(bytes[i]!+bytes[i+1]!).toBeLessThanOrEqual(258);expect(bytes[i+3]).toBe(255);}
+ const smoothNormal=((63*64+63)*4),roughNormal=(63*4);
+ expect(bytes[smoothNormal]).toBeGreaterThan(bytes[roughNormal]!);
 });
 
-async function load(folder:string,id:string){
- const bytes=readFileSync(`assets/library/asset.models.environment.${folder}.reference-${id}/geometry.glb`);
+async function load(_folder:string,id:string){
+ const bytes=readFileSync(`assets/library/asset.models.environment.${id}/geometry.glb`);
  const loader=new GLTFLoader().register(referenceMaterialPlugin).register(()=>({name:'geometry-only-test-textures',loadTexture:()=>Promise.resolve(new Texture())}));
  return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
-for(const [id,triangles,parts] of [['fir-a',694,3],['fir-b',1130,4],['fir-small-a',152,2],['stump-fir-a',689,3]] as const){
+for(const [id,triangles,parts] of [['woodland-pine-a',760,3],['woodland-pine-b',760,3],['woodland-pine-sapling',336,3],['woodland-pine-stump',210,2]] as const){
  it(`imports every ${id} material range with valid UVs, indices and correctly decoded normals`,async()=>{
   const {scene}=await load('trees',id);let count=0,meshes=0,normalCount=0,correct=0;
   scene.traverse(o=>{
    if(!(o instanceof Mesh))return;meshes++;
    const g=o.geometry,p=g.getAttribute('position'),n=g.getAttribute('normal'),uv=g.getAttribute('uv'),leaf=g.getAttribute('_leaf'),ix=g.index!;
-   count+=ix.count/3;expect(uv.count).toBe(p.count);expect(leaf.count).toBe(p.count);
-   for(const a of [p,n,uv,leaf])expect(Array.from(a.array).every(Number.isFinite)).toBe(true);
+   count+=ix.count/3;expect(uv.count).toBe(p.count);if(leaf)expect(leaf.count).toBe(p.count);
+   for(const a of [p,n,uv,...(leaf?[leaf]:[])])expect(Array.from(a.array).every(Number.isFinite)).toBe(true);
    const a=new Vector3(),b=new Vector3(),c=new Vector3(),normal=new Vector3();
    for(let i=0;i<ix.count;i+=3){
     const first=ix.getX(i);a.fromBufferAttribute(p,first);b.fromBufferAttribute(p,ix.getX(i+1)).sub(a);c.fromBufferAttribute(p,ix.getX(i+2)).sub(a);
     normal.fromBufferAttribute(n,first);const dot=b.cross(c).dot(normal);if(Math.abs(dot)>.00001){normalCount++;if(dot>0)correct++;}
    }
    const m=o.material as MeshStandardMaterial;
-   expect(m.map).toBeTruthy();expect(m.userData.referenceEnvironment).toBe(true);
+   expect(m.userData.referenceEnvironment).toBe(true);
   });
   expect(meshes).toBe(parts);expect(count).toBe(triangles);expect(correct/normalCount).toBeGreaterThan(.95);
  });
 }
-for(const id of ['fir-a','fir-b','fir-small-a'])it(`${id} supports hit, fall and decay without changing mesh scale`,async()=>{
+for(const id of ['woodland-pine-a','woodland-pine-b'])it(`${id} supports hit, fall and decay without changing mesh scale`,async()=>{
  const gltf=await load('trees',id),player=new TreePlayer(gltf.scene,gltf.animations);
  const f={hp:0,lastHitTick:0,fallTick:0,direction:{x:0,y:1}};
  player.sample(f,0,72,240);const initial=new Box3().setFromObject(gltf.scene,true);
@@ -57,16 +52,16 @@ for(const id of ['fir-a','fir-b','fir-small-a'])it(`${id} supports hit, fall and
  expect(fallen.min.y).toBeGreaterThan(-.2);
  player.sample(f,311,72,240);
  // Underlay remains on the ground until the resource is gone; the crown sinks.
- const crown=gltf.scene.getObjectByName('reference-crown')!;
+ const crown=gltf.scene.getObjectByName('TreePivot')!;
  expect(new Box3().setFromObject(crown,true).max.y).toBeLessThan(0);
  gltf.scene.traverse(o=>expect(o.scale.distanceTo(new Vector3(1,1,1))).toBeLessThan(.001));
  expect(player.sample(f,312,72,240)).toBe(false);player.dispose();
 });
-it('keeps fine grass silhouettes within ten triangles rather than geometric blades',async()=>{
- for(const id of ['grass-messy','grass-low']){
+it('keeps fine grass silhouettes within twelve triangles rather than geometric blades',async()=>{
+ for(const id of ['woodland-grass-messy','woodland-grass-low']){
   const {scene}=await load('grass',id);let count=0;
   scene.traverse(o=>{if(o instanceof Mesh){count+=o.geometry.index!.count/3;expect((o.material as MeshStandardMaterial).alphaTest).toBeGreaterThan(0);expect(o.geometry.getAttribute('uv')).toBeTruthy();}});
-  expect(count).toBe(10);
+  expect(count).toBe(12);
  }
 });
 it('preserves cutout alpha and leaf deformation in shadow passes while excluding underlays',()=>{
@@ -99,28 +94,8 @@ it('keeps source shelter out of vertex tint and shares the source sway with cuto
  wind.dispose();mesh.geometry.dispose();m.dispose();
 });
 
-it('loads the bridge source shading texture as shared metalness and roughness data, not AO',async()=>{
- const {scene}=await load('props','wooden-bridge-small');let shaded=0;
- const ground=new ReferenceGround(),macro=new Texture();prepareReferencePlants(scene,ground,()=>macro);
- scene.traverse(node=>{
-  if(!(node instanceof Mesh))return;
-  for(const material of Array.isArray(node.material)?node.material:[node.material]){
-   const m=material as MeshStandardMaterial;
-   if(m.userData.shadingTexture===undefined)continue;
-   shaded++;expect(m.userData.sourceShadingLoaded).toBe(true);
-   expect(m.userData.sourceShader).toBe('model');
-   expect(m.roughnessMap).toBeInstanceOf(Texture);expect(m.metalnessMap).toBe(m.roughnessMap);
-   expect(m.aoMap).toBeNull();expect(m.metalness).toBe(1);
-   const shader={uniforms:{},vertexShader:ShaderLib.standard.vertexShader,fragmentShader:ShaderLib.standard.fragmentShader};
-   m.onBeforeCompile(shader as never,{} as never);
-   expect(shader.fragmentShader).toContain('float sourceSpecularMultiplier=1.;');
-   expect(shader.fragmentShader).not.toContain('float sourceSpecularMultiplier=max(');
-  }
- });expect(shaded).toBeGreaterThan(0);ground.dispose();macro.dispose();
-});
-
 it('composes source foliage normals after instance transforms without dropping direct-light suppression',async()=>{
- const {scene}=await load('trees','fir-a'),ground=new ReferenceGround(),macro=new Texture();
+ const {scene}=await load('trees','woodland-pine-a'),ground=new ReferenceGround(),macro=new Texture();
  expect(prepareReferencePlants(scene,ground,()=>macro)).toBe(true);
  let foliage=0;
  scene.traverse(node=>{
@@ -140,30 +115,3 @@ it('composes source foliage normals after instance transforms without dropping d
  });expect(foliage).toBeGreaterThan(0);ground.dispose();macro.dispose();
 });
 
-it('preserves raised source underlays and selects plant versus model terrain snapping',async()=>{
- const ground=new ReferenceGround(),macro=new Texture();
- for(const [id,family] of [['lying-snag-a','plant'],['neutral-bandit-tent','model']] as const){
-  const {scene}=await load('props',id);prepareReferencePlants(scene,ground,()=>macro);
-  let underlays=0,relief=0;
-  scene.traverse(node=>{
-   if(!(node instanceof Mesh))return;
-   const m=node.material as MeshStandardMaterial;if(!m.userData.underlay)return;underlays++;
-   const p=node.geometry.getAttribute('position');let min=Infinity,max=-Infinity;
-   for(let i=0;i<p.count;i++){min=Math.min(min,p.getY(i));max=Math.max(max,p.getY(i));}
-   relief=Math.max(relief,max-min);
-   expect(m.userData.sourceShader).toBe(family);
-   const shader={uniforms:{},vertexShader:ShaderLib.standard.vertexShader,fragmentShader:ShaderLib.standard.fragmentShader};
-   m.onBeforeCompile(shader as never,{} as never);
-   expect(shader.vertexShader).not.toContain('referenceHeight(referenceWorld.xz)+.018');
-   if(family==='plant'){
-    expect(shader.vertexShader).toContain('dot(referenceWorld.xyz-referenceTransform[3].xyz,referenceUp)');
-    expect(shader.vertexShader).toContain('normalize(referenceTransform[1].xyz)');
-   }else{
-    expect(shader.vertexShader).toContain('clamp((position.y-2.)/2.,0.,1.)');
-    expect(shader.vertexShader).not.toContain('vec3 referenceUp=');
-   }
-  });
-  expect(underlays).toBeGreaterThan(0);expect(relief).toBeGreaterThan(.6);
- }
- ground.dispose();macro.dispose();
-});

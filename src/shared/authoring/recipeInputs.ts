@@ -7,6 +7,7 @@ const numbers:Record<string,[string,number,number,number]>={
  minSpacing:['Minimum separation',.1,64,.1],interiorMargin:['Interior inset',0,64,.1],
  'patchiness.scale':['Patch size',.5,128,.5],'patchiness.strength':['Patch contrast',0,1,.05],
  'riverBank.min':['Bank start distance',0,128,.1],'riverBank.max':['Bank end distance',.1,256,.1],
+ roughness:['Ground irregularity',0,1,.05],noiseScale:['Irregularity size',1,128,1],grassStrength:['Grassy top coverage',0,1,.05],rockStrength:['Exposed rock',0,1,.05],
  height:['Height',-128,128,.1],falloff:['Falloff',0,128,.1],width:['Width',.2,128,.1],depth:['Depth',.1,64,.1],bankWidth:['Bank width',.1,64,.1],
  flow:['Flow speed',0,3,.1],maxUphillGrade:['Maximum uphill grade',0,.05,.001],shoulder:['Shoulder width',0,64,.1],flatten:['Flatten strength',0,1,.05],vegetationClearance:['Vegetation clearance',0,32,.1],
 };
@@ -17,8 +18,9 @@ export function recipeInputs(recipe:LandscapeRecipe):RecipeInput[]{
   const values={...object};
   if('species'in values){values.density??=1;values.pattern??=values.patchiness?'patches':'scattered';values.patchiness??={scale:12,strength:.6};}
   for(const [key,value]of Object.entries(values)){
-   const path=prefix+key,local=path.replace(/^(edge\.|details\.(banks|water)\.)/,'');
+   const path=prefix+key,local=path.replace(/^(chunks\.|edge\.|details\.(banks|water)\.)/,'');
    if(key==='details'&&value){for(const [group,settings]of Object.entries(value as Record<string,unknown>))if(settings)visit(settings as Record<string,unknown>,`details.${group}.`,group==='water'?'Water lilies · ':'Riverbank · ');continue;}
+   if(key==='chunks'&&value){visit(value as Record<string,unknown>,'chunks.','Rock chunks · ');continue;}
    if(key==='edge'&&value){visit(value as Record<string,unknown>,'edge.','Edge · ');continue;}
    if(['patchiness','riverBank'].includes(key)&&value){visit(value as Record<string,unknown>,path+'.',labelPrefix);continue;}
    if(typeof value==='number'&&numbers[local]){const [label,min,max,step]=numbers[local]!;result.push({path,label:labelPrefix+label,value,min:local==='width'&&prefix==='edge.'?.1:min,max:local==='width'&&prefix==='edge.'?64:max,step});}

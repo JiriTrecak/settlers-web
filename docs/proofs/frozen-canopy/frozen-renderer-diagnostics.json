@@ -1,0 +1,1334 @@
+{
+  "id": 1,
+  "ok": true,
+  "result": {
+    "timings": {
+      "frameBudget": {
+        "targetMs": 8.333333333333334,
+        "samples": 0,
+        "overBudget": 0,
+        "overBudgetPercent": 0
+      },
+      "note": "CPU scopes overlap; GPU is asynchronous. Timings are milliseconds over the last 120 samples or a 10-second capture (4096 samples per scope maximum). Spikes contain the latest scope samples, not a causal trace; GPU results arrive late. Counters describe the last frame; category triangles cover color passes, while total triangles include shadows and reflections.",
+      "values": {},
+      "timings": {},
+      "spikes": []
+    },
+    "renderer": {
+      "samplerBudget": {
+        "fragment": 16,
+        "combined": 32,
+        "programs": [
+          {
+            "name": "",
+            "units": 16,
+            "samplers": [
+              {
+                "name": "uSourceAR",
+                "size": 1
+              },
+              {
+                "name": "uSourceNH",
+                "size": 1
+              },
+              {
+                "name": "uSourceMasks",
+                "size": 1
+              },
+              {
+                "name": "uSourceDisplacement",
+                "size": 1
+              },
+              {
+                "name": "uSourceSlots",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "uSourceDisplacementMask",
+                "size": 1
+              },
+              {
+                "name": "uSourceHeight",
+                "size": 1
+              },
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uSourceMacro",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring trunk",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring grass_grass_messy",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring grass_grass_messy",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring underlay",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "uReferenceHeight",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "",
+            "units": 16,
+            "samplers": [
+              {
+                "name": "uSourceAR",
+                "size": 1
+              },
+              {
+                "name": "uSourceNH",
+                "size": 1
+              },
+              {
+                "name": "uSourceMasks",
+                "size": 1
+              },
+              {
+                "name": "uSourceDisplacement",
+                "size": 1
+              },
+              {
+                "name": "uSourceSlots",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "uSourceDisplacementMask",
+                "size": 1
+              },
+              {
+                "name": "uSourceHeight",
+                "size": 1
+              },
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uSourceMacro",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring trunk",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring underlay",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "uReferenceHeight",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring grass_grass_messy",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring grass_grass_messy",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Source bark",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Scouring plant",
+            "units": 13,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uCanopySnow",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          },
+          {
+            "name": "Source bark",
+            "units": 12,
+            "samplers": [
+              {
+                "name": "utcVisibility",
+                "size": 1
+              },
+              {
+                "name": "uSceneryCutaway",
+                "size": 1
+              },
+              {
+                "name": "uReferenceReflection",
+                "size": 1
+              },
+              {
+                "name": "uReferenceLightHeight",
+                "size": 1
+              },
+              {
+                "name": "uReferenceBrdf",
+                "size": 1
+              },
+              {
+                "name": "uReferenceColor",
+                "size": 1
+              },
+              {
+                "name": "uReferenceMacro",
+                "size": 1
+              },
+              {
+                "name": "uReferenceUnderlay",
+                "size": 1
+              },
+              {
+                "name": "map",
+                "size": 1
+              },
+              {
+                "name": "envMap",
+                "size": 1
+              },
+              {
+                "name": "dfgLUT",
+                "size": 1
+              },
+              {
+                "name": "directionalShadowMap[0]",
+                "size": 1
+              }
+            ]
+          }
+        ]
+      },
+      "drawCalls": 389,
+      "triangles": 427059,
+      "geometries": 93,
+      "textures": 106,
+      "coverInstances": 0,
+      "assets": {
+        "loaded": 3968,
+        "failed": [],
+        "bounds": {
+          "frozen-fir-a": {
+            "minY": -0.10580015182495117,
+            "height": 12.441199779510498
+          },
+          "frozen-fir-b": {
+            "minY": -0.5758590698242188,
+            "height": 11.680803298950195
+          },
+          "frozen-rock-a": {
+            "minY": -0.16127386689186096,
+            "height": 0.5338954627513885
+          },
+          "frozen-grass-snowy": {
+            "minY": -0.07843206822872162,
+            "height": 0.9781090468168259
+          },
+          "frozen-grass-winter": {
+            "minY": -0.07843206822872162,
+            "height": 0.9781090468168259
+          },
+          "canopy-ancient-tree": {
+            "minY": -0.2734839916229248,
+            "height": 32.36053919792175
+          },
+          "frozen-rock-b": {
+            "minY": -0.11472481489181519,
+            "height": 0.3782999813556671
+          },
+          "frozen-fir-small-a": {
+            "minY": -0.4306071400642395,
+            "height": 3.01679927110672
+          },
+          "frozen-log-a": {
+            "minY": -0.053403519093990326,
+            "height": 0.8039601072669029
+          }
+        }
+      },
+      "environment": {
+        "hour": 12,
+        "playing": false,
+        "daySeconds": 600,
+        "label": "Day"
+      },
+      "lighting": {
+        "phase": "day",
+        "source": {
+          "ambient": {
+            "rgb": [
+              183,
+              193,
+              229
+            ],
+            "alpha": 1,
+            "multiplier": 4
+          },
+          "skyColor": {
+            "rgb": [
+              51,
+              114,
+              243
+            ],
+            "alpha": 1,
+            "multiplier": 4
+          },
+          "sunColor": {
+            "rgb": [
+              247,
+              224,
+              174
+            ],
+            "alpha": 1,
+            "multiplier": 10
+          },
+          "sunDirection": [
+            0.5,
+            -1,
+            -0.5
+          ],
+          "textureColorLUT": "lut/winter_day__vol_uncmp.tga",
+          "skyBloomColor": {
+            "rgb": [
+              130,
+              186,
+              255
+            ],
+            "alpha": 0.7058823529411765,
+            "multiplier": 1
+          },
+          "fog": {
+            "color": {
+              "rgb": [
+                93,
+                164,
+                223
+              ],
+              "alpha": 1,
+              "multiplier": 0.8
+            },
+            "density": 0.05,
+            "dispersionByHeight": 0.1,
+            "startDist": 70,
+            "startHeight": 8
+          },
+          "colorize": {
+            "color": {
+              "rgb": [
+                96,
+                94,
+                87
+              ],
+              "alpha": 1,
+              "multiplier": 1
+            },
+            "radialFactorScale": 1.5
+          }
+        },
+        "lutWeights": [
+          {
+            "path": "lut/winter_day__vol_uncmp.tga",
+            "weight": 1
+          }
+        ],
+        "pendingAttributes": [
+          "SkyBloomColor (mask generation)",
+          "Colorize (runtime uniform defaults)"
+        ],
+        "preset": {
+          "sunTint": "#ffffff",
+          "sunStrength": 1,
+          "sunDirection": 0,
+          "sunHeight": 60,
+          "ambientTint": "#ffffff",
+          "ambientStrength": 1,
+          "skyTint": "#ffffff",
+          "bounceTint": "#ffffff",
+          "fillStrength": 1,
+          "hazeColor": "#ffffff",
+          "hazeDistance": 100,
+          "shadowSoftness": 3
+        },
+        "sunIntensity": 9.59723675310354,
+        "sunColor": "f7e0ae",
+        "ambientIntensity": 4,
+        "fillIntensity": 4
+      }
+    },
+    "tick": 609
+  }
+}

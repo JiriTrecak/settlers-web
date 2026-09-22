@@ -1,3 +1,4 @@
+import {biomeById} from '../../content/biomes';
 import {terrainPixel,sceneryKind} from './terrainStyle';
 import { entityMarker } from "./presentation";
 import { sampleCurve, type Landscape } from "../../shared/landscape/curve";
@@ -15,7 +16,6 @@ import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
 
 const PX = 384;
-const LAND = "#7b7751";
 const VIEW = "#f2eee0";
 const SHEET = "#14161c";
 const RING = 2;
@@ -161,6 +161,7 @@ export class Minimap {
   }
 
   setHeight(field: HeightField | null): void {
+    if(this.height===field)return;
     this.height = field;
     this.terrainDirty = this.dirty = true;
   }
@@ -244,7 +245,23 @@ export class Minimap {
     this.terrainDirty=false;this.sceneryDirty=true;
     const canvas=this.terrainCanvas;canvas.width=canvas.height=PX;
     const ctx=canvas.getContext('2d')!, scale=PX/size;
-    ctx.fillStyle=LAND;ctx.fillRect(0,0,PX,PX);
+    const palette=biomeById(this.height?.biome).minimap;
+    ctx.fillStyle=palette.ground;ctx.fillRect(0,0,PX,PX);
+    // Compiled coverage includes painted layers and baked placements equally.
+    if(this.height){
+      const field=this.height, data=ctx.getImageData(0,0,PX,PX);
+      const rgb=(hex:string)=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+      const grass=rgb(palette.grass),forest=rgb(palette.forest);
+      const paints=(field.surfacePaint??[]).map(p=>({...p,color:p.material.includes('pebble')?[129,110,85]:p.material.includes('grass')?grass:p.material.includes('soil')?rgb(palette.ground):null})).filter(p=>p.color);
+      for(let py=0;py<PX;py++)for(let px=0;px<PX;px++){
+        const ix=Math.max(0,Math.min(field.verts-1,Math.round((px+.5)/scale-field.origin)));
+        const iz=Math.max(0,Math.min(field.verts-1,Math.round((py+.5)/scale-field.origin)));
+        const at=iz*field.verts+ix,i=(py*PX+px)*4;
+        const g=Math.min(1,(field.grassCoverage?.[at]??0)*2),f=field.forestCoverage?.[at]??0;
+        for(let c=0;c<3;c++){let v=data.data[i+c]!*(1-g)+grass[c]!*g;for(const p of paints){const w=p.weights[at]??0;v=v*(1-w)+p.color![c]!*w;}data.data[i+c]=v*(1-f)+forest[c]!*f;}
+      }
+      ctx.putImageData(data,0,0);
+    }
     const coverColors={meadow:'#64723d',straw:'#80764b',ochre:'#7b6238',sage:'#65715a',forest:'#465735'};
     for(const patch of this.landscape?.cover??[]) {
       const radius=Math.max(1,patch.radius*scale);
@@ -268,7 +285,7 @@ export class Minimap {
     for(let py=0;py<PX;py++)for(let px=0;px<PX;px++) {
       const x=(px+.5)/scale,z=(py+.5)/scale,y=field?.sample(x,z)??1,i=(py*PX+px)*4;
       const dx=field?field.sample(x+1,z)-field.sample(x-1,z):0,dz=field?field.sample(x,z+1)-field.sample(x,z-1):0;
-      const color=terrainPixel([data.data[i],data.data[i+1],data.data[i+2]],y,field?.waterLevel??0,dx,dz,px,py);
+      const color=terrainPixel([data.data[i],data.data[i+1],data.data[i+2]],y,field?.waterAt(x,z)??0,dx,dz,px,py);
       for(let c=0;c<3;c++)data.data[i+c]=color[c];
     }
     ctx.putImageData(data,0,0);
@@ -280,14 +297,15 @@ export class Minimap {
     const canvas=this.sceneryCanvas;canvas.width=canvas.height=PX;
     const ctx=canvas.getContext('2d')!,scale=PX/size;
     ctx.drawImage(this.terrainCanvas,0,0);
+    const palette=biomeById(this.height?.biome).minimap;
     const stamps=this.stamps.filter(s=>sceneryKind(s.asset)).slice().sort((a,b)=>a.y-b.y);
     for(const s of stamps){
       const kind=sceneryKind(s.asset),x=(s.x+.5)*scale,y=(s.y+.5)*scale;
       const radius=Math.max(.8,Math.min(5,(s.scale??1)*(s.widthScale??1)*1.8*scale));
       if(kind==='tree'){
         ctx.fillStyle='#17251485';ctx.beginPath();ctx.ellipse(x+radius*.35,y+radius*.45,radius*1.15,radius*.8,0,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=s.variant==='gold'?'#796e30':s.variant==='red'?'#774a2a':'#344c2a';ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=s.variant==='gold'?'#9a9146':'#687a40';ctx.beginPath();ctx.ellipse(x-radius*.22,y-radius*.22,radius*.57,radius*.65,-.3,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=s.variant==='gold'?'#796e30':s.variant==='red'?'#774a2a':palette.forest;ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=s.variant==='gold'?'#9a9146':palette.crown;ctx.beginPath();ctx.ellipse(x-radius*.22,y-radius*.22,radius*.57,radius*.65,-.3,0,Math.PI*2);ctx.fill();
       }else{
         ctx.fillStyle='#363e3480';ctx.fillRect(x-radius,y-radius*.5,radius*2.3,radius*1.8);
         ctx.fillStyle='#999b80';ctx.beginPath();ctx.moveTo(x-radius,y);ctx.lineTo(x-radius*.5,y-radius);ctx.lineTo(x+radius*.7,y-radius*.7);ctx.lineTo(x+radius,y+radius*.55);ctx.lineTo(x,y+radius*.75);ctx.closePath();ctx.fill();

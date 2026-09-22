@@ -11,7 +11,7 @@ import {compile} from '../../tooling/asset-studio/server/manifest';
 const old=()=>assetDefinitionSchema.parse({version:1,id:'old-tree',name:'Old tree',kind:'tree',status:'published',revision:1,tags:['synty'],usesGeometry:true,resources:[{role:'geometry',index:1,format:'glb',bytes:1,sha256:'0'.repeat(64)}],bindings:{render:[{id:'asset.resource.old',character:'old-rig',sceneryAsset:'old-tree',geometry:{asset:'old-tree',role:'geometry',index:1},harvestAnimation:{asset:'old-tree',role:'geometry',index:1}}],scenery:[{id:'old-tree',name:'Old tree',category:'foliage',type:'prop',blocker:{width:2,depth:2},geometry:{role:'geometry',index:1}}]},provenance:{method:'migration'}});
 describe('retiring incompatible model styles',()=>{
  it('keeps the approved styles and replaces retired runtime bindings without exposing old palette choices',async()=>{
-  const legacy=old(),keep={...old(),id:'new-tree',tags:['scouring'],bindings:{render:[],scenery:[]}};
+  const legacy=old(),keep={...old(),id:'new-tree',tags:['original'],bindings:{render:[],scenery:[]}};
   expect(legacyStyleModel(keep)).toBe(false);
   const plan=await retirementPlan([legacy,keep],[legacy,keep]),missing=plan.assets.find(a=>a.id===MISSING_MODEL_ID)!;
   expect(plan.assets.map(a=>a.id)).toEqual(['new-tree',MISSING_MODEL_ID]);

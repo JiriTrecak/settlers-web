@@ -4,10 +4,11 @@ export function sourceTerrainGLSL(layerCount:number){return `
  uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceMasks,uSourceDisplacement;
  uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask,uSourceHeight;
  uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
+ uniform float uSourceHeightScale;
  uniform float uSourceDisplacementTiling,uSourceHasDisplacement;
  uniform vec4 uSourceParams[${layerCount}];uniform float uSourceDesaturation[${layerCount}];
  float terrainHeight(vec2 world){
-  vec2 p=clamp((world-uSourceOrigin)*3.,vec2(0.),uSourceHeightSize-1.),i=floor(p),f=fract(p),uv=(i+.5)/uSourceHeightSize,d=1./uSourceHeightSize;
+  vec2 p=clamp((world-uSourceOrigin)*uSourceHeightScale,vec2(0.),uSourceHeightSize-1.),i=floor(p),f=fract(p),uv=(i+.5)/uSourceHeightSize,d=1./uSourceHeightSize;
   return mix(mix(textureLod(uSourceHeight,uv,0.).r,textureLod(uSourceHeight,uv+vec2(d.x,0.),0.).r,f.x),mix(textureLod(uSourceHeight,uv+vec2(0.,d.y),0.).r,textureLod(uSourceHeight,uv+d,0.).r,f.x),f.y);
  }
  vec3 terrainNormal(vec2 world){

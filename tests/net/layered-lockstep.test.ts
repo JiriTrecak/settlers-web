@@ -1,3 +1,4 @@
+import '../fixtures/walkableCatalogue';
 import {expect,it} from 'vitest';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {World} from '../../src/sim/world/world';
@@ -8,7 +9,7 @@ import {precise} from '../../src/sim/game/motion';
 it('keeps two peers identical through over/under movement, a mid-climb restore, fog and downhill arrows',()=>{
  const base=emptyUtcMap(),map={...base,
   playerStarts:base.playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),
-  stamps:[{id:'root',asset:'arched-root-walkway',x:40,y:40}],
+  stamps:[{id:'root',asset:'leafbound-twig-bridge',x:40,y:40}],
   entities:[placed('climber','unit.ants.archer',40,26),placed('underpass','unit.ants.warrior',30,40),
    {...placed('defender','unit.ants.marshal',49,40),owner:'player.2' as const}],
  };

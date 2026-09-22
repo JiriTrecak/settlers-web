@@ -15,7 +15,7 @@ import {
 } from "./presentation/scenery";
 async function start() {
   const params = new URLSearchParams(location.search);
-  const mapId=params.get('map') ?? 'authoring-playground';
+  const mapId=params.get('map') ?? 'threewater-forest';
   const raw=Object.entries(mapSources).find(([path])=>path.endsWith('/'+mapId+'.utcmap'))?.[1];
   if(!raw)throw Error('Unknown authored map: '+mapId);
   const x = Number(params.get("x") ?? 128),

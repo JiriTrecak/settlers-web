@@ -59,17 +59,18 @@ export class SourceGroundTextures {
   this.occlusionSize.value.set(...size);
   this.occlusionLayout.value.set(...src.origin,(size[0]-1)/(src.blocks[0]*16),(size[1]-1)/(src.blocks[1]*16));
   const [w,h]=field.source.heightSize;this.texture.value.dispose();
-  const data=new Float32Array(w*h*4);
+  const channels=src.source==='authored-layered'?1:4;
+  const data=new Float32Array(w*h*channels);
   for(let z=0;z<h;z++)for(let x=0;x<w;x++){
-   const i=z*w+x;data[i*4]=field.values[i]!*64/65535+field.source.heightOffset;
+   const i=z*w+x;data[i*channels]=field.values[i]!*64/65535+field.source.heightOffset;
    if(ao&&aoBytes){
     const fx=x*(ao.size[0]-1)/(w-1),fz=z*(ao.size[1]-1)/(h-1),ix=Math.floor(fx),iz=Math.floor(fz),tx=fx-ix,tz=fz-iz;
     const at=(xx:number,zz:number)=>aoBytes[(Math.min(ao.size[1]-1,zz)*ao.size[0]+Math.min(ao.size[0]-1,xx))*4+3]!/255;
     data[i*4+1]=(at(ix,iz)*(1-tx)+at(ix+1,iz)*tx)*(1-tz)+(at(ix,iz+1)*(1-tx)+at(ix+1,iz+1)*tx)*tz;
    }
   }
-  this.texture.value=new DataTexture(data,w,h,RGBAFormat,FloatType);this.texture.value.minFilter=this.texture.value.magFilter=NearestFilter;this.texture.value.needsUpdate=true;
-  this.layout.value.set(...field.source.origin,3,3);this.dimensions.value.set(w,h);
+  this.texture.value=new DataTexture(data,w,h,channels===1?RedFormat:RGBAFormat,FloatType);this.texture.value.minFilter=this.texture.value.magFilter=NearestFilter;this.texture.value.needsUpdate=true;
+  this.layout.value.set(...field.source.origin,src.heightSamplesPerUnit??3,src.heightSamplesPerUnit??3);this.dimensions.value.set(w,h);
   this.unsubscribeOcclusion=liveSourceOcclusion(src).subscribe(rect=>this.refreshOcclusion(rect));
  }
  /** Update changed texels only. Three's partial texture uploads require RGBA,

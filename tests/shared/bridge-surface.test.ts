@@ -1,7 +1,7 @@
 import {expect,it} from 'vitest';
-import {bridgeSurfaces,bridgeHeight,applyBridgeSurfaces} from '../../src/shared/map/bridgeSurface';
-it('matches the arched deck while retaining the underlying water bed',()=>{
- const surfaces=bridgeSurfaces([{id:'b',asset:'timber-bridge',x:12,y:12,yaw:Math.PI/2,elevation:2,depthScale:2}],()=>-1);
+import {bridgeHeight,applyBridgeSurfaces,type BridgeSurface} from '../../src/shared/map/bridgeSurface';
+it('matches an arched deck while retaining the underlying water bed',()=>{
+ const surfaces:BridgeSurface[]=[{id:'b',level:1,x:12.5,z:12.5,c:0,s:1,width:4,depth:24,base:1,height:.26,arch:.7,thickness:.4}];
  expect(bridgeHeight(surfaces,12.5,12.5)).toBeCloseTo(1.96);
  expect(bridgeHeight(surfaces,20.5,12.5)).toBeCloseTo(1.61);
  expect(bridgeHeight(surfaces,12.5,15)).toBeUndefined();

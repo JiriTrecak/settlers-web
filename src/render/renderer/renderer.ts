@@ -1,3 +1,5 @@
+import {biomeById} from '../../content/biomes';
+import {PlacedGrass} from '../foliage/placedGrass';
 import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
 import {ImportedWater} from '../water/importedWater';
 import {InteriorCeiling,ceilingY} from '../terrain/interiorCeiling';
@@ -172,6 +174,7 @@ export class Renderer {
   private readonly weather = new WeatherLayer(this.scene);
   private landscape: Landscape = emptyLandscape();
   private readonly meadow: Meadow;
+  private readonly placedGrass: PlacedGrass;
   private readonly decals: DecalLayer;
   private settlement: SettlementLayer | null = null;
   private readonly cutaway=new SceneryCutaway();
@@ -234,7 +237,7 @@ export class Renderer {
     this.refreshEnvironment();
     window.addEventListener("utc-environment-presets", this.refreshEnvironment);
     window.addEventListener("storage", this.presetStorage);
-    this.meadow = new Meadow(this.scene);
+    this.meadow = new Meadow(this.scene);this.placedGrass=new PlacedGrass(this.scene);
     this.decals = new DecalLayer(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
@@ -263,7 +266,7 @@ export class Renderer {
     try {
       if (animationTime !== undefined) {
         this.importedWater?.tick(animationTime * 1000);
-        this.meadow.tick(animationTime * 1000);
+        this.meadow.tick(animationTime * 1000);this.placedGrass.tick(animationTime*1000);
         this.props.tick(animationTime * 1000);
       }
       const cam = this.threeCam();
@@ -370,7 +373,7 @@ export class Renderer {
     }
   }
   async ready(): Promise<void> {
-    await Promise.all([this.props.ready(),this.meadow.ready,this.terrain?.material.ready,this.importedWater?.ready]);
+    await Promise.all([this.props.ready(),this.meadow.ready,this.placedGrass.ready,this.terrain?.material.ready,this.importedWater?.ready]);
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
@@ -417,7 +420,15 @@ export class Renderer {
     this.visualLast = null;
   }
   diagnostics() {
+    const context=this.display.gl.getContext() as WebGL2RenderingContext;
+    const samplerTypes=new Set<number>([context.SAMPLER_2D,context.SAMPLER_CUBE,context.SAMPLER_3D,context.SAMPLER_2D_ARRAY,context.SAMPLER_2D_SHADOW]);
+    const programs=(this.display.gl.info.programs??[]).map(p=>{
+      const program=p.program as WebGLProgram,n=context.getProgramParameter(program,context.ACTIVE_UNIFORMS),samplers:{name:string;size:number}[]=[];
+      for(let i=0;i<n;i++){const u=context.getActiveUniform(program,i);if(u&&samplerTypes.has(u.type))samplers.push({name:u.name,size:u.size});}
+      return {name:p.name,units:samplers.reduce((n,u)=>n+u.size,0),samplers};
+    }).filter(p=>p.units>=12);
     return {
+      samplerBudget:{fragment:context.getParameter(context.MAX_TEXTURE_IMAGE_UNITS),combined:context.getParameter(context.MAX_COMBINED_TEXTURE_IMAGE_UNITS),programs},
       drawCalls: this.display.gl.info.render.calls,
       triangles: this.display.gl.info.render.triangles,
       geometries: this.display.gl.info.memory.geometries,
@@ -466,6 +477,7 @@ export class Renderer {
   ): void {
     const timing = perf.start();
     this.height = field;
+    this.sky.setProfile(biomeById(field?.biome).terrainSet);
     this.updateCourses();
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
@@ -538,13 +550,15 @@ export class Renderer {
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
     if(this.height?.source)liveSourceOcclusion(this.height.source.source).sync(stamps);
-    this.props.sync(stamps);
+    this.props.sync(this.placedGrass.sync(stamps,this.height));
     if(this.height)this.sceneryLights.sync(stamps,this.height);
     perf.end("Prop sync", props);
     const visibility = perf.start();
     if (snapshot.settlement?.fog) {
       this.fog ??= new FogOfWar(snapshot.size);
       this.fog.update(snapshot.settlement.fog, this.scene);
+      // Rivers render in their own scene after opaque color/depth are copied.
+      if(this.importedWater)this.fog.prepare(this.importedWater.group);
     }
     perf.end("Fog of war", visibility);
     (this.terrain?.material as TerrainMaterial | undefined)?.setContacts(
@@ -628,7 +642,7 @@ export class Renderer {
     this.importedWater?.tick(now);
     if(this.landscape.environment.interior)this.scene.background=this.indoorBackground;
     this.canopy.tick(now);
-    this.sky.sun.intensity*=this.canopy.sunTransmission;
+    this.sky.setSunTransmission(this.canopy.sunTransmission);
     this.sky.focus(
       this.camera.targetX,
       this.camera.targetZ,
@@ -636,7 +650,7 @@ export class Renderer {
         ? Math.max(40, Math.min(110, this.camera.distance * 0.8))
         : 70,
     );
-    this.meadow.tick(now);
+    this.meadow.tick(now);this.placedGrass.tick(now);
     this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
     perf.end("Sky / water / wind", environment);
@@ -664,7 +678,7 @@ export class Renderer {
 
   private atmosphereFrame(now:number){
     const weather=this.landscape.environment.weather;
-    return {sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    return {sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }
@@ -738,7 +752,7 @@ export class Renderer {
     }
     this.spawnFlags.clear();
     this.previewCurve([]);
-    this.meadow.destroy();
+    this.meadow.destroy();this.placedGrass.destroy();
     this.weather.dispose();
     this.canopy.dispose();
     this.ceiling.dispose();

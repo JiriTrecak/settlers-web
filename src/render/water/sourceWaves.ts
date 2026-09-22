@@ -20,10 +20,12 @@ float sourceWaves(vec3 world,bool vertex,out vec3 worldNormal,out float foam){
  float speed=length(flow);vec2 dir=speed>.00001?flow/speed:vec2(1.,0.);
  vec3 toEye=cameraPosition-world;float lod=log2(max(length(toEye)/64./max(normalize(toEye).y,.01),.0001));
  if(vertex)lod*=2.;
- vec2 sourceXZ=world.xz-uSourceWaterOffset;
+ vec4 profile=waterProfile(world.xz,2.);
+ vec2 sourceXZ=(world.xz-uSourceWaterOffset)*(uAuthoredWater?profile.r/.15:1.);
  vec4 wave=sourceWaveSample(sourceXZ,dir,speed,lod),still=textureLod(uSourceWaterWaves,sourceXZ*(.1/1.75),lod);
  vec3 local=sourceWaveNormal(wave.rg),idle=sourceWaveNormal(vec2(.50196));
  float strength=vertex?sqrt(clamp((speed-.02)/.96,0.,1.)):speed;
+ if(uAuthoredWater)strength*=profile.g/.055;
  vec3 oriented=vec3(dir.x*local.x-dir.y*local.y,local.z,dir.y*local.x+dir.x*local.y);
  worldNormal=normalize(mix(idle.xzy,oriented,strength));
  float waveFoam=mix(still.b,wave.b,clamp(speed/.2,0.,1.));

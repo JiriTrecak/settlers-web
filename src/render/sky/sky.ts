@@ -31,11 +31,15 @@ function color(target:Color, value:DaytimeColor):Color {
 }
 
 export class Sky {
+  private profile:'temperate'|'winter'='temperate';
+  setProfile(profile:'temperate'|'winter'){if(profile!==this.profile){this.profile=profile;this.applied=null;this.apply();}}
   hour = SCRUB;
   playing = false;
   daySeconds = DAY_CYCLE_SECONDS;
   private light:GlobalLight={...FOREST.light};
   setGlobalLight(light:GlobalLight):void {this.light={...light};this.applied=null;this.apply();}
+  private baseSunIntensity=1;
+  setSunTransmission(value:number){this.sun.intensity=this.baseSunIntensity*Math.max(0,Math.min(1,value));}
   private size = 256;
   private last: number | null = null;
   private interior = false;
@@ -140,7 +144,7 @@ export class Sky {
 
   /** Held looks never drift with the clock. Directions interpolate only during transitions. */
   private apply(): void {
-    const sample=sampleDaytime(this.hour);this.current=sample;
+    const sample=sampleDaytime(this.hour,this.profile);this.current=sample;
     if(sample===this.applied)return;
     this.applied=sample;
     const look=sample.look,light=this.light,tint=this.tint;
@@ -161,6 +165,7 @@ export class Sky {
       this.direction.fromArray(look.sunDirection).negate().normalize().applyAxisAngle(UP,light.sunDirection*Math.PI/180);
       if(light.sunHeight!==60){const elevation=Math.asin(this.direction.y),az=Math.atan2(this.direction.x,this.direction.z),e=Math.min(1.48,elevation*light.sunHeight/60);this.direction.set(Math.cos(e)*Math.sin(az),Math.sin(e),Math.cos(e)*Math.cos(az));}
     }
+    this.baseSunIntensity=this.sun.intensity;
     this.scene.background=this.bg;this.sun.shadow.radius=light.shadowSoftness;
     this.sun.position.copy(this.direction).multiplyScalar(this.size*.85).add(this.sun.target.position);
     this.sun.target.updateMatrixWorld();

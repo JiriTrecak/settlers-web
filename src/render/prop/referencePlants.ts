@@ -1,3 +1,4 @@
+import {prepareSnowSurface} from './snowSurface';
 import {Mesh,MeshStandardMaterial,DoubleSide,SRGBColorSpace,ShaderChunk,type Object3D,type Texture} from 'three';
 import type {ReferenceGround} from './referenceGround';
 
@@ -11,11 +12,11 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
    if(!(m instanceof MeshStandardMaterial)||!m.userData.referenceEnvironment)continue;
    found=true;
    if(m.map){m.map.anisotropy=8;m.map.colorSpace=SRGBColorSpace;m.map.needsUpdate=true;}
-   node.castShadow=!m.userData.underlay;node.receiveShadow=true;
+   node.castShadow=!m.userData.underlay&&!m.userData.noShadow;node.receiveShadow=true;
    if(m.userData.underlay){m.depthWrite=false;m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;node.renderOrder=1;}
    if(m.userData.referencePrepared)continue;
    m.userData.referencePrepared=true;
-   m.color.setScalar(1);
+   // Preserve authored base-color factors; source imports already use white.
    const macroTexture=macro?.();
    if(macroTexture&&ground)ground.attachColor(m,macroTexture,m.userData.sourceShaderAttributes?.IsUseGroundColor==='true',!m.userData.underlay);
    if(m.userData.underlay&&ground)ground.attach(m);
@@ -50,6 +51,21 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
      .replaceAll('saturate( dot( geometryNormal, directLight.direction ) )',`mix(saturate(dot(geometryNormal,directLight.direction)),1.,${backside})`);
    };
    m.customProgramCacheKey=()=>lightKey()+'/source-mrb-specular-v3-'+!!m.userData.sourceShadingLoaded+'-'+m.userData.sourceShader;
+   prepareSnowSurface(m);
+   if(m.userData.sourceShader==='grass'&&!m.userData.foliage){
+    // Upright alpha cards describe a meadow volume, not six dark vertical walls.
+    // Shade both sides from the ground-up direction so adjacent cards read as
+    // one soft tuft under the same sunlight as the painted surface.
+    const before=m.onBeforeCompile,cacheKey=m.customProgramCacheKey.bind(m);
+    m.onBeforeCompile=(s,r)=>{
+     before.call(m,s,r);
+     s.vertexShader=s.vertexShader.replace('#include <defaultnormal_vertex>',
+      '#include <defaultnormal_vertex>\ntransformedNormal=mat3(viewMatrix)*vec3(0.,1.,0.);');
+     s.fragmentShader=s.fragmentShader.replace('#include <normal_fragment_begin>',
+      '#include <normal_fragment_begin>\nnormal*=gl_FrontFacing?1.0:-1.0;');
+    };
+    m.customProgramCacheKey=()=>cacheKey()+'/meadow-up-normal';
+   }
    if(!m.userData.foliage)continue;
    m.side=DoubleSide;
    const height=Number(node.userData.plantHeight)||12;

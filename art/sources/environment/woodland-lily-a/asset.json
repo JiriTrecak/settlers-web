@@ -1,0 +1,32 @@
+{
+  "name": "Woodland Lily A",
+  "blend": "woodland-lily-a.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "camera": {
+    "azimuth": 35,
+    "elevation": 38,
+    "scale": 4,
+    "target": [
+      0,
+      0,
+      0.4
+    ]
+  },
+  "render": {
+    "width": 800,
+    "height": 700,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 600,
+    "fill_energy": 350,
+    "rim_energy": 250,
+    "scale": 0.7,
+    "target": [
+      0,
+      0,
+      0.4
+    ]
+  }
+}

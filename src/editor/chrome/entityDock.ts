@@ -19,6 +19,7 @@ export class EntityDock {
     private readonly editor: WorldEditor,
   ) {
     this.root.className = `pointer-events-auto absolute left-24 top-1/2 z-20 flex w-72 -translate-y-1/2 flex-col gap-3 rounded-2xl p-3 font-dock ${sheet}`;
+    this.root.classList.add('editor-properties');
     this.root.setAttribute("aria-label", "Gameplay entities");
     this.category.setAttribute("aria-label", "Entity category");
     this.definition.setAttribute("aria-label", "Entity definition");

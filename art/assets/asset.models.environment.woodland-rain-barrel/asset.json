@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-rain-barrel",
+  "name": "woodland rain barrel",
+  "kind": "prop",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1f9fec0f6ad93bb7f4ebe10ae31a98bcfe1ff641ccaffbb43b25fb6cabc446aa",
+      "bytes": 1564948
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
+      "bytes": 1705512
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "3ba605eb11cf74469d660732d4ce2683e433a3189b2180840e37c7b3a7d092d9",
+      "bytes": 3599873
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
+      "bytes": 1534415
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
+      "bytes": 380
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-rain-barrel",
+        "sceneryAsset": "woodland-rain-barrel",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-rain-barrel"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-rain-barrel",
+        "name": "woodland rain barrel",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 0.25
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "asset.terrain.winter-dirt",
+  "name": "winter dirt · albedo/roughness",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "7a12c0ac1b7f9f3d333ef97170ceb3353c21523e379fb40eb275841f0046da27",
+      "bytes": 1520996
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8263a148e1837a4d5fd31774b87150bee6f5e370ad75b7c0de8fc6c9546dd8d6",
+      "bytes": 521
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "d9e48634d18475dc9fc79801af9c23313eb810c340042fd23071847349765706",
+      "bytes": 1452560
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

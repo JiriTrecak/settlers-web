@@ -9,7 +9,10 @@ export const splineKnotSchema=point.extend({
  depthScale:z.number().finite().min(.05).max(8).default(1),
  flowScale:z.number().finite().min(0).max(8).default(1),
 }).strict();
+export const maskStrokeSchema=z.object({operation:z.enum(['add','subtract']),radius:z.number().finite().min(.25).max(128),points:z.array(point).min(1).max(8192)}).strict();
+export const paintedMaskSchema=z.object({type:z.literal('mask'),elevation:z.number().finite().min(-128).max(128).default(-.6),strokes:z.array(maskStrokeSchema).max(4096)}).strict();
 export const layerShapeSchema=z.discriminatedUnion('type',[
+ paintedMaskSchema,
  z.object({type:z.literal('region'),points:z.array(point).min(3).max(512)}).strict(),
  z.object({type:z.literal('spline'),knots:z.array(splineKnotSchema).min(2).max(128)}).strict(),
 ]);
@@ -28,6 +31,7 @@ export const authoredObjectSchema=z.object({
  visible:z.boolean().default(true),locked:z.boolean().default(false),
  // Provenance is informational. A baked object no longer depends on its former layer.
  bakedFrom:authoringId.optional(),
+ bakedPlacement:z.object({stage:z.number().int(),order:z.number().int(),blocksVegetation:z.boolean()}).strict().optional(),
 }).strict();
 export const authoringSceneSchema=z.object({
  version:z.literal(1),layers:z.array(proceduralLayerSchema).max(1024),objects:z.array(authoredObjectSchema).max(200000),
@@ -41,6 +45,7 @@ export type AuthoredObject=z.infer<typeof authoredObjectSchema>;
 export type AuthoringScene=z.infer<typeof authoringSceneSchema>;
 export type Bounds={minX:number;minZ:number;maxX:number;maxZ:number};
 export function shapeBounds(shape:LayerShape,padding=0):Bounds{
+ if(shape.type==='mask'){const all=shape.strokes.filter(s=>s.operation==='add').map(s=>{const xs=s.points.map(p=>p.x),zs=s.points.map(p=>p.z);return {minX:Math.min(...xs)-s.radius-padding,minZ:Math.min(...zs)-s.radius-padding,maxX:Math.max(...xs)+s.radius+padding,maxZ:Math.max(...zs)+s.radius+padding};});return all.length?all.reduce(unionBounds):{minX:0,minZ:0,maxX:0,maxZ:0};}
  const points=shape.type==='region'?shape.points:shape.knots.flatMap(k=>[k,...(k.incoming?[k.incoming]:[]),...(k.outgoing?[k.outgoing]:[])]);
  return {minX:Math.min(...points.map(p=>p.x))-padding,minZ:Math.min(...points.map(p=>p.z))-padding,maxX:Math.max(...points.map(p=>p.x))+padding,maxZ:Math.max(...points.map(p=>p.z))+padding};
 }

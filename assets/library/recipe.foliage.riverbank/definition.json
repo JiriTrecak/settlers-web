@@ -3,11 +3,11 @@
   "id": "recipe.foliage.riverbank",
   "name": "Riverbank · broken tall grass",
   "kind": "landscape-recipe",
-  "revision": 1,
+  "revision": 3,
   "status": "published",
   "tags": [
     "authoring",
-    "source-informed"
+    "original"
   ],
   "resources": [],
   "usesGeometry": false,
@@ -31,11 +31,11 @@
     "type": "ground-cover",
     "species": [
       {
-        "asset": "asset.models.environment.grass.reference-grass-high-a",
+        "asset": "asset.models.environment.woodland-grass-high-a",
         "weight": 2
       },
       {
-        "asset": "asset.models.environment.grass.reference-grass-high-b",
+        "asset": "asset.models.environment.woodland-grass-high-b",
         "weight": 1
       }
     ],
@@ -60,6 +60,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+    "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
   }
 }

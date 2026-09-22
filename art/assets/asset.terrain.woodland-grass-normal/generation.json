@@ -1,0 +1,14 @@
+{
+  "method": "imagegen",
+  "originalPixels": true,
+  "source": "exec-20af8d00-17ba-4a40-8277-c8805a086097.png",
+  "brief": "Original seamless muted olive woodland ground: low-contrast short matted grass, moss and small leaf flecks. Flat painted albedo with restrained detail, matching the established forest palette.",
+  "revision": 2,
+  "refinement": "Nearly featureless low contrast diffuse albedo, tiny flecks rather than leaf or gravel shapes.",
+  "packing": {
+    "size": 1024,
+    "albedo": "Original generated RGB, no color grading or imported pixels",
+    "roughness": 240,
+    "normalHeight": "Derived from softly filtered original luminance with normalized height contrast; periodic finite differences"
+  }
+}

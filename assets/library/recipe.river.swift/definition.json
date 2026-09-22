@@ -1,13 +1,13 @@
 {
   "version": 1,
   "id": "recipe.river.swift",
-  "name": "Scouring · swift river",
+  "name": "Woodland · swift river",
   "kind": "landscape-recipe",
-  "revision": 2,
+  "revision": 4,
   "status": "published",
   "tags": [
     "authoring",
-    "source-informed"
+    "original"
   ],
   "resources": [],
   "usesGeometry": false,
@@ -41,11 +41,11 @@
         "pattern": "patches",
         "species": [
           {
-            "asset": "asset.models.environment.grass.reference-grass-high-a",
+            "asset": "asset.models.environment.woodland-grass-high-a",
             "weight": 2
           },
           {
-            "asset": "asset.models.environment.grass.reference-grass-high-b",
+            "asset": "asset.models.environment.woodland-grass-high-b",
             "weight": 1
           }
         ],
@@ -69,11 +69,11 @@
         "pattern": "patches",
         "species": [
           {
-            "asset": "asset.models.environment.grass.reference-grass-water-leaves-a",
+            "asset": "asset.models.environment.woodland-lily-a",
             "weight": 2
           },
           {
-            "asset": "asset.models.environment.grass.reference-grass-water-leaves-b",
+            "asset": "asset.models.environment.woodland-lily-b",
             "weight": 1
           }
         ],
@@ -96,6 +96,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Designed from supplied prebuild class values and measured Eldenvale patterns. Original brush algorithms were not included."
+    "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
   }
 }

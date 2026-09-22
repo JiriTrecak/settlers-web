@@ -1,0 +1,71 @@
+{
+  "ambient": {
+    "rgb": [
+      183,
+      193,
+      229
+    ],
+    "alpha": 1,
+    "multiplier": 4.0
+  },
+  "skyColor": {
+    "rgb": [
+      51,
+      114,
+      243
+    ],
+    "alpha": 1,
+    "multiplier": 4.0
+  },
+  "sunColor": {
+    "rgb": [
+      247,
+      224,
+      174
+    ],
+    "alpha": 1,
+    "multiplier": 10
+  },
+  "sunDirection": [
+    0.5,
+    -1.0,
+    -0.5
+  ],
+  "textureColorLUT": "woodland-winter-day",
+  "skyBloomColor": {
+    "rgb": [
+      130.0,
+      186.0,
+      255.0
+    ],
+    "alpha": 0.7058823529411765,
+    "multiplier": 1.0
+  },
+  "fog": {
+    "color": {
+      "rgb": [
+        93.0,
+        164.0,
+        223.0
+      ],
+      "alpha": 1,
+      "multiplier": 0.8
+    },
+    "density": 0.05,
+    "dispersionByHeight": 0.1,
+    "startDist": 70,
+    "startHeight": 8
+  },
+  "colorize": {
+    "color": {
+      "rgb": [
+        96,
+        94,
+        87
+      ],
+      "alpha": 1,
+      "multiplier": 1.0
+    },
+    "radialFactorScale": 1.5
+  }
+}

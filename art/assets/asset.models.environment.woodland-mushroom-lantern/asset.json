@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-mushroom-lantern",
+  "name": "woodland mushroom lantern",
+  "kind": "prop",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "a4724cac89a5fe35e0c4269bbd48fecf8cc04fdd3f9bf4bd753dd805e7ebbd60",
+      "bytes": 1546840
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
+      "bytes": 1705512
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "d65f44e89653946ff5fb5b3037e95a81679cd897cce7d8fdf5ab440ce473a415",
+      "bytes": 3598802
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
+      "bytes": 1534415
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
+      "bytes": 380
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-mushroom-lantern",
+        "sceneryAsset": "woodland-mushroom-lantern",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-mushroom-lantern"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-mushroom-lantern",
+        "name": "woodland mushroom lantern",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "light": {
+          "x": 0.78,
+          "y": 2.25,
+          "z": -0.04,
+          "color": "#d8a457",
+          "intensity": 1.6,
+          "range": 5
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 0.25
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

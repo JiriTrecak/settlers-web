@@ -5,6 +5,12 @@ uniform float uSourceWaterTime;
 uniform sampler2D uSourceWaterFlow,uSourceWaterGround,uSourceWaterWaves;
 uniform vec2 uSourceWaterOrigin,uSourceWaterSize,uSourceWaterOffset,uSourceWaterGroundSize;
 uniform float uSourceWaterGroundScale;
+uniform sampler2D uWaterProfiles;uniform bool uAuthoredWater;
+vec4 waterProfile(vec2 world,float row){
+ ivec2 cell=ivec2(clamp(floor(world-uSourceWaterOrigin),vec2(0.),uSourceWaterSize-1.));
+ float index=max(1.,floor(texelFetch(uSourceWaterFlow,cell,0).a*255.+.5));
+ return texture2D(uWaterProfiles,vec2((index+.5)/256.,(row+.5)/4.));
+}
 ${sourceWavesGLSL}
 float sourceGround(vec2 p){
  vec2 size=uSourceWaterGroundSize,q=clamp((p-uSourceWaterOrigin)*uSourceWaterGroundScale,vec2(0.),size-1.),i=floor(q),f=fract(q),uv=(i+.5)/size,d=1./size;
@@ -44,6 +50,7 @@ void main(){
  }
  vSourceAmbient=uAmbientLight*(1.-fresnel)*irradiance;
  gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);
+ // UTC_VISIBILITY_VERTEX
 }
 `;
 
@@ -92,12 +99,13 @@ void main(){
  if(uHasShadow)shadow=getShadow(uSunShadow,uShadowSize,1.,uShadowBias,uShadowRadius,uShadowMatrix*vec4(vSourceWater+vec3(normal.x,0.,normal.z)*.5,1.));
  vec3 lighting=vSourceDirect*shadow*clamp(1.-dot(normal,toEye),0.,1.)+vSourceAmbient;
  // XML blue preset; colors decoded from sRGB and multiplied by their HDR scalar.
- vec3 water=vec3(.00933,.01409,.01998)*lighting;
+ vec4 shallow=waterProfile(vSourceWater.xz,0.),deep=waterProfile(vSourceWater.xz,1.),effects=waterProfile(vSourceWater.xz,2.);
+ vec3 water=(uAuthoredWater?mix(shallow.rgb,deep.rgb,clamp(groundDepth/max(.2,shallow.a),0.,1.))*.22:vec3(.00933,.01409,.01998))*lighting;
  vec3 foamColor=vec3(.1)*(.5+foam)*lighting;
  vec3 rawRefraction=texture2D(uOpaqueColor,refrUV).rgb;
  vec3 refraction=rawRefraction;
- refraction*=mix(vec3(1.),vec3(.17874,.09982,.04761),clamp(depth/6.+.2,0.,1.));
- float transmission=clamp(exp(-depth/3.)*.8,0.,1.);
+ refraction*=uAuthoredWater?mix(vec3(1.),mix(vec3(.4),shallow.rgb,.6),clamp(depth/max(.2,shallow.a),0.,1.)):mix(vec3(1.),vec3(.17874,.09982,.04761),clamp(depth/6.+.2,0.,1.));
+ float transmission=clamp(exp(-depth/(uAuthoredWater?max(.2,shallow.a):3.))*.8,0.,1.);
  vec3 reflectionDir=-normalize(vec3(normalize(uViewDirection.xz).x,-1.,normalize(uViewDirection.xz).y));
  vec3 reflected=textureCube(uReflectionCube,-reflect(reflectionDir,normal)).rgb;
  vec3 reflectedDistortion=(viewMatrix*vec4(normal.x+extra.x*.05,0.,normal.z+extra.y*.05,0.)).xyz;
@@ -105,6 +113,7 @@ void main(){
  vec2 reflectionOffset=vec2(reflectedDistortion.z,-reflectedDistortion.x)*.25;
  vec4 screenReflection=texture2D(uSourceReflections,screenUV+reflectionOffset);
  reflected=mix(reflected,screenReflection.rgb,screenReflection.a);
+ if(uAuthoredWater)reflected*=deep.a/.45;
  reflected*=clamp(.02+.2*pow(1.-dot(normal,reflectionDir),2.),0.,1.);
  vec2 flow=2.*(map.rg-.50196)*(1.-map.b*.6);
  float causticsLod=(1.+5.*clamp(1.-length(flow)/.25,0.,1.))*groundDepth*.5;
@@ -112,13 +121,16 @@ void main(){
  vec2 causticsUV=(uCausticsView*vec4(sourcePoint,1.)).xy*.1+normal.xz*.2;
  vec3 caustics=textureLod(uSourceCaustics,causticsUV,causticsLod).rgb*clamp(1.-groundDepth*.25,0.,1.)*.75;
  caustics*=refraction*(vSourceAmbient+vSourceDirect*shadow)*soft*.5;
+ if(uAuthoredWater)caustics*=effects.b/.3;
  vec3 finalColor=mix(water,refraction+caustics,transmission)+reflected;
  // Source's narrow view-aligned glint, independent of the opaque GGX material.
  vec3 specularDir=-normalize(vec3(normalize(uViewDirection.xz).x,16.,normalize(uViewDirection.xz).y));
  vec3 halfVector=normalize(toEye-specularDir);
- finalColor+=vSourceDirect*shadow*(1.-map.b)*1.024*pow(max(0.,dot(normalize(normal*vec3(1.,.5,1.)),halfVector)),512.);
+ finalColor+=vSourceDirect*shadow*(1.-map.b)*smoothstep(.02,.25,length(uViewDirection.xz))*1.024*pow(max(0.,dot(normalize(normal*vec3(1.,.5,1.)),halfVector)),512.);
  float foamMix=clamp(map.b*foam*4.-(1.-map.b)*.5,0.,1.);
  finalColor=mix(finalColor,mix(rawRefraction,foamColor,soft),foamMix);
+ if(uAuthoredWater){float clouds=waterProfile(vSourceWater.xz,3.).r;finalColor*=1.-clouds*(.5+.5*sin(vSourceWater.x*.07+vSourceWater.z*.04+uSourceWaterTime*.04));}
  gl_FragColor=vec4(finalColor,1.);
+ // UTC_VISIBILITY_FRAGMENT
 }
 `;

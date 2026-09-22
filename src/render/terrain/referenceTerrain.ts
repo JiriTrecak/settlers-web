@@ -1,7 +1,7 @@
 import {TextureLoader,RepeatWrapping,SRGBColorSpace,type WebGLProgramParametersWithUniforms,type Texture,type Color} from 'three';
-import albedoUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.terrain-ar.png/albedo.png?url';
-import normalUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.terrain-nh.png/albedo.png?url';
-import macroUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.env_macro_color__d.png/albedo.png?url';
+import albedoUrl from '../../../assets/library/asset.texture.woodland-terrain-ar/albedo.png?url';
+import normalUrl from '../../../assets/library/asset.texture.woodland-terrain-nh/albedo.png?url';
+import macroUrl from '../../../assets/library/asset.texture.woodland-macro/albedo.png?url';
 import {HEIGHT_ORIGIN} from '../../shared';
 export function referenceTexture(url:string,color=true):Texture & {referenceReady:Promise<void>} {
  let resolve!:()=>void,reject!:(reason:unknown)=>void;

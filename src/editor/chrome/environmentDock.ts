@@ -1,7 +1,7 @@
 import {CanopyControls} from './canopyControls';
 import {WaterControls} from './waterControls';
 import {AtmosphereControls} from './atmosphereControls';
-import {CLEAR_WEATHER,type WeatherSettings} from '../../shared/landscape/weather';
+import {CLEAR_WEATHER,WEATHER_CHOICES,weatherPreset,type WeatherSettings} from '../../shared/landscape/weather';
 import { sheet, btn, btnPrimary } from '../../ui';
 import { environmentPreset, environmentPresets, saveEnvironmentPreset, LIGHT_RANGES, type GlobalLight, type EnvironmentPreset } from '../../shared/environment/presets';
 import { formatHour } from '../../render/sky/sky';
@@ -18,7 +18,6 @@ export class EnvironmentDock {
   private readonly controls=new Map<keyof GlobalLight,{input:HTMLInputElement;number?:HTMLInputElement}>();
   private readonly hour=document.createElement('input');
   private readonly clock=document.createElement('span');
-  private readonly season=document.createElement('select');
   private readonly floor=document.createElement('select');
   private readonly ceiling=document.createElement('input');
   private readonly interior=document.createElement('input');
@@ -32,6 +31,7 @@ export class EnvironmentDock {
   private readonly water:WaterControls;
   constructor(host:HTMLElement,private readonly editor:WorldEditor,close:()=>void){
     this.root.className=`pointer-events-auto absolute right-4 top-20 bottom-24 z-30 flex w-80 max-w-[calc(100vw-6rem)] flex-col gap-3 overflow-y-auto rounded-2xl p-4 font-dock ${sheet}`;
+    this.root.classList.add('editor-properties');
     this.root.setAttribute('aria-label','Environment settings');
     const head=document.createElement('div');head.className='flex items-center justify-between';
     const title=document.createElement('strong');title.textContent='Environment';
@@ -41,12 +41,12 @@ export class EnvironmentDock {
     this.state.className='text-xs text-canopy/60';this.root.append(this.select,this.state);
     const setting=document.createElement('label');setting.className='flex items-center gap-2 text-xs text-canopy/80';this.interior.type='checkbox';this.interior.setAttribute('aria-label','Interior: fixed gameplay lighting');this.interior.onchange=()=>editor.environment({interior:this.interior.checked});setting.append(this.interior,'Interior: fixed gameplay lighting');this.root.append(setting);
     const roof=document.createElement('label');roof.className='flex flex-col gap-1 text-xs text-canopy/80';roof.append('Interior ceiling height (world metres)');this.ceiling.type='number';this.ceiling.min='1';this.ceiling.max='128';this.ceiling.step='.5';this.ceiling.placeholder='No ceiling';this.ceiling.className='rounded bg-black/30 p-2 text-canopy';this.ceiling.setAttribute('aria-label','Interior ceiling height');this.ceiling.onchange=()=>{const height=this.ceiling.value===''?undefined:Number(this.ceiling.value);if(height===undefined||(Number.isFinite(height)&&height>=1&&height<=128))editor.environment({ceilingHeight:height});};roof.append(this.ceiling);this.root.append(roof);
-    const flooring=document.createElement('label');flooring.className='flex flex-col gap-1 text-xs text-canopy/80';flooring.append('Ground material');this.floor.setAttribute('aria-label','Ground material');this.floor.className='rounded bg-black/30 p-2 text-canopy';this.floor.add(new Option('Scouring ground','forest'));this.floor.onchange=()=>editor.environment({floorMaterial:this.floor.value as 'forest'|'heartwood'});flooring.append(this.floor);this.root.append(flooring);
+    const flooring=document.createElement('label');flooring.className='flex flex-col gap-1 text-xs text-canopy/80';flooring.append('Ground material');this.floor.setAttribute('aria-label','Ground material');this.floor.className='rounded bg-black/30 p-2 text-canopy';this.floor.add(new Option('Woodland ground','forest'));this.floor.onchange=()=>editor.environment({floorMaterial:this.floor.value as 'forest'|'heartwood'});flooring.append(this.floor);this.root.append(flooring);
     const actions=document.createElement('div');actions.className='flex flex-wrap gap-1';
     const save=this.button('Save preset',()=>this.save());save.className=btnPrimary;
     actions.append(save,this.button('Reset',()=>{this.preset=environmentPreset(this.preset.id);this.draft={...this.preset.light};this.apply();this.notice.textContent='Restored saved preset.';this.sync();}),this.button('Copy settings',()=>void this.copy()));this.root.append(actions);
     const help=document.createElement('p');help.className='text-xs leading-5 text-canopy/50';help.textContent='Live draft · Save updates this preset for maps on this device. White tints and strengths of 1 preserve the imported day/night values.';this.root.append(help);
-    const global=this.section('Global light',true);
+    const global=this.section('Global light');
     this.color(global,'Sun tint','sunTint');this.range(global,'Sun strength','sunStrength',.05);
     this.range(global,'Sun direction offset (°)','sunDirection',1);this.range(global,'Sun elevation scale (60° = source)','sunHeight',1);
     this.color(global,'Ambient tint','ambientTint');this.range(global,'Ambient strength','ambientStrength',.05);
@@ -58,17 +58,16 @@ export class EnvironmentDock {
     this.water=new WaterControls(editor);this.root.append(this.water.root);
     const weather=this.section('Weather',true);
     this.weather.setAttribute('aria-label','Weather');this.weather.className='rounded bg-black/30 p-2 text-canopy';
-    for(const [id,label] of [['clear','Clear'],['rain','Rain'],['snow','Snow'],['spores','Drifting spores']])this.weather.add(new Option(label,id));
-    this.weather.onchange=()=>{const current=editor.map.landscape?.environment.weather??CLEAR_WEATHER;editor.environment({weather:{...current,kind:this.weather.value as WeatherSettings['kind'],intensity:current.intensity||.5}});this.sync();};weather.append(this.weather);
+    for(const w of WEATHER_CHOICES)this.weather.add(new Option(w.name,w.kind));
+    this.weather.onchange=()=>{editor.environment({weather:weatherPreset(this.weather.value as WeatherSettings['kind'])});this.sync();};weather.append(this.weather);
     for(const [key,label,min,max,step] of [['intensity','Weather intensity',0,1,.05],['windX','Weather east wind',-10,10,.5],['windZ','Weather south wind',-10,10,.5]] as const){
       const row=document.createElement('label');row.className='flex flex-col gap-1 text-xs text-canopy/80';row.append(label);
       const input=document.createElement('input');input.type='range';input.min=String(min);input.max=String(max);input.step=String(step);input.setAttribute('aria-label',label);
       input.oninput=()=>{const current=editor.map.landscape?.environment.weather??CLEAR_WEATHER;editor.environment({weather:{...current,[key]:Number(input.value)}});};this.weatherInputs.set(key,input);row.append(input);weather.append(row);
     }
-    const weatherHelp=document.createElement('p');weatherHelp.className='text-xs text-canopy/50';weatherHelp.textContent='Weather is saved with this map. Wind moves precipitation or spores. Spores drift just above the ground; none of these effects affect unit movement.';weather.append(weatherHelp);
+    const weatherHelp=document.createElement('p');weatherHelp.className='text-xs text-canopy/50';weatherHelp.textContent='Weather is saved with this map. Wind moves precipitation or spores. Spores drift just above the ground; none of these effects affect unit movement.';weather.append(weatherHelp);head.after(weather.parentElement!);
     const time=this.section('Preview time',true);this.hour.type='range';this.hour.min='0';this.hour.max='23.99';this.hour.step='.05';this.hour.setAttribute('aria-label','Environment preview hour');this.hour.oninput=()=>{editor.environment({hour:Number(this.hour.value),playing:false});this.sync();};
     this.play.className=btn;this.play.onclick=()=>{editor.environment({hour:editor.sky?.hour??10,playing:!editor.sky?.playing});this.sync();};time.append(this.clock,this.hour,this.play);
-    this.season.setAttribute('aria-label','Environment season');this.season.className='rounded bg-black/30 p-2 text-canopy';for(const value of ['spring','summer','autumn']){const o=document.createElement('option');o.value=value;o.textContent=value[0]!.toUpperCase()+value.slice(1);this.season.append(o);}this.season.onchange=()=>editor.environment({season:this.season.value as 'spring'|'summer'|'autumn'});time.append(this.season);
     const timing=document.createElement('p');timing.className='text-xs text-canopy/50';timing.textContent='10-minute full cycle. Light controls tune daytime; the clock still drives sun movement. Editing light pauses the preview.';time.append(timing);
     this.notice.className='text-xs text-canopy/70';this.notice.setAttribute('role','status');this.fallback.className='hidden h-36 w-full rounded bg-black/30 p-2 text-xs';this.fallback.setAttribute('aria-label','Environment settings JSON');this.fallback.readOnly=true;this.root.append(this.fallback);actions.after(this.notice);host.append(this.root);this.setOpen(false);
   }
@@ -82,7 +81,7 @@ export class EnvironmentDock {
   private save(){try{const p:EnvironmentPreset={...this.preset,light:{...this.draft}};saveEnvironmentPreset(p);this.preset=p;this.notice.textContent='Preset saved on this device.';this.sync();}catch(e){this.notice.textContent=`Could not save: ${e instanceof Error?e.message:String(e)}`;}}
   settings(){return {version:1,preset:{...this.preset,light:{...this.draft}},preview:{...this.editor.map.landscape?.environment,...this.editor.sky?.snapshot()}};}
   private async copy(){const text=JSON.stringify(this.settings(),null,2);try{await navigator.clipboard.writeText(text);this.notice.textContent='Settings copied. Paste them into the conversation.';this.fallback.classList.add('hidden');}catch{this.fallback.value=text;this.fallback.classList.remove('hidden');this.fallback.focus();this.fallback.select();this.notice.textContent='Select and copy the settings below.';}}
-  sync(){if(!this.opened)return;this.atmosphere.sync();this.canopy.sync();this.water.sync();const id=this.editor.map.landscape?.environment.preset??'forest';if(id!==this.preset.id){this.preset=environmentPreset(id);this.draft={...this.preset.light};this.options();this.apply();}this.select.value=this.preset.id;this.floor.value=this.editor.map.landscape?.environment.floorMaterial??'forest';this.interior.checked=!!this.editor.map.landscape?.environment.interior;this.ceiling.disabled=!this.interior.checked;if(document.activeElement!==this.ceiling)this.ceiling.value=String(this.editor.map.landscape?.environment.ceilingHeight??'');this.state.textContent=`${this.preset.name}${JSON.stringify(this.draft)!==JSON.stringify(this.preset.light)?' · Modified':' · Saved'}`;for(const [key,c] of this.controls){if(document.activeElement!==c.input)c.input.value=String(this.draft[key]);if(c.number&&document.activeElement!==c.number)c.number.value=String(this.draft[key]);}this.season.value=this.editor.map.landscape?.environment.season??'summer';const weather=this.editor.map.landscape?.environment.weather??CLEAR_WEATHER;this.weather.value=weather.kind;for(const [key,input]of this.weatherInputs){input.step=key==='intensity'?'.05':weather.kind==='spores'?'.01':'.5';if(document.activeElement!==input)input.value=String(weather[key]);input.disabled=weather.kind==='clear';}const sky=this.editor.sky;this.hour.value=String(sky?.hour??10);this.clock.textContent=formatHour(sky?.hour??10);this.play.textContent=sky?.playing?'Pause cycle':'Play cycle';}
+  sync(){if(!this.opened)return;this.atmosphere.sync();this.canopy.sync();this.water.sync();const id=this.editor.map.landscape?.environment.preset??'forest';if(id!==this.preset.id){this.preset=environmentPreset(id);this.draft={...this.preset.light};this.options();this.apply();}this.select.value=this.preset.id;this.floor.value=this.editor.map.landscape?.environment.floorMaterial??'forest';this.interior.checked=!!this.editor.map.landscape?.environment.interior;this.ceiling.disabled=!this.interior.checked;if(document.activeElement!==this.ceiling)this.ceiling.value=String(this.editor.map.landscape?.environment.ceilingHeight??'');this.state.textContent=`${this.preset.name}${JSON.stringify(this.draft)!==JSON.stringify(this.preset.light)?' · Modified':' · Saved'}`;for(const [key,c] of this.controls){if(document.activeElement!==c.input)c.input.value=String(this.draft[key]);if(c.number&&document.activeElement!==c.number)c.number.value=String(this.draft[key]);}const weather=this.editor.map.landscape?.environment.weather??CLEAR_WEATHER;this.weather.value=weather.kind;for(const [key,input]of this.weatherInputs){input.step=key==='intensity'?'.05':weather.kind==='spores'?'.01':'.05';if(document.activeElement!==input)input.value=String(weather[key]);input.disabled=weather.kind==='clear';}const sky=this.editor.sky;this.hour.value=String(sky?.hour??10);this.clock.textContent=formatHour(sky?.hour??10);this.play.textContent=sky?.playing?'Pause cycle':'Play cycle';}
   setOpen(on:boolean){this.opened=on;this.root.classList.toggle('hidden',!on);if(on){this.sync();this.apply();}}
   destroy(){this.root.remove();}
 }

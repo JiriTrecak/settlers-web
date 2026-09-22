@@ -1,355 +1,479 @@
 [
   {
-    "id": "asset.models.environment.grass.reference-grass-daisy",
-    "name": "Reference · grass daisy",
+    "id": "asset.models.environment.autumn-grass",
+    "name": "autumn grass",
     "kind": "foliage",
-    "scenery": "reference-grass-daisy",
+    "scenery": "autumn-grass",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-high-a",
-    "name": "Reference · grass high a",
+    "id": "asset.models.environment.autumn-leaf-litter",
+    "name": "autumn leaf litter",
     "kind": "foliage",
-    "scenery": "reference-grass-high-a",
+    "scenery": "autumn-leaf-litter",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-high-b",
-    "name": "Reference · grass high b",
+    "id": "asset.models.environment.autumn-shrub-copper",
+    "name": "autumn shrub copper",
     "kind": "foliage",
-    "scenery": "reference-grass-high-b",
+    "scenery": "autumn-shrub-copper",
     "scale": 1,
-    "clearance": 0
+    "clearance": 0.25
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-low",
-    "name": "Reference · grass low",
+    "id": "asset.models.environment.autumn-shrub-gold",
+    "name": "autumn shrub gold",
     "kind": "foliage",
-    "scenery": "reference-grass-low",
+    "scenery": "autumn-shrub-gold",
     "scale": 1,
-    "clearance": 0
+    "clearance": 0.25
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-messy",
-    "name": "Reference · grass messy",
-    "kind": "foliage",
-    "scenery": "reference-grass-messy",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.grass.reference-grass-water-leaves-a",
-    "name": "Reference · grass water leaves a",
-    "kind": "foliage",
-    "scenery": "reference-grass-water-leaves-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.grass.reference-grass-water-leaves-b",
-    "name": "Reference · grass water leaves b",
-    "kind": "foliage",
-    "scenery": "reference-grass-water-leaves-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-bush-a",
-    "name": "Reference · bush a",
-    "kind": "foliage",
-    "scenery": "reference-bush-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-bush-b",
-    "name": "Reference · bush b",
-    "kind": "foliage",
-    "scenery": "reference-bush-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-dungeon-entrance",
-    "name": "Reference · dungeon entrance",
+    "id": "asset.models.environment.autumn-stump",
+    "name": "autumn stump",
     "kind": "prop",
-    "scenery": "reference-dungeon-entrance",
+    "scenery": "autumn-stump",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.props.reference-goblin-hut",
-    "name": "Reference · goblin hut",
-    "kind": "prop",
-    "scenery": "reference-goblin-hut",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-gold-vein-a",
-    "name": "Reference · gold vein a",
-    "kind": "prop",
-    "scenery": "reference-gold-vein-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-gold-vein-b",
-    "name": "Reference · gold vein b",
-    "kind": "prop",
-    "scenery": "reference-gold-vein-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-lying-snag-a",
-    "name": "Reference · lying snag a",
-    "kind": "prop",
-    "scenery": "reference-lying-snag-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-lying-snag-b",
-    "name": "Reference · lying snag b",
-    "kind": "prop",
-    "scenery": "reference-lying-snag-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-lying-snag-c",
-    "name": "Reference · lying snag c",
-    "kind": "prop",
-    "scenery": "reference-lying-snag-c",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-lying-snag-d",
-    "name": "Reference · lying snag d",
-    "kind": "prop",
-    "scenery": "reference-lying-snag-d",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-monument-01",
-    "name": "Reference · monument 01",
-    "kind": "prop",
-    "scenery": "reference-monument-01",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-mountain-chunk-a",
-    "name": "Reference · mountain chunk a",
-    "kind": "prop",
-    "scenery": "reference-mountain-chunk-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-mountain-chunk-b",
-    "name": "Reference · mountain chunk b",
-    "kind": "prop",
-    "scenery": "reference-mountain-chunk-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-mountain-chunk-c",
-    "name": "Reference · mountain chunk c",
-    "kind": "prop",
-    "scenery": "reference-mountain-chunk-c",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-bandit-a",
-    "name": "Reference · neutral bandit a",
-    "kind": "prop",
-    "scenery": "reference-neutral-bandit-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-bandit-b",
-    "name": "Reference · neutral bandit b",
-    "kind": "prop",
-    "scenery": "reference-neutral-bandit-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-bandit-tent",
-    "name": "Reference · neutral bandit tent",
-    "kind": "prop",
-    "scenery": "reference-neutral-bandit-tent",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-goblin",
-    "name": "Reference · neutral goblin",
-    "kind": "creature",
-    "scenery": "reference-neutral-goblin",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-outpost",
-    "name": "Reference · neutral outpost",
-    "kind": "prop",
-    "scenery": "reference-neutral-outpost",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-troll",
-    "name": "Reference · neutral troll",
-    "kind": "creature",
-    "scenery": "reference-neutral-troll",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-troll-cave",
-    "name": "Reference · neutral troll cave",
-    "kind": "prop",
-    "scenery": "reference-neutral-troll-cave",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-wolf",
-    "name": "Reference · neutral wolf",
-    "kind": "creature",
-    "scenery": "reference-neutral-wolf",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-wolf-den-a",
-    "name": "Reference · neutral wolf den a",
-    "kind": "prop",
-    "scenery": "reference-neutral-wolf-den-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-neutral-wolf-den-b",
-    "name": "Reference · neutral wolf den b",
-    "kind": "prop",
-    "scenery": "reference-neutral-wolf-den-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-ruins-blocks-03",
-    "name": "Reference · ruins blocks 03",
-    "kind": "prop",
-    "scenery": "reference-ruins-blocks-03",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-ruins-blocks-04",
-    "name": "Reference · ruins blocks 04",
-    "kind": "prop",
-    "scenery": "reference-ruins-blocks-04",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-ruins-blocks-06",
-    "name": "Reference · ruins blocks 06",
-    "kind": "prop",
-    "scenery": "reference-ruins-blocks-06",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-ruins-blocks-08",
-    "name": "Reference · ruins blocks 08",
-    "kind": "prop",
-    "scenery": "reference-ruins-blocks-08",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-ruins-column-11",
-    "name": "Reference · ruins column 11",
-    "kind": "prop",
-    "scenery": "reference-ruins-column-11",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-small-rock-a",
-    "name": "Reference · small rock a",
-    "kind": "prop",
-    "scenery": "reference-small-rock-a",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-small-rock-b",
-    "name": "Reference · small rock b",
-    "kind": "prop",
-    "scenery": "reference-small-rock-b",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-small-rock-c",
-    "name": "Reference · small rock c",
-    "kind": "prop",
-    "scenery": "reference-small-rock-c",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.props.reference-wooden-bridge-small",
-    "name": "Reference · wooden bridge small",
-    "kind": "prop",
-    "scenery": "reference-wooden-bridge-small",
-    "scale": 1,
-    "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.trees.reference-fir-a",
-    "name": "Reference · fir a",
+    "id": "asset.models.environment.autumn-tree-copper",
+    "name": "autumn tree copper",
     "kind": "tree",
-    "scenery": "reference-fir-a",
+    "scenery": "autumn-tree-copper",
+    "scale": 1,
+    "clearance": 1.1,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.autumn-tree-copper"
+    }
+  },
+  {
+    "id": "asset.models.environment.autumn-tree-gold",
+    "name": "autumn tree gold",
+    "kind": "tree",
+    "scenery": "autumn-tree-gold",
+    "scale": 1,
+    "clearance": 1.1,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.autumn-tree-gold"
+    }
+  },
+  {
+    "id": "asset.models.environment.canopy-acorns",
+    "name": "canopy acorns",
+    "kind": "prop",
+    "scenery": "canopy-acorns",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.canopy-ancient-tree",
+    "name": "canopy ancient tree",
+    "kind": "prop",
+    "scenery": "canopy-ancient-tree",
+    "scale": 1,
+    "clearance": 5
+  },
+  {
+    "id": "asset.models.environment.canopy-mushrooms-ochre",
+    "name": "canopy mushrooms ochre",
+    "kind": "prop",
+    "scenery": "canopy-mushrooms-ochre",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.canopy-mushrooms-russet",
+    "name": "canopy mushrooms russet",
+    "kind": "prop",
+    "scenery": "canopy-mushrooms-russet",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.canopy-oak",
+    "name": "canopy oak",
+    "kind": "tree",
+    "scenery": "canopy-oak",
+    "scale": 1,
+    "clearance": 1.1,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.canopy-oak"
+    }
+  },
+  {
+    "id": "asset.models.environment.canopy-twig",
+    "name": "canopy twig",
+    "kind": "prop",
+    "scenery": "canopy-twig",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.frost-boulder",
+    "name": "frost boulder",
+    "kind": "prop",
+    "scenery": "frost-boulder",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.frost-grass",
+    "name": "frost grass",
+    "kind": "foliage",
+    "scenery": "frost-grass",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.trees.reference-fir-b",
-    "name": "Reference · fir b",
+    "id": "asset.models.environment.frost-log",
+    "name": "frost log",
+    "kind": "prop",
+    "scenery": "frost-log",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.frost-pine-a",
+    "name": "frost pine a",
     "kind": "tree",
-    "scenery": "reference-fir-b",
+    "scenery": "frost-pine-a",
+    "scale": 1,
+    "clearance": 1.2,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.frost-pine-a"
+    }
+  },
+  {
+    "id": "asset.models.environment.frost-pine-b",
+    "name": "frost pine b",
+    "kind": "tree",
+    "scenery": "frost-pine-b",
+    "scale": 1,
+    "clearance": 1.2,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.frost-pine-b"
+    }
+  },
+  {
+    "id": "asset.models.environment.frost-pine-sapling",
+    "name": "frost pine sapling",
+    "kind": "foliage",
+    "scenery": "frost-pine-sapling",
+    "scale": 1,
+    "clearance": 0.3
+  },
+  {
+    "id": "asset.models.environment.frost-rock-ledge",
+    "name": "frost rock ledge",
+    "kind": "prop",
+    "scenery": "frost-rock-ledge",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.frost-snow-grass",
+    "name": "frost snow grass",
+    "kind": "foliage",
+    "scenery": "frost-snow-grass",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.trees.reference-fir-small-a",
-    "name": "Reference · fir small a",
-    "kind": "tree",
-    "scenery": "reference-fir-small-a",
+    "id": "asset.models.environment.leafbound-twig-bridge",
+    "name": "leafbound twig bridge",
+    "kind": "bridge",
+    "scenery": "leafbound-twig-bridge",
     "scale": 1,
     "clearance": 0
   },
   {
-    "id": "asset.models.environment.trees.reference-stump-fir-a",
-    "name": "Reference · stump fir a",
-    "kind": "tree",
-    "scenery": "reference-stump-fir-a",
+    "id": "asset.models.environment.woodland-abandoned-camp",
+    "name": "woodland abandoned camp",
+    "kind": "prop",
+    "scenery": "woodland-abandoned-camp",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-acorn-cache",
+    "name": "woodland acorn cache",
+    "kind": "prop",
+    "scenery": "woodland-acorn-cache",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-amber-deposit",
+    "name": "woodland amber deposit",
+    "kind": "prop",
+    "scenery": "woodland-amber-deposit",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-amber-lantern",
+    "name": "woodland amber lantern",
+    "kind": "prop",
+    "scenery": "woodland-amber-lantern",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-broken-trader-cart",
+    "name": "woodland broken trader cart",
+    "kind": "prop",
+    "scenery": "woodland-broken-trader-cart",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.environment.woodland-daisies",
+    "name": "woodland daisies",
+    "kind": "foliage",
+    "scenery": "woodland-daisies",
     "scale": 1,
     "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-fallen-log",
+    "name": "woodland fallen log",
+    "kind": "prop",
+    "scenery": "woodland-fallen-log",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-giant-stump",
+    "name": "woodland giant stump",
+    "kind": "prop",
+    "scenery": "woodland-giant-stump",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.environment.woodland-grass-high-a",
+    "name": "woodland grass high a",
+    "kind": "foliage",
+    "scenery": "woodland-grass-high-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-grass-high-b",
+    "name": "woodland grass high b",
+    "kind": "foliage",
+    "scenery": "woodland-grass-high-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-grass-low",
+    "name": "woodland grass low",
+    "kind": "foliage",
+    "scenery": "woodland-grass-low",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-grass-messy",
+    "name": "woodland grass messy",
+    "kind": "foliage",
+    "scenery": "woodland-grass-messy",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-hollow-log",
+    "name": "woodland hollow log",
+    "kind": "prop",
+    "scenery": "woodland-hollow-log",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-leaf-shelter",
+    "name": "woodland leaf shelter",
+    "kind": "prop",
+    "scenery": "woodland-leaf-shelter",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-lily-a",
+    "name": "woodland lily a",
+    "kind": "foliage",
+    "scenery": "woodland-lily-a",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-lily-b",
+    "name": "woodland lily b",
+    "kind": "foliage",
+    "scenery": "woodland-lily-b",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-log-bench",
+    "name": "woodland log bench",
+    "kind": "prop",
+    "scenery": "woodland-log-bench",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-moss-boulder",
+    "name": "woodland moss boulder",
+    "kind": "prop",
+    "scenery": "woodland-moss-boulder",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-mushroom-cluster",
+    "name": "woodland mushroom cluster",
+    "kind": "prop",
+    "scenery": "woodland-mushroom-cluster",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-mushroom-lantern",
+    "name": "woodland mushroom lantern",
+    "kind": "prop",
+    "scenery": "woodland-mushroom-lantern",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-a",
+    "name": "woodland pine a",
+    "kind": "tree",
+    "scenery": "woodland-pine-a",
+    "scale": 1,
+    "clearance": 1.2,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.woodland-pine-a"
+    }
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-b",
+    "name": "woodland pine b",
+    "kind": "tree",
+    "scenery": "woodland-pine-b",
+    "scale": 1,
+    "clearance": 1.2,
+    "harvesting": {
+      "definition": "resource.forest.tree",
+      "asset": "asset.scenery.woodland-pine-b"
+    }
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-sapling",
+    "name": "woodland pine sapling",
+    "kind": "foliage",
+    "scenery": "woodland-pine-sapling",
+    "scale": 1,
+    "clearance": 0.3
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-stump",
+    "name": "woodland pine stump",
+    "kind": "foliage",
+    "scenery": "woodland-pine-stump",
+    "scale": 1,
+    "clearance": 0.3
+  },
+  {
+    "id": "asset.models.environment.woodland-rain-barrel",
+    "name": "woodland rain barrel",
+    "kind": "prop",
+    "scenery": "woodland-rain-barrel",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-river-stones",
+    "name": "woodland river stones",
+    "kind": "prop",
+    "scenery": "woodland-river-stones",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-rock-ledge",
+    "name": "woodland rock ledge",
+    "kind": "prop",
+    "scenery": "woodland-rock-ledge",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-root-arch-bridge",
+    "name": "woodland root arch bridge",
+    "kind": "bridge",
+    "scenery": "woodland-root-arch-bridge",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-ruined-watchtower",
+    "name": "woodland ruined watchtower",
+    "kind": "prop",
+    "scenery": "woodland-ruined-watchtower",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.environment.woodland-snapped-root",
+    "name": "woodland snapped root",
+    "kind": "prop",
+    "scenery": "woodland-snapped-root",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-stone-spring",
+    "name": "woodland stone spring",
+    "kind": "prop",
+    "scenery": "woodland-stone-spring",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-supply-crate",
+    "name": "woodland supply crate",
+    "kind": "prop",
+    "scenery": "woodland-supply-crate",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-trail-sign",
+    "name": "woodland trail sign",
+    "kind": "prop",
+    "scenery": "woodland-trail-sign",
+    "scale": 1,
+    "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-woodpile",
+    "name": "woodland woodpile",
+    "kind": "prop",
+    "scenery": "woodland-woodpile",
+    "scale": 1,
+    "clearance": 0.25
   },
   {
     "id": "asset.placeholder.missing-model",
@@ -358,6 +482,44 @@
     "scenery": "missing-model",
     "scale": 1,
     "clearance": 0
+  },
+  {
+    "id": "recipe.foliage.frozen-bank",
+    "name": "Snowy riverbank",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "ground-cover",
+      "species": [
+        {
+          "asset": "asset.models.environment.frost-grass",
+          "weight": 2
+        },
+        {
+          "asset": "asset.models.environment.frost-snow-grass",
+          "weight": 3
+        }
+      ],
+      "spacing": 0.75,
+      "probability": 0.6,
+      "jitter": 0.65,
+      "scaleMin": 0.65,
+      "scaleMax": 1.05,
+      "maxSlope": 1,
+      "waterClearance": 0.1,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 0.2,
+      "riverBank": {
+        "min": 0.1,
+        "max": 3
+      },
+      "patchiness": {
+        "scale": 4,
+        "strength": 0.75
+      }
+    }
   },
   {
     "id": "recipe.foliage.riverbank",
@@ -369,11 +531,11 @@
       "type": "ground-cover",
       "species": [
         {
-          "asset": "asset.models.environment.grass.reference-grass-high-a",
+          "asset": "asset.models.environment.woodland-grass-high-a",
           "weight": 2
         },
         {
-          "asset": "asset.models.environment.grass.reference-grass-high-b",
+          "asset": "asset.models.environment.woodland-grass-high-b",
           "weight": 1
         }
       ],
@@ -398,6 +560,162 @@
     }
   },
   {
+    "id": "recipe.forest.autumn",
+    "name": "Amberleaf woodland",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "forest",
+      "density": 1,
+      "species": [
+        {
+          "asset": "asset.models.environment.autumn-tree-gold",
+          "weight": 3
+        },
+        {
+          "asset": "asset.models.environment.autumn-tree-copper",
+          "weight": 2
+        }
+      ],
+      "spacing": 4.6,
+      "probability": 0.95,
+      "jitter": 0.65,
+      "scaleMin": 0.85,
+      "scaleMax": 1.25,
+      "maxSlope": 1,
+      "waterClearance": 2,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 3.6,
+      "patchiness": {
+        "scale": 12,
+        "strength": 0.12
+      },
+      "interiorMargin": 3.5,
+      "details": [
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-ochre",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-russet",
+              "weight": 1
+            }
+          ],
+          "spacing": 3.5,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "mushrooms"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-acorns",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.canopy-twig",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.woodland-moss-boulder",
+              "weight": 1
+            }
+          ],
+          "spacing": 4.2,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "floor"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.autumn-leaf-litter",
+              "weight": 4
+            },
+            {
+              "asset": "asset.models.environment.autumn-grass",
+              "weight": 2
+            }
+          ],
+          "spacing": 1.3,
+          "probability": 0.8,
+          "jitter": 0.9,
+          "scaleMin": 0.6,
+          "scaleMax": 0.95,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "undergrowth"
+        }
+      ],
+      "edge": {
+        "species": [
+          {
+            "asset": "asset.models.environment.autumn-shrub-gold",
+            "weight": 2
+          },
+          {
+            "asset": "asset.models.environment.autumn-shrub-copper",
+            "weight": 1
+          }
+        ],
+        "spacing": 2.2,
+        "probability": 0.6,
+        "jitter": 0.65,
+        "scaleMin": 0.75,
+        "scaleMax": 1.1,
+        "maxSlope": 1,
+        "waterClearance": 0.5,
+        "objectClearance": 0,
+        "edgeFade": 1.5,
+        "minSpacing": 1.5,
+        "patchiness": {
+          "scale": 6,
+          "strength": 0.4
+        },
+        "width": 3
+      }
+    }
+  },
+  {
     "id": "recipe.forest.conifer-edge",
     "name": "Conifer forest · soft sapling edge",
     "kind": "landscape-recipe",
@@ -408,11 +726,11 @@
       "density": 1,
       "species": [
         {
-          "asset": "asset.models.environment.trees.reference-fir-a",
+          "asset": "asset.models.environment.woodland-pine-a",
           "weight": 1
         },
         {
-          "asset": "asset.models.environment.trees.reference-fir-b",
+          "asset": "asset.models.environment.woodland-pine-b",
           "weight": 1
         }
       ],
@@ -434,7 +752,7 @@
       "edge": {
         "species": [
           {
-            "asset": "asset.models.environment.trees.reference-fir-small-a",
+            "asset": "asset.models.environment.woodland-pine-sapling",
             "weight": 1
           }
         ],
@@ -457,6 +775,467 @@
     }
   },
   {
+    "id": "recipe.forest.diverse",
+    "name": "Living pine forest",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "forest",
+      "density": 1,
+      "species": [
+        {
+          "asset": "asset.models.environment.woodland-pine-a",
+          "weight": 1
+        },
+        {
+          "asset": "asset.models.environment.woodland-pine-b",
+          "weight": 1
+        }
+      ],
+      "spacing": 3.2,
+      "probability": 1,
+      "jitter": 0.65,
+      "scaleMin": 0.85,
+      "scaleMax": 1.15,
+      "maxSlope": 1,
+      "waterClearance": 2,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 3.2,
+      "patchiness": {
+        "scale": 12,
+        "strength": 0.12
+      },
+      "interiorMargin": 3.5,
+      "details": [
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-ochre",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-russet",
+              "weight": 1
+            }
+          ],
+          "spacing": 3.5,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "mushrooms"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-acorns",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.canopy-twig",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.woodland-moss-boulder",
+              "weight": 1
+            }
+          ],
+          "spacing": 4.2,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "floor"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.woodland-grass-messy",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.woodland-grass-low",
+              "weight": 1
+            }
+          ],
+          "spacing": 1.2,
+          "probability": 0.55,
+          "jitter": 0.9,
+          "scaleMin": 0.6,
+          "scaleMax": 0.95,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "undergrowth"
+        }
+      ],
+      "edge": {
+        "species": [
+          {
+            "asset": "asset.models.environment.woodland-pine-sapling",
+            "weight": 1
+          }
+        ],
+        "spacing": 1.5,
+        "probability": 0.65,
+        "jitter": 0.65,
+        "scaleMin": 0.75,
+        "scaleMax": 1.1,
+        "maxSlope": 1,
+        "waterClearance": 0.5,
+        "objectClearance": 0,
+        "edgeFade": 1.5,
+        "minSpacing": 1.5,
+        "patchiness": {
+          "scale": 6,
+          "strength": 0.4
+        },
+        "width": 5
+      }
+    }
+  },
+  {
+    "id": "recipe.forest.frozen",
+    "name": "Frozen pine forest",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "forest",
+      "density": 1,
+      "species": [
+        {
+          "asset": "asset.models.environment.frost-pine-a",
+          "weight": 2
+        },
+        {
+          "asset": "asset.models.environment.frost-pine-b",
+          "weight": 1
+        }
+      ],
+      "spacing": 3.2,
+      "probability": 1,
+      "jitter": 0.65,
+      "scaleMin": 0.85,
+      "scaleMax": 1.15,
+      "maxSlope": 1,
+      "waterClearance": 2,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 3.2,
+      "patchiness": {
+        "scale": 12,
+        "strength": 0.12
+      },
+      "interiorMargin": 3.5,
+      "details": [
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.frost-log",
+              "weight": 1
+            },
+            {
+              "asset": "asset.models.environment.frost-boulder",
+              "weight": 2
+            }
+          ],
+          "spacing": 5,
+          "probability": 0.4,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "winter-floor"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.frost-snow-grass",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.frost-grass",
+              "weight": 1
+            }
+          ],
+          "spacing": 1.6,
+          "probability": 0.45,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "winter-grass"
+        }
+      ],
+      "edge": {
+        "species": [
+          {
+            "asset": "asset.models.environment.frost-pine-sapling",
+            "weight": 1
+          }
+        ],
+        "spacing": 1.5,
+        "probability": 0.65,
+        "jitter": 0.65,
+        "scaleMin": 0.75,
+        "scaleMax": 1.1,
+        "maxSlope": 1,
+        "waterClearance": 0.5,
+        "objectClearance": 0,
+        "edgeFade": 1.5,
+        "minSpacing": 1.5,
+        "patchiness": {
+          "scale": 6,
+          "strength": 0.4
+        },
+        "width": 5
+      }
+    }
+  },
+  {
+    "id": "recipe.forest.leafy",
+    "name": "Leafy woodland",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "forest",
+      "density": 1,
+      "species": [
+        {
+          "asset": "asset.models.environment.canopy-oak",
+          "weight": 4
+        },
+        {
+          "asset": "asset.models.environment.woodland-pine-a",
+          "weight": 1
+        }
+      ],
+      "spacing": 4.8,
+      "probability": 1,
+      "jitter": 0.65,
+      "scaleMin": 0.85,
+      "scaleMax": 1.15,
+      "maxSlope": 1,
+      "waterClearance": 2,
+      "objectClearance": 0,
+      "edgeFade": 1,
+      "minSpacing": 4.5,
+      "patchiness": {
+        "scale": 12,
+        "strength": 0.12
+      },
+      "interiorMargin": 3.5,
+      "details": [
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-ochre",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.canopy-mushrooms-russet",
+              "weight": 1
+            }
+          ],
+          "spacing": 3.5,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "mushrooms"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.canopy-acorns",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.canopy-twig",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.woodland-moss-boulder",
+              "weight": 1
+            }
+          ],
+          "spacing": 4.2,
+          "probability": 0.5,
+          "jitter": 0.9,
+          "scaleMin": 0.7,
+          "scaleMax": 1.2,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "floor"
+        },
+        {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.woodland-grass-messy",
+              "weight": 3
+            },
+            {
+              "asset": "asset.models.environment.woodland-grass-low",
+              "weight": 1
+            }
+          ],
+          "spacing": 1.2,
+          "probability": 0.55,
+          "jitter": 0.9,
+          "scaleMin": 0.6,
+          "scaleMax": 0.95,
+          "maxSlope": 1.2,
+          "waterClearance": 0.5,
+          "objectClearance": 0.3,
+          "edgeFade": 1,
+          "minSpacing": 1.1,
+          "patchiness": {
+            "scale": 7,
+            "strength": 0.55
+          },
+          "id": "undergrowth"
+        }
+      ],
+      "edge": {
+        "species": [
+          {
+            "asset": "asset.models.environment.woodland-pine-sapling",
+            "weight": 2
+          },
+          {
+            "asset": "asset.models.environment.woodland-pine-sapling",
+            "weight": 1
+          }
+        ],
+        "spacing": 1.5,
+        "probability": 0.65,
+        "jitter": 0.65,
+        "scaleMin": 0.75,
+        "scaleMax": 1.1,
+        "maxSlope": 1,
+        "waterClearance": 0.5,
+        "objectClearance": 0,
+        "edgeFade": 1.5,
+        "minSpacing": 1.5,
+        "patchiness": {
+          "scale": 6,
+          "strength": 0.4
+        },
+        "width": 5
+      }
+    }
+  },
+  {
+    "id": "recipe.grass.autumn",
+    "name": "Fallen-leaf meadow",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "grass",
+      "species": [
+        {
+          "asset": "asset.models.environment.autumn-leaf-litter",
+          "weight": 7
+        },
+        {
+          "asset": "asset.models.environment.autumn-grass",
+          "weight": 5
+        }
+      ],
+      "spacing": 0.9,
+      "probability": 0.72,
+      "jitter": 0.65,
+      "scaleMin": 0.65,
+      "scaleMax": 1.05,
+      "maxSlope": 1,
+      "waterClearance": 0.2,
+      "objectClearance": 0,
+      "edgeFade": 4,
+      "minSpacing": 0.2,
+      "patchiness": {
+        "scale": 6,
+        "strength": 0.45
+      }
+    }
+  },
+  {
     "id": "recipe.grass.meadow",
     "name": "Meadow · mixed low grass",
     "kind": "landscape-recipe",
@@ -466,15 +1245,15 @@
       "type": "grass",
       "species": [
         {
-          "asset": "asset.models.environment.grass.reference-grass-low",
+          "asset": "asset.models.environment.woodland-grass-low",
           "weight": 6
         },
         {
-          "asset": "asset.models.environment.grass.reference-grass-messy",
+          "asset": "asset.models.environment.woodland-grass-messy",
           "weight": 3
         },
         {
-          "asset": "asset.models.environment.grass.reference-grass-daisy",
+          "asset": "asset.models.environment.woodland-daisies",
           "weight": 1
         }
       ],
@@ -495,8 +1274,87 @@
     }
   },
   {
+    "id": "recipe.grass.winter",
+    "name": "Winter meadow",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "grass",
+      "species": [
+        {
+          "asset": "asset.models.environment.frost-grass",
+          "weight": 2
+        },
+        {
+          "asset": "asset.models.environment.frost-snow-grass",
+          "weight": 3
+        }
+      ],
+      "spacing": 0.65,
+      "probability": 0.7,
+      "jitter": 0.65,
+      "scaleMin": 0.65,
+      "scaleMax": 1.05,
+      "maxSlope": 1,
+      "waterClearance": 0.2,
+      "objectClearance": 0,
+      "edgeFade": 2,
+      "minSpacing": 0.2,
+      "patchiness": {
+        "scale": 5,
+        "strength": 0.65
+      }
+    }
+  },
+  {
+    "id": "recipe.path.grass",
+    "name": "Grass ground",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "path",
+      "material": "asset.terrain.woodland-grass",
+      "width": 5,
+      "shoulder": 1.5,
+      "flatten": 0,
+      "vegetationClearance": 0
+    }
+  },
+  {
+    "id": "recipe.path.pebbles",
+    "name": "Pebble forest trail",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "path",
+      "material": "asset.terrain.pebble-trail",
+      "width": 5,
+      "shoulder": 1.5,
+      "flatten": 0,
+      "vegetationClearance": 1
+    }
+  },
+  {
+    "id": "recipe.path.soil",
+    "name": "Exposed earth",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "path",
+      "material": "asset.terrain.woodland-soil",
+      "width": 5,
+      "shoulder": 1.5,
+      "flatten": 0,
+      "vegetationClearance": 1
+    }
+  },
+  {
     "id": "recipe.river.gentle",
-    "name": "Scouring · gentle river",
+    "name": "Woodland · gentle river",
     "kind": "landscape-recipe",
     "scale": 1,
     "clearance": 0,
@@ -514,11 +1372,11 @@
           "pattern": "patches",
           "species": [
             {
-              "asset": "asset.models.environment.grass.reference-grass-high-a",
+              "asset": "asset.models.environment.woodland-grass-high-a",
               "weight": 2
             },
             {
-              "asset": "asset.models.environment.grass.reference-grass-high-b",
+              "asset": "asset.models.environment.woodland-grass-high-b",
               "weight": 1
             }
           ],
@@ -542,11 +1400,11 @@
           "pattern": "patches",
           "species": [
             {
-              "asset": "asset.models.environment.grass.reference-grass-water-leaves-a",
+              "asset": "asset.models.environment.woodland-lily-a",
               "weight": 2
             },
             {
-              "asset": "asset.models.environment.grass.reference-grass-water-leaves-b",
+              "asset": "asset.models.environment.woodland-lily-b",
               "weight": 1
             }
           ],
@@ -569,8 +1427,138 @@
     }
   },
   {
+    "id": "recipe.river.glacial",
+    "name": "Fast glacial stream",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "river",
+      "water": "recipe.river.glacial.water",
+      "width": 12,
+      "depth": 3,
+      "bankWidth": 4,
+      "flow": 1.8,
+      "maxUphillGrade": 0,
+      "details": {
+        "banks": {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.frost-grass",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.frost-snow-grass",
+              "weight": 3
+            }
+          ],
+          "spacing": 0.8,
+          "probability": 0.45,
+          "jitter": 0.8,
+          "scaleMin": 0.65,
+          "scaleMax": 1.1,
+          "maxSlope": 1.5,
+          "waterClearance": 0.2,
+          "objectClearance": 0.6,
+          "edgeFade": 1,
+          "minSpacing": 0.35,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.65
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "recipe.river.glacial.water",
+    "name": "Fast glacial stream water",
+    "kind": "water-profile",
+    "scale": 1,
+    "clearance": 0,
+    "water": {
+      "shallowColor": "#83aaa9",
+      "deepColor": "#254957",
+      "clarity": 3.5,
+      "rippleScale": 0.15,
+      "rippleStrength": 0.055,
+      "foamStrength": 0.55,
+      "reflectionStrength": 0.45,
+      "causticStrength": 0.3,
+      "cloudStrength": 0.03,
+      "flowSpeed": 1.2
+    }
+  },
+  {
+    "id": "recipe.river.meltwater",
+    "name": "Quiet meltwater",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "river",
+      "water": "recipe.river.meltwater.water",
+      "width": 7,
+      "depth": 1.8,
+      "bankWidth": 3,
+      "flow": 0.6,
+      "maxUphillGrade": 0,
+      "details": {
+        "banks": {
+          "density": 1,
+          "pattern": "patches",
+          "species": [
+            {
+              "asset": "asset.models.environment.frost-grass",
+              "weight": 2
+            },
+            {
+              "asset": "asset.models.environment.frost-snow-grass",
+              "weight": 3
+            }
+          ],
+          "spacing": 0.8,
+          "probability": 0.45,
+          "jitter": 0.8,
+          "scaleMin": 0.65,
+          "scaleMax": 1.1,
+          "maxSlope": 1.5,
+          "waterClearance": 0.2,
+          "objectClearance": 0.6,
+          "edgeFade": 1,
+          "minSpacing": 0.35,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.65
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "recipe.river.meltwater.water",
+    "name": "Quiet meltwater water",
+    "kind": "water-profile",
+    "scale": 1,
+    "clearance": 0,
+    "water": {
+      "shallowColor": "#83aaa9",
+      "deepColor": "#254957",
+      "clarity": 3.5,
+      "rippleScale": 0.15,
+      "rippleStrength": 0.055,
+      "foamStrength": 0.15,
+      "reflectionStrength": 0.45,
+      "causticStrength": 0.3,
+      "cloudStrength": 0.03,
+      "flowSpeed": 0.25
+    }
+  },
+  {
     "id": "recipe.river.swift",
-    "name": "Scouring · swift river",
+    "name": "Woodland · swift river",
     "kind": "landscape-recipe",
     "scale": 1,
     "clearance": 0,
@@ -588,11 +1576,11 @@
           "pattern": "patches",
           "species": [
             {
-              "asset": "asset.models.environment.grass.reference-grass-high-a",
+              "asset": "asset.models.environment.woodland-grass-high-a",
               "weight": 2
             },
             {
-              "asset": "asset.models.environment.grass.reference-grass-high-b",
+              "asset": "asset.models.environment.woodland-grass-high-b",
               "weight": 1
             }
           ],
@@ -616,11 +1604,11 @@
           "pattern": "patches",
           "species": [
             {
-              "asset": "asset.models.environment.grass.reference-grass-water-leaves-a",
+              "asset": "asset.models.environment.woodland-lily-a",
               "weight": 2
             },
             {
-              "asset": "asset.models.environment.grass.reference-grass-water-leaves-b",
+              "asset": "asset.models.environment.woodland-lily-b",
               "weight": 1
             }
           ],
@@ -643,6 +1631,24 @@
     }
   },
   {
+    "id": "recipe.terrain.bank",
+    "name": "Grassy banks",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "terrain",
+      "operation": "raise",
+      "height": 1.7,
+      "falloff": 4,
+      "surface": "bank",
+      "roughness": 0.4,
+      "noiseScale": 7,
+      "grassStrength": 0.8,
+      "rockStrength": 0.85
+    }
+  },
+  {
     "id": "recipe.terrain.hill",
     "name": "Soft woodland rise",
     "kind": "landscape-recipe",
@@ -653,6 +1659,51 @@
       "operation": "raise",
       "height": 4,
       "falloff": 8
+    }
+  },
+  {
+    "id": "recipe.terrain.mountain",
+    "name": "Rocky mountains",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "terrain",
+      "operation": "raise",
+      "height": 10,
+      "falloff": 8,
+      "surface": "mountain",
+      "roughness": 0.35,
+      "noiseScale": 14,
+      "grassStrength": 0.65,
+      "rockStrength": 1,
+      "chunks": {
+        "density": 1,
+        "species": [
+          {
+            "asset": "asset.models.environment.woodland-rock-ledge",
+            "weight": 2
+          },
+          {
+            "asset": "asset.models.environment.woodland-moss-boulder",
+            "weight": 2
+          },
+          {
+            "asset": "asset.models.environment.woodland-river-stones",
+            "weight": 1
+          }
+        ],
+        "spacing": 5.5,
+        "probability": 0.65,
+        "jitter": 0.8,
+        "scaleMin": 0.65,
+        "scaleMax": 1.05,
+        "maxSlope": 10,
+        "waterClearance": 2,
+        "objectClearance": 1,
+        "edgeFade": 1,
+        "minSpacing": 4
+      }
     }
   },
   {

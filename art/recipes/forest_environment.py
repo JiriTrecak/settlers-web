@@ -28,6 +28,7 @@ def tree_actions(k):
         pivot.rotation_euler.x=angle;pivot.location.z=z
         pivot.keyframe_insert('rotation_euler',frame=frame);pivot.keyframe_insert('location',frame=frame)
     def support(angle):return max(0,-min(v.y*math.sin(angle)+v.z*math.cos(angle) for v in points))
+    decay_depth=max(v.y for v in points)-min(v.y for v in points)+.5
     for name,length in [('hit',18),('fall',54),('decay',180)]:
         action=bpy.data.actions.new(name);pivot.animation_data.action=action;action.use_fake_user=True
         for frame in range(length+1):
@@ -35,7 +36,7 @@ def tree_actions(k):
             if name=='hit':angle=.035*math.sin(t*math.pi*5)*(1-t)**2;z=0
             elif name=='fall':
                 angle=math.pi/2*(t*t*(3-2*t));z=support(angle)
-            else:angle=math.pi/2;z=support(angle)-t*5.5
+            else:angle=math.pi/2;z=support(angle)-t*decay_depth
             key(frame,angle,z)
         track=pivot.animation_data.nla_tracks.new();track.name=name;track.strips.new(name,0,action);track.mute=True
     pivot.animation_data.action=None;pivot.rotation_euler=(0,0,0);pivot.location=(0,0,0)

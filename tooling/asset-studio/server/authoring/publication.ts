@@ -26,8 +26,9 @@ export function validateDependencies(all:readonly AssetDefinition[]){
   if(asset.capabilities.harvesting){const replacement=requireAsset(asset.capabilities.harvesting.replacement);if(!replacement.usesGeometry||replacement.id===asset.id)throw Error('Harvest replacement must be a different model');}
   const recipe=asset.recipe;if(!recipe)continue;
   if(recipe.type==='river'){for(const group of Object.values(recipe.details??{}))for(const species of group.species){const target=requireAsset(species.asset);if(!target.usesGeometry||!target.bindings.scenery.length)throw Error('River detail needs a scenery model: '+target.id);}requireAsset(recipe.water,'water-profile');if(recipe.bankMaterial)requireAsset(recipe.bankMaterial,'terrain-material');if(recipe.bedMaterial)requireAsset(recipe.bedMaterial,'terrain-material');}
+  if(recipe.type==='terrain'&&recipe.chunks)for(const species of recipe.chunks.species){const target=requireAsset(species.asset);if(!target.usesGeometry||!target.bindings.scenery.length)throw Error('Terrain chunk needs a scenery model: '+target.id);}
   if(recipe.type==='path')requireAsset(recipe.material,'terrain-material');
-  if('species'in recipe){for(const species of [...recipe.species,...(recipe.type==='forest'?recipe.edge?.species??[]:[])]){const target=requireAsset(species.asset);if(!target.usesGeometry||!target.bindings.scenery.length)throw Error(`${asset.id} species ${target.id} requires a scenery model binding`);}}
+  if('species'in recipe){for(const species of [...recipe.species,...(recipe.type==='forest'?[...(recipe.edge?.species??[]),...(recipe.details??[]).flatMap(d=>d.species)]:[])]){const target=requireAsset(species.asset);if(!target.usesGeometry||!target.bindings.scenery.length)throw Error(`${asset.id} species ${target.id} requires a scenery model binding`);}}
  }
 }
 type Write={path:string;bytes:Buffer};

@@ -1,13 +1,17 @@
-import {authoringSceneSchema,shapeBounds,type AuthoringScene,type AuthoredObject,type Bounds,type ProceduralLayer} from './layers';
+import {authoringSceneSchema,shapeBounds,type AuthoringScene,type AuthoredObject,type Bounds,type ProceduralLayer,type LayerShape} from './layers';
 import {generationStage,resolveRecipe,type LandscapeRecipe} from './recipes';
 import {cellRandom,patchNoise,nearestSpline,regionDistance,sampleBezier,type SplineSample} from './shapes';
 export type TerrainGrid={originX:number;originZ:number;step:number;width:number;height:number;samples:Float32Array};
 export type GenerationAssets={recipe:(id:string)=>LandscapeRecipe|undefined;clearance:(id:string)=>number};
-export type GeneratedObject=AuthoredObject&{owner:string};
+export type GeneratedObject=AuthoredObject&{owner:string;blocksVegetation?:boolean};
 export type GenerationIssue={code:'missing-recipe'|'shape-mismatch'|'uphill-river'|'object-water-conflict';id:string;message:string};
 export type MaterialPaint={owner:string;material:string;weights:Float32Array};
-export type CompiledRiver={owner:string;profile:string;samples:SplineSample[];width:number;depth:number;flow:number};
-export type GeneratedScene={terrain:TerrainGrid;objects:GeneratedObject[];rivers:CompiledRiver[];paint:MaterialPaint[];scatterLayers:string[];issues:GenerationIssue[]};
+export type CompiledRiver={owner:string;profile:string;samples:SplineSample[];width:number;depth:number;flow:number;area?:Extract<LayerShape,{type:'mask'}>};
+export function riverPoint(x:number,z:number,river:CompiledRiver){
+ if(!river.area)return nearestSpline(x,z,river.samples);
+ return {x,z,elevation:river.area.elevation,widthScale:1,depthScale:1,flowScale:0,distance:0,offset:river.width/2-regionDistance(x,z,river.area),direction:{x:0,z:0}};
+}
+export type GeneratedScene={terrain:TerrainGrid;objects:GeneratedObject[];rivers:CompiledRiver[];paint:MaterialPaint[];landformSurface?:{grass:Float32Array;rock:Float32Array};scatterLayers:string[];forestLayers?:string[];issues:GenerationIssue[]};
 type Prepared={layer:ProceduralLayer;recipe:LandscapeRecipe;bounds:Bounds;spline?:SplineSample[]};
 const clamp=(v:number)=>Math.max(0,Math.min(1,v));
 const smooth=(v:number)=>{const t=clamp(v);return t*t*(3-2*t);};
@@ -44,15 +48,26 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   const defaults=assets.recipe(layer.recipe);
   if(!defaults){issues.push({code:'missing-recipe',id:layer.id,message:`Missing recipe ${layer.recipe}`});continue;}
   const recipe=resolveRecipe(defaults,layer.overrides);
-  const needsSpline=recipe.type==='river'||recipe.type==='path';
-  if(needsSpline!==(layer.shape.type==='spline')){issues.push({code:'shape-mismatch',id:layer.id,message:`${recipe.type} requires a ${needsSpline?'spline':'region'}`});continue;}
+  const needsSpline=recipe.type==='path'||recipe.type==='river';
+  if(!(['river','path'].includes(recipe.type)&&layer.shape.type==='mask')&&needsSpline!==(layer.shape.type==='spline')){issues.push({code:'shape-mismatch',id:layer.id,message:`${recipe.type} requires a ${needsSpline?'spline':'region'}`});continue;}
   prepared.push({layer,recipe,bounds:shapeBounds(layer.shape,padding(recipe,layer)),spline:layer.shape.type==='spline'?sampleBezier(layer.shape.knots):undefined});
  }
  prepared.sort((a,b)=>generationStage[a.recipe.type]-generationStage[b.recipe.type]||a.layer.order-b.layer.order||a.layer.id.localeCompare(b.layer.id));
  for(const {layer,recipe,bounds,spline}of prepared){
-  if(recipe.type==='terrain'&&layer.shape.type==='region'){
+  if(recipe.type==='terrain'&&layer.shape.type!=='spline'){
    const shape=layer.shape;
-   eachVertex(terrain,bounds,(i,x,z)=>{const d=regionDistance(x,z,shape);if(d<0)return;const strength=recipe.falloff?smooth(d/recipe.falloff):1;const h=terrain.samples[i]!;terrain.samples[i]=recipe.operation==='flatten'?h+(recipe.height-h)*strength:h+(recipe.operation==='raise'?1:-1)*Math.abs(recipe.height)*strength;});
+   eachVertex(terrain,bounds,(i,x,z)=>{const d=regionDistance(x,z,shape);if(d<0)return;const strength=recipe.falloff?smooth(d/recipe.falloff):1;const h=terrain.samples[i]!;const noise=1-(recipe.roughness??0)*(1-patchNoise(layer.seed,layer.id+'.height',x,z,recipe.noiseScale??12));terrain.samples[i]=recipe.operation==='flatten'?h+(recipe.height-h)*strength:h+(recipe.operation==='raise'?1:-1)*Math.abs(recipe.height)*strength*noise;});
+  }
+  if(recipe.type==='river'&&layer.shape.type==='mask'){
+   const area=layer.shape;
+   rivers.push({owner:layer.id,profile:recipe.water,samples:[],width:recipe.width,depth:recipe.depth,flow:0,area});
+   const bank=new Float32Array(base.samples.length),bed=new Float32Array(base.samples.length);
+   eachVertex(terrain,bounds,(i,x,z)=>{const d=regionDistance(x,z,area),h=terrain.samples[i]!;if(d < -recipe.bankWidth)return;
+    if(d>=0){const strength=smooth(d/Math.max(1,recipe.bankWidth));terrain.samples[i]=Math.min(h,area.elevation-recipe.depth*strength);bed[i]=strength;bank[i]=1-strength;}
+    else{const strength=1-smooth(-d/recipe.bankWidth);terrain.samples[i]=Math.min(h,h+(area.elevation-h)*strength);bank[i]=strength;}
+   });
+   if(recipe.bankMaterial)paint.push({owner:layer.id,material:recipe.bankMaterial,weights:bank});
+   if(recipe.bedMaterial)paint.push({owner:layer.id,material:recipe.bedMaterial,weights:bed});
   }
   if(recipe.type==='river'&&spline){
    if(spline.some((s,i)=>i>0&&s.elevation-spline[i-1]!.elevation>recipe.maxUphillGrade*(s.distance-spline[i-1]!.distance)+.0001))issues.push({code:'uphill-river',id:layer.id,message:'The river height profile rises against its flow direction'});
@@ -67,23 +82,40 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    if(recipe.bankMaterial)paint.push({owner:layer.id,material:recipe.bankMaterial,weights:bank});
    if(recipe.bedMaterial)paint.push({owner:layer.id,material:recipe.bedMaterial,weights:bed});
   }
-  if(recipe.type==='path'&&spline){
+  if(recipe.type==='path'){
    const weights=new Float32Array(base.samples.length);
-   eachVertex(terrain,bounds,(i,x,z)=>{const p=nearestSpline(x,z,spline),half=recipe.width*p.widthScale/2;const a=p.offset<=half?1:recipe.shoulder?1-smooth((p.offset-half)/recipe.shoulder):0;if(a<=0)return;weights[i]=a;terrain.samples[i]+= (p.elevation-terrain.samples[i]!)*a*recipe.flatten;});
+   eachVertex(terrain,bounds,(i,x,z)=>{const p=spline?nearestSpline(x,z,spline):{offset:recipe.width/2-regionDistance(x,z,layer.shape as Exclude<LayerShape,{type:'spline'}>),widthScale:1,elevation:layer.shape.type==='mask'?layer.shape.elevation:0},half=recipe.width*p.widthScale/2;const a=spline?(p.offset<=half?1:recipe.shoulder?1-smooth((p.offset-half)/recipe.shoulder):0):smooth((half-p.offset)/Math.max(.25,recipe.shoulder));if(a<=0)return;weights[i]=a;terrain.samples[i]+= (p.elevation-terrain.samples[i]!)*a*recipe.flatten;});
    paint.push({owner:layer.id,material:recipe.material,weights});
   }
  }
- const inWater=(x:number,z:number,clearance=0)=>rivers.some(r=>{const p=nearestSpline(x,z,r.samples);return p.offset<r.width*p.widthScale/2+clearance;});
+ // Surface masks follow the final carved terrain, not the original heightfield.
+ const landforms=prepared.filter(p=>p.recipe.type==='terrain'&&p.recipe.surface);
+ const landformSurface=landforms.length?{grass:new Float32Array(base.samples.length),rock:new Float32Array(base.samples.length)}:undefined;
+ for(const {layer,recipe,bounds} of landforms){
+  if(recipe.type!=='terrain'||layer.shape.type==='spline')continue;
+  const shape=layer.shape;
+  eachVertex(terrain,bounds,(i,x,z)=>{
+   const edge=regionDistance(x,z,shape);if(edge<=0)return;
+   const fade=smooth(edge/Math.max(1,Math.min(3,recipe.falloff)));
+   const slope=Math.hypot(sample(terrain,x+.5,z)-sample(terrain,x-.5,z),sample(terrain,x,z+.5)-sample(terrain,x,z-.5));
+   const rock=fade*(recipe.rockStrength??1)*smooth((slope-.18)/.75);
+   const grass=fade*(recipe.grassStrength??.8)*(1-smooth((slope-.25)/.65));
+   landformSurface!.rock[i]=Math.max(landformSurface!.rock[i]!,rock);
+   landformSurface!.grass[i]=Math.max(landformSurface!.grass[i]!,grass);
+  });
+ }
+ const inWater=(x:number,z:number,clearance=0)=>rivers.some(r=>{const p=riverPoint(x,z,r);return p.offset<r.width*p.widthScale/2+clearance;});
  const paths=prepared.filter(p=>p.recipe.type==='path');
  const footprints=new Footprints();
- for(const obj of scene.objects){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
+ for(const obj of scene.objects.filter(o=>!o.bakedPlacement)){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
   if(inWater(obj.x,obj.z)&&obj.heightMode==='terrain')issues.push({code:'object-water-conflict',id:obj.id,message:'A placed object overlaps a river; its authored transform was preserved'});
  }
  let candidates=0;
  // River decoration belongs to the river layer: changing its course regenerates
  // banks and floating leaves deterministically, after structures reserve space.
- for(const {layer,recipe,bounds,spline} of prepared){
-  if(recipe.type!=='river'||!recipe.details||!spline)continue;
+ for(const {layer,recipe,bounds} of prepared){
+  if(recipe.type!=='river'||!recipe.details)continue;
+  const course=rivers.find(r=>r.owner===layer.id)!;
   for(const [mode,settings] of Object.entries(recipe.details)){
    if(!settings)continue;
    const density=settings.density??1;if(density===0)continue;
@@ -95,7 +127,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
     const random=(c:number)=>cellRandom(layer.seed,layer.id+'.river.'+mode,ix,iz,c);
     const x=(ix+.5+(random(0)-.5)*settings.jitter)*spacing,z=(iz+.5+(random(1)-.5)*settings.jitter)*spacing;
-    const p=nearestSpline(x,z,spline),bank=p.offset-recipe.width*p.widthScale/2;
+    const p=riverPoint(x,z,course),bank=p.offset-recipe.width*p.widthScale/2;
     const patch=settings.patchiness?1-settings.patchiness.strength+settings.patchiness.strength*patchNoise(layer.seed,layer.id,x,z,settings.patchiness.scale):1;
     if(random(2)>=settings.probability*patch)continue;
     if(mode==='water'){
@@ -114,13 +146,20 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   }
  }
  const scatterPasses=prepared.flatMap(p=>{
+  if(p.recipe.type==='terrain'&&p.recipe.chunks)return [{...p,recipe:{...p.recipe.chunks,type:'ground-cover' as const},reserve:true,pass:'rock',embed:true,minEdge:0,maxEdge:Math.max(1,p.recipe.falloff*.4)}];
   if(!('species'in p.recipe))return [];
-  const core={...p,recipe:p.recipe,pass:'interior',minEdge:p.recipe.type==='forest'?p.recipe.interiorMargin:0,maxEdge:Infinity};
-  if(p.recipe.type!=='forest'||!p.recipe.edge)return [core];
-  return [core,{...p,recipe:{...p.recipe.edge,type:'forest' as const,interiorMargin:0},pass:'edge',minEdge:0,maxEdge:p.recipe.edge.width}];
+  const core={...p,recipe:p.recipe,reserve:p.recipe.type==='forest',embed:false,pass:'interior',minEdge:p.recipe.type==='forest'?p.recipe.interiorMargin:0,maxEdge:Infinity};
+  if(p.recipe.type!=='forest')return [core];
+  return [core,...(p.recipe.edge?[{...p,recipe:{...p.recipe.edge,type:'forest' as const,interiorMargin:0},reserve:true,embed:false,pass:'edge',minEdge:0,maxEdge:p.recipe.edge.width}]:[]),...(p.recipe.details??[]).map(d=>({...p,recipe:{...d,type:'forest' as const,interiorMargin:0},reserve:false,embed:false,pass:'detail-'+d.id,minEdge:0,maxEdge:Infinity}))];
  });
- for(const {layer,recipe,bounds,pass,minEdge,maxEdge} of scatterPasses){
-  if(layer.shape.type!=='region')continue;
+ const baked=scene.objects.filter(o=>o.bakedPlacement?.blocksVegetation).sort((a,b)=>a.bakedPlacement!.stage-b.bakedPlacement!.stage||a.bakedPlacement!.order-b.bakedPlacement!.order||a.bakedFrom!.localeCompare(b.bakedFrom!));
+ let bakedIndex=0;
+ for(const {layer,recipe,bounds,pass,minEdge,maxEdge,reserve,embed} of scatterPasses){
+  while(bakedIndex<baked.length){const obj=baked[bakedIndex]!,rank=obj.bakedPlacement!;
+   if(rank.stage>generationStage[recipe.type]||(rank.stage===generationStage[recipe.type]&&(rank.order>layer.order||(rank.order===layer.order&&obj.bakedFrom!>layer.id))))break;
+   footprints.add(obj.x,obj.z,Math.max(0,assets.clearance(obj.asset))*obj.scale);bakedIndex++;
+  }
+  if(layer.shape.type==='spline')continue;
   const spacingFootprints=new Footprints();
   const density=recipe.density??1;if(density===0)continue;
   const shape=layer.shape,spacing=recipe.spacing/Math.sqrt(density);
@@ -136,27 +175,35 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    const edge=regionDistance(x,z,shape);if(edge<minEdge||edge>maxEdge)continue;
    const patch=recipe.pattern!=='scattered'&&patchSettings?1-patchSettings.strength+patchSettings.strength*patchNoise(layer.seed,layer.id,x,z,patchSettings.scale):1;
    if(random(2)>=recipe.probability*(recipe.edgeFade?clamp(edge/recipe.edgeFade):1)*patch)continue;
-   if(recipe.riverBank){let bankDistance=Infinity;for(const r of rivers){const p=nearestSpline(x,z,r.samples);bankDistance=Math.min(bankDistance,p.offset-r.width*p.widthScale/2);}if(bankDistance<recipe.riverBank.min||bankDistance>recipe.riverBank.max)continue;}
+   if(recipe.riverBank){let bankDistance=Infinity;for(const r of rivers){const p=riverPoint(x,z,r);bankDistance=Math.min(bankDistance,p.offset-r.width*p.widthScale/2);}if(bankDistance<recipe.riverBank.min||bankDistance>recipe.riverBank.max)continue;}
    if(recipe.minSpacing&&spacingFootprints.intersects(x,z,recipe.minSpacing/2))continue;
-   if(inWater(x,z,recipe.waterClearance)||paths.some(p=>{const r=p.recipe;if(r.type!=='path')return false;const n=nearestSpline(x,z,p.spline!);return n.offset<r.width*n.widthScale/2+r.vegetationClearance;}))continue;
+   if(inWater(x,z,recipe.waterClearance)||paths.some(p=>{const r=p.recipe;if(r.type!=='path')return false;if(r.vegetationClearance===0)return false;const n=p.spline?nearestSpline(x,z,p.spline):{offset:r.width/2-regionDistance(x,z,p.layer.shape as Exclude<LayerShape,{type:'spline'}>),widthScale:1};return n.offset<r.width*n.widthScale/2+r.vegetationClearance;}))continue;
    const d=terrain.step,dx=(sample(terrain,x+d,z)-sample(terrain,x-d,z))/(2*d),dz=(sample(terrain,x,z+d)-sample(terrain,x,z-d))/(2*d);
    if(Math.hypot(dx,dz)>recipe.maxSlope)continue;
    let w=random(3)*weight,asset=recipe.species[0]!.asset;for(const s of recipe.species){w-=s.weight;if(w<0){asset=s.asset;break;}}
-   const scale=recipe.scaleMin+random(4)*(recipe.scaleMax-recipe.scaleMin),radius=Math.max(0,assets.clearance(asset))*scale;
+   const scale=recipe.scaleMin+random(4)*(recipe.scaleMax-recipe.scaleMin),radius=Math.max(embed?recipe.spacing*.6:0,assets.clearance(asset))*scale;
    if(footprints.intersects(x,z,radius+recipe.objectClearance))continue;
-   objects.push({id:`generated.${layer.id.slice(0,100)}.${Math.floor(cellRandom(0,layer.id,0,0,0)*4294967296).toString(16)}.${pass}.${ix}.${iz}`,asset,x,z,elevation:0,yaw:random(5)*Math.PI*2,scale,heightMode:'terrain',visible:layer.visible,locked:layer.locked,owner:layer.id});
+   // Seat cliff pieces into the downhill side of the shoulder; a center-only
+   // ground sample leaves the downhill corners visibly suspended on steep banks.
+   let elevation=0;
+   if(embed){const r=radius,center=sample(terrain,x,z);let lowest=center;
+    for(let a=0;a<8;a++){const angle=a*Math.PI/4;lowest=Math.min(lowest,sample(terrain,x+Math.cos(angle)*r,z+Math.sin(angle)*r));}
+    elevation=lowest-center-.65*scale;
+   }
+   objects.push({id:`generated.${layer.id.slice(0,100)}.${Math.floor(cellRandom(0,layer.id,0,0,0)*4294967296).toString(16)}.${pass}.${ix}.${iz}`,asset,x,z,elevation,yaw:random(5)*Math.PI*2,scale,heightMode:'terrain',visible:layer.visible,locked:layer.locked,owner:layer.id,blocksVegetation:reserve});
    if(recipe.minSpacing)spacingFootprints.add(x,z,recipe.minSpacing/2);
    // Vegetation remains batchable; only trees create exclusions for subsequent layers.
-   if(recipe.type==='forest')footprints.add(x,z,radius);
+   if(reserve)footprints.add(x,z,radius);
   }
  }
- return {terrain,objects,rivers,paint,issues,scatterLayers:prepared.filter(p=>'species'in p.recipe).map(p=>p.layer.id)};
+ return {terrain,objects,rivers,paint,issues,landformSurface,forestLayers:prepared.filter(p=>p.recipe.type==='forest').map(p=>p.layer.id),scatterLayers:prepared.filter(p=>'species'in p.recipe).map(p=>p.layer.id)};
 }
 /** Baking is a document operation; callers record this entire result as one undo step. */
 export function bakeLayer(scene:AuthoringScene,layerId:string,compiled:GeneratedScene):AuthoringScene{
  const layer=scene.layers.find(l=>l.id===layerId);if(!layer)throw Error('Layer does not exist');if(layer.locked)throw Error('Layer is locked');
  // Terrain/river/path bakes need the map's terrain and water transaction, never silently discard them.
  if(!compiled.scatterLayers.includes(layerId))throw Error('This layer must be baked with its terrain and water output');
- const generated=compiled.objects.filter(o=>o.owner===layerId).map(({owner,...o})=>({...o,bakedFrom:owner}));
+ const stage=4; // Only forest instances reserve space for later scatter passes.
+ const generated=compiled.objects.filter(o=>o.owner===layerId).map(({owner,blocksVegetation,...o})=>({...o,bakedFrom:owner,bakedPlacement:{stage,order:layer.order,blocksVegetation:blocksVegetation??compiled.forestLayers?.includes(layerId)??false}}));
  return authoringSceneSchema.parse({...scene,layers:scene.layers.filter(l=>l.id!==layerId),objects:[...scene.objects,...generated]});
 }

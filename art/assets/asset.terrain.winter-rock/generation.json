@@ -1,0 +1,13 @@
+{
+  "method": "imagegen",
+  "originalPixels": true,
+  "source": "exec-405e5b45-685a-4530-a708-46b8592d5ee2.png",
+  "brief": "Original restrained low-detail forest material, matching the established muted palette. No imported pixels.",
+  "revision": 1,
+  "packing": {
+    "size": 1024,
+    "albedo": "Original generated RGB, no color grading or imported pixels",
+    "roughness": 240,
+    "normalHeight": "Derived from softly filtered original luminance with normalized height contrast; periodic finite differences"
+  }
+}

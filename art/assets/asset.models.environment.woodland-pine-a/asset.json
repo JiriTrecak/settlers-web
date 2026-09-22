@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-pine-a",
+  "name": "woodland pine a",
+  "kind": "tree",
+  "revision": 10,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "a4684d27e30410f6f2641b3f933f9b41771549f2461fcd543398d85ec8321dfe",
+      "bytes": 1298580
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "aeda7f6279705b0383e21b735f76ef73c762a8d4b2bbe11b7fd672a8f838884b",
+      "bytes": 1849442
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
+      "bytes": 987876
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
+      "bytes": 236370
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-pine-a",
+        "sceneryAsset": "woodland-pine-a",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-pine-a"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-pine-a"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-pine-a",
+        "name": "woodland pine a",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.2,
+    "harvesting": {
+      "replacement": "asset.models.environment.woodland-pine-stump",
+      "definition": "resource.forest.tree"
+    },
+    "animations": [
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "fall",
+        "clip": "fall",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "decay",
+        "clip": "decay",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "wind": {
+      "mode": "tree",
+      "strength": 0.1,
+      "speed": 0.18,
+      "stiffness": 0.8
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original Blender geometry and procedural bark. Original pine-bough albedo generated with built-in ImageGen. All geometry and pixels independently authored."
+  }
+}

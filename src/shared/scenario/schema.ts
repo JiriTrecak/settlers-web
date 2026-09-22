@@ -5,7 +5,7 @@ export const missionCameraSchema=z.object({
   lookAt:z.string().min(1).max(120).optional(),distance:z.number().min(1).max(30).optional(),
   height:z.number().min(.2).max(30).optional(),fov:z.number().min(25).max(90).optional(),transitionMs:z.number().min(0).max(5000).default(350),
 }).strict();
-export const regionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),x:z.number().int().min(0).max(511),y:z.number().int().min(0).max(511),radius:z.number().positive().max(64)}).strict();
+export const regionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),x:z.number().int().min(0).max(2047),y:z.number().int().min(0).max(2047),radius:z.number().positive().max(64)}).strict();
 export const objectiveDefinitionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),title:z.string().min(1).max(120),description:z.string().min(1).max(500),optional:z.boolean().default(false)}).strict();
 export const missionSchema=z.object({
   campaign:z.string().min(1).max(80), title:z.string().min(1).max(120), order:z.number().int().min(1).max(100),

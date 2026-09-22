@@ -1,0 +1,34 @@
+{
+  "name": "Woodland Trail Sign",
+  "blend": "woodland-trail-sign.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "seed": 813,
+  "camera": {
+    "azimuth": 35,
+    "elevation": 32,
+    "scale": 4,
+    "target": [
+      0,
+      0,
+      1.1
+    ]
+  },
+  "render": {
+    "width": 1000,
+    "height": 800,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 650,
+    "rim_energy": 500,
+    "scale": 0.5,
+    "target": [
+      0,
+      0,
+      1.1
+    ]
+  },
+  "design": "Original neutral scenery; construction and unseen sides independently authored. Palette reference is our own bound-twig bridge."
+}

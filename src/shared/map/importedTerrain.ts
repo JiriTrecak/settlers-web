@@ -7,7 +7,7 @@ const assetName=z.string().regex(/^[a-z0-9_-]+$/);
 /** Lossless source raster/instance payload. It is independent of the coarse navigation grid. */
 export const importedTerrainSchema=z.object({
  version:z.literal(1),source:z.string().max(128),sha256:z.string().regex(/^[a-f0-9]{64}$/),
- origin:pair,sourceOrigin:pair,blocks:z.tuple([z.number().int().min(1).max(64),z.number().int().min(1).max(64)]),
+ origin:pair,sourceOrigin:pair,blocks:z.tuple([z.number().int().min(1).max(256),z.number().int().min(1).max(256)]),
  groundColor:z.object({size:dims,rgba:bytes}).optional(),
  displacement:z.object({mask:bytes,texture:assetName,tiling:z.number().positive()}).optional(),
  occlusion:z.object({size:dims,rgba:bytes,dynamic:z.object({
@@ -15,6 +15,7 @@ export const importedTerrainSchema=z.object({
   plants:z.array(z.object({id:z.string(),asset:assetName,x:z.number().finite(),z:z.number().finite(),scale:z.number().positive(),size:pair,height:z.number().positive(),intensity:z.number().min(0).max(1)})).max(100000),
  }).optional()}).optional(),
  underlayMask:z.object({size:dims,mask:bytes}).optional(),
+ heightSamplesPerUnit:z.number().positive().max(3).optional(),maskSamplesPerUnit:z.number().positive().max(3).optional(),
  heightSize:dims,height:bytes,heightOffset:z.number().finite(),maskSize:dims,
  layers:z.array(z.object({name:assetName,mask:bytes.optional(),ar:assetName,nh:assetName,tiling:z.number().positive(),blend:z.number().finite(),verticality:z.number().finite(),edge:z.number().finite(),desaturation:z.number().finite()})).min(1).max(32),
  /** Six byte layer slots per 4×4 source subblock; 255 means unused. */
@@ -24,8 +25,8 @@ export const importedTerrainSchema=z.object({
 }).strict().superRefine((s,ctx)=>{
  const length=(b:string)=>b.length/4*3-(b.endsWith('==')?2:b.endsWith('=')?1:0);
  const fail=(message:string)=>ctx.addIssue({code:'custom',message});
- if(s.heightSize[0]!==s.blocks[0]*48+1||s.heightSize[1]!==s.blocks[1]*48+1||length(s.height)!==s.heightSize[0]*s.heightSize[1]*2)fail('Invalid source height dimensions');
- if(s.maskSize[0]!==s.blocks[0]*24+1||s.maskSize[1]!==s.blocks[1]*24+1)fail('Invalid source mask dimensions');
+ if(s.heightSize[0]!==s.blocks[0]*16*(s.heightSamplesPerUnit??3)+1||s.heightSize[1]!==s.blocks[1]*16*(s.heightSamplesPerUnit??3)+1||length(s.height)!==s.heightSize[0]*s.heightSize[1]*2)fail('Invalid source height dimensions');
+ if(s.maskSize[0]!==s.blocks[0]*16*(s.maskSamplesPerUnit??1.5)+1||s.maskSize[1]!==s.blocks[1]*16*(s.maskSamplesPerUnit??1.5)+1)fail('Invalid source mask dimensions');
  if(s.layers.some((l,i)=>i===0?l.mask!==undefined:!l.mask||length(l.mask)!==s.maskSize[0]*s.maskSize[1]))fail('Invalid source layer masks');
  if(length(s.layerSlots)!==s.blocks[0]*s.blocks[1]*16*6)fail('Invalid source subblock layers');
  if(s.groundColor&&length(s.groundColor.rgba)!==s.groundColor.size[0]*s.groundColor.size[1]*4)fail('Invalid source ground-color cache');
@@ -81,7 +82,7 @@ export class SourceHeight {
  }
  sample(x:number,z:number):number {
   const [ox,oz]=this.source.origin,[w,h]=this.source.heightSize;
-  const fx=Math.max(0,Math.min(w-1,(x-ox)*3)),fz=Math.max(0,Math.min(h-1,(z-oz)*3));
+  const fx=Math.max(0,Math.min(w-1,(x-ox)*(this.source.heightSamplesPerUnit??3))),fz=Math.max(0,Math.min(h-1,(z-oz)*(this.source.heightSamplesPerUnit??3)));
   const ix=Math.floor(fx),iz=Math.floor(fz),tx=fx-ix,tz=fz-iz;
   return (this.at(ix,iz)*(1-tx)+this.at(ix+1,iz)*tx)*(1-tz)+(this.at(ix,iz+1)*(1-tx)+this.at(ix+1,iz+1)*tx)*tz;
  }

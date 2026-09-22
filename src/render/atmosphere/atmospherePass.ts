@@ -66,7 +66,7 @@ export class AtmospherePass {
    u.sunDirection.value.subVectors(frame.sun.position,frame.sun.target.position).normalize();u.regionCount.value=settings.regions.length;
    settings.regions.forEach((r,i)=>{u.regions.value[i].set(r.x,r.y,r.z,r.density);u.regionShapes.value[i].set(r.radiusX,r.radiusY,r.radiusZ,0);});
    }
-   const composite=this.composite.uniforms;composite.sourceReference.value=frame.sourceHeightOffset!==undefined;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
+   const composite=this.composite.uniforms;composite.sourceReference.value=true;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
    if(frame.daytime){const lut=this.daytimeLuts.pair(frame.daytime);composite.daytimeLutFrom.value=lut.from;composite.daytimeLutTo.value=lut.to;composite.daytimeLutBlend.value=lut.blend;}
    if(frame.daytime){const f=frame.daytime.look.fog,scale=frame.daytimeFogDistanceScale??1;composite.daytimeFogColor.value.setRGB(f.color.rgb[0]/255,f.color.rgb[1]/255,f.color.rgb[2]/255,SRGBColorSpace).multiplyScalar(f.color.multiplier).multiply(this.fogTint.set(frame.daytimeFogTint??'#ffffff'));composite.daytimeFogDensity.value=f.density/scale;composite.daytimeFogDispersion.value=f.dispersionByHeight;composite.daytimeFogStart.value=f.startDist*scale;composite.daytimeFogHeight.value=f.startHeight+(frame.sourceHeightOffset??0);}
    measure('GPU atmosphere',()=>{

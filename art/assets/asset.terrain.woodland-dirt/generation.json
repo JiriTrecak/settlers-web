@@ -1,0 +1,12 @@
+{
+  "method": "imagegen",
+  "originalPixels": true,
+  "source": "exec-97bfc8d0-25ac-45ab-99ec-e20bd584e80d.png",
+  "brief": "Original nearly featureless low contrast painted compact earth; dark muted palette, smooth dusty patches, tiny subdued flecks. Seamless albedo.",
+  "packing": {
+    "size": 1024,
+    "albedo": "Original generated RGB, no color grading or imported pixels",
+    "roughness": 240,
+    "normalHeight": "Derived from softly filtered original luminance with normalized height contrast; periodic finite differences"
+  }
+}

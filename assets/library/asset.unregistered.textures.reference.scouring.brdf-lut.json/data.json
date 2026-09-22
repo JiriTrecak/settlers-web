@@ -1,9 +1,0 @@
-{
-  "source": "env_ibl_brdf_lut.dds",
-  "sourceSha256": "3e38ecd0cea35cceda157820de518e7de7a8f964c10d4fa21ba88849160fc287",
-  "width": 64,
-  "height": 64,
-  "decodedBytes": 16384,
-  "decodedSha256": "b0ce262b751826c50dbbfad310a2a5ca3e206062dbb3bfe8c2e6f303d11c17a3",
-  "colorSpace": "linear"
-}

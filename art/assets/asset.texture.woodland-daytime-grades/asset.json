@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.texture.woodland-daytime-grades",
+  "name": "Woodland daytime color curves",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "json",
+      "sha256": "759692728b85d9eda109bed31cc4ca1209c927cd49288b038280127b73072901",
+      "bytes": 873989
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "aff5389ac5eca4820824787b19639bac79b82a4e98dc884b13985e7bcba77050",
+      "bytes": 1376
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

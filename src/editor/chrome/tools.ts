@@ -61,7 +61,7 @@ export function fileTools(hooks: FileToolHooks): IconItem[] {
   return [
     { id: "new", label: "New", icon: FilePlus, run: hooks.onNew },
     { id: "save", label: "Save", icon: Save, run: hooks.onSave },
-    { id: "save-as", label: "Save as", icon: SaveAll, run: hooks.onSaveAs },
+    { id: "save-as", label: "Export", icon: SaveAll, run: hooks.onSaveAs },
     { id: "load", label: "Load", icon: FolderOpen, run: hooks.onLoad },
     {id:"mission",label:"Mission & Lua",icon:FileCode,run:hooks.onMission},
     { id: "effects", label: "Effects", icon: Sparkles, run: hooks.onEffects },

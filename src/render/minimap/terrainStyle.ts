@@ -13,7 +13,7 @@ export function terrainPixel(base:readonly number[],height:number,water:number,s
   return base.map((v,i)=>Math.round((v*(1-shore)+[153,146,107][i]*shore)*shade)) as [number,number,number];
 }
 export function sceneryKind(asset:string):'tree'|'rock'|null{
-  if(/tree|pine|conifer/i.test(asset))return 'tree';
+  if(/tree|pine|conifer|fir|oak/i.test(asset))return 'tree';
   if(/rock|boulder|cliff/i.test(asset))return 'rock';
   return null;
 }

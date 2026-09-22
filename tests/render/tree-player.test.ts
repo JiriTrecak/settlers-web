@@ -1,12 +1,12 @@
 import { it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { Box3, Vector3 } from 'three';
+import { Box3, Vector3, Texture } from 'three';
 import { TreePlayer } from '../../src/render/prop/treePlayer';
 
 it('samples actual hit/fall/decay clips at 1x, sinks at full size, and keeps instances independent', async () => {
-  const b = readFileSync('assets/library/asset.models.environment.trees.olive-pine-animated/geometry.glb');
-  const g = await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset, b.byteOffset+b.byteLength), '');
+  const b = readFileSync('assets/library/asset.models.environment.canopy-oak/geometry.glb');
+  const g = await new GLTFLoader().register(()=>({name:'AnimationOnly',loadTexture:()=>Promise.resolve(new Texture())})).parseAsync(b.buffer.slice(b.byteOffset, b.byteOffset+b.byteLength), '');
   const a = g.scene.clone(true), untouched = g.scene.clone(true), player = new TreePlayer(a, g.animations);
   const standing = new Box3().setFromObject(untouched);
   const f = {hp: 9, lastHitTick: 0, fallTick: null as number | null, direction:{x:0,y:1}};

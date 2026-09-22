@@ -1,0 +1,5 @@
+{
+  "method": "imagegen",
+  "prompt": "Original seamless top-down stylized RTS forest-floor texture: many small irregular rounded taupe, warm grey, brown and beige pebbles embedded in compact brown earth; varied sizes, natural distribution, worn dirt gaps. Soft neutral ambient light, no directional shadows, no perspective, no path borders, no arranged paving, no vegetation, no text.",
+  "processing": "1024 RGBA. Albedo calibrated at .18 linear reflectance for shared source-style lighting; roughness 240. Deliberately flat normal and neutral height; detail is texture-only to keep paths cheap."
+}

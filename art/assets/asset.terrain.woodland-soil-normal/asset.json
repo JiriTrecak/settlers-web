@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.terrain.woodland-soil-normal",
+  "name": "woodland soil · normal/height",
+  "kind": "terrain-material",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "3a48c60ad85d3bee69ef56f83b23d9497e28480bf7d331cc3e5a25a25b6c835f",
+      "bytes": 1014536
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8efc1d65eecbbb972f217eb3c8c88a75bea2561aef25dac665683d9d46c2989b",
+      "bytes": 993
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

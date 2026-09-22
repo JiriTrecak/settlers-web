@@ -24,26 +24,13 @@ describe("catalogue", () => {
     expect(assetIdFromName("Pine", new Set(["pine"]))).toBe("pine-2");
   });
 
-  it("ships pine in the project catalogue", () => {
+  it("ships only the current woodland scenery families", () => {
     const doc = projectCatalogue();
-    expect(doc.assets.some((a) => a.id === "pine" && a.category === "foliage")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "pine-dark" && a.category === "foliage")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "pine-umber" && a.category === "foliage")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "river-rock-1" && a.category === "terrain" && a.type === "ground")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "lily" && a.type === "water" && a.category === "water")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "lily-white" && a.type === "water")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "lily-gold" && a.type === "water")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "bridge-8" && a.type === "span")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "bridge-16" && a.type === "span")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "bridge-32" && a.type === "span")).toBe(true);
-    const synty = doc.assets.filter((a) => a.id.startsWith("synty-"));
-    expect(synty.length).toBeGreaterThan(30);
-    expect(synty.length).toBeLessThan(197);
-    expect(doc.assets.some((a) => a.id.includes("cloud"))).toBe(false);
-    expect(doc.assets.some((a) => a.id === "synty-plant-lillypad-large-01" && a.type === "water")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "synty-plant-reeds-01" && a.type === "water")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "synty-prop-bridge-curved-01" && a.type === "span")).toBe(true);
-    expect(doc.assets.some((a) => a.id === "synty-tree-pine-01" && a.type === "prop" && a.category === "foliage")).toBe(true);
+    for (const id of ["woodland-pine-a", "woodland-pine-b", "woodland-pine-sapling", "woodland-lily-a", "woodland-moss-boulder", "woodland-ruined-watchtower", "woodland-root-arch-bridge", "leafbound-twig-bridge"]) {
+      expect(doc.assets.some(a => a.id === id), id).toBe(true);
+    }
+    expect(doc.assets.some(a => a.id.startsWith("synty-") || a.id === "pine")).toBe(false);
+    expect(doc.assets.some(a => a.id === "woodland-amber-lantern" && a.light)).toBe(true);
   });
 
   it("sits water on wet and props on dry", () => {

@@ -32,7 +32,7 @@ export class WalkSurfaces {
  constructor(readonly size:number,readonly groundHeights:Int16Array,readonly groundWalkable:Uint8Array,surfaces:readonly BridgeSurface[]){
   this.groundCount=size*size;
   this.groundTactical=new TacticalTerrain(size,groundHeights);
-  if(!Number.isInteger(size)||size<2||size>512||groundHeights.length!==this.groundCount||groundWalkable.length!==this.groundCount)throw new Error('Invalid surface terrain');
+  if(!Number.isInteger(size)||size<2||size>2048||groundHeights.length!==this.groundCount||groundWalkable.length!==this.groundCount)throw new Error('Invalid surface terrain');
   const nodes:SurfaceNode[]=Array.from({length:this.groundCount},(_,id)=>({id,cell:id,x:id%size,y:Math.floor(id/size),height:groundHeights[id]!,level:0}));
   for(const deck of [...surfaces].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0)){
    if(!deck.id||this.decks.has(deck.id)||!Number.isInteger(deck.level)||deck.level<1||deck.level>31)throw new Error('Walk surfaces require unique stamp IDs');

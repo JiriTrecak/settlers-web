@@ -1,0 +1,9 @@
+{
+  "method": "authored",
+  "originalPixels": true,
+  "recipe": "scripts/assets/build-canopy-scenery.py",
+  "textures": [
+    "woodland-bark",
+    "woodland-oak-leaves"
+  ]
+}

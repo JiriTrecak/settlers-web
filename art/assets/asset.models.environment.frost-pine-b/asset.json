@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.frost-pine-b",
+  "name": "frost pine b",
+  "kind": "tree",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1a0cbcd700d127d6b0c98fff9c71e9ce49d33d4126955ab9cd74040828522278",
+      "bytes": 1298788
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "319242992e1ad94a4a2ce69f316c948c9db6094cc50dfd5976fe32ee49629c27",
+      "bytes": 1811435
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
+      "bytes": 987876
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
+      "bytes": 236370
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b1a97933950585ba874bd82b350de96c5028ec3706e73d412a3c2b4974fc9ae9",
+      "bytes": 246
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.frost-pine-b",
+        "sceneryAsset": "frost-pine-b",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.frost-pine-b"
+        },
+        "harvestAnimation": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.frost-pine-b"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "frost-pine-b",
+        "name": "frost pine b",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.2,
+    "harvesting": {
+      "replacement": "asset.models.environment.woodland-pine-stump",
+      "definition": "resource.forest.tree"
+    },
+    "animations": [
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "fall",
+        "clip": "fall",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "decay",
+        "clip": "decay",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "wind": {
+      "mode": "tree",
+      "strength": 0.1,
+      "speed": 0.18,
+      "stiffness": 0.8
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

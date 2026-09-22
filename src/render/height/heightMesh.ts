@@ -56,6 +56,8 @@ export class HeightMesh {
    }
   }
   if(field.source)return;
+  for(const patch of this.patches)patch.mesh.customDepthMaterial=field.rockCoverage?this.sourceDepth:undefined;
+  this.sourceDepth.needsUpdate=true;
   if(field.verts!==this.verts)throw new Error('Terrain height dimensions do not match');
   // Normal dependencies extend one vertex beyond the edited heights. Adjacent
   // patches sample the same global field, so shared boundaries remain seamless.
@@ -70,6 +72,8 @@ export class HeightMesh {
     position.setY(i,h);normal.setXYZ(i,nx/length,2/length,nz/length);
    }
    position.needsUpdate=true;normal.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
+   // GPU surface relief also needs room in CPU frustum/shadow bounds.
+   if(field.rockCoverage){geometry.boundingBox!.expandByScalar(1);geometry.boundingSphere!.radius+=1;}
   }
  }
  destroy(scene:Scene):void {scene.remove(this.mesh);for(const patch of this.patches)patch.mesh.geometry.dispose();this.patches.length=0;for(const mesh of this.sourceMeshes)mesh.geometry.dispose();this.sourceMeshes=[];this.sourceDepth.dispose();this.material.dispose();}

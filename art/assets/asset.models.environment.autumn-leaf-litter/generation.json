@@ -1,0 +1,11 @@
+{
+  "method": "imagegen",
+  "mode": "reference-guided original texture generation",
+  "reference": "codex-clipboard-87c028fc-4b72-4255-9756-f756798e1c91.png",
+  "sources": {
+    "leaves": "exec-811187d2-2c7b-4479-a706-345e582d0f8a.png",
+    "ground": "exec-38785ce2-9c39-455d-a695-8967bda446ea.png"
+  },
+  "brief": "Original stylized RTS autumn biome; ground edited with ImageGen to remove lush green, soften contrast, and blend dry straw/taupe grass into brown soil. Transparent dense maple/oak leaf cluster, copper russet amber gold; seamless top-down forest floor with small fallen leaves, short dry straw-colored grass and brown soil. No baked sunlight. Reference silhouette and color hierarchy; original pixels.",
+  "processing": "Lanczos resize to 1024; alpha retained for leaves; ground RGB calibrated by .18 linear reflectance for the shared HDR lighting; roughness 240 in A; flat NH normal (128,128,255) and height128."
+}

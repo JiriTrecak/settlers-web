@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.texture.winter-macro",
+  "name": "winter macro",
+  "kind": "texture",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "720dbad1dae49eed8f51b8890a705f3c57cba8387b21a5b4786fea003ebe1716",
+      "bytes": 82884
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b26c393711c3eed5efb0dddcccd5b1b455adbf7751cce4275b0b5275d9241920",
+      "bytes": 104
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

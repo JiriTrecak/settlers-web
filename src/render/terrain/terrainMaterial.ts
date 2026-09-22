@@ -12,9 +12,14 @@ export class TerrainMaterial extends MeshStandardMaterial {
   private strokes:readonly TerrainStroke[]=[];
   private cover:readonly CoverPatch[]=[];
   private nativeDirty=false;
-  private refreshNative(){if(this.imported||!this.field||!this.nativeDirty)return;this.nativeDirty=false;this.native?.dispose();this.native=new ImportedTerrainMaterial(authoredTerrain(this.field,this.strokes,this.cover));this.needsUpdate=true;}
+  private readonly colorPrograms=new Set<import('three').WebGLProgramParametersWithUniforms>();
+  private readonly depthPrograms=new Set<import('three').WebGLProgramParametersWithUniforms>();
+  private refreshNative(){if(this.imported||!this.field||!this.nativeDirty)return;this.nativeDirty=false;this.native?.dispose();this.native=new ImportedTerrainMaterial(authoredTerrain(this.field,this.strokes,this.cover));
+    for(const shader of this.colorPrograms)this.native.bindUniforms(shader);
+    for(const shader of this.depthPrograms)this.native.bindUniforms(shader,true);
+    this.needsUpdate=true;}
   private imported?:ImportedTerrainMaterial;
-  compileImportedDepth(shader:import('three').WebGLProgramParametersWithUniforms){(this.imported??this.native)?.compileDepth(shader);}
+  compileImportedDepth(shader:import('three').WebGLProgramParametersWithUniforms){this.refreshNative();this.depthPrograms.add(shader);(this.imported??this.native)?.compileDepth(shader);}
   get ready():Promise<void>{this.refreshNative();return (this.imported??this.native)?.ready??Promise.resolve();}
   setImported(source?:ImportedTerrain){if(this.imported?.source===source)return;this.imported?.dispose();this.imported=source?new ImportedTerrainMaterial(source):undefined;this.needsUpdate=true;}
   private readonly interiorFloor={value:0};
@@ -36,7 +41,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
     this.weights.minFilter=this.weights.magFilter=LinearFilter;
     this.weights.needsUpdate=true;
     this.onBeforeCompile=shader=>{
-      this.refreshNative();
+      this.refreshNative();this.colorPrograms.add(shader);
       (this.imported??this.native)?.compile(shader);
     };
     this.customProgramCacheKey=()=> `landscape-terrain-reference-v3-${this.imported?.source.sha256??"native"}`;
@@ -60,6 +65,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
     }this.contacts.needsUpdate=true;
   }
   setCover(patches:readonly CoverPatch[]):void {
+    if(this.cover===patches)return;
     this.cover=patches;this.nativeDirty=true;this.needsUpdate=true;
     // R = road blend, G = moss coverage. One mask sampler leaves room for fog,
     // shadows and observed-unit cutaways on WebGL's 16-sampler baseline.
@@ -75,7 +81,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
         const edge=Math.max(0,Math.min(1,(1-Math.hypot(x-p.x,z-p.z)/p.radius)*6));
         const i=(iz*size+ix)*2+1;data[i]=Math.max(data[i]!,Math.round(255*edge*Math.min(1,p.density)));
       }
-    }this.roadMask.needsUpdate=true;
+    }this.roadMask.needsUpdate=true;this.refreshNative();
   }
   setSeason(season:string):void { this.seasonTint.value.set(season==='autumn'?0xfff0dc:0xffffff); }
   update(field:HeightField,strokes:readonly TerrainStroke[]):void {
@@ -96,8 +102,8 @@ export class TerrainMaterial extends MeshStandardMaterial {
         for(let c=0;c<4;c++)data[i+c]=Math.round(data[i+c]!*(1-w)+(c===channel?255*w:0));
       }
     }
-    this.weights.needsUpdate=true;this.roadMask.needsUpdate=true;
+    this.weights.needsUpdate=true;this.roadMask.needsUpdate=true;this.refreshNative();
   }
-  override dispose():void{ this.imported?.dispose();this.native?.dispose(); this.roadMask.dispose();this.weights.dispose();this.contacts.dispose();super.dispose(); }
+  override dispose():void{ this.colorPrograms.clear();this.depthPrograms.clear(); this.imported?.dispose();this.native?.dispose(); this.roadMask.dispose();this.weights.dispose();this.contacts.dispose();super.dispose(); }
 }
 const smooth=(a:number,b:number,x:number)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};

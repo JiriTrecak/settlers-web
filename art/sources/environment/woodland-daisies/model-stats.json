@@ -1,0 +1,8 @@
+{
+  "meshes": 40,
+  "materials": 4,
+  "collections": [
+    "Original ground cover",
+    "Studio"
+  ]
+}

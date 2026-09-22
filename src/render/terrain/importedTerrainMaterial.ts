@@ -1,3 +1,4 @@
+import {terrainTextureUrl} from './terrainTextureUrl';
 import {sourceTerrainGLSL} from './sourceTerrainShader';
 import {DataArrayTexture,DataTexture,LinearFilter,LinearMipmapLinearFilter,NearestFilter,RedFormat,RepeatWrapping,SRGBColorSpace,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
 import {unpackSourceBytes,sourceHeight,type ImportedTerrain} from '../../shared/map/importedTerrain';
@@ -8,7 +9,7 @@ async function tileArray(names:string[],color:boolean):Promise<DataArrayTexture>
  const size=1024,data=new Uint8Array(size*size*4*names.length);
  // Decode exact independent channels, without premultiplied-alpha canvas conversion.
  for(let i=0;i<names.length;i++){
-  const url=assetUrls[`assets/library/asset.unregistered.textures.reference.scouring.${names[i]}.rgba.bin/data.bin`];if(!url)throw Error(`Missing terrain texture ${names[i]}`);
+  const url=terrainTextureUrl(names[i]!);if(!url)throw Error(`Missing terrain texture ${names[i]}`);
   const response=await fetch(url);if(!response.ok||!response.body)throw Error(`Failed terrain texture ${names[i]}`);
   const raw=new Uint8Array(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
   if(raw.length!==size*size*4)throw Error('Source tile dimensions mismatch');
@@ -28,6 +29,7 @@ export class ImportedTerrainMaterial {
  private macro=referenceTexture(macroUrl,false);
  private ground=new ReferenceGround();
  constructor(readonly source:ImportedTerrain){
+  if(source.layers.some(l=>l.ar.startsWith('asset.terrain.winter-'))){this.macro.dispose();this.macro=referenceTexture(assetUrls['assets/library/asset.texture.winter-macro/albedo.png'],false);}
   this.ground.updateSource(sourceHeight(source));
   const [dw,dh]=source.maskSize;
   this.displacementMask=new DataTexture(source.displacement?unpackSourceBytes(source.displacement.mask):new Uint8Array(dw*dh),dw,dh,RedFormat);
@@ -50,7 +52,13 @@ export class ImportedTerrainMaterial {
  }
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;
-  Object.assign(shader.uniforms,{uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)},uSourceParams:{value:s.layers.map(l=>new Vector4(l.tiling,l.blend,l.verticality,l.edge))},uSourceDesaturation:{value:s.layers.map(l=>l.desaturation)}});
+  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)},uSourceParams:{value:s.layers.map(l=>new Vector4(l.tiling,l.blend,l.verticality,l.edge))},uSourceDesaturation:{value:s.layers.map(l=>l.desaturation)}});
+ }
+ /** Rebind existing GPU programs after editable terrain replaces its textures.
+  * Three caches programs by shader source, so onBeforeCompile alone is insufficient. */
+ bindUniforms(shader:WebGLProgramParametersWithUniforms,depth=false){
+  this.uniforms(shader);
+  if(!depth)this.ground.bindSurfaceUniforms(shader,this.macro);
  }
  compileDepth(shader:WebGLProgramParametersWithUniforms){
   this.uniforms(shader);
@@ -73,8 +81,9 @@ export class ImportedTerrainMaterial {
    `);
   // Terrain.fx defines FORCE_LIGHTMAP_OCCLUSION_LEVEL0: no ground-color bounce.
   this.ground.compileSurface(shader,this.macro,false,false,false);
-  // Share the existing terrain samplers; binding the same image under another
-  // sampler name still consumes a separate fragment texture unit in WebGL.
+  // Both stages must use the same uniform name. Different vertex/fragment
+  // aliases consume two combined texture units even when they bind one image.
+  shader.vertexShader=shader.vertexShader.replaceAll('uTerrainUnderlay','uReferenceUnderlay');
   shader.fragmentShader=shader.fragmentShader.replace('uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask','uSourceSlots,uSourceDisplacementMask')
    .replaceAll('uTerrainUnderlay','uReferenceUnderlay')
    .replace('float baseHeight=texture2D(uReferenceLightHeight,heightUV).r;','float baseHeight=terrainHeight(vReferenceSurfaceXZ);')

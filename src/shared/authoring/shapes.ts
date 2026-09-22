@@ -33,7 +33,21 @@ export function nearestSpline(x:number,z:number,samples:readonly SplineSample[])
  if(!result)throw Error('Spline requires at least two samples');return result;
 }
 /** Positive distance inside, negative outside. Boundary is included in a region. */
-export function regionDistance(x:number,z:number,shape:Extract<LayerShape,{type:'region'}>):number{
+export function regionDistance(x:number,z:number,shape:Exclude<LayerShape,{type:'spline'}>):number{
+ if(shape.type==='mask'){
+  let distance=-Infinity;
+  for(const stroke of shape.strokes){
+   let nearest=Infinity;
+   for(let i=0;i<stroke.points.length;i++){
+    const a=stroke.points[i]!,b=stroke.points[Math.min(i+1,stroke.points.length-1)]!,dx=b.x-a.x,dz=b.z-a.z;
+    const t=Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz||1)));
+    nearest=Math.min(nearest,Math.hypot(x-a.x-t*dx,z-a.z-t*dz));
+   }
+   const d=stroke.radius-nearest;
+   distance=stroke.operation==='add'?Math.max(distance,d):Math.min(distance,-d);
+  }
+  return distance;
+ }
  let inside=false,distance=Infinity;
  for(let i=0,j=shape.points.length-1;i<shape.points.length;j=i++){
   const a=shape.points[i]!,b=shape.points[j]!,dx=b.x-a.x,dz=b.z-a.z;

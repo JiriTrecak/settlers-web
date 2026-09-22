@@ -32,7 +32,7 @@
       -1.0,
       -0.5
     ],
-    "textureColorLUT": "lut/day__vol_uncmp.tga",
+    "textureColorLUT": "woodland-day",
     "skyBloomColor": {
       "rgb": [
         130.0,
@@ -103,7 +103,7 @@
       -0.25,
       -0.5
     ],
-    "textureColorLUT": "lut/day_to_night__vol_uncmp.tga",
+    "textureColorLUT": "woodland-day-to-night",
     "skyBloomColor": {
       "rgb": [
         130.0,
@@ -174,7 +174,7 @@
       -1.0,
       0.5
     ],
-    "textureColorLUT": "lut/night__vol_uncmp.tga",
+    "textureColorLUT": "woodland-night",
     "skyBloomColor": null,
     "fog": {
       "color": {
@@ -237,7 +237,7 @@
       -0.15,
       -0.0
     ],
-    "textureColorLUT": "lut/night_to_day__vol_uncmp.tga",
+    "textureColorLUT": "woodland-night-to-day",
     "skyBloomColor": {
       "rgb": [
         130.0,

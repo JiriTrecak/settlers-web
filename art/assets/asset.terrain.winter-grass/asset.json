@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "asset.terrain.winter-grass",
+  "name": "winter grass · albedo/roughness",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "114f77de7cabc8c39cc2479579b7fcc5f5044741a3928f0a65f59c239118ff59",
+      "bytes": 1425727
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "e3fdd553781e7913fc781471405cdd04b7d3578272812a4629e843c54b117294",
+      "bytes": 521
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "7851dcc9c47c796601d17c06990bcd720427880a71b8ffa3ba214e271d359fd9",
+      "bytes": 1360795
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

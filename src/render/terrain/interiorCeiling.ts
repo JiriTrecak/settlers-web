@@ -1,5 +1,5 @@
 import {Mesh,MeshStandardMaterial,PlaneGeometry,RepeatWrapping,SRGBColorSpace,TextureLoader,type Scene} from 'three';
-import woodUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.plants_fir_trunk__d.png/albedo.png?url';
+import woodUrl from '../../../assets/library/asset.models.environment.woodland-hollow-log/albedo.png?url';
 import type {EnvironmentState} from '../../shared/landscape/curve';
 
 /** Lowest underside height; shallow wood ribs rise above the authored clearance. */

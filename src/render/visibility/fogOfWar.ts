@@ -68,28 +68,20 @@ export class FogOfWar {
       key = material.customProgramCacheKey();
     material.onBeforeCompile = (shader, renderer) => {
       before.call(material, shader, renderer);
-      if (
-        !shader.vertexShader.includes("#include <project_vertex>") ||
-        !shader.fragmentShader.includes("#include <fog_fragment>")
-      )
-        return;
+      // Deformed ground underlays replace project_vertex; fog_vertex still follows
+      // their final mvPosition. Custom water explicitly exposes equivalent hooks.
+      const custom=shader.vertexShader.includes('// UTC_VISIBILITY_VERTEX');
+      const vertexHook=custom?'// UTC_VISIBILITY_VERTEX':'#include <fog_vertex>';
+      const fragmentHook=custom?'// UTC_VISIBILITY_FRAGMENT':'#include <fog_fragment>';
+      if(!shader.vertexShader.includes(vertexHook)||!shader.fragmentShader.includes(fragmentHook))return;
       shader.uniforms.utcVisibility = this.uniform;
       shader.uniforms.utcFogGrid=this.grid;shader.uniforms.utcFogLayerCount=this.layerCount;shader.uniforms.utcFogHeight=this.heightRange;
       shader.uniforms.utcFogBounds=this.bounds;
-      shader.vertexShader =
-        "varying vec3 utcFogPosition;\n" + shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace(
-        "#include <project_vertex>",
-        `#include <project_vertex>
-        vec4 utcFogWorld=vec4(transformed,1.0);
-        #ifdef USE_BATCHING
-          utcFogWorld=batchingMatrix*utcFogWorld;
-        #endif
-        #ifdef USE_INSTANCING
-          utcFogWorld=instanceMatrix*utcFogWorld;
-        #endif
-        utcFogPosition=(modelMatrix*utcFogWorld).xyz;`,
-      );
+      shader.vertexShader='varying vec3 utcFogPosition;\n'+shader.vertexShader;
+      shader.vertexShader=shader.vertexShader.replace(vertexHook,custom
+        ?'utcFogPosition=p;'
+        :`#include <fog_vertex>
+          utcFogPosition=transpose(mat3(viewMatrix))*mvPosition.xyz+cameraPosition;`);
       shader.fragmentShader =
         `uniform sampler2D utcVisibility; varying vec3 utcFogPosition;
         uniform vec2 utcFogGrid,utcFogHeight; uniform vec4 utcFogBounds; uniform int utcFogLayerCount;
@@ -99,8 +91,8 @@ export class FogOfWar {
         }\n` +
         shader.fragmentShader;
       shader.fragmentShader = shader.fragmentShader.replace(
-        "#include <fog_fragment>",
-        `#include <fog_fragment>
+        fragmentHook,
+        `${custom?'':'#include <fog_fragment>'}
         vec2 utcUv=(utcFogPosition.xz+0.5)/${this.size.toFixed(1)};
         float inside=step(0.0,utcUv.x)*step(0.0,utcUv.y)*step(utcUv.x,1.0)*step(utcUv.y,1.0);
         float utcLight=texture2D(utcVisibility,utcFogTile(utcUv,0)).r;
@@ -119,7 +111,7 @@ export class FogOfWar {
       `,
       );
     };
-    material.customProgramCacheKey = () => key + `|utc-fog-v4-${this.size}`;
+    material.customProgramCacheKey = () => key + `|utc-fog-v5-${this.size}`;
     material.needsUpdate = true;
   }
   dispose() {

@@ -1,0 +1,33 @@
+{
+  "name": "Leafbound Twig Bridge",
+  "blend": "leafbound-twig-bridge.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "seed": 91,
+  "camera": {
+    "azimuth": 35,
+    "elevation": 35,
+    "scale": 29,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "render": {
+    "width": 1200,
+    "height": 900,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 1200,
+    "fill_energy": 650,
+    "rim_energy": 500,
+    "scale": 3,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  }
+}

@@ -1,3 +1,4 @@
+import '../fixtures/walkableCatalogue';
 import {it,expect} from 'vitest';
 import {content} from '../../src/content/builtin';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
@@ -8,7 +9,7 @@ import type {SettlementView} from '../../src/sim/game/observation';
 const arch:BridgeSurface={id:'arch',level:1,connections:{start:0,end:0},x:16,z:16,c:1,s:0,base:0,width:5,depth:24,height:0,arch:5,thickness:.8};
 const briefing=()=>({...createMapBriefing(emptyUtcMap(),content),size:32,heights:Array(1024).fill(0),land:Array(1024).fill(1),surfaces:[arch]});
 it('keeps authored ground and bridge surfaces separate in AI map knowledge',()=>{
- const m={...emptyUtcMap(),stamps:[{id:'bridge',asset:'timber-bridge',x:40,y:40}]},b=createMapBriefing(m,content);
+ const m={...emptyUtcMap(),stamps:[{id:'bridge',asset:'leafbound-twig-bridge',x:40,y:40}]},b=createMapBriefing(m,content);
  expect(b.heights.every(h=>h===0)).toBe(true);expect(b.surfaces[0].id).toBe('bridge');
  expect(b.fingerprint).not.toBe(createMapBriefing({...m,stamps:[{...m.stamps[0],walk:{level:3,connections:{}}}]},content).fingerprint);
 });

@@ -1,0 +1,7 @@
+{
+  "method": "authored",
+  "recipe": "art/recipes/woodland_details.py",
+  "seed": 813,
+  "textures": "Original ImageGen bark, woodland-bark source package. Original painted rock; other surfaces use original constant material colors.",
+  "design": "Original neutral scenery; construction and unseen sides independently authored. Palette reference is our own bound-twig bridge."
+}

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.terrain.woodland-grass-normal",
+  "name": "woodland grass · normal/height",
+  "kind": "terrain-material",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "325774cff8814e8e5e9b4c25715944314f5f51b5e1228ca4a7a3ad17c54f1e84",
+      "bytes": 1276146
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "27387589b51d0f0c8de5f4503c24859a793ce3109833a9fc67586e08c23cdb65",
+      "bytes": 720
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

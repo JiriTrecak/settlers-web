@@ -23,11 +23,17 @@ export class HeightField {
   readonly verts: number;
   readonly samples: Float32Array;
   constructor(readonly size = MAP_SIZE) {
-    if (!Number.isInteger(size) || size < 16 || size > 512) throw new Error("Unsupported height field size");
+    if (!Number.isInteger(size) || size < 16 || size > 2048) throw new Error("Unsupported height field size");
     this.span = size + MAP_HALO * 2;
     this.verts = this.span + 1;
     this.samples = new Float32Array(this.verts * this.verts);
   }
+  biome = 'vibrant-forest';
+  forestCoverage?:Float32Array;
+  baseMaterial:'soil'|'dirt'='soil';
+  grassCoverage?:Float32Array;
+  rockCoverage?:Float32Array;
+  surfacePaint?:import('../authoring/generate').MaterialPaint[];
   source?: SourceHeight;
   sourceWater?:SourceWater;
   watercourses:Watercourse[]=[];

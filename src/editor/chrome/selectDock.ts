@@ -26,6 +26,7 @@ export class SelectDock {
   constructor(host: HTMLElement, private readonly hooks: SelectDockHooks) {
     this.root = document.createElement("div");
     this.root.className = `pointer-events-auto flex w-56 min-w-0 flex-col gap-1.5 overflow-hidden rounded-2xl p-2 font-dock ${sheet}`;
+    this.root.classList.add('editor-properties');
     this.root.setAttribute("aria-label", "Select");
     const title = document.createElement("span");
     title.className = "text-[11px] font-medium tracking-[0.14em] text-canopy/40 uppercase";

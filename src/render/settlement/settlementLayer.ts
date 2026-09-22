@@ -215,9 +215,8 @@ export class SettlementLayer {
         .filter(
           (a) =>
             a.file &&
-            !a.sceneryAsset &&
-            (content.definitions.some((d) => d.asset === a.id) ||
-              content.assets.some((other) => other.carryAsset === a.id)),
+            // Map appearance overrides are published render assets too.
+            !a.sceneryAsset,
         )
         .map(async (a) => {
           const url = projectMeshUrl(a.file!);
@@ -338,7 +337,7 @@ export class SettlementLayer {
     const d = content.get(e.definition),
       assetId = e.appearance?.asset ?? d.asset;
     let o = this.entities.get(e.id);
-    if (o && o.userData.asset !== assetId) {
+    if (o && (o.userData.asset !== assetId || o.userData.modelScale !== (content.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1))) {
       this.removeModel(e.id, o);
       this.entities.delete(e.id);
       o = undefined;

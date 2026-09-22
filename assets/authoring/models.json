@@ -1,6 +1,6 @@
 [
   {
-    "id": "asset.models.environment.grass.reference-grass-daisy",
+    "id": "asset.models.environment.autumn-grass",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -11,15 +11,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-daisy/geometry.glb"
+      "assets/library/asset.models.environment.autumn-grass/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-daisy"
+      "autumn-grass"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-high-a",
+    "id": "asset.models.environment.autumn-leaf-litter",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -30,15 +31,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-high-a/geometry.glb"
+      "assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-high-a"
+      "autumn-leaf-litter"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-high-b",
+    "id": "asset.models.environment.autumn-shrub-copper",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -49,15 +51,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-high-b/geometry.glb"
+      "assets/library/asset.models.environment.autumn-shrub-copper/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-high-b"
+      "autumn-shrub-copper"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-low",
+    "id": "asset.models.environment.autumn-shrub-gold",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -68,15 +71,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-low/geometry.glb"
+      "assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-low"
+      "autumn-shrub-gold"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-messy",
+    "id": "asset.models.environment.autumn-stump",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -87,15 +91,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-messy/geometry.glb"
+      "assets/library/asset.models.environment.autumn-stump/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-messy"
+      "autumn-stump"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-water-leaves-a",
+    "id": "asset.models.environment.autumn-tree-copper",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -106,15 +111,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-water-leaves-a/geometry.glb"
+      "assets/library/asset.models.environment.autumn-tree-copper/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-water-leaves-a"
+      "autumn-tree-copper"
     ]
   },
   {
-    "id": "asset.models.environment.grass.reference-grass-water-leaves-b",
+    "id": "asset.models.environment.autumn-tree-gold",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -125,15 +131,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.grass.reference-grass-water-leaves-b/geometry.glb"
+      "assets/library/asset.models.environment.autumn-tree-gold/geometry.glb"
     ],
     "scenery": [
-      "reference-grass-water-leaves-b"
+      "autumn-tree-gold"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-bush-a",
+    "id": "asset.models.environment.canopy-acorns",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -144,15 +151,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-bush-a/geometry.glb"
+      "assets/library/asset.models.environment.canopy-acorns/geometry.glb"
     ],
     "scenery": [
-      "reference-bush-a"
+      "canopy-acorns"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-bush-b",
+    "id": "asset.models.environment.canopy-ancient-tree",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -163,15 +171,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-bush-b/geometry.glb"
+      "assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb"
     ],
     "scenery": [
-      "reference-bush-b"
+      "canopy-ancient-tree"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-dungeon-entrance",
+    "id": "asset.models.environment.canopy-mushrooms-ochre",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -182,15 +191,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-dungeon-entrance/geometry.glb"
+      "assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb"
     ],
     "scenery": [
-      "reference-dungeon-entrance"
+      "canopy-mushrooms-ochre"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-goblin-hut",
+    "id": "asset.models.environment.canopy-mushrooms-russet",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -201,15 +211,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-goblin-hut/geometry.glb"
+      "assets/library/asset.models.environment.canopy-mushrooms-russet/geometry.glb"
     ],
     "scenery": [
-      "reference-goblin-hut"
+      "canopy-mushrooms-russet"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-gold-vein-a",
+    "id": "asset.models.environment.canopy-oak",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -220,15 +231,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-gold-vein-a/geometry.glb"
+      "assets/library/asset.models.environment.canopy-oak/geometry.glb"
     ],
     "scenery": [
-      "reference-gold-vein-a"
+      "canopy-oak"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-gold-vein-b",
+    "id": "asset.models.environment.canopy-twig",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -239,15 +251,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-gold-vein-b/geometry.glb"
+      "assets/library/asset.models.environment.canopy-twig/geometry.glb"
     ],
     "scenery": [
-      "reference-gold-vein-b"
+      "canopy-twig"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-lying-snag-a",
+    "id": "asset.models.environment.frost-boulder",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -258,15 +271,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-lying-snag-a/geometry.glb"
+      "assets/library/asset.models.environment.frost-boulder/geometry.glb"
     ],
     "scenery": [
-      "reference-lying-snag-a"
+      "frost-boulder"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-lying-snag-b",
+    "id": "asset.models.environment.frost-grass",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -277,15 +291,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-lying-snag-b/geometry.glb"
+      "assets/library/asset.models.environment.frost-grass/geometry.glb"
     ],
     "scenery": [
-      "reference-lying-snag-b"
+      "frost-grass"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-lying-snag-c",
+    "id": "asset.models.environment.frost-log",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -296,15 +311,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-lying-snag-c/geometry.glb"
+      "assets/library/asset.models.environment.frost-log/geometry.glb"
     ],
     "scenery": [
-      "reference-lying-snag-c"
+      "frost-log"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-lying-snag-d",
+    "id": "asset.models.environment.frost-pine-a",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -315,15 +331,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-lying-snag-d/geometry.glb"
+      "assets/library/asset.models.environment.frost-pine-a/geometry.glb"
     ],
     "scenery": [
-      "reference-lying-snag-d"
+      "frost-pine-a"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-monument-01",
+    "id": "asset.models.environment.frost-pine-b",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -334,15 +351,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-monument-01/geometry.glb"
+      "assets/library/asset.models.environment.frost-pine-b/geometry.glb"
     ],
     "scenery": [
-      "reference-monument-01"
+      "frost-pine-b"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-mountain-chunk-a",
+    "id": "asset.models.environment.frost-pine-sapling",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -353,15 +371,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-mountain-chunk-a/geometry.glb"
+      "assets/library/asset.models.environment.frost-pine-sapling/geometry.glb"
     ],
     "scenery": [
-      "reference-mountain-chunk-a"
+      "frost-pine-sapling"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-mountain-chunk-b",
+    "id": "asset.models.environment.frost-rock-ledge",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -372,15 +391,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-mountain-chunk-b/geometry.glb"
+      "assets/library/asset.models.environment.frost-rock-ledge/geometry.glb"
     ],
     "scenery": [
-      "reference-mountain-chunk-b"
+      "frost-rock-ledge"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-mountain-chunk-c",
+    "id": "asset.models.environment.frost-snow-grass",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -391,15 +411,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-mountain-chunk-c/geometry.glb"
+      "assets/library/asset.models.environment.frost-snow-grass/geometry.glb"
     ],
     "scenery": [
-      "reference-mountain-chunk-c"
+      "frost-snow-grass"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-bandit-a",
+    "id": "asset.models.environment.leafbound-twig-bridge",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -410,15 +431,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-bandit-a/geometry.glb"
+      "assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-bandit-a"
+      "leafbound-twig-bridge"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-bandit-b",
+    "id": "asset.models.environment.woodland-abandoned-camp",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -429,15 +451,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-bandit-b/geometry.glb"
+      "assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-bandit-b"
+      "woodland-abandoned-camp"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-bandit-tent",
+    "id": "asset.models.environment.woodland-acorn-cache",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -448,15 +471,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-bandit-tent/geometry.glb"
+      "assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-bandit-tent"
+      "woodland-acorn-cache"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-goblin",
+    "id": "asset.models.environment.woodland-amber-deposit",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -467,15 +491,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-goblin/geometry.glb"
+      "assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-goblin"
+      "woodland-amber-deposit"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-outpost",
+    "id": "asset.models.environment.woodland-amber-lantern",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -486,15 +511,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-outpost/geometry.glb"
+      "assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-outpost"
+      "woodland-amber-lantern"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-troll",
+    "id": "asset.models.environment.woodland-broken-trader-cart",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -505,15 +531,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-troll/geometry.glb"
+      "assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-troll"
+      "woodland-broken-trader-cart"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-troll-cave",
+    "id": "asset.models.environment.woodland-daisies",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -524,15 +551,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-troll-cave/geometry.glb"
+      "assets/library/asset.models.environment.woodland-daisies/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-troll-cave"
+      "woodland-daisies"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-wolf",
+    "id": "asset.models.environment.woodland-fallen-log",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -543,15 +571,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-wolf/geometry.glb"
+      "assets/library/asset.models.environment.woodland-fallen-log/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-wolf"
+      "woodland-fallen-log"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-wolf-den-a",
+    "id": "asset.models.environment.woodland-giant-stump",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -562,15 +591,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-wolf-den-a/geometry.glb"
+      "assets/library/asset.models.environment.woodland-giant-stump/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-wolf-den-a"
+      "woodland-giant-stump"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-neutral-wolf-den-b",
+    "id": "asset.models.environment.woodland-grass-high-a",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -581,15 +611,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-neutral-wolf-den-b/geometry.glb"
+      "assets/library/asset.models.environment.woodland-grass-high-a/geometry.glb"
     ],
     "scenery": [
-      "reference-neutral-wolf-den-b"
+      "woodland-grass-high-a"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-ruins-blocks-03",
+    "id": "asset.models.environment.woodland-grass-high-b",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -600,15 +631,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-ruins-blocks-03/geometry.glb"
+      "assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb"
     ],
     "scenery": [
-      "reference-ruins-blocks-03"
+      "woodland-grass-high-b"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-ruins-blocks-04",
+    "id": "asset.models.environment.woodland-grass-low",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -619,15 +651,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-ruins-blocks-04/geometry.glb"
+      "assets/library/asset.models.environment.woodland-grass-low/geometry.glb"
     ],
     "scenery": [
-      "reference-ruins-blocks-04"
+      "woodland-grass-low"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-ruins-blocks-06",
+    "id": "asset.models.environment.woodland-grass-messy",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -638,15 +671,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "terrain",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-ruins-blocks-06/geometry.glb"
+      "assets/library/asset.models.environment.woodland-grass-messy/geometry.glb"
     ],
     "scenery": [
-      "reference-ruins-blocks-06"
+      "woodland-grass-messy"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-ruins-blocks-08",
+    "id": "asset.models.environment.woodland-hollow-log",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -657,15 +691,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-ruins-blocks-08/geometry.glb"
+      "assets/library/asset.models.environment.woodland-hollow-log/geometry.glb"
     ],
     "scenery": [
-      "reference-ruins-blocks-08"
+      "woodland-hollow-log"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-ruins-column-11",
+    "id": "asset.models.environment.woodland-leaf-shelter",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -676,15 +711,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-ruins-column-11/geometry.glb"
+      "assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb"
     ],
     "scenery": [
-      "reference-ruins-column-11"
+      "woodland-leaf-shelter"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-small-rock-a",
+    "id": "asset.models.environment.woodland-lily-a",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -695,15 +731,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "water",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-small-rock-a/geometry.glb"
+      "assets/library/asset.models.environment.woodland-lily-a/geometry.glb"
     ],
     "scenery": [
-      "reference-small-rock-a"
+      "woodland-lily-a"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-small-rock-b",
+    "id": "asset.models.environment.woodland-lily-b",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -714,15 +751,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "water",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-small-rock-b/geometry.glb"
+      "assets/library/asset.models.environment.woodland-lily-b/geometry.glb"
     ],
     "scenery": [
-      "reference-small-rock-b"
+      "woodland-lily-b"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-small-rock-c",
+    "id": "asset.models.environment.woodland-log-bench",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -733,15 +771,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-small-rock-c/geometry.glb"
+      "assets/library/asset.models.environment.woodland-log-bench/geometry.glb"
     ],
     "scenery": [
-      "reference-small-rock-c"
+      "woodland-log-bench"
     ]
   },
   {
-    "id": "asset.models.environment.props.reference-wooden-bridge-small",
+    "id": "asset.models.environment.woodland-moss-boulder",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -752,15 +791,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.props.reference-wooden-bridge-small/geometry.glb"
+      "assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb"
     ],
     "scenery": [
-      "reference-wooden-bridge-small"
+      "woodland-moss-boulder"
     ]
   },
   {
-    "id": "asset.models.environment.trees.reference-fir-a",
+    "id": "asset.models.environment.woodland-mushroom-cluster",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -771,15 +811,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.trees.reference-fir-a/geometry.glb"
+      "assets/library/asset.models.environment.woodland-mushroom-cluster/geometry.glb"
     ],
     "scenery": [
-      "reference-fir-a"
+      "woodland-mushroom-cluster"
     ]
   },
   {
-    "id": "asset.models.environment.trees.reference-fir-b",
+    "id": "asset.models.environment.woodland-mushroom-lantern",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -790,15 +831,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.trees.reference-fir-b/geometry.glb"
+      "assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb"
     ],
     "scenery": [
-      "reference-fir-b"
+      "woodland-mushroom-lantern"
     ]
   },
   {
-    "id": "asset.models.environment.trees.reference-fir-small-a",
+    "id": "asset.models.environment.woodland-pine-a",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -809,15 +851,16 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.trees.reference-fir-small-a/geometry.glb"
+      "assets/library/asset.models.environment.woodland-pine-a/geometry.glb"
     ],
     "scenery": [
-      "reference-fir-small-a"
+      "woodland-pine-a"
     ]
   },
   {
-    "id": "asset.models.environment.trees.reference-stump-fir-a",
+    "id": "asset.models.environment.woodland-pine-b",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -828,11 +871,252 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "groundContact": "pivot",
     "geometry": [
-      "assets/library/asset.models.environment.trees.reference-stump-fir-a/geometry.glb"
+      "assets/library/asset.models.environment.woodland-pine-b/geometry.glb"
     ],
     "scenery": [
-      "reference-stump-fir-a"
+      "woodland-pine-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-sapling",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-pine-sapling"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-pine-stump",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-pine-stump/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-pine-stump"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-rain-barrel",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-rain-barrel"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-river-stones",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-river-stones/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-river-stones"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-rock-ledge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-rock-ledge"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-root-arch-bridge",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-root-arch-bridge"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-ruined-watchtower",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-ruined-watchtower"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-snapped-root",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-snapped-root/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-snapped-root"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-stone-spring",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-stone-spring/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-stone-spring"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-supply-crate",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-supply-crate/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-supply-crate"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-trail-sign",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-trail-sign/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-trail-sign"
+    ]
+  },
+  {
+    "id": "asset.models.environment.woodland-woodpile",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.woodland-woodpile/geometry.glb"
+    ],
+    "scenery": [
+      "woodland-woodpile"
     ]
   },
   {

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.terrain.winter-dirt-normal",
+  "name": "winter dirt · normal/height",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "de25486bff964157aad31b77a3cc6654a9f9b21b67571ce17d5e0df30213cca0",
+      "bytes": 1160034
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8263a148e1837a4d5fd31774b87150bee6f5e370ad75b7c0de8fc6c9546dd8d6",
+      "bytes": 521
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

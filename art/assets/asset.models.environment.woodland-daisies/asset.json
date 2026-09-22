@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-daisies",
+  "name": "woodland daisies",
+  "kind": "foliage",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f7085f1bd639a21259d802bea56465f05e7f98c79e5735ce284fde560201c8e5",
+      "bytes": 23212
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "6a486b70ea9716e3ca706abe50a42ec579ddbc6cf4d41bf302ee3d98f9349983",
+      "bytes": 240162
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9bfe7888c163fed1247990b6a1bf9a5787f55b90d761132bd6ea77fed5e56a1b",
+      "bytes": 224
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "woodland-daisies",
+        "name": "woodland daisies",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "terrain"
+    },
+    "wind": {
+      "mode": "grass",
+      "strength": 0.12,
+      "speed": 0.2,
+      "stiffness": 0.75
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.texture.woodland-waves",
+  "name": "woodland waves",
+  "kind": "texture",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "7113b199dbd32e3c4854ca3570ffa538045b4f2cc514b1825d410926b0da828b",
+      "bytes": 218993
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b26c393711c3eed5efb0dddcccd5b1b455adbf7751cce4275b0b5275d9241920",
+      "bytes": 104
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

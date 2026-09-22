@@ -1,3 +1,4 @@
+import './sourceAssetFetch';
 import {afterEach,expect,it,vi} from 'vitest';
 import {Group,Scene} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';

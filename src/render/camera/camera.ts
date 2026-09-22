@@ -94,6 +94,7 @@ export class Camera {
     this.focusHeight=0;
     this.setClosePose(null);
     this.game = on;
+    this.maxZoom = on ? 60 : Math.max(60,size*.75);
     this.locked = on;
     this.bound = on ? size : 0;
     if (on) {

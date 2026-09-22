@@ -1,3 +1,4 @@
+import {newMapDialog} from '../../editor/chrome/newMapDialog';
 import {selectedWalk} from '../../editor/select/select';
 import {ScenePanel} from '../../editor/chrome/scenePanel';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
@@ -31,6 +32,7 @@ import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
+  private readonly draftKey="utc-editor-threewater-draft:"+(new URLSearchParams(location.search).get("map")??"new");
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
@@ -59,6 +61,12 @@ export class EditorScreen extends GameScreen {
     hooks: { onLeave: () => void; map?: UtcMap },
   ) {
     super("screen");
+    // Capture the draft before replace() triggers syncDoc and writes this key.
+    let restoredDraft: UtcMap | undefined;
+    try {
+      for(const key of Object.keys(sessionStorage))if(key.startsWith('utc-editor-biome-draft:'))sessionStorage.removeItem(key);
+      restoredDraft = parseUtcMap(JSON.parse(sessionStorage.getItem(this.draftKey) ?? "null")) ?? undefined;
+    } catch { /* Invalid drafts must not prevent opening the editor. */ }
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
       host: this.root,
@@ -199,22 +207,14 @@ export class EditorScreen extends GameScreen {
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
     {
-      const initial = hooks.map ?? getMap("authoring-playground").map;
+      const initial = hooks.map ?? getMap("threewater-forest").map;
       this.saved = stringifyUtcMap(initial);
-      this.editor.replace(initial);
+      this.editor.replace(restoredDraft ?? initial);
     }
     this.spawnDock = new SpawnDock(this.root, this.editor);
     this.entityDock = new EntityDock(this.root, this.editor);
-    this.scenePanel=new ScenePanel(this.root,this.editor);
-    // Reloads must never interrupt the live editor / MCP iteration loop.
-    try {
-      const draft = parseUtcMap(
-        JSON.parse(sessionStorage.getItem("utc-editor-draft-scouring-1") ?? "null"),
-      );
-      if (draft && !hooks.map) this.editor.replace(draft);
-    } catch {
-      /* An invalid draft must not prevent opening the editor. */
-    }
+    this.scenePanel=new ScenePanel(this.root,this.editor, () => {this.mcpOpen=false;this.skyOpen=false;this.syncMcp();this.syncSky();this.syncRemote();}, () => this.toggleMcp(), () => this.toggleSky());
+
   }
 
   start(): void {
@@ -295,6 +295,7 @@ export class EditorScreen extends GameScreen {
     this.spawnDock?.setOpen(this.editor.tool === "spawn");
     this.decalDock?.setOpen(this.editor.tool === "decal");
     this.terrainDock?.setOpen(this.editor.tool === "terrain");
+    this.scenePanel?.sync();
     const urls = this.library.urls();
     this.chrome.setBrushOpen(this.editor.tool === "brush");
     this.chrome.setBrush({
@@ -316,13 +317,15 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncSelect(): void {
+    this.terrainDock?.setOpen(this.editor.tool === "terrain");
+    this.spawnDock?.setOpen(this.editor.tool === "spawn");
     this.scenePanel?.sync();
     this.entityDock?.setOpen(
       this.editor.tool === "entity" || !!this.editor.selectedEntity,
     );
     const stamp = this.editor.selectedStamp();
     this.chrome.setSelectOpen(
-      this.editor.tool === "select" && !this.editor.selectedEntity && !this.editor.layers.selection,
+      this.editor.tool === "select" && !!stamp && !this.editor.selectedEntity && !this.editor.layers.selection,
     );
     this.chrome.setSelect({
       name: stamp
@@ -473,6 +476,7 @@ export class EditorScreen extends GameScreen {
 
   private toggleMcp(): void {
     this.mcpOpen = !this.mcpOpen;
+    if(this.mcpOpen){this.skyOpen=false;this.syncSky();}
     this.syncMcp();
   }
 
@@ -494,6 +498,7 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncMcp(): void {
+    this.scenePanel?.setUtilities(this.mcpOpen,this.skyOpen);
     this.chrome.setMcpOpen(this.mcpOpen);
     this.chrome.setMcp({
       enabled: this.mcpPrefs.value.enabled,
@@ -504,6 +509,7 @@ export class EditorScreen extends GameScreen {
 
   private toggleSky(): void {
     this.skyOpen = !this.skyOpen;
+    if(this.skyOpen){this.mcpOpen=false;this.syncMcp();}
     this.syncSky();
   }
 
@@ -523,6 +529,7 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncSky(): void {
+    this.scenePanel?.setUtilities(this.mcpOpen,this.skyOpen);
     this.chrome.setSkyOpen(false);
     this.chrome.setEnvironmentOpen(this.skyOpen);
     this.environmentDock?.setOpen(this.skyOpen);
@@ -549,7 +556,7 @@ export class EditorScreen extends GameScreen {
     this.environmentDock?.sync();
     try {
       sessionStorage.setItem(
-        "utc-editor-draft-scouring-1",
+        this.draftKey,
         stringifyUtcMap(this.editor.map),
       );
     } catch {
@@ -627,6 +634,10 @@ export class EditorScreen extends GameScreen {
       await this.alert("Player starts", error);
       return false;
     }
+    if(!asNew){
+      try{rememberAuthoredMap(this.editor.map);this.markClean();return true;}
+      catch{await this.alert("Couldn't save",'The local map library is full or unavailable. Use Export to save a map file.');return false;}
+    }
     const result = await this.files.save(this.editor.map, asNew);
     if (result === "ok") {
       try {
@@ -662,17 +673,14 @@ export class EditorScreen extends GameScreen {
   }
 
   private async askNew(): Promise<void> {
-    const size = await this.confirm("New map", "Choose the size of the battlefield. Both sizes start with two player spawn points.", [
-      { id: "cancel", label: "Cancel" },
-      { id: "256", label: "256 × 256", kind: "primary" },
-      { id: "512", label: "512 × 512" },
-    ]);
-    if (size !== "256" && size !== "512") return;
-    if (!(await this.ifClean("Save this map before starting a new one?")))
-      return;
+    if (!(await this.ifClean("Save this map before starting a new one?"))) return;
+    const map = await newMapDialog(this.root);
+    if (!map) return;
     this.files.clearFile();
-    this.editor.replace(emptyUtcMap(size === "512" ? 512 : 256));
-    this.markClean();
+    this.editor.replace(map);
+    this.editor.lookAt(map.size/2,map.size/2);
+    this.saved = "";
+    this.syncDoc();
   }
 
   private async askLoad(): Promise<void> {

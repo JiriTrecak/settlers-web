@@ -302,7 +302,7 @@ export class PropField {
         node.receiveShadow = true;
       });
       const referenceOrigin=prepareReferencePlants(gltf.scene,this.referenceGround,()=>this.referenceMacro??=referenceTexture(macroUrl,false));
-      if(referenceOrigin&&asset.startsWith('reference-fir'))wind={amplitude:.12,speed:.22};
+      if(referenceOrigin&&/^(reference|frozen)-fir/.test(asset))wind={amplitude:.12,speed:.22};
       disposeBatch=batchStaticMaterials(gltf.scene,!!gltf.animations.length);
       gltf.scene.updateMatrixWorld(true);
       const box=prototypeBounds(gltf.scene);
@@ -418,7 +418,7 @@ export class PropField {
         }
         if(colorChanged&&b.instanceColor)b.instanceColor.needsUpdate=true;
       }
-      b.userData.category=/pine|reference-fir/.test(String(this.placed.get(g.ids[0])?.userData.asset))?'Tree triangles':'Other prop triangles';
+      b.userData.category=/pine|fir|canopy-oak|canopy-ancient/.test(String(this.placed.get(g.ids[0])?.userData.asset))?'Tree triangles':'Other prop triangles';
       if(changed||!b.boundingSphere){
         b.instanceMatrix.needsUpdate=true;
         // Source harmonics can travel farther than the native .5-unit sway.

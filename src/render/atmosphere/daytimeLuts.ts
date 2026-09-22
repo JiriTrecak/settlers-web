@@ -1,12 +1,13 @@
 import {ClampToEdgeWrapping,Data3DTexture,LinearFilter,NoColorSpace,RGBAFormat,UnsignedByteType} from 'three';
-import source from '../../../assets/library/asset.unregistered.textures.grading.scouring-reference-luts.json/data.json';
+import source from '../../../assets/library/asset.texture.woodland-daytime-grades/data.json';
 import type {DaytimeId,DaytimeSample} from '../../shared/environment/dayCycle';
 
-/** The reference's uncompressed 16³ BGRX DDS volumes, losslessly converted to RGBA. */
+/** Original channel curves, authored as a filterable 32³ color volume. */
 export function createDaytimeLuts() {
- const textures={} as Record<DaytimeId,Data3DTexture>;
- for(const id of Object.keys(source) as DaytimeId[]){
-  const {size,rgba}=source[id];
+ const textures={} as Record<DaytimeId|'winter_day',Data3DTexture>;
+ const volumes=source;
+ for(const id of Object.keys(volumes) as (DaytimeId|'winter_day')[]){
+  const {size,rgba}=volumes[id];
   const data=Uint8Array.from(atob(rgba),c=>c.charCodeAt(0));
   const texture=new Data3DTexture(data,size,size,size);
   texture.name=`Daytime LUT · ${id}`;
@@ -18,7 +19,7 @@ export function createDaytimeLuts() {
  }
  return {
   textures,
-  pair:(sample:DaytimeSample)=>({from:textures[sample.from],to:textures[sample.to],blend:sample.blend}),
+  pair:(sample:DaytimeSample)=>({from:textures[sample.profile==='winter'&&sample.from==='day'?'winter_day':sample.from],to:textures[sample.profile==='winter'&&sample.to==='day'?'winter_day':sample.to],blend:sample.blend}),
   dispose:()=>Object.values(textures).forEach(t=>t.dispose()),
  };
 }

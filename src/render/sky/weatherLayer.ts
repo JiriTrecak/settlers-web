@@ -30,7 +30,7 @@ export class WeatherLayer {
   this.mesh=new InstancedMesh(this.rain,this.material,COUNT);this.mesh.name='weather';this.mesh.renderOrder=4;this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);this.mesh.frustumCulled=false;this.mesh.count=0;this.mesh.visible=false;scene.add(this.mesh);}
  configure(settings?:WeatherSettings){
   this.settings=settings??CLEAR_WEATHER;const snow=this.settings.kind==='snow',spores=this.settings.kind==='spores';
-  this.softParticle.value=spores?1:0;
+  this.softParticle.value=spores||snow?1:0;
   this.mesh.geometry=spores?this.spore:snow?this.snow:this.rain;this.material.color.set(spores?0xd6d5ad:snow?0xe6edf1:0xb5cbd9);this.material.opacity=spores?.6:snow?.65:.24;
   this.mesh.count=this.settings.kind==='clear'?0:Math.round(COUNT*this.settings.intensity);this.mesh.visible=this.mesh.count>0;
  }
@@ -42,7 +42,7 @@ export class WeatherLayer {
    const [a,b,c]=this.seeds[i];
    const wx=x-SPAN/2+wrap(a*SPAN+time*this.settings.windX+(spores?Math.sin(time*.28+i)*1.1:snow?Math.sin(time*.7+i)*1.5:0)-x+SPAN/2,SPAN);
    const wz=z-SPAN/2+wrap(b*SPAN+time*this.settings.windZ+(spores?Math.cos(time*.21+i)*.7:0)-z+SPAN/2,SPAN);
-   this.position.set(wx,Math.max(field?.sample(wx,wz)??0,field?.waterLevel??0)+(spores?1+wrap(c*6-time*speed,6):wrap(c*HEIGHT-time*speed,HEIGHT)),wz);
+   this.position.set(wx,Math.max(field?.sample(wx,wz)??0,field?.waterAt(wx,wz)??0)+(spores?1+wrap(c*6-time*speed,6):wrap(c*HEIGHT-time*speed,HEIGHT)),wz);
    this.matrix.compose(this.position,this.rotation,ONE);this.mesh.setMatrixAt(i,this.matrix);
   }
   this.mesh.instanceMatrix.needsUpdate=true;

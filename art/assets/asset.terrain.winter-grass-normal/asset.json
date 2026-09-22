@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.terrain.winter-grass-normal",
+  "name": "winter grass · normal/height",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "33bcf65c0b385ed3b795b4552b98406581333c1f6dc12f6f32047435c83c1ef0",
+      "bytes": 913829
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "e3fdd553781e7913fc781471405cdd04b7d3578272812a4629e843c54b117294",
+      "bytes": 521
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

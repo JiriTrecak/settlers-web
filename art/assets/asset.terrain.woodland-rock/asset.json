@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "asset.terrain.woodland-rock",
+  "name": "woodland rock · albedo/roughness",
+  "kind": "terrain-material",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "41fd3dd4c4cad86ad3764fbd5cc0f05598c77d16bc07563e8f45951db0f6d132",
+      "bytes": 1434913
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "01f4d54fc027a42d2dee0369ffba99335a115655b82755a244211abaffbae5c9",
+      "bytes": 554
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "20bf93f16fd710062ee2a1987e818b92cd9c92e455cba0781ef83e080c6fa11f",
+      "bytes": 1368024
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

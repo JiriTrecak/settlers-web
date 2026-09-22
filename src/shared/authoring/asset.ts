@@ -58,7 +58,7 @@ export const assetDefinitionSchema=z.object({
   vegetationClearance:finite.min(0).max(128).optional(),
   groundContact:z.object({mode:z.enum(['pivot','terrain','water','free']),underlay:refSchema.optional(),ambientRadius:finite.min(0).max(128).optional()}).strict().optional(),
   walkable:z.object({surface:refSchema,connectors:z.array(z.object({name:authoringId,position:vector,width:finite.positive()}).strict()).min(2).max(16)}).strict().optional(),
-  harvesting:z.object({replacement:authoringId}).strict().optional(),
+  harvesting:z.object({replacement:authoringId,definition:authoringId.optional()}).strict().optional(),
  }).strict().default({}),
  water:waterProfileSchema.optional(),recipe:landscapeRecipeSchema.optional(),
  provenance:z.object({method:z.enum(['import','migration','generated','authored']),licenseNote:z.string().max(4000).optional(),sourceHash:z.string().regex(/^[a-f0-9]{64}$/).optional(),generation:refSchema.optional()}).strict(),

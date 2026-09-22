@@ -17,7 +17,7 @@ function placementFloors(map:UtcMap){
 
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
 export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
-  const result = [...map.entities];
+  const result = [...map.entities,...(projectScene(map)?.resources??[])];
   for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const setup = registry.rules.startingSetup;
     if (s.setup !== setup.id)

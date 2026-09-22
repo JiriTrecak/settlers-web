@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-log-bench",
+  "name": "woodland log bench",
+  "kind": "prop",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "9fff0142191e10216017af745e34bc6eb0309885eaf4687a7076d790560e70b8",
+      "bytes": 1547556
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
+      "bytes": 1705512
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "5bc9c2bf46c65bdc09da5e7a633221104decda039f26d91f6f34c2ea673f46a7",
+      "bytes": 3593426
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
+      "bytes": 1534415
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
+      "bytes": 380
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-log-bench",
+        "sceneryAsset": "woodland-log-bench",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-log-bench"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-log-bench",
+        "name": "woodland log bench",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 0.25
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

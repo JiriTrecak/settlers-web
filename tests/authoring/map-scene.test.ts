@@ -13,14 +13,14 @@ describe('authored map compilation',()=>{
  it('serializes only authored inputs and regenerates identical trees and stream elevations on reload',()=>{
   const map=fixture(),before=stringifyUtcMap(map),a=compileMapScene(map,landscapeAssets),reloaded=parseUtcMap(JSON.parse(before))!,b=compileMapScene(reloaded,landscapeAssets);
   expect(reloaded.authoring).toEqual(map.authoring);expect(b.stamps).toEqual(a.stamps);expect(b.field.samples).toEqual(a.field.samples);expect(stringifyUtcMap(map)).toBe(before);
-  expect(a.generated!.objects.length).toBeGreaterThan(50);expect(a.stamps.length).toBe(a.generated!.objects.length);
+  expect(a.generated!.objects.length).toBeGreaterThan(50);expect(a.stamps.length+a.resources.length).toBe(a.generated!.objects.length);
   expect(a.field.waterAt(127,129)).toBeCloseTo(-.2);expect(a.field.sample(127,129)).toBeLessThan(-1);expect(a.field.waterAt(0,0)).toBe(-8);
  });
  it('preserves terrain and object transforms when the full forest layer is baked',()=>{
   const map=fixture(),a=compileMapScene(map,landscapeAssets);const scene=bakeLayer(map.authoring!,'forest',a.generated!);
   const b=compileMapScene({...map,authoring:scene},landscapeAssets);
   const forest=a.stamps.filter(s=>a.owners.get(s.id)==='forest');expect(forest.length).toBeGreaterThan(20);
-  expect(b.stamps.filter(s=>forest.some(f=>f.id===s.id))).toEqual(forest);expect(b.field.samples).toEqual(a.field.samples);expect([...b.owners.values()]).not.toContain('forest');
+  expect(b.stamps.filter(s=>forest.some(f=>f.id===s.id))).toEqual(forest);expect(b.field.samples).toEqual(a.field.samples);expect([...b.owners.values()]).not.toContain('forest');expect(b.field.grassCoverage).toEqual(a.field.grassCoverage);
  });
  it('restores base height and water when a river is removed and excludes stale bank foliage',()=>{
   const map=fixture();const result=compileMapScene({...map,authoring:{...map.authoring!,layers:map.authoring!.layers.filter(l=>l.id!=='stream')}},landscapeAssets);

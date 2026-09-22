@@ -9,7 +9,7 @@ export function sourceDirectLight(shader:WebGLProgramParametersWithUniforms){
  const start=chunk.indexOf(marker),body=chunk.indexOf('{',start);
  if(start<0||body<0)throw Error('Three direct-light shader interface changed');
  const direct=`
- if(uReferenceColorEnabled>0.){
+ {
   vec3 N=geometryNormal,V=geometryViewDir,L=directLight.direction,H=normalize(V+L);
   float noV=abs(dot(N,V))+1e-5,noH=clamp(dot(N,H),0.,1.),hoV=clamp(dot(H,V),0.,1.);
   float backside=0.; // SOURCE_BACKSIDE
@@ -32,6 +32,6 @@ export function sourceDirectLight(shader:WebGLProgramParametersWithUniforms){
   .replace('#include <lights_physical_pars_fragment>',chunk.slice(0,body+1)+direct+chunk.slice(body+1))
   .replace('#include <lights_physical_fragment>',`#include <lights_physical_fragment>
    // Source uses authored roughness with a .001 floor, without derivative AA.
-   if(uReferenceColorEnabled>0.)material.roughness=max(roughnessFactor,.001);
+   material.roughness=max(roughnessFactor,.001);
   `);
 }

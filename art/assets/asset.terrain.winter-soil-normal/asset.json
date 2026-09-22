@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.terrain.winter-soil-normal",
+  "name": "winter soil · normal/height",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "9e6c1c46b334226dae559d9c7dfa7cc6b07c84fc0f94290c11e5c5d5c88913be",
+      "bytes": 398611
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "7cd949753d1ec1ac50e0a18711eb17be34d7967219b94b5ffe2ce1e0da4b4925",
+      "bytes": 521
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

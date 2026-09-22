@@ -11,8 +11,8 @@ export type Owner = z.infer<typeof ownerSchema>;
 export const surfaceSchema = z.string().min(1).max(160);
 export const pointSchema = z
   .object({
-    x: z.number().int().min(0).max(511),
-    y: z.number().int().min(0).max(511),
+    x: z.number().int().min(0).max(2047),
+    y: z.number().int().min(0).max(2047),
     surface: surfaceSchema.optional(),
   })
   .strict();

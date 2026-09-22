@@ -1,0 +1,15 @@
+{
+  "method": "imagegen",
+  "intent": "Original newly generated woodland soil, with palette and quiet painted detail matched to the approved visual reference.",
+  "source": "exec-0eb026c6-5ff9-4e61-b47d-48f4df60cd56.png",
+  "prompt": "Original seamless square tileable RTS game terrain albedo, warm compact woodland soil. Reference for style, color and scale only; new pixels and arrangement. Dark raw albedo for HDR renderer. Muted warm brown and taupe, softly painted irregular patches, tiny embedded grit, no deep cracks, directional light, vignette or objects.",
+  "originalPixels": true,
+  "revision": 2,
+  "refinement": "Nearly featureless low contrast diffuse albedo, tiny flecks rather than leaf or gravel shapes.",
+  "packing": {
+    "size": 1024,
+    "albedo": "Original generated RGB, no color grading or imported pixels",
+    "roughness": 240,
+    "normalHeight": "Derived from softly filtered original luminance with normalized height contrast; periodic finite differences"
+  }
+}

@@ -14,16 +14,35 @@ function field(x:number,y:number,period:number,seed:number):number {
 
 /** Broad openings surrounded by smaller leaf clusters, generated once per edit. */
 export function canopyMask(size:number,coverage:number,seed:number):Uint8Array {
- const values=new Float32Array(size*size);
+ const values=new Float32Array(size*size).fill(-8);
+ const cells=36,step=size/cells;
+ const random=(x:number,y:number,salt:number)=>{let n=Math.imul(x+seed+salt,374761393)^Math.imul(y+salt,668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967295;};
+ // Directional pointed leaves, gathered into crowns with broad openings.
+ // Explicit silhouettes avoid the old soft noise mask's circular blotches.
+ for(let gy=0;gy<cells;gy++)for(let gx=0;gx<cells;gx++){
+  const cx=(gx+.5+(random(gx,gy,1)-.5)*.75)*step,cy=(gy+.5+(random(gx,gy,2)-.5)*.75)*step;
+  const angle=random(gx,gy,3)*Math.PI*2,c=Math.cos(angle),s=Math.sin(angle);
+  const a=step*(.75+random(gx,gy,4)*.4),b=step*(.22+random(gx,gy,5)*.12);
+  const crown=field(cx/size*5,cy/size*5,5,seed),bias=(crown-.45)*3;
+  const radius=Math.ceil(a*1.8);
+  for(let y=Math.floor(cy-radius);y<=cy+radius;y++)for(let x=Math.floor(cx-radius);x<=cx+radius;x++){
+   const dx=x-cx,dy=y-cy,u=Math.abs((dx*c+dy*s)/a),v=Math.abs((-dx*s+dy*c)/b);
+   const leaf=1-u*u-v/(Math.max(.08,1-u*.7))+bias;
+   const i=((y%size+size)%size)*size+(x%size+size)%size;
+   values[i]=Math.max(values[i]!,leaf);
+  }
+ }
+ // Leaves break up crown edges; dense crown interiors cast connected shade.
+ // A field of isolated silhouettes reads as confetti on otherwise empty terrain.
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-  const u=x/size,v=y/size;
-  values[y*size+x]=field(u*5,v*5,5,seed)*.45+field(u*23,v*23,23,seed+31)*.4+field(u*79,v*79,79,seed+71)*.15;
+  const i=y*size+x;
+  values[i]=field(x/size*5,y/size*5,5,seed)*.85+Math.max(0,Math.min(1,values[i]!))*.15;
  }
  // Coverage is an actual area fraction, independent of the noise seed.
  const sorted=Float32Array.from(values).sort(),threshold=sorted[Math.floor((1-coverage)*(sorted.length-1))]!;
  const data=new Uint8Array(size*size*4);
  for(let i=0;i<values.length;i++){
-  const alpha=Math.round(Math.max(0,Math.min(1,.5+(values[i]!-threshold)*32))*255);
+  const alpha=Math.round(Math.max(0,Math.min(1,.5+(values[i]!-threshold)*5))*255);
   data[i*4]=data[i*4+1]=data[i*4+2]=alpha;data[i*4+3]=255;
  }
  return data;

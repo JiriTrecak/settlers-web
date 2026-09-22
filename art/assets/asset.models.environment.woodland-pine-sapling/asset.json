@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-pine-sapling",
+  "name": "woodland pine sapling",
+  "kind": "foliage",
+  "revision": 10,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "91ac2052bd680f387a8bf19e479b83f6b89d00382e7dc5be91a861c0ff6f6c96",
+      "bytes": 1258500
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "4c5acc81277844402f3632f4487443df893579a66dd6bf984a33f2bc3f0105b7",
+      "bytes": 1747486
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
+      "bytes": 987876
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
+      "bytes": 236370
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-pine-sapling",
+        "sceneryAsset": "woodland-pine-sapling",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-pine-sapling"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-pine-sapling",
+        "name": "woodland pine sapling",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 0.3,
+    "wind": {
+      "mode": "tree",
+      "strength": 0.1,
+      "speed": 0.18,
+      "stiffness": 0.8
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original Blender geometry and procedural bark. Original pine-bough albedo generated with built-in ImageGen. All geometry and pixels independently authored."
+  }
+}

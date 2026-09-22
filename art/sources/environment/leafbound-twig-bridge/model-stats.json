@@ -1,0 +1,11 @@
+{
+  "meshes": 194,
+  "materials": 5,
+  "collections": [
+    "Original woodland geometry",
+    "Bound twig deck",
+    "Curved structural runners and rails",
+    "End brace branches",
+    "Studio"
+  ]
+}

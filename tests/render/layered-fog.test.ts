@@ -38,7 +38,7 @@ it('switches reveal mode without retaining a deck mask and preserves material sh
  material.onBeforeCompile=s=>{s.uniforms.other={value:17};};
  const nodes=[{cell:10,height:400}],cells=new Uint8Array(65);cells.fill(2,0,64);
  fog.update({cells:cells.slice(0,64),floors:{cells,decks:nodes},owner:1,revision:1},scene);
- const shader={vertexShader:'#include <project_vertex>',fragmentShader:'#include <fog_fragment>',uniforms:{} as Record<string,{value:unknown}>};material.onBeforeCompile(shader as never,{} as never);
+ const shader={vertexShader:'#include <project_vertex>\n#include <fog_vertex>',fragmentShader:'#include <fog_fragment>',uniforms:{} as Record<string,{value:unknown}>};material.onBeforeCompile(shader as never,{} as never);
  expect(shader.uniforms.other.value).toBe(17);expect(shader.uniforms.utcFogLayerCount.value).toBe(2);
  expect(shader.uniforms.utcVisibility.value).not.toBe(fog.texture);
  fog.update({cells:new Uint8Array(64).fill(2),owner:-1,revision:-2},scene);

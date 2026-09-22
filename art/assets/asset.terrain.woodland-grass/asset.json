@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "asset.terrain.woodland-grass",
+  "name": "woodland grass · albedo/roughness",
+  "kind": "terrain-material",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "a793a1d47edaa31c84b06ab132a0fa5a17c32cf5a29e945cd56a5f0a09680b63",
+      "bytes": 1742557
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "27387589b51d0f0c8de5f4503c24859a793ce3109833a9fc67586e08c23cdb65",
+      "bytes": 720
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "87f9aae4d345eb2aa931c79968962f151db147da14c08d5d7c37fa35bdfd09b6",
+      "bytes": 1649982
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

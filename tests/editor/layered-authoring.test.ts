@@ -1,3 +1,4 @@
+import '../fixtures/walkableCatalogue';
 import {selectedWalk} from '../../src/editor/select/select';
 import {it,expect,vi} from 'vitest';
 import {WorldEditor} from '../../src/editor/world/worldEditor';
@@ -8,7 +9,7 @@ import {bridgeSurfaces} from '../../src/shared/map/bridgeSurface';
 
 function fixture(){
  const changed=vi.fn(),editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement,onChange:changed});
- editor.replace({...emptyUtcMap(),stamps:[{id:'root',asset:'arched-root-walkway',x:32,y:32},{id:'mushroom',asset:'lanterncap-grove',x:50,y:50}]});
+ editor.replace({...emptyUtcMap(),stamps:[{id:'root',asset:'leafbound-twig-bridge',x:32,y:32},{id:'mushroom',asset:'woodland-mushroom-cluster',x:50,y:50}]});
  return {editor,control:new EditorControl(editor,new CatalogueStore(),vi.fn()),changed};
 }
 it('authors explicit floors through the editor operation, saves them, and resets to asset defaults',()=>{
@@ -40,7 +41,7 @@ it('authors indoor spores and ceiling through the same operation used by MCP',()
 });
 
 it('preserves asset connections when the inspector edits a height-only override',()=>{
- const {editor,control}=fixture(),deck=new CatalogueStore().entry('arched-root-walkway')!.deck!;
+ const {editor,control}=fixture(),deck=new CatalogueStore().entry('leafbound-twig-bridge')!.deck!;
  control.dispatch('walkSurface',{id:'root',walk:{level:1,height:11.4}});
  const displayed=selectedWalk(editor.map.stamps[0]!,deck)!;
  expect(displayed.connections).toEqual({start:0,end:0});

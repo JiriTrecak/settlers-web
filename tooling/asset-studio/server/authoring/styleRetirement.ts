@@ -4,7 +4,7 @@ import {missingModelPackage,MISSING_MODEL_ID} from './placeholder';
 
 /** Explicit project direction, not a name-based heuristic that hides future authored assets. */
 export function legacyStyleModel(asset:AssetDefinition):boolean{
- return asset.usesGeometry&&asset.id!==MISSING_MODEL_ID&&!asset.tags.some(tag=>['forest-warfare','scouring'].includes(tag));
+ return asset.usesGeometry&&asset.id!==MISSING_MODEL_ID&&!asset.tags.some(tag=>['forest-warfare','original'].includes(tag));
 }
 export async function retirementPlan(released:AssetDefinition[],working:AssetDefinition[]){
  const retired=released.filter(legacyStyleModel),ids=new Set(retired.map(a=>a.id));
@@ -23,6 +23,6 @@ export async function retirementPlan(released:AssetDefinition[],working:AssetDef
  const prefix=assetFolder(MISSING_MODEL_ID),staged=new Map([[prefix+'/geometry.glb',placeholder.geometry],[prefix+'/albedo.png',placeholder.albedo]]);
  const writes=[...staged].map(([path,bytes])=>({path,bytes}));
  writes.push({path:prefix+'/asset.json',bytes:definitionBytes(placeholder.asset)},...archived.map(a=>({path:assetFolder(a.id)+'/asset.json',bytes:definitionBytes(a)})));
- const audit={version:1,policy:'Keep Scouring references and forest-warfare models. Archive prior styles; preserve required runtime IDs with diagnostic geometry.',placeholder:MISSING_MODEL_ID,retired:retired.map(a=>({id:a.id,name:a.name,tags:a.tags,revision:a.revision,render:a.bindings.render.map(b=>b.id),scenery:a.bindings.scenery.map(b=>b.id),resources:a.resources.map(r=>({role:r.role,index:r.index,sha256:r.sha256,bytes:r.bytes}))})),retainedModels:next.filter(a=>a.usesGeometry).map(a=>a.id)};
+ const audit={version:1,policy:'Keep original and forest-warfare models. Archive prior styles; preserve required runtime IDs with diagnostic geometry.',placeholder:MISSING_MODEL_ID,retired:retired.map(a=>({id:a.id,name:a.name,tags:a.tags,revision:a.revision,render:a.bindings.render.map(b=>b.id),scenery:a.bindings.scenery.map(b=>b.id),resources:a.resources.map(r=>({role:r.role,index:r.index,sha256:r.sha256,bytes:r.bytes}))})),retainedModels:next.filter(a=>a.usesGeometry).map(a=>a.id)};
  return {assets:next,staged,writes,audit};
 }

@@ -1,6 +1,6 @@
 import {BufferAttribute,BufferGeometry,HalfFloatType,LinearMipmapLinearFilter,Mesh,OrthographicCamera,RepeatWrapping,Scene,ShaderMaterial,WebGLRenderTarget,type WebGLRenderer} from 'three';
 import {referenceTexture} from '../terrain/referenceTerrain';
-import causticsUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.env_water_caustics__d_uncmp.png/albedo.png?url';
+import causticsUrl from '../../../assets/library/asset.texture.woodland-caustics/albedo.png?url';
 
 /** WaterCompute.fx::causticsPS and Common.fxh::SampleMirrored.
  * The source does not store its generated-target size; 256 is our explicit choice. */

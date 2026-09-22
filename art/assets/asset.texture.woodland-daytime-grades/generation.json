@@ -1,0 +1,97 @@
+{
+  "method": "authored",
+  "originalPixels": true,
+  "algorithm": "Independent channel curves with luminance-preserving saturation, evaluated on a 32-cube lattice.",
+  "profiles": {
+    "day": {
+      "gamma": [
+        1.2,
+        1.16,
+        1.15
+      ],
+      "black": [
+        0,
+        0,
+        5
+      ],
+      "white": [
+        250,
+        246,
+        240
+      ],
+      "saturation": 0.97
+    },
+    "day_to_night": {
+      "gamma": [
+        0.97,
+        0.97,
+        0.99
+      ],
+      "black": [
+        0,
+        0,
+        8
+      ],
+      "white": [
+        255,
+        254,
+        241
+      ],
+      "saturation": 0.97
+    },
+    "night": {
+      "gamma": [
+        0.89,
+        0.9,
+        0.9
+      ],
+      "black": [
+        0,
+        0,
+        0
+      ],
+      "white": [
+        255,
+        255,
+        255
+      ],
+      "saturation": 0.95
+    },
+    "night_to_day": {
+      "gamma": [
+        1,
+        1,
+        1.01
+      ],
+      "black": [
+        2,
+        2,
+        8
+      ],
+      "white": [
+        255,
+        255,
+        244
+      ],
+      "saturation": 0.93
+    },
+    "winter_day": {
+      "gamma": [
+        1.06,
+        1.04,
+        1.02
+      ],
+      "black": [
+        2,
+        3,
+        7
+      ],
+      "white": [
+        246,
+        250,
+        255
+      ],
+      "saturation": 0.91
+    }
+  }
+}

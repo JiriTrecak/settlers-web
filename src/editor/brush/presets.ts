@@ -3,7 +3,7 @@
  */
 import { mintSlotId, type BrushSlot } from "./kit";
 
-export const BRUSH_PRESET_KEY = "utc.brush-presets.scouring-1";
+export const BRUSH_PRESET_KEY = "utc.brush-presets.woodland-2";
 
 export type BrushPreset = {
   readonly id: string;

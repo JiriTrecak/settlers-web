@@ -1,0 +1,30 @@
+{
+  "relevantTests": {
+    "files": 17,
+    "passed": 84,
+    "failed": 0
+  },
+  "fullSuite": {
+    "passed": 950,
+    "failed": 7,
+    "failedSuites": 8,
+    "note": "One suite could not load its retired map fixture. Seven assertions still expect retired content or renderer behavior. See validation.md."
+  },
+  "blenderSourcesValidated": 30,
+  "runtimeModelsLoadedAndOrbitReviewed": 30,
+  "map": {
+    "name": "Threewater Forest",
+    "editableLayers": 38,
+    "harvestableTrees": 1691,
+    "generatedProps": 15368,
+    "authoredLandmarkObjects": 45,
+    "walkableCrossings": 3
+  },
+  "visualChecks": [
+    "Threewater landmarks and all crossings",
+    "Original model collection",
+    "Winter forest",
+    "Autumn forest"
+  ],
+  "performance": "No new frame-time benchmark captured; model counts are not frame-time claims."
+}

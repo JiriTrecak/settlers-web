@@ -1,10 +1,10 @@
 import {CubeTexture,DataTexture,LinearFilter,LinearMipmapLinearFilter,SRGBColorSpace} from 'three';
-import url from '../../../assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.bin/data.bin?url';
-import metadata from '../../../assets/library/asset.unregistered.textures.reference.scouring.reflection-cube.json/data.json';
-import brdfUrl from '../../../assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.bin/data.bin?url';
-import brdfMetadata from '../../../assets/library/asset.unregistered.textures.reference.scouring.brdf-lut.json/data.json';
+import url from '../../../assets/library/asset.texture.woodland-reflection/data.bin?url';
+import metadata from '../../../assets/library/asset.texture.woodland-reflection/data_2.json';
+import brdfUrl from '../../../assets/library/asset.texture.woodland-brdf/data.bin?url';
+import brdfMetadata from '../../../assets/library/asset.texture.woodland-brdf/data_2.json';
 
-/** Author-filtered BC7 cube. Do not regenerate its roughness/irradiance mip levels. */
+/** Original analytic woodland sky with explicit roughness mip levels. */
 export function sourceReflection(){
  const texture=new CubeTexture(Array.from({length:6},()=>new DataTexture(new Uint8Array([0,0,0,255]),1,1)));
  texture.generateMipmaps=false;texture.minFilter=LinearFilter;texture.colorSpace=SRGBColorSpace;texture.needsUpdate=true;

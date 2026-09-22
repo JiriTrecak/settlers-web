@@ -1,3 +1,4 @@
+import {BIOMES, type MapSize} from '../../content/biomes';
 import {missionSchema, type MissionDefinition} from "../scenario/schema";
 import {authoringSceneSchema,type AuthoringScene} from '../authoring/layers';
 import { z } from "zod";
@@ -45,8 +46,8 @@ export type MapStamp = {
 const startSchema = z
   .object({
     player: z.number().int().min(1).max(8),
-    x: z.number().int().min(0).max(511),
-    z: z.number().int().min(0).max(511),
+    x: z.number().int().min(0).max(2047),
+    z: z.number().int().min(0).max(2047),
     setup: z.string(),
     mainFort: z.string(),
   })
@@ -54,7 +55,8 @@ const startSchema = z
 export type PlayerStart = z.infer<typeof startSchema>;
 
 export type UtcMap = {
-  readonly size: 256 | 512;
+  readonly size: MapSize;
+  readonly biome?: string;
   readonly playerStarts: readonly PlayerStart[];
   readonly entities: readonly Placement[];
   readonly camps: readonly Camp[];
@@ -72,7 +74,7 @@ export type UtcMap = {
   readonly authoring?: AuthoringScene;
 };
 
-export function emptyUtcMap(size: 256 | 512 = 256): UtcMap {
+export function emptyUtcMap(size: MapSize = 256): UtcMap {
   return {
     v: UTCMAP_VERSION,
     size,
@@ -113,11 +115,13 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
           "height",
           "landscape",
           "authoring",
+          "biome",
         ].includes(k),
     )
   )
     return null;
-  if (o.size !== 256 && o.size !== 512) return null;
+  if (o.size !== 256 && o.size !== 512 && o.size !== 1024 && o.size !== 2048) return null;
+  if (o.biome !== undefined && !BIOMES.some(b => b.id === o.biome)) return null;
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return null;
@@ -158,6 +162,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     v: UTCMAP_VERSION,
     size,
     name,
+    ...(typeof o.biome === "string" ? {biome: o.biome} : {}),
     ...(description ? { description } : {}),
     ...(mission.data ? {mission:mission.data} : {}),
     ...(o.sandbox ? {sandbox:true} : {}),
@@ -183,6 +188,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       v: map.v,
       size: map.size,
       name: map.name,
+      ...(map.biome ? {biome: map.biome} : {}),
       ...(map.description ? { description: map.description } : {}),
       ...(map.mission ? {mission:map.mission} : {}),
       ...(map.sandbox ? {sandbox:true} : {}),

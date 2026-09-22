@@ -4,16 +4,16 @@ import {SceneryLights} from '../../src/render/prop/sceneryLights';
 import {HeightField} from '../../src/shared/map/height';
 it('keeps a fixed light budget, transforms emitters and reuses lights after camera movement',()=>{
  const scene=new Scene(),lights=new SceneryLights(scene),field=new HeightField(256);
- lights.sync(Array.from({length:12},(_,i)=>({id:`l${i}`,asset:'lantern-post',x:10+i*2,y:10,yaw:Math.PI/2,scale:2})),field);
+ lights.sync(Array.from({length:12},(_,i)=>({id:`l${i}`,asset:'woodland-amber-lantern',x:10+i*2,y:10,yaw:Math.PI/2,scale:2})),field);
  lights.update(10,10);
  const pool=scene.children.filter((o):o is PointLight=>o instanceof PointLight);
  expect(pool).toHaveLength(4);expect(pool.every(l=>l.intensity>0&&!l.castShadow)).toBe(true);
- expect(pool[0].position.x).toBeCloseTo(10.5);expect(pool[0].position.z).toBeCloseTo(10.5-1.56);expect(pool[0].position.y).toBeCloseTo(5.7);
+ expect(pool[0].position.x).toBeCloseTo(10.42);expect(pool[0].position.z).toBeCloseTo(10.5-1.56);expect(pool[0].position.y).toBeCloseTo(4.5);
  lights.update(240,240);expect(pool.every(l=>l.intensity===0)).toBe(true);expect(scene.children).toHaveLength(4);
  lights.dispose();expect(scene.children).toHaveLength(0);
 });
 it('reuses stable scene sources and refreshes after explicit terrain invalidation',()=>{
- const scene=new Scene(),lights=new SceneryLights(scene),field=new HeightField(256),stamps=[{id:'lamp',asset:'lantern-post',x:10,y:10}];
+ const scene=new Scene(),lights=new SceneryLights(scene),field=new HeightField(256),stamps=[{id:'lamp',asset:'woodland-amber-lantern',x:10,y:10}];
  lights.sync(stamps,field);const before=lights.groundSources;lights.sync(stamps,field);expect(lights.groundSources).toBe(before);
  field.samples.fill(4);lights.invalidate();lights.sync(stamps,field);expect(lights.groundSources).not.toBe(before);expect(lights.groundSources[0]!.y-before[0]!.y).toBeCloseTo(4);lights.dispose();
 });
