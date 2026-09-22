@@ -206,6 +206,6 @@ And yes, all of this effort is so a tiny ant with a sword goes where you told it
 
 This post describes the development checkpoint of September 10, 2026. Measurements are specific fixtures, not universal speedups or internet-latency guarantees. The diagrams are original explanatory illustrations. Network changes describe the updated client/server implementation, not a measured production deployment.
 
-The [combat-feel engineering log](/development/declarations/combat-feel) records timing, formation, pursuit, and network changes. The [traffic audit](/development/declarations/traffic-audit) records the crowd matrices, retained changes, rejected experiments, and remaining failures. Our [controls guide](/guide/controls) describes the current player-facing commands.
+The [combat and movement contract](/development/declarations/combat-feel) describes current implementation boundaries. Our [controls guide](/guide/controls) describes the current player-facing commands.
 
 The reproducible repository entry points are `scripts/bench/army-movement.ts`, `scripts/bench/combat-traffic.ts`, `scripts/bench/mixed-movement.ts`, and `scripts/bench/combat-frontline.ts`. The interactive lab is `combat-lab.html` on the game development server. The wiki does not run the game engine.

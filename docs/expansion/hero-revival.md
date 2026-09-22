@@ -10,14 +10,14 @@ Point-targeted commands display a terrain-following impact footprint before comm
 
 A hero's existing entity identity is retained with `hp: 0` and `fallen: true` after authoritative death resolution. The entity is excluded from live gameplay, visibility sensors, collisions and battlefield selection. XP, learned skills, cooldown timestamps and equipment remain attached. Work/movement/transient effects are cleared. Ground drops still come from neutral camp rewards or deliberate item drops; hero death no longer spills inventory.
 
-The owner's observation includes a separate `fallenHeroes` roster. Enemy players cannot read it. The current simulation snapshot (`declarative-sim-12`) retains this state and validates revival references and duplicate queues.
+The owner's observation includes a separate `fallenHeroes` roster. Enemy players cannot read it. The simulation snapshot retains this state and validates revival references and duplicate queues.
 
 ## Amber Sanctuary
 
-Workers can construct `building.ants.sanctuary` from Advanced Build. Cost: 12 wood + 8 amber. Its declarative `revival` behavior defines a four-entry queue and 400 ticks (10 seconds at 40 Hz) of work. Revival itself is currently free. Commands are `revive {actor, hero}` and `cancelRevival {actor, hero}`; a hero cannot be queued at two buildings. The selected building exposes a command per fallen hero and a cancelable percentage queue.
+Workers can construct `building.ants.sanctuary` when its build action is available. Cost and command category come from the content registry. Its declarative `revival` behavior defines a four-entry queue and 400 ticks (10 seconds at 40 Hz) of work. Revival itself is currently free. Commands are `revive {actor, hero}` and `cancelRevival {actor, hero}`; a hero cannot be queued at two buildings. The selected building exposes a command per fallen hero and a cancelable percentage queue.
 
 Completion restores the same hero at an available location near the entrance, with full derived HP and mana, preserved XP/skills/items, and unchanged absolute ability cooldowns. A blocked exit delays completion. Destroying the building discards its queue but leaves the fallen hero available elsewhere. Additional hero purchases are not implemented; revival does not manufacture a replacement identity.
 
 ## Validation
 
-284 tests passed at the checkpoint, plus production build and combat-harness type check. New coverage includes real forced-combat hero death, six retained items, learned skill/XP preservation, save/load halfway through revival, duplicate queue rejection, owner-only commands, cancellation, building loss and live restoration. Browser inspection verified line/circle previews, invalid red targets and cancellation in the combat harness. Sanctuary GLB, saved Blender file, front/rear geometry and blue flag recoloring were inspected. Full match balance and purchasing remain separate work.
+Check authoritative hero death, retained equipment/skills/XP, save/load during revival, duplicate queue rejection, ownership, cancellation, building loss and successful restoration. Model availability and live visual behavior must be checked separately from simulation state.

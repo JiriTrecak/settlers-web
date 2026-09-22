@@ -64,7 +64,7 @@ The planner first tries a direct swept line to the destination. When blocked, ei
 
 A* uses an octile heuristic, costs 1000/1414, stable heap ties and reusable generation-stamped buffers. Integer supercover ray traversal checks every crossed cell, including both sides at exact corners and slope limits. A conservative 0.2-cell half-width sweep protects buildings, terrain and resources. Execution repeats the sweep for each movement segment, checks unit occupancy and 0.4-cell pair separation, and replans/yields deterministically when blocked. A newly occupied delivery goal can choose a nearby free handoff point.
 
-The current simulation identity is `declarative-sim-13`; saves and peers with incompatible content or simulation identity are rejected. These geometry/collision algorithms are native systems, not content-configurable behavior code.
+Saves and peers with incompatible content or simulation identity are rejected. These geometry/collision algorithms are native systems, not content-configurable behavior code.
 
 ### Building placement orientation
 

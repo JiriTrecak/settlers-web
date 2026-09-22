@@ -26,7 +26,7 @@ Initial scope is these native spatial/work orders. Spell casts, item use, recrui
 - `UnitOrder` and `unit.orderQueue` are authoritative, typed simulation state. The queue stores persistent entity IDs or map coordinates, never a precomputed path or UI callback.
 - `UnitOrders` owns append/replace/advance; Game validates activation; Economy, Combat and Inventory own task completion. Navigation remains a native system.
 - Only the owner's observation exposes `control.orderQueue`. Presentation resolves labels/art from content and observed targets. A queued worker is unavailable for automatic recruitment and idle wandering.
-- Queues are saved and checksummed. Simulation build `declarative-sim-16` identifies the changed state contract; incompatible saves/peers should start a fresh match.
+- Queues are saved and checksummed. Incompatible save or simulation identities require a fresh match.
 
 ## Feedback
 

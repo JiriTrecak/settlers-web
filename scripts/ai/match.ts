@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { parseUtcMap } from "../../src/shared/map/utcmap";
 import { World } from "../../src/sim/world/world";
-const path = process.argv[2] ?? "assets/maps/skirmish/worldroot-hollow.utcmap";
+const path = process.argv[2] ?? "assets/maps/skirmish/threewater-forest.utcmap";
 const map = parseUtcMap(JSON.parse(readFileSync(path, "utf8")))!;
 if (!map) throw new Error("Invalid map");
 const ticks = Number(process.argv[3] ?? 12000),
@@ -95,9 +95,9 @@ const summary = {
       cargo: e.unit?.cargo,
     })),
 };
-mkdirSync("experiments/ai", { recursive: true });
+mkdirSync("tmp/ai", { recursive: true });
 writeFileSync(
-  process.argv[5] ?? "experiments/ai/latest-match.json",
+  process.argv[5] ?? "tmp/ai/latest-match.json",
   JSON.stringify(summary, null, 2),
 );
 if (process.argv[6]) writeFileSync(process.argv[6], JSON.stringify(world.snapshot()));

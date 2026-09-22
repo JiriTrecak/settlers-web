@@ -14,10 +14,10 @@ This runs the TypeScript/content checks and Vite build, then creates `src-tauri/
 
 ## App icon
 
-The source artwork and design prompt are in `assets/ui/app-icon/`. Native PNG, ICNS and ICO variants live in `src-tauri/icons/` and are included through `src-tauri/tauri.conf.json`. Regenerate them after changing the master artwork:
+The published icon is `assets/library/asset.interface.app-icon.under-the-canopy/image.png`. Native PNG, ICNS and ICO variants live in `src-tauri/icons/` and are included through `src-tauri/tauri.conf.json`. Regenerate them after changing the master artwork:
 
 ```sh
-npm run tauri -- icon assets/ui/app-icon/under-the-canopy.png --output src-tauri/icons
+npm run tauri -- icon assets/library/asset.interface.app-icon.under-the-canopy/image.png --output src-tauri/icons
 ```
 
 Multiplayer still needs the configured match server. Development-only content-saving endpoints are not part of the desktop bundle.

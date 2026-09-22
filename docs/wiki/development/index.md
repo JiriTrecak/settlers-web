@@ -30,7 +30,7 @@ No public deployment is performed by these commands.
 - **Player prose:** `docs/wiki/`. These Markdown files explain rules and design intent. New pages are picked up during generation; add a navigation entry in `scripts/wiki/generate.ts` when adding a new guide.
 - **Devlogs:** `docs/wiki/devlog/`. Write in the creator's first-person voice, beginning with the player experience and following the design decisions, experiments and tradeoffs. Add each published post to the devlog index and navigation. Date the post, distinguish shipped work from experiments, and link measurements to the technical audit. Future topics include unit design, terrain, performance and lockstep; listing an idea does not publish a promised article.
 - **Authored illustrations:** `docs/wiki/media/`. SVG, PNG, WebP and JPEG files are copied to the generated site's `/media/` tree. Keep explanatory diagrams labeled as schematics and measured charts tied to reproducible data. Use Markdown image syntax with descriptive alt text so VitePress handles deployment base paths. Never edit the generated copies.
-- **Technical contracts:** existing `docs/declarations/`, `docs/ai/` and other documentation folders. They are published under Development with an engineering or history notice. Earlier design logs are retained and labeled, not promoted to current player rules.
+- **Technical contracts:** existing `docs/declarations/`, `docs/ai/` and other documentation folders. They are published under Development. Keep them current; obsolete plans and milestone logs are removed rather than archived in the wiki.
 - **Presentation:** `wiki/.vitepress/`. Theme components provide the landing page, encyclopedia cards and map atlas. CSS controls the visual treatment.
 - **Generator:** `scripts/wiki/`. Output is confined to `wiki/.generated/`, which is ignored by Git. Do not edit it.
 
@@ -56,8 +56,6 @@ A failed source validation leaves the previous generated output intact. Regenera
 
 ## Engineering reference
 
-- [Warcraft III Human balance research](/development/warcraft-human-balance)
-- [First combat balance baseline](/development/first-balance-pass)
 - [Declaration architecture](/development/declarations/README)
 - [Behaviors](/development/declarations/behaviors)
 - [Worked examples](/development/declarations/examples)
@@ -66,4 +64,4 @@ A failed source validation leaves the previous generated output intact. Regenera
 - [Opponent AI](/development/ai/implementation)
 - [Hero targeting and revival](/development/expansion/hero-revival)
 - [Team-color contract](/development/declarations/team-color)
-- [All technical documents and design history](/development/archive)
+- [Technical reference index](/development/reference-index)

@@ -1,24 +1,21 @@
 # Under the Canopy
 
-A browser RTS with physical colony logistics, composed gameplay definitions, a map editor, and deterministic multiplayer lockstep.
+A TypeScript / Three.js RTS about forest-floor warfare, with deterministic simulation, multiplayer lockstep, procedural map authoring and a separate asset editor.
 
-Run `npm run dev` and open `http://127.0.0.1:5173/`. Singleplayer chooses an authored map. Editor uses the same map records and model renderer. `npm test` checks simulation and infrastructure; `npm run build` validates content and builds the game. `npm run dev:tools` starts the separate art tools.
+## Run
 
-## Game wiki
+- `npm run dev` — game and map editor at http://127.0.0.1:5173/.
+- `npm run dev:tools` — Asset Studio and asset editor at http://127.0.0.1:5175/.
+- `npm run wiki:dev` — generated player/developer wiki at http://127.0.0.1:5174/.
+- `npm run build` and `npm run build:tools` — game type check/build and tools build.
+- `npm test` — automated checks. Socket tests need local loopback access.
 
-Run `npm run wiki:dev` and open `http://127.0.0.1:5174`. The generated VitePress wiki includes player guides, factions, a page for every declared building/unit/item/resource, hero abilities, loot tables and authored maps. Stats and costs come from the same validated content registry as the game.
+The maintained map is **Threewater Forest**, in `assets/maps/skirmish/threewater-forest.utcmap`. Open `/?screen=editor&map=threewater-forest` to edit it. Earlier campaign and study maps are not shipped.
 
-`npm run wiki:build` produces the static site in `wiki/.vitepress/dist/`; `npm run wiki:preview` serves that build on port 4174. Edit player prose in `docs/wiki/`, never `wiki/.generated/`. See [wiki maintenance](docs/wiki/development/index.md) for generation, hosting and authoring details.
+## Documentation
 
-## Start here
+Start with the [documentation index](docs/README.md), [map authoring](docs/editor.md), [asset publication](docs/asset-pipeline/publication.md), or [gameplay contracts](docs/declarations/README.md).
 
-- [Gameplay and controls](docs/game/README.md)
-- [Declarative implementation reference](docs/declarations/README.md)
-- [Definitions and behaviors](docs/declarations/behaviors.md)
-- [Adding content, with JSON examples](docs/declarations/examples.md)
-- [Native systems and lifecycle rules](docs/declarations/systems.md)
-- [Validation and acceptance scenarios](docs/declarations/validation.md)
+`content/game.json` owns gameplay definitions. `art/assets/<id>/asset.json` owns working asset definitions; `assets/authoring/published.json` records releases and `assets/library/` contains their runtime files. See [repository layout](docs/architecture.md).
 
-`content/game.json` is the gameplay source of truth. `assets/maps/showcase/*.utcmap` are the authored maps. Art files stay in `assets/`; their filenames do not imply gameplay behavior.
-
-The approved design history is in `declaration-rebuild-spec.md`, `production-and-work-spec.md`, and `declaration-scenario-review.md`. The implementation reference above records the current API and deliberate refinements. Earlier prototype rule tables, mapless player cubes, stamp-based neutral spawning, and previous map/save formats are retired.
+Keep documentation current rather than appending milestone reports. Disposable captures, benchmark output and comparison renders belong in ignored `tmp/`; editable masters belong in `art/`.

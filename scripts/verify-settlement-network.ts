@@ -51,7 +51,7 @@ try {
   ]);
   const raw = readFileSync(
       new URL(
-        "../assets/maps/skirmish/worldroot-hollow.utcmap",
+        "../assets/maps/skirmish/threewater-forest.utcmap",
         import.meta.url,
       ),
       "utf8",
@@ -59,7 +59,7 @@ try {
     map = parseUtcMap(JSON.parse(raw))!;
   const created = await post("/api/rooms", {
       name: "Settlement verification",
-      mapId: "mosswater-divide",
+      mapId: "threewater-forest",
       mapRevision: mapRevision(map),
       slotCount: 2,
       guestName: "Blue",

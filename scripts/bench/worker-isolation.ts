@@ -10,8 +10,8 @@ import {localMatch} from '../../src/shared/match/match';
 const args=process.argv.slice(2),option=(key:string,fallback:string)=>args[args.indexOf(key)+1]??fallback;
 const ticks=Number(args.includes('--ticks')?option('--ticks','12000'):'12000');
 const output=args.includes('--output')?option('--output','/tmp/worker-isolation.json'):'/tmp/worker-isolation.json';
-const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/four-crowns.utcmap','utf8')))!;
-const match=localMatch({mapId:'four-crowns',mapRevision:'benchmark',seed:731942,slotCount:map.playerStarts.length,me:0});match.slots.forEach(s=>{s.kind='ai';s.team=s.player;});
+const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/threewater-forest.utcmap','utf8')))!;
+const match=localMatch({mapId:'threewater-forest',mapRevision:'benchmark',seed:731942,slotCount:map.playerStarts.length,me:0});match.slots.forEach(s=>{s.kind='ai';s.team=s.player;});
 const worker=new Worker(new URL('../../tests/session/fixtures/simulation-worker.cjs',import.meta.url),{workerData:{benchmark:{ticks}}});
 const samples:Record<string,number[]>={},add=(key:string,value:number)=>(samples[key]??=[]).push(value);
 const stats=(values:number[])=>{const a=[...values].sort((a,b)=>a-b);return {count:a.length,mean:a.reduce((x,y)=>x+y,0)/a.length,p95:a[Math.floor(a.length*.95)],p99:a[Math.floor(a.length*.99)],max:a.at(-1)};};
@@ -38,7 +38,7 @@ try{
  let last=performance.now();timer=setInterval(()=>{const now=performance.now();if(warm)add('parentHeartbeatInterval',now-last);last=now;},8);
  await client.request('start',undefined);
  const result=await complete;
- const report={map:'four-crowns',seed:731942,speed:4,ticks:result.tick,checksum:result.checksum,wallMs:performance.now()-start,
+ const report={map:'threewater-forest',seed:731942,speed:4,ticks:result.tick,checksum:result.checksum,wallMs:performance.now()-start,
   simulation:stats(result.samples),timings:Object.fromEntries(Object.entries(samples).map(([key,values])=>[key,stats(values)])),frames,entityUpdates,fogBytes,routing:result.routing,
   note:'Node worker using production entry/protocol; 8 ms parent heartbeat, no GPU or browser rendering. Tick samples include worker-owned lockstep/receipts. Snapshot timings are per publication at most 40 Hz, not per accelerated tick.'};
  writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

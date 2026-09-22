@@ -49,3 +49,9 @@ assets/maps/*
 
 __pycache__/
 *.pyc
+
+# Disposable review evidence; keep source masters in art/, captures in tmp/.
+/docs/proofs/
+/artifacts/
+/experiments/ai/
+/art/sources/**/comparison.png

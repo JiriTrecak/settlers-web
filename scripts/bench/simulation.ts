@@ -4,7 +4,7 @@ import {World} from '../../src/sim/world/world';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
 const args=process.argv.slice(2);
 const option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
-const mapId=option('--map','four-crowns'),ticks=Number(option('--ticks','12000'));
+const mapId=option('--map','threewater-forest'),ticks=Number(option('--ticks','12000'));
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')))!;
 if(!map||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Choose a valid map and at least 400 ticks');
 const start=performance.now();

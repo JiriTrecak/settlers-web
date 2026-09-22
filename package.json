@@ -25,7 +25,8 @@
     "bench:sim": "node --import tsx scripts/bench/simulation.ts",
     "assets:compile": "node --import tsx scripts/assets/compile.ts",
     "assets:studio": "node --import tsx tooling/asset-studio/cli.ts",
-    "assets:publish": "node --import tsx scripts/assets/publish-authoring.ts"
+    "assets:publish": "node --import tsx scripts/assets/publish-authoring.ts",
+    "docs:check": "node --import tsx scripts/docs/check.ts"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",

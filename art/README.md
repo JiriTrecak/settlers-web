@@ -1,13 +1,11 @@
-# Authoring sources
+# Editable art
 
-- `records/<asset-id>/asset.json`: checked asset identities, exports and source/provenance links.
-- `sources/`: editable Blender documents, recipes, pack sources and local comparison studios.
-- `styles/`: curated reference collections and art direction.
-- `profiles/`: checked export/validation policies.
-- `references/`: scene comparison images.
-- `migrations/`: retained physical-path ledger.
-- `archive/`: historical outputs and generators. No runtime fallback resolves from here.
+- `assets/<asset-id>/asset.json`: working definitions and role-named resources.
+- `sources/`: editable Blender files, model recipes and original image masters.
+- `styles/`: approved art direction and image-reference collections.
+- `profiles/`: export and validation settings.
+- `recipes/`: reproducible environment generation scripts.
 
-Generate/import/publish images through Asset Studio, at `http://127.0.0.1:5175/`. The same server supports `npm run assets:studio` for agents. See `docs/asset-pipeline/studio.md`.
+Runtime resources live in `assets/library/` at the repository root. Publish through the asset editor or shared authoring service; see [publication](../docs/asset-pipeline/publication.md) and [Asset Studio](../docs/asset-pipeline/studio.md).
 
-Historical generators may contain old output paths. They are preserved as reference recipes, not supported entry points. New 3D generation/publication will use a separate provider adapter; existing Blender source previews remain usable.
+Keep source inputs and generation provenance. Put temporary comparisons, screenshots and delivery reports in ignored `tmp/`, not a permanent proof archive. Legacy icon masters are retained in `sources/interface/icons/`; these are unique full-resolution source images, not copies of the small runtime icons.

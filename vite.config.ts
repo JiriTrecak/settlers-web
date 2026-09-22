@@ -26,9 +26,6 @@ export default defineConfig(({ command }) => ({
         reference: fileURLToPath(
           new URL("./reference-stage.html", import.meta.url),
         ),
-        comparison: fileURLToPath(
-          new URL("./visual-compare.html", import.meta.url),
-        ),
       },
     },
   },

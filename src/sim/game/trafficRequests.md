@@ -10,4 +10,4 @@ At the pocket, the unit waits until the leader clears the vicinity, becomes unav
 
 Save validation rejects self-leaders and deadlines beyond the maximum waiting interval. Missing or dead leaders are valid and release the wait. Tests cover all four rotations, collision clearance, reservation release, stop/death/timeout, interruption, and save/replay equivalence.
 
-This is a fallback heuristic, not a deadlock-free pathfinding guarantee or an implementation of PIBT. See `docs/declarations/traffic-audit.md` for measured benefits, regressions and unresolved dense traffic.
+This is a fallback heuristic, not a deadlock-free pathfinding guarantee or an implementation of PIBT. See `docs/declarations/combat-feel.md` for current movement contracts and validation guidance.

@@ -41,8 +41,4 @@ The editor's MCP `editor_landscape` tool exposes the same `plateau` and `ramp` o
 
 ## Try it
 
-[Terrain Proving Ground](/maps/terrain-proving-ground) is a small scenario with a cliff, a wide ramp and an intervening ridge. It isolates movement, fog and firing rules.
-
-[Four Crowns](/maps/four-crowns) is a **512 × 512** four-player battlefield. Four elevated starting colonies descend toward a central lake. A shore road and a higher circulation route connect expansion areas. It contains **48 camps**, including **eight T3 boss encounters**, **16 amber mines**, **12 root deposits**, and rich home forests. Two contested boss camps award legendary items; the other T3 encounters use the hard reward pool, preserving the game's legendary-loot limit.
-
-Choose four separate teams for **1v1v1v1**, or set all four slots to AI to observe. Worldroot Hollow remains available.
+Open [Threewater Forest](/maps/threewater-forest) in the editor to inspect riverbanks, wooded landforms and its three crossings. Use a local test copy when changing heights or bridge endpoints, then verify movement and fog in gameplay.

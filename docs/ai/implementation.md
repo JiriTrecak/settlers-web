@@ -1,6 +1,6 @@
 # Opponent AI implementation
 
-Implemented 9 September 2026. This document describes the running replacement. [The design](README.md), [architecture rationale](architecture.md), and [adversarial review](adversarial-review.md) retain the longer-term intent and playtesting questions. There is one policy, one planner, and no old-planner fallback.
+The opponent uses an observation-limited policy and planner. This page describes authority, scheduling and current behavior; content values come from the registry.
 
 ## Entry points and authority
 
@@ -69,24 +69,21 @@ The Marshal scores visible line/blast footprints, avoids redundant buffs, uses h
 
 ## Determinism, diagnostics and verification
 
-World snapshots are version 2 and the simulation build is `declarative-sim-12`. Content policy, match slots, map identity, brain state, observations and queued actions participate in save validation/checksums. Brain saves are validated before applying a world restore, including pending-command correlation. Incompatible old saves are rejected; there is no compatibility branch. Policy choices depend on ticks, sorted IDs, content and observed state; wall-clock timings are diagnostic only.
+Content policy, match slots, map identity, brain state, observations and queued actions participate in save validation/checksums. Brain saves are validated before applying a world restore, including pending-command correlation. Incompatible old saves are rejected; there is no compatibility branch. Policy choices depend on ticks, sorted IDs, content and observed state; wall-clock timings are diagnostic only.
 
 F3 shows each AI's decision timing, mission, economic state, current reason, and accepted/rejected command counts. Timing samples include the owner observation required for a decision. Each brain retains its last 80 intention records, available through `World.aiSummary()` / snapshots. This is an initial explanation surface; a clickable map of scored alternatives is not implemented.
 
 Run the reproducible headless harness:
 
 ```sh
-node --import tsx scripts/ai/match.ts assets/maps/showcase/mosswater-divide.utcmap 24000 duel experiments/ai/mosswater-duel.json
-node --import tsx scripts/ai/match.ts assets/maps/skirmish/amberfall-wilds.utcmap 20000 duel experiments/ai/amberfall-duel.json
+node --import tsx scripts/ai/match.ts assets/maps/skirmish/threewater-forest.utcmap 24000 duel tmp/ai-match.json
 ```
 
 The harness reports investments, skill/loot use, hero levels, outcome, and CPU percentiles for actual decision beats. `passive` instead of `duel` supplies a stationary human-controlled opponent. Results are written to the specified JSON report. These are simulation tests, not a claim of human playtesting or a fixed match length.
 
-The economy cutover passed **325 tests across 90 files**, including AI, spell and lockstep checks. TypeScript and the production build pass.
 
-Automated coverage lives in `tests/ai/player-ai.test.ts` and the existing lockstep, observation, economy, inventory, spell and revival suites. It covers hidden camp changes, inspected emptiness, enemy-private-field removal, command budgets, arbitrary-tick save continuation, healing/skills, resurrection, worker evacuation, a broke one-worker economy, noncombat targets, saved death reports, and eight-slot save continuity. The wider adversarial scenario list remains a playtesting backlog, not a list of scenarios all proven by unit tests.
+Automated coverage lives in `tests/ai/player-ai.test.ts` and the existing lockstep, observation, economy, inventory, spell and revival suites. It covers hidden camp changes, inspected emptiness, enemy-private-field removal, command budgets, arbitrary-tick save continuation, healing/skills, resurrection, worker evacuation, a broke one-worker economy, noncombat targets, saved death reports, and eight-slot save continuity. Human playtesting is still required; unit tests do not prove opponent quality.
 
-Before the economy cutover, the final Mosswater passive-opponent run ended in a hall kill at tick 5,094 (about 2:07) with a level-4 Marshal, 14 recruitment commands, eight casts, four pickups, and no rejected commands; an Amberfall two-AI run ended in a hall kill with level-7 and level-8 Marshals. The live Mosswater browser check reported about 120 FPS and roughly 1.2 ms p95 for one AI decision in that view. Headless decision timings were higher on the large two-AI map. These are observations on this machine, not a universal 120 FPS or sub-1-ms guarantee. Report files capture individual tuning runs; balance and human exploit testing should continue from actual matches.
 
 ## Skirmish lobby and observation
 
@@ -126,5 +123,3 @@ a future multiplayer lobby; this change does not alter the network-room protocol
 Tests cover P2 ownership and starts, zero-human matches, roster validation, observer command
 rejection and save restoration, visual fog restoration, unchanged AI knowledge/checksums,
 and equivalent simulation results at all four speeds.
-
-After the amber/wood cutover, a 16,000-tick Mosswater duel kept both economies producing, expanding capacity and recruiting: each finished with 23 workers; Player 1 had 17 warriors and 10 archers, Player 2 had 16 warriors and 9 archers. No outcome had occurred yet. This is a liveness smoke test, not a balance verdict.

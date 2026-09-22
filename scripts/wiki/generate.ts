@@ -18,12 +18,6 @@ export const root = path.resolve(
   fileURLToPath(new URL("../../", import.meta.url)),
 );
 const destination = path.join(root, "wiki/.generated");
-const designs = [
-  "declaration-proposal.md",
-  "declaration-rebuild-spec.md",
-  "declaration-scenario-review.md",
-  "production-and-work-spec.md",
-];
 async function paths(dir: string): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   return (
@@ -205,15 +199,11 @@ export async function generate() {
       "Explore the authored battlefields. Previews and camp lists are generated from the same map files loaded by Skirmish, Campaign and the editor.\n\n<WikiMaps />",
     ),
   );
-  // Preserve relative links inside technical documentation. Old design logs are explicitly historical.
+  // Publish the maintained technical documentation, preserving relative links.
   const technical: string[] = [];
   for (const file of await paths(path.join(root, "docs"))) {
     if (!file.endsWith(".md") || file.startsWith(authored + path.sep)) continue;
     const rel = path.relative(path.join(root, "docs"), file);
-    const historical =
-      rel.startsWith("build-plan/") ||
-      rel === "expansion/hero-economy.md" ||
-      ["reference-landscapes.md", "vivid-landscapes.md"].includes(rel);
     let md = await readFile(file, "utf8");
     // Technical illustrations are copied only when the page references them,
     // preserving relative URLs without publishing the entire authoring library.
@@ -235,50 +225,23 @@ export async function generate() {
           return `${label} (repository source: \`${path.relative(root, href)}\`)`;
         if (/^(https?:|#|\/)/.test(href)) return full;
         const target = path.resolve(path.dirname(file), href.split("#")[0]);
+        if (target.startsWith(authored + path.sep)) {
+          const fragment = href.includes("#") ? "#" + href.split("#")[1] : "";
+          return `[${label}](/${path.relative(authored, target).replace(/\.md$/, "")}${fragment})`;
+        }
         if (!target.startsWith(path.join(root, "docs") + path.sep))
           return `${label} (repository source: \`${path.relative(root, target)}\`)`;
         return full;
       },
     );
     const title = md.match(/^# (.+)$/m)?.[1] ?? rel;
-    const notice = historical
-      ? "::: warning Design history\nThis document preserves an earlier design or implementation checkpoint. Its balance values and retired production chains are not current game rules. Use the [game guide](/guide/economy) and generated encyclopedia for current behavior.\n:::"
-      : "::: info Developer reference\nThis is an engineering document. For player rules and current balance, use the [game guide](/guide/getting-started) and [encyclopedia](/buildings/).\n:::";
+    const notice = "::: info Developer reference\nThis is an engineering document. For player rules and current balance, use the [game guide](/guide/getting-started) and [encyclopedia](/buildings/).\n:::";
     md = md.replace(/^# .+$/m, (m) => `${m}\n\n${notice}`);
     files.set(
       `development/${rel}`,
-      `---\ntitle: ${JSON.stringify(title)}\n${historical ? "search: false\n" : ""}---\n\n${md}`,
+      `---\ntitle: ${JSON.stringify(title)}\n---\n\n${md}`,
     );
     technical.push(rel);
-  }
-  for (const name of designs) {
-    let md = await readFile(path.join(root, name), "utf8");
-    const title = md.match(/^# (.+)$/m)?.[1] ?? name;
-    md = md.replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      (full, label: string, raw: string) => {
-        const href = raw.replace(/^<|>$/g, "");
-        if (/^(https?:|#)/.test(href)) return full;
-        const [file, fragment] = href.split("#");
-        const target = path.relative(root, path.resolve(root, file));
-        const suffix = fragment ? `#${fragment}` : "";
-        if (designs.includes(target))
-          return `[${label}](/development/design/${target.replace(".md", "")}${suffix})`;
-        if (target.startsWith("docs/") && target.endsWith(".md"))
-          return `[${label}](/development/${target.slice(5).replace(".md", "")}${suffix})`;
-        return `${label} (repository source: \`${target}\`)`;
-      },
-    );
-    md = md.replace(
-      /^# .+$/m,
-      (heading) =>
-        `${heading}\n\n::: warning Design history\nAn earlier proposal, retained for design rationale. Its production chains and balance values may be retired. Read the [current economy](/guide/economy) and [implementation contracts](/development/declarations/README) for the running game.\n:::`,
-    );
-    files.set(
-      `development/design/${name}`,
-      `---\ntitle: ${JSON.stringify(title)}\nsearch: false\n---\n\n${md}`,
-    );
-    technical.push(`design/${name}`);
   }
   const sections = ["buildings", "units", "items", "resources"];
   const navigation = [
@@ -352,20 +315,17 @@ export async function generate() {
       collapsed: true,
       items: [
         { text: "Authoring the wiki", link: "/development/" },
+        { text: "Map editor", link: "/development/editor" },
+        { text: "Architecture", link: "/development/architecture" },
         { text: "Mission scripting & Lua", link: "/development/mission-scripting" },
-        { text: "Briarwatch reference mission", link: "/development/briarwatch-reference" },
         { text: "Canopy environment", link: "/development/canopy-environment" },
         { text: "Performance & loading", link: "/development/performance" },
-        { text: "Warcraft Human balance research", link: "/development/warcraft-human-balance" },
-        { text: "First combat balance baseline", link: "/development/first-balance-pass" },
         {
           text: "Asset Studio",
           collapsed: false,
           items: [
             { text: "Using Asset Studio", link: "/development/asset-pipeline/studio" },
-            { text: "Structure & workflow", link: "/development/asset-pipeline/proposal" },
-            { text: "Current asset audit", link: "/development/asset-pipeline/audit" },
-            { text: "Generation & validation", link: "/development/asset-pipeline/pipeline" },
+            { text: "Asset publication", link: "/development/asset-pipeline/publication" },
           ],
         },
         ...[
@@ -408,15 +368,15 @@ export async function generate() {
           )[rel],
           link: `/development/${rel.replace(".md", "")}`,
         })),
-        { text: "Document archive", link: "/development/archive" },
+        { text: "Technical reference index", link: "/development/reference-index" },
       ],
     },
   ];
   files.set(
-    "development/archive.md",
+    "development/reference-index.md",
     page(
-      "Document archive",
-      "Technical references and historical plans retained from the repository. Older plans are labeled on their pages; their mechanics may have been superseded.\n\n" +
+      "Technical reference index",
+      "Maintained engineering contracts for the game and authoring tools.\n\n" +
         technical
           .map((rel) => `- [${rel}](/development/${rel.replace(".md", "")})`)
           .join("\n"),
@@ -439,7 +399,7 @@ export async function generate() {
   }
   files.set(
     "public/media/forest-heroes.png",
-    await readFile(path.join(root, "assets/interface/main-menu/forest-heroes.png")),
+    await readFile(path.join(root, "assets/library/asset.interface.main-menu.forest-heroes/image.png")),
   );
   await writeGenerated(destination, files);
   console.log(
@@ -503,15 +463,6 @@ async function cli() {
           timer = setTimeout(() => void refresh(), 180);
         }),
       );
-  if (mode === "dev")
-    watchers.push(
-      watch(root, (_event, name) => {
-        if (name && designs.includes(name)) {
-          clearTimeout(timer);
-          timer = setTimeout(() => void refresh(), 180);
-        }
-      }),
-    );
   const close = () => {
     clearTimeout(timer);
     watchers.forEach((w) => w.close());

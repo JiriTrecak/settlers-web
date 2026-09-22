@@ -89,7 +89,7 @@ A contested third resource for higher tiers has been discussed, but is **not imp
 
 ## Load size and initial scale
 
-Workers bring **10 amber or 10 wood per full trip**. Amber takes 2.5 seconds of work per load; wood takes 10 seconds, with travel added in both cases. Depletion or limited storage can produce a partial final load without losing resources. Mature trees hold 100 wood. The price and starting-resource scale is deliberately close to Warcraft-sized numbers for this first playtest; worker conversion and automatic births remain our own economy. See the [implemented balance baseline](/development/first-balance-pass).
+Workers bring **10 amber or 10 wood per full trip**. Amber takes 2.5 seconds of work per load; wood takes 10 seconds, with travel added in both cases. Depletion or limited storage can produce a partial final load without losing resources. Mature trees hold 100 wood. Prices and starting resources are declared in `content/game.json`; see the [economy contract](/development/game/economy).
 
 ## Chopping and felling trees
 

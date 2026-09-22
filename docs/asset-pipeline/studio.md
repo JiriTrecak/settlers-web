@@ -15,8 +15,6 @@ Asset Studio is the local image workshop and published-asset library for **Under
 
 **Import your own image** takes PNG, JPEG or WebP through the same decoding, framing, validation, approval and publication steps, without making an API call.
 
-A real provider smoke test created and published **Heart of the Forest** with GPT Image 2, three retained item references, medium quality and one candidate. Its 128px PNG is about 21 KiB. It is a library asset; no unit stats or item mechanics were added by this test.
-
 ## Upload style or interface references
 
 In **Create asset → Upload reference images**, choose one or several PNG, JPEG or WebP files (20 MiB and 40 megapixels maximum each). Thumbnails appear immediately after validation; uploaded images are selected automatically. They are stored locally for reuse and do not become published game assets. Uploading does not call OpenAI.
@@ -50,36 +48,13 @@ The reviewer supports checkerboard, white and near-black backdrops. Validation e
 
 Mechanical validation is not an aesthetic verdict. Check silhouette, legibility, material treatment and framing before approval. The current validator does not detect baked text or evaluate visual quality automatically.
 
-## Where things live
+## Storage and publication
 
-`assets/` contains published runtime files:
+The canonical [publication contract](publication.md) defines working versus released state. Definitions and role-named resources live in `art/assets/<id>/`; released resources live in `assets/library/<id>/` and snapshots in `assets/authoring/published.json`. Editable Blender sources and older original image masters live under `art/sources/`. Profiles and curated style references live in `art/profiles/` and `art/styles/`.
 
-- `icons/`: flat, consistently named PNGs such as `command-move.png`, `unit-ants-worker.png`, `item-heart-of-the-forest.png`.
-- `interface/`: woodland HUD, main menu and app artwork.
-- `models/buildings/{ants,neutral}/`, `models/units/{ants,neutral}/`, `models/environment/{trees,grass,mushrooms,rocks,structures}/`, `models/items/`: per-model directories with self-contained `model.glb` exports. Future factions use their own folders.
-- `textures/`: terrain, roads, vegetation and material data.
-- `maps/`: the four existing campaign/skirmish maps, retaining their scenario IDs.
-- `manifest.json`: the generated runtime listing.
+Use `npm run assets:compile` to validate released bytes and regenerate deterministic indexes. It does not publish working drafts. Reload a game/editor page deliberately after publication; do not replace an in-progress map document through asset hot reload.
 
-`art/records/<asset-id>/asset.json` is the authoring record. It carries stable render/scenery bindings, outputs, hashes, revision, profile, source and provenance. Keeping records keyed by identity lets one physical asset support multiple existing render or scenery IDs without duplicating its GLB.
-
-`art/sources/` contains the former Blender experiments, editable models, recipes and pack sources. Exact-matching model exports and the purchased conifer pack are linked to their shared Blender sources. A retained runtime image is explicitly marked **runtime-only** when an exact master has not been established; the importer does not invent source provenance from a similar filename.
-
-New image revisions retain their original bytes, complete job, reference snapshots and recipes under their asset record. These survive removal of the disposable workspace. Shared source models are not copied into every related asset record.
-
-`art/styles/` holds curated image-reference collections. `art/references/` holds comparison images. `art/archive/` preserves superseded exports and old generators outside the runtime build. The old ignored sprite dump is quarantined in the ignored local workspace rather than accidentally added to Git.
-
-`.asset-work/` contains jobs, credentials, partial previews and publication journals. It is ignored by Git and denied by both game and Studio Vite file servers. Keys use a restricted-permission local file, or the server's `OPENAI_API_KEY` environment variable. Credentials are never written into jobs, manifests or browser bundles.
-
-## Runtime integration and migration
-
-The game, editor and wiki consume `assets/manifest.json`. The compiler emits explicit Vite URL imports in `src/shared/assets/urls.generated.ts`. There is no wildcard model discovery, suffix-based lookup or hidden archive fallback. `content/game.json` contains gameplay definitions rather than another physical-file asset listing; the loader composes the manifest's render bindings in memory.
-
-Existing gameplay/scenery IDs, bridge decks, blockers, lights, team materials, harvest clips and character profiles were preserved. The 112 JSON glTF exports were repacked as GLB without simplifying geometry or re-encoding textures; every original buffer-view payload was checked against its new location. The path ledger is `art/migrations/2026-09-11-paths.json`.
-
-This is a content-revision boundary. Existing save/network fingerprint checks remain strict; saves made against the old physical asset listing may be rejected. Start a fresh match after the migration.
-
-Use `npm run assets:compile` to validate published hashes and regenerate the manifest/URL module from reviewed authoring records. Build validation rejects missing or changed runtime files. Do not use the historical migration scripts or archived generators as a second publication path. The Blender studio still exports editable source work; automated model publication and Meshy generation are a later adapter, not an implemented cloud feature.
+`.asset-work/` contains ignored local jobs, credentials and recovery journals. Do not remove it as documentation clutter. Keys stay on the server and never enter jobs, manifests or browser bundles. Temporary captures and comparison renders belong in ignored `tmp/`.
 
 ## Recovery and concurrency
 
@@ -109,14 +84,13 @@ Do not put API keys in request files, command arguments, prompts or chat. Use Pr
 
 ## Verification
 
-The full suite passed 727 tests across 170 files after the migration, including real socket tests. Focused Studio tests exercise actual image decoding, no-upscale exports, alpha openings, path/symlink containment, credential permissions, duplicate submissions, stale approvals/revisions, ambiguous provider failures, restart behavior and rollback at each write. The game and Studio production builds and generated wiki were checked separately. The 38 purchased vegetation exports passed geometry, color, grounding and animation validation against the new paths.
+Run the Studio tests for decoding, export profiles, path containment, revision checks and publication recovery. Check actual exported pixels and model previews in the tools/game renderer. A successful API response is not proof of visual quality. Do not store historical pass counts as a current guarantee.
 
-Meshy generation, arbitrary protected-opening polygons, a visual crop-handle editor and automatic aesthetic scoring are not part of this version.
+The Studio and game Vite servers use separate dependency caches. Meshy generation, arbitrary protected-opening polygons and automatic aesthetic scoring are not implemented here.
 
-The Studio and game Vite servers keep separate dependency caches so both can run at once without invalidating model-preview modules.
 ## Generated woodland HUD
 
-The HUD's new woodland textures were generated using Asset Studio with the uploaded approved interface screenshot. Exact prompts, source images, hashes, dimensions and approvals are retained in the six `art/records/image.woodland-*` revisions. No artwork was copied directly into the runtime outside the Studio publication transaction.
+The HUD's new woodland textures were generated using Asset Studio with the uploaded approved interface screenshot. Exact prompts, source images, hashes, dimensions and approvals are retained in the six `art/assets/image.woodland-*` revisions. No artwork was copied directly into the runtime outside the Studio publication transaction.
 
 The runtime now uses `woodland-connected-hud.png`, generated from the approved connected concept through Asset Studio. Its exterior has real alpha; its minimap opening, uninterrupted center and twelve command cells retain matching dark textured interiors. The minimap is drawn into its opening at runtime. Separate square rims remain for inventory and production queue items, with a horizontal frame for resources/vitals/learning, two textured vital fills, and subdued leather behind four inventory slots.
 

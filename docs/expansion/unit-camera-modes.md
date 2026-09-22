@@ -1,6 +1,6 @@
 # Unit cameras
 
-Implemented: selected-unit controls, mission Lua shots and an opening shot in The Heartwood Vault.
+Selected-unit camera controls and mission Lua shots share the same camera modes.
 
 Select a visible living unit and click the spyglass in the command card, or press **J**. It cycles **RTS → third person → first person → RTS**. Escape returns to RTS after cancelling an active targeting command. Rebind “Cycle camera” in Keyboard shortcuts. The action, icon and default binding are declared in `content/game.json`; abilities retain their assigned bottom-row slots. Observers can use the same camera while inspecting visible units.
 
@@ -23,16 +23,14 @@ Arguments are mode, subject Script ID, optional look-at unit Script ID, trailing
 
 Shot declarations are validated and saved in mission state, so scripted timing is deterministic across peers and save/load. Rendering and camera interpolation remain local. Shots use the existing cinematic visibility rules; switching a player camera does not reveal fog.
 
-The Heartwood Vault introduction uses an archer's first-person view looking toward the Marshal, then restores RTS after the briefing. There is no new general-purpose skip system in this change; authored scene endings remain responsible for their mission stages.
 
 ## Interior ceilings
 
 Environment → Interior ceiling height authors a minimum underside height in world metres (1–128). Leave the field empty to remove it. MCP `landscape` environment operations accept `ceilingHeight`, with `null` clearing the setting. The ceiling uses a gently ribbed heartwood surface, renders only in first/third person, and follows normal fog visibility. It is decorative enclosure, not another walkable floor. Keep the authored clearance above every deck and actor; third-person booms shorten before crossing the roof.
 
-The Heartwood Vault uses 18 metres, above its 11.4-metre root crown. One static mesh adds 8,192 triangles for this 256-metre map, without a shadow pass or per-frame geometry work. Browser inspection checked the surface with fog on and temporarily revealed, then restored normal visibility and RTS mode.
 
 ## Validation and limits
 
-Automated checks cover facing, raised-floor eye height, camera cycling, RTS restoration, bounded minimap rays, body/shadow draw separation, fixed ability slots, Lua validation and deterministic shot save/restore. The existing two-chapter ordinary-order combat journey passes; it now waits for scripted scene cleanup before issuing orders. Browser checks cover both views, the opening briefing and restoration.
+Automated checks cover facing, raised-floor eye height, camera cycling, RTS restoration, bounded minimap rays, body/shadow draw separation, fixed ability slots, Lua validation and deterministic shot save/restore. Verify both views, scene cleanup and RTS restoration in the current map.
 
 These cameras reveal the existing RTS models at close range. Low-poly faces and simplified foliage are consequently more apparent. Third-person obstruction uses a short center boom rather than a swept camera volume; tight corners and rapid shot transitions may still need shot-specific framing. Free look, direct character steering, arbitrary point look-at shots and bone-mounted eye bob are not part of this version.

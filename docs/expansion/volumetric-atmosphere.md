@@ -1,6 +1,6 @@
 # Volumetric mist and sunlight shafts
 
-Maps can opt into drifting, height-dependent mist and shadow-aware sunlight shafts. The prologue uses a light global layer, with denser pockets beside the entrance, old crossing, moss shrine and lakeside. The mission starts at 09:12, with long diagonal morning light. The entrance pocket sits along the tree line rather than covering the party in a bright veil. Rain reduces the shaft contribution. The existing day/night sun supplies direction and color.
+Maps can opt into drifting, height-dependent mist and shadow-aware sunlight shafts. Rain reduces the shaft contribution. The existing day/night sun supplies direction and color.
 
 ## Authoring
 
@@ -59,10 +59,4 @@ Atmosphere is cosmetic. It does not change line of sight, height-based fog of wa
 
 ## Validation
 
-Automated coverage checks map roundtripping, unchanged omission behavior, malformed and unbounded volume rejection, unique IDs, quality persistence, pixel budgets and the Off bypass. Browser checks cover the prologue, soft/filtered shadows, the editor authoring path and shader compilation. Treat performance as hardware- and scene-dependent; the pixel caps bound fog work, not the rest of the forest renderer.
-
-### Initial measurement (before the visibility tuning)
-
-On the development Mac, a paused prologue opening view at 2674 × 2408, native resolution and soft shadows measured approximately **5.17 ms mean / 5.46 ms p95** for the whole GPU frame with atmosphere Off, versus **6.40 / 6.74 ms** with Medium (632 × 569 fog pixels, 24 samples). That is roughly 1.2 ms additional mean GPU time in this particular view. These are warmed-up browser measurements, not a guarantee for other GPUs or a full-mission benchmark. The browser was throttling frame presentation during parts of the test, so FPS was not used to infer GPU cost.
-
-The lakeside was inspected through the game camera/capture API: mist terminates above the water, canopy shadows form shafts, and turning debug reveal back off leaves the unexplored lake fully black. Soft/filtered/off shadows and High/Medium/Low/Off atmosphere settings were exercised without Three.js shader errors.
+Automated coverage checks map roundtripping, unchanged omission behavior, malformed and unbounded volume rejection, unique IDs, quality persistence, pixel budgets and the Off bypass. Visual checks should cover soft/filtered shadows, the editor authoring path and shader compilation on a maintained map. Treat performance as hardware- and scene-dependent; the pixel caps bound fog work, not the rest of the forest renderer.

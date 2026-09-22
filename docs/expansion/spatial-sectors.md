@@ -29,29 +29,13 @@ Tree and building blocker changes rebuild the affected sector regions and adjace
 
 All decisions use stable ordering and integer path costs. No command queue delay or time-sliced response was introduced. The corridor prioritizes a plausible coarse route; it does **not** guarantee the globally shortest fine-grid path. The unrestricted fallback preserves reachability when the preferred corridor is blocked, but can still be expensive.
 
-## Scaling evidence
-
-The synthetic benchmark increases square grids from 128 to 256, 512 and 1024 cells while keeping local density fixed. The same local query examines **16 candidates in one sector** at every size, while the population grows from **1,024 to 65,536**. This isolates broad-phase query work; initialization and index maintenance are measured separately.
-
-For cross-map routes around a central lake, the 512-cell case expands about **10,090 cells instead of 33,560**. At 1024 cells it expands about **21,581 instead of 135,324**, an 84% reduction. Those particular routes have the same fine-grid cost as unrestricted A*. They do not establish global optimality on arbitrary terrain. The 1024 grid is an algorithm stress fixture; playable maps remain limited to 512.
-
-Two five-minute Four Crowns runs with four AI players reproduced checksum **2898436630**, 251 living units, 4,238 detailed searches, 4,369,531 expanded cells, 21,266 expanded coarse regions and four corridor fallbacks. The final run measured:
-
-- Simulation tick: **2.42 ms mean**, **4.12 ms p95**, **10.95 ms p99**, **41.42 ms maximum**.
-- Observer view projection: **0.49 ms mean**, **0.75 ms p95**, **0.91 ms p99**.
-- Observation update within the simulation: **0.54 ms mean**, **0.93 ms p95**, **1.83 ms p99**.
-
-Simulation, observation update and view projection are different scopes; observation update is already included in simulation time. These are local CPU diagnostics without rendering, not an end-to-end FPS claim or slower-machine certification. Corridor route choices change battle outcomes relative to the previous implementation, so its earlier timings are not an identical-workload speedup comparison.
-
-The 8.33 ms whole-frame target remains unmet in the tails. Combat planning remains the dominant spike source in this match. Shared destination searches and more precise portal routing are candidates for further work; simply reducing update frequency would not satisfy immediate command response.
-
 ## Reproduce and inspect
 
 ```sh
 node --import tsx scripts/bench/sector-scaling.ts --output /tmp/sector-scaling.json
-npm run bench:sim -- --map four-crowns --ticks 12000 --output /tmp/sector-match.json
+npm run bench:sim -- --map threewater-forest --ticks 12000 --output /tmp/sector-match.json
 ```
 
-Debug profiling reports cumulative navigation searches, fine cells expanded, coarse regions expanded and corridor fallbacks. The benchmark artifacts for this pass are `tmp/combat-polish/sector-scaling.json`, `sectors-long.json` and `sectors-final.json`.
+Debug profiling reports cumulative navigation searches, fine cells expanded, coarse regions expanded and corridor fallbacks.
 
-Regression coverage includes sector edges and corners, disconnected pieces within a sector, local topology changes, dynamic corridor fallback, spanning footprints, sensor movement and containment, resource removal/restore, and distant routes onto elevated surfaces. Validation passed 908 tests across 217 files: the 907-test full suite plus a focused rerun of the navigation file after adding the corridor-fallback regression. Typecheck, game build and generated wiki build passed. A browser smoke check confirmed squad movement and fog reveal in Heartwood Vault without reported console errors.
+Regression coverage includes sector edges and corners, disconnected pieces within a sector, local topology changes, dynamic corridor fallback, spanning footprints, sensor movement and containment, resource removal/restore, and distant routes onto elevated surfaces.

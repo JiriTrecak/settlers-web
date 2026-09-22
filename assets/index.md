@@ -1,7 +1,5 @@
 # Published game assets
 
-`manifest.json` is the runtime listing. Asset Studio compiles it from `art/records/<asset-id>/asset.json` and emits exact Vite URL imports. The game/editor do not scan arbitrary folders or fall back to archived catalogs.
+`manifest.json` and generated URL bindings resolve the published asset library. Released definitions live in `authoring/published.json`; binaries and data profiles live in `library/<asset-id>/`. Map source lives in `maps/`.
 
-Use `npm run dev:tools` to open Asset Studio on port 5175. See [the Studio guide](../docs/asset-pipeline/studio.md) for generation, imports, references, validation, approval and publication.
-
-Runtime folders: `icons/`, `interface/`, `models/`, `textures/`, `maps/`. Editable Blender work and image masters live in `art/`, outside the game build.
+Working definitions and editable resources live in `art/assets/` outside the runtime build. Use [asset publication](../docs/asset-pipeline/publication.md); do not manually replace released bytes without updating their validated hashes and revision.
