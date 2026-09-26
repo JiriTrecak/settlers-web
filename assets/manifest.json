@@ -321,7 +321,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -331,12 +331,7 @@
           "bytes": 10985
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.great-mound",
-          "image": "assets/library/asset.icons.building-ants-great-mound/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -425,7 +420,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -435,12 +430,7 @@
           "bytes": 31567
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.fort",
-          "image": "assets/library/asset.icons.building-ants-mound/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1964,7 +1954,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -1974,12 +1964,7 @@
           "bytes": 36017
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.warrior",
-          "image": "assets/library/asset.icons.unit-ants-warrior/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -2406,6 +2391,154 @@
           "path": "assets/library/asset.interface.woodland.slot/image.png",
           "sha256": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d",
           "bytes": 21115
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-acorn-hall",
+      "name": "Acorn Main Hall",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "main-building",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 4,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/geometry.glb",
+          "sha256": "a449330484f45094c34ee72e4ef34ebb86cdeff042ffa782f4b1154b0e4bed3f",
+          "bytes": 12969976
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/albedo.png",
+          "sha256": "e3c8ab8a37467844ae07834ca88b8aa6bef1a4c08b769c6faeafa13adb0cbaee",
+          "bytes": 8054779
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/team_mask.png",
+          "sha256": "7afb1dd1b3e7e3dd54411ffb325f9cadb99d2f5048e9c8dcaef495d93cd21fee",
+          "bytes": 368411
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/normal.png",
+          "sha256": "a09f9094a101a18143ca49b5ba444603391f30389a165de8ec367381ebdabccb",
+          "bytes": 3461977
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/roughness.png",
+          "sha256": "f8d81f366b51e354915da539851d0bc5707ef221dcc8d7e2ab020c58155d8959",
+          "bytes": 1359724
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-acorn-hall/image.png",
+          "sha256": "643584462e3bf4ff60b2b853f0c9ef091eadac0594c699a69e817208f0d32f75",
+          "bytes": 16071
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.fort",
+          "file": "assets/library/asset.models.buildings.ants-acorn-hall/geometry.glb",
+          "scale": 1,
+          "healthHeight": 9.7
+        },
+        {
+          "id": "asset.ants.great-mound",
+          "file": "assets/library/asset.models.buildings.ants-acorn-hall/geometry.glb",
+          "scale": 1,
+          "healthHeight": 9.7
+        },
+        {
+          "id": "icon.ants.fort",
+          "image": "assets/library/asset.models.buildings.ants-acorn-hall/image.png"
+        },
+        {
+          "id": "icon.ants.great-mound",
+          "image": "assets/library/asset.models.buildings.ants-acorn-hall/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-mandible-hall",
+      "name": "Mandible Hall",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "main-building",
+        "procedural"
+      ],
+      "revision": 5,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb",
+          "sha256": "0cd0d71df0f2cae934355115ee50ff1668e51fabc37a55b3d6f5903654d069b2",
+          "bytes": 942944
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/image.png",
+          "sha256": "2271fb450bf08df2566f6a45a05c573ce757928dc5a9d07f5e76d55dd4b5aac3",
+          "bytes": 25193
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/albedo.png",
+          "sha256": "bbdecc0c4831d2a8bc4a49717c6a57d801172b87df2c13b9db5e04356888a8fd",
+          "bytes": 28157
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/albedo_2.png",
+          "sha256": "be0694eecb502f45c6e02298e6a8eaab3294974cfe23d756b87440bf20c688c6",
+          "bytes": 44899
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/albedo_3.png",
+          "sha256": "19b037a0f5bfd0dfe5a2ebf1f1053525653a4accfe1572ee30ecd4cb7e1caa4e",
+          "bytes": 29677
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/albedo_4.png",
+          "sha256": "bc7fcdfe2b70cfe0f07f420cdba0691e0dc668efcbee29ab1563bab8ae6f0b8d",
+          "bytes": 57751
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/albedo_5.png",
+          "sha256": "dbe22ccc895b5a4385b524e689aa78b5d17f65a4d1eb39c935a82ecc648bf011",
+          "bytes": 49070
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/normal.png",
+          "sha256": "463c16d04888c2cea2ad83339cd6ba7ef30c22ce529873e908373dc71e6d15f9",
+          "bytes": 41007
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-mandible-hall/normal_2.png",
+          "sha256": "80f43acefbe21b5326bcb6b8a2c53e3ea4b7f171e47358a12167726aacc210e3",
+          "bytes": 63229
         }
       ],
       "render": [],
@@ -3508,6 +3641,92 @@
       ]
     },
     {
+      "id": "asset.models.environment.woodland-bank-slabs",
+      "name": "Rounded shoreline shelves",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb",
+          "sha256": "8cf342974d5e80b8a288974fc0b3564ab4f66c1a468853905fed6d5cd99196d2",
+          "bytes": 376524
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-bank-slabs",
+          "file": "assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb",
+          "sceneryAsset": "woodland-bank-slabs"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-bank-slabs",
+          "name": "Rounded shoreline shelves",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 6,
+              "depth": 3.4,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-bank-slabs/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-broken-leaf-raft",
+      "name": "Stranded leaf raft",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb",
+          "sha256": "e68a14826825493c27075ae6a458e57ac9d681b224161335eede5ce102135bb0",
+          "bytes": 434880
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-broken-leaf-raft",
+          "file": "assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb",
+          "sceneryAsset": "woodland-broken-leaf-raft"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-broken-leaf-raft",
+          "name": "Stranded leaf raft",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 5.5,
+              "depth": 2.8,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.woodland-broken-trader-cart",
       "name": "woodland broken trader cart",
       "kind": "model",
@@ -3555,6 +3774,92 @@
       ]
     },
     {
+      "id": "asset.models.environment.woodland-canopy-elder",
+      "name": "Ancient canopy oak",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb",
+          "sha256": "321cfc0d5ed708596068364639f51cddbcd9e03fe959ef29f6da878af5a39362",
+          "bytes": 2705856
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-canopy-elder",
+          "file": "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb",
+          "sceneryAsset": "woodland-canopy-elder"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-canopy-elder",
+          "name": "Ancient canopy oak",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 8.2,
+              "depth": 8.2,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-canopy-elder/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-canopy-spreading",
+      "name": "Spreading canopy oak",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb",
+          "sha256": "8d4dbaddd95bc0ebea09dfd860bcb36e3452c6845425923b0eca0c35471c8ab9",
+          "bytes": 2705756
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-canopy-spreading",
+          "file": "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb",
+          "sceneryAsset": "woodland-canopy-spreading"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-canopy-spreading",
+          "name": "Spreading canopy oak",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 8.2,
+              "depth": 8.2,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-canopy-spreading/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.woodland-daisies",
       "name": "woodland daisies",
       "kind": "model",
@@ -3580,6 +3885,85 @@
           "category": "foliage",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-daisies/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-drift-log",
+      "name": "Waterworn drift log",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-drift-log/geometry.glb",
+          "sha256": "25ab7e8cf056d64b3b053ac76164eb4488920acbeb80c7ea0a711e50f5bce940",
+          "bytes": 333072
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-drift-log",
+          "file": "assets/library/asset.models.environment.woodland-drift-log/geometry.glb",
+          "sceneryAsset": "woodland-drift-log"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-drift-log",
+          "name": "Waterworn drift log",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 9,
+              "depth": 1.8,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-drift-log/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-drift-scraps",
+      "name": "Broken driftwood",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb",
+          "sha256": "da4784d412e8b30d40f7cd107db3ebe105ecd6a093aa97b1492b0562cdae1f80",
+          "bytes": 335924
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-drift-scraps",
+          "file": "assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb",
+          "sceneryAsset": "woodland-drift-scraps"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-drift-scraps",
+          "name": "Broken driftwood",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.woodland-drift-scraps/geometry.glb"
         }
       ]
     },
@@ -3627,6 +4011,92 @@
           "category": "landmark",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-fallen-log/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-giant-mushroom-ochre",
+      "name": "Giant ochre umbrella",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb",
+          "sha256": "c8fc2ef160f25bc0949f8a92c896513ef1ea63ba6de18874fa4727a024b30b9c",
+          "bytes": 2009024
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-giant-mushroom-ochre",
+          "file": "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb",
+          "sceneryAsset": "woodland-giant-mushroom-ochre"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-giant-mushroom-ochre",
+          "name": "Giant ochre umbrella",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 2.8,
+              "depth": 2.8,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-giant-mushroom-russet",
+      "name": "Giant russet umbrella",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb",
+          "sha256": "3775530dd39b72c7bdfe913c4bcc6828b6b2b4603bc5e3d0b4e8899338ae1e5e",
+          "bytes": 2009020
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-giant-mushroom-russet",
+          "file": "assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb",
+          "sceneryAsset": "woodland-giant-mushroom-russet"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-giant-mushroom-russet",
+          "name": "Giant russet umbrella",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 2.4,
+              "depth": 2.4,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb"
         }
       ]
     },
@@ -3814,6 +4284,91 @@
           "category": "foliage",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-grass-messy/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-great-broken-trunk",
+      "name": "Great broken trunk",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb",
+          "sha256": "289b495111da253f815139ee93520da085715fd1da19e442478526dde80d294e",
+          "bytes": 1628780
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-great-broken-trunk",
+          "file": "assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb",
+          "sceneryAsset": "woodland-great-broken-trunk"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-great-broken-trunk",
+          "name": "Great broken trunk",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 8.2,
+              "depth": 8.2,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-great-broken-trunk/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-great-fallen-log",
+      "name": "Great fallen hollow log",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb",
+          "sha256": "1513498173fe5720db10ff5ea0acfab693bee324c184b7f51d40fe2f0b5fe8cb",
+          "bytes": 1597108
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-great-fallen-log",
+          "file": "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb",
+          "sceneryAsset": "woodland-great-fallen-log"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-great-fallen-log",
+          "name": "Great fallen hollow log",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 30,
+              "depth": 7
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-great-fallen-log/geometry.glb"
         }
       ]
     },
@@ -4166,6 +4721,78 @@
       ]
     },
     {
+      "id": "asset.models.environment.woodland-mushrooms-button",
+      "name": "Woodland button mushrooms",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "mushrooms"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb",
+          "sha256": "0fb4f87370447e3dbe23fe996971cf81921122754c5c60ebbca790d939c1205b",
+          "bytes": 2019300
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-mushrooms-button",
+          "file": "assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb",
+          "sceneryAsset": "woodland-mushrooms-button"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-mushrooms-button",
+          "name": "Woodland button mushrooms",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.woodland-mushrooms-button/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-mushrooms-fan",
+      "name": "Woodland russet mushrooms",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "mushrooms"
+      ],
+      "revision": 3,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb",
+          "sha256": "8304ba212a42a41de0ffbb6242158c69d488177cbe5236b96945500e1ed7eac3",
+          "bytes": 2019300
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-mushrooms-fan",
+          "file": "assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb",
+          "sceneryAsset": "woodland-mushrooms-fan"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-mushrooms-fan",
+          "name": "Woodland russet mushrooms",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.woodland-mushrooms-fan/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.woodland-pine-a",
       "name": "woodland pine a",
       "kind": "model",
@@ -4401,6 +5028,42 @@
       ]
     },
     {
+      "id": "asset.models.environment.woodland-reed-tuft",
+      "name": "Quiet-water reeds",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb",
+          "sha256": "ab357cbfe1e68422abb0be6d32e7e1f2070503bf85f3e1e4b3cab57b634e8b03",
+          "bytes": 110352
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-reed-tuft",
+          "file": "assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb",
+          "sceneryAsset": "woodland-reed-tuft"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-reed-tuft",
+          "name": "Quiet-water reeds",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.woodland-reed-tuft/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.woodland-river-stones",
       "name": "woodland river stones",
       "kind": "model",
@@ -4544,6 +5207,49 @@
             }
           },
           "file": "library/asset.models.environment.woodland-root-arch-bridge/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.woodland-root-snag",
+      "name": "Uprooted river snag",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "revision": 2,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.woodland-root-snag/geometry.glb",
+          "sha256": "0015cfaf45d4c951868bdbbee560d61eb7e84202f34da24773f6d1fdfd11a2a1",
+          "bytes": 351516
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.woodland-root-snag",
+          "file": "assets/library/asset.models.environment.woodland-root-snag/geometry.glb",
+          "sceneryAsset": "woodland-root-snag"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "woodland-root-snag",
+          "name": "Uprooted river snag",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 10,
+              "depth": 2.2,
+              "shape": "ellipse"
+            }
+          ],
+          "file": "library/asset.models.environment.woodland-root-snag/geometry.glb"
         }
       ]
     },
@@ -4830,6 +5536,50 @@
       ]
     },
     {
+      "id": "asset.models.units.ants-warrior",
+      "name": "Ant Warrior",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "warrior",
+        "skinned",
+        "acorn",
+        "tripo"
+      ],
+      "revision": 5,
+      "profile": "warrior",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-warrior/geometry.glb",
+          "sha256": "00e8769d782809d5e4a18ff4c329a3c70d95c2ee67cccbc355f62a9f588e6fa0",
+          "bytes": 1594404
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-warrior/image.png",
+          "sha256": "ef8ae1274e2cd474d0be8738b9c53fcebeb67020bdd8c5d002835f5e3a872eed",
+          "bytes": 13595
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.warrior",
+          "file": "assets/library/asset.models.units.ants-warrior/geometry.glb",
+          "character": "warrior",
+          "scale": 1,
+          "healthHeight": 2.3
+        },
+        {
+          "id": "icon.ants.warrior",
+          "image": "assets/library/asset.models.units.ants-warrior/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "model",
@@ -4837,7 +5587,7 @@
         "placeholder",
         "diagnostic"
       ],
-      "revision": 3,
+      "revision": 5,
       "profile": "prop",
       "outputs": [
         {
@@ -5102,12 +5852,6 @@
           "healthHeight": 3.2
         },
         {
-          "id": "asset.ants.great-mound",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 7
-        },
-        {
           "id": "asset.ants.house",
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
@@ -5124,12 +5868,6 @@
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
           "healthHeight": 4.7
-        },
-        {
-          "id": "asset.ants.fort",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 5.8
         },
         {
           "id": "asset.ants.rootworks",
@@ -5214,17 +5952,6 @@
             "distance": 7
           },
           "castContact": 0.68
-        },
-        {
-          "id": "asset.ants.warrior",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.3,
-          "cameraAnchor": {
-            "height": 1.5,
-            "forward": 0.15,
-            "distance": 7
-          }
         },
         {
           "id": "asset.ants.settler",
@@ -6001,6 +6728,48 @@
       "scenery": []
     },
     {
+      "id": "asset.textures.forest-giants-bark",
+      "name": "Forest giants · painted bark",
+      "kind": "texture",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "revision": 2,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.textures.forest-giants-bark/albedo.png",
+          "sha256": "dc2dee36a20d0cd7c7a9600b2631a37325d8635c9c32ab852eaa77954112cc24",
+          "bytes": 1573520
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.textures.forest-giants-mushrooms",
+      "name": "Forest giants · painted mushrooms",
+      "kind": "texture",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "revision": 2,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.textures.forest-giants-mushrooms/albedo.png",
+          "sha256": "2cec8d9e6b20a7bdc1dce7eaab5f2bad9ed59aa7f7185fc0dab691ccb1df086b",
+          "bytes": 1989503
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "image.item-heart-of-the-forest",
       "name": "Heart of the Forest",
       "kind": "icon",
@@ -6190,6 +6959,27 @@
           "path": "assets/library/recipe.foliage.frozen-bank/definition.json",
           "sha256": "487bed587e8120fcef71667244e92f13a6868b746fd4510c71c8bc78e4fb4085",
           "bytes": 1249
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "recipe.foliage.mushroom-patches",
+      "name": "Woodland mushroom patches",
+      "kind": "data",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "revision": 3,
+      "profile": "landscape-recipe",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/library/recipe.foliage.mushroom-patches/definition.json",
+          "sha256": "8f5f709a7d7e0f79078d1f0dadf6fd12b113888fb5ee51221226fe1111528e2b",
+          "bytes": 1221
         }
       ],
       "render": [],

@@ -10,7 +10,7 @@ it('approaches each face of a building from the attacking unit’s side',()=>{
  const goals=actors.map(e=>g.spatial.point(e.unit!.goal!));
  expect(goals[0].x).toBeGreaterThan(100);expect(goals[1].x).toBeLessThan(100);
  expect(goals[2].y).toBeGreaterThan(100);expect(goals[3].y).toBeLessThan(100);
- goals.forEach(goal=>expect(g.spatial.pointRange(goal,target)).toBeLessThanOrEqual(1.5**2));
+ goals.forEach((goal,i)=>expect(g.spatial.pointRange(goal,target)).toBeLessThanOrEqual(g.context.def(actors[i]).behaviors.combat!.range**2));
 });
 
 it('routes an archer to weapon range instead of the target’s feet',()=>{

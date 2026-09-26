@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {scaleUnitDefinition} from './unitScale';
 import {
   actionsSchema,
   assetSchema,
@@ -150,7 +151,7 @@ export class ContentRegistry {
             disabledBehaviors: _disabled,
             ...fields
           } = raw;
-          return definitionSchema.parse({ ...fields, behaviors: merged });
+          return scaleUnitDefinition(definitionSchema.parse({ ...fields, behaviors: merged }), this.rules.unitScale);
         })
         .sort(ordinal),
     );

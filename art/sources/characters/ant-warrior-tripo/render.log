@@ -1,0 +1,30 @@
+20:34:09 - tripo_addon - [task.py:21] - INFO - WebSocket server started on port 60600
+20:34:09 - tripo_addon - [ws_server.py:202] - WARNING - Port 60600 in use; will retry every 3.0s
+00:00.626  blend            | Read blend: "/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/ant-warrior-tripo/ant-warrior-tripo.blend"
+00:04.081  render           | Saved: '/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/ant-warrior-tripo/.render-1790447648194535000.png'
+[Tripo3D] Log file: /var/folders/2z/1nnckf2s54572t36kkxdj92w0000gn/T/tripo3d_blender_bridge.log
+Info: Applied modifier was not first, result may not be as expected
+Info: Applied modifier was not first, result may not be as expected
+Info: Applied modifier was not first, result may not be as expected
+Info: Applied modifier was not first, result may not be as expected
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+20:34:12 | INFO: Starting glTF 2.0 export
+20:34:12 | INFO: Extracting primitive: Mesh_0.002
+20:34:12 | INFO: Primitives created: 8
+20:34:12 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+20:34:15 | INFO: Finished glTF 2.0 export in 2.553892135620117 s
+
+20:34:15 | INFO: Starting glTF 2.0 export
+20:34:15 | INFO: Extracting primitive: Mesh_0.002
+20:34:15 | INFO: Primitives created: 8
+20:34:15 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+20:34:17 | INFO: Finished glTF 2.0 export in 2.7783608436584473 s
+
+BUILDING_RENDER_READY /Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/characters/ant-warrior-tripo/.render-1790447648194535000.png
+20:34:18 - tripo_addon - [ws_server.py:101] - INFO - Stopping WebSocket server...
+20:34:18 - tripo_addon - [task.py:27] - INFO - WebSocket server stop requested
+20:34:18 - tripo_addon - [ws_server.py:88] - INFO - Event loop closed
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

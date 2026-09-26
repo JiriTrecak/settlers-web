@@ -5,6 +5,7 @@ import {SectorNavigation} from './sectorNavigation';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {TacticalTerrain,MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {UnitIndex} from "./unitIndex";
+import {unitDimensions} from '../../content/unitScale';
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import {
@@ -36,6 +37,9 @@ export class Spatial {
 
   readonly layers: WalkSurfaces | undefined;
   readonly size: number;
+  /** Collision radius in fixed-point units, shared by broad/narrow phase and terrain sweeps. */
+  readonly unitRadius: number;
+  readonly unitHeight: number;
   readonly heights: Int16Array;
   readonly terrain: Uint8Array;
   readonly sea: number;
@@ -56,6 +60,9 @@ export class Spatial {
     private readonly units: () => readonly Entity[] = () => entities().filter(e => e.unit),
   ) {
     this.size = map.size;
+    const dimensions = unitDimensions(registry.rules.unitScale);
+    this.unitRadius = Math.round(dimensions.radius * 1000);
+    this.unitHeight = dimensions.height;
     const compiled=projectScene(map);if(compiled)map={...map,stamps:compiled.stamps};
     this.heights = new Int16Array(this.size * this.size);
     this.waterHeights=new Int16Array(this.size*this.size);
@@ -78,7 +85,7 @@ export class Spatial {
     const surfaces=bridgeSurfaces(map.stamps,(x,z)=>source?.sample(x,z)??(h?sampleHeight(h,x,z,this.size):0));
     if(surfaces.length){
       applySceneryBlockers(map,this.terrain);
-      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces);
+      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces,Math.round(this.unitHeight*100));
       this.decks=new Uint8Array(this.size*this.size);
       for(const node of this.layers.nodes)if(node.surface)this.decks[node.cell]=1;
     }else{
@@ -94,7 +101,9 @@ export class Spatial {
     this.navigation = new Navigation(
       this.size,
       (a, b) =>
-        this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= MAX_GROUND_STEP_CM,
+        this.unitRadius < 500
+          ? this.walkable(b) && Math.abs(this.heights[a]! - this.heights[b]!) <= MAX_GROUND_STEP_CM
+          : this.clearSegment(fixed(this.point(a)), fixed(this.point(b))),
       (a,b)=>this.sectors.connected(a,b),
       true,
     );
@@ -120,6 +129,7 @@ export class Spatial {
   validNode(id:number):boolean {return Number.isInteger(id)&&id>=0&&id<this.occupied.length;}
   findPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity):number[]|null {
     if(!this.validNode(start)||!this.validNode(goal))return null;
+    if(!this.unitWalkable(this.point(goal)))return null;
     if(!this.layers){
       const dx=Math.abs(start%this.size-goal%this.size),dy=Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size));
       const corridor=Math.max(dx,dy)>=32?this.sectors.corridor(start,goal):undefined;
@@ -140,11 +150,12 @@ export class Spatial {
     this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
     const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!!this.occupied[n.id]||!!this.resources[n.id]||!!blocked?.has(n.id);
     this.routing.searches++;
-    const route=this.layers.path(from,to,n=>blockedNode(n)||!!corridor&&!corridor[this.sectors.sector(n.id)],maxCost);
+    const fits = (a:number,b:number) => this.clearSegment(fixed(this.point(a)),fixed(this.point(b)));
+    const route=this.layers.path(from,to,n=>blockedNode(n)||!!corridor&&!corridor[this.sectors.sector(n.id)],maxCost,fits);
     this.routing.expanded+=this.layers.lastExpanded;
     if(route!==null||!corridor)return route?.map(n=>n.id)??null;
     this.routing.fallbacks++;this.routing.searches++;
-    const fallback=this.layers.path(from,to,blockedNode,maxCost);this.routing.expanded+=this.layers.lastExpanded;
+    const fallback=this.layers.path(from,to,blockedNode,maxCost,fits);this.routing.expanded+=this.layers.lastExpanded;
     return fallback?.map(n=>n.id)??null;
   }
   visible(a:Point & {elevation?:number},b:Point & {elevation?:number}){return (this.layers??this.tactical).visible(a,b);}
@@ -202,7 +213,7 @@ export class Spatial {
       }
     this.blockedCells=next;
     const added=[...next].filter(cell=>!previous.has(cell)),removed=[...previous].filter(cell=>!next.has(cell));
-    this.navigation.invalidate([...added,...removed]);
+    this.navigation.invalidate([...added,...removed], 1 + Math.floor((this.unitRadius + 500) / 1000));
     this.sectors.invalidate([...added,...removed]);
     this.sectors.prepare();
   }
@@ -215,6 +226,11 @@ export class Spatial {
       !this.resources[i]
     );
   }
+  /** Physical clearance at a destination, not just the center terrain cell. */
+  unitWalkable(p: Point): boolean {
+    const position = fixed(p);
+    return this.clearSegment(position, position);
+  }
   free(p: Point, except?: number) {
     const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     return (
@@ -222,7 +238,8 @@ export class Spatial {
       p.x < this.size &&
       p.y >= 0 &&
       p.y < this.size &&
-      this.walkable(this.cell(p)) &&
+      this.unitWalkable(p) &&
+      this.unitSegmentClear(fixed(p), fixed(p), except ?? -1) &&
       (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.units()).some(
         (e) =>
           e.unit &&
@@ -231,7 +248,7 @@ export class Spatial {
           !e.unit.release &&
           !this.ignoresUnits(e) &&
           e.id !== except &&
-          (e.surface === p.surface || !!this.layers&&Math.abs(this.height(precise(e))-this.height(p))<2) &&
+          (e.surface === p.surface || !!this.layers&&Math.abs(this.height(precise(e))-this.height(p))<this.unitHeight) &&
           ((e.x === p.x && e.y === p.y) ||
             (!!e.unit.detour?.yielding && e.unit.detour.waypoint===this.cell(p))),
       ))
@@ -386,13 +403,13 @@ export class Spatial {
         }
         return result;
       };
-      return clearSweep(from,to,(a,b)=>candidates(a).some(na=>candidates(b).some(nb=>graph.step(na,nb))),this.size);
+      return clearSweep(from,to,(a,b)=>candidates(a).some(na=>candidates(b).some(nb=>graph.step(na,nb))),this.size,this.unitRadius);
 
     }
     const terrainStep = (a: number, b: number) =>
       this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= MAX_GROUND_STEP_CM;
     return (
-      clearSweep(from, to, terrainStep, this.size) &&
+      clearSweep(from, to, terrainStep, this.size, this.unitRadius) &&
       (!blocked ||
         clearRay(
           from,
@@ -419,7 +436,8 @@ export class Spatial {
     const dx = to.x - from.x,
       dy = to.y - from.y,
       square = dx * dx + dy * dy;
-    const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-400,Math.min(from.y,to.y)-400,Math.max(from.x,to.x)+400,Math.max(from.y,to.y)+400) ?? this.units();
+    const diameter = this.unitRadius * 2;
+    const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-diameter,Math.min(from.y,to.y)-diameter,Math.max(from.x,to.x)+diameter,Math.max(from.y,to.y)+diameter) ?? this.units();
     for (const unit of candidates) {
       if (
         unit.id === except ||
@@ -430,13 +448,13 @@ export class Spatial {
         || this.ignoresUnits(unit)
       )
         continue;
-      if(this.layers && Math.abs(this.height(precise(unit))-this.height({x:from.x/1000,y:from.y/1000,surface:from.surface}))>=2)continue;
+      if(this.layers && Math.abs(this.height(precise(unit))-this.height({x:from.x/1000,y:from.y/1000,surface:from.surface}))>=this.unitHeight)continue;
       const p = unit.unit.position ?? fixed(unit);
       if (
-        p.x < Math.min(from.x, to.x) - 400 ||
-        p.x > Math.max(from.x, to.x) + 400 ||
-        p.y < Math.min(from.y, to.y) - 400 ||
-        p.y > Math.max(from.y, to.y) + 400
+        p.x < Math.min(from.x, to.x) - diameter ||
+        p.x > Math.max(from.x, to.x) + diameter ||
+        p.y < Math.min(from.y, to.y) - diameter ||
+        p.y > Math.max(from.y, to.y) + diameter
       )
         continue;
       const t = square
@@ -447,7 +465,7 @@ export class Spatial {
         : 0;
       if (
         (p.x - from.x - t * dx) ** 2 + (p.y - from.y - t * dy) ** 2 <
-        400 ** 2
+        diameter ** 2
       ) {
         if (!blockers) return false;
         blockers.push(unit.id);

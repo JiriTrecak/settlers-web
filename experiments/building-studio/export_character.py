@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import bpy
+import bmesh
 from mathutils import Vector
 from export_viewer import yup
 
@@ -16,7 +17,7 @@ def export_character(asset,output):
     variants=config.get('characterVariants',defaults)
     events=config.get('attackEvents',{'base':{'normalizedTime':.55,'event':'hit'},'warrior':{'normalizedTime':.55,'event':'hit'},'archer':{'normalizedTime':.65,'event':'release'}})
     forward=cam.matrix_world.to_quaternion() @ Vector((0,0,-1))
-    meta={'kind':'character','camera':{'position':yup(cam.matrix_world.translation),'target':yup(cam.matrix_world.translation+forward*20),'scale':cam.data.ortho_scale},'lights':[]}
+    meta={'kind':'character','camera':{'position':yup(cam.matrix_world.translation),'target':yup(cam.matrix_world.translation+forward*config['camera'].get('distance',20)),'scale':cam.data.ortho_scale},'lights':[]}
     for o in scene.objects:
         if o.type=='LIGHT':meta['lights'].append({'name':o.name,'type':o.data.type,'position':yup(o.location),'color':list(o.data.color),'energy':o.data.energy*7})
     meshes=[o for o in scene.objects if o.type=='MESH' and 'role' in o]
@@ -39,10 +40,32 @@ def export_character(asset,output):
         for source in meshes:
             if source['role']!=role:continue
             ob=source.copy();ob.data=source.data.copy();scene.collection.objects.link(ob)
-            ob.hide_render=False;ob.hide_set(False);ob.select_set(True);copies.append(ob)
+            ob.hide_render=False;ob.hide_set(False);copies.append(ob)
+            weld=config.get('runtimeWeldDistance',0)
+            if weld < 0:raise ValueError('runtimeWeldDistance must be nonnegative')
+            if weld:
+                # Imported glTF UV/normal seams duplicate coincident vertices.
+                # Weld topology before reduction so adjacent faces cannot collapse apart.
+                bm=bmesh.new();bm.from_mesh(ob.data)
+                bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=weld)
+                bm.to_mesh(ob.data);bm.free();ob.data.update()
+            ratio=config.get('runtimeDecimation',{}).get(source.name,1)
+            if not 0 < ratio <= 1:raise ValueError(f'Invalid runtime decimation for {source.name}: {ratio}')
+            if ratio < 1:
+                bpy.ops.object.select_all(action='DESELECT');ob.select_set(True)
+                bpy.context.view_layer.objects.active=ob
+                modifier=ob.modifiers.new('Disposable runtime reduction','DECIMATE')
+                modifier.ratio=ratio;modifier.use_collapse_triangulate=True
+                bpy.ops.object.modifier_apply(modifier=modifier.name)
+        bpy.ops.object.select_all(action='DESELECT')
+        for ob in copies:ob.select_set(True)
         bpy.context.view_layer.objects.active=copies[0];bpy.ops.object.join()
         ob=bpy.context.object;ob.name='Ant_'+role;ob['role']=role;merged.append(ob)
     meshes=merged
+    for role in meta['variants']:
+        meta['variantTriangles'][role]=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes if o['role'] in ('base',role))
+    meta['triangles']=meta['variantTriangles'][meta['variants'][0]]
+    meta['vertices']=sum(len(o.data.vertices) for o in meshes)
     def write(path,role=None):
         rigs[0]['variant']=role or meta['variants'][0]
         rigs[0]['characterProfile']={'variants':variants,'attackEvents':events}

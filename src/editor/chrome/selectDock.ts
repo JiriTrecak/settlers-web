@@ -40,7 +40,7 @@ export class SelectDock {
     this.yaw.addEventListener("input", () => this.hooks.onYaw((Number(this.yaw.value) * Math.PI) / 180));
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
-    hint.textContent = "Drag move · Shift-drag rotate · Q/E 15° · R 90° · Del";
+    hint.textContent = "Drag move · Shift-drag rotate · Q/E 15° · Shift+Q/E 90° · R 90° · Del";
     this.walkSection.className='flex flex-col gap-2 border-t border-white/10 pt-2';
     for(const [key,label,min,max] of [['level','Navigation level',1,31],['height','Center height (m)',-16,64],['start','Start connects to level',0,31],['end','End connects to level',0,31]] as const){
       const input=document.createElement('input');input.type='number';input.min=String(min);input.max=String(max);input.step=key==='height'?'.1':'1';

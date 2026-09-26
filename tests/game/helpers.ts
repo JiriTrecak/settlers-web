@@ -22,6 +22,10 @@ export function game(
     new ContentRegistry(src),
   );
 }
+/** Regression fixtures with hand-authored sub-cell gaps/timings at original size. */
+export function originalScaleGame(entities: Placement[] = [], edit?: (draft: ReturnType<typeof source>) => void) {
+  return game(entities, draft => { (draft.rules as Rules).unitScale=1; edit?.(draft); });
+}
 export function placed(
   id: string,
   definition: string,

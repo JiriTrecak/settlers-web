@@ -10,8 +10,12 @@ const offsets=[[-1,0],[0,-1],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean):FixedPoint[]|null {
  if(Math.hypot(to.x-from.x,to.y-from.y)>4000)return null;
  if(clear(from,to))return [{...to}];
- const position=(id:number)=>({x:from.x+(id%WIDTH-RADIUS)*SPACING,y:from.y+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})});
  const start=RADIUS*WIDTH+RADIUS;
+ // Anchor the grid to the world, not the interrupted sub-cell position. A
+ // translated grid can miss the only clear center between enlarged bodies.
+ // Retain the exact start as a special node; never snap the actual unit.
+ const originX=Math.round(from.x/SPACING)*SPACING,originY=Math.round(from.y/SPACING)*SPACING;
+ const position=(id:number)=>id===start?{...from}:{x:originX+(id%WIDTH-RADIUS)*SPACING,y:originY+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})};
  const cost=new Map<number,number>([[start,0]]),previous=new Map<number,number>();
  const open=[{id:start,g:0,h:lengthCeil(to.x-from.x,to.y-from.y)}],closed=new Set<number>();
  for(let visits=0;open.length&&visits<MAX_VISITS;){
@@ -35,7 +39,7 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
   for(const [dx,dy] of offsets){
    const x=current.id%WIDTH+dx,y=Math.floor(current.id/WIDTH)+dy;
    if(x<0||y<0||x>=WIDTH||y>=WIDTH)continue;
-   const id=y*WIDTH+x,g=current.g+(dx&&dy?354:250),q=position(id);
+   const id=y*WIDTH+x,q=position(id),g=current.g+lengthCeil(q.x-p.x,q.y-p.y);
    if(closed.has(id)||g>=(cost.get(id)??Infinity)||!clear(p,q))continue;
    cost.set(id,g);previous.set(id,current.id);
    open.push({id,g,h:lengthCeil(to.x-q.x,to.y-q.y)});

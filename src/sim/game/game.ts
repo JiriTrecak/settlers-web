@@ -312,8 +312,9 @@ export class Game {
       const destinations = action.type === "move" ? formationDestinations(
         eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
           .map(e=>({id:e.id,...precise(e)})), action.destination, this.spatial.size,
-        p=>this.spatial.walkable(this.spatial.cell(p)),
+        p=>this.spatial.unitWalkable(p),
         (from,to)=>this.spatial.clearSegment(fixed(from),fixed(to)),
+        this.registry.rules.unitScale,
       ) : null;
       const applied: number[] = [];
       for (const e of eligible) {

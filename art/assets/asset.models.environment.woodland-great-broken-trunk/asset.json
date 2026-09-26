@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-great-broken-trunk",
+  "name": "Great broken trunk",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "289b495111da253f815139ee93520da085715fd1da19e442478526dde80d294e",
+      "bytes": 1628780
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "157c7e8e79ba8ea6301d73343ca322ee726e0ce34c329db72d0fdea4fcba976f",
+      "bytes": 1671460
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fd5685bc206417c3bb5c502a4a5f88be42e6b5763dd1a0750d71d83973bdc000",
+      "bytes": 358
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-great-broken-trunk",
+        "sceneryAsset": "woodland-great-broken-trunk",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-great-broken-trunk"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-great-broken-trunk",
+        "name": "Great broken trunk",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 8.2,
+            "depth": 8.2,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 4.6
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

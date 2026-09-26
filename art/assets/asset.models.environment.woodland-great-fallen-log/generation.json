@@ -1,0 +1,11 @@
+{
+  "method": "authored",
+  "recipe": "scripts/assets/build-forest-giants.py",
+  "triangles": 428,
+  "design": "Original sparse forest-scale scenery. Mushroom collision is stem-only. Canopies use bent tangent leaf fans.",
+  "textures": [
+    "asset.textures.forest-giants-bark",
+    "asset.textures.forest-giants-mushrooms",
+    "woodland-oak-leaves"
+  ]
+}

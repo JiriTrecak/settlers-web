@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { prepareMaskedTeamColor } from '/masked-team-color.js';
 
 export class BuildingViewer {
   constructor(container, status) {
@@ -108,6 +109,7 @@ export class BuildingViewer {
       if (!o.isMesh) return;
       for (const material of (Array.isArray(o.material) ? o.material : [o.material])) {
         if (material.name !== 'TC_TeamColor') continue;
+        prepareMaskedTeamColor(material);
         material.userData.defaultTeamColor ??= material.color.clone();
         if (value === 'default') material.color.copy(material.userData.defaultTeamColor);
         else material.color.set(value);

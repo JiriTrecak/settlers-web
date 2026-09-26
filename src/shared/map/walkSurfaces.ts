@@ -29,7 +29,7 @@ export class WalkSurfaces {
  private regionCount=0;
  private readonly groundTactical:TacticalTerrain;
  private readonly bounds:{loX:number;hiX:number;loY:number;hiY:number}[]=[];
- constructor(readonly size:number,readonly groundHeights:Int16Array,readonly groundWalkable:Uint8Array,surfaces:readonly BridgeSurface[]){
+ constructor(readonly size:number,readonly groundHeights:Int16Array,readonly groundWalkable:Uint8Array,surfaces:readonly BridgeSurface[],readonly bodyClearanceCm=BODY_CLEARANCE_CM){
   this.groundCount=size*size;
   this.groundTactical=new TacticalTerrain(size,groundHeights);
   if(!Number.isInteger(size)||size<2||size>2048||groundHeights.length!==this.groundCount||groundWalkable.length!==this.groundCount)throw new Error('Invalid surface terrain');
@@ -122,7 +122,7 @@ export class WalkSurfaces {
    const bottom=upper.height-Math.round(deck.thickness*100);
    // Adjacent pieces can share a coplanar seam. A solid ending at our feet
    // is supporting floor, not an overhead obstruction.
-   if(upper.height>n.height && bottom<n.height+BODY_CLEARANCE_CM)return false;
+   if(upper.height>n.height && bottom<n.height+this.bodyClearanceCm)return false;
   }
   return true;
  }
@@ -157,7 +157,7 @@ export class WalkSurfaces {
   return result;
  }
  /** Integer A*, stable ties. The optional occupancy query is layer-specific. */
- path(from:SurfacePoint,to:SurfacePoint,blocked?:(node:SurfaceNode)=>boolean,maxCost=Infinity):SurfaceNode[]|null {
+ path(from:SurfacePoint,to:SurfacePoint,blocked?:(node:SurfaceNode)=>boolean,maxCost=Infinity,canStep?:(from:number,to:number)=>boolean):SurfaceNode[]|null {
   this.lastExpanded=0;
   const start=this.node(from),goal=this.node(to);
   if(start===undefined||goal===undefined||!this.walkable(goal)||blocked?.(this.nodes[goal]!))return null;
@@ -177,7 +177,7 @@ export class WalkSurfaces {
    if(cur.id===goal){const route:SurfaceNode[]=[];for(let at=goal;at!==start;at=prev[at]!)route.push(this.nodes[at]!);return route.reverse();}
    closed[cur.id]=search;this.lastExpanded++;const a=this.nodes[cur.id]!;
    for(const id of this.neighbors(cur.id,blocked)){
-    if(closed[id]===search)continue;const b=this.nodes[id]!,g=cur.g+(a.x!==b.x&&a.y!==b.y?1414:1000);
+    if(closed[id]===search||canStep&&!canStep(cur.id,id))continue;const b=this.nodes[id]!,g=cur.g+(a.x!==b.x&&a.y!==b.y?1414:1000);
     const h=heuristic(id);if(g+h>maxCost||seen[id]===search&&g>=cost[id]!)continue;
     seen[id]=search;cost[id]=g;prev[id]=cur.id;push({id,g,h});
    }

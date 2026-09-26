@@ -11,6 +11,7 @@ export class Meadow{
  constructor(private readonly scene:Scene){}
  get ready(){return this.grass?.ready??Promise.resolve();}
  updateLOD(_camera:Camera){} // Ten-triangle clumps; sector batches provide culling.
+ updateGround(field:HeightField){this.grass?.updateGround(field);}
  tick(now:number){this.grass?.tick(now);}
  rebuild(field:HeightField,landscape:Landscape){
   this.grass?.dispose();this.grass=undefined;this.count=0;

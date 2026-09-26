@@ -1,0 +1,61 @@
+{
+  "name": "Ant Warrior \u2014 Tripo study",
+  "kind": "character",
+  "blend": "ant-warrior-tripo.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 8,
+    "scale": 2.75,
+    "target": [
+      0,
+      0,
+      1.08
+    ],
+    "distance": 12
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 560,
+    "fill_energy": 260,
+    "rim_energy": 360,
+    "scale": 0.45,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "characterHeight": 2.18,
+  "characterVariants": {
+    "warrior": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "attack": "attack_sword",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "warrior": {
+      "normalizedTime": 0.49295774647887325,
+      "event": "hit"
+    }
+  },
+  "runtimeDecimation": {
+    "Body and clothing": 0.5,
+    "Head helmet and antennae": 0.6,
+    "Acorn shield": 0.38,
+    "Ivory sword and guard": 0.7
+  },
+  "runtimeWeldDistance": 1e-06
+}

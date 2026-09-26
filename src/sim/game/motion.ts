@@ -1,8 +1,9 @@
 import { canTraverse } from './navigation';
 import type { Entity, Point } from './state';
+import {unitDimensions} from '../../content/unitScale';
 
 export const POSITION_SCALE = 1000;
-export const UNIT_RADIUS = 200;
+const BASE_UNIT_RADIUS = unitDimensions(1).radius * POSITION_SCALE;
 export type FixedPoint = {x: number; y: number; surface?:string};
 export const fixed = (p: Point): FixedPoint => ({x: p.x * POSITION_SCALE, y: p.y * POSITION_SCALE, ...(p.surface?{surface:p.surface}:{})});
 export const motionCell = (p: FixedPoint,size=256) => Math.floor((p.y + 500) / 1000) * size + Math.floor((p.x + 500) / 1000);
@@ -45,8 +46,16 @@ export function clearRay(from: FixedPoint, to: FixedPoint, step: (a: number, b: 
 }
 
 /** Sweep a conservative square footprint around the center line. */
-export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256): boolean {
-  for (const [x, y] of [[0, 0], [-UNIT_RADIUS, -UNIT_RADIUS], [UNIT_RADIUS, -UNIT_RADIUS], [-UNIT_RADIUS, UNIT_RADIUS], [UNIT_RADIUS, UNIT_RADIUS]]) {
+export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256,radius=BASE_UNIT_RADIUS): boolean {
+  const offsets = [[0, 0], [-radius, -radius], [radius, -radius], [-radius, radius], [radius, radius]];
+  // Wider bodies must not straddle an obstacle between their center/corners.
+  // Sample the interior as well, with strictly sub-cell gaps between rays.
+  if (radius >= 500) {
+    const divisions = Math.ceil(2 * radius / 900);
+    for (let x = 0; x <= divisions; x++) for (let y = 0; y <= divisions; y++)
+      offsets.push([Math.round(-radius + 2 * radius * x / divisions), Math.round(-radius + 2 * radius * y / divisions)]);
+  }
+  for (const [x, y] of offsets) {
     if (!clearRay({x: from.x + x, y: from.y + y}, {x: to.x + x, y: to.y + y}, step,size)) return false;
   }
   return true;

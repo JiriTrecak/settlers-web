@@ -82,8 +82,38 @@ def export_viewer(asset, output):
     bpy.ops.object.join()
     merged=bpy.context.object
     merged.name=asset.name+' · evaluated preview mesh'
+    # An explicit per-asset budget affects disposable export geometry only.
+    # UV seams/material boundaries survive Blender's collapse; verify the actual
+    # exported count and silhouette, never report the source object's face count.
+    budget=config.get('runtime_triangle_budget')
+    if budget:
+        for attempt in range(3):
+            count=sum(len(p.vertices)-2 for p in merged.data.polygons)
+            if count<=budget:break
+            reduction=merged.modifiers.new('Runtime triangle budget','DECIMATE')
+            reduction.ratio=budget/count*.98
+            reduction.use_collapse_triangulate=True
+            bpy.ops.object.modifier_apply(modifier=reduction.name)
+        if sum(len(p.vertices)-2 for p in merged.data.polygons)>budget:
+            raise ValueError('Runtime triangle budget was not met')
     if config.get('foliage_wind'):merged['foliageWind']=config['foliage_wind']
     if preserve_textures:
+        # The saved Blender source keeps full-resolution images. Only this
+        # disposable export uses the asset's runtime texture-size limit.
+        texture_size=config.get('runtime_texture_size')
+        if texture_size:
+            replacements={}
+            for material in merged.data.materials:
+                if not material or not material.use_nodes:continue
+                for node in material.node_tree.nodes:
+                    if node.type!='TEX_IMAGE' or not node.image:continue
+                    original=node.image
+                    if max(original.size)<=texture_size:continue
+                    if original.name not in replacements:
+                        reduced=original.copy();factor=texture_size/max(original.size)
+                        reduced.scale(max(1,round(original.size[0]*factor)),max(1,round(original.size[1]*factor)))
+                        reduced.pack();replacements[original.name]=reduced
+                    node.image=replacements[original.name]
         # Broad contact shading keeps overlaps readable under moving canopy
         # shadows. It is neutral grayscale, so ownership can still be recolored.
         if config.get('bake_vertex_ao',False):
@@ -99,6 +129,13 @@ def export_viewer(asset, output):
         # Export its neutral pattern instead, then restore the red factor in GLB.
         team_factors={}
         for material in merged.data.materials:
+            if material and material.get('teamColorMask')=='baseColorAlpha':
+                # Keep reference RGB for ordinary glTF viewers; ownership lives
+                # in the packed alpha channel, consumed by the shared shader.
+                bsdf=material.node_tree.nodes.get('Principled BSDF')
+                texture=material.node_tree.nodes['Authored albedo with ownership mask']
+                material.node_tree.links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])
+                material.diffuse_color=(1,1,1,1)
             if material and material.name=='TC_TeamColor' and material.get('ownership_texture_neutral'):
                 bsdf=material.node_tree.nodes.get('Principled BSDF')
                 texture=next(n for n in material.node_tree.nodes if n.type=='TEX_IMAGE')

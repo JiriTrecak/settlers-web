@@ -1,5 +1,5 @@
 import { isStunned } from "./effects";
-import { atPoint, precise, UNIT_RADIUS, POSITION_SCALE } from "./motion";
+import { atPoint, precise, POSITION_SCALE } from "./motion";
 import type { Creation, Owner, Stock } from "../../content/schema";
 import { workerPopulation, gathererCount } from "./population";
 import { GameContext } from "./context";
@@ -885,7 +885,7 @@ export class Economy {
         !this.c.liveUnits().some((e) => {
           if (!e.unit || e.unit.contained || e.unit.release) return false;
           const p = precise(e),
-            clearance = 0.5 + UNIT_RADIUS / POSITION_SCALE;
+            clearance = 0.5 + this.c.spatial.unitRadius / POSITION_SCALE;
           return (
             Math.abs(p.x - r.x) <= clearance && Math.abs(p.y - r.y) <= clearance
           );

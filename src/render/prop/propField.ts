@@ -46,6 +46,7 @@ export class PropField {
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private batches: InstancedMesh[]=[];
+  private instanceSlots=new Map<string,{batch:InstancedMesh;index:number;source:Mesh}[]>();
   private warmMeshes: InstancedMesh[]=[];
   contactRevision=0;
   contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
@@ -360,12 +361,23 @@ export class PropField {
     if(this.queued)return;this.queued=true;
     queueMicrotask(()=>{this.queued=false;if(!this.destroyed)this.rebuildBatches();});
   }
+  /** Editor movement changes only this object's instance matrices. Rebatch on commit. */
+  previewStamp(stamp:MapStamp):void {
+    const root=this.placed.get(stamp.id);if(!root)return;
+    this.place(root,stamp);root.updateMatrixWorld(true);
+    root.userData.cameraBounds=new Box3().setFromObject(root);
+    const touched=new Set<InstancedMesh>();
+    for(const slot of this.instanceSlots.get(stamp.id)??[]){slot.batch.setMatrixAt(slot.index,slot.source.matrixWorld);slot.batch.instanceMatrix.needsUpdate=true;touched.add(slot.batch);}
+    for(const batch of touched){batch.computeBoundingSphere();if(batch.boundingSphere)batch.boundingSphere.radius+=1.25;}
+    this.syncMark();
+  }
+
   private rebuildBatches():void {
     const timing=perf.start();
-    this.contacts=[];this.contactRevision++;
+    this.contacts=[];this.contactRevision++;this.instanceSlots.clear();
     const previous=new Map(this.batches.map(b=>[b.userData.batchKey as string,b]));
     this.batches=[];
-    const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[]}>();
+    const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[];sources:Mesh[]}>();
     for(const [id,root] of this.placed){
       root.updateMatrixWorld(true);
       root.userData.cameraBounds=new Box3().setFromObject(root);
@@ -381,8 +393,8 @@ export class PropField {
         // Spatial batches allow camera and shadow frusta to reject offscreen forest.
         const cell=`${Math.floor(root.position.x/24)},${Math.floor(root.position.z/24)}`;
         const key=cell+':'+n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');
-        let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[]};groups.set(key,g);}
-        g.poses.push(n.matrixWorld.clone());g.ids.push(id);
+        let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[],sources:[]};groups.set(key,g);}
+        g.poses.push(n.matrixWorld.clone());g.ids.push(id);g.sources.push(n);
       });
     }
     for(const [key,g] of groups){
@@ -410,6 +422,7 @@ export class PropField {
         if(changed)b.setMatrixAt(i,g.poses[i]);
       }
       b.count=g.poses.length;b.userData.stampIds=g.ids;
+      for(let i=0;i<g.ids.length;i++){const id=g.ids[i]!,slots=this.instanceSlots.get(id)??[];slots.push({batch:b,index:i,source:g.sources[i]!});this.instanceSlots.set(id,slots);}
       if(g.source.userData.sourceTreeWind){
         const color=new Color();let colorChanged=false;
         for(let i=0;i<g.ids.length;i++){

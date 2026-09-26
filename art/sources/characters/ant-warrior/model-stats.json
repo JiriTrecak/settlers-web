@@ -1,0 +1,14 @@
+{
+  "parts": 129,
+  "triangles": 4748,
+  "bones": 26,
+  "clips": [
+    "attack_sword",
+    "carry",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "walk"
+  ]
+}

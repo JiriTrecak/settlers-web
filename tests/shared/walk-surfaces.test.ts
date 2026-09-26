@@ -82,3 +82,19 @@ describe('overlapping walk surfaces',()=>{
  });
 
 });
+
+it('routes across rotated bridge decks at diagonal and right-angle orientations',()=>{
+ for(const angle of [Math.PI/4,Math.PI/2]){
+  const c=Math.cos(angle),s=Math.sin(angle),deck={...arch,c,s};
+  const heights=new Int16Array(1024),land=new Uint8Array(1024).fill(1);
+  for(let y=0;y<32;y++)for(let x=0;x<32;x++){
+   const localZ=s*(x+.5-16)+c*(y+.5-16);
+   if(Math.abs(localZ)<8){heights[y*32+x]=-300;land[y*32+x]=0;}
+  }
+  const graph=new WalkSurfaces(32,heights,land,[deck]);
+  const start={x:Math.floor(16-s*14),y:Math.floor(16-c*14)},end={x:Math.floor(16+s*14),y:Math.floor(16+c*14)};
+  const route=graph.path(start,end);
+  expect(route).not.toBeNull();expect(route!.some(n=>n.surface==='arch')).toBe(true);
+  expect(route!.filter(n=>!land[n.y*32+n.x]).every(n=>n.surface==='arch')).toBe(true);
+ }
+});

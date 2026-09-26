@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-root-snag",
+  "name": "Uprooted river snag",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "waterfront"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "0015cfaf45d4c951868bdbbee560d61eb7e84202f34da24773f6d1fdfd11a2a1",
+      "bytes": 351516
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "3ece9cfb2615fc732fa064d947b07254dfa09cdfdff46a0389656bd0c17c8ab5",
+      "bytes": 753239
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+      "bytes": 206
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-root-snag",
+        "sceneryAsset": "woodland-root-snag",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-root-snag"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-root-snag",
+        "name": "Uprooted river snag",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 10,
+            "depth": 2.2,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.1
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

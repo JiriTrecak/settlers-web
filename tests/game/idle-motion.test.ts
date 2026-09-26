@@ -17,7 +17,7 @@ it("strolls at half speed near its resting point and immediately yields to an or
   const before = precise(w);
   g.context.move();
   const after = precise(w);
-  expect(Math.hypot(after.x - before.x, after.y - before.y)).toBeCloseTo(2 / 40, 2);
+  expect(Math.hypot(after.x - before.x, after.y - before.y)).toBeCloseTo(g.context.def(w).behaviors.movement!.walkSpeed! / 40, 2);
   expect(Math.abs(after.x - 100)).toBeLessThanOrEqual(1);
   const result = g.command("player.1", {type: "move", actors: [w.id], destination: {x: 110, y: 100}});
   expect(result.accepted).toBe(true);

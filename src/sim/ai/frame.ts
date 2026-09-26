@@ -1,4 +1,5 @@
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
+import {unitDimensions} from '../../content/unitScale';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
@@ -86,7 +87,7 @@ export class Geography {
     const { size, land, heights } = map;
     this.regions = new Int32Array(size * size);
     if(map.surfaces.length){
-      this.layers=new WalkSurfaces(size,Int16Array.from(heights),Uint8Array.from(land),map.surfaces);
+      this.layers=new WalkSurfaces(size,Int16Array.from(heights),Uint8Array.from(land),map.surfaces,Math.round(unitDimensions(map.unitScale??1).height*100));
       return;
     }
     let region = 0;

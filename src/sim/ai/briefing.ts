@@ -20,6 +20,7 @@ export type ResourceSite = Readonly<{
 }>;
 export type MapBriefing = Readonly<{
   size: number;
+  unitScale?: number;
   fingerprint: string;
   heights: readonly number[];
   land: readonly number[];
@@ -85,6 +86,7 @@ export function createMapBriefing(
     .sort((a, b) => a.x - b.x || a.y - b.y);
   const data = {
     size: map.size,
+    unitScale: registry.rules.unitScale,
     heights: Object.freeze(heights),
     land: Object.freeze(land),
     surfaces: Object.freeze(surfaces),

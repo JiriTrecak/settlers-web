@@ -73,11 +73,25 @@ export function wrapYaw(rad: number): number {
   return t < 0 ? t + Math.PI * 2 : t;
 }
 
+/** Snap strictly in the requested direction, including across the 0° seam. */
+export function stepYaw(yaw: number, delta: number): number {
+  if (!delta) return wrapYaw(yaw);
+  const step = Math.abs(delta), tick = yaw / step;
+  return wrapYaw((delta > 0 ? Math.floor(tick + 1e-8) + 1 : Math.ceil(tick - 1e-8) - 1) * step);
+}
+
 export function withPose(stamp: MapStamp, x: number, y: number, yaw: number,size=256): MapStamp | null {
   if (!inStamp(x, y,size)) return null;
   const y0 = wrapYaw(yaw);
   const { yaw: _oldYaw, ...rest } = stamp;
-  const next: MapStamp = { ...rest, x, y };
+  let next: MapStamp = { ...rest, x, y };
+  const delta = y0 - (stamp.yaw ?? 0);
+  if (stamp.sourceTransform && Math.abs(delta) > 1e-10) {
+    // World-space yaw preserves the model's authored pitch/roll and absolute height.
+    const [qx,qy,qz,qw] = stamp.sourceTransform.quaternion;
+    const c = Math.cos(delta / 2), s = Math.sin(delta / 2);
+    next = {...next,sourceTransform: {...stamp.sourceTransform, quaternion: [c*qx+s*qz,c*qy+s*qw,c*qz-s*qx,c*qw-s*qy]}};
+  }
   const out = y0 < 1e-4 || Math.abs(y0 - Math.PI * 2) < 1e-4 ? next : { ...next, yaw: y0 };
   return stamp.scale !== undefined && stamp.scale !== 1 ? { ...out, scale: stamp.scale } : out;
 }

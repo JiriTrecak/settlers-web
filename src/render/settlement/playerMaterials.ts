@@ -5,6 +5,7 @@ import {
   type Object3D,
 } from "three";
 import { PLAYER_COLORS } from "../../shared";
+import { prepareMaskedTeamColor } from './maskedTeamColor.js';
 
 /** The only authored material opted into runtime player coloring. Exact, case-sensitive. */
 export const TEAM_COLOR_MATERIAL = "TC_TeamColor";
@@ -14,6 +15,7 @@ export function applyPlayerMaterial(
   playerColor: Color,
 ): void {
   if (material.name !== TEAM_COLOR_MATERIAL) return;
+  prepareMaskedTeamColor(material);
   material.userData.authoredPlayerColor ??= material.color.toArray();
   material.color.copy(playerColor);
 }
@@ -29,6 +31,7 @@ export function applyPlayerMaterials(root: Object3D, owner: number): void {
         ? child.material
         : [child.material]) {
         if (material instanceof MeshStandardMaterial) {
+          prepareMaskedTeamColor(material);
           if (owner < 0) {
             if (material.userData.authoredPlayerColor)
               material.color.fromArray(material.userData.authoredPlayerColor);

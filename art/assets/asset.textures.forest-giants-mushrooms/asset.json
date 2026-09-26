@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "id": "asset.textures.forest-giants-mushrooms",
+  "name": "Forest giants · painted mushrooms",
+  "kind": "texture",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "2cec8d9e6b20a7bdc1dce7eaab5f2bad9ed59aa7f7185fc0dab691ccb1df086b",
+      "bytes": 1989503
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "4343685be2ad0378441e2431e227a3df97369363d1fa8f3677ab91b616a83668",
+      "bytes": 1804
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

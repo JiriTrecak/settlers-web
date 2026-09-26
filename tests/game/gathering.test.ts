@@ -35,7 +35,7 @@ describe('hall gathering economy',()=>{
   expect(g.canBuild('player.1','building.ants.house',{x:mine.x+6,y:mine.y},worker.id)).toMatch(/Leave access/);
  });
  it('restores an in-flight harvest to the identical future without duplicating deposits',()=>{
-  const g=setup();run(g,400);
+  const g=setup();for(let tick=0;tick<800&&!g.entities.some(e=>e.unit?.cargo);tick++)g.tick();
   expect(g.entities.some(e=>e.unit?.cargo)).toBe(true);
   const restored=setup();restored.restore(g.snapshot());
   run(g,800);run(restored,800);

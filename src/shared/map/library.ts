@@ -13,7 +13,7 @@ export type MapEntry = {
   players: number;
   source: "project" | "local";
 };
-const key = "utc.authored-maps.threewater-1";
+export const LOCAL_MAPS_KEY = "utc.authored-maps.threewater-1";
 function entry(id: string, map: UtcMap, source: MapEntry["source"]): MapEntry {
   return {
     id,
@@ -36,10 +36,14 @@ const project = Object.entries(sources).map(([path, raw]) => {
 export function authoredMaps(): MapEntry[] {
   const maps = new Map(project.map((m) => [m.id, m]));
   try {
-    for (const item of JSON.parse(localStorage.getItem(key) ?? "[]")) {
+    for (const item of JSON.parse(localStorage.getItem(LOCAL_MAPS_KEY) ?? "[]")) {
       const map = parseUtcMap(item.map);
-      if (map && typeof item.id === "string")
-        maps.set(item.id, entry(item.id, map, "local"));
+      if (map && typeof item.id === "string") {
+        const id = item.id.startsWith("local:") ? item.id : `local:${item.id}`;
+        const local = entry(id, map, "local");
+        local.name = `${map.name} (local copy)`;
+        maps.set(id, local);
+      }
     }
   } catch {
     /* Storage unavailable or damaged: project files remain available. */
@@ -56,20 +60,22 @@ export function getMap(id: string): MapEntry {
   if (!found) throw new Error(`Map not found: ${id}`);
   return found;
 }
-export function rememberAuthoredMap(map: UtcMap): void {
-  const id =
+export function rememberAuthoredMap(map: UtcMap): string {
+  const slug =
     map.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "") || "untitled";
+  const id = `local:${slug}`;
   const maps = authoredMaps().filter(
     (m) => m.source === "local" && m.id !== id,
   );
   maps.push(entry(id, map, "local"));
   localStorage.setItem(
-    key,
+    LOCAL_MAPS_KEY,
     JSON.stringify(maps.map(({ id, map }) => ({ id, map }))),
   );
+  return id;
 }
 
 export function missionMaps(campaign?:string):MapEntry[]{return authoredMaps().filter(m=>m.map.mission && (!campaign || m.map.mission.campaign===campaign) && !playableMapError(m.map)).sort((a,b)=>a.map.mission!.order-b.map.mission!.order);}

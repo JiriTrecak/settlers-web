@@ -33,11 +33,12 @@ export type MapInputHooks = {
     down(clientX: number, clientY: number, shift: boolean): boolean;
     move(clientX: number, clientY: number): void;
     up(): void;
+    cancel?(): void;
     rotateBy(steps: number): void;
   };
 };
 
-type Drag = "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
+type Drag = "context" | "command" | "select" | "pan" | "orbit" | "stroke" | "grab";
 
 export class MapInput {
   reset():void { this.onBlur(); }
@@ -53,7 +54,7 @@ export class MapInput {
   private readonly onPointerOut = (e: PointerEvent) => {
     if (!e.relatedTarget) this.edgePointer = null;
   };
-  private readonly onBlur=()=>{this.zoomMomentum.reset();this.keys.clear();this.panCodes.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
+  private readonly onBlur=()=>{if(this.drag==="grab")this.hooks.grab?.cancel?.();this.zoomMomentum.reset();this.keys.clear();this.panCodes.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
   private readonly onContext=(e:Event)=>e.preventDefault();
   private readonly panCodes=new Map<string,string>();
   private readonly keys = new Set<string>();
@@ -116,6 +117,12 @@ export class MapInput {
         this.drag='select';this.startX=e.clientX;this.startY=e.clientY;this.moved=0;
         this.canvas.setPointerCapture(e.pointerId);return;
       }
+      if (!this.hooks.rts && e.button === 2 && this.hooks.onRightClick) {
+        this.drag = "context"; this.moved = 0;
+        this.lastX = e.clientX; this.lastY = e.clientY;
+        this.canvas.setPointerCapture(e.pointerId);
+        return;
+      }
       const paint = this.hooks.paint;
       const grab = this.hooks.grab;
       if (paint?.on() && e.button === 0 && !e.altKey && !this.keys.has(" ")) {
@@ -158,6 +165,10 @@ export class MapInput {
         Object.assign(this.selectionBox.style,{left:Math.min(this.startX,e.clientX)+'px',top:Math.min(this.startY,e.clientY)+'px',width:Math.abs(e.clientX-this.startX)+'px',height:Math.abs(e.clientY-this.startY)+'px'});
         return;
       }
+      if (this.drag === "context") {
+        if (Math.hypot(e.clientX-this.lastX,e.clientY-this.lastY) < CLICK_PX) return;
+        this.drag = this.orbit && !this.camera.locked ? "orbit" : "pan";
+      }
       const dx = e.clientX - this.lastX;
       const dy = e.clientY - this.lastY;
       this.moved += Math.hypot(dx, dy);
@@ -170,6 +181,13 @@ export class MapInput {
       this.hooks.onChanged();
     };
     this.onPointerUp = (e) => {
+      if (this.drag === "context") {
+        if (e.button !== 2) return;
+        this.drag = null;
+        if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+        this.hooks.onRightClick?.(e.clientX,e.clientY,e.shiftKey);
+        return;
+      }
       if (this.drag === "command") {
         if (e.button !== 2) return;
         this.drag = null;
@@ -199,7 +217,7 @@ export class MapInput {
       this.drag = null;
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
       if (stroking) this.hooks.paint?.endStroke?.();
-      if (grabbing) this.hooks.grab?.up();
+      if (grabbing) {if(this.hooks.grab?.cancel)this.hooks.grab.cancel();else this.hooks.grab?.up();}
     };
     this.onWheel = (e) => {
       e.preventDefault();

@@ -59,7 +59,7 @@ describe("eight-direction navigation", () => {
       expect(g.context.spatial.route(w, {x: 110, y: diagonal ? 110 : 100})).toBe(true);
       let ticks = 0;
       while (w.unit!.route.length && ticks < 100) {g.context.move(); ticks++;}
-      expect(ticks).toBe(diagonal ? 71 : 50);
+      expect(ticks).toBe(Math.ceil((diagonal?Math.hypot(10,10):10)/g.context.def(w).behaviors.movement!.speed*40));
       expect([w.x, w.y]).toEqual([110, diagonal ? 110 : 100]);
     }
     const g = game(), w = worker(g);

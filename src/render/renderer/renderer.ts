@@ -476,33 +476,37 @@ export class Renderer {
     drape = true,
   ): void {
     const timing = perf.start();
+    const previous=this.height;
+    // Immutable compiled fields may differ only in vegetation coverage. Moving a
+    // landmark must refresh those masks, but must not rebuild the river meshes.
+    const surfaceOnly=!!(previous&&field&&previous!==field&&!previous.source&&!field.source&&previous.size===field.size&&previous.waterLevel===field.waterLevel&&previous.samples.every((h,i)=>h===field.samples[i])&&JSON.stringify(previous.watercourses)===JSON.stringify(field.watercourses));
     this.height = field;
     this.sky.setProfile(biomeById(field?.biome).terrainSet);
-    this.updateCourses();
+    if(!surfaceOnly)this.updateCourses();
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
     this.props.setHeight(sample,field);
     this.props.setWaterY(field?.waterLevel ?? 0);
-    this.brush.setHeight(sample, dirty);
+    if(!surfaceOnly)this.brush.setHeight(sample, dirty);
     if (!this.terrain || !field || field.size !== this.size) {
       perf.end("Terrain update (event)", timing);
       return;
     }
-    this.terrain.setFrom(field, dirty);
+    if(!surfaceOnly)this.terrain.setFrom(field, dirty);
     (this.terrain.material as TerrainMaterial).update(
       field,
       this.landscape.strokes,
     );
     (this.terrain.material as TerrainMaterial).setCover(this.landscape.cover);
-    this.meadow.rebuild(field, this.landscape);
-    this.decals.rebuild(
+    if(surfaceOnly)this.meadow.updateGround(field);else this.meadow.rebuild(field, this.landscape);
+    if(!surfaceOnly)this.decals.rebuild(
       this.landscape.decals ?? [],
       field,
       this.landscape.environment.season,
     );
-    if (drape) this.refreshGrid();
+    if (drape&&!surfaceOnly) this.refreshGrid();
     perf.end("Terrain update (event)", timing);
   }
 
@@ -567,6 +571,12 @@ export class Renderer {
     );
     if(this.height&&this.landscape.environment.interior)(this.terrain?.material as TerrainMaterial|undefined)?.setGroundLights(this.sceneryLights.groundSources,this.height);
     this.present();
+  }
+
+  /** Drag previews bypass terrain uploads, grass rebuilding and static prop synchronization. */
+  previewEditorStamp(stamp:MapStamp):void {this.props.previewStamp(stamp);}
+  previewEditorEntities(settlement:NonNullable<ViewSnapshot['settlement']>):void {
+    if(this.height)this.settlement?.update(settlement,this.height,0,this.gameTimeScale);
   }
 
   pickGameEntity(clientX: number, clientY: number): number | null {

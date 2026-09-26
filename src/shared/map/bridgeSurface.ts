@@ -2,6 +2,7 @@ import {sceneryCatalogue as catalogJson} from '../assets/manifest';
 import {parseCatalogue} from '../asset/catalog';
 import type {MapStamp} from './utcmap';
 const definitions=new Map(parseCatalogue(catalogJson)!.assets.filter(e=>e.deck).map(e=>[e.id,e.deck!]));
+export function isBridgeAsset(asset:string):boolean {return definitions.has(asset);}
 export type BridgeSurface={rampLengths?:readonly [number,number];triangles?:readonly (readonly [number,number,number])[];id:string;level:number;connections?:{start?:number;end?:number};x:number;z:number;base:number;c:number;s:number;width:number;depth:number;height:number;arch:number;rise?:number;thickness:number};
 /** The same absolute placement is used by the visible mesh and navigation. */
 export function bridgePlacementHeight(stamp:MapStamp,ground:(x:number,z:number)=>number):number {

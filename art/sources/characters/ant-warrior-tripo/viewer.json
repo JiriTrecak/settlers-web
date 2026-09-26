@@ -1,0 +1,83 @@
+{
+  "kind": "character",
+  "camera": {
+    "position": [
+      0.0,
+      2.750077247619629,
+      11.883216857910156
+    ],
+    "target": [
+      0.0,
+      1.0800023078918457,
+      -9.5367431640625e-07
+    ],
+    "scale": 2.75
+  },
+  "lights": [
+    {
+      "name": "Warm key",
+      "type": "AREA",
+      "position": [
+        -1.3499999046325684,
+        3.7899997234344482,
+        1.7999999523162842
+      ],
+      "color": [
+        1.0,
+        0.8399999737739563,
+        0.6700000166893005
+      ],
+      "energy": 793.8000106811523
+    },
+    {
+      "name": "Soft front fill",
+      "type": "AREA",
+      "position": [
+        0.44999998807907104,
+        2.440000057220459,
+        2.6999998092651367
+      ],
+      "color": [
+        0.7799999713897705,
+        0.8399999737739563,
+        1.0
+      ],
+      "energy": 368.55001068115234
+    },
+    {
+      "name": "Amber right rim",
+      "type": "AREA",
+      "position": [
+        2.25,
+        3.3399999141693115,
+        -1.3499999046325684
+      ],
+      "color": [
+        1.0,
+        0.7400000095367432,
+        0.4699999988079071
+      ],
+      "energy": 510.30001068115234
+    }
+  ],
+  "variants": [
+    "warrior"
+  ],
+  "variantTriangles": {
+    "warrior": 4905
+  },
+  "triangles": 4905,
+  "vertices": 2552,
+  "animations": [
+    "attack_sword",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "slash_preset",
+    "walk"
+  ],
+  "height": 2.18,
+  "forward": "+Z",
+  "note": "Shared skeleton; rigidly weighted exoskeleton; in-place named animation clips."
+}

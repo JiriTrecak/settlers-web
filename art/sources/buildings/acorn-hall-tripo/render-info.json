@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-26T23:18:04+0200",
+  "view": "saved",
+  "quick": false,
+  "seconds": 98.1,
+  "blend_mtime_ns": 1790457394485965258,
+  "config": {
+    "name": "Acorn Main Hall",
+    "blend": "acorn-hall-tripo.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 0,
+      "elevation": 32,
+      "scale": 17.919999999999998,
+      "target": [
+        0.0,
+        0.0,
+        4.24
+      ],
+      "distance": 40.0
+    },
+    "render": {
+      "width": 1448,
+      "height": 1086,
+      "samples": 40
+    },
+    "light": {
+      "key_energy": 1100,
+      "fill_energy": 370,
+      "rim_energy": 800,
+      "scale": 2.2399999999999998,
+      "target": [
+        0.0,
+        0.0,
+        4.16
+      ]
+    },
+    "preserve_textures": true,
+    "runtime_triangle_budget": 10000,
+    "texture_format": "AUTO",
+    "bake_vertex_ao": true,
+    "runtime_texture_size": 2048,
+    "width": 14.08
+  }
+}

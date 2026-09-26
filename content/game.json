@@ -241,6 +241,7 @@
   },
   "rules": {
     "id": "declarations-6",
+    "unitScale": 1.7,
     "maxUnits": 160,
     "maxBuildings": 160,
     "constructionHpPermille": 100,
@@ -288,56 +289,56 @@
           "definition": "unit.ants.settler",
           "offset": {
             "x": -3,
-            "y": 7
+            "y": 11
           }
         },
         {
           "definition": "unit.ants.settler",
           "offset": {
             "x": -1,
-            "y": 7
+            "y": 11
           }
         },
         {
           "definition": "unit.ants.settler",
           "offset": {
             "x": 1,
-            "y": 7
+            "y": 11
           }
         },
         {
           "definition": "unit.ants.settler",
           "offset": {
             "x": 3,
-            "y": 7
+            "y": 11
           }
         },
         {
           "definition": "unit.ants.settler",
           "offset": {
             "x": -3,
-            "y": 9
+            "y": 13
           }
         },
         {
           "definition": "unit.ants.warrior",
           "offset": {
             "x": -4,
-            "y": 12
+            "y": 16
           }
         },
         {
           "definition": "unit.ants.warrior",
           "offset": {
             "x": 4,
-            "y": 12
+            "y": 16
           }
         },
         {
           "definition": "unit.ants.marshal",
           "offset": {
             "x": 0,
-            "y": 12
+            "y": 16
           }
         }
       ],
@@ -1576,7 +1577,7 @@
     {
       "id": "building.ants.fort",
       "kind": "building",
-      "name": "Mound",
+      "name": "Acorn Main Hall",
       "description": "Receives gathered amber and wood. Produces one worker every 12 seconds and supports 8 living workers.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
@@ -1587,12 +1588,12 @@
       },
       "vision": 42,
       "footprint": {
-        "width": 9,
-        "depth": 9
+        "width": 15,
+        "depth": 15
       },
       "entrance": {
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "creation": {
         "method": "construct",
@@ -1647,8 +1648,8 @@
     {
       "id": "building.ants.great-mound",
       "kind": "building",
-      "name": "Great Mound",
-      "description": "The colony’s fortified tier-two heart. Unlocks advanced troops and research; retains Mound worker births and amber/wood drop-off.",
+      "name": "Great Acorn Hall",
+      "description": "The colony’s fortified tier-two heart. Unlocks advanced troops and research; retains Acorn Main Hall worker births and amber/wood drop-off.",
       "asset": "asset.ants.great-mound",
       "icon": "icon.ants.great-mound",
       "body": {
@@ -1658,12 +1659,12 @@
       },
       "vision": 42,
       "footprint": {
-        "width": 9,
-        "depth": 9
+        "width": 15,
+        "depth": 15
       },
       "entrance": {
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "creation": {
         "method": "construct",

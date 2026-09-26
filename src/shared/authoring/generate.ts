@@ -104,7 +104,14 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    landformSurface!.grass[i]=Math.max(landformSurface!.grass[i]!,grass);
   });
  }
- const inWater=(x:number,z:number,clearance=0)=>rivers.some(r=>{const p=riverPoint(x,z,r);return p.offset<r.width*p.widthScale/2+clearance;});
+ const riverBounds=new Map(rivers.map(r=>{
+  if(r.area)return [r,shapeBounds(r.area)] as const;
+  const bounds:Bounds={minX:Infinity,minZ:Infinity,maxX:-Infinity,maxZ:-Infinity};
+  for(const s of r.samples){const half=r.width*s.widthScale/2;bounds.minX=Math.min(bounds.minX,s.x-half);bounds.maxX=Math.max(bounds.maxX,s.x+half);bounds.minZ=Math.min(bounds.minZ,s.z-half);bounds.maxZ=Math.max(bounds.maxZ,s.z+half);}
+  return [r,bounds] as const;
+ }));
+ const outside=(x:number,z:number,b:Bounds,pad=0)=>x<b.minX-pad||x>b.maxX+pad||z<b.minZ-pad||z>b.maxZ+pad;
+ const inWater=(x:number,z:number,clearance=0)=>rivers.some(r=>{if(outside(x,z,riverBounds.get(r)!,clearance))return false;const p=riverPoint(x,z,r);return p.offset<r.width*p.widthScale/2+clearance;});
  const paths=prepared.filter(p=>p.recipe.type==='path');
  const footprints=new Footprints();
  for(const obj of scene.objects.filter(o=>!o.bakedPlacement)){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
@@ -127,9 +134,9 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
     const random=(c:number)=>cellRandom(layer.seed,layer.id+'.river.'+mode,ix,iz,c);
     const x=(ix+.5+(random(0)-.5)*settings.jitter)*spacing,z=(iz+.5+(random(1)-.5)*settings.jitter)*spacing;
-    const p=riverPoint(x,z,course),bank=p.offset-recipe.width*p.widthScale/2;
     const patch=settings.patchiness?1-settings.patchiness.strength+settings.patchiness.strength*patchNoise(layer.seed,layer.id,x,z,settings.patchiness.scale):1;
     if(random(2)>=settings.probability*patch)continue;
+    const p=riverPoint(x,z,course),bank=p.offset-recipe.width*p.widthScale/2;
     if(mode==='water'){
      const depth=p.elevation-sample(terrain,x,z);
      if(bank>-.5||bank< -Math.min(3,recipe.width*.4)||depth<.15||depth>2.5)continue;
@@ -177,7 +184,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    if(random(2)>=recipe.probability*(recipe.edgeFade?clamp(edge/recipe.edgeFade):1)*patch)continue;
    if(recipe.riverBank){let bankDistance=Infinity;for(const r of rivers){const p=riverPoint(x,z,r);bankDistance=Math.min(bankDistance,p.offset-r.width*p.widthScale/2);}if(bankDistance<recipe.riverBank.min||bankDistance>recipe.riverBank.max)continue;}
    if(recipe.minSpacing&&spacingFootprints.intersects(x,z,recipe.minSpacing/2))continue;
-   if(inWater(x,z,recipe.waterClearance)||paths.some(p=>{const r=p.recipe;if(r.type!=='path')return false;if(r.vegetationClearance===0)return false;const n=p.spline?nearestSpline(x,z,p.spline):{offset:r.width/2-regionDistance(x,z,p.layer.shape as Exclude<LayerShape,{type:'spline'}>),widthScale:1};return n.offset<r.width*n.widthScale/2+r.vegetationClearance;}))continue;
+   if(inWater(x,z,recipe.waterClearance)||paths.some(p=>{const r=p.recipe;if(r.type!=='path')return false;if(r.vegetationClearance===0||outside(x,z,p.bounds))return false;const n=p.spline?nearestSpline(x,z,p.spline):{offset:r.width/2-regionDistance(x,z,p.layer.shape as Exclude<LayerShape,{type:'spline'}>),widthScale:1};return n.offset<r.width*n.widthScale/2+r.vegetationClearance;}))continue;
    const d=terrain.step,dx=(sample(terrain,x+d,z)-sample(terrain,x-d,z))/(2*d),dz=(sample(terrain,x,z+d)-sample(terrain,x,z-d))/(2*d);
    if(Math.hypot(dx,dz)>recipe.maxSlope)continue;
    let w=random(3)*weight,asset=recipe.species[0]!.asset;for(const s of recipe.species){w-=s.weight;if(w<0){asset=s.asset;break;}}

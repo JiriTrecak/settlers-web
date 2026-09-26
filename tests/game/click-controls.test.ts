@@ -54,6 +54,12 @@ describe("RTS click intentions", () => {
         } else {
           expect(right).not.toHaveBeenCalled();
           expect(camera.orbitScreen).toHaveBeenCalledOnce();
+          pointer("pointerdown",10);pointer("pointermove",12);pointer("pointerup",12);
+          expect(right).toHaveBeenCalledWith(12,10,false);
+          expect(camera.orbitScreen).toHaveBeenCalledOnce();
+          right.mockClear();
+          pointer("pointerdown",10);pointer("pointercancel",10);pointer("pointerup",10);
+          expect(right).not.toHaveBeenCalled();
         }
         input.destroy();
       }

@@ -1,3 +1,4 @@
+import {EditorDraft} from '../../editor/file/draft';
 import {newMapDialog} from '../../editor/chrome/newMapDialog';
 import {selectedWalk} from '../../editor/select/select';
 import {ScenePanel} from '../../editor/chrome/scenePanel';
@@ -18,7 +19,6 @@ import { TerrainDock } from "../../editor/chrome/terrainDock";
 import { Confirm, GameScreen } from "../../ui";
 import {
   emptyUtcMap,
-  parseUtcMap,
   stringifyUtcMap,
   type GridMode,
 } from "../../shared";
@@ -32,7 +32,7 @@ import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
-  private readonly draftKey="utc-editor-threewater-draft:"+(new URLSearchParams(location.search).get("map")??"new");
+  private draft:EditorDraft;
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
@@ -58,15 +58,16 @@ export class EditorScreen extends GameScreen {
 
   constructor(
     canvas: HTMLCanvasElement,
-    hooks: { onLeave: () => void; map?: UtcMap },
+    hooks: { onLeave: () => void; map?: UtcMap; mapId?: string },
   ) {
     super("screen");
-    // Capture the draft before replace() triggers syncDoc and writes this key.
-    let restoredDraft: UtcMap | undefined;
-    try {
-      for(const key of Object.keys(sessionStorage))if(key.startsWith('utc-editor-biome-draft:'))sessionStorage.removeItem(key);
-      restoredDraft = parseUtcMap(JSON.parse(sessionStorage.getItem(this.draftKey) ?? "null")) ?? undefined;
-    } catch { /* Invalid drafts must not prevent opening the editor. */ }
+    const initial = hooks.map ?? getMap("threewater-forest").map;
+    const mapId = hooks.mapId ?? (hooks.map ? 'new' : 'threewater-forest');
+    this.draft = new EditorDraft(sessionStorage,mapId,initial);
+    const restored = this.draft.restore([
+      'utc-editor-threewater-draft:'+mapId,
+      'utc-editor-threewater-draft:'+(new URLSearchParams(location.search).get('map')??'new'),
+    ]);
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
       host: this.root,
@@ -93,7 +94,7 @@ export class EditorScreen extends GameScreen {
       onLeave: () => void this.askLeave(),
       onMission:()=>{this.missionEditor?.destroy();this.missionEditor=new MissionEditor(this.root,this.editor,()=>{
         const error=playableMapError(this.editor.map);if(error)throw new Error(error);
-        rememberAuthoredMap(this.editor.map);const id=this.editor.map.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+        const id=rememberAuthoredMap(this.editor.map);
         window.open(`/?map=${encodeURIComponent(id)}`,"_blank");
       });},
       onEffects: () => {
@@ -207,13 +208,20 @@ export class EditorScreen extends GameScreen {
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
     {
-      const initial = hooks.map ?? getMap("threewater-forest").map;
       this.saved = stringifyUtcMap(initial);
-      this.editor.replace(restoredDraft ?? initial);
+      this.editor.replace(restored.map ?? initial);
     }
     this.spawnDock = new SpawnDock(this.root, this.editor);
     this.entityDock = new EntityDock(this.root, this.editor);
     this.scenePanel=new ScenePanel(this.root,this.editor, () => {this.mcpOpen=false;this.skyOpen=false;this.syncMcp();this.syncSky();this.syncRemote();}, () => this.toggleMcp(), () => this.toggleSky());
+    if(restored.recovery){
+      const notice=document.createElement('div');notice.className='editor-draft-recovery';notice.setAttribute('role','status');
+      const text=document.createElement('span');text.textContent='Updated map loaded. Your earlier browser draft is preserved.';
+      const button=document.createElement('button');button.textContent='Open earlier draft';button.type='button';
+      button.onclick=()=>{void (async()=>{if(!await this.ifClean('Save your current changes before opening the earlier draft?'))return;this.editor.replace(restored.recovery!);notice.remove();})();};
+      notice.append(text,button);this.root.append(notice);
+    }
+
 
   }
 
@@ -554,14 +562,7 @@ export class EditorScreen extends GameScreen {
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());
     this.environmentDock?.sync();
-    try {
-      sessionStorage.setItem(
-        this.draftKey,
-        stringifyUtcMap(this.editor.map),
-      );
-    } catch {
-      /* Storage may be full. */
-    }
+    this.draft.write(this.editor.map,this.dirty());
   }
 
   private markClean(): void {
@@ -606,19 +607,19 @@ export class EditorScreen extends GameScreen {
     }
     if (
       this.editor.tool === "select" &&
-      (this.editor.select.id || this.editor.selectedEntity)
+      (this.editor.select.id || this.editor.selectedEntity || this.editor.layers.selection?.kind === "object")
     ) {
       if (k === "q") {
         e.preventDefault();
-        this.editor.nudgeSelected(-Math.PI / 12);
+        this.editor.nudgeSelected(e.shiftKey ? -Math.PI / 2 : -Math.PI / 12);
         return;
       }
       if (k === "e") {
         e.preventDefault();
-        this.editor.nudgeSelected(Math.PI / 12);
+        this.editor.nudgeSelected(e.shiftKey ? Math.PI / 2 : Math.PI / 12);
         return;
       }
-      if (e.key === "Delete" || e.key === "Backspace") {
+      if ((e.key === "Delete" || e.key === "Backspace") && (this.editor.select.id || this.editor.selectedEntity)) {
         e.preventDefault();
         this.editor.deleteSelected();
         return;
@@ -677,6 +678,8 @@ export class EditorScreen extends GameScreen {
     const map = await newMapDialog(this.root);
     if (!map) return;
     this.files.clearFile();
+    this.draft = new EditorDraft(sessionStorage, "new", map);
+    this.saved = "";
     this.editor.replace(map);
     this.editor.lookAt(map.size/2,map.size/2);
     this.saved = "";
@@ -691,6 +694,8 @@ export class EditorScreen extends GameScreen {
       await this.alert("Couldn't load", "That file isn't a valid .utcmap.");
       return;
     }
+    this.draft = new EditorDraft(sessionStorage, "file:" + result.map.name, result.map);
+    this.saved = stringifyUtcMap(result.map);
     this.editor.replace(result.map);
     if (!playableMapError(result.map)) {
       try {

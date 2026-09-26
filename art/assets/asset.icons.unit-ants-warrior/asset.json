@@ -3,7 +3,7 @@
   "id": "asset.icons.unit-ants-warrior",
   "name": "Warrior",
   "kind": "icon",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "ants-v1",
@@ -32,16 +32,7 @@
   "materials": [],
   "bindings": {
     "profile": "icon",
-    "render": [
-      {
-        "id": "icon.ants.warrior",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.icons.unit-ants-warrior"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

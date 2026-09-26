@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,placed} from './helpers';
+import {originalScaleGame as game,placed} from './helpers';
 import {atPoint,fixed,precise} from '../../src/sim/game/motion';
 
 function fixture(rotation=0) {

@@ -78,8 +78,8 @@ async function start() {
   renderer.draw(snapshot, stamps);
   await Promise.all([renderer.ready(), renderer.gameReady()]);
   renderer.draw(snapshot, stamps);
-  if(map.landscape?.importedTerrain){
-    const save=document.createElement('button');save.textContent='Save comparison PNG';
+  {
+    const save=document.createElement('button');save.textContent='Save scene PNG';
     save.style.cssText='position:fixed;left:150px;bottom:12px;z-index:10;background:#101820ee;color:white;border:1px solid #6b7966;padding:8px 12px';
     save.onclick=()=>{
       const image=renderer.capture(1920,16/9,12),a=document.createElement('a');

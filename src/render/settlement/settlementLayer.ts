@@ -2,6 +2,7 @@ import {geometryModel} from '../../shared/assets/models';
 import {transformedModel} from '../prop/modelTransform';
 import {prototypeBounds} from '../prop/grounding';
 import {ImpactEffects} from './impactEffects';
+import {MeleeTrails} from './meleeTrails';
 import {speechEnvelope} from '../characters/speech';
 import {perf} from '../../debug/performance';
 import {firstPersonBody} from '../camera/firstPersonBody';
@@ -49,6 +50,7 @@ import { createCharacterInstance } from "../characters/character-player.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { content } from "../../content/builtin";
+import type {ContentRegistry} from "../../content/registry";
 import { ownerSlot } from "../../content/schema";
 import { projectMeshUrl } from "../../shared/assets/project";
 import type { HeightField } from "../../shared/map/height";
@@ -92,8 +94,9 @@ export class SettlementLayer {
   cameraSubject(id:number):CameraSubject|null {
     const root=this.entities.get(id),e=this.observedById.get(id);
     if(!root?.visible||!e?.unit||e.remembered||e.unit.contained||(e.hp!==null&&e.hp<=0))return null;
-    const asset=content.asset(content.get(e.definition).asset),anchor=asset.cameraAnchor;
-    return {position:root.position.clone(),yaw:root.rotation.y,eyeHeight:anchor?.height??Math.max(.65,(asset.healthHeight??2.5)*.65),eyeForward:anchor?.forward??0,distance:anchor?.distance??7};
+    const asset=this.registry.asset(this.registry.get(e.definition).asset),anchor=asset.cameraAnchor;
+    const scale=root.userData.visualScale??1;
+    return {position:root.position.clone(),yaw:root.rotation.y,eyeHeight:(anchor?.height??Math.max(.65,(asset.healthHeight??2.5)*.65))*scale,eyeForward:(anchor?.forward??0)*scale,distance:(anchor?.distance??7)*scale};
   }
   private observedEntities: readonly EntityView[] | undefined;
   private modelEntities: readonly EntityView[] = [];
@@ -109,6 +112,7 @@ export class SettlementLayer {
     this.abilityTarget.update(aim, height);
   }
   private readonly impacts = new ImpactEffects(this.root);
+  private readonly meleeTrails = new MeleeTrails(this.root);
   private readonly spellEffects = new SpellEffects(this.root);
   private readonly characterSources = new Map<string, GLTF>();
   private readonly characters = new Map<
@@ -202,7 +206,7 @@ export class SettlementLayer {
   private readonly invalidColor = new Color(0xf26960);
   private pendingPreview: (() => void) | null = null;
   readonly ready: Promise<void>;
-  constructor(scene: Scene, private readonly cutaway?:SceneryCutaway) {
+  constructor(scene: Scene, private readonly cutaway?:SceneryCutaway, private readonly registry:ContentRegistry=content) {
     this.root.name = "game-entities";
     this.root.add(this.ghost, this.entranceGhost, this.gridLines);
     this.gridLines.visible = false;
@@ -211,7 +215,7 @@ export class SettlementLayer {
     scene.add(this.root);
     const loader = new GLTFLoader();
     this.ready = Promise.all([this.harvestTrees.ready, ...
-      content.assets
+      this.registry.assets
         .filter(
           (a) =>
             a.file &&
@@ -284,7 +288,7 @@ export class SettlementLayer {
     if (this.warmModels.length) return this.warmModels;
     for (const asset of this.prototypes.keys()) {
       const source = this.characterSources.get(asset);
-      const character = source ? createCharacterInstance(source, content.asset(asset).character) : null;
+      const character = source ? createCharacterInstance(source, this.registry.asset(asset).character) : null;
       const model = character?.root ?? this.clone(asset);
       if (!model) continue;
       model.traverse(o => { if (o instanceof Mesh) {o.castShadow = true; o.receiveShadow = true;} });
@@ -297,9 +301,9 @@ export class SettlementLayer {
   }
   /** HUD previews share loaded geometry/textures, but own their skeleton and materials. */
   createPortrait(definition: string, owner: number) {
-    const asset = content.get(definition).asset;
+    const asset = this.registry.get(definition).asset;
     const source = this.characterSources.get(asset);
-    const character = source ? createCharacterInstance(source, content.asset(asset).character) : null;
+    const character = source ? createCharacterInstance(source, this.registry.asset(asset).character) : null;
     const root = character?.root ?? this.clone(asset);
     if (!root) return null;
     applyPlayerMaterials(root, owner);
@@ -334,10 +338,12 @@ export class SettlementLayer {
     model.traverse(node=>{if(node instanceof Mesh)for(const mat of Array.isArray(node.material)?node.material:[node.material])this.cutaway!.attach(mat,height);});
   }
   private make(e: EntityView) {
-    const d = content.get(e.definition),
+    const d = this.registry.get(e.definition),
       assetId = e.appearance?.asset ?? d.asset;
+    const visualScale = d.kind === "unit" ? this.registry.rules.unitScale : 1;
+    const modelScale = (this.registry.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1) * visualScale;
     let o = this.entities.get(e.id);
-    if (o && (o.userData.asset !== assetId || o.userData.modelScale !== (content.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1))) {
+    if (o && (o.userData.asset !== assetId || o.userData.modelScale !== modelScale)) {
       this.removeModel(e.id, o);
       this.entities.delete(e.id);
       o = undefined;
@@ -345,7 +351,7 @@ export class SettlementLayer {
     if (o) return o;
     const source = this.characterSources.get(assetId);
     const character = source
-      ? createCharacterInstance(source, content.asset(assetId).character)
+      ? createCharacterInstance(source, this.registry.asset(assetId).character)
       : null;
     if (character) this.characters.set(e.id, character);
     const model = character?.root ?? this.clone(assetId);
@@ -363,10 +369,11 @@ export class SettlementLayer {
     o.add(model);
     o.userData.asset = assetId;
     o.userData.entityId = e.id;
-    const asset = content.asset(assetId),
-      scale = (asset.scale ?? 1) * (e.appearance?.scale ?? 1);
+    const asset = this.registry.asset(assetId),
+      scale = modelScale;
     o.userData.modelScale = scale;
-    o.userData.pickHeight = asset.healthHeight ?? 2.5;
+    o.userData.visualScale = visualScale;
+    o.userData.pickHeight = (asset.healthHeight ?? 2.5) * visualScale;
     model.scale.setScalar(scale);
     if (asset.carryAsset) {
       const carry = this.clone(asset.carryAsset);
@@ -379,15 +386,16 @@ export class SettlementLayer {
     }
     const cargo = new Group();
     cargo.name = "Cargo";
-    cargo.position.set(0, 1.04, 0.48);
+    cargo.position.set(0, 1.04 * visualScale, 0.48 * visualScale);
+    cargo.scale.setScalar(visualScale);
     o.add(cargo);
     const selection = new Group();
     selection.name = "Selection";
     selection.position.y = 0.12;
     selection.scale.set(
-      d.footprint ? d.footprint.width + 0.3 : 1.8,
+      (d.footprint ? d.footprint.width + 0.3 : 1.8) * visualScale,
       1,
-      d.footprint ? d.footprint.depth + 0.3 : 1.8,
+      (d.footprint ? d.footprint.depth + 0.3 : 1.8) * visualScale,
     );
     const outline = new Line2(this.selectionGeometry, this.selectionMaterial);
     outline.raycast = () => {}; // Selection decoration must not intercept unit picking.
@@ -412,7 +420,7 @@ export class SettlementLayer {
       ),
     );
     hp.name = "Health";
-    hp.position.set(0, asset.healthHeight ?? 2.5, 0);
+    hp.position.set(0, o.userData.pickHeight, 0);
     hp.scale.set(
       d.kind === "building" ? 3.8 : 1.35,
       d.kind === "building" ? 0.36 : 0.42,
@@ -453,7 +461,7 @@ export class SettlementLayer {
   ) {
     if(this.observedEntities!==state.entities){
       this.observedEntities=state.entities;
-      this.modelEntities=state.entities.filter(e=>content.get(e.definition).kind!=="resource");
+      this.modelEntities=state.entities.filter(e=>this.registry.get(e.definition).kind!=="resource");
       this.observedById=new Map(this.modelEntities.map(e=>[e.id,e]));
     }
     this.restoreCameraSprites();
@@ -479,7 +487,7 @@ export class SettlementLayer {
     const byId = this.observedById;
     const seen = new Set<number>();
     for (const e of this.modelEntities) {
-      const d = content.get(e.definition);
+      const d = this.registry.get(e.definition);
       seen.add(e.id);
       const o = this.make(e);
       if (!o) continue;
@@ -520,6 +528,7 @@ export class SettlementLayer {
           o.userData.animationHp !== undefined &&
           e.hp !== null &&
           e.hp < o.userData.animationHp;
+        if(hurt)o.userData.reactionTick=renderTick;
         const cast = e.unit.casting;
         const castStarted = !!cast && o.userData.castKey !== `${cast.ability}/${cast.resolveTick}`;
         if (cast) {
@@ -547,7 +556,7 @@ export class SettlementLayer {
           const work =
             character.player.variant === "base" ? e.unit.work : undefined;
           character.player.setState(
-            work?.animation ?? (e.unit.cargo ? "carry" : "idle"),
+            work?.animation ?? (e.unit.cargo && character.player.hasState("carry") ? "carry" : "idle"),
           );
           if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
         }
@@ -560,7 +569,7 @@ export class SettlementLayer {
           character.player.seek(Math.min(.999999,phase));
         } else if (character.player.state === "cast" && o.userData.castTimeline) {
           const timeline=o.userData.castTimeline as NonNullable<NonNullable<EntityView['unit']>['casting']>;
-          const contact=content.asset(e.appearance?.asset??d.asset).castContact??.55;
+          const contact=this.registry.asset(e.appearance?.asset??d.asset).castContact??.55;
           // Windup follows authority, including late observations and long casts.
           // Recovery is visual only and yields to movement, attacks and damage.
           const phase=cast
@@ -577,6 +586,14 @@ export class SettlementLayer {
           character.player.update(previousState === character.player.state && !restarted ? dt : 0);
         }
         character.player.speak(e.id===speaker?speech:0);
+        // A brief local recoil remains readable even during an authoritative
+        // strike. It never moves the simulation body or delays damage.
+        const age=(renderTick-(o.userData.reactionTick??-Infinity))/40;
+        const recoil=age>=0&&age<.22?Math.sin(Math.PI*Math.min(1,age/.16))*Math.exp(-age*8):0;
+        parts.body.rotation.x=-.10*recoil;
+        parts.body.position.z=-.045*recoil;
+        if(attack&&!e.remembered&&character.player.state==='attack')
+          this.meleeTrails.sample(e.id,o,renderTick,attack.started,character.player.action.time/character.player.action.getClip().duration);
         o.userData.animationHp = e.hp;
       }
       const { carry, body } = parts;
@@ -599,7 +616,7 @@ export class SettlementLayer {
         selection.children[1].visible =
           this.selected.has(e.id) && !attackTarget;
       if (e.unit) selection.rotation.y = -o.rotation.y;
-      this.statusBadges.update(o, e, tick, content.asset(d.asset).healthHeight ?? 2.5);
+      this.statusBadges.update(o, e, tick, o.userData.pickHeight);
       const hp = parts.hp;
       if (
         e.hp !== null &&
@@ -609,7 +626,7 @@ export class SettlementLayer {
         o.userData.lastDamageTick = tick;
         const attacker=this.modelEntities.find(a=>a.unit?.attack?.target===e.id&&a.unit.attack.released);
         const angle=attacker?Math.atan2(e.x-attacker.x,e.y-attacker.y):o.rotation.y;
-        this.impacts.hit(e.id,o.position.x,o.position.y+(d.kind==='building'?1.7:1.1),o.position.z,renderTick,angle,d.hero?1.4:1);
+        this.impacts.hit(e.id,o.position.x,o.position.y+(d.kind==='building'?1.7:1.1*(o.userData.visualScale??1)),o.position.z,renderTick,angle,d.hero?1.4:1);
       }
       o.userData.previousHealth = e.hp;
       hp.visible =
@@ -634,10 +651,10 @@ export class SettlementLayer {
           child.removeFromParent();
         }
         if (cargoKey) {
-          const item = this.clone(content.get(cargoKey).asset);
+          const item = this.clone(this.registry.get(cargoKey).asset);
           if (item) {
             item.scale.setScalar(
-              0.7 * (content.asset(content.get(cargoKey).asset).scale ?? 1),
+              0.7 * (this.registry.asset(this.registry.get(cargoKey).asset).scale ?? 1),
             );
             cargo.add(item);
           }
@@ -653,6 +670,7 @@ export class SettlementLayer {
         });
     }
     this.impacts.update(renderTick,seen);
+    this.meleeTrails.update(renderTick,seen);
     perf.end('Units · pose and overlays',animationTiming);
     perf.value('Animated units',this.characters.size);
     const projectileTiming=perf.start();
@@ -660,7 +678,7 @@ export class SettlementLayer {
       const source = this.entities.get(shot.source);
       const observed = byId.get(shot.source);
       if (!source?.visible || !observed || observed.remembered) return undefined;
-      const socket = content.asset(observed.appearance?.asset ?? content.get(observed.definition).asset).projectileSocket;
+      const socket = this.registry.asset(observed.appearance?.asset ?? this.registry.get(observed.definition).asset).projectileSocket;
       return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
     };
     this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
@@ -710,7 +728,7 @@ export class SettlementLayer {
         definition !== null;
     if (this.placementModel) this.placementModel.visible = definition !== null;
     if (!definition) return;
-    const d = content.get(definition),
+    const d = this.registry.get(definition),
       footprint = d.footprint!;
     if (this.placementAsset !== d.asset || !this.placementModel) {
       if (this.placementModel) {
@@ -720,7 +738,7 @@ export class SettlementLayer {
       this.placementModel = this.clone(d.asset);
       this.placementAsset = d.asset;
       if (this.placementModel) {
-        this.placementModel.scale.setScalar(content.asset(d.asset).scale ?? 1);
+        this.placementModel.scale.setScalar(this.registry.asset(d.asset).scale ?? 1);
         this.placementModel.traverse((child) => {
           if (!(child instanceof Mesh)) return;
           child.castShadow = false;
@@ -813,6 +831,7 @@ export class SettlementLayer {
     this.gridLines.material.dispose();
     this.spellEffects.dispose();
     this.impacts.dispose();
+    this.meleeTrails.dispose();
     this.commandEffects.dispose();
     this.harvestTrees.dispose();
     this.abilityTarget.dispose();

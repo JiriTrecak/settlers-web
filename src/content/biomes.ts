@@ -37,6 +37,7 @@ export const BIOMES: readonly Biome[] = [{
     {id: 'recipe.forest.diverse', name: 'Living pine forest'},
     {id: 'recipe.forest.leafy', name: 'Leafy woodland'},
     {id: 'recipe.foliage.riverbank', name: 'Riverbank undergrowth'},
+    {id: 'recipe.foliage.mushroom-patches', name: 'Woodland mushroom patches'},
   ],
   rivers: [
     {id: 'recipe.river.gentle', name: 'Gentle woodland stream'},
@@ -64,7 +65,7 @@ export const BIOMES: readonly Biome[] = [{
   minimap: {ground:'#ad8960',grass:'#89834a',forest:'#99622f',crown:'#d69b37'},
   environment: {hour:12,season:'summer',playing:false,canopy:{...DEFAULT_CANOPY,enabled:false,height:38,scale:90,coverage:.22,cloudShadow:.10}},
   materials: [{id:'sand',name:'Warm exposed soil'},{id:'road',name:'Woodland path'},{id:'grass',name:'Fallen leaves and dry grass'},{id:'rock',name:'Rock'}],
-  foliage: [{id:'recipe.grass.autumn',name:'Fallen-leaf meadow'},{id:'recipe.forest.autumn',name:'Amberleaf woodland'},{id:'recipe.foliage.riverbank',name:'Green riverbank'}],
+  foliage: [{id:'recipe.grass.autumn',name:'Fallen-leaf meadow'},{id:'recipe.forest.autumn',name:'Amberleaf woodland'},{id:'recipe.foliage.riverbank',name:'Green riverbank'},{id:'recipe.foliage.mushroom-patches',name:'Woodland mushroom patches'}],
   rivers: [{id:'recipe.river.gentle',name:'Woodland stream'},{id:'recipe.river.swift',name:'Fast woodland river'}],
   scenery: {prefixes:['autumn-','canopy-','woodland-'],default:'autumn-shrub-gold'},
   landforms:[{id:'recipe.terrain.hill',name:'Woodland hill'},{id:'recipe.terrain.bank',name:'Leaf-covered banks'},{id:'recipe.terrain.mountain',name:'Rocky mountains'}],

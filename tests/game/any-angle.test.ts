@@ -25,8 +25,9 @@ describe('continuous arbitrary-angle movement', () => {
       const view = g.view('player.1').entities.find(e => e.id === w.id)!;
       expect([view.x, view.y]).toEqual([pos.x, pos.y]);
     }
-    expect(ticks).toBeGreaterThanOrEqual(74);
-    expect(ticks).toBeLessThanOrEqual(75);
+    const expected=Math.ceil(Math.hypot(13,7)/g.context.def(w).behaviors.movement!.speed*40);
+    expect(ticks).toBeGreaterThanOrEqual(expected);
+    expect(ticks).toBeLessThanOrEqual(expected+1);
     expect(atPoint(w, destination)).toBe(true);
   });
   it('stops and retargets mid-cell without snapping to a grid center', () => {

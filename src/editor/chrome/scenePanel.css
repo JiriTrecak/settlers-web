@@ -22,3 +22,11 @@
 .biome-dialog-backdrop{position:absolute;inset:0;z-index:100;display:grid;place-items:center;pointer-events:auto;background:#09090bbd;backdrop-filter:blur(6px)}
 .biome-dialog{width:460px;max-width:90vw;background:#202024;color:#e4e4e7;padding:28px;border:1px solid #52525b;border-radius:14px;font:14px/1.6 system-ui;box-shadow:0 24px 80px #0009}
 .biome-dialog h2{font-size:24px;margin:0 0 20px}.biome-dialog label{display:block;margin:12px 0}.biome-dialog input,.biome-dialog select{display:block;width:100%;padding:10px;background:#111114;color:#fafafa;border:1px solid #52525b;border-radius:7px}.biome-dialog p{color:#a1a1aa;font-size:12px}.biome-dialog button{padding:8px 14px;border-radius:6px;background:#3f3f46}.biome-dialog button[type=submit]{background:#e4e4e7;color:#18181b}
+
+.editor-draft-recovery {
+ position: absolute; top: 120px; left: 50%; transform: translateX(-50%); z-index: 20;
+ display: flex; align-items: center; gap: 12px; max-width: min(640px, calc(100vw - 40px));
+ padding: 10px 14px; border: 1px solid #a6ac7955; border-radius: 12px;
+ background: #20271ef5; color: #e9ecd9; font-size: 13px;
+}
+.editor-draft-recovery button {border: 1px solid #a6ac7977;border-radius: 7px;padding: 6px 9px;white-space: nowrap;cursor: pointer;}

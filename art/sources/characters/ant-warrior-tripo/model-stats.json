@@ -1,0 +1,22 @@
+{
+  "sourceTriangles": 9490,
+  "visibleSourceTriangles": 9308,
+  "runtimeTriangles": 4905,
+  "bones": 69,
+  "animations": [
+    "attack_sword",
+    "death",
+    "hit",
+    "idle",
+    "run",
+    "slash_preset",
+    "walk"
+  ],
+  "notes": [
+    "Tripo-generated textured mesh; Blender import adapter",
+    "Rigid head, shield, sword and pommel weights",
+    "Rear shell retained hidden in editable source; plain rear team cloth added",
+    "Tripo presets plus generated diagonal slash with local grip and timing correction; no facial rig",
+    "Configured attack event; paired gameplay combat not yet verified"
+  ]
+}

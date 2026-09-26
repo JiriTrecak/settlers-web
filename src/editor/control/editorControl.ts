@@ -25,7 +25,7 @@ import type {
 /**
  * Named editor ops the MCP bridge dispatches. Add a method here when you add a tool.
  */
-import { filterCatalog, parseCatalogQuery, sitAllowed } from "../../shared";
+import { filterCatalog, parseCatalogQuery } from "../../shared";
 import type { CatalogueStore } from "../assets/store";
 import type { EditorTool, WorldEditor } from "../world/worldEditor";
 
@@ -444,7 +444,7 @@ export class EditorControl {
         );
         skipped.push({
           ...item,
-          reason: sitAllowed(entry.type, wet)
+          reason: this.editor.sceneryAllowed(item.asset,Math.floor(item.x)+.5,Math.floor(item.y)+.5)
             ? "out of bounds"
             : wet
               ? "land asset on water"

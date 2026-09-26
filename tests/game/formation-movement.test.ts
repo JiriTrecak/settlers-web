@@ -1,20 +1,23 @@
 import {expect,it} from 'vitest';
 import {game,placed} from './helpers';
 import {precise,fixed} from '../../src/sim/game/motion';
+import {content} from '../../src/content/builtin';
 
 it.each([{x:6,y:0},{x:0,y:6},{x:6,y:6},{x:-6,y:0}])('moves a compact 12-unit army without reorganizing it on clear ground: %j',offset=>{
- const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.ants.warrior',100+i%4,100+Math.floor(i/4));p.rotation=90;return p;});
+ const spacing=Math.ceil(content.rules.unitScale);
+ offset={x:offset.x*spacing,y:offset.y*spacing};
+ const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.ants.warrior',100+i%4*spacing,100+Math.floor(i/4)*spacing);p.rotation=90;return p;});
  const g=game(placements),army=g.entities.filter(e=>e.placement?.startsWith('army-'));
  const starts=new Map(army.map(e=>[e.id,{x:e.x,y:e.y}])),first=new Map<number,number>();
- g.command('player.1',{type:'move',actors:army.map(e=>e.id),destination:{x:102+offset.x,y:101+offset.y}});
- for(let tick=1;tick<=110;tick++){
+ g.command('player.1',{type:'move',actors:army.map(e=>e.id),destination:{x:100+Math.round(1.5*spacing)+offset.x,y:100+spacing+offset.y}});
+ for(let tick=1;tick<=180;tick++){
   const before=army.map(e=>fixed(precise(e)));g.tick();
   army.forEach((e,i)=>{
    const after=fixed(precise(e)),travel=Math.hypot(after.x-before[i].x,after.y-before[i].y);
    if(travel>0&&!first.has(e.id))first.set(e.id,tick);
-   expect(travel).toBeLessThanOrEqual(102);
+   expect(travel).toBeLessThanOrEqual(g.context.def(e).behaviors.movement!.speed*1000/40+2);
    expect(g.spatial.clearSegment(before[i],after)).toBe(true);
-   for(const other of army)if(other!==e)expect(Math.hypot(precise(e).x-precise(other).x,precise(e).y-precise(other).y)).toBeGreaterThanOrEqual(.399);
+   for(const other of army)if(other!==e)expect(Math.hypot(precise(e).x-precise(other).x,precise(e).y-precise(other).y)).toBeGreaterThanOrEqual(g.spatial.unitRadius*2/1000-.001);
   });
  }
  expect(first.size).toBe(12);expect(Math.max(...first.values())).toBeLessThanOrEqual(10);

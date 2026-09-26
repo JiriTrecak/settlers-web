@@ -364,6 +364,8 @@ export const assetSchema = z
 export const rulesSchema = z
   .object({
     id: z.string(),
+    /** Global unit size and locomotion tuning; authored stats remain at scale 1. */
+    unitScale: z.number().min(0.25).max(4).default(1),
     armorTypes: z.record(
       idSchema,
       z.object({ name: z.string().min(1), icon: idSchema }).strict(),

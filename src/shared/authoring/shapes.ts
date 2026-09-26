@@ -21,16 +21,40 @@ export function sampleBezier(knots:readonly SplineKnot[],spacing=.5):SplineSampl
  }
  return result;
 }
+type SplineNode={minX:number;maxX:number;minZ:number;maxZ:number;segments?:number[];left?:SplineNode;right?:SplineNode};
+const splineIndexes=new WeakMap<readonly SplineSample[],SplineNode>();
+function splineIndex(samples:readonly SplineSample[]):SplineNode{
+ const build=(segments:number[]):SplineNode=>{
+  const node:SplineNode={minX:Infinity,maxX:-Infinity,minZ:Infinity,maxZ:-Infinity};
+  for(const i of segments){const a=samples[i]!,b=samples[i+1]!;node.minX=Math.min(node.minX,a.x,b.x);node.maxX=Math.max(node.maxX,a.x,b.x);node.minZ=Math.min(node.minZ,a.z,b.z);node.maxZ=Math.max(node.maxZ,a.z,b.z);}
+  if(segments.length<=8)node.segments=segments;
+  else{const axis=node.maxX-node.minX>node.maxZ-node.minZ?'x':'z';segments.sort((i,j)=>samples[i]![axis]+samples[i+1]![axis]-samples[j]![axis]-samples[j+1]![axis]);const mid=segments.length>>1;node.left=build(segments.slice(0,mid));node.right=build(segments.slice(mid));}
+  return node;
+ };
+ let index=splineIndexes.get(samples);if(!index){index=build(Array.from({length:samples.length-1},(_,i)=>i));splineIndexes.set(samples,index);}return index;
+}
+/** Exact nearest segment, indexed for immutable sampled courses. Ties keep original segment order. */
 export function nearestSpline(x:number,z:number,samples:readonly SplineSample[]):SplineSample&{offset:number;direction:Point}{
- let best=Infinity,result:SplineSample&{offset:number;direction:Point}|undefined;
- for(let i=0;i<samples.length-1;i++){
+ let best=Infinity,bestIndex=-1,bestT=0;
+ const test=(i:number)=>{
   const a=samples[i]!,b=samples[i+1]!,dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz;
   const t=length?Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/length)):0;
-  const px=mix(a.x,b.x,t),pz=mix(a.z,b.z,t),offset=Math.hypot(x-px,z-pz);
-  if(offset>=best)continue;best=offset;
-  result={x:px,z:pz,offset,elevation:mix(a.elevation,b.elevation,t),widthScale:mix(a.widthScale,b.widthScale,t),depthScale:mix(a.depthScale,b.depthScale,t),flowScale:mix(a.flowScale,b.flowScale,t),distance:mix(a.distance,b.distance,t),direction:{x:dx/Math.sqrt(length||1),z:dz/Math.sqrt(length||1)}};
+  const offset=Math.hypot(x-mix(a.x,b.x,t),z-mix(a.z,b.z,t));
+  if(offset>best||(offset===best&&i>=bestIndex))return;
+  best=offset;bestIndex=i;bestT=t;
+ };
+ if(samples.length<=16){for(let i=0;i<samples.length-1;i++)test(i);}
+ else{
+  const distance=(n:SplineNode)=>Math.hypot(Math.max(n.minX-x,0,x-n.maxX),Math.max(n.minZ-z,0,z-n.maxZ));
+  const visit=(n:SplineNode)=>{
+   if(distance(n)>best+1e-10)return;
+   if(n.segments){for(const i of n.segments)test(i);return;}
+   const a=n.left!,b=n.right!;if(distance(a)<=distance(b)){visit(a);visit(b);}else{visit(b);visit(a);}
+  };visit(splineIndex(samples));
  }
- if(!result)throw Error('Spline requires at least two samples');return result;
+ if(bestIndex<0)throw Error('Spline requires at least two samples');
+ const a=samples[bestIndex]!,b=samples[bestIndex+1]!,t=bestT,dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz;
+ return {x:mix(a.x,b.x,t),z:mix(a.z,b.z,t),offset:best,elevation:mix(a.elevation,b.elevation,t),widthScale:mix(a.widthScale,b.widthScale,t),depthScale:mix(a.depthScale,b.depthScale,t),flowScale:mix(a.flowScale,b.flowScale,t),distance:mix(a.distance,b.distance,t),direction:{x:dx/Math.sqrt(length||1),z:dz/Math.sqrt(length||1)}};
 }
 /** Positive distance inside, negative outside. Boundary is included in a region. */
 export function regionDistance(x:number,z:number,shape:Exclude<LayerShape,{type:'spline'}>):number{

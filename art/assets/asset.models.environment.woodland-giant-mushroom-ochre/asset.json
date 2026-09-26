@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-giant-mushroom-ochre",
+  "name": "Giant ochre umbrella",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "c8fc2ef160f25bc0949f8a92c896513ef1ea63ba6de18874fa4727a024b30b9c",
+      "bytes": 2009024
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "a306079a108fa0f93d59a3c44d682aad726d77ec5e530517adc34e67b85743a6",
+      "bytes": 2079149
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1a8b1e000e3ee13dc6f47e5822796b88d6a3027e0f6b22a88b5c399384403341",
+      "bytes": 357
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-giant-mushroom-ochre",
+        "sceneryAsset": "woodland-giant-mushroom-ochre",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-giant-mushroom-ochre"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-giant-mushroom-ochre",
+        "name": "Giant ochre umbrella",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 2.8,
+            "depth": 2.8,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.9
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

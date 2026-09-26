@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-bank-slabs",
+  "name": "Rounded shoreline shelves",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "waterfront"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8cf342974d5e80b8a288974fc0b3564ab4f66c1a468853905fed6d5cd99196d2",
+      "bytes": 376524
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "f03b5812649e2ad1aa15a60438b279c5bbe5098fd152d3a7b14a6695d9439947",
+      "bytes": 744696
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+      "bytes": 206
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-bank-slabs",
+        "sceneryAsset": "woodland-bank-slabs",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-bank-slabs"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-bank-slabs",
+        "name": "Rounded shoreline shelves",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 6,
+            "depth": 3.4,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.7
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

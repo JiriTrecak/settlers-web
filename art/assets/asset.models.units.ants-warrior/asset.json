@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-warrior",
+  "name": "Ant Warrior",
+  "kind": "unit",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "warrior",
+    "skinned",
+    "acorn",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "00e8769d782809d5e4a18ff4c329a3c70d95c2ee67cccbc355f62a9f588e6fa0",
+      "bytes": 1594404
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "61cdd288d7fa13236245f1c99cf641fc00d137ddf7720fbc68c50b1ac28675f6",
+      "bytes": 3625875
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "cd733ecadb72b3d5005c1c37022292c319ff750e1c2bae4648fb68f714702810",
+      "bytes": 1109227
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "4cde2a098508cb06760b232d994140f9512f76fa2e6ffb6e14bf38956f7aeafa",
+      "bytes": 597158
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "ef8ae1274e2cd474d0be8738b9c53fcebeb67020bdd8c5d002835f5e3a872eed",
+      "bytes": 13595
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "bca875a17f5d588ab80dfedbe432226ba52e4f0e607ee23d78e543f8ab20b813",
+      "bytes": 13255
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "warrior",
+    "render": [
+      {
+        "id": "asset.ants.warrior",
+        "geometry": {
+          "asset": "asset.models.units.ants-warrior",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "warrior",
+        "scale": 1,
+        "healthHeight": 2.3
+      },
+      {
+        "id": "icon.ants.warrior",
+        "image": {
+          "asset": "asset.models.units.ants-warrior",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "material",
+      "slots": [
+        "TC_TeamColor"
+      ]
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "charge",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack_sword",
+        "loop": false,
+        "events": [
+          {
+            "name": "hit",
+            "time": 0.6161971830985915
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "left-hand",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "right-hand",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "blade-base",
+        "node": "socket_blade_base",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "blade-tip",
+        "node": "socket_blade_tip",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Tripo-generated artwork from the supplied ant-warrior reference, adapted in Blender for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

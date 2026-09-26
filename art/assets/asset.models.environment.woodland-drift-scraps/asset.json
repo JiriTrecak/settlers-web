@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-drift-scraps",
+  "name": "Broken driftwood",
+  "kind": "prop",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "waterfront"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "da4784d412e8b30d40f7cd107db3ebe105ecd6a093aa97b1492b0562cdae1f80",
+      "bytes": 335924
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "b76fb1084f94bd25f0b943800da5a35a425083de6e94ea847d187828f8f3326f",
+      "bytes": 745179
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+      "bytes": 206
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-drift-scraps",
+        "sceneryAsset": "woodland-drift-scraps",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-drift-scraps"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-drift-scraps",
+        "name": "Broken driftwood",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 0.1
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

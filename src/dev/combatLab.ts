@@ -5,12 +5,13 @@ import {Game} from '../sim/game/game';
 import {emptyUtcMap} from '../shared/map/utcmap';
 import {HeightField} from '../shared/map/height';
 import {SettlementLayer} from '../render/settlement/settlementLayer';
-import type {Placement} from '../content/schema';
+import type {Placement,Rules} from '../content/schema';
+import {ContentRegistry} from '../content/registry';
 import {commandFeedback} from '../presentation/commandFeedback';
-import {content} from '../content/builtin';
+import {content,builtinSource} from '../content/builtin';
 import './combatLab.css';
 
-document.body.innerHTML=`<aside><h1>Combat Lab</h1><p>Disposable simulation · real game models and combat systems</p><label>Scenario <select id="scenario"><option value="duel">Warrior duel</option><option value="arrow">Archer and moving target</option><option value="chase">Melee pursuit and reversal</option><option value="army">12 vs 12 mixed army</option><option value="micro">Compact army short move</option><option value="cast">Marshal spell release</option><option value="cast-ultimate">Marshal ultimate release</option><option value="advanced">24 vs 24 advanced mixed army</option><option value="traffic">48-unit counterflow passage</option><option value="packing">Packed destination escape</option><option value="packing-long">Parked allies and distant move</option><option value="packing-waypoint">Occupied corridor waypoint</option><option value="packing-crowd">Packed army final approach</option><option value="yielding">Three-unit deadlock recovery</option><option value="yielding-turn">Turning actor at a narrow gap</option><option value="yielding-mouth">Narrow-mouth yielding reversal</option></select></label><label>Passage width <select id="gap"><option value="1">1 cell</option><option value="3" selected>3 cells</option><option value="5">5 cells</option></select></label><button id="reset">Reset scenario</button><button id="engage">Engage</button><button id="reverse">Reverse red army</button><button id="stop">Stop red army</button><button id="target-move">Move blue target</button><button id="target-reverse">Reverse blue target</button><label>Speed <select id="speed"><option value="0.25">¼× slow motion</option><option value="1" selected>1×</option></select></label><label>Zoom <select id="zoom"><option value="0.65">Wide overview</option><option value="1" selected>Overview</option><option value="2">Close-up</option></select></label><button id="pause">Pause</button><button id="step">Step 25 ms</button><button id="stall">Stall simulation</button><p>Right-click ground to move the red army. Observe turns, contact, projectiles and health.</p><output id="status" aria-live="off">Loading models…</output></aside><main></main>`;
+document.body.innerHTML=`<aside><h1>Combat Lab</h1><p>Disposable simulation · real game models and combat systems</p><label>Scenario <select id="scenario"><option value="duel">Warrior duel</option><option value="arrow">Archer and moving target</option><option value="chase">Melee pursuit and reversal</option><option value="warriors">12 vs 12 warriors</option><option value="army">12 vs 12 mixed army</option><option value="micro">Compact army short move</option><option value="cast">Marshal spell release</option><option value="cast-ultimate">Marshal ultimate release</option><option value="advanced">24 vs 24 advanced mixed army</option><option value="traffic">48-unit counterflow passage</option><option value="packing">Packed destination escape</option><option value="packing-long">Parked allies and distant move</option><option value="packing-waypoint">Occupied corridor waypoint</option><option value="packing-crowd">Packed army final approach</option><option value="yielding">Three-unit deadlock recovery</option><option value="yielding-turn">Turning actor at a narrow gap</option><option value="yielding-mouth">Narrow-mouth yielding reversal</option></select></label><label>Unit scale <input id="unit-scale" type="number" min="0.25" max="4" step="0.05" value="${content.rules.unitScale}"></label><p>Reset applies size, speed, collisions and melee reach. Save the chosen default in content/game.json → rules.unitScale.</p><label>Passage width <select id="gap"><option value="1">1 cell</option><option value="3" selected>3 cells</option><option value="5">5 cells</option></select></label><button id="reset">Reset scenario</button><button id="engage">Engage</button><button id="reverse">Reverse red army</button><button id="stop">Stop red army</button><button id="target-move">Move blue target</button><button id="target-reverse">Reverse blue target</button><label>Speed <select id="speed"><option value="0.25">¼× slow motion</option><option value="1" selected>1×</option></select></label><label>Zoom <select id="zoom"><option value="0.65">Wide overview</option><option value="1" selected>Overview</option><option value="2">Close-up</option><option value="4">Animation detail</option></select></label><button id="pause">Pause</button><button id="step">Step 25 ms</button><button id="stall">Stall simulation</button><p>Right-click ground to move the red army. Observe turns, contact, projectiles and health.</p><output id="status" aria-live="off">Loading models…</output></aside><main></main>`;
 const scene=new Scene();scene.background=new Color('#202a2d');
 const renderer=new WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.shadowMap.enabled=true;renderer.shadowMap.type=PCFSoftShadowMap;
 document.querySelector('main')!.append(renderer.domElement);
@@ -19,16 +20,20 @@ const light=new DirectionalLight('#fff0d7',3);light.position.set(116,35,139);lig
 const ground=new Mesh(new PlaneGeometry(80,80),new MeshStandardMaterial({color:'#74715a',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.set(128,-.015,128);ground.receiveShadow=true;scene.add(ground);
 const grid=new GridHelper(60,60,'#929581','#777b6b');grid.position.set(128,.005,128);scene.add(grid);
 const field=new HeightField();
-let layer=new SettlementLayer(scene),game:Game,paused=false,stalled=false,acc=0,previous=performance.now(),frameCount=0,frameMs=0,lastInput:number|null=null,response:string='No order yet';
+let registry=content,layer:SettlementLayer,game:Game,paused=false,stalled=false,acc=0,previous=performance.now(),frameCount=0,frameMs=0,lastInput:number|null=null,response:string='No order yet';
 const select=document.querySelector<HTMLSelectElement>('#scenario')!,speed=document.querySelector<HTMLSelectElement>('#speed')!,status=document.querySelector<HTMLOutputElement>('#status')!;
 const red=()=>game.entities.filter(e=>e.placement?.startsWith('lab.red')&&e.hp!>0);
 const blue=()=>game.entities.filter(e=>e.placement?.startsWith('lab.blue')&&e.hp!>0);
 const walls:Mesh[]=[];
 function reset(){
+ const input=document.querySelector<HTMLInputElement>('#unit-scale')!;
+ if(!input.reportValidity()||!Number.isFinite(input.valueAsNumber))return;
+ const source=structuredClone(builtinSource);(source.rules as Rules).unitScale=input.valueAsNumber;
+ registry=new ContentRegistry(source);layer?.destroy(scene);layer=new SettlementLayer(scene,undefined,registry);
  for(const wall of walls){scene.remove(wall);wall.geometry.dispose();(wall.material as MeshStandardMaterial).dispose();}walls.length=0;
- const placements:Placement[]=[];const count=select.value==='traffic'||select.value==='advanced'?24:select.value==='army'?12:1;
+ const placements:Placement[]=[];const count=select.value==='traffic'||select.value==='advanced'?24:select.value==='army'||select.value==='warriors'?12:1;
  for(const side of ['red','blue'])for(let i=0;i<count;i++){
-  const role=select.value==='advanced'?['marshal','warrior','hunter','archer','bombardier','warrior'][i%6]:select.value==='chase'&&side==='blue'?'settler':select.value==='arrow'&&side==='red'?'archer':count>1&&i%3===2?'archer':'warrior';
+  const role=select.value==='advanced'?['marshal','warrior','hunter','archer','bombardier','warrior'][i%6]:select.value==='chase'&&side==='blue'?'settler':select.value==='arrow'&&side==='red'?'archer':count>1&&select.value!=='warriors'&&i%3===2?'archer':'warrior';
   placements.push({id:`lab.${side}.${i}`,definition:`unit.ants.${role}`,owner:side==='red'?'player.1':'player.2',rotation:side==='red'?270:90,position:{x:(side==='red'?122:134)+(i%3)*(side==='red'?-1:1),y:126+Math.floor(i/3)*1.5}});
  }
  if(select.value==='traffic')for(const p of placements){const i=Number(p.id.split('.').at(-1)),side=p.id.includes('.red.');p.owner='player.1';p.position={x:(side?108:145)+i%4,y:119+Math.floor(i/4)};p.rotation=side?90:270;}
@@ -59,7 +64,7 @@ function reset(){
  }
  // Map placement coordinates are integral; keep rows readable and deterministic.
  for(const p of placements)p.position.y=Math.round(p.position.y);
- game=new Game({...emptyUtcMap(),entities:placements},[{player:0,kind:'human'},{player:1,kind:'human'}]);
+ game=new Game({...emptyUtcMap(),entities:placements},[{player:0,kind:'human'},{player:1,kind:'human'}],registry);
  if(select.value.startsWith('cast')){
   const hero=red()[0];hero.progression!.experience=3200;
   game.command(hero.owner,{type:'learnAbility',actor:hero.id,ability:select.value==='cast-ultimate'?'spell.marshal.crownfall':'spell.marshal.faultline'});
@@ -80,12 +85,12 @@ function reset(){
 }
 function issue(action:Parameters<Game['command']>[1]){
  lastInput=performance.now();response='Awaiting next tick';const receipt=game.command('player.1',action);if(!receipt.accepted){response=receipt.reason??'Order rejected';lastInput=null;return;}
- const cue=commandFeedback(action,game.view('player.1'),content);if(cue)layer.commandFeedback(cue,field);
+ const cue=commandFeedback(action,game.view('player.1'),registry);if(cue)layer.commandFeedback(cue,field);
 }
 function tick(){
  game.tick();if(lastInput!==null){response=`Order → next simulation tick: ${(performance.now()-lastInput).toFixed(1)} ms`;lastInput=null;}
 }
-document.querySelector('#reset')!.addEventListener('click',()=>{layer.destroy(scene);layer=new SettlementLayer(scene);reset()});
+document.querySelector('#reset')!.addEventListener('click',reset);
 document.querySelector('#engage')!.addEventListener('click',()=>{if(select.value.startsWith('cast')){issue({type:'cast',actor:red()[0].id,ability:select.value==='cast-ultimate'?'spell.marshal.crownfall':'spell.marshal.faultline',point:{x:130,y:126}});return;}if(select.value==='micro'){issue({type:'move',actors:red().map(e=>e.id),destination:{x:132,y:126}});return;}if(select.value.startsWith('yielding')){
   red().forEach((e,i)=>{
    const mouth=select.value==='yielding-mouth',goal={x:mouth?(i?137:117):(i?117:137),y:126};issue({type:'move',actors:[e.id],destination:goal});
@@ -111,6 +116,6 @@ function frame(now:number){
  const snapshot=game.view(),view={...snapshot,entities:snapshot.entities.filter(e=>game.context.get(e.id)?.placement?.startsWith('lab.'))};
  layer.update(view,field,game.state.tick,paused?0:Number(speed.value));renderer.render(scene,camera);
  frameCount++;frameMs+=dt;if(frameMs>=200){
-  status.textContent=`${Math.round(frameCount*1000/frameMs)} FPS · ${renderer.info.render.triangles.toLocaleString()} triangles\nTick ${game.state.tick}${stalled?' · SIMULATION STALLED (renderer live)':''}\n${select.value==='traffic'?`Crossed: ${red().filter(e=>e.x>130).length}/24 east · ${blue().filter(e=>e.x<126).length}/24 west\n`:''}${select.value.startsWith('yielding')?`Traffic recovery: ${red().some(e=>e.unit?.detour?.yielding)?'active':'inactive'}\n`:''}${select.value.startsWith('packing')?`Local escape: ${red()[0]?.unit?.detour?'active':'inactive'}\n`:''}${select.value==='army'||select.value==='advanced'?`Alive: ${red().length} red · ${blue().length} blue\n`:''}${response}\n\n`+[...red(),...blue()].slice(0,8).map(e=>`${e.owner} ${e.definition.split('.').at(-1)} #${e.id}\nHP ${e.hp} · yaw ${e.rotation.toFixed(0)}°\n${e.spellcasting?.pending?`Cast ${e.spellcasting.pending.startTick} → ${e.spellcasting.pending.resolveTick}`:e.unit?.attack?`Strike ${e.unit.attack.started} → ${e.unit.attack.impact} → ${e.unit.attack.ends}`:e.unit?.route.length?'Moving / turning':'Idle'}`).join('\n\n');frameCount=0;frameMs=0;
+  status.textContent=`${Math.round(frameCount*1000/frameMs)} FPS · ${renderer.info.render.triangles.toLocaleString()} triangles\nUnit scale ${registry.rules.unitScale}× · collision diameter ${(game.spatial.unitRadius*2/1000).toFixed(2)}\nTick ${game.state.tick}${stalled?' · SIMULATION STALLED (renderer live)':''}\n${select.value==='traffic'?`Crossed: ${red().filter(e=>e.x>130).length}/24 east · ${blue().filter(e=>e.x<126).length}/24 west\n`:''}${select.value.startsWith('yielding')?`Traffic recovery: ${red().some(e=>e.unit?.detour?.yielding)?'active':'inactive'}\n`:''}${select.value.startsWith('packing')?`Local escape: ${red()[0]?.unit?.detour?'active':'inactive'}\n`:''}${select.value==='army'||select.value==='warriors'||select.value==='advanced'?`Alive: ${red().length} red · ${blue().length} blue\n`:''}${response}\n\n`+[...red(),...blue()].slice(0,8).map(e=>`${e.owner} ${e.definition.split('.').at(-1)} #${e.id}\nHP ${e.hp} · yaw ${e.rotation.toFixed(0)}°\n${e.spellcasting?.pending?`Cast ${e.spellcasting.pending.startTick} → ${e.spellcasting.pending.resolveTick}`:e.unit?.attack?`Strike ${e.unit.attack.started} → ${e.unit.attack.impact} → ${e.unit.attack.ends}`:e.unit?.route.length?'Moving / turning':'Idle'}`).join('\n\n');frameCount=0;frameMs=0;
  }requestAnimationFrame(frame);
 }requestAnimationFrame(frame);

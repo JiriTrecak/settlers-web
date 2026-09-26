@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-great-fallen-log",
+  "name": "Great fallen hollow log",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1513498173fe5720db10ff5ea0acfab693bee324c184b7f51d40fe2f0b5fe8cb",
+      "bytes": 1597108
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "5c1073c40b77ee8fa79465d298d9d3514ddbde7edbf53d3b0807cf45f89bb4de",
+      "bytes": 1662903
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "5ed46c806ee3bb2540e6247f89c0c6475d849cbe37eccf02f2d5612e134881a7",
+      "bytes": 357
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-great-fallen-log",
+        "sceneryAsset": "woodland-great-fallen-log",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-great-fallen-log"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-great-fallen-log",
+        "name": "Great fallen hollow log",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 30,
+            "depth": 7
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 4
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

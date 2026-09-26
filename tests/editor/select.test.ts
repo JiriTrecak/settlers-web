@@ -1,5 +1,6 @@
+import {Quaternion,Euler,Vector3} from 'three';
 import { describe, expect, it } from "vitest";
-import { nearestStamp, SelectTool, withPose, wrapYaw } from "../../src/editor/select/select";
+import { nearestStamp, stepYaw, SelectTool, withPose, wrapYaw } from "../../src/editor/select/select";
 
 describe("select", () => {
   it("picks the nearest stamp in range", () => {
@@ -34,5 +35,30 @@ describe("select", () => {
     const next = withPose(s, 3, 4, 0);
     expect(next).toEqual({ id: "a", asset: "pine", x: 3, y: 4, scale: 1.4 });
     expect(wrapYaw(-Math.PI / 2)).toBeCloseTo((3 * Math.PI) / 2, 5);
+  });
+});
+
+describe('rotation steps and source transforms',()=>{
+  it('snaps in either direction rather than preserving an off-grid offset',()=>{
+    const rad=(n:number)=>n*Math.PI/180,deg=(n:number)=>n*180/Math.PI;
+    expect(deg(stepYaw(rad(13),rad(15)))).toBeCloseTo(15);
+    expect(deg(stepYaw(rad(15),rad(15)))).toBeCloseTo(30);
+    expect(deg(stepYaw(rad(30),rad(15)))).toBeCloseTo(45);
+    expect(deg(stepYaw(rad(13),rad(-15)))).toBeCloseTo(0);
+    expect(deg(stepYaw(rad(15),rad(-15)))).toBeCloseTo(0);
+    expect(deg(stepYaw(0,rad(-15)))).toBeCloseTo(345);
+    expect(deg(stepYaw(rad(13),rad(90)))).toBeCloseTo(90);
+    expect(deg(stepYaw(rad(90),rad(90)))).toBeCloseTo(180);
+    expect(deg(stepYaw(rad(91),rad(-90)))).toBeCloseTo(90);
+    expect(deg(stepYaw(rad(359),rad(15)))).toBeCloseTo(0);
+  });
+  it('rotates the rendered quaternion and deck together, retaining tilt and height',()=>{
+    const q=new Quaternion().setFromEuler(new Euler(.2,.5,-.1,'ZXY'));
+    const stamp={id:'bridge',asset:'leafbound-twig-bridge',x:20,y:20,yaw:.5,sourceTransform:{height:2,quaternion:q.toArray() as [number,number,number,number]}};
+    const next=withPose(stamp,21,22,1)!;
+    const expected=q.clone().premultiply(new Quaternion().setFromAxisAngle(new Vector3(0,1,0),.5));
+    expect(new Quaternion().fromArray(next.sourceTransform!.quaternion).angleTo(expected)).toBeCloseTo(0);
+    expect(next.sourceTransform!.height).toBe(2);expect(stamp.sourceTransform.quaternion).toEqual(q.toArray());
+    expect(withPose(stamp,21,22,.5)!.sourceTransform).toBe(stamp.sourceTransform);
   });
 });

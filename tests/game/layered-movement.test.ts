@@ -34,7 +34,10 @@ it('walks through an entrance onto the arch, can be interrupted there, and walks
  move(c);expect(precise(e)).toEqual({x:40,y:55});
 });
 it('reaches the top from directly underneath by walking around to an end',()=>{
- const c=setup(),e=c.create(placed('walker','unit.ants.warrior',40,40));c.spatial.rebuild();
+ // This low arch has 3.2 units of headroom: use the original 2-unit body here.
+ // Enlarged-body rejection is covered separately in unit-scale.test.ts.
+ const source=structuredClone(builtinSource);(source.rules as {unitScale:number}).unitScale=1;
+ const c=new GameContext(emptyState(),new ContentRegistry(source),map()),e=c.create(placed('walker','unit.ants.warrior',40,40));c.spatial.rebuild();
  expect(c.spatial.route(e,{x:40,y:40,surface:'arch'},false)).toBe(true);
  expect(e.unit!.route.length).toBeGreaterThan(2);
  move(c,2400);expect(precise(e)).toEqual({x:40,y:40,surface:'arch'});

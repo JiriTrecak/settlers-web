@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,placed} from './helpers';
+import {game,originalScaleGame,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {heading,turnDifference} from '../../src/sim/game/facing';
 
@@ -81,7 +81,7 @@ it.each([0,1,2,3].flatMap(rotation=>[false,true].map(occupiedGoal=>({rotation,oc
   const destination=turn({x:110,y:100}),alternative=turn({x:110,y:occupiedGoal?99:100});
   g.command('player.1',{type:'move',actors:[mover.id],destination});
   // Reconstruct a valid corridor whose waypoint was occupied after planning.
-  mover.unit!.position=turn({x:100400,y:100000},1000);mover.unit!.segment=null;
+  mover.unit!.position=turn({x:100300,y:100000},1000);mover.unit!.segment=null;
   mover.unit!.route=[turn({x:101,y:100}),destination].map(p=>g.spatial.cell(p));mover.unit!.goal=g.spatial.cell(destination);
   const parked=guards.map(e=>({...precise(e)}));
   const repaired=(g.context as unknown as {beginLocalDetour(e:typeof mover,units:typeof guards,p:typeof alternative):boolean}).beginLocalDetour(mover,g.context.activeUnits(),alternative);
@@ -99,6 +99,8 @@ it.each([0,1,2,3].flatMap(rotation=>[false,true].map(occupiedGoal=>({rotation,oc
  });
 
 it.each([0,1,2,3])('finds a local rejoin outside a fully occupied projected square, rotation %i',rotation=>{
+ // This recorded crowded layout and its sub-cell gaps were captured at scale 1.
+ const game=originalScaleGame;
  const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
  const crowd=[[146,117],[147,119],[149,121],[146,121],[147,122],[147,121],[148,122],[149,122],[146,123],[145,122],[148,119],[147,123],[148,123],[149,123],[149,120],[149,119],[146,120],[147,120],[148,121],[146,122]];
  const start=turn({x:145,y:121});
@@ -118,7 +120,7 @@ it.each([0,1,2,3])('finds a local rejoin outside a fully occupied projected squa
   expect(g.checksum()).toBe(copy.checksum());
   const after=fixed(precise(mover));expect(g.spatial.clearSegment(before,after)).toBe(true);
   expect(g.spatial.unitSegmentClear(before,after,mover.id)).toBe(true);
-  expect(Math.hypot(after.x-before.x,after.y-before.y)).toBeLessThanOrEqual(77);
+  expect(Math.hypot(after.x-before.x,after.y-before.y)).toBeLessThanOrEqual(g.context.def(mover).behaviors.movement!.speed*1000/40+2);
  }
  expect(mover.unit!.order).toBeNull();expect(precise(mover)).toMatchObject(goal);
  expect(guards.map(e=>precise(e))).toEqual(parked);

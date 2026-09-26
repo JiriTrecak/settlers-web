@@ -3,7 +3,7 @@
   "id": "asset.placeholder.missing-model",
   "name": "Missing model",
   "kind": "prop",
-  "revision": 3,
+  "revision": 5,
   "status": "published",
   "tags": [
     "placeholder",
@@ -443,16 +443,6 @@
         }
       },
       {
-        "id": "asset.ants.great-mound",
-        "scale": 1,
-        "healthHeight": 7,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
         "id": "asset.ants.house",
         "scale": 1,
         "healthHeight": 3.5,
@@ -476,16 +466,6 @@
         "id": "asset.ants.barracks",
         "scale": 1,
         "healthHeight": 4.7,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.fort",
-        "scale": 1,
-        "healthHeight": 5.8,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -618,21 +598,6 @@
           "distance": 7
         },
         "castContact": 0.68,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.warrior",
-        "scale": 1,
-        "healthHeight": 2.3,
-        "cameraAnchor": {
-          "height": 1.5,
-          "forward": 0.15,
-          "distance": 7
-        },
         "geometry": {
           "role": "geometry",
           "index": 1,

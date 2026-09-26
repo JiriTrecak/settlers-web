@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "warrior": {
+      "file": "warrior.glb",
+      "triangles": 4748,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "carry": "carry",
+        "attack": "attack_sword",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "warrior": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.18
+}

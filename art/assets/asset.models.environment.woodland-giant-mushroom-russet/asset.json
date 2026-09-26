@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-giant-mushroom-russet",
+  "name": "Giant russet umbrella",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "3775530dd39b72c7bdfe913c4bcc6828b6b2b4603bc5e3d0b4e8899338ae1e5e",
+      "bytes": 2009020
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "635cc039c7948afe398ab2b13d82e7588b8ecc5b451477c8a6ad9af017f79b5b",
+      "bytes": 2079033
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1a8b1e000e3ee13dc6f47e5822796b88d6a3027e0f6b22a88b5c399384403341",
+      "bytes": 357
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-giant-mushroom-russet",
+        "sceneryAsset": "woodland-giant-mushroom-russet",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-giant-mushroom-russet"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-giant-mushroom-russet",
+        "name": "Giant russet umbrella",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 2.4,
+            "depth": 2.4,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 1.7
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

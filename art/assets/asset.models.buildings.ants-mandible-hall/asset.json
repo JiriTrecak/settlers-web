@@ -1,0 +1,245 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-mandible-hall",
+  "name": "Mandible Hall",
+  "kind": "building",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "main-building",
+    "procedural"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "0cd0d71df0f2cae934355115ee50ff1668e51fabc37a55b3d6f5903654d069b2",
+      "bytes": 942944
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "88a4f2f5ea05a750fccf4551371dbcebfe2c782ca37dba080453926e01214288",
+      "bytes": 2378601
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "e06c36b8fd7dc26f9c9413793dcdef0fda8d2d466f9887c061f7a3e5944c6706",
+      "bytes": 1726285
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "8e420992d3ec017296216fcc517a4678a4299036c6739a7493a94935114c69f5",
+      "bytes": 1449572
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2271fb450bf08df2566f6a45a05c573ce757928dc5a9d07f5e76d55dd4b5aac3",
+      "bytes": 25193
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "bbdecc0c4831d2a8bc4a49717c6a57d801172b87df2c13b9db5e04356888a8fd",
+      "bytes": 28157
+    },
+    {
+      "role": "albedo",
+      "index": 2,
+      "format": "png",
+      "sha256": "be0694eecb502f45c6e02298e6a8eaab3294974cfe23d756b87440bf20c688c6",
+      "bytes": 44899
+    },
+    {
+      "role": "albedo",
+      "index": 3,
+      "format": "png",
+      "sha256": "19b037a0f5bfd0dfe5a2ebf1f1053525653a4accfe1572ee30ecd4cb7e1caa4e",
+      "bytes": 29677
+    },
+    {
+      "role": "albedo",
+      "index": 4,
+      "format": "png",
+      "sha256": "bc7fcdfe2b70cfe0f07f420cdba0691e0dc668efcbee29ab1563bab8ae6f0b8d",
+      "bytes": 57751
+    },
+    {
+      "role": "albedo",
+      "index": 5,
+      "format": "png",
+      "sha256": "dbe22ccc895b5a4385b524e689aa78b5d17f65a4d1eb39c935a82ecc648bf011",
+      "bytes": 49070
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "463c16d04888c2cea2ad83339cd6ba7ef30c22ce529873e908373dc71e6d15f9",
+      "bytes": 41007
+    },
+    {
+      "role": "normal",
+      "index": 2,
+      "format": "png",
+      "sha256": "80f43acefbe21b5326bcb6b8a2c53e3ea4b7f171e47358a12167726aacc210e3",
+      "bytes": 63229
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "3815f0e546cc4db362f33a09b596e2113f0a3ea64024f234f5c604802310d8ef",
+      "bytes": 20692
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "Wood_Dark",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.65,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        }
+      }
+    },
+    {
+      "slot": "Wood_Light_Dome",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.65,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 2
+        },
+        "normal": {
+          "role": "normal",
+          "index": 2
+        }
+      }
+    },
+    {
+      "slot": "Leaf_Green",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.65,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 3
+        }
+      }
+    },
+    {
+      "slot": "Chitin_Red",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.28,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 4
+        }
+      }
+    },
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#cc4a2e",
+      "roughness": 0.65,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 5
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "material",
+      "slots": [
+        "TC_TeamColor"
+      ]
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        9,
+        9
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 4.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

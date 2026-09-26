@@ -1,9 +1,12 @@
-import {hitLayer} from '../select/layerHit';
+import {LayerContextMenu} from '../chrome/layerContextMenu';
+import {isBridgeAsset} from '../../shared/map/bridgeSurface';
+import {perf} from '../../debug/performance';
+import {hitLayer,hitLayers} from '../select/layerHit';
 import {walkStampSchema} from '../../shared/map/utcmap';
 import {AuthoringHistory,type SceneSelection} from '../../shared/authoring/history';
-import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer} from '../../shared/authoring/layers';
+import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer,type AuthoredObject} from '../../shared/authoring/layers';
 import {compileMapScene,type CompiledMapScene} from '../../shared/authoring/mapScene';
-import {landscapeAssets,projectScene} from '../../shared/authoring/project';
+import {landscapeAssets,projectScene,rememberProjectScene,sceneInputs} from '../../shared/authoring/project';
 import {sampleBezier} from '../../shared/authoring/shapes';
 import {canopySchema} from '../../shared/landscape/canopy';
 import {atmosphereSchema} from '../../shared/landscape/atmosphere';
@@ -71,7 +74,7 @@ import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
 import { CleanTool, wipeStamps, eraseCover } from "../clean/clean";
-import { nearestStamp, SelectTool, withPose, YAW_STEP } from "../select/select";
+import { nearestStamp, SelectTool, withPose, stepYaw, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
 export type EditorTool =
@@ -157,13 +160,13 @@ export class WorldEditor {
   }
   get generatedScene(){return this.compiledScene?.generated;}
   selectLayer(selection:SceneSelection){this.paintingLayer=null;this.drawingLayer=null;this.layers.selection=selection;this.select.clear();this.selectedEntity=null;this.setTool('select');this.paint();this.hooks.onSelect?.();}
-  putLayer(input:unknown){const layer=proceduralLayerSchema.parse(input),scene=this.layers.scene;if(scene.layers.find(l=>l.id===layer.id)?.locked)throw Error('Layer is locked');compileMapScene({...this.map,authoring:{...scene,layers:[...scene.layers.filter(l=>l.id!==layer.id),layer]}},this.authoringAssets);this.layers.putLayer(layer);if(this.paintingLayer?.id===layer.id)this.paintingLayer=structuredClone(layer);this.commitLayers();}
-  putAuthoredObject(input:unknown){const object=authoredObjectSchema.parse(input),scene=this.layers.scene;if(scene.objects.find(o=>o.id===object.id)?.locked)throw Error('Object is locked');compileMapScene({...this.map,authoring:{...scene,objects:[...scene.objects.filter(o=>o.id!==object.id),object]}},this.authoringAssets);this.layers.putObject(object);this.commitLayers();}
+  putLayer(input:unknown){const layer=proceduralLayerSchema.parse(input),scene=this.layers.scene;if(scene.layers.find(l=>l.id===layer.id)?.locked)throw Error('Layer is locked');const compiled=compileMapScene({...this.map,authoring:{...scene,layers:[...scene.layers.filter(l=>l.id!==layer.id),layer]}},this.authoringAssets);this.layers.putLayer(layer);if(this.paintingLayer?.id===layer.id)this.paintingLayer=structuredClone(layer);this.commitLayers(compiled);}
+  putAuthoredObject(input:unknown){const object=authoredObjectSchema.parse(input),scene=this.layers.scene;if(scene.objects.find(o=>o.id===object.id)?.locked)throw Error('Object is locked');const compiled=compileMapScene({...this.map,authoring:{...scene,objects:[...scene.objects.filter(o=>o.id!==object.id),object]}},this.authoringAssets);this.layers.putObject(object);this.commitLayers(compiled);}
   removeLayerSelection(){if(this.layers.selection){this.layers.remove(this.layers.selection);this.cancelLayerShape();}this.commitLayers();}
   lockLayerSelection(locked:boolean){if(this.layers.selection){this.layers.setLocked(this.layers.selection,locked);if(locked)this.cancelLayerShape();}this.commitLayers();}
   bakeSelectedLayer(){if(this.layers.selection?.kind!=='layer'||!this.generatedScene)throw Error('Select a generated layer');this.layers.bake(this.layers.selection.id,this.generatedScene);this.cancelLayerShape();this.commitLayers();}
   undoLayers(redo=false){if(redo)this.layers.redo();else this.layers.undo();if(this.paintingLayer){const l=this.layers.scene.layers.find(l=>l.id===this.paintingLayer!.id);this.paintingLayer=l?structuredClone(l):{...this.paintingLayer,shape:{type:'mask',elevation:-.6,strokes:[]}};}this.commitLayers();}
-  private commitLayers(){this.map={...this.map,authoring:this.layers.scene};this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}
+  private commitLayers(compiled?:CompiledMapScene){this.map={...this.map,authoring:this.layers.scene};if(compiled)rememberProjectScene(this.map,compiled);this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}
   authoringCamera(mode:'top'|'free'|'game'){
     const camera=this.renderer?.camera;if(!camera)return;this.gameCam=mode==='game';camera.setGame(this.gameCam,this.map.size);
     if(mode==='top')camera.setTopDown();else if(mode==='free')camera.pose({pitch:ISO_PITCH,yaw:ISO_YAW});
@@ -186,7 +189,7 @@ export class WorldEditor {
   shapeWorldPoint(clientX:number,clientY:number){return this.renderer?.pickGround(clientX,clientY);}
   previewLayerShape(shape:ProceduralLayer['shape']){this.renderer?.previewCurve(shape.type==='mask'?[]:shape.type==='region'?[...shape.points,shape.points[0]!]:sampleBezier(shape.knots));}
   private compiledMap():CompiledMapScene{
-    const keys=[this.map.biome,this.map.authoring,this.map.height,this.map.waterLevel,this.map.landscape?.importedTerrain,this.map.stamps,this.map.size];
+    const keys=sceneInputs(this.map);
     if(!this.compiledScene||keys.some((v,i)=>v!==this.compiledInputs[i])){this.compiledScene=projectScene(this.map)??compileMapScene(this.map,this.authoringAssets);this.compiledInputs=keys;this.renderer?.setTerrain(this.compiledScene.field);}
     return this.compiledScene;
   }
@@ -198,7 +201,10 @@ export class WorldEditor {
   private entityUndo: EntityAuthoringState[] = [];
   private entityRedo: EntityAuthoringState[] = [];
   private entityDragging = false;
-  private entityDragStart: UtcMap | null = null;
+  private dragEntityId = 0;
+  private pendingEntity: UtcMap['entities'][number] | null = null;
+  private stampDrag: {original:MapStamp;pending:MapStamp;object?:AuthoredObject} | null = null;
+  private paintedMap: UtcMap | null = null;
   private entityOffset = { x: 0, y: 0 };
   private entityViews = editorEntities(this.map);
   setMission(mission:MissionDefinition|undefined,camps=this.map.camps){
@@ -302,6 +308,7 @@ export class WorldEditor {
   get sky() {
     return this.renderer?.sky ?? null;
   }
+  private layerMenu: LayerContextMenu | null = null;
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
 
@@ -324,6 +331,8 @@ export class WorldEditor {
   }
 
   replace(map: UtcMap): void {
+    this.layerMenu?.close();
+    this.finishGrab(true);this.paintedMap=null;
     this.map = map;
     this.layers=new AuthoringHistory(map.authoring??{version:1,layers:[],objects:[]});this.compiledScene=null;this.drawingLayer=null;this.paintingLayer=null;
     this.entityUndo = [];
@@ -354,7 +363,7 @@ export class WorldEditor {
     if (kinds) this.kinds = new Map(kinds);
     this.renderer?.setAssets(this.urls);
     this.renderer?.setKinds(this.kinds);
-    this.paint();
+    this.paintedMap=null;this.paint();
   }
 
   setTool(tool: EditorTool | null): void {
@@ -368,13 +377,17 @@ export class WorldEditor {
     this.hooks.onSelect?.();
   }
 
+  sceneryAllowed(asset:string,x:number,z:number):boolean {
+    return isBridgeAsset(asset) || sitAllowed(this.kinds.get(asset),this.height.wet(x,z));
+  }
+
   setAsset(id: string): void {
     this.asset = id;
     if (this.tool === null) this.tool = "stamp";
   }
 
   rotateStamp(steps = 1): void {
-    if (this.selectedEntity) {
+    if (this.selectedEntity || this.layers.selection?.kind === 'object') {
       this.nudgeSelected((steps * Math.PI) / 2);
       return;
     }
@@ -387,17 +400,22 @@ export class WorldEditor {
   }
 
   nudgeSelected(delta: number): void {
+    if (this.layers.selection?.kind === 'object') {
+      const object = this.layers.scene.objects.find(o => o.id === this.layers.selection?.id);
+      if (object && !object.locked) this.putAuthoredObject({...object,yaw:stepYaw(object.yaw,delta)});
+      return;
+    }
     const p = this.selectedPlacement();
     if (p) {
       this.putEntity({
         ...p,
-        rotation: Math.round((p.rotation + (delta * 180) / Math.PI) / 90) * 90,
+        rotation: stepYaw(p.rotation * Math.PI / 180,delta) * 180 / Math.PI,
       });
       return;
     }
     const stamp = this.selectedStamp();
     if (!stamp) return;
-    this.applyPose(stamp, stamp.x, stamp.y, (stamp.yaw ?? 0) + delta);
+    this.applyPose(stamp, stamp.x, stamp.y, stepYaw(stamp.yaw ?? 0,delta));
   }
 
   setSelectedYaw(rad: number): void {
@@ -572,7 +590,7 @@ export class WorldEditor {
     const cx = snap ? Math.floor(x) : x;
     const cy = snap ? Math.floor(y) : y;
     if (!inStamp(cx, cy,this.map.size)) return null;
-    if (!sitAllowed(this.kinds.get(asset), this.height.wet(cx + 0.5, cy + 0.5)))
+    if (!this.sceneryAllowed(asset,cx+.5,cy+.5))
       return null;
     const stamp: MapStamp = {
       id: crypto.randomUUID(),
@@ -1125,7 +1143,7 @@ export class WorldEditor {
 
   start(): void {
     const renderer = new Renderer(this.canvas, this.urls);
-    this.renderer = renderer;
+    this.renderer = renderer;this.paintedMap=null;
     renderer.setKinds(this.kinds);
     renderer.camera.locked = false;
     renderer.camera.lookAt(this.map.size / 2, this.map.size / 2);
@@ -1134,21 +1152,14 @@ export class WorldEditor {
       orbit: true,
       onChanged: () => this.draw(),
       onClick: (x, y) => this.click(x, y),
+      onRightClick: (x,y) => this.openLayerMenu(x,y),
       onHome: () => this.toggleGameCam(),
       grab: {
         on: () => this.tool === "select",
         down: (x, y, shift) => this.grabDown(x, y, shift),
         move: (x, y) => this.grabMove(x, y),
-        up: () => {
-          this.select.end();
-          if (this.entityDragStart && this.entityDragStart !== this.map) {
-            this.entityUndo.push(entityAuthoringState(this.entityDragStart));
-            this.entityUndo = this.entityUndo.slice(-64);
-            this.entityRedo = [];
-          }
-          this.entityDragging = false;
-          this.entityDragStart = null;
-        },
+        up: () => this.finishGrab(),
+        cancel: () => this.finishGrab(true),
         rotateBy: (steps) => this.nudgeSelected(steps * YAW_STEP),
       },
       paint: {
@@ -1217,7 +1228,7 @@ export class WorldEditor {
     this.syncPaintView();
     void this.ready()
       .then(() => {
-        if (this.renderer === renderer) this.paint();
+        if (this.renderer === renderer) {this.paintedMap=null;this.paint();}
       })
       .catch((error) => {
         this.entityMessage = `Asset loading failed: ${(error as Error).message}`;
@@ -1230,7 +1241,19 @@ export class WorldEditor {
     this.draw();
   }
 
+  private openLayerMenu(clientX:number,clientY:number):void {
+    const hit=this.renderer?.pickGround(clientX,clientY);
+    if(!hit){this.layerMenu?.close();return;}
+    const layers=hitLayers(this.layers.scene.layers,this.authoringAssets,hit.x,hit.z);
+    this.layerMenu??=new LayerContextMenu(this.canvas);
+    this.layerMenu.open(clientX,clientY,layers.map(layer=>({id:layer.id,name:layer.name,
+      detail:(this.authoringAssets.find(a=>a.id===layer.recipe)?.name??layer.recipe)+(layer.locked?' · Locked':''),
+      selected:this.layers.selection?.kind==='layer'&&this.layers.selection.id===layer.id,
+    })),id=>this.selectLayer({kind:'layer',id}));
+  }
+
   stop(): void {
+    this.layerMenu?.close();this.layerMenu=null;
     this.input?.destroy();
     this.input = null;
     this.mini?.destroy();
@@ -1359,7 +1382,7 @@ export class WorldEditor {
       if (!this.map.entities.some((e) => e.id === p.id)) {
         const generatedOwner=this.compiledScene?.owners.get(p.id);
         if(generatedOwner){this.selectLayer({kind:'layer',id:generatedOwner});return true;}
-        if(this.map.authoring?.objects.some(o=>o.id===p.id)){this.selectLayer({kind:'object',id:p.id});return true;}
+        if(this.map.authoring?.objects.some(o=>o.id===p.id))return this.beginObjectGrab(p.id,clientX,clientY,rotate);
         this.entityMessage = "Use the spawn tool to move setup members.";
         this.hooks.onSelect?.();
         return true;
@@ -1371,14 +1394,14 @@ export class WorldEditor {
           x: p.position.x - hit.x,
           y: p.position.y - hit.z,
         };
-        this.entityDragging = true;
-        this.entityDragStart = this.map;
+        this.entityDragging = true;this.dragEntityId=id!;
+        this.pendingEntity = null;
       }
       return true;
     }
     this.selectedEntity = null;
     if(owner){this.selectLayer({kind:'layer',id:owner});return true;}
-    if(resourceId&&this.map.authoring?.objects.some(o=>o.id===resourceId)){this.selectLayer({kind:'object',id:resourceId});return true;}
+    if(resourceId&&this.map.authoring?.objects.some(o=>o.id===resourceId))return this.beginObjectGrab(resourceId,clientX,clientY,rotate);
 
     const stamp = this.hitStamp(clientX, clientY);
     if (!stamp) {
@@ -1395,40 +1418,62 @@ export class WorldEditor {
     if (!hit) return false;
     this.layers.selection=null;
     this.select.begin(stamp, hit, rotate);
+    this.stampDrag={original:stamp,pending:stamp};
     this.paint();
     this.hooks.onSelect?.();
     return true;
   }
 
-  private grabMove(clientX: number, clientY: number): void {
-    if (this.entityDragging) {
-      const p = this.selectedPlacement(),
-        hit = this.renderer?.pickGround(clientX, clientY);
-      if (p && hit) {
-        try {
-          this.map = putEntity(this.map, {
-            ...p,
-            position: {
-              x: Math.round(hit.x + this.entityOffset.x),
-              y: Math.round(hit.z + this.entityOffset.y),
-            },
-          });
-          this.paint();
-          this.hooks.onChange?.();
-          this.hooks.onSelect?.();
-        } catch {
-          /* Drag outside map retains the last valid pose. */
-        }
-      }
+  private beginObjectGrab(id:string,clientX:number,clientY:number,rotate:boolean):boolean {
+    const object=this.map.authoring?.objects.find(o=>o.id===id);
+    this.selectLayer({kind:'object',id});if(!object||object.locked)return true;
+    const resource=expandMap(this.map,content).findIndex(p=>p.id===id);
+    const stamp=this.compiledScene?.stamps.find(s=>s.id===id)??(resource>=0?resourceStamps(this.entityViews).find(s=>s.id===`resource-${resource+1}`):undefined);
+    const hit=this.renderer?.pickGround(clientX,clientY);if(!stamp||!hit)return true;
+    this.select.begin(stamp,hit,rotate);this.stampDrag={original:stamp,pending:stamp,object};
+    this.renderer?.setSelected(stamp.id);return true;
+  }
+
+  private grabMove(clientX:number,clientY:number):void {
+    const started=perf.start();try{this.previewGrab(clientX,clientY);}finally{perf.end('Editor drag preview',started);}
+  }
+  private previewGrab(clientX: number, clientY: number): void {
+    const hit=this.renderer?.pickGround(clientX,clientY);if(!hit)return;
+    if(this.entityDragging){
+      const p=this.selectedPlacement();if(!p)return;
+      const x=Math.round(hit.x+this.entityOffset.x),y=Math.round(hit.z+this.entityOffset.y);
+      if(x<0||y<0||x>=this.map.size||y>=this.map.size)return;
+      const previous=this.pendingEntity??p;if(previous.position.x===x&&previous.position.y===y)return;
+      this.pendingEntity={...p,position:{...p.position,x,y}};
+      const id=this.dragEntityId;
+      const views=this.entityViews.map(e=>e.id===id?{...e,x,y}:e);
+      this.renderer?.previewEditorEntities(authoredScene(views,this.map.size));
+      const resource=resourceStamps(views.filter(e=>e.id===id))[0];if(resource)this.renderer?.previewEditorStamp(resource);
       return;
     }
+    const drag=this.stampDrag,pose=this.select.drag(hit);if(!drag||!pose)return;
+    if(!drag.object&&!this.sceneryAllowed(drag.original.asset,pose.x+.5,pose.y+.5))return;
+    const next=withPose(drag.original,pose.x,pose.y,pose.yaw,this.map.size);if(!next)return;
+    drag.pending=next;this.renderer?.previewEditorStamp(next);
+  }
 
-    const stamp = this.selectedStamp();
-    const hit = this.renderer?.pickGround(clientX, clientY);
-    if (!stamp || !hit) return;
-    const pose = this.select.drag(hit);
-    if (!pose) return;
-    this.applyPose(stamp, pose.x, pose.y, pose.yaw);
+  /** One document transaction per gesture; previews never compile or autosave. */
+  private finishGrab(cancel=false):void {
+    const started=perf.start();try{this.commitGrab(cancel);}finally{perf.end('Editor drag commit',started);}
+  }
+  private commitGrab(cancel=false):void {
+    const entity=this.pendingEntity,drag=this.stampDrag;
+    this.pendingEntity=null;this.stampDrag=null;this.entityDragging=false;this.select.end();
+    if(drag)this.renderer?.previewEditorStamp(drag.original);
+    if(entity){this.renderer?.previewEditorEntities(authoredScene(this.entityViews,this.map.size));const id=expandMap(this.map,content).findIndex(p=>p.id===entity.id)+1;const resource=resourceStamps(this.entityViews.filter(e=>e.id===id))[0];if(resource)this.renderer?.previewEditorStamp(resource);}
+    if(cancel)return;
+    try{
+      if(entity)this.putEntity(entity);
+      if(drag&&(drag.pending.x!==drag.original.x||drag.pending.y!==drag.original.y||drag.pending.yaw!==drag.original.yaw)){
+        if(drag.object)this.putAuthoredObject({...drag.object,x:drag.object.x+drag.pending.x-drag.original.x,z:drag.object.z+drag.pending.y-drag.original.y,yaw:drag.object.yaw+((drag.pending.yaw??0)-(withPose(drag.original,drag.original.x,drag.original.y,drag.original.yaw??0,this.map.size)?.yaw??0))});
+        else this.applyPose(drag.original,drag.pending.x,drag.pending.y,drag.pending.yaw??0);
+      }
+    }catch(e){this.entityMessage=(e as Error).message;this.hooks.onSelect?.();}
   }
 
   private hitStamp(clientX: number, clientY: number): MapStamp | null {
@@ -1441,10 +1486,7 @@ export class WorldEditor {
 
   private applyPose(stamp: MapStamp, x: number, y: number, yaw: number): void {
     if (
-      !sitAllowed(
-        this.kinds.get(stamp.asset),
-        this.height.wet(x + 0.5, y + 0.5),
-      )
+      !this.sceneryAllowed(stamp.asset,x+.5,y+.5)
     )
       return;
     const next = withPose(stamp, x, y, yaw,this.map.size);
@@ -1530,7 +1572,7 @@ export class WorldEditor {
     const x = Math.floor(hit.x);
     const y = Math.floor(hit.z);
     if (!inStamp(x, y,this.map.size)) return;
-    if (!sitAllowed(this.kinds.get(this.asset), this.height.wet(hit.x, hit.z)))
+    if (!this.sceneryAllowed(this.asset,hit.x,hit.z))
       return;
     this.map = {
       ...this.map,
@@ -1551,19 +1593,24 @@ export class WorldEditor {
 
   private paint(): void {
     const compiled=this.compiledMap();
-    if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id))
+    if (this.select.id && !this.map.stamps.some((s) => s.id === this.select.id) && !this.stampDrag)
       this.select.clear();
     this.renderer?.setSpawnPoints(
       this.map.playerStarts ?? [],
       this.tool === "spawn",
     );
     this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
-    this.entityViews = editorEntities(this.map);
+    const changed=this.paintedMap!==this.map;
+    if(changed)this.entityViews = editorEntities(this.map);
     const stamps = [...compiled.stamps, ...resourceStamps(this.entityViews)];
     const selected = expandMap(this.map, content).findIndex(
       (p) => p.id === this.selectedEntity,
     );
     this.renderer?.gameSelect(selected >= 0 ? [selected + 1] : []);
+    const selectedLayer=this.layers.scene.layers.find(l=>l.id===this.layers.selection?.id);
+    if(selectedLayer)this.previewLayerShape(selectedLayer.shape);else this.renderer?.previewCurve([]);
+    if(!changed)return;
+    this.paintedMap=this.map;
     this.renderer?.draw(
       {
         tick: 0,
@@ -1578,8 +1625,6 @@ export class WorldEditor {
     this.mini?.setFog(authoredScene(this.entityViews,this.map.size));
     this.mini?.setPlayerStarts(this.map.playerStarts ?? []);
     this.mini?.paint();
-    const selectedLayer=this.layers.scene.layers.find(l=>l.id===this.layers.selection?.id);
-    if(selectedLayer)this.previewLayerShape(selectedLayer.shape);
   }
 
   private loadHeight(map: UtcMap): void {

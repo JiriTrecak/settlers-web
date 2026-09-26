@@ -252,6 +252,8 @@ class Handler(SimpleHTTPRequestHandler):
             path=(base/route[len('/vendor/three/'):]).resolve()
             if not path.is_relative_to(base) or not path.is_file() or path.suffix!='.js':
                 return self.send_error(404)
+        elif route=='/masked-team-color.js':
+            path=ROOT/'src/render/settlement/maskedTeamColor.js'
         elif route=='/character-player.js':
             path=ROOT/'src/render/characters/character-player.js'
         elif route=='/scale-building.glb':

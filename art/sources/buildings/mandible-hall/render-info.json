@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-26T17:00:44+0200",
+  "view": "saved",
+  "quick": false,
+  "seconds": 14.58,
+  "blend_mtime_ns": 1790434831160102782,
+  "config": {
+    "name": "Mandible Hall",
+    "blend": "mandible-hall.blend",
+    "recipe": "model.py",
+    "seed": 72,
+    "camera": {
+      "azimuth": 27,
+      "elevation": 34,
+      "scale": 12.9,
+      "target": [
+        0,
+        0,
+        3.55
+      ],
+      "distance": 25
+    },
+    "render": {
+      "width": 1280,
+      "height": 1280,
+      "samples": 48
+    },
+    "light": {
+      "key_energy": 1050,
+      "fill_energy": 230,
+      "rim_energy": 900,
+      "scale": 1.6,
+      "target": [
+        0,
+        0,
+        3.5
+      ]
+    },
+    "preserve_textures": true,
+    "texture_format": "AUTO",
+    "viewer_light_scale": 1,
+    "runtime_triangle_budget": 9800
+  }
+}

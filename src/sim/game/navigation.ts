@@ -42,12 +42,12 @@ export class Navigation {
   }
   /** Terrain changes affect outgoing edges in the surrounding 3×3 cells,
    * including diagonal corner checks. Moving bodies never enter this cache. */
-  invalidate(cells?:Iterable<number>):void {
+  invalidate(cells?:Iterable<number>,padding=1):void {
     if(!this.cacheTerrain)return;
     if(!cells){this.knownEdges.fill(0);return;}
     for(const cell of cells){
       const x=cell%this.size,y=Math.floor(cell/this.size);
-      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      for(let dy=-padding;dy<=padding;dy++)for(let dx=-padding;dx<=padding;dx++){
         const nx=x+dx,ny=y+dy;
         if(nx>=0&&ny>=0&&nx<this.size&&ny<this.size)this.knownEdges[ny*this.size+nx]=0;
       }

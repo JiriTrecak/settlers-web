@@ -90,6 +90,7 @@ export class ImportedGrass {
   }
   perf.value('Source grass instances',groups.reduce((n,g)=>n+g.instances.length,0));
  }
+ updateGround(field:HeightField){this.ground.update(field);}
  tick(now:number){
   this.time.value=now*.001;
   if(this.sun){this.sunColor.value.copy(this.sun.color).multiplyScalar(this.sun.intensity);this.sun.getWorldPosition(this.sunDirection.value);this.sun.target.getWorldPosition(this.target);this.sunDirection.value.sub(this.target).normalize();}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Color, Mesh, MeshStandardMaterial } from "three";
+import { Color, Mesh, MeshStandardMaterial, Texture } from "three";
 import { applyPlayerMaterial, applyPlayerMaterials, TEAM_COLOR_MATERIAL } from "../../src/render/settlement/playerMaterials";
 
 describe("explicit team-color material", () => {
@@ -29,4 +29,33 @@ describe("explicit team-color material", () => {
       expect(material.color.equals(original)).toBe(true);
     }
   });
+});
+
+it('recolors masked pixels in independent instances, preserving opacity and existing shader hooks', () => {
+  const prototype = new MeshStandardMaterial();
+  prototype.name = TEAM_COLOR_MATERIAL;
+  prototype.userData = {teamColorMask:'baseColorAlpha', teamColorSourceMax:.6, teamColorDefault:[.02,.12,.6]};
+  prototype.map = new Texture();
+  const first = prototype.clone(), second = prototype.clone();
+  let priorCalls = 0;
+  first.onBeforeCompile = shader => {priorCalls++;shader.fragmentShader += '\n// fog hook retained';};
+  applyPlayerMaterial(first,new Color('#ff0000'));
+  applyPlayerMaterial(second,new Color('#0000ff'));
+  const shader={fragmentShader:'#include <map_fragment>\n#include <color_fragment>',uniforms:{}};
+  first.onBeforeCompile(shader as any, {} as any);
+  expect(priorCalls).toBe(1);
+  expect(shader.fragmentShader).toContain('mix(ownershipSample.rgb');
+  expect(shader.fragmentShader).toContain('ownershipSample.a');
+  expect(shader.fragmentShader).not.toContain('diffuseColor.a *=');
+  expect(shader.fragmentShader).toContain('// fog hook retained');
+  expect(shader.fragmentShader).toContain('#include <color_fragment>');
+  expect(first.color.getHexString()).toBe('ff0000');
+  expect(second.color.getHexString()).toBe('0000ff');
+  expect(prototype.color.getHexString()).toBe('ffffff');
+  expect(first.map).toBe(second.map);
+  const hook=first.onBeforeCompile;
+  applyPlayerMaterial(first,new Color('#00ff00'));
+  expect(first.onBeforeCompile).toBe(hook);
+  applyPlayerMaterials(new Mesh(undefined,first),-1);
+  expect(first.color.toArray()).toEqual([.02,.12,.6]);
 });

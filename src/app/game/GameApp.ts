@@ -85,7 +85,7 @@ export class GameApp {
         ? authoredMaps().find((m) => m.id === intent.mapId)
         : undefined;
       if (intent.mapId && !selected) this.showMapPicker(true);
-      else this.showEditor(selected?.map);
+      else this.showEditor(selected?.map, selected?.id);
     } else if (intent.kind === "campaign") this.showCampaign();
     else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
@@ -170,7 +170,7 @@ export class GameApp {
       new MapPicker(edit ? "edit" : "play", {
         onBack: () => this.showMenu(),
         onChoose: (entry) =>
-          edit ? this.showEditor(entry.map) : this.play(entry.id),
+          edit ? this.showEditor(entry.map, entry.id) : this.play(entry.id),
         ...(edit ? { onNew: () => this.showEditor(emptyUtcMap()) } : {}),
       }),
     );
@@ -352,14 +352,14 @@ export class GameApp {
       this.screens.clear();
   }
 
-  private showEditor(map?: UtcMap): void {
+  private showEditor(map?: UtcMap, mapId?: string): void {
     if (!this.canvas || !this.screens) return;
     if (this.screens.screen instanceof EditorScreen) return;
     const gen = ++this.playGen;
     this.showCanvas();
     const editor = new EditorScreen(this.canvas, {
       onLeave: () => this.showMenu(),
-      map,
+      map, mapId,
     });
     this.screens.show(editor);
     try {

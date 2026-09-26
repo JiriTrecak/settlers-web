@@ -1,0 +1,23 @@
+23:16:33 | INFO: Data are loaded, start creating Blender stuff
+23:16:33 | INFO: Blender create Mesh node Mesh_0
+23:16:33 | INFO: Blender create Mesh node Mesh_1
+23:16:33 | INFO: Blender create Mesh node Mesh_10
+23:16:33 | INFO: Blender create Mesh node Mesh_11
+23:16:33 | INFO: Blender create Mesh node Mesh_12
+23:16:33 | INFO: Blender create Mesh node Mesh_13
+23:16:33 | INFO: Blender create Mesh node Mesh_2
+23:16:33 | INFO: Blender create Mesh node Mesh_3
+23:16:33 | INFO: Blender create Mesh node Mesh_4
+23:16:33 | INFO: Blender create Mesh node Mesh_5
+23:16:33 | INFO: Blender create Mesh node Mesh_6
+23:16:33 | INFO: Blender create Mesh node Mesh_7
+23:16:33 | INFO: Blender create Mesh node Mesh_8
+23:16:33 | INFO: Blender create Mesh node Mesh_9
+23:16:33 | INFO: glTF import finished in 0.11s
+/Users/jiritrecak/Documents/Supernova/Development/Settlers 3 Web/art/sources/buildings/acorn-hall-tripo/model.py:30: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  material=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True
+Info: Saved as "acorn-hall-tripo.blend"
+HALL_SOURCE 14 parts 9330 triangles
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

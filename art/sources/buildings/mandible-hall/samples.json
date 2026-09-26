@@ -1,0 +1,27 @@
+{
+  "Wood_Dark": {
+    "u": 0.486,
+    "v": 0.41,
+    "radius": 5
+  },
+  "Wood_Light_Dome": {
+    "u": 0.533,
+    "v": 0.444,
+    "radius": 6
+  },
+  "Leaf_Green": {
+    "u": 0.764,
+    "v": 0.517,
+    "radius": 5
+  },
+  "Chitin_Red": {
+    "u": 0.49,
+    "v": 0.64,
+    "radius": 6
+  },
+  "Ivory": {
+    "u": 0.728,
+    "v": 0.424,
+    "radius": 4
+  }
+}

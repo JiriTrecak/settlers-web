@@ -3,7 +3,7 @@
   "size": 256,
   "name": "Threewater Forest",
   "biome": "vibrant-forest",
-  "description": "Three branching woodland waters, three walkable crossings and secluded glades: a ruined lookout, a broken trading cart, a spring and a forgotten camp among dense pines.",
+  "description": "Oldoak and Amberleaf glades face one another across three woodland crossings. A stranded leaf ferry, raised watchpost, spring hollow and waterworn root snags frame clear base sites and winding supply tracks.",
   "stamps": [
     {
       "id": "bridge.0",
@@ -189,13 +189,13 @@
       "season": "summer",
       "playing": false,
       "canopy": {
-        "enabled": false,
+        "enabled": true,
         "height": 38,
         "scale": 100,
-        "coverage": 0.36,
-        "sway": 1.2,
-        "speed": 0.35,
-        "cloudShadow": 0.12,
+        "coverage": 0.18,
+        "sway": 0.65,
+        "speed": 0.2,
+        "cloudShadow": 0.08,
         "seed": 731
       }
     }
@@ -1808,6 +1808,16 @@
                   "z": 72.29781771501925
                 }
               ]
+            },
+            {
+              "radius": 22,
+              "points": [
+                {
+                  "x": 163,
+                  "z": 56
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -2230,6 +2240,16 @@
                   "z": 198.1617458279846
                 }
               ]
+            },
+            {
+              "radius": 9,
+              "points": [
+                {
+                  "x": 107,
+                  "z": 194
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -2362,6 +2382,16 @@
                   "z": 210.3209242618742
                 }
               ]
+            },
+            {
+              "radius": 22,
+              "points": [
+                {
+                  "x": 60,
+                  "z": 205
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -2424,6 +2454,16 @@
                   "z": 134.0795892169448
                 }
               ]
+            },
+            {
+              "radius": 8,
+              "points": [
+                {
+                  "x": 231,
+                  "z": 105
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -2853,6 +2893,26 @@
                   "z": 138.35173299101413
                 }
               ]
+            },
+            {
+              "radius": 15,
+              "points": [
+                {
+                  "x": 60,
+                  "z": 205
+                }
+              ],
+              "operation": "subtract"
+            },
+            {
+              "radius": 15,
+              "points": [
+                {
+                  "x": 163,
+                  "z": 56
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -2954,6 +3014,26 @@
                   "z": 211.30680359435172
                 }
               ]
+            },
+            {
+              "radius": 15,
+              "points": [
+                {
+                  "x": 60,
+                  "z": 205
+                }
+              ],
+              "operation": "subtract"
+            },
+            {
+              "radius": 15,
+              "points": [
+                {
+                  "x": 163,
+                  "z": 56
+                }
+              ],
+              "operation": "subtract"
             }
           ]
         }
@@ -3085,6 +3165,1619 @@
                   "z": 233.3247753530167
                 }
               ]
+            },
+            {
+              "radius": 15,
+              "points": [
+                {
+                  "x": 163,
+                  "z": 56
+                }
+              ],
+              "operation": "subtract"
+            }
+          ]
+        }
+      },
+      {
+        "id": "foliage.mushroom-glades",
+        "name": "Mushroom glades · forest-scale landmarks",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "seed": 19027,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 38,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "radius": 5,
+              "points": [
+                {
+                  "x": 82,
+                  "z": 183
+                },
+                {
+                  "x": 89,
+                  "z": 194
+                },
+                {
+                  "x": 91,
+                  "z": 200
+                }
+              ],
+              "operation": "add"
+            },
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 202,
+                  "z": 149
+                },
+                {
+                  "x": 211,
+                  "z": 156
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 111,
+                  "z": 117
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.base-0",
+        "name": "Oldoak Glade · buildable glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 4,
+          "vegetationClearance": 0
+        },
+        "seed": 5548,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 39,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 55,
+                  "z": 205
+                },
+                {
+                  "x": 65,
+                  "z": 205
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 58,
+                  "z": 196
+                },
+                {
+                  "x": 62,
+                  "z": 214
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.base-shelf-0",
+        "name": "Oldoak Glade · level foundation",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "operation": "flatten",
+          "height": 0,
+          "falloff": 4,
+          "roughness": 0
+        },
+        "seed": 5621,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 40,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 60,
+                  "z": 205
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.base-1",
+        "name": "Amberleaf Glade · buildable glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 4,
+          "vegetationClearance": 0
+        },
+        "seed": 5694,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 41,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 158,
+                  "z": 56
+                },
+                {
+                  "x": 168,
+                  "z": 56
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 161,
+                  "z": 47
+                },
+                {
+                  "x": 165,
+                  "z": 65
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.base-shelf-1",
+        "name": "Amberleaf Glade · level foundation",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "operation": "flatten",
+          "height": 0,
+          "falloff": 4,
+          "roughness": 0
+        },
+        "seed": 5767,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 42,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 163,
+                  "z": 56
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.backwater",
+        "name": "Stillwater · abandoned ferry pool",
+        "recipe": "recipe.river.gentle",
+        "overrides": {
+          "type": "river",
+          "depth": 1.45,
+          "bankWidth": 2.8,
+          "flow": 0.12,
+          "details": {
+            "banks": {
+              "spacing": 1.7,
+              "probability": 0.6
+            },
+            "water": {
+              "spacing": 2.1,
+              "probability": 0.65
+            }
+          }
+        },
+        "seed": 5840,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 43,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 5.8,
+              "points": [
+                {
+                  "x": 75,
+                  "z": 151
+                },
+                {
+                  "x": 77,
+                  "z": 148
+                },
+                {
+                  "x": 81,
+                  "z": 150
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.watch-rise",
+        "name": "Watchpost · worn hill",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 3,
+          "falloff": 5,
+          "roughness": 0.14,
+          "grassStrength": 0.65,
+          "rockStrength": 0.48
+        },
+        "seed": 5913,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 44,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6.2,
+              "points": [
+                {
+                  "x": 232,
+                  "z": 102
+                },
+                {
+                  "x": 235,
+                  "z": 105
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.spring-rise",
+        "name": "Spring Hollow · mossy shoulder",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.5,
+          "falloff": 5,
+          "roughness": 0.2,
+          "rockStrength": 0.42
+        },
+        "seed": 5986,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 45,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 4.5,
+              "points": [
+                {
+                  "x": 104,
+                  "z": 191
+                },
+                {
+                  "x": 109,
+                  "z": 193
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.north-ridge",
+        "name": "Northern old-growth ridge",
+        "recipe": "recipe.terrain.mountain",
+        "overrides": {
+          "type": "terrain",
+          "height": 5,
+          "falloff": 4,
+          "roughness": 0.22,
+          "grassStrength": 0.5,
+          "rockStrength": 0.66
+        },
+        "seed": 6059,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 46,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 112,
+                  "z": 14
+                },
+                {
+                  "x": 120,
+                  "z": 18
+                },
+                {
+                  "x": 127,
+                  "z": 16
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.south-ridge",
+        "name": "Southern folded banks",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 3.3,
+          "falloff": 3.5,
+          "roughness": 0.2,
+          "rockStrength": 0.65
+        },
+        "seed": 6132,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 47,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 4,
+              "points": [
+                {
+                  "x": 108,
+                  "z": 238
+                },
+                {
+                  "x": 120,
+                  "z": 237
+                },
+                {
+                  "x": 131,
+                  "z": 231
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.island-shoulder",
+        "name": "Heartwood island · low shelves",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.6,
+          "falloff": 4,
+          "roughness": 0.17,
+          "rockStrength": 0.6
+        },
+        "seed": 6205,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 48,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3.2,
+              "points": [
+                {
+                  "x": 116,
+                  "z": 130
+                },
+                {
+                  "x": 117,
+                  "z": 137
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.oldoak-north",
+        "name": "Oldoak · north supply track",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3.2,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 749,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 49,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 61,
+              "z": 195,
+              "elevation": 0,
+              "incoming": {
+                "x": 60.833333333333336,
+                "z": 197
+              },
+              "outgoing": {
+                "x": 61.166666666666664,
+                "z": 193
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 62,
+              "z": 183,
+              "elevation": 0,
+              "incoming": {
+                "x": 61.833333333333336,
+                "z": 187.33333333333334
+              },
+              "outgoing": {
+                "x": 62.166666666666664,
+                "z": 178.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 62,
+              "z": 169,
+              "elevation": 0,
+              "incoming": {
+                "x": 63,
+                "z": 173.66666666666666
+              },
+              "outgoing": {
+                "x": 61,
+                "z": 164.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 56,
+              "z": 155,
+              "elevation": 0,
+              "incoming": {
+                "x": 57.666666666666664,
+                "z": 157.66666666666666
+              },
+              "outgoing": {
+                "x": 54.333333333333336,
+                "z": 152.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 52,
+              "z": 153,
+              "elevation": 0,
+              "incoming": {
+                "x": 52.666666666666664,
+                "z": 155.66666666666666
+              },
+              "outgoing": {
+                "x": 51.333333333333336,
+                "z": 150.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 52,
+              "z": 139,
+              "elevation": 0,
+              "incoming": {
+                "x": 50.833333333333336,
+                "z": 143.66666666666666
+              },
+              "outgoing": {
+                "x": 53.166666666666664,
+                "z": 134.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 59,
+              "z": 125,
+              "elevation": 0,
+              "incoming": {
+                "x": 56,
+                "z": 129.33333333333334
+              },
+              "outgoing": {
+                "x": 62,
+                "z": 120.66666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 70,
+              "z": 113,
+              "elevation": 0,
+              "incoming": {
+                "x": 68.16666666666667,
+                "z": 115
+              },
+              "outgoing": {
+                "x": 71.83333333333333,
+                "z": 111
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.oldoak-east",
+        "name": "Oldoak · southern supply track",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3.5,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 750,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 50,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 70,
+              "z": 211,
+              "elevation": 0,
+              "incoming": {
+                "x": 67,
+                "z": 210
+              },
+              "outgoing": {
+                "x": 73,
+                "z": 212
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 88,
+              "z": 217,
+              "elevation": 0,
+              "incoming": {
+                "x": 82.83333333333333,
+                "z": 215
+              },
+              "outgoing": {
+                "x": 93.16666666666667,
+                "z": 219
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 101,
+              "z": 223,
+              "elevation": 0,
+              "incoming": {
+                "x": 95.83333333333333,
+                "z": 222.16666666666666
+              },
+              "outgoing": {
+                "x": 106.16666666666667,
+                "z": 223.83333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 119,
+              "z": 222,
+              "elevation": 0,
+              "incoming": {
+                "x": 112.66666666666667,
+                "z": 223
+              },
+              "outgoing": {
+                "x": 125.33333333333333,
+                "z": 221
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 139,
+              "z": 217,
+              "elevation": 0,
+              "incoming": {
+                "x": 132.33333333333334,
+                "z": 218.16666666666666
+              },
+              "outgoing": {
+                "x": 145.66666666666666,
+                "z": 215.83333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 159,
+              "z": 215,
+              "elevation": 0,
+              "incoming": {
+                "x": 153.66666666666666,
+                "z": 216.33333333333334
+              },
+              "outgoing": {
+                "x": 164.33333333333334,
+                "z": 213.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 171,
+              "z": 209,
+              "elevation": 0,
+              "incoming": {
+                "x": 169,
+                "z": 210
+              },
+              "outgoing": {
+                "x": 173,
+                "z": 208
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.amberleaf-west",
+        "name": "Amberleaf · western approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3.7,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 751,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 51,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 155,
+              "z": 65,
+              "elevation": 0,
+              "incoming": {
+                "x": 156.83333333333334,
+                "z": 64.33333333333333
+              },
+              "outgoing": {
+                "x": 153.16666666666666,
+                "z": 65.66666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 144,
+              "z": 69,
+              "elevation": 0,
+              "incoming": {
+                "x": 147.83333333333334,
+                "z": 66.83333333333333
+              },
+              "outgoing": {
+                "x": 140.16666666666666,
+                "z": 71.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 132,
+              "z": 78,
+              "elevation": 0,
+              "incoming": {
+                "x": 134.33333333333334,
+                "z": 74.5
+              },
+              "outgoing": {
+                "x": 129.66666666666666,
+                "z": 81.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 130,
+              "z": 90,
+              "elevation": 0,
+              "incoming": {
+                "x": 131.33333333333334,
+                "z": 86.16666666666667
+              },
+              "outgoing": {
+                "x": 128.66666666666666,
+                "z": 93.83333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 124,
+              "z": 101,
+              "elevation": 0,
+              "incoming": {
+                "x": 127.33333333333333,
+                "z": 98.5
+              },
+              "outgoing": {
+                "x": 120.66666666666667,
+                "z": 103.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 110,
+              "z": 105,
+              "elevation": 0,
+              "incoming": {
+                "x": 112.33333333333333,
+                "z": 104.33333333333333
+              },
+              "outgoing": {
+                "x": 107.66666666666667,
+                "z": 105.66666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.amberleaf-east",
+        "name": "Amberleaf · root-bridge approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3.7,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 752,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 52,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 176,
+              "z": 65,
+              "elevation": 0,
+              "incoming": {
+                "x": 175.33333333333334,
+                "z": 63
+              },
+              "outgoing": {
+                "x": 176.66666666666666,
+                "z": 67
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 180,
+              "z": 77,
+              "elevation": 0,
+              "incoming": {
+                "x": 180.5,
+                "z": 72.66666666666667
+              },
+              "outgoing": {
+                "x": 179.5,
+                "z": 81.33333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 173,
+              "z": 91,
+              "elevation": 0,
+              "incoming": {
+                "x": 174.66666666666666,
+                "z": 87.5
+              },
+              "outgoing": {
+                "x": 171.33333333333334,
+                "z": 94.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 170,
+              "z": 98,
+              "elevation": 0,
+              "incoming": {
+                "x": 170.5,
+                "z": 96.83333333333333
+              },
+              "outgoing": {
+                "x": 169.5,
+                "z": 99.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.oldoak-mine",
+        "name": "Oldoak · amber run",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 753,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 53,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 58,
+              "z": 216,
+              "elevation": 0,
+              "incoming": {
+                "x": 58.5,
+                "z": 214.5
+              },
+              "outgoing": {
+                "x": 57.5,
+                "z": 217.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 55,
+              "z": 225,
+              "elevation": 0,
+              "incoming": {
+                "x": 55.5,
+                "z": 223.5
+              },
+              "outgoing": {
+                "x": 54.5,
+                "z": 226.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.amberleaf-mine",
+        "name": "Amberleaf · amber run",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 3,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 754,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 54,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 169,
+              "z": 44,
+              "elevation": 0,
+              "incoming": {
+                "x": 168,
+                "z": 45.333333333333336
+              },
+              "outgoing": {
+                "x": 170,
+                "z": 42.666666666666664
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 175,
+              "z": 36,
+              "elevation": 0,
+              "incoming": {
+                "x": 174,
+                "z": 37.333333333333336
+              },
+              "outgoing": {
+                "x": 176,
+                "z": 34.666666666666664
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.ferry-spur",
+        "name": "Stillwater · old towpath",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 2.4,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 755,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 55,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 53,
+              "z": 147,
+              "elevation": 0,
+              "incoming": {
+                "x": 51.5,
+                "z": 146.5
+              },
+              "outgoing": {
+                "x": 54.5,
+                "z": 147.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 62,
+              "z": 150,
+              "elevation": 0,
+              "incoming": {
+                "x": 59.5,
+                "z": 148.5
+              },
+              "outgoing": {
+                "x": 64.5,
+                "z": 151.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 68,
+              "z": 156,
+              "elevation": 0,
+              "incoming": {
+                "x": 66.33333333333333,
+                "z": 154.83333333333334
+              },
+              "outgoing": {
+                "x": 69.66666666666667,
+                "z": 157.16666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 72,
+              "z": 157,
+              "elevation": 0,
+              "incoming": {
+                "x": 71.33333333333333,
+                "z": 156.83333333333334
+              },
+              "outgoing": {
+                "x": 72.66666666666667,
+                "z": 157.16666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.spring-spur",
+        "name": "Spring Hollow · worn footpath",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 2.8,
+          "shoulder": 1.2,
+          "flatten": 0,
+          "vegetationClearance": 1.2
+        },
+        "seed": 756,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 56,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 88,
+              "z": 216,
+              "elevation": 0,
+              "incoming": {
+                "x": 87.33333333333333,
+                "z": 218.33333333333334
+              },
+              "outgoing": {
+                "x": 88.66666666666667,
+                "z": 213.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 92,
+              "z": 202,
+              "elevation": 0,
+              "incoming": {
+                "x": 90,
+                "z": 205.5
+              },
+              "outgoing": {
+                "x": 94,
+                "z": 198.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 100,
+              "z": 195,
+              "elevation": 0,
+              "incoming": {
+                "x": 97.16666666666667,
+                "z": 196.33333333333334
+              },
+              "outgoing": {
+                "x": 102.83333333333333,
+                "z": 193.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 109,
+              "z": 194,
+              "elevation": 0,
+              "incoming": {
+                "x": 107.5,
+                "z": 194.16666666666666
+              },
+              "outgoing": {
+                "x": 110.5,
+                "z": 193.83333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.watch-earth",
+        "name": "Watchpost forecourt",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 6862,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 57,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 4,
+              "points": [
+                {
+                  "x": 230,
+                  "z": 108
+                },
+                {
+                  "x": 234,
+                  "z": 109
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.trader-earth",
+        "name": "Spilled cargo clearing",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 6935,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 58,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 4,
+              "points": [
+                {
+                  "x": 214,
+                  "z": 141
+                },
+                {
+                  "x": 218,
+                  "z": 142
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.spring-earth",
+        "name": "Spring Hollow gathering place",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 7008,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 59,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3.8,
+              "points": [
+                {
+                  "x": 107,
+                  "z": 196
+                },
+                {
+                  "x": 111,
+                  "z": 197
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.ferry-earth",
+        "name": "The old ferry landing",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 7081,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 60,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3.4,
+              "points": [
+                {
+                  "x": 69,
+                  "z": 155
+                },
+                {
+                  "x": 73,
+                  "z": 156
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.stump-earth",
+        "name": "Heartwood acorn cache",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 7154,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 61,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3,
+              "points": [
+                {
+                  "x": 109,
+                  "z": 118
+                },
+                {
+                  "x": 113,
+                  "z": 119
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.south-earth",
+        "name": "Southwater landing",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 2.2,
+          "vegetationClearance": 0.6
+        },
+        "seed": 7227,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 62,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3.4,
+              "points": [
+                {
+                  "x": 177,
+                  "z": 207
+                },
+                {
+                  "x": 181,
+                  "z": 208
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.base-fringes",
+        "name": "Glade shoulders · patchy short meadow",
+        "recipe": "recipe.grass.meadow",
+        "overrides": {
+          "spacing": 1.15,
+          "probability": 0.68,
+          "scaleMin": 0.4,
+          "scaleMax": 0.72,
+          "patchiness": {
+            "scale": 3.2,
+            "strength": 0.7
+          },
+          "type": "grass"
+        },
+        "seed": 7300,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 63,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 4,
+              "points": [
+                {
+                  "x": 44,
+                  "z": 189
+                },
+                {
+                  "x": 39,
+                  "z": 195
+                },
+                {
+                  "x": 41,
+                  "z": 217
+                },
+                {
+                  "x": 49,
+                  "z": 222
+                },
+                {
+                  "x": 76,
+                  "z": 214
+                },
+                {
+                  "x": 80,
+                  "z": 202
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 4,
+              "points": [
+                {
+                  "x": 141,
+                  "z": 53
+                },
+                {
+                  "x": 145,
+                  "z": 69
+                },
+                {
+                  "x": 155,
+                  "z": 78
+                },
+                {
+                  "x": 179,
+                  "z": 69
+                },
+                {
+                  "x": 184,
+                  "z": 61
+                },
+                {
+                  "x": 161,
+                  "z": 34
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "scenic.micro-glades",
+        "name": "Sheltered mushrooms · roots and banks",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "overrides": {
+          "spacing": 1.8,
+          "probability": 0.62,
+          "scaleMin": 0.55,
+          "scaleMax": 1.1,
+          "type": "ground-cover"
+        },
+        "seed": 7373,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 64,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 3.2,
+              "points": [
+                {
+                  "x": 34,
+                  "z": 204
+                },
+                {
+                  "x": 38,
+                  "z": 214
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 3.2,
+              "points": [
+                {
+                  "x": 184,
+                  "z": 45
+                },
+                {
+                  "x": 188,
+                  "z": 49
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 3.2,
+              "points": [
+                {
+                  "x": 106,
+                  "z": 189
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 3.2,
+              "points": [
+                {
+                  "x": 235,
+                  "z": 106
+                }
+              ]
             }
           ]
         }
@@ -3097,7 +4790,7 @@
         "x": 230.79478054567022,
         "z": 103.84595635430038,
         "elevation": 0,
-        "yaw": 0,
+        "yaw": 2.5132741228718345,
         "scale": 1.4,
         "heightMode": "terrain",
         "visible": true,
@@ -3628,6 +5321,1062 @@
         "yaw": 74.8,
         "scale": 1.6,
         "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.0",
+        "asset": "asset.models.environment.woodland-canopy-elder",
+        "x": 33,
+        "z": 203,
+        "elevation": 0,
+        "yaw": 0.35,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.1",
+        "asset": "asset.models.environment.woodland-canopy-spreading",
+        "x": 188,
+        "z": 43,
+        "elevation": 0,
+        "yaw": -0.5,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.2",
+        "asset": "asset.models.environment.woodland-canopy-elder",
+        "x": 237,
+        "z": 221,
+        "elevation": 0,
+        "yaw": 1.8,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.3",
+        "asset": "asset.models.environment.woodland-great-broken-trunk",
+        "x": 111,
+        "z": 112,
+        "elevation": 0,
+        "yaw": 0.1,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.4",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 43,
+        "z": 177,
+        "elevation": 0,
+        "yaw": 0.55,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.5",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 148,
+        "z": 82,
+        "elevation": 0,
+        "yaw": -0.6,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.6",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 85,
+        "z": 185,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.7",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 90,
+        "z": 196,
+        "elevation": 0,
+        "yaw": 2.1,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.8",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 205,
+        "z": 144,
+        "elevation": 0,
+        "yaw": -0.7,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "forest-scale.9",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 211,
+        "z": 151,
+        "elevation": 0,
+        "yaw": 1,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.raft",
+        "asset": "asset.models.environment.woodland-broken-leaf-raft",
+        "x": 75,
+        "z": 154,
+        "elevation": -0.44,
+        "yaw": -0.45,
+        "scale": 0.95,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.crate",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 70.8,
+        "z": 156.6,
+        "elevation": 0,
+        "yaw": 0.28,
+        "scale": 0.72,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.barrel",
+        "asset": "asset.models.environment.woodland-rain-barrel",
+        "x": 68.7,
+        "z": 157.4,
+        "elevation": 0,
+        "yaw": -0.2,
+        "scale": 0.75,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.lamp",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 69.6,
+        "z": 154.7,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.sign",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 65,
+        "z": 153,
+        "elevation": 0,
+        "yaw": -0.6,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.snag",
+        "asset": "asset.models.environment.woodland-root-snag",
+        "x": 81.7,
+        "z": 148,
+        "elevation": -0.83,
+        "yaw": -0.85,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.scraps",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 78.8,
+        "z": 151.5,
+        "elevation": -0.55,
+        "yaw": 0.5,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.ferry.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 71.3,
+        "z": 149.3,
+        "elevation": -0.7,
+        "yaw": 0.4,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.watch.footing",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 236,
+        "z": 100,
+        "elevation": -0.4,
+        "yaw": 0.6,
+        "scale": 1.05,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.watch.fall",
+        "asset": "asset.models.environment.woodland-snapped-root",
+        "x": 235,
+        "z": 111,
+        "elevation": -0.2,
+        "yaw": 0.8,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.watch.cache",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 228.5,
+        "z": 108,
+        "elevation": 0,
+        "yaw": -0.1,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.watch.mushrooms",
+        "asset": "asset.models.environment.woodland-mushrooms-button",
+        "x": 235.5,
+        "z": 106,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.trader.spill",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 214.3,
+        "z": 143.4,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.trader.splinters",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 218.5,
+        "z": 140,
+        "elevation": 0,
+        "yaw": 1,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.trader.wheel-rest",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 220.5,
+        "z": 145,
+        "elevation": -0.45,
+        "yaw": 0.4,
+        "scale": 0.75,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.spring.stones",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 103,
+        "z": 194,
+        "elevation": -0.55,
+        "yaw": 0.8,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.spring.stool",
+        "asset": "asset.models.environment.woodland-pine-stump",
+        "x": 110,
+        "z": 198,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.spring.acorns",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 109,
+        "z": 197,
+        "elevation": 0,
+        "yaw": 1.5,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.spring.lamp",
+        "asset": "asset.models.environment.woodland-mushroom-lantern",
+        "x": 106.5,
+        "z": 189.5,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south.landing-log",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 180,
+        "z": 213,
+        "elevation": -0.68,
+        "yaw": -0.35,
+        "scale": 0.72,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 178,
+        "z": 214,
+        "elevation": -0.68,
+        "yaw": 0.4,
+        "scale": 1.1,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south.woodpile",
+        "asset": "asset.models.environment.woodland-woodpile",
+        "x": 175.5,
+        "z": 205,
+        "elevation": 0,
+        "yaw": -0.4,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south.lamp",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 178,
+        "z": 202,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 38,
+        "z": 216,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.rock",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 81,
+        "z": 216,
+        "elevation": -0.55,
+        "yaw": 0,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.bench",
+        "asset": "asset.models.environment.woodland-log-bench",
+        "x": 41,
+        "z": 218,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.cache",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 38,
+        "z": 219,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.lamp",
+        "asset": "asset.models.environment.woodland-mushroom-lantern",
+        "x": 40,
+        "z": 214,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.0.stump",
+        "asset": "asset.models.environment.woodland-pine-stump",
+        "x": 80,
+        "z": 192,
+        "elevation": 0,
+        "yaw": 1.5,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 185,
+        "z": 67,
+        "elevation": 0,
+        "yaw": -0.7,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.rock",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 142,
+        "z": 67,
+        "elevation": -0.55,
+        "yaw": 0.8,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.bench",
+        "asset": "asset.models.environment.woodland-log-bench",
+        "x": 182,
+        "z": 69,
+        "elevation": 0,
+        "yaw": -0.7,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.cache",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 185,
+        "z": 70,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.lamp",
+        "asset": "asset.models.environment.woodland-mushroom-lantern",
+        "x": 183,
+        "z": 65,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.base.1.stump",
+        "asset": "asset.models.environment.woodland-pine-stump",
+        "x": 143,
+        "z": 43,
+        "elevation": 0,
+        "yaw": 1.5,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-upper.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 68,
+        "z": 68.5,
+        "elevation": -1.35,
+        "yaw": 0.8,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-upper.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 69.6,
+        "z": 69.7,
+        "elevation": -1.05,
+        "yaw": 1.6,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-upper.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 69.39341341869434,
+        "z": 69.93471218179904,
+        "elevation": -0.85,
+        "yaw": 0.8,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-crossing.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 78.5,
+        "z": 116,
+        "elevation": -1.35,
+        "yaw": 1.2,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-crossing.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 80.1,
+        "z": 117.2,
+        "elevation": -1.05,
+        "yaw": 2,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-crossing.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 77.45963290863214,
+        "z": 118.2732435670642,
+        "elevation": -0.3864854040490487,
+        "yaw": 2.2,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.west-crossing.reeds.2",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 75.67333297799402,
+        "z": 117.00496445046771,
+        "elevation": -0.000003927866315718479,
+        "yaw": 3.2,
+        "scale": 1.08,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-west.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 92,
+        "z": 124.5,
+        "elevation": -0.95,
+        "yaw": 0.9,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-west.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 93.6,
+        "z": 125.7,
+        "elevation": -0.65,
+        "yaw": 1.7000000000000002,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-west.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 93.24321993654132,
+        "z": 126.06665381925497,
+        "elevation": -0.28844520170817006,
+        "yaw": 0.9,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-west.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 91.67788876426118,
+        "z": 126.97916202613118,
+        "elevation": -0.85,
+        "yaw": 1.9,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-bend.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 111,
+        "z": 154.5,
+        "elevation": -1.35,
+        "yaw": 1.5,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.island-bend.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 112.6,
+        "z": 155.7,
+        "elevation": -1.05,
+        "yaw": 2.3,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southern-bend.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 144.5,
+        "z": 159.5,
+        "elevation": -1.35,
+        "yaw": 0.7,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southern-bend.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 146.1,
+        "z": 160.7,
+        "elevation": -1.05,
+        "yaw": 1.5,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southern-bend.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 146.02968437456897,
+        "z": 160.78843537447537,
+        "elevation": -0.20735380516558435,
+        "yaw": 0.7,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southern-bend.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 144.67684300416926,
+        "z": 161.99373746651014,
+        "elevation": -0.010416221644134417,
+        "yaw": 1.7,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southern-bend.reeds.2",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 142.50117193616052,
+        "z": 161.73711563653015,
+        "elevation": -0.35192338003704976,
+        "yaw": 2.7,
+        "scale": 1.08,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-upper.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 199,
+        "z": 76.5,
+        "elevation": -0.95,
+        "yaw": 1.2,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-upper.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 200.6,
+        "z": 77.7,
+        "elevation": -0.65,
+        "yaw": 2,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-upper.reeds.2",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 196.17333297799402,
+        "z": 77.50496445046771,
+        "elevation": -0.3592310797689896,
+        "yaw": 3.2,
+        "scale": 1.08,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.root-crossing.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 185.5,
+        "z": 121.5,
+        "elevation": -1.35,
+        "yaw": 1.1,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.root-crossing.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 187.1,
+        "z": 122.7,
+        "elevation": -1.05,
+        "yaw": 1.9000000000000001,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.root-crossing.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 186.40719224285115,
+        "z": 123.28241472012287,
+        "elevation": -0.18347368803539393,
+        "yaw": 1.1,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.root-crossing.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 184.69177608284124,
+        "z": 123.86575021921854,
+        "elevation": -0.8435114688152017,
+        "yaw": 2.1,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-cove.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 180.5,
+        "z": 152.5,
+        "elevation": -1.35,
+        "yaw": 0.8,
+        "scale": 0.75,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-cove.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 182.1,
+        "z": 153.7,
+        "elevation": -1.05,
+        "yaw": 1.6,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.east-cove.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 181.89341341869434,
+        "z": 153.93471218179906,
+        "elevation": -0.27331985925571406,
+        "yaw": 0.8,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southwater.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 196.5,
+        "z": 200,
+        "elevation": -1.35,
+        "yaw": 0.9,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southwater.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 198.1,
+        "z": 201.2,
+        "elevation": -1.05,
+        "yaw": 1.7000000000000002,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southwater.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 197.74321993654132,
+        "z": 201.56665381925498,
+        "elevation": -0.19024879368112058,
+        "yaw": 0.9,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.southwater.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 196.17788876426118,
+        "z": 202.47916202613118,
+        "elevation": -0.8109169401105065,
+        "yaw": 1.9,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south-exit.shelf",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 176.5,
+        "z": 237.5,
+        "elevation": -1.35,
+        "yaw": 1.3,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south-exit.pebbles",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 178.1,
+        "z": 238.7,
+        "elevation": -1.05,
+        "yaw": 2.1,
+        "scale": 1.05,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south-exit.reeds.0",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 177.03499765724916,
+        "z": 239.4271163708344,
+        "elevation": -0.85,
+        "yaw": 1.3,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south-exit.reeds.1",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 175.23788473850036,
+        "z": 239.65802341662217,
+        "elevation": -0.17526741350753317,
+        "yaw": 2.3,
+        "scale": 0.9400000000000001,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.south-exit.reeds.2",
+        "asset": "asset.models.environment.woodland-reed-tuft",
+        "x": 173.58712550455124,
+        "z": 238.21774798764196,
+        "elevation": 0,
+        "yaw": 3.3,
+        "scale": 1.08,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.0",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 86,
+        "z": 123,
+        "elevation": -1,
+        "yaw": 0.25,
+        "scale": 0.75,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.bits.0",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 88,
+        "z": 125,
+        "elevation": -0.64,
+        "yaw": 0.95,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.1",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 135,
+        "z": 159,
+        "elevation": -1,
+        "yaw": -0.2,
+        "scale": 0.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.bits.1",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 137,
+        "z": 161,
+        "elevation": -0.64,
+        "yaw": 0.49999999999999994,
+        "scale": 0.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.4",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 219,
+        "z": 66,
+        "elevation": -1,
+        "yaw": 0.4,
+        "scale": 0.85,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "scenic.drift.bits.4",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 221,
+        "z": 68,
+        "elevation": -0.64,
+        "yaw": 1.1,
+        "scale": 0.8,
+        "heightMode": "absolute",
         "visible": true,
         "locked": false
       }

@@ -672,7 +672,7 @@
       "id": "asset.icons.building-ants-great-mound",
       "name": "Great Mound",
       "kind": "icon",
-      "revision": 1,
+      "revision": 2,
       "status": "published",
       "tags": [
         "ants-v1",
@@ -701,16 +701,7 @@
       "materials": [],
       "bindings": {
         "profile": "icon",
-        "render": [
-          {
-            "id": "icon.ants.great-mound",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.building-ants-great-mound"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
@@ -880,7 +871,7 @@
       "id": "asset.icons.building-ants-mound",
       "name": "Fort",
       "kind": "icon",
-      "revision": 1,
+      "revision": 2,
       "status": "published",
       "tags": [
         "ants-v1",
@@ -909,16 +900,7 @@
       "materials": [],
       "bindings": {
         "profile": "icon",
-        "render": [
-          {
-            "id": "icon.ants.fort",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.building-ants-mound"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
@@ -3964,7 +3946,7 @@
       "id": "asset.icons.unit-ants-warrior",
       "name": "Warrior",
       "kind": "icon",
-      "revision": 1,
+      "revision": 2,
       "status": "published",
       "tags": [
         "ants-v1",
@@ -3993,16 +3975,7 @@
       "materials": [],
       "bindings": {
         "profile": "icon",
-        "render": [
-          {
-            "id": "icon.ants.warrior",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-ants-warrior"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
@@ -4880,6 +4853,457 @@
       "provenance": {
         "method": "migration",
         "sourceHash": "e4070c347030688284d3eb8d3620cde6a7dc77e5f72b9e20dd204918c2c2421d"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants-acorn-hall",
+      "name": "Acorn Main Hall",
+      "kind": "building",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "original",
+        "ants",
+        "main-building",
+        "tripo",
+        "team-mask"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "a449330484f45094c34ee72e4ef34ebb86cdeff042ffa782f4b1154b0e4bed3f",
+          "bytes": 12969976
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "6bbbfeff307cec85ca77cd3cc9cca1e64ca1a886ad1a29fcb282c9f4e97738cb",
+          "bytes": 26935848
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "d14e000cff0fbc99e410188b20297c42eec088ffc2f0cceb8066cb5491601042",
+          "bytes": 1703064
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "3950b19be799f8e325d606ab092dde1a82b8ba478693d607b0f019b6b3f71258",
+          "bytes": 1282957
+        },
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "e3c8ab8a37467844ae07834ca88b8aa6bef1a4c08b769c6faeafa13adb0cbaee",
+          "bytes": 8054779
+        },
+        {
+          "role": "team_mask",
+          "index": 1,
+          "format": "png",
+          "sha256": "7afb1dd1b3e7e3dd54411ffb325f9cadb99d2f5048e9c8dcaef495d93cd21fee",
+          "bytes": 368411
+        },
+        {
+          "role": "normal",
+          "index": 1,
+          "format": "png",
+          "sha256": "a09f9094a101a18143ca49b5ba444603391f30389a165de8ec367381ebdabccb",
+          "bytes": 3461977
+        },
+        {
+          "role": "roughness",
+          "index": 1,
+          "format": "png",
+          "sha256": "f8d81f366b51e354915da539851d0bc5707ef221dcc8d7e2ab020c58155d8959",
+          "bytes": 1359724
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "643584462e3bf4ff60b2b853f0c9ef091eadac0594c699a69e817208f0d32f75",
+          "bytes": 16071
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "5987df85efacc0a742657d70bf6dfebf460998204dd8a3b7331b9f29e6893318",
+          "bytes": 8482
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [
+        {
+          "slot": "TC_TeamColor",
+          "shader": "standard",
+          "color": "#ffffff",
+          "roughness": 0.72,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": true,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 1
+            },
+            "normal": {
+              "role": "normal",
+              "index": 1
+            },
+            "roughness": {
+              "role": "roughness",
+              "index": 1
+            },
+            "teamMask": {
+              "role": "team_mask",
+              "index": 1
+            }
+          }
+        }
+      ],
+      "bindings": {
+        "faction": "ants",
+        "profile": "building",
+        "render": [
+          {
+            "id": "asset.ants.fort",
+            "geometry": {
+              "asset": "asset.models.buildings.ants-acorn-hall",
+              "role": "geometry",
+              "index": 1
+            },
+            "scale": 1,
+            "healthHeight": 9.7
+          },
+          {
+            "id": "asset.ants.great-mound",
+            "geometry": {
+              "asset": "asset.models.buildings.ants-acorn-hall",
+              "role": "geometry",
+              "index": 1
+            },
+            "scale": 1,
+            "healthHeight": 9.7
+          },
+          {
+            "id": "icon.ants.fort",
+            "image": {
+              "asset": "asset.models.buildings.ants-acorn-hall",
+              "role": "image",
+              "index": 1
+            }
+          },
+          {
+            "id": "icon.ants.great-mound",
+            "image": {
+              "asset": "asset.models.buildings.ants-acorn-hall",
+              "role": "image",
+              "index": 1
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "teamColor": {
+          "mode": "mask",
+          "slots": [
+            "TC_TeamColor"
+          ],
+          "mask": {
+            "role": "team_mask",
+            "index": 1
+          }
+        },
+        "blocker": {
+          "shape": "box",
+          "size": [
+            15,
+            15
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "groundContact": {
+          "mode": "pivot"
+        },
+        "vegetationClearance": 7.5
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.buildings.ants-mandible-hall",
+      "name": "Mandible Hall",
+      "kind": "building",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "original",
+        "ants",
+        "main-building",
+        "procedural"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "0cd0d71df0f2cae934355115ee50ff1668e51fabc37a55b3d6f5903654d069b2",
+          "bytes": 942944
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "88a4f2f5ea05a750fccf4551371dbcebfe2c782ca37dba080453926e01214288",
+          "bytes": 2378601
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "e06c36b8fd7dc26f9c9413793dcdef0fda8d2d466f9887c061f7a3e5944c6706",
+          "bytes": 1726285
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "8e420992d3ec017296216fcc517a4678a4299036c6739a7493a94935114c69f5",
+          "bytes": 1449572
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2271fb450bf08df2566f6a45a05c573ce757928dc5a9d07f5e76d55dd4b5aac3",
+          "bytes": 25193
+        },
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "bbdecc0c4831d2a8bc4a49717c6a57d801172b87df2c13b9db5e04356888a8fd",
+          "bytes": 28157
+        },
+        {
+          "role": "albedo",
+          "index": 2,
+          "format": "png",
+          "sha256": "be0694eecb502f45c6e02298e6a8eaab3294974cfe23d756b87440bf20c688c6",
+          "bytes": 44899
+        },
+        {
+          "role": "albedo",
+          "index": 3,
+          "format": "png",
+          "sha256": "19b037a0f5bfd0dfe5a2ebf1f1053525653a4accfe1572ee30ecd4cb7e1caa4e",
+          "bytes": 29677
+        },
+        {
+          "role": "albedo",
+          "index": 4,
+          "format": "png",
+          "sha256": "bc7fcdfe2b70cfe0f07f420cdba0691e0dc668efcbee29ab1563bab8ae6f0b8d",
+          "bytes": 57751
+        },
+        {
+          "role": "albedo",
+          "index": 5,
+          "format": "png",
+          "sha256": "dbe22ccc895b5a4385b524e689aa78b5d17f65a4d1eb39c935a82ecc648bf011",
+          "bytes": 49070
+        },
+        {
+          "role": "normal",
+          "index": 1,
+          "format": "png",
+          "sha256": "463c16d04888c2cea2ad83339cd6ba7ef30c22ce529873e908373dc71e6d15f9",
+          "bytes": 41007
+        },
+        {
+          "role": "normal",
+          "index": 2,
+          "format": "png",
+          "sha256": "80f43acefbe21b5326bcb6b8a2c53e3ea4b7f171e47358a12167726aacc210e3",
+          "bytes": 63229
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "3815f0e546cc4db362f33a09b596e2113f0a3ea64024f234f5c604802310d8ef",
+          "bytes": 20692
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [
+        {
+          "slot": "Wood_Dark",
+          "shader": "standard",
+          "color": "#ffffff",
+          "roughness": 0.65,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": false,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 1
+            },
+            "normal": {
+              "role": "normal",
+              "index": 1
+            }
+          }
+        },
+        {
+          "slot": "Wood_Light_Dome",
+          "shader": "standard",
+          "color": "#ffffff",
+          "roughness": 0.65,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": false,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 2
+            },
+            "normal": {
+              "role": "normal",
+              "index": 2
+            }
+          }
+        },
+        {
+          "slot": "Leaf_Green",
+          "shader": "standard",
+          "color": "#ffffff",
+          "roughness": 0.65,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": false,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 3
+            }
+          }
+        },
+        {
+          "slot": "Chitin_Red",
+          "shader": "standard",
+          "color": "#ffffff",
+          "roughness": 0.28,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": false,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 4
+            }
+          }
+        },
+        {
+          "slot": "TC_TeamColor",
+          "shader": "standard",
+          "color": "#cc4a2e",
+          "roughness": 0.65,
+          "metalness": 0,
+          "alphaMode": "opaque",
+          "alphaCutoff": 0.4,
+          "doubleSided": false,
+          "textures": {
+            "albedo": {
+              "role": "albedo",
+              "index": 5
+            }
+          }
+        }
+      ],
+      "bindings": {
+        "faction": "ants",
+        "profile": "building",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {
+        "teamColor": {
+          "mode": "material",
+          "slots": [
+            "TC_TeamColor"
+          ]
+        },
+        "blocker": {
+          "shape": "box",
+          "size": [
+            9,
+            9
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "vegetationClearance": 4.5,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
       }
     },
     {
@@ -7478,6 +7902,196 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.woodland-bank-slabs",
+      "name": "Rounded shoreline shelves",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "8cf342974d5e80b8a288974fc0b3564ab4f66c1a468853905fed6d5cd99196d2",
+          "bytes": 376524
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "f03b5812649e2ad1aa15a60438b279c5bbe5098fd152d3a7b14a6695d9439947",
+          "bytes": 744696
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-bank-slabs",
+            "sceneryAsset": "woodland-bank-slabs",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-bank-slabs"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-bank-slabs",
+            "name": "Rounded shoreline shelves",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 6,
+                "depth": 3.4,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 1.7,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-broken-leaf-raft",
+      "name": "Stranded leaf raft",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e68a14826825493c27075ae6a458e57ac9d681b224161335eede5ce102135bb0",
+          "bytes": 434880
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "50cdf0156518b3abd51ac40cc01e96624883c300e90b8f941b81ea46d8b4baa3",
+          "bytes": 766559
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-broken-leaf-raft",
+            "sceneryAsset": "woodland-broken-leaf-raft",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-broken-leaf-raft"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-broken-leaf-raft",
+            "name": "Stranded leaf raft",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 5.5,
+                "depth": 2.8,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 1.4,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.woodland-broken-trader-cart",
       "name": "woodland broken trader cart",
       "kind": "prop",
@@ -7579,6 +8193,196 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.woodland-canopy-elder",
+      "name": "Ancient canopy oak",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "321cfc0d5ed708596068364639f51cddbcd9e03fe959ef29f6da878af5a39362",
+          "bytes": 2705856
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "4425e07f261a8be8638cc0e7cb3eaa410137013b66e26c9f39db1de5603f0e43",
+          "bytes": 2514274
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "23a10c207e33dc39adb13da144aa17b98edde746ef64799fd55b0d0134f980c3",
+          "bytes": 358
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-canopy-elder",
+            "sceneryAsset": "woodland-canopy-elder",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-canopy-elder"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-canopy-elder",
+            "name": "Ancient canopy oak",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 8.2,
+                "depth": 8.2,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 4.6,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-canopy-spreading",
+      "name": "Spreading canopy oak",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "8d4dbaddd95bc0ebea09dfd860bcb36e3452c6845425923b0eca0c35471c8ab9",
+          "bytes": 2705756
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a1c9685ac7fa51415c64c7cb22ee3a6d093327a3ac7de32de8243795e74e9f54",
+          "bytes": 2514316
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "23a10c207e33dc39adb13da144aa17b98edde746ef64799fd55b0d0134f980c3",
+          "bytes": 358
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-canopy-spreading",
+            "sceneryAsset": "woodland-canopy-spreading",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-canopy-spreading"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-canopy-spreading",
+            "name": "Spreading canopy oak",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 8.2,
+                "depth": 8.2,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 4.6,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.woodland-daisies",
       "name": "woodland daisies",
       "kind": "foliage",
@@ -7648,6 +8452,189 @@
         },
         "groundContact": {
           "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-drift-log",
+      "name": "Waterworn drift log",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "25ab7e8cf056d64b3b053ac76164eb4488920acbeb80c7ea0a711e50f5bce940",
+          "bytes": 333072
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a4c8ace11da83b67ea5742bac24694eecae7a29aee3dc4fbb1ee55a071ca41d8",
+          "bytes": 748915
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-drift-log",
+            "sceneryAsset": "woodland-drift-log",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-drift-log"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-drift-log",
+            "name": "Waterworn drift log",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 9,
+                "depth": 1.8,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.9,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-drift-scraps",
+      "name": "Broken driftwood",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "da4784d412e8b30d40f7cd107db3ebe105ecd6a093aa97b1492b0562cdae1f80",
+          "bytes": 335924
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "b76fb1084f94bd25f0b943800da5a35a425083de6e94ea847d187828f8f3326f",
+          "bytes": 745179
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-drift-scraps",
+            "sceneryAsset": "woodland-drift-scraps",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-drift-scraps"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-drift-scraps",
+            "name": "Broken driftwood",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.1,
+        "groundContact": {
+          "mode": "pivot"
         }
       },
       "provenance": {
@@ -7747,6 +8734,196 @@
       },
       "capabilities": {
         "vegetationClearance": 0.25,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-giant-mushroom-ochre",
+      "name": "Giant ochre umbrella",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "c8fc2ef160f25bc0949f8a92c896513ef1ea63ba6de18874fa4727a024b30b9c",
+          "bytes": 2009024
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a306079a108fa0f93d59a3c44d682aad726d77ec5e530517adc34e67b85743a6",
+          "bytes": 2079149
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "1a8b1e000e3ee13dc6f47e5822796b88d6a3027e0f6b22a88b5c399384403341",
+          "bytes": 357
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-giant-mushroom-ochre",
+            "sceneryAsset": "woodland-giant-mushroom-ochre",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-giant-mushroom-ochre"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-giant-mushroom-ochre",
+            "name": "Giant ochre umbrella",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 2.8,
+                "depth": 2.8,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 1.9,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-giant-mushroom-russet",
+      "name": "Giant russet umbrella",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "3775530dd39b72c7bdfe913c4bcc6828b6b2b4603bc5e3d0b4e8899338ae1e5e",
+          "bytes": 2009020
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "635cc039c7948afe398ab2b13d82e7588b8ecc5b451477c8a6ad9af017f79b5b",
+          "bytes": 2079033
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "1a8b1e000e3ee13dc6f47e5822796b88d6a3027e0f6b22a88b5c399384403341",
+          "bytes": 357
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-giant-mushroom-russet",
+            "sceneryAsset": "woodland-giant-mushroom-russet",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-giant-mushroom-russet"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-giant-mushroom-russet",
+            "name": "Giant russet umbrella",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 2.4,
+                "depth": 2.4,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 1.7,
         "groundContact": {
           "mode": "pivot"
         }
@@ -8206,6 +9383,195 @@
         },
         "groundContact": {
           "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-great-broken-trunk",
+      "name": "Great broken trunk",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "289b495111da253f815139ee93520da085715fd1da19e442478526dde80d294e",
+          "bytes": 1628780
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "157c7e8e79ba8ea6301d73343ca322ee726e0ce34c329db72d0fdea4fcba976f",
+          "bytes": 1671460
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "fd5685bc206417c3bb5c502a4a5f88be42e6b5763dd1a0750d71d83973bdc000",
+          "bytes": 358
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-great-broken-trunk",
+            "sceneryAsset": "woodland-great-broken-trunk",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-great-broken-trunk"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-great-broken-trunk",
+            "name": "Great broken trunk",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 8.2,
+                "depth": 8.2,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 4.6,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-great-fallen-log",
+      "name": "Great fallen hollow log",
+      "kind": "prop",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "1513498173fe5720db10ff5ea0acfab693bee324c184b7f51d40fe2f0b5fe8cb",
+          "bytes": 1597108
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5c1073c40b77ee8fa79465d298d9d3514ddbde7edbf53d3b0807cf45f89bb4de",
+          "bytes": 1662903
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "5ed46c806ee3bb2540e6247f89c0c6475d849cbe37eccf02f2d5612e134881a7",
+          "bytes": 357
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-great-fallen-log",
+            "sceneryAsset": "woodland-great-fallen-log",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-great-fallen-log"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-great-fallen-log",
+            "name": "Great fallen hollow log",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 30,
+                "depth": 7
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 4,
+        "groundContact": {
+          "mode": "pivot"
         }
       },
       "provenance": {
@@ -8985,6 +10351,182 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.woodland-mushrooms-button",
+      "name": "Woodland button mushrooms",
+      "kind": "foliage",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "mushrooms"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "0fb4f87370447e3dbe23fe996971cf81921122754c5c60ebbca790d939c1205b",
+          "bytes": 2019300
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "445b1ffc84bb615ea32a2b593112c29b96eb206888127cfc26dcad34d8f8c320",
+          "bytes": 2078991
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "33789aa8d6d439e4d161f18d85e40c54c9084885025b698e316dfe68e2c3d9b0",
+          "bytes": 358
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-mushrooms-button",
+            "sceneryAsset": "woodland-mushrooms-button",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-mushrooms-button"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-mushrooms-button",
+            "name": "Woodland button mushrooms",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.2,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-mushrooms-fan",
+      "name": "Woodland russet mushrooms",
+      "kind": "foliage",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "mushrooms"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "8304ba212a42a41de0ffbb6242158c69d488177cbe5236b96945500e1ed7eac3",
+          "bytes": 2019300
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "049a762fe65a5b76e0e16baf9ef256ef76d11299aa89ec41e437258f023395cb",
+          "bytes": 2078963
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "33789aa8d6d439e4d161f18d85e40c54c9084885025b698e316dfe68e2c3d9b0",
+          "bytes": 358
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-mushrooms-fan",
+            "sceneryAsset": "woodland-mushrooms-fan",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-mushrooms-fan"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-mushrooms-fan",
+            "name": "Woodland russet mushrooms",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.2,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.woodland-pine-a",
       "name": "woodland pine a",
       "kind": "tree",
@@ -9519,6 +11061,94 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.woodland-reed-tuft",
+      "name": "Quiet-water reeds",
+      "kind": "foliage",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ab357cbfe1e68422abb0be6d32e7e1f2070503bf85f3e1e4b3cab57b634e8b03",
+          "bytes": 110352
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "58ef2b6902802721df5d954ddf907aa95751dfd70899da7b088be5014fc2c78b",
+          "bytes": 762894
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-reed-tuft",
+            "sceneryAsset": "woodland-reed-tuft",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-reed-tuft"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-reed-tuft",
+            "name": "Quiet-water reeds",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.1,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.woodland-river-stones",
       "name": "woodland river stones",
       "kind": "prop",
@@ -9809,6 +11439,101 @@
       },
       "capabilities": {
         "vegetationClearance": 0.25,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.woodland-root-snag",
+      "name": "Uprooted river snag",
+      "kind": "prop",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "waterfront"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "0015cfaf45d4c951868bdbbee560d61eb7e84202f34da24773f6d1fdfd11a2a1",
+          "bytes": 351516
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "3ece9cfb2615fc732fa064d947b07254dfa09cdfdff46a0389656bd0c17c8ab5",
+          "bytes": 753239
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b98f4e6e20b2f74092890778d541691468031474e4cefac65b9a4e3e784ed337",
+          "bytes": 206
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.woodland-root-snag",
+            "sceneryAsset": "woodland-root-snag",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.woodland-root-snag"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "woodland-root-snag",
+            "name": "Uprooted river snag",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 10,
+                "depth": 2.2,
+                "shape": "ellipse"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 1.1,
         "groundContact": {
           "mode": "pivot"
         }
@@ -10430,10 +12155,214 @@
     },
     {
       "version": 1,
+      "id": "asset.models.units.ants-warrior",
+      "name": "Ant Warrior",
+      "kind": "unit",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "original",
+        "ants",
+        "warrior",
+        "skinned",
+        "acorn",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "00e8769d782809d5e4a18ff4c329a3c70d95c2ee67cccbc355f62a9f588e6fa0",
+          "bytes": 1594404
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "61cdd288d7fa13236245f1c99cf641fc00d137ddf7720fbc68c50b1ac28675f6",
+          "bytes": 3625875
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "cd733ecadb72b3d5005c1c37022292c319ff750e1c2bae4648fb68f714702810",
+          "bytes": 1109227
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "4cde2a098508cb06760b232d994140f9512f76fa2e6ffb6e14bf38956f7aeafa",
+          "bytes": 597158
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "ef8ae1274e2cd474d0be8738b9c53fcebeb67020bdd8c5d002835f5e3a872eed",
+          "bytes": 13595
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "bca875a17f5d588ab80dfedbe432226ba52e4f0e607ee23d78e543f8ab20b813",
+          "bytes": 13255
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "faction": "ants",
+        "profile": "warrior",
+        "render": [
+          {
+            "id": "asset.ants.warrior",
+            "character": "warrior",
+            "scale": 1,
+            "healthHeight": 2.3,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.ants-warrior"
+            }
+          },
+          {
+            "id": "icon.ants.warrior",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.ants-warrior"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "teamColor": {
+          "mode": "material",
+          "slots": [
+            "TC_TeamColor"
+          ]
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "charge",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack_sword",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.6161971830985915
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "left-hand",
+            "node": "socket_handL",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "right-hand",
+            "node": "socket_handR",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "blade-base",
+            "node": "socket_blade_base",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "blade-tip",
+            "node": "socket_blade_tip",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Tripo-generated artwork from the supplied ant-warrior reference, adapted in Blender for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "prop",
-      "revision": 3,
+      "revision": 5,
       "status": "published",
       "tags": [
         "placeholder",
@@ -10873,16 +12802,6 @@
             }
           },
           {
-            "id": "asset.ants.great-mound",
-            "scale": 1,
-            "healthHeight": 7,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
             "id": "asset.ants.house",
             "scale": 1,
             "healthHeight": 3.5,
@@ -10906,16 +12825,6 @@
             "id": "asset.ants.barracks",
             "scale": 1,
             "healthHeight": 4.7,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.ants.fort",
-            "scale": 1,
-            "healthHeight": 5.8,
             "geometry": {
               "role": "geometry",
               "index": 1,
@@ -11048,21 +12957,6 @@
               "distance": 7
             },
             "castContact": 0.68,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.ants.warrior",
-            "scale": 1,
-            "healthHeight": 2.3,
-            "cameraAnchor": {
-              "height": 1.5,
-              "forward": 0.15,
-              "distance": 7
-            },
             "geometry": {
               "role": "geometry",
               "index": 1,
@@ -12844,6 +14738,112 @@
     },
     {
       "version": 1,
+      "id": "asset.textures.forest-giants-bark",
+      "name": "Forest giants · painted bark",
+      "kind": "texture",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "dc2dee36a20d0cd7c7a9600b2631a37325d8635c9c32ab852eaa77954112cc24",
+          "bytes": 1573520
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b0e4b5c5631e7a4c04af684e8c44f622bbdc9ab7b24fe5ca3d1dd58a2c3f3b8b",
+          "bytes": 1050
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.textures.forest-giants-mushrooms",
+      "name": "Forest giants · painted mushrooms",
+      "kind": "texture",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "2cec8d9e6b20a7bdc1dce7eaab5f2bad9ed59aa7f7185fc0dab691ccb1df086b",
+          "bytes": 1989503
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "4343685be2ad0378441e2431e227a3df97369363d1fa8f3677ab91b616a83668",
+          "bytes": 1804
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "image.item-heart-of-the-forest",
       "name": "Heart of the Forest",
       "kind": "icon",
@@ -13315,6 +15315,69 @@
       "provenance": {
         "method": "authored",
         "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
+      }
+    },
+    {
+      "version": 1,
+      "id": "recipe.foliage.mushroom-patches",
+      "name": "Woodland mushroom patches",
+      "kind": "landscape-recipe",
+      "revision": 3,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "resources": [],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "recipe": {
+        "type": "ground-cover",
+        "density": 1,
+        "pattern": "patches",
+        "species": [
+          {
+            "asset": "asset.models.environment.woodland-mushrooms-button",
+            "weight": 3
+          },
+          {
+            "asset": "asset.models.environment.woodland-mushrooms-fan",
+            "weight": 2
+          }
+        ],
+        "spacing": 1.8,
+        "probability": 0.65,
+        "jitter": 0.8,
+        "scaleMin": 0.6,
+        "scaleMax": 1.25,
+        "maxSlope": 0.9,
+        "waterClearance": 0.5,
+        "objectClearance": 0.2,
+        "edgeFade": 1.2,
+        "minSpacing": 1.2,
+        "patchiness": {
+          "scale": 5,
+          "strength": 0.7
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy."
       }
     },
     {

@@ -1,5 +1,7 @@
 /** Threewater's woodland layout. Every forest, trail and watercourse remains editable. */
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {dressThreewater} from './threewater-scenery';
+import {addForestGiants} from './forest-giants';
 import {createBiomeMap} from '../../src/shared/map/newMap';
 import {stringifyUtcMap,parseUtcMap,type MapStamp} from '../../src/shared/map/utcmap';
 import {proceduralLayerSchema,type ProceduralLayer,authoredObjectSchema} from '../../src/shared/authoring/layers';
@@ -77,7 +79,9 @@ mask('grass.landmarks','Soft grass around woodland landmarks','recipe.grass.mead
  {r:15,p:[[208,69],[562,127],[102,287],[446,421],[459,600],[193,710]]},
 ],{type:'grass',spacing:.65,probability:.76,scaleMin:.6,scaleMax:1,patchiness:{scale:4,strength:.68}});
 base.authoring={version:1,layers,objects:landmarks.map(([scenery,x,z,scale],i)=>authoredObjectSchema.parse({id:'landmark.'+i,asset:catalogue.find(a=>a.scenery===scenery)!.id,...p(x,z),scale,yaw:i*1.7}))};
+addForestGiants(base);
+dressThreewater(base,catalogue);
 const raw=stringifyUtcMap(base),map=parseUtcMap(JSON.parse(raw));if(!map)throw Error('Invalid generated map');
 const start=performance.now(),scene=compileMapScene(map,catalogue);if(scene.generated!.issues.length)throw Error(JSON.stringify(scene.generated!.issues));
 mkdirSync('assets/maps/skirmish',{recursive:true});writeFileSync('assets/maps/skirmish/threewater-forest.utcmap',raw);
-console.log({layers:layers.length,trees:scene.resources.length,props:scene.stamps.length,bytes:raw.length,compileMs:performance.now()-start});
+console.log({layers:map.authoring!.layers.length,trees:scene.resources.length,props:scene.stamps.length,bytes:raw.length,compileMs:performance.now()-start});

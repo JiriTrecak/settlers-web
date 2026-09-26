@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.woodland-canopy-spreading",
+  "name": "Spreading canopy oak",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8d4dbaddd95bc0ebea09dfd860bcb36e3452c6845425923b0eca0c35471c8ab9",
+      "bytes": 2705756
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "a1c9685ac7fa51415c64c7cb22ee3a6d093327a3ac7de32de8243795e74e9f54",
+      "bytes": 2514316
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "23a10c207e33dc39adb13da144aa17b98edde746ef64799fd55b0d0134f980c3",
+      "bytes": 358
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.woodland-canopy-spreading",
+        "sceneryAsset": "woodland-canopy-spreading",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.woodland-canopy-spreading"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "woodland-canopy-spreading",
+        "name": "Spreading canopy oak",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 8.2,
+            "depth": 8.2,
+            "shape": "ellipse"
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "vegetationClearance": 4.6
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

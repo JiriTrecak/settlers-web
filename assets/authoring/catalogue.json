@@ -1,5 +1,19 @@
 [
   {
+    "id": "asset.models.buildings.ants-acorn-hall",
+    "name": "Acorn Main Hall",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 7.5
+  },
+  {
+    "id": "asset.models.buildings.ants-mandible-hall",
+    "name": "Mandible Hall",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 4.5
+  },
+  {
     "id": "asset.models.environment.autumn-grass",
     "name": "autumn grass",
     "kind": "foliage",
@@ -228,12 +242,44 @@
     "clearance": 0.25
   },
   {
+    "id": "asset.models.environment.woodland-bank-slabs",
+    "name": "Rounded shoreline shelves",
+    "kind": "prop",
+    "scenery": "woodland-bank-slabs",
+    "scale": 1,
+    "clearance": 1.7
+  },
+  {
+    "id": "asset.models.environment.woodland-broken-leaf-raft",
+    "name": "Stranded leaf raft",
+    "kind": "prop",
+    "scenery": "woodland-broken-leaf-raft",
+    "scale": 1,
+    "clearance": 1.4
+  },
+  {
     "id": "asset.models.environment.woodland-broken-trader-cart",
     "name": "woodland broken trader cart",
     "kind": "prop",
     "scenery": "woodland-broken-trader-cart",
     "scale": 1,
     "clearance": 2
+  },
+  {
+    "id": "asset.models.environment.woodland-canopy-elder",
+    "name": "Ancient canopy oak",
+    "kind": "prop",
+    "scenery": "woodland-canopy-elder",
+    "scale": 1,
+    "clearance": 4.6
+  },
+  {
+    "id": "asset.models.environment.woodland-canopy-spreading",
+    "name": "Spreading canopy oak",
+    "kind": "prop",
+    "scenery": "woodland-canopy-spreading",
+    "scale": 1,
+    "clearance": 4.6
   },
   {
     "id": "asset.models.environment.woodland-daisies",
@@ -244,12 +290,44 @@
     "clearance": 0
   },
   {
+    "id": "asset.models.environment.woodland-drift-log",
+    "name": "Waterworn drift log",
+    "kind": "prop",
+    "scenery": "woodland-drift-log",
+    "scale": 1,
+    "clearance": 0.9
+  },
+  {
+    "id": "asset.models.environment.woodland-drift-scraps",
+    "name": "Broken driftwood",
+    "kind": "prop",
+    "scenery": "woodland-drift-scraps",
+    "scale": 1,
+    "clearance": 0.1
+  },
+  {
     "id": "asset.models.environment.woodland-fallen-log",
     "name": "woodland fallen log",
     "kind": "prop",
     "scenery": "woodland-fallen-log",
     "scale": 1,
     "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-giant-mushroom-ochre",
+    "name": "Giant ochre umbrella",
+    "kind": "prop",
+    "scenery": "woodland-giant-mushroom-ochre",
+    "scale": 1,
+    "clearance": 1.9
+  },
+  {
+    "id": "asset.models.environment.woodland-giant-mushroom-russet",
+    "name": "Giant russet umbrella",
+    "kind": "prop",
+    "scenery": "woodland-giant-mushroom-russet",
+    "scale": 1,
+    "clearance": 1.7
   },
   {
     "id": "asset.models.environment.woodland-giant-stump",
@@ -290,6 +368,22 @@
     "scenery": "woodland-grass-messy",
     "scale": 1,
     "clearance": 0
+  },
+  {
+    "id": "asset.models.environment.woodland-great-broken-trunk",
+    "name": "Great broken trunk",
+    "kind": "prop",
+    "scenery": "woodland-great-broken-trunk",
+    "scale": 1,
+    "clearance": 4.6
+  },
+  {
+    "id": "asset.models.environment.woodland-great-fallen-log",
+    "name": "Great fallen hollow log",
+    "kind": "prop",
+    "scenery": "woodland-great-fallen-log",
+    "scale": 1,
+    "clearance": 4
   },
   {
     "id": "asset.models.environment.woodland-hollow-log",
@@ -356,6 +450,22 @@
     "clearance": 0.25
   },
   {
+    "id": "asset.models.environment.woodland-mushrooms-button",
+    "name": "Woodland button mushrooms",
+    "kind": "foliage",
+    "scenery": "woodland-mushrooms-button",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.woodland-mushrooms-fan",
+    "name": "Woodland russet mushrooms",
+    "kind": "foliage",
+    "scenery": "woodland-mushrooms-fan",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
     "id": "asset.models.environment.woodland-pine-a",
     "name": "woodland pine a",
     "kind": "tree",
@@ -404,6 +514,14 @@
     "clearance": 0.25
   },
   {
+    "id": "asset.models.environment.woodland-reed-tuft",
+    "name": "Quiet-water reeds",
+    "kind": "foliage",
+    "scenery": "woodland-reed-tuft",
+    "scale": 1,
+    "clearance": 0.1
+  },
+  {
     "id": "asset.models.environment.woodland-river-stones",
     "name": "woodland river stones",
     "kind": "prop",
@@ -426,6 +544,14 @@
     "scenery": "woodland-root-arch-bridge",
     "scale": 1,
     "clearance": 0.25
+  },
+  {
+    "id": "asset.models.environment.woodland-root-snag",
+    "name": "Uprooted river snag",
+    "kind": "prop",
+    "scenery": "woodland-root-snag",
+    "scale": 1,
+    "clearance": 1.1
   },
   {
     "id": "asset.models.environment.woodland-ruined-watchtower",
@@ -476,6 +602,13 @@
     "clearance": 0.25
   },
   {
+    "id": "asset.models.units.ants-warrior",
+    "name": "Ant Warrior",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
     "id": "asset.placeholder.missing-model",
     "name": "Missing model",
     "kind": "prop",
@@ -518,6 +651,42 @@
       "patchiness": {
         "scale": 4,
         "strength": 0.75
+      }
+    }
+  },
+  {
+    "id": "recipe.foliage.mushroom-patches",
+    "name": "Woodland mushroom patches",
+    "kind": "landscape-recipe",
+    "scale": 1,
+    "clearance": 0,
+    "recipe": {
+      "type": "ground-cover",
+      "density": 1,
+      "pattern": "patches",
+      "species": [
+        {
+          "asset": "asset.models.environment.woodland-mushrooms-button",
+          "weight": 3
+        },
+        {
+          "asset": "asset.models.environment.woodland-mushrooms-fan",
+          "weight": 2
+        }
+      ],
+      "spacing": 1.8,
+      "probability": 0.65,
+      "jitter": 0.8,
+      "scaleMin": 0.6,
+      "scaleMax": 1.25,
+      "maxSlope": 0.9,
+      "waterClearance": 0.5,
+      "objectClearance": 0.2,
+      "edgeFade": 1.2,
+      "minSpacing": 1.2,
+      "patchiness": {
+        "scale": 5,
+        "strength": 0.7
       }
     }
   },

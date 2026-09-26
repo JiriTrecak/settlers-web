@@ -16,9 +16,11 @@ export class CharacterPlayer {
       if (e.action === this.action && this.state !== 'death') this.setState('idle');
     });
     this.setVariant(variant); this.setState('idle');
-    this.speechBones=[];this.speechRotation=new Quaternion();this.speechAxis=new Vector3(0,0,1);
+    this.speechBones=[];this.speechRotation=new Quaternion();
     root.traverse(o=>{if(o.userData.speechRig){const spec=o.userData.speechRig;
-      for(const [name,sign] of [[spec.left,1],[spec.right,-1]]){const bone=root.getObjectByName(name)||root.getObjectByName(name.replaceAll('.',''));if(bone)this.speechBones.push({bone,sign,rest:bone.quaternion.clone(),angle:spec.angle??.24});}
+      // New characters can use a jaw hinge; retain paired mandibles on older rigs.
+      const channels=spec.bones??[{name:spec.left,axis:[0,0,1],angle:spec.angle??.24},{name:spec.right,axis:[0,0,1],angle:-(spec.angle??.24)}];
+      for(const {name,axis,angle} of channels){if(!name)continue;const bone=root.getObjectByName(name)||root.getObjectByName(name.replaceAll('.',''));if(bone)this.speechBones.push({bone,axis:new Vector3().fromArray(axis).normalize(),rest:bone.quaternion.clone(),angle});}
     }});
   }
   setVariant(variant) {
@@ -61,7 +63,7 @@ export class CharacterPlayer {
   }
   speak(amount) {
     const weight=this.state==='death'?0:Math.max(0,Math.min(1,Number.isFinite(amount)?amount:0));
-    for(const {bone,sign,rest,angle} of this.speechBones)bone.quaternion.copy(rest).multiply(this.speechRotation.setFromAxisAngle(this.speechAxis,weight*sign*angle));
+    for(const {bone,axis,rest,angle} of this.speechBones)bone.quaternion.copy(rest).multiply(this.speechRotation.setFromAxisAngle(axis,weight*angle));
   }
   setTeamColor(color) {
     this.root.traverse(o => {

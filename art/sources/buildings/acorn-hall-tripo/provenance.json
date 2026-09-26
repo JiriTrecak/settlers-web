@@ -1,0 +1,46 @@
+{
+  "provider": "Tripo Studio",
+  "taskId": "cfc06426-fd6d-4e07-8f94-8670d7ff9eea",
+  "source": "source.glb",
+  "reference": "reference.png",
+  "generation": {
+    "model": "H3.1",
+    "ultraMesh": true,
+    "generateInParts": "Balanced",
+    "topology": "Triangle",
+    "polycountTarget": 10000,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "triangles": 9330
+  },
+  "adaptation": "Blender import, grounded 14.08-unit-wide geometry within 15x15 gameplay footprint, packed ownership mask, shared game/studio shader",
+  "pbr": {
+    "credits": 5,
+    "maps": [
+      "normal",
+      "roughness"
+    ],
+    "metalness": "disabled for natural materials"
+  },
+  "gameplay": {
+    "footprint": [
+      15,
+      15
+    ],
+    "entrance": [
+      0,
+      9
+    ],
+    "workerStartClearance": "original offsets moved forward by 4 units",
+    "runtimeTextures": 2048
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "method": "generated",
+  "tool": "Built-in ImageGen",
+  "prompt": "Use case: stylized-concept. Asset type: production game albedo texture, square seamless bark tile, full bleed. Create ORIGINAL hand-painted old oak bark for a forest-floor RTS. Broad flowing vertical bark furrows, rounded interlocking bark plates, soft hand-painted light and dark planes; medium restrained painterly detail visible from overhead gameplay, no fine pores or scratch noise, no polygon triangles. Dark muted umber and gray olive brown matching the attached existing original woodland bark's overall darkness and earthy toning, slightly more coherent and art-directed large shapes. Texture must be flat unlit albedo, not a photograph or rendered cylinder: no directional lighting, cast shadows, vignette, borders, text, knots like eyes, moss clumps, or background. Seamlessly tile both directions. Keep broad shallow creases and naturally varied widths rather than regular stripes. Input image is style/palette reference only; make a new independent bark texture."
+}
