@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-dirt",
   "name": "woodland dirt · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 15,
+  "revision": 33,
   "status": "published",
   "tags": [
     "original",
@@ -14,8 +14,8 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "6ce2ce8df4c582d80b94956e9d01e26d8a54886b17e42ee113ffbf6d2a8f3990",
-      "bytes": 1908399
+      "sha256": "45d31cc16f50205b7a84ba2ccd31b7d2c9aff77258adc6a2367e697fc25e8375",
+      "bytes": 1454731
     },
     {
       "role": "build",
@@ -28,29 +28,29 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "776756455492d836a4f8134c204e510ecd8a03913cbd2c54596f969d3cf74960",
-      "bytes": 1907171
+      "sha256": "a1ee1d44bcc501cab9e3f877e92a049bbddce3a181880cf3dc54226fcdf61f16",
+      "bytes": 1515995
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-      "bytes": 303
+      "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+      "bytes": 320
     },
     {
       "role": "source",
       "index": 1,
       "format": "png",
-      "sha256": "c7417d7bfa22b3c4a36cf0d67bb15afc2e34c02b1d684d5e83188bd5fc10c1ea",
-      "bytes": 1687554
+      "sha256": "39ce776e3b113744baff95c0fe48b1b893d5f486041fe734eec81080977d6f40",
+      "bytes": 1168674
     },
     {
       "role": "source",
       "index": 2,
       "format": "json",
-      "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-      "bytes": 303
+      "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+      "bytes": 320
     }
   ],
   "usesGeometry": false,

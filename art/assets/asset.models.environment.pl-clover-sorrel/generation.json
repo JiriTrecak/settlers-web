@@ -1,0 +1,14 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-clover-sorrel",
+  "fbx": "PL_Water_Flora_Pack.fbx",
+  "object": "PL_Violet_Wood_Sorrel_VarA",
+  "texture": "Water_Flowers_Textures/PL_Water_Flora_Albedo.png",
+  "scale": 2.4,
+  "textureSize": 1024,
+  "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
+  "triangles": 772,
+  "height": 0.554
+}

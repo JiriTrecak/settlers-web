@@ -1,0 +1,14 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-fern-sword-b",
+  "fbx": "PL_Fern_Pack.fbx",
+  "object": "PL_Sword_Fern_VarB",
+  "texture": "Fern_Textures/PL_Fern_Albedo.png",
+  "scale": 1.4,
+  "textureSize": 1024,
+  "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
+  "triangles": 162,
+  "height": 1.301
+}

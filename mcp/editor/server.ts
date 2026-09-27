@@ -16,7 +16,7 @@ export function createEditorMcp(hub: EditorHub): MCPServer {
     instructions: [
       "Open a dedicated world editor tab (?screen=editor) and enable its MCP toggle. Verify editor_status before mutations; the hub targets the most recently connected tab.",
       "Discover the loaded biome's recipes with editor_scene command action=recipes, and current assets with editor_catalog or asset_author. Never assume asset IDs from an older project version.",
-      "Author procedural masks and splines with editor_scene command action=put-layer. Masks have add/subtract circular strokes; forests and foliage remain live. Stages run terrain, water, paths, structures, forest, grass automatically.",
+      "Author procedural masks and splines with editor_scene command action=put-layer; group several put-layer/put-object/remove edits into action=batch so the world regenerates once. Masks have add/subtract circular strokes; forests and foliage remain live. Stages run terrain, water, paths, structures, forest, grass automatically.",
       "Place independent scenery with put-object using canonical asset IDs, x/z, yaw in radians. Gameplay placements use editor_entities, position x/y (y is map Z), and rotation in degrees.",
       "Biomes own lighting, grading, canopy, atmosphere and water profiles. Maps choose biome, time and weather kind; visual overrides are forbidden.",
       "Read map dimensions and player slots from the exported map. Preserve base construction space and validate routes; do not assume a 256-square two-player map.",

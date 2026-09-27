@@ -14,7 +14,8 @@ export type Biome = {
   ground: 'soil' | 'dirt';
   lightingProfile: 'temperate' | 'winter';
   terrainSet: 'temperate' | 'winter';
-  terrainTiles?: Partial<Record<'soil'|'dirt'|'grass'|'waterbed'|'stones'|'rock', {ar:string; nh:string; tiling?:number; blend?:number; tint?:string}>>;
+  /** breakup: 0..1 noise that frays a layer's coverage into bald and lush patches (see sourceTerrainShader). */
+  terrainTiles?: Partial<Record<'soil'|'dirt'|'grass'|'waterbed'|'stones'|'rock', {ar:string; nh:string; tiling?:number; blend?:number; tint?:string; breakup?:number}>>;
   groundCover?: {radius:number; strength:number};
   minimap: {ground: string; grass: string; forest: string; crown: string};
   environment: EnvironmentState & {light:GlobalLight;postProcessing:PostProcessingSettings};
@@ -54,7 +55,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   description: 'Warm exposed soil, patchy meadow grass, dense pines and clear woodland streams.',
   ground: 'soil',
   lightingProfile:'temperate', terrainSet: 'temperate',
-  terrainTiles:{soil:{ar:'asset.terrain.woodland-soil',nh:'asset.terrain.woodland-soil-normal',tiling:.8},dirt:{ar:'asset.terrain.woodland-dirt',nh:'asset.terrain.woodland-dirt-normal',tiling:.8},grass:{ar:'asset.terrain.woodland-grass',nh:'asset.terrain.woodland-grass-normal',tiling:.9},stones:{ar:'asset.terrain.pebble-trail',nh:'asset.terrain.pebble-normal',tiling:1.2,blend:.65}},
+  terrainTiles:{soil:{ar:'asset.terrain.woodland-soil',nh:'asset.terrain.woodland-soil-normal',tiling:.8},dirt:{ar:'asset.terrain.woodland-dirt',nh:'asset.terrain.woodland-dirt-normal',tiling:.8},grass:{ar:'asset.terrain.woodland-grass',nh:'asset.terrain.woodland-grass-normal',tiling:.9,blend:.35,breakup:.35},stones:{ar:'asset.terrain.pebble-trail',nh:'asset.terrain.pebble-normal',tiling:1.2,blend:.65}},
   paths:[{id:'recipe.path.pebbles',name:'Pebble forest trail'},{id:'recipe.path.grass',name:'Grass ground'},{id:'recipe.path.soil',name:'Exposed earth'}],
   minimap: {ground: '#ad956d', grass: '#829151', forest: '#344c2a', crown: '#687a40'},
   environment: {postProcessing:WOODLAND_FINISH,light:{...FOREST.light,ambientTint:'#e5f3e8',ambientStrength:.3,skyTint:'#e0eeff',fillStrength:.8,sunTint:'#eef0ff',sunStrength:1,sunHeight:45,sunDirection:-100,shadowSoftness:3},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:false,density:0,shaftDensity:0,regions:[]},hour: 12, season: 'summer', playing: false, canopy: {...DEFAULT_CANOPY,enabled:true,height:140,scale:240,coverage:.55,softness:.22,strength:.14,cloudShadow:0}},
@@ -131,10 +132,10 @@ export function biomeTerrainTile(biome:Biome,name:'soil'|'dirt'|'grass'|'waterbe
  const override=biome.terrainTiles?.[name];if(override)return override;
  if(biome.terrainSet==='temperate'){
   const base='asset.terrain.'+(name==='stones'?'pebble-trail':name==='waterbed'?'woodland-riverbed':'woodland-'+name);
-  return {ar:base,nh:name==='stones'?'asset.terrain.pebble-normal':base+'-normal',tiling:undefined,blend:undefined,tint:undefined};
+  return {ar:base,nh:name==='stones'?'asset.terrain.pebble-normal':base+'-normal',tiling:undefined,blend:undefined,tint:undefined,breakup:undefined};
  }
  const base='asset.terrain.'+(['soil','grass','dirt','rock'].includes(name)?'winter-'+name:name==='waterbed'?'woodland-riverbed':'pebble-trail');
- return {ar:base,nh:name==='stones'?'asset.terrain.pebble-normal':base+'-normal',tiling:undefined,blend:undefined,tint:undefined};
+ return {ar:base,nh:name==='stones'?'asset.terrain.pebble-normal':base+'-normal',tiling:undefined,blend:undefined,tint:undefined,breakup:undefined};
 }
 
 /** Resolve every visual parameter from the live biome, never from map snapshots

@@ -9363,10 +9363,774 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.meadow-boulder",
+      "name": "meadow boulder",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ec1d74fb22491aaf9322a21b48dc5483c67b2edbfabbfd2b702140306c174467",
+          "bytes": 11048
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "7640ab7f34e56ed1f316a62b616ad0038a5ff5bcaf32a324948732e6254c040c",
+          "bytes": 564047
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "c4c4a5d2b3da9d62a2aabc78ee9f67f171018ef9a2b2817b8ad30cb3eaa40b61",
+          "bytes": 173
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-boulder",
+            "sceneryAsset": "meadow-boulder",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-boulder"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-boulder",
+            "name": "meadow boulder",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.8,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.meadow-pebble-a",
+      "name": "meadow pebble a",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "32259d937c6111a9ab28cae5e1d7f42f3312e643c12b16e240fdb31433b78e38",
+          "bytes": 2804
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "02770a9eaf07b4ee6d205e4ff41aa22492993b158533ba1ec3177dd61d875b28",
+          "bytes": 543512
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "cacc1fc6c2e5983542a2137ad11a0de4bb911145637f77038ac21401dedd5ad7",
+          "bytes": 172
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-pebble-a",
+            "sceneryAsset": "meadow-pebble-a",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-pebble-a"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-pebble-a",
+            "name": "meadow pebble a",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.15,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.meadow-pebble-b",
+      "name": "meadow pebble b",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e197ab2808b100ed5edb33568741307206bbd1c4e61f90fe1025f156269bc246",
+          "bytes": 4628
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "8c7055802c3e69b1c3881c79d6c1028e0cbf50ddd4c57466a26340a70be693c6",
+          "bytes": 548023
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "d63cf2599e6ad13d2a6d6c86fb95c01ea2afecc672e4251a1d913b53bdc3605f",
+          "bytes": 174
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-pebble-b",
+            "sceneryAsset": "meadow-pebble-b",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-pebble-b"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-pebble-b",
+            "name": "meadow pebble b",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.15,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.meadow-pebble-c",
+      "name": "meadow pebble c",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "3b3be2daf5f2c7c086ae0b2f30d7e540c8eed18a55322cbc59c6f4ed29a66759",
+          "bytes": 7124
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "f171c3fe87299751d4a6b31794cf6cf6a0681b841aa393b6e7551060e2410695",
+          "bytes": 556071
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "78a962fc9d754bf1c3793f8e169bae22b0d57396c9309c57aef2eb6dd168dea6",
+          "bytes": 174
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-pebble-c",
+            "sceneryAsset": "meadow-pebble-c",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-pebble-c"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-pebble-c",
+            "name": "meadow pebble c",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.15,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.meadow-stick-a",
+      "name": "meadow stick a",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e91be31d8ff95758cfd4946ba2130ebb439a15170de3a8062bf343d673e17741",
+          "bytes": 3784
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "da3c46c9cd3a2ad87b3cf334f35afb31c7c9c985216b87358b548a16bcf42fe3",
+          "bytes": 565875
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "ef064e71e560105232c37cde3ad2708e0b35e872b7923db1d28669554a0159d8",
+          "bytes": 172
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-stick-a",
+            "sceneryAsset": "meadow-stick-a",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-stick-a"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-stick-a",
+            "name": "meadow stick a",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.15,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.meadow-stick-b",
+      "name": "meadow stick b",
+      "kind": "prop",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6b42b3981c903b8fe57d2c9ad2468fa23754cd7b825becbdb4a58479ec1d453c",
+          "bytes": 3920
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5b23a425b77e7b518bcd8e1f806e629cbe0b118416d1e950389484b0bd598db6",
+          "bytes": 565692
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
+          "bytes": 6289
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "83745b16dd9ab76695f3642cd9a3a56c07b9a36938f67052e99ce8fc9962b44e",
+          "bytes": 172
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.meadow-stick-b",
+            "sceneryAsset": "meadow-stick-b",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.meadow-stick-b"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "meadow-stick-b",
+            "name": "meadow stick b",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 0.15,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.pl-clover-a",
+      "name": "clover a",
+      "kind": "foliage",
+      "revision": 8,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "clover"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "3ab61b13dfaf884e06d5bb4adaaa8aedc4739eb561294ccd2f948ec2b9864c8e",
+          "bytes": 904107
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "e249e657d995ac9b297e78163adc41a0c2a8e02e3664fe77faff38bd3c527c8c",
+          "bytes": 384
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "c6e2f64102960ed8019cba5488e9aa68f48a864ff0e6a3a72f4adbb7a91725e7",
+          "bytes": 921988
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "69c7c9c6cbe0a1e28880af7cf147cc87987c2b39af4095e3343925aa4880634d",
+          "bytes": 13962525
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-clover-a",
+            "name": "clover a",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.04,
+          "speed": 0.16,
+          "stiffness": 0.9
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.pl-clover-sorrel",
+      "name": "clover sorrel",
+      "kind": "foliage",
+      "revision": 8,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "clover"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "3ab61b13dfaf884e06d5bb4adaaa8aedc4739eb561294ccd2f948ec2b9864c8e",
+          "bytes": 904107
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "ddc4324cc15aaea4b0fcb3d9d386efdb8f4ce26fe7be1dc1e551a08904f0a1bd",
+          "bytes": 401
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "53daccf3da37d81badfd78e5b233c14380f964555f6145e2bdca934282a02b73",
+          "bytes": 940896
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "2621b2586219129ec8f49f851c6094f422f8d97d622aba3e69a5799506d8301c",
+          "bytes": 13994040
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-clover-sorrel",
+            "name": "clover sorrel",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.04,
+          "speed": 0.16,
+          "stiffness": 0.9
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.pl-daisy",
       "name": "daisy",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 15,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -9378,36 +10142,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "3882aabdbb5d327eca7b7c8f897e167d359be25bea057366578c10e69f65f7cc",
-          "bytes": 295
+          "sha256": "c3df5749bb5f47a83fcb6255f5eebd6e3f27c6a46a53eb67a99b23c1212d62ac",
+          "bytes": 384
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "a2cec2fb76a832ffbdcc74d51c5f5621914b165c8937c490c57f33f16b5cc41f",
-          "bytes": 1134420
+          "sha256": "4ae2149e2678d6e8b8f562a8c43cb49ced8b9b2a41a742fdc42332d4af092cfc",
+          "bytes": 1012848
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "c31a8cebe04e329a7ecb65da2ad208be444574adef3247010e17f1478b73ecb2",
-          "bytes": 15455565
+          "sha256": "66602ff138abad4639ce9067fa10ccb53cc90b93b9edb2155f156f32793df38b",
+          "bytes": 15333992
         }
       ],
       "usesGeometry": true,
@@ -9463,7 +10227,7 @@
       "id": "asset.models.environment.pl-fern-bushy",
       "name": "fern bushy",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 15,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -9475,36 +10239,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "d90d2842a33c398362f18a914e73f797db01a6c80d82ba6b4c162f2fb52657ea",
-          "bytes": 1193531
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "855708ab92169aad9dff668bba1a7cc2de55d556ab4ff59000a2af7f18ad163a",
-          "bytes": 277
+          "sha256": "1742ef34fee0d8e16b2ee9ea45c5e566dd068399934002573ab812f5516e760d",
+          "bytes": 366
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "0be3a9c8f2e0ac36382b167473233ee166fb03f5b1c3600328c7123f5c97ffc2",
-          "bytes": 1197828
+          "sha256": "d8a8daa7f6e7a396bf3aa32112bbc3ecaa1986bc7519beea35f934ee711484d6",
+          "bytes": 1057948
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "9c40351c282c75d0ffcb1f8fd2234bc85b88c34faf30f83e2740818b519848ae",
-          "bytes": 16632116
+          "sha256": "69ed07d681434b3ae54f561580ef217f9ca616626f7cd14fc24df8f3115828a6",
+          "bytes": 16492236
         }
       ],
       "usesGeometry": true,
@@ -9557,8 +10321,8 @@
     },
     {
       "version": 1,
-      "id": "asset.models.environment.pl-fern-sword",
-      "name": "fern sword",
+      "id": "asset.models.environment.pl-fern-bushy-b",
+      "name": "fern bushy b",
       "kind": "foliage",
       "revision": 8,
       "status": "published",
@@ -9572,36 +10336,133 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "d90d2842a33c398362f18a914e73f797db01a6c80d82ba6b4c162f2fb52657ea",
-          "bytes": 1193531
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "64fb9a8fb42425f6bb8a9279e4b666eca633bc7ffa0f0a908e1e1e4c2d9de9a0",
-          "bytes": 277
+          "sha256": "6e325598705e01be112ce0d48faf7458518434ee5135705b0f285bceb15da8bf",
+          "bytes": 369
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "0209a8fc6bff63de29e06e7af9f213cfce179bbebecf757a0b1367d402abad77",
-          "bytes": 1197056
+          "sha256": "8735f94fe4ece3942623ab024ef91f831f08fa062aeaa615ab241685e0f3005b",
+          "bytes": 1060680
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "7a9953bfcda126633054e2ffe89e0bc1d4dd5ca8318c750339d94ed8275afb91",
-          "bytes": 16630004
+          "sha256": "9dae97499db105c2dc3c7ca56f71ea7b07d28d5bca8fef3080bf10df788dbd5c",
+          "bytes": 16499876
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-fern-bushy-b",
+            "name": "fern bushy b",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.05,
+          "speed": 0.16,
+          "stiffness": 0.9
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.pl-fern-sword",
+      "name": "fern sword",
+      "kind": "foliage",
+      "revision": 15,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "fern"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b88ef7e954e6868e071c84bb1fb294f101eea6bd69e2ec6dba9888f5e581e4da",
+          "bytes": 366
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6058567cc2db2696ba71b70c02dc069423df2adabef582d0c86ef9163adc74a9",
+          "bytes": 1057176
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "959831add946fe2c3303483d0435eba8eac0b29fcb5212dc3a3f78210c1bdd61",
+          "bytes": 16490124
         }
       ],
       "usesGeometry": true,
@@ -9654,10 +10515,107 @@
     },
     {
       "version": 1,
+      "id": "asset.models.environment.pl-fern-sword-b",
+      "name": "fern sword b",
+      "kind": "foliage",
+      "revision": 8,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "fern"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "5d343ca269e7078dec74f743feafd8403914e5beb2264462e7d6c1b4a1da2ba4",
+          "bytes": 369
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "fb65a12d9773fc16291e058b5e60455e93e6b3d9a1d2735d7d71beb388b801de",
+          "bytes": 1060908
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "2a42f07efd0ccbf3c954745413b06a8ee06a844f84eae306c1bdebfb3d67be4e",
+          "bytes": 16500480
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-fern-sword-b",
+            "name": "fern sword b",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.05,
+          "speed": 0.16,
+          "stiffness": 0.9
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.models.environment.pl-flowers-blue",
       "name": "flowers blue",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 15,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -9669,36 +10627,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "4f9e653fcab72e95b4dff0da21e8a2ba446ba26dcc36e38ec05281cd72cea190",
-          "bytes": 295
+          "sha256": "712d634b955f09fd11d8fe7d6df69bb09df381643f562846e4d31558871674a6",
+          "bytes": 384
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "41d6c1976568eb43de1aa58ef7236495004c3f9f54b9a9e077ac4c47b8ee4f3c",
-          "bytes": 1127996
+          "sha256": "265c1e67d7391f80686de5dd858d941fb53620a82e7474e9342b75d59f7a3e33",
+          "bytes": 1006424
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "d75a0840014d3ddcf1984e52d27ae6dd135d90afcfecc5113f46a2e47a6207da",
-          "bytes": 15433263
+          "sha256": "9741a54f1e1f2f3977dd34f044d44d631e0d6e0d05bdbf5c6081fa632a60332a",
+          "bytes": 15311690
         }
       ],
       "usesGeometry": true,
@@ -9751,8 +10709,8 @@
     },
     {
       "version": 1,
-      "id": "asset.models.environment.pl-flowers-white",
-      "name": "flowers white",
+      "id": "asset.models.environment.pl-flowers-bluebell",
+      "name": "flowers bluebell",
       "kind": "foliage",
       "revision": 8,
       "status": "published",
@@ -9766,36 +10724,230 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "3bd408bcbdcb699660896faf97c2b68d32a2c818e07b8b6f7d271fbfeb47471e",
+          "bytes": 813036
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "db7df7705f57cf6a6ffc54cf6bf12c30f2821f19893d66e18ddd0c04168b29d8",
-          "bytes": 297
+          "sha256": "38fbeba00f16fb3a6d41631348a98b5269a1648a1902f96921de6a0347a1a624",
+          "bytes": 393
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "5c7a95ce137062fd66c8498de100f30dfe2181b7233110a68dbfcb79e9237cfa",
-          "bytes": 1128304
+          "sha256": "f8eec49392f9db5998da174739e310eeb6d6c382e2d05ac37279be893e161879",
+          "bytes": 822516
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "8e218ea0cc7c8346b3d72ac76b4ed15cd275d7153c35f3b9414c4ffa27b047e9",
-          "bytes": 15434055
+          "sha256": "e643e4a468d673efaea6e37843909314473792fbb7bdcab50b761c923895b9e8",
+          "bytes": 12684922
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-flowers-bluebell",
+            "name": "flowers bluebell",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.1,
+          "speed": 0.2,
+          "stiffness": 0.8
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.pl-flowers-trillium",
+      "name": "flowers trillium",
+      "kind": "foliage",
+      "revision": 8,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "flowers"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "3bd408bcbdcb699660896faf97c2b68d32a2c818e07b8b6f7d271fbfeb47471e",
+          "bytes": 813036
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "bd23ca8338c713f4d6c8005d6be7a1679d13575b972f8d88791078a979cd9527",
+          "bytes": 397
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "3c93ff626c8c48825657fadf5612e1f60b1d385db8a1490989d2a754155bfa95",
+          "bytes": 831216
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "99ea09c129aff65df0034ed24cf4c2200c5ece24293fda66338b7db522a351b0",
+          "bytes": 7638
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "18c3575e6f8a34477f388e47b156029e4018f71c02eb635434ac8593ffe33451",
+          "bytes": 12712649
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [],
+        "scenery": [
+          {
+            "id": "pl-flowers-trillium",
+            "name": "flowers trillium",
+            "category": "foliage",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            }
+          }
+        ]
+      },
+      "capabilities": {
+        "wind": {
+          "mode": "grass",
+          "strength": 0.1,
+          "speed": 0.2,
+          "stiffness": 0.8
+        },
+        "groundContact": {
+          "mode": "terrain"
+        }
+      },
+      "provenance": {
+        "method": "import",
+        "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.pl-flowers-white",
+      "name": "flowers white",
+      "kind": "foliage",
+      "revision": 15,
+      "status": "published",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "flowers"
+      ],
+      "resources": [
+        {
+          "role": "albedo",
+          "index": 1,
+          "format": "png",
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "2abfd99d9d8d9960b3eb15bcfd393c46a0586c250b1c17de36f06067ba375cd5",
+          "bytes": 386
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e8c4419f6ba0bfbafa471cbdc26d7cd3109d61235c1f9e0979cf6cb63d1610d9",
+          "bytes": 1006732
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5bb1a71376127184bc9c81542c4e07dfcdfd87a196252b7d0a93357a7486691d",
+          "bytes": 15312482
         }
       ],
       "usesGeometry": true,
@@ -9851,7 +11003,7 @@
       "id": "asset.models.environment.pl-flowers-yellow",
       "name": "flowers yellow",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 15,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -9863,36 +11015,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "2e9f537b6f26a1976a638903ac142c42fb2a2a26dde3c77c168515f57a0b735f",
-          "bytes": 299
+          "sha256": "63bd0ec2b643676ecbcaf5ac6c5d7b04201b7aeaf2573f59c91ccba18f20aa52",
+          "bytes": 388
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "64286d2eedfe05599da3cf4d6d7fcb9028e73a0206b274f205328d4e7b0c368d",
-          "bytes": 1128308
+          "sha256": "cee7c109be9908cd326580b0cd4907b94fdcdfa8ed8fc879a5a2097478f0007f",
+          "bytes": 1006736
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "c0fab988b8959f998374dda9cb30d3d10c369f9c439a6edc191989b1b3c3f15a",
-          "bytes": 15434055
+          "sha256": "9981fa1b169ac0670ce74f5c572584de99a7e259f7757f2eaca31d77094b0abb",
+          "bytes": 15312482
         }
       ],
       "usesGeometry": true,
@@ -9948,7 +11100,7 @@
       "id": "asset.models.environment.pl-grass-lush-a",
       "name": "grass lush a",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 22,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -9960,36 +11112,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "7a3e33074ce5037f718e0181766ac3f4ffee1dac520a4a0f177014061a644621",
-          "bytes": 125575
+          "sha256": "939f4f357b7d75e88d52d3157cfc96825209695d63a79de8e910ba41b7640d45",
+          "bytes": 114196
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "7d7b7de140ce835cebc21b4db17b1465dd0a51bd8627206f2b79d45dd32c91b1",
-          "bytes": 306
+          "sha256": "efe6ab79c81364267471d2e9dd71d5e3a84693c78d21c77c4b92380b369dcbc5",
+          "bytes": 398
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "08ef2acf0029635fb1aa875a320261d025609734f6f36916c8c846f61efde855",
-          "bytes": 128776
+          "sha256": "c1f52c53eb32170f368f714e9d64eab5f2363edcef317f88de25d5720f45ac98",
+          "bytes": 117396
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "ece39f97d71354da345a6c7cd440d9e93ea98395a55463cf774cb3cce17e5ca9",
-          "bytes": 2447497
+          "sha256": "f3d77162f5d67fb85fd585fba5355ec020d3064da8950e6c08c1e3f0500bb3e8",
+          "bytes": 2436118
         }
       ],
       "usesGeometry": true,
@@ -10045,7 +11197,7 @@
       "id": "asset.models.environment.pl-grass-lush-b",
       "name": "grass lush b",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 22,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -10057,36 +11209,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "9839d3441b94d4b6b293a6d7578d3c1cd0e8efd2697e8d775863c3e0206244f7",
-          "bytes": 124221
+          "sha256": "462e48471e57952a81e21f8ea51640b9fc9a66989aea24d823673821a7b2bc5e",
+          "bytes": 115033
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "528bc84bf09e3ae0ada90b5e0fc056f2695a2c61985b6492c8c85c938f43b698",
-          "bytes": 306
+          "sha256": "7c2f8bc29362049014dc19ff36c5c6759372dd2171610bbfe4bd010632578244",
+          "bytes": 397
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "9866419a607f8b2d74b0672119dd0917815cce88c519866bf0b2d5402ee9cd33",
-          "bytes": 127424
+          "sha256": "813cc903e67145e4dd4f7bc18540faa944c256330578b175d69f9b31bd97594a",
+          "bytes": 118236
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "e978c98840b6b1a037346578adbd4ba2cdebe033bf8292e0194d0362416d2a40",
-          "bytes": 2446143
+          "sha256": "dc1178b09d610d967862482fc7e019fb626479e49c0070e0a7e9d37c7aa54c9f",
+          "bytes": 2436955
         }
       ],
       "usesGeometry": true,
@@ -10142,7 +11294,7 @@
       "id": "asset.models.environment.pl-grass-lush-c",
       "name": "grass lush c",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 22,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -10154,36 +11306,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "807ff04f3e328ff08bfe55e3c7c735d3eb6afeb499f94960b3e550cc45da1683",
-          "bytes": 128633
+          "sha256": "dbd2f39219276172a958ac7c106d8adcdafaf5ed253aa15719bd6663b0b59514",
+          "bytes": 117518
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "7c37eed6978388ba8614ee75142338d66d4914198db9b83a000463337658a8e6",
-          "bytes": 306
+          "sha256": "e7e53502eebea9f2cb34e60c5abf6752d6e991e1e4246ac5f36e685e43356577",
+          "bytes": 397
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "d0ae954b1d1bfef86b041e4a9c4ae10d5656e18d63a7f91fd5f69150d1e5454c",
-          "bytes": 131136
+          "sha256": "39ccc5edb9ced5270185bdf0cc9b6013f3d952be3cd250a721f2833cce04b5a2",
+          "bytes": 120020
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "2cbcf7c0a277e3ec62cd5cc03b75e1c430b45aaa45834ecd00e2f8ab4d718528",
-          "bytes": 2449385
+          "sha256": "22cf3ba0671b84f25561e3f9526adc82b58ba5002379e1fd460bf91468f35651",
+          "bytes": 2438270
         }
       ],
       "usesGeometry": true,
@@ -10239,7 +11391,7 @@
       "id": "asset.models.environment.pl-grass-tall",
       "name": "grass tall",
       "kind": "foliage",
-      "revision": 8,
+      "revision": 22,
       "status": "published",
       "tags": [
         "pl-pack",
@@ -10251,36 +11403,36 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "8f54dfa546c620d1b3fb407b856e325981e0f1f4ff2e948cd44a29ec18d1975d",
-          "bytes": 125779
+          "sha256": "b8552937f96c17346c872515327ff06f476a15c9fcafc109def4979f0797d1e1",
+          "bytes": 117938
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "1f6aeb9bd91ee2cf1508d742356a0e3b24054a5e2b8765db3c81cab4b813ee01",
-          "bytes": 304
+          "sha256": "ad364effaa9226539ccc4beb6c8ea8049679981654234247cab41fad123097a5",
+          "bytes": 395
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "60231e526e607f318127d1cc1d5b20e5a41acdfeb7fc342e897f94109acee003",
-          "bytes": 133604
+          "sha256": "ec902451b7e44951e04f8ed83d028d3dd5a4101a915987c38df97fb19f8a4ed8",
+          "bytes": 125764
         },
         {
           "role": "recipe",
           "index": 1,
           "format": "py",
-          "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-          "bytes": 5186
+          "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+          "bytes": 6743
         },
         {
           "role": "source",
           "index": 1,
           "format": "blend",
-          "sha256": "19f37fede8ae4b732947a8e582fa6080ce7765a7f44a03a089d8556962b9ea7d",
-          "bytes": 2455423
+          "sha256": "f722507f9d03b36873740846aa824ef9341eb445649518cd182539c9972fc85b",
+          "bytes": 2447582
         }
       ],
       "usesGeometry": true,
@@ -14885,7 +16037,7 @@
       "id": "asset.models.environment.woodland-pine-a",
       "name": "woodland pine a",
       "kind": "tree",
-      "revision": 23,
+      "revision": 33,
       "status": "published",
       "tags": [
         "original",
@@ -14897,8 +16049,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "albedo",
@@ -14918,15 +16070,15 @@
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-          "bytes": 458
+          "sha256": "42f6817c9cb008776adf060af7578d52a2f6c3627ff14ae54606781ba27b8ea9",
+          "bytes": 324
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "10453f1f2d980923033544039494cab01303d4d8b28a96350c5048b4bb7ad1d1",
-          "bytes": 1381664
+          "sha256": "c6af6a93c97596c2ffdd2d5a84dfee2b85f9e88edb74244b64592b5a26fb373b",
+          "bytes": 1092380
         },
         {
           "role": "recipe",
@@ -14953,15 +16105,15 @@
           "role": "source",
           "index": 3,
           "format": "glb",
-          "sha256": "3688a2bccb0c1ca29142e1b6ca476344590597912513e7fcb626ef2927ff514f",
-          "bytes": 1363500
+          "sha256": "a50db327ea5db34027207921c25344a1d16a570599a9d57e26f7aa236736300b",
+          "bytes": 1074260
         },
         {
           "role": "source",
           "index": 4,
           "format": "glb",
-          "sha256": "ea179845a297ea67a28eaea1643d4da662dc4b6bcfc8a78e5c80d03b31a1817d",
-          "bytes": 1356248
+          "sha256": "6d8c34e7e4d81856221528e0e44237b4e78ac3f5afacb133d5b08be71c7ab276",
+          "bytes": 1067008
         },
         {
           "role": "source",
@@ -15081,7 +16233,7 @@
       "id": "asset.models.environment.woodland-pine-b",
       "name": "woodland pine b",
       "kind": "tree",
-      "revision": 23,
+      "revision": 33,
       "status": "published",
       "tags": [
         "original",
@@ -15093,8 +16245,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "albedo",
@@ -15114,15 +16266,15 @@
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-          "bytes": 458
+          "sha256": "42f6817c9cb008776adf060af7578d52a2f6c3627ff14ae54606781ba27b8ea9",
+          "bytes": 324
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "1eca776efeebcb54b838481d39b6a25ba93f07d58215423138882ef1c589b7bb",
-          "bytes": 1381668
+          "sha256": "7bf996f9905a3b3b575a8799f6412b06ab9f3f7f467b20e20aba76839930b0b4",
+          "bytes": 1092388
         },
         {
           "role": "recipe",
@@ -15149,15 +16301,15 @@
           "role": "source",
           "index": 3,
           "format": "glb",
-          "sha256": "6597bdb07119f1690fe2a680ef5abb1ee880247d474ae1793ab89bd83e1769ff",
-          "bytes": 1363504
+          "sha256": "091d4505200f3353f43b8efea1e762692e82d99a1fd3dbdebd60f6c539254c8f",
+          "bytes": 1074264
         },
         {
           "role": "source",
           "index": 4,
           "format": "glb",
-          "sha256": "c5115d428a50ed2010a5b57eeb2de116e61b8b33abfe5fdf2beb2514a4ce498c",
-          "bytes": 1356256
+          "sha256": "0816659843c54d61b3b6b0f62d61e360a29b4878633a518dc2500dd36e8e9b34",
+          "bytes": 1067012
         },
         {
           "role": "source",
@@ -15263,7 +16415,7 @@
       "id": "asset.models.environment.woodland-pine-sapling",
       "name": "woodland pine sapling",
       "kind": "foliage",
-      "revision": 23,
+      "revision": 33,
       "status": "published",
       "tags": [
         "original",
@@ -15275,8 +16427,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "albedo",
@@ -15296,15 +16448,15 @@
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-          "bytes": 458
+          "sha256": "42f6817c9cb008776adf060af7578d52a2f6c3627ff14ae54606781ba27b8ea9",
+          "bytes": 324
         },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "c801a52d0cd95f2b1bfa9d81339f3a78313ae73a5119712b10fbdb1e83324351",
-          "bytes": 1341588
+          "sha256": "a8a9adb91144cb73b9ae974c89a003577ea94a01cc8564b6fc8af2ebe08b681e",
+          "bytes": 1052304
         },
         {
           "role": "recipe",
@@ -15331,15 +16483,15 @@
           "role": "source",
           "index": 3,
           "format": "glb",
-          "sha256": "758f7d4a6ce1e591115d389eabe991a5c49734e2f4eacb54ebd27766cbf5c631",
-          "bytes": 1331976
+          "sha256": "d28dba2e0d52e368ed105793c3b421f894d4a74448f4b2e28833284b1b519d6d",
+          "bytes": 1042736
         },
         {
           "role": "source",
           "index": 4,
           "format": "glb",
-          "sha256": "33355899feb15c478b46b110013df4574bc3b2caa28ef28d5da96418c1f5305e",
-          "bytes": 1332008
+          "sha256": "111bbc1d0cfeeb97a46bb5a326b113945c19a75a2d73dd12281fd035344c648b",
+          "bytes": 1042768
         },
         {
           "role": "source",
@@ -20551,7 +21703,7 @@
       "id": "asset.terrain.woodland-dirt",
       "name": "woodland dirt · albedo/roughness",
       "kind": "terrain-material",
-      "revision": 15,
+      "revision": 33,
       "status": "published",
       "tags": [
         "original",
@@ -20562,8 +21714,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "6ce2ce8df4c582d80b94956e9d01e26d8a54886b17e42ee113ffbf6d2a8f3990",
-          "bytes": 1908399
+          "sha256": "45d31cc16f50205b7a84ba2ccd31b7d2c9aff77258adc6a2367e697fc25e8375",
+          "bytes": 1454731
         },
         {
           "role": "build",
@@ -20576,29 +21728,29 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "776756455492d836a4f8134c204e510ecd8a03913cbd2c54596f969d3cf74960",
-          "bytes": 1907171
+          "sha256": "a1ee1d44bcc501cab9e3f877e92a049bbddce3a181880cf3dc54226fcdf61f16",
+          "bytes": 1515995
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-          "bytes": 303
+          "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+          "bytes": 320
         },
         {
           "role": "source",
           "index": 1,
           "format": "png",
-          "sha256": "c7417d7bfa22b3c4a36cf0d67bb15afc2e34c02b1d684d5e83188bd5fc10c1ea",
-          "bytes": 1687554
+          "sha256": "39ce776e3b113744baff95c0fe48b1b893d5f486041fe734eec81080977d6f40",
+          "bytes": 1168674
         },
         {
           "role": "source",
           "index": 2,
           "format": "json",
-          "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-          "bytes": 303
+          "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+          "bytes": 320
         }
       ],
       "usesGeometry": false,
@@ -20632,7 +21784,7 @@
       "id": "asset.terrain.woodland-dirt-normal",
       "name": "woodland dirt · normal/height",
       "kind": "terrain-material",
-      "revision": 8,
+      "revision": 17,
       "status": "published",
       "tags": [
         "original",
@@ -20643,15 +21795,15 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "d79f490b2cf8b3bef8bb7c0ca8010e6db163d963d8699cab503eab61b574adc6",
-          "bytes": 1190846
+          "sha256": "2f8d8a207021db466e35069ebc7a48ba28e209778cd327d614d01813d8eabe3a",
+          "bytes": 1282230
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-          "bytes": 303
+          "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+          "bytes": 320
         }
       ],
       "usesGeometry": false,
@@ -20685,7 +21837,7 @@
       "id": "asset.terrain.woodland-grass",
       "name": "woodland grass · albedo/roughness",
       "kind": "terrain-material",
-      "revision": 17,
+      "revision": 29,
       "status": "published",
       "tags": [
         "original",
@@ -20696,8 +21848,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "e0c02d2cc420db29aab3996f6a2fc4a66c332c3fa8bb664e965503b1af807509",
-          "bytes": 2432782
+          "sha256": "12ac6a41b9250f7ea85e07122e2226f474bd23847685bee980cbe69c9fad41c9",
+          "bytes": 1992930
         },
         {
           "role": "build",
@@ -20710,29 +21862,29 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "f3a65d7d3ebc6cd65559206eae8826b78dd2724a0573bb59c0a2ad9591090eed",
-          "bytes": 2536940
+          "sha256": "ea4f3a45d8d457639d6bc13b2025ee6cde77dc3377bcaf38e48fd80c29ef25ed",
+          "bytes": 2099616
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-          "bytes": 295
+          "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+          "bytes": 365
         },
         {
           "role": "source",
           "index": 1,
           "format": "png",
-          "sha256": "fe6bc8ded438f16f5236c50a6863929bc9ad806e1c32e777da557f3328e3a714",
-          "bytes": 2078925
+          "sha256": "4e5e1a4b6a460add49b19734e4912e9b42f16497c997259e706f5e90a8e3ded1",
+          "bytes": 1397527
         },
         {
           "role": "source",
           "index": 2,
           "format": "json",
-          "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-          "bytes": 295
+          "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+          "bytes": 365
         }
       ],
       "usesGeometry": false,
@@ -20766,7 +21918,7 @@
       "id": "asset.terrain.woodland-grass-normal",
       "name": "woodland grass · normal/height",
       "kind": "terrain-material",
-      "revision": 10,
+      "revision": 16,
       "status": "published",
       "tags": [
         "original",
@@ -20777,15 +21929,15 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "10debf31008704e07a66d0b6c8dc90b9e0c0f7ce1ee691ed19dc248b1aa2e67c",
-          "bytes": 1455493
+          "sha256": "024bb4c9b6cfcba61ea5a0322c3010f0e851d17492dbceb18ff36891d4b6bd4d",
+          "bytes": 1701103
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-          "bytes": 295
+          "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+          "bytes": 365
         }
       ],
       "usesGeometry": false,
@@ -21129,7 +22281,7 @@
       "id": "asset.terrain.woodland-soil",
       "name": "woodland soil · albedo/roughness",
       "kind": "terrain-material",
-      "revision": 17,
+      "revision": 35,
       "status": "published",
       "tags": [
         "original",
@@ -21140,8 +22292,8 @@
           "role": "albedo",
           "index": 1,
           "format": "png",
-          "sha256": "93c846209800bb3a8fcab847080b2de1ebedc8c2884558f2f301b6009b4ea150",
-          "bytes": 1868462
+          "sha256": "9cd2622ba6b869df398e247aea5a35f09015b661dd36109f431659240a654104",
+          "bytes": 1489436
         },
         {
           "role": "build",
@@ -21154,29 +22306,29 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "19a329cb0680eae6f6a503a592b535c0efd674cfb5a44bc48443907695520c4c",
-          "bytes": 1872393
+          "sha256": "f600875033fc883916e73be8c7ece1e15a2666eac4ab9165251a534dacd924de",
+          "bytes": 1549671
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
-          "bytes": 319
+          "sha256": "4e75a28b3c5391dc588cd1379d470d22273f4f25f095dd8695e4a9f77a09bcdf",
+          "bytes": 320
         },
         {
           "role": "source",
           "index": 1,
           "format": "png",
-          "sha256": "9ab050794d7f5c881eec9ca9012b7ec2a8945fca2b8c1ee645224200216ec518",
-          "bytes": 1650627
+          "sha256": "2fbfa0d965f248173367e6326fcb2bd94a5542a07472003515e457784a1418f6",
+          "bytes": 1195545
         },
         {
           "role": "source",
           "index": 2,
           "format": "json",
-          "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
-          "bytes": 319
+          "sha256": "4e75a28b3c5391dc588cd1379d470d22273f4f25f095dd8695e4a9f77a09bcdf",
+          "bytes": 320
         }
       ],
       "usesGeometry": false,
@@ -21210,7 +22362,7 @@
       "id": "asset.terrain.woodland-soil-normal",
       "name": "woodland soil · normal/height",
       "kind": "terrain-material",
-      "revision": 10,
+      "revision": 19,
       "status": "published",
       "tags": [
         "original",
@@ -21221,15 +22373,15 @@
           "role": "data",
           "index": 1,
           "format": "bin",
-          "sha256": "b2c80e361e4781bbf26b4f55298f4d725a9a65af6f2961f95c2a2e6dae54a258",
-          "bytes": 1155491
+          "sha256": "51b137a903c3f48ca84f20bbfdefccc519d65154864ce9971ba958ee64218822",
+          "bytes": 1339168
         },
         {
           "role": "generation",
           "index": 1,
           "format": "json",
-          "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
-          "bytes": 319
+          "sha256": "4e75a28b3c5391dc588cd1379d470d22273f4f25f095dd8695e4a9f77a09bcdf",
+          "bytes": 320
         }
       ],
       "usesGeometry": false,
@@ -23371,7 +24523,7 @@
       "id": "recipe.grass.meadow",
       "name": "Meadow · mixed low grass",
       "kind": "landscape-recipe",
-      "revision": 5,
+      "revision": 11,
       "status": "published",
       "tags": [
         "authoring",
@@ -23399,51 +24551,43 @@
         "type": "grass",
         "species": [
           {
-            "asset": "asset.models.environment.pl-grass-lush-a",
+            "asset": "asset.models.environment.pl-grass-lush-b",
             "weight": 5
           },
           {
-            "asset": "asset.models.environment.pl-grass-lush-b",
+            "asset": "asset.models.environment.pl-grass-lush-c",
             "weight": 4
           },
           {
-            "asset": "asset.models.environment.pl-grass-lush-c",
-            "weight": 3
+            "asset": "asset.models.environment.pl-grass-tall",
+            "weight": 2
           },
           {
-            "asset": "asset.models.environment.pl-grass-tall",
-            "weight": 1.2
+            "asset": "asset.models.environment.pl-grass-lush-a",
+            "weight": 1
           },
           {
             "asset": "asset.models.environment.pl-flowers-white",
-            "weight": 0.5
-          },
-          {
-            "asset": "asset.models.environment.pl-flowers-yellow",
-            "weight": 0.35
-          },
-          {
-            "asset": "asset.models.environment.pl-flowers-blue",
-            "weight": 0.12
+            "weight": 0.18
           },
           {
             "asset": "asset.models.environment.pl-daisy",
-            "weight": 0.15
+            "weight": 0.06
           }
         ],
-        "spacing": 0.55,
-        "probability": 0.85,
+        "spacing": 0.9,
+        "probability": 0.3,
         "jitter": 0.65,
-        "scaleMin": 0.7,
-        "scaleMax": 1.2,
+        "scaleMin": 0.45,
+        "scaleMax": 0.75,
         "maxSlope": 1,
         "waterClearance": 0.2,
         "objectClearance": 0,
         "edgeFade": 2,
-        "minSpacing": 0.25,
+        "minSpacing": 0.4,
         "patchiness": {
-          "scale": 5,
-          "strength": 0.4
+          "scale": 3,
+          "strength": 0.85
         }
       },
       "provenance": {
@@ -23511,6 +24655,387 @@
       "provenance": {
         "method": "authored",
         "licenseNote": "Original deterministic layer recipe using original woodland asset packages."
+      }
+    },
+    {
+      "version": 1,
+      "id": "recipe.meadow.woodland-edge",
+      "name": "Meadow · woodland edge (tree-driven)",
+      "kind": "landscape-recipe",
+      "revision": 28,
+      "status": "published",
+      "tags": [
+        "authoring",
+        "original"
+      ],
+      "resources": [],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "recipe": {
+        "type": "meadow",
+        "material": "asset.terrain.woodland-grass",
+        "canopy": 0,
+        "reach": 9,
+        "falloff": 4,
+        "under": 1,
+        "peak": 1,
+        "open": 0,
+        "edgeFade": 0,
+        "noise": {
+          "scale": 12,
+          "strength": 0.2
+        },
+        "ragged": {
+          "width": 3.5,
+          "scale": 2.2,
+          "strength": 1.4
+        },
+        "accents": [
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-grass-lush-b",
+                "weight": 5
+              },
+              {
+                "asset": "asset.models.environment.pl-grass-lush-c",
+                "weight": 4
+              },
+              {
+                "asset": "asset.models.environment.pl-grass-lush-a",
+                "weight": 2
+              }
+            ],
+            "spacing": 1,
+            "probability": 0.55,
+            "jitter": 0.8,
+            "scaleMin": 0.45,
+            "scaleMax": 0.8,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 0.45,
+            "patchiness": {
+              "scale": 3.5,
+              "strength": 0.6
+            },
+            "id": "fringe",
+            "coverage": {
+              "min": 0.15,
+              "max": 0.6
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-grass-tall",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.pl-grass-lush-b",
+                "weight": 2
+              }
+            ],
+            "spacing": 2.2,
+            "probability": 0.22,
+            "jitter": 0.8,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "patchiness": {
+              "scale": 5,
+              "strength": 0.7
+            },
+            "id": "lush",
+            "trees": {
+              "min": 2,
+              "max": 9
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-fern-bushy",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.pl-fern-bushy-b",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.pl-fern-sword",
+                "weight": 1.5
+              },
+              {
+                "asset": "asset.models.environment.pl-fern-sword-b",
+                "weight": 1.5
+              }
+            ],
+            "spacing": 3,
+            "probability": 0.4,
+            "jitter": 0.8,
+            "scaleMin": 1.1,
+            "scaleMax": 1.6,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 2,
+            "patchiness": {
+              "scale": 6,
+              "strength": 0.75
+            },
+            "id": "ferns",
+            "trees": {
+              "min": 1.2,
+              "max": 5
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-flowers-white",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-yellow",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-blue",
+                "weight": 1
+              },
+              {
+                "asset": "asset.models.environment.pl-daisy",
+                "weight": 1.5
+              }
+            ],
+            "spacing": 1.5,
+            "probability": 0.34,
+            "jitter": 0.8,
+            "scaleMin": 1.05,
+            "scaleMax": 1.55,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 0.9,
+            "patchiness": {
+              "scale": 5,
+              "strength": 0.95
+            },
+            "id": "flowers",
+            "trees": {
+              "min": 2,
+              "max": 10
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-clover-sorrel",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.pl-clover-a",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-trillium",
+                "weight": 1.5
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-bluebell",
+                "weight": 1.5
+              }
+            ],
+            "spacing": 2.4,
+            "probability": 0.35,
+            "jitter": 0.8,
+            "scaleMin": 0.8,
+            "scaleMax": 1.2,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 1.4,
+            "patchiness": {
+              "scale": 5,
+              "strength": 0.8
+            },
+            "id": "floor",
+            "trees": {
+              "min": 0.6,
+              "max": 4.5
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.canopy-mushrooms-russet",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.canopy-mushrooms-ochre",
+                "weight": 1
+              },
+              {
+                "asset": "asset.models.environment.woodland-mushrooms-button",
+                "weight": 2
+              }
+            ],
+            "spacing": 4,
+            "probability": 0.12,
+            "jitter": 0.8,
+            "scaleMin": 0.7,
+            "scaleMax": 1.1,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 3,
+            "id": "mushrooms",
+            "trees": {
+              "min": 0.8,
+              "max": 3
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.meadow-pebble-a",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.meadow-pebble-b",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.meadow-pebble-c",
+                "weight": 1
+              }
+            ],
+            "spacing": 3.2,
+            "probability": 0.24,
+            "jitter": 0.8,
+            "scaleMin": 0.7,
+            "scaleMax": 1.15,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 2,
+            "patchiness": {
+              "scale": 9,
+              "strength": 0.7
+            },
+            "id": "pebbles",
+            "coverage": {
+              "min": 0,
+              "max": 0.55
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.meadow-stick-a",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.meadow-stick-b",
+                "weight": 3
+              }
+            ],
+            "spacing": 4.5,
+            "probability": 0.25,
+            "jitter": 0.8,
+            "scaleMin": 0.8,
+            "scaleMax": 1.15,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 3,
+            "id": "twigs",
+            "trees": {
+              "min": 1.5,
+              "max": 12
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.woodland-fallen-log",
+                "weight": 1
+              }
+            ],
+            "spacing": 12,
+            "probability": 0.3,
+            "jitter": 0.8,
+            "scaleMin": 0.42,
+            "scaleMax": 0.58,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 9,
+            "id": "logs",
+            "trees": {
+              "min": 1.5,
+              "max": 5
+            }
+          },
+          {
+            "species": [
+              {
+                "asset": "asset.models.environment.meadow-boulder",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.woodland-moss-boulder",
+                "weight": 1
+              }
+            ],
+            "spacing": 7,
+            "probability": 0.3,
+            "jitter": 0.8,
+            "scaleMin": 0.5,
+            "scaleMax": 0.95,
+            "maxSlope": 1,
+            "waterClearance": 0.3,
+            "objectClearance": 0,
+            "edgeFade": 0,
+            "minSpacing": 5,
+            "id": "rocks",
+            "trees": {
+              "min": 1,
+              "max": 8
+            }
+          }
+        ]
+      },
+      "provenance": {
+        "method": "authored",
+        "licenseNote": "Original deterministic layer recipe; accents use the licensed PL foliage packages."
       }
     },
     {

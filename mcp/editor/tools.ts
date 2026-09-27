@@ -47,7 +47,7 @@ export function editorTools(hub: EditorHub) {
   const call = (op: string, params?: unknown) => hub.call(op, params);
 
   return {
-    editor_scene:createTool({id:'editor_scene',description:'Author live procedural layers and independent objects. Recipes generate in terrain/river/path/forest/grass order. Pick selects the owner layer; bake converts the complete scatter layer with undo. No detach or per-generated-object edits. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
+    editor_scene:createTool({id:'editor_scene',description:'Author live procedural layers and independent objects. Recipes generate in terrain/river/path/forest/grass/meadow order. Batch applies many put/remove edits as one undo step and one regeneration. Pick selects the owner layer; bake converts the complete scatter layer with undo. No detach or per-generated-object edits. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
     editor_mission:createTool({id:"editor_mission",description:"Read or replace mission metadata, Lua source and named circular regions in the loaded map. Mission maps are excluded from Skirmish.",inputSchema:z.object({action:z.enum(["get","set"]),mission:missionSchema.nullable().optional(),camps:z.array(campSchema).optional()}),execute:async(input)=>call("mission",input)}),
     editor_entities: createTool({
       id: "editor_entities",

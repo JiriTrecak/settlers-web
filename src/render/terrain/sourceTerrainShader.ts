@@ -8,7 +8,24 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
  uniform float uSourceHeightScale;
  uniform float uSourceDisplacementTiling,uSourceHasDisplacement;
- uniform vec4 uSourceParams[${layerCount}];uniform vec3 uSourceTints[${layerCount}];uniform float uSourceDesaturation[${layerCount}];
+ uniform vec4 uSourceParams[${layerCount}];uniform vec3 uSourceTints[${layerCount}];uniform float uSourceDesaturation[${layerCount}];uniform float uSourceBreakup[${layerCount}];
+ float terrainHash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+ float terrainValueNoise(vec2 p){
+  vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(terrainHash(i),terrainHash(i+vec2(1.,0.)),f.x),mix(terrainHash(i+vec2(0.,1.)),terrainHash(i+1.),f.x),f.y);
+ }
+ float terrainNoise(vec2 p){return terrainValueNoise(p)*.65+terrainValueNoise(p*2.03+vec2(5.2,1.3))*.35;}
+ // Frayed grounds wobble their mask with ~9 m noise so blob outlines stay
+ // organic; terrainDensity then turns the result into a soft edge.
+ float terrainBreakup(float weight,vec2 world,float amount){
+  return clamp(weight+amount*(terrainNoise(world*.11)-.5)*.9*smoothstep(0.,.6,weight),0.,1.);
+ }
+ // Soft blob edge centred on half coverage. The layer's tuft height shifts the
+ // threshold ±.28, so partial coverage resolves into clumps with dirt between
+ // them; with blend .35, full (1) and empty (0) coverage stay solid for any height.
+ float terrainDensity(float weight,float height,float blend){
+  return smoothstep(0.,1.,clamp((weight+(height-.5)*.55-.5)/max(blend,.00001)+.5,0.,1.));
+ }
  float terrainHeight(vec2 world){
   vec2 p=clamp((world-uSourceOrigin)*uSourceHeightScale,vec2(0.),uSourceHeightSize-1.),i=floor(p),f=fract(p),uv=(i+.5)/uSourceHeightSize,d=1./uSourceHeightSize;
   return mix(mix(textureLod(uSourceHeight,uv,0.).r,textureLod(uSourceHeight,uv+vec2(d.x,0.),0.).r,f.x),mix(textureLod(uSourceHeight,uv+vec2(0.,d.y),0.).r,textureLod(uSourceHeight,uv+d,0.).r,f.x),f.y);
@@ -40,11 +57,13 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
    vec4 layerAR=${sample('uSourceAR','tileUV','float(id)')},layerNH=${sample('uSourceNH','tileUV','float(id)')};
    layerAR.rgb*=uSourceTints[id];
    float weight=textureLod(uSourceMasks,vec3(uv,float(id)),0.).r;
+   if(uSourceBreakup[id]>0.)weight=terrainBreakup(weight,world,uSourceBreakup[id]);
    weight*=1.-underlay*(1.-nh.a*.5);
    if(param.z>=0.)weight*=mix(1.,clamp(normalY,0.,1.),param.z);else weight=clamp(weight+(1.-normalY)*-param.z,0.,1.);
    layerAR.rgb*=mix(1.,clamp((weight-.25)/.75,0.,1.),param.w);
    if(uSourceDesaturation[id]>0.)ar.rgb=mix(ar.rgb,vec3(dot(layerAR.rgb,vec3(uSourceDesaturation[id]))),clamp((weight-.5)/.5,0.,1.));
    float k=param.y>=0.?clamp(((layerNH.a+.5)*weight-nh.a+.25)/max(param.y,.00001),0.,1.):clamp((1.-layerNH.a)+(weight-(1.-layerNH.a))*(1.-param.y),0.,1.);
+   if(uSourceBreakup[id]>0.)k=terrainDensity(weight,layerNH.a,param.y);
    ar=mix(ar,layerAR,k);nh=mix(nh,vec4(layerNH.rgb,param.y>=0.?layerNH.a:.5),k);
   }
  }

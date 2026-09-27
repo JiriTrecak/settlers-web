@@ -32,10 +32,10 @@ function glb(doc:any,bin:Buffer,replacements:Map<number,Buffer>){
  const h=Buffer.alloc(20),b=Buffer.alloc(8);h.writeUInt32LE(0x46546c67);h.writeUInt32LE(2,4);h.writeUInt32LE(28+json.length+binary.length,8);h.writeUInt32LE(json.length,12);h.writeUInt32LE(0x4e4f534a,16);b.writeUInt32LE(binary.length);b.writeUInt32LE(0x004e4942,4);
  return Buffer.concat([h,json,b,binary]);
 }
-const manifest=JSON.parse(await readFile(process.argv[2]!,'utf8')) as {kind:'terrain'|'pine';id:string;image:string;brief:string}[];
+const manifest=JSON.parse(await readFile(process.argv[2]!,'utf8')) as {kind:'terrain'|'pine';id:string;image:string;brief:string;method?:string;factor?:number}[];
 for(const item of manifest){
  const {id,kind,brief}=item,source=await readFile(item.image);
- const receipt=Buffer.from(JSON.stringify({method:'built-in imagegen',originalPixels:true,brief,source:item.image.split('/').pop(),packing:'Periodic normal/height derived from luminance; original colors retained.'},null,2)+'\n');
+ const receipt=Buffer.from(JSON.stringify({method:item.method??'built-in imagegen',originalPixels:true,brief,source:item.image.split('/').pop(),packing:'Periodic normal/height derived from luminance; original colors retained.'},null,2)+'\n');
  if(kind==='terrain'){
   const size=1024,png=await sharp(source).resize(size,size).removeAlpha().png().toBuffer();
   const rgb=await sharp(png).raw().toBuffer(),lum=await sharp(png).greyscale().blur(2).raw().toBuffer();
@@ -63,7 +63,7 @@ for(const item of manifest){
    if(!m.extras?.foliage)continue;
    const tex=doc.textures[m.pbrMetallicRoughness.baseColorTexture.index],im=doc.images[tex.source];
    replacements.set(im.bufferView,png);im.mimeType='image/png';
-   m.pbrMetallicRoughness.baseColorFactor=[.4,.4,.4,1];
+   const f=item.factor??.4;m.pbrMetallicRoughness.baseColorFactor=[f,f,f,1];
   }
   if(!replacements.size)throw Error('No pine foliage texture: '+id);
   await upload(id,'albedo','png',png);await upload(id,'geometry','glb',glb(doc,bin,replacements));await upload(id,'generation','json',receipt);

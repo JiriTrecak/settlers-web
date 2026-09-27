@@ -69,8 +69,11 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
    if(!m.userData.foliage)continue;
    m.side=DoubleSide;
    const height=Number(node.userData.plantHeight)||12;
+   // crownNormal < 1 keeps part of each bough's own facet normal, so tiers read as
+   // separate lit/shaded shapes instead of one smoothly shaded cone.
+   const crown=Math.max(0,Math.min(1,Number(m.userData.crownNormal??1)));
    const previousKey=m.customProgramCacheKey.bind(m);
-   m.customProgramCacheKey=()=>previousKey()+`/reference-plant-3-${height}`;
+   m.customProgramCacheKey=()=>previousKey()+`/reference-plant-3-${height}-${crown}`;
    const previous=m.onBeforeCompile;
    m.onBeforeCompile=(s,r)=>{
     previous.call(m,s,r);
@@ -91,7 +94,7 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
       vec3 crownUpward=crownDirection+vec3(0.,1.,0.);
       crownUpward=length(crownUpward)>0.?normalize(crownUpward):vec3(0.,1.,0.);
       vec3 crownNormal=normalize(mix(vec3(0.,1.,0.),crownUpward,clamp((${height.toFixed(5)}-.8)/2.6,0.,1.)));
-      float crownMask=_leaf.a>0.?1.:0.;
+      float crownMask=_leaf.a>0.?${crown.toFixed(3)}:0.;
       transformedNormal=mix(transformedNormal,mat3(viewMatrix)*crownNormal,crownMask);
       #ifdef USE_TANGENT
        vec3 crownTangent=normalize(cross(crownNormal,vec3(0.,0.,1.)));

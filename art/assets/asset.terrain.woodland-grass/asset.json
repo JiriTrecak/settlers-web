@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-grass",
   "name": "woodland grass · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 17,
+  "revision": 29,
   "status": "published",
   "tags": [
     "original",
@@ -14,8 +14,8 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "e0c02d2cc420db29aab3996f6a2fc4a66c332c3fa8bb664e965503b1af807509",
-      "bytes": 2432782
+      "sha256": "12ac6a41b9250f7ea85e07122e2226f474bd23847685bee980cbe69c9fad41c9",
+      "bytes": 1992930
     },
     {
       "role": "build",
@@ -28,29 +28,29 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "f3a65d7d3ebc6cd65559206eae8826b78dd2724a0573bb59c0a2ad9591090eed",
-      "bytes": 2536940
+      "sha256": "ea4f3a45d8d457639d6bc13b2025ee6cde77dc3377bcaf38e48fd80c29ef25ed",
+      "bytes": 2099616
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-      "bytes": 295
+      "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+      "bytes": 365
     },
     {
       "role": "source",
       "index": 1,
       "format": "png",
-      "sha256": "fe6bc8ded438f16f5236c50a6863929bc9ad806e1c32e777da557f3328e3a714",
-      "bytes": 2078925
+      "sha256": "4e5e1a4b6a460add49b19734e4912e9b42f16497c997259e706f5e90a8e3ded1",
+      "bytes": 1397527
     },
     {
       "role": "source",
       "index": 2,
       "format": "json",
-      "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-      "bytes": 295
+      "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+      "bytes": 365
     }
   ],
   "usesGeometry": false,

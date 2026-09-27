@@ -6,6 +6,7 @@ import {perf} from '../../debug/performance';
 import {hitLayer,hitLayers} from '../select/layerHit';
 import {walkStampSchema} from '../../shared/map/utcmap';
 import {AuthoringHistory,type SceneSelection} from '../../shared/authoring/history';
+import {applySceneEdits,type SceneEdit} from '../../shared/authoring/sceneCommands';
 import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer,type AuthoredObject} from '../../shared/authoring/layers';
 import {compileMapScene,type CompiledMapScene} from '../../shared/authoring/mapScene';
 import {landscapeAssets,projectScene,rememberProjectScene,sceneInputs} from '../../shared/authoring/project';
@@ -160,6 +161,8 @@ export class WorldEditor {
   selectLayer(selection:SceneSelection){this.paintingLayer=null;this.drawingLayer=null;this.layers.selection=selection;this.select.clear();this.selectedEntity=null;this.setTool('select');this.paint();this.hooks.onSelect?.();}
   putLayer(input:unknown){const layer=proceduralLayerSchema.parse(input),scene=this.layers.scene;if(scene.layers.find(l=>l.id===layer.id)?.locked)throw Error('Layer is locked');const compiled=compileMapScene({...this.map,authoring:{...scene,layers:[...scene.layers.filter(l=>l.id!==layer.id),layer]}},this.authoringAssets);this.layers.putLayer(layer);if(this.paintingLayer?.id===layer.id)this.paintingLayer=structuredClone(layer);this.commitLayers(compiled);}
   putAuthoredObject(input:unknown){const object=authoredObjectSchema.parse(input),scene=this.layers.scene;if(scene.objects.find(o=>o.id===object.id)?.locked)throw Error('Object is locked');const compiled=compileMapScene({...this.map,authoring:{...scene,objects:[...scene.objects.filter(o=>o.id!==object.id),object]}},this.authoringAssets);this.layers.putObject(object);this.commitLayers(compiled);}
+  /** Validates, regenerates and repaints once for the whole group (one undo step). */
+  applySceneEdits(edits:readonly SceneEdit[]){const compiled=compileMapScene({...this.map,authoring:applySceneEdits(this.layers.scene,edits)},this.authoringAssets);this.layers.batch(edits);this.cancelLayerShape();this.commitLayers(compiled);}
   removeLayerSelection(){if(this.layers.selection){this.layers.remove(this.layers.selection);this.cancelLayerShape();}this.commitLayers();}
   lockLayerSelection(locked:boolean){if(this.layers.selection){this.layers.setLocked(this.layers.selection,locked);if(locked)this.cancelLayerShape();}this.commitLayers();}
   bakeSelectedLayer(){if(this.layers.selection?.kind!=='layer'||!this.generatedScene)throw Error('Select a generated layer');this.layers.bake(this.layers.selection.id,this.generatedScene);this.cancelLayerShape();this.commitLayers();}

@@ -1,0 +1,14 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-clover-a",
+  "fbx": "PL_Water_Flora_Pack.fbx",
+  "object": "PL_Clover_VarD",
+  "texture": "Water_Flowers_Textures/PL_Water_Flora_Albedo.png",
+  "scale": 2.4,
+  "textureSize": 1024,
+  "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
+  "triangles": 510,
+  "height": 0.396
+}

@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "meadow-stick-a",
+ "recipe": "art/recipes/meadow_debris.py",
+ "triangles": 56,
+ "size": [
+  2.016,
+  0.714,
+  0.158
+ ]
+}

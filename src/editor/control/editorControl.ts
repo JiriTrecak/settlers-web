@@ -61,6 +61,7 @@ export class EditorControl {
         case 'put-object':e.putAuthoredObject(p.object);break;
         case 'select':e.selectLayer({kind:p.kind,id:p.id});break;
         case 'remove':e.selectLayer({kind:p.kind,id:p.id});e.removeLayerSelection();break;
+        case 'batch':e.applySceneEdits(p.edits);break;
         case 'lock':e.selectLayer({kind:p.kind,id:p.id});e.lockLayerSelection(p.locked);break;
         case 'bake':e.selectLayer({kind:'layer',id:p.id});e.bakeSelectedLayer();break;
         case 'undo':e.undoLayers();break;case 'redo':e.undoLayers(true);break;

@@ -1,7 +1,7 @@
 {
-  "method": "built-in imagegen",
+  "method": "imagegen (user-provided) graded by art/recipes/grade_terrain_tile.py 96 81 64",
   "originalPixels": true,
-  "brief": "Soft packed tan-brown forest earth, painterly low-frequency variation, tiny pebbles; seamless, graded to clear-air RTS reference.",
-  "source": "soil.png",
+  "brief": "Painted packed earth: soft plates, small pebbles; seamless.",
+  "source": "gen-soil-graded.png",
   "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

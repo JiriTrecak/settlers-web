@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "meadow-pebble-b",
+ "recipe": "art/recipes/meadow_debris.py",
+ "triangles": 160,
+ "size": [
+  0.858,
+  0.592,
+  0.291
+ ]
+}

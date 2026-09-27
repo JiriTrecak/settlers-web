@@ -34,19 +34,30 @@ const recipeVariants=[
  z.object({type:z.literal('forest'),...scatter.shape,interiorMargin:finite.min(0).max(64).default(0),details:z.array(scatter.extend({id:authoringId}).strict()).max(8).optional(),edge:scatter.extend({width:finite.positive().max(64)}).strict().optional()}).strict(),
  z.object({type:z.literal('grass'),...scatter.shape}).strict(),
  z.object({type:z.literal('ground-cover'),...scatter.shape}).strict(),
+ /** Whole-region grass coverage derived from distance to generated trees: thin in
+  * shade (< canopy), lush at the edge (canopy..reach), fading to `open` over `falloff`.
+  * `ragged` frays only the grass edge: `width` metres either side of it get small bald holes and stray tufts.
+  * Accents scatter only inside their bands: final (path-worn) coverage and/or metres to the nearest tree. */
+ z.object({type:z.literal('meadow'),material:authoringId,canopy:finite.min(0).max(32),reach:finite.min(0).max(64),falloff:finite.min(.1).max(128),
+  under:finite.min(0).max(1),peak:finite.min(0).max(1),open:finite.min(0).max(1),edgeFade:finite.min(0).max(64),
+  noise:z.object({scale:finite.min(.5).max(128),strength:finite.min(0).max(1)}).strict().optional(),
+  ragged:z.object({width:finite.min(0).max(32),scale:finite.min(.5).max(64),strength:finite.min(0).max(1.5)}).strict().optional(),
+  accents:z.array(scatter.extend({id:authoringId,coverage:z.object({min:finite.min(0).max(1),max:finite.min(0).max(1)}).strict().optional(),trees:z.object({min:finite.min(0).max(128),max:finite.min(0).max(128)}).strict().optional()}).strict()).max(12).optional(),
+ }).strict(),
 ] as const;
 export const landscapeRecipeSchema=z.discriminatedUnion('type',recipeVariants).superRefine((r,c)=>{
  if(r.type==='terrain'&&r.chunks&&r.chunks.scaleMax<r.chunks.scaleMin)c.addIssue({code:'custom',message:'Maximum chunk scale must exceed minimum scale',path:['chunks','scaleMax']});
  if('riverBank'in r&&r.riverBank&&r.riverBank.max<=r.riverBank.min)c.addIssue({code:'custom',message:'Riverbank maximum must exceed minimum',path:['riverBank']});
  if(r.type==='forest'&&r.edge){if(r.edge.scaleMax<r.edge.scaleMin)c.addIssue({code:'custom',message:'Edge maximum scale must exceed minimum scale',path:['edge','scaleMax']});if(r.edge.riverBank&&r.edge.riverBank.max<=r.edge.riverBank.min)c.addIssue({code:'custom',message:'Edge bank interval is empty',path:['edge','riverBank']});}
  if(r.type==='forest'&&r.details){if(new Set(r.details.map(d=>d.id)).size!==r.details.length)c.addIssue({code:'custom',message:'Forest detail pass IDs must be unique',path:['details']});for(const d of r.details)if(d.scaleMax<d.scaleMin)c.addIssue({code:'custom',message:'Invalid forest detail scale range',path:['details']});}
+ if(r.type==='meadow'&&r.accents){if(new Set(r.accents.map(a=>a.id)).size!==r.accents.length)c.addIssue({code:'custom',message:'Meadow accent IDs must be unique',path:['accents']});for(const a of r.accents){if(a.scaleMax<a.scaleMin)c.addIssue({code:'custom',message:'Invalid meadow accent scale range',path:['accents']});if(a.coverage&&a.coverage.max<a.coverage.min)c.addIssue({code:'custom',message:'Meadow accent coverage band is empty',path:['accents']});if(a.trees&&a.trees.max<a.trees.min)c.addIssue({code:'custom',message:'Meadow accent tree-distance band is empty',path:['accents']});}}
  if('scaleMin' in r&&r.scaleMax<r.scaleMin)c.addIssue({code:'custom',message:'Maximum scale must be at least minimum scale',path:['scaleMax']});
  if('species' in r&&new Set(r.species.map(s=>s.asset)).size!==r.species.length)c.addIssue({code:'custom',message:'Species must be unique',path:['species']});
 });
 export type LandscapeRecipe=z.infer<typeof landscapeRecipeSchema>;
 export type WaterProfile=z.infer<typeof waterProfileSchema>;
 /** Execution stages are an engine invariant, independent of the order authors draw layers. */
-export const generationStage:Readonly<Record<LandscapeRecipe['type'],number>>={terrain:0,river:1,path:2,forest:4,grass:5,'ground-cover':6};
+export const generationStage:Readonly<Record<LandscapeRecipe['type'],number>>={terrain:0,river:1,path:2,forest:4,grass:5,meadow:5,'ground-cover':6};
 // Stage 3 is occupied by placed structures, whose footprints constrain vegetation.
 
 /** Sparse instance inputs. Type prevents stale settings being applied to a different recipe kind. */
@@ -61,6 +72,7 @@ export const recipeOverridesSchema=z.discriminatedUnion('type',[
  scatterOverrides.extend({type:z.literal('forest'),interiorMargin:finite.min(0).max(64).optional(),details:z.array(scatter.extend({id:authoringId}).strict()).max(8).optional(),edge:scatterOverrides.extend({width:finite.positive().max(64).optional()}).optional()}),
  scatterOverrides.extend({type:z.literal('grass')}),
  scatterOverrides.extend({type:z.literal('ground-cover')}),
+ recipeVariants[6].partial().extend({type:z.literal('meadow'),noise:recipeVariants[6].shape.noise.unwrap().partial().optional(),ragged:recipeVariants[6].shape.ragged.unwrap().partial().optional()}),
 ]);
 export type RecipeOverrides=z.infer<typeof recipeOverridesSchema>;
 export function resolveRecipe(defaults:LandscapeRecipe,overrides?:RecipeOverrides):LandscapeRecipe{

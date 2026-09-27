@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-grass-normal",
   "name": "woodland grass · normal/height",
   "kind": "terrain-material",
-  "revision": 10,
+  "revision": 16,
   "status": "published",
   "tags": [
     "original",
@@ -14,15 +14,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "10debf31008704e07a66d0b6c8dc90b9e0c0f7ce1ee691ed19dc248b1aa2e67c",
-      "bytes": 1455493
+      "sha256": "024bb4c9b6cfcba61ea5a0322c3010f0e851d17492dbceb18ff36891d4b6bd4d",
+      "bytes": 1701103
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "1f76de946a94a9a10f0afaea5475f5d3fa8e6c7557fde56011dc323192f23e53",
-      "bytes": 295
+      "sha256": "0b86092d2fedf907f5302d60fa02387b562488d2af190d186629480481e04de1",
+      "bytes": 365
     }
   ],
   "usesGeometry": false,

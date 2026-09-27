@@ -3,10 +3,12 @@
   "slug": "pl-grass-lush-c",
   "fbx": "PL_Grass_Mesh_Pack.fbx",
   "object": "PL_Grass_VarA",
-  "texture": "Grass_Textures/Summer_Grass_Textures/PL_Grass_Summer_03.png",
+  "texture": "Grass_Textures/Summer_Grass_Textures/PL_Grass_Summer_07.png",
   "scale": 2.3,
   "textureSize": 512,
   "groundColor": false,
+  "albedoMultiplier": 0.9,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
   "triangles": 12,
   "height": 0.736
 }

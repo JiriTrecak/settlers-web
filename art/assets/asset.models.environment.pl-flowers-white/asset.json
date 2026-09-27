@@ -3,7 +3,7 @@
   "id": "asset.models.environment.pl-flowers-white",
   "name": "flowers white",
   "kind": "foliage",
-  "revision": 8,
+  "revision": 15,
   "status": "published",
   "tags": [
     "pl-pack",
@@ -15,36 +15,36 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-      "bytes": 1121968
+      "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+      "bytes": 1000395
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "db7df7705f57cf6a6ffc54cf6bf12c30f2821f19893d66e18ddd0c04168b29d8",
-      "bytes": 297
+      "sha256": "2abfd99d9d8d9960b3eb15bcfd393c46a0586c250b1c17de36f06067ba375cd5",
+      "bytes": 386
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "5c7a95ce137062fd66c8498de100f30dfe2181b7233110a68dbfcb79e9237cfa",
-      "bytes": 1128304
+      "sha256": "e8c4419f6ba0bfbafa471cbdc26d7cd3109d61235c1f9e0979cf6cb63d1610d9",
+      "bytes": 1006732
     },
     {
       "role": "recipe",
       "index": 1,
       "format": "py",
-      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-      "bytes": 5186
+      "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+      "bytes": 6743
     },
     {
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "8e218ea0cc7c8346b3d72ac76b4ed15cd275d7153c35f3b9414c4ffa27b047e9",
-      "bytes": 15434055
+      "sha256": "5bb1a71376127184bc9c81542c4e07dfcdfd87a196252b7d0a93357a7486691d",
+      "bytes": 15312482
     }
   ],
   "usesGeometry": true,

@@ -1,0 +1,14 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-fern-bushy-b",
+  "fbx": "PL_Fern_Pack.fbx",
+  "object": "PL_Bushy_Fern_VarE",
+  "texture": "Fern_Textures/PL_Fern_Albedo.png",
+  "scale": 1.6,
+  "textureSize": 1024,
+  "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
+  "triangles": 156,
+  "height": 1.031
+}

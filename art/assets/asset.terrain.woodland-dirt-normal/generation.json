@@ -1,7 +1,7 @@
 {
-  "method": "built-in imagegen",
+  "method": "imagegen (user-provided) graded by art/recipes/grade_terrain_tile.py 90 75 58",
   "originalPixels": true,
-  "brief": "Trodden tan-brown dirt path, soft painterly variation, tiny pebbles; seamless, graded to clear-air RTS reference.",
-  "source": "dirt.png",
+  "brief": "Painted trodden dirt: soft plates, small pebbles; seamless.",
+  "source": "gen-dirt-graded.png",
   "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

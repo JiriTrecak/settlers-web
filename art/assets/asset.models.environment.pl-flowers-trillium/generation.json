@@ -1,0 +1,14 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-flowers-trillium",
+  "fbx": "PL_Flowers_1_Pack.fbx",
+  "object": "PL_White_Trillium_Flower_VarA",
+  "texture": "Flowers_1_Textures/PL_Flowers_1_Albedo.png",
+  "scale": 1,
+  "textureSize": 1024,
+  "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
+  "triangles": 528,
+  "height": 0.791
+}

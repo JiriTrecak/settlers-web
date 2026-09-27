@@ -1046,6 +1046,224 @@
     ]
   },
   {
+    "id": "asset.models.environment.meadow-boulder",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.8,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-boulder/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-boulder"
+    ]
+  },
+  {
+    "id": "asset.models.environment.meadow-pebble-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.15,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-pebble-a/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-pebble-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.meadow-pebble-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.15,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-pebble-b/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-pebble-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.meadow-pebble-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.15,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-pebble-c/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-pebble-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.meadow-stick-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.15,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-stick-a/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-stick-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.meadow-stick-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.15,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.meadow-stick-b/geometry.glb"
+    ],
+    "scenery": [
+      "meadow-stick-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-clover-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.04,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-clover-a/geometry.glb"
+    ],
+    "scenery": [
+      "pl-clover-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-clover-sorrel",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.04,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-clover-sorrel/geometry.glb"
+    ],
+    "scenery": [
+      "pl-clover-sorrel"
+    ]
+  },
+  {
     "id": "asset.models.environment.pl-daisy",
     "transform": {
       "scale": 1,
@@ -1108,6 +1326,37 @@
     ]
   },
   {
+    "id": "asset.models.environment.pl-fern-bushy-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.05,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-fern-bushy-b/geometry.glb"
+    ],
+    "scenery": [
+      "pl-fern-bushy-b"
+    ]
+  },
+  {
     "id": "asset.models.environment.pl-fern-sword",
     "transform": {
       "scale": 1,
@@ -1139,6 +1388,37 @@
     ]
   },
   {
+    "id": "asset.models.environment.pl-fern-sword-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.05,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-fern-sword-b/geometry.glb"
+    ],
+    "scenery": [
+      "pl-fern-sword-b"
+    ]
+  },
+  {
     "id": "asset.models.environment.pl-flowers-blue",
     "transform": {
       "scale": 1,
@@ -1167,6 +1447,68 @@
     ],
     "scenery": [
       "pl-flowers-blue"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-flowers-bluebell",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-flowers-bluebell/geometry.glb"
+    ],
+    "scenery": [
+      "pl-flowers-bluebell"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-flowers-trillium",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-flowers-trillium/geometry.glb"
+    ],
+    "scenery": [
+      "pl-flowers-trillium"
     ]
   },
   {

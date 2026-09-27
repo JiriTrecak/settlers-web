@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "meadow-boulder",
+ "recipe": "art/recipes/meadow_debris.py",
+ "triangles": 480,
+ "size": [
+  2.381,
+  1.683,
+  1.195
+ ]
+}

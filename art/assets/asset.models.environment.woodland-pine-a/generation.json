@@ -1,7 +1,7 @@
 {
-  "method": "built-in imagegen",
+  "method": "procedural recolour: art/recipes/woodland_pine_atlas.py",
   "originalPixels": true,
-  "brief": "Original six-cell dense hanging spruce bough atlas; broad rounded shoulders, tapering short needle sprays, quiet green masses without broad leaves or miniature whole-tree forms. Built-in ImageGen, reference-guided original artwork.",
-  "source": "exec-27a3e2ea-f69f-47f9-bbd7-057311872a15.png",
+  "brief": "Saturated conifer ramp over the existing bough silhouettes; bright sprig rims, deep cores.",
+  "source": "pine-atlas.png",
   "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

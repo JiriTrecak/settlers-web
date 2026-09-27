@@ -1,5 +1,6 @@
 import {authoringSceneSchema,proceduralLayerSchema,authoredObjectSchema,type AuthoringScene,type ProceduralLayer,type AuthoredObject} from './layers';
 import {bakeLayer,type GeneratedScene} from './generate';
+import {applySceneEdits,type SceneEdit} from './sceneCommands';
 export type SceneSelection={kind:'layer'|'object';id:string}|null;
 /** A document history contains authored state only. Generated meshes/caches are disposable. */
 export class AuthoringHistory{
@@ -25,6 +26,8 @@ export class AuthoringHistory{
   const field=selection.kind==='layer'?'layers':'objects',item=this.current[field].find(o=>o.id===selection.id);if(!item)throw Error('Selection no longer exists');if(item.locked)throw Error('Selection is locked');
   this.commit({...this.current,[field]:this.current[field].filter(o=>o.id!==selection.id)},null);
  }
+ /** Many edits, one undo step. */
+ batch(edits:readonly SceneEdit[]){this.commit(applySceneEdits(this.current,edits),null);}
  selectGenerated(id:string,compiled:GeneratedScene){const owner=compiled.objects.find(o=>o.id===id)?.owner;if(!owner||!this.current.layers.some(l=>l.id===owner))throw Error('Generated object has no current layer');this.selection={kind:'layer',id:owner};}
  bake(id:string,compiled:GeneratedScene){this.commit(bakeLayer(this.current,id,compiled),null);}
  undo(){const state=this.past.pop();if(!state)return;this.future.push({scene:this.current,selection:this.selection});this.current=state.scene;this.selection=state.selection;this.revision++;}

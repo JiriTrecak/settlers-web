@@ -37,7 +37,8 @@ class Kit(ForestKit):
   return ((col+.015+u*.97)/3,1-(row+.015+(1-v)*.97)/2)
  def bough(self,a,h,r,width,drop,foliage,cell=0):
   # One draped 3-by-4 sheet per bough, as in the reference's construction.
-  # The centre ridge is raised above the edges; no intersecting secondary card.
+  # The centre ridge sits well above the edges: the flat-shaded fold gives each
+  # bough a sunlit half and a shaded half. No intersecting secondary card.
   # Atlas top is the attachment end and atlas bottom is the hanging outer end.
   d=Vector((math.cos(a),math.sin(a),0));side=Vector((-math.sin(a),math.cos(a),0))
   verts=[]
@@ -45,7 +46,7 @@ class Kit(ForestKit):
    t=j/3;distance=r*(.025+t*.88+.12*t*t)
    for col in range(3):
     across=col-1
-    edge_drop=abs(across)*width*.16
+    edge_drop=abs(across)*width*.36
     c=d*(distance-abs(across)*r*.06)+side*across*width*.5
     c.z=h-drop*(.65*t+.35*t*t)-edge_drop
     verts.append(tuple(c))

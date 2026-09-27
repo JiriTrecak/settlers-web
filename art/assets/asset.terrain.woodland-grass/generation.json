@@ -1,7 +1,7 @@
 {
-  "method": "built-in imagegen",
+  "method": "imagegen (user-provided) graded by art/recipes/grade_terrain_tile.py 30 54 21",
   "originalPixels": true,
-  "brief": "Dense short painted meadow grass seen from above, deep natural greens; seamless ground beneath 3D grass.",
-  "source": "grass.png",
+  "brief": "Painted leafy meadow ground; seamless; luminance doubles as clump height for the grass-over-dirt blend.",
+  "source": "gen-grass-graded.png",
   "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

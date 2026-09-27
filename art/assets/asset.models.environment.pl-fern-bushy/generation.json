@@ -7,6 +7,8 @@
   "scale": 1.6,
   "textureSize": 1024,
   "groundColor": false,
+  "albedoMultiplier": 1,
+  "alphaBleed": "premultiplied resize + nearest opaque colour",
   "triangles": 76,
   "height": 1.038
 }

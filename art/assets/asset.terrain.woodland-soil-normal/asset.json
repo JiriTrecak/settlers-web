@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-soil-normal",
   "name": "woodland soil · normal/height",
   "kind": "terrain-material",
-  "revision": 10,
+  "revision": 19,
   "status": "published",
   "tags": [
     "original",
@@ -14,15 +14,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "b2c80e361e4781bbf26b4f55298f4d725a9a65af6f2961f95c2a2e6dae54a258",
-      "bytes": 1155491
+      "sha256": "51b137a903c3f48ca84f20bbfdefccc519d65154864ce9971ba958ee64218822",
+      "bytes": 1339168
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
-      "bytes": 319
+      "sha256": "4e75a28b3c5391dc588cd1379d470d22273f4f25f095dd8695e4a9f77a09bcdf",
+      "bytes": 320
     }
   ],
   "usesGeometry": false,

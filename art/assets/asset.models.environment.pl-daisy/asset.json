@@ -3,7 +3,7 @@
   "id": "asset.models.environment.pl-daisy",
   "name": "daisy",
   "kind": "foliage",
-  "revision": 8,
+  "revision": 15,
   "status": "published",
   "tags": [
     "pl-pack",
@@ -15,36 +15,36 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-      "bytes": 1121968
+      "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+      "bytes": 1000395
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "3882aabdbb5d327eca7b7c8f897e167d359be25bea057366578c10e69f65f7cc",
-      "bytes": 295
+      "sha256": "c3df5749bb5f47a83fcb6255f5eebd6e3f27c6a46a53eb67a99b23c1212d62ac",
+      "bytes": 384
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "a2cec2fb76a832ffbdcc74d51c5f5621914b165c8937c490c57f33f16b5cc41f",
-      "bytes": 1134420
+      "sha256": "4ae2149e2678d6e8b8f562a8c43cb49ced8b9b2a41a742fdc42332d4af092cfc",
+      "bytes": 1012848
     },
     {
       "role": "recipe",
       "index": 1,
       "format": "py",
-      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-      "bytes": 5186
+      "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+      "bytes": 6743
     },
     {
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "c31a8cebe04e329a7ecb65da2ad208be444574adef3247010e17f1478b73ecb2",
-      "bytes": 15455565
+      "sha256": "66602ff138abad4639ce9067fa10ccb53cc90b93b9edb2155f156f32793df38b",
+      "bytes": 15333992
     }
   ],
   "usesGeometry": true,

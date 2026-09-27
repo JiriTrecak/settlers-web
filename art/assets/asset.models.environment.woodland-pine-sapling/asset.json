@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-sapling",
   "name": "woodland pine sapling",
   "kind": "foliage",
-  "revision": 23,
+  "revision": 33,
   "status": "published",
   "tags": [
     "original",
@@ -15,8 +15,8 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-      "bytes": 1070959
+      "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+      "bytes": 781668
     },
     {
       "role": "albedo",
@@ -36,15 +36,15 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-      "bytes": 458
+      "sha256": "42f6817c9cb008776adf060af7578d52a2f6c3627ff14ae54606781ba27b8ea9",
+      "bytes": 324
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "c801a52d0cd95f2b1bfa9d81339f3a78313ae73a5119712b10fbdb1e83324351",
-      "bytes": 1341588
+      "sha256": "a8a9adb91144cb73b9ae974c89a003577ea94a01cc8564b6fc8af2ebe08b681e",
+      "bytes": 1052304
     },
     {
       "role": "recipe",
@@ -71,15 +71,15 @@
       "role": "source",
       "index": 3,
       "format": "glb",
-      "sha256": "758f7d4a6ce1e591115d389eabe991a5c49734e2f4eacb54ebd27766cbf5c631",
-      "bytes": 1331976
+      "sha256": "d28dba2e0d52e368ed105793c3b421f894d4a74448f4b2e28833284b1b519d6d",
+      "bytes": 1042736
     },
     {
       "role": "source",
       "index": 4,
       "format": "glb",
-      "sha256": "33355899feb15c478b46b110013df4574bc3b2caa28ef28d5da96418c1f5305e",
-      "bytes": 1332008
+      "sha256": "111bbc1d0cfeeb97a46bb5a326b113945c19a75a2d73dd12281fd035344c648b",
+      "bytes": 1042768
     },
     {
       "role": "source",

@@ -11,7 +11,8 @@ export function riverPoint(x:number,z:number,river:CompiledRiver){
  if(!river.area)return nearestSpline(x,z,river.samples);
  return {x,z,elevation:river.area.elevation,widthScale:1,depthScale:1,flowScale:0,distance:0,offset:river.width/2-regionDistance(x,z,river.area),direction:{x:0,z:0}};
 }
-export type GeneratedScene={terrain:TerrainGrid;objects:GeneratedObject[];rivers:CompiledRiver[];paint:MaterialPaint[];landformSurface?:{grass:Float32Array;rock:Float32Array};scatterLayers:string[];forestLayers?:string[];issues:GenerationIssue[]};
+/** `meadow` is base grass coverage (max of all meadow layers); path/river paint still overrides it. */
+export type GeneratedScene={terrain:TerrainGrid;objects:GeneratedObject[];rivers:CompiledRiver[];paint:MaterialPaint[];landformSurface?:{grass:Float32Array;rock:Float32Array};meadow?:Float32Array;scatterLayers:string[];forestLayers?:string[];issues:GenerationIssue[]};
 type Prepared={layer:ProceduralLayer;recipe:LandscapeRecipe;bounds:Bounds;spline?:SplineSample[]};
 const clamp=(v:number)=>Math.max(0,Math.min(1,v));
 const smooth=(v:number)=>{const t=clamp(v);return t*t*(3-2*t);};
@@ -152,21 +153,67 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    }
   }
  }
+ type Band={min:number;max:number};
+ const noBand=undefined as {coverage?:Band;trees?:Band}|undefined;
  const scatterPasses=prepared.flatMap(p=>{
-  if(p.recipe.type==='terrain'&&p.recipe.chunks)return [{...p,recipe:{...p.recipe.chunks,type:'ground-cover' as const},reserve:true,pass:'rock',embed:true,minEdge:0,maxEdge:Math.max(1,p.recipe.falloff*.4)}];
+  const stage=generationStage[p.recipe.type];
+  if(p.recipe.type==='terrain'&&p.recipe.chunks)return [{...p,recipe:{...p.recipe.chunks,type:'ground-cover' as const},stage,band:noBand,reserve:true,pass:'rock',embed:true,minEdge:0,maxEdge:Math.max(1,p.recipe.falloff*.4)}];
+  if(p.recipe.type==='meadow')return (p.recipe.accents??[]).map(a=>({...p,recipe:{...a,type:'grass' as const},stage,band:{coverage:a.coverage,trees:a.trees} as typeof noBand,reserve:false,embed:false,pass:'accent-'+a.id,minEdge:0,maxEdge:Infinity}));
   if(!('species'in p.recipe))return [];
-  const core={...p,recipe:p.recipe,reserve:p.recipe.type==='forest',embed:false,pass:'interior',minEdge:p.recipe.type==='forest'?p.recipe.interiorMargin:0,maxEdge:Infinity};
+  const core={...p,recipe:p.recipe,stage,band:noBand,reserve:p.recipe.type==='forest',embed:false,pass:'interior',minEdge:p.recipe.type==='forest'?p.recipe.interiorMargin:0,maxEdge:Infinity};
   if(p.recipe.type!=='forest')return [core];
-  return [core,...(p.recipe.edge?[{...p,recipe:{...p.recipe.edge,type:'forest' as const,interiorMargin:0},reserve:true,embed:false,pass:'edge',minEdge:0,maxEdge:p.recipe.edge.width}]:[]),...(p.recipe.details??[]).map(d=>({...p,recipe:{...d,type:'forest' as const,interiorMargin:0},reserve:false,embed:false,pass:'detail-'+d.id,minEdge:0,maxEdge:Infinity}))];
+  return [core,...(p.recipe.edge?[{...p,recipe:{...p.recipe.edge,type:'forest' as const,interiorMargin:0},stage,band:noBand,reserve:true,embed:false,pass:'edge',minEdge:0,maxEdge:p.recipe.edge.width}]:[]),...(p.recipe.details??[]).map(d=>({...p,recipe:{...d,type:'forest' as const,interiorMargin:0},stage,band:noBand,reserve:false,embed:false,pass:'detail-'+d.id,minEdge:0,maxEdge:Infinity}))];
  });
  const baked=scene.objects.filter(o=>o.bakedPlacement?.blocksVegetation).sort((a,b)=>a.bakedPlacement!.stage-b.bakedPlacement!.stage||a.bakedPlacement!.order-b.bakedPlacement!.order||a.bakedFrom!.localeCompare(b.bakedFrom!));
+ // Meadows read the trees actually placed, so they are grown once every forest pass has run.
+ const meadows=prepared.filter(p=>p.recipe.type==='meadow');
+ const trees=baked.filter(o=>o.bakedPlacement!.stage===generationStage.forest).map(o=>({x:o.x,z:o.z}));
+ const meadowCover=new Map<string,Float32Array>();
+ let meadow:Float32Array|undefined,nearest:Float32Array|undefined;
+ const growMeadows=()=>{
+  if(meadow||!meadows.length)return;
+  meadow=new Float32Array(base.samples.length);
+  // Nearest-trunk distance, stamped per tree out to the widest meadow's influence (accent bands included).
+  const range=Math.max(...meadows.map(({recipe:r})=>r.type==='meadow'?Math.max(r.reach+r.falloff,...(r.accents??[]).map(a=>a.trees?.max??0)):0));
+  nearest=new Float32Array(base.samples.length).fill(Infinity);
+  for(const t of trees)eachVertex(terrain,{minX:t.x-range,maxX:t.x+range,minZ:t.z-range,maxZ:t.z+range},(i,x,z)=>{const d=Math.hypot(x-t.x,z-t.z);if(d<nearest![i]!)nearest![i]=d;});
+  for(const {layer,recipe:r,bounds} of meadows){
+   if(r.type!=='meadow'||layer.shape.type==='spline')continue;
+   const shape=layer.shape,own=new Float32Array(base.samples.length);
+   eachVertex(terrain,bounds,(i,x,z)=>{
+    const edge=regionDistance(x,z,shape);if(edge<0)return;
+    const d=nearest![i]!;
+    // Shade → lush fringe → open ground. Two noise octaves break the rings into clumps and bald spots.
+    let c=d<r.canopy?r.under+(r.peak-r.under)*smooth(d/Math.max(.01,r.canopy)):d<=r.reach?r.peak:r.peak+(r.open-r.peak)*smooth((d-r.reach)/r.falloff);
+    if(r.noise)c+=(patchNoise(layer.seed,layer.id+'.meadow',x,z,r.noise.scale)*.65+patchNoise(layer.seed,layer.id+'.meadow.fine',x,z,r.noise.scale*.35)*.35-.5)*2*r.noise.strength;
+    // Fray: inside a tent band centred on the clean curve's half-coverage line, coverage is pulled toward
+    // noise around .5, so grass and dirt interleave as worn holes and stray islands instead of shifting one
+    // smooth line. A ~5× coarser noise sets how torn each stretch of rim is.
+    if(r.ragged&&r.ragged.strength>0){
+     const half=r.falloff/2,b=smooth(clamp(1-Math.abs(d-(r.reach+half))/(half+r.ragged.width)));
+     if(b>0){
+      const torn=.15+.85*smooth(patchNoise(layer.seed,layer.id+'.ragged.span',x,z,r.ragged.scale*5));
+      const fray=.5+(patchNoise(layer.seed,layer.id+'.ragged',x,z,r.ragged.scale)*.6+patchNoise(layer.seed,layer.id+'.ragged.fine',x,z,r.ragged.scale*.45)*.4-.5)*2*r.ragged.strength;
+      c+=(fray-c)*b*torn;
+     }
+    }
+    own[i]=clamp(c)*(r.edgeFade?smooth(edge/r.edgeFade):1);
+    meadow![i]=Math.max(meadow![i]!,own[i]!);
+   });
+   // Accent bands see the coverage the terrain will show: landform grass, then paint in order (mirrors authoredTerrain).
+   for(let i=0;i<own.length;i++){let c=Math.max(own[i]!,landformSurface?.grass[i]??0);for(const p of paint){const w=p.weights[i]!;if(w>0)c=c*(1-w)+(p.material===r.material?w:0);}own[i]=c;}
+   meadowCover.set(layer.id,own);
+  }
+ };
  let bakedIndex=0;
- for(const {layer,recipe,bounds,pass,minEdge,maxEdge,reserve,embed} of scatterPasses){
+ for(const {layer,recipe,bounds,pass,minEdge,maxEdge,reserve,embed,stage,band} of scatterPasses){
   while(bakedIndex<baked.length){const obj=baked[bakedIndex]!,rank=obj.bakedPlacement!;
    if(rank.stage>generationStage[recipe.type]||(rank.stage===generationStage[recipe.type]&&(rank.order>layer.order||(rank.order===layer.order&&obj.bakedFrom!>layer.id))))break;
    footprints.add(obj.x,obj.z,Math.max(0,assets.clearance(obj.asset))*obj.scale);bakedIndex++;
   }
+  if(stage>=generationStage.meadow)growMeadows();
   if(layer.shape.type==='spline')continue;
+  const cover=band?.coverage?{...terrain,samples:meadowCover.get(layer.id)!}:undefined;
   const spacingFootprints=new Footprints();
   const density=recipe.density??1;if(density===0)continue;
   const shape=layer.shape,spacing=recipe.spacing/Math.sqrt(density);
@@ -180,6 +227,8 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    const x=(ix+.5+(random(0)-.5)*recipe.jitter)*spacing,z=(iz+.5+(random(1)-.5)*recipe.jitter)*spacing;
    if(x<terrain.originX||z<terrain.originZ||x>terrain.originX+(terrain.width-1)*terrain.step||z>terrain.originZ+(terrain.height-1)*terrain.step)continue;
    const edge=regionDistance(x,z,shape);if(edge<minEdge||edge>maxEdge)continue;
+   if(cover&&band?.coverage){const c=sample(cover,x,z);if(c<band.coverage.min||c>band.coverage.max)continue;}
+   if(band?.trees&&nearest){const gx=Math.round((x-terrain.originX)/terrain.step),gz=Math.round((z-terrain.originZ)/terrain.step),d=nearest[Math.min(terrain.height-1,Math.max(0,gz))*terrain.width+Math.min(terrain.width-1,Math.max(0,gx))]!;if(d<band.trees.min||d>band.trees.max)continue;}
    const patch=recipe.pattern!=='scattered'&&patchSettings?1-patchSettings.strength+patchSettings.strength*patchNoise(layer.seed,layer.id,x,z,patchSettings.scale):1;
    if(random(2)>=recipe.probability*(recipe.edgeFade?clamp(edge/recipe.edgeFade):1)*patch)continue;
    if(recipe.riverBank){let bankDistance=Infinity;for(const r of rivers){const p=riverPoint(x,z,r);bankDistance=Math.min(bankDistance,p.offset-r.width*p.widthScale/2);}if(bankDistance<recipe.riverBank.min||bankDistance>recipe.riverBank.max)continue;}
@@ -201,9 +250,11 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    if(recipe.minSpacing)spacingFootprints.add(x,z,recipe.minSpacing/2);
    // Vegetation remains batchable; only trees create exclusions for subsequent layers.
    if(reserve)footprints.add(x,z,radius);
+   if(reserve&&recipe.type==='forest')trees.push({x,z});
   }
  }
- return {terrain,objects,rivers,paint,issues,landformSurface,forestLayers:prepared.filter(p=>p.recipe.type==='forest').map(p=>p.layer.id),scatterLayers:prepared.filter(p=>'species'in p.recipe).map(p=>p.layer.id)};
+ growMeadows();
+ return {terrain,objects,rivers,paint,issues,landformSurface,meadow,forestLayers:prepared.filter(p=>p.recipe.type==='forest').map(p=>p.layer.id),scatterLayers:prepared.filter(p=>'species'in p.recipe).map(p=>p.layer.id)};
 }
 /** Baking is a document operation; callers record this entire result as one undo step. */
 export function bakeLayer(scene:AuthoringScene,layerId:string,compiled:GeneratedScene):AuthoringScene{

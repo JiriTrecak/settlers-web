@@ -3,7 +3,7 @@
   "id": "asset.models.environment.pl-fern-bushy",
   "name": "fern bushy",
   "kind": "foliage",
-  "revision": 8,
+  "revision": 15,
   "status": "published",
   "tags": [
     "pl-pack",
@@ -15,36 +15,36 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "d90d2842a33c398362f18a914e73f797db01a6c80d82ba6b4c162f2fb52657ea",
-      "bytes": 1193531
+      "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+      "bytes": 1053651
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "855708ab92169aad9dff668bba1a7cc2de55d556ab4ff59000a2af7f18ad163a",
-      "bytes": 277
+      "sha256": "1742ef34fee0d8e16b2ee9ea45c5e566dd068399934002573ab812f5516e760d",
+      "bytes": 366
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "0be3a9c8f2e0ac36382b167473233ee166fb03f5b1c3600328c7123f5c97ffc2",
-      "bytes": 1197828
+      "sha256": "d8a8daa7f6e7a396bf3aa32112bbc3ecaa1986bc7519beea35f934ee711484d6",
+      "bytes": 1057948
     },
     {
       "role": "recipe",
       "index": 1,
       "format": "py",
-      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-      "bytes": 5186
+      "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+      "bytes": 6743
     },
     {
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "9c40351c282c75d0ffcb1f8fd2234bc85b88c34faf30f83e2740818b519848ae",
-      "bytes": 16632116
+      "sha256": "69ed07d681434b3ae54f561580ef217f9ca616626f7cd14fc24df8f3115828a6",
+      "bytes": 16492236
     }
   ],
   "usesGeometry": true,

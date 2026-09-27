@@ -3786,6 +3786,294 @@
       ]
     },
     {
+      "id": "asset.models.environment.meadow-boulder",
+      "name": "meadow boulder",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-boulder/geometry.glb",
+          "sha256": "ec1d74fb22491aaf9322a21b48dc5483c67b2edbfabbfd2b702140306c174467",
+          "bytes": 11048
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-boulder",
+          "file": "assets/library/asset.models.environment.meadow-boulder/geometry.glb",
+          "sceneryAsset": "meadow-boulder"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-boulder",
+          "name": "meadow boulder",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-boulder/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.meadow-pebble-a",
+      "name": "meadow pebble a",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-pebble-a/geometry.glb",
+          "sha256": "32259d937c6111a9ab28cae5e1d7f42f3312e643c12b16e240fdb31433b78e38",
+          "bytes": 2804
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-pebble-a",
+          "file": "assets/library/asset.models.environment.meadow-pebble-a/geometry.glb",
+          "sceneryAsset": "meadow-pebble-a"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-pebble-a",
+          "name": "meadow pebble a",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-pebble-a/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.meadow-pebble-b",
+      "name": "meadow pebble b",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-pebble-b/geometry.glb",
+          "sha256": "e197ab2808b100ed5edb33568741307206bbd1c4e61f90fe1025f156269bc246",
+          "bytes": 4628
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-pebble-b",
+          "file": "assets/library/asset.models.environment.meadow-pebble-b/geometry.glb",
+          "sceneryAsset": "meadow-pebble-b"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-pebble-b",
+          "name": "meadow pebble b",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-pebble-b/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.meadow-pebble-c",
+      "name": "meadow pebble c",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-pebble-c/geometry.glb",
+          "sha256": "3b3be2daf5f2c7c086ae0b2f30d7e540c8eed18a55322cbc59c6f4ed29a66759",
+          "bytes": 7124
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-pebble-c",
+          "file": "assets/library/asset.models.environment.meadow-pebble-c/geometry.glb",
+          "sceneryAsset": "meadow-pebble-c"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-pebble-c",
+          "name": "meadow pebble c",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-pebble-c/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.meadow-stick-a",
+      "name": "meadow stick a",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-stick-a/geometry.glb",
+          "sha256": "e91be31d8ff95758cfd4946ba2130ebb439a15170de3a8062bf343d673e17741",
+          "bytes": 3784
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-stick-a",
+          "file": "assets/library/asset.models.environment.meadow-stick-a/geometry.glb",
+          "sceneryAsset": "meadow-stick-a"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-stick-a",
+          "name": "meadow stick a",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-stick-a/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.meadow-stick-b",
+      "name": "meadow stick b",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "debris"
+      ],
+      "revision": 1,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.meadow-stick-b/geometry.glb",
+          "sha256": "6b42b3981c903b8fe57d2c9ad2468fa23754cd7b825becbdb4a58479ec1d453c",
+          "bytes": 3920
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.meadow-stick-b",
+          "file": "assets/library/asset.models.environment.meadow-stick-b/geometry.glb",
+          "sceneryAsset": "meadow-stick-b"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "meadow-stick-b",
+          "name": "meadow stick b",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.meadow-stick-b/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.pl-clover-a",
+      "name": "clover a",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "clover"
+      ],
+      "revision": 8,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.environment.pl-clover-a/albedo.png",
+          "sha256": "3ab61b13dfaf884e06d5bb4adaaa8aedc4739eb561294ccd2f948ec2b9864c8e",
+          "bytes": 904107
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-clover-a/geometry.glb",
+          "sha256": "c6e2f64102960ed8019cba5488e9aa68f48a864ff0e6a3a72f4adbb7a91725e7",
+          "bytes": 921988
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-clover-a",
+          "name": "clover a",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-clover-a/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.pl-clover-sorrel",
+      "name": "clover sorrel",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "clover"
+      ],
+      "revision": 8,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.environment.pl-clover-sorrel/albedo.png",
+          "sha256": "3ab61b13dfaf884e06d5bb4adaaa8aedc4739eb561294ccd2f948ec2b9864c8e",
+          "bytes": 904107
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-clover-sorrel/geometry.glb",
+          "sha256": "53daccf3da37d81badfd78e5b233c14380f964555f6145e2bdca934282a02b73",
+          "bytes": 940896
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-clover-sorrel",
+          "name": "clover sorrel",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-clover-sorrel/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.pl-daisy",
       "name": "daisy",
       "kind": "model",
@@ -3794,20 +4082,20 @@
         "woodland",
         "daisy"
       ],
-      "revision": 8,
+      "revision": 15,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-daisy/albedo.png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-daisy/geometry.glb",
-          "sha256": "a2cec2fb76a832ffbdcc74d51c5f5621914b165c8937c490c57f33f16b5cc41f",
-          "bytes": 1134420
+          "sha256": "4ae2149e2678d6e8b8f562a8c43cb49ced8b9b2a41a742fdc42332d4af092cfc",
+          "bytes": 1012848
         }
       ],
       "render": [],
@@ -3830,20 +4118,20 @@
         "woodland",
         "fern"
       ],
-      "revision": 8,
+      "revision": 15,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-fern-bushy/albedo.png",
-          "sha256": "d90d2842a33c398362f18a914e73f797db01a6c80d82ba6b4c162f2fb52657ea",
-          "bytes": 1193531
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-fern-bushy/geometry.glb",
-          "sha256": "0be3a9c8f2e0ac36382b167473233ee166fb03f5b1c3600328c7123f5c97ffc2",
-          "bytes": 1197828
+          "sha256": "d8a8daa7f6e7a396bf3aa32112bbc3ecaa1986bc7519beea35f934ee711484d6",
+          "bytes": 1057948
         }
       ],
       "render": [],
@@ -3858,8 +4146,8 @@
       ]
     },
     {
-      "id": "asset.models.environment.pl-fern-sword",
-      "name": "fern sword",
+      "id": "asset.models.environment.pl-fern-bushy-b",
+      "name": "fern bushy b",
       "kind": "model",
       "tags": [
         "pl-pack",
@@ -3871,15 +4159,51 @@
       "outputs": [
         {
           "role": "image",
+          "path": "assets/library/asset.models.environment.pl-fern-bushy-b/albedo.png",
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-fern-bushy-b/geometry.glb",
+          "sha256": "8735f94fe4ece3942623ab024ef91f831f08fa062aeaa615ab241685e0f3005b",
+          "bytes": 1060680
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-fern-bushy-b",
+          "name": "fern bushy b",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-fern-bushy-b/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.pl-fern-sword",
+      "name": "fern sword",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "fern"
+      ],
+      "revision": 15,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
           "path": "assets/library/asset.models.environment.pl-fern-sword/albedo.png",
-          "sha256": "d90d2842a33c398362f18a914e73f797db01a6c80d82ba6b4c162f2fb52657ea",
-          "bytes": 1193531
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-fern-sword/geometry.glb",
-          "sha256": "0209a8fc6bff63de29e06e7af9f213cfce179bbebecf757a0b1367d402abad77",
-          "bytes": 1197056
+          "sha256": "6058567cc2db2696ba71b70c02dc069423df2adabef582d0c86ef9163adc74a9",
+          "bytes": 1057176
         }
       ],
       "render": [],
@@ -3894,6 +4218,42 @@
       ]
     },
     {
+      "id": "asset.models.environment.pl-fern-sword-b",
+      "name": "fern sword b",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "fern"
+      ],
+      "revision": 8,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.environment.pl-fern-sword-b/albedo.png",
+          "sha256": "5f9da691b82079f9be76ac33131cdc6c4164a9170e9a7fd1672543c57ebd4cc0",
+          "bytes": 1053651
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-fern-sword-b/geometry.glb",
+          "sha256": "fb65a12d9773fc16291e058b5e60455e93e6b3d9a1d2735d7d71beb388b801de",
+          "bytes": 1060908
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-fern-sword-b",
+          "name": "fern sword b",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-fern-sword-b/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.pl-flowers-blue",
       "name": "flowers blue",
       "kind": "model",
@@ -3902,20 +4262,20 @@
         "woodland",
         "flowers"
       ],
-      "revision": 8,
+      "revision": 15,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-flowers-blue/albedo.png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-flowers-blue/geometry.glb",
-          "sha256": "41d6c1976568eb43de1aa58ef7236495004c3f9f54b9a9e077ac4c47b8ee4f3c",
-          "bytes": 1127996
+          "sha256": "265c1e67d7391f80686de5dd858d941fb53620a82e7474e9342b75d59f7a3e33",
+          "bytes": 1006424
         }
       ],
       "render": [],
@@ -3930,8 +4290,8 @@
       ]
     },
     {
-      "id": "asset.models.environment.pl-flowers-white",
-      "name": "flowers white",
+      "id": "asset.models.environment.pl-flowers-bluebell",
+      "name": "flowers bluebell",
       "kind": "model",
       "tags": [
         "pl-pack",
@@ -3943,15 +4303,87 @@
       "outputs": [
         {
           "role": "image",
+          "path": "assets/library/asset.models.environment.pl-flowers-bluebell/albedo.png",
+          "sha256": "3bd408bcbdcb699660896faf97c2b68d32a2c818e07b8b6f7d271fbfeb47471e",
+          "bytes": 813036
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-flowers-bluebell/geometry.glb",
+          "sha256": "f8eec49392f9db5998da174739e310eeb6d6c382e2d05ac37279be893e161879",
+          "bytes": 822516
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-flowers-bluebell",
+          "name": "flowers bluebell",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-flowers-bluebell/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.pl-flowers-trillium",
+      "name": "flowers trillium",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "flowers"
+      ],
+      "revision": 8,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.environment.pl-flowers-trillium/albedo.png",
+          "sha256": "3bd408bcbdcb699660896faf97c2b68d32a2c818e07b8b6f7d271fbfeb47471e",
+          "bytes": 813036
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.pl-flowers-trillium/geometry.glb",
+          "sha256": "3c93ff626c8c48825657fadf5612e1f60b1d385db8a1490989d2a754155bfa95",
+          "bytes": 831216
+        }
+      ],
+      "render": [],
+      "scenery": [
+        {
+          "id": "pl-flowers-trillium",
+          "name": "flowers trillium",
+          "category": "foliage",
+          "type": "prop",
+          "file": "library/asset.models.environment.pl-flowers-trillium/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.pl-flowers-white",
+      "name": "flowers white",
+      "kind": "model",
+      "tags": [
+        "pl-pack",
+        "woodland",
+        "flowers"
+      ],
+      "revision": 15,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "image",
           "path": "assets/library/asset.models.environment.pl-flowers-white/albedo.png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-flowers-white/geometry.glb",
-          "sha256": "5c7a95ce137062fd66c8498de100f30dfe2181b7233110a68dbfcb79e9237cfa",
-          "bytes": 1128304
+          "sha256": "e8c4419f6ba0bfbafa471cbdc26d7cd3109d61235c1f9e0979cf6cb63d1610d9",
+          "bytes": 1006732
         }
       ],
       "render": [],
@@ -3974,20 +4406,20 @@
         "woodland",
         "flowers"
       ],
-      "revision": 8,
+      "revision": 15,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-flowers-yellow/albedo.png",
-          "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
-          "bytes": 1121968
+          "sha256": "219fc115c9cd5c0f3e559f2451773f930637e090a43fd86ad7ed57f33918ff74",
+          "bytes": 1000395
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-flowers-yellow/geometry.glb",
-          "sha256": "64286d2eedfe05599da3cf4d6d7fcb9028e73a0206b274f205328d4e7b0c368d",
-          "bytes": 1128308
+          "sha256": "cee7c109be9908cd326580b0cd4907b94fdcdfa8ed8fc879a5a2097478f0007f",
+          "bytes": 1006736
         }
       ],
       "render": [],
@@ -4010,20 +4442,20 @@
         "woodland",
         "grass"
       ],
-      "revision": 8,
+      "revision": 22,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-grass-lush-a/albedo.png",
-          "sha256": "7a3e33074ce5037f718e0181766ac3f4ffee1dac520a4a0f177014061a644621",
-          "bytes": 125575
+          "sha256": "939f4f357b7d75e88d52d3157cfc96825209695d63a79de8e910ba41b7640d45",
+          "bytes": 114196
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-grass-lush-a/geometry.glb",
-          "sha256": "08ef2acf0029635fb1aa875a320261d025609734f6f36916c8c846f61efde855",
-          "bytes": 128776
+          "sha256": "c1f52c53eb32170f368f714e9d64eab5f2363edcef317f88de25d5720f45ac98",
+          "bytes": 117396
         }
       ],
       "render": [],
@@ -4046,20 +4478,20 @@
         "woodland",
         "grass"
       ],
-      "revision": 8,
+      "revision": 22,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-grass-lush-b/albedo.png",
-          "sha256": "9839d3441b94d4b6b293a6d7578d3c1cd0e8efd2697e8d775863c3e0206244f7",
-          "bytes": 124221
+          "sha256": "462e48471e57952a81e21f8ea51640b9fc9a66989aea24d823673821a7b2bc5e",
+          "bytes": 115033
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-grass-lush-b/geometry.glb",
-          "sha256": "9866419a607f8b2d74b0672119dd0917815cce88c519866bf0b2d5402ee9cd33",
-          "bytes": 127424
+          "sha256": "813cc903e67145e4dd4f7bc18540faa944c256330578b175d69f9b31bd97594a",
+          "bytes": 118236
         }
       ],
       "render": [],
@@ -4082,20 +4514,20 @@
         "woodland",
         "grass"
       ],
-      "revision": 8,
+      "revision": 22,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-grass-lush-c/albedo.png",
-          "sha256": "807ff04f3e328ff08bfe55e3c7c735d3eb6afeb499f94960b3e550cc45da1683",
-          "bytes": 128633
+          "sha256": "dbd2f39219276172a958ac7c106d8adcdafaf5ed253aa15719bd6663b0b59514",
+          "bytes": 117518
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-grass-lush-c/geometry.glb",
-          "sha256": "d0ae954b1d1bfef86b041e4a9c4ae10d5656e18d63a7f91fd5f69150d1e5454c",
-          "bytes": 131136
+          "sha256": "39ccc5edb9ced5270185bdf0cc9b6013f3d952be3cd250a721f2833cce04b5a2",
+          "bytes": 120020
         }
       ],
       "render": [],
@@ -4118,20 +4550,20 @@
         "woodland",
         "grass"
       ],
-      "revision": 8,
+      "revision": 22,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.pl-grass-tall/albedo.png",
-          "sha256": "8f54dfa546c620d1b3fb407b856e325981e0f1f4ff2e948cd44a29ec18d1975d",
-          "bytes": 125779
+          "sha256": "b8552937f96c17346c872515327ff06f476a15c9fcafc109def4979f0797d1e1",
+          "bytes": 117938
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.pl-grass-tall/geometry.glb",
-          "sha256": "60231e526e607f318127d1cc1d5b20e5a41acdfeb7fc342e897f94109acee003",
-          "bytes": 133604
+          "sha256": "ec902451b7e44951e04f8ed83d028d3dd5a4101a915987c38df97fb19f8a4ed8",
+          "bytes": 125764
         }
       ],
       "render": [],
@@ -5502,14 +5934,14 @@
         "woodland",
         "forest"
       ],
-      "revision": 23,
+      "revision": 33,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-a/albedo.png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "image",
@@ -5520,8 +5952,8 @@
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-a/geometry.glb",
-          "sha256": "10453f1f2d980923033544039494cab01303d4d8b28a96350c5048b4bb7ad1d1",
-          "bytes": 1381664
+          "sha256": "c6af6a93c97596c2ffdd2d5a84dfee2b85f9e88edb74244b64592b5a26fb373b",
+          "bytes": 1092380
         }
       ],
       "render": [
@@ -5551,14 +5983,14 @@
         "woodland",
         "forest"
       ],
-      "revision": 23,
+      "revision": 33,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-b/albedo.png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "image",
@@ -5569,8 +6001,8 @@
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-b/geometry.glb",
-          "sha256": "1eca776efeebcb54b838481d39b6a25ba93f07d58215423138882ef1c589b7bb",
-          "bytes": 1381668
+          "sha256": "7bf996f9905a3b3b575a8799f6412b06ab9f3f7f467b20e20aba76839930b0b4",
+          "bytes": 1092388
         }
       ],
       "render": [
@@ -5600,14 +6032,14 @@
         "woodland",
         "forest"
       ],
-      "revision": 23,
+      "revision": 33,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-sapling/albedo.png",
-          "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-          "bytes": 1070959
+          "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+          "bytes": 781668
         },
         {
           "role": "image",
@@ -5618,8 +6050,8 @@
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb",
-          "sha256": "c801a52d0cd95f2b1bfa9d81339f3a78313ae73a5119712b10fbdb1e83324351",
-          "bytes": 1341588
+          "sha256": "a8a9adb91144cb73b9ae974c89a003577ea94a01cc8564b6fc8af2ebe08b681e",
+          "bytes": 1052304
         }
       ],
       "render": [
@@ -7203,20 +7635,20 @@
         "original",
         "woodland"
       ],
-      "revision": 15,
+      "revision": 33,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.terrain.woodland-dirt/albedo.png",
-          "sha256": "6ce2ce8df4c582d80b94956e9d01e26d8a54886b17e42ee113ffbf6d2a8f3990",
-          "bytes": 1908399
+          "sha256": "45d31cc16f50205b7a84ba2ccd31b7d2c9aff77258adc6a2367e697fc25e8375",
+          "bytes": 1454731
         },
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-dirt/data.bin",
-          "sha256": "776756455492d836a4f8134c204e510ecd8a03913cbd2c54596f969d3cf74960",
-          "bytes": 1907171
+          "sha256": "a1ee1d44bcc501cab9e3f877e92a049bbddce3a181880cf3dc54226fcdf61f16",
+          "bytes": 1515995
         }
       ],
       "render": [],
@@ -7230,14 +7662,14 @@
         "original",
         "woodland"
       ],
-      "revision": 8,
+      "revision": 17,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-dirt-normal/data.bin",
-          "sha256": "d79f490b2cf8b3bef8bb7c0ca8010e6db163d963d8699cab503eab61b574adc6",
-          "bytes": 1190846
+          "sha256": "2f8d8a207021db466e35069ebc7a48ba28e209778cd327d614d01813d8eabe3a",
+          "bytes": 1282230
         }
       ],
       "render": [],
@@ -7251,20 +7683,20 @@
         "original",
         "woodland"
       ],
-      "revision": 17,
+      "revision": 29,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.terrain.woodland-grass/albedo.png",
-          "sha256": "e0c02d2cc420db29aab3996f6a2fc4a66c332c3fa8bb664e965503b1af807509",
-          "bytes": 2432782
+          "sha256": "12ac6a41b9250f7ea85e07122e2226f474bd23847685bee980cbe69c9fad41c9",
+          "bytes": 1992930
         },
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-grass/data.bin",
-          "sha256": "f3a65d7d3ebc6cd65559206eae8826b78dd2724a0573bb59c0a2ad9591090eed",
-          "bytes": 2536940
+          "sha256": "ea4f3a45d8d457639d6bc13b2025ee6cde77dc3377bcaf38e48fd80c29ef25ed",
+          "bytes": 2099616
         }
       ],
       "render": [],
@@ -7278,14 +7710,14 @@
         "original",
         "woodland"
       ],
-      "revision": 10,
+      "revision": 16,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-grass-normal/data.bin",
-          "sha256": "10debf31008704e07a66d0b6c8dc90b9e0c0f7ce1ee691ed19dc248b1aa2e67c",
-          "bytes": 1455493
+          "sha256": "024bb4c9b6cfcba61ea5a0322c3010f0e851d17492dbceb18ff36891d4b6bd4d",
+          "bytes": 1701103
         }
       ],
       "render": [],
@@ -7416,20 +7848,20 @@
         "original",
         "woodland"
       ],
-      "revision": 17,
+      "revision": 35,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.terrain.woodland-soil/albedo.png",
-          "sha256": "93c846209800bb3a8fcab847080b2de1ebedc8c2884558f2f301b6009b4ea150",
-          "bytes": 1868462
+          "sha256": "9cd2622ba6b869df398e247aea5a35f09015b661dd36109f431659240a654104",
+          "bytes": 1489436
         },
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-soil/data.bin",
-          "sha256": "19a329cb0680eae6f6a503a592b535c0efd674cfb5a44bc48443907695520c4c",
-          "bytes": 1872393
+          "sha256": "f600875033fc883916e73be8c7ece1e15a2666eac4ab9165251a534dacd924de",
+          "bytes": 1549671
         }
       ],
       "render": [],
@@ -7443,14 +7875,14 @@
         "original",
         "woodland"
       ],
-      "revision": 10,
+      "revision": 19,
       "profile": "terrain-material",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/asset.terrain.woodland-soil-normal/data.bin",
-          "sha256": "b2c80e361e4781bbf26b4f55298f4d725a9a65af6f2961f95c2a2e6dae54a258",
-          "bytes": 1155491
+          "sha256": "51b137a903c3f48ca84f20bbfdefccc519d65154864ce9971ba958ee64218822",
+          "bytes": 1339168
         }
       ],
       "render": [],
@@ -8071,14 +8503,14 @@
         "authoring",
         "original"
       ],
-      "revision": 5,
+      "revision": 11,
       "profile": "landscape-recipe",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/recipe.grass.meadow/definition.json",
-          "sha256": "ea4904ac516c13ad4a545531d5bb3ff6455330e8d8950ad8f2dab5d72e4808b0",
-          "bytes": 1762
+          "sha256": "2271675fe7619c63e1b3254e98c2ed0d89dd12d230003ba5494e7ac91e9e2b65",
+          "bytes": 1558
         }
       ],
       "render": [],
@@ -8101,6 +8533,27 @@
           "path": "assets/library/recipe.grass.winter/definition.json",
           "sha256": "477756bf5976cd6cac630066e3e69af508a442ba0e44f397dda78cde4c15dff9",
           "bytes": 1174
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "recipe.meadow.woodland-edge",
+      "name": "Meadow · woodland edge (tree-driven)",
+      "kind": "data",
+      "tags": [
+        "authoring",
+        "original"
+      ],
+      "revision": 28,
+      "profile": "landscape-recipe",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/library/recipe.meadow.woodland-edge/definition.json",
+          "sha256": "d9892e83d9f4fd5fe927d886368fb40eb7c8a017c951ac0ab3677123b53cfcfa",
+          "bytes": 8738
         }
       ],
       "render": [],

@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-b",
   "name": "woodland pine b",
   "kind": "tree",
-  "revision": 23,
+  "revision": 33,
   "status": "published",
   "tags": [
     "original",
@@ -15,8 +15,8 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
-      "bytes": 1070959
+      "sha256": "6e53cc9c6d1b88a307b4ce933bf781589fddecbd1fb131c748508b10a98b344c",
+      "bytes": 781668
     },
     {
       "role": "albedo",
@@ -36,15 +36,15 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-      "bytes": 458
+      "sha256": "42f6817c9cb008776adf060af7578d52a2f6c3627ff14ae54606781ba27b8ea9",
+      "bytes": 324
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "1eca776efeebcb54b838481d39b6a25ba93f07d58215423138882ef1c589b7bb",
-      "bytes": 1381668
+      "sha256": "7bf996f9905a3b3b575a8799f6412b06ab9f3f7f467b20e20aba76839930b0b4",
+      "bytes": 1092388
     },
     {
       "role": "recipe",
@@ -71,15 +71,15 @@
       "role": "source",
       "index": 3,
       "format": "glb",
-      "sha256": "6597bdb07119f1690fe2a680ef5abb1ee880247d474ae1793ab89bd83e1769ff",
-      "bytes": 1363504
+      "sha256": "091d4505200f3353f43b8efea1e762692e82d99a1fd3dbdebd60f6c539254c8f",
+      "bytes": 1074264
     },
     {
       "role": "source",
       "index": 4,
       "format": "glb",
-      "sha256": "c5115d428a50ed2010a5b57eeb2de116e61b8b33abfe5fdf2beb2514a4ce498c",
-      "bytes": 1356256
+      "sha256": "0816659843c54d61b3b6b0f62d61e360a29b4878633a518dc2500dd36e8e9b34",
+      "bytes": 1067012
     },
     {
       "role": "source",

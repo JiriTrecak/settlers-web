@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-dirt-normal",
   "name": "woodland dirt · normal/height",
   "kind": "terrain-material",
-  "revision": 8,
+  "revision": 17,
   "status": "published",
   "tags": [
     "original",
@@ -14,15 +14,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "d79f490b2cf8b3bef8bb7c0ca8010e6db163d963d8699cab503eab61b574adc6",
-      "bytes": 1190846
+      "sha256": "2f8d8a207021db466e35069ebc7a48ba28e209778cd327d614d01813d8eabe3a",
+      "bytes": 1282230
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "2df5cc42d78fd22362af28d3bfe2221a9d56b513fb64c85a2ff36738787b69cf",
-      "bytes": 303
+      "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
+      "bytes": 320
     }
   ],
   "usesGeometry": false,

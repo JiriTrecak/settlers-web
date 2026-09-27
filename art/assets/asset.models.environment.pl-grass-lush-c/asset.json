@@ -3,7 +3,7 @@
   "id": "asset.models.environment.pl-grass-lush-c",
   "name": "grass lush c",
   "kind": "foliage",
-  "revision": 8,
+  "revision": 22,
   "status": "published",
   "tags": [
     "pl-pack",
@@ -15,36 +15,36 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "807ff04f3e328ff08bfe55e3c7c735d3eb6afeb499f94960b3e550cc45da1683",
-      "bytes": 128633
+      "sha256": "dbd2f39219276172a958ac7c106d8adcdafaf5ed253aa15719bd6663b0b59514",
+      "bytes": 117518
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "7c37eed6978388ba8614ee75142338d66d4914198db9b83a000463337658a8e6",
-      "bytes": 306
+      "sha256": "e7e53502eebea9f2cb34e60c5abf6752d6e991e1e4246ac5f36e685e43356577",
+      "bytes": 397
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "d0ae954b1d1bfef86b041e4a9c4ae10d5656e18d63a7f91fd5f69150d1e5454c",
-      "bytes": 131136
+      "sha256": "39ccc5edb9ced5270185bdf0cc9b6013f3d952be3cd250a721f2833cce04b5a2",
+      "bytes": 120020
     },
     {
       "role": "recipe",
       "index": 1,
       "format": "py",
-      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
-      "bytes": 5186
+      "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
+      "bytes": 6743
     },
     {
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "2cbcf7c0a277e3ec62cd5cc03b75e1c430b45aaa45834ecd00e2f8ab4d718528",
-      "bytes": 2449385
+      "sha256": "22cf3ba0671b84f25561e3f9526adc82b58ba5002379e1fd460bf91468f35651",
+      "bytes": 2438270
     }
   ],
   "usesGeometry": true,

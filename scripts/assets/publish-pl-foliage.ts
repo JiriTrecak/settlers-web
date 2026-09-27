@@ -9,7 +9,7 @@ import type {FileRole} from '../../src/shared/authoring/asset';
 const store=new AuthoringStore(process.cwd());
 const LICENSE='Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.';
 // Ferns sway less than grass blades; flower heads a little more than ferns.
-const WIND:Record<string,{strength:number;speed:number;stiffness:number}>={grass:{strength:.14,speed:.22,stiffness:.7},flowers:{strength:.1,speed:.2,stiffness:.8},daisy:{strength:.1,speed:.2,stiffness:.8},fern:{strength:.05,speed:.16,stiffness:.9}};
+const WIND:Record<string,{strength:number;speed:number;stiffness:number}>={grass:{strength:.14,speed:.22,stiffness:.7},flowers:{strength:.1,speed:.2,stiffness:.8},daisy:{strength:.1,speed:.2,stiffness:.8},fern:{strength:.05,speed:.16,stiffness:.9},clover:{strength:.04,speed:.16,stiffness:.9}};
 
 async function upload(id:string,role:FileRole,format:string,bytes:Buffer,index=1){
  const a=await store.get(id);

@@ -23,7 +23,8 @@ export function compileMapScene(map:UtcMap,catalogue:readonly LandscapeAsset[]):
  field.source=undefined;field.samples.set(generated.terrain.samples);
  field.watercourses=generated.rivers.map(r=>{const style=index.get(r.profile)?.water;if(!style)throw Error('Missing published water profile '+r.profile);return {...r,style};});
  field.courseWater=new WatercourseIndex(generated.rivers);
- field.grassCoverage=generated.landformSurface?.grass??new Float32Array(field.samples.length);
+ field.grassCoverage=generated.landformSurface?.grass.slice()??new Float32Array(field.samples.length);
+ if(generated.meadow)for(let i=0;i<generated.meadow.length;i++)field.grassCoverage[i]=Math.max(field.grassCoverage[i]!,generated.meadow[i]!);
  field.rockCoverage=generated.landformSurface?.rock;
  field.surfacePaint=generated.paint;
  field.forestCoverage=new Float32Array(field.samples.length);
