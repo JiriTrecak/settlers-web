@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-a",
   "name": "woodland pine a",
   "kind": "tree",
-  "revision": 11,
+  "revision": 23,
   "status": "published",
   "tags": [
     "original",
@@ -12,25 +12,11 @@
   ],
   "resources": [
     {
-      "role": "geometry",
-      "index": 1,
-      "format": "glb",
-      "sha256": "a4684d27e30410f6f2641b3f933f9b41771549f2461fcd543398d85ec8321dfe",
-      "bytes": 1298580
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "blend",
-      "sha256": "aeda7f6279705b0383e21b735f76ef73c762a8d4b2bbe11b7fd672a8f838884b",
-      "bytes": 1849442
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
-      "bytes": 987876
+      "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
+      "bytes": 1070959
     },
     {
       "role": "albedo",
@@ -38,6 +24,41 @@
       "format": "png",
       "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
       "bytes": 236370
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "b194673cbd5687d9aacf337cb8d355980f65458a6db08afc912af69a44c79c70",
+      "bytes": 1533
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
+      "bytes": 458
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "10453f1f2d980923033544039494cab01303d4d8b28a96350c5048b4bb7ad1d1",
+      "bytes": 1381664
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
+      "bytes": 196
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "aeda7f6279705b0383e21b735f76ef73c762a8d4b2bbe11b7fd672a8f838884b",
+      "bytes": 1849442
     },
     {
       "role": "source",
@@ -50,22 +71,15 @@
       "role": "source",
       "index": 3,
       "format": "glb",
-      "sha256": "070775baca5787213c76c1991901dfae842ff370b14cb19a1450a9ccf0804dff",
-      "bytes": 1280416
+      "sha256": "3688a2bccb0c1ca29142e1b6ca476344590597912513e7fcb626ef2927ff514f",
+      "bytes": 1363500
     },
     {
       "role": "source",
       "index": 4,
       "format": "glb",
-      "sha256": "bd9cfc1b71e9df05f889532385c8b71cfdf96981c1e0a5a7ab35ced89f92aab4",
-      "bytes": 1273168
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
-      "bytes": 196
+      "sha256": "ea179845a297ea67a28eaea1643d4da662dc4b6bcfc8a78e5c80d03b31a1817d",
+      "bytes": 1356248
     },
     {
       "role": "source",
@@ -94,13 +108,6 @@
       "format": "json",
       "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
       "bytes": 198
-    },
-    {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "b194673cbd5687d9aacf337cb8d355980f65458a6db08afc912af69a44c79c70",
-      "bytes": 1533
     }
   ],
   "usesGeometry": true,

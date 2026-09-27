@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.pl-grass-lush-c",
+  "name": "grass lush c",
+  "kind": "foliage",
+  "revision": 8,
+  "status": "published",
+  "tags": [
+    "pl-pack",
+    "woodland",
+    "grass"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "807ff04f3e328ff08bfe55e3c7c735d3eb6afeb499f94960b3e550cc45da1683",
+      "bytes": 128633
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "7c37eed6978388ba8614ee75142338d66d4914198db9b83a000463337658a8e6",
+      "bytes": 306
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d0ae954b1d1bfef86b041e4a9c4ae10d5656e18d63a7f91fd5f69150d1e5454c",
+      "bytes": 131136
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
+      "bytes": 5186
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2cbcf7c0a277e3ec62cd5cc03b75e1c430b45aaa45834ecd00e2f8ab4d718528",
+      "bytes": 2449385
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "pl-grass-lush-c",
+        "name": "grass lush c",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "wind": {
+      "mode": "grass",
+      "strength": 0.14,
+      "speed": 0.22,
+      "stiffness": 0.7
+    },
+    "groundContact": {
+      "mode": "terrain"
+    }
+  },
+  "provenance": {
+    "method": "import",
+    "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

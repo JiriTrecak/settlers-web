@@ -1,0 +1,12 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-grass-lush-b",
+  "fbx": "PL_Grass_Mesh_Pack.fbx",
+  "object": "PL_Grass_VarB",
+  "texture": "Grass_Textures/Summer_Grass_Textures/PL_Grass_Summer_04.png",
+  "scale": 2.6,
+  "textureSize": 512,
+  "groundColor": false,
+  "triangles": 22,
+  "height": 0.849
+}

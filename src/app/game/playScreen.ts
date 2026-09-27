@@ -36,6 +36,7 @@ export class PlayScreen extends GameScreen {
     },
   ) {
     super("screen");
+    this.enableHudToggle(()=>this.ready);
     this.mapId = hooks.mapId;
     this.initialSave=hooks.save;
     const entry=getMap(hooks.mapId);

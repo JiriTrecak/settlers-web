@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.pl-grass-tall",
+  "name": "grass tall",
+  "kind": "foliage",
+  "revision": 8,
+  "status": "published",
+  "tags": [
+    "pl-pack",
+    "woodland",
+    "grass"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "8f54dfa546c620d1b3fb407b856e325981e0f1f4ff2e948cd44a29ec18d1975d",
+      "bytes": 125779
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1f6aeb9bd91ee2cf1508d742356a0e3b24054a5e2b8765db3c81cab4b813ee01",
+      "bytes": 304
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "60231e526e607f318127d1cc1d5b20e5a41acdfeb7fc342e897f94109acee003",
+      "bytes": 133604
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
+      "bytes": 5186
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "19f37fede8ae4b732947a8e582fa6080ce7765a7f44a03a089d8556962b9ea7d",
+      "bytes": 2455423
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "pl-grass-tall",
+        "name": "grass tall",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "wind": {
+      "mode": "grass",
+      "strength": 0.14,
+      "speed": 0.22,
+      "stiffness": 0.7
+    },
+    "groundContact": {
+      "mode": "terrain"
+    }
+  },
+  "provenance": {
+    "method": "import",
+    "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

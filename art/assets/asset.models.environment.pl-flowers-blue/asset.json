@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.pl-flowers-blue",
+  "name": "flowers blue",
+  "kind": "foliage",
+  "revision": 8,
+  "status": "published",
+  "tags": [
+    "pl-pack",
+    "woodland",
+    "flowers"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "e9159858c163c984da5c1f710c6833c4afb1da0b9e14633d9dc6f15e45eb3243",
+      "bytes": 1121968
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "4f9e653fcab72e95b4dff0da21e8a2ba446ba26dcc36e38ec05281cd72cea190",
+      "bytes": 295
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "41d6c1976568eb43de1aa58ef7236495004c3f9f54b9a9e077ac4c47b8ee4f3c",
+      "bytes": 1127996
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "e407afa12e8e812e84d9d9477d15e50aba3f602f0103491a00d9a37898b0bc36",
+      "bytes": 5186
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "d75a0840014d3ddcf1984e52d27ae6dd135d90afcfecc5113f46a2e47a6207da",
+      "bytes": 15433263
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [],
+    "scenery": [
+      {
+        "id": "pl-flowers-blue",
+        "name": "flowers blue",
+        "category": "foliage",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "wind": {
+      "mode": "grass",
+      "strength": 0.1,
+      "speed": 0.2,
+      "stiffness": 0.8
+    },
+    "groundContact": {
+      "mode": "terrain"
+    }
+  },
+  "provenance": {
+    "method": "import",
+    "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

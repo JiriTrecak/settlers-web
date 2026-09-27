@@ -1,0 +1,12 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-flowers-white",
+  "fbx": "PL_Flowers_2_Pack.fbx",
+  "object": "PL_White_Clump_VarA",
+  "texture": "Flowers_2_Textures/PL_Flowers_2_Albedo.png",
+  "scale": 2.6,
+  "textureSize": 1024,
+  "groundColor": false,
+  "triangles": 136,
+  "height": 0.566
+}

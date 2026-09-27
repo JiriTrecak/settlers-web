@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-soil-normal",
   "name": "winter soil · normal/height",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 4,
   "status": "published",
   "tags": [
     "original",
@@ -14,15 +14,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "9e6c1c46b334226dae559d9c7dfa7cc6b07c84fc0f94290c11e5c5d5c88913be",
-      "bytes": 398611
+      "sha256": "86f05f459f583bb7817a2c720ccd7a31973dbf87a4613f5ab43b91a0b6c36a49",
+      "bytes": 958357
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "7cd949753d1ec1ac50e0a18711eb17be34d7967219b94b5ffe2ce1e0da4b4925",
-      "bytes": 521
+      "sha256": "dabd288f688437ff18ec40890c17042279aa055ef90efa506e7692b08998dc55",
+      "bytes": 315
     }
   ],
   "usesGeometry": false,

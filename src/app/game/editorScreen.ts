@@ -61,6 +61,7 @@ export class EditorScreen extends GameScreen {
     hooks: { onLeave: () => void; map?: UtcMap; mapId?: string },
   ) {
     super("screen");
+    this.enableHudToggle();
     const initial = hooks.map ?? getMap("threewater-forest").map;
     const mapId = hooks.mapId ?? (hooks.map ? 'new' : 'threewater-forest');
     this.draft = new EditorDraft(sessionStorage,mapId,initial);

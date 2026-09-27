@@ -18,6 +18,7 @@ export const globalShortcuts:Shortcut[]=[
  {id:'selection.next',name:'Next subgroup',key:'Tab',scope:'global'},
  {id:'selection.previous',name:'Previous subgroup',key:'Shift+Tab',scope:'global'},
  {id:'game.settings',name:'Game menu',key:'F10',scope:'global'},
+ {id:'hud.toggle',name:'Show / hide HUD',key:'Ctrl+Shift+KeyH',scope:'global'},
  {id:'debug.toggle',name:'Debug overlay',key:'Ctrl+F3',scope:'global'},
  {id:'target.cancel',name:'Cancel targeting',key:'Escape',scope:'global'},
  {id:'placement.rotate',name:'Rotate building clockwise',key:'KeyR',scope:'command'},

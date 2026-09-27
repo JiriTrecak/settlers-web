@@ -1,6 +1,6 @@
 import {terrainTextureUrl} from './terrainTextureUrl';
 import {sourceTerrainGLSL} from './sourceTerrainShader';
-import {DataArrayTexture,DataTexture,LinearFilter,LinearMipmapLinearFilter,NearestFilter,RedFormat,RepeatWrapping,SRGBColorSpace,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
+import {Color,DataArrayTexture,DataTexture,LinearFilter,LinearMipmapLinearFilter,NearestFilter,RedFormat,RepeatWrapping,SRGBColorSpace,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
 import {unpackSourceBytes,sourceHeight,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {ReferenceGround} from '../prop/referenceGround';
 import {referenceTexture,macroUrl} from './referenceTerrain';
@@ -52,7 +52,7 @@ export class ImportedTerrainMaterial {
  }
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;
-  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)},uSourceParams:{value:s.layers.map(l=>new Vector4(l.tiling,l.blend,l.verticality,l.edge))},uSourceDesaturation:{value:s.layers.map(l=>l.desaturation)}});
+  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)},uSourceTints:{value:s.layers.map(l=>new Color(l.tint??'#ffffff'))},uSourceParams:{value:s.layers.map(l=>new Vector4(l.tiling,l.blend,l.verticality,l.edge))},uSourceDesaturation:{value:s.layers.map(l=>l.desaturation)}});
  }
  /** Rebind existing GPU programs after editable terrain replaces its textures.
   * Three caches programs by shader source, so onBeforeCompile alone is insufficient. */
@@ -70,14 +70,14 @@ export class ImportedTerrainMaterial {
   const shared=sourceTerrainGLSL(this.source.layers.length);
   shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\n'+shared+'\nvarying vec3 vSourcePosition;varying vec3 vSourceDisplaced;')
    .replace('#include <begin_vertex>','#include <begin_vertex>\nvSourcePosition=position;transformed=terrainDisplace(transformed);vSourceDisplaced=transformed;');
-  shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\n'+shared+'\nvarying vec3 vSourcePosition,vSourceDisplaced;uniform sampler2D uSourceMacro;')
+  shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\n'+sourceTerrainGLSL(this.source.layers.length,true)+'\nvarying vec3 vSourcePosition,vSourceDisplaced;uniform sampler2D uSourceMacro;')
    .replace('#include <map_fragment>',`
     vec3 sourceBaseNormal=terrainNormal(vSourceDisplaced.xz);
     vec4 sourceAR,sourceNH;terrainLayers(vSourcePosition.xz,sourceBaseNormal.y,sourceAR,sourceNH);
     diffuseColor.rgb*=sourceAR.rgb*texture2D(uSourceMacro,(vSourcePosition.xz-uSourceOffset)*.01).rgb*2.;
    `).replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=sourceAR.a;')
    .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-    normal=normalize(mat3(viewMatrix)*terrainBasis(sourceBaseNormal)*(2.*(sourceNH.rgb-.50196)*vec3(1.,1.,.25)));
+    normal=normalize(mat3(viewMatrix)*terrainBasis(sourceBaseNormal)*(2.*(sourceNH.rgb-.50196)*vec3(1.,1.,.55)));
    `);
   // Terrain.fx defines FORCE_LIGHTMAP_OCCLUSION_LEVEL0: no ground-color bounce.
   this.ground.compileSurface(shader,this.macro,false,false,false);

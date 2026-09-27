@@ -1,7 +1,7 @@
 {
-  "method": "imagegen",
+  "method": "built-in imagegen",
   "originalPixels": true,
-  "source": "exec-28ce535c-3aaa-4156-ba83-f31d12806c68.png",
-  "brief": "Original restrained low-detail forest material, matching the established muted palette. No imported pixels.",
-  "revision": 1
+  "brief": "Sculpted compact snow clumps, cool soft creases, restrained raw albedo for HDR sunlight.",
+  "source": "exec-c34b1dee-cb29-4d7a-9ed4-b2b07f83fe36.png",
+  "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

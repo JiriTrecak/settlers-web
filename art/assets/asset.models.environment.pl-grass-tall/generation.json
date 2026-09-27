@@ -1,0 +1,12 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-grass-tall",
+  "fbx": "PL_Grass_Mesh_Pack.fbx",
+  "object": "PL_Grass_VarC",
+  "texture": "Grass_Textures/Summer_Grass_Textures/PL_Grass_Summer_07.png",
+  "scale": 2.2,
+  "textureSize": 512,
+  "groundColor": false,
+  "triangles": 88,
+  "height": 0.734
+}

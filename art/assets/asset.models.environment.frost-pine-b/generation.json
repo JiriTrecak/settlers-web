@@ -1,6 +1,7 @@
 {
-  "method": "authored",
-  "originalBase": "asset.models.environment.woodland-pine-b",
-  "script": "scripts/assets/publish-original-winter.ts",
-  "treatment": "Original directional snow shader; underlying authored mesh and textures retained."
+  "method": "built-in imagegen",
+  "originalPixels": true,
+  "brief": "Original six-cell dense hanging spruce bough atlas; broad rounded shoulders, tapering short needle sprays, quiet green masses without broad leaves or miniature whole-tree forms. Built-in ImageGen, reference-guided original artwork.",
+  "source": "exec-27a3e2ea-f69f-47f9-bbd7-057311872a15.png",
+  "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

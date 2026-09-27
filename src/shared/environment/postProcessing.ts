@@ -1,5 +1,8 @@
 /** Biome-owned art direction. These settings are never serialized into a map. */
 export type PostProcessingSettings = {
+  /** Legacy clock grading and distance haze are independently owned by the biome. */
+  daytimeLutStrength?: number;
+  distanceFogStrength?: number;
   exposure: number;
   contrast: number;
   /** Display-space knee for a hue-preserving highlight shoulder; zero bypasses it. */

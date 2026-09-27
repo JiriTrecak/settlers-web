@@ -829,6 +829,13 @@ body {
   pointer-events: none;
 }
 
+/* Hide presentation controls without hiding dialogs or stopping the scene.
+   display:none also removes hit targets, keyboard focus and the live portrait. */
+.screen.hud-hidden > :not(dialog):not([role="dialog"]):not(.mission-cinematic):not(.mission-outcome):not(.load-status),
+body:has(.screen.hud-hidden) > .performance-debug {
+  display: none !important;
+}
+
 .menu {
   pointer-events: auto;
   display: flex;

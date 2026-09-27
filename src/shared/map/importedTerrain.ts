@@ -17,7 +17,7 @@ export const importedTerrainSchema=z.object({
  underlayMask:z.object({size:dims,mask:bytes}).optional(),
  heightSamplesPerUnit:z.number().positive().max(3).optional(),maskSamplesPerUnit:z.number().positive().max(3).optional(),
  heightSize:dims,height:bytes,heightOffset:z.number().finite(),maskSize:dims,
- layers:z.array(z.object({name:assetName,mask:bytes.optional(),ar:assetName,nh:assetName,tiling:z.number().positive(),blend:z.number().finite(),verticality:z.number().finite(),edge:z.number().finite(),desaturation:z.number().finite()})).min(1).max(32),
+ layers:z.array(z.object({tint:z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),name:assetName,mask:bytes.optional(),ar:assetName,nh:assetName,tiling:z.number().positive(),blend:z.number().finite(),verticality:z.number().finite(),edge:z.number().finite(),desaturation:z.number().finite()})).min(1).max(32),
  /** Six byte layer slots per 4×4 source subblock; 255 means unused. */
  layerSlots:bytes,
  grass:z.array(z.object({asset:assetName,instances:bytes,water:z.boolean().optional()})).max(64),

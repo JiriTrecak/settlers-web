@@ -1,6 +1,7 @@
 {
-  "method": "imagegen",
+  "method": "built-in imagegen",
   "originalPixels": true,
-  "source": "exec-97bfc8d0-25ac-45ab-99ec-e20bd584e80d.png",
-  "brief": "Original nearly featureless low contrast painted compact earth; dark muted palette, smooth dusty patches, tiny subdued flecks. Seamless albedo."
+  "brief": "Trodden tan-brown dirt path, soft painterly variation, tiny pebbles; seamless, graded to clear-air RTS reference.",
+  "source": "dirt.png",
+  "packing": "Periodic normal/height derived from luminance; original colors retained."
 }

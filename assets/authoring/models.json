@@ -1046,6 +1046,316 @@
     ]
   },
   {
+    "id": "asset.models.environment.pl-daisy",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-daisy/geometry.glb"
+    ],
+    "scenery": [
+      "pl-daisy"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-fern-bushy",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.05,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-fern-bushy/geometry.glb"
+    ],
+    "scenery": [
+      "pl-fern-bushy"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-fern-sword",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.05,
+        "speed": 0.16,
+        "stiffness": 0.9
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-fern-sword/geometry.glb"
+    ],
+    "scenery": [
+      "pl-fern-sword"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-flowers-blue",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-flowers-blue/geometry.glb"
+    ],
+    "scenery": [
+      "pl-flowers-blue"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-flowers-white",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-flowers-white/geometry.glb"
+    ],
+    "scenery": [
+      "pl-flowers-white"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-flowers-yellow",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.1,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-flowers-yellow/geometry.glb"
+    ],
+    "scenery": [
+      "pl-flowers-yellow"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-grass-lush-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.14,
+        "speed": 0.22,
+        "stiffness": 0.7
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-grass-lush-a/geometry.glb"
+    ],
+    "scenery": [
+      "pl-grass-lush-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-grass-lush-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.14,
+        "speed": 0.22,
+        "stiffness": 0.7
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-grass-lush-b/geometry.glb"
+    ],
+    "scenery": [
+      "pl-grass-lush-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-grass-lush-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.14,
+        "speed": 0.22,
+        "stiffness": 0.7
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-grass-lush-c/geometry.glb"
+    ],
+    "scenery": [
+      "pl-grass-lush-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.pl-grass-tall",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.14,
+        "speed": 0.22,
+        "stiffness": 0.7
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
+    "groundContact": "terrain",
+    "geometry": [
+      "assets/library/asset.models.environment.pl-grass-tall/geometry.glb"
+    ],
+    "scenery": [
+      "pl-grass-tall"
+    ]
+  },
+  {
     "id": "asset.models.environment.woodland-abandoned-camp",
     "transform": {
       "scale": 1,

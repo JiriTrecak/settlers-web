@@ -3,7 +3,7 @@
   "id": "asset.models.environment.frost-pine-b",
   "name": "frost pine b",
   "kind": "tree",
-  "revision": 4,
+  "revision": 12,
   "status": "published",
   "tags": [
     "original",
@@ -11,25 +11,11 @@
   ],
   "resources": [
     {
-      "role": "geometry",
-      "index": 1,
-      "format": "glb",
-      "sha256": "1a0cbcd700d127d6b0c98fff9c71e9ce49d33d4126955ab9cd74040828522278",
-      "bytes": 1298788
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "blend",
-      "sha256": "319242992e1ad94a4a2ce69f316c948c9db6094cc50dfd5976fe32ee49629c27",
-      "bytes": 1811435
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
-      "bytes": 987876
+      "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
+      "bytes": 1070959
     },
     {
       "role": "albedo",
@@ -42,8 +28,22 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "b1a97933950585ba874bd82b350de96c5028ec3706e73d412a3c2b4974fc9ae9",
-      "bytes": 246
+      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
+      "bytes": 458
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "dc37b34bbc8ca44f8085aa8f7eb5a3326ea081ea7366f26a578f71c5992c5446",
+      "bytes": 1381876
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "319242992e1ad94a4a2ce69f316c948c9db6094cc50dfd5976fe32ee49629c27",
+      "bytes": 1811435
     }
   ],
   "usesGeometry": true,
@@ -90,13 +90,11 @@
     ]
   },
   "capabilities": {
-    "groundContact": {
-      "mode": "pivot"
-    },
-    "vegetationClearance": 1.2,
-    "harvesting": {
-      "replacement": "asset.models.environment.woodland-pine-stump",
-      "definition": "resource.forest.tree"
+    "wind": {
+      "mode": "tree",
+      "strength": 0.1,
+      "speed": 0.18,
+      "stiffness": 0.8
     },
     "animations": [
       {
@@ -118,11 +116,13 @@
         "events": []
       }
     ],
-    "wind": {
-      "mode": "tree",
-      "strength": 0.1,
-      "speed": 0.18,
-      "stiffness": 0.8
+    "vegetationClearance": 1.2,
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "harvesting": {
+      "replacement": "asset.models.environment.woodland-pine-stump",
+      "definition": "resource.forest.tree"
     }
   },
   "provenance": {

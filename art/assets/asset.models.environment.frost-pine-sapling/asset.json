@@ -3,7 +3,7 @@
   "id": "asset.models.environment.frost-pine-sapling",
   "name": "frost pine sapling",
   "kind": "foliage",
-  "revision": 4,
+  "revision": 12,
   "status": "published",
   "tags": [
     "original",
@@ -11,25 +11,11 @@
   ],
   "resources": [
     {
-      "role": "geometry",
-      "index": 1,
-      "format": "glb",
-      "sha256": "f3fba1a6a8c1bbaef53d6ad28d23a94eba27e70160c36b21b62dbc4b113e5dc7",
-      "bytes": 1258720
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "blend",
-      "sha256": "4c5acc81277844402f3632f4487443df893579a66dd6bf984a33f2bc3f0105b7",
-      "bytes": 1747486
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "b2f584791b881e459e285b1ec3f9eda8d1faf8ca0840625c9185c9cf450ec2f7",
-      "bytes": 987876
+      "sha256": "1f468c7cea80c13173702293904bb52830710d7cc65a0992a8d136fd775207c7",
+      "bytes": 1070959
     },
     {
       "role": "albedo",
@@ -42,8 +28,22 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "1c06957170a6c8416c66e603c06bc14c5349adc1718d9aea52d8bdd155ef6589",
-      "bytes": 252
+      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
+      "bytes": 458
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "fec9047339da2918e5850635a854dab2df524f3db8e779ea1640fbd566584da4",
+      "bytes": 1341804
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "4c5acc81277844402f3632f4487443df893579a66dd6bf984a33f2bc3f0105b7",
+      "bytes": 1747486
     }
   ],
   "usesGeometry": true,
@@ -85,15 +85,15 @@
     ]
   },
   "capabilities": {
-    "groundContact": {
-      "mode": "pivot"
-    },
-    "vegetationClearance": 0.3,
     "wind": {
       "mode": "tree",
       "strength": 0.1,
       "speed": 0.18,
       "stiffness": 0.8
+    },
+    "vegetationClearance": 0.3,
+    "groundContact": {
+      "mode": "pivot"
     }
   },
   "provenance": {

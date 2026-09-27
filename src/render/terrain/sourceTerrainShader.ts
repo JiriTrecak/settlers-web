@@ -1,12 +1,14 @@
-/** Terrain.fx layer blending shared by color and displaced shadow vertices.
- * Explicit LOD zero is intentional: both source DS and PS request it. */
-export function sourceTerrainGLSL(layerCount:number){return `
+/** Shared layer blending. Geometry samples exact heights; fragment color and
+ * normals use screen derivatives so distant terrain stays crisp without shimmer. */
+export function sourceTerrainGLSL(layerCount:number,fragment=false){
+ const sample=(tex:string,uv:string,layer:string)=>fragment?`textureGrad(${tex},vec3(${uv},${layer}),dFdx(${uv}),dFdy(${uv}))`:`textureLod(${tex},vec3(${uv},${layer}),0.)`;
+ return `
  uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceMasks,uSourceDisplacement;
  uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask,uSourceHeight;
  uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
  uniform float uSourceHeightScale;
  uniform float uSourceDisplacementTiling,uSourceHasDisplacement;
- uniform vec4 uSourceParams[${layerCount}];uniform float uSourceDesaturation[${layerCount}];
+ uniform vec4 uSourceParams[${layerCount}];uniform vec3 uSourceTints[${layerCount}];uniform float uSourceDesaturation[${layerCount}];
  float terrainHeight(vec2 world){
   vec2 p=clamp((world-uSourceOrigin)*uSourceHeightScale,vec2(0.),uSourceHeightSize-1.),i=floor(p),f=fract(p),uv=(i+.5)/uSourceHeightSize,d=1./uSourceHeightSize;
   return mix(mix(textureLod(uSourceHeight,uv,0.).r,textureLod(uSourceHeight,uv+vec2(d.x,0.),0.).r,f.x),mix(textureLod(uSourceHeight,uv+vec2(0.,d.y),0.).r,textureLod(uSourceHeight,uv+d,0.).r,f.x),f.y);
@@ -30,12 +32,13 @@ export function sourceTerrainGLSL(layerCount:number){return `
   vec4 ids0=texelFetch(uSourceSlots,ivec2(sub.x*2,sub.y),0)*255.,ids1=texelFetch(uSourceSlots,ivec2(sub.x*2+1,sub.y),0)*255.;
   int ids[6];ids[0]=int(ids0.x+.5);ids[1]=int(ids0.y+.5);ids[2]=int(ids0.z+.5);ids[3]=int(ids0.w+.5);ids[4]=int(ids1.x+.5);ids[5]=int(ids1.y+.5);
   int base=clamp(ids[0],0,${layerCount-1});vec2 tile=sourceXZ*uSourceParams[base].x*.08;
-  ar=textureLod(uSourceAR,vec3(tile,float(base)),0.);nh=textureLod(uSourceNH,vec3(tile,float(base)),0.);
-  ar.rgb*=1.-max(underlay-.75,0.);
+  ar=${sample('uSourceAR','tile','float(base)')};nh=${sample('uSourceNH','tile','float(base)')};
+  ar.rgb*=uSourceTints[base]*(1.-max(underlay-.75,0.));
   for(int j=1;j<6;j++){
    int id=ids[j];if(id<=0||id>=${layerCount})continue;
    vec4 param=uSourceParams[id];vec2 tileUV=sourceXZ*param.x*.08;
-   vec4 layerAR=textureLod(uSourceAR,vec3(tileUV,float(id)),0.),layerNH=textureLod(uSourceNH,vec3(tileUV,float(id)),0.);
+   vec4 layerAR=${sample('uSourceAR','tileUV','float(id)')},layerNH=${sample('uSourceNH','tileUV','float(id)')};
+   layerAR.rgb*=uSourceTints[id];
    float weight=textureLod(uSourceMasks,vec3(uv,float(id)),0.).r;
    weight*=1.-underlay*(1.-nh.a*.5);
    if(param.z>=0.)weight*=mix(1.,clamp(normalY,0.,1.),param.z);else weight=clamp(weight+(1.-normalY)*-param.z,0.,1.);

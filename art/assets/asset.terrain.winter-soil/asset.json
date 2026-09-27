@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-soil",
   "name": "winter soil · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 2,
+  "revision": 8,
   "status": "published",
   "tags": [
     "original",
@@ -11,39 +11,11 @@
   ],
   "resources": [
     {
-      "role": "data",
-      "index": 1,
-      "format": "bin",
-      "sha256": "70e40b3ad5df968789dcd137a68ed2daaf31acb65a188fe048af0544b6dcab32",
-      "bytes": 936320
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "7cd949753d1ec1ac50e0a18711eb17be34d7967219b94b5ffe2ce1e0da4b4925",
-      "bytes": 521
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "b8991dc6887802298ce2de2f03187a13a5b86ec7fe498a80539e93c16f9d74c2",
-      "bytes": 882030
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "png",
-      "sha256": "b3ad53c32dea424d7327caaa7df95a3a7ec208d172f6e1b09135615a08c9dae0",
-      "bytes": 1079770
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "json",
-      "sha256": "fc13671fea6888dce527649ef98ee33fc2c4a13a239b2bbed449f01e49256f36",
-      "bytes": 253
+      "sha256": "50a9fd0fe7805e62d1753a2952f96176779c3c4b0937910c173dead3717fc6ad",
+      "bytes": 1276610
     },
     {
       "role": "build",
@@ -51,6 +23,34 @@
       "format": "json",
       "sha256": "aba5e727217b33cc9e105b0b0aae12beab63a3c8969574411bb9e3b872556d46",
       "bytes": 316
+    },
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "d023d4338440c730bab38947a57347c89e8cb9e7836d9f392fc2d6dffccb28a3",
+      "bytes": 1349370
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "dabd288f688437ff18ec40890c17042279aa055ef90efa506e7692b08998dc55",
+      "bytes": 315
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "51629c9442931fc1e75fbac9d38f2c4a927ece8d3259b5ae30303aeb09407c8e",
+      "bytes": 1430319
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "dabd288f688437ff18ec40890c17042279aa055ef90efa506e7692b08998dc55",
+      "bytes": 315
     }
   ],
   "usesGeometry": false,

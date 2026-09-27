@@ -1,0 +1,12 @@
+{
+  "method": "pl-pack adaptation",
+  "slug": "pl-daisy",
+  "fbx": "PL_Flowers_2_Pack.fbx",
+  "object": "PL_Oxeye_Daisy_Flower_VarA",
+  "texture": "Flowers_2_Textures/PL_Flowers_2_Albedo.png",
+  "scale": 1.1,
+  "textureSize": 1024,
+  "groundColor": false,
+  "triangles": 378,
+  "height": 1.34
+}

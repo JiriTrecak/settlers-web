@@ -153,7 +153,7 @@ uniform sampler2D sceneColor,fogTexture,visibilityMap;
 #include <tonemapping_pars_fragment>
 uniform vec2 fogSize;
 uniform bool sourceReference,hasVolumetrics,hasDaytimeFog,hasVisibility;
-uniform float mapSize,daytimeLutBlend;
+uniform float mapSize,daytimeLutBlend,daytimeLutStrength;
 uniform highp sampler3D daytimeLutFrom,daytimeLutTo;
 uniform vec3 daytimeFogColor;
 uniform float daytimeFogDensity,daytimeFogDispersion,daytimeFogStart,daytimeFogHeight;
@@ -257,10 +257,10 @@ void main(){
   toneColor.rgb*=compressed/peak;
  }
  gl_FragColor=sRGBTransferEOTF(toneColor);
- if(hasDaytimeFog){
+ if(daytimeLutStrength>0.){
   vec4 displayColor=sRGBTransferOETF(gl_FragColor);
   vec3 graded=mix(texture(daytimeLutFrom,displayColor.rgb).rgb,texture(daytimeLutTo,displayColor.rgb).rgb,daytimeLutBlend);
-  displayColor.rgb=mix(displayColor.rgb,graded,visibility);
+  displayColor.rgb=mix(displayColor.rgb,graded,visibility*daytimeLutStrength);
   gl_FragColor=sRGBTransferEOTF(displayColor);
  }
  vec4 displayColor=sRGBTransferOETF(gl_FragColor);

@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-soil",
   "name": "woodland soil · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 5,
+  "revision": 17,
   "status": "published",
   "tags": [
     "original",
@@ -11,39 +11,11 @@
   ],
   "resources": [
     {
-      "role": "data",
-      "index": 1,
-      "format": "bin",
-      "sha256": "b81f291642c86e4d912f5fc093f564c2db41f84e088663d6c372db8753a044a3",
-      "bytes": 1588406
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "8efc1d65eecbbb972f217eb3c8c88a75bea2561aef25dac665683d9d46c2989b",
-      "bytes": 993
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "08f3022c36b1c6c2134691aa4c92925c6b2a7b397b5dd8f696ec59aa8e2dea17",
-      "bytes": 1502507
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "png",
-      "sha256": "ddf5b54f481b7803329d3eb2f34cc79c7c26e25d1a7b1be61418d63bbf2bcb05",
-      "bytes": 2064043
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "json",
-      "sha256": "2670a6fbed8b0d59f2385e7f1ac626194cf0237a009c3cc72e04b8653eaf37ee",
-      "bytes": 725
+      "sha256": "93c846209800bb3a8fcab847080b2de1ebedc8c2884558f2f301b6009b4ea150",
+      "bytes": 1868462
     },
     {
       "role": "build",
@@ -51,6 +23,34 @@
       "format": "json",
       "sha256": "7ec1bd608c8990862c20ab91a73ff0ac3224e6468c64f0c3e4c17ee6a26e92f3",
       "bytes": 322
+    },
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "19a329cb0680eae6f6a503a592b535c0efd674cfb5a44bc48443907695520c4c",
+      "bytes": 1872393
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
+      "bytes": 319
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "9ab050794d7f5c881eec9ca9012b7ec2a8945fca2b8c1ee645224200216ec518",
+      "bytes": 1650627
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "92d39bd2121b0d31fcc6014e44f49e960fe08b44c6f9e8e553f3a169177bb1b7",
+      "bytes": 319
     }
   ],
   "usesGeometry": false,
