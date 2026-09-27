@@ -1,0 +1,73 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "3059df27-deb2-4e56-81f1-e134f13cba31",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9562,
+    "credits": 60,
+    "partsReturned": 48
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "bombardier-workshop.png",
+  "integration": {
+    "definition": "building.ants.bombardier-workshop",
+    "width": 9.2,
+    "depth": 7.60802,
+    "height": 6.72567,
+    "footprint": [
+      11,
+      9
+    ],
+    "entrance": [
+      0,
+      5
+    ]
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 9562
+  },
+  "runtime": {
+    "triangles": 9562,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "savedBlender": true,
+    "finiteGeometry": true,
+    "packedTextures": true,
+    "studioColors": [
+      "white",
+      "green"
+    ],
+    "rearOrbit": true,
+    "gameColors": [
+      "red",
+      "blue"
+    ],
+    "gameScene": "Combat Lab colony beside hall and warriors",
+    "consoleErrors": 0
+  }
+}

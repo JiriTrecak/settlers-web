@@ -15,7 +15,7 @@ The `asset` record selects a project-relative model file, optional carry model, 
 - `combat { damage, damageType, range, cooldownTicks, aggroRange }`: unit auto-acquisition and combat. Every armor type must be covered by every damage row in `rules.damageMultipliers`.
 - `work { carryCapacity, builds, harvests }`: mobile workers can carry goods and perform native work. `builds` lists constructible definition IDs. `harvests` lists direct gathering recipes. Employment is runtime state; builder/carrier/forester are jobs, not unit definitions.
 - `storage { capacity, accepts, dropoff? }`: capacity and accepted currency IDs. `dropoff: true` makes a completed owned store a harvest destination and spendable bank. A producer holds reserved costs, not a relay economy.
-- `production { mode, outputs, workerSlots, ... }`: automatic single-output production or a queued producer. `workerSlots` is currently zero or one. Queued production declares `queueCapacity`; external work declares `workRadius`; spawning declares `population: { capacity, intervalTicks }`. `jobName` labels employment in the UI.
+- `production { mode, outputs, workerSlots, ... }`: automatic single-output production or a queued producer. `workerSlots` is currently zero or one. Queued production declares `queueCapacity`; external work declares `workRadius`. `jobName` labels employment in the UI.
 - `progression { levels, experienceRadius }`: explicit level records containing cumulative `experience`, `maxHp`, `damage`, `armor`, `cooldownTicks`, `maxMana`, `healthRegenPerSecond` and `manaRegenPerSecond`. The first record must agree with the body's/combat's/spellcaster's level-one fields. XP starts at zero and strictly increases; HP and mana pools cannot shrink. There is one representation, with no STR/AGI/INT or old per-level increment fields.
 - `spellcasting { abilities, learningCategory, manaIcon, maxMana, manaRegenPerSecond }`: declared ability IDs and the base mana policy. Progression overrides pool/rate at later levels. Regeneration rates have millipoint-per-second precision. Native recovery retains integer remainders across fixed ticks and saves.
 - `inventory { slots, pickupRange }`: hero equipment/pickup participation. Items modify resolved stats before percentage attack buffs. Death retains slots and contents.
@@ -29,10 +29,11 @@ Behavior sets are flat bundles. Arrays replace; known object fields merge. Confl
 All creation records contain `method`, `items`, and `workTicks`. The output definition owns its price; producers only enumerate output IDs.
 
 - `construct`: building, full currency bill reserved from owned banks, then physical builder work.
-- `recruit`: unit, currency bill plus `unitInput` definition. One unassigned matching worker approaches and is contained during training. Successful deployment changes that entity's definition and preserves its runtime ID.
+- `train`: unit, currency bill and work time. A queued producer reserves the bill and declared `supplyCost`; completion deploys a new entity without consuming a worker.
 - `harvest`: currency with a `source` yielding resource or building definition; a directly assigned worker removes finite yield and carries it to an owned drop-off. `amount` is the number gathered per completed `workTicks` cycle, capped by reserved load space and remaining source yield. Built-in workers carry ten; amber gathers ten in 100 ticks and wood ten in 400 ticks. Travel is additional.
 - `plant`: resource with regrowth duration; one employed worker restores an eligible depleted site.
-- `spawn`: worker unit, no material input. The producer owns its recurring interval and shared living-worker capacity contribution. `population.intervalTicks` governs birth timing; the unit creation record does not override a producer's interval.
+
+Unit definitions declare `supplyCost` (nonnegative integer); only building definitions can declare `supplyProvided`. Supply capacity is capped by `rules.maxSupply`. See [economy](../game/economy.md#supply-and-training) for queue reservations and capacity-loss rules.
 
 These are native verbs. Adding a new building that uses an existing verb is content work. Adding a new verb is an explicit system change, with schema validation, state, lifecycle rules, snapshot support, and acceptance tests.
 

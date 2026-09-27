@@ -1,3 +1,4 @@
+import {biomeEnvironment} from '../../content/biomes';
 import {UNIT_CAMERA_MODES,nextCameraMode,type UnitCameraMode} from '../../shared/camera/modes';
 import type {CampaignCompany} from '../../shared/scenario/company';
 import {MissionHud} from "../../ui/campaign/missionHud";
@@ -376,7 +377,7 @@ export class Session {
     await assets.ready(); check();
     renderer.present();
     assets.close(); this.assetLoading = null;
-    renderer.sky.setPlaying(!map.sandbox && !map.landscape?.environment.interior);
+    renderer.sky.setPlaying(!map.sandbox && !biomeEnvironment(map.biome).interior);
     this.started = true;
     await worker.request("start",undefined);check();
     this.unbindDebug = perf.bindMatch({

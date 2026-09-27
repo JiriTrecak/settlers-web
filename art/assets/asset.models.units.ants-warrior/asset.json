@@ -3,7 +3,7 @@
   "id": "asset.models.units.ants-warrior",
   "name": "Ant Warrior",
   "kind": "unit",
-  "revision": 5,
+  "revision": 11,
   "status": "published",
   "tags": [
     "original",
@@ -18,15 +18,15 @@
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "00e8769d782809d5e4a18ff4c329a3c70d95c2ee67cccbc355f62a9f588e6fa0",
-      "bytes": 1594404
+      "sha256": "097ee6f3510d6ee6bfe751b8470c860f99743d7e6f52efd376915c0cb3b294cf",
+      "bytes": 1196200
     },
     {
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "61cdd288d7fa13236245f1c99cf641fc00d137ddf7720fbc68c50b1ac28675f6",
-      "bytes": 3625875
+      "sha256": "e1be998514e9bdf1d4f61262456fa5e7998adbea0b09dec63f6cd7cd5f4166fc",
+      "bytes": 3640495
     },
     {
       "role": "reference",
@@ -39,7 +39,7 @@
       "role": "preview",
       "index": 1,
       "format": "png",
-      "sha256": "4cde2a098508cb06760b232d994140f9512f76fa2e6ffb6e14bf38956f7aeafa",
+      "sha256": "2616bae7c1d296615f643abaf6256101c8a7ab1cb612f62eab8ddb205fcf37bf",
       "bytes": 597158
     },
     {
@@ -53,8 +53,71 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "bca875a17f5d588ab80dfedbe432226ba52e4f0e607ee23d78e543f8ab20b813",
-      "bytes": 13255
+      "sha256": "a062fb050337324680a751e93963a1c688af80fb8ac9d1ce2113e57248e7334e",
+      "bytes": 13450
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "5c8f387c37675eab8967a182d4fbcc0973b8fe2778cfc3a8d683b4d37dd68cf6",
+      "bytes": 4639
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "102d664ea7d86056481d16ad29ec9c10f952b52d16bda102f194ff08d7e28057",
+      "bytes": 1151
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "076e9a6b2e3373f421eb10c551003b3460a88dd08bdc7475672d8052304f327e",
+      "bytes": 490
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "fc1cccf82bb67922a9969e45df006c45452f2c74b8ca7f260f2c79160c4b8130",
+      "bytes": 11648
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "a20afec7b754258feceb4ca4d3abdc410633bd43951100040032b4a116518b7a",
+      "bytes": 8026
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "57c45fe56be9169082cc5f42a391ee8ce8546468985a56cd393f9262b5a65918",
+      "bytes": 569
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "glb",
+      "sha256": "bc2d3a19f7c5cadebf64022275f3926f9e3e38399fe395024ec4f37ee218da10",
+      "bytes": 1971496
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "c4cc3ff7f7c701cc482f3d9718ef4a13c79253a9a34ea65f87977cbd9d20d450",
+      "bytes": 1563
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "glb",
+      "sha256": "9c8ee776ca36b7b625d79eca54885cb458894488582b5158e388f83082c7ba62",
+      "bytes": 1594312
     }
   ],
   "usesGeometry": true,
@@ -75,35 +138,37 @@
     "render": [
       {
         "id": "asset.ants.warrior",
-        "geometry": {
-          "asset": "asset.models.units.ants-warrior",
-          "role": "geometry",
-          "index": 1
-        },
         "character": "warrior",
         "scale": 1,
-        "healthHeight": 2.3
+        "healthHeight": 2.3,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-warrior"
+        }
       },
       {
         "id": "icon.ants.warrior",
         "image": {
-          "asset": "asset.models.units.ants-warrior",
           "role": "image",
-          "index": 1
+          "index": 1,
+          "asset": "asset.models.units.ants-warrior"
         }
       }
     ],
     "scenery": []
   },
   "capabilities": {
+    "dimensions": {
+      "radius": 0.2,
+      "height": 2,
+      "formationSpacing": 1
+    },
     "teamColor": {
       "mode": "material",
       "slots": [
         "TC_TeamColor"
       ]
-    },
-    "groundContact": {
-      "mode": "pivot"
     },
     "animations": [
       {
@@ -191,7 +256,10 @@
           0
         ]
       }
-    ]
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
   },
   "provenance": {
     "method": "generated",
@@ -200,5 +268,8 @@
       "role": "generation",
       "index": 1
     }
+  },
+  "exportSettings": {
+    "textureSize": 512
   }
 }

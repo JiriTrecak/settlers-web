@@ -53,7 +53,7 @@ describe("landscape curve strokes", () => {
       seed: 42,
       palette: "ochre",
     });
-    landscape.environment = { hour: 22, season: "autumn", playing: true };
+    landscape.environment = { hour: 22, playing: true };
     landscape.rivers = [
       {
         points: [

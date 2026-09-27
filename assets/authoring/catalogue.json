@@ -7,11 +7,53 @@
     "clearance": 7.5
   },
   {
+    "id": "asset.models.buildings.ants-barracks",
+    "name": "Barracks",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 4.5
+  },
+  {
+    "id": "asset.models.buildings.ants-bombardier-workshop",
+    "name": "Bombardier Workshop",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 5.5
+  },
+  {
+    "id": "asset.models.buildings.ants-chitin-works",
+    "name": "Chitin Works",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 4.5
+  },
+  {
     "id": "asset.models.buildings.ants-mandible-hall",
     "name": "Mandible Hall",
     "kind": "building",
     "scale": 1,
     "clearance": 4.5
+  },
+  {
+    "id": "asset.models.buildings.ants-mound",
+    "name": "Mound",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 3.5
+  },
+  {
+    "id": "asset.models.buildings.ants-rootworks",
+    "name": "Rootworks",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 5.5
+  },
+  {
+    "id": "asset.models.buildings.ants-watchtower",
+    "name": "Watchtower",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 3.5
   },
   {
     "id": "asset.models.environment.autumn-grass",
@@ -602,8 +644,43 @@
     "clearance": 0.25
   },
   {
+    "id": "asset.models.resources.amber-deposit",
+    "name": "Amber Deposit",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 3.5
+  },
+  {
+    "id": "asset.models.resources.corrupted-root",
+    "name": "Corrupted Root Deposit",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-archer",
+    "name": "Ant Archer",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-bombardier",
+    "name": "Bombardier Beetle",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
     "id": "asset.models.units.ants-warrior",
     "name": "Ant Warrior",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-worker",
+    "name": "Ant Worker",
     "kind": "unit",
     "scale": 1,
     "clearance": 0

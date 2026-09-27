@@ -33,7 +33,7 @@ export function idleMotion(c: GameContext) {
       (target.x === e.x && target.y === e.y) || occupied.has(c.spatial.cell(target))) continue;
     // Never wander through an obstacle or take a long detour.
     occupied.delete(c.spatial.cell(e));
-    const clear = c.spatial.clearSegment(u.position ?? fixed(e), fixed(target), occupied);
+    const clear = c.spatial.clearSegment(u.position ?? fixed(e), fixed(target), occupied, e);
     occupied.add(c.spatial.cell(e));
     if (clear && c.spatial.route(e, target)) u.idle.walking = true;
   }

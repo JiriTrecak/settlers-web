@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "category": "resources",
+  "slug": "corrupted-root",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.resources.corrupted-root",
+      "role": "source",
+      "index": 2
+    },
+    "geometry.glb": {
+      "asset": "asset.models.resources.corrupted-root",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.resources.corrupted-root",
+      "role": "recipe",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.resources.corrupted-root",
+      "role": "preview",
+      "index": 1
+    },
+    "source.blend": {
+      "asset": "asset.models.resources.corrupted-root",
+      "role": "source",
+      "index": 1
+    }
+  }
+}

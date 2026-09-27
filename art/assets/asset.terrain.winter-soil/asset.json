@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-soil",
   "name": "winter soil · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "b8991dc6887802298ce2de2f03187a13a5b86ec7fe498a80539e93c16f9d74c2",
       "bytes": 882030
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "b3ad53c32dea424d7327caaa7df95a3a7ec208d172f6e1b09135615a08c9dae0",
+      "bytes": 1079770
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "fc13671fea6888dce527649ef98ee33fc2c4a13a239b2bbed449f01e49256f36",
+      "bytes": 253
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "aba5e727217b33cc9e105b0b0aae12beab63a3c8969574411bb9e3b872556d46",
+      "bytes": 316
     }
   ],
   "usesGeometry": false,

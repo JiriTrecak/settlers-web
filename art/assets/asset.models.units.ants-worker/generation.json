@@ -1,0 +1,205 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "63d5dc28-33a8-4812-8b95-fe372a40d514",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9264,
+    "partsReturned": 18,
+    "credits": 60,
+    "budgetNote": "Segmented generator resets 4500 to 10000 on blur. Source master deliberately retained; runtime reduction including attachments must remain below 5000."
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "rig": {
+    "type": "Humanoid",
+    "preset": "Mixamo",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Main view isolated from supplied worker.png sheet using imagegen; full sheet retained as reference-sheet.png.",
+  "integration": {
+    "definition": "unit.ants.settler",
+    "status": "published; gathering and backpack carry checked in game",
+    "triangles": 4072,
+    "completeUnitTriangles": 4172
+  },
+  "animation": {
+    "presets": [
+      "idle",
+      "walk",
+      "run",
+      "chop",
+      "box_01",
+      "hit_to_body_01",
+      "fall"
+    ],
+    "generated": [
+      "Hammering Timber take 1",
+      "Hammering Timber take 2"
+    ],
+    "generationCredits": 40,
+    "exportedTakes": 9,
+    "carry": "Blender copies of idle/walk/run with a mild spine lean",
+    "status": "exported, tested, integrated"
+  },
+  "export": {
+    "format": "GLB",
+    "resolution": 4096,
+    "packUV": true,
+    "skeleton": true,
+    "inPlace": true,
+    "result": "18 editable parts, 65 bones, 9 takes, one shared atlas; UV re-packed explicitly for runtime draw-call reduction"
+  },
+  "sourceDirectory": "art/sources/characters/ant-worker-tripo",
+  "config": {
+    "name": "Ant Worker",
+    "kind": "character",
+    "blend": "ant-worker-tripo.blend",
+    "recipe": "model.py",
+    "preserve_textures": true,
+    "camera": {
+      "azimuth": 0,
+      "elevation": 8,
+      "scale": 2.6,
+      "target": [
+        0,
+        0,
+        1
+      ],
+      "distance": 12
+    },
+    "render": {
+      "width": 1024,
+      "height": 1024,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 560,
+      "fill_energy": 260,
+      "rim_energy": 360,
+      "scale": 0.45,
+      "target": [
+        0,
+        0,
+        1
+      ]
+    },
+    "characterHeight": 2.02,
+    "characterVariants": {
+      "base": {
+        "states": {
+          "idle": "idle",
+          "walk": "walk",
+          "run": "run",
+          "carry": "carry",
+          "carry_walk": "carry_walk",
+          "carry_run": "carry_run",
+          "build": "build",
+          "chop": "chop",
+          "attack": "chop",
+          "hit": "hit",
+          "death": "death"
+        }
+      }
+    },
+    "attackEvents": {
+      "base": {
+        "normalizedTime": 0.55,
+        "event": "hit"
+      }
+    },
+    "runtimeDecimation": {
+      "Wooden backpack": 0.34,
+      "Head and antennae": 0.72,
+      "Left leg": 0.42,
+      "Right leg": 0.42,
+      "Right hand and forearm": 0.42,
+      "Abdomen": 0.34,
+      "Right shoulder and leaf collar": 0.34,
+      "Left hand and forearm": 0.42,
+      "Chest": 0.34,
+      "Left shoulder and leaf collar": 0.34,
+      "Right elbow": 0.34,
+      "Left elbow": 0.34,
+      "Right eye": 0.72,
+      "Left eye": 0.72,
+      "Belly detail A": 0.34,
+      "Belly detail B": 0.34,
+      "Eye detail": 0.34,
+      "Neck detail": 0.34
+    },
+    "runtimeWeldDistance": 0.000001,
+    "runtime_texture_size": 2048,
+    "runtime_triangle_budget": 4500,
+    "ownership_channel": "green",
+    "team_color_default": [
+      0.38,
+      0.035,
+      0.055
+    ],
+    "part_names": {
+      "0": "Wooden backpack",
+      "1": "Head and antennae",
+      "2": "Left leg",
+      "3": "Right leg",
+      "4": "Right hand and forearm",
+      "5": "Abdomen",
+      "6": "Right shoulder and leaf collar",
+      "7": "Left hand and forearm",
+      "8": "Chest",
+      "9": "Left shoulder and leaf collar",
+      "10": "Right elbow",
+      "11": "Left elbow",
+      "12": "Right eye",
+      "13": "Left eye",
+      "14": "Belly detail A",
+      "15": "Belly detail B",
+      "16": "Eye detail",
+      "17": "Neck detail"
+    },
+    "rigid_parts": {
+      "0": "Spine2",
+      "1": "Head",
+      "12": "Head",
+      "13": "Head",
+      "16": "Head"
+    },
+    "publication": {
+      "id": "asset.models.units.ants-worker",
+      "renderId": "asset.ants.settler",
+      "iconId": "icon.ants.settler",
+      "profile": "base",
+      "healthHeight": 2.15,
+      "renderAliases": [
+        "asset.briar.civilian"
+      ]
+    },
+    "cargo": [
+      "wood",
+      "amber",
+      "root"
+    ],
+    "runningLeanFactor": 0.2
+  },
+  "triangles": 4072,
+  "maximumCargo": 100,
+  "completeUnitTriangles": 4172,
+  "adapter": "\"\"\"Reference-generated worker, preserved rig and editable parts; no remeshing of source.\"\"\"\nfrom pathlib import Path\nimport bpy,json,sys,math\nfrom mathutils import Vector,Quaternion\nassert bpy.app.background\nP=Path(__file__).resolve().parent;ROOT=P.parents[3]\nsys.path.insert(0,str(ROOT/'experiments/building-studio'))\nfrom stage import create_stage\nfrom export_character import export_character\nCFG=json.loads((P/'asset.json').read_text());own=json.loads((P/'ownership.json').read_text())\nbpy.ops.wm.read_factory_settings(use_empty=True)\nbpy.ops.import_scene.gltf(filepath=str(P/'source.glb'))\nscene=bpy.context.scene;scene.render.fps=24\nrig=next(o for o in scene.objects if o.type=='ARMATURE')\nobjects=[o for o in scene.objects if o.type=='MESH' and o.name.startswith('tripo_part_')]\nfor o in list(scene.objects):\n if o.type=='MESH' and o not in objects:bpy.data.objects.remove(o,do_unlink=True)\nfor pb in rig.pose.bones:pb.custom_shape=None\nfor o in objects:\n index=o.name.split('_')[-1];o['tripo_part']=int(index);o['role']='base'\n o.name=CFG['part_names'][index]\n if index in CFG['rigid_parts']:\n  o.vertex_groups.clear();g=o.vertex_groups.new(name='mixamorig:'+CFG['rigid_parts'][index]);g.add(list(range(len(o.data.vertices))),1,'REPLACE')\n# Original Tripo reference rest height is .97876. Scale at roots preserves binding.\nfor o in list(scene.objects):\n if o.parent is None and o.type in ('MESH','ARMATURE','EMPTY'):o.scale*=CFG['characterHeight']/.9787596\nrig.name='Ant Worker Rig'\nbpy.context.view_layer.objects.active=rig;rig.select_set(True)\nbpy.ops.object.mode_set(mode='EDIT')\nfor name,parent,point in [('socket_handL','LeftHand',None),('socket_handR','RightHand',None),('socket_back','Spine2',(0,.073,.52))]:\n bone=rig.data.edit_bones.new(name);pb=rig.data.edit_bones['mixamorig:'+parent]\n bone.head=pb.head if point is None else Vector(point);bone.tail=bone.head+Vector((0,0,.015));bone.parent=pb;bone.use_deform=False\nbpy.ops.object.mode_set(mode='OBJECT')\nmaterial=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True\nmaterial['teamColorMask']='baseColorAlpha';material['teamColorSourceMax']=own['sourceMax'];material['teamColorDefault']=own['default']\nmaterial.diffuse_color=(*own['default'],1)\nnodes,links=material.node_tree.nodes,material.node_tree.links\nbsdf=nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.72;bsdf.inputs['Metallic'].default_value=0\nfor link in list(bsdf.inputs['Metallic'].links):links.remove(link)\nfor node in nodes:\n if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.45\ntexture=nodes.new('ShaderNodeTexImage');texture.name='Authored albedo with ownership mask';texture.image=bpy.data.images.load(str(P/'albedo-team.png'))\ntexture.image.alpha_mode='CHANNEL_PACKED';texture.image.pack()\n# Keep the raw RGB albedo available for portable glTF display. The runtime\n# ownership mask is its alpha channel, independent of opacity.\nsep=nodes.new('ShaderNodeSeparateColor');links.new(texture.outputs['Color'],sep.inputs[0])\nmx=nodes.new('ShaderNodeMath');mx.operation='MAXIMUM';links.new(sep.outputs[0],mx.inputs[0]);links.new(sep.outputs[1],mx.inputs[1])\nmx2=nodes.new('ShaderNodeMath');mx2.operation='MAXIMUM';links.new(mx.outputs[0],mx2.inputs[0]);links.new(sep.outputs[2],mx2.inputs[1])\ndiv=nodes.new('ShaderNodeMath');div.operation='DIVIDE';links.new(mx2.outputs[0],div.inputs[0]);div.inputs[1].default_value=own['sourceMax']\ntint=nodes.new('ShaderNodeMixRGB');tint.name='Team color';tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(*own['default'],1);links.new(div.outputs[0],tint.inputs[1])\nmix=nodes.new('ShaderNodeMixRGB');links.new(texture.outputs['Alpha'],mix.inputs[0]);links.new(texture.outputs['Color'],mix.inputs[1]);links.new(tint.outputs[0],mix.inputs[2]);links.new(mix.outputs[0],bsdf.inputs['Base Color'])\nif not CFG.get('team_color',True):\n material.name='Natural_Materials';material.diffuse_color=(1,1,1,1)\n for key in ['teamColorMask','teamColorSourceMax','teamColorDefault']:del material[key]\n links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])\nfor o in objects:\n o.data.materials.clear();o.data.materials.append(material)\n\n# A compact ivory hatchet with a timber poll serves chopping and construction.\n# It is part of the same skinned budget and rigidly follows the real gripping hand.\ndef tool_material(name,color):\n m=bpy.data.materials.new(name);m.use_nodes=True\n m.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(*color,1)\n m.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value=.8\n return m\nwood=tool_material('Tool_Wood',(.22,.095,.031));ivory=tool_material('Tool_Ivory',(.67,.49,.27))\ndef tool_mesh(name,verts,faces,mat):\n me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.materials.append(mat)\n ob=bpy.data.objects.new(name,me);scene.collection.objects.link(ob);ob.parent=rig;ob['role']='base'\n g=ob.vertex_groups.new(name='mixamorig:RightHand');g.add(list(range(len(verts))),1,'REPLACE')\n mod=ob.modifiers.new('Hand attachment','ARMATURE');mod.object=rig\n return ob\ncx,cy,cz=-.207,-.105,.291\nverts=[(cx+.013*math.cos(j*math.tau/8),cy+d,cz+.013*math.sin(j*math.tau/8)) for d in [-.20,.11] for j in range(8)]\nfaces=[tuple(range(7,-1,-1)),tuple(range(8,16))]+[(j,(j+1)%8,(j+1)%8+8,j+8) for j in range(8)]\ntool_mesh('Worker hatchet handle',verts,faces,wood)\noutline=[(.032,.027),(.032,-.027),(-.07,-.055),(-.108,-.04),(-.108,.048),(-.045,.037)]\nverts=[(cx+x,cy-.175+y,cz+z) for z in [-.016,.016] for x,y in outline]\nn=len(outline);faces=[tuple(range(n-1,-1,-1)),tuple(range(n,n*2))]+[(j,(j+1)%n,(j+1)%n+n,j+n) for j in range(n)]\ntool_mesh('Worker hatchet ivory head',verts,faces,ivory)\n# Finger closure follows each finger's anatomical axis, rather than animating\n# the provider's generic open hand through the wooden handle.\ngrip={}\nfor b in rig.data.bones:\n if 'RightHand' in b.name and any(k in b.name for k in ['Index','Middle','Ring','Pinky']) and b.name[-1] in '12':\n  axis=b.matrix_local.to_quaternion().inverted()@Vector((0,-1,0))\n  grip[b.name]=Quaternion(axis,math.radians(32 if b.name.endswith('1') else 28))\ncount=0\nfor a in list(bpy.data.actions):\n a.use_fake_user=True\n if a.name.startswith('Looping construction'):\n  a.name='build' if count==0 else 'build_alternate';count+=1\n else:a.name={'box_01':'attack_unarmed','hit_to_body_01':'hit','fall':'death'}.get(a.name,a.name)\nfor a in bpy.data.actions:\n curves=a.layers[0].strips[0].channelbag(a.slots[0]).fcurves\n for fc in curves:\n  if not fc.data_path.endswith('rotation_quaternion'):continue\n  bone=fc.data_path.split('\"')[1]\n  if bone in grip:\n   for k in fc.keyframe_points:k.co.y=grip[bone][fc.array_index]\n   fc.update()\n# Back-carried loads have a mild forward lean; keep the actual locomotion contacts.\nfor source,target in [('idle','carry'),('walk','carry_walk'),('run','carry_run')]:\n a=bpy.data.actions[source].copy();a.name=target;a.use_fake_user=True\n curves=a.layers[0].strips[0].channelbag(a.slots[0]).fcurves\n qcs={fc.array_index:fc for fc in curves if fc.data_path=='pose.bones[\"mixamorig:Spine\"].rotation_quaternion'}\n if len(qcs)==4:\n  frames=[k.co.x for k in qcs[0].keyframe_points]\n  qs=[Quaternion([qcs[i].evaluate(f) for i in range(4)]).normalized()@Quaternion((1,0,0),math.radians(5)) for f in frames]\n  for i,fc in qcs.items():\n   for k,q in zip(fc.keyframe_points,qs):k.co.y=q[i]\n   fc.update()\nfrom locomotion import soften_running_lean\nlean_report=soften_running_lean(rig,scene,.2)\n(P/'locomotion.json').write_text(json.dumps(lean_report,indent=2)+'\\n')\nrig.animation_data.action=None\nfor track in rig.animation_data.nla_tracks:track.mute=True\nfor pb in rig.pose.bones:pb.location=(0,0,0);pb.rotation_quaternion=grip.get(pb.name,Quaternion((1,0,0,0)));pb.scale=(1,1,1)\ncollection=bpy.data.collections.new('Studio');scene.collection.children.link(collection);create_stage(CFG,collection)\nref=bpy.data.images.load(str(P/'reference.png'));ref.name='reference.png';ref.pack();ref.use_fake_user=True\nfor im in bpy.data.images:\n if im.source=='FILE':\n  try:im.pack()\n  except RuntimeError:pass\nsys.path.insert(0,str(P))\nfrom cargo import create_cargo\ncargo_counts=create_cargo(P,scene)\n(P/'cargo-stats.json').write_text(json.dumps(cargo_counts,indent=2))\nfor f in ['asset.json','model.py','cargo.py','provenance.json']:bpy.data.texts.load(str(P/f))\nscene.frame_set(0);bpy.context.view_layer.update()\nbpy.ops.wm.save_as_mainfile(filepath=str(P/CFG['blend']))\nscene.render.filepath=str(P/'render.png');bpy.ops.render.render(write_still=True)\nmeta=export_character(P,P/'model.glb');(P/'viewer.json').write_text(json.dumps(meta,indent=2)+'\\n')\nprint('WORKER_READY',meta['triangles'],meta['animations'])\n",
+  "triangleBudget": 5000
+}

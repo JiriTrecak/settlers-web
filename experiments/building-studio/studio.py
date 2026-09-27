@@ -19,18 +19,11 @@ from compare import comparison
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-ASSETS = ROOT / 'art/sources/buildings'
+from source_workspace import materialize
 
 
 def asset_path(name, category="buildings"):
-    if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', name):
-        raise ValueError('Asset names use lowercase letters, digits and hyphens')
-    if category not in ('buildings','characters','environment','items'):raise ValueError('Unknown asset category')
-    base=ASSETS if category=='buildings' else ROOT/'art/sources'/category
-    path = (base / name).resolve()
-    if path.parent != base.resolve():
-        raise ValueError('Asset path leaves source folder')
-    return path
+    return materialize(name,category)
 
 
 def config_for(asset):
@@ -257,7 +250,7 @@ class Handler(SimpleHTTPRequestHandler):
         elif route=='/character-player.js':
             path=ROOT/'src/render/characters/character-player.js'
         elif route=='/scale-building.glb':
-            path=ROOT/'art/sources/buildings/lumberjack-workshop/model.glb'
+            path=ROOT/'.asset-work/build/buildings/lumberjack-workshop/model.glb'
             if not path.is_file():return self.send_error(404)
         elif route=='/viewer.js':
             path=HERE/'viewer.js'
@@ -312,23 +305,15 @@ def main():
     parser.add_argument('--category',choices=['buildings','characters','environment','items'],default='buildings')
     args=parser.parse_args()
     if args.command=='init':
-        if not args.reference or not args.reference.is_file():parser.error('init requires --reference /path/image.png')
-        asset=asset_path(args.asset,args.category)
-        if asset.exists():parser.error('Asset already exists; choose a new name')
-        asset.mkdir(parents=True)
-        from PIL import Image
-        im=Image.open(args.reference).convert('RGB');im.save(asset/'reference.png')
-        config={'name':args.asset.replace('-',' ').title(),'blend':args.asset+'.blend','recipe':'model.py','seed':28,
-                'camera':{'azimuth':19,'elevation':29,'scale':11.6,'target':[0,0,2.15]},
-                'render':{'width':im.width,'height':im.height,'samples':32},
-                'light':{'key_energy':1200,'fill_energy':300,'rim_energy':1000}}
-        atomic_json(asset/'asset.json',config);atomic_json(asset/'samples.json',{})
-        extract(asset)
-        print(f'Created {asset}. Open the studio to sample colors, then author model.py for this reference.')
+        parser.error('Create the canonical asset in the Asset Workbench, then import its source and recipe resources.')
+    if args.command=='serve':
+        print('Visual review moved to the shared asset workbench. Run npm run dev:tools and open http://127.0.0.1:5175/')
         return
     studio=Studio(args.asset,args.quick,args.category)
     if args.command!='serve':
         studio.run(args.command,args.view)
+        canonical=(studio.asset/'.canonical-id').read_text().strip()
+        subprocess.run(['node','--import','tsx',str(ROOT/'scripts/assets/capture-build.ts'),canonical],cwd=ROOT,check=True)
         return
     studio.watch()
     server=ThreadingHTTPServer(('127.0.0.1',args.port),functools.partial(Handler,studio=studio))

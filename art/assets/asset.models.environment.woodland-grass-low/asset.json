@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-grass-low",
   "name": "woodland grass low",
   "kind": "foliage",
-  "revision": 2,
+  "revision": 3,
   "status": "published",
   "tags": [
     "original",
@@ -37,6 +37,76 @@
       "format": "png",
       "sha256": "1c9f35888a669edbbf9470c9b25783a0eb948a891c3a14f79f7944e77ed3dcc4",
       "bytes": 129815
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "fdcaa7ae9166674be7eea240efe5077a736861ba4209fa9cde439a2cab36d025",
+      "bytes": 1032
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "c7b1e1d3b8eac2dae0559ec174a8a4b267f21e568255cecc48be1c49703cafb9",
+      "bytes": 482
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "50b50779379580f0b653a0c044d82184460b60c56ad2ad8fb41d9f590d05ebad",
+      "bytes": 132092
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "07cb430fbad4b7a25f2e11ee0b4c9fff44831b4c04ee22714d1daced1a076266",
+      "bytes": 132128
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "d8d8c1524478ae56c12b570e3bce80d41deaaf1ee8e24ae13a4ad2cfac5a64e0",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "6ea8e764f580073dbfc0ac2cd9a47acc519de4dca91250227908c9501e56a655",
+      "bytes": 4600
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "5c4d253081402bb3a65fec25163d29e4c088e916dad506448e2f9c4ecfe7c910",
+      "bytes": 1349
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "png",
+      "sha256": "8b7ec6d1926f41bc6abd9887fe5dde6f210b5f84d5dd45e45b66cdc875d4ad34",
+      "bytes": 182637
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "json",
+      "sha256": "aa3f2286cc59e1ea694aa0eb45001f705d41c86d70cf20b1bcabc7419da25933",
+      "bytes": 67
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "4d4a66bb51144cb40b56a0b19e2f2fec680354986c536e23d67e859a4ec8e5bd",
+      "bytes": 1969
     }
   ],
   "usesGeometry": true,
@@ -68,14 +138,14 @@
     ]
   },
   "capabilities": {
-    "groundContact": {
-      "mode": "terrain"
-    },
     "wind": {
       "mode": "grass",
       "strength": 0.12,
       "speed": 0.2,
       "stiffness": 0.75
+    },
+    "groundContact": {
+      "mode": "terrain"
     }
   },
   "provenance": {

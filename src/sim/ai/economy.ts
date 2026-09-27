@@ -1,3 +1,5 @@
+import { resourceCenterSeparation } from "../../shared/map/resourceClearance";
+import { supplyAdmission } from "../game/supply";
 import type { Action } from "../../shared/types/types";
 import type { Definition } from "../../content/schema";
 import type { AIState } from "./state";
@@ -14,9 +16,9 @@ export function build(
   reason: string,
   origin = f.home,
 ) {
-  const worker = f.workers.find(
-    (w) => f.free(w) && f.def(w).behaviors.work?.builds.includes(d.id),
-  );
+  const builders = f.workers.filter(w => f.def(w).behaviors.work?.builds.includes(d.id));
+  const worker = builders.find(w => f.free(w)) ?? builders.find(w =>
+    w.control?.order?.type === "gather" && !w.unit?.cargo && !w.unit?.contained && !w.control.orderQueue.length);
   if (
     !worker ||
     !f.canAfford(d) ||
@@ -25,11 +27,14 @@ export function build(
   )
     return false;
   const max = f.registry.rules.ai.limits.placementCandidates;
+  const source = d.placementNear ? f.registry.get(d.placementNear.source) : undefined;
+  const clearance = source ? resourceCenterSeparation(d.footprint!, source.footprint!, source.constructionClearance ?? 0) : null;
+  const nearRadius = clearance ? Math.max(clearance.x, clearance.y) : 0;
   for (let i = 0; i < max; i++) {
     const k = s.placementCursor++ % 192,
       ring = Math.floor(k / 32),
       angle = ((k % 32) * Math.PI) / 16,
-      radius = d.placementNear ? 9 + ring % 3 : 12 + ring * 4;
+      radius = d.placementNear ? Math.min(d.placementNear.radius, nearRadius + ring % 3) : 12 + ring * 4;
     const p = {
       x: Math.round(origin.x + Math.cos(angle) * radius),
       y: Math.round(origin.y + Math.sin(angle) * radius),
@@ -63,11 +68,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
       workers.flatMap((w) => f.def(w).behaviors.work!.builds),
     );
   const defs = f.registry.definitions.filter((d) => buildable.has(d.id)),
-    houses = defs.filter((d) =>
-      d.behaviors.production?.outputs.some(
-        (id) => f.registry.get(id).creation?.method === "spawn",
-      ),
-    );
+    houses = defs.filter(d => d.supplyProvided && !d.behaviors.production);
   const producers = defs.filter(
     (d) =>
       d.behaviors.production?.mode === "queued" &&
@@ -81,10 +82,10 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
         (id) => f.registry.get(id).creation?.method === "plant",
       ),
     );
-  const queues = f.buildings.flatMap((b) => b.production?.queue ?? []),
-    training = f.own.filter(
-      (e) => e.unit?.contained && f.def(e).behaviors.work,
-    ).length;
+  const allQueues = f.buildings.flatMap(b => b.production?.queue ?? []);
+  const queues = allQueues.filter(q => !f.registry.get(q.definition).behaviors.work);
+  const workerQueues = allQueues.filter(q => f.registry.get(q.definition).behaviors.work);
+  const supply = f.view.supply!;
   const promised: Record<string, number> = {};
   for (const b of f.buildings) {
     const bill: Record<string, number> = {};
@@ -99,24 +100,12 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     barracks = ready.filter((b) =>
       producers.some((d) => d.id === b.definition),
     );
-  // Raid losses invalidate earlier workforce promises; shed queue tails before they deepen the deficit.
-  if (queues.length > Math.max(0, workers.length - rules.workers.minimum)) {
-    for (const b of f.buildings) {
-      const q = b.production?.queue
-        .slice()
-        .reverse()
-        .find((q) => q.id !== b.production?.active?.queue);
-      if (
-        q &&
-        emit(
-          { type: "cancel", actor: b.id, queue: q.id },
-          "Cancel an unstarted recruit to protect the remaining workforce",
-        )
-      )
-        return;
-    }
+  // Planned capacity prevents duplicate mounds; started training keeps its reservation.
+  const planned = f.buildings.filter(b => b.construction).reduce((n,b) => n + (f.def(b).supplyProvided ?? 0),0);
+  if (supply.capacity < supply.limit && supply.committed + 4 > Math.min(supply.limit, supply.capacity + planned)) {
+    const house = houses.find(d => f.canAfford(d, promised));
+    if (house && build(f,s,house,emit,"Expand colony supply")) return;
   }
-
   const fallen = f.view.fallenHeroes ?? [];
   for (const hero of fallen) {
     if (
@@ -124,7 +113,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     )
       continue;
     const altar = ready.find((b) => f.def(b).behaviors.revival);
-    if (altar) {
+    if (altar && !supplyAdmission(supply,f.registry.get(hero.definition).supplyCost!)) {
       if (
         emit(
           { type: "revive", actor: altar.id, hero: hero.id },
@@ -133,22 +122,13 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
       )
         return;
     } else if (
-      sanctuary &&
+      !altar && sanctuary &&
       f.canAfford(sanctuary, promised) &&
       build(f, s, sanctuary, emit, "Build a sanctuary for the fallen hero")
     )
       return;
   }
-  // Houses add persistent capacity and replenishment, not a one-off batch of workers.
-  // Include planned construction so the AI does not overbuild while waiting for births.
-  const capacity = f.buildings.reduce(
-    (n, b) => n + (f.def(b).behaviors.production?.population?.capacity ?? 0),
-    0,
-  );
-  const total = workers.length + training,
-    hasProducer = f.buildings.some((b) =>
-      producers.some((d) => d.id === b.definition),
-    );
+  const hasProducer = f.buildings.some(b => producers.some(d => d.id === b.definition));
   const incomeNeed = Math.min(
     rules.workers.maximum,
     rules.workers.target + Math.floor(f.army.length / 4),
@@ -174,24 +154,22 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     rules.army.maximum,
     Math.max(
       rules.army.minimum,
-      (total - rules.workers.minimum) * 2,
+      Math.max(0, workers.length - rules.workers.minimum) * 2,
       Math.ceil((observedPressure / Math.max(1, typicalPower)) * 1.3),
     ),
   );
-  const endangered = workers.length < rules.workers.minimum;
-  const needHouse =
-    (capacity < incomeNeed ||
-      capacity - queues.length <
-        rules.workers.minimum + rules.workers.reserve) &&
-    (hasProducer || endangered);
-  if (needHouse) {
-    const d = houses.find((d) => f.canAfford(d, promised));
-    if (
-      d &&
-      build(f, s, d, emit, "Grow workforce before committing more recruits")
-    )
-      return;
-  }
+  const trainWorker = (reserve: Record<string,number>) => {
+    if (workers.length + workerQueues.length >= incomeNeed) return false;
+    for (const hall of ready) {
+      const id = f.def(hall).behaviors.production?.outputs.find(id => f.registry.get(id).behaviors.work);
+      if (!id || hall.upgrade || (hall.production?.queue.length ?? 0) >= 2) continue;
+      const d = f.registry.get(id);
+      if (!supplyAdmission(supply,d.supplyCost!) && f.canAfford(d,reserve) &&
+        emit({type:"produce",actor:hall.id,definition:id},"Train a worker for the economy")) return true;
+    }
+    return false;
+  };
+  if (workers.length + workerQueues.length < rules.workers.minimum && trainWorker(promised)) return;
   if (!hasProducer) {
     const d = producers.find((d) => f.canAfford(d, promised));
     if (d && build(f, s, d, emit, "Establish army production")) return;
@@ -244,10 +222,8 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     const bill=outpost?.creation?.items ?? upgrade?.u?.items ?? next?.creation?.items ?? [];
     for(const c of bill)investmentReserve[c.item]=Math.max(investmentReserve[c.item]??0,c.amount);
   }
-  // Queue only soldiers that can be funded, with enough workers left harvesting.
-  const canRecruit =
-    total - training - queues.length > rules.workers.minimum &&
-    f.army.length + queues.length < s.plan.army;
+  // Army production is independent of the worker pool.
+  const canRecruit = f.army.length + queues.length < s.plan.army;
   if (canRecruit) {
     const choices = [...rules.composition].sort((a, b) => {
       const count = (id: string) =>
@@ -306,11 +282,11 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
         break;
       }
       if (
-        producer &&
+        producer && !supplyAdmission(supply, d.supplyCost!) &&
         f.canAfford(d, investmentReserve) &&
         emit(
           { type: "produce", actor: producer.id, definition: d.id },
-          `Train ${d.name}; workforce remains above its floor`,
+          `Train ${d.name} within colony supply`,
         )
       )
         return;
@@ -345,8 +321,9 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     if (d && build(f, s, d, emit, "Add production throughput to match income"))
       return;
   }
+  if (trainWorker(investmentReserve)) return;
   s.plan.economy = `${workers.length} workers, ${f.army.length} army; ${queues.length} training orders`;
-  // Gather assignments survive reviews. Reserve builders/recruits instead of stopping the whole economy.
+  // Gather assignments survive reviews. Reserve builders instead of stopping the whole economy.
   const free = workers.filter((w) => f.free(w)),
     desiredReserve = Math.min(
       rules.workers.reserve,
@@ -363,7 +340,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
       release &&
       emit(
         { type: "stop", actors: [release.id] },
-        "Release one worker for construction or recruitment",
+        "Release one worker for construction",
       )
     )
       return;

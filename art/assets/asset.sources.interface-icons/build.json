@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "category": "interface",
+  "slug": "icons",
+  "files": {
+    "amber.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 1
+    },
+    "archer.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 2
+    },
+    "armor-heavy.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 3
+    },
+    "armor-icon-generation.json": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 4
+    },
+    "armor-light.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 5
+    },
+    "armor-structure.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 6
+    },
+    "attack.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 7
+    },
+    "barkguard.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 8
+    },
+    "barracks.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 9
+    },
+    "build-advanced.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 10
+    },
+    "build.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 11
+    },
+    "cancel.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 12
+    },
+    "carapace.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 13
+    },
+    "crownfall.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 14
+    },
+    "faultline.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 15
+    },
+    "forester.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 16
+    },
+    "fort.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 17
+    },
+    "heartseed.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 18
+    },
+    "house.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 19
+    },
+    "icon-generation.json": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 20
+    },
+    "log.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 21
+    },
+    "lumberjack.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 22
+    },
+    "marshal.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 23
+    },
+    "moon-dew.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 24
+    },
+    "move.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 25
+    },
+    "ogre.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 26
+    },
+    "pause.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 27
+    },
+    "plank.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 28
+    },
+    "produce.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 29
+    },
+    "rally.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 30
+    },
+    "resin-salve.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 31
+    },
+    "royal-crest.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 32
+    },
+    "sawmill.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 33
+    },
+    "settler.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 34
+    },
+    "stone.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 35
+    },
+    "stonemason.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 36
+    },
+    "stop.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 37
+    },
+    "thornband.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 38
+    },
+    "tower.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 39
+    },
+    "warrior.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 40
+    },
+    "wolf.png": {
+      "asset": "asset.sources.interface-icons",
+      "role": "source",
+      "index": 41
+    }
+  }
+}

@@ -1,0 +1,11 @@
+import {triangleGlb} from './glb-fixture';
+import {describe,it,expect} from 'vitest';
+import {inspectGeometry,validateCompleteModel} from '../../tooling/asset-studio/server/authoring/modelQuality';
+import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
+
+const asset=()=>assetDefinitionSchema.parse({version:1,id:'test',name:'Test',kind:'unit',status:'draft',revision:1,usesGeometry:true,resources:[{role:'geometry',index:1,format:'glb',sha256:'0'.repeat(64),bytes:0}],provenance:{method:'authored'}});
+describe('shared model publication quality gate',()=>{
+ it('counts repeated mesh instances and enforces the complete unit budget',async()=>{const report=await inspectGeometry(triangleGlb(3),asset());expect(report.triangles).toBe(3);expect(report.primitives).toBe(3);expect(()=>validateCompleteModel(asset(),[{...report,triangles:4900},{...report,triangles:101}])).toThrow('attachments');expect(()=>validateCompleteModel({...asset(),kind:'building'},[{...report,triangles:9000},{...report,triangles:1001}])).toThrow('limit 10000');await expect(inspectGeometry(triangleGlb(5001),asset())).rejects.toThrow('exceeds 5000');});
+ it('rejects malformed containers, non-finite geometry and out-of-range views',async()=>{await expect(inspectGeometry(Buffer.from('test geometry'),asset())).rejects.toThrow('header');await expect(inspectGeometry(triangleGlb(1,(_,bin)=>bin.writeFloatLE(NaN,0)),asset())).rejects.toThrow('non-finite');await expect(inspectGeometry(triangleGlb(1,d=>d.bufferViews[0].byteLength=1000),asset())).rejects.toThrow('outside');});
+ it('checks definitions again even when geometry measurements are cached',async()=>{const bytes=triangleGlb();await inspectGeometry(bytes,asset());const missing=asset();missing.capabilities.sockets=[{name:'hand',node:'missing',offset:[0,0,0]}];await expect(inspectGeometry(bytes,missing)).rejects.toThrow('Missing socket');missing.capabilities={animations:[{semantic:'idle',clip:'unknown',loop:true,events:[]}]};await expect(inspectGeometry(bytes,missing)).rejects.toThrow('Missing animation');missing.capabilities={teamColor:{mode:'material',slots:['TC_TeamColor']}};await expect(inspectGeometry(bytes,missing)).rejects.toThrow('Missing material');});
+});

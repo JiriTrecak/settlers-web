@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "category": "buildings",
+  "slug": "colony-watchtower-tripo",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 2
+    },
+    "albedo-team.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 3
+    },
+    "asset.json": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 4
+    },
+    "colony-watchtower-tripo.blend": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 1
+    },
+    "model.glb": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "recipe",
+      "index": 1
+    },
+    "normal.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 5
+    },
+    "ownership.json": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 6
+    },
+    "palette.json": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 7
+    },
+    "prepare_texture.py": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "recipe",
+      "index": 2
+    },
+    "provenance.json": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 8
+    },
+    "reference.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "preview",
+      "index": 1
+    },
+    "roughness.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 9
+    },
+    "samples.json": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 10
+    },
+    "source-albedo.jpg": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 11
+    },
+    "source.glb": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 12
+    },
+    "team-mask.png": {
+      "asset": "asset.models.buildings.ants-watchtower",
+      "role": "source",
+      "index": 13
+    }
+  }
+}

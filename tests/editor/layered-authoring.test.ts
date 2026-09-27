@@ -27,17 +27,14 @@ it('authors explicit floors through the editor operation, saves them, and resets
  control.dispatch('walkSurface',{id:'root',walk:null});expect(editor.map.stamps[0]!.walk).toBeUndefined();
  expect(bridgeSurfaces(editor.map.stamps,()=>2)[0]!.level).toBe(1);expect(changed).toHaveBeenCalled();
 });
-it('authors indoor spores and ceiling through the same operation used by MCP',()=>{
+it('allows weather conditions through MCP but rejects appearance overrides atomically',()=>{
  const {editor,control}=fixture();
- const weather={kind:'spores',intensity:.5,windX:.12,windZ:-.08};
- control.dispatch('landscape',{action:'environment',interior:true,ceilingHeight:18,floorMaterial:'heartwood',weather});
+ control.dispatch('landscape',{action:'environment',weather:{kind:'spores'},hour:17});
  const saved=parseUtcMap(JSON.parse(stringifyUtcMap(editor.map)))!;
- expect(saved.landscape!.environment).toMatchObject({interior:true,ceilingHeight:18,floorMaterial:'heartwood',weather});
+ expect(saved.landscape!.environment).toEqual({hour:17,playing:false,weather:{kind:'spores'}});
  const before=stringifyUtcMap(editor.map);
- expect(()=>control.dispatch('landscape',{action:'environment',ceilingHeight:-2})).toThrow();
- expect(()=>control.dispatch('landscape',{action:'environment',weather:{...weather,intensity:2}})).toThrow();
+ for(const settings of [{interior:true},{ceilingHeight:18},{canopy:{enabled:false}},{light:{}},{weather:{kind:'snow',intensity:.2}}])expect(()=>control.dispatch('landscape',{action:'environment',...settings})).toThrow(/biome-owned/);
  expect(stringifyUtcMap(editor.map)).toBe(before);
- control.dispatch('landscape',{action:'environment',ceilingHeight:null});expect(editor.map.landscape!.environment.ceilingHeight).toBeUndefined();
 });
 
 it('preserves asset connections when the inspector edits a height-only override',()=>{
@@ -50,4 +47,23 @@ it('preserves asset connections when the inspector edits a height-only override'
  editor.setStampWalk('root',{level:1,height:12,connections:{}});
  expect(selectedWalk(editor.map.stamps[0]!,deck)!.connections).toEqual({});
  expect(selectedWalk(editor.map.stamps[1]!,undefined)).toBeUndefined();
+});
+
+it('switches biome through MCP without copying appearance into the map',()=>{
+ const {editor,control}=fixture();
+ control.dispatch('landscape',{action:'biome',biome:'deep-forest'});
+ expect(editor.map.biome).toBe('deep-forest');
+ expect(editor.map.landscape?.environment??{}).not.toHaveProperty('light');
+ const before=stringifyUtcMap(editor.map);
+ expect(()=>control.dispatch('landscape',{action:'biome',biome:'unknown-biome'})).toThrow();
+ expect(stringifyUtcMap(editor.map)).toBe(before);
+});
+
+it('authors additional player starts with complete setup metadata through MCP',()=>{
+ const {editor,control}=fixture();
+ control.dispatch('setSpawnPoint',{player:3,x:180,z:60});
+ control.dispatch('setSpawnPoint',{player:4,x:60,z:180});
+ expect(editor.map.playerStarts.map(p=>p.player)).toEqual([1,2,3,4]);
+ expect(editor.map.playerStarts[3]).toMatchObject({setup:'setup.ants',mainFort:'start.player.4/main-fort'});
+ expect(parseUtcMap(JSON.parse(stringifyUtcMap(editor.map)))).not.toBeNull();
 });

@@ -3,7 +3,7 @@
   "id": "asset.icons.building-ants-rootworks",
   "name": "Rootworks",
   "kind": "icon",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "ants-v1",
@@ -32,16 +32,7 @@
   "materials": [],
   "bindings": {
     "profile": "icon",
-    "render": [
-      {
-        "id": "icon.ants.rootworks",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.icons.building-ants-rootworks"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

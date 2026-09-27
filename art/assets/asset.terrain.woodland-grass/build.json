@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "woodland-grass",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.terrain.woodland-grass",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.terrain.woodland-grass",
+      "role": "source",
+      "index": 2
+    }
+  }
+}

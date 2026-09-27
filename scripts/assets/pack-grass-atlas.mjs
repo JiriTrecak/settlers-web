@@ -1,6 +1,6 @@
 /** Pack transparent original artwork into padded UV cells; do not repaint it. */
 import sharp from 'sharp';import fs from 'node:fs/promises';
-const dir='art/sources/textures/woodland-grass-cards',src=dir+'/source.png',meta=await sharp(src).metadata(),pieces=[];
+const dir='.asset-work/build/textures/woodland-grass-cards',src=dir+'/source.png',meta=await sharp(src).metadata(),pieces=[];
 const raw=await sharp(src).ensureAlpha().raw().toBuffer(),w=meta.width,h=meta.height;
 for(let cell=0;cell<6;cell++){
  const x0=Math.floor(cell%3*w/3),x1=Math.floor((cell%3+1)*w/3),y0=Math.floor(Math.floor(cell/3)*h/2),y1=Math.floor((Math.floor(cell/3)+1)*h/2);

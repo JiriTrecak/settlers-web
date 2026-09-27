@@ -115,14 +115,14 @@ export class WalkSurfaces {
  }
  /** Deck undersides block tall bodies, but leave a traversable floor where
   * clearance permits. Pillars and abutments are separate ground blockers. */
- walkable(id:number):boolean {
+ walkable(id:number,clearance=this.bodyClearanceCm):boolean {
   const n=this.nodes[id];if(!n||(!n.surface&&!this.groundWalkable[n.cell])||n.height<this.groundHeights[n.cell]!)return false;
   for(const other of this.columns.get(n.cell)??[]){
    if(other===id)continue;const upper=this.nodes[other]!,deck=this.decks.get(upper.surface!)!;
    const bottom=upper.height-Math.round(deck.thickness*100);
    // Adjacent pieces can share a coplanar seam. A solid ending at our feet
    // is supporting floor, not an overhead obstruction.
-   if(upper.height>n.height && bottom<n.height+this.bodyClearanceCm)return false;
+   if(upper.height>n.height && bottom<n.height+clearance)return false;
   }
   return true;
  }

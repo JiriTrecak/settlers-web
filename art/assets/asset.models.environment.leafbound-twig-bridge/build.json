@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "category": "environment",
+  "slug": "leafbound-twig-bridge",
+  "entry": "model.py",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "albedo",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 2
+    },
+    "geometry.glb": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 3
+    },
+    "leafbound-twig-bridge.blend": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 1
+    },
+    "model.glb": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 4
+    },
+    "model.py": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "recipe",
+      "index": 1
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 5
+    },
+    "render.png": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 6
+    },
+    "samples.json": {
+      "asset": "asset.models.environment.leafbound-twig-bridge",
+      "role": "source",
+      "index": 7
+    }
+  }
+}

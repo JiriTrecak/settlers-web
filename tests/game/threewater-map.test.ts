@@ -29,13 +29,19 @@ describe('Threewater authored battlefield',()=>{
     const i=z*map.size+x;expect(game.spatial.resources[i]).toBe(0);expect(game.spatial.terrain[i]).toBe(1);
     expect(Math.abs(game.spatial.heights[i]!)).toBeLessThanOrEqual(1);
    }
-   for(let z=b.z-12;z<=b.z+12;z+=4)for(let x=b.x-12;x<=b.x+12;x+=4)
+   const hall=game.registry.get(game.registry.rules.startingSetup.fort).footprint!;
+   const barracks=game.registry.get('building.ants.barracks').footprint!;
+   const radius=Math.ceil((Math.max(hall.width,hall.depth)+Math.max(barracks.width,barracks.depth))/2)+4;
+   for(let z=b.z-radius;z<=b.z+radius;z+=4)for(let x=b.x-radius;x<=b.x+radius;x+=4)
     if(game.canBuild(owner,'building.ants.barracks',{x,y:z},worker.id)===null)valid++;
    expect(valid).toBeGreaterThanOrEqual(25);
   }
  });
  it('connects bases and all six amber deposits without removing trees',()=>{
-  const starts=map.playerStarts.map(b=>near(b.x,b.z));
+  const starts=map.playerStarts.map(b=>{
+   const hall=game.entities.find(e=>e.placement===b.mainFort)!;
+   const entrance=game.spatial.entrance(hall);return near(entrance.x,entrance.y);
+  });
   expect(game.spatial.findPath(starts[0]!,starts[1]!)).not.toBeNull();
   for(const mine of map.entities.filter(e=>e.definition==='building.neutral.amber-mine')){
    const destination=near(mine.position.x,mine.position.y,10);

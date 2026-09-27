@@ -151,7 +151,7 @@ export class ContentRegistry {
             disabledBehaviors: _disabled,
             ...fields
           } = raw;
-          return scaleUnitDefinition(definitionSchema.parse({ ...fields, behaviors: merged }), this.rules.unitScale);
+          return scaleUnitDefinition(definitionSchema.parse({ ...fields, behaviors: merged }), this.rules.unitScale,this.byAsset[fields.asset]?.dimensions);
         })
         .sort(ordinal),
     );
@@ -400,6 +400,10 @@ export class ContentRegistry {
         fail("placement-near requires a constructable building and a finite resource source");
       if (d.behaviors.storage?.dropoff && d.kind !== "building")
         fail("drop-off requires building");
+      if ((d.kind === "unit") !== (d.supplyCost !== undefined))
+        fail("every unit must declare supplyCost; other kinds cannot consume supply");
+      if (d.supplyProvided !== undefined && d.kind !== "building")
+        fail("only buildings provide supply");
       const c = d.creation;
       if (c) {
         if (new Set(c.items.map((p) => p.item)).size !== c.items.length)
@@ -407,10 +411,8 @@ export class ContentRegistry {
         for (const input of c.items) expect(input.item, "item");
         if (c.method === "construct" && d.kind !== "building")
           fail("construct target must be building");
-        if (c.method === "recruit") {
-          if (d.kind !== "unit" || !expect(c.unitInput, "unit").behaviors.work)
-            fail("recruit requires unit and worker input");
-        }
+        if (c.method === "train" && d.kind !== "unit")
+          fail("train target must be unit");
         if (c.method === "harvest" && d.kind !== "item")
           fail("harvest targets items");
         if (c.method === "harvest" && !this.get(c.source).yield)
@@ -425,8 +427,6 @@ export class ContentRegistry {
         }
         if (c.method === "plant" && (d.kind !== "resource" || !d.regrowthTicks))
           fail("plant needs resource and regrowthTicks");
-        if (c.method === "spawn" && d.kind !== "unit")
-          fail("spawn target must be unit");
       }
       const p = d.behaviors.production;
       if (!p) continue;
@@ -442,17 +442,13 @@ export class ContentRegistry {
           c = target.creation;
         if (!c || c.method === "construct") fail(`unsupported output ${id}`);
         if (!c) continue;
-        if ((c.method === "recruit") !== (p.mode === "queued"))
+        if ((c.method === "train") !== (p.mode === "queued"))
           fail(`${c.method} has incompatible production mode`);
         const needsWorker = ["harvest", "plant"].includes(c.method);
         if (p.workerSlots !== (needsWorker ? 1 : 0))
           fail(`${c.method} has invalid staffing`);
         if (["harvest", "plant"].includes(c.method) && !p.workRadius)
           fail("external work requires workRadius");
-        if ((c.method === "spawn") !== !!p.population)
-          fail("spawn requires population capacity and interval, exclusively");
-        if (p.population && !target.behaviors.work)
-          fail("population output must be a worker");
         const store = d.behaviors.storage;
         for (const input of c.items)
           if (!store?.accepts.includes(input.item))
@@ -481,6 +477,7 @@ export class ContentRegistry {
         parent = this.actions.categories[parent]?.parent;
       }
     }
+    if (!this.asset(this.rules.supplyIcon).image) throw new Error("Supply icon must reference an image");
     for (const d of this.definitions) categoryExists(d.category);
     for (const a of [
       ...Object.values(this.actions.actions),
@@ -563,7 +560,7 @@ export class ContentRegistry {
       const d = expect(entry.definition, "unit");
       if (
         !d.behaviors.combat ||
-        d.creation?.method !== "recruit" ||
+        d.creation?.method !== "train" ||
         !this.definitions.some(
           (b) =>
             b.behaviors.production?.outputs.includes(d.id) &&

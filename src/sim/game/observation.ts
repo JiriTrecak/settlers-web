@@ -1,3 +1,4 @@
+import { colonySupply, type Supply } from "./supply";
 import {elevatedPoint} from './garrisons';
 import {SectorIndex} from '../../shared/spatial/sectors';
 import {VisionMask} from './visionMask';
@@ -112,6 +113,7 @@ export type SettlementView = {
   visuals?: VisualCue[];
   goods?: GoodsSummary[];
   population?: ReturnType<typeof workerPopulation>;
+  supply?: Supply;
   revision: number;
   entities: readonly EntityView[];
   fog?: FogView;
@@ -645,6 +647,7 @@ export class Observation {
         .map((cue) => cue.entity),
       ...(owner
         ? {
+            supply: colonySupply(this.c.populationCandidates(), owner, this.c.registry),
             population: workerPopulation(this.c.populationCandidates(), owner, this.c.registry),
             goods: summarizeGoods(
               actors,

@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "base": {
+      "file": "base.glb",
+      "triangles": 4072,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "carry_walk": "carry_walk",
+        "carry_run": "carry_run",
+        "build": "build",
+        "chop": "chop",
+        "attack": "chop",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "base": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.02
+}

@@ -2,11 +2,11 @@ import {describe,it,expect} from 'vitest';
 import {DEFAULT_WATER_STYLE,parseWaterStyle} from '../../src/shared/landscape/waterStyle';
 import {emptyLandscape} from '../../src/shared/landscape/curve';
 import {emptyUtcMap,parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
-describe('authored water appearance',()=>{
- it('survives map save and reload while legacy maps remain valid',()=>{
+describe('biome-owned water appearance',()=>{
+ it('strips legacy map water overrides while keeping maps valid',()=>{
   const water={...DEFAULT_WATER_STYLE,rippleStrength:.21,foamStrength:.2,causticStrength:0,reflectionStrength:.2,shadowStrength:.25};
   const map={...emptyUtcMap(),landscape:{...emptyLandscape(),water}};
-  expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.landscape?.water).toEqual(water);
+  expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.landscape?.water).toBeUndefined();
   expect(parseUtcMap(emptyUtcMap())?.landscape).toBeUndefined();
   expect(parseWaterStyle(DEFAULT_WATER_STYLE)).toEqual(DEFAULT_WATER_STYLE);
  });

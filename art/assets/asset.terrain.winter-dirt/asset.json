@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-dirt",
   "name": "winter dirt · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "d9e48634d18475dc9fc79801af9c23313eb810c340042fd23071847349765706",
       "bytes": 1452560
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ebf6315f750695e71cf7d4dc9315b02a52f93ced77617158b84c9c5e6aee6ebc",
+      "bytes": 2110214
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "1cb9aaf7b53bafb8dc6e98482f3a94f2d9d11f776784f004a10492868d027df7",
+      "bytes": 253
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "0776e2d297d95969f0db6bbc884165a1d8af8c1f94b4a76a257673d0a3d08b08",
+      "bytes": 316
     }
   ],
   "usesGeometry": false,

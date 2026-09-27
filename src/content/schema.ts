@@ -34,9 +34,8 @@ export const creationSchema = z.discriminatedUnion("method", [
     .strict(),
   z
     .object({
-      method: z.literal("recruit"),
+      method: z.literal("train"),
       items: priceSchema,
-      unitInput: idSchema,
       workTicks: work,
     })
     .strict(),
@@ -58,13 +57,7 @@ export const creationSchema = z.discriminatedUnion("method", [
       workTicks: work,
     })
     .strict(),
-  z
-    .object({
-      method: z.literal("spawn"),
-      items: z.array(z.never()),
-      workTicks: work,
-    })
-    .strict(),
+
 ]);
 const movement = z
   .object({
@@ -116,10 +109,6 @@ const production = z
     workerSlots: z.union([z.literal(0), z.literal(1)]),
     queueCapacity: positive.max(100).optional(),
     workRadius: positive.max(64).optional(),
-    population: z
-      .object({ capacity: positive.max(1000), intervalTicks: work })
-      .strict()
-      .optional(),
     jobName: z.string().optional(),
   })
   .strict();
@@ -210,9 +199,10 @@ const rawBehaviors = z
       .optional(),
   })
   .strict();
+export const unitDimensionsSchema=z.object({radius:z.number().positive().max(16),height:z.number().positive().max(64),formationSpacing:z.number().positive().max(64)}).strict().refine(d=>d.formationSpacing>=d.radius*2,'Formation spacing must fit the body diameter');
 const fields = {
   id: idSchema,
-  garrison: z.object({capacity:z.literal(1),accepts:z.array(idSchema).min(1),height:z.number().positive().max(32)}).strict().optional(),
+  garrison: z.object({capacity:z.literal(1),accepts:z.array(idSchema).min(1),height:z.number().positive().max(32),lookoutRadius:z.number().min(0).max(5).optional()}).strict().optional(),
   requires: z.array(idSchema).min(1).optional(),
   upgrade: z.object({target: idSchema, items: priceSchema, workTicks: work}).strict().optional(),
   category: idSchema.optional(),
@@ -223,6 +213,9 @@ const fields = {
   icon: idSchema,
   displayOrder: z.number().int().optional(),
   hero: z.boolean().optional(),
+  dimensions: unitDimensionsSchema.optional(),
+  supplyCost: natural.max(100).optional(),
+  supplyProvided: positive.max(1000).optional(),
   level: positive.optional(),
   experienceYield: natural.optional(),
   itemTier: z.number().int().min(1).max(3).optional(),
@@ -348,6 +341,7 @@ export const assetSchema = z
       .regex(/^assets\/.*\.png$/)
       .optional(),
     harvestAnimation: z.string().regex(/^assets\/.*\.glb$/).optional(),
+    dimensions: unitDimensionsSchema.optional(),
     carryAsset: idSchema.optional(),
     character: idSchema.optional(),
     scale: z.number().positive().optional(),
@@ -371,6 +365,8 @@ export const rulesSchema = z
       z.object({ name: z.string().min(1), icon: idSchema }).strict(),
     ),
     maxUnits: positive,
+    maxSupply: positive.max(1000),
+    supplyIcon: idSchema,
     maxBuildings: positive,
     constructionHpPermille: positive.max(1000),
     repairTicks: positive,

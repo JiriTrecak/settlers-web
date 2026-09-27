@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-supply-crate",
   "name": "woodland supply crate",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "9ee8c1f517317c612359c0b44e3979416fc78dd60398c044c14df4201f1d3918",
+      "bytes": 1068
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "bf0f4591acf12e27d1770b77c4081f853ba7280538aeb532568bdd09f8b59246",
+      "bytes": 648
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "09d41d59a728df0e6ded783fac701188d4108220c9f5ba1ba8d8fe0d286824c3",
+      "bytes": 1588756
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "608fb0260dc99e38e2f4b35fa5e8c38e7e91b27c89e3e29acc09ad77456ee5ba",
+      "bytes": 1563440
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "a0c1ce343a35c702469ea6d4a8bc6f90deea3b8f97caff92d89d3a82a55f4a92",
+      "bytes": 1263
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "cc58bae0b31919a4526dd3ae2a3516ae28711b5bd698f59020119f476fc72759",
+      "bytes": 532942
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "2a325a7f2880236d691d0cbc38ad15afba182de0ff138c53e077dbbc9da27fdd",
+      "bytes": 2153
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

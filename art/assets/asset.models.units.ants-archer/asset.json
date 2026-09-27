@@ -1,0 +1,354 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-archer",
+  "name": "Ant Archer",
+  "kind": "unit",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "skinned",
+    "tripo",
+    "ant-archer-tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "c4604ed351c485cebdc0c1f75173f609b127283e52b947ce20667cfb7d204e27",
+      "bytes": 10754292
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "006473789c5327159253d299956d9af22cae24e8474ed0bfca6457a06441c038",
+      "bytes": 20513370
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "aae346698e9c4190fd4d82b7a5b088d6ad473e2e5509a453056c6243a5d350fc",
+      "bytes": 1323446
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "de063a229100afce47264c24d254dcfbc59c30e3218018c13c51093de23bc615",
+      "bytes": 550992
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d668fadae2e4854444bab8fe50bb56f4e754124e77d0b8096a983d400b491e7f",
+      "bytes": 11144
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "6cef1a016b26f2a6446a0be99da94efe0fcfae5e6aaff7226d4b0ba1788196c5",
+      "bytes": 4650475
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "5f41567125610f6e0dc9c2c7484e361eeebdc3e251df788830d2f1fe852c2679",
+      "bytes": 51006
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "c1236abae25714d6334bd916306943b8cc2ccbd74e55fa5b238dcda754366a88",
+      "bytes": 9762
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "bfac25185253c5eaafc4bf00af591603bb9d53b5d80a39af45bc1d1d8f3d97bc",
+      "bytes": 1913
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "62d201b807d2cc9f2768f806078992ff77d7d5a3fda10a81a21f6cb67c6284e3",
+      "bytes": 9882277
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "8d0cc5c6e4b0978953bcd2617476c9bc0ad3069d0007e32f5f6496c1b0c34bbb",
+      "bytes": 2225
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "13714fc2395c62b15f0d1282bd8a31e97d29334d124c4fa3fcf7cb6d2a568b34",
+      "bytes": 8749
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "deede7d17e7ba48aeb5617706ebff0a697ea4964741b1d9de22373fecec23ca3",
+      "bytes": 488
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "62542e08317d0a9b71caaa2bf458fee80c23c5c8cc0ddbb527f4795228fabc8b",
+      "bytes": 5654
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "png",
+      "sha256": "8b83efb82ad322b9e162b02ac3a791d795700c6fe3bb7dff8710be4302dfd52d",
+      "bytes": 6115295
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "e726afcfbfac629c51a2e1d877a37d37a257eb043caf77d5f61ea499449b0219",
+      "bytes": 153
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "87c8d1c3fda0f6f01f7dc2da1c1b75a1ef61b12c1bb46e181069d5371ea07568",
+      "bytes": 4061
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "cdc01912812d79efe66ff164b7603c8f4ddc2153b8356a10192e85a617b4a28a",
+      "bytes": 195
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "json",
+      "sha256": "9aefe49f8e7243c71c3840e2533906823313112595122dde60627b36beb97ec0",
+      "bytes": 1431
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "png",
+      "sha256": "6c7777c40939e506ae1bae8da680f2ece3aa34d51c99da7bcea9cf55ff42707c",
+      "bytes": 1762407
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "png",
+      "sha256": "1822383a53a49a7297bae268750d335bfcc8f1a4885e407bb3bd06502def2dd5",
+      "bytes": 4355238
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "bytes": 3
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "jpeg",
+      "sha256": "5b9c869a1e248a0cf1e0be1d0534637cfc8dd77a665e73c59bee89e1d7759598",
+      "bytes": 2325146
+    },
+    {
+      "role": "source",
+      "index": 14,
+      "format": "glb",
+      "sha256": "81f13661dab0aa821878f9960c6dffb96c9ea9576dcdd22bb656115449373346",
+      "bytes": 8195292
+    },
+    {
+      "role": "source",
+      "index": 15,
+      "format": "png",
+      "sha256": "4d55c97407f8a0f27effc6e225ec7441c6d6a26601b64b7e638289352c6a52f8",
+      "bytes": 118750
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "7516ed972eaa207e727b190bfbbab70e2168e6960667e8b53ff7ff230d7b7dfd",
+      "bytes": 2764
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "archer",
+    "render": [
+      {
+        "id": "asset.ants.archer",
+        "character": "archer",
+        "scale": 1,
+        "healthHeight": 2.15,
+        "projectile": "arrow",
+        "projectileSocket": "socket_projectile",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-archer"
+        }
+      },
+      {
+        "id": "icon.ants.archer",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-archer"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "charge",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack_bow",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.6250000000000002
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "back",
+        "node": "socket_back",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "dimensions": {
+      "radius": 0.2,
+      "height": 2,
+      "formationSpacing": 1
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

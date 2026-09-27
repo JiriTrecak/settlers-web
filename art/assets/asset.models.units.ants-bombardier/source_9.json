@@ -1,0 +1,62 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "bd3a9d5e-294b-46bb-a6b0-3b6447b879aa",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9764,
+    "partsCount": 24,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Single blue-team three-quarter view isolated from supplied bombardier.png. Full sheet retained.",
+  "integration": {
+    "definition": "unit.ants.bombardier",
+    "status": "published",
+    "triangles": 4957,
+    "localAdaptation": "Rigid mortar and wing shell; baked upper-body brace/recoil; animated muzzle socket; runtime 2K ownership atlas"
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "rig": {
+    "type": "Humanoid",
+    "preset": "Mixamo",
+    "credits": 20,
+    "status": "complete"
+  },
+  "animation": {
+    "presets": [
+      "idle",
+      "walk",
+      "run",
+      "hit_to_body_01",
+      "fall"
+    ],
+    "generated": [
+      "Mortar Recharge Recoil"
+    ],
+    "generationCredits": 20,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "resolution": 4096,
+    "packUV": true,
+    "skeleton": true,
+    "inPlace": true,
+    "takes": 6
+  }
+}

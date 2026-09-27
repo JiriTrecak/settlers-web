@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "category": "environment",
+  "slug": "woodland-grass-high-b",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 2
+    },
+    "albedo.png": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "albedo",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 3
+    },
+    "generation.json": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "generation",
+      "index": 1
+    },
+    "geometry.glb": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 4
+    },
+    "model.glb": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 5
+    },
+    "model.py": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "recipe",
+      "index": 1
+    },
+    "palette.json": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 6
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "albedo",
+      "index": 1
+    },
+    "render.glb": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 5
+    },
+    "render.json": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 7
+    },
+    "render.png": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 8
+    },
+    "samples.json": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 9
+    },
+    "woodland-grass-high-b.blend": {
+      "asset": "asset.models.environment.woodland-grass-high-b",
+      "role": "source",
+      "index": 1
+    }
+  }
+}

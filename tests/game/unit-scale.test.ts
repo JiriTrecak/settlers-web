@@ -136,3 +136,23 @@ it('moves two enlarged armies through a passage without overlaps or stranded uni
   expect(army.slice(0,12).every(e=>e.x>116)).toBe(true);
   expect(army.slice(12).every(e=>e.x<116)).toBe(true);
 });
+
+it('uses individual dimensions for mixed-size collisions, gates and bridge headroom',()=>{
+ const raw=source();(raw.rules as Rules).unitScale=1;
+ const definitions=raw.definitions as any[];
+ const small=definitions.find(d=>d.id==='unit.ants.warrior');
+ const tall=definitions.find(d=>d.id==='unit.ants.archer');
+ small.dimensions={radius:.2,height:1.5,formationSpacing:1};
+ tall.dimensions={radius:.65,height:4,formationSpacing:1.4};
+ const c=new GameContext(emptyState(),new ContentRegistry(raw),{...emptyUtcMap(),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
+ const a=c.create(placed('small',small.id,100,100)),b=c.create(placed('large',tall.id,101,100));c.spatial.rebuild();
+ expect(c.spatial.unitWalkable({x:40,y:40},a)).toBe(true);
+ expect(c.spatial.unitWalkable({x:40,y:40},b)).toBe(false);
+ b.unit!.position=fixed({x:100.8,y:100});
+ for(const indexed of [false,true]){if(indexed)c.spatial.beginUnitMovement();expect(c.spatial.unitSegmentClear(fixed(a),fixed(a),a.id)).toBe(false);expect(c.spatial.unitSegmentClear(fixed(precise(b)),fixed(precise(b)),b.id)).toBe(false);c.spatial.endUnitMovement();}
+ const s=c.spatial;for(let y=0;y<s.size;y++)if(y!==10&&(y<20||y>22))s.terrain[y*s.size+20]=0;
+ s.navigation.invalidate();s.sectors.invalidate();s.sectors.prepare();
+ const from=s.cell({x:10,y:10}),to=s.cell({x:30,y:10});
+ expect(s.findPath(from,to,undefined,Infinity,a)).toContain(s.cell({x:20,y:10}));
+ const wide=s.findPath(from,to,undefined,Infinity,b)!;expect(wide).not.toContain(s.cell({x:20,y:10}));expect(wide).toContain(s.cell({x:20,y:21}));
+});

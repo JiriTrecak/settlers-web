@@ -1,0 +1,36 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "bd338520-85ca-470a-8473-ed7499be2ca1",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9746,
+    "credits": 60,
+    "partsReturned": 25
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "tower.png",
+  "integration": {
+    "definition": "building.ants.tower",
+    "platformHeight": 5.8,
+    "centerRoofClearance": 4.5,
+    "lookoutRadius": 1.35,
+    "roofLift": 1.3
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  }
+}

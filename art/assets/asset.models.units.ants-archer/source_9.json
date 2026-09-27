@@ -1,0 +1,61 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "5e11f3bb-510e-496e-94d6-f07497f8bc3a",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9687,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Single front view isolated from supplied archer.png; bow removed from generation input for separately fitted animated equipment. Full sheet retained.",
+  "integration": {
+    "definition": "unit.ants.archer",
+    "status": "published",
+    "triangles": 4715
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "rig": {
+    "type": "Humanoid",
+    "preset": "Mixamo",
+    "credits": 20,
+    "status": "complete"
+  },
+  "animation": {
+    "presets": [
+      "idle",
+      "walk",
+      "run",
+      "hit_to_body_01",
+      "fall"
+    ],
+    "generated": [
+      "Archery Shot"
+    ],
+    "generationCredits": 20,
+    "status": "exported",
+    "adaptation": "Generated body/leg take with neutral upright upper torso and locally baked two-arm draw, skinned bowstring and arrow. Release frame 39/71."
+  },
+  "export": {
+    "format": "GLB",
+    "resolution": 4096,
+    "packUV": true,
+    "skeleton": true,
+    "inPlace": true,
+    "takes": 6
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "winter-dirt",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.terrain.winter-dirt",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.terrain.winter-dirt",
+      "role": "source",
+      "index": 2
+    }
+  }
+}

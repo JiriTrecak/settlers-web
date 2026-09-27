@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "woodland-grass-cards",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.sources.textures-woodland-grass-cards",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.sources.textures-woodland-grass-cards",
+      "role": "source",
+      "index": 2
+    },
+    "source.png": {
+      "asset": "asset.sources.textures-woodland-grass-cards",
+      "role": "source",
+      "index": 3
+    }
+  }
+}

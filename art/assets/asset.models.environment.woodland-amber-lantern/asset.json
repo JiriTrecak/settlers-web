@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-amber-lantern",
   "name": "woodland amber lantern",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "1a7ffb846d82e370d2ee46cda0d1d4a7bef72f27d282e42db951c5b9de6f1146",
+      "bytes": 1030
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "947c241e5e1db1df86dfc7ffca48b0751a1e516e6bf9cb43a32fac2c0ab1bc4c",
+      "bytes": 665
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "ddc9cb54017deb6490fee0cd738179fa14310a48d0e4f9b07e09ea498e46b2aa",
+      "bytes": 1554616
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "1007df4590a4da68c1e8c9b9370c68bea4cc98e846df0914dc7e00584629ee1b",
+      "bytes": 1554652
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "dcc5af94cea410daf4017d914d84a150b2be7a464a73c3203b2c94810304706e",
+      "bytes": 1387
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "a9aecc56b42cbb8ea9c3c8f2bce4564ee5579ddcf69045fd3621307c88d2fc37",
+      "bytes": 264856
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "a3e95cfad840a3d8d667f94909623ac08463ef7eb11a5e8e689892a32ff1f86a",
+      "bytes": 2170
     }
   ],
   "usesGeometry": true,
@@ -93,10 +170,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-mushroom-cluster",
   "name": "woodland mushroom cluster",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "8fa1526fbea1f68e7158216915cddcdea5e88182662e0cce095b645d16a62984",
+      "bytes": 1092
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "b1811f81505a0645abb80f0b77218640cbd24c57160b9dd81a9ad444a8fcaf6b",
+      "bytes": 658
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "cea0a3514228b4f0d1131479f2b10d438e65343e345dae07248050732ead0d76",
+      "bytes": 12352
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "1b12e9470cef785a8cac6b7588e56813ba13cb46191459ae953b24ec1f976937",
+      "bytes": 12392
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "8067366a557be669fe9e34422c9c177c3b740a1087c23d303527e1a2e8af3e50",
+      "bytes": 1278
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "9414db88cb5eaf28fcafaff95833099fcfee6fd8e5a9679e6cd03ba4b3edcb29",
+      "bytes": 269982
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "daf35da46c4987e3e5cee64064936483a05166366a3f8f56ef8ef0447da20b2e",
+      "bytes": 2221
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

@@ -1,0 +1,353 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-bombardier",
+  "name": "Bombardier Beetle",
+  "kind": "unit",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "skinned",
+    "tripo",
+    "ant-bombardier-tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6ad2fb59475a83488672458aeccb25f6625482b13fbfb1d96257136bad24a0d4",
+      "bytes": 11323560
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "94a31fff8c6078312d69b928375e9710cccea2989338644fc75c2e5690f0e12a",
+      "bytes": 23116094
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "2e68fa276c65d984c5a79311e3a434531e9c2b64c74be2abbbda98fb5f30644b",
+      "bytes": 1606819
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "3b887dcb5d6d20a8eaa7cb07a98cfde3d8baccfba0a69587344b5b55225a9a4a",
+      "bytes": 650830
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "fc40856f2fde2e3053b05ddcd2c836db588e81e22cb9360885a1f411b447fa68",
+      "bytes": 15415
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "36e6ce6531fa81d0299a36779d26a45de7745909510880af247a10d38402d78d",
+      "bytes": 5920134
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "3bd62f4ce1bae9d6244a7ccce6332f8974fec5dd5c54d8f96aa6b8586a28db07",
+      "bytes": 34440
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "24b473d3a5acbfca753c1d822e3e819cd9404ea7312cf8f7a5a7b2f7b7ed21e4",
+      "bytes": 10888
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "647bfbc925117115a456fc54ef1cb85addcb6156e5bf54f2cea7b666d6b3fa86",
+      "bytes": 1810
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "6711d23252444159206a644abda1d50fc862b8f65fa25925eaf304d17dceb6bc",
+      "bytes": 12308645
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "fa474f87ece272f859013c4ac42b126108c0f3697da6585e8f9877ffc3360f56",
+      "bytes": 3257
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "1e2c2a6604502f1a3a92a7a0abb0d85fb106af993c048ac6b7004197f2469fbc",
+      "bytes": 503
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "cad90329a605b93b641bf1ccc0550d3eb249bad7c6d1227f33f47d27ef590126",
+      "bytes": 5707
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "282f029e5feb080b9c259b6d9a89e7e8dcf8e10b358612a3f73207b81165a1ce",
+      "bytes": 2464
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "png",
+      "sha256": "b816df0a55c80b519b70404c71eb056f9ca81f7f7052be5a9956d60e81426ff4",
+      "bytes": 7490562
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "5a1e4f5d7b517d3c05e3d2ad3c5d5750fc1f4ad32c83b8bce000a074b9a2b432",
+      "bytes": 153
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "eb68bb1945370f21b5d34a200ba3d007efe4c4f0c498a524fd0de9d17bed6d3a",
+      "bytes": 5353
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "cdc01912812d79efe66ff164b7603c8f4ddc2153b8356a10192e85a617b4a28a",
+      "bytes": 195
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "json",
+      "sha256": "62f9dbdc6043710c3e19ff0104182704e5793cc9d4c82ed9d4fc885c27696cdf",
+      "bytes": 1390
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "png",
+      "sha256": "b6a37cc71984ce4e7514ac43c6941eeb26f071ec4a377155cb732c9b6a4cc8bc",
+      "bytes": 1846716
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "png",
+      "sha256": "d86b4f7c14067f0dc93244dcf532c2e54d583cceb8486182d8ef5c1516972638",
+      "bytes": 3064583
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "bytes": 3
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "jpeg",
+      "sha256": "43ebf9f85fc1917c5f85028e3e2eda1b78f70d5aa9134e2e18f102617b040e1a",
+      "bytes": 2667221
+    },
+    {
+      "role": "source",
+      "index": 14,
+      "format": "glb",
+      "sha256": "e5a6e44ec913596692af3a513b901470635a4a8ca83016647e228f3f9dce2fc8",
+      "bytes": 8225228
+    },
+    {
+      "role": "source",
+      "index": 15,
+      "format": "png",
+      "sha256": "3d381114b1c949ee28229712220a9c9e9d2f2e144cbf23a8a1ae4d9edecbb3fd",
+      "bytes": 79833
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "29173049b45c63c2211ac49dfa6ef6440b1b306a231b2d742f359b9f5eaa85bd",
+      "bytes": 2865
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "bombardier",
+    "render": [
+      {
+        "id": "asset.ants.bombardier",
+        "character": "bombardier",
+        "scale": 1,
+        "healthHeight": 3.05,
+        "projectileSocket": "socket_projectile",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-bombardier"
+        }
+      },
+      {
+        "id": "icon.ants.bombardier",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-bombardier"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "charge",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack_mortar",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.5
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "back",
+        "node": "socket_back",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "dimensions": {
+      "radius": 0.2,
+      "height": 2,
+      "formationSpacing": 1
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

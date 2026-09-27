@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.sources.textures-woodland-bark",
+  "name": "woodland-bark",
+  "kind": "data",
+  "revision": 2,
+  "status": "archived",
+  "tags": [],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
+      "bytes": 1534415
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "ab2f1d79929584e7ea5abc6a66a0fa632b077d6ec55e7062ad3635d72aab282b",
+      "bytes": 242
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "60dc9075fc78cbfd3826a80410b86e9bac75868fa7d44c2e8ad7cff1691dbe3c",
+      "bytes": 340
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

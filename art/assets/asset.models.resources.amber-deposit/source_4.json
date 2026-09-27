@@ -1,0 +1,58 @@
+{
+  "name": "Amber Deposit",
+  "blend": "colony-amber-deposit-tripo.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 32,
+    "scale": 7.1,
+    "target": [
+      0,
+      0,
+      2.1
+    ],
+    "distance": 24.43181818181818
+  },
+  "render": {
+    "width": 1254,
+    "height": 1254,
+    "samples": 40
+  },
+  "light": {
+    "key_energy": 1100,
+    "fill_energy": 370,
+    "rim_energy": 800,
+    "scale": 1.368181818181818,
+    "target": [
+      0.0,
+      0.0,
+      2.540909090909091
+    ]
+  },
+  "preserve_textures": true,
+  "runtime_triangle_budget": 10000,
+  "texture_format": "AUTO",
+  "bake_vertex_ao": true,
+  "runtime_texture_size": 2048,
+  "width": 6.6,
+  "part_role": "amber-deposit",
+  "part_names": {},
+  "publication": {
+    "id": "asset.models.resources.amber-deposit",
+    "faction": "neutral",
+    "renderIds": [
+      "asset.resource.amber-seam",
+      "asset.resource.woodland-amber-deposit"
+    ],
+    "iconIds": [
+      "icon.neutral.amber-deposit"
+    ],
+    "footprint": [
+      7,
+      7
+    ],
+    "healthHeight": 4.8
+  },
+  "team_color": false
+}

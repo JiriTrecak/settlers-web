@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-chitin-works",
+  "name": "Chitin Works",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f29265b5b98312baa8be9304e4d3e42920e35c3804088584b97b86bad8be9121",
+      "bytes": 12678196
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "612ce7267cd118670f180cd406fcd97bbf09d485827cbfc85ef8f397d85d6fb4",
+      "bytes": 27714485
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "02a19c4ea72162ff84029d908ffdbaf429c6dc618d32bf76919bb23edc194c12",
+      "bytes": 1790282
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "b57b207dc15a846e17e24f9b37457d300a6624cb1b7b263c0a0fcc6c59b08034",
+      "bytes": 1204467
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "cb2e7ba5fae02dd8d452236a7c07f843953a8336f2b904c42f23153e493ed5e7",
+      "bytes": 7779577
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "a55f56629c5d9f8bc0e7e87b5a295bea250941125d83b6e7116cc7ef0a26f9e8",
+      "bytes": 288933
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "4f661ad1987be9f9f574395515c83db85c7b78e3750b86b2ccc7bc11293245ca",
+      "bytes": 2715402
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "4e3205bc2ff7050b26bc62704610a83405a6f0c24b6f6ce4dd78beb436cb6b64",
+      "bytes": 1623883
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "908033ebadb96d1ef528fc0c3fe220ef4fc4bb4e7981dcbb9a36ec7e1cfae2b7",
+      "bytes": 21339
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "210e0279625732f5112a8227f704aaaeb3a6cea2c629b5c67898d2918cefd2b1",
+      "bytes": 11734
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "cbd416ad9934f5c5c10ac588008f8795ca07ad68c5682732c4af8d74f85ac4db",
+      "bytes": 962
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "5d231e0fe94d4907e3d3ec98d52170236c9e1a1d7d1b569d04b46d0de3994405",
+      "bytes": 16200404
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "fa2ca9b2da62d00065931103e7ad580ad6e8fc1d3e278a02f81c8bbde5c49969",
+      "bytes": 1072
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
+      "bytes": 263
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "b1b64c54c7a029f73136109553aa26c58946464c3f2e3ee962de1aaa47fcbde3",
+      "bytes": 7715267
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "d047d39dad1f9b5e40c98c1192c56faa36faffe89779773e8b390023c409f32e",
+      "bytes": 164
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "9cef5fda915f5573b9740a9afdb5862e845f369b059f32bc0c8b8544b8649d07",
+      "bytes": 6822
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "8de3c34c24eeb2e08a2e7fe975287750e0836201cb8a77b748a19bdeecb8eac5",
+      "bytes": 1433
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "fb795c631c4b83603e6f18d2b46aac7e51d8777419477a5cdec96b3a4208d917",
+      "bytes": 3984877
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "97e3d9ebe73f84b099b21cb5f92b6c0c73de525b28f4ba4618e933b6ca6f414d",
+      "bytes": 330
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "jpeg",
+      "sha256": "b1987c70f655a14eceeff3f43c5a3726f996c0be45be19fc075c50c9bf0582a3",
+      "bytes": 3664549
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "glb",
+      "sha256": "ed9d064cd161838f08bff765bb790b95bdf010fcd484d97c831c7ee89ae88243",
+      "bytes": 10042184
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "49df3024bf92ac101512bbac48144d1903d15c82da1ebce32855fe97de6c65cf",
+      "bytes": 650164
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "72f4e271991d4981c3754ada65d402aa20e3a4894e38bd1bbf87b0f3a50ff24b",
+      "bytes": 2480
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.72,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": true,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.ants.ironroot-forge",
+        "scale": 1,
+        "healthHeight": 8.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-chitin-works"
+        }
+      },
+      {
+        "id": "icon.ants.ironroot-forge",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-chitin-works"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        9,
+        9
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 4.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "archer": {
+      "file": "archer.glb",
+      "triangles": 4721,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "attack": "attack_bow",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "archer": {
+      "normalizedTime": 0.5492957746478874,
+      "event": "release"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.02
+}

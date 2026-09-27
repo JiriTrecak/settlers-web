@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "category": "buildings",
+  "slug": "colony-amber-deposit-tripo",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 2
+    },
+    "albedo-team.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 3
+    },
+    "asset.json": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 4
+    },
+    "colony-amber-deposit-tripo.blend": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 1
+    },
+    "model.glb": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "recipe",
+      "index": 1
+    },
+    "normal.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 5
+    },
+    "ownership.json": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 6
+    },
+    "palette.json": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 7
+    },
+    "prepare_texture.py": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "recipe",
+      "index": 2
+    },
+    "provenance.json": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 8
+    },
+    "reference-sheet.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 9
+    },
+    "reference.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "preview",
+      "index": 1
+    },
+    "roughness.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 10
+    },
+    "samples.json": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 11
+    },
+    "source-albedo.jpg": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 12
+    },
+    "source.glb": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 13
+    },
+    "team-mask.png": {
+      "asset": "asset.models.resources.amber-deposit",
+      "role": "source",
+      "index": 14
+    }
+  }
+}

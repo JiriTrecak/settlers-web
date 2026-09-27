@@ -1,0 +1,133 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "bfed9ddf-2661-43e9-a4fb-a190a21969a3",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 8999,
+    "credits": 60,
+    "partsReturned": 43
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "chitin-works.png",
+  "integration": {
+    "definition": "building.ants.ironroot-forge",
+    "width": 8.6,
+    "footprint": [
+      9,
+      9
+    ],
+    "entrance": [
+      0,
+      5
+    ],
+    "height": 8.33256,
+    "depth": 7.68472
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 8999
+  },
+  "runtime": {
+    "triangles": 8999,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "savedBlender": true,
+    "finiteGeometry": true,
+    "packedTextures": true,
+    "studioColors": [
+      "white",
+      "green"
+    ],
+    "rearOrbit": true,
+    "gameColors": [
+      "red",
+      "blue"
+    ],
+    "gameScene": "Combat Lab colony beside hall and warriors",
+    "consoleErrors": 0
+  },
+  "config": {
+    "name": "Chitin Works",
+    "blend": "colony-chitin-works-tripo.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 25,
+      "elevation": 32,
+      "scale": 12.1,
+      "target": [
+        0,
+        0,
+        3.8
+      ],
+      "distance": 24.43181818181818
+    },
+    "render": {
+      "width": 1254,
+      "height": 1254,
+      "samples": 40
+    },
+    "light": {
+      "key_energy": 1100,
+      "fill_energy": 370,
+      "rim_energy": 800,
+      "scale": 1.368181818181818,
+      "target": [
+        0,
+        0,
+        2.540909090909091
+      ]
+    },
+    "preserve_textures": true,
+    "runtime_triangle_budget": 10000,
+    "texture_format": "AUTO",
+    "bake_vertex_ao": true,
+    "runtime_texture_size": 2048,
+    "width": 8.6,
+    "part_role": "chitin-works",
+    "part_names": {},
+    "publication": {
+      "id": "asset.models.buildings.ants-chitin-works",
+      "faction": "ants",
+      "renderIds": [
+        "asset.ants.ironroot-forge"
+      ],
+      "iconIds": [
+        "icon.ants.ironroot-forge"
+      ],
+      "footprint": [
+        9,
+        9
+      ],
+      "healthHeight": 8.8
+    },
+    "orientation_degrees": 0
+  },
+  "rebuild": "python art/sources/buildings/colony-chitin-works-tripo/prepare_texture.py; node experiments/building-studio/launch.mjs build colony-chitin-works-tripo",
+  "adapter": "\"\"\"Editable Tripo import adapter. Rebuilds scale, materials and stage, not AI geometry.\nThe original source.glb remains unchanged; generated structural parts stay editable.\n\"\"\"\nfrom pathlib import Path\nimport bpy, json, sys, math\nfrom mathutils import Vector, Matrix\nassert bpy.app.background, 'Run in a separate background Blender process.'\nP=Path(ASSET_DIR).resolve();ROOT=P.parents[3]\nsys.path.insert(0,str(ROOT/'experiments/building-studio'))\nfrom stage import create_stage\nbpy.ops.wm.read_factory_settings(use_empty=True)\nbpy.ops.import_scene.gltf(filepath=str(P/'source.glb'))\nCFG=json.loads((P/'asset.json').read_text());own=json.loads((P/'ownership.json').read_text())\nscene=bpy.context.scene\nobjects=[o for o in scene.objects if o.type=='MESH']\norientation=Matrix.Rotation(math.radians(CFG.get('orientation_degrees',0)),4,'Z')\npoints=[orientation@o.matrix_world@v.co for o in objects for v in o.data.vertices]\nlow=Vector([min(p[i] for p in points) for i in range(3)]);high=Vector([max(p[i] for p in points) for i in range(3)])\nscale=CFG[\"width\"]/max(high.x-low.x,high.y-low.y)\ncenter=Vector(((low.x+high.x)/2,(low.y+high.y)/2,low.z))\nfor o in objects:\n index=objects.index(o);world=orientation@o.matrix_world;o.parent=None\n o.data.transform(Matrix.Scale(scale,4)@Matrix.Translation(-center)@world)\n o.matrix_world=Matrix.Identity(4)\n o.name=CFG.get('part_names',{}).get(str(index),f'{CFG[\"name\"]} part {index:02d}');o['tripoPart']=index\n o['source']='Reference-based Tripo H3.1';o['role']=CFG.get('part_role','building')\n for face in o.data.polygons:face.use_smooth=True\nfor o in list(scene.objects):\n if o.type=='EMPTY':bpy.data.objects.remove(o,do_unlink=True)\nmaterial=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True\nmaterial['teamColorMask']='baseColorAlpha';material['teamColorSourceMax']=own['sourceMax'];material['teamColorDefault']=own['default']\nmaterial.diffuse_color=(*own['default'],1)\nnodes,links=material.node_tree.nodes,material.node_tree.links\nbsdf=nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.72;bsdf.inputs['Metallic'].default_value=0\nfor link in list(bsdf.inputs['Metallic'].links):links.remove(link)\nfor node in nodes:\n if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.45\ntexture=nodes.new('ShaderNodeTexImage');texture.name='Authored albedo with ownership mask';texture.image=bpy.data.images.load(str(P/'albedo-team.png'))\ntexture.image.alpha_mode='CHANNEL_PACKED';texture.image.pack()\n# Keep the raw RGB albedo available for portable glTF display. The runtime\n# ownership mask is its alpha channel, independent of opacity.\nsep=nodes.new('ShaderNodeSeparateColor');links.new(texture.outputs['Color'],sep.inputs[0])\nmx=nodes.new('ShaderNodeMath');mx.operation='MAXIMUM';links.new(sep.outputs[0],mx.inputs[0]);links.new(sep.outputs[1],mx.inputs[1])\nmx2=nodes.new('ShaderNodeMath');mx2.operation='MAXIMUM';links.new(mx.outputs[0],mx2.inputs[0]);links.new(sep.outputs[2],mx2.inputs[1])\ndiv=nodes.new('ShaderNodeMath');div.operation='DIVIDE';links.new(mx2.outputs[0],div.inputs[0]);div.inputs[1].default_value=own['sourceMax']\ntint=nodes.new('ShaderNodeMixRGB');tint.name='Team color';tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(*own['default'],1);links.new(div.outputs[0],tint.inputs[1])\nmix=nodes.new('ShaderNodeMixRGB');links.new(texture.outputs['Alpha'],mix.inputs[0]);links.new(texture.outputs['Color'],mix.inputs[1]);links.new(tint.outputs[0],mix.inputs[2]);links.new(mix.outputs[0],bsdf.inputs['Base Color'])\nif not CFG.get('team_color',True):\n material.name='Natural_Materials';material.diffuse_color=(1,1,1,1)\n for key in ['teamColorMask','teamColorSourceMax','teamColorDefault']:del material[key]\n links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])\nfor o in objects:\n o.data.materials.clear();o.data.materials.append(material)\ncollection=bpy.data.collections.new('Studio');scene.collection.children.link(collection);create_stage(CFG,collection)\nref=bpy.data.images.load(str(P/'reference.png'));ref.name='reference.png';ref.pack();ref.use_fake_user=True\nfor f in ['model.py','prepare_texture.py','asset.json','provenance.json']:\n if (P/f).exists():bpy.data.texts.load(str(P/f))\nfor screen in bpy.data.screens:\n for area in screen.areas:\n  if area.type=='VIEW_3D':\n   area.spaces.active.shading.type='MATERIAL';area.spaces.active.region_3d.view_distance=14;area.spaces.active.region_3d.view_location=(0,0,2.8)\nbpy.ops.wm.save_as_mainfile(filepath=str(P/CFG['blend']))\nprint('BUILDING_SOURCE',len(objects),'parts',sum(len(p.vertices)-2 for o in objects for p in o.data.polygons),'triangles')\n",
+  "maskAdapter": "\"\"\"Extract an ownership mask from the approved blue albedo; preserve RGB verbatim.\"\"\"\nfrom pathlib import Path\nimport json, struct\nimport numpy as np\nfrom PIL import Image, ImageDraw\nP=Path(ASSET_DIR).resolve()\nraw=(P/'source.glb').read_bytes();size=struct.unpack_from('<I',raw,12)[0]\ndoc=json.loads(raw[20:20+size]);binary=raw[28+size:]\nmaterial=doc['materials'][0];albedo_index=doc['textures'][material['pbrMetallicRoughness']['baseColorTexture']['index']]['source']\nview=doc['bufferViews'][doc['images'][albedo_index]['bufferView']]\n(P/'source-albedo.jpg').write_bytes(binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']])\nimage=Image.open(P/'source-albedo.jpg').convert('RGB');rgb=np.asarray(image).astype(np.float32)/255\n# Grey stone and warm natural materials have no blue chroma. A soft transition\n# follows the antialiased painted edge rather than recoloring entire triangles.\nblue=rgb[:,:,2];other=np.maximum(rgb[:,:,0],rgb[:,:,1])\na=np.clip((blue-other-.018)/.095,0,1);a=a*a*(3-2*a)\n# Purple root corruption is not ownership; configurable chroma gate.\nconfig=json.loads((P/'asset.json').read_text())\nif config.get('exclude_purple_ownership',False):\n # Separate blue/cyan ownership (G > R) from violet corruption (R > G).\n # Normalizing by chroma keeps the decision stable in shadows/highlights.\n chroma=np.maximum(rgb.max(axis=2)-rgb.min(axis=2),.001)\n hue_gate=np.clip(((rgb[:,:,1]-rgb[:,:,0])/chroma-.02)/.16,0,1)\n a*=hue_gate*hue_gate*(3-2*hue_gate)\n# Explicitly authored ownership parts also cover desaturated painted shadows.\n# Their isolated UV islands prevent recoloring nearby natural materials.\nowned_parts=set(config.get('team_color_parts',[]))\nif owned_parts:\n mask=Image.new('L',image.size,0);draw=ImageDraw.Draw(mask)\n def accessor(index):\n  ac=doc['accessors'][index];bv=doc['bufferViews'][ac['bufferView']]\n  dtype=np.dtype({5121:'u1',5123:'<u2',5125:'<u4',5126:'<f4'}[ac['componentType']])\n  count={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4}[ac['type']]\n  return np.ndarray((ac['count'],count),dtype=dtype,buffer=binary,\n   offset=bv.get('byteOffset',0)+ac.get('byteOffset',0),\n   strides=(bv.get('byteStride',count*dtype.itemsize),dtype.itemsize))\n found=set()\n for node in doc['nodes']:\n  if node.get('name') not in owned_parts:continue\n  found.add(node['name'])\n  for primitive in doc['meshes'][node['mesh']]['primitives']:\n   if primitive.get('mode',4)!=4:raise ValueError('Ownership parts require triangle topology')\n   uv=accessor(primitive['attributes']['TEXCOORD_0'])*np.array(image.size)\n   indices=accessor(primitive['indices']).reshape(-1,3)\n   for face in indices:draw.polygon([tuple(v) for v in uv[face]],fill=255)\n if found!=owned_parts:raise ValueError(f'Missing ownership parts: {owned_parts-found}')\n a=np.maximum(a,np.asarray(mask,dtype=np.float32)/255)\nhas_team_color=config.get('team_color',True)\nif not has_team_color:a=np.zeros_like(a)\nrgba=np.concatenate((rgb,a[:,:,None]),axis=2)\nImage.fromarray(np.rint(rgba*255).astype(np.uint8),'RGBA').save(P/'albedo-team.png')\nImage.fromarray(np.rint(a*255).astype(np.uint8),'L').save(P/'team-mask.png')\nlinear=lambda x:np.where(x<=.04045,x/12.92,((x+.055)/1.055)**2.4)\nif has_team_color and not np.any(a>.99):raise ValueError('No unambiguous blue ownership pixels; inspect the generated atlas before publishing.')\nsource_max=float(np.quantile(linear(blue[a>.99]),.95)) if has_team_color else 1.0\n(P/'ownership.json').write_text(json.dumps({'mask':'baseColorAlpha','sourceMax':source_max,'default':[.025,.14,source_max],'coverage':float((a>.5).mean())},indent=2)+'\\n')\nfor slot,ref in [('normal',material.get('normalTexture')),('roughness',material['pbrMetallicRoughness'].get('metallicRoughnessTexture'))]:\n if ref:\n  import io\n  iv=doc['bufferViews'][doc['images'][doc['textures'][ref['index']]['source']]['bufferView']]\n  im=Image.open(io.BytesIO(binary[iv.get('byteOffset',0):iv.get('byteOffset',0)+iv['byteLength']])).convert('RGB')\n  if slot=='roughness': im=im.getchannel('G')\n  im.save(P/(slot+'.png'))\nprint('Ownership source brightness',source_max,'coverage',float((a>.5).mean()))\n"
+}

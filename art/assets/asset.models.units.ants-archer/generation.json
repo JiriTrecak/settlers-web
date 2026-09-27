@@ -1,0 +1,171 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "5e11f3bb-510e-496e-94d6-f07497f8bc3a",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9687,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Single front view isolated from supplied archer.png; bow removed from generation input for separately fitted animated equipment. Full sheet retained.",
+  "integration": {
+    "definition": "unit.ants.archer",
+    "status": "published",
+    "triangles": 4715
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "rig": {
+    "type": "Humanoid",
+    "preset": "Mixamo",
+    "credits": 20,
+    "status": "complete"
+  },
+  "animation": {
+    "presets": [
+      "idle",
+      "walk",
+      "run",
+      "hit_to_body_01",
+      "fall"
+    ],
+    "generated": [
+      "Archery Shot"
+    ],
+    "generationCredits": 20,
+    "status": "exported",
+    "adaptation": "Generated body/leg take with neutral upright upper torso and locally baked two-arm draw, skinned bowstring and arrow. Release frame 39/71."
+  },
+  "export": {
+    "format": "GLB",
+    "resolution": 4096,
+    "packUV": true,
+    "skeleton": true,
+    "inPlace": true,
+    "takes": 6
+  },
+  "sourceDirectory": "art/sources/characters/ant-archer-tripo",
+  "config": {
+    "name": "Ant Archer",
+    "kind": "character",
+    "blend": "ant-archer-tripo.blend",
+    "recipe": "model.py",
+    "preserve_textures": true,
+    "camera": {
+      "azimuth": 0,
+      "elevation": 8,
+      "scale": 2.6,
+      "target": [
+        0,
+        0,
+        1
+      ],
+      "distance": 12
+    },
+    "render": {
+      "width": 1024,
+      "height": 1024,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 560,
+      "fill_energy": 260,
+      "rim_energy": 360,
+      "scale": 0.45,
+      "target": [
+        0,
+        0,
+        1
+      ]
+    },
+    "characterHeight": 2.02,
+    "characterVariants": {
+      "archer": {
+        "states": {
+          "idle": "idle",
+          "walk": "walk",
+          "run": "run",
+          "charge": "run",
+          "attack": "attack_bow",
+          "hit": "hit",
+          "death": "death"
+        }
+      }
+    },
+    "attackEvents": {
+      "archer": {
+        "normalizedTime": 0.5492957746478874,
+        "event": "release"
+      }
+    },
+    "runtimeDecimation": {
+      "Head helmet and right antenna": 0.66,
+      "Body straps and team cloth": 0.39,
+      "Right leg": 0.43,
+      "Left leg and abdomen": 0.43,
+      "Left arm and bracer": 0.43,
+      "Wooden quiver": 0.39,
+      "Right arm and bracer": 0.43,
+      "Quiver arrows A": 0.39,
+      "Left antenna": 0.66,
+      "Quiver arrows B": 0.39
+    },
+    "runtimeWeldDistance": 0.000001,
+    "runtime_texture_size": 2048,
+    "runtime_triangle_budget": 5000,
+    "ownership_channel": "green",
+    "team_color_default": [
+      0.38,
+      0.035,
+      0.055
+    ],
+    "part_names": {
+      "0": "Head helmet and right antenna",
+      "1": "Body straps and team cloth",
+      "2": "Right leg",
+      "3": "Left leg and abdomen",
+      "4": "Left arm and bracer",
+      "5": "Wooden quiver",
+      "6": "Right arm and bracer",
+      "7": "Quiver arrows A",
+      "8": "Left antenna",
+      "9": "Quiver arrows B"
+    },
+    "rigid_parts": {
+      "0": "Head",
+      "5": "Spine2",
+      "7": "Spine2",
+      "8": "Head",
+      "9": "Spine2"
+    },
+    "publication": {
+      "id": "asset.models.units.ants-archer",
+      "renderId": "asset.ants.archer",
+      "iconId": "icon.ants.archer",
+      "profile": "archer",
+      "healthHeight": 2.15,
+      "projectile": "arrow",
+      "projectileSocket": "socket_projectile"
+    },
+    "runningLeanFactor": 0.2
+  },
+  "triangles": 4715,
+  "maximumCargo": 0,
+  "completeUnitTriangles": 4715,
+  "adapter": "\"\"\"Reference-generated archer with fitted bow, preserved rig and editable parts.\"\"\"\nfrom pathlib import Path\nimport bpy,json,sys,math\nfrom mathutils import Vector,Quaternion\nassert bpy.app.background\nP=Path(__file__).resolve().parent;ROOT=P.parents[3]\nsys.path.insert(0,str(ROOT/'experiments/building-studio'))\nfrom stage import create_stage\nfrom export_character import export_character\nCFG=json.loads((P/'asset.json').read_text());own=json.loads((P/'ownership.json').read_text())\nbpy.ops.wm.read_factory_settings(use_empty=True)\nbpy.ops.import_scene.gltf(filepath=str(P/'source.glb'))\nscene=bpy.context.scene;scene.render.fps=24\nrig=next(o for o in scene.objects if o.type=='ARMATURE')\nobjects=[o for o in scene.objects if o.type=='MESH' and o.name.startswith('tripo_part_')]\nfor o in list(scene.objects):\n if o.type=='MESH' and o not in objects:bpy.data.objects.remove(o,do_unlink=True)\nfor pb in rig.pose.bones:pb.custom_shape=None\nfor o in objects:\n index=o.name.split('_')[-1];o['tripo_part']=int(index);o['role']='archer'\n o.name=CFG['part_names'][index]\n if index in CFG['rigid_parts']:\n  o.vertex_groups.clear();g=o.vertex_groups.new(name='mixamorig:'+CFG['rigid_parts'][index]);g.add(list(range(len(o.data.vertices))),1,'REPLACE')\n# Original Tripo reference rest height is .980713. Scale at roots preserves binding.\nfor o in list(scene.objects):\n if o.parent is None and o.type in ('MESH','ARMATURE','EMPTY'):o.scale*=CFG['characterHeight']/.980713\nrig.name='Ant Archer Rig'\nbpy.context.view_layer.objects.active=rig;rig.select_set(True)\nbpy.ops.object.mode_set(mode='EDIT')\nfor name,parent,point in [('socket_handL','LeftHand',None),('socket_handR','RightHand',None),('socket_back','Spine2',(0,.073,.52))]:\n bone=rig.data.edit_bones.new(name);pb=rig.data.edit_bones['mixamorig:'+parent]\n bone.head=pb.head if point is None else Vector(point);bone.tail=bone.head+Vector((0,0,.015));bone.parent=pb;bone.use_deform=False\nbpy.ops.object.mode_set(mode='OBJECT')\nmaterial=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True\nmaterial['teamColorMask']='baseColorAlpha';material['teamColorSourceMax']=own['sourceMax'];material['teamColorDefault']=own['default']\nmaterial.diffuse_color=(*own['default'],1)\nnodes,links=material.node_tree.nodes,material.node_tree.links\nbsdf=nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.72;bsdf.inputs['Metallic'].default_value=0\nfor link in list(bsdf.inputs['Metallic'].links):links.remove(link)\nfor node in nodes:\n if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.45\ntexture=nodes.new('ShaderNodeTexImage');texture.name='Authored albedo with ownership mask';texture.image=bpy.data.images.load(str(P/'albedo-team.png'))\ntexture.image.alpha_mode='CHANNEL_PACKED';texture.image.pack()\n# Keep the raw RGB albedo available for portable glTF display. The runtime\n# ownership mask is its alpha channel, independent of opacity.\nsep=nodes.new('ShaderNodeSeparateColor');links.new(texture.outputs['Color'],sep.inputs[0])\nmx=nodes.new('ShaderNodeMath');mx.operation='MAXIMUM';links.new(sep.outputs[0],mx.inputs[0]);links.new(sep.outputs[1],mx.inputs[1])\nmx2=nodes.new('ShaderNodeMath');mx2.operation='MAXIMUM';links.new(mx.outputs[0],mx2.inputs[0]);links.new(sep.outputs[2],mx2.inputs[1])\ndiv=nodes.new('ShaderNodeMath');div.operation='DIVIDE';links.new(mx2.outputs[0],div.inputs[0]);div.inputs[1].default_value=own['sourceMax']\ntint=nodes.new('ShaderNodeMixRGB');tint.name='Team color';tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(*own['default'],1);links.new(div.outputs[0],tint.inputs[1])\nmix=nodes.new('ShaderNodeMixRGB');links.new(texture.outputs['Alpha'],mix.inputs[0]);links.new(texture.outputs['Color'],mix.inputs[1]);links.new(tint.outputs[0],mix.inputs[2]);links.new(mix.outputs[0],bsdf.inputs['Base Color'])\nif not CFG.get('team_color',True):\n material.name='Natural_Materials';material.diffuse_color=(1,1,1,1)\n for key in ['teamColorMask','teamColorSourceMax','teamColorDefault']:del material[key]\n links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])\nfor o in objects:\n o.data.materials.clear();o.data.materials.append(material)\n\nfor a in bpy.data.actions:\n a.use_fake_user=True\n a.name='attack_bow' if a.name.startswith('A single precise') else {'hit_to_body_01':'hit','fall':'death'}.get(a.name,a.name)\nrig.animation_data.action=None\nfor track in rig.animation_data.nla_tracks:track.mute=True\nfor pb in rig.pose.bones:pb.location=(0,0,0);pb.rotation_quaternion=(1,0,0,0);pb.scale=(1,1,1)\nsys.path.insert(0,str(P))\nfrom bow import add_bow\nCFG['attackEvents']['archer']['normalizedTime']=add_bow(rig,scene)\n(P/'asset.json').write_text(json.dumps(CFG,indent=2)+'\\n')\nfrom locomotion import soften_running_lean\nlean_report=soften_running_lean(rig,scene,.2)\n(P/'locomotion.json').write_text(json.dumps(lean_report,indent=2)+'\\n')\ncollection=bpy.data.collections.new('Studio');scene.collection.children.link(collection);create_stage(CFG,collection)\nref=bpy.data.images.load(str(P/'reference.png'));ref.name='reference.png';ref.pack();ref.use_fake_user=True\nfor im in bpy.data.images:\n if im.source=='FILE':\n  try:im.pack()\n  except RuntimeError:pass\nfor f in ['asset.json','model.py','bow.py','provenance.json']:bpy.data.texts.load(str(P/f))\nscene.frame_set(0);bpy.context.view_layer.update()\nbpy.ops.wm.save_as_mainfile(filepath=str(P/CFG['blend']))\nscene.render.filepath=str(P/'render.png');bpy.ops.render.render(write_still=True)\nmeta=export_character(P,P/'model.glb');(P/'viewer.json').write_text(json.dumps(meta,indent=2)+'\\n')\nprint('ARCHER_READY',meta['triangles'],meta['animations'])\n",
+  "triangleBudget": 5000
+}

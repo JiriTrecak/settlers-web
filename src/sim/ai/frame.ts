@@ -1,3 +1,4 @@
+import {resourceBlocksCell} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {unitDimensions} from '../../content/unitScale';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
@@ -196,7 +197,7 @@ export class Frame {
     this.stores = this.buildings.filter(
       (e) => !e.construction && this.def(e).behaviors.storage?.dropoff,
     );
-    const homeStore = this.stores.find(s => this.def(s).behaviors.production?.population) ?? this.stores[0];
+    const homeStore = this.stores.find(s => this.def(s).supplyProvided) ?? this.stores[0];
     this.home = homeStore
       ? entrance(
           this.def(homeStore),
@@ -210,9 +211,8 @@ export class Frame {
     this.resources = view.entities.filter(
       (e) => e.resource && e.resource.amount > 0 && !e.resource.growingUntil,
     );
-    for (const s of this.stores)
-      for (const [id, n] of Object.entries(s.inventory ?? {}))
-        this.bank[id] = (this.bank[id] ?? 0) + n;
+    // Use the same spendable balance as commands, including hall training escrow.
+    for (const goods of view.goods ?? []) this.bank[goods.item] = goods.available;
   }
   def(e: EntityView) {
     return this.registry.get(e.definition);
@@ -316,21 +316,8 @@ export class Frame {
     )
       return false;
     for (const res of this.resources) {
-      const clearance = this.def(res).constructionClearance ?? 0;
-      if (
-        clearance &&
-        cells.some(
-          (q) =>
-            distance(q, res) <=
-            clearance +
-              Math.max(
-                this.def(res).footprint?.width ?? 1,
-                this.def(res).footprint?.depth ?? 1,
-              ) /
-                2,
-        )
-      )
-        return false;
+      const definition=this.def(res),clearance=definition.constructionClearance;
+      if(clearance!==undefined&&cells.some(q=>resourceBlocksCell(q,res,definition.footprint,clearance,res.rotation)))return false;
     }
     // Leave a two-cell service lane around every existing building, especially its door.
     for (const b of this.buildings) {

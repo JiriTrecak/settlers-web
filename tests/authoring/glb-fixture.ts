@@ -1,0 +1,5 @@
+export function triangleGlb(instances=1,change?:(doc:any,bin:Buffer)=>void){
+ const bin=Buffer.alloc(36);[0,0,0,1,0,0,0,1,0].forEach((v,i)=>bin.writeFloatLE(v,i*4));
+ const doc:any={asset:{version:'2.0'},scene:0,scenes:[{nodes:Array.from({length:instances},(_,i)=>i)}],nodes:Array.from({length:instances},()=>({mesh:0})),meshes:[{primitives:[{attributes:{POSITION:0}}]}],buffers:[{byteLength:bin.length}],bufferViews:[{buffer:0,byteLength:bin.length}],accessors:[{bufferView:0,componentType:5126,count:3,type:'VEC3'}]};
+ change?.(doc,bin);const text=JSON.stringify(doc),json=Buffer.from(text+' '.repeat((4-text.length%4)%4));const result=Buffer.alloc(28+json.length+bin.length);result.write('glTF');result.writeUInt32LE(2,4);result.writeUInt32LE(result.length,8);result.writeUInt32LE(json.length,12);result.writeUInt32LE(0x4e4f534a,16);json.copy(result,20);result.writeUInt32LE(bin.length,20+json.length);result.writeUInt32LE(0x004e4942,24+json.length);bin.copy(result,28+json.length);return result;
+}

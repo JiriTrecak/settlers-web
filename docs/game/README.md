@@ -2,11 +2,11 @@
 
 The maintained battlefield is **Threewater Forest**. Skirmish selects the map and each player’s Human/AI controller. Taking Player 2 changes your start and authority; all-AI games open observer mode. No campaign maps are currently shipped. Definitions and setup values come from `content/game.json`.
 
-Each starting setup supplies a Mound, five workers, two warriors, a Marshal, the resources declared by `rules.startingSetup`. Three workers start gathering amber and two start chopping wood. Workers carry harvests directly home. There are no production chains or economic ground stacks. Foresters replenish exhausted tree sites. Buildings can be placed on any explored legal ground; territory ownership and border posts have been removed.
+Each starting setup supplies a Main Hall, five workers, two warriors, a Marshal, the resources declared by `rules.startingSetup`. Three workers start gathering amber and two start chopping wood. Workers carry harvests directly home. There are no production chains or economic ground stacks. Foresters replenish exhausted tree sites. Buildings can be placed on any explored legal ground; territory ownership and border posts have been removed.
 
-The Mound produces one worker every 12 seconds and contributes eight living-worker capacity. Every completed house contributes three capacity and produces a worker every 20 seconds. These are shared limits per colony; recruitment and losses make room for replacements. See [the economy contract](economy.md) for assignment, capacity, funding and cancellation rules. All balance values live in `content/game.json`.
+The Main Hall trains workers and provides 12 supply. Completed Mounds provide 6 more, up to a colony maximum of 100. Workers and soldiers are trained directly; workers are never exchanged for military units. See [the economy contract](economy.md) for supply, funding and cancellation rules. All balance values live in `content/game.json`.
 
-Barracks convert an actual available worker into a warrior or archer. Miners, woodcutters, builders and other assigned workers are protected from recruitment. A worker walks into the barracks, trains for one second, and emerges with the same entity ID. The Mound has no defensive attack. Buildings and units have HP; repairs cost worker time but no resources. Losing the objective-bound Mound ends the match; simultaneous loss is a draw.
+Barracks train new Warriors and Archers without claiming economic workers. Both cost 1 supply. Buildings and units have HP; repairs cost worker time but no resources. Losing the objective-bound Main Hall ends the match; simultaneous loss is a draw.
 
 Neutral camps aggro and leash home. They drop selectable hero loot. The Marshal levels to ten, learns three abilities and an ultimate, and preserves inventory and progression through death. A sanctuary revives that same hero. Ability targeting previews share their geometry with damage resolution.
 
@@ -16,11 +16,11 @@ Click to select; Shift adds/removes. Drag selection favors controllable soldiers
 
 Build menus expose the structures currently declared in the command configuration; definitions hidden from those menus can still exist in the content registry. R rotates placement; Shift+R reverses it. Placement retains the workers' selection. Escape cancels targeting, then navigates back. Command slots fill left-to-right across four columns and three rows; submenu Back occupies slot nine. Tooltips show declared names, descriptions, costs, shortcuts and unavailable reasons.
 
-Selection cards show HP: click to focus, double-click to isolate, Shift-click to remove. A focused barracks exposes recruitment, rally, pause and its stable queue. Hall/house inspection shows replenishment progress. Mine inspection and its overhead label show occupied gathering slots. Workers retain their mine slot throughout the carry/return trip.
+Selection cards show HP: click to focus, double-click to isolate, Shift-click to remove. A focused barracks exposes recruitment, rally, pause and its stable queue. Hall inspection shows worker training; Mounds provide supply. Mine inspection and its overhead label show occupied gathering slots. Workers retain their mine slot throughout the carry/return trip.
 
-Resource counters show available amber and wood; tooltips distinguish stored, reserved and carried quantities. The worker counter shows living workers/capacity; its tooltip also shows available workers. Observer mode shows each player's income, bank, units, workers and hero level.
+Resource counters show available amber and wood; tooltips distinguish stored, reserved and carried quantities. The supply counter shows committed supply/capacity; its tooltip separates living units and queued reservations. Observer mode shows each player's income, bank, units, workers and hero level.
 
-F3 exposes performance scopes, AI decisions, visual-only fog reveal and local match speeds 1×–4×. Settings persist rendering resolution. Save downloads a `.utcsave`; Load restores the same map/content revision, including pending commands and population timers. Incompatible previous formats are intentionally unsupported.
+F3 exposes performance scopes, AI decisions, visual-only fog reveal and local match speeds 1×–4×. Settings persist rendering resolution. Save downloads a `.utcsave`; Load restores the same map/content revision, including pending commands, training progress and supply reservations. Incompatible previous formats are intentionally unsupported.
 
 ## Authoring
 

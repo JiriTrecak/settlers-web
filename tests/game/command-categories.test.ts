@@ -10,7 +10,7 @@ describe("command categories", () => {
     const root = commandMenu(bindings, null, g.registry).entries;
     expect(root.map(b => b.id)).toEqual(["move", "stop", "hold", "patrol", "follow", "category:category.build", "category:category.build-advanced"]);
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
-    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Mound"});
+    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Acorn Hall"});
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
       ["house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),

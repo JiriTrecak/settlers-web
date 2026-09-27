@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "category": "characters",
+  "slug": "ant-archer-tripo",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 2
+    },
+    "albedo-team.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 3
+    },
+    "ant-archer-tripo.blend": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 1
+    },
+    "archer.glb": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "geometry",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 4
+    },
+    "bow.py": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "recipe",
+      "index": 1
+    },
+    "character.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 5
+    },
+    "model.glb": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "recipe",
+      "index": 2
+    },
+    "normal.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 6
+    },
+    "ownership.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 7
+    },
+    "palette.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 8
+    },
+    "prepare_texture.py": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "recipe",
+      "index": 3
+    },
+    "provenance.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 9
+    },
+    "reference-sheet.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 10
+    },
+    "reference.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "preview",
+      "index": 1
+    },
+    "roughness.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 11
+    },
+    "samples.json": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 12
+    },
+    "source-albedo.jpg": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 13
+    },
+    "source.glb": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 14
+    },
+    "team-mask.png": {
+      "asset": "asset.models.units.ants-archer",
+      "role": "source",
+      "index": 15
+    }
+  }
+}

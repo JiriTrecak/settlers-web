@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-moss-boulder",
   "name": "woodland moss boulder",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "6bd0b5e40e4d5c4c137f7447fdffc86390f742dbf68a45e0803a7f5e4e200610",
+      "bytes": 1067
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "68071b9b8471c0ef681c94029b6fb1123e32dcaf3fbd1c9e20f50f2ab717a237",
+      "bytes": 659
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "1e89298911cbde80b22e2f9acd2b9a0e2ee6682e7f886788db79a3127dfb1e5e",
+      "bytes": 1712072
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "418a620632be14347bd880d4f60773f1f88ac0ed274c4526e8f1defd0c3d8cff",
+      "bytes": 1712104
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "2a7810ac63c578dfd06c66cc83d995ed2763991ca6f41907fb74c0a4b96f5b00",
+      "bytes": 1369
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "40f2a03b70fd08ccec597b560bd555865d7906dba7e4966fbb7e3e2b42b6b9f9",
+      "bytes": 434151
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "709a699241c93e1ae61df71052fea645106cb97b741bd8367d8195cda9364da6",
+      "bytes": 2153
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

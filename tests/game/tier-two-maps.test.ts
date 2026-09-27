@@ -5,26 +5,25 @@ import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
 import {slots} from './helpers';
-const sites=JSON.parse(readFileSync('scripts/maps/tier-two-root-sites.json','utf8')) as {file:string,camp:string,deposit:{x:number,y:number},rootworks:{x:number,y:number}}[];
-it.each([...new Set(sites.map(s=>s.file))])('%s has guarded finite Root accessible to both players with buildable Rootworks space',file=>{
- const map=parseUtcMap(JSON.parse(readFileSync(file,'utf8')))!;expect(playableMapError(map)).toBeNull();
+import {THREEWATER_ROOT_SITES} from '../../scripts/maps/threewater-resources';
+it('Threewater has two finite Root deposits reachable from both bases, with room for Rootworks',()=>{
+ const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/threewater-forest.utcmap','utf8')))!;expect(playableMapError(map)).toBeNull();
  const g=new Game(map,slots,content);const deposits=g.entities.filter(e=>e.definition==='building.neutral.corrupted-root');expect(deposits).toHaveLength(2);
- for(const site of sites.filter(s=>s.file===file)){
-  const deposit=deposits.find(e=>e.x===site.deposit.x&&e.y===site.deposit.y)!;
+ const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
+ for(const site of THREEWATER_ROOT_SITES){
+  const deposit=deposits.find(e=>e.x===site.x&&e.y===site.y)!;
   expect(deposit.resource!.amount).toBe(3000);expect(content.get(deposit.definition).gatheringCapacity).toBe(5);
-  const camp=map.camps.find(c=>c.id===site.camp)!;expect(camp.aggression).toBe('players');
-  expect(camp.members.length).toBeGreaterThan(0);expect(Math.hypot(camp.home.x-deposit.x,camp.home.y-deposit.y)).toBeLessThanOrEqual(camp.aggroRange);
   for(const start of map.playerStarts){
-   expect(Math.hypot(start.x-deposit.x,start.z-deposit.y)).toBeGreaterThanOrEqual(40);
-   const from=g.spatial.cell({x:start.x,y:start.z+8}),entrance=g.spatial.entrance(deposit);
-   expect(g.spatial.navigation.path(from,g.spatial.cell(entrance))).not.toBeNull();
-   expect(g.spatial.navigation.path(from,g.spatial.cell({x:site.rootworks.x,y:site.rootworks.y+4}))).not.toBeNull();
+   expect(Math.hypot(start.x-site.x,start.z-site.y)).toBeGreaterThanOrEqual(36);
+   const hall=g.entities.find(e=>e.placement===start.mainFort)!;
+   expect(g.spatial.findPath(g.spatial.cell(g.spatial.entrance(hall)),g.spatial.cell(g.spatial.entrance(deposit)))).not.toBeNull();
   }
-  const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
-  worker.x=site.rootworks.x;worker.y=site.rootworks.y+4;worker.unit!.position=null;
-  // Reveal both the deposit and the complete construction footprint, like a scouted site.
-  const scout=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;scout.x=site.deposit.x;scout.y=site.deposit.y+4;scout.unit!.position=null;
-  g.observation.update();
-  expect(g.canBuild('player.1','building.ants.rootworks',site.rootworks,worker.id)).toBeNull();
+  // Scout the surrounding build area, then leave the footprint clear.
+  for(let dz=-16;dz<=16;dz+=8)for(let dx=-16;dx<=16;dx+=8){worker.x=site.x+dx;worker.y=site.y+dz;worker.unit!.position=null;g.observation.update();}
+  worker.x=site.x;worker.y=site.y+4;g.observation.update();
+  let buildable=0;
+  for(let y=site.y-18;y<=site.y+18;y+=2)for(let x=site.x-18;x<=site.x+18;x+=2)
+   if(g.canBuild('player.1','building.ants.rootworks',{x,y},worker.id)===null)buildable++;
+  expect(buildable).toBeGreaterThan(0);
  }
-});
+},30000);

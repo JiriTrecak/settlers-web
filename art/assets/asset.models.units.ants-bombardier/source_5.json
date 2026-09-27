@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "bombardier": {
+      "file": "bombardier.glb",
+      "triangles": 4957,
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "attack": "attack_mortar",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "bombardier": {
+      "normalizedTime": 0.5070422535211268,
+      "event": "release"
+    }
+  },
+  "teamMaterial": "TC_TeamColor",
+  "metersPerUnit": 1,
+  "height": 2.85
+}

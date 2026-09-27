@@ -37,7 +37,7 @@ it('places a Rootworks near an observed safe deposit, but not beside visible ene
  g.context.create({...placed('root','building.neutral.corrupted-root',240,175),owner:'none'});g.observation.update();
  const geo=new Geography(createMapBriefing(g.map,g.registry));
  const choose=(danger=false)=>{
-  const view={...g.view(),entities:[...g.view().entities]};view.fog={...g.view('player.1').fog!,cells:new Uint8Array(g.map.size*g.map.size).fill(2)};
+  const view={...g.view('player.1'),entities:[...g.view().entities]};view.fog={...g.view('player.1').fog!,cells:new Uint8Array(g.map.size*g.map.size).fill(2)};
   if(danger){const enemy=structuredClone(view.entities.find(e=>e.definition==='unit.ants.warrior')!);enemy.id=99999;enemy.owner='player.2';enemy.hostile=true;enemy.x=240;enemy.y=178;view.entities.push(enemy);}
   const actions:Action[]=[];economy(new Frame(view,'player.1',g.registry,geo,0),newAIState(geo.map.fingerprint,1),a=>{actions.push(a);return true});return actions;
  };

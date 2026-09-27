@@ -35,10 +35,10 @@ describe('blocked worker departure',()=>{
   const worker=g.entities.find(e=>e.placement==='worker')!,other=g.entities.find(e=>e.placement==='other')!;
   let searched=0;const path=g.spatial.navigation.path.bind(g.spatial.navigation);
   g.spatial.navigation.path=(...args)=>{searched++;return path(...args);};
-  expect(g.spatial.route(worker,{x:225,y:225},true)).toBe(false);
+  expect(g.spatial.route(worker,{x:200,y:225},true)).toBe(false);
   expect(searched).toBe(0);
   other.x=200;other.y=200;
-  expect(g.spatial.route(worker,{x:225,y:225},true)).toBe(true);
-  expect(worker.unit!.goal).toBe(g.spatial.cell({x:225,y:225}));
+  expect(g.spatial.route(worker,{x:200,y:225},true)).toBe(true);
+  expect(worker.unit!.goal).toBe(g.spatial.cell({x:200,y:225}));
  });
 });

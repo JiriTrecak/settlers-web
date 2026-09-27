@@ -3,7 +3,7 @@
   "id": "asset.placeholder.missing-model",
   "name": "Missing model",
   "kind": "prop",
-  "revision": 5,
+  "revision": 17,
   "status": "published",
   "tags": [
     "placeholder",
@@ -254,47 +254,11 @@
         }
       },
       {
-        "id": "asset.item.wood",
-        "scale": 1,
-        "healthHeight": 2.5,
-        "stackHeight": 0.42,
-        "stackColumns": 1,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
         "id": "asset.item.plank",
         "scale": 1,
         "healthHeight": 2.5,
         "stackHeight": 0.19,
         "stackColumns": 1,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.item.amber",
-        "scale": 1,
-        "healthHeight": 2.5,
-        "stackHeight": 0.58,
-        "stackColumns": 2,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.item.root",
-        "scale": 1,
-        "healthHeight": 1,
-        "stackHeight": 0.3,
-        "stackColumns": 2,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -322,21 +286,6 @@
         "healthHeight": 3.2199999999999998,
         "cameraAnchor": {
           "height": 2.0999999999999996,
-          "forward": 0.15,
-          "distance": 7
-        },
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.briar.civilian",
-        "scale": 1,
-        "healthHeight": 2.3,
-        "cameraAnchor": {
-          "height": 1.5,
           "forward": 0.15,
           "distance": 7
         },
@@ -423,89 +372,9 @@
         }
       },
       {
-        "id": "asset.ants.bombardier-workshop",
-        "scale": 1,
-        "healthHeight": 4.7,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
         "id": "asset.ants.forester",
         "scale": 1,
         "healthHeight": 3.2,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.house",
-        "scale": 1,
-        "healthHeight": 3.5,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.ironroot-forge",
-        "scale": 1,
-        "healthHeight": 4.6,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.barracks",
-        "scale": 1,
-        "healthHeight": 4.7,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.rootworks",
-        "scale": 1,
-        "healthHeight": 3.7,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.tower",
-        "scale": 1,
-        "healthHeight": 8.3,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.resource.amber-seam",
-        "scale": 1,
-        "healthHeight": 5,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.resource.corrupted-root",
-        "scale": 1,
-        "healthHeight": 4.8,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -543,37 +412,6 @@
         }
       },
       {
-        "id": "asset.ants.archer",
-        "scale": 1,
-        "healthHeight": 2.3,
-        "cameraAnchor": {
-          "height": 1.5,
-          "forward": 0.15,
-          "distance": 7
-        },
-        "projectile": "arrow",
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.bombardier",
-        "scale": 1,
-        "healthHeight": 2.3,
-        "cameraAnchor": {
-          "height": 1.5,
-          "forward": 0.15,
-          "distance": 7
-        },
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
         "id": "asset.ants.hunter",
         "scale": 1,
         "healthHeight": 2.7,
@@ -598,21 +436,6 @@
           "distance": 7
         },
         "castContact": 0.68,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.ants.settler",
-        "scale": 1,
-        "healthHeight": 2.3,
-        "cameraAnchor": {
-          "height": 1.5,
-          "forward": 0.15,
-          "distance": 7
-        },
         "geometry": {
           "role": "geometry",
           "index": 1,

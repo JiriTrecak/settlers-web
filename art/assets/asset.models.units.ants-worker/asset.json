@@ -1,0 +1,433 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-worker",
+  "name": "Ant Worker",
+  "kind": "unit",
+  "revision": 6,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "skinned",
+    "tripo",
+    "ant-worker-tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "e3e2a76c721a08503e6a329f20264b41f79260e61838824dded7a4ae59f84fd5",
+      "bytes": 11932860
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "b6d1dbf51d69a067b821c42aae1cc0af9ba806f11c1bccc82e61e88d9e5654c4",
+      "bytes": 23899899
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "c2c1618fbe1da816dbdca0604de376c81f48b4c353e0d41d7ef4e793331d45e8",
+      "bytes": 1231195
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "0a747ffce26726dcdacdaccaa77f56747f538737a7f201f686bfe97fcb338fce",
+      "bytes": 234974
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "517e1df20124715ef5df977a709c1623d544149a03b9184c590c373c1aa2747c",
+      "bytes": 11478
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "6266efe6249cd44ce2029d38e0d7ae979fbfc674546638c3b93ba57847c4c84b",
+      "bytes": 5416210
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "d1ed2967f0776bd95200b6740249085a2b775272d0605110824a4b8a3c0dbed8",
+      "bytes": 53094
+    },
+    {
+      "role": "geometry",
+      "index": 2,
+      "format": "glb",
+      "sha256": "1b29be62769d6f923e49f40ce2be9aeee1df09a93b4e0cd6bc31b375627a8f90",
+      "bytes": 7292
+    },
+    {
+      "role": "geometry",
+      "index": 3,
+      "format": "glb",
+      "sha256": "05962525b6276fbec9788f8581fbae97203e55d8d0bb1951c50fbab127274a14",
+      "bytes": 11456
+    },
+    {
+      "role": "geometry",
+      "index": 4,
+      "format": "glb",
+      "sha256": "9418afcbb76d8aa4920903da317e9c3df4a5a939d3d4bab913d679477d1d0387",
+      "bytes": 7300
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "aff80917446fa484db605a800f37d920e491d8ef9dd6ee37afebacca82092565",
+      "bytes": 13847
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "316c484ca63ab9f991d607d745b5d5ce8299b5cc8a1aa5cda7dc8e3a47384eec",
+      "bytes": 1990
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "78baba4adbe6707d4bd8bb922899ad9659cf929a556ea51035bff7352a3180c7",
+      "bytes": 11284406
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "cd5b918b9bd48c16b56753ee2cfbe46db758c1413b8bc48e2c1469db6b979409",
+      "bytes": 2726
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "9dfb810ef6fad3bfe8660e0dc5a47555d95cc36e07ed68266ae2de75bc50de57",
+      "bytes": 46
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "529c8777f5f85092602814f6879449921e3224732c7ee528969e8d9b5089ea52",
+      "bytes": 2199
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "2bfa358976bab2863de145d46d1b4774b22898b74e609a989d47a0daacaa1b74",
+      "bytes": 579
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "181a30372746f8c90b32bdb15df4ea4671efb14ad18db9c3842da085019dc9c9",
+      "bytes": 8722
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "0e0acf00a481e9ad3518a13cf7f2c089538502e68fa4ad14864a9fb05384376d",
+      "bytes": 7553442
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "efa79b318a4e9294074e61e6721a52af4287c50303d7461cda4245ec1d6a4e9a",
+      "bytes": 150
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "json",
+      "sha256": "8874b083d1033c267af46ad9722a8f32eb18d5494675ce09bda63360ceed35a7",
+      "bytes": 4064
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "cdc01912812d79efe66ff164b7603c8f4ddc2153b8356a10192e85a617b4a28a",
+      "bytes": 195
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "4ebba971e2c6f98ee5bd03d295d9bf1d860f92d6fe13a26410770c82735f9fda",
+      "bytes": 1840
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "png",
+      "sha256": "12cda1512776fb059f156af889bb378bed7cd5a932b16c1d8f86c9a9fe66f617",
+      "bytes": 1432916
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "png",
+      "sha256": "69c06013cf4f818eeb6461616f8151eea5d92b4041a12e03970969e4a44963c6",
+      "bytes": 3507512
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "bytes": 3
+    },
+    {
+      "role": "source",
+      "index": 14,
+      "format": "jpeg",
+      "sha256": "b8d55c2aea79a284b4bf6111d29c93d174e4655a57e81748c00239cd8f0813ae",
+      "bytes": 2670755
+    },
+    {
+      "role": "source",
+      "index": 15,
+      "format": "glb",
+      "sha256": "39330b6d88dcda94d8e0f55f06c1c2769ad4d1bb0848d3535e8a553541954eb1",
+      "bytes": 8874824
+    },
+    {
+      "role": "source",
+      "index": 16,
+      "format": "png",
+      "sha256": "b5d2059254f3e4b620b9ae184e61370db480344cf7455eb8ef4e7b9797ed1f66",
+      "bytes": 122232
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "67d3881a6d48223adf4cc899a67b8701766280fb32d6ddec28da4857ea832494",
+      "bytes": 3258
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.settler",
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 2.15,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-worker"
+        }
+      },
+      {
+        "id": "icon.ants.settler",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-worker"
+        }
+      },
+      {
+        "id": "asset.briar.civilian",
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 2.15,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-worker"
+        }
+      },
+      {
+        "id": "asset.item.wood",
+        "scale": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 2,
+          "asset": "asset.models.units.ants-worker"
+        }
+      },
+      {
+        "id": "asset.item.amber",
+        "scale": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 3,
+          "asset": "asset.models.units.ants-worker"
+        }
+      },
+      {
+        "id": "asset.item.root",
+        "scale": 1,
+        "geometry": {
+          "role": "geometry",
+          "index": 4,
+          "asset": "asset.models.units.ants-worker"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "carry",
+        "clip": "carry",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "carry_walk",
+        "clip": "carry_walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "carry_run",
+        "clip": "carry_run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "build",
+        "clip": "build",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "chop",
+        "clip": "chop",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "chop",
+        "loop": false,
+        "events": [
+          {
+            "name": "hit",
+            "time": 3.6208333333333336
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "back",
+        "node": "socket_back",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "dimensions": {
+      "radius": 0.2,
+      "height": 2,
+      "formationSpacing": 1
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

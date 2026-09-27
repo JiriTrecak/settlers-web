@@ -131,10 +131,6 @@ export class EditorScreen extends GameScreen {
       onMcpEnabled: (on) => this.setMcpEnabled(on),
       onMcpPort: (n) => this.setMcpPort(n),
       onSky: () => this.toggleSky(),
-      onSeason: (season) => {
-        this.editor.environment({ season });
-        this.syncSky();
-      },
       onSkyHour: (h) => this.setSkyHour(h),
       onSkyPlay: (on) => this.setSkyPlay(on),
       onSkySpeed: (n) => this.setSkySpeed(n),

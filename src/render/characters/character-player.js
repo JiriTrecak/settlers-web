@@ -4,18 +4,28 @@ import { AnimationMixer, LoopOnce, LoopRepeat, Quaternion, Vector3 } from 'three
 const ONE_SHOT = new Set(['attack', 'cast', 'hit', 'death']);
 /** Shared by the studio and game. Call update(dt) with seconds from the game clock. */
 export class CharacterPlayer {
-  constructor(root, clips, variant = 'base') {
+  constructor(root, clips, variant = 'base', capabilities) {
     this.root = root;
     this.mixer = new AnimationMixer(root);
     this.actions = new Map(clips.map(clip => [clip.name, this.mixer.clipAction(clip)]));
     root.traverse(o => { if (o.userData.characterProfile) this.profile = o.userData.characterProfile; });
+    this.definitions = capabilities?.animations;
+    if (this.definitions?.length) {
+      // Canonical asset metadata is authoritative. Embedded extras remain an
+      // import fallback for unpublished provider outputs, never a second editor.
+      const states = Object.fromEntries(this.definitions.map(a => [a.semantic, a.clip]));
+      const attack = this.definitions.find(a => a.semantic === 'attack');
+      const contact = attack?.events.find(e => e.name === 'hit' || e.name === 'release');
+      const duration = clips.find(c => c.name === attack?.clip)?.duration;
+      this.profile = {variants: {[variant]: {states}}, attackEvents: {[variant]: contact && duration ? {event: contact.name, normalizedTime: contact.time / duration} : undefined}};
+    }
     if (!this.profile?.variants) throw new Error('Character asset is missing its animation profile');
     this.variant = variant; this.state = null; this.paused = false; this.speed = 1.5;
     this.onEvent = null; this.eventFired = false;
     this.mixer.addEventListener('finished', e => {
-      if (e.action === this.action && this.state !== 'death') this.setState('idle');
+      if (e.action === this.action && this.state !== 'death' && this.hasState('idle')) this.setState('idle');
     });
-    this.setVariant(variant); this.setState('idle');
+    this.setVariant(variant); this.setState(this.hasState('idle') ? 'idle' : Object.keys(this.profile.variants[variant].states)[0]);
     this.speechBones=[];this.speechRotation=new Quaternion();
     root.traverse(o=>{if(o.userData.speechRig){const spec=o.userData.speechRig;
       // New characters can use a jaw hinge; retain paired mandibles on older rigs.
@@ -30,30 +40,45 @@ export class CharacterPlayer {
     if (this.state) this.setState(this.profile.variants[variant].states[this.state] ? this.state : 'idle', {restart:true});
   }
   hasState(state) { return this.actions.has(this.profile.variants[this.variant].states[state]); }
-  setState(state, { restart = false, fade = .12 } = {}) {
+  setState(state, { restart = false, fade = .18 } = {}) {
     if (this.state === state && !restart) return;
     const name = this.profile.variants[this.variant].states[state];
     const next = this.actions.get(name);
     if (!next) throw new Error(`Animation state unavailable: ${state} (${name})`);
     const previous = this.action;
     this.state = state; this.action = next; this.eventFired = false;
+    // Semantic aliases (run/charge) share one clip: preserve its gait phase.
+    if (previous === next && !restart) return;
     next.reset().setEffectiveWeight(1).setEffectiveTimeScale(1);
-    next.setLoop(ONE_SHOT.has(state) ? LoopOnce : LoopRepeat, ONE_SHOT.has(state) ? 1 : Infinity);
-    next.clampWhenFinished = ONE_SHOT.has(state);
+    const oneShot = this.definitions?.find(a => a.semantic === state)?.loop === false || (!this.definitions && ONE_SHOT.has(state));
+    next.setLoop(oneShot ? LoopOnce : LoopRepeat, oneShot ? 1 : Infinity);
+    next.clampWhenFinished = oneShot;
     next.play();
-    if (previous && previous !== next) { previous.fadeOut(fade); next.fadeIn(fade); }
+    if (previous && previous !== next) { previous.setEffectiveWeight(previous.getEffectiveWeight()).fadeOut(fade); next.fadeIn(fade); }
   }
   update(dt) {
     if (!Number.isFinite(dt) || dt < 0) throw new Error('Animation delta must be finite nonnegative seconds');
     if (this.paused) return;
     const attack = this.state === 'attack', action = this.action;
-    const event = this.profile.attackEvents[this.variant];
+    const event = this.profile.attackEvents?.[this.variant];
     // Evaluate the crossing before mixer.finished changes state, including a long frame.
     const crossed = attack && event && !this.eventFired && action.time + dt * this.speed >= action.getClip().duration * event.normalizedTime;
     if (crossed) { this.eventFired = true; this.onEvent?.({ type: event.event, variant: this.variant }); }
     this.mixer.update(dt * this.speed);
   }
-  attackContact() { return this.profile.attackEvents[this.variant]?.normalizedTime ?? .55; }
+  attackContact() { return this.profile.attackEvents?.[this.variant]?.normalizedTime ?? .55; }
+  /** Authoritative pose time with live crossfades; unlike a studio scrub. */
+  sample(normalized, dt) {
+    if (!Number.isFinite(dt) || dt < 0) throw new Error('Animation delta must be finite nonnegative seconds');
+    if (!this.action || this.paused) return;
+    const action = this.action;
+    action.time = Math.max(0, Math.min(.999999, normalized)) * action.getClip().duration;
+    // Pause only this clip's clock. Mixer time still advances outgoing poses and
+    // blend envelopes, while contact/release stays locked to simulation time.
+    action.paused = true;
+    this.mixer.update(dt * this.speed);
+    action.paused = false;
+  }
   seek(normalized) {
     if (!this.action) return;
     for (const action of this.actions.values()) if (action !== this.action) action.stop();
@@ -79,13 +104,13 @@ export class CharacterPlayer {
 }
 
 /** Geometry is shared; skeletons and materials are independent between units/players. */
-export function createCharacterInstance(gltf, variant = 'base') {
+export function createCharacterInstance(gltf, variant = 'base', capabilities) {
   const root = clone(gltf.scene), materials = new Map();
   root.traverse(o => {
     if (!o.isMesh) return;
     const own = m => { if (!materials.has(m)) materials.set(m, m.clone()); return materials.get(m); };
     o.material = Array.isArray(o.material) ? o.material.map(own) : own(o.material);
   });
-  const player = new CharacterPlayer(root, gltf.animations, variant);
+  const player = new CharacterPlayer(root, gltf.animations, variant, capabilities);
   return { root, player, dispose() { player.dispose(); const skeletons = new Set(); root.traverse(o => { if (o.isSkinnedMesh) skeletons.add(o.skeleton); }); for (const skeleton of skeletons) skeleton.dispose(); for (const m of materials.values()) m.dispose(); root.removeFromParent(); } };
 }

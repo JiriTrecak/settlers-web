@@ -1,0 +1,64 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "1eae9d61-009f-4bd9-8b08-8a510bf4e998",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9128,
+    "partsReturned": 28,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "barracks.png",
+  "integration": {
+    "definition": "building.ants.barracks",
+    "width": 8.6,
+    "footprint": [
+      9,
+      7
+    ],
+    "entrance": [
+      0,
+      4
+    ],
+    "height": 6.8032,
+    "depth": 6.18144
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 9128
+  },
+  "runtime": {
+    "triangles": 9128,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "referenceComparison": "Inspected full-resolution comparison; large forms preserved, fine wood and leaf veins simplified",
+    "savedBlender": "28 editable meshes; finite geometry and packed 4K maps validated",
+    "game": "Combat Lab red/blue instances beside main hall and warriors; no browser errors",
+    "teamColors": "red/blue in game, white/green and rear orbit in GLB studio",
+    "tests": "TypeScript and 2 resource placement tests passed"
+  }
+}

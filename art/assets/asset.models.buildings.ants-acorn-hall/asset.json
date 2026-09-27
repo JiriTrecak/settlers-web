@@ -3,7 +3,7 @@
   "id": "asset.models.buildings.ants-acorn-hall",
   "name": "Acorn Main Hall",
   "kind": "building",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -82,6 +82,111 @@
       "format": "json",
       "sha256": "5987df85efacc0a742657d70bf6dfebf460998204dd8a3b7331b9f29e6893318",
       "bytes": 8482
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "fa933c6e1b2b7a6c3c3348e157f8ff8f006432e17f1c4fb6212ba34907105565",
+      "bytes": 1490
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "ff255084587274cdd066171038bc8b7c2dc13bebcb22eb8eb4893e3faa6112e7",
+      "bytes": 16601009
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "a41675eebd47a1808b6173a6b567d0fad39b734f97979b607878d9abc8180c14",
+      "bytes": 697
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "76897206b2da89b47818c0b26a8c0e1122026a4181e3cdb4015127e74b9a2b6a",
+      "bytes": 4407
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "7c50f041145c35362da1a6e385f0c9f04a3f535fb03f04f7a2bda72e0ba040b4",
+      "bytes": 8854249
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "89b2773f64ec49c93420a0c87e745b9dd6b33d8c80033a30f7fc885e4141b8c7",
+      "bytes": 165
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "5a6660c810c736edc3ad952e3fc3474038de7bb34ecb0afe3b860b9a4a67be70",
+      "bytes": 4072
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "2b845cc27f1ec5bc28c7296999c8b3fcea920e2e4e6020a7dba5c5563a170be7",
+      "bytes": 2035
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "06b541972436a3c4e7f703980923e05bf476705b3d696b0224ed8f0318f7864f",
+      "bytes": 1013
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "64782ff67395badb6172d4ec6140cd0e529d76988e6dd61e53d491dc6d3fee30",
+      "bytes": 3495739
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "bytes": 3
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "jpeg",
+      "sha256": "8792faed1246806c6bdce821cead4e43c230b328ffde7aaa992ded4f712269a4",
+      "bytes": 3379919
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "glb",
+      "sha256": "a03918e247f8cce059a057c1e291c350a44aa29b7f90603618e44773731de16d",
+      "bytes": 8776128
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "ee74035d0e3c40169cd9f7e43b058d94ef7ea2da9e9004eb94bb8b9223ae2a6d",
+      "bytes": 857504
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "634aab39cfe624f5d0baae0d12157fb868e5b7b1a0ec6e44a1eb1b70874faa8a",
+      "bytes": 2426
     }
   ],
   "usesGeometry": true,
@@ -131,38 +236,38 @@
     "render": [
       {
         "id": "asset.ants.fort",
-        "geometry": {
-          "asset": "asset.models.buildings.ants-acorn-hall",
-          "role": "geometry",
-          "index": 1
-        },
         "scale": 1,
-        "healthHeight": 9.7
+        "healthHeight": 9.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-acorn-hall"
+        }
       },
       {
         "id": "asset.ants.great-mound",
-        "geometry": {
-          "asset": "asset.models.buildings.ants-acorn-hall",
-          "role": "geometry",
-          "index": 1
-        },
         "scale": 1,
-        "healthHeight": 9.7
+        "healthHeight": 9.7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-acorn-hall"
+        }
       },
       {
         "id": "icon.ants.fort",
         "image": {
-          "asset": "asset.models.buildings.ants-acorn-hall",
           "role": "image",
-          "index": 1
+          "index": 1,
+          "asset": "asset.models.buildings.ants-acorn-hall"
         }
       },
       {
         "id": "icon.ants.great-mound",
         "image": {
-          "asset": "asset.models.buildings.ants-acorn-hall",
           "role": "image",
-          "index": 1
+          "index": 1,
+          "asset": "asset.models.buildings.ants-acorn-hall"
         }
       }
     ],
@@ -190,10 +295,10 @@
         0
       ]
     },
+    "vegetationClearance": 7.5,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 7.5
+    }
   },
   "provenance": {
     "method": "generated",

@@ -18,7 +18,7 @@ function prepare(bytes:Buffer,name:string){
  d.buffers[0].byteLength=binary.length;let json=Buffer.from(JSON.stringify(d));json=Buffer.concat([json,Buffer.alloc((4-json.length%4)%4,32)]);const h=Buffer.alloc(20),b=Buffer.alloc(8);h.writeUInt32LE(0x46546c67);h.writeUInt32LE(2,4);h.writeUInt32LE(28+json.length+binary.length,8);h.writeUInt32LE(json.length,12);h.writeUInt32LE(0x4e4f534a,16);b.writeUInt32LE(binary.length);b.writeUInt32LE(0x004e4942,4);return Buffer.concat([h,json,b,binary]);
 }
 for(const name of names){
- const slug='woodland-'+name,id='asset.models.environment.'+slug,dir='art/sources/environment/'+slug,p=originalPackage(id,slug.replaceAll('-',' '),'foliage','authored');
+ const slug='woodland-'+name,id='asset.models.environment.'+slug,dir='.asset-work/build/environment/'+slug,p=originalPackage(id,slug.replaceAll('-',' '),'foliage','authored');
  addBytes(p,'geometry','glb',prepare(await readFile(dir+'/geometry.glb'),name));await addFile(p,'source','blend',dir+'/'+slug+'.blend');await addFile(p,'generation','json',dir+'/generation.json');
  if(name.startsWith('grass'))await addFile(p,'albedo','png',dir+'/albedo.png');
  p.definition.bindings={profile:'model',render:[],scenery:[{id:slug,name:p.definition.name,category:'foliage',type:'prop',geometry:{role:'geometry',index:1}}]};

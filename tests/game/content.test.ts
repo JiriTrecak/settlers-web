@@ -63,6 +63,7 @@ describe("content and presentation contracts", () => {
   it("S22 adds and recruits a variant entirely through JSON references", () => {
     const g = game(
       [
+        placed("supply", "building.ants.house", 245, 240),
         placed("b", "building.ants.barracks", 205, 210, {
           inventory: { "item.wood": 2 },
         }),
@@ -145,7 +146,7 @@ describe("content and presentation contracts", () => {
     expect(g.registry.get(e.definition).behaviors.combat).toBeDefined();
   });
   it("S15 an uncontrolled barracks is inspectable without recruitment or queue cancellation", () => {
-    const g = game([placed("b", "building.ants.barracks")], (s) => {
+    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks")], (s) => {
       (
         s.definitions.find((d: any) => d.id === "building.ants.barracks") as any
       ).disabledBehaviors = ["playerControl"];
@@ -173,7 +174,7 @@ describe("content and presentation contracts", () => {
     ).toBe(false);
   });
   it("S15 thirteen outputs page from the top-left with stable disabled positions and scoped shortcuts", () => {
-    const g = game([placed("b", "building.ants.barracks")], (s) => {
+    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks")], (s) => {
       const template = s.definitions.find(
         (d: any) => d.id === "unit.ants.warrior",
       );
@@ -245,8 +246,8 @@ describe("content and presentation contracts", () => {
       /required/,
     );
   });
-  it("prices include amber, wood and a worker, while currencies cannot be placed on the ground", () => {
-    expect(costs(content, "unit.ants.archer").map(c=>c.kind)).toEqual(["item","item","unit"]);
+  it("prices include amber, wood and supply, while currencies cannot be placed on the ground", () => {
+    expect(costs(content, "unit.ants.archer").map(c=>c.kind)).toEqual(["item","item","supply"]);
     expect(() => putEntity(emptyUtcMap(), placed("loose", "item.wood"))).toThrow(/currencies/);
     expect(() => putEntity(emptyUtcMap(), placed("loose", "item.amber"))).toThrow(/currencies/);
   });

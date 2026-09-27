@@ -1,8 +1,8 @@
 import { expect, it } from "vitest";
 import { commandCard } from "../../src/presentation/commands";
-import { game, run } from "./helpers";
+import { game, run, placed } from "./helpers";
 
-const setup = () => game([], draft => {
+const setup = () => game([placed("supply","building.ants.house",245,240)], draft => {
   (draft.rules as any).repairTicks = 100000;
   const fort = (draft.definitions as any[]).find(d => d.id === "building.ants.fort");
   const great = (draft.definitions as any[]).find(d => d.id === "building.ants.great-mound");
@@ -11,8 +11,9 @@ const setup = () => game([], draft => {
 const mound = (g: ReturnType<typeof setup>) => g.context.get(g.state.objectives["player.1"])!;
 const start = (g: ReturnType<typeof setup>) => g.command("player.1", {type: "upgrade", actor: mound(g).id});
 
-it("pays once, pauses births, preserves identity and damage, and survives save/restore", () => {
+it("pays once, pauses training, preserves identity and damage, and survives save/restore", () => {
   const g = setup(), m = mound(g), original = structuredClone(m.inventory), id = m.id;
+  expect(g.command("player.1",{type:"produce",actor:m.id,definition:"unit.ants.settler"}).accepted).toBe(true);
   m.hp! -= 200;
   run(g, 1);
   expect(start(g).accepted).toBe(true);

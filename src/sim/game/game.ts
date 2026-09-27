@@ -1,3 +1,5 @@
+import { colonySupply, supplyAdmission } from "./supply";
+import {resourceBlocksCell} from '../../shared/map/resourceClearance';
 import type {CampaignCompany} from '../../shared/scenario/company';
 import {companyForMap,restoreCompanyMember} from '../scenario/company';
 import {Mission} from "../scenario/mission";
@@ -41,7 +43,7 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-46";
+export const SIMULATION_BUILD = "declarative-sim-47";
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -199,16 +201,10 @@ export class Game {
     for (const resource of this.context.live()) {
       const clearance = this.context.def(resource).constructionClearance;
       if (clearance === undefined || !resource.resource?.amount) continue;
-      const f = this.context.def(resource).footprint ?? { width: 1, depth: 1 };
-      if (
-        cells.some(
-          (i) =>
-            Math.abs((i % this.spatial.size) - resource.x) <=
-              Math.floor(f.width / 2) + clearance &&
-            Math.abs(Math.floor(i / this.spatial.size) - resource.y) <=
-              Math.floor(f.depth / 2) + clearance,
-        )
-      )
+      if (cells.some(i=>resourceBlocksCell(
+        {x:i%this.spatial.size,y:Math.floor(i/this.spatial.size)},resource,
+        this.context.def(resource).footprint,clearance,resource.rotation,
+      )))
         return "Leave access around the resource deposit";
     }
     const elevations = cells.map((i) => this.spatial.heights[i]);
@@ -309,12 +305,13 @@ export class Game {
           target.unit?.release)
       )
         return reject("Target is not visible and damageable");
+      const formationBody=eligible.reduce((body,e)=>{const d=this.spatial.dimensions(e);return {radius:Math.max(body.radius,d.radius),height:Math.max(body.height,d.height),formationSpacing:Math.max(body.formationSpacing,d.formationSpacing)};},{radius:0,height:0,formationSpacing:0});
       const destinations = action.type === "move" ? formationDestinations(
         eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
           .map(e=>({id:e.id,...precise(e)})), action.destination, this.spatial.size,
-        p=>this.spatial.unitWalkable(p),
-        (from,to)=>this.spatial.clearSegment(fixed(from),fixed(to)),
-        this.registry.rules.unitScale,
+        p=>this.spatial.unitWalkable(p,formationBody),
+        (from,to)=>this.spatial.clearSegment(fixed(from),fixed(to),undefined,formationBody),
+        formationBody.formationSpacing,
       ) : null;
       const applied: number[] = [];
       for (const e of eligible) {
@@ -455,7 +452,7 @@ export class Game {
       return { accepted: true, actors: [builder.id] };
     }
     if (action.type === "cancel" && actor.construction) {
-      if (action.queue) return reject("Project has no recruitment queue");
+      if (action.queue) return reject("Project has no training queue");
       this.economy.remove(actor, true);
       return { accepted: true, actors: [actor.id] };
     }
@@ -472,6 +469,8 @@ export class Game {
         return reject("Queue is full");
       const prerequisite = prerequisiteReason(this.registry.get(action.definition), owner, this.state.entities, this.registry);
       if (prerequisite) return reject(prerequisite);
+      const supplyError = supplyAdmission(colonySupply(this.context.populationCandidates(), owner, this.registry), this.registry.get(action.definition).supplyCost!);
+      if (supplyError) return reject(supplyError);
       if (!this.economy.queue(actor, action.definition))
         return reject("Insufficient unreserved materials");
     } else if (action.type === "cancel") {
@@ -877,9 +876,14 @@ export class Game {
       if (e.production) {
         const p = e.production;
         if (
+          p.queue.length > (d.behaviors.production!.queueCapacity ?? 0) ||
           p.queue.some(
             (q) => !d.behaviors.production!.outputs.includes(q.definition),
           ) ||
+          (d.behaviors.production!.mode === "queued" && p.active &&
+            (p.active.worker !== null || p.active.queue !== p.queue[0]?.id ||
+             p.active.definition !== p.queue[0]?.definition ||
+             p.active.progress > this.registry.get(p.active.definition).creation!.workTicks)) ||
           (p.active &&
             !d.behaviors.production!.outputs.includes(p.active.definition)) ||
           (p.active?.worker != null && !ids.has(p.active.worker)) ||
@@ -891,7 +895,7 @@ export class Game {
           for (const cost of this.registry.get(q.definition).creation!.items)
             reserved[cost.item] = (reserved[cost.item] ?? 0) + cost.amount;
         if (Object.entries(reserved).some(([item, amount]) => (e.inventory[item] ?? 0) < amount))
-          throw new Error("Unfunded saved recruitment queue");
+          throw new Error("Unfunded saved training queue");
       }
     }
     for (const j of state.jobs)

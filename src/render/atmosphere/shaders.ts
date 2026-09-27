@@ -18,9 +18,30 @@ vec3 surfaceAt(vec2 uv){
  return p;
 }
 `;
+export const canopyTransmission=/* glsl */`
+uniform sampler2D canopyMap;
+uniform bool hasCanopy;
+uniform float canopyHeight,canopyScale,canopyStrength;
+uniform vec2 canopyOffset;
+uniform vec3 canopySun;
+vec2 canopyUV(vec3 p){
+ vec2 crown=p.xz+canopySun.xz*(canopyHeight-p.y)/max(.01,canopySun.y);
+ return crown/canopyScale+canopyOffset;
+}
+float overheadShade(vec3 p){
+ if(!hasCanopy||p.y>=canopyHeight||canopySun.y<=.01)return 0.;
+ return texture2D(canopyMap,canopyUV(p)).r;
+}
+float overheadOpening(vec3 p){
+ if(!hasCanopy||p.y>=canopyHeight)return 1.;
+ if(canopySun.y<=.01)return 0.;
+ return texture2D(canopyMap,canopyUV(p)).g;
+}
+`;
 export const marchFragment=/* glsl */`
 varying vec2 vUv;
 ${reconstruct}
+${canopyTransmission}
 uniform sampler2D visibilityMap;
 #ifdef FILTERED_SHADOW
  uniform highp sampler2DShadow sunShadow;
@@ -29,7 +50,7 @@ uniform sampler2D visibilityMap;
 #endif
 uniform mat4 shadowMatrix;
 uniform bool hasShadow,hasVisibility;
-uniform float mapSize,density,baseHeight,heightFalloff,sunStrength,noiseScale,noiseStrength,time,driftSpeed;
+uniform float mapSize,density,shaftDensity,baseHeight,heightFalloff,sunStrength,noiseScale,noiseStrength,time,driftSpeed;
 uniform vec2 wind;
 uniform vec3 fogColor,sunColor,sunDirection;
 uniform int regionCount;
@@ -88,13 +109,19 @@ void main(){
    float distance=length((p-regions[r].xyz)/regionShapes[r].xyz);
    amount+=regions[r].w*(1.-smoothstep(.25,1.,distance));
   }
-  if(amount<.0001)continue;
+  if(amount<.0001&&shaftDensity<.00001)continue;
   vec3 flow=vec3(wind.x,.08,wind.y)*time*driftSpeed;
-  amount*=mix(1.,.25+1.5*noise3((p-flow)*noiseScale),noiseStrength);
+  float drift=mix(1.,.25+1.5*noise3((p-flow)*noiseScale),noiseStrength);
+  amount*=drift;
   amount*=visibleAt(p);
   float extinction=1.-exp(-amount*stepSize);
-  vec3 light=fogColor*.2+sunColor*(sunlight(p)*sunStrength*phase);
-  scattered+=transmission*extinction*light;
+  float opening=overheadOpening(p);
+  float lit=sunlight(p)*opening*sunStrength*phase;
+  // Clear-air shafts remain localized to canopy openings. Keeping this source
+  // separate from extinction avoids a uniform fog veil to make beams visible.
+  float shaft=shaftDensity*stepSize*exp(-max(0.,p.y-baseHeight)/heightFalloff)
+    *smoothstep(1.,6.,p.y-baseHeight)*drift*visibleAt(p);
+  scattered+=transmission*(extinction*fogColor*.2+(extinction+shaft)*sunColor*lit);
   transmission*=1.-extinction;
  }
  gl_FragColor=vec4(scattered*revealed,mix(1.,transmission,revealed));
@@ -121,6 +148,7 @@ void main(){
 export const compositeFragment=/* glsl */`
 varying vec2 vUv;
 ${reconstruct}
+${canopyTransmission}
 uniform sampler2D sceneColor,fogTexture,visibilityMap;
 #include <tonemapping_pars_fragment>
 uniform vec2 fogSize;
@@ -129,6 +157,47 @@ uniform float mapSize,daytimeLutBlend;
 uniform highp sampler3D daytimeLutFrom,daytimeLutTo;
 uniform vec3 daytimeFogColor;
 uniform float daytimeFogDensity,daytimeFogDispersion,daytimeFogStart,daytimeFogHeight;
+uniform sampler2D bloomNear,bloomMid,bloomFar,contactTexture;
+uniform vec2 contactSize;
+uniform float contactStrength,bloomStrength,lookExposure,lookContrast,lookSaturation,splitStrength,shadowLift,vignetteStrength,highlightShoulder;
+uniform vec3 shadowTint,highlightTint;
+float contactShade(vec3 surface){
+ if(contactStrength<=0.)return 1.;
+ vec2 pixel=vUv*contactSize-.5,base=floor(pixel),f=fract(pixel);
+ float sum=0.,shade=0.;
+ for(int y=0;y<2;y++)for(int x=0;x<2;x++){
+  vec2 offset=vec2(float(x),float(y)),uv=(base+offset+.5)/contactSize;
+  vec2 bilinear=mix(1.-f,f,offset);
+  float weight=bilinear.x*bilinear.y*exp(-length(surfaceAt(uv)-surface)*2.)+.00001;
+  shade+=texture2D(contactTexture,uv).r*weight;sum+=weight;
+ }
+ return mix(1.,shade/sum,contactStrength);
+}
+vec3 gradeBiome(vec3 color){
+ // Brighten the readable midtones without clipping already bright team colors.
+ float peak=max(color.r,max(color.g,color.b));
+ float exposureWeight=lookExposure>1.?1.-smoothstep(.45,.9,peak):1.;
+ color*=mix(1.,lookExposure,exposureWeight);
+ float luminance=dot(color,vec3(.2126,.7152,.0722));
+ // Multiplicative tint leaves black black and does not invent light at night.
+ float highlights=smoothstep(.2,.85,luminance);
+ vec3 tint=mix(shadowTint,highlightTint,highlights);
+ tint/=max(.01,dot(tint,vec3(.2126,.7152,.0722)));
+ color*=mix(vec3(1.),tint,splitStrength);
+ // Colored shadow lift supplies the painted violet fill missing from a simple
+ // multiply. Fade at true black, so unlit night silhouettes stay unlit.
+ float shadowWeight=pow(1.-smoothstep(.04,.72,luminance),2.)*smoothstep(.01,.16,luminance);
+ color=mix(color,max(color,shadowTint),shadowLift*shadowWeight);
+ float chroma=max(color.r,max(color.g,color.b))-min(color.r,min(color.g,color.b));
+ float saturation=lookSaturation>1.?1.+(lookSaturation-1.)*(1.-smoothstep(.15,.65,chroma)):lookSaturation;
+ color=mix(vec3(dot(color,vec3(.2126,.7152,.0722))),color,saturation);
+ color=.18*pow(max(vec3(0.),color/.18),vec3(lookContrast));
+ // Grading can create new peaks after the first shoulder. Preserve their hue.
+ peak=max(color.r,max(color.g,color.b));
+ if(highlightShoulder>0.&&peak>.9)color*=(.9+.1*(1.-exp(-(peak-.9)/.1)))/peak;
+ float edge=smoothstep(.15,.72,length(vUv-.5));
+ return color*(1.-edge*vignetteStrength);
+}
 // Common.fxh / ComputeFog, recovered from the supplied shader cache.
 // Preserve the source's base-2 extinction and height integral (including epsilon).
 float daytimeHeightIntegral(float scale,float low,float high){
@@ -161,7 +230,15 @@ void main(){
  float visibility=1.;
  if(hasVisibility){vec2 uv=(surface.xz+.5)/mapSize;visibility=texture2D(visibilityMap,clamp(uv,0.,1.)).r;
  if(any(lessThan(uv,vec2(0.)))||any(greaterThan(uv,vec2(1.))))visibility=0.;}
- vec3 color=texture2D(sceneColor,vUv).rgb;
+ vec3 color=texture2D(sceneColor,vUv).rgb*contactShade(surface);
+ // Large continuous shade retains sky fill; apply it to bloom as well so
+ // unshaded diffuse highlights cannot wash light back into the canopy shade.
+ float canopyLight=1.-overheadShade(surface)*canopyStrength*visibility;
+ color*=canopyLight;
+ if(bloomStrength>0.){
+  vec3 glow=texture2D(bloomNear,vUv).rgb*.2+texture2D(bloomMid,vUv).rgb*.3+texture2D(bloomFar,vUv).rgb*.5;
+  color+=glow*bloomStrength*visibility*canopyLight;
+ }
  gl_FragColor=vec4(color*mix(1.,fog.a,visibility)+fog.rgb*visibility,1.);
  if(hasDaytimeFog && texture2D(sceneDepth,vUv).r<.999999)gl_FragColor.rgb=mix(gl_FragColor.rgb,daytimeFogColor,daytimeOpacity(surface)*visibility);
  // The recovered source shaders leave their optional tone mapper disabled.
@@ -172,12 +249,23 @@ void main(){
  // captures grade linear values while the live canvas graded sRGB values.
  // PostProcess.fx samples directly, without a half-texel coordinate remap.
  // The original target encoding remains an explicit assumption (see sky.md).
+ vec4 toneColor=sRGBTransferOETF(gl_FragColor);
+ float peak=max(toneColor.r,max(toneColor.g,toneColor.b));
+ if(highlightShoulder>0. && peak>highlightShoulder){
+  float room=max(.01,1.-highlightShoulder);
+  float compressed=highlightShoulder+room*(1.-exp(-(peak-highlightShoulder)/room));
+  toneColor.rgb*=compressed/peak;
+ }
+ gl_FragColor=sRGBTransferEOTF(toneColor);
  if(hasDaytimeFog){
   vec4 displayColor=sRGBTransferOETF(gl_FragColor);
   vec3 graded=mix(texture(daytimeLutFrom,displayColor.rgb).rgb,texture(daytimeLutTo,displayColor.rgb).rgb,daytimeLutBlend);
   displayColor.rgb=mix(displayColor.rgb,graded,visibility);
   gl_FragColor=sRGBTransferEOTF(displayColor);
  }
+ vec4 displayColor=sRGBTransferOETF(gl_FragColor);
+ displayColor.rgb=mix(displayColor.rgb,gradeBiome(displayColor.rgb),visibility);
+ gl_FragColor=sRGBTransferEOTF(displayColor);
  #include <colorspace_fragment>
 }
 `;

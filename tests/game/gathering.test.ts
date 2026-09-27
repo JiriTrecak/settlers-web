@@ -29,10 +29,10 @@ describe('hall gathering economy',()=>{
  });
  it('reserves a multi-cell mine footprint and prevents surrounding buildings from sealing its access',()=>{
   const g=setup(),mine=g.entities.find(e=>e.placement==='mine.1')!;
-  expect(g.spatial.footprint(mine)).toHaveLength(25);
+  expect(g.spatial.footprint(mine)).toHaveLength(49);
   expect(g.spatial.footprint(mine).every(i=>g.spatial.resources[i]===mine.id)).toBe(true);
   const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
-  expect(g.canBuild('player.1','building.ants.house',{x:mine.x+6,y:mine.y},worker.id)).toMatch(/Leave access/);
+  expect(g.canBuild('player.1','building.ants.house',{x:mine.x+7,y:mine.y},worker.id)).toMatch(/Leave access/);
  });
  it('restores an in-flight harvest to the identical future without duplicating deposits',()=>{
   const g=setup();for(let tick=0;tick<800&&!g.entities.some(e=>e.unit?.cargo);tick++)g.tick();
@@ -47,7 +47,7 @@ describe('ten-resource trips',()=>{
  for(const [definition,item] of [['building.neutral.amber-mine','item.amber'],['resource.forest.tree','item.wood']] as const){
   it(`delivers ten ${item} exactly once per full load, including an in-flight save`,()=>{
    const map=emptyUtcMap(),start=map.playerStarts[0];
-   const g=new Game({...map,entities:[{...placed('source',definition,start.x+10,start.z+4,{amount:definition==='resource.forest.tree'?10:100}),owner:'none'}]},slots,content);
+   const g=new Game({...map,entities:[{...placed('source',definition,start.x+(definition==='resource.forest.tree'?10:14),start.z+4,{amount:definition==='resource.forest.tree'?10:100}),owner:'none'}]},slots,content);
    // Isolate one gatherer so the source/receipt assertions are independent of startup groups.
    const owned=g.entities.filter(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work);
    g.command('player.1',{type:'stop',actors:owned.map(e=>e.id)});

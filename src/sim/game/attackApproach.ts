@@ -38,7 +38,7 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
   // Prefer a clear approach on this side of terrain before searching detours.
   for (const candidate of candidates) {
     if (!c.spatial.free(candidate.point, actor.id)) continue;
-    if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point)) && c.spatial.route(actor, candidate.point, false)) return true;
+    if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point), undefined, actor) && c.spatial.route(actor, candidate.point, false)) return true;
     if (detours.length < 8) detours.push(candidate.point);
   }
   // Bound alternate destination searches. A later retry reconsiders moving bodies.

@@ -1,0 +1,106 @@
+{
+  "name": "Ant Archer",
+  "kind": "character",
+  "blend": "ant-archer-tripo.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 8,
+    "scale": 2.6,
+    "target": [
+      0,
+      0,
+      1
+    ],
+    "distance": 12
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 560,
+    "fill_energy": 260,
+    "rim_energy": 360,
+    "scale": 0.45,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "characterHeight": 2.02,
+  "characterVariants": {
+    "archer": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "attack": "attack_bow",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "archer": {
+      "normalizedTime": 0.5492957746478874,
+      "event": "release"
+    }
+  },
+  "runtimeDecimation": {
+    "Head helmet and right antenna": 0.66,
+    "Body straps and team cloth": 0.39,
+    "Right leg": 0.43,
+    "Left leg and abdomen": 0.43,
+    "Left arm and bracer": 0.43,
+    "Wooden quiver": 0.39,
+    "Right arm and bracer": 0.43,
+    "Quiver arrows A": 0.39,
+    "Left antenna": 0.66,
+    "Quiver arrows B": 0.39
+  },
+  "runtimeWeldDistance": 1e-06,
+  "runtime_texture_size": 2048,
+  "runtime_triangle_budget": 5000,
+  "ownership_channel": "green",
+  "team_color_default": [
+    0.38,
+    0.035,
+    0.055
+  ],
+  "part_names": {
+    "0": "Head helmet and right antenna",
+    "1": "Body straps and team cloth",
+    "2": "Right leg",
+    "3": "Left leg and abdomen",
+    "4": "Left arm and bracer",
+    "5": "Wooden quiver",
+    "6": "Right arm and bracer",
+    "7": "Quiver arrows A",
+    "8": "Left antenna",
+    "9": "Quiver arrows B"
+  },
+  "rigid_parts": {
+    "0": "Head",
+    "8": "Head",
+    "5": "Spine2",
+    "7": "Spine2",
+    "9": "Spine2"
+  },
+  "publication": {
+    "id": "asset.models.units.ants-archer",
+    "renderId": "asset.ants.archer",
+    "iconId": "icon.ants.archer",
+    "profile": "archer",
+    "healthHeight": 2.15,
+    "projectile": "arrow",
+    "projectileSocket": "socket_projectile",
+    "faction": "ants",
+    "kind": "unit"
+  },
+  "runningLeanFactor": 0.2
+}

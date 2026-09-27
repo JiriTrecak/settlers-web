@@ -1,4 +1,4 @@
-import {biomeById} from '../../content/biomes';
+import {biomeById,biomeLandscape,type ResolvedLandscape} from '../../content/biomes';
 import {PlacedGrass} from '../foliage/placedGrass';
 import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
 import {ImportedWater} from '../water/importedWater';
@@ -19,8 +19,7 @@ import { FogOfWar } from "../visibility/fogOfWar";
 import { forestEnvironment } from "../sky/forestEnvironment";
 import { SettlementLayer } from "../settlement/settlementLayer";
 import {
-  environmentPreset,
-  PRESET_KEY,
+  environmentLight,
 } from "../../shared/environment/presets";
 import { DecalLayer } from "../decal/decalLayer";
 import { TerrainMaterial } from "../terrain/terrainMaterial";
@@ -172,7 +171,8 @@ export class Renderer {
   readonly sky: Sky;
   private readonly canopy: CanopyLayer;
   private readonly weather = new WeatherLayer(this.scene);
-  private landscape: Landscape = emptyLandscape();
+  private authoredLandscape: Landscape = emptyLandscape();
+  private landscape: ResolvedLandscape = biomeLandscape(undefined,emptyLandscape());
   private readonly meadow: Meadow;
   private readonly placedGrass: PlacedGrass;
   private readonly decals: DecalLayer;
@@ -212,11 +212,8 @@ export class Renderer {
   }
   private readonly refreshEnvironment = () =>
     this.sky.setGlobalLight(
-      environmentPreset(this.landscape.environment.preset).light,
+      environmentLight(this.landscape.environment),
     );
-  private readonly presetStorage = (event: StorageEvent) => {
-    if (event.key === PRESET_KEY) this.refreshEnvironment();
-  };
   gridOn = true;
   gridMode: GridMode = "tiles";
   private readonly interiorCutaway={value:0};
@@ -235,12 +232,19 @@ export class Renderer {
     this.sky = new Sky(this.scene);
     this.canopy = new CanopyLayer(this.scene);
     this.refreshEnvironment();
-    window.addEventListener("utc-environment-presets", this.refreshEnvironment);
-    window.addEventListener("storage", this.presetStorage);
+
+
     this.meadow = new Meadow(this.scene);this.placedGrass=new PlacedGrass(this.scene);
     this.decals = new DecalLayer(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
+  }
+
+  /** Tools attach editable/animated subjects to the actual game scene. The owner
+   * retains their resources; lighting, shadows, reflections and grading stay here. */
+  mountInspectionSubject(subject: Object3D): () => void {
+    this.scene.add(subject);
+    return () => subject.removeFromParent();
   }
 
   landmarks(aspect: number, ids?: readonly string[]) {
@@ -334,7 +338,9 @@ export class Renderer {
     this.scene.add(this.curvePreview);
     this.present();
   }
-  setLandscape(landscape: Landscape): void {
+  setLandscape(input: Landscape): void {
+    this.authoredLandscape=input;
+    const landscape=biomeLandscape(this.height?.biome,input);
     const rebuild =
       this.landscape.cover !== landscape.cover ||
       this.landscape.strokes !== landscape.strokes ||
@@ -350,7 +356,8 @@ export class Renderer {
         landscape.environment.season,
       );
     const presetChanged =
-      this.landscape.environment.preset !== landscape.environment.preset;
+      this.landscape.environment.preset !== landscape.environment.preset ||
+      this.landscape.environment.light !== landscape.environment.light;
     this.landscape = landscape;
     this.interiorCutaway.value=landscape.environment.interior?1:0;
     this.ceiling.configure(this.size||256,landscape.environment);
@@ -481,7 +488,8 @@ export class Renderer {
     // landmark must refresh those masks, but must not rebuild the river meshes.
     const surfaceOnly=!!(previous&&field&&previous!==field&&!previous.source&&!field.source&&previous.size===field.size&&previous.waterLevel===field.waterLevel&&previous.samples.every((h,i)=>h===field.samples[i])&&JSON.stringify(previous.watercourses)===JSON.stringify(field.watercourses));
     this.height = field;
-    this.sky.setProfile(biomeById(field?.biome).terrainSet);
+    this.sky.setProfile(biomeById(field?.biome).lightingProfile);
+    if(previous?.biome!==field?.biome)this.setLandscape(this.authoredLandscape);
     if(!surfaceOnly)this.updateCourses();
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
@@ -510,7 +518,7 @@ export class Renderer {
     perf.end("Terrain update (event)", timing);
   }
 
-  draw(snapshot: ViewSnapshot, stamps: readonly MapStamp[] = []): void {
+  draw(snapshot: Omit<ViewSnapshot, "settlement"> & Partial<Pick<ViewSnapshot, "settlement">>, stamps: readonly MapStamp[] = []): void {
     if (this.size !== snapshot.size) {
       this.size = snapshot.size;
       this.ceiling.configure(this.size,this.landscape.environment);
@@ -688,7 +696,7 @@ export class Renderer {
 
   private atmosphereFrame(now:number){
     const weather=this.landscape.environment.weather;
-    return {sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    return {canopy:this.canopy.frame(),sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,postProcessing:this.landscape.environment.postProcessing,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }
@@ -776,11 +784,8 @@ export class Renderer {
     this.portrait.destroy();
     this.settlement?.destroy(this.scene);
     this.fog?.dispose();
-    window.removeEventListener(
-      "utc-environment-presets",
-      this.refreshEnvironment,
-    );
-    window.removeEventListener("storage", this.presetStorage);
+
+
     this.decals.destroy(this.scene);
     this.reflections.dispose();
     this.display.destroy();

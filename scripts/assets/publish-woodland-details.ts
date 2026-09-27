@@ -15,7 +15,7 @@ function calibrated(bytes:Buffer){
  const h=Buffer.alloc(20),b=Buffer.alloc(8);h.writeUInt32LE(0x46546c67);h.writeUInt32LE(2,4);h.writeUInt32LE(28+json.length+binary.length,8);h.writeUInt32LE(json.length,12);h.writeUInt32LE(0x4e4f534a,16);b.writeUInt32LE(binary.length);b.writeUInt32LE(0x004e4942,4);return Buffer.concat([h,json,b,binary]);
 }
 for(const name of names){
- const slug='woodland-'+name,id='asset.models.environment.'+slug,dir='art/sources/environment/'+slug;
+ const slug='woodland-'+name,id='asset.models.environment.'+slug,dir='.asset-work/build/environment/'+slug;
  const bridge=name==='root-arch-bridge',a=originalPackage(id,slug.replaceAll('-',' '),bridge?'bridge':'prop','authored');
  addBytes(a,'geometry','glb',calibrated(await readFile(dir+'/geometry.glb')));
  await addFile(a,'albedo','png',dir+'/albedo_2.png',2);await addFile(a,'source','blend',dir+'/'+slug+'.blend');await addFile(a,'albedo','png',dir+'/albedo.png');await addFile(a,'generation','json',dir+'/generation.json');

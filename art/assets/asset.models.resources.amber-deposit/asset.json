@@ -1,0 +1,287 @@
+{
+  "version": 1,
+  "id": "asset.models.resources.amber-deposit",
+  "name": "Amber Deposit",
+  "kind": "building",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "5c30b9bd20649b542c3cd3733b63339a6054febf11306d722b0c5fc6f698a40b",
+      "bytes": 12822188
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "3a7d13bd605e3e24c19a4c787b468c273b86624268f976e2e5d1d2738d3332d9",
+      "bytes": 24304982
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "7980e7c56d1d801b706c403b18de5f4b492b70da2d54388246b0319ebae6db47",
+      "bytes": 1868584
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "86b1af7a7fdc85faec8ce62c2d5f2a93206070816e29a1bed0e188701dc88a33",
+      "bytes": 1345831
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "b2393b43d237b2ed927dfc5b8f5c871aace7ab68b5e11c346b1bd3d25d073288",
+      "bytes": 6561225
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
+      "bytes": 3796966
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
+      "bytes": 1953719
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "9a24f37483c3a48609587f969806908a690acfe4bfec8be476d2776e2834c34f",
+      "bytes": 25961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9eeac2b07a3254227233cb5abf5bfb63e7eafc75a8acc015e9bd0c388312b28b",
+      "bytes": 11285
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "6805e1ea650481fa10ec4b86b55347d10201f7b417c4597bb05e3a0d1c778d2a",
+      "bytes": 1268
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "10bce0ccd8d9baca2fcf44a7e2fed8665ae14423e5b9161c5ca7f1a2fb9cd307",
+      "bytes": 13460553
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "31f91ccbba8df9919bbba70fb39d06a7d193519169fde03c421c197b1884c095",
+      "bytes": 1116
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
+      "bytes": 263
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "da50559df9df6177d478452447060d8dc45d6c55a2dcf1081fdcbbd25239d59f",
+      "bytes": 9272985
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "c49a0dc1fc46a97ec9bb3329a2f044c859090bafac637dc63885184275160ffc",
+      "bytes": 119
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "125f7e342e265902ba495dce2199966668c44df6b0f7c589bf835a40124336d4",
+      "bytes": 6263
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "d4d41b13e3283517fd970e71ac9649a5d970dee3b5c8d2264515e6aee9fef54c",
+      "bytes": 936
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "703fbc4a1672b4b37c98050f3670d2a7f28fefe62e2b7f89cd48379174a9239a",
+      "bytes": 1949726
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "png",
+      "sha256": "465738ec7dae9b6da528239a02606736609421a661e2f0cb380e41eebd6720d8",
+      "bytes": 4410407
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "json",
+      "sha256": "bdf8de2e3bc4a353117160a589c685390c8ac0a1cfca174bad574d6b639ac196",
+      "bytes": 254
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "jpeg",
+      "sha256": "b25bcfed9b269d4573684e00355f408fba7855cf2bed314222065eb3dbf3090b",
+      "bytes": 3024226
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "glb",
+      "sha256": "ab1d5c284efb827f9eb96641262057ce6ebfc9f8ca15327d0af2449b680b008f",
+      "bytes": 9021364
+    },
+    {
+      "role": "source",
+      "index": 14,
+      "format": "png",
+      "sha256": "54853360befcb3949cecc6c5df2d01f2b9a344a70cd2825e633c61c66be4c574",
+      "bytes": 16354
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "85ff2851f807220280bcd44d2b2f37c8eebdd2b2977d5d9eed13a32d2c8ba723",
+      "bytes": 2543
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "Natural_Materials",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.72,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": true,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "neutral",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.resource.amber-seam",
+        "scale": 1,
+        "healthHeight": 4.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.amber-deposit"
+        }
+      },
+      {
+        "id": "asset.resource.woodland-amber-deposit",
+        "scale": 1,
+        "healthHeight": 4.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.amber-deposit"
+        }
+      },
+      {
+        "id": "icon.neutral.amber-deposit",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.resources.amber-deposit"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "blocker": {
+      "shape": "box",
+      "size": [
+        7,
+        7
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 3.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

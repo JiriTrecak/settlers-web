@@ -7,7 +7,7 @@ import {
 } from "../../src/shared";
 import { Room, Lockstep, MemoryChannel } from "../../src/net";
 import { World } from "../../src/sim/world/world";
-const map = emptyUtcMap();
+const map = {...emptyUtcMap(), entities: [{id: "supply", definition: "building.ants.house", position: {x:245,y:240}, rotation:0, owner:"player.1" as const}]};
 const config = {
   ...localMatch({
     mapId: "test",
@@ -43,7 +43,7 @@ describe("declarative lockstep integration", () => {
     }
     expect(n).toBe(70);
   });
-  it("independent mailboxes agree through construction, recruitment and restored future commands", () => {
+  it("independent mailboxes agree through construction, training and restored future commands", () => {
     const room = new Room(config),
       channels = [new MemoryChannel(room, 0), new MemoryChannel(room, 1)],
       peers = channels.map((c, i) => new Lockstep(c, i, 3)),

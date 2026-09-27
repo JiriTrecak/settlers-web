@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "id": "asset.models.resources.corrupted-root",
+  "name": "Corrupted Root Deposit",
+  "kind": "prop",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "4a759b91b177242fb8e19005cde992934542d12f7e081e408f578029580669f6",
+      "bytes": 1622452
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "2089ee988316360cf0053cdc48b26cb74b76c9c1a3796f964d627b646f7d0aab",
+      "bytes": 1660895
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "fc2e8b3ad00157f27bd90c33966ed10cda5d1d3d6ed06dd7406a6eae1f230e29",
+      "bytes": 263525
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "f712de390f122f4d9d34708e0e33cadadec93e05052081240fee0811438ff160",
+      "bytes": 8224
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "27483375264fae929fe2bca8c0dfc22723360c30d5cbe803316c007b7a61b7d7",
+      "bytes": 3492
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "426fda91746ab882ef226c5e6ba47dfe25d4ec2b30d633c59784aee3e2ccdf43",
+      "bytes": 649
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a903c5be6fe461c3b06bb17933852fade6a2dd82c4f67f6fab2afee27e9a3342",
+      "bytes": 3275
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "2bc45f1bddd9e99578151eb57772e87f3517332f9517578c3435517563416142",
+      "bytes": 738
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.resource.corrupted-root",
+        "scale": 1,
+        "healthHeight": 3.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.corrupted-root"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

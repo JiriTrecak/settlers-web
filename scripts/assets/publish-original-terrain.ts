@@ -8,7 +8,7 @@ const names=['woodland-soil','woodland-grass','woodland-dirt','woodland-riverbed
 const requested=process.argv.slice(2),size=1024,packs:OriginalPackage[]=[];
 for(const name of names){
  if(requested.length&&!requested.includes(name))continue;
- const dir=`art/sources/textures/${name}`;
+ const dir=`.asset-work/build/textures/${name}`;
  try{await access(dir+'/albedo.png');}catch{if(requested.includes(name))throw Error('Missing original texture '+name);continue;}
  const png=await sharp(dir+'/albedo.png').resize(size,size,{fit:'fill'}).removeAlpha().png().toBuffer();
  const rgb=await sharp(png).raw().toBuffer();

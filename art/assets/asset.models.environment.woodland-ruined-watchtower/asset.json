@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-ruined-watchtower",
   "name": "woodland ruined watchtower",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "245bbde98350669ed35c9e0a13cdb838d4aae8fe5544e03529f2c74b43715531",
+      "bytes": 1093
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "1879065d7ea5ed1bfe44669b56cd111afe8d9730be318f4938d96fac39f5482e",
+      "bytes": 670
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "7f079c13cff45867a20fa25eaf21107bddfedcb146fb31a6a14c6f17dccdc553",
+      "bytes": 3368352
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "24982a4d5bed42217c3dba94b4d2d45dfd98c1850daa1a64863189c4a00f6862",
+      "bytes": 3326148
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "0a97f11b43c4c6d39382b988a68b89b3e64673743a1c49ee43bd40b28ac3e2d6",
+      "bytes": 1367
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "0bbcb243762e1bc2c298c95befac4379756a0394f5bc1cdb511af9288c29be8f",
+      "bytes": 543704
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "fdd0d3c55407003e3949e97f02abae387f0826df2402d68ef59a96716a5c5b68",
+      "bytes": 2238
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 2,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 2
+    }
   },
   "provenance": {
     "method": "authored",

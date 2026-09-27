@@ -2,20 +2,17 @@ import type { ContentRegistry } from "../../content/registry";
 import type { Owner } from "../../content/schema";
 import { alive, type Entity, type GameState } from "./state";
 
-/** A shared living-worker pool per colony. Soldiers and fallen heroes do not occupy worker capacity. */
+/** Employment statistics only; every unit shares the separate colony supply pool. */
 export function workerPopulation(
   entities: readonly Entity[],
   owner: Owner,
   registry: ContentRegistry,
 ) {
   let workers = 0,
-    available = 0,
-    capacity = 0;
+    available = 0;
   for (const e of entities) {
     if (e.owner !== owner || !alive(e)) continue;
     const d = registry.get(e.definition);
-    if (!e.construction)
-      capacity += d.behaviors.production?.population?.capacity ?? 0;
     if (!e.unit || !d.behaviors.work) continue;
     workers++;
     const u = e.unit;
@@ -31,7 +28,7 @@ export function workerPopulation(
     )
       available++;
   }
-  return { workers, available, capacity };
+  return { workers, available };
 }
 /** Current trips and queued gather assignments reserve slots, including a retarget while carrying. */
 export function gathererCount(

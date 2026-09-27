@@ -1,12 +1,12 @@
-# Economy and living workers
+# Economy and supply
 
-Your economy has three spendable resources: **[Amber](/resources/item-amber)**, **[Wood](/resources/item-wood)** and contested **[Root](/resources/item-root)**. Your workforce is a separate strategic constraint. The same ant can gather, build or become a soldier, but cannot do all three at once.
+Your economy has three spendable resources: **[Amber](/resources/item-amber)**, **[Wood](/resources/item-wood)** and contested **[Root](/resources/item-root)**. Your workforce is a separate strategic constraint. Workers gather and build; military units train independently at their production buildings.
 
 ## Gather → carry → deposit
 
 Workers assigned to an Amber Mine pass through other units on the outward and return trip. Terrain, water and buildings still block them. Tree gathering and ordinary movement retain unit collision.
 
-Select Workers and right-click a [mine](/buildings/building-neutral-amber-mine) or [tree](/resources/resource-forest-tree). They approach, harvest and carry the load to a completed owned [Mound](/buildings/building-ants-fort). Resources become spendable **on delivery**, not when harvesting starts.
+Select Workers and right-click a [mine](/buildings/building-neutral-amber-mine) or [tree](/resources/resource-forest-tree). They approach, harvest and carry the load to a completed owned [Main Hall](/buildings/building-ants-fort). Resources become spendable **on delivery**, not when harvesting starts.
 
 There are no lumber mills, planks, stone chains or economic piles on the ground in the current game. The Forester remains useful because it restores exhausted tree sites. Hero loot chests are separate from economic resources.
 
@@ -16,7 +16,7 @@ A dead worker loses its cargo. Losing a Mound destroys the inventory it held. Ke
 
 Amber Mines are neutral buildings already present on the map. You can select them, inspect their remaining yield and assign workers directly. They do not need to be captured or constructed.
 
-Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the Mound. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
+Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the Main Hall. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
 
 Trees are directly targetable, including their canopies. A felled tree stops blocking movement, falls and then sinks out of view. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
 
@@ -35,9 +35,9 @@ a deposit. It is the **only Root drop-off**: a Mound or Bombardier Workshop cann
 receive a worker's Root cargo. Once delivered, Root enters the colony's shared
 spendable account. Protect both the deposit and its delivery route.
 
-Upgrade your starting [Mound](/buildings/building-ants-fort) in place to a
+Upgrade your starting [Main Hall](/buildings/building-ants-fort) in place to a
 [Great Mound](/buildings/building-ants-great-mound) for **320 Amber, 180 Wood and
-100 Root**. The upgrade takes 60 seconds and pauses that Mound's worker births.
+100 Root**. The upgrade takes 60 seconds and pauses that hall's unit training.
 Canceling refunds its full price; destruction does not. The same building
 remains your defeat-condition objective after upgrading.
 
@@ -49,31 +49,23 @@ buys permanent colony-wide research; some research requires Great Mound and Root
 Research benefits existing and future eligible units, survives losing the Forge,
 and refunds in full if canceled while queued or in progress.
 
-## Population is a living pool
+## Supply
 
 {{stats:population}}
 
-Capacity is **pooled per colony**, not permanently attached to the building that birthed a particular worker. Gatherers, builders, foresters, idle workers and workers inside training all count. Soldiers and heroes do not count toward this worker pool.
-
-The ant counter above the command card shows **available now / free allocation after replenishment**, rather than the total workforce. For example, **3/10** means three workers can be recruited now and seven more can spawn into that reserve, assuming current assignments stay the same. Assigned workers are excluded from both numbers. The denominator is the current reserve plus empty worker slots; births need active Mounds or houses. Hover the counter for details.
-
-At capacity, birth progress waits and resets. A death or successful conversion to a soldier opens space and starts a fresh interval. The listed capacity is not a lifetime quota: your colony keeps making replacements.
-
-A destroyed house removes its capacity, but excess existing workers survive. Births wait until there is room again. A paused producer retains capacity; blocked exits delay deployment.
+Every unit consumes its declared supply. Workers, Warriors and Archers cost 1 each, Hunters 2, Bombardiers 3 and the Marshal 5. The HUD shows **used + reserved / capacity**. Hover it to distinguish living units from queued reservations. Supply is shared across the colony, including garrisoned units; unfinished buildings provide none.
 
 {{stats:limits}}
 
-## Turning workers into an army
+## Training an army
 
 {{stats:recruitment}}
 
-The [Barracks](/buildings/building-ants-barracks) reserves the full resource bill immediately for **every unit you queue**, calls a real **available Worker** to its entrance and trains that ant. Unaffordable units cannot be queued. Cancelling any queue slot returns that unit's full reserved cost; the next unit is already paid for. Training is quick once the worker arrives. Traveling and a blocked exit can make the total wait longer.
+Train workers at the Main Hall and soldiers at their production buildings. Training reserves the complete price and supply immediately; no existing worker is consumed or needs to approach the building. A fresh colony begins at 12/12 supply, so build a Mound to make room for growth.
 
-An available worker has no assignment, cargo, active order, job or pending release. A mine assignment is protected even while the ant is between loads. Training does **not** silently strip your economy. If there is no eligible worker, the queue waits.
+Supply is checked again when a waiting unit starts training. **Losing a Mound does not pause units already in training.** They finish normally, even over capacity. Waiting entries keep their money and resume when enough supply is available. Existing units are never killed by capacity loss.
 
-To mobilize gatherers, select them and issue **Stop**. Carried resources are delivered before they become available. Shift-clicking a train button does not secretly conscript assigned workers.
-
-That trade is the heart of the economy: protect income for long-term growth, or deliberately turn working ants into immediate military strength.
+Cancel any queue entry to refund its held price and release its supply reservation. Blocked exits retain completed training until a deployment position opens. Destroying a trainer loses its reserved resources and releases its queue's supply. Reviving a hero also reserves supply; a started revival finishes despite later capacity loss.
 
 ## Construction and refunds
 
@@ -81,15 +73,11 @@ Workers can build on explored, clear, dry and sufficiently level terrain with ac
 
 The full bill is reserved from hall stores when you commit. A worker then reaches the site and builds. No courier chain is needed. Damaged buildings can be repaired without a resource bill.
 
-Cancelling construction or recruitment refunds reserved resources to an owned hall with space. If no accepting hall exists, that amount is lost rather than dropped onto the ground. A cancelled recruit is released when a safe exit is available.
-
-## Future resources
-
-A contested third resource for higher tiers has been discussed, but is **not implemented**. Today's decisions are about amber, wood, worker allocation, travel, replenishment and military conversion.
+Cancelling construction or recruitment refunds reserved resources to an owned hall with space. If no accepting hall exists, that amount is lost rather than dropped onto the ground. Cancelled training never consumes or creates a unit.
 
 ## Load size and initial scale
 
-Workers bring **10 amber or 10 wood per full trip**. Amber takes 2.5 seconds of work per load; wood takes 10 seconds, with travel added in both cases. Depletion or limited storage can produce a partial final load without losing resources. Mature trees hold 100 wood. Prices and starting resources are declared in `content/game.json`; see the [economy contract](/development/game/economy).
+Workers bring **10 amber or 10 wood per full trip**. Amber takes 2.5 seconds of work per load; wood takes 10 seconds, with travel added in both cases. Depletion or limited storage can produce a partial final load without losing resources. Mature trees yield 10 wood. Prices and starting resources are declared in `content/game.json`; see the [economy contract](/development/game/economy).
 
 ## Chopping and felling trees
 

@@ -12,7 +12,7 @@ it('renders loose pickups at their selectable position with the declared asset s
  const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
  const g=game([{...placed('loot','item.royal-crest',219,230),owner:'none'}]);
  const view=g.view(),pickup=view.entities.find(e=>e.definition==='item.royal-crest')!;
- expect(pickup).toBeDefined();layer.update({...view,entities:[pickup]},new HeightField(),0);
+ expect(pickup).toBeDefined();const field=new HeightField(),state={...view,entities:[pickup]};layer.update(state,field,0);await layer.ready;layer.update(state,field,0);
  const root=(layer as any).entities.get(pickup.id),body=root.getObjectByName('Body');
  expect(body.visible).toBe(true);
  expect(body.position.x).toBe(0);expect(body.position.z).toBe(0);

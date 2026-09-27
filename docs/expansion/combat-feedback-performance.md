@@ -10,7 +10,7 @@ A short directional chip/spark burst accompanies an observed loss of HP. Attacki
 
 Worker, Warrior, Archer, Marshal, Hunter and Bombardier have separate mandible bones. Text timing opens and closes the jaws, with punctuation and spaces creating pauses. Speech runs after the body animation mixer and does not replace locomotion, attacks or casting. Death closes the jaws. Each clone controls its own bones.
 
-Use the optional final `actorTag` in `mission.say` to name the speaker. Heartwood Vault's lines now identify Marshal and Scout explicitly. Existing 2D portrait images remain static; the animation is on the actual 3D unit. The character studio has a **Speaking** checkbox for inspection. See [mission scripting](/development/mission-scripting) and the asset handoff at `art/sources/characters/SPEECH-RIG-HANDOFF.md`.
+Use the optional final `actorTag` in `mission.say` to name the speaker. Heartwood Vault's lines now identify Marshal and Scout explicitly. Existing 2D portrait images remain static; the animation is on the actual 3D unit. The character studio has a **Speaking** checkbox for inspection. See [mission scripting](/development/mission-scripting) and the canonical character source and recipe resources in `art/assets/<id>/`.
 
 ## Capture a slowdown
 

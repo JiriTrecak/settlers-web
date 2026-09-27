@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-grass",
   "name": "winter grass · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "7851dcc9c47c796601d17c06990bcd720427880a71b8ffa3ba214e271d359fd9",
       "bytes": 1360795
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ae3df6b44870e431dd2a8286ab571117f48ff3127193a86c7179e57f95bf4117",
+      "bytes": 2016755
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "8e35879f6b0487a9da256c4be3ec141c479cc064af96b5f08679da93228db0ed",
+      "bytes": 253
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "28d787007f3c358b3e256788ceced3604b34d0df8d8677fc9cb440310490ad04",
+      "bytes": 319
     }
   ],
   "usesGeometry": false,

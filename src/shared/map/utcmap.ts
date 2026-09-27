@@ -196,7 +196,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       playerStarts: map.playerStarts,
       entities: map.entities,
       camps: map.camps,
-      ...(map.landscape ? { landscape: map.landscape } : {}),
+      ...(map.landscape ? { landscape: parseLandscape(map.landscape) } : {}),
       ...(map.authoring?{authoring:map.authoring}:{}),
       ...(waterLevel !== undefined ? { waterLevel } : {}),
       ...(height ? { height } : {}),

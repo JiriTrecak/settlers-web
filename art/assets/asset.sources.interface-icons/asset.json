@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "id": "asset.sources.interface-icons",
+  "name": "icons",
+  "kind": "data",
+  "revision": 2,
+  "status": "archived",
+  "tags": [],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "1f7be3ebbff0fa4c7f790b998b43cf1d8e6a748c7183268fb20202309369679f",
+      "bytes": 1934981
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "png",
+      "sha256": "9cfa6caef71d13f3733bca6291937aa23f36a7c912dab8886a41f0cfe1eccc25",
+      "bytes": 2440269
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "8e1d9e3f883ddfbfaa6ffb6f9c4ec2eed0a681c397c181f7b2ea1bb9d322abd6",
+      "bytes": 2394213
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "ca547a5103039e8a60e50bed6e36599a7d3b7b064bb9c94cc145550a28977f10",
+      "bytes": 1462
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "12a0d86c60a903061ce89eb8d5de3c0ce204d91be199d8c0a84277fb24c2a878",
+      "bytes": 2225312
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "png",
+      "sha256": "0c4e243571062b654c4580b69ce02ccb8a38a9cd6070755e0b486d4bdc768175",
+      "bytes": 1777191
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "64109956b242d5b642613f770a7356059c729d8e9bd84bb62cd427abefcd50b1",
+      "bytes": 1750217
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "png",
+      "sha256": "cbb45db8da5deca4ab14d2981ffba9a7e51a51d635cb7c77b99ebf62514222d7",
+      "bytes": 2113115
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "b317bd26c8f0a8638d950feb29087c928ce6547262f98c3a6898d0ec4254edc5",
+      "bytes": 2231656
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "png",
+      "sha256": "c45bc2c02a4c7c15ce41ffb45cddecd7da63b58c5dd6dc756c55df8446cc46c1",
+      "bytes": 2681523
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "png",
+      "sha256": "67d93a23b2cf93832ede0371b86431421cf21f779aacc65632e6159ebe332287",
+      "bytes": 2511761
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "png",
+      "sha256": "6da68f0c498a231803bacbbd5f762186c86c7061f859db312a1d35809f9fcb13",
+      "bytes": 1343506
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "ece7c7b26a7fa455e20f06a9c8c851e43318984414ab0885855f43e877cd8d6f",
+      "bytes": 2476183
+    },
+    {
+      "role": "source",
+      "index": 14,
+      "format": "png",
+      "sha256": "308bd743627114f4ee12714272c01e70ee2c7c4ffee8aed4976336253499fe82",
+      "bytes": 2533054
+    },
+    {
+      "role": "source",
+      "index": 15,
+      "format": "png",
+      "sha256": "8eda09d89db5cac63847dc9ca7e8e3b266ce6ea159d6d48d2bbc73e41ff47164",
+      "bytes": 2565314
+    },
+    {
+      "role": "source",
+      "index": 16,
+      "format": "png",
+      "sha256": "e53fb25c9ac9b6449d1b167948275030610b1c0d3fdc31d04e08ecc5c1d95234",
+      "bytes": 2229965
+    },
+    {
+      "role": "source",
+      "index": 17,
+      "format": "png",
+      "sha256": "b45a1dde65a4cb8a243dbb06cd44a12dde7f7c19b7a57f668371a2d6f02eadb6",
+      "bytes": 2356935
+    },
+    {
+      "role": "source",
+      "index": 18,
+      "format": "png",
+      "sha256": "bee270116348f09f428f5b848d52e53a54707443003db62bfc216553ff8da866",
+      "bytes": 1904244
+    },
+    {
+      "role": "source",
+      "index": 19,
+      "format": "png",
+      "sha256": "9e3a8add9111eea5016b7debe293b328bc0c15ea083d6bb887169450b2b685b8",
+      "bytes": 2203390
+    },
+    {
+      "role": "source",
+      "index": 20,
+      "format": "json",
+      "sha256": "a6dd58ba08d6f7c5b1e9a9dac7f4992d15996de7c55eac74a5b77cc7b2d7f5a1",
+      "bytes": 23308
+    },
+    {
+      "role": "source",
+      "index": 21,
+      "format": "png",
+      "sha256": "479687ce15e2605f96ed931bed91633883f14061b7b5f49f555f8f1aed7e78e3",
+      "bytes": 2281559
+    },
+    {
+      "role": "source",
+      "index": 22,
+      "format": "png",
+      "sha256": "1282f35a69cb42c8a155cdc85e2c0356851b988de1434eec1f23314f959107d0",
+      "bytes": 2342121
+    },
+    {
+      "role": "source",
+      "index": 23,
+      "format": "png",
+      "sha256": "963eff5c13d276ab11cb84e9188cc90a6e2f38a803e522260cb2f77db41e4939",
+      "bytes": 2464774
+    },
+    {
+      "role": "source",
+      "index": 24,
+      "format": "png",
+      "sha256": "50ff2e501bc0b5733c5bb39fa2b2cf0528f79340c3024a1c2e52e903c5c3b117",
+      "bytes": 1895506
+    },
+    {
+      "role": "source",
+      "index": 25,
+      "format": "png",
+      "sha256": "9d33944c4ad447a1f26837b59815088f1888a53ea1d77298e0f6de1c52e09c05",
+      "bytes": 1213100
+    },
+    {
+      "role": "source",
+      "index": 26,
+      "format": "png",
+      "sha256": "039818b823a6cf9bfcc76158fe4bef2cc855ee2690e97c1fa22e2ee596183c66",
+      "bytes": 2437005
+    },
+    {
+      "role": "source",
+      "index": 27,
+      "format": "png",
+      "sha256": "103b2d4687f2630291d957ef7bc41dc79eea60d77637bc9bb96affa679c7abd5",
+      "bytes": 2673892
+    },
+    {
+      "role": "source",
+      "index": 28,
+      "format": "png",
+      "sha256": "a4cdd0c2670dbdf54a492bb3d12cf67a303b81301da315d8741dac863a1a0f3c",
+      "bytes": 2134866
+    },
+    {
+      "role": "source",
+      "index": 29,
+      "format": "png",
+      "sha256": "4b6da4af8f98935cefd5c8da87fc31d8455bcadbc7fd9ebed3dba8f36b376abb",
+      "bytes": 2154865
+    },
+    {
+      "role": "source",
+      "index": 30,
+      "format": "png",
+      "sha256": "9065524ece5c7d366d1c23e22bfc8504affef8194da08a440532c50d8afaec05",
+      "bytes": 2313764
+    },
+    {
+      "role": "source",
+      "index": 31,
+      "format": "png",
+      "sha256": "3d5def3fbe39dc6e56b54b0d9c14f0fab2a1b10046c789515106b17fe70394cb",
+      "bytes": 2061206
+    },
+    {
+      "role": "source",
+      "index": 32,
+      "format": "png",
+      "sha256": "1d149a828e6fa3daadd9de9ad761d20856a77f1ff1417ca4b2b28d862e9dcff3",
+      "bytes": 2155373
+    },
+    {
+      "role": "source",
+      "index": 33,
+      "format": "png",
+      "sha256": "618af44fcefbe8d37d03fde6480f2665f2321a8cd17a787623c1a4f3da170ba5",
+      "bytes": 2379590
+    },
+    {
+      "role": "source",
+      "index": 34,
+      "format": "png",
+      "sha256": "5da0a9d97f51fa065653e0fdb101c00e246f426f2fafef38b93b89387b49bf6a",
+      "bytes": 2364867
+    },
+    {
+      "role": "source",
+      "index": 35,
+      "format": "png",
+      "sha256": "f7ea10b91755f224a4c84991f4d5bf384276a3f5c4ddbf66df979a8fefa7e2ff",
+      "bytes": 2113356
+    },
+    {
+      "role": "source",
+      "index": 36,
+      "format": "png",
+      "sha256": "6dafd042df7774f736f2c7b436d58005cf659f4f958267c26adfa9b9d805a2db",
+      "bytes": 2528814
+    },
+    {
+      "role": "source",
+      "index": 37,
+      "format": "png",
+      "sha256": "ff1d57f09460755a80bf1a1233ecb41a55acd849e9ee3719eeff24f6ec3cf2b0",
+      "bytes": 2915057
+    },
+    {
+      "role": "source",
+      "index": 38,
+      "format": "png",
+      "sha256": "10023c29ff2b72d8f4a9b71ec4b2e55b6e28ac222affbca9542168978db9decf",
+      "bytes": 1946837
+    },
+    {
+      "role": "source",
+      "index": 39,
+      "format": "png",
+      "sha256": "af0417f8ca7495ef9ac8065f37be140442bde8d728e6f85546c72615e4f24990",
+      "bytes": 1757292
+    },
+    {
+      "role": "source",
+      "index": 40,
+      "format": "png",
+      "sha256": "30003e760a1ea6134b7dc37d8dc469a56836c79526dbae75e091d6dee600c4b3",
+      "bytes": 2762886
+    },
+    {
+      "role": "source",
+      "index": 41,
+      "format": "png",
+      "sha256": "3dd59cce22981e36e7963f225c3f2d4901a4693fd703c0682d83c5b7e378a3ea",
+      "bytes": 2080109
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "2d7e680cd47e794b8ae5ce11cf723c76fbd76bb9273b351252f5271c7d50f638",
+      "bytes": 4948
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

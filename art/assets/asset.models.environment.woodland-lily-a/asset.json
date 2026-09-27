@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-lily-a",
   "name": "woodland lily a",
   "kind": "foliage",
-  "revision": 2,
+  "revision": 3,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,83 @@
       "format": "json",
       "sha256": "9bfe7888c163fed1247990b6a1bf9a5787f55b90d761132bd6ea77fed5e56a1b",
       "bytes": 224
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "4f4dcf90248d5f69e8e13703482180f53a34bc836692e4e7e94a6beb62791d35",
+      "bytes": 1014
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "1c9f35888a669edbbf9470c9b25783a0eb948a891c3a14f79f7944e77ed3dcc4",
+      "bytes": 129815
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "05bcd78f0c57d44670b83dc06609603032681d293474c6a09b74c64629d13601",
+      "bytes": 476
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "0cca3f6762b85bef6b358618861314f44eb1c7175a7be5f28ffc281d62b615e4",
+      "bytes": 6800
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "glb",
+      "sha256": "2fc591af50f7c001c6a24afaf164f567d9679203237d9bba91779818c78a1d2b",
+      "bytes": 6828
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "d8d8c1524478ae56c12b570e3bce80d41deaaf1ee8e24ae13a4ad2cfac5a64e0",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "6ea8e764f580073dbfc0ac2cd9a47acc519de4dca91250227908c9501e56a655",
+      "bytes": 4600
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "65a017e713f62c9728bcc74f846ec239710340c04cb02ce88e835acfac72167d",
+      "bytes": 1349
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "ba2480ad7c189e468c8c53d18fdbc11638714956c8e813274bc601dfa43d5238",
+      "bytes": 166027
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "aa3f2286cc59e1ea694aa0eb45001f705d41c86d70cf20b1bcabc7419da25933",
+      "bytes": 67
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "cf26d04f9e2a322873411646618a860f71d5c787fc77216a57a33c9d24427ce4",
+      "bytes": 1922
     }
   ],
   "usesGeometry": true,

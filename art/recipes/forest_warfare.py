@@ -60,7 +60,7 @@ class ForestKit:
             p.inputs['Emission Color'].default_value=(*rgb,1);p.inputs['Emission Strength'].default_value=glow
         # Low-contrast real PNG texture, packed into .blend/GLB. Broad grain only.
         if texture:
-            path=ROOT/'art/sources/textures/forest-warfare'/f'{texture}.png'
+            path=ROOT/'.asset-work/build/textures/forest-warfare'/f'{texture}.png'
             if path.exists():
                 import numpy as np
                 source=bpy.data.images.load(str(path),check_existing=True)

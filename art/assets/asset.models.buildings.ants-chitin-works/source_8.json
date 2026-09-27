@@ -1,0 +1,73 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "bfed9ddf-2661-43e9-a4fb-a190a21969a3",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 8999,
+    "credits": 60,
+    "partsReturned": 43
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "chitin-works.png",
+  "integration": {
+    "definition": "building.ants.ironroot-forge",
+    "width": 8.6,
+    "footprint": [
+      9,
+      9
+    ],
+    "entrance": [
+      0,
+      5
+    ],
+    "height": 8.33256,
+    "depth": 7.68472
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 8999
+  },
+  "runtime": {
+    "triangles": 8999,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "savedBlender": true,
+    "finiteGeometry": true,
+    "packedTextures": true,
+    "studioColors": [
+      "white",
+      "green"
+    ],
+    "rearOrbit": true,
+    "gameColors": [
+      "red",
+      "blue"
+    ],
+    "gameScene": "Combat Lab colony beside hall and warriors",
+    "consoleErrors": 0
+  }
+}

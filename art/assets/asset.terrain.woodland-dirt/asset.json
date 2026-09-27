@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-dirt",
   "name": "woodland dirt · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 2,
+  "revision": 3,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "bc3a28e379901a1236ba3b26416e9a842b33e1f4cd4255693c0627041ac1029c",
       "bytes": 1392964
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "5824eb93714fcd1e87da81e6a41ff0143e0761154a19f4ded7742504c13004db",
+      "bytes": 1845450
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "83a6f0023b0ef6d830ceae632f4e0d25f615761b3a25cbc488e5e3c13b8e7f91",
+      "bytes": 272
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "f255db82fbfef46a72109672463a72954c293de89554e3b528f63092edc3a850",
+      "bytes": 322
     }
   ],
   "usesGeometry": false,

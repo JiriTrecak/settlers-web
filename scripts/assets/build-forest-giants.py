@@ -23,7 +23,7 @@ class Kit(ForestKit):
   self.leaves=self.texture('Broadleaf canopy','woodland-oak-leaves',True)
  def texture(self,name,slug,alpha=False):
   m=self.mat(name,'#ffffff');p=m.node_tree.nodes.get('Principled BSDF');t=m.node_tree.nodes.new('ShaderNodeTexImage')
-  folder=ROOT/'art/assets'/slug if slug.startswith('asset.') else ROOT/'art/sources/textures'/slug
+  folder=ROOT/'art/assets'/slug if slug.startswith('asset.') else ROOT/'.asset-work/build/textures'/slug
   t.image=bpy.data.images.load(str(folder/'albedo.png'),check_existing=True);t.image.pack()
   m.node_tree.links.new(t.outputs['Color'],p.inputs['Base Color'])
   if alpha:m.node_tree.links.new(t.outputs['Alpha'],p.inputs['Alpha']);m.surface_render_method='DITHERED';m.use_backface_culling=False

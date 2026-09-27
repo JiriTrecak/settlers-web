@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "category": "environment",
+  "slug": "woodland-pine-a",
+  "entry": "model.py",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "albedo",
+      "index": 1
+    },
+    "albedo_2.png": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "albedo",
+      "index": 2
+    },
+    "asset.json": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 2
+    },
+    "geometry.glb": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 3
+    },
+    "model.glb": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 4
+    },
+    "model.py": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "recipe",
+      "index": 1
+    },
+    "palette.json": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 5
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 6
+    },
+    "render.png": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 7
+    },
+    "samples.json": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 8
+    },
+    "woodland-pine-a.blend": {
+      "asset": "asset.models.environment.woodland-pine-a",
+      "role": "source",
+      "index": 1
+    }
+  }
+}

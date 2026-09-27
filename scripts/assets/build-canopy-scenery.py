@@ -9,8 +9,8 @@ from forest_warfare import ForestKit
 from forest_environment import tree_actions
 OUT=Path('/tmp/utc-canopy-models');OUT.mkdir(exist_ok=True)
 import shutil
-shutil.copyfile(ROOT/'art/sources/textures/woodland-bark/albedo.png',OUT/'bark.png')
-shutil.copyfile(ROOT/'art/sources/textures/woodland-oak-leaves/albedo.png',OUT/'leaves.png')
+shutil.copyfile(ROOT/'.asset-work/build/textures/woodland-bark/albedo.png',OUT/'bark.png')
+shutil.copyfile(ROOT/'.asset-work/build/textures/woodland-oak-leaves/albedo.png',OUT/'leaves.png')
 class Kit(ForestKit):
  def __init__(self):
   bpy.ops.wm.read_factory_settings(use_empty=True);self.rng=random.Random(2209);self.palette={};self.groups={};self.group('Forest materials')

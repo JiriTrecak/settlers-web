@@ -1,0 +1,145 @@
+{
+  "name": "Bombardier Beetle",
+  "kind": "character",
+  "blend": "ant-bombardier-tripo.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "camera": {
+    "azimuth": 20,
+    "elevation": 12,
+    "scale": 3.6,
+    "target": [
+      0,
+      0,
+      1.4
+    ],
+    "distance": 12
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 560,
+    "fill_energy": 260,
+    "rim_energy": 360,
+    "scale": 0.45,
+    "target": [
+      0,
+      0,
+      1.3
+    ]
+  },
+  "characterHeight": 2.85,
+  "characterVariants": {
+    "bombardier": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "charge": "run",
+        "attack": "attack_mortar",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "bombardier": {
+      "normalizedTime": 0.5070422535211268,
+      "event": "release"
+    }
+  },
+  "runtimeDecimation": {
+    "Mortar barrel and bronze rings": 0.44,
+    "Wing shell": 0.44,
+    "Left leg": 0.52,
+    "Right leg": 0.52,
+    "Head and upper harness": 0.72,
+    "Left mortar carriage": 0.38,
+    "Segmented abdomen": 0.43,
+    "Body harness": 0.43,
+    "Right mortar carriage": 0.38,
+    "Right arm and glove": 0.58,
+    "Left arm and glove": 0.58,
+    "Right leaf collar": 0.65,
+    "Left antenna": 0.7,
+    "Left leaf collar": 0.65,
+    "Lower back harness": 0.5,
+    "Right antenna": 0.7,
+    "Buckle and team cloth": 0.6,
+    "Carriage fastener": 0.5,
+    "Left toe": 0.8,
+    "Left waist strap": 0.6,
+    "Right waist strap": 0.6,
+    "Right toe": 0.8,
+    "Right side seam": 0.8,
+    "Left side seam": 0.8
+  },
+  "runtimeWeldDistance": 1e-06,
+  "runtime_texture_size": 2048,
+  "runtime_triangle_budget": 5000,
+  "ownership_channel": "blue",
+  "team_color_default": [
+    0.38,
+    0.035,
+    0.055
+  ],
+  "part_names": {
+    "0": "Mortar barrel and bronze rings",
+    "1": "Wing shell",
+    "2": "Left leg",
+    "3": "Right leg",
+    "4": "Head and upper harness",
+    "5": "Left mortar carriage",
+    "6": "Segmented abdomen",
+    "7": "Body harness",
+    "8": "Right mortar carriage",
+    "9": "Right arm and glove",
+    "10": "Left arm and glove",
+    "11": "Right leaf collar",
+    "12": "Left antenna",
+    "13": "Left leaf collar",
+    "14": "Lower back harness",
+    "15": "Right antenna",
+    "16": "Buckle and team cloth",
+    "17": "Carriage fastener",
+    "18": "Left toe",
+    "19": "Left waist strap",
+    "20": "Right waist strap",
+    "21": "Right toe",
+    "22": "Right side seam",
+    "23": "Left side seam"
+  },
+  "rigid_parts": {
+    "4": "Head",
+    "12": "Head",
+    "15": "Head",
+    "5": "Spine2",
+    "8": "Spine2",
+    "11": "Spine2",
+    "13": "Spine2",
+    "14": "Spine2",
+    "17": "Spine2",
+    "19": "Spine2",
+    "20": "Spine2",
+    "22": "Spine2",
+    "23": "Spine2",
+    "1": "Spine2",
+    "6": "Hips",
+    "7": "Spine2",
+    "16": "Hips"
+  },
+  "publication": {
+    "id": "asset.models.units.ants-bombardier",
+    "renderId": "asset.ants.bombardier",
+    "iconId": "icon.ants.bombardier",
+    "profile": "bombardier",
+    "healthHeight": 3.05,
+    "projectileSocket": "socket_projectile",
+    "faction": "ants",
+    "kind": "unit"
+  },
+  "runningLeanFactor": 0.2
+}

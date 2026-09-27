@@ -243,7 +243,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -253,12 +253,7 @@
           "bytes": 32681
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.barracks",
-          "image": "assets/library/asset.icons.building-ants-barracks/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -269,7 +264,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -279,12 +274,7 @@
           "bytes": 22161
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.bombardier-workshop",
-          "image": "assets/library/asset.icons.building-ants-bombardier-workshop/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -342,7 +332,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -352,12 +342,7 @@
           "bytes": 30779
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.house",
-          "image": "assets/library/asset.icons.building-ants-house/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -368,7 +353,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -378,12 +363,7 @@
           "bytes": 16723
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.ironroot-forge",
-          "image": "assets/library/asset.icons.building-ants-ironroot-forge/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -441,7 +421,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -451,12 +431,7 @@
           "bytes": 15316
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.rootworks",
-          "image": "assets/library/asset.icons.building-ants-rootworks/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -519,7 +494,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -529,12 +504,7 @@
           "bytes": 25040
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.tower",
-          "image": "assets/library/asset.icons.building-ants-tower/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1850,7 +1820,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -1860,12 +1830,7 @@
           "bytes": 33990
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.archer",
-          "image": "assets/library/asset.icons.unit-ants-archer/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1876,7 +1841,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -1886,12 +1851,7 @@
           "bytes": 13714
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.bombardier",
-          "image": "assets/library/asset.icons.unit-ants-bombardier/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1975,7 +1935,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -1985,12 +1945,7 @@
           "bytes": 32276
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.settler",
-          "image": "assets/library/asset.icons.unit-ants-worker/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -2408,7 +2363,7 @@
         "tripo",
         "team-mask"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "building",
       "outputs": [
         {
@@ -2473,6 +2428,201 @@
       "scenery": []
     },
     {
+      "id": "asset.models.buildings.ants-barracks",
+      "name": "Barracks",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 3,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-barracks/geometry.glb",
+          "sha256": "cad2a09192150695adfef235fd070dd89545ab1401f820946328aaca73bda10c",
+          "bytes": 11453356
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-barracks/albedo.png",
+          "sha256": "1992e6c9c4b5373ba1080c9c905ba31cd96e81c4eafc4e93c0f9058adba2e4df",
+          "bytes": 7380716
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-barracks/team_mask.png",
+          "sha256": "26d04b81cd41fa46f17ebdafe8748ee3f8c2675fddcacef0336eecba699581a1",
+          "bytes": 207724
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-barracks/normal.png",
+          "sha256": "d9c75880c488f7d1486132d8dd10db11a630fa92868a303630c14ec24e3bb07a",
+          "bytes": 2303833
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-barracks/roughness.png",
+          "sha256": "fef38c1c895d84a5c70b1f9b55768033742042af836de3e1c453fbadcf997969",
+          "bytes": 1344472
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-barracks/image.png",
+          "sha256": "515bf70114ef609c17f5c2e088b3e23de08bc522047383863889a6a70e315a34",
+          "bytes": 17375
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.barracks",
+          "file": "assets/library/asset.models.buildings.ants-barracks/geometry.glb",
+          "scale": 1,
+          "healthHeight": 7.2
+        },
+        {
+          "id": "icon.ants.barracks",
+          "image": "assets/library/asset.models.buildings.ants-barracks/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-bombardier-workshop",
+      "name": "Bombardier Workshop",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 3,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb",
+          "sha256": "20df9a1ef4bb07eae0d9f7440d9c2e8f5193be079cd639050cef246709ef2621",
+          "bytes": 11972612
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/albedo.png",
+          "sha256": "a6823822feaad55d7b81cdff83b76a339bf1df377f56b8fc03872f236132eac2",
+          "bytes": 8089090
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/team_mask.png",
+          "sha256": "a38812358774ca3cb5d31cc71f6a914bf91fcb44d4697d16c530261385c53605",
+          "bytes": 249483
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/normal.png",
+          "sha256": "43ff5c1258ec3a5e8578eb310ef527237369a09bd2e7f7a3fc27b089e56346d1",
+          "bytes": 2903223
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/roughness.png",
+          "sha256": "dc94228b2343c54e063e07a1df545d2470c2a6cbcecc1ce38492440a5a3bd792",
+          "bytes": 914532
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-bombardier-workshop/image.png",
+          "sha256": "b381e0e38e4771997fcd5dcb5d9893b560db89eacda3c0f7a60faa462a53b3b2",
+          "bytes": 23170
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.bombardier-workshop",
+          "file": "assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb",
+          "scale": 1,
+          "healthHeight": 7.1
+        },
+        {
+          "id": "icon.ants.bombardier-workshop",
+          "image": "assets/library/asset.models.buildings.ants-bombardier-workshop/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-chitin-works",
+      "name": "Chitin Works",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 3,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/geometry.glb",
+          "sha256": "f29265b5b98312baa8be9304e4d3e42920e35c3804088584b97b86bad8be9121",
+          "bytes": 12678196
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/albedo.png",
+          "sha256": "cb2e7ba5fae02dd8d452236a7c07f843953a8336f2b904c42f23153e493ed5e7",
+          "bytes": 7779577
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/team_mask.png",
+          "sha256": "a55f56629c5d9f8bc0e7e87b5a295bea250941125d83b6e7116cc7ef0a26f9e8",
+          "bytes": 288933
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/normal.png",
+          "sha256": "4f661ad1987be9f9f574395515c83db85c7b78e3750b86b2ccc7bc11293245ca",
+          "bytes": 2715402
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/roughness.png",
+          "sha256": "4e3205bc2ff7050b26bc62704610a83405a6f0c24b6f6ce4dd78beb436cb6b64",
+          "bytes": 1623883
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-chitin-works/image.png",
+          "sha256": "908033ebadb96d1ef528fc0c3fe220ef4fc4bb4e7981dcbb9a36ec7e1cfae2b7",
+          "bytes": 21339
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.ironroot-forge",
+          "file": "assets/library/asset.models.buildings.ants-chitin-works/geometry.glb",
+          "scale": 1,
+          "healthHeight": 8.8
+        },
+        {
+          "id": "icon.ants.ironroot-forge",
+          "image": "assets/library/asset.models.buildings.ants-chitin-works/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.buildings.ants-mandible-hall",
       "name": "Mandible Hall",
       "kind": "model",
@@ -2483,7 +2633,7 @@
         "main-building",
         "procedural"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "building",
       "outputs": [
         {
@@ -2542,6 +2692,201 @@
         }
       ],
       "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-mound",
+      "name": "Mound",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 3,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-mound/geometry.glb",
+          "sha256": "73711aa53b3a7f34d2bad32c5b8a2d5a99ee0c00d42b2cd0e5d9bbfe78d0fa5c",
+          "bytes": 13367996
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mound/albedo.png",
+          "sha256": "af41d26b2afa4c03891b2fc6168a9b8ad206657af7939448aef6f18936811e55",
+          "bytes": 7689177
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-mound/team_mask.png",
+          "sha256": "e1e70ebeae1f54994a19f8793e9735a871fcf5b7c0a6c34a75d539d6d1b40b22",
+          "bytes": 197742
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-mound/normal.png",
+          "sha256": "54fb6111ad0e756ef6f2b19a15109eca1b7c8721f589b8df6fdb1e5a62068d13",
+          "bytes": 4181919
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-mound/roughness.png",
+          "sha256": "002ced7bbf4a3c774f6b43516d2afc4f00647f773234ed66f98e6a4d4d866516",
+          "bytes": 1786742
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-mound/image.png",
+          "sha256": "16089349d22bf324245dcb8363e68920fc2be48fd41742121423566c65fb6c50",
+          "bytes": 15914
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.house",
+          "file": "assets/library/asset.models.buildings.ants-mound/geometry.glb",
+          "scale": 1,
+          "healthHeight": 4.1
+        },
+        {
+          "id": "icon.ants.house",
+          "image": "assets/library/asset.models.buildings.ants-mound/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-rootworks",
+      "name": "Rootworks",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 4,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/geometry.glb",
+          "sha256": "332c67c1a3b43676bfc2ec1b50640bcec70273a7677fccce62278d523b108393",
+          "bytes": 13154400
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/albedo.png",
+          "sha256": "fe39e990ca86d0d01c46ee1fdc8efe27be801879e5ff4af61169671ca39cd421",
+          "bytes": 8073868
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/team_mask.png",
+          "sha256": "734dbb83b1695b54e47e6b73e7cff779884cd0b4db7f262ea1d9dfc3af951809",
+          "bytes": 114408
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/normal.png",
+          "sha256": "99ec1c30e046e3c228392d45f00f2d0a5a6907fc5c0bdba1a645d20758d41d73",
+          "bytes": 3730797
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/roughness.png",
+          "sha256": "db47e3db225ba0f34d14b5592312655206591a5165e7348422c3ae5cfc4374dd",
+          "bytes": 1252409
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-rootworks/image.png",
+          "sha256": "dea7ea1e49d1a0966eaddde1ef469c741f53cb39539b975301c9029c0b61f23e",
+          "bytes": 16751
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.rootworks",
+          "file": "assets/library/asset.models.buildings.ants-rootworks/geometry.glb",
+          "scale": 1,
+          "healthHeight": 4.6
+        },
+        {
+          "id": "icon.ants.rootworks",
+          "image": "assets/library/asset.models.buildings.ants-rootworks/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-watchtower",
+      "name": "Watchtower",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 5,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/geometry.glb",
+          "sha256": "06733b224b04121c9d3d09e89db24f351747577e9175ce92bcd4723dadbd8490",
+          "bytes": 13714396
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/albedo.png",
+          "sha256": "428a13f7b6f244b8fcdaea5d2c305e2dd11469f1f345369ccd17227b4d910d90",
+          "bytes": 8122874
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/team_mask.png",
+          "sha256": "e093e42b8c19a6ff31aeedefcd3029c413bdbba5888c19984a3c27806d234bcb",
+          "bytes": 217588
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/normal.png",
+          "sha256": "b4707c41f03c0a9b5cb2ebcf3175509bd3c8ce458e8e17cb2f2e63eab671c532",
+          "bytes": 4782248
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/roughness.png",
+          "sha256": "6e61a364e61cb8176850a54d33abf9e8465def42104cb76e582cb0433a1a11a8",
+          "bytes": 1367305
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-watchtower/image.png",
+          "sha256": "93a47f7be6332a4f66f7302906299fb103c37dde4444a51ed3547fa7a2ad8eea",
+          "bytes": 12730
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.tower",
+          "file": "assets/library/asset.models.buildings.ants-watchtower/geometry.glb",
+          "scale": 1,
+          "healthHeight": 13.1
+        },
+        {
+          "id": "icon.ants.tower",
+          "image": "assets/library/asset.models.buildings.ants-watchtower/image.png"
+        }
+      ],
       "scenery": []
     },
     {
@@ -3401,7 +3746,7 @@
         "woodland",
         "forest"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -3448,7 +3793,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -3495,7 +3840,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -3542,7 +3887,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 6,
       "profile": "model",
       "outputs": [
         {
@@ -3569,10 +3914,6 @@
           "id": "asset.scenery.woodland-amber-deposit",
           "file": "assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb",
           "sceneryAsset": "woodland-amber-deposit"
-        },
-        {
-          "id": "asset.resource.woodland-amber-deposit",
-          "file": "assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb"
         }
       ],
       "scenery": [
@@ -3593,7 +3934,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -3734,7 +4075,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -3867,7 +4208,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -3975,7 +4316,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4108,7 +4449,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4155,7 +4496,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4190,7 +4531,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4225,7 +4566,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4260,7 +4601,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4380,7 +4721,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4427,7 +4768,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4474,7 +4815,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4503,7 +4844,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4532,7 +4873,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4579,7 +4920,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4626,7 +4967,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4673,7 +5014,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -4801,7 +5142,7 @@
         "woodland",
         "forest"
       ],
-      "revision": 10,
+      "revision": 11,
       "profile": "model",
       "outputs": [
         {
@@ -4850,7 +5191,7 @@
         "woodland",
         "forest"
       ],
-      "revision": 10,
+      "revision": 11,
       "profile": "model",
       "outputs": [
         {
@@ -4899,7 +5240,7 @@
         "woodland",
         "forest"
       ],
-      "revision": 10,
+      "revision": 11,
       "profile": "model",
       "outputs": [
         {
@@ -4947,7 +5288,7 @@
         "woodland",
         "forest"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -4988,7 +5329,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5071,7 +5412,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5118,7 +5459,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5165,7 +5506,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5261,7 +5602,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5308,7 +5649,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5355,7 +5696,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5402,7 +5743,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5449,7 +5790,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5496,7 +5837,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "model",
       "outputs": [
         {
@@ -5536,6 +5877,227 @@
       ]
     },
     {
+      "id": "asset.models.resources.amber-deposit",
+      "name": "Amber Deposit",
+      "kind": "model",
+      "faction": "neutral",
+      "tags": [
+        "original",
+        "neutral",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
+          "sha256": "5c30b9bd20649b542c3cd3733b63339a6054febf11306d722b0c5fc6f698a40b",
+          "bytes": 12822188
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.resources.amber-deposit/albedo.png",
+          "sha256": "b2393b43d237b2ed927dfc5b8f5c871aace7ab68b5e11c346b1bd3d25d073288",
+          "bytes": 6561225
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.resources.amber-deposit/normal.png",
+          "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
+          "bytes": 3796966
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.resources.amber-deposit/roughness.png",
+          "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
+          "bytes": 1953719
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.resources.amber-deposit/image.png",
+          "sha256": "9a24f37483c3a48609587f969806908a690acfe4bfec8be476d2776e2834c34f",
+          "bytes": 25961
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-seam",
+          "file": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
+          "scale": 1,
+          "healthHeight": 4.8
+        },
+        {
+          "id": "asset.resource.woodland-amber-deposit",
+          "file": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
+          "scale": 1,
+          "healthHeight": 4.8
+        },
+        {
+          "id": "icon.neutral.amber-deposit",
+          "image": "assets/library/asset.models.resources.amber-deposit/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.corrupted-root",
+      "name": "Corrupted Root Deposit",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland"
+      ],
+      "revision": 3,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.corrupted-root/geometry.glb",
+          "sha256": "4a759b91b177242fb8e19005cde992934542d12f7e081e408f578029580669f6",
+          "bytes": 1622452
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.resources.corrupted-root/image.png",
+          "sha256": "f712de390f122f4d9d34708e0e33cadadec93e05052081240fee0811438ff160",
+          "bytes": 8224
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.corrupted-root",
+          "file": "assets/library/asset.models.resources.corrupted-root/geometry.glb",
+          "scale": 1,
+          "healthHeight": 3.2
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-archer",
+      "name": "Ant Archer",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "skinned",
+        "tripo",
+        "ant-archer-tripo"
+      ],
+      "revision": 5,
+      "profile": "archer",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-archer/geometry.glb",
+          "sha256": "c4604ed351c485cebdc0c1f75173f609b127283e52b947ce20667cfb7d204e27",
+          "bytes": 10754292
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-archer/image.png",
+          "sha256": "d668fadae2e4854444bab8fe50bb56f4e754124e77d0b8096a983d400b491e7f",
+          "bytes": 11144
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-archer/albedo.png",
+          "sha256": "6cef1a016b26f2a6446a0be99da94efe0fcfae5e6aaff7226d4b0ba1788196c5",
+          "bytes": 4650475
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-archer/team_mask.png",
+          "sha256": "5f41567125610f6e0dc9c2c7484e361eeebdc3e251df788830d2f1fe852c2679",
+          "bytes": 51006
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.archer",
+          "file": "assets/library/asset.models.units.ants-archer/geometry.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "character": "archer",
+          "scale": 1,
+          "healthHeight": 2.15,
+          "projectile": "arrow",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.ants.archer",
+          "image": "assets/library/asset.models.units.ants-archer/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-bombardier",
+      "name": "Bombardier Beetle",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "skinned",
+        "tripo",
+        "ant-bombardier-tripo"
+      ],
+      "revision": 4,
+      "profile": "bombardier",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-bombardier/geometry.glb",
+          "sha256": "6ad2fb59475a83488672458aeccb25f6625482b13fbfb1d96257136bad24a0d4",
+          "bytes": 11323560
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-bombardier/image.png",
+          "sha256": "fc40856f2fde2e3053b05ddcd2c836db588e81e22cb9360885a1f411b447fa68",
+          "bytes": 15415
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-bombardier/albedo.png",
+          "sha256": "36e6ce6531fa81d0299a36779d26a45de7745909510880af247a10d38402d78d",
+          "bytes": 5920134
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-bombardier/team_mask.png",
+          "sha256": "3bd62f4ce1bae9d6244a7ccce6332f8974fec5dd5c54d8f96aa6b8586a28db07",
+          "bytes": 34440
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.bombardier",
+          "file": "assets/library/asset.models.units.ants-bombardier/geometry.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "character": "bombardier",
+          "scale": 1,
+          "healthHeight": 3.05,
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.ants.bombardier",
+          "image": "assets/library/asset.models.units.ants-bombardier/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.units.ants-warrior",
       "name": "Ant Warrior",
       "kind": "model",
@@ -5548,14 +6110,14 @@
         "acorn",
         "tripo"
       ],
-      "revision": 5,
+      "revision": 11,
       "profile": "warrior",
       "outputs": [
         {
           "role": "model",
           "path": "assets/library/asset.models.units.ants-warrior/geometry.glb",
-          "sha256": "00e8769d782809d5e4a18ff4c329a3c70d95c2ee67cccbc355f62a9f588e6fa0",
-          "bytes": 1594404
+          "sha256": "097ee6f3510d6ee6bfe751b8470c860f99743d7e6f52efd376915c0cb3b294cf",
+          "bytes": 1196200
         },
         {
           "role": "image",
@@ -5568,6 +6130,11 @@
         {
           "id": "asset.ants.warrior",
           "file": "assets/library/asset.models.units.ants-warrior/geometry.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
           "character": "warrior",
           "scale": 1,
           "healthHeight": 2.3
@@ -5580,6 +6147,126 @@
       "scenery": []
     },
     {
+      "id": "asset.models.units.ants-worker",
+      "name": "Ant Worker",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "skinned",
+        "tripo",
+        "ant-worker-tripo"
+      ],
+      "revision": 6,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-worker/geometry.glb",
+          "sha256": "e3e2a76c721a08503e6a329f20264b41f79260e61838824dded7a4ae59f84fd5",
+          "bytes": 11932860
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-worker/image.png",
+          "sha256": "517e1df20124715ef5df977a709c1623d544149a03b9184c590c373c1aa2747c",
+          "bytes": 11478
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-worker/albedo.png",
+          "sha256": "6266efe6249cd44ce2029d38e0d7ae979fbfc674546638c3b93ba57847c4c84b",
+          "bytes": 5416210
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-worker/team_mask.png",
+          "sha256": "d1ed2967f0776bd95200b6740249085a2b775272d0605110824a4b8a3c0dbed8",
+          "bytes": 53094
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-worker/geometry_2.glb",
+          "sha256": "1b29be62769d6f923e49f40ce2be9aeee1df09a93b4e0cd6bc31b375627a8f90",
+          "bytes": 7292
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-worker/geometry_3.glb",
+          "sha256": "05962525b6276fbec9788f8581fbae97203e55d8d0bb1951c50fbab127274a14",
+          "bytes": 11456
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-worker/geometry_4.glb",
+          "sha256": "9418afcbb76d8aa4920903da317e9c3df4a5a939d3d4bab913d679477d1d0387",
+          "bytes": 7300
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.settler",
+          "file": "assets/library/asset.models.units.ants-worker/geometry.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.15
+        },
+        {
+          "id": "icon.ants.settler",
+          "image": "assets/library/asset.models.units.ants-worker/image.png"
+        },
+        {
+          "id": "asset.briar.civilian",
+          "file": "assets/library/asset.models.units.ants-worker/geometry.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.15
+        },
+        {
+          "id": "asset.item.wood",
+          "file": "assets/library/asset.models.units.ants-worker/geometry_2.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "scale": 1
+        },
+        {
+          "id": "asset.item.amber",
+          "file": "assets/library/asset.models.units.ants-worker/geometry_3.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "scale": 1
+        },
+        {
+          "id": "asset.item.root",
+          "file": "assets/library/asset.models.units.ants-worker/geometry_4.glb",
+          "dimensions": {
+            "radius": 0.2,
+            "height": 2,
+            "formationSpacing": 1
+          },
+          "scale": 1
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "model",
@@ -5587,7 +6274,7 @@
         "placeholder",
         "diagnostic"
       ],
-      "revision": 5,
+      "revision": 17,
       "profile": "prop",
       "outputs": [
         {
@@ -5727,36 +6414,12 @@
           "healthHeight": 1
         },
         {
-          "id": "asset.item.wood",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.5,
-          "stackHeight": 0.42,
-          "stackColumns": 1
-        },
-        {
           "id": "asset.item.plank",
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
           "healthHeight": 2.5,
           "stackHeight": 0.19,
           "stackColumns": 1
-        },
-        {
-          "id": "asset.item.amber",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.5,
-          "stackHeight": 0.58,
-          "stackColumns": 2
-        },
-        {
-          "id": "asset.item.root",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 1,
-          "stackHeight": 0.3,
-          "stackColumns": 2
         },
         {
           "id": "asset.briar.archer",
@@ -5776,17 +6439,6 @@
           "healthHeight": 3.2199999999999998,
           "cameraAnchor": {
             "height": 2.0999999999999996,
-            "forward": 0.15,
-            "distance": 7
-          }
-        },
-        {
-          "id": "asset.briar.civilian",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.3,
-          "cameraAnchor": {
-            "height": 1.5,
             "forward": 0.15,
             "distance": 7
           }
@@ -5840,58 +6492,10 @@
           "healthHeight": 4.9
         },
         {
-          "id": "asset.ants.bombardier-workshop",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.7
-        },
-        {
           "id": "asset.ants.forester",
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
           "healthHeight": 3.2
-        },
-        {
-          "id": "asset.ants.house",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 3.5
-        },
-        {
-          "id": "asset.ants.ironroot-forge",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.6
-        },
-        {
-          "id": "asset.ants.barracks",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.7
-        },
-        {
-          "id": "asset.ants.rootworks",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 3.7
-        },
-        {
-          "id": "asset.ants.tower",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 8.3
-        },
-        {
-          "id": "asset.resource.amber-seam",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 5
-        },
-        {
-          "id": "asset.resource.corrupted-root",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.8
         },
         {
           "id": "asset.resource.tree-primary",
@@ -5906,29 +6510,6 @@
           "harvestAnimation": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
           "sceneryAsset": "missing-model"
-        },
-        {
-          "id": "asset.ants.archer",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.3,
-          "cameraAnchor": {
-            "height": 1.5,
-            "forward": 0.15,
-            "distance": 7
-          },
-          "projectile": "arrow"
-        },
-        {
-          "id": "asset.ants.bombardier",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.3,
-          "cameraAnchor": {
-            "height": 1.5,
-            "forward": 0.15,
-            "distance": 7
-          }
         },
         {
           "id": "asset.ants.hunter",
@@ -5952,17 +6533,6 @@
             "distance": 7
           },
           "castContact": 0.68
-        },
-        {
-          "id": "asset.ants.settler",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.3,
-          "cameraAnchor": {
-            "height": 1.5,
-            "forward": 0.15,
-            "distance": 7
-          }
         }
       ],
       "scenery": [
@@ -6081,7 +6651,7 @@
         "original",
         "woodland"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6129,7 +6699,7 @@
         "original",
         "woodland"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6177,7 +6747,7 @@
         "original",
         "woodland"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6225,7 +6795,7 @@
         "original",
         "woodland"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6273,7 +6843,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6321,7 +6891,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6369,7 +6939,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6417,7 +6987,7 @@
         "original",
         "woodland"
       ],
-      "revision": 3,
+      "revision": 4,
       "profile": "terrain-material",
       "outputs": [
         {
@@ -6486,7 +7056,7 @@
         "original",
         "woodland"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "terrain-material",
       "outputs": [
         {

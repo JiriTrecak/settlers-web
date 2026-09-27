@@ -9,7 +9,7 @@ export function workplaceCard(focus: EntityView | undefined, queue: readonly Tas
   let waiting=[...queue];
   let summary='';
   if (!focus || focus.remembered) return {active,waiting:[],summary};
-  const definition=registry.get(focus.definition), policy=definition.behaviors.production;
+  const definition=registry.get(focus.definition);
   if (focus.upgrade) {
     const target=registry.get(focus.upgrade.target);
     active={key:`upgrade/${target.id}`,icon:target.icon,name:`Upgrading to ${target.name}`,progress:focus.upgrade.progress/definition.upgrade!.workTicks,task:null};
@@ -17,7 +17,7 @@ export function workplaceCard(focus: EntityView | undefined, queue: readonly Tas
     const operation=focus.production.active, product=registry.get(operation.definition);
     const task=queue.find(q=>q.id===operation.queue)??null;
     active={key:`production/${operation.queue ?? product.id}`,icon:product.icon,name:product.name,
-      progress:operation.progress/(policy?.population?.intervalTicks??product.creation?.workTicks??1),task};
+      progress:operation.progress/(product.creation?.workTicks??1),task};
     waiting=queue.filter(q=>q!==task);
   } else if (queue.length) {
     const task=queue[0];

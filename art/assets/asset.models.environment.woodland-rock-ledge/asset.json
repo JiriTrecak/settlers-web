@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-rock-ledge",
   "name": "woodland rock ledge",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "09a134a51b50f61fe4f9f1099c11c3bc88b09d841ad1d6c8468dd3e62ee23e03",
+      "bytes": 1056
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "c87463ad931e80ad7c43f105ab68cb92447ce3490eeabcd0ab588243ca860c03",
+      "bytes": 655
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "056013fa997f4b13bad51db793df7a85bffc525dc5254b629f2072c56afdd78a",
+      "bytes": 1721688
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "ecf68a7ce72956e5b7b0edc5d8ffeb2756725c074de94445fa39ee8a087505c8",
+      "bytes": 1721716
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "6e03b01e8c735cab4bfb1a7c6cf17c9874a64f4c1e07b7e0c3358c0df8c2d47b",
+      "bytes": 1329
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "d6b64ed0fc362e64c498800f44d9741d85cc95aebae4680454b585bd01f22c77",
+      "bytes": 343009
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "e2bcc37a485d32a3ebf47db13fb4f8c1796c2c30c05d9035c0cd9ea0877301f5",
+      "bytes": 2119
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

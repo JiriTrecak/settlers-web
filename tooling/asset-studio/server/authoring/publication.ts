@@ -1,3 +1,4 @@
+import {inspectGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
 /** Published snapshots isolate draft edits; one journal commits binaries and every runtime index. */
 import path from 'node:path';
 import {ContentRegistry,type ContentSource} from '../../../../src/content/registry';
@@ -52,6 +53,7 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
 
  const add=async(path:string,bytes:Buffer)=>{try{if(hash(await readFile(await within(root,path)))===hash(bytes))return;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}writes.push({path,bytes});};
  for(const asset of sorted){
+  const quality:ModelQuality[]=[];
   if(changed.has(asset.id))for(const resource of asset.resources){
    const source=assetFolder(asset.id)+'/'+resourceFilename(resource),bytes=staged.get(source)??await readFile(await within(root,source));
    if(bytes.length!==resource.bytes||hash(bytes)!==resource.sha256)throw Error('Unpublished or damaged resource: '+source);
@@ -59,8 +61,10 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
   for(const resource of runtimeResources(asset)){
    const target=publishedResource(asset,resource),source=changed.has(asset.id)?assetFolder(asset.id)+'/'+resourceFilename(resource):target;
    const bytes=staged.get(source)??await readFile(await within(root,source));if(bytes.length!==resource.bytes||hash(bytes)!==resource.sha256)throw Error('Damaged publication resource: '+source);
+   if(resource.role==='geometry')quality.push(await inspectGeometry(bytes,asset,resource.index===1));
    if(changed.has(asset.id))await add(target,bytes);
   }
+  validateCompleteModel(asset,quality);
   if(!runtimeResources(asset).length)await add(publishedDefinition(asset),definitionBytes(asset));
  }
  await add('assets/authoring/models.json',Buffer.from(JSON.stringify(modelCatalogue(sorted),null,2)+'\n'));

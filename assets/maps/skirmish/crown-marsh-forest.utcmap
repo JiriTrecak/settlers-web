@@ -1,0 +1,7487 @@
+{
+  "v": 2,
+  "size": 256,
+  "name": "Crown Marsh \u00b7 Forest",
+  "biome": "vibrant-forest",
+  "stamps": [],
+  "playerStarts": [
+    {
+      "setup": "setup.ants",
+      "mainFort": "start.player.1/main-fort",
+      "player": 1,
+      "x": 64,
+      "z": 58
+    },
+    {
+      "setup": "setup.ants",
+      "mainFort": "start.player.2/main-fort",
+      "player": 2,
+      "x": 192,
+      "z": 58
+    },
+    {
+      "setup": "setup.ants",
+      "mainFort": "start.player.3/main-fort",
+      "player": 3,
+      "x": 64,
+      "z": 198
+    },
+    {
+      "setup": "setup.ants",
+      "mainFort": "start.player.4/main-fort",
+      "player": 4,
+      "x": 192,
+      "z": 198
+    }
+  ],
+  "entities": [
+    {
+      "id": "amber.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 40,
+        "y": 55
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 216,
+        "y": 55
+      },
+      "rotation": 270,
+      "owner": "none"
+    },
+    {
+      "id": "amber.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 40,
+        "y": 201
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "amber.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 216,
+        "y": 201
+      },
+      "rotation": 270,
+      "owner": "none"
+    },
+    {
+      "id": "amber.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 103,
+        "y": 82
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "amber.6",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 153,
+        "y": 82
+      },
+      "rotation": 270,
+      "owner": "none"
+    },
+    {
+      "id": "amber.7",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 103,
+        "y": 174
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "amber.8",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 153,
+        "y": 174
+      },
+      "rotation": 270,
+      "owner": "none"
+    }
+  ],
+  "camps": [],
+  "landscape": {
+    "strokes": [],
+    "cover": [],
+    "environment": {
+      "hour": 12,
+      "playing": false,
+      "weather": {
+        "kind": "clear"
+      }
+    }
+  },
+  "authoring": {
+    "version": 1,
+    "layers": [
+      {
+        "id": "bank.0",
+        "name": "Reedbank shelf 1",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8068,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 1,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 31,
+                  "z": 91
+                },
+                {
+                  "x": 37,
+                  "z": 93
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.1",
+        "name": "Reedbank shelf 2",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8115,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 2,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 219,
+                  "z": 91
+                },
+                {
+                  "x": 225,
+                  "z": 93
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.2",
+        "name": "Reedbank shelf 3",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8162,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 3,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 31,
+                  "z": 165
+                },
+                {
+                  "x": 37,
+                  "z": 167
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.3",
+        "name": "Reedbank shelf 4",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8209,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 4,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 219,
+                  "z": 165
+                },
+                {
+                  "x": 225,
+                  "z": 167
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.4",
+        "name": "Reedbank shelf 5",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8256,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 5,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 111,
+                  "z": 33
+                },
+                {
+                  "x": 117,
+                  "z": 35
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.5",
+        "name": "Reedbank shelf 6",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8303,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 6,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 139,
+                  "z": 33
+                },
+                {
+                  "x": 145,
+                  "z": 35
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.6",
+        "name": "Reedbank shelf 7",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8350,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 7,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 111,
+                  "z": 223
+                },
+                {
+                  "x": 117,
+                  "z": 225
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "bank.7",
+        "name": "Reedbank shelf 8",
+        "recipe": "recipe.terrain.bank",
+        "overrides": {
+          "type": "terrain",
+          "height": 1.7,
+          "falloff": 4,
+          "roughness": 0.22
+        },
+        "seed": 8397,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 8,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 139,
+                  "z": 223
+                },
+                {
+                  "x": 145,
+                  "z": 225
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "ground.meadow",
+        "name": "Broken meadow ground",
+        "recipe": "recipe.path.grass",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-grass",
+          "shoulder": 6,
+          "vegetationClearance": 0
+        },
+        "seed": 8444,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 9,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 95,
+              "points": [
+                {
+                  "x": 128,
+                  "z": 68
+                },
+                {
+                  "x": 128,
+                  "z": 188
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "base.1",
+        "name": "Player 1 \u00b7 spacious construction glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "shoulder": 7,
+          "vegetationClearance": 0
+        },
+        "seed": 8491,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 10,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 59,
+                  "z": 58
+                },
+                {
+                  "x": 69,
+                  "z": 58
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "base.2",
+        "name": "Player 2 \u00b7 spacious construction glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "shoulder": 7,
+          "vegetationClearance": 0
+        },
+        "seed": 8538,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 11,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 187,
+                  "z": 58
+                },
+                {
+                  "x": 197,
+                  "z": 58
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "base.3",
+        "name": "Player 3 \u00b7 spacious construction glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "shoulder": 7,
+          "vegetationClearance": 0
+        },
+        "seed": 8585,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 12,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 59,
+                  "z": 198
+                },
+                {
+                  "x": 69,
+                  "z": 198
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "base.4",
+        "name": "Player 4 \u00b7 spacious construction glade",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "shoulder": 7,
+          "vegetationClearance": 0
+        },
+        "seed": 8632,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 13,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 187,
+                  "z": 198
+                },
+                {
+                  "x": 197,
+                  "z": 198
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.west",
+        "name": "Western avenue \u00b7 broad army route",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 10,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 14,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 64,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 61,
+                "z": 54.5
+              },
+              "outgoing": {
+                "x": 67,
+                "z": 61.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 82,
+              "z": 79,
+              "elevation": 0,
+              "incoming": {
+                "x": 78.5,
+                "z": 70.66666666666667
+              },
+              "outgoing": {
+                "x": 85.5,
+                "z": 87.33333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 85,
+              "z": 108,
+              "elevation": 0,
+              "incoming": {
+                "x": 85.33333333333333,
+                "z": 99.83333333333333
+              },
+              "outgoing": {
+                "x": 84.66666666666667,
+                "z": 116.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 80,
+              "z": 128,
+              "elevation": 0,
+              "incoming": {
+                "x": 80,
+                "z": 121.33333333333333
+              },
+              "outgoing": {
+                "x": 80,
+                "z": 134.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 85,
+              "z": 148,
+              "elevation": 0,
+              "incoming": {
+                "x": 84.66666666666667,
+                "z": 139.83333333333334
+              },
+              "outgoing": {
+                "x": 85.33333333333333,
+                "z": 156.16666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 82,
+              "z": 177,
+              "elevation": 0,
+              "incoming": {
+                "x": 85.5,
+                "z": 168.66666666666666
+              },
+              "outgoing": {
+                "x": 78.5,
+                "z": 185.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 64,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 67,
+                "z": 194.5
+              },
+              "outgoing": {
+                "x": 61,
+                "z": 201.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.east",
+        "name": "Eastern avenue \u00b7 broad army route",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 10,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 15,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 192,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 195,
+                "z": 54.5
+              },
+              "outgoing": {
+                "x": 189,
+                "z": 61.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 174,
+              "z": 79,
+              "elevation": 0,
+              "incoming": {
+                "x": 177.5,
+                "z": 70.66666666666667
+              },
+              "outgoing": {
+                "x": 170.5,
+                "z": 87.33333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 171,
+              "z": 108,
+              "elevation": 0,
+              "incoming": {
+                "x": 170.66666666666666,
+                "z": 99.83333333333333
+              },
+              "outgoing": {
+                "x": 171.33333333333334,
+                "z": 116.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 176,
+              "z": 128,
+              "elevation": 0,
+              "incoming": {
+                "x": 176,
+                "z": 121.33333333333333
+              },
+              "outgoing": {
+                "x": 176,
+                "z": 134.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 171,
+              "z": 148,
+              "elevation": 0,
+              "incoming": {
+                "x": 171.33333333333334,
+                "z": 139.83333333333334
+              },
+              "outgoing": {
+                "x": 170.66666666666666,
+                "z": 156.16666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 174,
+              "z": 177,
+              "elevation": 0,
+              "incoming": {
+                "x": 170.5,
+                "z": 168.66666666666666
+              },
+              "outgoing": {
+                "x": 177.5,
+                "z": 185.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 192,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 189,
+                "z": 194.5
+              },
+              "outgoing": {
+                "x": 195,
+                "z": 201.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.north",
+        "name": "Northern ruins approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 8,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 16,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 64,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 58.833333333333336,
+                "z": 59
+              },
+              "outgoing": {
+                "x": 69.16666666666667,
+                "z": 57
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 95,
+              "z": 52,
+              "elevation": 0,
+              "incoming": {
+                "x": 84.33333333333333,
+                "z": 54.666666666666664
+              },
+              "outgoing": {
+                "x": 105.66666666666667,
+                "z": 49.333333333333336
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 128,
+              "z": 42,
+              "elevation": 0,
+              "incoming": {
+                "x": 117,
+                "z": 42
+              },
+              "outgoing": {
+                "x": 139,
+                "z": 42
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 161,
+              "z": 52,
+              "elevation": 0,
+              "incoming": {
+                "x": 150.33333333333334,
+                "z": 49.333333333333336
+              },
+              "outgoing": {
+                "x": 171.66666666666666,
+                "z": 54.666666666666664
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 192,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 186.83333333333334,
+                "z": 57
+              },
+              "outgoing": {
+                "x": 197.16666666666666,
+                "z": 59
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.south",
+        "name": "Southern camp approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 8,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 17,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 64,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 58.833333333333336,
+                "z": 197
+              },
+              "outgoing": {
+                "x": 69.16666666666667,
+                "z": 199
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 95,
+              "z": 204,
+              "elevation": 0,
+              "incoming": {
+                "x": 84.33333333333333,
+                "z": 201.33333333333334
+              },
+              "outgoing": {
+                "x": 105.66666666666667,
+                "z": 206.66666666666666
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 128,
+              "z": 214,
+              "elevation": 0,
+              "incoming": {
+                "x": 117,
+                "z": 214
+              },
+              "outgoing": {
+                "x": 139,
+                "z": 214
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 161,
+              "z": 204,
+              "elevation": 0,
+              "incoming": {
+                "x": 150.33333333333334,
+                "z": 206.66666666666666
+              },
+              "outgoing": {
+                "x": 171.66666666666666,
+                "z": 201.33333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 192,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 186.83333333333334,
+                "z": 199
+              },
+              "outgoing": {
+                "x": 197.16666666666666,
+                "z": 197
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.cross",
+        "name": "Sanctuary crossing",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 8,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 18,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 65,
+              "z": 128,
+              "elevation": 0,
+              "incoming": {
+                "x": 60.833333333333336,
+                "z": 128.83333333333334
+              },
+              "outgoing": {
+                "x": 69.16666666666667,
+                "z": 127.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 90,
+              "z": 123,
+              "elevation": 0,
+              "incoming": {
+                "x": 82,
+                "z": 123.33333333333333
+              },
+              "outgoing": {
+                "x": 98,
+                "z": 122.66666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 113,
+              "z": 126,
+              "elevation": 0,
+              "incoming": {
+                "x": 106.66666666666667,
+                "z": 125.16666666666667
+              },
+              "outgoing": {
+                "x": 119.33333333333333,
+                "z": 126.83333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 128,
+              "z": 128,
+              "elevation": 0,
+              "incoming": {
+                "x": 123,
+                "z": 128
+              },
+              "outgoing": {
+                "x": 133,
+                "z": 128
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 143,
+              "z": 126,
+              "elevation": 0,
+              "incoming": {
+                "x": 136.66666666666666,
+                "z": 126.83333333333333
+              },
+              "outgoing": {
+                "x": 149.33333333333334,
+                "z": 125.16666666666667
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 166,
+              "z": 123,
+              "elevation": 0,
+              "incoming": {
+                "x": 158,
+                "z": 122.66666666666667
+              },
+              "outgoing": {
+                "x": 174,
+                "z": 123.33333333333333
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 191,
+              "z": 128,
+              "elevation": 0,
+              "incoming": {
+                "x": 186.83333333333334,
+                "z": 127.16666666666667
+              },
+              "outgoing": {
+                "x": 195.16666666666666,
+                "z": 128.83333333333334
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.0",
+        "name": "Amber trail 1",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 19,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 64,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 68,
+                "z": 58.5
+              },
+              "outgoing": {
+                "x": 60,
+                "z": 57.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 40,
+              "z": 55,
+              "elevation": 0,
+              "incoming": {
+                "x": 44,
+                "z": 55.5
+              },
+              "outgoing": {
+                "x": 36,
+                "z": 54.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.1",
+        "name": "Amber trail 2",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 20,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 192,
+              "z": 58,
+              "elevation": 0,
+              "incoming": {
+                "x": 188,
+                "z": 58.5
+              },
+              "outgoing": {
+                "x": 196,
+                "z": 57.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 216,
+              "z": 55,
+              "elevation": 0,
+              "incoming": {
+                "x": 212,
+                "z": 55.5
+              },
+              "outgoing": {
+                "x": 220,
+                "z": 54.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.2",
+        "name": "Amber trail 3",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 21,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 64,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 68,
+                "z": 197.5
+              },
+              "outgoing": {
+                "x": 60,
+                "z": 198.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 40,
+              "z": 201,
+              "elevation": 0,
+              "incoming": {
+                "x": 44,
+                "z": 200.5
+              },
+              "outgoing": {
+                "x": 36,
+                "z": 201.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.3",
+        "name": "Amber trail 4",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 22,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 192,
+              "z": 198,
+              "elevation": 0,
+              "incoming": {
+                "x": 188,
+                "z": 197.5
+              },
+              "outgoing": {
+                "x": 196,
+                "z": 198.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 216,
+              "z": 201,
+              "elevation": 0,
+              "incoming": {
+                "x": 212,
+                "z": 200.5
+              },
+              "outgoing": {
+                "x": 220,
+                "z": 201.5
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.4",
+        "name": "Amber trail 5",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 23,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 87,
+              "z": 82,
+              "elevation": 0,
+              "incoming": {
+                "x": 84.33333333333333,
+                "z": 82
+              },
+              "outgoing": {
+                "x": 89.66666666666667,
+                "z": 82
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 103,
+              "z": 82,
+              "elevation": 0,
+              "incoming": {
+                "x": 100.33333333333333,
+                "z": 82
+              },
+              "outgoing": {
+                "x": 105.66666666666667,
+                "z": 82
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.5",
+        "name": "Amber trail 6",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 24,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 169,
+              "z": 82,
+              "elevation": 0,
+              "incoming": {
+                "x": 171.66666666666666,
+                "z": 82
+              },
+              "outgoing": {
+                "x": 166.33333333333334,
+                "z": 82
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 153,
+              "z": 82,
+              "elevation": 0,
+              "incoming": {
+                "x": 155.66666666666666,
+                "z": 82
+              },
+              "outgoing": {
+                "x": 150.33333333333334,
+                "z": 82
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.6",
+        "name": "Amber trail 7",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 25,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 87,
+              "z": 174,
+              "elevation": 0,
+              "incoming": {
+                "x": 84.33333333333333,
+                "z": 174
+              },
+              "outgoing": {
+                "x": 89.66666666666667,
+                "z": 174
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 103,
+              "z": 174,
+              "elevation": 0,
+              "incoming": {
+                "x": 100.33333333333333,
+                "z": 174
+              },
+              "outgoing": {
+                "x": 105.66666666666667,
+                "z": 174
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "mine-road.7",
+        "name": "Amber trail 8",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "material": "asset.terrain.woodland-soil",
+          "width": 4.5,
+          "shoulder": 2,
+          "flatten": 0,
+          "vegetationClearance": 2
+        },
+        "seed": 123,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 26,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 169,
+              "z": 174,
+              "elevation": 0,
+              "incoming": {
+                "x": 171.66666666666666,
+                "z": 174
+              },
+              "outgoing": {
+                "x": 166.33333333333334,
+                "z": 174
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 153,
+              "z": 174,
+              "elevation": 0,
+              "incoming": {
+                "x": 155.66666666666666,
+                "z": 174
+              },
+              "outgoing": {
+                "x": 150.33333333333334,
+                "z": 174
+              },
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.0",
+        "name": "Quarter 1 \u00b7 shoreline pines",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9290,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 27,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 29,
+                  "z": 34
+                },
+                {
+                  "x": 34,
+                  "z": 28
+                },
+                {
+                  "x": 53,
+                  "z": 29
+                },
+                {
+                  "x": 82,
+                  "z": 29
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.1",
+        "name": "Quarter 1 \u00b7 curved shelter belt",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9337,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 28,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 27,
+                  "z": 76
+                },
+                {
+                  "x": 32,
+                  "z": 86
+                },
+                {
+                  "x": 42,
+                  "z": 94
+                },
+                {
+                  "x": 61,
+                  "z": 98
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.2",
+        "name": "Quarter 1 \u00b7 marsh island grove",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9384,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 29,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 32,
+                  "z": 105
+                },
+                {
+                  "x": 49,
+                  "z": 109
+                },
+                {
+                  "x": 62,
+                  "z": 112
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.3",
+        "name": "Quarter 1 \u00b7 ruin shoulders",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 95,
+                  "z": 31
+                },
+                {
+                  "x": 103,
+                  "z": 43
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.4",
+        "name": "Quarter 1 \u00b7 amber shelter",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9478,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 31,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 59
+                },
+                {
+                  "x": 114,
+                  "z": 63
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.0.5",
+        "name": "Quarter 1 \u00b7 sanctuary crown",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9525,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 32,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 114,
+                  "z": 94
+                },
+                {
+                  "x": 107,
+                  "z": 104
+                },
+                {
+                  "x": 107,
+                  "z": 116
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "grass.0",
+        "name": "Quarter 1 \u00b7 wildflower and grass patches",
+        "recipe": "recipe.grass.meadow",
+        "overrides": {
+          "spacing": 0.95,
+          "probability": 0.7,
+          "scaleMin": 0.45,
+          "scaleMax": 0.85,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.7
+          },
+          "type": "grass"
+        },
+        "seed": 9572,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 33,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 50,
+                  "z": 84
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 70,
+                  "z": 96
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 91,
+                  "z": 64
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 112,
+                  "z": 91
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 115
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 55,
+                  "z": 144
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.0",
+        "name": "Quarter 2 \u00b7 shoreline pines",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9619,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 34,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 227,
+                  "z": 34
+                },
+                {
+                  "x": 222,
+                  "z": 28
+                },
+                {
+                  "x": 203,
+                  "z": 29
+                },
+                {
+                  "x": 174,
+                  "z": 29
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.1",
+        "name": "Quarter 2 \u00b7 curved shelter belt",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9666,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 35,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 229,
+                  "z": 76
+                },
+                {
+                  "x": 224,
+                  "z": 86
+                },
+                {
+                  "x": 214,
+                  "z": 94
+                },
+                {
+                  "x": 195,
+                  "z": 98
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.2",
+        "name": "Quarter 2 \u00b7 marsh island grove",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9713,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 36,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 224,
+                  "z": 105
+                },
+                {
+                  "x": 207,
+                  "z": 109
+                },
+                {
+                  "x": 194,
+                  "z": 112
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.3",
+        "name": "Quarter 2 \u00b7 ruin shoulders",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9760,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 37,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 161,
+                  "z": 31
+                },
+                {
+                  "x": 153,
+                  "z": 43
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.4",
+        "name": "Quarter 2 \u00b7 amber shelter",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9807,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 38,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 59
+                },
+                {
+                  "x": 142,
+                  "z": 63
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1.5",
+        "name": "Quarter 2 \u00b7 sanctuary crown",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9854,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 39,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 142,
+                  "z": 94
+                },
+                {
+                  "x": 149,
+                  "z": 104
+                },
+                {
+                  "x": 149,
+                  "z": 116
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "grass.1",
+        "name": "Quarter 2 \u00b7 wildflower and grass patches",
+        "recipe": "recipe.grass.meadow",
+        "overrides": {
+          "spacing": 0.95,
+          "probability": 0.7,
+          "scaleMin": 0.45,
+          "scaleMax": 0.85,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.7
+          },
+          "type": "grass"
+        },
+        "seed": 9901,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 40,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 206,
+                  "z": 84
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 96
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 165,
+                  "z": 64
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 144,
+                  "z": 91
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 115
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 201,
+                  "z": 144
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.0",
+        "name": "Quarter 3 \u00b7 shoreline pines",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9948,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 41,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 29,
+                  "z": 222
+                },
+                {
+                  "x": 34,
+                  "z": 228
+                },
+                {
+                  "x": 53,
+                  "z": 227
+                },
+                {
+                  "x": 82,
+                  "z": 227
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.1",
+        "name": "Quarter 3 \u00b7 curved shelter belt",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 9995,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 42,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 27,
+                  "z": 180
+                },
+                {
+                  "x": 32,
+                  "z": 170
+                },
+                {
+                  "x": 42,
+                  "z": 162
+                },
+                {
+                  "x": 61,
+                  "z": 158
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.2",
+        "name": "Quarter 3 \u00b7 marsh island grove",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10042,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 43,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 32,
+                  "z": 151
+                },
+                {
+                  "x": 49,
+                  "z": 147
+                },
+                {
+                  "x": 62,
+                  "z": 144
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.3",
+        "name": "Quarter 3 \u00b7 ruin shoulders",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10089,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 44,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 95,
+                  "z": 225
+                },
+                {
+                  "x": 103,
+                  "z": 213
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.4",
+        "name": "Quarter 3 \u00b7 amber shelter",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10136,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 45,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 197
+                },
+                {
+                  "x": 114,
+                  "z": 193
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2.5",
+        "name": "Quarter 3 \u00b7 sanctuary crown",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10183,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 46,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 114,
+                  "z": 162
+                },
+                {
+                  "x": 107,
+                  "z": 152
+                },
+                {
+                  "x": 107,
+                  "z": 140
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "grass.2",
+        "name": "Quarter 3 \u00b7 wildflower and grass patches",
+        "recipe": "recipe.grass.meadow",
+        "overrides": {
+          "spacing": 0.95,
+          "probability": 0.7,
+          "scaleMin": 0.45,
+          "scaleMax": 0.85,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.7
+          },
+          "type": "grass"
+        },
+        "seed": 10230,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 47,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 50,
+                  "z": 172
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 70,
+                  "z": 160
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 91,
+                  "z": 192
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 112,
+                  "z": 165
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 141
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 55,
+                  "z": 112
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.0",
+        "name": "Quarter 4 \u00b7 shoreline pines",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10277,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 48,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 227,
+                  "z": 222
+                },
+                {
+                  "x": 222,
+                  "z": 228
+                },
+                {
+                  "x": 203,
+                  "z": 227
+                },
+                {
+                  "x": 174,
+                  "z": 227
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.1",
+        "name": "Quarter 4 \u00b7 curved shelter belt",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10324,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 49,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 229,
+                  "z": 180
+                },
+                {
+                  "x": 224,
+                  "z": 170
+                },
+                {
+                  "x": 214,
+                  "z": 162
+                },
+                {
+                  "x": 195,
+                  "z": 158
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.2",
+        "name": "Quarter 4 \u00b7 marsh island grove",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10371,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 50,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 224,
+                  "z": 151
+                },
+                {
+                  "x": 207,
+                  "z": 147
+                },
+                {
+                  "x": 194,
+                  "z": 144
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.3",
+        "name": "Quarter 4 \u00b7 ruin shoulders",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10418,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 51,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 161,
+                  "z": 225
+                },
+                {
+                  "x": 153,
+                  "z": 213
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.4",
+        "name": "Quarter 4 \u00b7 amber shelter",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10465,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 52,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 197
+                },
+                {
+                  "x": 142,
+                  "z": 193
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.3.5",
+        "name": "Quarter 4 \u00b7 sanctuary crown",
+        "recipe": "recipe.forest.diverse",
+        "overrides": {
+          "spacing": 2.8,
+          "scaleMin": 0.62,
+          "scaleMax": 0.9,
+          "minSpacing": 2.3,
+          "type": "forest",
+          "interiorMargin": 1.1,
+          "edge": {
+            "spacing": 1.8,
+            "probability": 0.68,
+            "scaleMin": 0.55,
+            "scaleMax": 0.85,
+            "width": 2
+          }
+        },
+        "seed": 10512,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 53,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 7,
+              "points": [
+                {
+                  "x": 142,
+                  "z": 162
+                },
+                {
+                  "x": 149,
+                  "z": 152
+                },
+                {
+                  "x": 149,
+                  "z": 140
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "grass.3",
+        "name": "Quarter 4 \u00b7 wildflower and grass patches",
+        "recipe": "recipe.grass.meadow",
+        "overrides": {
+          "spacing": 0.95,
+          "probability": 0.7,
+          "scaleMin": 0.45,
+          "scaleMax": 0.85,
+          "patchiness": {
+            "scale": 5,
+            "strength": 0.7
+          },
+          "type": "grass"
+        },
+        "seed": 10559,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 54,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 206,
+                  "z": 172
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 160
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 165,
+                  "z": 192
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 144,
+                  "z": 165
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 141
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 201,
+                  "z": 112
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 58
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 64,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 192,
+                  "z": 198
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 55
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 40,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 216,
+                  "z": 201
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 103,
+                  "z": 174
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 153,
+                  "z": 174
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "water.marsh",
+        "name": "The Crown \u00b7 enclosing marsh",
+        "recipe": "recipe.river.gentle",
+        "overrides": {
+          "type": "river",
+          "depth": 2.4,
+          "bankWidth": 2.8,
+          "details": {
+            "banks": {
+              "spacing": 1.25,
+              "probability": 0.58
+            },
+            "water": {
+              "spacing": 3,
+              "probability": 0.4
+            }
+          }
+        },
+        "seed": 8021,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 0,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 18,
+              "points": [
+                {
+                  "x": -8,
+                  "z": 4
+                },
+                {
+                  "x": 37,
+                  "z": 3
+                },
+                {
+                  "x": 75,
+                  "z": 9
+                },
+                {
+                  "x": 104,
+                  "z": 5
+                },
+                {
+                  "x": 128,
+                  "z": 11
+                },
+                {
+                  "x": 154,
+                  "z": 5
+                },
+                {
+                  "x": 181,
+                  "z": 9
+                },
+                {
+                  "x": 219,
+                  "z": 3
+                },
+                {
+                  "x": 264,
+                  "z": 4
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 18,
+              "points": [
+                {
+                  "x": -8,
+                  "z": 252
+                },
+                {
+                  "x": 37,
+                  "z": 253
+                },
+                {
+                  "x": 75,
+                  "z": 247
+                },
+                {
+                  "x": 104,
+                  "z": 251
+                },
+                {
+                  "x": 128,
+                  "z": 245
+                },
+                {
+                  "x": 154,
+                  "z": 251
+                },
+                {
+                  "x": 181,
+                  "z": 247
+                },
+                {
+                  "x": 219,
+                  "z": 253
+                },
+                {
+                  "x": 264,
+                  "z": 252
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 3,
+                  "z": -8
+                },
+                {
+                  "x": 7,
+                  "z": 40
+                },
+                {
+                  "x": 3,
+                  "z": 73
+                },
+                {
+                  "x": 12,
+                  "z": 98
+                },
+                {
+                  "x": 8,
+                  "z": 128
+                },
+                {
+                  "x": 12,
+                  "z": 158
+                },
+                {
+                  "x": 3,
+                  "z": 183
+                },
+                {
+                  "x": 7,
+                  "z": 216
+                },
+                {
+                  "x": 3,
+                  "z": 264
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 253,
+                  "z": -8
+                },
+                {
+                  "x": 249,
+                  "z": 40
+                },
+                {
+                  "x": 253,
+                  "z": 73
+                },
+                {
+                  "x": 244,
+                  "z": 98
+                },
+                {
+                  "x": 248,
+                  "z": 128
+                },
+                {
+                  "x": 244,
+                  "z": 158
+                },
+                {
+                  "x": 253,
+                  "z": 183
+                },
+                {
+                  "x": 249,
+                  "z": 216
+                },
+                {
+                  "x": 253,
+                  "z": 264
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 12,
+                  "z": 128
+                },
+                {
+                  "x": 30,
+                  "z": 126
+                },
+                {
+                  "x": 43,
+                  "z": 128
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 244,
+                  "z": 128
+                },
+                {
+                  "x": 226,
+                  "z": 126
+                },
+                {
+                  "x": 213,
+                  "z": 128
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 24,
+              "points": [
+                {
+                  "x": -17,
+                  "z": -17
+                },
+                {
+                  "x": 273,
+                  "z": -17
+                },
+                {
+                  "x": 273,
+                  "z": 273
+                },
+                {
+                  "x": -17,
+                  "z": 273
+                },
+                {
+                  "x": -17,
+                  "z": -17
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "objects": [
+      {
+        "id": "quarter.0.detail.0",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 33,
+        "z": 90,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.1",
+        "asset": "asset.models.environment.woodland-rock-ledge",
+        "x": 36,
+        "z": 86,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 58,
+        "z": 96,
+        "elevation": 0,
+        "yaw": 1.4,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.3",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 80,
+        "z": 64,
+        "elevation": 0,
+        "yaw": 2.0999999999999996,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.4",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 81,
+        "z": 76,
+        "elevation": 0,
+        "yaw": 2.8,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.5",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 108,
+        "z": 90,
+        "elevation": 0,
+        "yaw": 3.5,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.6",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 22,
+        "z": 103,
+        "elevation": -0.3,
+        "yaw": 4.199999999999999,
+        "scale": 1.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.7",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 24,
+        "z": 113,
+        "elevation": 0,
+        "yaw": 4.8999999999999995,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.0.detail.8",
+        "asset": "asset.models.environment.woodland-pine-a",
+        "x": 37,
+        "z": 31,
+        "elevation": 0,
+        "yaw": 5.6,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.0",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 223,
+        "z": 90,
+        "elevation": 0,
+        "yaw": 1.57,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.1",
+        "asset": "asset.models.environment.woodland-rock-ledge",
+        "x": 220,
+        "z": 86,
+        "elevation": 0,
+        "yaw": 2.27,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 198,
+        "z": 96,
+        "elevation": 0,
+        "yaw": 2.9699999999999998,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.3",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 176,
+        "z": 64,
+        "elevation": 0,
+        "yaw": 3.67,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.4",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 175,
+        "z": 76,
+        "elevation": 0,
+        "yaw": 4.37,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.5",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 148,
+        "z": 90,
+        "elevation": 0,
+        "yaw": 5.07,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.6",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 234,
+        "z": 103,
+        "elevation": -0.3,
+        "yaw": 5.77,
+        "scale": 1.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.7",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 232,
+        "z": 113,
+        "elevation": 0,
+        "yaw": 6.47,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.1.detail.8",
+        "asset": "asset.models.environment.woodland-pine-a",
+        "x": 219,
+        "z": 31,
+        "elevation": 0,
+        "yaw": 7.17,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.0",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 33,
+        "z": 166,
+        "elevation": 0,
+        "yaw": 3.14,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.1",
+        "asset": "asset.models.environment.woodland-rock-ledge",
+        "x": 36,
+        "z": 170,
+        "elevation": 0,
+        "yaw": 3.84,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 58,
+        "z": 160,
+        "elevation": 0,
+        "yaw": 4.54,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.3",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 80,
+        "z": 192,
+        "elevation": 0,
+        "yaw": 5.24,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.4",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 81,
+        "z": 180,
+        "elevation": 0,
+        "yaw": 5.9399999999999995,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.5",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 108,
+        "z": 166,
+        "elevation": 0,
+        "yaw": 6.640000000000001,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.6",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 22,
+        "z": 153,
+        "elevation": -0.3,
+        "yaw": 7.34,
+        "scale": 1.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.7",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 24,
+        "z": 143,
+        "elevation": 0,
+        "yaw": 8.04,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.2.detail.8",
+        "asset": "asset.models.environment.woodland-pine-a",
+        "x": 37,
+        "z": 225,
+        "elevation": 0,
+        "yaw": 8.74,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.0",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 223,
+        "z": 166,
+        "elevation": 0,
+        "yaw": 4.71,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.1",
+        "asset": "asset.models.environment.woodland-rock-ledge",
+        "x": 220,
+        "z": 170,
+        "elevation": 0,
+        "yaw": 5.41,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 198,
+        "z": 160,
+        "elevation": 0,
+        "yaw": 6.109999999999999,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.3",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 176,
+        "z": 192,
+        "elevation": 0,
+        "yaw": 6.81,
+        "scale": 0.85,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.4",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 175,
+        "z": 180,
+        "elevation": 0,
+        "yaw": 7.51,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.5",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 148,
+        "z": 166,
+        "elevation": 0,
+        "yaw": 8.21,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.6",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 234,
+        "z": 153,
+        "elevation": -0.3,
+        "yaw": 8.91,
+        "scale": 1.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.7",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 232,
+        "z": 143,
+        "elevation": 0,
+        "yaw": 9.61,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "quarter.3.detail.8",
+        "asset": "asset.models.environment.woodland-pine-a",
+        "x": 219,
+        "z": 225,
+        "elevation": 0,
+        "yaw": 10.309999999999999,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.spring",
+        "asset": "asset.models.environment.woodland-stone-spring",
+        "x": 128,
+        "z": 128,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.rock.-1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 119,
+        "z": 136,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.lantern.-1",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 120,
+        "z": 120,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.15,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.crown.-1",
+        "asset": "asset.models.environment.canopy-oak",
+        "x": 122,
+        "z": 109,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.rock.1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 137,
+        "z": 136,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.lantern.1",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 136,
+        "z": 120,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.15,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sanctuary.crown.1",
+        "asset": "asset.models.environment.canopy-oak",
+        "x": 134,
+        "z": 109,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "north.ruined-watch",
+        "asset": "asset.models.environment.woodland-ruined-watchtower",
+        "x": 128,
+        "z": 32,
+        "elevation": 0,
+        "yaw": 3.141592653589793,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "north.woodpile",
+        "asset": "asset.models.environment.woodland-woodpile",
+        "x": 139,
+        "z": 33,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "north.bench",
+        "asset": "asset.models.environment.woodland-log-bench",
+        "x": 116,
+        "z": 34,
+        "elevation": 0,
+        "yaw": -0.4,
+        "scale": 1.15,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "south.camp",
+        "asset": "asset.models.environment.woodland-abandoned-camp",
+        "x": 128,
+        "z": 216,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "south.cart",
+        "asset": "asset.models.environment.woodland-broken-trader-cart",
+        "x": 115,
+        "z": 220,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "south.cargo",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 112,
+        "z": 216,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.0.shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 57,
+        "z": 127,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.25,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.0.bench",
+        "asset": "asset.models.environment.woodland-log-bench",
+        "x": 57,
+        "z": 139,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.0.lantern",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 62,
+        "z": 137,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.0.raft",
+        "asset": "asset.models.environment.woodland-broken-leaf-raft",
+        "x": 32,
+        "z": 132,
+        "elevation": -0.5,
+        "yaw": 0.8,
+        "scale": 1,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.1.shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 199,
+        "z": 127,
+        "elevation": 0,
+        "yaw": 3.141592653589793,
+        "scale": 1.25,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.1.bench",
+        "asset": "asset.models.environment.woodland-log-bench",
+        "x": 199,
+        "z": 139,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.1.lantern",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 194,
+        "z": 137,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "outpost.1.raft",
+        "asset": "asset.models.environment.woodland-broken-leaf-raft",
+        "x": 224,
+        "z": 132,
+        "elevation": -0.5,
+        "yaw": -0.8,
+        "scale": 1,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      }
+    ]
+  },
+  "waterLevel": -1
+}

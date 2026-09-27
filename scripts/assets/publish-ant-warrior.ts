@@ -2,7 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import sharp from 'sharp';
 import {originalPackage,addBytes,addFile,publishOriginals} from './original-publication';
-const source='art/sources/characters/ant-warrior-tripo',id='asset.models.units.ants-warrior';
+const source='.asset-work/build/characters/ant-warrior-tripo',id='asset.models.units.ants-warrior';
 const pack=originalPackage(id,'Ant Warrior','unit','generated');
 const cfg=JSON.parse(await readFile(source+'/asset.json','utf8'));
 await addFile(pack,'geometry','glb',source+'/warrior.glb');

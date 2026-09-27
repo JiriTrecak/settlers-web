@@ -27,11 +27,11 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
   if(!length)continue;
   const to={x:Math.round(from.x+dx/length*step),y:Math.round(from.y+dy/length*step)};
   c.spatial.adoptSurface(from,to,waypoint);
-  if(!c.spatial.clearSegment(from,to))continue;
+  if(!c.spatial.clearSegment(from,to, undefined, e))continue;
   const blocked:number[]=[];
   for(const b of index.within(from.x-1500,from.y-1500,from.x+1500,from.y+1500)){
    if(b.id===e.id||b.owner!==e.owner)continue;
-   if(c.spatial.cell(b)!==c.spatial.cell(e)&&!c.spatial.clearSegment(from,to,new Set([c.spatial.cell(b)])))blocked.push(b.id);
+   if(c.spatial.cell(b)!==c.spatial.cell(e)&&!c.spatial.clearSegment(from,to,new Set([c.spatial.cell(b)]), e))blocked.push(b.id);
   }
   const physical:number[]=[];c.spatial.unitSegmentClear(from,to,e.id,physical);
   for(const id of physical){const b=index.entities.get(id);if(b&&b.owner===e.owner&&!blocked.includes(id))blocked.push(id);}
@@ -84,7 +84,7 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
   const constrained=candidates.some(([id,r])=>{
    const e=index.entities.get(id)!,p=e.unit!.position??fixed(e),q=r.parent.unit!.position??fixed(r.parent);
    const dx=p.x-q.x,dy=p.y-q.y,length=Math.hypot(dx,dy);if(!length)return false;
-   return [-1,1].every(sign=>!c.spatial.clearSegment(p,{x:p.x+Math.round(-dy/length*1000*sign),y:p.y+Math.round(dx/length*1000*sign),...(p.surface?{surface:p.surface}:{})}));
+   return [-1,1].every(sign=>!c.spatial.clearSegment(p,{x:p.x+Math.round(-dy/length*1000*sign),y:p.y+Math.round(dx/length*1000*sign),...(p.surface?{surface:p.surface}:{})}, undefined, e));
   });
   if(!constrained||candidates.some(([id,r])=>canEscape(index.entities.get(id)!,r.parent)))continue;
   const alternatives=moving.filter(e=>components.get(e.id)===component&&!requests.has(e.id)&&

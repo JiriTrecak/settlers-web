@@ -13,7 +13,7 @@ class Kit(ForestKit):
   bpy.ops.wm.read_factory_settings(use_empty=True)
   self.rng=random.Random(seed);self.palette={};self.groups={};self.group('Waterfront')
   self.bark=self.texture('Waterworn bark',ROOT/'art/assets/asset.textures.forest-giants-bark/albedo.png')
-  self.stone=self.texture('Woodland stone',ROOT/'art/sources/textures/woodland-rock/albedo.png')
+  self.stone=self.texture('Woodland stone',ROOT/'.asset-work/build/textures/woodland-rock/albedo.png')
   self.cut=self.mat('Weathered exposed wood','#947c59');self.dark=self.mat('Wet heartwood','#3d392c');self.wood=self.bark
   self.rope=self.mat('Root bindings','#887c54');self.moss=self.mat('Bank moss','#596347')
   self.green=self.mat('Dull reed blades','#6c7344');self.reed=self.mat('Sunlit reed edges','#889057');self.seed=self.mat('Dry reed heads','#68523b')

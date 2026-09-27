@@ -6,4 +6,4 @@ Native support includes owned-building prerequisites, placement near observed fi
 
 The ant roster includes Great Mound progression, Rootworks, Ironroot Forge, Hunter and Bombardier definitions. Root is a finite gathered resource. Hunters use the native charge behavior; Bombardiers use persistent non-homing shells. See [shell combat](shell-combat.md), the content registry and `src/sim/game/{upgrades,research,charge}.ts` for contracts.
 
-Check prerequisite rejection, funding, cancellation, destruction, duplicate queues, resource depletion, recruited-worker identity and save continuation when editing this progression. Do not assume that every declared definition is exposed in the current worker menu; action visibility is authored separately.
+Check prerequisite rejection, funding, cancellation, destruction, duplicate queues, resource depletion, new-unit identity and supply reservations and save continuation when editing this progression. Do not assume that every declared definition is exposed in the current worker menu; action visibility is authored separately.

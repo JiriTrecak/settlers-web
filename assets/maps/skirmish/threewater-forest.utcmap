@@ -8,10 +8,13 @@
     {
       "id": "bridge.0",
       "asset": "leafbound-twig-bridge",
-      "x": 84.52965599051008,
-      "y": 103.67458279845957,
-      "scale": 1,
-      "yaw": 1.5707963267948966,
+      "walk": {
+        "level": 1,
+        "connections": {
+          "start": 0,
+          "end": 0
+        }
+      },
       "sourceTransform": {
         "height": -0.35,
         "quaternion": [
@@ -21,21 +24,20 @@
           0.7071067811865476
         ]
       },
+      "x": 84.52965599051008,
+      "y": 103.67458279845957,
+      "yaw": 1.5707963267948966
+    },
+    {
+      "id": "bridge.1",
+      "asset": "woodland-root-arch-bridge",
       "walk": {
         "level": 1,
         "connections": {
           "start": 0,
           "end": 0
         }
-      }
-    },
-    {
-      "id": "bridge.1",
-      "asset": "woodland-root-arch-bridge",
-      "x": 183.83214709371293,
-      "y": 108.60397946084724,
-      "scale": 1.5,
-      "yaw": 0.7853981633974483,
+      },
       "sourceTransform": {
         "height": -0.72,
         "quaternion": [
@@ -45,21 +47,21 @@
           0.9238795325112867
         ]
       },
+      "x": 183.83214709371293,
+      "y": 108.60397946084724,
+      "yaw": 0.7853981633974483,
+      "scale": 1.5
+    },
+    {
+      "id": "bridge.2",
+      "asset": "leafbound-twig-bridge",
       "walk": {
         "level": 1,
         "connections": {
           "start": 0,
           "end": 0
         }
-      }
-    },
-    {
-      "id": "bridge.2",
-      "asset": "leafbound-twig-bridge",
-      "x": 187.77995255041517,
-      "y": 208.1777920410783,
-      "scale": 1,
-      "yaw": 1.5707963267948966,
+      },
       "sourceTransform": {
         "height": -0.35,
         "quaternion": [
@@ -69,13 +71,9 @@
           0.7071067811865476
         ]
       },
-      "walk": {
-        "level": 1,
-        "connections": {
-          "start": 0,
-          "end": 0
-        }
-      }
+      "x": 187.77995255041517,
+      "y": 208.1777920410783,
+      "yaw": 1.5707963267948966
     }
   ],
   "playerStarts": [
@@ -98,86 +96,82 @@
     {
       "id": "mine.0",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 61,
         "y": 16
       },
       "rotation": 0,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
     },
     {
       "id": "mine.1",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 176,
         "y": 33
       },
       "rotation": 90,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
     },
     {
       "id": "mine.2",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 26,
         "y": 88
       },
       "rotation": 180,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
     },
     {
       "id": "mine.3",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 128,
         "y": 132
       },
       "rotation": 270,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
     },
     {
       "id": "mine.4",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 135,
         "y": 190
       },
       "rotation": 0,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
     },
     {
       "id": "mine.5",
       "definition": "building.neutral.amber-mine",
-      "owner": "none",
       "position": {
         "x": 54,
         "y": 228
       },
       "rotation": 90,
-      "appearance": {
-        "asset": "asset.resource.woodland-amber-deposit",
-        "scale": 1.25
-      }
+      "owner": "none"
+    },
+    {
+      "id": "root.0",
+      "definition": "building.neutral.corrupted-root",
+      "position": {
+        "x": 118,
+        "y": 193
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "root.1",
+      "definition": "building.neutral.corrupted-root",
+      "position": {
+        "x": 143,
+        "y": 91
+      },
+      "rotation": 180,
+      "owner": "none"
     }
   ],
   "camps": [],
@@ -186,18 +180,7 @@
     "cover": [],
     "environment": {
       "hour": 12,
-      "season": "summer",
-      "playing": false,
-      "canopy": {
-        "enabled": true,
-        "height": 38,
-        "scale": 100,
-        "coverage": 0.18,
-        "sway": 0.65,
-        "speed": 0.2,
-        "cloudShadow": 0.08,
-        "seed": 731
-      }
+      "playing": false
     }
   },
   "authoring": {
@@ -1810,14 +1793,14 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 22,
               "points": [
                 {
                   "x": 163,
                   "z": 56
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -2242,14 +2225,14 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 9,
               "points": [
                 {
                   "x": 107,
                   "z": 194
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -2384,14 +2367,14 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 22,
               "points": [
                 {
                   "x": 60,
                   "z": 205
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -2456,14 +2439,14 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 8,
               "points": [
                 {
                   "x": 231,
                   "z": 105
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -2895,24 +2878,24 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 15,
               "points": [
                 {
                   "x": 60,
                   "z": 205
                 }
-              ],
-              "operation": "subtract"
+              ]
             },
             {
+              "operation": "subtract",
               "radius": 15,
               "points": [
                 {
                   "x": 163,
                   "z": 56
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -3016,24 +2999,24 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 15,
               "points": [
                 {
                   "x": 60,
                   "z": 205
                 }
-              ],
-              "operation": "subtract"
+              ]
             },
             {
+              "operation": "subtract",
               "radius": 15,
               "points": [
                 {
                   "x": 163,
                   "z": 56
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -3167,14 +3150,14 @@
               ]
             },
             {
+              "operation": "subtract",
               "radius": 15,
               "points": [
                 {
                   "x": 163,
                   "z": 56
                 }
-              ],
-              "operation": "subtract"
+              ]
             }
           ]
         }
@@ -3193,6 +3176,7 @@
           "elevation": -0.6,
           "strokes": [
             {
+              "operation": "add",
               "radius": 5,
               "points": [
                 {
@@ -3207,8 +3191,7 @@
                   "x": 91,
                   "z": 200
                 }
-              ],
-              "operation": "add"
+              ]
             },
             {
               "operation": "add",

@@ -29,7 +29,7 @@ import { Line2 } from "three/addons/lines/Line2.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import {
-  Group,
+  Quaternion,  Group,
   BufferGeometry,
   Color,
   LineSegments,
@@ -205,46 +205,37 @@ export class SettlementLayer {
   private gridKey = "";
   private readonly invalidColor = new Color(0xf26960);
   private pendingPreview: (() => void) | null = null;
-  readonly ready: Promise<void>;
+  private readonly modelLoads=new Map<string,Promise<GLTF>>();
+  private readonly bindingLoads=new Map<string,Promise<void>>();
+  private readonly modelLoader=new GLTFLoader();
+  get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,...this.bindingLoads.values()]).then(()=>{});}
   constructor(scene: Scene, private readonly cutaway?:SceneryCutaway, private readonly registry:ContentRegistry=content) {
     this.root.name = "game-entities";
     this.root.add(this.ghost, this.entranceGhost, this.gridLines);
-    this.gridLines.visible = false;
-    this.entranceGhost.visible = false;
-    this.ghost.visible = false;
+    this.gridLines.visible = this.entranceGhost.visible = this.ghost.visible = false;
     scene.add(this.root);
-    const loader = new GLTFLoader();
-    this.ready = Promise.all([this.harvestTrees.ready, ...
-      this.registry.assets
-        .filter(
-          (a) =>
-            a.file &&
-            // Map appearance overrides are published render assets too.
-            !a.sceneryAsset,
-        )
-        .map(async (a) => {
-          const url = projectMeshUrl(a.file!);
-          if (!url) throw new Error(`Missing declared model ${a.file}`);
-          const gltf = await loader.loadAsync(url);
-          if (this.dead) { this.disposePrototype(gltf.scene); return; }
-          if (!this.dead) {
-            if (!a.character) {
-              this.characterBatchDisposers.push(batchStaticMaterials(gltf.scene,!!gltf.animations.length));
-            }
-            const authored=geometryModel(a.file!);
-            if(authored)gltf.scene=transformedModel(gltf.scene,authored.transform,authored.groundContact==='terrain'?-prototypeBounds(gltf.scene).min.y:0);
-            this.prototypes.set(a.id, gltf.scene);
-            if (a.character) {
-              this.characterBatchDisposers.push(
-                batchCharacterMaterials(gltf.scene, gltf.animations),
-              );
-              this.characterSources.set(a.id, gltf);
-            }
-          }
-        }),
-    ]).then(() => {
-      if (!this.dead) this.pendingPreview?.();
-    });
+  }
+  /** Scope residency to requested entities/portraits/placement, deduplicating aliases. */
+  private requestModel(id:string){
+    if(this.dead||this.bindingLoads.has(id))return;
+    const asset=this.registry.asset(id);if(!asset.file||asset.sceneryAsset)return;
+    const file=asset.file,key=file+'|'+(asset.character?'character':'static');
+    let pending=this.modelLoads.get(key);
+    if(!pending){
+      const url=projectMeshUrl(file);if(!url)throw Error(`Missing declared model ${file}`);
+      pending=this.modelLoader.loadAsync(url).then(gltf=>{
+        if(this.dead){this.disposePrototype(gltf.scene);return gltf;}
+        this.characterBatchDisposers.push(asset.character?batchCharacterMaterials(gltf.scene,gltf.animations):batchStaticMaterials(gltf.scene,!!gltf.animations.length));
+        const authored=geometryModel(file);
+        if(authored)gltf.scene=transformedModel(gltf.scene,authored.transform,authored.groundContact==='terrain'?-prototypeBounds(gltf.scene).min.y:0);
+        return gltf;
+      });this.modelLoads.set(key,pending);
+    }
+    const binding=pending.then(async gltf=>{if(asset.carryAsset)await this.bindingLoads.get(asset.carryAsset);if(this.dead)return;this.prototypes.set(id,gltf.scene);if(asset.character)this.characterSources.set(id,gltf);this.pendingPreview?.();});
+    this.bindingLoads.set(id,binding);
+    // Keep asynchronous late-spawn failures observable without an unhandled promise.
+    void binding.catch(error=>console.error(`Model load failed: ${id}`,error));
+    if(asset.carryAsset)this.requestModel(asset.carryAsset);
   }
   select(ids: number | null | readonly number[]) {
     this.selected = new Set(
@@ -262,7 +253,7 @@ export class SettlementLayer {
     const bodies: UnitPickBody[] = [];
     for (const [id, root] of this.entities) {
       if (!root.visible || !root.userData.clickableUnit) continue;
-      bodies.push({id, position: root.position, height: root.userData.pickHeight});
+      bodies.push({id, position: root.position, height: root.userData.pickHeight, radius:root.userData.pickRadius});
     }
     return pickUnitBody(bodies, camera, viewport, x, y);
   }
@@ -288,7 +279,7 @@ export class SettlementLayer {
     if (this.warmModels.length) return this.warmModels;
     for (const asset of this.prototypes.keys()) {
       const source = this.characterSources.get(asset);
-      const character = source ? createCharacterInstance(source, this.registry.asset(asset).character) : null;
+      const character = source ? createCharacterInstance(source, this.registry.asset(asset).character,geometryModel(this.registry.asset(asset).file!)?.capabilities) : null;
       const model = character?.root ?? this.clone(asset);
       if (!model) continue;
       model.traverse(o => { if (o instanceof Mesh) {o.castShadow = true; o.receiveShadow = true;} });
@@ -303,7 +294,8 @@ export class SettlementLayer {
   createPortrait(definition: string, owner: number) {
     const asset = this.registry.get(definition).asset;
     const source = this.characterSources.get(asset);
-    const character = source ? createCharacterInstance(source, this.registry.asset(asset).character) : null;
+    if(!this.prototypes.has(asset)){this.requestModel(asset);return null;}
+    const character = source ? createCharacterInstance(source, this.registry.asset(asset).character,geometryModel(this.registry.asset(asset).file!)?.capabilities) : null;
     const root = character?.root ?? this.clone(asset);
     if (!root) return null;
     applyPlayerMaterials(root, owner);
@@ -312,6 +304,7 @@ export class SettlementLayer {
       dispose: () => character ? character.dispose() : this.disposeInstance(root) };
   }
   private clone(asset: string) {
+    this.requestModel(asset);
     const proto = this.prototypes.get(asset);
     if (!proto) return null;
     const o = proto.clone(true);
@@ -349,9 +342,10 @@ export class SettlementLayer {
       o = undefined;
     }
     if (o) return o;
+    if(!this.prototypes.has(assetId)){this.requestModel(assetId);return null;}
     const source = this.characterSources.get(assetId);
     const character = source
-      ? createCharacterInstance(source, this.registry.asset(assetId).character)
+      ? createCharacterInstance(source, this.registry.asset(assetId).character,geometryModel(this.registry.asset(assetId).file!)?.capabilities)
       : null;
     if (character) this.characters.set(e.id, character);
     const model = character?.root ?? this.clone(assetId);
@@ -373,7 +367,8 @@ export class SettlementLayer {
       scale = modelScale;
     o.userData.modelScale = scale;
     o.userData.visualScale = visualScale;
-    o.userData.pickHeight = (asset.healthHeight ?? 2.5) * visualScale;
+    o.userData.pickHeight = d.dimensions?.height ?? (asset.healthHeight ?? 2.5) * visualScale;
+    o.userData.pickRadius = d.dimensions?.radius;
     model.scale.setScalar(scale);
     if (asset.carryAsset) {
       const carry = this.clone(asset.carryAsset);
@@ -388,14 +383,26 @@ export class SettlementLayer {
     cargo.name = "Cargo";
     cargo.position.set(0, 1.04 * visualScale, 0.48 * visualScale);
     cargo.scale.setScalar(visualScale);
-    o.add(cargo);
+    const backSocket=model.getObjectByName("socket_back");
+    if(backSocket){
+      // Attach at the authored backpack anchor. Cancel the imported rig scale
+      // and rest orientation so item assets keep their ordinary game units.
+      model.updateMatrixWorld(true);
+      const socketScale=backSocket.getWorldScale(new Vector3()).x;
+      const socketRotation=backSocket.getWorldQuaternion(new Quaternion());
+      const modelRotation=model.getWorldQuaternion(new Quaternion());
+      cargo.position.set(0,0,0);
+      cargo.quaternion.copy(socketRotation.invert().multiply(modelRotation));
+      cargo.scale.setScalar(scale/socketScale);
+      backSocket.add(cargo);
+    }else o.add(cargo);
     const selection = new Group();
     selection.name = "Selection";
     selection.position.y = 0.12;
     selection.scale.set(
-      (d.footprint ? d.footprint.width + 0.3 : 1.8) * visualScale,
+      d.dimensions ? Math.max(d.dimensions.radius*2+.3,d.dimensions.formationSpacing) : (d.footprint ? d.footprint.width + 0.3 : 1.8) * visualScale,
       1,
-      (d.footprint ? d.footprint.depth + 0.3 : 1.8) * visualScale,
+      d.dimensions ? Math.max(d.dimensions.radius*2+.3,d.dimensions.formationSpacing) : (d.footprint ? d.footprint.depth + 0.3 : 1.8) * visualScale,
     );
     const outline = new Line2(this.selectionGeometry, this.selectionMaterial);
     outline.raycast = () => {}; // Selection decoration must not intercept unit picking.
@@ -504,6 +511,14 @@ export class SettlementLayer {
         );
       }
       const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.unit?.garrison?.height??0), e.y);
+      if (e.unit?.garrison) {
+        const host=byId.get(e.unit.garrison.building);
+        const radius=host?(this.registry.get(host.definition).garrison?.lookoutRadius??0)*(host.appearance?.scale??1):0;
+        // Occupants step to the firing side of an authored balcony. Simulation
+        // retains the building anchor; visible shots originate at the real bow.
+        const facing=e.rotation*Math.PI/180;
+        target.x+=Math.sin(facing)*radius;target.z+=Math.cos(facing)*radius;
+      }
       if (e.unit && o.userData.placed && o.userData.garrison===e.unit.garrison?.building) {
         const yaw=e.rotation*Math.PI/180;
         const delta=Math.atan2(Math.sin(yaw-o.rotation.y),Math.cos(yaw-o.rotation.y));
@@ -538,7 +553,7 @@ export class SettlementLayer {
           o.userData.castKey = key;
           o.userData.castTimeline = cast;
         } else if (attack && !e.unit.moving) {
-          character.player.setState("attack", { restart: attacked, fade: .04 });
+          character.player.setState("attack", { restart: attacked, fade: .18 });
 
         } else if (attacked) {
           character.player.setState("attack", { restart: true });
@@ -551,7 +566,7 @@ export class SettlementLayer {
         }
         else if (character.player.state === "cast" && o.userData.castTimeline && tick < o.userData.castTimeline.resolveTick)
           character.player.setState("idle", {fade:.05});
-        else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.05});
+        else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.18});
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
           const work =
             character.player.variant === "base" ? e.unit.work : undefined;
@@ -566,7 +581,7 @@ export class SettlementLayer {
           const phase = renderTick <= attack.impact
             ? contact * Math.max(0,renderTick-attack.started) / Math.max(1,attack.impact-attack.started)
             : contact + (1-contact) * (renderTick-attack.impact) / Math.max(1,attack.ends-attack.impact);
-          character.player.seek(Math.min(.999999,phase));
+          character.player.sample(Math.min(.999999,phase),dt);
         } else if (character.player.state === "cast" && o.userData.castTimeline) {
           const timeline=o.userData.castTimeline as NonNullable<NonNullable<EntityView['unit']>['casting']>;
           const contact=this.registry.asset(e.appearance?.asset??d.asset).castContact??.55;
@@ -576,10 +591,10 @@ export class SettlementLayer {
             ? contact*Math.max(0,renderTick-timeline.startTick)/Math.max(1,timeline.resolveTick-timeline.startTick)
             : contact+(renderTick-timeline.resolveTick)/40*character.player.speed/character.player.action.getClip().duration;
           if(phase>=1) {character.player.setState("idle",{fade:.05});character.player.update(0);}
-          else character.player.seek(Math.max(0,Math.min(cast?contact:.999999,phase)));
+          else character.player.sample(Math.max(0,Math.min(cast?contact:.999999,phase)),dt);
         } else if (cycle && character.player.state === e.unit.work?.animation) {
           // Authoritative work phase locks axe contact to the exact damage tick.
-          character.player.seek(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks));
+          character.player.sample(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks),dt);
         } else {
           // A newly observed reaction must not consume the time before it was observed.
           const restarted = castStarted || (hurt && character.player.state === "hit");
@@ -659,7 +674,7 @@ export class SettlementLayer {
             cargo.add(item);
           }
         }
-        o.userData.cargoKey = cargoKey;
+        o.userData.cargoKey = !cargoKey || cargo.children.length ? cargoKey : undefined;
       }
       if (e.unit && !character)
         o.traverse((child) => {
@@ -681,8 +696,8 @@ export class SettlementLayer {
       const socket = this.registry.asset(observed.appearance?.asset ?? this.registry.get(observed.definition).asset).projectileSocket;
       return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
     };
-    this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
-    this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
+    this.shells.update(state.shells ?? [], field, renderTick, launchPosition, this.registry.rules.unitScale);
+    this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition, this.registry.rules.unitScale);
     perf.end('Projectiles / shell effects',projectileTiming);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
@@ -795,6 +810,10 @@ export class SettlementLayer {
   }
 
   private removeModel(id: number, o: Object3D) {
+    // Socket-attached cargo was added after character cloning, so its materials
+    // are owned here rather than by the character factory.
+    const cargo=this.parts.get(o)?.cargo;
+    if(cargo){this.disposeInstance(cargo);cargo.removeFromParent();}
     // Detach the character before disposing accessories; its factory owns rig/material cleanup.
     this.characters.get(id)?.dispose();
     this.characters.delete(id);
@@ -839,8 +858,8 @@ export class SettlementLayer {
     this.shells.dispose();
     for (const [id, o] of this.entities) this.removeModel(id, o);
     for (const [id, corpse] of this.corpses) this.removeModel(id, corpse.root);
-    for (const p of this.prototypes.values()) this.disposePrototype(p);
-    this.prototypes.clear();this.characterSources.clear();
+    for (const p of new Set(this.prototypes.values())) this.disposePrototype(p);
+    this.prototypes.clear();this.characterSources.clear();this.bindingLoads.clear();this.modelLoads.clear();
     this.characterBatchDisposers.forEach((dispose) => dispose());
     this.selectionGeometry.dispose();
     this.selectionMaterial.dispose();

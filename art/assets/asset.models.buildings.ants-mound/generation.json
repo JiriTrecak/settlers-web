@@ -1,0 +1,123 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "3cb9bafb-e42d-4539-af27-847bf5693f4e",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9499,
+    "partsReturned": 20,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "mound.png",
+  "integration": {
+    "definition": "building.ants.house",
+    "width": 6.2,
+    "footprint": [
+      7,
+      7
+    ],
+    "entrance": [
+      0,
+      4
+    ]
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 9499
+  },
+  "runtime": {
+    "triangles": 9499,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "simultaneousRedBlue": "Combat Lab colony review: rendered beside the main hall with approved warrior units",
+    "typecheck": "passed",
+    "economyConstructionUpgrades": "18 targeted tests passed",
+    "referenceComparison": "comparison.png inspected; broad silhouette and egg baskets retained, fine woven/leaf details simplified",
+    "savedBlender": "passed; 20 meshes, packed 4K images and reference",
+    "teamColors": "red/blue simultaneously in game; green/white in shared GLB viewer",
+    "rear": "orbit inspected; closed timber/earth surface"
+  },
+  "config": {
+    "name": "Mound",
+    "blend": "colony-mound-tripo.blend",
+    "recipe": "model.py",
+    "seed": 28,
+    "camera": {
+      "azimuth": 0,
+      "elevation": 32,
+      "scale": 7.890909090909091,
+      "target": [
+        0,
+        0,
+        1.867045454545455
+      ],
+      "distance": 17.613636363636363
+    },
+    "render": {
+      "width": 1254,
+      "height": 1254,
+      "samples": 40
+    },
+    "light": {
+      "key_energy": 1100,
+      "fill_energy": 370,
+      "rim_energy": 800,
+      "scale": 0.9863636363636363,
+      "target": [
+        0,
+        0,
+        1.831818181818182
+      ]
+    },
+    "preserve_textures": true,
+    "runtime_triangle_budget": 10000,
+    "texture_format": "AUTO",
+    "bake_vertex_ao": true,
+    "runtime_texture_size": 2048,
+    "width": 6.2,
+    "part_role": "worker-house",
+    "part_names": {},
+    "publication": {
+      "id": "asset.models.buildings.ants-mound",
+      "faction": "ants",
+      "renderIds": [
+        "asset.ants.house"
+      ],
+      "iconIds": [
+        "icon.ants.house"
+      ],
+      "footprint": [
+        7,
+        7
+      ],
+      "healthHeight": 4.1
+    }
+  },
+  "rebuild": "python art/sources/buildings/colony-mound-tripo/prepare_texture.py; node experiments/building-studio/launch.mjs build colony-mound-tripo",
+  "adapter": "\"\"\"Editable Tripo import adapter. Rebuilds scale, materials and stage, not AI geometry.\nThe original source.glb remains unchanged; generated structural parts stay editable.\n\"\"\"\nfrom pathlib import Path\nimport bpy, json, sys\nfrom mathutils import Vector, Matrix\nassert bpy.app.background, 'Run in a separate background Blender process.'\nP=Path(ASSET_DIR).resolve();ROOT=P.parents[3]\nsys.path.insert(0,str(ROOT/'experiments/building-studio'))\nfrom stage import create_stage\nbpy.ops.wm.read_factory_settings(use_empty=True)\nbpy.ops.import_scene.gltf(filepath=str(P/'source.glb'))\nCFG=json.loads((P/'asset.json').read_text());own=json.loads((P/'ownership.json').read_text())\nscene=bpy.context.scene\nobjects=[o for o in scene.objects if o.type=='MESH']\npoints=[o.matrix_world@v.co for o in objects for v in o.data.vertices]\nlow=Vector([min(p[i] for p in points) for i in range(3)]);high=Vector([max(p[i] for p in points) for i in range(3)])\nscale=CFG[\"width\"]/max(high.x-low.x,high.y-low.y)\ncenter=Vector(((low.x+high.x)/2,(low.y+high.y)/2,low.z))\nfor o in objects:\n index=objects.index(o);world=o.matrix_world.copy();o.parent=None\n o.data.transform(Matrix.Scale(scale,4)@Matrix.Translation(-center)@world)\n o.matrix_world=Matrix.Identity(4)\n o.name=CFG.get('part_names',{}).get(str(index),f'{CFG[\"name\"]} part {index:02d}');o['tripoPart']=index\n o['source']='Reference-based Tripo H3.1';o['role']=CFG.get('part_role','building')\n for face in o.data.polygons:face.use_smooth=True\nfor o in list(scene.objects):\n if o.type=='EMPTY':bpy.data.objects.remove(o,do_unlink=True)\nmaterial=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True\nmaterial['teamColorMask']='baseColorAlpha';material['teamColorSourceMax']=own['sourceMax'];material['teamColorDefault']=own['default']\nmaterial.diffuse_color=(*own['default'],1)\nnodes,links=material.node_tree.nodes,material.node_tree.links\nbsdf=nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.72;bsdf.inputs['Metallic'].default_value=0\nfor link in list(bsdf.inputs['Metallic'].links):links.remove(link)\nfor node in nodes:\n if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.45\ntexture=nodes.new('ShaderNodeTexImage');texture.name='Authored albedo with ownership mask';texture.image=bpy.data.images.load(str(P/'albedo-team.png'))\ntexture.image.alpha_mode='CHANNEL_PACKED';texture.image.pack()\n# Keep the raw RGB albedo available for portable glTF display. The runtime\n# ownership mask is its alpha channel, independent of opacity.\nsep=nodes.new('ShaderNodeSeparateColor');links.new(texture.outputs['Color'],sep.inputs[0])\nmx=nodes.new('ShaderNodeMath');mx.operation='MAXIMUM';links.new(sep.outputs[0],mx.inputs[0]);links.new(sep.outputs[1],mx.inputs[1])\nmx2=nodes.new('ShaderNodeMath');mx2.operation='MAXIMUM';links.new(mx.outputs[0],mx2.inputs[0]);links.new(sep.outputs[2],mx2.inputs[1])\ndiv=nodes.new('ShaderNodeMath');div.operation='DIVIDE';links.new(mx2.outputs[0],div.inputs[0]);div.inputs[1].default_value=own['sourceMax']\ntint=nodes.new('ShaderNodeMixRGB');tint.name='Team color';tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(*own['default'],1);links.new(div.outputs[0],tint.inputs[1])\nmix=nodes.new('ShaderNodeMixRGB');links.new(texture.outputs['Alpha'],mix.inputs[0]);links.new(texture.outputs['Color'],mix.inputs[1]);links.new(tint.outputs[0],mix.inputs[2]);links.new(mix.outputs[0],bsdf.inputs['Base Color'])\nfor o in objects:\n o.data.materials.clear();o.data.materials.append(material)\ncollection=bpy.data.collections.new('Studio');scene.collection.children.link(collection);create_stage(CFG,collection)\nref=bpy.data.images.load(str(P/'reference.png'));ref.name='reference.png';ref.pack();ref.use_fake_user=True\nfor f in ['model.py','prepare_texture.py','asset.json','provenance.json']:\n if (P/f).exists():bpy.data.texts.load(str(P/f))\nfor screen in bpy.data.screens:\n for area in screen.areas:\n  if area.type=='VIEW_3D':\n   area.spaces.active.shading.type='MATERIAL';area.spaces.active.region_3d.view_distance=14;area.spaces.active.region_3d.view_location=(0,0,2.8)\nbpy.ops.wm.save_as_mainfile(filepath=str(P/CFG['blend']))\nprint('BUILDING_SOURCE',len(objects),'parts',sum(len(p.vertices)-2 for o in objects for p in o.data.polygons),'triangles')\n",
+  "maskAdapter": "\"\"\"Extract an ownership mask from the approved blue albedo; preserve RGB verbatim.\"\"\"\nfrom pathlib import Path\nimport json, struct\nimport numpy as np\nfrom PIL import Image\nP=Path(ASSET_DIR).resolve()\nraw=(P/'source.glb').read_bytes();size=struct.unpack_from('<I',raw,12)[0]\ndoc=json.loads(raw[20:20+size]);binary=raw[28+size:]\nmaterial=doc['materials'][0];albedo_index=doc['textures'][material['pbrMetallicRoughness']['baseColorTexture']['index']]['source']\nview=doc['bufferViews'][doc['images'][albedo_index]['bufferView']]\n(P/'source-albedo.jpg').write_bytes(binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']])\nimage=Image.open(P/'source-albedo.jpg').convert('RGB');rgb=np.asarray(image).astype(np.float32)/255\n# Grey stone and warm natural materials have no blue chroma. A soft transition\n# follows the antialiased painted edge rather than recoloring entire triangles.\nblue=rgb[:,:,2];other=np.maximum(rgb[:,:,0],rgb[:,:,1])\na=np.clip((blue-other-.018)/.095,0,1);a=a*a*(3-2*a)\n# Purple root corruption is not ownership; configurable chroma gate.\nconfig=json.loads((P/'asset.json').read_text())\nif config.get('exclude_purple_ownership',False):\n gate=np.clip((blue-rgb[:,:,0]-.12)/.18,0,1);a*=gate*gate*(3-2*gate)\nrgba=np.concatenate((rgb,a[:,:,None]),axis=2)\nImage.fromarray(np.rint(rgba*255).astype(np.uint8),'RGBA').save(P/'albedo-team.png')\nImage.fromarray(np.rint(a*255).astype(np.uint8),'L').save(P/'team-mask.png')\nlinear=lambda x:np.where(x<=.04045,x/12.92,((x+.055)/1.055)**2.4)\nsource_max=float(np.quantile(linear(blue[a>.99]),.95))\n(P/'ownership.json').write_text(json.dumps({'mask':'baseColorAlpha','sourceMax':source_max,'default':[.025,.14,source_max],'coverage':float((a>.5).mean())},indent=2)+'\\n')\nfor slot,ref in [('normal',material.get('normalTexture')),('roughness',material['pbrMetallicRoughness'].get('metallicRoughnessTexture'))]:\n if ref:\n  import io\n  iv=doc['bufferViews'][doc['images'][doc['textures'][ref['index']]['source']]['bufferView']]\n  im=Image.open(io.BytesIO(binary[iv.get('byteOffset',0):iv.get('byteOffset',0)+iv['byteLength']])).convert('RGB')\n  if slot=='roughness': im=im.getchannel('G')\n  im.save(P/(slot+'.png'))\nprint('Ownership source brightness',source_max,'coverage',float((a>.5).mean()))\n"
+}

@@ -56,8 +56,7 @@ export function buildCatalog(source: ContentSource) {
     const entries = c.items.map(
       (p) => `${icon(registry.get(p.item).icon)} ${p.amount} ${link(p.item)}`,
     );
-    if (c.method === "recruit")
-      entries.push(`1 available ${link(c.unitInput)}`);
+    if (d.supplyCost) entries.push(`${d.supplyCost} supply`);
     return entries.join(" + ") || "No resource cost";
   };
   const bulletLinks = (ids: readonly string[]) =>
@@ -158,17 +157,11 @@ export function buildCatalog(source: ContentSource) {
     if (
       builders.length ||
       producers.length ||
-      d.creation?.method === "recruit"
+      d.creation?.method === "train"
     ) {
       body += `## How to obtain\n\n${builders.length ? `Built by ${builders.map((x) => link(x.id)).join(", ")}.` : `Produced by ${producers.map((x) => link(x.id)).join(", ")}.`}\n\n`;
-      if (d.creation?.method !== "spawn")
-        body += `**Cost:** ${cost(d)}.\n\n**${d.creation?.method === "recruit" ? "Training after worker arrival" : "Work time"}:** ${seconds(d.creation!.workTicks)}. Travel and blocked exits add time.\n\n`;
-      else
-        body +=
-          "Replenishes automatically while the colony is below its living-worker capacity. The producer sets the birth interval; this is not a manual purchase.\n\n";
-      if (d.creation?.method === "recruit")
-        body +=
-          "The barracks reserves the cost, calls an **available** worker to its entrance and transforms that same worker. Assigned gatherers and builders are protected. A queue without a free worker waits. [Recruitment rules](/guide/economy#turning-workers-into-an-army).\n\n";
+      body += `**Cost:** ${cost(d)}.\n\n**Work time:** ${seconds(d.creation!.workTicks)}. Blocked exits can delay deployment.\n\n`;
+      if (d.creation?.method === "train") body += "Resources and supply are reserved on enqueue. Training creates a new unit; workers are never converted. Started training finishes even if supply capacity is lost.\n\n";
     } else if (d.id === registry.rules.startingSetup.fort || d.hero) {
       body +=
         "## How to obtain\n\nIncluded in the starting colony. It is not currently offered as a new purchase in the worker command card.\n\n";
@@ -179,7 +172,7 @@ export function buildCatalog(source: ContentSource) {
       body += `## Prerequisites\n\nRequires completed owned ${d.requires.map(link).join(", ")}. Losing a prerequisite locks new purchases; paid tasks continue.\n\n`;
     if (d.upgrade) {
       const u = d.upgrade;
-      body += `## Building upgrade\n\nUpgrades in place to ${link(u.target)}. Cost: ${u.items.map(p => `${p.amount} ${link(p.item)}`).join(", ")}. Time: ${seconds(u.workTicks)}. Worker spawning pauses. Cancellation refunds the full price; destruction loses the paid upgrade. Identity, stored resources and existing damage are preserved.\n\n`;
+      body += `## Building upgrade\n\nUpgrades in place to ${link(u.target)}. Cost: ${u.items.map(p => `${p.amount} ${link(p.item)}`).join(", ")}. Time: ${seconds(u.workTicks)}. Unit training pauses. Cancellation refunds the full price; destruction loses the paid upgrade. Identity, stored resources and existing damage are preserved.\n\n`;
     }
     if (b.research) {
       body += `## Research\n\nOne task runs at a time; queue capacity **${b.research.queueCapacity}**. Purchases are paid on enqueue. Cancellation refunds the full price. Each upgrade is researched once per colony and affects existing and future units; completed research survives loss of the Forge.\n\n`;
@@ -191,22 +184,13 @@ export function buildCatalog(source: ContentSource) {
     if (b.production) {
       const p = b.production;
       body += `## Production\n\n${bulletLinks(p.outputs)}\n\n`;
-      if (p.population)
-        body +=
-          table(
-            ["Population rule", "Value"],
-            [
-              ["Worker capacity contributed", p.population.capacity],
-              ["Birth interval", seconds(p.population.intervalTicks)],
-            ],
-          ) +
-          "\nAll living workers count, including assigned gatherers. Capacity is pooled per owner. Losing or training a worker opens room for a replacement; this is not a lifetime birth limit.\n\n";
       if (p.workerSlots)
         body += `**Staffing:** ${p.workerSlots} worker${p.workerSlots === 1 ? "" : "s"}.\n\n`;
       if (p.workRadius) body += `**Work radius:** ${p.workRadius} cells.\n\n`;
       if (p.queueCapacity)
         body += `**Queue capacity:** ${p.queueCapacity}.\n\n`;
     }
+    if (d.supplyProvided) body += `**Supply provided:** ${d.supplyProvided} when completed.\n\n`;
     if (b.storage)
       body += `## Storage\n\nAccepts ${b.storage.accepts.map(link).join(", ")}; total capacity **${b.storage.capacity.toLocaleString("en-US")}**.${b.storage.dropoff ? " Workers deposit their loads here, making those resources available to spend." : " Production costs are reserved from the colony’s hall stores."}\n\n`;
     if (b.work)
@@ -388,23 +372,14 @@ export function buildCatalog(source: ContentSource) {
     (setup.gathering ?? [])
       .map((g) => `${g.workers} workers begin gathering ${link(g.item)}`)
       .join("; ") + ".";
-  fragments.population = table(
-    ["Producer", "Living-worker capacity", "Birth interval"],
-    defs
-      .filter((d) => d.behaviors.production?.population)
-      .map((d) => [
-        link(d.id),
-        d.behaviors.production!.population!.capacity,
-        seconds(d.behaviors.production!.population!.intervalTicks),
-      ]),
-  );
+  fragments.population = table(["Building", "Supply provided"], defs.filter(d => d.supplyProvided).map(d => [link(d.id), d.supplyProvided!]));
   fragments.recruitment = table(
-    ["Unit", "Cost", "Training after arrival"],
+    ["Unit", "Cost", "Training time"],
     defs
-      .filter((d) => d.creation?.method === "recruit")
+      .filter((d) => d.creation?.method === "train")
       .map((d) => [link(d.id), cost(d), seconds(d.creation!.workTicks)]),
   );
-  fragments.limits = `The current engine safety limits are **${registry.rules.maxUnits} units** and **${registry.rules.maxBuildings} buildings**. These are separate from worker capacity; this is not an unlimited-army mode.`;
+  fragments.limits = `The current engine safety limits are **${registry.rules.maxUnits} units** and **${registry.rules.maxBuildings} buildings**. Supply is capped at **${registry.rules.maxSupply}** per colony.`;
   fragments.armor = table(
     ["Attack class", ...Object.values(registry.rules.armorTypes).map(a => a.name), "Armor points apply"],
     Object.entries(registry.rules.damageTypes).map(([id, type]) => [

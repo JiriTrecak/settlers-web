@@ -97,7 +97,7 @@ export class Display {
     const exposure=this.gl.toneMappingExposure;
     if(atmosphere?.daytime)this.gl.toneMappingExposure=.28;
     try {
-    if(atmosphere?.settings?.enabled||atmosphere?.daytime){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
+    if(atmosphere?.settings?.enabled||atmosphere?.daytime||atmosphere?.postProcessing||atmosphere?.canopy){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
     else {perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>this.gl.render(scene,camera));}
     }finally{this.gl.toneMappingExposure=exposure;}
   }

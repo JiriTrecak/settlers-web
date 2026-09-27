@@ -1,0 +1,42 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "096e8ca2-f15d-41b6-bec0-5710c002335d",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9647,
+    "partsReturned": 51,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Main view isolated from supplied amber-deposit.png sheet using imagegen; full sheet retained as reference-sheet.png.",
+  "integration": {
+    "definition": "building.neutral.amber-mine",
+    "size": [
+      6.570313,
+      4.40679,
+      6.6
+    ],
+    "hallMinimumCenterSeparation": {
+      "x": 14,
+      "z": 14,
+      "serviceLane": 3
+    }
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  }
+}

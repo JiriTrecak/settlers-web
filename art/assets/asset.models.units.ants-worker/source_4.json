@@ -1,0 +1,132 @@
+{
+  "name": "Ant Worker",
+  "kind": "character",
+  "blend": "ant-worker-tripo.blend",
+  "recipe": "model.py",
+  "preserve_textures": true,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 8,
+    "scale": 2.6,
+    "target": [
+      0,
+      0,
+      1
+    ],
+    "distance": 12
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 32
+  },
+  "light": {
+    "key_energy": 560,
+    "fill_energy": 260,
+    "rim_energy": 360,
+    "scale": 0.45,
+    "target": [
+      0,
+      0,
+      1
+    ]
+  },
+  "characterHeight": 2.02,
+  "characterVariants": {
+    "base": {
+      "states": {
+        "idle": "idle",
+        "walk": "walk",
+        "run": "run",
+        "carry": "carry",
+        "carry_walk": "carry_walk",
+        "carry_run": "carry_run",
+        "build": "build",
+        "chop": "chop",
+        "attack": "chop",
+        "hit": "hit",
+        "death": "death"
+      }
+    }
+  },
+  "attackEvents": {
+    "base": {
+      "normalizedTime": 0.55,
+      "event": "hit"
+    }
+  },
+  "runtimeDecimation": {
+    "Wooden backpack": 0.34,
+    "Head and antennae": 0.72,
+    "Left leg": 0.42,
+    "Right leg": 0.42,
+    "Right hand and forearm": 0.42,
+    "Abdomen": 0.34,
+    "Right shoulder and leaf collar": 0.34,
+    "Left hand and forearm": 0.42,
+    "Chest": 0.34,
+    "Left shoulder and leaf collar": 0.34,
+    "Right elbow": 0.34,
+    "Left elbow": 0.34,
+    "Right eye": 0.72,
+    "Left eye": 0.72,
+    "Belly detail A": 0.34,
+    "Belly detail B": 0.34,
+    "Eye detail": 0.34,
+    "Neck detail": 0.34
+  },
+  "runtimeWeldDistance": 1e-06,
+  "runtime_texture_size": 2048,
+  "runtime_triangle_budget": 4500,
+  "ownership_channel": "green",
+  "team_color_default": [
+    0.38,
+    0.035,
+    0.055
+  ],
+  "part_names": {
+    "0": "Wooden backpack",
+    "1": "Head and antennae",
+    "2": "Left leg",
+    "3": "Right leg",
+    "4": "Right hand and forearm",
+    "5": "Abdomen",
+    "6": "Right shoulder and leaf collar",
+    "7": "Left hand and forearm",
+    "8": "Chest",
+    "9": "Left shoulder and leaf collar",
+    "10": "Right elbow",
+    "11": "Left elbow",
+    "12": "Right eye",
+    "13": "Left eye",
+    "14": "Belly detail A",
+    "15": "Belly detail B",
+    "16": "Eye detail",
+    "17": "Neck detail"
+  },
+  "rigid_parts": {
+    "0": "Spine2",
+    "1": "Head",
+    "12": "Head",
+    "13": "Head",
+    "16": "Head"
+  },
+  "publication": {
+    "id": "asset.models.units.ants-worker",
+    "renderId": "asset.ants.settler",
+    "iconId": "icon.ants.settler",
+    "profile": "base",
+    "healthHeight": 2.15,
+    "renderAliases": [
+      "asset.briar.civilian"
+    ],
+    "faction": "ants",
+    "kind": "unit"
+  },
+  "cargo": [
+    "wood",
+    "amber",
+    "root"
+  ],
+  "runningLeanFactor": 0.2
+}

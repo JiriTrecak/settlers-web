@@ -1,13 +1,13 @@
 import {z} from 'zod';
-import {assetSchema as runtimeRenderSchema} from '../../content/schema';
+import {unitDimensionsSchema,assetSchema as runtimeRenderSchema} from '../../content/schema';
 import {authoringId,landscapeRecipeSchema,waterProfileSchema} from './recipes';
 
 export const ASSET_KINDS=['unit','creature','building','tree','foliage','prop','bridge','terrain-material','water-profile','landscape-recipe','icon','interface','texture','audio','map','data'] as const;
-export const FILE_ROLES=['geometry','source','image','albedo','normal','roughness','metalness','occlusion','height','opacity','team_mask','emissive','wind','animation','collision','walkable','preview','reference','data','grading','audio','generation'] as const;
+export const FILE_ROLES=['geometry','source','recipe','build','image','albedo','normal','roughness','metalness','occlusion','height','opacity','team_mask','emissive','wind','animation','collision','walkable','preview','reference','data','grading','audio','generation'] as const;
 export type FileRole=typeof FILE_ROLES[number];
 /** One physical filename grammar, shared by the server, compiler, MCP and UI. */
 export const ROLE_FORMATS:Readonly<Record<FileRole,readonly string[]>>={
- geometry:['glb'],source:['blend','glb','gltf','png','jpeg','webp','svg','json','bin','wav','ogg','mp3'],
+ geometry:['glb'],source:['blend','glb','gltf','png','jpeg','webp','svg','json','bin','wav','ogg','mp3','md','txt'],recipe:['py','ts','mjs'],build:['json'],
  image:['png','jpeg','webp','svg'],albedo:['png','jpeg','webp'],normal:['png'],roughness:['png'],metalness:['png'],occlusion:['png','bin'],height:['png','bin'],opacity:['png'],team_mask:['png'],emissive:['png','jpeg','webp'],wind:['png','bin'],
  animation:['glb'],collision:['glb'],walkable:['glb'],preview:['png','jpeg','webp'],reference:['png','jpeg','webp'],data:['json','bin','utcmap','lua'],grading:['png','bin','json'],generation:['json'],audio:['wav','ogg','mp3'],
 };
@@ -46,10 +46,12 @@ export const assetDefinitionSchema=z.object({
  version:z.literal(1),id:authoringId,name:z.string().trim().min(1).max(160),kind:z.enum(ASSET_KINDS),
  revision:z.number().int().positive(),status:z.enum(['draft','published','archived']),tags:z.array(z.string().min(1).max(80)).max(64).default([]),
  resources:z.array(resourceSchema).max(2048),usesGeometry:z.boolean(),
+ exportSettings:z.object({textureSize:z.union([z.literal(128),z.literal(256),z.literal(512),z.literal(1024),z.literal(2048),z.literal(4096)])}).strict().optional(),
  transform:z.object({scale:finite.positive().max(10000),pivot:vector,up:z.literal('Y'),forward:z.enum(['+Z','-Z'])}).strict().default({scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'}),
  materials:z.array(materialSchema).max(128).default([]),
  bindings:z.object({faction:authoringId.optional(),profile:authoringId.optional(),render:z.array(renderBinding).max(256).default([]),scenery:z.array(sceneryBinding).max(256).default([])}).strict().default({render:[],scenery:[]}),
  capabilities:z.object({
+  dimensions:unitDimensionsSchema.optional(),
   wind:z.object({mode:z.enum(['tree','foliage','grass']),strength:finite.min(0).max(4),speed:finite.min(0).max(10),stiffness:finite.min(0).max(1)}).strict().optional(),
   teamColor:z.object({mode:z.enum(['material','mask']),slots:z.array(z.string().min(1)).min(1).max(128),mask:refSchema.optional()}).strict().optional(),
   animations:z.array(z.object({semantic:authoringId,clip:z.string().min(1),loop:z.boolean(),nominalSpeed:finite.nonnegative().optional(),events:z.array(z.object({name:authoringId,time:finite.nonnegative()}).strict()).max(128).default([])}).strict()).max(128).optional(),

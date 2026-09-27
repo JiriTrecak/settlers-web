@@ -19,7 +19,7 @@ Use strict TypeScript, typed command unions and explicit lifecycle ownership. Ke
 
 - `assets/maps/`: authored map source and generated map catalog.
 - `art/assets/`: canonical working asset definitions and role-named files.
-- `art/sources/`: editable Blender work, texture/icon masters and model recipes.
+- `art/assets/<id>/`: canonical role-named geometry, editable Blender sources, texture masters, recipes and build manifests. `.asset-work/build/` is disposable tool staging.
 - `art/styles/`, `art/profiles/`: approved style inputs and validation/export profiles.
 - `assets/authoring/published.json`: released asset definitions.
 - `assets/library/`: published runtime resources, with `assets/manifest.json` and generated URL bindings.

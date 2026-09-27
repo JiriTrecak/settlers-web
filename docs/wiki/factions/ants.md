@@ -4,11 +4,11 @@
 Ants are the only player faction currently implemented. Their encyclopedia entries describe the running game, not proposed future units.
 :::
 
-Versatile colony builders whose strength comes from a healthy workforce. Workers gather, build and become soldiers. Red is the authored default team color; ownership recolors the designated team surfaces on units and flags.
+Versatile colony builders whose strength comes from a healthy workforce. Workers gather and build; soldiers train independently. Red is the authored default team color; ownership recolors the designated team surfaces on units and flags.
 
 ## Identity
 
-A living economy going to war. Amber and timber sustain the colony; houses and the hall replenish its population. Turning a Worker into a Warrior is quick once the ant reaches the Barracks, but a missing gatherer can cost more than the visible recruitment price.
+Amber, timber and Root sustain the colony. Halls train workers, Mounds expand supply, and military buildings train soldiers directly. Protecting the gathering economy and building enough supply keeps the army growing.
 
 The Ant Marshal gives that army a persistent center: experience, abilities and recovered camp items make a surviving veteran increasingly important.
 

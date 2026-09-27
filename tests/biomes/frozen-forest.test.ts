@@ -13,16 +13,16 @@ import {expandMap,validatePlacements} from '../../src/content/map';
 import {content} from '../../src/content/builtin';
 import {sampleDaytime} from '../../src/shared/environment/dayCycle';
 import {Sky} from '../../src/render/sky/sky';
-import {biomeById} from '../../src/content/biomes';
+import {biomeById,biomeEnvironment} from '../../src/content/biomes';
 import {sceneryKind,terrainPixel} from '../../src/render/minimap/terrainStyle';
 const map=biomeFixture;
 describe('Frozen Forest and living woodland',()=>{
  it('persists creation weather independently of biome defaults',()=>{
-  const snowy=createBiomeMap('Snow',256,'frozen-forest');expect(snowy.landscape!.environment.weather!.kind).toBe('snow');
+  const snowy=createBiomeMap('Snow',256,'frozen-forest');expect(biomeEnvironment(snowy.biome,snowy.landscape!.environment).weather!.kind).toBe('snow');
   const rain=createBiomeMap('Rain',256,'frozen-forest','rain');const loaded=parseUtcMap(JSON.parse(stringifyUtcMap(rain)))!;
-  expect(loaded.landscape!.environment.weather).toEqual({kind:'rain',intensity:.5,windX:1,windZ:.4});
-  expect(createBiomeMap('Clear',256,'frozen-forest','clear').landscape!.environment.weather!.intensity).toBe(0);
-  expect(snowy.landscape!.environment.weather!.kind).toBe('snow');
+  expect(loaded.landscape!.environment.weather).toEqual({kind:'rain'});
+  expect(biomeEnvironment('frozen-forest',createBiomeMap('Clear',256,'frozen-forest','clear').landscape!.environment).weather!.intensity).toBe(0);
+  expect(biomeEnvironment(snowy.biome,snowy.landscape!.environment).weather!.kind).toBe('snow');
  });
  it('selects the actual winter tile maps and inherited normals',()=>{
   const scene=compileMapScene(createBiomeMap('Snow',256,'frozen-forest'),landscapeAssets),ground=authoredTerrain(scene.field,[],[]);

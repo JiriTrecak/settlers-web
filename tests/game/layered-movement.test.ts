@@ -139,6 +139,7 @@ it('revives a hero killed on a bridge onto the sanctuary landing',()=>{
  const c=setup(),hero=c.create({...placed('hero','unit.ants.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
  shrine=c.create(placed('shrine','building.ants.sanctuary',65,65)),revival=new Revival(c);
  c.remove(hero);revival.retain(hero);c.state.tick=10;c.spatial.rebuild();
+ c.create(placed('supply','building.ants.house',80,80));
  expect(revival.enqueue(shrine,hero.id)).toBeNull();
  shrine.revival!.queue[0].progress=c.def(shrine).behaviors.revival!.workTicks;
  revival.tick();expect(hero.fallen).toBeUndefined();expect(hero.surface).toBeUndefined();

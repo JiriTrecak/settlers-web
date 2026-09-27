@@ -100,245 +100,303 @@ import a97 from "../../../assets/library/asset.models.buildings.ants-acorn-hall/
 import a98 from "../../../assets/library/asset.models.buildings.ants-acorn-hall/normal.png?url";
 import a99 from "../../../assets/library/asset.models.buildings.ants-acorn-hall/roughness.png?url";
 import a100 from "../../../assets/library/asset.models.buildings.ants-acorn-hall/team_mask.png?url";
-import a101 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo.png?url";
-import a102 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_2.png?url";
-import a103 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_3.png?url";
-import a104 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_4.png?url";
-import a105 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_5.png?url";
-import a106 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb?url";
-import a107 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/image.png?url";
-import a108 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/normal.png?url";
-import a109 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/normal_2.png?url";
-import a110 from "../../../assets/library/asset.models.environment.autumn-grass/geometry.glb?url";
-import a111 from "../../../assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb?url";
-import a112 from "../../../assets/library/asset.models.environment.autumn-shrub-copper/albedo.png?url";
-import a113 from "../../../assets/library/asset.models.environment.autumn-shrub-copper/geometry.glb?url";
-import a114 from "../../../assets/library/asset.models.environment.autumn-shrub-gold/albedo.png?url";
-import a115 from "../../../assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb?url";
-import a116 from "../../../assets/library/asset.models.environment.autumn-stump/geometry.glb?url";
-import a117 from "../../../assets/library/asset.models.environment.autumn-tree-copper/albedo.png?url";
-import a118 from "../../../assets/library/asset.models.environment.autumn-tree-copper/geometry.glb?url";
-import a119 from "../../../assets/library/asset.models.environment.autumn-tree-gold/albedo.png?url";
-import a120 from "../../../assets/library/asset.models.environment.autumn-tree-gold/geometry.glb?url";
-import a121 from "../../../assets/library/asset.models.environment.canopy-acorns/geometry.glb?url";
-import a122 from "../../../assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb?url";
-import a123 from "../../../assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb?url";
-import a124 from "../../../assets/library/asset.models.environment.canopy-mushrooms-russet/geometry.glb?url";
-import a125 from "../../../assets/library/asset.models.environment.canopy-oak/geometry.glb?url";
-import a126 from "../../../assets/library/asset.models.environment.canopy-twig/geometry.glb?url";
-import a127 from "../../../assets/library/asset.models.environment.frost-boulder/albedo.png?url";
-import a128 from "../../../assets/library/asset.models.environment.frost-boulder/albedo_2.png?url";
-import a129 from "../../../assets/library/asset.models.environment.frost-boulder/geometry.glb?url";
-import a130 from "../../../assets/library/asset.models.environment.frost-grass/albedo.png?url";
-import a131 from "../../../assets/library/asset.models.environment.frost-grass/geometry.glb?url";
-import a132 from "../../../assets/library/asset.models.environment.frost-log/albedo.png?url";
-import a133 from "../../../assets/library/asset.models.environment.frost-log/albedo_2.png?url";
-import a134 from "../../../assets/library/asset.models.environment.frost-log/geometry.glb?url";
-import a135 from "../../../assets/library/asset.models.environment.frost-pine-a/albedo.png?url";
-import a136 from "../../../assets/library/asset.models.environment.frost-pine-a/albedo_2.png?url";
-import a137 from "../../../assets/library/asset.models.environment.frost-pine-a/geometry.glb?url";
-import a138 from "../../../assets/library/asset.models.environment.frost-pine-b/albedo.png?url";
-import a139 from "../../../assets/library/asset.models.environment.frost-pine-b/albedo_2.png?url";
-import a140 from "../../../assets/library/asset.models.environment.frost-pine-b/geometry.glb?url";
-import a141 from "../../../assets/library/asset.models.environment.frost-pine-sapling/albedo.png?url";
-import a142 from "../../../assets/library/asset.models.environment.frost-pine-sapling/albedo_2.png?url";
-import a143 from "../../../assets/library/asset.models.environment.frost-pine-sapling/geometry.glb?url";
-import a144 from "../../../assets/library/asset.models.environment.frost-rock-ledge/albedo.png?url";
-import a145 from "../../../assets/library/asset.models.environment.frost-rock-ledge/albedo_2.png?url";
-import a146 from "../../../assets/library/asset.models.environment.frost-rock-ledge/geometry.glb?url";
-import a147 from "../../../assets/library/asset.models.environment.frost-snow-grass/albedo.png?url";
-import a148 from "../../../assets/library/asset.models.environment.frost-snow-grass/geometry.glb?url";
-import a149 from "../../../assets/library/asset.models.environment.leafbound-twig-bridge/albedo.png?url";
-import a150 from "../../../assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb?url";
-import a151 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/albedo.png?url";
-import a152 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/albedo_2.png?url";
-import a153 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb?url";
-import a154 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/albedo.png?url";
-import a155 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/albedo_2.png?url";
-import a156 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb?url";
-import a157 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/albedo.png?url";
-import a158 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/albedo_2.png?url";
-import a159 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb?url";
-import a160 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/albedo.png?url";
-import a161 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/albedo_2.png?url";
-import a162 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb?url";
-import a163 from "../../../assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb?url";
-import a164 from "../../../assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb?url";
-import a165 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/albedo.png?url";
-import a166 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/albedo_2.png?url";
-import a167 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb?url";
-import a168 from "../../../assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb?url";
-import a169 from "../../../assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb?url";
-import a170 from "../../../assets/library/asset.models.environment.woodland-daisies/geometry.glb?url";
-import a171 from "../../../assets/library/asset.models.environment.woodland-drift-log/geometry.glb?url";
-import a172 from "../../../assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb?url";
-import a173 from "../../../assets/library/asset.models.environment.woodland-fallen-log/albedo.png?url";
-import a174 from "../../../assets/library/asset.models.environment.woodland-fallen-log/albedo_2.png?url";
-import a175 from "../../../assets/library/asset.models.environment.woodland-fallen-log/geometry.glb?url";
-import a176 from "../../../assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb?url";
-import a177 from "../../../assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb?url";
-import a178 from "../../../assets/library/asset.models.environment.woodland-giant-stump/albedo.png?url";
-import a179 from "../../../assets/library/asset.models.environment.woodland-giant-stump/albedo_2.png?url";
-import a180 from "../../../assets/library/asset.models.environment.woodland-giant-stump/geometry.glb?url";
-import a181 from "../../../assets/library/asset.models.environment.woodland-grass-high-a/albedo.png?url";
-import a182 from "../../../assets/library/asset.models.environment.woodland-grass-high-a/geometry.glb?url";
-import a183 from "../../../assets/library/asset.models.environment.woodland-grass-high-b/albedo.png?url";
-import a184 from "../../../assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb?url";
-import a185 from "../../../assets/library/asset.models.environment.woodland-grass-low/albedo.png?url";
-import a186 from "../../../assets/library/asset.models.environment.woodland-grass-low/geometry.glb?url";
-import a187 from "../../../assets/library/asset.models.environment.woodland-grass-messy/albedo.png?url";
-import a188 from "../../../assets/library/asset.models.environment.woodland-grass-messy/geometry.glb?url";
-import a189 from "../../../assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb?url";
-import a190 from "../../../assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb?url";
-import a191 from "../../../assets/library/asset.models.environment.woodland-hollow-log/albedo.png?url";
-import a192 from "../../../assets/library/asset.models.environment.woodland-hollow-log/albedo_2.png?url";
-import a193 from "../../../assets/library/asset.models.environment.woodland-hollow-log/geometry.glb?url";
-import a194 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/albedo.png?url";
-import a195 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/albedo_2.png?url";
-import a196 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb?url";
-import a197 from "../../../assets/library/asset.models.environment.woodland-lily-a/geometry.glb?url";
-import a198 from "../../../assets/library/asset.models.environment.woodland-lily-b/geometry.glb?url";
-import a199 from "../../../assets/library/asset.models.environment.woodland-log-bench/albedo.png?url";
-import a200 from "../../../assets/library/asset.models.environment.woodland-log-bench/albedo_2.png?url";
-import a201 from "../../../assets/library/asset.models.environment.woodland-log-bench/geometry.glb?url";
-import a202 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/albedo.png?url";
-import a203 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/albedo_2.png?url";
-import a204 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb?url";
-import a205 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/albedo.png?url";
-import a206 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/albedo_2.png?url";
-import a207 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/geometry.glb?url";
-import a208 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/albedo.png?url";
-import a209 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/albedo_2.png?url";
-import a210 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb?url";
-import a211 from "../../../assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb?url";
-import a212 from "../../../assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb?url";
-import a213 from "../../../assets/library/asset.models.environment.woodland-pine-a/albedo.png?url";
-import a214 from "../../../assets/library/asset.models.environment.woodland-pine-a/albedo_2.png?url";
-import a215 from "../../../assets/library/asset.models.environment.woodland-pine-a/geometry.glb?url";
-import a216 from "../../../assets/library/asset.models.environment.woodland-pine-b/albedo.png?url";
-import a217 from "../../../assets/library/asset.models.environment.woodland-pine-b/albedo_2.png?url";
-import a218 from "../../../assets/library/asset.models.environment.woodland-pine-b/geometry.glb?url";
-import a219 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/albedo.png?url";
-import a220 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/albedo_2.png?url";
-import a221 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb?url";
-import a222 from "../../../assets/library/asset.models.environment.woodland-pine-stump/albedo.png?url";
-import a223 from "../../../assets/library/asset.models.environment.woodland-pine-stump/geometry.glb?url";
-import a224 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/albedo.png?url";
-import a225 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/albedo_2.png?url";
-import a226 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb?url";
-import a227 from "../../../assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb?url";
-import a228 from "../../../assets/library/asset.models.environment.woodland-river-stones/albedo.png?url";
-import a229 from "../../../assets/library/asset.models.environment.woodland-river-stones/albedo_2.png?url";
-import a230 from "../../../assets/library/asset.models.environment.woodland-river-stones/geometry.glb?url";
-import a231 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/albedo.png?url";
-import a232 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/albedo_2.png?url";
-import a233 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb?url";
-import a234 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/albedo.png?url";
-import a235 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/albedo_2.png?url";
-import a236 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb?url";
-import a237 from "../../../assets/library/asset.models.environment.woodland-root-snag/geometry.glb?url";
-import a238 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/albedo.png?url";
-import a239 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/albedo_2.png?url";
-import a240 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb?url";
-import a241 from "../../../assets/library/asset.models.environment.woodland-snapped-root/albedo.png?url";
-import a242 from "../../../assets/library/asset.models.environment.woodland-snapped-root/albedo_2.png?url";
-import a243 from "../../../assets/library/asset.models.environment.woodland-snapped-root/geometry.glb?url";
-import a244 from "../../../assets/library/asset.models.environment.woodland-stone-spring/albedo.png?url";
-import a245 from "../../../assets/library/asset.models.environment.woodland-stone-spring/albedo_2.png?url";
-import a246 from "../../../assets/library/asset.models.environment.woodland-stone-spring/geometry.glb?url";
-import a247 from "../../../assets/library/asset.models.environment.woodland-supply-crate/albedo.png?url";
-import a248 from "../../../assets/library/asset.models.environment.woodland-supply-crate/albedo_2.png?url";
-import a249 from "../../../assets/library/asset.models.environment.woodland-supply-crate/geometry.glb?url";
-import a250 from "../../../assets/library/asset.models.environment.woodland-trail-sign/albedo.png?url";
-import a251 from "../../../assets/library/asset.models.environment.woodland-trail-sign/albedo_2.png?url";
-import a252 from "../../../assets/library/asset.models.environment.woodland-trail-sign/geometry.glb?url";
-import a253 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo.png?url";
-import a254 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo_2.png?url";
-import a255 from "../../../assets/library/asset.models.environment.woodland-woodpile/geometry.glb?url";
-import a256 from "../../../assets/library/asset.models.units.ants-warrior/geometry.glb?url";
-import a257 from "../../../assets/library/asset.models.units.ants-warrior/image.png?url";
-import a258 from "../../../assets/library/asset.placeholder.missing-model/albedo.png?url";
-import a259 from "../../../assets/library/asset.placeholder.missing-model/geometry.glb?url";
-import a260 from "../../../assets/library/asset.terrain.autumn-leaf-litter/albedo.png?url";
-import a261 from "../../../assets/library/asset.terrain.autumn-leaf-litter/data.bin?url";
-import a262 from "../../../assets/library/asset.terrain.autumn-leaf-normal/data.bin?url";
-import a263 from "../../../assets/library/asset.terrain.pebble-normal/data.bin?url";
-import a264 from "../../../assets/library/asset.terrain.pebble-trail/albedo.png?url";
-import a265 from "../../../assets/library/asset.terrain.pebble-trail/data.bin?url";
-import a266 from "../../../assets/library/asset.terrain.winter-dirt-normal/data.bin?url";
-import a267 from "../../../assets/library/asset.terrain.winter-dirt/albedo.png?url";
-import a268 from "../../../assets/library/asset.terrain.winter-dirt/data.bin?url";
-import a269 from "../../../assets/library/asset.terrain.winter-grass-normal/data.bin?url";
-import a270 from "../../../assets/library/asset.terrain.winter-grass/albedo.png?url";
-import a271 from "../../../assets/library/asset.terrain.winter-grass/data.bin?url";
-import a272 from "../../../assets/library/asset.terrain.winter-rock-normal/data.bin?url";
-import a273 from "../../../assets/library/asset.terrain.winter-rock/albedo.png?url";
-import a274 from "../../../assets/library/asset.terrain.winter-rock/data.bin?url";
-import a275 from "../../../assets/library/asset.terrain.winter-soil-normal/data.bin?url";
-import a276 from "../../../assets/library/asset.terrain.winter-soil/albedo.png?url";
-import a277 from "../../../assets/library/asset.terrain.winter-soil/data.bin?url";
-import a278 from "../../../assets/library/asset.terrain.woodland-dirt-normal/data.bin?url";
-import a279 from "../../../assets/library/asset.terrain.woodland-dirt/albedo.png?url";
-import a280 from "../../../assets/library/asset.terrain.woodland-dirt/data.bin?url";
-import a281 from "../../../assets/library/asset.terrain.woodland-grass-normal/data.bin?url";
-import a282 from "../../../assets/library/asset.terrain.woodland-grass/albedo.png?url";
-import a283 from "../../../assets/library/asset.terrain.woodland-grass/data.bin?url";
-import a284 from "../../../assets/library/asset.terrain.woodland-riverbed-normal/data.bin?url";
-import a285 from "../../../assets/library/asset.terrain.woodland-riverbed/albedo.png?url";
-import a286 from "../../../assets/library/asset.terrain.woodland-riverbed/data.bin?url";
-import a287 from "../../../assets/library/asset.terrain.woodland-rock-displacement/data.bin?url";
-import a288 from "../../../assets/library/asset.terrain.woodland-rock-normal/data.bin?url";
-import a289 from "../../../assets/library/asset.terrain.woodland-rock/albedo.png?url";
-import a290 from "../../../assets/library/asset.terrain.woodland-rock/data.bin?url";
-import a291 from "../../../assets/library/asset.terrain.woodland-soil-normal/data.bin?url";
-import a292 from "../../../assets/library/asset.terrain.woodland-soil/albedo.png?url";
-import a293 from "../../../assets/library/asset.terrain.woodland-soil/data.bin?url";
-import a294 from "../../../assets/library/asset.texture.winter-macro/albedo.png?url";
-import a295 from "../../../assets/library/asset.texture.woodland-brdf/data.bin?url";
-import a296 from "../../../assets/library/asset.texture.woodland-brdf/data_2.json?url";
-import a297 from "../../../assets/library/asset.texture.woodland-caustics/albedo.png?url";
-import a298 from "../../../assets/library/asset.texture.woodland-daytime-grades/data.json?url";
-import a299 from "../../../assets/library/asset.texture.woodland-macro/albedo.png?url";
-import a300 from "../../../assets/library/asset.texture.woodland-reflection/data.bin?url";
-import a301 from "../../../assets/library/asset.texture.woodland-reflection/data_2.json?url";
-import a302 from "../../../assets/library/asset.texture.woodland-terrain-ar/albedo.png?url";
-import a303 from "../../../assets/library/asset.texture.woodland-terrain-nh/albedo.png?url";
-import a304 from "../../../assets/library/asset.texture.woodland-waves/albedo.png?url";
-import a305 from "../../../assets/library/asset.textures.forest-giants-bark/albedo.png?url";
-import a306 from "../../../assets/library/asset.textures.forest-giants-mushrooms/albedo.png?url";
-import a307 from "../../../assets/library/image.item-heart-of-the-forest/image.png?url";
-import a308 from "../../../assets/library/image.woodland-bar-rim/image.png?url";
-import a309 from "../../../assets/library/image.woodland-connected-hud/image.png?url";
-import a310 from "../../../assets/library/image.woodland-health-fill/image.png?url";
-import a311 from "../../../assets/library/image.woodland-mana-fill/image.png?url";
-import a312 from "../../../assets/library/image.woodland-satchel/image.png?url";
-import a313 from "../../../assets/library/image.woodland-selection-rim/image.png?url";
-import a314 from "../../../assets/library/image.woodland-square-rim/image.png?url";
-import a315 from "../../../assets/library/recipe.foliage.frozen-bank/definition.json?url";
-import a316 from "../../../assets/library/recipe.foliage.mushroom-patches/definition.json?url";
-import a317 from "../../../assets/library/recipe.foliage.riverbank/definition.json?url";
-import a318 from "../../../assets/library/recipe.forest.autumn/definition.json?url";
-import a319 from "../../../assets/library/recipe.forest.conifer-edge/definition.json?url";
-import a320 from "../../../assets/library/recipe.forest.diverse/definition.json?url";
-import a321 from "../../../assets/library/recipe.forest.frozen/definition.json?url";
-import a322 from "../../../assets/library/recipe.forest.leafy/definition.json?url";
-import a323 from "../../../assets/library/recipe.grass.autumn/definition.json?url";
-import a324 from "../../../assets/library/recipe.grass.meadow/definition.json?url";
-import a325 from "../../../assets/library/recipe.grass.winter/definition.json?url";
-import a326 from "../../../assets/library/recipe.path.grass/definition.json?url";
-import a327 from "../../../assets/library/recipe.path.pebbles/definition.json?url";
-import a328 from "../../../assets/library/recipe.path.soil/definition.json?url";
-import a329 from "../../../assets/library/recipe.river.gentle/definition.json?url";
-import a330 from "../../../assets/library/recipe.river.glacial.water/definition.json?url";
-import a331 from "../../../assets/library/recipe.river.glacial/definition.json?url";
-import a332 from "../../../assets/library/recipe.river.meltwater.water/definition.json?url";
-import a333 from "../../../assets/library/recipe.river.meltwater/definition.json?url";
-import a334 from "../../../assets/library/recipe.river.swift/definition.json?url";
-import a335 from "../../../assets/library/recipe.terrain.bank/definition.json?url";
-import a336 from "../../../assets/library/recipe.terrain.hill/definition.json?url";
-import a337 from "../../../assets/library/recipe.terrain.mountain/definition.json?url";
-import a338 from "../../../assets/library/water.clear-forest/definition.json?url";
-import a339 from "../../../assets/library/water.muddy/definition.json?url";
+import a101 from "../../../assets/library/asset.models.buildings.ants-barracks/albedo.png?url";
+import a102 from "../../../assets/library/asset.models.buildings.ants-barracks/geometry.glb?url";
+import a103 from "../../../assets/library/asset.models.buildings.ants-barracks/image.png?url";
+import a104 from "../../../assets/library/asset.models.buildings.ants-barracks/normal.png?url";
+import a105 from "../../../assets/library/asset.models.buildings.ants-barracks/roughness.png?url";
+import a106 from "../../../assets/library/asset.models.buildings.ants-barracks/team_mask.png?url";
+import a107 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/albedo.png?url";
+import a108 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb?url";
+import a109 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/image.png?url";
+import a110 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/normal.png?url";
+import a111 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/roughness.png?url";
+import a112 from "../../../assets/library/asset.models.buildings.ants-bombardier-workshop/team_mask.png?url";
+import a113 from "../../../assets/library/asset.models.buildings.ants-chitin-works/albedo.png?url";
+import a114 from "../../../assets/library/asset.models.buildings.ants-chitin-works/geometry.glb?url";
+import a115 from "../../../assets/library/asset.models.buildings.ants-chitin-works/image.png?url";
+import a116 from "../../../assets/library/asset.models.buildings.ants-chitin-works/normal.png?url";
+import a117 from "../../../assets/library/asset.models.buildings.ants-chitin-works/roughness.png?url";
+import a118 from "../../../assets/library/asset.models.buildings.ants-chitin-works/team_mask.png?url";
+import a119 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo.png?url";
+import a120 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_2.png?url";
+import a121 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_3.png?url";
+import a122 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_4.png?url";
+import a123 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/albedo_5.png?url";
+import a124 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb?url";
+import a125 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/image.png?url";
+import a126 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/normal.png?url";
+import a127 from "../../../assets/library/asset.models.buildings.ants-mandible-hall/normal_2.png?url";
+import a128 from "../../../assets/library/asset.models.buildings.ants-mound/albedo.png?url";
+import a129 from "../../../assets/library/asset.models.buildings.ants-mound/geometry.glb?url";
+import a130 from "../../../assets/library/asset.models.buildings.ants-mound/image.png?url";
+import a131 from "../../../assets/library/asset.models.buildings.ants-mound/normal.png?url";
+import a132 from "../../../assets/library/asset.models.buildings.ants-mound/roughness.png?url";
+import a133 from "../../../assets/library/asset.models.buildings.ants-mound/team_mask.png?url";
+import a134 from "../../../assets/library/asset.models.buildings.ants-rootworks/albedo.png?url";
+import a135 from "../../../assets/library/asset.models.buildings.ants-rootworks/geometry.glb?url";
+import a136 from "../../../assets/library/asset.models.buildings.ants-rootworks/image.png?url";
+import a137 from "../../../assets/library/asset.models.buildings.ants-rootworks/normal.png?url";
+import a138 from "../../../assets/library/asset.models.buildings.ants-rootworks/roughness.png?url";
+import a139 from "../../../assets/library/asset.models.buildings.ants-rootworks/team_mask.png?url";
+import a140 from "../../../assets/library/asset.models.buildings.ants-watchtower/albedo.png?url";
+import a141 from "../../../assets/library/asset.models.buildings.ants-watchtower/geometry.glb?url";
+import a142 from "../../../assets/library/asset.models.buildings.ants-watchtower/image.png?url";
+import a143 from "../../../assets/library/asset.models.buildings.ants-watchtower/normal.png?url";
+import a144 from "../../../assets/library/asset.models.buildings.ants-watchtower/roughness.png?url";
+import a145 from "../../../assets/library/asset.models.buildings.ants-watchtower/team_mask.png?url";
+import a146 from "../../../assets/library/asset.models.environment.autumn-grass/geometry.glb?url";
+import a147 from "../../../assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb?url";
+import a148 from "../../../assets/library/asset.models.environment.autumn-shrub-copper/albedo.png?url";
+import a149 from "../../../assets/library/asset.models.environment.autumn-shrub-copper/geometry.glb?url";
+import a150 from "../../../assets/library/asset.models.environment.autumn-shrub-gold/albedo.png?url";
+import a151 from "../../../assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb?url";
+import a152 from "../../../assets/library/asset.models.environment.autumn-stump/geometry.glb?url";
+import a153 from "../../../assets/library/asset.models.environment.autumn-tree-copper/albedo.png?url";
+import a154 from "../../../assets/library/asset.models.environment.autumn-tree-copper/geometry.glb?url";
+import a155 from "../../../assets/library/asset.models.environment.autumn-tree-gold/albedo.png?url";
+import a156 from "../../../assets/library/asset.models.environment.autumn-tree-gold/geometry.glb?url";
+import a157 from "../../../assets/library/asset.models.environment.canopy-acorns/geometry.glb?url";
+import a158 from "../../../assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb?url";
+import a159 from "../../../assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb?url";
+import a160 from "../../../assets/library/asset.models.environment.canopy-mushrooms-russet/geometry.glb?url";
+import a161 from "../../../assets/library/asset.models.environment.canopy-oak/geometry.glb?url";
+import a162 from "../../../assets/library/asset.models.environment.canopy-twig/geometry.glb?url";
+import a163 from "../../../assets/library/asset.models.environment.frost-boulder/albedo.png?url";
+import a164 from "../../../assets/library/asset.models.environment.frost-boulder/albedo_2.png?url";
+import a165 from "../../../assets/library/asset.models.environment.frost-boulder/geometry.glb?url";
+import a166 from "../../../assets/library/asset.models.environment.frost-grass/albedo.png?url";
+import a167 from "../../../assets/library/asset.models.environment.frost-grass/geometry.glb?url";
+import a168 from "../../../assets/library/asset.models.environment.frost-log/albedo.png?url";
+import a169 from "../../../assets/library/asset.models.environment.frost-log/albedo_2.png?url";
+import a170 from "../../../assets/library/asset.models.environment.frost-log/geometry.glb?url";
+import a171 from "../../../assets/library/asset.models.environment.frost-pine-a/albedo.png?url";
+import a172 from "../../../assets/library/asset.models.environment.frost-pine-a/albedo_2.png?url";
+import a173 from "../../../assets/library/asset.models.environment.frost-pine-a/geometry.glb?url";
+import a174 from "../../../assets/library/asset.models.environment.frost-pine-b/albedo.png?url";
+import a175 from "../../../assets/library/asset.models.environment.frost-pine-b/albedo_2.png?url";
+import a176 from "../../../assets/library/asset.models.environment.frost-pine-b/geometry.glb?url";
+import a177 from "../../../assets/library/asset.models.environment.frost-pine-sapling/albedo.png?url";
+import a178 from "../../../assets/library/asset.models.environment.frost-pine-sapling/albedo_2.png?url";
+import a179 from "../../../assets/library/asset.models.environment.frost-pine-sapling/geometry.glb?url";
+import a180 from "../../../assets/library/asset.models.environment.frost-rock-ledge/albedo.png?url";
+import a181 from "../../../assets/library/asset.models.environment.frost-rock-ledge/albedo_2.png?url";
+import a182 from "../../../assets/library/asset.models.environment.frost-rock-ledge/geometry.glb?url";
+import a183 from "../../../assets/library/asset.models.environment.frost-snow-grass/albedo.png?url";
+import a184 from "../../../assets/library/asset.models.environment.frost-snow-grass/geometry.glb?url";
+import a185 from "../../../assets/library/asset.models.environment.leafbound-twig-bridge/albedo.png?url";
+import a186 from "../../../assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb?url";
+import a187 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/albedo.png?url";
+import a188 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/albedo_2.png?url";
+import a189 from "../../../assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb?url";
+import a190 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/albedo.png?url";
+import a191 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/albedo_2.png?url";
+import a192 from "../../../assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb?url";
+import a193 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/albedo.png?url";
+import a194 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/albedo_2.png?url";
+import a195 from "../../../assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb?url";
+import a196 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/albedo.png?url";
+import a197 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/albedo_2.png?url";
+import a198 from "../../../assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb?url";
+import a199 from "../../../assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb?url";
+import a200 from "../../../assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb?url";
+import a201 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/albedo.png?url";
+import a202 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/albedo_2.png?url";
+import a203 from "../../../assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb?url";
+import a204 from "../../../assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb?url";
+import a205 from "../../../assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb?url";
+import a206 from "../../../assets/library/asset.models.environment.woodland-daisies/geometry.glb?url";
+import a207 from "../../../assets/library/asset.models.environment.woodland-drift-log/geometry.glb?url";
+import a208 from "../../../assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb?url";
+import a209 from "../../../assets/library/asset.models.environment.woodland-fallen-log/albedo.png?url";
+import a210 from "../../../assets/library/asset.models.environment.woodland-fallen-log/albedo_2.png?url";
+import a211 from "../../../assets/library/asset.models.environment.woodland-fallen-log/geometry.glb?url";
+import a212 from "../../../assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb?url";
+import a213 from "../../../assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb?url";
+import a214 from "../../../assets/library/asset.models.environment.woodland-giant-stump/albedo.png?url";
+import a215 from "../../../assets/library/asset.models.environment.woodland-giant-stump/albedo_2.png?url";
+import a216 from "../../../assets/library/asset.models.environment.woodland-giant-stump/geometry.glb?url";
+import a217 from "../../../assets/library/asset.models.environment.woodland-grass-high-a/albedo.png?url";
+import a218 from "../../../assets/library/asset.models.environment.woodland-grass-high-a/geometry.glb?url";
+import a219 from "../../../assets/library/asset.models.environment.woodland-grass-high-b/albedo.png?url";
+import a220 from "../../../assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb?url";
+import a221 from "../../../assets/library/asset.models.environment.woodland-grass-low/albedo.png?url";
+import a222 from "../../../assets/library/asset.models.environment.woodland-grass-low/geometry.glb?url";
+import a223 from "../../../assets/library/asset.models.environment.woodland-grass-messy/albedo.png?url";
+import a224 from "../../../assets/library/asset.models.environment.woodland-grass-messy/geometry.glb?url";
+import a225 from "../../../assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb?url";
+import a226 from "../../../assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb?url";
+import a227 from "../../../assets/library/asset.models.environment.woodland-hollow-log/albedo.png?url";
+import a228 from "../../../assets/library/asset.models.environment.woodland-hollow-log/albedo_2.png?url";
+import a229 from "../../../assets/library/asset.models.environment.woodland-hollow-log/geometry.glb?url";
+import a230 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/albedo.png?url";
+import a231 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/albedo_2.png?url";
+import a232 from "../../../assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb?url";
+import a233 from "../../../assets/library/asset.models.environment.woodland-lily-a/geometry.glb?url";
+import a234 from "../../../assets/library/asset.models.environment.woodland-lily-b/geometry.glb?url";
+import a235 from "../../../assets/library/asset.models.environment.woodland-log-bench/albedo.png?url";
+import a236 from "../../../assets/library/asset.models.environment.woodland-log-bench/albedo_2.png?url";
+import a237 from "../../../assets/library/asset.models.environment.woodland-log-bench/geometry.glb?url";
+import a238 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/albedo.png?url";
+import a239 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/albedo_2.png?url";
+import a240 from "../../../assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb?url";
+import a241 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/albedo.png?url";
+import a242 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/albedo_2.png?url";
+import a243 from "../../../assets/library/asset.models.environment.woodland-mushroom-cluster/geometry.glb?url";
+import a244 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/albedo.png?url";
+import a245 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/albedo_2.png?url";
+import a246 from "../../../assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb?url";
+import a247 from "../../../assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb?url";
+import a248 from "../../../assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb?url";
+import a249 from "../../../assets/library/asset.models.environment.woodland-pine-a/albedo.png?url";
+import a250 from "../../../assets/library/asset.models.environment.woodland-pine-a/albedo_2.png?url";
+import a251 from "../../../assets/library/asset.models.environment.woodland-pine-a/geometry.glb?url";
+import a252 from "../../../assets/library/asset.models.environment.woodland-pine-b/albedo.png?url";
+import a253 from "../../../assets/library/asset.models.environment.woodland-pine-b/albedo_2.png?url";
+import a254 from "../../../assets/library/asset.models.environment.woodland-pine-b/geometry.glb?url";
+import a255 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/albedo.png?url";
+import a256 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/albedo_2.png?url";
+import a257 from "../../../assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb?url";
+import a258 from "../../../assets/library/asset.models.environment.woodland-pine-stump/albedo.png?url";
+import a259 from "../../../assets/library/asset.models.environment.woodland-pine-stump/geometry.glb?url";
+import a260 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/albedo.png?url";
+import a261 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/albedo_2.png?url";
+import a262 from "../../../assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb?url";
+import a263 from "../../../assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb?url";
+import a264 from "../../../assets/library/asset.models.environment.woodland-river-stones/albedo.png?url";
+import a265 from "../../../assets/library/asset.models.environment.woodland-river-stones/albedo_2.png?url";
+import a266 from "../../../assets/library/asset.models.environment.woodland-river-stones/geometry.glb?url";
+import a267 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/albedo.png?url";
+import a268 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/albedo_2.png?url";
+import a269 from "../../../assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb?url";
+import a270 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/albedo.png?url";
+import a271 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/albedo_2.png?url";
+import a272 from "../../../assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb?url";
+import a273 from "../../../assets/library/asset.models.environment.woodland-root-snag/geometry.glb?url";
+import a274 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/albedo.png?url";
+import a275 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/albedo_2.png?url";
+import a276 from "../../../assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb?url";
+import a277 from "../../../assets/library/asset.models.environment.woodland-snapped-root/albedo.png?url";
+import a278 from "../../../assets/library/asset.models.environment.woodland-snapped-root/albedo_2.png?url";
+import a279 from "../../../assets/library/asset.models.environment.woodland-snapped-root/geometry.glb?url";
+import a280 from "../../../assets/library/asset.models.environment.woodland-stone-spring/albedo.png?url";
+import a281 from "../../../assets/library/asset.models.environment.woodland-stone-spring/albedo_2.png?url";
+import a282 from "../../../assets/library/asset.models.environment.woodland-stone-spring/geometry.glb?url";
+import a283 from "../../../assets/library/asset.models.environment.woodland-supply-crate/albedo.png?url";
+import a284 from "../../../assets/library/asset.models.environment.woodland-supply-crate/albedo_2.png?url";
+import a285 from "../../../assets/library/asset.models.environment.woodland-supply-crate/geometry.glb?url";
+import a286 from "../../../assets/library/asset.models.environment.woodland-trail-sign/albedo.png?url";
+import a287 from "../../../assets/library/asset.models.environment.woodland-trail-sign/albedo_2.png?url";
+import a288 from "../../../assets/library/asset.models.environment.woodland-trail-sign/geometry.glb?url";
+import a289 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo.png?url";
+import a290 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo_2.png?url";
+import a291 from "../../../assets/library/asset.models.environment.woodland-woodpile/geometry.glb?url";
+import a292 from "../../../assets/library/asset.models.resources.amber-deposit/albedo.png?url";
+import a293 from "../../../assets/library/asset.models.resources.amber-deposit/geometry.glb?url";
+import a294 from "../../../assets/library/asset.models.resources.amber-deposit/image.png?url";
+import a295 from "../../../assets/library/asset.models.resources.amber-deposit/normal.png?url";
+import a296 from "../../../assets/library/asset.models.resources.amber-deposit/roughness.png?url";
+import a297 from "../../../assets/library/asset.models.resources.corrupted-root/geometry.glb?url";
+import a298 from "../../../assets/library/asset.models.resources.corrupted-root/image.png?url";
+import a299 from "../../../assets/library/asset.models.units.ants-archer/albedo.png?url";
+import a300 from "../../../assets/library/asset.models.units.ants-archer/geometry.glb?url";
+import a301 from "../../../assets/library/asset.models.units.ants-archer/image.png?url";
+import a302 from "../../../assets/library/asset.models.units.ants-archer/team_mask.png?url";
+import a303 from "../../../assets/library/asset.models.units.ants-bombardier/albedo.png?url";
+import a304 from "../../../assets/library/asset.models.units.ants-bombardier/geometry.glb?url";
+import a305 from "../../../assets/library/asset.models.units.ants-bombardier/image.png?url";
+import a306 from "../../../assets/library/asset.models.units.ants-bombardier/team_mask.png?url";
+import a307 from "../../../assets/library/asset.models.units.ants-warrior/geometry.glb?url";
+import a308 from "../../../assets/library/asset.models.units.ants-warrior/image.png?url";
+import a309 from "../../../assets/library/asset.models.units.ants-worker/albedo.png?url";
+import a310 from "../../../assets/library/asset.models.units.ants-worker/geometry.glb?url";
+import a311 from "../../../assets/library/asset.models.units.ants-worker/geometry_2.glb?url";
+import a312 from "../../../assets/library/asset.models.units.ants-worker/geometry_3.glb?url";
+import a313 from "../../../assets/library/asset.models.units.ants-worker/geometry_4.glb?url";
+import a314 from "../../../assets/library/asset.models.units.ants-worker/image.png?url";
+import a315 from "../../../assets/library/asset.models.units.ants-worker/team_mask.png?url";
+import a316 from "../../../assets/library/asset.placeholder.missing-model/albedo.png?url";
+import a317 from "../../../assets/library/asset.placeholder.missing-model/geometry.glb?url";
+import a318 from "../../../assets/library/asset.terrain.autumn-leaf-litter/albedo.png?url";
+import a319 from "../../../assets/library/asset.terrain.autumn-leaf-litter/data.bin?url";
+import a320 from "../../../assets/library/asset.terrain.autumn-leaf-normal/data.bin?url";
+import a321 from "../../../assets/library/asset.terrain.pebble-normal/data.bin?url";
+import a322 from "../../../assets/library/asset.terrain.pebble-trail/albedo.png?url";
+import a323 from "../../../assets/library/asset.terrain.pebble-trail/data.bin?url";
+import a324 from "../../../assets/library/asset.terrain.winter-dirt-normal/data.bin?url";
+import a325 from "../../../assets/library/asset.terrain.winter-dirt/albedo.png?url";
+import a326 from "../../../assets/library/asset.terrain.winter-dirt/data.bin?url";
+import a327 from "../../../assets/library/asset.terrain.winter-grass-normal/data.bin?url";
+import a328 from "../../../assets/library/asset.terrain.winter-grass/albedo.png?url";
+import a329 from "../../../assets/library/asset.terrain.winter-grass/data.bin?url";
+import a330 from "../../../assets/library/asset.terrain.winter-rock-normal/data.bin?url";
+import a331 from "../../../assets/library/asset.terrain.winter-rock/albedo.png?url";
+import a332 from "../../../assets/library/asset.terrain.winter-rock/data.bin?url";
+import a333 from "../../../assets/library/asset.terrain.winter-soil-normal/data.bin?url";
+import a334 from "../../../assets/library/asset.terrain.winter-soil/albedo.png?url";
+import a335 from "../../../assets/library/asset.terrain.winter-soil/data.bin?url";
+import a336 from "../../../assets/library/asset.terrain.woodland-dirt-normal/data.bin?url";
+import a337 from "../../../assets/library/asset.terrain.woodland-dirt/albedo.png?url";
+import a338 from "../../../assets/library/asset.terrain.woodland-dirt/data.bin?url";
+import a339 from "../../../assets/library/asset.terrain.woodland-grass-normal/data.bin?url";
+import a340 from "../../../assets/library/asset.terrain.woodland-grass/albedo.png?url";
+import a341 from "../../../assets/library/asset.terrain.woodland-grass/data.bin?url";
+import a342 from "../../../assets/library/asset.terrain.woodland-riverbed-normal/data.bin?url";
+import a343 from "../../../assets/library/asset.terrain.woodland-riverbed/albedo.png?url";
+import a344 from "../../../assets/library/asset.terrain.woodland-riverbed/data.bin?url";
+import a345 from "../../../assets/library/asset.terrain.woodland-rock-displacement/data.bin?url";
+import a346 from "../../../assets/library/asset.terrain.woodland-rock-normal/data.bin?url";
+import a347 from "../../../assets/library/asset.terrain.woodland-rock/albedo.png?url";
+import a348 from "../../../assets/library/asset.terrain.woodland-rock/data.bin?url";
+import a349 from "../../../assets/library/asset.terrain.woodland-soil-normal/data.bin?url";
+import a350 from "../../../assets/library/asset.terrain.woodland-soil/albedo.png?url";
+import a351 from "../../../assets/library/asset.terrain.woodland-soil/data.bin?url";
+import a352 from "../../../assets/library/asset.texture.winter-macro/albedo.png?url";
+import a353 from "../../../assets/library/asset.texture.woodland-brdf/data.bin?url";
+import a354 from "../../../assets/library/asset.texture.woodland-brdf/data_2.json?url";
+import a355 from "../../../assets/library/asset.texture.woodland-caustics/albedo.png?url";
+import a356 from "../../../assets/library/asset.texture.woodland-daytime-grades/data.json?url";
+import a357 from "../../../assets/library/asset.texture.woodland-macro/albedo.png?url";
+import a358 from "../../../assets/library/asset.texture.woodland-reflection/data.bin?url";
+import a359 from "../../../assets/library/asset.texture.woodland-reflection/data_2.json?url";
+import a360 from "../../../assets/library/asset.texture.woodland-terrain-ar/albedo.png?url";
+import a361 from "../../../assets/library/asset.texture.woodland-terrain-nh/albedo.png?url";
+import a362 from "../../../assets/library/asset.texture.woodland-waves/albedo.png?url";
+import a363 from "../../../assets/library/asset.textures.forest-giants-bark/albedo.png?url";
+import a364 from "../../../assets/library/asset.textures.forest-giants-mushrooms/albedo.png?url";
+import a365 from "../../../assets/library/image.item-heart-of-the-forest/image.png?url";
+import a366 from "../../../assets/library/image.woodland-bar-rim/image.png?url";
+import a367 from "../../../assets/library/image.woodland-connected-hud/image.png?url";
+import a368 from "../../../assets/library/image.woodland-health-fill/image.png?url";
+import a369 from "../../../assets/library/image.woodland-mana-fill/image.png?url";
+import a370 from "../../../assets/library/image.woodland-satchel/image.png?url";
+import a371 from "../../../assets/library/image.woodland-selection-rim/image.png?url";
+import a372 from "../../../assets/library/image.woodland-square-rim/image.png?url";
+import a373 from "../../../assets/library/recipe.foliage.frozen-bank/definition.json?url";
+import a374 from "../../../assets/library/recipe.foliage.mushroom-patches/definition.json?url";
+import a375 from "../../../assets/library/recipe.foliage.riverbank/definition.json?url";
+import a376 from "../../../assets/library/recipe.forest.autumn/definition.json?url";
+import a377 from "../../../assets/library/recipe.forest.conifer-edge/definition.json?url";
+import a378 from "../../../assets/library/recipe.forest.diverse/definition.json?url";
+import a379 from "../../../assets/library/recipe.forest.frozen/definition.json?url";
+import a380 from "../../../assets/library/recipe.forest.leafy/definition.json?url";
+import a381 from "../../../assets/library/recipe.grass.autumn/definition.json?url";
+import a382 from "../../../assets/library/recipe.grass.meadow/definition.json?url";
+import a383 from "../../../assets/library/recipe.grass.winter/definition.json?url";
+import a384 from "../../../assets/library/recipe.path.grass/definition.json?url";
+import a385 from "../../../assets/library/recipe.path.pebbles/definition.json?url";
+import a386 from "../../../assets/library/recipe.path.soil/definition.json?url";
+import a387 from "../../../assets/library/recipe.river.gentle/definition.json?url";
+import a388 from "../../../assets/library/recipe.river.glacial.water/definition.json?url";
+import a389 from "../../../assets/library/recipe.river.glacial/definition.json?url";
+import a390 from "../../../assets/library/recipe.river.meltwater.water/definition.json?url";
+import a391 from "../../../assets/library/recipe.river.meltwater/definition.json?url";
+import a392 from "../../../assets/library/recipe.river.swift/definition.json?url";
+import a393 from "../../../assets/library/recipe.terrain.bank/definition.json?url";
+import a394 from "../../../assets/library/recipe.terrain.hill/definition.json?url";
+import a395 from "../../../assets/library/recipe.terrain.mountain/definition.json?url";
+import a396 from "../../../assets/library/water.clear-forest/definition.json?url";
+import a397 from "../../../assets/library/water.muddy/definition.json?url";
 export const assetUrls:Readonly<Record<string,string>> = {
 "assets/library/asset.icons.ability-ants-carapace/image.png":a0,
 "assets/library/asset.icons.ability-ants-crownfall/image.png":a1,
@@ -441,243 +499,301 @@ export const assetUrls:Readonly<Record<string,string>> = {
 "assets/library/asset.models.buildings.ants-acorn-hall/normal.png":a98,
 "assets/library/asset.models.buildings.ants-acorn-hall/roughness.png":a99,
 "assets/library/asset.models.buildings.ants-acorn-hall/team_mask.png":a100,
-"assets/library/asset.models.buildings.ants-mandible-hall/albedo.png":a101,
-"assets/library/asset.models.buildings.ants-mandible-hall/albedo_2.png":a102,
-"assets/library/asset.models.buildings.ants-mandible-hall/albedo_3.png":a103,
-"assets/library/asset.models.buildings.ants-mandible-hall/albedo_4.png":a104,
-"assets/library/asset.models.buildings.ants-mandible-hall/albedo_5.png":a105,
-"assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb":a106,
-"assets/library/asset.models.buildings.ants-mandible-hall/image.png":a107,
-"assets/library/asset.models.buildings.ants-mandible-hall/normal.png":a108,
-"assets/library/asset.models.buildings.ants-mandible-hall/normal_2.png":a109,
-"assets/library/asset.models.environment.autumn-grass/geometry.glb":a110,
-"assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb":a111,
-"assets/library/asset.models.environment.autumn-shrub-copper/albedo.png":a112,
-"assets/library/asset.models.environment.autumn-shrub-copper/geometry.glb":a113,
-"assets/library/asset.models.environment.autumn-shrub-gold/albedo.png":a114,
-"assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb":a115,
-"assets/library/asset.models.environment.autumn-stump/geometry.glb":a116,
-"assets/library/asset.models.environment.autumn-tree-copper/albedo.png":a117,
-"assets/library/asset.models.environment.autumn-tree-copper/geometry.glb":a118,
-"assets/library/asset.models.environment.autumn-tree-gold/albedo.png":a119,
-"assets/library/asset.models.environment.autumn-tree-gold/geometry.glb":a120,
-"assets/library/asset.models.environment.canopy-acorns/geometry.glb":a121,
-"assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb":a122,
-"assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb":a123,
-"assets/library/asset.models.environment.canopy-mushrooms-russet/geometry.glb":a124,
-"assets/library/asset.models.environment.canopy-oak/geometry.glb":a125,
-"assets/library/asset.models.environment.canopy-twig/geometry.glb":a126,
-"assets/library/asset.models.environment.frost-boulder/albedo.png":a127,
-"assets/library/asset.models.environment.frost-boulder/albedo_2.png":a128,
-"assets/library/asset.models.environment.frost-boulder/geometry.glb":a129,
-"assets/library/asset.models.environment.frost-grass/albedo.png":a130,
-"assets/library/asset.models.environment.frost-grass/geometry.glb":a131,
-"assets/library/asset.models.environment.frost-log/albedo.png":a132,
-"assets/library/asset.models.environment.frost-log/albedo_2.png":a133,
-"assets/library/asset.models.environment.frost-log/geometry.glb":a134,
-"assets/library/asset.models.environment.frost-pine-a/albedo.png":a135,
-"assets/library/asset.models.environment.frost-pine-a/albedo_2.png":a136,
-"assets/library/asset.models.environment.frost-pine-a/geometry.glb":a137,
-"assets/library/asset.models.environment.frost-pine-b/albedo.png":a138,
-"assets/library/asset.models.environment.frost-pine-b/albedo_2.png":a139,
-"assets/library/asset.models.environment.frost-pine-b/geometry.glb":a140,
-"assets/library/asset.models.environment.frost-pine-sapling/albedo.png":a141,
-"assets/library/asset.models.environment.frost-pine-sapling/albedo_2.png":a142,
-"assets/library/asset.models.environment.frost-pine-sapling/geometry.glb":a143,
-"assets/library/asset.models.environment.frost-rock-ledge/albedo.png":a144,
-"assets/library/asset.models.environment.frost-rock-ledge/albedo_2.png":a145,
-"assets/library/asset.models.environment.frost-rock-ledge/geometry.glb":a146,
-"assets/library/asset.models.environment.frost-snow-grass/albedo.png":a147,
-"assets/library/asset.models.environment.frost-snow-grass/geometry.glb":a148,
-"assets/library/asset.models.environment.leafbound-twig-bridge/albedo.png":a149,
-"assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb":a150,
-"assets/library/asset.models.environment.woodland-abandoned-camp/albedo.png":a151,
-"assets/library/asset.models.environment.woodland-abandoned-camp/albedo_2.png":a152,
-"assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb":a153,
-"assets/library/asset.models.environment.woodland-acorn-cache/albedo.png":a154,
-"assets/library/asset.models.environment.woodland-acorn-cache/albedo_2.png":a155,
-"assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb":a156,
-"assets/library/asset.models.environment.woodland-amber-deposit/albedo.png":a157,
-"assets/library/asset.models.environment.woodland-amber-deposit/albedo_2.png":a158,
-"assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb":a159,
-"assets/library/asset.models.environment.woodland-amber-lantern/albedo.png":a160,
-"assets/library/asset.models.environment.woodland-amber-lantern/albedo_2.png":a161,
-"assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb":a162,
-"assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb":a163,
-"assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb":a164,
-"assets/library/asset.models.environment.woodland-broken-trader-cart/albedo.png":a165,
-"assets/library/asset.models.environment.woodland-broken-trader-cart/albedo_2.png":a166,
-"assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb":a167,
-"assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb":a168,
-"assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb":a169,
-"assets/library/asset.models.environment.woodland-daisies/geometry.glb":a170,
-"assets/library/asset.models.environment.woodland-drift-log/geometry.glb":a171,
-"assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb":a172,
-"assets/library/asset.models.environment.woodland-fallen-log/albedo.png":a173,
-"assets/library/asset.models.environment.woodland-fallen-log/albedo_2.png":a174,
-"assets/library/asset.models.environment.woodland-fallen-log/geometry.glb":a175,
-"assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb":a176,
-"assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb":a177,
-"assets/library/asset.models.environment.woodland-giant-stump/albedo.png":a178,
-"assets/library/asset.models.environment.woodland-giant-stump/albedo_2.png":a179,
-"assets/library/asset.models.environment.woodland-giant-stump/geometry.glb":a180,
-"assets/library/asset.models.environment.woodland-grass-high-a/albedo.png":a181,
-"assets/library/asset.models.environment.woodland-grass-high-a/geometry.glb":a182,
-"assets/library/asset.models.environment.woodland-grass-high-b/albedo.png":a183,
-"assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb":a184,
-"assets/library/asset.models.environment.woodland-grass-low/albedo.png":a185,
-"assets/library/asset.models.environment.woodland-grass-low/geometry.glb":a186,
-"assets/library/asset.models.environment.woodland-grass-messy/albedo.png":a187,
-"assets/library/asset.models.environment.woodland-grass-messy/geometry.glb":a188,
-"assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb":a189,
-"assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb":a190,
-"assets/library/asset.models.environment.woodland-hollow-log/albedo.png":a191,
-"assets/library/asset.models.environment.woodland-hollow-log/albedo_2.png":a192,
-"assets/library/asset.models.environment.woodland-hollow-log/geometry.glb":a193,
-"assets/library/asset.models.environment.woodland-leaf-shelter/albedo.png":a194,
-"assets/library/asset.models.environment.woodland-leaf-shelter/albedo_2.png":a195,
-"assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb":a196,
-"assets/library/asset.models.environment.woodland-lily-a/geometry.glb":a197,
-"assets/library/asset.models.environment.woodland-lily-b/geometry.glb":a198,
-"assets/library/asset.models.environment.woodland-log-bench/albedo.png":a199,
-"assets/library/asset.models.environment.woodland-log-bench/albedo_2.png":a200,
-"assets/library/asset.models.environment.woodland-log-bench/geometry.glb":a201,
-"assets/library/asset.models.environment.woodland-moss-boulder/albedo.png":a202,
-"assets/library/asset.models.environment.woodland-moss-boulder/albedo_2.png":a203,
-"assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb":a204,
-"assets/library/asset.models.environment.woodland-mushroom-cluster/albedo.png":a205,
-"assets/library/asset.models.environment.woodland-mushroom-cluster/albedo_2.png":a206,
-"assets/library/asset.models.environment.woodland-mushroom-cluster/geometry.glb":a207,
-"assets/library/asset.models.environment.woodland-mushroom-lantern/albedo.png":a208,
-"assets/library/asset.models.environment.woodland-mushroom-lantern/albedo_2.png":a209,
-"assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb":a210,
-"assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb":a211,
-"assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb":a212,
-"assets/library/asset.models.environment.woodland-pine-a/albedo.png":a213,
-"assets/library/asset.models.environment.woodland-pine-a/albedo_2.png":a214,
-"assets/library/asset.models.environment.woodland-pine-a/geometry.glb":a215,
-"assets/library/asset.models.environment.woodland-pine-b/albedo.png":a216,
-"assets/library/asset.models.environment.woodland-pine-b/albedo_2.png":a217,
-"assets/library/asset.models.environment.woodland-pine-b/geometry.glb":a218,
-"assets/library/asset.models.environment.woodland-pine-sapling/albedo.png":a219,
-"assets/library/asset.models.environment.woodland-pine-sapling/albedo_2.png":a220,
-"assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb":a221,
-"assets/library/asset.models.environment.woodland-pine-stump/albedo.png":a222,
-"assets/library/asset.models.environment.woodland-pine-stump/geometry.glb":a223,
-"assets/library/asset.models.environment.woodland-rain-barrel/albedo.png":a224,
-"assets/library/asset.models.environment.woodland-rain-barrel/albedo_2.png":a225,
-"assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb":a226,
-"assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb":a227,
-"assets/library/asset.models.environment.woodland-river-stones/albedo.png":a228,
-"assets/library/asset.models.environment.woodland-river-stones/albedo_2.png":a229,
-"assets/library/asset.models.environment.woodland-river-stones/geometry.glb":a230,
-"assets/library/asset.models.environment.woodland-rock-ledge/albedo.png":a231,
-"assets/library/asset.models.environment.woodland-rock-ledge/albedo_2.png":a232,
-"assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb":a233,
-"assets/library/asset.models.environment.woodland-root-arch-bridge/albedo.png":a234,
-"assets/library/asset.models.environment.woodland-root-arch-bridge/albedo_2.png":a235,
-"assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb":a236,
-"assets/library/asset.models.environment.woodland-root-snag/geometry.glb":a237,
-"assets/library/asset.models.environment.woodland-ruined-watchtower/albedo.png":a238,
-"assets/library/asset.models.environment.woodland-ruined-watchtower/albedo_2.png":a239,
-"assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb":a240,
-"assets/library/asset.models.environment.woodland-snapped-root/albedo.png":a241,
-"assets/library/asset.models.environment.woodland-snapped-root/albedo_2.png":a242,
-"assets/library/asset.models.environment.woodland-snapped-root/geometry.glb":a243,
-"assets/library/asset.models.environment.woodland-stone-spring/albedo.png":a244,
-"assets/library/asset.models.environment.woodland-stone-spring/albedo_2.png":a245,
-"assets/library/asset.models.environment.woodland-stone-spring/geometry.glb":a246,
-"assets/library/asset.models.environment.woodland-supply-crate/albedo.png":a247,
-"assets/library/asset.models.environment.woodland-supply-crate/albedo_2.png":a248,
-"assets/library/asset.models.environment.woodland-supply-crate/geometry.glb":a249,
-"assets/library/asset.models.environment.woodland-trail-sign/albedo.png":a250,
-"assets/library/asset.models.environment.woodland-trail-sign/albedo_2.png":a251,
-"assets/library/asset.models.environment.woodland-trail-sign/geometry.glb":a252,
-"assets/library/asset.models.environment.woodland-woodpile/albedo.png":a253,
-"assets/library/asset.models.environment.woodland-woodpile/albedo_2.png":a254,
-"assets/library/asset.models.environment.woodland-woodpile/geometry.glb":a255,
-"assets/library/asset.models.units.ants-warrior/geometry.glb":a256,
-"assets/library/asset.models.units.ants-warrior/image.png":a257,
-"assets/library/asset.placeholder.missing-model/albedo.png":a258,
-"assets/library/asset.placeholder.missing-model/geometry.glb":a259,
-"assets/library/asset.terrain.autumn-leaf-litter/albedo.png":a260,
-"assets/library/asset.terrain.autumn-leaf-litter/data.bin":a261,
-"assets/library/asset.terrain.autumn-leaf-normal/data.bin":a262,
-"assets/library/asset.terrain.pebble-normal/data.bin":a263,
-"assets/library/asset.terrain.pebble-trail/albedo.png":a264,
-"assets/library/asset.terrain.pebble-trail/data.bin":a265,
-"assets/library/asset.terrain.winter-dirt-normal/data.bin":a266,
-"assets/library/asset.terrain.winter-dirt/albedo.png":a267,
-"assets/library/asset.terrain.winter-dirt/data.bin":a268,
-"assets/library/asset.terrain.winter-grass-normal/data.bin":a269,
-"assets/library/asset.terrain.winter-grass/albedo.png":a270,
-"assets/library/asset.terrain.winter-grass/data.bin":a271,
-"assets/library/asset.terrain.winter-rock-normal/data.bin":a272,
-"assets/library/asset.terrain.winter-rock/albedo.png":a273,
-"assets/library/asset.terrain.winter-rock/data.bin":a274,
-"assets/library/asset.terrain.winter-soil-normal/data.bin":a275,
-"assets/library/asset.terrain.winter-soil/albedo.png":a276,
-"assets/library/asset.terrain.winter-soil/data.bin":a277,
-"assets/library/asset.terrain.woodland-dirt-normal/data.bin":a278,
-"assets/library/asset.terrain.woodland-dirt/albedo.png":a279,
-"assets/library/asset.terrain.woodland-dirt/data.bin":a280,
-"assets/library/asset.terrain.woodland-grass-normal/data.bin":a281,
-"assets/library/asset.terrain.woodland-grass/albedo.png":a282,
-"assets/library/asset.terrain.woodland-grass/data.bin":a283,
-"assets/library/asset.terrain.woodland-riverbed-normal/data.bin":a284,
-"assets/library/asset.terrain.woodland-riverbed/albedo.png":a285,
-"assets/library/asset.terrain.woodland-riverbed/data.bin":a286,
-"assets/library/asset.terrain.woodland-rock-displacement/data.bin":a287,
-"assets/library/asset.terrain.woodland-rock-normal/data.bin":a288,
-"assets/library/asset.terrain.woodland-rock/albedo.png":a289,
-"assets/library/asset.terrain.woodland-rock/data.bin":a290,
-"assets/library/asset.terrain.woodland-soil-normal/data.bin":a291,
-"assets/library/asset.terrain.woodland-soil/albedo.png":a292,
-"assets/library/asset.terrain.woodland-soil/data.bin":a293,
-"assets/library/asset.texture.winter-macro/albedo.png":a294,
-"assets/library/asset.texture.woodland-brdf/data.bin":a295,
-"assets/library/asset.texture.woodland-brdf/data_2.json":a296,
-"assets/library/asset.texture.woodland-caustics/albedo.png":a297,
-"assets/library/asset.texture.woodland-daytime-grades/data.json":a298,
-"assets/library/asset.texture.woodland-macro/albedo.png":a299,
-"assets/library/asset.texture.woodland-reflection/data.bin":a300,
-"assets/library/asset.texture.woodland-reflection/data_2.json":a301,
-"assets/library/asset.texture.woodland-terrain-ar/albedo.png":a302,
-"assets/library/asset.texture.woodland-terrain-nh/albedo.png":a303,
-"assets/library/asset.texture.woodland-waves/albedo.png":a304,
-"assets/library/asset.textures.forest-giants-bark/albedo.png":a305,
-"assets/library/asset.textures.forest-giants-mushrooms/albedo.png":a306,
-"assets/library/image.item-heart-of-the-forest/image.png":a307,
-"assets/library/image.woodland-bar-rim/image.png":a308,
-"assets/library/image.woodland-connected-hud/image.png":a309,
-"assets/library/image.woodland-health-fill/image.png":a310,
-"assets/library/image.woodland-mana-fill/image.png":a311,
-"assets/library/image.woodland-satchel/image.png":a312,
-"assets/library/image.woodland-selection-rim/image.png":a313,
-"assets/library/image.woodland-square-rim/image.png":a314,
-"assets/library/recipe.foliage.frozen-bank/definition.json":a315,
-"assets/library/recipe.foliage.mushroom-patches/definition.json":a316,
-"assets/library/recipe.foliage.riverbank/definition.json":a317,
-"assets/library/recipe.forest.autumn/definition.json":a318,
-"assets/library/recipe.forest.conifer-edge/definition.json":a319,
-"assets/library/recipe.forest.diverse/definition.json":a320,
-"assets/library/recipe.forest.frozen/definition.json":a321,
-"assets/library/recipe.forest.leafy/definition.json":a322,
-"assets/library/recipe.grass.autumn/definition.json":a323,
-"assets/library/recipe.grass.meadow/definition.json":a324,
-"assets/library/recipe.grass.winter/definition.json":a325,
-"assets/library/recipe.path.grass/definition.json":a326,
-"assets/library/recipe.path.pebbles/definition.json":a327,
-"assets/library/recipe.path.soil/definition.json":a328,
-"assets/library/recipe.river.gentle/definition.json":a329,
-"assets/library/recipe.river.glacial.water/definition.json":a330,
-"assets/library/recipe.river.glacial/definition.json":a331,
-"assets/library/recipe.river.meltwater.water/definition.json":a332,
-"assets/library/recipe.river.meltwater/definition.json":a333,
-"assets/library/recipe.river.swift/definition.json":a334,
-"assets/library/recipe.terrain.bank/definition.json":a335,
-"assets/library/recipe.terrain.hill/definition.json":a336,
-"assets/library/recipe.terrain.mountain/definition.json":a337,
-"assets/library/water.clear-forest/definition.json":a338,
-"assets/library/water.muddy/definition.json":a339,
+"assets/library/asset.models.buildings.ants-barracks/albedo.png":a101,
+"assets/library/asset.models.buildings.ants-barracks/geometry.glb":a102,
+"assets/library/asset.models.buildings.ants-barracks/image.png":a103,
+"assets/library/asset.models.buildings.ants-barracks/normal.png":a104,
+"assets/library/asset.models.buildings.ants-barracks/roughness.png":a105,
+"assets/library/asset.models.buildings.ants-barracks/team_mask.png":a106,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/albedo.png":a107,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb":a108,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/image.png":a109,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/normal.png":a110,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/roughness.png":a111,
+"assets/library/asset.models.buildings.ants-bombardier-workshop/team_mask.png":a112,
+"assets/library/asset.models.buildings.ants-chitin-works/albedo.png":a113,
+"assets/library/asset.models.buildings.ants-chitin-works/geometry.glb":a114,
+"assets/library/asset.models.buildings.ants-chitin-works/image.png":a115,
+"assets/library/asset.models.buildings.ants-chitin-works/normal.png":a116,
+"assets/library/asset.models.buildings.ants-chitin-works/roughness.png":a117,
+"assets/library/asset.models.buildings.ants-chitin-works/team_mask.png":a118,
+"assets/library/asset.models.buildings.ants-mandible-hall/albedo.png":a119,
+"assets/library/asset.models.buildings.ants-mandible-hall/albedo_2.png":a120,
+"assets/library/asset.models.buildings.ants-mandible-hall/albedo_3.png":a121,
+"assets/library/asset.models.buildings.ants-mandible-hall/albedo_4.png":a122,
+"assets/library/asset.models.buildings.ants-mandible-hall/albedo_5.png":a123,
+"assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb":a124,
+"assets/library/asset.models.buildings.ants-mandible-hall/image.png":a125,
+"assets/library/asset.models.buildings.ants-mandible-hall/normal.png":a126,
+"assets/library/asset.models.buildings.ants-mandible-hall/normal_2.png":a127,
+"assets/library/asset.models.buildings.ants-mound/albedo.png":a128,
+"assets/library/asset.models.buildings.ants-mound/geometry.glb":a129,
+"assets/library/asset.models.buildings.ants-mound/image.png":a130,
+"assets/library/asset.models.buildings.ants-mound/normal.png":a131,
+"assets/library/asset.models.buildings.ants-mound/roughness.png":a132,
+"assets/library/asset.models.buildings.ants-mound/team_mask.png":a133,
+"assets/library/asset.models.buildings.ants-rootworks/albedo.png":a134,
+"assets/library/asset.models.buildings.ants-rootworks/geometry.glb":a135,
+"assets/library/asset.models.buildings.ants-rootworks/image.png":a136,
+"assets/library/asset.models.buildings.ants-rootworks/normal.png":a137,
+"assets/library/asset.models.buildings.ants-rootworks/roughness.png":a138,
+"assets/library/asset.models.buildings.ants-rootworks/team_mask.png":a139,
+"assets/library/asset.models.buildings.ants-watchtower/albedo.png":a140,
+"assets/library/asset.models.buildings.ants-watchtower/geometry.glb":a141,
+"assets/library/asset.models.buildings.ants-watchtower/image.png":a142,
+"assets/library/asset.models.buildings.ants-watchtower/normal.png":a143,
+"assets/library/asset.models.buildings.ants-watchtower/roughness.png":a144,
+"assets/library/asset.models.buildings.ants-watchtower/team_mask.png":a145,
+"assets/library/asset.models.environment.autumn-grass/geometry.glb":a146,
+"assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb":a147,
+"assets/library/asset.models.environment.autumn-shrub-copper/albedo.png":a148,
+"assets/library/asset.models.environment.autumn-shrub-copper/geometry.glb":a149,
+"assets/library/asset.models.environment.autumn-shrub-gold/albedo.png":a150,
+"assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb":a151,
+"assets/library/asset.models.environment.autumn-stump/geometry.glb":a152,
+"assets/library/asset.models.environment.autumn-tree-copper/albedo.png":a153,
+"assets/library/asset.models.environment.autumn-tree-copper/geometry.glb":a154,
+"assets/library/asset.models.environment.autumn-tree-gold/albedo.png":a155,
+"assets/library/asset.models.environment.autumn-tree-gold/geometry.glb":a156,
+"assets/library/asset.models.environment.canopy-acorns/geometry.glb":a157,
+"assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb":a158,
+"assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb":a159,
+"assets/library/asset.models.environment.canopy-mushrooms-russet/geometry.glb":a160,
+"assets/library/asset.models.environment.canopy-oak/geometry.glb":a161,
+"assets/library/asset.models.environment.canopy-twig/geometry.glb":a162,
+"assets/library/asset.models.environment.frost-boulder/albedo.png":a163,
+"assets/library/asset.models.environment.frost-boulder/albedo_2.png":a164,
+"assets/library/asset.models.environment.frost-boulder/geometry.glb":a165,
+"assets/library/asset.models.environment.frost-grass/albedo.png":a166,
+"assets/library/asset.models.environment.frost-grass/geometry.glb":a167,
+"assets/library/asset.models.environment.frost-log/albedo.png":a168,
+"assets/library/asset.models.environment.frost-log/albedo_2.png":a169,
+"assets/library/asset.models.environment.frost-log/geometry.glb":a170,
+"assets/library/asset.models.environment.frost-pine-a/albedo.png":a171,
+"assets/library/asset.models.environment.frost-pine-a/albedo_2.png":a172,
+"assets/library/asset.models.environment.frost-pine-a/geometry.glb":a173,
+"assets/library/asset.models.environment.frost-pine-b/albedo.png":a174,
+"assets/library/asset.models.environment.frost-pine-b/albedo_2.png":a175,
+"assets/library/asset.models.environment.frost-pine-b/geometry.glb":a176,
+"assets/library/asset.models.environment.frost-pine-sapling/albedo.png":a177,
+"assets/library/asset.models.environment.frost-pine-sapling/albedo_2.png":a178,
+"assets/library/asset.models.environment.frost-pine-sapling/geometry.glb":a179,
+"assets/library/asset.models.environment.frost-rock-ledge/albedo.png":a180,
+"assets/library/asset.models.environment.frost-rock-ledge/albedo_2.png":a181,
+"assets/library/asset.models.environment.frost-rock-ledge/geometry.glb":a182,
+"assets/library/asset.models.environment.frost-snow-grass/albedo.png":a183,
+"assets/library/asset.models.environment.frost-snow-grass/geometry.glb":a184,
+"assets/library/asset.models.environment.leafbound-twig-bridge/albedo.png":a185,
+"assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb":a186,
+"assets/library/asset.models.environment.woodland-abandoned-camp/albedo.png":a187,
+"assets/library/asset.models.environment.woodland-abandoned-camp/albedo_2.png":a188,
+"assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb":a189,
+"assets/library/asset.models.environment.woodland-acorn-cache/albedo.png":a190,
+"assets/library/asset.models.environment.woodland-acorn-cache/albedo_2.png":a191,
+"assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb":a192,
+"assets/library/asset.models.environment.woodland-amber-deposit/albedo.png":a193,
+"assets/library/asset.models.environment.woodland-amber-deposit/albedo_2.png":a194,
+"assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb":a195,
+"assets/library/asset.models.environment.woodland-amber-lantern/albedo.png":a196,
+"assets/library/asset.models.environment.woodland-amber-lantern/albedo_2.png":a197,
+"assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb":a198,
+"assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb":a199,
+"assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb":a200,
+"assets/library/asset.models.environment.woodland-broken-trader-cart/albedo.png":a201,
+"assets/library/asset.models.environment.woodland-broken-trader-cart/albedo_2.png":a202,
+"assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb":a203,
+"assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb":a204,
+"assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb":a205,
+"assets/library/asset.models.environment.woodland-daisies/geometry.glb":a206,
+"assets/library/asset.models.environment.woodland-drift-log/geometry.glb":a207,
+"assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb":a208,
+"assets/library/asset.models.environment.woodland-fallen-log/albedo.png":a209,
+"assets/library/asset.models.environment.woodland-fallen-log/albedo_2.png":a210,
+"assets/library/asset.models.environment.woodland-fallen-log/geometry.glb":a211,
+"assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb":a212,
+"assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb":a213,
+"assets/library/asset.models.environment.woodland-giant-stump/albedo.png":a214,
+"assets/library/asset.models.environment.woodland-giant-stump/albedo_2.png":a215,
+"assets/library/asset.models.environment.woodland-giant-stump/geometry.glb":a216,
+"assets/library/asset.models.environment.woodland-grass-high-a/albedo.png":a217,
+"assets/library/asset.models.environment.woodland-grass-high-a/geometry.glb":a218,
+"assets/library/asset.models.environment.woodland-grass-high-b/albedo.png":a219,
+"assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb":a220,
+"assets/library/asset.models.environment.woodland-grass-low/albedo.png":a221,
+"assets/library/asset.models.environment.woodland-grass-low/geometry.glb":a222,
+"assets/library/asset.models.environment.woodland-grass-messy/albedo.png":a223,
+"assets/library/asset.models.environment.woodland-grass-messy/geometry.glb":a224,
+"assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb":a225,
+"assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb":a226,
+"assets/library/asset.models.environment.woodland-hollow-log/albedo.png":a227,
+"assets/library/asset.models.environment.woodland-hollow-log/albedo_2.png":a228,
+"assets/library/asset.models.environment.woodland-hollow-log/geometry.glb":a229,
+"assets/library/asset.models.environment.woodland-leaf-shelter/albedo.png":a230,
+"assets/library/asset.models.environment.woodland-leaf-shelter/albedo_2.png":a231,
+"assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb":a232,
+"assets/library/asset.models.environment.woodland-lily-a/geometry.glb":a233,
+"assets/library/asset.models.environment.woodland-lily-b/geometry.glb":a234,
+"assets/library/asset.models.environment.woodland-log-bench/albedo.png":a235,
+"assets/library/asset.models.environment.woodland-log-bench/albedo_2.png":a236,
+"assets/library/asset.models.environment.woodland-log-bench/geometry.glb":a237,
+"assets/library/asset.models.environment.woodland-moss-boulder/albedo.png":a238,
+"assets/library/asset.models.environment.woodland-moss-boulder/albedo_2.png":a239,
+"assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb":a240,
+"assets/library/asset.models.environment.woodland-mushroom-cluster/albedo.png":a241,
+"assets/library/asset.models.environment.woodland-mushroom-cluster/albedo_2.png":a242,
+"assets/library/asset.models.environment.woodland-mushroom-cluster/geometry.glb":a243,
+"assets/library/asset.models.environment.woodland-mushroom-lantern/albedo.png":a244,
+"assets/library/asset.models.environment.woodland-mushroom-lantern/albedo_2.png":a245,
+"assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb":a246,
+"assets/library/asset.models.environment.woodland-mushrooms-button/geometry.glb":a247,
+"assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb":a248,
+"assets/library/asset.models.environment.woodland-pine-a/albedo.png":a249,
+"assets/library/asset.models.environment.woodland-pine-a/albedo_2.png":a250,
+"assets/library/asset.models.environment.woodland-pine-a/geometry.glb":a251,
+"assets/library/asset.models.environment.woodland-pine-b/albedo.png":a252,
+"assets/library/asset.models.environment.woodland-pine-b/albedo_2.png":a253,
+"assets/library/asset.models.environment.woodland-pine-b/geometry.glb":a254,
+"assets/library/asset.models.environment.woodland-pine-sapling/albedo.png":a255,
+"assets/library/asset.models.environment.woodland-pine-sapling/albedo_2.png":a256,
+"assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb":a257,
+"assets/library/asset.models.environment.woodland-pine-stump/albedo.png":a258,
+"assets/library/asset.models.environment.woodland-pine-stump/geometry.glb":a259,
+"assets/library/asset.models.environment.woodland-rain-barrel/albedo.png":a260,
+"assets/library/asset.models.environment.woodland-rain-barrel/albedo_2.png":a261,
+"assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb":a262,
+"assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb":a263,
+"assets/library/asset.models.environment.woodland-river-stones/albedo.png":a264,
+"assets/library/asset.models.environment.woodland-river-stones/albedo_2.png":a265,
+"assets/library/asset.models.environment.woodland-river-stones/geometry.glb":a266,
+"assets/library/asset.models.environment.woodland-rock-ledge/albedo.png":a267,
+"assets/library/asset.models.environment.woodland-rock-ledge/albedo_2.png":a268,
+"assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb":a269,
+"assets/library/asset.models.environment.woodland-root-arch-bridge/albedo.png":a270,
+"assets/library/asset.models.environment.woodland-root-arch-bridge/albedo_2.png":a271,
+"assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb":a272,
+"assets/library/asset.models.environment.woodland-root-snag/geometry.glb":a273,
+"assets/library/asset.models.environment.woodland-ruined-watchtower/albedo.png":a274,
+"assets/library/asset.models.environment.woodland-ruined-watchtower/albedo_2.png":a275,
+"assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb":a276,
+"assets/library/asset.models.environment.woodland-snapped-root/albedo.png":a277,
+"assets/library/asset.models.environment.woodland-snapped-root/albedo_2.png":a278,
+"assets/library/asset.models.environment.woodland-snapped-root/geometry.glb":a279,
+"assets/library/asset.models.environment.woodland-stone-spring/albedo.png":a280,
+"assets/library/asset.models.environment.woodland-stone-spring/albedo_2.png":a281,
+"assets/library/asset.models.environment.woodland-stone-spring/geometry.glb":a282,
+"assets/library/asset.models.environment.woodland-supply-crate/albedo.png":a283,
+"assets/library/asset.models.environment.woodland-supply-crate/albedo_2.png":a284,
+"assets/library/asset.models.environment.woodland-supply-crate/geometry.glb":a285,
+"assets/library/asset.models.environment.woodland-trail-sign/albedo.png":a286,
+"assets/library/asset.models.environment.woodland-trail-sign/albedo_2.png":a287,
+"assets/library/asset.models.environment.woodland-trail-sign/geometry.glb":a288,
+"assets/library/asset.models.environment.woodland-woodpile/albedo.png":a289,
+"assets/library/asset.models.environment.woodland-woodpile/albedo_2.png":a290,
+"assets/library/asset.models.environment.woodland-woodpile/geometry.glb":a291,
+"assets/library/asset.models.resources.amber-deposit/albedo.png":a292,
+"assets/library/asset.models.resources.amber-deposit/geometry.glb":a293,
+"assets/library/asset.models.resources.amber-deposit/image.png":a294,
+"assets/library/asset.models.resources.amber-deposit/normal.png":a295,
+"assets/library/asset.models.resources.amber-deposit/roughness.png":a296,
+"assets/library/asset.models.resources.corrupted-root/geometry.glb":a297,
+"assets/library/asset.models.resources.corrupted-root/image.png":a298,
+"assets/library/asset.models.units.ants-archer/albedo.png":a299,
+"assets/library/asset.models.units.ants-archer/geometry.glb":a300,
+"assets/library/asset.models.units.ants-archer/image.png":a301,
+"assets/library/asset.models.units.ants-archer/team_mask.png":a302,
+"assets/library/asset.models.units.ants-bombardier/albedo.png":a303,
+"assets/library/asset.models.units.ants-bombardier/geometry.glb":a304,
+"assets/library/asset.models.units.ants-bombardier/image.png":a305,
+"assets/library/asset.models.units.ants-bombardier/team_mask.png":a306,
+"assets/library/asset.models.units.ants-warrior/geometry.glb":a307,
+"assets/library/asset.models.units.ants-warrior/image.png":a308,
+"assets/library/asset.models.units.ants-worker/albedo.png":a309,
+"assets/library/asset.models.units.ants-worker/geometry.glb":a310,
+"assets/library/asset.models.units.ants-worker/geometry_2.glb":a311,
+"assets/library/asset.models.units.ants-worker/geometry_3.glb":a312,
+"assets/library/asset.models.units.ants-worker/geometry_4.glb":a313,
+"assets/library/asset.models.units.ants-worker/image.png":a314,
+"assets/library/asset.models.units.ants-worker/team_mask.png":a315,
+"assets/library/asset.placeholder.missing-model/albedo.png":a316,
+"assets/library/asset.placeholder.missing-model/geometry.glb":a317,
+"assets/library/asset.terrain.autumn-leaf-litter/albedo.png":a318,
+"assets/library/asset.terrain.autumn-leaf-litter/data.bin":a319,
+"assets/library/asset.terrain.autumn-leaf-normal/data.bin":a320,
+"assets/library/asset.terrain.pebble-normal/data.bin":a321,
+"assets/library/asset.terrain.pebble-trail/albedo.png":a322,
+"assets/library/asset.terrain.pebble-trail/data.bin":a323,
+"assets/library/asset.terrain.winter-dirt-normal/data.bin":a324,
+"assets/library/asset.terrain.winter-dirt/albedo.png":a325,
+"assets/library/asset.terrain.winter-dirt/data.bin":a326,
+"assets/library/asset.terrain.winter-grass-normal/data.bin":a327,
+"assets/library/asset.terrain.winter-grass/albedo.png":a328,
+"assets/library/asset.terrain.winter-grass/data.bin":a329,
+"assets/library/asset.terrain.winter-rock-normal/data.bin":a330,
+"assets/library/asset.terrain.winter-rock/albedo.png":a331,
+"assets/library/asset.terrain.winter-rock/data.bin":a332,
+"assets/library/asset.terrain.winter-soil-normal/data.bin":a333,
+"assets/library/asset.terrain.winter-soil/albedo.png":a334,
+"assets/library/asset.terrain.winter-soil/data.bin":a335,
+"assets/library/asset.terrain.woodland-dirt-normal/data.bin":a336,
+"assets/library/asset.terrain.woodland-dirt/albedo.png":a337,
+"assets/library/asset.terrain.woodland-dirt/data.bin":a338,
+"assets/library/asset.terrain.woodland-grass-normal/data.bin":a339,
+"assets/library/asset.terrain.woodland-grass/albedo.png":a340,
+"assets/library/asset.terrain.woodland-grass/data.bin":a341,
+"assets/library/asset.terrain.woodland-riverbed-normal/data.bin":a342,
+"assets/library/asset.terrain.woodland-riverbed/albedo.png":a343,
+"assets/library/asset.terrain.woodland-riverbed/data.bin":a344,
+"assets/library/asset.terrain.woodland-rock-displacement/data.bin":a345,
+"assets/library/asset.terrain.woodland-rock-normal/data.bin":a346,
+"assets/library/asset.terrain.woodland-rock/albedo.png":a347,
+"assets/library/asset.terrain.woodland-rock/data.bin":a348,
+"assets/library/asset.terrain.woodland-soil-normal/data.bin":a349,
+"assets/library/asset.terrain.woodland-soil/albedo.png":a350,
+"assets/library/asset.terrain.woodland-soil/data.bin":a351,
+"assets/library/asset.texture.winter-macro/albedo.png":a352,
+"assets/library/asset.texture.woodland-brdf/data.bin":a353,
+"assets/library/asset.texture.woodland-brdf/data_2.json":a354,
+"assets/library/asset.texture.woodland-caustics/albedo.png":a355,
+"assets/library/asset.texture.woodland-daytime-grades/data.json":a356,
+"assets/library/asset.texture.woodland-macro/albedo.png":a357,
+"assets/library/asset.texture.woodland-reflection/data.bin":a358,
+"assets/library/asset.texture.woodland-reflection/data_2.json":a359,
+"assets/library/asset.texture.woodland-terrain-ar/albedo.png":a360,
+"assets/library/asset.texture.woodland-terrain-nh/albedo.png":a361,
+"assets/library/asset.texture.woodland-waves/albedo.png":a362,
+"assets/library/asset.textures.forest-giants-bark/albedo.png":a363,
+"assets/library/asset.textures.forest-giants-mushrooms/albedo.png":a364,
+"assets/library/image.item-heart-of-the-forest/image.png":a365,
+"assets/library/image.woodland-bar-rim/image.png":a366,
+"assets/library/image.woodland-connected-hud/image.png":a367,
+"assets/library/image.woodland-health-fill/image.png":a368,
+"assets/library/image.woodland-mana-fill/image.png":a369,
+"assets/library/image.woodland-satchel/image.png":a370,
+"assets/library/image.woodland-selection-rim/image.png":a371,
+"assets/library/image.woodland-square-rim/image.png":a372,
+"assets/library/recipe.foliage.frozen-bank/definition.json":a373,
+"assets/library/recipe.foliage.mushroom-patches/definition.json":a374,
+"assets/library/recipe.foliage.riverbank/definition.json":a375,
+"assets/library/recipe.forest.autumn/definition.json":a376,
+"assets/library/recipe.forest.conifer-edge/definition.json":a377,
+"assets/library/recipe.forest.diverse/definition.json":a378,
+"assets/library/recipe.forest.frozen/definition.json":a379,
+"assets/library/recipe.forest.leafy/definition.json":a380,
+"assets/library/recipe.grass.autumn/definition.json":a381,
+"assets/library/recipe.grass.meadow/definition.json":a382,
+"assets/library/recipe.grass.winter/definition.json":a383,
+"assets/library/recipe.path.grass/definition.json":a384,
+"assets/library/recipe.path.pebbles/definition.json":a385,
+"assets/library/recipe.path.soil/definition.json":a386,
+"assets/library/recipe.river.gentle/definition.json":a387,
+"assets/library/recipe.river.glacial.water/definition.json":a388,
+"assets/library/recipe.river.glacial/definition.json":a389,
+"assets/library/recipe.river.meltwater.water/definition.json":a390,
+"assets/library/recipe.river.meltwater/definition.json":a391,
+"assets/library/recipe.river.swift/definition.json":a392,
+"assets/library/recipe.terrain.bank/definition.json":a393,
+"assets/library/recipe.terrain.hill/definition.json":a394,
+"assets/library/recipe.terrain.mountain/definition.json":a395,
+"assets/library/water.clear-forest/definition.json":a396,
+"assets/library/water.muddy/definition.json":a397,
 };

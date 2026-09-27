@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "id": "asset.sources.characters-ant-warrior",
+  "name": "ant-warrior",
+  "kind": "data",
+  "revision": 2,
+  "status": "archived",
+  "tags": [],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "md",
+      "sha256": "213abcb3311310b8079e5b851a724787613c07d71816ada6439773e4856aadb4",
+      "bytes": 2968
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "blend",
+      "sha256": "770b270950beedaed4aed74953ad415fe2d517065b5e93fa778719d65953a2fc",
+      "bytes": 1922418
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "a2eddf943f12d16d81d2441f1f1a939da1bbeba10e080176256d304f23615787",
+      "bytes": 908
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "7f30a6822c19e2874d94cbf8e4c283355ce86c9dcd24b4d42e95c4617f8b1813",
+      "bytes": 501
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "347aeb7997501d125bb75ed67e22ab5a54313fd34c5346a41657aaf5f4287e5f",
+      "bytes": 371472
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "fb4d611bd3e96c1e4afbd56a105ee08d02dc784d789c55db67df0f96ac9af6e9",
+      "bytes": 28467
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "a20afec7b754258feceb4ca4d3abdc410633bd43951100040032b4a116518b7a",
+      "bytes": 8026
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "cd733ecadb72b3d5005c1c37022292c319ff750e1c2bae4648fb68f714702810",
+      "bytes": 1109227
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "png",
+      "sha256": "4acb044da96f914db70033f0b6eedfe853ac5fe657a4525e3ccfecbf9c5c0423",
+      "bytes": 513687
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "json",
+      "sha256": "57c45fe56be9169082cc5f42a391ee8ce8546468985a56cd393f9262b5a65918",
+      "bytes": 569
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "6536376438ef2d5305068d52c2c2fd0f660f00e7ec4b4ee80ea0b22b1be17559",
+      "bytes": 1480
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

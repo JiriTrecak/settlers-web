@@ -50,7 +50,7 @@ Mechanical validation is not an aesthetic verdict. Check silhouette, legibility,
 
 ## Storage and publication
 
-The canonical [publication contract](publication.md) defines working versus released state. Definitions and role-named resources live in `art/assets/<id>/`; released resources live in `assets/library/<id>/` and snapshots in `assets/authoring/published.json`. Editable Blender sources and older original image masters live under `art/sources/`. Profiles and curated style references live in `art/profiles/` and `art/styles/`.
+The canonical [publication contract](publication.md) defines working versus released state. Definitions and role-named resources live in `art/assets/<id>/`; released resources live in `assets/library/<id>/` and snapshots in `assets/authoring/published.json`. Editable Blender sources, original image masters, build recipes and their manifests live in the same canonical asset folders. Profiles and curated style references live in `art/profiles/` and `art/styles/`.
 
 Use `npm run assets:compile` to validate released bytes and regenerate deterministic indexes. It does not publish working drafts. Reload a game/editor page deliberately after publication; do not replace an in-progress map document through asset hot reload.
 

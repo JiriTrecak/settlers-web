@@ -5,8 +5,8 @@ import {emptyLandscape,parseLandscape} from '../../src/shared/landscape/curve';
 import {HeightField} from '../../src/shared/map/height';
 it('validates map-authored weather and keeps existing clear maps effect-free',()=>{
  const landscape=emptyLandscape();expect(parseLandscape(landscape)).toBeDefined();
- landscape.environment.weather={kind:'rain',intensity:.5,windX:2,windZ:-1};expect(parseLandscape(landscape)).toBeDefined();
- expect(parseLandscape({...landscape,environment:{...landscape.environment,weather:{...landscape.environment.weather,intensity:10}}})).toBeUndefined();
+ landscape.environment.weather={kind:'rain'};expect(parseLandscape(landscape)).toBeDefined();
+ expect(parseLandscape({...landscape,environment:{...landscape.environment,weather:{...landscape.environment.weather,intensity:10}}})?.environment.weather).toEqual({kind:'rain'});
 });
 it('bounds weather to one camera-local instance batch, switches precipitation and disables cleanly',()=>{
  const scene=new Scene(),weather=new WeatherLayer(scene),camera=new OrthographicCamera(),field=new HeightField();
@@ -23,7 +23,7 @@ it('bounds weather to one camera-local instance batch, switches precipitation an
 it('keeps spores slow, reproducible, above the water and in a single bounded batch',()=>{
  const scene=new Scene(),weather=new WeatherLayer(scene),camera=new OrthographicCamera(),field=new HeightField();field.waterLevel=3;
  const settings={kind:'spores' as const,intensity:.5,windX:.12,windZ:-.08};
- const landscape=emptyLandscape();landscape.environment.weather=settings;expect(parseLandscape(JSON.parse(JSON.stringify(landscape)))).toEqual(landscape);
+ const landscape=emptyLandscape();landscape.environment.weather={kind:settings.kind};expect(parseLandscape(JSON.parse(JSON.stringify(landscape)))).toEqual(landscape);
  weather.configure(settings);weather.update(10000,100,100,camera,field);
  expect(scene.children).toHaveLength(1);expect(weather.mesh.count).toBe(384);expect(weather.mesh.renderOrder).toBeGreaterThan(2);
  const matrix=new Matrix4(),before=new Vector3(),after=new Vector3();weather.mesh.getMatrixAt(0,matrix);before.setFromMatrixPosition(matrix);

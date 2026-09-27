@@ -1,3 +1,5 @@
+import {footprintHalfExtents} from './resourceClearance';
+import {unitDimensions} from '../../content/unitScale';
 import {validateMissionLua} from "../scenario/lua";
 import {projectScene,landscapeAssets} from '../authoring/project';
 import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
@@ -5,7 +7,7 @@ import {sceneryRules} from './sceneryCollision';
 import { decodeHeight, HeightField } from "./height";
 import type { PlayerStart, UtcMap } from "./utcmap";
 import { content } from "../../content/builtin";
-import { validatePlacements, placementOccupancyError } from "../../content/map";
+import { validatePlacements, placementOccupancyError, startingResourceClearanceError } from "../../content/map";
 import { fingerprint } from "../../content/registry";
 
 export type PlayableMap = UtcMap & {
@@ -40,6 +42,14 @@ export function playableMapError(
   if (!compiled&&map.height)
     field.load(decodeHeight(map.height,map.size) ?? [], map.waterLevel ?? 0);
   else if(!compiled)field.waterLevel = map.waterLevel ?? 0;
+  const setup=content.rules.startingSetup,half=footprintHalfExtents(content.get(setup.fort).footprint);
+  const radius=unitDimensions(content.rules.unitScale).radius;
+  const startEnvelope={
+   minX:Math.floor(Math.min(-half.x,...setup.units.map(u=>u.offset.x-radius))),
+   maxX:Math.ceil(Math.max(half.x,...setup.units.map(u=>u.offset.x+radius))),
+   minZ:Math.floor(Math.min(-half.y,...setup.units.map(u=>u.offset.y-radius))),
+   maxZ:Math.ceil(Math.max(half.y,...setup.units.map(u=>u.offset.y+radius))),
+  };
   for (const s of starts) {
     if (
       !Number.isInteger(s.x) ||
@@ -50,10 +60,12 @@ export function playableMapError(
       s.z > map.size - 9
     )
       return `Player ${s.player} needs an integer start at least 8 cells inside the map.`;
+    if(s.x+startEnvelope.minX<0||s.x+startEnvelope.maxX>=map.size||s.z+startEnvelope.minZ<0||s.z+startEnvelope.maxZ>=map.size)
+      return `Player ${s.player} needs room for the complete fort and worker formation.`;
     let dry=true,lo = Infinity,
       hi = -Infinity;
-    for (let z = s.z - 5; z <= s.z + 7; z++)
-      for (let x = s.x - 5; x <= s.x + 5; x++) {
+    for (let z = s.z + startEnvelope.minZ; z <= s.z + startEnvelope.maxZ; z++)
+      for (let x = s.x + startEnvelope.minX; x <= s.x + startEnvelope.maxX; x++) {
         const h = field.sample(x, z);
         if(h<=field.waterAt(x,z)+.1)dry=false;
         lo = Math.min(lo, h);
@@ -72,7 +84,7 @@ export function playableMapError(
   }
   if (new Set(starts.map((s) => s.player)).size !== starts.length)
     return "Player starts must be unique.";
-  return requirePlayers ? placementOccupancyError(map, content) : null;
+  return startingResourceClearanceError(map,content) ?? (requirePlayers ? placementOccupancyError(map, content) : null);
 }
 export function requirePlayableMap(map: UtcMap): PlayableMap {
   const error = playableMapError(map);

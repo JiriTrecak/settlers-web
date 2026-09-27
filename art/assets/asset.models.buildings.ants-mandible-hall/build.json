@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "category": "buildings",
+  "slug": "mandible-hall",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "source",
+      "index": 2
+    },
+    "asset.json": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "source",
+      "index": 3
+    },
+    "chitin.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "albedo",
+      "index": 4
+    },
+    "dome-normal.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "normal",
+      "index": 2
+    },
+    "dome.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "albedo",
+      "index": 2
+    },
+    "leaf.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "albedo",
+      "index": 3
+    },
+    "mandible-hall.blend": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "source",
+      "index": 1
+    },
+    "model.glb": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "recipe",
+      "index": 1
+    },
+    "palette.json": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "source",
+      "index": 4
+    },
+    "reference.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "preview",
+      "index": 1
+    },
+    "samples.json": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "source",
+      "index": 5
+    },
+    "team.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "albedo",
+      "index": 5
+    },
+    "textures.py": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "recipe",
+      "index": 2
+    },
+    "wood-normal.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "normal",
+      "index": 1
+    },
+    "wood.png": {
+      "asset": "asset.models.buildings.ants-mandible-hall",
+      "role": "albedo",
+      "index": 1
+    }
+  }
+}

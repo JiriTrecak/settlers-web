@@ -206,7 +206,6 @@ export const jobSchema = z
       "repair",
       "harvest",
       "plant",
-      "recruit",
     ]),
     worker: positive,
     target: positive,

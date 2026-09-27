@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-watchtower",
+  "name": "Watchtower",
+  "kind": "building",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "06733b224b04121c9d3d09e89db24f351747577e9175ce92bcd4723dadbd8490",
+      "bytes": 13714396
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "c6bea278b395f006ea631f036a0c1adf6cdb9bf2c129abad3ffbeee3e4256004",
+      "bytes": 28397440
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "642e0b519fe47dd03ba71d6bdc00c82e4063c4390fbfa8a26a56233fe9e05876",
+      "bytes": 2380925
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "bea63444e09c73e9d4baa21f2285ed4427b06aa6a68936ed3141c00dd61a8339",
+      "bytes": 972600
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "428a13f7b6f244b8fcdaea5d2c305e2dd11469f1f345369ccd17227b4d910d90",
+      "bytes": 8122874
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "e093e42b8c19a6ff31aeedefcd3029c413bdbba5888c19984a3c27806d234bcb",
+      "bytes": 217588
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "b4707c41f03c0a9b5cb2ebcf3175509bd3c8ce458e8e17cb2f2e63eab671c532",
+      "bytes": 4782248
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "6e61a364e61cb8176850a54d33abf9e8465def42104cb76e582cb0433a1a11a8",
+      "bytes": 1367305
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "93a47f7be6332a4f66f7302906299fb103c37dde4444a51ed3547fa7a2ad8eea",
+      "bytes": 12730
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "4dd434428b39814881ac90d9371cdbd4fb5c5e5304e4723471918bb76d55b318",
+      "bytes": 11787
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "8a714eb475f2b5db0ccd7ec20ac02515e4f3a5069a324439bb63ba1aeac22c1d",
+      "bytes": 979
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "cba7c9e89059767a64235b09c36d88b581a1fd4a308fb17362cf63c8e6f0cae5",
+      "bytes": 16709498
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "5a1ac6b5b86215883338593cc053d84432c73b8a839723a28ebe73dd29421aeb",
+      "bytes": 1090
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
+      "bytes": 263
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "9263c7710325313f79e436f5bb32526c6ec7a99e1146e5eebb8a5acaddd4d965",
+      "bytes": 11376291
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "64f1af7eb4997f5d20bdd9a9c395540dec2cbc46ffab01e1b31eaa7adb628104",
+      "bytes": 163
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "ecec6b304cd85c8a4c054096ee4a036128211318f85fd2c8830d7cd4d3854830",
+      "bytes": 6258
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "8b058386f966faf4e1ce4d638d1a3410a49ae2156024fb515ad63b9161a1eb5a",
+      "bytes": 769
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "81cc7d5effb04c1a1401ca9421af5a78a8d0b81148efa58714bc08b58c9572d3",
+      "bytes": 3582275
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "065417f8dd563cdb77d97a1c9112cd6e38ca83fe0ced4d9e1188ac9d39081064",
+      "bytes": 262
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "jpeg",
+      "sha256": "35a0445fd0353c2e28681e13589412c76bb6aea8a955a8ea9c34ad067a2f9bc0",
+      "bytes": 3603630
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "glb",
+      "sha256": "d09de40b888f5cfd0f88a83ff467e0b99dddd93f7077d9ab47ddf97bc2a9abb0",
+      "bytes": 9427144
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "500f042cbf50379ad12736e476ef83e1511c9fdf6931f296b89424a932439af4",
+      "bytes": 485488
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "3f87be599bfda9cf34a2d75b026ffbded8f2c440ffca45e3d10fd6870bac094b",
+      "bytes": 2440
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.72,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": true,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.ants.tower",
+        "scale": 1,
+        "healthHeight": 13.1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-watchtower"
+        }
+      },
+      {
+        "id": "icon.ants.tower",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-watchtower"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        7,
+        7
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 3.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

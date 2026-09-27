@@ -241,7 +241,7 @@ export class Combat {
     if (!u.route.length && u.retryAt <= this.c.state.tick) {
       const goal = this.c.spatial.nearest(destination, 8, e.id);
       if (goal && !this.c.spatial.route(e, goal) &&
-          this.c.spatial.findPath(this.c.spatial.cell(e), this.c.spatial.cell(goal)) === null) {
+          this.c.spatial.findPath(this.c.spatial.cell(e), this.c.spatial.cell(goal), undefined, undefined, e) === null) {
         u.order = null;
         u.goal = null;
         this.c.event(e.owner, "Move destination is unreachable", "error");

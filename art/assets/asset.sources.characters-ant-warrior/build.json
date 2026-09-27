@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "category": "characters",
+  "slug": "ant-warrior",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 1
+    },
+    "ant-warrior.blend": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 2
+    },
+    "asset.json": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 3
+    },
+    "character.json": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 4
+    },
+    "model.glb": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 5
+    },
+    "model.py": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "recipe",
+      "index": 1
+    },
+    "palette.json": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 6
+    },
+    "reference.png": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 7
+    },
+    "render.png": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 8
+    },
+    "samples.json": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 9
+    },
+    "warrior.glb": {
+      "asset": "asset.sources.characters-ant-warrior",
+      "role": "source",
+      "index": 5
+    }
+  }
+}

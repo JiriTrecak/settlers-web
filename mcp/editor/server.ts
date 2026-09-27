@@ -12,15 +12,16 @@ export function createEditorMcp(hub: EditorHub): MCPServer {
     id: "utc-editor",
     name: "Under the Canopy Editor",
     version: "1.0.0",
-    description: "Control the in-game world editor: catalogue, stamps, brush, clean, sculpt.",
+    description: "Author live biome maps: procedural layers, scenery, gameplay placements, player starts and render captures.",
     instructions: [
-      "The world editor must be open (?screen=editor) and this process running so the tab can connect.",
-      "Cell grid is 256²; halo allows stamps from -16 to 271. Cell = 1 meter.",
-      "type=water sits on the sea, wet cells only. type=prop is dry land only. type=span (bridges) anywhere on the sea plane.",
-      "Browse with editor_catalog before placing. Handmade ids: pine, boulder, rock, lily, bridge-8. Synty pack is synty-*.",
-      "Brush: editor_brush kit with assets, paint at cells, then apply. Sculpt water: mode=water, stroke a basin, action=apply.",
-      "Prefer editor_place items[] for batches. Check editor_status if a call fails.",
-      "After placing or painting, editor_screenshot (no args = current view) so you can see the result. Pass x/z/zoom/yaw/pitch for a framed shot; the user camera is restored unless keep=true.",
+      "Open a dedicated world editor tab (?screen=editor) and enable its MCP toggle. Verify editor_status before mutations; the hub targets the most recently connected tab.",
+      "Discover the loaded biome's recipes with editor_scene command action=recipes, and current assets with editor_catalog or asset_author. Never assume asset IDs from an older project version.",
+      "Author procedural masks and splines with editor_scene command action=put-layer. Masks have add/subtract circular strokes; forests and foliage remain live. Stages run terrain, water, paths, structures, forest, grass automatically.",
+      "Place independent scenery with put-object using canonical asset IDs, x/z, yaw in radians. Gameplay placements use editor_entities, position x/y (y is map Z), and rotation in degrees.",
+      "Biomes own lighting, grading, canopy, atmosphere and water profiles. Maps choose biome, time and weather kind; visual overrides are forbidden.",
+      "Read map dimensions and player slots from the exported map. Preserve base construction space and validate routes; do not assume a 256-square two-player map.",
+      "Use editor_screenshot for actual visual review, with overview and game-distance views. Screenshots restore the camera unless keep=true.",
+      "Use editor_landscape export to preserve the active map before loading another. Publish the editor-exported map to assets/maps/skirmish; browser saves are separate local copies.",
     ].join(" "),
     tools,
     resources: {
@@ -64,7 +65,7 @@ export function createEditorMcp(hub: EditorHub): MCPServer {
               role: "user",
               content: {
                 type: "text",
-                text: `Open the editor catalogue, pick pine variants, set a brush kit, paint around (${x}, ${z}) radius ~8, apply, then look at that point.`,
+                text: `Discover the biome forest recipes with editor_scene, add a named live forest mask around (${x}, ${z}) with radius 8, then capture and inspect it.`,
               },
             },
           ];
@@ -75,7 +76,7 @@ export function createEditorMcp(hub: EditorHub): MCPServer {
               role: "user",
               content: {
                 type: "text",
-                text: `Browse water-type assets. Place lily / synty lilies on wet cells near (${x}, ${z}). Skip dry cells. Look at the pond.`,
+                text: `Discover the biome river recipe and its bank/water detail passes. Author or refine a painted pond at (${x}, ${z}), then capture its shoreline.`,
               },
             },
           ];

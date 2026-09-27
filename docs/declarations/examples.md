@@ -28,16 +28,16 @@ Add this complete definition:
       "aggroRange": 10
     }
   },
+  "supplyCost": 1,
   "creation": {
-    "method": "recruit",
+    "method": "train",
     "items": [{ "item": "item.amber", "amount": 16 }],
-    "unitInput": "unit.ants.settler",
     "workTicks": 40
   }
 }
 ```
 
-Append `unit.ants.vanguard` to the barracks' `behaviors.production.outputs`. Its existing store accepts amber and fits this bill. The command card, tooltip price, bank reservation, worker claim, training, deployment, HP and selection now follow this definition. The ground-army set supplies movement and direct control; the definition overrides speed and supplies its combat values. No new simulation or HTML branch is needed.
+Append `unit.ants.vanguard` to the barracks' `behaviors.production.outputs`. Its existing store accepts amber and fits this bill. The command card, tooltip price, bank reservation, supply reservation, training, deployment, HP and selection now follow this definition. The ground-army set supplies movement and direct control; the definition overrides speed and supplies its combat values. No new simulation or HTML branch is needed.
 
 Optionally add an action override under `actions.overrides`:
 
@@ -70,22 +70,22 @@ This instance starts damaged; its maximum HP still comes from the definition. Th
 
 Placing `unit.neutral.wolf` through Editor → Entities writes an explicit camp record too. Editing raw JSON requires adding its placement ID to exactly one camp's `members`, with `home`, `aggroRange`, `leash` and `aggression`. The neutral model name is never inspected to discover a camp.
 
-## A population producer
+## Supply providers and trainers
 
-The house's `production` capability is:
+A Mound declares `"supplyProvided": 6` on the building definition. It needs no production behavior. Add its ID to the worker's `work.builds` to make it constructable.
+
+A hall declares `"supplyProvided": 12` and this production capability:
 
 ```json
 {
-  "mode": "automatic",
+  "mode": "queued",
   "outputs": ["unit.ants.settler"],
   "workerSlots": 0,
-  "population": { "capacity": 3, "intervalTicks": 800 }
+  "queueCapacity": 6
 }
 ```
 
-The worker has `creation.method = "spawn"`. The house contributes three living-worker capacity and produces one replacement every twenty seconds while the colony is below its shared cap. A hall uses the same capability with capacity eight and interval 480. No building-ID branch, lifetime quota or separate population token is required.
-
-To add another population building, give it its own ID, art, footprint, currency construction bill and population values. Add its ID to the worker's `work.builds`. Automatic output must be a worker definition, and incompatible combinations fail validation.
+The worker declares `supplyCost: 1` and a `train` creation recipe with its own price and training time. Capacity and training are independent capabilities. See [the supply contract](../game/economy.md#supply-and-training); no identity checks or separate worker population tokens are needed.
 
 A neutral mine instead declares `kind: "building"`, owner `none` on the map, `yield`, `gatheringCapacity`, body, footprint and entrance. The currency's harvest recipe refers to that source, and a worker's `work.harvests` exposes it. Set a map instance's `initialState.amount` to override remaining yield. A tree is a yielding resource rather than a neutral building.
 

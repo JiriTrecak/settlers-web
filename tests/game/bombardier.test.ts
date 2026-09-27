@@ -3,12 +3,12 @@ import {expect,it} from 'vitest';
 import {commandCard,queueCard} from '../../src/presentation/commands';
 import {game,placed,run,worker} from './helpers';
 const workshop='building.ants.bombardier-workshop',bomb='unit.ants.bombardier',research='research.ants.saturating-shells';
-it('gates the Workshop and its recruitment, refunds Root, and transforms a physical worker',()=>{
- const g=game([placed('workshop',workshop,205,210)]),w=worker(g),b=g.entities.find(e=>e.placement==='workshop')!,m=g.context.get(g.state.objectives[w.owner])!;
+it('gates the Workshop and its recruitment, refunds Root, and trains a new unit',()=>{
+ const g=game([placed('supply','building.ants.house',245,245),placed('workshop',workshop,205,210)]),w=worker(g),b=g.entities.find(e=>e.placement==='workshop')!,m=g.context.get(g.state.objectives[w.owner])!;
  m.inventory={'item.amber':1000,'item.wood':1000,'item.root':100};
  const build=()=>commandCard(g.view(w.owner),[w.id],w.owner,g.registry).find(c=>c.targetDefinition===workshop)!;
  const recruit=()=>commandCard(g.view(w.owner),[b.id],w.owner,g.registry).find(c=>c.targetDefinition===bomb)!;
- expect(build().enabled).toBe(false);expect(recruit().reason).toContain('Great Mound');
+ expect(build().enabled).toBe(false);expect(recruit().reason).toContain('Great Acorn Hall');
  m.definition='building.ants.great-mound';run(g,1);expect(build().enabled).toBe(true);
  expect(g.command(w.owner,recruit().immediate!).accepted).toBe(true);expect(m.inventory['item.root']).toBe(60);
  run(g,1);

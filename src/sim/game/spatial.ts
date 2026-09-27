@@ -28,7 +28,13 @@ export const point = (i: number, size = 256): Point => ({
 });
 export const distance2 = (a: Point, b: Point) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+type Body = {radius:number;height:number;formationSpacing:number};
+type Actor = Pick<Entity,'definition'>|Body;
 export class Spatial {
+  dimensions(actor?:Actor):Body {return actor&&'definition' in actor ? this.registry.get(actor.definition).dimensions??unitDimensions(this.registry.rules.unitScale) : actor??unitDimensions(this.registry.rules.unitScale);}
+  private readonly bodyNavigations=new Map<string,Navigation>();
+  private readonly maxUnitRadius:number;
+  private navigationFor(actor?:Actor){const d=this.dimensions(actor),key=`${d.radius}/${d.height}`;let navigation=this.bodyNavigations.get(key);if(!navigation){navigation=new Navigation(this.size,(a,b)=>!this.layers&&d.radius<.5?this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM:this.clearSegment(fixed(this.point(a)),fixed(this.point(b)),undefined,d),(a,b)=>this.sectors.connected(a,b),true);this.bodyNavigations.set(key,navigation);}return navigation;}
   private unitIndex:UnitIndex|null=null;
   /** Scoped to one synchronous planning or movement pass; other queries use live entities. */
   beginUnitMovement(){this.unitIndex=new UnitIndex(this.units(),this.size,this.ignoresUnits);}
@@ -63,6 +69,7 @@ export class Spatial {
     const dimensions = unitDimensions(registry.rules.unitScale);
     this.unitRadius = Math.round(dimensions.radius * 1000);
     this.unitHeight = dimensions.height;
+    this.maxUnitRadius=Math.round(Math.max(dimensions.radius,...registry.definitions.filter(d=>d.kind==='unit').map(d=>d.dimensions!.radius))*1000);
     const compiled=projectScene(map);if(compiled)map={...map,stamps:compiled.stamps};
     this.heights = new Int16Array(this.size * this.size);
     this.waterHeights=new Int16Array(this.size*this.size);
@@ -85,7 +92,7 @@ export class Spatial {
     const surfaces=bridgeSurfaces(map.stamps,(x,z)=>source?.sample(x,z)??(h?sampleHeight(h,x,z,this.size):0));
     if(surfaces.length){
       applySceneryBlockers(map,this.terrain);
-      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces,Math.round(this.unitHeight*100));
+      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces,Math.round(Math.min(this.unitHeight,...registry.definitions.filter(d=>d.kind==='unit').map(d=>d.dimensions!.height))*100));
       this.decks=new Uint8Array(this.size*this.size);
       for(const node of this.layers.nodes)if(node.surface)this.decks[node.cell]=1;
     }else{
@@ -127,30 +134,31 @@ export class Spatial {
     return p.x>=0&&p.y>=0&&p.x<this.size&&p.y<this.size && (!p.surface || !!this.layers&&this.layers.node({x:Math.round(p.x),y:Math.round(p.y),surface:p.surface})!==undefined);
   }
   validNode(id:number):boolean {return Number.isInteger(id)&&id>=0&&id<this.occupied.length;}
-  findPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity):number[]|null {
+  findPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity,actor?:Actor):number[]|null {
     if(!this.validNode(start)||!this.validNode(goal))return null;
-    if(!this.unitWalkable(this.point(goal)))return null;
+    if(!this.unitWalkable(this.point(goal),actor))return null;
+    const navigation=this.navigationFor(actor);
     if(!this.layers){
       const dx=Math.abs(start%this.size-goal%this.size),dy=Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size));
       const corridor=Math.max(dx,dy)>=32?this.sectors.corridor(start,goal):undefined;
       this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
       if(corridor===null)return null;
       this.routing.searches++;
-      const route=this.navigation.path(start,goal,blocked,maxCost,corridor);
-      this.routing.expanded+=this.navigation.lastExpanded;
+      const route=navigation.path(start,goal,blocked,maxCost,corridor);
+      this.routing.expanded+=navigation.lastExpanded;
       if(route!==null||!corridor)return route;
       // Temporary traffic may block every portal on the preferred corridor.
       // Preserve reachability with a full search instead of reporting failure.
       this.routing.fallbacks++;this.routing.searches++;
-      const fallback=this.navigation.path(start,goal,blocked,maxCost);
-      this.routing.expanded+=this.navigation.lastExpanded;return fallback;
+      const fallback=navigation.path(start,goal,blocked,maxCost);
+      this.routing.expanded+=navigation.lastExpanded;return fallback;
     }
     const from=this.point(start),to=this.point(goal),corridor=Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))>=32?this.sectors.corridor(start,goal):undefined;
     if(corridor===null)return null;
     this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
     const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!!this.occupied[n.id]||!!this.resources[n.id]||!!blocked?.has(n.id);
     this.routing.searches++;
-    const fits = (a:number,b:number) => this.clearSegment(fixed(this.point(a)),fixed(this.point(b)));
+    const fits = (a:number,b:number) => this.clearSegment(fixed(this.point(a)),fixed(this.point(b)),undefined,actor);
     const route=this.layers.path(from,to,n=>blockedNode(n)||!!corridor&&!corridor[this.sectors.sector(n.id)],maxCost,fits);
     this.routing.expanded+=this.layers.lastExpanded;
     if(route!==null||!corridor)return route?.map(n=>n.id)??null;
@@ -214,6 +222,7 @@ export class Spatial {
     this.blockedCells=next;
     const added=[...next].filter(cell=>!previous.has(cell)),removed=[...previous].filter(cell=>!next.has(cell));
     this.navigation.invalidate([...added,...removed], 1 + Math.floor((this.unitRadius + 500) / 1000));
+    for(const navigation of this.bodyNavigations.values())navigation.invalidate([...added,...removed],1+Math.floor((this.maxUnitRadius+500)/1000));
     this.sectors.invalidate([...added,...removed]);
     this.sectors.prepare();
   }
@@ -227,19 +236,19 @@ export class Spatial {
     );
   }
   /** Physical clearance at a destination, not just the center terrain cell. */
-  unitWalkable(p: Point): boolean {
+  unitWalkable(p: Point,actor?:Actor): boolean {
     const position = fixed(p);
-    return this.clearSegment(position, position);
+    return this.clearSegment(position, position,undefined,actor);
   }
-  free(p: Point, except?: number) {
+  free(p: Point, except?: number,actor?:Actor) {
     const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     return (
       p.x >= 0 &&
       p.x < this.size &&
       p.y >= 0 &&
       p.y < this.size &&
-      this.unitWalkable(p) &&
-      this.unitSegmentClear(fixed(p), fixed(p), except ?? -1) &&
+      this.unitWalkable(p,actor??mover) &&
+      this.unitSegmentClear(fixed(p), fixed(p), except ?? -1,undefined,actor) &&
       (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.units()).some(
         (e) =>
           e.unit &&
@@ -248,19 +257,19 @@ export class Spatial {
           !e.unit.release &&
           !this.ignoresUnits(e) &&
           e.id !== except &&
-          (e.surface === p.surface || !!this.layers&&Math.abs(this.height(precise(e))-this.height(p))<this.unitHeight) &&
+          (e.surface === p.surface || !!this.layers&&Math.abs(this.height(precise(e))-this.height(p))<Math.max(this.dimensions(e).height,this.dimensions(actor??mover).height)) &&
           ((e.x === p.x && e.y === p.y) ||
             (!!e.unit.detour?.yielding && e.unit.detour.waypoint===this.cell(p))),
       ))
     );
   }
-  nearest(origin: Point, max = 12, except?: number): Point | null {
+  nearest(origin: Point, max = 12, except?: number,actor?:Actor): Point | null {
     for (let r = 0; r <= max; r++)
       for (let dy = -r; dy <= r; dy++)
         for (let dx = -r; dx <= r; dx++)
           if (Math.abs(dx) + Math.abs(dy) === r) {
             const p = { x: origin.x + dx, y: origin.y + dy, ...(origin.surface?{surface:origin.surface}:{}) };
-            if (this.free(p, except)) return p;
+            if (this.free(p, except,actor)) return p;
           }
     return null;
   }
@@ -299,47 +308,47 @@ export class Spatial {
     if(avoidUnits&&Number.isFinite(maxCost)){
       // Recompute the terrain-only budget so successive traffic retries cannot
       // ratchet the allowed detour farther and farther away from the corridor.
-      const terrainPath=this.clearSegment(from,fixed(destination))?[goal]:this.findPath(this.cell(e),goal);
+      const terrainPath=this.clearSegment(from,fixed(destination), undefined, e)?[goal]:this.findPath(this.cell(e),goal, undefined, undefined, e);
       if(terrainPath===null)return false;
       let length=0,anchor=from;
       for(const i of terrainPath){const p=fixed(this.point(i));length+=Math.hypot(p.x-anchor.x,p.y-anchor.y);anchor=p;}
       maxCost=Math.min(maxCost,Math.ceil(length*1.25/1000+4)*1000);
     }
-    const direct = this.clearSegment(from, fixed(destination), blocked);
+    const direct = this.clearSegment(from, fixed(destination), blocked, e);
     if(!direct&&!this.layers&&this.probes?.entity===e&&avoidUnits){
-      if(this.probes.pocket===undefined)this.probes.pocket=this.navigation.reachablePocket(this.cell(e),blocked);
+      if(this.probes.pocket===undefined)this.probes.pocket=this.navigationFor(e).reachablePocket(this.cell(e),blocked);
       if(this.probes.pocket&&!this.probes.pocket.has(goal))return false;
     }
     // Every A* route starts at one of the eight neighboring cell centers.
     // If an interrupted sub-cell position cannot join any of those (or its own
     // center), all resulting routes would be rejected by the smoothing loop.
     // Prove that once up front instead of searching hundreds of tree targets.
-    if (!direct && !this.clearSegment(from, fixed(e), blocked)) {
+    if (!direct && !this.clearSegment(from, fixed(e), blocked, e)) {
       let exit = false;
       for (let dy = -1; dy <= 1 && !exit; dy++)
         for (let dx = -1; dx <= 1 && !exit; dx++) {
           if (!dx && !dy) continue;
           const x = e.x + dx, y = e.y + dy;
           if (x >= 0 && y >= 0 && x < this.size && y < this.size &&
-              this.clearSegment(from, fixed({x,y,...(e.surface?{surface:e.surface}:{})}), blocked)) exit = true;
+              this.clearSegment(from, fixed({x,y,...(e.surface?{surface:e.surface}:{})}), blocked, e)) exit = true;
         }
       if (!exit) return false;
     }
     const path = direct
       ? [goal]
-      : this.findPath(this.cell(e), goal, blocked, maxCost);
+      : this.findPath(this.cell(e), goal, blocked, maxCost, e);
     if (path === null) return false;
     const waypoints: number[] = [];
     let anchor = from;
     for (let i = 0; i < path.length;) {
       let farthest = i;
-      if (!this.clearSegment(anchor, fixed(this.point(path[i])), blocked)) {
+      if (!this.clearSegment(anchor, fixed(this.point(path[i])), blocked, e)) {
         // A* starts at a cell center, but an interrupted mover may be beside a
         // corner inside that cell. Join the corridor via its checked center
         // instead of rejecting a reachable route or snapping the unit there.
         const center = fixed(this.point(this.cell(e)));
-        if (i !== 0 || !this.clearSegment(anchor, center, blocked) ||
-            !this.clearSegment(center, fixed(this.point(path[i])), blocked)) return false;
+        if (i !== 0 || !this.clearSegment(anchor, center, blocked, e) ||
+            !this.clearSegment(center, fixed(this.point(path[i])), blocked, e)) return false;
         waypoints.push(this.cell(e));
         anchor = center;
       }
@@ -349,8 +358,7 @@ export class Spatial {
         this.clearSegment(
           anchor,
           fixed(this.point(path[farthest + 1])),
-          blocked,
-        )
+          blocked, e)
       )
         farthest++;
       const next = path[farthest];
@@ -373,13 +381,15 @@ export class Spatial {
     from: FixedPoint,
     to: FixedPoint,
     blocked?: ReadonlySet<number>,
+    actor?:Actor,
   ) {
+    const dimensions=this.dimensions(actor),radius=Math.round(dimensions.radius*1000);
     if(this.layers){
       const graph=this.layers;
       const layerPoint=(p:FixedPoint)=>({x:Math.floor((p.x+500)/1000),y:Math.floor((p.y+500)/1000),...(p.surface?{surface:p.surface}:{})});
       const start=graph.node(layerPoint(from)),goal=graph.node(layerPoint(to));
       if(start===undefined||goal===undefined)return false;
-      const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!this.walkable(n.id)||!!blocked?.has(n.id);
+      const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!this.walkable(n.id)||!graph.walkable(n.id,Math.round(dimensions.height*100))||!!blocked?.has(n.id);
       const node=(cell:number,surface:string|undefined)=>graph.node({x:cell%this.size,y:Math.floor(cell/this.size),surface});
       const step=(a:number,b:number)=>{
         const na=node(a,from.surface),nb=node(b,from.surface);if(na===undefined||nb===undefined)return false;
@@ -396,20 +406,20 @@ export class Spatial {
       const candidates=(cell:number)=>{
         const result:number[]=[];
         for(const id of [node(cell,from.surface),node(cell,to.surface)])
-          if(id!==undefined&&this.walkable(id)&&!result.includes(id))result.push(id);
+          if(id!==undefined&&this.walkable(id)&&graph.walkable(id,Math.round(dimensions.height*100))&&!result.includes(id))result.push(id);
         if(!result.length){
           for(const id of graph.at(cell%this.size,Math.floor(cell/this.size)))
             if((graph.step(start,id)||graph.step(goal,id))&&this.walkable(id))result.push(id);
         }
         return result;
       };
-      return clearSweep(from,to,(a,b)=>candidates(a).some(na=>candidates(b).some(nb=>graph.step(na,nb))),this.size,this.unitRadius);
+      return clearSweep(from,to,(a,b)=>candidates(a).some(na=>candidates(b).some(nb=>graph.step(na,nb,blockedNode))),this.size,radius);
 
     }
     const terrainStep = (a: number, b: number) =>
       this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= MAX_GROUND_STEP_CM;
     return (
-      clearSweep(from, to, terrainStep, this.size, this.unitRadius) &&
+      clearSweep(from, to, terrainStep, this.size, radius) &&
       (!blocked ||
         clearRay(
           from,
@@ -429,14 +439,14 @@ export class Spatial {
   }
   /** Optional diagnostics collect every physical blocker without changing the
    * ordinary movement query's allocation-free, first-collision fast path. */
-  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[]): boolean {
+  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[],actor?:Actor): boolean {
     const initialCount=blockers?.length ?? 0;
     const mover = this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     if (mover && this.ignoresUnits(mover)) return true;
     const dx = to.x - from.x,
       dy = to.y - from.y,
       square = dx * dx + dy * dy;
-    const diameter = this.unitRadius * 2;
+    const body=this.dimensions(actor??mover),radius=Math.round(body.radius*1000),diameter=radius+this.maxUnitRadius;
     const candidates=this.unitIndex?.within(Math.min(from.x,to.x)-diameter,Math.min(from.y,to.y)-diameter,Math.max(from.x,to.x)+diameter,Math.max(from.y,to.y)+diameter) ?? this.units();
     for (const unit of candidates) {
       if (
@@ -448,7 +458,8 @@ export class Spatial {
         || this.ignoresUnits(unit)
       )
         continue;
-      if(this.layers && Math.abs(this.height(precise(unit))-this.height({x:from.x/1000,y:from.y/1000,surface:from.surface}))>=this.unitHeight)continue;
+      const other=this.dimensions(unit),separation=radius+Math.round(other.radius*1000);
+      if(this.layers){const floor=this.height({x:from.x/1000,y:from.y/1000,surface:from.surface}),otherFloor=this.height(precise(unit));if(floor>=otherFloor+other.height||otherFloor>=floor+body.height)continue;}
       const p = unit.unit.position ?? fixed(unit);
       if (
         p.x < Math.min(from.x, to.x) - diameter ||
@@ -465,7 +476,7 @@ export class Spatial {
         : 0;
       if (
         (p.x - from.x - t * dx) ** 2 + (p.y - from.y - t * dy) ** 2 <
-        diameter ** 2
+        separation ** 2
       ) {
         if (!blockers) return false;
         blockers.push(unit.id);

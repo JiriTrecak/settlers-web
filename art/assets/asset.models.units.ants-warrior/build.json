@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "category": "characters",
+  "slug": "ant-warrior-tripo",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 2
+    },
+    "ant-warrior-tripo.blend": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 3
+    },
+    "character.json": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 4
+    },
+    "model.glb": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "recipe",
+      "index": 1
+    },
+    "palette.json": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 5
+    },
+    "reference.png": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "preview",
+      "index": 1
+    },
+    "samples.json": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 6
+    },
+    "source.glb": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "source",
+      "index": 7
+    },
+    "warrior.glb": {
+      "asset": "asset.models.units.ants-warrior",
+      "role": "geometry",
+      "index": 1
+    }
+  }
+}

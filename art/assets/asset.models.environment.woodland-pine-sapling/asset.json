@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-sapling",
   "name": "woodland pine sapling",
   "kind": "foliage",
-  "revision": 10,
+  "revision": 11,
   "status": "published",
   "tags": [
     "original",
@@ -38,6 +38,55 @@
       "format": "png",
       "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
       "bytes": 236370
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "2523749f682105b8e502cce940f10cf905bdc36c9fdfe92df1a48ff00ceb9008",
+      "bytes": 503
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "glb",
+      "sha256": "9376818c7cac8e1779eafaf161537d2ab50562da139e71f5850a3ab2d4a7c6b9",
+      "bytes": 1248892
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "84aed8f2b3e0a93cd0e8bc93808e819249f8014e49908e7f7a6a5ace5099e1e0",
+      "bytes": 1248928
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
+      "bytes": 196
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "9c0294805cf8f161af3910cc07110841f14774f1c21b8d934ab9dcfb2ff46fcf",
+      "bytes": 427015
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
+      "bytes": 198
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "7400e7b8be2c9058997edb5eb380cbc7fc6c74643e65e2a8c5d2475bcb31c7e6",
+      "bytes": 1476
     }
   ],
   "usesGeometry": true,
@@ -79,15 +128,15 @@
     ]
   },
   "capabilities": {
-    "groundContact": {
-      "mode": "pivot"
-    },
-    "vegetationClearance": 0.3,
     "wind": {
       "mode": "tree",
       "strength": 0.1,
       "speed": 0.18,
       "stiffness": 0.8
+    },
+    "vegetationClearance": 0.3,
+    "groundContact": {
+      "mode": "pivot"
     }
   },
   "provenance": {

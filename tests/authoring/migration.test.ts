@@ -1,3 +1,4 @@
+import {triangleGlb} from './glb-fixture';
 import {afterEach,describe,it,expect} from 'vitest';
 import {mkdtemp,rm,readFile} from 'node:fs/promises';
 import os from 'node:os';
@@ -8,7 +9,7 @@ import {AuthoringStore} from '../../tooling/asset-studio/server/authoring/store'
 import {atomic,hash,saveJson} from '../../tooling/asset-studio/server/storage';
 import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
 const roots:string[]=[];
-async function fixture(){const root=await mkdtemp(path.join(os.tmpdir(),'authoring-'));roots.push(root);const bytes=Buffer.from('geometry fixture'),file='assets/models/pine/model.glb';await atomic(path.join(root,file),bytes);
+async function fixture(){const root=await mkdtemp(path.join(os.tmpdir(),'authoring-'));roots.push(root);const bytes=triangleGlb(),file='assets/models/pine/model.glb';await atomic(path.join(root,file),bytes);
  await saveJson(path.join(root,'art/records/pine/asset.json'),{version:1,id:'pine',name:'Pine',kind:'model',tags:[],status:'published',revision:1,profile:'model',outputs:[{role:'model',path:file,sha256:hash(bytes),bytes:bytes.length}],render:[{id:'tree',file}],scenery:[{id:'pine',name:'Pine',category:'foliage',type:'prop',file:file.slice(7),blockers:[{width:1,depth:1}]}],source:{path:file,sha256:hash(bytes),quality:'runtime-only'},origin:{method:'import'},validation:{checkedAt:'test',warnings:[]}});return root;}
 afterEach(async()=>{await Promise.all(roots.splice(0).map(r=>rm(r,{recursive:true,force:true})));});
 describe('asset authoring migration',()=>{

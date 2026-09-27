@@ -333,7 +333,7 @@ describe("disruption and scaling gates", () => {
     };
     const actions: Action[] = [];
     economy(
-      new Frame(seen(base, [worker, resource, {...base.entities.find(e=>e.owner==="player.1" && e.definition==="building.ants.fort")!, inventory:{}}]), "player.1", content, geo, 100),
+      new Frame(seen({...base, goods: base.goods!.map(g => ({...g, available: 0, stored: 0}))}, [worker, resource, {...base.entities.find(e=>e.owner==="player.1" && e.definition==="building.ants.fort")!, inventory:{}}]), "player.1", content, geo, 100),
       newAIState(geo.map.fingerprint, 1),
       (a) => {
         actions.push(a);

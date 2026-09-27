@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-rain-barrel",
   "name": "woodland rain barrel",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "58317beae18ac21bbd9b503b0dfa0d187954198e5ee473ed13231b9ee855f0ab",
+      "bytes": 1062
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "c1e00e738304fc42c42f78b13557f2941ae9dbc4ea5641f1e9ca40398fd64838",
+      "bytes": 646
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "1ec9104045146717b2a440c3d4c1106d7be4ccda7681d0debf817ed4928b72aa",
+      "bytes": 1564412
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "d7bc8189bdca3bbe82a91ca174000e1c0f6f68105084cf57db6f7e66fc0776b3",
+      "bytes": 1564448
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "a1774ca11e255c89adf6f055e40aa69c544eb37568907d1ff6c399edcaaa641d",
+      "bytes": 1261
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "a78b6da320272e686acfbe68a26fc40e00f4fe74963bb41d26df7ca44688e922",
+      "bytes": 441710
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "9083a4b49a4deb58c35d663cc9987893f1984947df2aec84a4fbf7218d188e4b",
+      "bytes": 2136
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

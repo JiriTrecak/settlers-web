@@ -7,7 +7,6 @@ import {shortcuts,keyLabel,authoredKey,commandShortcut,inputCaptured,SHORTCUTS_C
 import { itemStatusCard } from "../../presentation/itemStatus";
 import { heroShortcuts } from "../../presentation/heroes";
 import { unitOrderCard } from "../../presentation/orderQueue";
-import { workforceReserve } from "../../presentation/workforce";
 import { HeroBar } from "./heroBar";
 import { armorMultiplier } from "../../sim/game/damage";
 import { experienceMeter } from "../../presentation/experience";
@@ -776,7 +775,7 @@ export class SettlementHud {
       meter.setAttribute('aria-label',`${workplace.active.name}: ${workplace.active.progress===null?workplace.summary:percent+'%'}`);
       Object.assign(meter.dataset,{tipName:workplace.active.name,tipDescription:workplace.summary});
     }
-    const stockSignature = JSON.stringify([view.goods, view.population]);
+    const stockSignature = JSON.stringify([view.goods, view.supply]);
     if (this.stockSignature !== stockSignature) {
       this.stockSignature = stockSignature;
       const shown = new Set((view.goods ?? []).map(row => row.item));
@@ -807,30 +806,19 @@ export class SettlementHud {
       }
     }
     // Resource and population badges share the same declarative icon/tooltip path.
-    if (view.population) {
+    if (view.supply) {
       let badge = this.stock.querySelector<HTMLElement>("[data-population]");
       if (!badge) {
-        badge = document.createElement("span");
-        badge.dataset.population = "true";
-        badge.tabIndex = 0;
-        badge.innerHTML =
-          iconArt(
-            content.get(
-              content.rules.startingSetup.units.find(
-                (u) => content.get(u.definition).behaviors.work,
-              )!.definition,
-            ).icon,
-          ) + "<b></b>";
-        this.stock.append(badge);
+        badge = document.createElement("span"); badge.dataset.population = "true"; badge.tabIndex = 0;
+        badge.innerHTML = iconArt(content.rules.supplyIcon) + "<b></b>"; this.stock.append(badge);
       }
-      const reserve = workforceReserve(view.population);
-      const description = `${reserve.available} ready to recruit now.\n${reserve.replenishing} more can spawn.\n${reserve.allocation} free workers after replenishment, keeping current assignments.\nAssigned workers are protected from recruitment.`;
+      const s = view.supply;
+      const description = `${s.used} used by living units. ${s.reserved} reserved for queued units.\n${s.available} available; maximum ${s.limit}.\nCompleted halls and mounds provide supply. Started training finishes even if capacity is lost; waiting units need enough supply to start.`;
+      badge.querySelector("b")!.textContent = `${s.committed}/${s.capacity}`;
+      badge.style.color = s.overCapacity ? "#ed8d77" : "";
+      badge.setAttribute("aria-label", `Supply ${s.committed} of ${s.capacity}, ${s.used} used and ${s.reserved} reserved`);
       if (badge.dataset.tipDescription !== description) {
-        badge.querySelector("b")!.textContent = `${reserve.available}/${reserve.allocation}`;
-        badge.setAttribute("aria-label", `${reserve.available} workers available for recruitment, ${reserve.allocation} after replenishment`);
-        badge.dataset.tipName = "Available workers";
-        badge.dataset.tipDescription = description;
-        this.tooltips.refresh(badge);
+        badge.dataset.tipName = "Supply"; badge.dataset.tipDescription = description; this.tooltips.refresh(badge);
       }
     } else {
       const badge = this.stock.querySelector("[data-population]");

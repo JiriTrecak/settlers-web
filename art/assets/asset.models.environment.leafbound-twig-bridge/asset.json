@@ -3,7 +3,7 @@
   "id": "asset.models.environment.leafbound-twig-bridge",
   "name": "leafbound twig bridge",
   "kind": "bridge",
-  "revision": 2,
+  "revision": 3,
   "status": "published",
   "tags": [
     "original",
@@ -31,6 +31,62 @@
       "format": "png",
       "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
       "bytes": 236370
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "5eb7ed8c7cd6f97baab6422be8c8d34ae9554ef04b6313cf219c35393e51ffa0",
+      "bytes": 498
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "glb",
+      "sha256": "0420cfac17df0f5c93a5f2787634214c86411115b641dc8c6f62868e0ec349a5",
+      "bytes": 628344
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "fc57a1aa397409ac9b87f82f8bc179e01815f00fef0ee2c6b26b18d266436366",
+      "bytes": 628376
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
+      "bytes": 196
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "d418e57fbb91fedb2410647bbcf889f18fc956c61525cdaa44a426955488afab",
+      "bytes": 1983075
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
+      "bytes": 198
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "0afdabc818a4fd7b7713cca7fdff69994aa6420a54647acaca4ec51f555ec13a",
+      "bytes": 1341
     }
   ],
   "usesGeometry": true,
@@ -74,10 +130,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0
+    }
   },
   "provenance": {
     "method": "authored",

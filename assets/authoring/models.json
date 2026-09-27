@@ -11,9 +11,171 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          15,
+          15
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 7.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.ants-acorn-hall/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-barracks",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          9,
+          7
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 4.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-barracks/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-bombardier-workshop",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          11,
+          9
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 5.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-chitin-works",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          9,
+          9
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 4.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-chitin-works/geometry.glb"
     ],
     "scenery": []
   },
@@ -29,9 +191,167 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "teamColor": {
+        "mode": "material",
+        "slots": [
+          "TC_TeamColor"
+        ]
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          9,
+          9
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 4.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-mound",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          7,
+          7
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 3.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-mound/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-rootworks",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          11,
+          9
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 5.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-rootworks/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-watchtower",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          7,
+          7
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 3.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-watchtower/geometry.glb"
     ],
     "scenery": []
   },
@@ -46,6 +366,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -67,6 +393,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.autumn-leaf-litter/geometry.glb"
@@ -86,6 +418,18 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "foliage",
+        "strength": 0.025,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -107,6 +451,18 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "foliage",
+        "strength": 0.025,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.autumn-shrub-gold/geometry.glb"
@@ -126,6 +482,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -147,6 +509,22 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.09,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 1.1,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.autumn-stump",
+        "definition": "resource.forest.tree"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.autumn-tree-copper/geometry.glb"
@@ -166,6 +544,22 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.09,
+        "speed": 0.2,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 1.1,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.autumn-stump",
+        "definition": "resource.forest.tree"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -187,6 +581,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.canopy-acorns/geometry.glb"
@@ -206,6 +606,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 5,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -227,6 +633,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.canopy-mushrooms-ochre/geometry.glb"
@@ -246,6 +658,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -267,6 +685,22 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 1.1,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.woodland-pine-stump",
+        "definition": "resource.forest.tree"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.canopy-oak/geometry.glb"
@@ -286,6 +720,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -307,6 +747,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.frost-boulder/geometry.glb"
@@ -326,6 +772,17 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
     },
     "groundContact": "terrain",
     "geometry": [
@@ -347,6 +804,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.frost-log/geometry.glb"
@@ -366,6 +829,42 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "animations": [
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "fall",
+          "clip": "fall",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "decay",
+          "clip": "decay",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "vegetationClearance": 1.2,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.woodland-pine-stump",
+        "definition": "resource.forest.tree"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -387,6 +886,42 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "animations": [
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "fall",
+          "clip": "fall",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "decay",
+          "clip": "decay",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "vegetationClearance": 1.2,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.woodland-pine-stump",
+        "definition": "resource.forest.tree"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.frost-pine-b/geometry.glb"
@@ -406,6 +941,18 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 0.3,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -427,6 +974,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.frost-rock-ledge/geometry.glb"
@@ -446,6 +999,17 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
     },
     "groundContact": "terrain",
     "geometry": [
@@ -467,6 +1031,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.leafbound-twig-bridge/geometry.glb"
@@ -486,6 +1056,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -507,6 +1083,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb"
@@ -526,6 +1108,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -547,6 +1135,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb"
@@ -566,6 +1160,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 1.7,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -587,6 +1187,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 1.4,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb"
@@ -606,6 +1212,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -627,6 +1239,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 4.6,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb"
@@ -646,6 +1264,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 4.6,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -667,6 +1291,17 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
     "groundContact": "terrain",
     "geometry": [
       "assets/library/asset.models.environment.woodland-daisies/geometry.glb"
@@ -686,6 +1321,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.9,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -707,6 +1348,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.1,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb"
@@ -726,6 +1373,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -747,6 +1400,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 1.9,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb"
@@ -766,6 +1425,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 1.7,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -787,6 +1452,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-giant-stump/geometry.glb"
@@ -806,6 +1477,17 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
     },
     "groundContact": "terrain",
     "geometry": [
@@ -827,6 +1509,17 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
     "groundContact": "terrain",
     "geometry": [
       "assets/library/asset.models.environment.woodland-grass-high-b/geometry.glb"
@@ -846,6 +1539,17 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
     },
     "groundContact": "terrain",
     "geometry": [
@@ -867,6 +1571,17 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "grass",
+        "strength": 0.12,
+        "speed": 0.2,
+        "stiffness": 0.75
+      },
+      "groundContact": {
+        "mode": "terrain"
+      }
+    },
     "groundContact": "terrain",
     "geometry": [
       "assets/library/asset.models.environment.woodland-grass-messy/geometry.glb"
@@ -886,6 +1601,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 4.6,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -907,6 +1628,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 4,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb"
@@ -926,6 +1653,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -947,6 +1680,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb"
@@ -966,6 +1705,11 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "groundContact": {
+        "mode": "water"
+      }
     },
     "groundContact": "water",
     "geometry": [
@@ -987,6 +1731,11 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "groundContact": {
+        "mode": "water"
+      }
+    },
     "groundContact": "water",
     "geometry": [
       "assets/library/asset.models.environment.woodland-lily-b/geometry.glb"
@@ -1006,6 +1755,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1027,6 +1782,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-moss-boulder/geometry.glb"
@@ -1046,6 +1807,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1067,6 +1834,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb"
@@ -1086,6 +1859,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1107,6 +1886,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-mushrooms-fan/geometry.glb"
@@ -1126,6 +1911,42 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "animations": [
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "fall",
+          "clip": "fall",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "decay",
+          "clip": "decay",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "vegetationClearance": 1.2,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.woodland-pine-stump",
+        "definition": "resource.forest.tree"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1147,6 +1968,42 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "animations": [
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "fall",
+          "clip": "fall",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "decay",
+          "clip": "decay",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "vegetationClearance": 1.2,
+      "groundContact": {
+        "mode": "pivot"
+      },
+      "harvesting": {
+        "replacement": "asset.models.environment.woodland-pine-stump",
+        "definition": "resource.forest.tree"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-pine-b/geometry.glb"
@@ -1166,6 +2023,18 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "wind": {
+        "mode": "tree",
+        "strength": 0.1,
+        "speed": 0.18,
+        "stiffness": 0.8
+      },
+      "vegetationClearance": 0.3,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1187,6 +2056,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.3,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-pine-stump/geometry.glb"
@@ -1206,6 +2081,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1227,6 +2108,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.1,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-reed-tuft/geometry.glb"
@@ -1246,6 +2133,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1267,6 +2160,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-rock-ledge/geometry.glb"
@@ -1286,6 +2185,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1307,6 +2212,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 1.1,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-root-snag/geometry.glb"
@@ -1326,6 +2237,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1347,6 +2264,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-snapped-root/geometry.glb"
@@ -1366,6 +2289,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1387,6 +2316,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-supply-crate/geometry.glb"
@@ -1406,6 +2341,12 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [
@@ -1427,6 +2368,12 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "vegetationClearance": 0.25,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.environment.woodland-woodpile/geometry.glb"
@@ -1434,6 +2381,314 @@
     "scenery": [
       "woodland-woodpile"
     ]
+  },
+  {
+    "id": "asset.models.resources.amber-deposit",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          7,
+          7
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 3.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-deposit/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.corrupted-root",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.corrupted-root/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-archer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.2,
+        "height": 2,
+        "formationSpacing": 1
+      },
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "charge",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack_bow",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.6250000000000002
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "back",
+          "node": "socket_back",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-archer/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-bombardier",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.2,
+        "height": 2,
+        "formationSpacing": 1
+      },
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "charge",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack_mortar",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.5
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "back",
+          "node": "socket_back",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-bombardier/geometry.glb"
+    ],
+    "scenery": []
   },
   {
     "id": "asset.models.units.ants-warrior",
@@ -1447,9 +2702,255 @@
       "up": "Y",
       "forward": "+Z"
     },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.2,
+        "height": 2,
+        "formationSpacing": 1
+      },
+      "teamColor": {
+        "mode": "material",
+        "slots": [
+          "TC_TeamColor"
+        ]
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "charge",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack_sword",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.6161971830985915
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "left-hand",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "right-hand",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "blade-base",
+          "node": "socket_blade_base",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "blade-tip",
+          "node": "socket_blade_tip",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.units.ants-warrior/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-worker",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.2,
+        "height": 2,
+        "formationSpacing": 1
+      },
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry",
+          "clip": "carry",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry_walk",
+          "clip": "carry_walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry_run",
+          "clip": "carry_run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "build",
+          "clip": "build",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "chop",
+          "clip": "chop",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "chop",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 3.6208333333333336
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "back",
+          "node": "socket_back",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-worker/geometry.glb",
+      "assets/library/asset.models.units.ants-worker/geometry_2.glb",
+      "assets/library/asset.models.units.ants-worker/geometry_3.glb",
+      "assets/library/asset.models.units.ants-worker/geometry_4.glb"
     ],
     "scenery": []
   },
@@ -1464,6 +2965,11 @@
       ],
       "up": "Y",
       "forward": "+Z"
+    },
+    "capabilities": {
+      "groundContact": {
+        "mode": "pivot"
+      }
     },
     "groundContact": "pivot",
     "geometry": [

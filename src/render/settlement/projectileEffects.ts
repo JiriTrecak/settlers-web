@@ -7,7 +7,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 export type ProjectileKind='arrow'|'thorn';
 type Flight={kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
 type Batch={mesh:InstancedMesh;capacity:number};
-const UP=new Vector3(0,1,0),SCALE=new Vector3(1,1,1);
+const UP=new Vector3(0,1,0);
 function colored(geometry:BufferGeometry,tint:number){
  const color=new Color(tint),values=new Float32Array(geometry.getAttribute('position').count*3);
  for(let i=0;i<values.length;i+=3){values[i]=color.r;values[i+1]=color.g;values[i+2]=color.b;}
@@ -15,7 +15,7 @@ function colored(geometry:BufferGeometry,tint:number){
 }
 function arrowGeometry(){
  // Close to the authored nocked arrow, with slightly thicker detail for RTS zoom.
- const parts=[colored(new CylinderGeometry(.012,.012,.62,5),0xc3a779),colored(new CylinderGeometry(0,.04,.12,4).translate(0,.37,0),0xa5afb4),colored(new BoxGeometry(.10,.13,.01).translate(0,-.23,0),0xc3a779),colored(new BoxGeometry(.01,.13,.10).translate(0,-.23,0),0xc3a779)];
+ const parts=[colored(new CylinderGeometry(.012,.012,.62,5),0xc3a779),colored(new CylinderGeometry(0,.04,.12,4).translate(0,.37,0),0xdfc99a),colored(new BoxGeometry(.10,.13,.01).translate(0,-.23,0),0xc3a779),colored(new BoxGeometry(.01,.13,.10).translate(0,-.23,0),0xc3a779)];
  const merged=mergeGeometries(parts)!;parts.forEach(p=>p.dispose());return merged;
 }
 /** Observer-filtered authoritative flights. One draw per projectile kind, never one per shot. */
@@ -27,6 +27,7 @@ export class ProjectileEffects {
  private flights:Flight[]=[];
  private readonly origins=new Map<number,{launched:number;position:Vector3}>();
  private readonly position=new Vector3();
+ private readonly scale=new Vector3(1,1,1);
  private readonly tangent=new Vector3();
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
@@ -39,7 +40,8 @@ export class ProjectileEffects {
   mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;mesh.count=0;
   this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
  }
- update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined){
+ update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined,unitScale=1){
+  this.scale.setScalar(unitScale);
   const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact);
   const liveIds=new Set(active.map(m=>m.id));
   for(const id of this.origins.keys())if(!liveIds.has(id))this.origins.delete(id);
@@ -71,7 +73,7 @@ export class ProjectileEffects {
    this.position.lerpVectors(flight.start,flight.end,t);this.position.y+=4*arc*t*(1-t);
    this.tangent.subVectors(flight.end,flight.start);this.tangent.y+=4*arc*(1-2*t);
    if(this.tangent.lengthSq()<1e-10)this.tangent.copy(UP);else this.tangent.normalize();
-   this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,SCALE);
+   this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,this.scale);
    const mesh=this.batches.get(flight.kind)!.mesh;mesh.setMatrixAt(mesh.count++,this.matrix);
   }
   for(const batch of this.batches.values())if(batch.mesh.count)batch.mesh.instanceMatrix.needsUpdate=true;

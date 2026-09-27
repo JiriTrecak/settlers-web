@@ -4,13 +4,17 @@ import { game,placed } from "./helpers";
 import { inventoryCard } from "../../src/presentation/commands";
 
 function setup() {
-  return game([{...placed("ring","item.test-ring",219,230),owner:"none"},
+  const g=game([{...placed("ring","item.test-ring",219,230),owner:"none"},
     {...placed("salve","item.test-salve",217,230),owner:"none"}],draft=>{
       draft.definitions.push({id:"item.test-ring",kind:"item",name:"Ring",description:"Armor and might.",asset:"asset.item.plank",icon:"icon.item.plank",stackLimit:1,
         itemEffect:{type:"equipment",damage:9,armor:2,maxHp:100}},
       {id:"item.test-salve",kind:"item",name:"Salve",description:"Restores health.",asset:"asset.item.plank",icon:"icon.item.plank",stackLimit:1,
         itemEffect:{type:"consumable",heal:100}});
     });
+  // Place test loot beside the actual starting hero, independent of hall size.
+  const hero=g.entities.find(e=>e.owner==='player.1'&&e.equipment)!;
+  for(const e of g.entities.filter(e=>e.item)){e.x=hero.x+(e.placement==='ring'?1:-1);e.y=hero.y;}
+  g.observation.update();return g;
 }
 describe("hero inventory",()=>{
   it("transfers ground loot atomically, derives bonuses, saves slots and drops without healing exploits",()=>{
@@ -66,6 +70,7 @@ it('retains a pickup order through a stun and transfers the chest only after rec
 
 it('revives the same hero with items, XP and skills after real combat death and a queued save/load',()=>{
  const g=setup(),victim=g.context.create(placed('fallen','unit.ants.marshal',230,230,{health:1})),attacker=g.context.create(placed('attacker','unit.ants.warrior',231,230)),shrine=g.context.create(placed('shrine','building.ants.sanctuary',239,230));
+ g.context.create(placed('supply','building.ants.house',245,245));
  for(const e of [victim,attacker,shrine])e.readyTick=0;
  victim.equipment!.fill('item.test-ring');victim.progression!.experience=100;
  expect(g.spells.learn(victim,'spell.marshal.faultline')).toBeNull();

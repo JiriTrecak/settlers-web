@@ -66,6 +66,28 @@ def export_character(asset,output):
         meta['variantTriangles'][role]=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes if o['role'] in ('base',role))
     meta['triangles']=meta['variantTriangles'][meta['variants'][0]]
     meta['vertices']=sum(len(o.data.vertices) for o in meshes)
+    # Source has already been saved; modify only the disposable runtime export.
+    runtime_materials={m for ob in meshes for m in ob.data.materials if m}
+    replacements={}
+    for material in runtime_materials:
+        if not material.use_nodes:continue
+        if material.get('teamColorMask')=='baseColorAlpha':
+            texture=material.node_tree.nodes['Authored albedo with ownership mask']
+            bsdf=material.node_tree.nodes.get('Principled BSDF')
+            material.node_tree.links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])
+            material.diffuse_color=(1,1,1,1)
+        size=config.get('runtime_texture_size')
+        for node in material.node_tree.nodes:
+            if not size or node.type!='TEX_IMAGE' or not node.image or max(node.image.size)<=size:continue
+            original=node.image
+            if original.name not in replacements:
+                reduced=original.copy();factor=size/max(original.size)
+                reduced.scale(max(1,round(original.size[0]*factor)),max(1,round(original.size[1]*factor)))
+                reduced.pack();replacements[original.name]=reduced
+            node.image=replacements[original.name]
+    budget=config.get('runtime_triangle_budget')
+    if budget and any(n>budget for n in meta['variantTriangles'].values()):
+        raise ValueError(f'Character triangle budget exceeded: {meta["variantTriangles"]}')
     def write(path,role=None):
         rigs[0]['variant']=role or meta['variants'][0]
         rigs[0]['characterProfile']={'variants':variants,'attackEvents':events}

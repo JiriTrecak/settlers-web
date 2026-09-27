@@ -2,7 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import sharp from 'sharp';
 import {originalPackage,addBytes,addFile,publishOriginals} from './original-publication';
-const source='art/sources/buildings/mandible-hall';
+const source='.asset-work/build/buildings/mandible-hall';
 const id='asset.models.buildings.ants-mandible-hall';
 const pack=originalPackage(id,'Mandible Hall','building','generated');
 await addFile(pack,'geometry','glb',source+'/model.glb');

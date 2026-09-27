@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "winter-soil",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.terrain.winter-soil",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.terrain.winter-soil",
+      "role": "source",
+      "index": 2
+    }
+  }
+}

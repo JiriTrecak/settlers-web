@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "woodland-bark",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.sources.textures-woodland-bark",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.sources.textures-woodland-bark",
+      "role": "source",
+      "index": 2
+    }
+  }
+}

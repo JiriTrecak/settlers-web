@@ -3,7 +3,7 @@
   "id": "asset.terrain.woodland-soil",
   "name": "woodland soil · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "08f3022c36b1c6c2134691aa4c92925c6b2a7b397b5dd8f696ec59aa8e2dea17",
       "bytes": 1502507
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ddf5b54f481b7803329d3eb2f34cc79c7c26e25d1a7b1be61418d63bbf2bcb05",
+      "bytes": 2064043
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "2670a6fbed8b0d59f2385e7f1ac626194cf0237a009c3cc72e04b8653eaf37ee",
+      "bytes": 725
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "7ec1bd608c8990862c20ab91a73ff0ac3224e6468c64f0c3e4c17ee6a26e92f3",
+      "bytes": 322
     }
   ],
   "usesGeometry": false,

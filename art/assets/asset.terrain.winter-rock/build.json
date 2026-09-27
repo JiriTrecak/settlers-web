@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "category": "textures",
+  "slug": "winter-rock",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.terrain.winter-rock",
+      "role": "source",
+      "index": 1
+    },
+    "generation.json": {
+      "asset": "asset.terrain.winter-rock",
+      "role": "source",
+      "index": 2
+    }
+  }
+}

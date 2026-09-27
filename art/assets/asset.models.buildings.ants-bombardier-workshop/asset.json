@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-bombardier-workshop",
+  "name": "Bombardier Workshop",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "20df9a1ef4bb07eae0d9f7440d9c2e8f5193be079cd639050cef246709ef2621",
+      "bytes": 11972612
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "5bf7aac8359624eb866c3cd8da5a2cd37410c6dadd63797d2b9e731bff6b29ea",
+      "bytes": 26589237
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "b8380e9ba9eeccebeb95bddd608527e24eec42b2a54062e95c382577b3948dc7",
+      "bytes": 1852042
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "16dc0ec2f5ed13bfeb4907682bdb0f1a102b3086c3727bc9faceb96ab1922b91",
+      "bytes": 1311467
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "a6823822feaad55d7b81cdff83b76a339bf1df377f56b8fc03872f236132eac2",
+      "bytes": 8089090
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "a38812358774ca3cb5d31cc71f6a914bf91fcb44d4697d16c530261385c53605",
+      "bytes": 249483
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "43ff5c1258ec3a5e8578eb310ef527237369a09bd2e7f7a3fc27b089e56346d1",
+      "bytes": 2903223
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "dc94228b2343c54e063e07a1df545d2470c2a6cbcecc1ce38492440a5a3bd792",
+      "bytes": 914532
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b381e0e38e4771997fcd5dcb5d9893b560db89eacda3c0f7a60faa462a53b3b2",
+      "bytes": 23170
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6de43b44cd1b9d13f8a3dc6f9850f6191bce4eea21f6f017666391de70c4d364",
+      "bytes": 11769
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "6c4a62171d0967c64754c3b4b5f5a4da03ea51afb86209a418c8a20cda83f661",
+      "bytes": 1003
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "13667229da4a87d0d38168311863441cfc47bd76da721da90471f5e885de872e",
+      "bytes": 16653780
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "ea24a95794c000ae41f52f8def0679e5e7727697575104868e3a0935ff17819c",
+      "bytes": 1082
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
+      "bytes": 263
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "67c0fa236650c3767944e30c7fb2a22b04c7f7a23d4010e5b5c1bc76fdd3e52a",
+      "bytes": 7349598
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "5d9aa06d2749c5437c80fa6fb757707e831bada0ae39af127e559e9e99939f07",
+      "bytes": 162
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "25221dda1b971ef545c22064e783d54c9f71af8d5d3be8880568bace4e242b7c",
+      "bytes": 6817
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "a2f9bcfeec3b0a08307a84cfd27c92700ed89fc2128d6e6aa24ed34708362188",
+      "bytes": 1446
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "90c12c7f91de5f665c61a3a8c1d0d3dcd87e4a6fd68518a1f3f73729d1f3c2b0",
+      "bytes": 2587505
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "81c23a5145cce8ab12ea32dceaa3ad019c9609959028dfc9771ad7e5862ee93d",
+      "bytes": 324
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "jpeg",
+      "sha256": "5c06a467bc0c49893ddb5efb7b1f4272ceb7e206b0b143456607493771a8209c",
+      "bytes": 3488026
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "glb",
+      "sha256": "7b6efb572545120df3df50ce5962a5af8cd8bd71f52b271128ba10f9a3501114",
+      "bytes": 8386764
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "72726592d8b79958cd320f8029019ac3cfb1c3e85ebf4ac30161c4ba35397fb3",
+      "bytes": 575171
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "6151446f2dec19f634ca2db84b738708d67c478df038e3071ea716c10c170bd7",
+      "bytes": 2620
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.72,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": true,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.ants.bombardier-workshop",
+        "scale": 1,
+        "healthHeight": 7.1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-bombardier-workshop"
+        }
+      },
+      {
+        "id": "icon.ants.bombardier-workshop",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-bombardier-workshop"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        11,
+        9
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 5.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

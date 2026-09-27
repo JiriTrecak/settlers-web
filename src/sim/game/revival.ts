@@ -1,3 +1,4 @@
+import { colonySupply, supplyAdmission, supplyStart } from "./supply";
 import type {GameContext} from './context';
 import type {Entity} from './state';
 /** Fallen heroes retain identity and progression in authoritative state, outside the live battlefield. */
@@ -14,6 +15,8 @@ export class Revival {
   if(!hero?.fallen||hero.owner!==building.owner)return 'Choose one of your fallen heroes';
   if(this.c.state.entities.some(e=>e.revival?.queue.some(q=>q.hero===id)))return 'Hero is already being revived';
   if(building.revival.queue.length>=policy.queueCapacity)return 'Revival queue is full';
+  const reason=supplyAdmission(colonySupply(this.c.populationCandidates(),building.owner,this.c.registry),this.c.def(hero).supplyCost!);
+  if(reason)return reason;
   building.revival.queue.push({hero:id,progress:0});return null;
  }
  cancel(building:Entity,id:number):string|null {
@@ -25,6 +28,8 @@ export class Revival {
    const queue=building.revival?.queue,entry=queue?.[0],policy=this.c.def(building).behaviors.revival;
    if(!entry||!policy||building.construction||!this.c.ready(building))continue;
    const hero=this.c.get(entry.hero);if(!hero?.fallen){queue!.shift();continue;}
+   if(entry.progress===0 && supplyStart(colonySupply(this.c.populationCandidates(),building.owner,this.c.registry),this.c.def(hero).supplyCost!))continue;
+   if(this.c.liveUnits().filter(e=>e.owner===building.owner).length>=this.c.registry.rules.maxUnits)continue;
    entry.progress=Math.min(policy.workTicks,entry.progress+1);if(entry.progress<policy.workTicks)continue;
    const location=this.c.spatial.nearest(this.c.spatial.entrance(building),12,hero.id);if(!location)continue;
    hero.x=location.x;hero.y=location.y;if(location.surface)hero.surface=location.surface;else delete hero.surface;hero.unit=this.c.freshUnit();hero.hp=this.c.stats(hero).maxHp;hero.regeneration={health:0,mana:0};delete hero.fallen;

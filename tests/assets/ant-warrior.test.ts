@@ -20,7 +20,7 @@ beforeAll(async()=>{
 });
 describe('Published Tripo ant warrior',()=>{
  it('publishes the approved source with textures, sockets and the enforced triangle budget',()=>{
-  expect(bytes.equals(readFileSync('art/sources/characters/ant-warrior-tripo/warrior.glb'))).toBe(true);
+  expect(bytes.equals(readFileSync('art/assets/asset.models.units.ants-warrior/geometry.glb'))).toBe(true);
   const asset=content.asset(content.get('unit.ants.warrior').asset);
   expect(asset.file).toBe(file);expect(asset.character).toBe('warrior');
   const tris=json.meshes.flatMap((m:any)=>m.primitives).reduce((sum:number,p:any)=>sum+json.accessors[p.indices].count/3,0);

@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-a",
   "name": "woodland pine a",
   "kind": "tree",
-  "revision": 10,
+  "revision": 11,
   "status": "published",
   "tags": [
     "original",
@@ -38,6 +38,69 @@
       "format": "png",
       "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
       "bytes": 236370
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "d813e87cb534786b95129da5087a951a05040e4eee80b9fe2717abe98c6bc0eb",
+      "bytes": 486
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "glb",
+      "sha256": "070775baca5787213c76c1991901dfae842ff370b14cb19a1450a9ccf0804dff",
+      "bytes": 1280416
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "bd9cfc1b71e9df05f889532385c8b71cfdf96981c1e0a5a7ab35ced89f92aab4",
+      "bytes": 1273168
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
+      "bytes": 196
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "0e2d34ccb8c69a7881eb43d484ec7bc2e180a5e96828d92729155e80659b71dd",
+      "bytes": 5714
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "png",
+      "sha256": "9c4567a1de193c0b5c7c14ad30656c7d677dec845b23ec8b578ea85af1760c99",
+      "bytes": 505625
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "d8dfccad2db29a941a44ad6f2e6dbb81d7693379a35245b0951e5cdebb40eebb",
+      "bytes": 505625
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
+      "bytes": 198
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "b194673cbd5687d9aacf337cb8d355980f65458a6db08afc912af69a44c79c70",
+      "bytes": 1533
     }
   ],
   "usesGeometry": true,
@@ -84,13 +147,11 @@
     ]
   },
   "capabilities": {
-    "groundContact": {
-      "mode": "pivot"
-    },
-    "vegetationClearance": 1.2,
-    "harvesting": {
-      "replacement": "asset.models.environment.woodland-pine-stump",
-      "definition": "resource.forest.tree"
+    "wind": {
+      "mode": "tree",
+      "strength": 0.1,
+      "speed": 0.18,
+      "stiffness": 0.8
     },
     "animations": [
       {
@@ -112,11 +173,13 @@
         "events": []
       }
     ],
-    "wind": {
-      "mode": "tree",
-      "strength": 0.1,
-      "speed": 0.18,
-      "stiffness": 0.8
+    "vegetationClearance": 1.2,
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "harvesting": {
+      "replacement": "asset.models.environment.woodland-pine-stump",
+      "definition": "resource.forest.tree"
     }
   },
   "provenance": {

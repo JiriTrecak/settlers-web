@@ -1,3 +1,5 @@
+import {biomeById} from '../../content/biomes';
+import {environmentConditions,type EnvironmentConditions} from '../../shared/environment/conditions';
 import {LayerContextMenu} from '../chrome/layerContextMenu';
 import {isBridgeAsset} from '../../shared/map/bridgeSurface';
 import {perf} from '../../debug/performance';
@@ -8,8 +10,6 @@ import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer,type Aut
 import {compileMapScene,type CompiledMapScene} from '../../shared/authoring/mapScene';
 import {landscapeAssets,projectScene,rememberProjectScene,sceneInputs} from '../../shared/authoring/project';
 import {sampleBezier} from '../../shared/authoring/shapes';
-import {canopySchema} from '../../shared/landscape/canopy';
-import {atmosphereSchema} from '../../shared/landscape/atmosphere';
 import {missionSchema,type MissionDefinition} from "../../shared/scenario/schema";
 import {renameEntity} from "./entityAuthoring";
 import {validatePlacements} from "../../content/map";
@@ -40,7 +40,6 @@ import {
 import { readBrushSize, saveBrushSize } from "../brush/sizePrefs";
 import { DAY_CYCLE_SECONDS } from "../../render/sky/sky";
 import {
-  DEFAULT_WATER_STYLE,
   type WaterStyle,
 } from "../../shared/landscape/waterStyle";
 import { applyLandform, type Landform } from "../../shared/landscape/landform";
@@ -51,7 +50,6 @@ import {
   type CurvePoint,
   type TerrainLayer,
   type CoverPatch,
-  type EnvironmentState,
 } from "../../shared/landscape/curve";
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
@@ -781,31 +779,23 @@ export class WorldEditor {
     this.paint();
   }
 
-  waterStyle(settings: WaterStyle): void {
-    const landscape = this.map.landscape ?? emptyLandscape();
-    this.map = {
-      ...this.map,
-      landscape: {
-        ...landscape,
-        water: { ...DEFAULT_WATER_STYLE, ...settings },
-      },
-    };
-    this.renderer?.setLandscape(this.map.landscape!);
-    this.hooks.onChange?.();
-    this.paint();
+  waterStyle(_settings: WaterStyle): void {
+    throw new Error('Water appearance belongs to the biome river profiles. Select a river recipe instead.');
   }
 
-  environment(settings: Partial<EnvironmentState>): void {
-    if(settings.canopy)canopySchema.parse(settings.canopy);
-    if(settings.atmosphere)atmosphereSchema.parse(settings.atmosphere);
-    const landscape = this.map.landscape ?? emptyLandscape();
-    // Keep the live clock when editing weather/season rather than rewinding to
-    // the hour last stored in the map. An explicit time edit still wins.
-    const environment = { ...landscape.environment, hour: this.sky?.hour ?? landscape.environment.hour, ...settings };
-    this.map = { ...this.map, landscape: { ...landscape, environment } };
-    this.renderer?.setLandscape(this.map.landscape!);
-    this.hooks.onChange?.();
-    this.paint();
+  setBiome(id:string):void {
+    biomeById(id); // Fail before touching the map if an unknown ID is supplied.
+    this.replace({...this.map,biome:id});
+  }
+
+  environment(settings: Partial<EnvironmentConditions>): void {
+    const forbidden=Object.keys(settings).filter(k=>!['hour','playing','weather'].includes(k));
+    if(forbidden.length)throw new Error('Appearance is biome-owned: '+forbidden.join(', '));
+    if(settings.weather&&Object.keys(settings.weather).some(k=>k!=='kind'))throw new Error('Weather appearance is biome-owned; select a weather kind');
+    const landscape=this.map.landscape??emptyLandscape();
+    const environment=environmentConditions({...landscape.environment,hour:this.sky?.hour??landscape.environment.hour,...settings});
+    this.map={...this.map,landscape:{...landscape,environment}};
+    this.renderer?.setLandscape(this.map.landscape!);this.hooks.onChange?.();this.paint();
   }
 
   putDecal(decal: GroundDecal): void {
@@ -1501,14 +1491,16 @@ export class WorldEditor {
   }
 
   setSpawnPoint(player: number, x: number, z: number): void {
-    if (!Number.isInteger(player) || player < 1 || player > 2)
-      throw new Error("Choose Player 1 or Player 2");
+    if (!Number.isInteger(player) || player < 1 || player > 8)
+      throw new Error("Choose Player 1 through Player 8");
     const map = {
       ...this.map,
       playerStarts: [
         ...(this.map.playerStarts ?? []).filter((s) => s.player !== player),
         {
-          ...this.map.playerStarts.find((s) => s.player === player)!,
+          setup: "setup.ants",
+          mainFort: `start.player.${player}/main-fort`,
+          ...this.map.playerStarts.find((s) => s.player === player),
           player,
           x: Math.round(x),
           z: Math.round(z),

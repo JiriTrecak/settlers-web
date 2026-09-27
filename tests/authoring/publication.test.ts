@@ -1,3 +1,4 @@
+import {triangleGlb} from './glb-fixture';
 import {afterEach,describe,it,expect} from 'vitest';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import os from 'node:os';import path from 'node:path';
@@ -26,7 +27,7 @@ describe('canonical runtime publication',()=>{
   await expect(store.dispatch({op:'asset.publish',id:'hill',expectedRevision:2})).rejects.toThrow('another editor');
  });
  it('keeps edited model files unpublished until explicitly released',async()=>{
-  const bytes=Buffer.from('test geometry'),tree=assetDefinitionSchema.parse({...recipe('tree'),recipe:undefined,kind:'tree',usesGeometry:true,resources:[{role:'geometry',index:1,format:'glb',bytes:bytes.length,sha256:hash(bytes)}],bindings:{render:[],scenery:[{id:'pine',name:'Pine',category:'foliage',type:'prop',geometry:{role:'geometry',index:1}}]}});
+  const bytes=triangleGlb(),tree=assetDefinitionSchema.parse({...recipe('tree'),recipe:undefined,kind:'tree',usesGeometry:true,resources:[{role:'geometry',index:1,format:'glb',bytes:bytes.length,sha256:hash(bytes)}],bindings:{render:[],scenery:[{id:'pine',name:'Pine',category:'foliage',type:'prop',geometry:{role:'geometry',index:1}}]}});
   const root=await mkdtemp(path.join(os.tmpdir(),'asset-publish-model-'));roots.push(root);await atomic(path.join(root,'art/assets/tree/geometry.glb'),bytes);await saveJson(path.join(root,'art/assets/tree/asset.json'),tree);await saveJson(path.join(root,'art/assets/hill/asset.json'),recipe());
   await commitFiles(root,(await planPublication(root,[tree,recipe()],new Set(['tree','hill']))).writes);
   const modelIndex=JSON.parse(await readFile(path.join(root,'assets/authoring/models.json'),'utf8'));expect(modelIndex).toEqual([{id:'tree',transform:tree.transform,geometry:['assets/library/tree/geometry.glb'],scenery:['pine']}]);

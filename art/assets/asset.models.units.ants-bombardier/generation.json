@@ -1,0 +1,211 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "bd3a9d5e-294b-46bb-a6b0-3b6447b879aa",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9764,
+    "partsCount": 24,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "Single blue-team three-quarter view isolated from supplied bombardier.png. Full sheet retained.",
+  "integration": {
+    "definition": "unit.ants.bombardier",
+    "status": "published",
+    "triangles": 4957,
+    "localAdaptation": "Rigid mortar and wing shell; baked upper-body brace/recoil; animated muzzle socket; runtime 2K ownership atlas"
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "rig": {
+    "type": "Humanoid",
+    "preset": "Mixamo",
+    "credits": 20,
+    "status": "complete"
+  },
+  "animation": {
+    "presets": [
+      "idle",
+      "walk",
+      "run",
+      "hit_to_body_01",
+      "fall"
+    ],
+    "generated": [
+      "Mortar Recharge Recoil"
+    ],
+    "generationCredits": 20,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "resolution": 4096,
+    "packUV": true,
+    "skeleton": true,
+    "inPlace": true,
+    "takes": 6
+  },
+  "sourceDirectory": "art/sources/characters/ant-bombardier-tripo",
+  "config": {
+    "name": "Bombardier Beetle",
+    "kind": "character",
+    "blend": "ant-bombardier-tripo.blend",
+    "recipe": "model.py",
+    "preserve_textures": true,
+    "camera": {
+      "azimuth": 20,
+      "elevation": 12,
+      "scale": 3.6,
+      "target": [
+        0,
+        0,
+        1.4
+      ],
+      "distance": 12
+    },
+    "render": {
+      "width": 1024,
+      "height": 1024,
+      "samples": 32
+    },
+    "light": {
+      "key_energy": 560,
+      "fill_energy": 260,
+      "rim_energy": 360,
+      "scale": 0.45,
+      "target": [
+        0,
+        0,
+        1.3
+      ]
+    },
+    "characterHeight": 2.85,
+    "characterVariants": {
+      "bombardier": {
+        "states": {
+          "idle": "idle",
+          "walk": "walk",
+          "run": "run",
+          "charge": "run",
+          "attack": "attack_mortar",
+          "hit": "hit",
+          "death": "death"
+        }
+      }
+    },
+    "attackEvents": {
+      "bombardier": {
+        "normalizedTime": 0.5070422535211268,
+        "event": "release"
+      }
+    },
+    "runtimeDecimation": {
+      "Mortar barrel and bronze rings": 0.44,
+      "Wing shell": 0.44,
+      "Left leg": 0.52,
+      "Right leg": 0.52,
+      "Head and upper harness": 0.72,
+      "Left mortar carriage": 0.38,
+      "Segmented abdomen": 0.43,
+      "Body harness": 0.43,
+      "Right mortar carriage": 0.38,
+      "Right arm and glove": 0.58,
+      "Left arm and glove": 0.58,
+      "Right leaf collar": 0.65,
+      "Left antenna": 0.7,
+      "Left leaf collar": 0.65,
+      "Lower back harness": 0.5,
+      "Right antenna": 0.7,
+      "Buckle and team cloth": 0.6,
+      "Carriage fastener": 0.5,
+      "Left toe": 0.8,
+      "Left waist strap": 0.6,
+      "Right waist strap": 0.6,
+      "Right toe": 0.8,
+      "Right side seam": 0.8,
+      "Left side seam": 0.8
+    },
+    "runtimeWeldDistance": 0.000001,
+    "runtime_texture_size": 2048,
+    "runtime_triangle_budget": 5000,
+    "ownership_channel": "blue",
+    "team_color_default": [
+      0.38,
+      0.035,
+      0.055
+    ],
+    "part_names": {
+      "0": "Mortar barrel and bronze rings",
+      "1": "Wing shell",
+      "2": "Left leg",
+      "3": "Right leg",
+      "4": "Head and upper harness",
+      "5": "Left mortar carriage",
+      "6": "Segmented abdomen",
+      "7": "Body harness",
+      "8": "Right mortar carriage",
+      "9": "Right arm and glove",
+      "10": "Left arm and glove",
+      "11": "Right leaf collar",
+      "12": "Left antenna",
+      "13": "Left leaf collar",
+      "14": "Lower back harness",
+      "15": "Right antenna",
+      "16": "Buckle and team cloth",
+      "17": "Carriage fastener",
+      "18": "Left toe",
+      "19": "Left waist strap",
+      "20": "Right waist strap",
+      "21": "Right toe",
+      "22": "Right side seam",
+      "23": "Left side seam"
+    },
+    "rigid_parts": {
+      "1": "Spine2",
+      "4": "Head",
+      "5": "Spine2",
+      "6": "Hips",
+      "7": "Spine2",
+      "8": "Spine2",
+      "11": "Spine2",
+      "12": "Head",
+      "13": "Spine2",
+      "14": "Spine2",
+      "15": "Head",
+      "16": "Hips",
+      "17": "Spine2",
+      "19": "Spine2",
+      "20": "Spine2",
+      "22": "Spine2",
+      "23": "Spine2"
+    },
+    "publication": {
+      "id": "asset.models.units.ants-bombardier",
+      "renderId": "asset.ants.bombardier",
+      "iconId": "icon.ants.bombardier",
+      "profile": "bombardier",
+      "healthHeight": 3.05,
+      "projectileSocket": "socket_projectile"
+    },
+    "runningLeanFactor": 0.2
+  },
+  "triangles": 4957,
+  "maximumCargo": 0,
+  "completeUnitTriangles": 4957,
+  "adapter": "\"\"\"Reference-generated bombardier with rigid mounted mortar, preserved rig and editable parts.\"\"\"\nfrom pathlib import Path\nimport bpy,json,sys,math\nfrom mathutils import Vector,Quaternion\nassert bpy.app.background\nP=Path(__file__).resolve().parent;ROOT=P.parents[3]\nsys.path.insert(0,str(ROOT/'experiments/building-studio'))\nfrom stage import create_stage\nfrom export_character import export_character\nCFG=json.loads((P/'asset.json').read_text());own=json.loads((P/'ownership.json').read_text())\nbpy.ops.wm.read_factory_settings(use_empty=True)\nbpy.ops.import_scene.gltf(filepath=str(P/'source.glb'))\nscene=bpy.context.scene;scene.render.fps=24\nrig=next(o for o in scene.objects if o.type=='ARMATURE')\nobjects=[o for o in scene.objects if o.type=='MESH' and o.name.startswith('tripo_part_')]\nfor o in list(scene.objects):\n if o.type=='MESH' and o not in objects:bpy.data.objects.remove(o,do_unlink=True)\nfor pb in rig.pose.bones:pb.custom_shape=None\nfor o in objects:\n index=o.name.split('_')[-1];o['tripo_part']=int(index);o['role']='bombardier'\n o.name=CFG['part_names'][index]\n if index in CFG['rigid_parts']:\n  o.vertex_groups.clear();g=o.vertex_groups.new(name='mixamorig:'+CFG['rigid_parts'][index]);g.add(list(range(len(o.data.vertices))),1,'REPLACE')\n# Original Tripo reference rest height is .9797363. Scale at roots preserves binding.\nfor o in list(scene.objects):\n if o.parent is None and o.type in ('MESH','ARMATURE','EMPTY'):o.scale*=CFG['characterHeight']/.9797363\nrig.name='Ant Bombardier Rig'\nbpy.context.view_layer.objects.active=rig;rig.select_set(True)\nbpy.ops.object.mode_set(mode='EDIT')\nfor name,parent,point in [('socket_handL','LeftHand',None),('socket_handR','RightHand',None),('socket_back','Spine2',(0,.073,.52))]:\n bone=rig.data.edit_bones.new(name);pb=rig.data.edit_bones['mixamorig:'+parent]\n bone.head=pb.head if point is None else Vector(point);bone.tail=bone.head+Vector((0,0,.015));bone.parent=pb;bone.use_deform=False\nbpy.ops.object.mode_set(mode='OBJECT')\nmaterial=objects[0].data.materials[0].copy();material.name='TC_TeamColor';material.use_nodes=True\nmaterial['teamColorMask']='baseColorAlpha';material['teamColorSourceMax']=own['sourceMax'];material['teamColorDefault']=own['default']\nmaterial.diffuse_color=(*own['default'],1)\nnodes,links=material.node_tree.nodes,material.node_tree.links\nbsdf=nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.72;bsdf.inputs['Metallic'].default_value=0\nfor link in list(bsdf.inputs['Metallic'].links):links.remove(link)\nfor node in nodes:\n if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.45\ntexture=nodes.new('ShaderNodeTexImage');texture.name='Authored albedo with ownership mask';texture.image=bpy.data.images.load(str(P/'albedo-team.png'))\ntexture.image.alpha_mode='CHANNEL_PACKED';texture.image.pack()\n# Keep the raw RGB albedo available for portable glTF display. The runtime\n# ownership mask is its alpha channel, independent of opacity.\nsep=nodes.new('ShaderNodeSeparateColor');links.new(texture.outputs['Color'],sep.inputs[0])\nmx=nodes.new('ShaderNodeMath');mx.operation='MAXIMUM';links.new(sep.outputs[0],mx.inputs[0]);links.new(sep.outputs[1],mx.inputs[1])\nmx2=nodes.new('ShaderNodeMath');mx2.operation='MAXIMUM';links.new(mx.outputs[0],mx2.inputs[0]);links.new(sep.outputs[2],mx2.inputs[1])\ndiv=nodes.new('ShaderNodeMath');div.operation='DIVIDE';links.new(mx2.outputs[0],div.inputs[0]);div.inputs[1].default_value=own['sourceMax']\ntint=nodes.new('ShaderNodeMixRGB');tint.name='Team color';tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(*own['default'],1);links.new(div.outputs[0],tint.inputs[1])\nmix=nodes.new('ShaderNodeMixRGB');links.new(texture.outputs['Alpha'],mix.inputs[0]);links.new(texture.outputs['Color'],mix.inputs[1]);links.new(tint.outputs[0],mix.inputs[2]);links.new(mix.outputs[0],bsdf.inputs['Base Color'])\nif not CFG.get('team_color',True):\n material.name='Natural_Materials';material.diffuse_color=(1,1,1,1)\n for key in ['teamColorMask','teamColorSourceMax','teamColorDefault']:del material[key]\n links.new(texture.outputs['Color'],bsdf.inputs['Base Color'])\nfor o in objects:\n o.data.materials.clear();o.data.materials.append(material)\n\nfor a in bpy.data.actions:\n a.use_fake_user=True\n a.name='attack_mortar' if a.name.startswith('A stocky siege') else {'hit_to_body_01':'hit','fall':'death'}.get(a.name,a.name)\nrig.animation_data.action=None\nfor track in rig.animation_data.nla_tracks:track.mute=True\nfor pb in rig.pose.bones:pb.location=(0,0,0);pb.rotation_quaternion=(1,0,0,0);pb.scale=(1,1,1)\nsys.path.insert(0,str(P))\nfrom mortar import add_mortar\nCFG['attackEvents']['bombardier']['normalizedTime']=add_mortar(rig,scene,objects)\n(P/'asset.json').write_text(json.dumps(CFG,indent=2)+'\\n')\nfrom locomotion import soften_running_lean\nlean_report=soften_running_lean(rig,scene,.2)\n(P/'locomotion.json').write_text(json.dumps(lean_report,indent=2)+'\\n')\ncollection=bpy.data.collections.new('Studio');scene.collection.children.link(collection);create_stage(CFG,collection)\nref=bpy.data.images.load(str(P/'reference.png'));ref.name='reference.png';ref.pack();ref.use_fake_user=True\nfor im in bpy.data.images:\n if im.source=='FILE':\n  try:im.pack()\n  except RuntimeError:pass\nfor f in ['asset.json','model.py','mortar.py','provenance.json']:bpy.data.texts.load(str(P/f))\nscene.frame_set(0);bpy.context.view_layer.update()\nbpy.ops.wm.save_as_mainfile(filepath=str(P/CFG['blend']))\nscene.render.filepath=str(P/'render.png');bpy.ops.render.render(write_still=True)\nmeta=export_character(P,P/'model.glb');(P/'viewer.json').write_text(json.dumps(meta,indent=2)+'\\n')\nprint('BOMBARDIER_READY',meta['triangles'],meta['animations'])\n",
+  "triangleBudget": 5000
+}

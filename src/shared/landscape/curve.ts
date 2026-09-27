@@ -1,9 +1,12 @@
+import type {PostProcessingSettings} from '../environment/postProcessing';
+import {environmentConditionsSchema,type EnvironmentConditions} from '../environment/conditions';
+import {type GlobalLight} from '../environment/presets';
 import {importedTerrainSchema,type ImportedTerrain} from '../map/importedTerrain';
-import {canopySchema,type CanopySettings} from './canopy';
-import {atmosphereSchema,type AtmosphereSettings} from './atmosphere';
-import {weatherSchema,type WeatherSettings} from './weather';
+import {type CanopySettings} from './canopy';
+import {type AtmosphereSettings} from './atmosphere';
+import {type WeatherSettings} from './weather';
 import { validDecal, type GroundDecal } from './decal';
-import { parseWaterStyle, type WaterStyle } from './waterStyle';
+import { type WaterStyle } from './waterStyle';
 import type { RiverStroke } from './riverFlow';
 /** Catmull–Rom brush centerline, sampled independently of pointer/event rate. */
 export type CurvePoint = { x: number; z: number; radius?: number };
@@ -40,30 +43,24 @@ export type TerrainLayer = 'grass' | 'sand' | 'road' | 'mud' | 'rock' | 'snow';
 export type TerrainStroke = { points: CurvePoint[]; radius: number; layer: TerrainLayer; opacity: number };
 export type CoverExclusion = { x: number; z: number; radius: number };
 export type CoverPatch = { exclusions?: CoverExclusion[]; x: number; z: number; radius: number; density: number; seed: number; flowers: number; grassScale?: number; broadRatio?: number; palette?: 'meadow' | 'straw' | 'ochre' | 'sage' | 'forest' };
-export type EnvironmentState = { interior?:boolean; ceilingHeight?:number; floorMaterial?:'forest'|'heartwood'; canopy?: CanopySettings; atmosphere?: AtmosphereSettings; weather?: WeatherSettings; preset?: string; hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
-export type Landscape = { importedTerrain?: ImportedTerrain; decals?: GroundDecal[]; water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentState };
-export const emptyLandscape = (): Landscape => ({ strokes: [], cover: [], environment: { hour: 10, season: 'summer', playing: false } });
+export type EnvironmentState = { postProcessing?:PostProcessingSettings; light?:GlobalLight; interior?:boolean; ceilingHeight?:number; floorMaterial?:'forest'|'heartwood'; canopy?: CanopySettings; atmosphere?: AtmosphereSettings; weather?: WeatherSettings; preset?: string; hour: number; season: 'spring' | 'summer' | 'autumn'; playing: boolean };
+export type Landscape = { importedTerrain?: ImportedTerrain; decals?: GroundDecal[]; water?: WaterStyle; rivers?: RiverStroke[]; strokes: TerrainStroke[]; cover: CoverPatch[]; environment: EnvironmentConditions };
+export const emptyLandscape = (): Landscape => ({ strokes: [], cover: [], environment: { hour: 10, playing: false } });
 /** Strict persisted scene validation: malformed new fields never break legacy maps. */
 export function parseLandscape(raw: unknown): Landscape | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   const o=raw as Landscape;
   if(o.importedTerrain!==undefined&&!importedTerrainSchema.safeParse(o.importedTerrain).success)return undefined;
   if(o.decals!==undefined&&(!Array.isArray(o.decals)||o.decals.length>2048||!o.decals.every(validDecal)||new Set(o.decals.map(d=>d.id)).size!==o.decals.length))return undefined;
-  if(o.water!==undefined&&!parseWaterStyle(o.water))return undefined;
+
   if (!Array.isArray(o.strokes) || !Array.isArray(o.cover) || !o.environment) return undefined;
   const finite=(v: unknown) => typeof v==='number' && Number.isFinite(v);
   if (!o.strokes.every(s=>s && typeof s==='object' && ['grass','sand','road','mud','rock','snow'].includes(s.layer) && finite(s.radius) && s.radius>0 && s.radius<=64 && finite(s.opacity) && s.opacity>=0 && s.opacity<=1 && Array.isArray(s.points) && s.points.length>0 && s.points.length<=128 && s.points.every(p=>p && typeof p==='object' && finite(p.x)&&finite(p.z)&&(p.radius===undefined||(finite(p.radius)&&p.radius>0&&p.radius<=64))))) return undefined;
   if (!o.cover.every(p=>p && typeof p==='object' && [p.x,p.z,p.radius,p.density,p.seed,p.flowers].every(finite)&&p.radius>0&&p.radius<=100&&p.density>=0&&p.density<=12&&p.flowers>=0&&p.flowers<=1&&(p.grassScale===undefined||(finite(p.grassScale)&&p.grassScale>=.2&&p.grassScale<=4))&&(p.broadRatio===undefined||(finite(p.broadRatio)&&p.broadRatio>=0&&p.broadRatio<=1))&&(p.exclusions===undefined||(Array.isArray(p.exclusions)&&p.exclusions.every(e=>e&&finite(e.x)&&finite(e.z)&&finite(e.radius)&&e.radius>0&&e.radius<=32)))&&(p.palette===undefined||['meadow','straw','ochre','sage','forest'].includes(p.palette)))) return undefined;
   if(o.rivers!==undefined && (!Array.isArray(o.rivers)||!o.rivers.every(r=>r&&typeof r==='object'&&finite(r.depth)&&finite(r.radius)&&r.radius>0&&r.radius<=64&&Array.isArray(r.points)&&r.points.length>0&&r.points.length<=128&&r.points.every(p=>p&&finite(p.x)&&finite(p.z)&&(p.radius===undefined||(finite(p.radius)&&p.radius>0&&p.radius<=64))))))return undefined;
-  if (!finite(o.environment.hour)||!['spring','summer','autumn'].includes(o.environment.season)||typeof o.environment.playing!=='boolean') return undefined;
-  if(o.environment.interior!==undefined&&typeof o.environment.interior!=='boolean')return undefined;
-  if(o.environment.ceilingHeight!==undefined&&(!finite(o.environment.ceilingHeight)||o.environment.ceilingHeight<1||o.environment.ceilingHeight>128))return undefined;
-  if(o.environment.floorMaterial!==undefined&&!['forest','heartwood'].includes(o.environment.floorMaterial))return undefined;
-  if(o.environment.canopy!==undefined&&!canopySchema.safeParse(o.environment.canopy).success)return undefined;
-  if(o.environment.atmosphere!==undefined&&!atmosphereSchema.safeParse(o.environment.atmosphere).success)return undefined;
-  if(o.environment.weather!==undefined&&!weatherSchema.safeParse(o.environment.weather).success)return undefined;
-  if(o.environment.preset!==undefined&&(typeof o.environment.preset!=='string'||!o.environment.preset.length||o.environment.preset.length>128))return undefined;
-  return o;
+  const conditions=environmentConditionsSchema.safeParse(o.environment);if(!conditions.success)return undefined;
+  const {water:_retiredWater,...landscape}=o;
+  return {...landscape,environment:conditions.data};
 }
 
 /** Rasterize only segment bounds, avoiding every-terrain-vertex × every-path-segment scans. */

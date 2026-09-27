@@ -1,3 +1,4 @@
+import { colonySupply, type Supply } from "../sim/game/supply";
 import { workerPopulation } from "../sim/game/population";
 import type { ContentRegistry } from "../content/registry";
 import { slotOwner, type Owner } from "../content/schema";
@@ -77,7 +78,7 @@ export type ObserverPlayerStats = {
   units: number;
   workers: number;
   availableWorkers: number;
-  workerCapacity: number;
+  supply: Supply;
   army: number;
   heroes: {
     id: number;
@@ -120,11 +121,7 @@ export function observerStats(
         slotOwner(slot.player),
         registry,
       ).available,
-      workerCapacity: workerPopulation(
-        state.entities,
-        slotOwner(slot.player),
-        registry,
-      ).capacity,
+      supply: colonySupply(state.entities, slotOwner(slot.player), registry),
       army: 0,
       heroes: [],
     });

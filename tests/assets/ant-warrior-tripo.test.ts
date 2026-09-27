@@ -1,6 +1,6 @@
 import {readFileSync} from 'node:fs';
 import {describe,it,expect} from 'vitest';
-const bytes=readFileSync('art/sources/characters/ant-warrior-tripo/warrior.glb');
+const bytes=readFileSync('art/assets/asset.models.units.ants-warrior/geometry.glb');
 const jsonLength=bytes.readUInt32LE(12);
 const gltf=JSON.parse(bytes.subarray(20,20+jsonLength).toString());
 const bin=bytes.subarray(28+jsonLength);

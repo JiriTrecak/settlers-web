@@ -1,8 +1,5 @@
 import {biomeById,biomeRecipes} from '../../content/biomes';
-import {canopySchema} from '../../shared/landscape/canopy';
 import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
-import {atmosphereSchema} from '../../shared/landscape/atmosphere';
-import {weatherSchema} from '../../shared/landscape/weather';
 import {campSchema} from '../../content/schema';
 import {missionSchema} from "../../shared/scenario/schema";
 import {validateMissionLua} from "../../shared/scenario/lua";
@@ -20,7 +17,6 @@ import { parseUtcMap, stringifyUtcMap } from "../../shared";
 import type {
   CurvePoint,
   TerrainLayer,
-  EnvironmentState,
 } from "../../shared/landscape/curve";
 /**
  * Named editor ops the MCP bridge dispatches. Add a method here when you add a tool.
@@ -339,28 +335,13 @@ export class EditorControl {
       });
       if (!water) throw new Error("Invalid water settings");
       this.editor.waterStyle(water);
+    } else if (action === "biome") {
+      if(typeof o.biome!=='string')throw new Error('Expected biome ID');this.editor.setBiome(o.biome);
     } else if (action === "environment") {
-      const settings: Partial<EnvironmentState> = {};
-      if (o.hour !== undefined) {
-        const h = num(o.hour);
-        if (h === undefined) throw new Error("Invalid hour");
-        settings.hour = ((h % 24) + 24) % 24;
-      }
-      if (o.season !== undefined) {
-        if (!["spring", "summer", "autumn"].includes(String(o.season)))
-          throw new Error("Invalid season");
-        settings.season = o.season as EnvironmentState["season"];
-      }
-      if (typeof o.playing === "boolean") settings.playing = o.playing;
-      if(o.interior!==undefined){if(typeof o.interior!=='boolean')throw new Error('Invalid interior mode');settings.interior=o.interior;}
-      if(o.ceilingHeight===null)settings.ceilingHeight=undefined;
-      else if(o.ceilingHeight!==undefined){const h=num(o.ceilingHeight);if(h===undefined||h<1||h>128)throw new Error('Invalid ceiling height');settings.ceilingHeight=h;}
-      if(o.floorMaterial!==undefined){if(!['forest','heartwood'].includes(String(o.floorMaterial)))throw new Error('Invalid floor material');settings.floorMaterial=o.floorMaterial as EnvironmentState['floorMaterial'];}
-      if(o.preset!==undefined){if(typeof o.preset!=='string'||!o.preset.length||o.preset.length>128)throw new Error('Invalid environment preset');settings.preset=o.preset;}
-      if(o.canopy!==undefined)settings.canopy=canopySchema.parse(o.canopy);
-      if(o.atmosphere!==undefined)settings.atmosphere=atmosphereSchema.parse(o.atmosphere);
-      if(o.weather!==undefined)settings.weather=weatherSchema.parse(o.weather);
-      this.editor.environment(settings);
+      const allowed=new Set(['action','hour','playing','weather']);
+      if(Object.keys(o).some(k=>!allowed.has(k)))throw new Error('Appearance is biome-owned. Choose a biome; only hour, playing and weather.kind are map conditions.');
+      const {action:_action,...settings}=o;
+      this.editor.environment(settings as Parameters<WorldEditor['environment']>[0]);
     } else if (action === "view") {
       if (o.grid !== undefined)
         this.editor.setGridMode(o.grid === true ? "tiles" : "none");

@@ -3,7 +3,7 @@
   "id": "asset.icons.unit-ants-archer",
   "name": "Archer",
   "kind": "icon",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "ants-v1",
@@ -32,16 +32,7 @@
   "materials": [],
   "bindings": {
     "profile": "icon",
-    "render": [
-      {
-        "id": "icon.ants.archer",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.icons.unit-ants-archer"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

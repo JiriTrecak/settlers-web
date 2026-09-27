@@ -15,13 +15,13 @@ describe('Acorn Main Hall',()=>{
    expect(asset.file).toContain('ants-acorn-hall/geometry.glb');
    expect(hall.footprint).toEqual({width:15,depth:15});expect(hall.entrance).toEqual({x:0,y:9});
    expect(hall.behaviors.storage).toMatchObject({dropoff:true,accepts:['item.wood','item.amber']});
-   expect(hall.behaviors.production).toMatchObject({mode:'automatic',population:{capacity:8,intervalTicks:480}});
+   expect(hall.behaviors.production).toMatchObject({mode:'queued',outputs:['unit.ants.settler']}); expect(hall.supplyProvided).toBe(12);
    expect(content.asset(hall.icon!).image).toContain('ants-acorn-hall/image.png');
   }
  });
 
  it('publishes the inspected source export with one draw and fewer than 10k triangles',()=>{
-  expect(bytes.equals(readFileSync('art/sources/buildings/acorn-hall-tripo/model.glb'))).toBe(true);
+  expect(bytes.equals(readFileSync('art/assets/asset.models.buildings.ants-acorn-hall/geometry.glb'))).toBe(true);
   expect(bytes.equals(readFileSync('assets/library/asset.models.buildings.ants-acorn-hall/geometry.glb'))).toBe(true);
   const primitives=gltf.meshes.flatMap((m:any)=>m.primitives);
   expect(primitives).toHaveLength(1);

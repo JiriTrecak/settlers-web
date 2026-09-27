@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-broken-trader-cart",
   "name": "woodland broken trader cart",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "44e2236f5a9ba6713d0747e5b778237fb8609b9d4aea41bc702c05035af38696",
+      "bytes": 1097
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "823ec12e30b0df8cd6e03e9c9b3c6d3a168e3e2223de21fb2f83721841db7b9c",
+      "bytes": 671
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "d101a186c03f47c759e78aaf38f4bcb0dd72036151bbd2b319c550d32734210e",
+      "bytes": 1711580
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "969dbb026f86f67c4d8acc0d5af11a7f2ca52b11cc1784838d55d701d6ecbf15",
+      "bytes": 1648260
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "a6c53d3cd4924bb4b5422def5e94c8307a65d3082a2b9b1f47491eb01771f916",
+      "bytes": 1370
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "d702ba743db48964ce10d97a3f01dd7d9672ac0ffb5ade47dd07acdb5bfccbf6",
+      "bytes": 382812
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "2a232ea9d574e012dac5602b2aed8e4aea55c0fa349de78a79553ec698c6873f",
+      "bytes": 2255
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 2,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 2
+    }
   },
   "provenance": {
     "method": "authored",

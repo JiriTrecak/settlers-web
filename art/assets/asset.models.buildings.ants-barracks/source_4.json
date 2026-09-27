@@ -1,0 +1,56 @@
+{
+  "name": "Barracks",
+  "blend": "colony-barracks-tripo.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 32,
+    "scale": 10.945454545454544,
+    "target": [
+      0.0,
+      0.0,
+      2.5897727272727273
+    ],
+    "distance": 24.43181818181818
+  },
+  "render": {
+    "width": 1254,
+    "height": 1254,
+    "samples": 40
+  },
+  "light": {
+    "key_energy": 1100,
+    "fill_energy": 370,
+    "rim_energy": 800,
+    "scale": 1.368181818181818,
+    "target": [
+      0.0,
+      0.0,
+      2.540909090909091
+    ]
+  },
+  "preserve_textures": true,
+  "runtime_triangle_budget": 10000,
+  "texture_format": "AUTO",
+  "bake_vertex_ao": true,
+  "runtime_texture_size": 2048,
+  "width": 8.6,
+  "part_role": "barracks",
+  "part_names": {},
+  "publication": {
+    "id": "asset.models.buildings.ants-barracks",
+    "faction": "ants",
+    "renderIds": [
+      "asset.ants.barracks"
+    ],
+    "iconIds": [
+      "icon.ants.barracks"
+    ],
+    "footprint": [
+      9,
+      7
+    ],
+    "healthHeight": 7.2
+  }
+}

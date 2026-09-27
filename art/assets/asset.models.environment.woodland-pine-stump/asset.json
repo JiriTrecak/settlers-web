@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-stump",
   "name": "woodland pine stump",
   "kind": "foliage",
-  "revision": 2,
+  "revision": 3,
   "status": "published",
   "tags": [
     "original",
@@ -31,6 +31,48 @@
       "format": "png",
       "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
       "bytes": 236370
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "76f4d9dbba900b6380556a9aca6a27c407391aa8bd2a34e7c5c39204f47c9a26",
+      "bytes": 499
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "glb",
+      "sha256": "10e70929ba188334d71956652e08d95d32fd1e98c07585d10905d13474a7c1b3",
+      "bytes": 246228
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
+      "bytes": 196
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "png",
+      "sha256": "d418e57fbb91fedb2410647bbcf889f18fc956c61525cdaa44a426955488afab",
+      "bytes": 1983075
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
+      "bytes": 198
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "0c8331b7987b0f99bd8636440d85733384256ea44a770f6da264d9f2da4d5192",
+      "bytes": 1058
     }
   ],
   "usesGeometry": true,
@@ -72,10 +114,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.3,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.3
+    }
   },
   "provenance": {
     "method": "authored",

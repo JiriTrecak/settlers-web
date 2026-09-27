@@ -28,7 +28,7 @@ export function startCharge(c: GameContext, e: Entity, target: Entity) {
   const distance = c.spatial.range(e, target);
   if (distance < policy.minRange ** 2 || distance > policy.maxRange ** 2) return;
   // Do not spend the cooldown while following a detour behind a wall.
-  if (!c.spatial.clearSegment(u.position ?? fixed(e), target.unit.position ?? fixed(target))) return;
+  if (!c.spatial.clearSegment(u.position ?? fixed(e), target.unit.position ?? fixed(target), undefined, e)) return;
   let cooldown = policy.cooldownTicks;
   for (const id of c.state.research[e.owner] ?? []) {
     for (const effect of c.registry.rules.research[id]?.effects ?? []) {

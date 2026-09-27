@@ -13,7 +13,7 @@ import {
 import { writeGenerated } from "../../scripts/wiki/generate";
 
 describe("generated game wiki", () => {
-  it("publishes every expanded definition, linked prices, birth intervals and hero levels", () => {
+  it("publishes every expanded definition, linked prices, supply capacities and hero levels", () => {
     const result = buildCatalog(structuredClone(source));
     for (const d of result.registry.definitions)
       expect(result.files.has(`${definitionPath(d)}.md`), d.id).toBe(true);
@@ -24,13 +24,13 @@ describe("generated game wiki", () => {
       "building-ants-house",
     );
     expect(result.files.get("buildings/building-ants-fort.md")).toContain(
-      "| Birth interval | 12 s |",
+      "**Supply provided:** 12",
     );
     expect(result.files.get("buildings/building-ants-house.md")).toContain(
-      "| Birth interval | 20 s |",
+      "**Supply provided:** 6",
     );
     expect(result.files.get("units/unit-ants-archer.md")).toContain(
-      "1 available [Worker]",
+      "1 supply",
     );
     expect(result.files.get("units/unit-ants-marshal.md")).toContain(
       "| 10 | 3200 | 1375 | 58 | 6 |",

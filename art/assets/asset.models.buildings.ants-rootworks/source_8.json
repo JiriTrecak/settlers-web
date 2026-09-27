@@ -1,0 +1,71 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "82b87d0c-bb40-422c-b778-644fed25eba7",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9686,
+    "partsReturned": 23,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "rootworks.png",
+  "integration": {
+    "definition": "building.ants.rootworks",
+    "width": 9.4,
+    "naturalPurpleCorruption": true,
+    "footprint": [
+      11,
+      9
+    ],
+    "entrance": [
+      1,
+      5
+    ],
+    "height": 4.14435,
+    "depth": 8.91719,
+    "orientationDegrees": 45
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 9686
+  },
+  "validation": {
+    "atlasPurplePreservation": {
+      "purpleTexels": 239825,
+      "maxOwnershipWeight": 0,
+      "blueMeanOwnershipWeight": 0.9999056
+    },
+    "savedBlender": "23 editable meshes, finite geometry, packed 4K maps and reference",
+    "teamColors": "Red/blue simultaneously in Combat Lab; white and green including back in studio",
+    "game": "Inspected beside main hall and warriors; no console errors",
+    "reference": "Full-resolution comparison inspected; unseen back inferred, small detail simplified",
+    "bannerMask": "Explicit ownership UVs for central flag retain desaturated shadows"
+  },
+  "runtime": {
+    "triangles": 9686,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  }
+}

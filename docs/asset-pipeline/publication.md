@@ -2,7 +2,7 @@
 
 The asset editor is at `http://127.0.0.1:5175/asset-editor.html` (`npm run dev:tools`).
 
-Each authored asset lives in `art/assets/<id>/asset.json`, with role-named files in the same folder: `geometry.glb`, `source.blend`, `image.png`, `reference_2.png`, etc. The definition declares roles and sequence indices, never arbitrary filenames. `source`, `reference`, `preview`, and `generation` are authoring-only roles.
+Each authored asset lives in `art/assets/<id>/asset.json`, with role-named files in the same folder: `geometry.glb`, `source.blend`, `image.png`, `reference_2.png`, etc. The definition declares roles and sequence indices, never arbitrary filenames. `source`, `recipe`, `build`, `reference`, `preview`, and `generation` are authoring-only roles.
 
 ## Working versus published state
 
@@ -26,3 +26,13 @@ The asset editor and `asset_author` MCP tool dispatch the same validated command
 Mutations include `expectedRevision`; stale writers are rejected. Publish/archive use the current working revision. The cross-process write lock covers optimistic revision checks, and a journal rolls back multi-file commits on failure. Startup recovery waits for live publishers rather than rolling back their work.
 
 Image-generation studio publication uses the same path. Reviewed outputs, original source images, reference images, and generation receipts receive canonical role filenames. Further generations append numbered originals and receipts; they survive temporary job-folder cleanup. The selected reviewed output becomes `image.png` in the published library.
+
+## Editable sources and dimensions
+
+`art/assets/<id>/` is the sole editable authority. `source.blend` is an editable master; numbered source roles preserve provider inputs and original high-resolution textures. `recipe.py` contains the build recipe, and `build.json` maps logical Blender filenames to canonical role references. Tool-facing names exist only in ignored `.asset-work/build/`.
+
+Run `python3 experiments/building-studio/source_workspace.py <asset-id>` to stage an existing build. After editing/building there, run `node --import tsx scripts/assets/capture-build.ts <asset-id>` immediately to save changed resources back as a canonical draft. Do not start another staging operation first: staging is disposable. Review and publish in the workbench. The Blender `build`, `render`, and `palette` commands stage and capture automatically. Old replacement publishers reject consolidated packages so they cannot erase source metadata.
+
+Unit/creature capabilities may declare `dimensions: {radius, height, formationSpacing}` in world units before `rules.unitScale`. Collision radius describes the body, not sword/antenna span. Height controls underpasses. Formation spacing must fit the diameter. A gameplay definition can override dimensions; the registry resolves asset defaults and applies global scale exactly once. Terrain clearance, routing, separation, spawn placement, formation spacing and unit picking consume those resolved dimensions. Existing units retain the previous 0.2 radius, 2 height, 1 formation spacing baseline until deliberately tuned.
+
+512px is the starting target for individual unit texture maps, with 128–256px suitable for small props. Terrain tiles, packed foliage atlases and large landmarks need screen-space review before reduction. Keep high-resolution source textures. `node --import tsx scripts/assets/texture-size.ts <asset-id> 512` creates a smaller canonical draft and preserves the exact previous GLB as a source resource. It records `exportSettings.textureSize`, which is reapplied when capturing subsequent Blender builds. It retains geometry, rigs, animation and team-color metadata and resizes mask alpha independently. Review at game distance and in the portrait camera, then publish. This does not globally shrink terrain, LUTs or data maps.

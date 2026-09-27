@@ -84,7 +84,7 @@
       },
       "produce": {
         "name": "Produce",
-        "description": "Reserve the resource cost and call an available worker to the building for training.",
+        "description": "Train a unit. Reserves its resources and supply immediately.",
         "icon": "icon.action.produce",
         "priority": 60
       },
@@ -240,7 +240,7 @@
     }
   },
   "rules": {
-    "id": "declarations-6",
+    "id": "declarations-7",
     "unitScale": 1.7,
     "maxUnits": 160,
     "maxBuildings": 160,
@@ -1372,14 +1372,16 @@
           }
         ]
       }
-    }
+    },
+    "maxSupply": 100,
+    "supplyIcon": "icon.ants.house"
   },
   "definitions": [
     {
       "id": "unit.ants.settler",
       "kind": "unit",
       "name": "Worker",
-      "description": "Gathers amber and wood, builds the colony, or enters a barracks to become a soldier. Assigned workers are protected from automatic recruitment.",
+      "description": "Gather resources and construct buildings. Trained at the main hall; uses 1 supply.",
       "asset": "asset.ants.settler",
       "icon": "icon.ants.settler",
       "selectionClass": "worker",
@@ -1402,12 +1404,18 @@
         }
       },
       "creation": {
-        "method": "spawn",
-        "items": [],
-        "workTicks": 80
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 75
+          }
+        ],
+        "workTicks": 480
       },
       "level": 1,
-      "experienceYield": 15
+      "experienceYield": 15,
+      "supplyCost": 1
     },
     {
       "id": "unit.ants.warrior",
@@ -1441,18 +1449,18 @@
         }
       },
       "creation": {
-        "method": "recruit",
+        "method": "train",
         "items": [
           {
             "item": "item.amber",
             "amount": 95
           }
         ],
-        "workTicks": 40,
-        "unitInput": "unit.ants.settler"
+        "workTicks": 40
       },
       "level": 1,
-      "experienceYield": 25
+      "experienceYield": 25,
+      "supplyCost": 1
     },
     {
       "id": "unit.ants.archer",
@@ -1489,7 +1497,7 @@
         }
       },
       "creation": {
-        "method": "recruit",
+        "method": "train",
         "items": [
           {
             "item": "item.amber",
@@ -1500,11 +1508,11 @@
             "amount": 20
           }
         ],
-        "workTicks": 40,
-        "unitInput": "unit.ants.settler"
+        "workTicks": 40
       },
       "level": 1,
-      "experienceYield": 25
+      "experienceYield": 25,
+      "supplyCost": 1
     },
     {
       "id": "unit.neutral.wolf",
@@ -1538,7 +1546,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 35
+      "experienceYield": 35,
+      "supplyCost": 1
     },
     {
       "id": "unit.neutral.ogre",
@@ -1572,13 +1581,14 @@
         }
       },
       "level": 1,
-      "experienceYield": 120
+      "experienceYield": 120,
+      "supplyCost": 1
     },
     {
       "id": "building.ants.fort",
       "kind": "building",
       "name": "Acorn Main Hall",
-      "description": "Receives gathered amber and wood. Produces one worker every 12 seconds and supports 8 living workers.",
+      "description": "The colony main hall stores resources, trains workers and provides 12 supply.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
       "body": {
@@ -1614,15 +1624,12 @@
           "dropoff": true
         },
         "production": {
-          "mode": "automatic",
+          "mode": "queued",
           "outputs": [
             "unit.ants.settler"
           ],
           "workerSlots": 0,
-          "population": {
-            "capacity": 8,
-            "intervalTicks": 480
-          }
+          "queueCapacity": 6
         }
       },
       "level": 1,
@@ -1643,13 +1650,14 @@
           }
         ],
         "workTicks": 2400
-      }
+      },
+      "supplyProvided": 12
     },
     {
       "id": "building.ants.great-mound",
       "kind": "building",
       "name": "Great Acorn Hall",
-      "description": "The colony’s fortified tier-two heart. Unlocks advanced troops and research; retains Acorn Main Hall worker births and amber/wood drop-off.",
+      "description": "The colony main hall stores resources, trains workers and provides 12 supply.",
       "asset": "asset.ants.great-mound",
       "icon": "icon.ants.great-mound",
       "body": {
@@ -1685,18 +1693,16 @@
           "dropoff": true
         },
         "production": {
-          "mode": "automatic",
+          "mode": "queued",
           "outputs": [
             "unit.ants.settler"
           ],
           "workerSlots": 0,
-          "population": {
-            "capacity": 8,
-            "intervalTicks": 480
-          }
+          "queueCapacity": 6
         }
       },
-      "level": 2
+      "level": 2,
+      "supplyProvided": 12
     },
     {
       "id": "building.ants.barracks",
@@ -1712,7 +1718,7 @@
       },
       "vision": 12,
       "footprint": {
-        "width": 7,
+        "width": 9,
         "depth": 7
       },
       "entrance": {
@@ -1814,8 +1820,8 @@
     {
       "id": "building.ants.house",
       "kind": "building",
-      "name": "Worker house",
-      "description": "Supports 3 additional living workers and produces one every 20 seconds. Replenishes workers after losses or recruitment.",
+      "name": "Mound",
+      "description": "A compact colony mound that provides 6 supply when completed.",
       "asset": "asset.ants.house",
       "icon": "icon.ants.house",
       "body": {
@@ -1825,12 +1831,12 @@
       },
       "vision": 12,
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 7,
+        "depth": 7
       },
       "entrance": {
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "creation": {
         "method": "construct",
@@ -1850,26 +1856,15 @@
       "behaviorSets": [
         "behavior-set.player-building"
       ],
-      "behaviors": {
-        "production": {
-          "mode": "automatic",
-          "outputs": [
-            "unit.ants.settler"
-          ],
-          "workerSlots": 0,
-          "population": {
-            "capacity": 3,
-            "intervalTicks": 800
-          }
-        }
-      },
-      "level": 1
+      "behaviors": {},
+      "level": 1,
+      "supplyProvided": 6
     },
     {
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1879,12 +1874,12 @@
       },
       "vision": 22,
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 7,
+        "depth": 7
       },
       "entrance": {
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "creation": {
         "method": "construct",
@@ -1912,7 +1907,8 @@
         "accepts": [
           "unit.ants.archer"
         ],
-        "height": 4.9
+        "height": 5.8,
+        "lookoutRadius": 1.35
       }
     },
     {
@@ -2131,7 +2127,8 @@
           "manaRegenPerSecond": 0.76
         }
       },
-      "experienceYield": 150
+      "experienceYield": 150,
+      "supplyCost": 5
     },
     {
       "id": "item.barkguard",
@@ -2246,20 +2243,20 @@
     {
       "id": "building.neutral.amber-mine",
       "kind": "building",
-      "name": "Amber Mine",
-      "description": "A neutral amber mine. Assign up to 10 workers; each carries amber back to a Mound.",
+      "name": "Amber Deposit",
+      "description": "An exposed amber seam among weathered rocks and roots. Workers carry amber back to the Main Hall.",
       "asset": "asset.resource.amber-seam",
-      "icon": "icon.item.amber",
+      "icon": "icon.neutral.amber-deposit",
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 7,
+        "depth": 7
       },
       "constructionClearance": 3,
       "behaviors": {},
       "yield": 12000,
       "entrance": {
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "body": {
         "maxHp": 1500,
@@ -2304,7 +2301,8 @@
         }
       },
       "level": 2,
-      "experienceYield": 70
+      "experienceYield": 70,
+      "supplyCost": 1
     },
     {
       "id": "unit.neutral.elder-thornspitter",
@@ -2341,7 +2339,8 @@
         }
       },
       "level": 5,
-      "experienceYield": 240
+      "experienceYield": 240,
+      "supplyCost": 1
     },
     {
       "id": "building.ants.sanctuary",
@@ -2395,7 +2394,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper’s Flask",
+      "name": "Trailkeeper\u2019s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -2479,7 +2478,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout’s Whistle",
+      "name": "Scout\u2019s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -2547,7 +2546,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator’s Talon",
+      "name": "Predator\u2019s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -2594,7 +2593,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper’s Lantern",
+      "name": "Broodkeeper\u2019s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -2618,7 +2617,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller’s Standard",
+      "name": "Warcaller\u2019s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2686,7 +2685,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder’s Idol",
+      "name": "Rootbinder\u2019s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2767,7 +2766,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper’s Mandible",
+      "name": "Reaper\u2019s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -3015,7 +3014,8 @@
         }
       },
       "level": 8,
-      "experienceYield": 600
+      "experienceYield": 600,
+      "supplyCost": 1
     },
     {
       "id": "unit.neutral.thornblade-matriarch",
@@ -3049,12 +3049,13 @@
         }
       },
       "level": 8,
-      "experienceYield": 600
+      "experienceYield": 600,
+      "supplyCost": 1
     },
     {
       "id": "building.ants.ironroot-forge",
       "kind": "building",
-      "name": "Ironroot Forge",
+      "name": "Chitin Works",
       "description": "Researches permanent improvements for the colony. Existing and future units benefit from completed research.",
       "asset": "asset.ants.ironroot-forge",
       "icon": "icon.ants.ironroot-forge",
@@ -3065,12 +3066,12 @@
       },
       "vision": 12,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 9,
+        "depth": 9
       },
       "entrance": {
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "creation": {
         "method": "construct",
@@ -3166,12 +3167,12 @@
       },
       "vision": 12,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 11,
+        "depth": 9
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 1,
+        "y": 5
       },
       "creation": {
         "method": "construct",
@@ -3211,7 +3212,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3–7 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3\u20137 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -3247,7 +3248,7 @@
         }
       },
       "creation": {
-        "method": "recruit",
+        "method": "train",
         "items": [
           {
             "item": "item.amber",
@@ -3258,14 +3259,14 @@
             "amount": 45
           }
         ],
-        "workTicks": 60,
-        "unitInput": "unit.ants.settler"
+        "workTicks": 60
       },
       "requires": [
         "building.ants.great-mound"
       ],
       "level": 2,
-      "experienceYield": 50
+      "experienceYield": 50,
+      "supplyCost": 2
     },
     {
       "id": "unit.ants.bombardier",
@@ -3309,7 +3310,7 @@
         }
       },
       "creation": {
-        "method": "recruit",
+        "method": "train",
         "items": [
           {
             "item": "item.amber",
@@ -3324,14 +3325,14 @@
             "amount": 40
           }
         ],
-        "workTicks": 80,
-        "unitInput": "unit.ants.settler"
+        "workTicks": 80
       },
       "requires": [
         "building.ants.great-mound"
       ],
       "level": 2,
-      "experienceYield": 65
+      "experienceYield": 65,
+      "supplyCost": 3
     },
     {
       "id": "building.ants.bombardier-workshop",
@@ -3347,12 +3348,12 @@
       },
       "vision": 12,
       "footprint": {
-        "width": 9,
-        "depth": 7
+        "width": 11,
+        "depth": 9
       },
       "entrance": {
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "creation": {
         "method": "construct",
@@ -3418,7 +3419,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 15
+      "experienceYield": 15,
+      "supplyCost": 1
     },
     {
       "id": "unit.ants.youngling",
@@ -3442,7 +3444,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 15
+      "experienceYield": 15,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.scavenger",
@@ -3480,7 +3483,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 20
+      "experienceYield": 20,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.raider",
@@ -3518,7 +3522,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 20
+      "experienceYield": 20,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.cutthroat",
@@ -3556,7 +3561,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 20
+      "experienceYield": 20,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.chieftain",
@@ -3594,7 +3600,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 45
+      "experienceYield": 45,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.slinger",
@@ -3635,7 +3642,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 20
+      "experienceYield": 20,
+      "supplyCost": 1
     },
     {
       "id": "unit.briar.turncoat",
@@ -3669,7 +3677,8 @@
         }
       },
       "level": 1,
-      "experienceYield": 20
+      "experienceYield": 20,
+      "supplyCost": 1
     },
     {
       "id": "building.briar.cottage",
@@ -3743,7 +3752,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant’s Leaf Ledger",
+      "name": "Merchant\u2019s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3838,7 +3847,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker’s Ring",
+      "name": "Caretaker\u2019s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",

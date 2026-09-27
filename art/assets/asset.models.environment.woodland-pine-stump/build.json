@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "category": "environment",
+  "slug": "woodland-pine-stump",
+  "entry": "model.py",
+  "files": {
+    "albedo.png": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "albedo",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "source",
+      "index": 2
+    },
+    "geometry.glb": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "source",
+      "index": 3
+    },
+    "model.py": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "recipe",
+      "index": 1
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "source",
+      "index": 4
+    },
+    "samples.json": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "source",
+      "index": 5
+    },
+    "woodland-pine-stump.blend": {
+      "asset": "asset.models.environment.woodland-pine-stump",
+      "role": "source",
+      "index": 1
+    }
+  }
+}

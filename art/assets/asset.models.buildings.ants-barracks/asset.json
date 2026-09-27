@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-barracks",
+  "name": "Barracks",
+  "kind": "building",
+  "revision": 3,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "cad2a09192150695adfef235fd070dd89545ab1401f820946328aaca73bda10c",
+      "bytes": 11453356
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "04ee5f3b9d78c806548854585785aeb5955c6f165ef0e2e82491b8a9c8f7e8e3",
+      "bytes": 25077867
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "a78295aec315164f8a2cac622139cb4f9f1478075a77f20bc619664c43aa8253",
+      "bytes": 1699909
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "dbb99b5e9a86ba6dcbe0f492bcb32eebc030b4180e82aea423515258c1930b6a",
+      "bytes": 1056019
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "1992e6c9c4b5373ba1080c9c905ba31cd96e81c4eafc4e93c0f9058adba2e4df",
+      "bytes": 7380716
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "26d04b81cd41fa46f17ebdafe8748ee3f8c2675fddcacef0336eecba699581a1",
+      "bytes": 207724
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "d9c75880c488f7d1486132d8dd10db11a630fa92868a303630c14ec24e3bb07a",
+      "bytes": 2303833
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "fef38c1c895d84a5c70b1f9b55768033742042af836de3e1c453fbadcf997969",
+      "bytes": 1344472
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "515bf70114ef609c17f5c2e088b3e23de08bc522047383863889a6a70e315a34",
+      "bytes": 17375
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b384148129fdf678deab7cdc71d1e388b8d8dc6ce305ba5b2690bbe1c000c156",
+      "bytes": 9607
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "34eb8af6f89886e9b61e440319f1aa1dec1316138dd127ca062a8afd92f46344",
+      "bytes": 909
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "fb4c43648481f86a22a82a8af6c785328b77181eff2685019f664c80becf3e8b",
+      "bytes": 15307971
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "643b3703733e699cf146ce844a0178bc09d81e2f5af2838d8990b148fa3d5827",
+      "bytes": 1048
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
+      "bytes": 263
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "png",
+      "sha256": "7413cf23eb8eda5e532be3c45de61d0bdc51b1061cd61fe56a89c4420ef58489",
+      "bytes": 6677792
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "cfde6097a6139bb6a78ec4cb9c96c54c489ca1ffaf750c69d990b58dd69f5349",
+      "bytes": 164
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "json",
+      "sha256": "3b14974da89b1e73a5cf120878e90a6a8c0135ebb48ba4da829d76463c18a6d2",
+      "bytes": 6282
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "6edd3c852530377fdf53248e48a227cf7075c41993ed285a6cdb43c6d3f7f6fa",
+      "bytes": 1573
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "d0bbd316f03ee2c77dc95a4448bd4d5770746bd14ccb32f8550fbecce0a4f876",
+      "bytes": 3295737
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "c369223d9a05c5dd20c36eb0e51302b38055175e2bbb546bd387648248050c1d",
+      "bytes": 261
+    },
+    {
+      "role": "source",
+      "index": 11,
+      "format": "jpeg",
+      "sha256": "be9450186e4d1e97fdc4ade22c0f0614b5d5a6a458ffc18adca23d0c833f9865",
+      "bytes": 3361774
+    },
+    {
+      "role": "source",
+      "index": 12,
+      "format": "glb",
+      "sha256": "6823172e3ae381f4b19346978d79c4bc0bba28c2dfd42dcb9a73dc69ffbc3def",
+      "bytes": 8355392
+    },
+    {
+      "role": "source",
+      "index": 13,
+      "format": "png",
+      "sha256": "18cd4c81285231bf8426272fe4a0ecff6a1270472feb1b7a02e93034f575540a",
+      "bytes": 480112
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "b806213f3a7668b3aa34210343d6babf85931655880c4c4b091e5a9a54dbd055",
+      "bytes": 2400
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 0.72,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": true,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.ants.barracks",
+        "scale": 1,
+        "healthHeight": 7.2,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-barracks"
+        }
+      },
+      {
+        "id": "icon.ants.barracks",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-barracks"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        9,
+        7
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 4.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

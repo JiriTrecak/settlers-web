@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-amber-deposit",
   "name": "woodland amber deposit",
   "kind": "prop",
-  "revision": 4,
+  "revision": 6,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "21041a31d6f357e654f8d78999c2b7d330fc99bf201da21ed9cd4c7f82e5ab49",
+      "bytes": 1068
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "38f0b9f583a3a562bff71f95574788ba33080dc1187660181135f0a44d22816e",
+      "bytes": 661
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "9dc1aa4c8fd8c6a132cbd97a8b3820fadaf7ca27bb254b390a31f68693532d5a",
+      "bytes": 1551776
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "8d20d9f67e0c8035a7aa248e400c5836014f7cb4cb7ee520cbbe92fa80dc4795",
+      "bytes": 1551812
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "afef7c8b71f8291a8b3c1a3e498e59002e3cb3f37eb17f8ce10888a692063f5f",
+      "bytes": 1372
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "1c06fb20975158162b9ed31d9a91293faa9ca02d8c91701324c1070e9190c573",
+      "bytes": 291890
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "a4e919825f24ae8c91162a10b275823f9e1839847c6cf3ca0d61f4ebe3764eaa",
+      "bytes": 2170
     }
   ],
   "usesGeometry": true,
@@ -69,14 +146,6 @@
           "index": 1,
           "asset": "asset.models.environment.woodland-amber-deposit"
         }
-      },
-      {
-        "id": "asset.resource.woodland-amber-deposit",
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.models.environment.woodland-amber-deposit"
-        }
       }
     ],
     "scenery": [
@@ -93,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

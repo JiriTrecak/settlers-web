@@ -1,3 +1,4 @@
+import {addThreewaterRoots} from './threewater-resources';
 /** Threewater's woodland layout. Every forest, trail and watercourse remains editable. */
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {dressThreewater} from './threewater-scenery';
@@ -46,7 +47,7 @@ for(const [id,points] of [['west',[[56,477],[77,506],[107,531]]],['south',[[357,
 mask('grass.details','Patchy meadow tufts','recipe.grass.meadow',[{r:87,p:[[323,104],[503,171],[454,272]]},{r:52,p:[[162,447],[193,536],[230,609]]},{r:32,p:[[733,469],[759,628]]},{r:27,p:[[418,421]]}],{type:'grass',spacing:.85,probability:.62,scaleMin:.38,scaleMax:.7,patchiness:{scale:7,strength:.8}});
 const base=createBiomeMap('Threewater Forest',256,'vibrant-forest');base.description='Three branching woodland waters, three walkable crossings and secluded glades: a ruined lookout, a broken trading cart, a spring and a forgotten camp among dense pines.';
 base.landscape!.environment.canopy!.enabled=false;
-base.entities=clearings.slice(0,6).map(([x,z],i)=>{const q=p(x!,z!);return {id:'mine.'+i,definition:'building.neutral.amber-mine',owner:'none' as const,position:{x:Math.round(q.x),y:Math.round(q.z)},rotation:(i%4)*90,appearance:{asset:'asset.resource.woodland-amber-deposit',scale:1.25}};});
+base.entities=clearings.slice(0,6).map(([x,z],i)=>{const q=p(x!,z!);return {id:'mine.'+i,definition:'building.neutral.amber-mine',owner:'none' as const,position:{x:Math.round(q.x),y:Math.round(q.z)},rotation:(i%4)*90};});
 base.playerStarts=base.playerStarts.map((s,i)=>({...s,...(()=>{const q=p(...(i===0?[199,624]:[536,170]) as [number,number]);return {x:Math.round(q.x),z:Math.round(q.z)};})()}));
 // Original twig bridge: analytic arched deck shared by rendering and navigation.
 base.stamps=([[280,317,Math.PI/2],[607,332,Math.PI/4],[620,635,Math.PI/2]] as const).map(([x,z,yaw],i):MapStamp=>{const q=p(x,z);return {id:'bridge.'+i,asset:'leafbound-twig-bridge',x:q.x-.5,y:q.z-.5,scale:1,yaw,sourceTransform:{height:-.35,quaternion:[0,Math.sin(yaw/2),0,Math.cos(yaw/2)]},walk:{level:1,connections:{start:0,end:0}}};});
@@ -81,6 +82,7 @@ mask('grass.landmarks','Soft grass around woodland landmarks','recipe.grass.mead
 base.authoring={version:1,layers,objects:landmarks.map(([scenery,x,z,scale],i)=>authoredObjectSchema.parse({id:'landmark.'+i,asset:catalogue.find(a=>a.scenery===scenery)!.id,...p(x,z),scale,yaw:i*1.7}))};
 addForestGiants(base);
 dressThreewater(base,catalogue);
+base.entities=[...addThreewaterRoots(base)];
 const raw=stringifyUtcMap(base),map=parseUtcMap(JSON.parse(raw));if(!map)throw Error('Invalid generated map');
 const start=performance.now(),scene=compileMapScene(map,catalogue);if(scene.generated!.issues.length)throw Error(JSON.stringify(scene.generated!.issues));
 mkdirSync('assets/maps/skirmish',{recursive:true});writeFileSync('assets/maps/skirmish/threewater-forest.utcmap',raw);

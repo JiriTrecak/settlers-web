@@ -2,9 +2,7 @@ import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {sceneCommandSchema} from '../../src/shared/authoring/sceneCommands';
 import {walkStampSchema} from '../../src/shared/map/utcmap';
 import {DECAL_KINDS} from '../../src/shared/landscape/decal';
-import {canopySchema} from '../../src/shared/landscape/canopy';
-import {atmosphereSchema} from '../../src/shared/landscape/atmosphere';
-import {weatherSchema} from '../../src/shared/landscape/weather';
+import {environmentConditionsSchema} from '../../src/shared/environment/conditions';
 import {campSchema} from '../../src/content/schema';
 import {missionSchema} from "../../src/shared/scenario/schema";
 import { actionSchema } from "../../src/shared/types/types";
@@ -77,13 +75,13 @@ export function editorTools(hub: EditorHub) {
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), environment (hour/season/playing/weather/atmosphere; map-saved volumetric density, color, height, shafts, noise, drift and up to 16 soft ellipsoid mist regions), water (persisted rippleScale .01..1, rippleStrength 0...5, cloudStrength 0...2, foamStrength 0..1, causticStrength 0..1, reflectionStrength 0..1), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
           "curve",
           "cover",
-          "environment",
+          "environment", "biome",
           "base",
           "landform",
           "plateau",
@@ -92,28 +90,7 @@ export function editorTools(hub: EditorHub) {
           "export",
           "load",
           "landmarks",
-          "water",
         ]),
-        water: z
-          .object({
-            rippleScale: z.number().min(0.01).max(1).optional(),
-            rippleStrength: z.number().min(0).max(0.5).optional(),
-            cloudStrength: z.number().min(0).max(0.2).optional(),
-            foamStrength: z.number().min(0).max(1).optional(),
-            causticStrength: z.number().min(0).max(1).optional(),
-            shallowColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
-            deepColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
-            clarity: z.number().min(.2).max(12).optional(),
-            flowSpeed: z.number().min(0).max(3).optional(),
-            shadowStrength: z
-              .number()
-              .min(0)
-              .max(1)
-              .optional()
-              .describe("Directional shadow strength on water; default .6."),
-            reflectionStrength: z.number().min(0).max(1).optional(),
-          })
-          .optional(),
         aspect: z.number().optional(),
         ids: z.array(z.string()).optional(),
         points: z
@@ -154,16 +131,10 @@ export function editorTools(hub: EditorHub) {
           .enum(["meadow", "straw", "ochre", "sage", "forest"])
           .optional(),
         seed: z.number().optional(),
-        canopy: canopySchema.optional(),
-        atmosphere: atmosphereSchema.optional(),
-        weather: weatherSchema.optional(),
+        weather: environmentConditionsSchema.shape.weather,
+        biome:z.string().optional().describe('Biome ID for action biome. All appearance is defined by the biome.'),
         hour: z.number().optional(),
-        season: z.enum(["spring", "summer", "autumn"]).optional(),
         playing: z.boolean().optional(),
-        interior: z.boolean().optional().describe('Keep mission lighting fixed instead of running the outdoor day/night cycle.'),
-        ceilingHeight: z.number().min(1).max(128).nullable().optional().describe('Absolute minimum ceiling height for interior close camera views; keep above all walkable decks and actors. Null removes the ceiling.'),
-        floorMaterial: z.enum(['forest','heartwood']).optional(),
-        preset: z.string().min(1).max(128).optional(),
         radiusX: z.number().optional(),
         radiusZ: z.number().optional(),
         rotation: z.number().optional(),
@@ -242,8 +213,7 @@ export function editorTools(hub: EditorHub) {
           .enum([
             "foliage",
             "terrain",
-            "water",
-            "landmark",
+              "landmark",
             "resource",
             "other",
           ])

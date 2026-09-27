@@ -1,7 +1,8 @@
+import { colonySupply, supplyAdmission, supplyStart } from "./supply";
 import { isStunned } from "./effects";
-import { atPoint, precise, POSITION_SCALE } from "./motion";
+import { atPoint, precise } from "./motion";
 import type { Creation, Owner, Stock } from "../../content/schema";
-import { workerPopulation, gathererCount } from "./population";
+import { gathererCount } from "./population";
 import { GameContext } from "./context";
 import { distance2 } from "./spatial";
 import {
@@ -57,9 +58,11 @@ export class Economy {
     );
   }
   available(e: Entity, item: string): number {
-    return !e.construction && this.c.def(e).behaviors.storage?.dropoff
-      ? quantity(e.inventory, item)
-      : 0;
+    if (e.construction || !this.c.def(e).behaviors.storage?.dropoff) return 0;
+    // A hall is both treasury and trainer. Its queue escrow cannot be spent twice.
+    const reserved = (e.production?.queue ?? []).reduce((n, q) =>
+      n + (this.price(q.definition)[item] ?? 0), 0);
+    return Math.max(0, quantity(e.inventory, item) - reserved);
   }
   private incoming(id: number, item?: string) {
     return this.s.jobs
@@ -505,48 +508,11 @@ export class Economy {
       p.status = "Waiting for stored resources";
       return;
     }
-    if (creation.method === "spawn") {
-      const population = workerPopulation(
-        this.c.populationCandidates(),
-        b.owner,
-        this.c.registry,
-      );
-      if (population.workers >= population.capacity) {
-        p.status = `Worker capacity ${population.workers}/${population.capacity}`;
-        return;
-      }
-      if (
-        this.c.liveUnits().filter((e) => e.owner === b.owner).length >=
-        this.c.registry.rules.maxUnits
-      ) {
-        p.status = "Population limit";
-        return;
-      }
-      p.active = {
-        definition: d.id,
-        queue: t.queue,
-        worker: null,
-        progress: 0,
-      };
-      p.status = "Welcoming worker";
-      return;
-    }
-    if (creation.method === "recruit") {
-      for (const w of this.workers(b.owner, true).filter(
-        (w) => w.definition === creation.unitInput,
-      )) {
-        if (!this.workPoint(b, w)) continue;
-        p.active = {
-          definition: d.id,
-          queue: t.queue,
-          worker: w.id,
-          progress: 0,
-        };
-        this.job("recruit", w, b, { queue: t.queue });
-        p.status = "Recruit approaching";
-        return;
-      }
-      p.status = "Waiting for an available worker";
+    if (creation.method === "train") {
+      const reason = supplyStart(colonySupply(this.c.populationCandidates(), b.owner, this.c.registry), d.supplyCost!);
+      if (reason) { p.status = reason; return; }
+      p.active = { definition: d.id, queue: t.queue, worker: null, progress: 0 };
+      p.status = "Training";
       return;
     }
     let w = this.c.get(p.staff);
@@ -678,61 +644,17 @@ export class Economy {
     if (p.paused) this.releaseStaff(b);
   }
   private completeUnit(b: Entity): boolean {
-    const p = b.production!,
-      a = p.active!,
-      d = this.c.registry.get(a.definition),
-      c = d.creation!,
-      w = this.c.get(a.worker);
-    const exit = this.c.spatial.nearest(this.c.spatial.entrance(b), 12, w?.id);
-    if (!exit) {
-      p.status = "Deployment blocked";
-      return false;
+    const p = b.production!, a = p.active!, d = this.c.registry.get(a.definition);
+    // Supply was secured at training start. Lost capacity never blocks completion.
+    if (this.c.liveUnits().filter(e => e.owner === b.owner).length >= this.c.registry.rules.maxUnits) {
+      p.status = "Unit limit reached"; return false;
     }
+    const exit = this.c.spatial.nearest(this.c.spatial.entrance(b), 12,undefined,{definition:d.id});
+    if (!exit) { p.status = "Deployment blocked"; return false; }
     if (this.missing(b, this.price(d.id))) return false;
-    if (c.method === "recruit") {
-      if (!w?.unit || w.unit.contained !== b.id) return false;
-      const j = this.findJob(w.unit.job);
-      if (j) this.eraseJob(j);
-      w.definition = d.id;
-      w.hp = this.c.stats(w).maxHp;
-      w.unit = this.c.freshUnit();
-      w.x = exit.x;
-      w.y = exit.y;
-      w.readyTick = this.s.tick + 1;
-      delete w.appearance;
-      if (p.rally)
-        w.unit.order = {
-          type: "move",
-          destination: { ...p.rally },
-          attackMove: false,
-        };
-    } else {
-      const population = workerPopulation(
-        this.c.populationCandidates(),
-        b.owner,
-        this.c.registry,
-      );
-      if (population.workers >= population.capacity) return false;
-      if (
-        this.c.liveUnits().filter((e) => e.owner === b.owner).length >=
-        this.c.registry.rules.maxUnits
-      )
-        return false;
-      const e = this.c.create({
-        id: "",
-        definition: d.id,
-        position: exit,
-        rotation: 0,
-        owner: b.owner,
-      });
-      if (p.rally)
-        e.unit!.order = {
-          type: "move",
-          destination: { ...p.rally },
-          attackMove: false,
-        };
-    }
-    this.inputConsume(b, c);
+    const unit = this.c.create({id: "", definition: d.id, position: exit, rotation: 0, owner: b.owner});
+    if (p.rally) unit.unit!.order = {type: "move", destination: {...p.rally}, attackMove: false};
+    this.inputConsume(b, d.creation!);
     this.finishCycle(b);
     return true;
   }
@@ -819,16 +741,6 @@ export class Economy {
       }
       const target = this.c.registry.get(active.definition),
         creation = target.creation!;
-      if (job.type === "recruit") {
-        u.contained = b.id;
-        u.route = [];
-        u.goal = null;
-        delete u.detour;
-        b.production!.status = "Training";
-        active.progress++;
-        if (active.progress >= creation.workTicks) this.completeUnit(b);
-        continue;
-      }
       const resource = this.c.get(job.source);
       if (!resource?.resource) {
         this.abandon(job);
@@ -852,26 +764,14 @@ export class Economy {
       )) {
       const a = b.production!.active!,
         c = this.c.registry.get(a.definition).creation!;
-      if (c.method === "spawn") {
-        const population = workerPopulation(
-          this.c.populationCandidates(),
-          b.owner,
-          this.c.registry,
-        );
-        if (population.workers >= population.capacity) {
-          b.production!.active = null;
-          b.production!.status = `Worker capacity ${population.workers}/${population.capacity}`;
-          continue;
-        }
-        if (b.production!.paused) continue;
-        a.progress++;
-        if (
-          a.progress >=
-          this.c.def(b).behaviors.production!.population!.intervalTicks
-        )
-          this.completeUnit(b);
+      if (c.method === "train") {
+        if (b.production!.paused) { b.production!.status = "Paused"; continue; }
+        b.production!.status = "Training";
+        a.progress = Math.min(c.workTicks, a.progress + 1);
+        if (a.progress >= c.workTicks) this.completeUnit(b);
       }
     }
+
     for (const r of this.c
       .live()
       .filter(
@@ -885,7 +785,7 @@ export class Economy {
         !this.c.liveUnits().some((e) => {
           if (!e.unit || e.unit.contained || e.unit.release) return false;
           const p = precise(e),
-            clearance = 0.5 + this.c.spatial.unitRadius / POSITION_SCALE;
+            clearance = 0.5 + this.c.spatial.dimensions(e).radius;
           return (
             Math.abs(p.x - r.x) <= clearance && Math.abs(p.y - r.y) <= clearance
           );
@@ -1104,7 +1004,8 @@ export class Economy {
   }
   queue(b: Entity, definition: string): QueueEntry | null {
     // Every queue entry owns its whole bill. Cancelling any slot returns exactly
-    // that bill; starting the next recruit cannot silently charge it again.
+    // that bill; starting the next unit cannot silently charge it again.
+    if (supplyAdmission(colonySupply(this.c.populationCandidates(), b.owner, this.c.registry), this.c.registry.get(definition).supplyCost!)) return null;
     const reservation = this.reserveBill(b.owner, definition);
     if (!reservation) return null;
     this.admitProject(b, reservation);

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.sources.textures-woodland-grass-cards",
+  "name": "woodland-grass-cards",
+  "kind": "data",
+  "revision": 2,
+  "status": "archived",
+  "tags": [],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "1c9f35888a669edbbf9470c9b25783a0eb948a891c3a14f79f7944e77ed3dcc4",
+      "bytes": 129815
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "e0d90b6779517fbeee5cd1bb2f87d31eea915355eb44c9b92e821a07fad1ae77",
+      "bytes": 217
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "bd1cf365f43e4eb3f56d9cf24c0f144a9eed074909d7460ef60039fd052b679e",
+      "bytes": 832549
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "bd39ca58f57cae68c726aa008d9b060557142f0c6c5a1c858f9b70643c247ac2",
+      "bytes": 491
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

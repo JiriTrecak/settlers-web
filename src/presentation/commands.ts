@@ -1,3 +1,4 @@
+import { supplyAdmission } from "../sim/game/supply";
 import {cameraModeName,nextCameraMode,type UnitCameraMode} from '../shared/camera/modes';
 import {prioritizeSelection} from "./selection";
 import type { ContentRegistry } from "../content/registry";
@@ -23,7 +24,7 @@ export type CostView = {
   name: string;
   icon: string;
   amount: number;
-  kind: "item" | "unit" | "mana";
+  kind: "item" | "supply" | "mana";
 };
 
 export function inventoryCard(view:SettlementView,focusId:number|undefined,owner:Owner,registry:ContentRegistry,readOnly=false) {
@@ -185,10 +186,7 @@ export function costs(registry: ContentRegistry, id: string): CostView[] {
     const item = registry.get(p.item);
     return { name: item.name, icon: item.icon, amount: p.amount, kind: "item" };
   });
-  if (c.method === "recruit") {
-    const unit = registry.get(c.unitInput);
-    result.push({ name: unit.name, icon: unit.icon, amount: 1, kind: "unit" });
-  }
+  if (d.supplyCost) result.push({name: "Supply", icon: registry.rules.supplyIcon, amount: d.supplyCost, kind: "supply"});
   return result;
 }
 export function areaSelection(
@@ -287,7 +285,7 @@ export function commandCard(
       } else {
         const meta = registry.actions.actions.upgrade;
         result.push({id: "upgrade", type: "upgrade", name: `Upgrade to ${target.name}`, icon: target.icon,
-          description: `${target.description}\n${d.upgrade.workTicks*TICK_MS/1000}s. Worker spawning pauses during the upgrade.`,
+          description: `${target.description}\n${d.upgrade.workTicks*TICK_MS/1000}s. Unit training pauses during the upgrade.`,
           priority: meta.priority, hotkey: meta.hotkey, costs: d.upgrade.items.map(p => ({kind: "item", name: registry.get(p.item).name, icon: registry.get(p.item).icon, amount: p.amount})),
           actors: [focus.id], enabled: !view.outcome && !reason, reason, immediate: {type: "upgrade", actor: focus.id}});
       }
@@ -309,8 +307,8 @@ export function commandCard(
     if(d.behaviors.revival&&focus.revival){
       for(const hero of view.fallenHeroes??[]){
         const definition=registry.get(hero.definition),queued=view.entities.some(b=>b.revival?.queue.some(q=>q.hero===hero.id));
-        const reason=queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':undefined;
-        result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${d.behaviors.revival.workTicks*TICK_MS/1000}s.`,icon:definition.icon,costs:[],priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
+        const reason=queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':view.supply?supplyAdmission(view.supply,definition.supplyCost!)??undefined:undefined;
+        result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${d.behaviors.revival.workTicks*TICK_MS/1000}s.`,icon:definition.icon,costs:[{name:'Supply',icon:registry.rules.supplyIcon,amount:definition.supplyCost!,kind:'supply'}],priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
       }
     }
     if (p && policy) {
@@ -327,6 +325,9 @@ export function commandCard(
             const b = result.at(-1)!;
             b.enabled = false;
             b.reason = "Queue full";
+          } else if (view.supply && supplyAdmission(view.supply, registry.get(output).supplyCost!)) {
+            const b = result.at(-1)!; b.enabled = false;
+            b.reason = supplyAdmission(view.supply, registry.get(output).supplyCost!)!;
           } else if (registry.get(output).creation!.items.some(cost =>
             (view.goods?.find(g => g.item === cost.item)?.available ?? 0) < cost.amount)) {
             const b = result.at(-1)!;

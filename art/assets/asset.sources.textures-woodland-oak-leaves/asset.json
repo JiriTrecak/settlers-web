@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "id": "asset.sources.textures-woodland-oak-leaves",
+  "name": "woodland-oak-leaves",
+  "kind": "data",
+  "revision": 2,
+  "status": "archived",
+  "tags": [],
+  "resources": [
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ec05f4b4d897806925b66ad30a9dd70ea1b6a5a0ccb8ae58375fa8dbbfb960af",
+      "bytes": 783989
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "923ffab26a61f93ade3a34dfff0f7e603f3b087440fd8c740f97c336fa05a0e4",
+      "bytes": 209
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "7fc1daef8f52a9719a5237984b0da18e71b2bdf3a9266a1c09803b6fe4d5cb44",
+      "bytes": 358
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "migration"
+  }
+}

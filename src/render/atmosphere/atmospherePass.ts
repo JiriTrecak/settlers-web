@@ -1,3 +1,6 @@
+import type {CanopyFrame} from './canopyLayer';
+import {BeautyPass} from './beautyPass';
+import {NEUTRAL_POST_PROCESSING,type PostProcessingSettings} from '../../shared/environment/postProcessing';
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
 import type {ImportedWater} from '../water/importedWater';
 import {createAtmosphereNoise} from './noiseVolume';
@@ -9,9 +12,10 @@ import {perf} from '../../debug/performance';
 import {compositeFragment,filterFragment,fullscreenVertex,marchFragment} from './shaders';
 
 export const atmosphereQualitySpec=(quality:AtmosphereQuality)=>quality==='high'?{scale:.66,steps:40,maxPixels:900_000}:quality==='low'?{scale:.33,steps:16,maxPixels:180_000}:{scale:.5,steps:24,maxPixels:360_000};
-export type AtmosphereFrame={sourceWater?:ImportedWater;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
+export type AtmosphereFrame={canopy?:CanopyFrame;postProcessing?:PostProcessingSettings;sourceWater?:ImportedWater;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
 /** Bounded raymarch and depth-aware filter, then full-resolution composite. No history buffer. */
 export class AtmospherePass {
+ private readonly beauty=new BeautyPass();
  private readonly noiseVolume=createAtmosphereNoise();
  private readonly daytimeLuts=createDaytimeLuts();
  private readonly sceneTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:true,samples:2});
@@ -20,14 +24,17 @@ export class AtmospherePass {
  private readonly quadScene=new Scene();
  private readonly camera=new OrthographicCamera(-1,1,1,-1,0,1);
  private readonly geometry=new PlaneGeometry(2,2);
- private readonly shared={sceneDepth:{value:null as Texture|null},inverseProjection:{value:new Matrix4()},cameraWorld:{value:new Matrix4()},waterLevel:{value:0},visibilityMap:{value:null as Texture|null},hasVisibility:{value:false},mapSize:{value:256}};
+ private readonly shared={canopyMap:{value:null as Texture|null},hasCanopy:{value:false},canopyHeight:{value:120},canopyScale:{value:300},canopyStrength:{value:.65},canopyOffset:{value:new Vector2()},canopySun:{value:new Vector3()},sceneDepth:{value:null as Texture|null},inverseProjection:{value:new Matrix4()},cameraWorld:{value:new Matrix4()},waterLevel:{value:0},visibilityMap:{value:null as Texture|null},hasVisibility:{value:false},mapSize:{value:256}};
  private readonly march=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:marchFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,
   noiseVolume:{value:this.noiseVolume},sunShadow:{value:null as Texture|null},shadowMatrix:{value:new Matrix4()},hasShadow:{value:false},
-  density:{value:0},baseHeight:{value:0},heightFalloff:{value:4},sunStrength:{value:1},noiseScale:{value:.1},noiseStrength:{value:.6},time:{value:0},driftSpeed:{value:.3},wind:{value:new Vector2()},
+  density:{value:0},shaftDensity:{value:0},baseHeight:{value:0},heightFalloff:{value:4},sunStrength:{value:1},noiseScale:{value:.1},noiseStrength:{value:.6},time:{value:0},driftSpeed:{value:.3},wind:{value:new Vector2()},
   fogColor:{value:new Color()},sunColor:{value:new Color()},sunDirection:{value:new Vector3()},regionCount:{value:0},regions:{value:Array.from({length:16},()=>new Vector4())},regionShapes:{value:Array.from({length:16},()=>new Vector4())},
  }});
  private readonly filter=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:filterFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,fogTexture:{value:this.fogTarget.texture},fogSize:{value:new Vector2()}}});
- private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},sourceReference:{value:false},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
+ private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,
+    bloomNear:{value:this.beauty.bloom[0].texture},bloomMid:{value:this.beauty.bloom[1].texture},bloomFar:{value:this.beauty.bloom[2].texture},contactTexture:{value:this.beauty.contact.texture},
+    contactSize:{value:new Vector2()},contactStrength:{value:0},bloomStrength:{value:0},lookExposure:{value:1},lookContrast:{value:1},highlightShoulder:{value:0},lookSaturation:{value:1},shadowTint:{value:new Color()},highlightTint:{value:new Color()},splitStrength:{value:0},shadowLift:{value:0},vignetteStrength:{value:0},
+    toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},sourceReference:{value:false},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly quad=new Mesh(this.geometry,this.march);
  private shaderKey='';
  private readonly size=new Vector2();
@@ -37,7 +44,7 @@ export class AtmospherePass {
  render(gl:WebGLRenderer,scene:Scene,camera:Camera,frame:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()):void {
   const quality=readAtmosphereQuality(),settings=frame.settings;
   const volumetrics=!!settings?.enabled&&quality!=='off';
-  if(!volumetrics&&!frame.daytime&&!frame.sourceWater){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
+  if(!volumetrics&&!frame.daytime&&!frame.sourceWater&&!frame.postProcessing&&!frame.canopy){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
   const {scale,steps,maxPixels}=atmosphereQualitySpec(quality);const destination=gl.getRenderTarget();if(destination)this.size.set(destination.width,destination.height);else gl.getDrawingBufferSize(this.size);
   if(this.sceneTarget.width!==this.size.x||this.sceneTarget.height!==this.size.y)this.sceneTarget.setSize(this.size.x,this.size.y);
   const boundedScale=Math.min(scale,Math.sqrt(maxPixels/(this.size.x*this.size.y)));
@@ -52,23 +59,33 @@ export class AtmospherePass {
    const start=perf.start();
    // Scene render has updated both camera matrices and the current sun shadow.
    const u=this.march.uniforms,s=this.shared;
+   s.hasCanopy.value=!!frame.canopy;
+   s.canopySun.value.subVectors(frame.sun.position,frame.sun.target.position).normalize();
+   if(frame.canopy){const c=frame.canopy;s.canopyMap.value=c.texture;s.canopyHeight.value=c.settings.height;s.canopyScale.value=c.settings.scale;s.canopyStrength.value=c.settings.strength;s.canopyOffset.value.copy(c.offset);}
    s.sceneDepth.value=this.sceneTarget.depthTexture;s.inverseProjection.value.copy(camera.projectionMatrix).invert();s.cameraWorld.value.copy(camera.matrixWorld);
    s.waterLevel.value=frame.waterLevel;s.visibilityMap.value=frame.visibility??null;s.hasVisibility.value=!!frame.visibility;s.mapSize.value=frame.mapSize;
    if(volumetrics&&settings){
    u.hasShadow.value=gl.shadowMap.enabled&&!!frame.sun.shadow.map;
    u.sunShadow.value=filtered?frame.sun.shadow.map?.depthTexture??null:frame.sun.shadow.map?.texture??null;
    u.shadowMatrix.value.copy(frame.sun.shadow.matrix);
-   u.density.value=settings.density;u.baseHeight.value=settings.baseHeight;u.heightFalloff.value=settings.heightFalloff;
+   u.density.value=settings.density;u.shaftDensity.value=settings.shaftDensity;u.baseHeight.value=settings.baseHeight;u.heightFalloff.value=settings.heightFalloff;
    u.sunStrength.value=settings.sunStrength*(1-frame.rain*.65);
    u.noiseScale.value=settings.noiseScale;u.noiseStrength.value=settings.noiseStrength;u.driftSpeed.value=settings.driftSpeed;u.time.value=frame.time/1000;
    u.wind.value.set(frame.windX,frame.windZ);u.fogColor.value.set(settings.color);
-   u.sunColor.value.copy(frame.sun.color).multiply(this.shaftTint.set(settings.sunTint??DEFAULT_SHAFT_TINT)).multiplyScalar(Math.min(2.5,frame.sun.intensity));
+   u.sunColor.value.copy(frame.sun.color).lerp(this.shaftTint.set('#ffffff'),.6*Math.min(1,frame.sun.intensity/8)).multiply(this.shaftTint.set(settings.sunTint??DEFAULT_SHAFT_TINT)).multiplyScalar(Math.min(2.5,frame.sun.intensity));
    u.sunDirection.value.subVectors(frame.sun.position,frame.sun.target.position).normalize();u.regionCount.value=settings.regions.length;
    settings.regions.forEach((r,i)=>{u.regions.value[i].set(r.x,r.y,r.z,r.density);u.regionShapes.value[i].set(r.radiusX,r.radiusY,r.radiusZ,0);});
    }
-   const composite=this.composite.uniforms;composite.sourceReference.value=true;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
+   const composite=this.composite.uniforms,look=frame.postProcessing??NEUTRAL_POST_PROCESSING;
+   composite.contactStrength.value=look.contact.strength;composite.bloomStrength.value=look.bloom.strength;
+   composite.highlightShoulder.value=look.highlightShoulder;composite.lookExposure.value=look.exposure;composite.lookContrast.value=look.contrast;composite.lookSaturation.value=look.saturation;
+   composite.shadowTint.value.set(look.shadowTint).convertLinearToSRGB();composite.highlightTint.value.set(look.highlightTint).convertLinearToSRGB();
+   composite.shadowLift.value=look.shadowLift;composite.splitStrength.value=look.splitStrength;composite.vignetteStrength.value=look.vignette;
+   composite.sourceReference.value=!!frame.daytime;composite.hasVolumetrics.value=volumetrics;composite.hasDaytimeFog.value=!!frame.daytime;
    if(frame.daytime){const lut=this.daytimeLuts.pair(frame.daytime);composite.daytimeLutFrom.value=lut.from;composite.daytimeLutTo.value=lut.to;composite.daytimeLutBlend.value=lut.blend;}
    if(frame.daytime){const f=frame.daytime.look.fog,scale=frame.daytimeFogDistanceScale??1;composite.daytimeFogColor.value.setRGB(f.color.rgb[0]/255,f.color.rgb[1]/255,f.color.rgb[2]/255,SRGBColorSpace).multiplyScalar(f.color.multiplier).multiply(this.fogTint.set(frame.daytimeFogTint??'#ffffff'));composite.daytimeFogDensity.value=f.density/scale;composite.daytimeFogDispersion.value=f.dispersionByHeight;composite.daytimeFogStart.value=f.startDist*scale;composite.daytimeFogHeight.value=f.startHeight+(frame.sourceHeightOffset??0);}
+   measure('GPU biome finish',()=>{gl.shadowMap.autoUpdate=false;this.beauty.render(gl,this.sceneTarget,camera,frame.waterLevel,look);});
+   composite.contactSize.value.set(this.beauty.contact.width,this.beauty.contact.height);
    measure('GPU atmosphere',()=>{
    gl.shadowMap.autoUpdate=false;
    if(volumetrics){this.quad.material=this.march;gl.setRenderTarget(this.fogTarget);gl.render(this.quadScene,this.camera);
@@ -78,5 +95,5 @@ export class AtmospherePass {
    perf.end('Atmosphere submit (CPU)',start);perf.value('Atmosphere',volumetrics?`${quality} · ${width} × ${height} · ${steps} samples`:'Daytime height fog · one composite');
   }finally{gl.setRenderTarget(previous);gl.autoClear=autoClear;gl.shadowMap.autoUpdate=shadowAuto;}
  }
- dispose(){this.daytimeLuts.dispose();this.noiseVolume.dispose();this.sceneTarget.dispose();this.fogTarget.dispose();this.filteredTarget.dispose();this.geometry.dispose();this.march.dispose();this.filter.dispose();this.composite.dispose();}
+ dispose(){this.beauty.dispose();this.daytimeLuts.dispose();this.noiseVolume.dispose();this.sceneTarget.dispose();this.fogTarget.dispose();this.filteredTarget.dispose();this.geometry.dispose();this.march.dispose();this.filter.dispose();this.composite.dispose();}
 }

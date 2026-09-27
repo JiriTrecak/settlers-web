@@ -25,7 +25,7 @@ No public deployment is performed by these commands.
 
 ## Where to edit
 
-- **Game facts:** `content/game.json`. The generator constructs the real `ContentRegistry`, expanding composed behaviors and validating references. HP, armor, prices, harvest yields, birth intervals, recipes, level growth, ability ranks and weighted drops come from it.
+- **Game facts:** `content/game.json`. The generator constructs the real `ContentRegistry`, expanding composed behaviors and validating references. HP, armor, prices, harvest yields, supply costs and training times, recipes, level growth, ability ranks and weighted drops come from it.
 - **Maps:** authored `.utcmap` files in `assets/maps/showcase/` and `assets/maps/skirmish/`. Map schema and placements are validated before publication. Terrain previews use the game's height decoder and landscape curves.
 - **Player prose:** `docs/wiki/`. These Markdown files explain rules and design intent. New pages are picked up during generation; add a navigation entry in `scripts/wiki/generate.ts` when adding a new guide.
 - **Devlogs:** `docs/wiki/devlog/`. Write in the creator's first-person voice, beginning with the player experience and following the design decisions, experiments and tradeoffs. Add each published post to the devlog index and navigation. Date the post, distinguish shipped work from experiments, and link measurements to the technical audit. Future topics include unit design, terrain, performance and lockstep; listing an idea does not publish a promised article.

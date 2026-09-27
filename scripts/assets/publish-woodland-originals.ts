@@ -34,10 +34,11 @@ await withWorkspaceWriteLock(process.cwd(),async()=>{
  const root=process.cwd(),all=(await readPublished(root))!,index=new Map(all.map(a=>[a.id,a])),changed=new Set<string>(),staged=new Map<string,Buffer>();
  const add=(a:AssetDefinition)=>{assetDefinitionSchema.parse(a);index.set(a.id,a);changed.add(a.id);};
  for(const slug of slugs){
+  if(index.get(id(slug))?.resources.some(r=>r.role==='build'))throw Error('Use canonical capture-build and workbench publication: '+id(slug));
   const bridge=slug.includes('bridge'),tree=slug==='woodland-pine-a'||slug==='woodland-pine-b';
   const a=originalPackage(id(slug),slug.replaceAll('-',' '),bridge?'bridge':tree?'tree':'foliage','authored').definition;a.id=id(slug);a.name=slug.replaceAll('-',' ');a.kind=bridge?'bridge':tree?'tree':'foliage';a.tags=['original','woodland','forest'];a.revision=(index.get(a.id)?.revision??0)+1;a.resources=[];a.usesGeometry=true;
   a.provenance={method:'authored',licenseNote:'Original Blender geometry and procedural bark. Original pine-bough albedo generated with built-in ImageGen. All geometry and pixels independently authored.'};
-  const source='art/sources/environment/'+slug+'/';
+  const source='.asset-work/build/environment/'+slug+'/';
   for(const [role,format,file,i] of [['geometry','glb','geometry.glb',1],['source','blend',slug+'.blend',1],['albedo','png','albedo.png',1],...(!bridge&&!slug.includes('stump')?[['albedo','png','albedo_2.png',2]]:[])] as [FileRole,string,string,number][]){
    let b=await readFile(source+file);if(role==='geometry')b=prepare(b,slug);a.resources.push({role,index:i,format,sha256:createHash('sha256').update(b).digest('hex'),bytes:b.length});staged.set(assetFolder(a.id)+'/'+role+(i===1?'':'_'+i)+'.'+format,b);
   }

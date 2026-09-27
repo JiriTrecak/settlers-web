@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "category": "characters",
+  "slug": "ant-worker-tripo",
+  "entry": "model.py",
+  "files": {
+    "README.md": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 2
+    },
+    "albedo-team.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 3
+    },
+    "ant-worker-tripo.blend": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 4
+    },
+    "base.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "geometry",
+      "index": 1
+    },
+    "cargo-amber.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "geometry",
+      "index": 3
+    },
+    "cargo-root.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "geometry",
+      "index": 4
+    },
+    "cargo-stats.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 5
+    },
+    "cargo-wood.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "geometry",
+      "index": 2
+    },
+    "cargo.py": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "recipe",
+      "index": 1
+    },
+    "character.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 6
+    },
+    "model.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "geometry",
+      "index": 1
+    },
+    "model.py": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "recipe",
+      "index": 2
+    },
+    "normal.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 7
+    },
+    "ownership.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 8
+    },
+    "palette.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 9
+    },
+    "prepare_texture.py": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "recipe",
+      "index": 3
+    },
+    "provenance.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 10
+    },
+    "reference-sheet.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 11
+    },
+    "reference.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "preview",
+      "index": 1
+    },
+    "roughness.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 12
+    },
+    "samples.json": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 13
+    },
+    "source-albedo.jpg": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 14
+    },
+    "source.glb": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 15
+    },
+    "team-mask.png": {
+      "asset": "asset.models.units.ants-worker",
+      "role": "source",
+      "index": 16
+    }
+  }
+}

@@ -22,7 +22,7 @@ export class GpuTimings {
    this.gl.deleteQuery(sample.query);this.pending.shift();
   }
   this.active=perf.enabled&&this.pending.length<4;
-  this.scope=['GPU frame','GPU atmosphere','GPU frame','GPU scene','GPU frame','GPU portrait'][this.frame++%6];
+  this.scope=['GPU frame','GPU atmosphere','GPU frame','GPU scene','GPU frame','GPU portrait','GPU frame','GPU biome finish'][this.frame++%8];
   if(this.active&&this.scope==='GPU frame')this.start(this.scope);
  }
  private start(label:string){const query=this.gl.createQuery();if(!query||!this.extension)return;this.current={query,label};this.gl.beginQuery(this.extension.TIME_ELAPSED_EXT,query);}

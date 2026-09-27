@@ -1,0 +1,10 @@
+{
+  "mask": "baseColorAlpha",
+  "sourceMax": 1.0,
+  "default": [
+    0.025,
+    0.14,
+    1.0
+  ],
+  "coverage": 0.0
+}

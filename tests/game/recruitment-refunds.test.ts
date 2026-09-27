@@ -3,7 +3,7 @@ import { game, placed, run, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 
 function setup() {
-  const g = game([placed("b", "building.ants.barracks")]);
+  const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks")]);
   const b = g.entities.find(e => e.placement === "b")!;
   const hall = g.context.get(g.state.objectives["player.1"])!;
   const initial = {...hall.inventory};
@@ -31,18 +31,15 @@ describe("recruitment payment and refunds", () => {
     expect(restored.checksum()).toBe(g.checksum());
   });
 
-  it("returns amber, lumber and the same worker when cancelled during training", () => {
-    const {g, b, hall, initial, recruit, cancel} = setup();
-    recruit("unit.ants.archer");
-    for (let i = 0; i < 900 && !g.context.get(b.production!.active?.worker)?.unit?.contained; i++) g.tick();
-    const worker = g.context.get(b.production!.active?.worker)!;
-    expect(worker.unit!.contained).toBe(b.id);
+  it("returns currency and supply without changing any worker when cancelled during training", () => {
+    const {g,b,hall,initial,recruit,cancel}=setup();
+    const workers=g.entities.filter(e=>e.definition==='unit.ants.settler').map(e=>e.id);
+    recruit('unit.ants.archer');run(g,10);
+    expect(b.production!.active).toMatchObject({worker:null,progress:10});
     expect(cancel(b.production!.queue[0].id).accepted).toBe(true);
     expect(hall.inventory).toEqual(initial);
-    expect(worker.definition).toBe("unit.ants.settler");
-    expect(worker.unit!.contained).toBeNull();
-    expect(b.inventory).toEqual({});
-    expect(b.production!.active).toBeNull();
+    expect(g.entities.filter(e=>e.definition==='unit.ants.settler').map(e=>e.id)).toEqual(workers);
+    expect(b.inventory).toEqual({});expect(b.production!.active).toBeNull();
   });
 
   it("rejects unaffordable recruitment without a partial charge or queue entry", () => {

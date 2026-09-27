@@ -1,3 +1,4 @@
+import {resourceCenterSeparation} from '../shared/map/resourceClearance';
 import {missionSchema} from "../shared/scenario/schema";
 import {projectScene} from '../shared/authoring/project';
 import type { ContentRegistry } from "./registry";
@@ -219,4 +220,19 @@ export function placementOccupancyError(
       }
   }
   return null;
+}
+
+/** Authoring gate: starting halls preserve the same resource access lane as construction. */
+export function startingResourceClearanceError(map:UtcMap,registry:ContentRegistry):string|null {
+ if(map.mission||map.sandbox)return null;
+ const hall=registry.get(registry.rules.startingSetup.fort);
+ const resources=[...map.entities,...(projectScene(map)?.resources??[])];
+ for(const s of map.playerStarts)for(const resource of resources){
+  const definition=registry.get(resource.definition),clearance=definition.constructionClearance;
+  if(clearance===undefined||resource.activation==='script'||(resource.initialState?.amount??definition.yield??0)<=0)continue;
+  const minimum=resourceCenterSeparation(hall.footprint!,definition.footprint??{width:1,depth:1},clearance,0,resource.rotation);
+  if(Math.abs(s.x-resource.position.x)<minimum.x&&Math.abs(s.z-resource.position.y)<minimum.y)
+   return `Player ${s.player}: ${hall.name} is too close to ${definition.name}; leave at least ${minimum.x} cells horizontally or ${minimum.y} cells vertically between centers.`;
+ }
+ return null;
 }

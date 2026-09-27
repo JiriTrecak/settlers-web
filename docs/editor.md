@@ -16,7 +16,7 @@ Maps retain masks, splines, seeds, recipe IDs and sparse per-layer overrides. Re
 
 `src/shared/authoring/mapScene.ts` compiles the same scene for editor and game. Biome choices live in `src/content/biomes.ts`. Generated objects retain layer ownership. Scatter layers can be baked as a whole into independent objects; there is no detach-selected workflow. Terrain, path and river layers remain live. Layer history and entity history are separate; the bottom history buttons explicitly act on layers.
 
-Weather and canopy settings are map properties in Environment. MCP exposes the same validated authoring operations to agents. Asset definitions and publication are managed in the [asset editor](asset-pipeline/publication.md), separate from placing instances on a map.
+**Environment → Biome & conditions** selects the biome, time of day and optional weather kind. Biomes own lighting, grading, atmosphere, canopy and water styles; maps cannot override their appearance. Define a biome variant in `src/content/biomes.ts` to change that direction consistently in the game, editor and asset workbench. MCP exposes the same validated operations: `editor_landscape` with `action: "biome"` and a biome ID, or `action: "environment"` with hour, playing and weather kind. Asset definitions and publication are managed in the [asset editor](asset-pipeline/publication.md), separate from placing instances on a map.
 
 ## Forest-scale scenery
 

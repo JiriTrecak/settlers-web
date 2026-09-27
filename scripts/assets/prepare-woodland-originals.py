@@ -3,7 +3,7 @@ from pathlib import Path
 import json, shutil, math
 import numpy as np
 from PIL import Image
-root=Path(__file__).resolve().parents[2];base=root/'art/sources/environment'
+root=Path(__file__).resolve().parents[2];base=root/'.asset-work/build/environment'
 n=512;y,x=np.mgrid[:n,:n];u=x/n;v=y/n
 # Broad vertical bark plates with periodic grain; restrained painterly relief.
 rng=np.random.default_rng(91)

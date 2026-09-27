@@ -3,7 +3,7 @@
   "id": "asset.models.buildings.ants-mandible-hall",
   "name": "Mandible Hall",
   "kind": "building",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "original",
@@ -102,6 +102,55 @@
       "format": "json",
       "sha256": "3815f0e546cc4db362f33a09b596e2113f0a3ea64024f234f5c604802310d8ef",
       "bytes": 20692
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "c9d6a8cd4de88fc45f21f964fe9249314b70ec90ee7894ad13964c105f8e619b",
+      "bytes": 3614
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "97c2d2a1226ba972c0dba4bbddf84e16723ac32426dde661c32e09d27093cfcf",
+      "bytes": 603
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "6fe089008cb6f964a76f419a169a037e2f2315fbb7efc658c11dbdc3ce2928d1",
+      "bytes": 16872
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "51c136a958a0e8a6949286b6fe6d7f199d38d558674d12a3875409dab32eae96",
+      "bytes": 6856
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "f045d7829026f385f9764de93a2becbb0c3977694d6a0f8c7b82f987ea00bb3d",
+      "bytes": 353
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "91061f4ae5ac3692121f72e0bc209f60ecd7d2f5ebb03877cf002e811eee84eb",
+      "bytes": 2355
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "b2000c2aec70ac12a5af3068f1c1740bf9eaf44397de5f9ac3b37a30d68c04c5",
+      "bytes": 2310
     }
   ],
   "usesGeometry": true,

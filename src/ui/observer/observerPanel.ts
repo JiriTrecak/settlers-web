@@ -121,7 +121,7 @@ export class ObserverPanel {
       [
         player.workers,
         "Total workers",
-        `${player.availableWorkers} available workers. ${player.workers}/${player.workerCapacity} living-worker capacity, including workers inside production buildings.`,
+        `${player.availableWorkers} available workers. ${player.supply.committed}/${player.supply.capacity} supply (${player.supply.used} used, ${player.supply.reserved} reserved).`,
       ],
     ] as const) {
       const cell = document.createElement("td");

@@ -341,14 +341,14 @@ export class GameContext {
                     ),
                 };
           this.spatial.adoptSurface(current,proposed,goal);
-          if (!this.spatial.clearSegment(current, proposed)) {
+          if (!this.spatial.clearSegment(current, proposed, undefined, e)) {
             u.route = [];
             u.segment = null;
             u.retryAt = this.state.tick + 6;
             break;
           }
           if (
-            (!ignoresUnits && !this.spatial.clearSegment(current, proposed, occupied)) ||
+            (!ignoresUnits && !this.spatial.clearSegment(current, proposed, occupied, e)) ||
             !this.spatial.unitSegmentClear(current, proposed, e.id)
           ) {
             if (this.state.tick >= u.retryAt && u.goal !== null) {
@@ -385,8 +385,7 @@ export class GameContext {
                       this.spatial.clearSegment(
                         u.position!,
                         fixed(p),
-                        occupied,
-                      ) &&
+                        occupied, e) &&
                       this.spatial.unitSegmentClear(
                         u.position!,
                         fixed(p),
@@ -443,7 +442,7 @@ export class GameContext {
     const rejoin=nearbyDestination?0:u.route.findIndex(i=>{
       const p=fixed(this.spatial.point(i));return this.spatial.unitSegmentClear(p,p,e.id);
     });
-    const replaceGoal=rejoin<0&&destination&&this.spatial.clearSegment(current,fixed(destination));
+    const replaceGoal=rejoin<0&&destination&&this.spatial.clearSegment(current,fixed(destination), undefined, e);
     if(rejoin<0&&!replaceGoal)return false;
     const next=nearbyDestination||replaceGoal ? destination! : this.spatial.point(u.route[rejoin]), dx=next.x-current.x/1000, dy=next.y-current.y/1000;
     const distance=Math.hypot(dx,dy);
@@ -455,8 +454,8 @@ export class GameContext {
     // Rounding a point on a clear diagonal can move it across a wall corner.
     // Choose a nearby grid anchor with a checked continuation before searching.
     const usable=(p:Point)=>Math.hypot(p.x-current.x/1000,p.y-current.y/1000)<=4 &&
-      this.spatial.clearSegment(fixed(p),fixed(next)) &&
-      this.spatial.clearSegment(fixed(p),fixed(p),reservations) && this.spatial.unitSegmentClear(fixed(p),fixed(p),e.id);
+      this.spatial.clearSegment(fixed(p),fixed(next), undefined, e) &&
+      this.spatial.clearSegment(fixed(p),fixed(p),reservations, e) && this.spatial.unitSegmentClear(fixed(p),fixed(p),e.id);
     // A packed destination can fill the entire 3×3 projection. Check one
     // outer ring before giving up; retain the same local radius/search budget.
     const fallback=()=>[-2,-1,0,1,2].flatMap(y=>[-2,-1,0,1,2]
@@ -467,7 +466,7 @@ export class GameContext {
     if (!target) return false;
     const end=fixed(target);
     const points=localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
-      this.spatial.clearSegment(a,b,reservations)&&this.spatial.unitSegmentClear(a,b,e.id));
+      this.spatial.clearSegment(a,b,reservations, e)&&this.spatial.unitSegmentClear(a,b,e.id));
     if (!points) return false;
     const waypoint=this.spatial.cell(target);
     if (nearbyDestination) {u.goal=waypoint;u.route=[waypoint];}
@@ -499,7 +498,7 @@ export class GameContext {
       y:current.y + Math.round((target.y-current.y)*travel/length),
     };
     if(current.surface)(proposed as FixedPoint).surface=current.surface;
-    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e,units)) ||
+    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e,units), e) ||
       !this.spatial.unitSegmentClear(current,proposed,e.id)) {
       delete u.detour;
       u.retryAt = this.state.tick+6;

@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-trail-sign",
   "name": "woodland trail sign",
   "kind": "prop",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "original",
@@ -44,6 +44,83 @@
       "format": "json",
       "sha256": "bacf1d9150aed3a78007dac1fb8ead715c445be9ecf85a57bff7c7b9c281d3f5",
       "bytes": 380
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "md",
+      "sha256": "439a3bf73367b7bdff52565f9efedcc92752af4dc1323f160f524c1b1b7efd63",
+      "bytes": 1056
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "ed98dbf9c11ac709d1d9147c20b6d5afc5e63d310fb43ac65484d97680ec8fe3",
+      "bytes": 644
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "glb",
+      "sha256": "744ae874d72037d0b712fa18f2334693d88672313f657bde98d9fcb33b5bbc69",
+      "bytes": 1553836
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "glb",
+      "sha256": "1e9a42444f0e68c215be22af66cbc780702352a7e8d3f1bda3615e39d4c8268c",
+      "bytes": 1545424
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "309ab8186eb90b56f5d29d4747fa2ca47c052092888ad26dce0c9d31556c99ac",
+      "bytes": 194
+    },
+    {
+      "role": "source",
+      "index": 6,
+      "format": "json",
+      "sha256": "079aa83e8ca53987845e49f0c03ef86804a67c8de0002208e217aa8d320126be",
+      "bytes": 5196
+    },
+    {
+      "role": "source",
+      "index": 7,
+      "format": "png",
+      "sha256": "40dabb4135bd75298e5fbb586d05795f569d15bee11cc9a055ffdd073e4ac84c",
+      "bytes": 282522
+    },
+    {
+      "role": "source",
+      "index": 8,
+      "format": "json",
+      "sha256": "06531cf03e951655d7dcc3bb06db71077808bd02b5e989250799899b2c755355",
+      "bytes": 1261
+    },
+    {
+      "role": "source",
+      "index": 9,
+      "format": "png",
+      "sha256": "d15ab790f8a59f61934bb3d3ba5fd111b807223179ccbafff552dd2f8ba06bbe",
+      "bytes": 302648
+    },
+    {
+      "role": "source",
+      "index": 10,
+      "format": "json",
+      "sha256": "00f0bebc3a2657af1242ee2e201e8c8f75ed433a0b1144ee231212375b0b87f6",
+      "bytes": 129
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "21e2df04b56debc8babafedd22ab24bde72acdc6dd04b7692f6ecf99f717510d",
+      "bytes": 2119
     }
   ],
   "usesGeometry": true,
@@ -85,10 +162,10 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 0.25,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 0.25
+    }
   },
   "provenance": {
     "method": "authored",

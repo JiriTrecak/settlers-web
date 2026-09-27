@@ -24,7 +24,7 @@ export async function publishOriginals(packs:OriginalPackage[],edit?:(index:Map<
  await withWorkspaceWriteLock(process.cwd(),async()=>{
   const root=process.cwd(),all=await readPublished(root);if(!all)throw Error('Canonical asset registry is required');
   const index=new Map(all.map(a=>[a.id,a])),changed=new Set<string>(),staged=new Map<string,Buffer>();
-  for(const pack of packs){const a=pack.definition;a.revision=(index.get(a.id)?.revision??0)+1;assetDefinitionSchema.parse(a);index.set(a.id,a);changed.add(a.id);for(const [p,b]of pack.files)staged.set(p,b);}
+  for(const pack of packs){const a=pack.definition;if(index.get(a.id)?.resources.some(r=>r.role==='build'))throw Error('This asset has canonical build sources. Use capture-build and publish from the workbench: '+a.id);a.revision=(index.get(a.id)?.revision??0)+1;assetDefinitionSchema.parse(a);index.set(a.id,a);changed.add(a.id);for(const [p,b]of pack.files)staged.set(p,b);}
   edit?.(index,changed);
   const plan=await planPublication(root,[...index.values()],changed,staged);
   await commitFiles(root,[...[...staged].map(([path,bytes])=>({path,bytes})),...[...changed].map(id=>({path:assetFolder(id)+'/asset.json',bytes:definitionBytes(index.get(id)!)})),...plan.writes]);

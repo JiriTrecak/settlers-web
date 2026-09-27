@@ -6,7 +6,7 @@ async function markdown(dir:string):Promise<string[]>{
  const entries=await readdir(dir,{withFileTypes:true});
  return (await Promise.all(entries.map(e=>e.isDirectory()?markdown(path.join(dir,e.name)):e.name.endsWith('.md')?[path.join(dir,e.name)]:[]))).flat();
 }
-const files=['README.md','art/README.md','assets/index.md',...await markdown('docs'),...await markdown('art/sources')];
+const files=['README.md','art/README.md','assets/index.md',...await markdown('docs'),...await markdown('art/recipes')];
 const errors:string[]=[];let checked=0;
 for(const file of files){
  const text=(await readFile(file,'utf8')).replace(/```[\s\S]*?```/g,'');

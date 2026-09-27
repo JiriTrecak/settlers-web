@@ -5,7 +5,7 @@ import { Game } from "../../src/sim/game/game";
 
 describe("work disruption and capacity", () => {
   it("S05 protects a nearly full queue-head bill from tail demand", () => {
-    const g = game([placed("b", "building.ants.barracks")], (s) => {
+    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks")], (s) => {
         const b = s.definitions.find(
           (d: any) => d.id === "building.ants.barracks",
         ) as any;

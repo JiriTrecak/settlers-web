@@ -34,7 +34,7 @@ export class AuthoringStore{
   if(command.op==='asset.list')return (await readPackages(this.root)).filter(a=>command.includeArchived||a.status!=='archived');
   if(command.op==='asset.publication'){const released=(await readPublished(this.root))?.find(a=>a.id===command.id);return {id:command.id,revision:released?.revision??null};}
   if(command.op==='asset.get')return this.get(command.id);
-  if(command.op==='asset.validate'){const a=await this.get(command.id);await validatePackage(this.root,a);const released=await readPublished(this.root);if(released)await planPublication(this.root,[...released.filter(v=>v.id!==a.id),assetDefinitionSchema.parse({...a,status:'published'})],new Set([a.id]));return {valid:true,id:a.id,revision:a.revision,resources:a.resources.length};}
+  if(command.op==='asset.validate'){const a=await this.get(command.id);const models=await validatePackage(this.root,a);const released=await readPublished(this.root);if(released)await planPublication(this.root,[...released.filter(v=>v.id!==a.id),assetDefinitionSchema.parse({...a,status:'published'})],new Set([a.id]));return {valid:true,id:a.id,revision:a.revision,resources:a.resources.length,models};}
   if(command.op==='asset.create'){
    const a=command.definition;if(a.status!=='draft'||a.revision!==1||a.resources.length)throw Error('Create an empty draft at revision 1, then upload its resources');
    try{await access(await within(this.root,definitionPath(a.id)));throw Error('Asset ID already exists');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}

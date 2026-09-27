@@ -3,7 +3,7 @@
   "id": "asset.terrain.winter-rock",
   "name": "winter rock · albedo/roughness",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "original",
@@ -30,6 +30,27 @@
       "format": "png",
       "sha256": "f0af50f551e0055288be4f2976b06ff6a3797d93c718b7a0a0e032dba7dcdb49",
       "bytes": 1666982
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "64798ea32d8243e5619c24b1ea337b7c6c2d99e9e1baabbbe9eb98738bdcd548",
+      "bytes": 2423139
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "json",
+      "sha256": "57692a3616fd9ee2b5da91d96138b9cb24f0a57549bb7110adf4fa8cd1d09550",
+      "bytes": 253
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "ceb86968f6336556018ebdaa95045202c252c96444203b5d0f8a43824c394fbd",
+      "bytes": 316
     }
   ],
   "usesGeometry": false,

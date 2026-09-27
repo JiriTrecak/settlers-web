@@ -4,8 +4,8 @@ import { Game } from "../../src/sim/game/game";
 import { slots } from "./helpers";
 
 describe("declarative physical economy", () => {
-  it("S01 constructs a barracks from hall stores and transforms the same settler into a warrior", () => {
-    const g = game(),
+  it("S01 constructs a barracks and trains a new warrior without consuming its builder", () => {
+    const g = game([placed("supply", "building.ants.house", 245, 240)]),
       w = worker(g),
       before = physical(g, "item.wood");
     expect(
@@ -65,7 +65,7 @@ describe("declarative physical economy", () => {
     expect(b.construction).toBeUndefined();
     expect(g.state.jobs).toHaveLength(0);
   });
-  it("S04 two barracks cannot reserve one settler twice", () => {
+  it("S04 two barracks train independently of a single worker", () => {
     const g = game(
       [
         placed("a", "building.ants.barracks", 205, 210, {
@@ -93,12 +93,12 @@ describe("declarative physical economy", () => {
       g.entities.filter(
         (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
       ),
-    ).toHaveLength(1);
+    ).toHaveLength(2);
     expect(
       g.entities
         .filter((e) => e.production)
         .reduce((n, b) => n + b.production!.queue.length, 0),
-    ).toBe(1);
+    ).toBe(0);
   });
   it("S07 cancels partial construction and returns its reserved cost to the hall", () => {
     const g = game(),
@@ -144,55 +144,32 @@ describe("declarative physical economy", () => {
     expect(carrier!.x).toBe(235);
     expect(carrier!.y).toBe(235);
   });
-  it("S10 deployment blocked retains input, queue and identity; cancellation releases exactly once", () => {
-    const g = game([
-        placed("b", "building.ants.barracks", 205, 210, {
-          inventory: { "item.wood": 1 },
-        }),
-      ]),
-      b = g.entities.find((e) => e.placement === "b")!;
-    g.command("player.1", {
-      type: "produce",
-      actor: b.id,
-      definition: "unit.ants.warrior",
-    });
-    while (
-      !b.production!.active?.worker ||
-      !g.context.get(b.production!.active.worker)?.unit?.contained
-    )
-      g.tick();
-    const id = b.production!.active!.worker!,
-      original = g.context.get(id)!,
-      nearest = g.spatial.nearest.bind(g.spatial);
-    g.spatial.nearest = () => null;
-    run(g, 500);
-    expect(original.definition).toBe("unit.ants.settler");
-    expect(b.inventory["item.amber"]).toBe(g.registry.get("unit.ants.warrior").creation!.items.find(p=>p.item === "item.amber")!.amount);
-    expect(b.production!.queue).toHaveLength(1);
-    g.command("player.1", {
-      type: "cancel",
-      actor: b.id,
-      queue: b.production!.queue[0]!.id,
-    });
-    expect(original.unit!.release).not.toBeNull();
-    const save = g.snapshot(),
-      restored = new Game(g.map, slots, g.registry);
-    restored.restore(save);
+  it("S10 blocked deployment retains funded training; cancellation refunds exactly once", () => {
+    const g=game([placed('supply','building.ants.house',245,240),placed('b','building.ants.barracks')]);
+    const b=g.entities.find(e=>e.placement==='b')!;
+    g.command('player.1',{type:'produce',actor:b.id,definition:'unit.ants.warrior'});
+    const nearest=g.spatial.nearest.bind(g.spatial);g.spatial.nearest=()=>null;
+    run(g,100);
+    expect(b.production!.status).toBe('Deployment blocked');
+    expect(b.production!.active!.progress).toBe(40);
+    expect(b.inventory['item.amber']).toBe(95);
+    const id=b.production!.queue[0].id;
+    expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(true);
+    expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(false);
+    expect(b.production!.active).toBeNull();expect(b.inventory).toEqual({});
+    g.spatial.nearest=nearest;
+    const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
     expect(restored.checksum()).toBe(g.checksum());
-    g.spatial.nearest = nearest;
-    run(g, 4);
-    expect(original.unit!.release).toBeNull();
-    expect(g.entities.filter((e) => e.id === id)).toHaveLength(1);
   });
   it("S21 save during recruitment and training resumes the same future simulation", () => {
-    const g = game([placed("b", "building.ants.barracks", 205, 210)]),
+    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks", 205, 210)]),
       b = g.entities.find((e) => e.placement === "b")!;
     g.command("player.1", {
       type: "produce",
       actor: b.id,
       definition: "unit.ants.warrior",
     });
-    run(g, 60);
+    run(g, 20);
     const restored = new Game(g.map, slots, g.registry);
     restored.restore(g.snapshot());
     expect(restored.checksum()).toBe(g.checksum());

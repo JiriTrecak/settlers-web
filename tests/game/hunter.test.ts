@@ -41,11 +41,11 @@ it('halves charge cooldown through colony research without enabling point-blank 
  const a=g.entities.find(e=>e.placement==='h')!,b=g.entities.find(e=>e.placement==='b')!;
  g.command(a.owner,{type:'attack',actors:[a.id],target:b.id,force:false});run(g,3);expect(a.unit!.charge).toBeUndefined();
 });
-it('gates the Barracks Hunter by Great Mound and recruits a physical free worker without Root',()=>{
- const g=game([placed('b','building.ants.barracks',205,210)]);const b=g.entities.find(e=>e.placement==='b')!;
+it('gates the Barracks Hunter by Great Acorn Hall and trains a new unit without Root',()=>{
+ const g=game([placed('supply','building.ants.house',245,245),placed('b','building.ants.barracks',205,210)]);const b=g.entities.find(e=>e.placement==='b')!;
  const mound=g.context.get(g.state.objectives[b.owner])!;mound.inventory={'item.amber':1000,'item.wood':1000};
  const card=()=>commandCard(g.view(b.owner),[b.id],b.owner,g.registry).find(c=>c.targetDefinition===hunter)!;
- expect(card().enabled).toBe(false);expect(card().reason).toContain('Great Mound');
+ expect(card().enabled).toBe(false);expect(card().reason).toContain('Great Acorn Hall');
  mound.definition='building.ants.great-mound';run(g,1);
  expect(card().enabled).toBe(true);expect(g.command(b.owner,card().immediate!).accepted).toBe(true);
  for(let i=0;i<2000&&!g.entities.some(e=>e.definition===hunter);i++)g.tick();

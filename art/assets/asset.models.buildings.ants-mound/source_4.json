@@ -1,0 +1,56 @@
+{
+  "name": "Mound",
+  "blend": "colony-mound-tripo.blend",
+  "recipe": "model.py",
+  "seed": 28,
+  "camera": {
+    "azimuth": 0,
+    "elevation": 32,
+    "scale": 7.890909090909091,
+    "target": [
+      0.0,
+      0.0,
+      1.867045454545455
+    ],
+    "distance": 17.613636363636363
+  },
+  "render": {
+    "width": 1254,
+    "height": 1254,
+    "samples": 40
+  },
+  "light": {
+    "key_energy": 1100,
+    "fill_energy": 370,
+    "rim_energy": 800,
+    "scale": 0.9863636363636363,
+    "target": [
+      0.0,
+      0.0,
+      1.831818181818182
+    ]
+  },
+  "preserve_textures": true,
+  "runtime_triangle_budget": 10000,
+  "texture_format": "AUTO",
+  "bake_vertex_ao": true,
+  "runtime_texture_size": 2048,
+  "width": 6.2,
+  "part_role": "worker-house",
+  "part_names": {},
+  "publication": {
+    "id": "asset.models.buildings.ants-mound",
+    "faction": "ants",
+    "renderIds": [
+      "asset.ants.house"
+    ],
+    "iconIds": [
+      "icon.ants.house"
+    ],
+    "footprint": [
+      7,
+      7
+    ],
+    "healthHeight": 4.1
+  }
+}

@@ -1,0 +1,9 @@
+# Bombardier Beetle
+
+Reference-generated Tripo H3.1 model for the existing `unit.ants.bombardier`. The source retains 24 editable parts, a Mixamo rig, six motion takes and packed 4K albedo/normal/roughness maps. The isolated blue reference and full supplied sheet are retained beside the untouched provider export.
+
+Runtime: **4,957 triangles including the mounted mortar**, one material primitive, 70 bones (including sockets and recoil), six clips and three 2K surface maps. Leaf collar and sash use the opaque albedo-alpha ownership mask. Chitin, timber, harness, ivory and metal retain natural colors. Base height including mortar is 2.85; global gameplay scale is applied by the engine, not baked into geometry.
+
+The adapter makes the barrel, carriage and wing shell rigid. Generated raised-arm attack motion is replaced with a planted upper-body brace and recoil while retaining the generated leg motion. `mortar.py` keys the mounted barrel and exports `socket_projectile` at its mouth. The normalized release is 36/71; the game retimes it to the simulation's impact tick. Actual combat was inspected with a shell visibly leaving the barrel and arcing toward the target. Idle, walk, firing and death poses, blue/white ownership and the rear equipment were inspected in the GLB studio. Automated checks cover budget, skin weights, finite tracks, keyed recoil, texture ownership and publication parity. No speech rig is provided; unseen surfaces and motion were inferred by Tripo and locally adapted.
+
+Rebuild: `prepare_texture.py`, then the studio build action on port 8796. Publish using `node --import tsx scripts/assets/publish-tripo-unit.ts ant-bombardier-tripo`. Canonical package: `art/assets/asset.models.units.ants-bombardier`; runtime mirror: `assets/library/asset.models.units.ants-bombardier`.

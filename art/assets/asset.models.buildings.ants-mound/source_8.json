@@ -1,0 +1,64 @@
+{
+  "provider": "Tripo Studio",
+  "assetId": "3cb9bafb-e42d-4539-af27-847bf5693f4e",
+  "model": "H3.1",
+  "geometry": {
+    "ultraMesh": true,
+    "aiComplete": false,
+    "parts": "Balanced",
+    "topology": "Triangle",
+    "targetTriangles": 10000,
+    "reportedTriangles": 9499,
+    "partsReturned": 20,
+    "credits": 60
+  },
+  "texture": {
+    "resolution": 4096,
+    "removeLighting": true,
+    "style": "None",
+    "credits": 20,
+    "status": "complete"
+  },
+  "reference": "mound.png",
+  "integration": {
+    "definition": "building.ants.house",
+    "width": 6.2,
+    "footprint": [
+      7,
+      7
+    ],
+    "entrance": [
+      0,
+      4
+    ]
+  },
+  "pbr": {
+    "normal": true,
+    "roughness": true,
+    "credits": 5,
+    "status": "complete"
+  },
+  "export": {
+    "format": "GLB",
+    "packUV": true,
+    "textureResolution": 4096,
+    "sourceTriangles": 9499
+  },
+  "runtime": {
+    "triangles": 9499,
+    "meshes": 1,
+    "materials": 1,
+    "textureResolution": 2048,
+    "textures": 3,
+    "teamMask": "baseColorAlpha"
+  },
+  "validation": {
+    "simultaneousRedBlue": "Combat Lab colony review: rendered beside the main hall with approved warrior units",
+    "typecheck": "passed",
+    "economyConstructionUpgrades": "18 targeted tests passed",
+    "referenceComparison": "comparison.png inspected; broad silhouette and egg baskets retained, fine woven/leaf details simplified",
+    "savedBlender": "passed; 20 meshes, packed 4K images and reference",
+    "teamColors": "red/blue simultaneously in game; green/white in shared GLB viewer",
+    "rear": "orbit inspected; closed timber/earth surface"
+  }
+}

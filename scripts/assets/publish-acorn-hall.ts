@@ -2,7 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import sharp from 'sharp';
 import {originalPackage,addBytes,addFile,publishOriginals} from './original-publication';
-const source='art/sources/buildings/acorn-hall-tripo';
+const source='.asset-work/build/buildings/acorn-hall-tripo';
 const id='asset.models.buildings.ants-acorn-hall';
 const pack=originalPackage(id,'Acorn Main Hall','building','generated');
 for(const [role,format,path] of [

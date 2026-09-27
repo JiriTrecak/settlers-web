@@ -8,7 +8,6 @@ export type SkyDockHooks = {
   onSkyHour(hour: number): void;
   onSkyPlay(on: boolean): void;
   onSkySpeed(seconds: number): void;
-  onSeason(season: "spring" | "summer" | "autumn"): void;
 };
 
 const BEATS: { name: string; hour: number }[] = [
@@ -72,9 +71,7 @@ export class SkyDock {
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
     hint.textContent = "Day and night hold their colors. Short dawn/dusk transitions blend lighting and shadows (45% / 5% / 45% / 5%).";
-    const seasons=document.createElement('div');seasons.className='grid grid-cols-3 gap-1';
-    for(const season of ['spring','summer','autumn'] as const){const b=document.createElement('button');b.type='button';b.className=btn;b.textContent=season[0]!.toUpperCase()+season.slice(1);b.onclick=()=>this.hooks.onSeason(season);seasons.append(b);}
-    this.root.append(title, head, this.time, beats, this.play, spd, seasons, hint);
+    this.root.append(title, head, this.time, beats, this.play, spd, hint);
     this.root.classList.add("hidden");
     host.append(this.root);
   }

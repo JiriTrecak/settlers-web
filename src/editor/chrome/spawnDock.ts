@@ -10,10 +10,10 @@ export class SpawnDock {
     this.root.classList.add('editor-properties');
   this.root.setAttribute('aria-label','Player spawn points');
   const title=document.createElement('strong');title.textContent='Spawn point';this.root.append(title);
-  for(const player of [1,2]){const b=document.createElement('button');b.className=btn;b.textContent=`Player ${player}`;b.onclick=()=>{editor.spawnPlayer=player;editor.spawnMessage='';this.sync();};this.buttons.push(b);this.root.append(b);}
+  for(const player of [1,2,3,4,5,6,7,8]){const b=document.createElement('button');b.className=btn;b.textContent=`Player ${player}`;b.onclick=()=>{editor.spawnPlayer=player;editor.spawnMessage='';this.sync();};this.buttons.push(b);this.root.append(b);}
   this.info.className='text-xs leading-5 text-canopy/70';this.root.append(this.info);host.append(this.root);this.setOpen(false);
  }
- sync(){this.buttons.forEach((b,i)=>{b.setAttribute('aria-pressed',String(this.editor.spawnPlayer===i+1));b.style.background=this.editor.spawnPlayer===i+1?'#ffffff18':'';});this.info.textContent=this.editor.spawnMessage||`Click dry, level terrain to place Player ${this.editor.spawnPlayer}.`;}
+ sync(){this.buttons.forEach((b,i)=>{b.hidden=i>=Math.max(2,...this.editor.map.playerStarts.map(s=>s.player));b.setAttribute('aria-pressed',String(this.editor.spawnPlayer===i+1));b.style.background=this.editor.spawnPlayer===i+1?'#ffffff18':'';});this.info.textContent=this.editor.spawnMessage||`Click dry, level terrain to place Player ${this.editor.spawnPlayer}.`;}
  setOpen(on:boolean){this.root.classList.toggle('hidden',!on);if(on)this.sync();}
  destroy(){this.root.remove();}
 }
