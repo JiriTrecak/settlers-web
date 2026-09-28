@@ -13,6 +13,11 @@ export type MatchDebugControls = {
   onReveal(value: boolean): void;
   onSpeed(value: number): void;
   onVision(player: number): void;
+  /** Navigation overlay toggles; only polled while the profiler panel is enabled. */
+  paths: boolean;
+  walkability: boolean;
+  onPaths(value: boolean): void;
+  onWalkability(value: boolean): void;
 };
 /** Opt-in profiler. CPU scopes overlap; GPU samples arrive asynchronously. */
 export class PerformanceDebug {
@@ -82,12 +87,29 @@ export class PerformanceDebug {
       spec.onVision(spec.visionPlayer);
     };
     vision.append("Fog perspective  ", players);
+    const toggle = (text: string, value: boolean, set: (value: boolean) => void) => {
+      const label = document.createElement("label"),
+        input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = value;
+      input.onchange = () => set(input.checked);
+      label.append(input, text);
+      return label;
+    };
+    const paths = toggle(" Show unit paths", spec.paths, (v) => {
+      spec.paths = v;
+      spec.onPaths(v);
+    });
+    const walkability = toggle(" Show walkable / blocked cells", spec.walkability, (v) => {
+      spec.walkability = v;
+      spec.onWalkability(v);
+    });
     const hint = document.createElement("small");
     hint.textContent = spec.remote
       ? "Network matches use synchronized speed and player vision."
       : "AI vision is unchanged. Uncheck Reveal map to use the selected perspective.";
     hint.style.cssText = "max-width:340px;color:#9ab0ab;line-height:1.4";
-    box.append(reveal, speed, vision, hint);
+    box.append(reveal, speed, vision, paths, walkability, hint);
     this.text?.before(box);
     this.visibility();
   }

@@ -595,10 +595,19 @@ export class SettlementLayer {
       // Rally is private intent: only the viewer's own, currently seen, selected producers show it.
       const rally = e.production?.rally;
       if (chosen && rally && !e.remembered && !e.construction && ownerSlot(e.owner) === this.viewerSlot) {
-        const offset = d.entrance ?? {x:0,y:0}, r = ((Math.round(e.rotation / 90) % 4) + 4) % 4;
-        rallies.push({id:e.id,slot:this.viewerSlot,
-          from:{x:e.x+[offset.x,offset.y,-offset.x,-offset.y][r]!,z:e.y+[offset.y,-offset.x,-offset.y,offset.x][r]!,surface:e.surface},
-          to:{x:rally.x,z:rally.y,surface:rally.surface}});
+        // A followed unit carries the flag with it; resources and ground stay put.
+        const followed = rally.target !== undefined && byId.get(rally.target)?.unit ? this.entities.get(rally.target) : undefined;
+        let to = followed?.visible ? {x:followed.position.x,z:followed.position.z,surface:byId.get(rally.target!)!.surface} : {x:rally.x,z:rally.y,surface:rally.surface};
+        // A flag planted on a tree vanishes into its canopy: stand it just in front, toward the building.
+        if (rally.target !== undefined && byId.get(rally.target)?.resource) {
+          const dx = e.x - to.x, dz = e.y - to.z, len = Math.hypot(dx, dz) || 1;
+          to = {...to, x: to.x + dx / len * 1.3, z: to.z + dz / len * 1.3};
+        }
+        // Spawns exit on the side facing the flag (sim `deployment`), so the route starts at that edge.
+        const swap = Math.round(e.rotation / 90) % 2 !== 0, f = d.footprint,
+          hx = (f ? Math.floor((swap ? f.depth : f.width) / 2) : 0) + 1, hz = (f ? Math.floor((swap ? f.width : f.depth) / 2) : 0) + 1;
+        rallies.push({id:e.id,slot:this.viewerSlot,to,
+          from:{x:Math.max(e.x-hx,Math.min(e.x+hx,to.x)),z:Math.max(e.y-hz,Math.min(e.y+hz,to.z)),surface:e.surface}});
       }
       this.statusBadges.update(o, e, tick, o.userData.pickHeight);
       const hp = parts.hp;

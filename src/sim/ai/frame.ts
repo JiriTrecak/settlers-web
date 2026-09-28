@@ -1,4 +1,4 @@
-import {resourceBlocksCell} from '../../shared/map/resourceClearance';
+import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {unitDimensions} from '../../content/unitScale';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
@@ -158,13 +158,14 @@ export class Frame {
   get blocked() {
     if (!this._blocked) {
       this._blocked = new Set<number>();
-      for (const e of this.view.entities)
-        if (
-          this.def(e).kind === "building" ||
-          (e.resource && e.resource.amount > 0)
-        )
-          for (const p of footprint(this.def(e), integerPoint(e), e.rotation))
-            if (this.geo.inside(p)) this._blocked.add(this.geo.index(p));
+      for (const e of this.view.entities) {
+        const d = this.def(e);
+        const cells = d.kind === "building" ? footprint(d, integerPoint(e), e.rotation)
+          : e.resource && e.resource.amount > 0
+            ? resourceCollisionCells(integerPoint(e), d.footprint, d.collisionRadius, e.appearance?.scale ?? 1, e.rotation)
+            : [];
+        for (const p of cells) if (this.geo.inside(p)) this._blocked.add(this.geo.index(p));
+      }
     }
     return this._blocked;
   }

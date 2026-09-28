@@ -226,19 +226,20 @@ export class Economy {
   }
   private workPoint(target: Entity, worker: Entity): Point | null {
     if (this.c.def(target).kind === "building") {
-      const door = this.c.spatial.entrance(target);
-      // A free doorway cell can still be cut off by standing units. Try the
-      // complete existing service radius before deferring this builder.
-      for (let radius = 0; radius <= 3; radius++)
-        for (let dy = -radius; dy <= radius; dy++)
-          for (let dx = -radius; dx <= radius; dx++) {
-            if (Math.abs(dx) + Math.abs(dy) !== radius) continue;
-            const p = { x: door.x + dx, y: door.y + dy };
+      // Drop-off, construction and repair happen at any side, as in WC3: the nearest
+      // touching cell to the worker approximates the shortest walk. Standing bodies can
+      // fill that edge, so the next ring out is still in service range.
+      const origin = precise(worker);
+      return this.c.spatial.routeBatch(worker, () => {
+        for (let ring = 1; ring <= 2; ring++)
+          for (const p of this.c.spatial.perimeter(target, ring).sort((a, b) =>
+            distance2(a, origin) - distance2(b, origin) || a.y - b.y || a.x - b.x))
             if (this.c.spatial.free(p, worker.id) && this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
-          }
-      return null;
+        return null;
+      });
     }
-    const footprint = this.c.spatial.footprint(target),
+    // Resources are approached from outside their movement disc, not the one-cell trunk.
+    const footprint = this.c.spatial.collision(target).filter(i => i >= 0),
       occupied = new Set(footprint),
       candidates = new Set<number>();
     for (const i of footprint)
@@ -649,11 +650,20 @@ export class Economy {
     if (this.c.liveUnits().filter(e => e.owner === b.owner).length >= this.c.registry.rules.maxUnits) {
       p.status = "Unit limit reached"; return false;
     }
-    const exit = this.c.spatial.nearest(this.c.spatial.entrance(b), 12,undefined,{definition:d.id});
+    // Units leave on the side facing their rally (a followed unit is tracked live), else the door side.
+    const target = this.c.get(p.rally?.target), rally = p.rally && {x: p.rally.x, y: p.rally.y, ...(p.rally.surface ? {surface: p.rally.surface} : {})};
+    const toward = target && alive(target) ? target : rally ?? this.c.spatial.entrance(b);
+    const exit = this.c.spatial.deployment(b, toward, {definition: d.id});
     if (!exit) { p.status = "Deployment blocked"; return false; }
     if (this.missing(b, this.price(d.id))) return false;
     const unit = this.c.create({id: "", definition: d.id, position: exit, rotation: 0, owner: b.owner});
-    if (p.rally) unit.unit!.order = {type: "move", destination: {...p.rally}, attackMove: false};
+    // WC3 rally semantics: harvesters rallied onto a resource start gathering it, units rallied
+    // onto a friendly unit follow it, everything else walks to the flag.
+    if (target?.resource && this.harvestItem(unit, target) && this.canAssignGather(unit, target))
+      unit.unit!.order = {type: "gather", target: target.id};
+    else if (target?.unit && alive(target) && target.owner === b.owner && !target.unit.contained)
+      unit.unit!.order = {type: "follow", target: target.id};
+    else if (rally) unit.unit!.order = {type: "move", destination: rally, attackMove: false};
     this.inputConsume(b, d.creation!);
     this.finishCycle(b);
     return true;
@@ -781,15 +791,7 @@ export class Economy {
       ))
       if (
         r.resource!.growingUntil! <= this.s.tick &&
-        this.c.spatial.free(r) &&
-        !this.c.liveUnits().some((e) => {
-          if (!e.unit || e.unit.contained || e.unit.release) return false;
-          const p = precise(e),
-            clearance = 0.5 + this.c.spatial.dimensions(e).radius;
-          return (
-            Math.abs(p.x - r.x) <= clearance && Math.abs(p.y - r.y) <= clearance
-          );
-        })
+        this.canRegrow(r)
       ) {
         this.c.resourceChanged(r);
         r.resource!.amount = this.c.def(r).yield!;
@@ -799,6 +801,52 @@ export class Economy {
         };
         this.c.spatial.rebuild();
       }
+  }
+  /** A regrown tree reclaims its whole movement disc. It waits while a building sits on the
+   * stump, a doorway falls inside the disc, or a body stands in it; idle bodies are walked out
+   * (as WC3 pushes units off a regrowing site) so a parked worker cannot hold it off forever.
+   * Disc cells under neighbouring buildings or trees are already blocked and do not matter. */
+  private canRegrow(r: Entity) {
+    const s = this.c.spatial, cells = new Set(s.collision(r).filter(i => i >= 0));
+    if (s.footprint(r).some(i => i >= 0 && s.occupied[i])) return false;
+    for (const b of this.c.liveBuildings()) if (cells.has(s.cell(s.entrance(b)))) return false;
+    let reach = 0;
+    for (const i of cells) {
+      const q = s.point(i);
+      reach = Math.max(reach, Math.abs(q.x - r.x), Math.abs(q.y - r.y));
+    }
+    const inside = this.c.liveUnits().filter((e) => {
+      if (!e.unit || e.unit.contained || e.unit.release) return false;
+      if (cells.has(s.cell(e))) return true;
+      const p = precise(e), clearance = 0.5 + s.dimensions(e).radius;
+      if (Math.abs(p.x - r.x) > reach + clearance || Math.abs(p.y - r.y) > reach + clearance) return false;
+      for (const i of cells) {
+        const q = s.point(i);
+        if (Math.abs(p.x - q.x) <= clearance && Math.abs(p.y - q.y) <= clearance) return true;
+      }
+      return false;
+    });
+    for (const e of inside) {
+      const u = e.unit!;
+      if (u.order || u.job !== null || u.route.length || u.retryAt > this.s.tick) continue;
+      const exit = this.regrowthExit(r, reach, cells, e);
+      if (!exit || !s.route(e, exit)) u.retryAt = this.s.tick + 20;
+    }
+    return inside.length === 0;
+  }
+  /** Nearest free cell to the unit just outside the disc's bounding ring. */
+  private regrowthExit(r: Entity, reach: number, cells: ReadonlySet<number>, e: Entity): Point | null {
+    const s = this.c.spatial, origin = precise(e);
+    for (let ring = reach + 2; ring <= reach + 5; ring++) {
+      const around: Point[] = [];
+      for (let dy = -ring; dy <= ring; dy++)
+        for (let dx = -ring; dx <= ring; dx += Math.abs(dy) === ring ? 1 : 2 * ring)
+          around.push({ x: r.x + dx, y: r.y + dy });
+      around.sort((a, b) => distance2(a, origin) - distance2(b, origin) || a.y - b.y || a.x - b.x);
+      for (const p of around)
+        if (p.x >= 0 && p.y >= 0 && p.x < s.size && p.y < s.size && !cells.has(s.cell(p)) && s.free(p, e.id)) return p;
+    }
+    return null;
   }
   private deliver(job: Job, w: Entity, b: Entity) {
     const cargo = w.unit!.cargo;

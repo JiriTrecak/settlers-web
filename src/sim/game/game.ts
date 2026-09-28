@@ -15,6 +15,7 @@ import { Revival } from "./revival";
 import { Regeneration } from "./regeneration";
 import { Spellcasting } from "./spellcasting";
 import { idleMotion } from "./idleMotion";
+import { separateOverlaps } from "./separation";
 import { fixed, lengthCeil } from "./motion";
 import { simulationHash } from "./checksum";
 import { z } from "zod";
@@ -484,7 +485,13 @@ export class Game {
       )
         return reject("No unit production");
       // Null clears the flag; spawns then idle at the entrance.
-      actor.production.rally = action.destination ? { ...action.destination } : null;
+      if (action.target !== undefined) {
+        const target = this.context.get(action.target);
+        if (!target || !alive(target) || !this.observation.previouslyVisible(owner, target) ||
+          !(target.resource || (target.unit && target.owner === owner && !target.unit.contained)))
+          return reject("Rally onto a visible resource or friendly unit");
+        actor.production.rally = { x: target.x, y: target.y, ...(target.surface ? { surface: target.surface } : {}), target: target.id };
+      } else actor.production.rally = action.destination ? { ...action.destination } : null;
     }
     return { accepted: true, actors: [actor.id] };
   }
@@ -537,6 +544,7 @@ export class Game {
       measure("Orders · garrisons", () => this.garrisons.tick());
       measure("Orders · inventory", () => this.inventory.plan());
       measure("Orders · combat planning", () => this.combat.plan());
+      measure("Orders · separation", () => separateOverlaps(this.context));
       measure("Orders · idle motion", () => idleMotion(this.context));
       measure("Orders · movement", () => this.context.move());
     });

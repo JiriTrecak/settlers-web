@@ -240,6 +240,10 @@ const fields = {
   felling: z.object({ maxHp: positive, fallTicks: positive, decayTicks: positive }).strict().optional(),
   gatheringCapacity: positive.max(100).optional(),
   gatheringUnitCollision: z.boolean().optional(),
+  /** Movement-only blocking disc (cells, before appearance scale) around a standing resource.
+   * Sized so neighbouring forest trees join into a wall, while `footprint` stays the
+   * placement/targeting envelope. */
+  collisionRadius: z.number().positive().max(8).optional(),
   currency: z.boolean().optional(),
   regrowthTicks: positive.optional(),
   constructionClearance: natural.max(32).optional(),

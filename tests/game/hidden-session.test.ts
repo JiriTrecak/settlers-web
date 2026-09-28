@@ -6,7 +6,7 @@ it('does no presentation work while hidden and resumes using the latest worker s
  const visual={tick:10,size:256,settlement:{entities:[],objectives:{}}},request=vi.fn();
  const worker={latest:{visual,selection:visual},receivedAt:0,request};
  const renderer={draw:vi.fn(),unitCamera:vi.fn(),gameSelect:vi.fn(),gameHover:vi.fn(),pickGameHover:vi.fn(),camera:{distance:40,cinematic:vi.fn()}},input={tick:vi.fn()},mini={paint:vi.fn(),setFog:vi.fn()},onHud=vi.fn();
- const session=Object.assign(Object.create(Session.prototype),{started:true,canvas:{style:{}},worker,workerProfiling:false,renderer,input,mini,config:{hooks:{onHud}},me:0,fpsFrames:0,fpsMs:0,stamps:[],updateResourceStamps:vi.fn()});
+ const session=Object.assign(Object.create(Session.prototype),{started:true,canvas:{style:{}},worker,workerProfiling:false,renderer,input,mini,config:{hooks:{onHud}},me:0,fpsFrames:0,fpsMs:0,stamps:[],updateResourceStamps:vi.fn(),navDebug:{paths:false,walkability:false,revision:-1,pending:false,next:0,shown:false}});
  session.tick(50,50);expect(input.tick).not.toHaveBeenCalled();expect(renderer.draw).not.toHaveBeenCalled();expect(mini.paint).not.toHaveBeenCalled();expect(renderer.unitCamera).not.toHaveBeenCalled();
  // Authoritative time advances independently; no main-thread tick/confirm calls.
  visual.tick=80;doc.hidden=false;session.tick(25,75);

@@ -48,7 +48,7 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the shared rules scale
   const body=root.getObjectByName('Body')!;
   expect(body.scale.x).toBeCloseTo((asset.scale??1)*multiplier);
   expect(body.scale.y).toBeCloseTo(body.scale.x);expect(body.scale.z).toBeCloseTo(body.scale.x);
-  expect(root.getObjectByName('Health')!.position.y).toBeCloseTo((asset.healthHeight??2.5)*multiplier);
+  expect(root.getObjectByName('Health')!.position.y).toBeCloseTo(registry.get(e.definition).dimensions?.height??(asset.healthHeight??2.5)*multiplier);
   expect(root.position.x).toBe(e.x);expect(root.position.z).toBe(e.y);expect(root.scale.x).toBe(1);
   if(unit){
    expect(root.getObjectByName('Cargo')!.position.y).toBeCloseTo(1.04*scale);

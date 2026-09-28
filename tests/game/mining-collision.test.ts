@@ -21,7 +21,7 @@ it("amber assignments pass through units in planning and motion, but still respe
   expect(g.spatial.unitSegmentClear(fixed(w), fixed({x: 100, y: 100}), w.id)).toBe(false);
 });
 
-it("wood gatherers retain unit collisions; a queued mine order does not grant passing early", () => {
+it("wood gatherers pass through units too; a queued mine order does not grant passing early", () => {
   const g = game([
     {...placed("mine", "building.neutral.amber-mine", 228, 229), owner: "none"},
     {...placed("tree", "resource.forest.tree", 228, 235), owner: "none"},
@@ -29,6 +29,8 @@ it("wood gatherers retain unit collisions; a queued mine order does not grant pa
   const tree = g.entities.find(e => e.placement === "tree")!, mine = g.entities.find(e => e.placement === "mine")!;
   const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.warrior")!;
   g.command(w.owner, {type: "gather", actors: [w.id], target: tree.id});
+  expect(g.spatial.free(blocker, w.id)).toBe(true);
+  g.command(w.owner, {type: "move", actors: [w.id], destination: {x: 150, y: 150}});
   g.command(w.owner, {type: "gather", actors: [w.id], target: mine.id, append: true});
   expect(g.spatial.free(blocker, w.id)).toBe(false);
 });

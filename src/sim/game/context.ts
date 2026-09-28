@@ -59,10 +59,13 @@ export class GameContext {
     this.spatial = new Spatial(map, registry, () => state.entities, e => {
       if(e.unit?.garrison)return true;
       if (!e.unit || !this.def(e).behaviors.work) return false;
+      // Harvest traffic (to the resource, working it, carrying back) ghosts through units like
+      // SC2 workers, so gather lines never jam. A resource may opt back in with `true`.
       const job = e.unit.job == null ? undefined : state.jobs.find(j => j.id === e.unit!.job);
+      if (job?.type === "deliver") return true;
       const source = job?.type === "harvest" ? this.get(job.source)
         : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
-      return !!source && this.def(source).gatheringUnitCollision === false;
+      return !!source && this.def(source).gatheringUnitCollision !== true;
     }, () => this.unitEntities);
   }
   reindex() {

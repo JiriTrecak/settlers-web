@@ -185,7 +185,8 @@ export const entitySchema = z
           .nullable(),
         staff: positive.nullable(),
         produced: natural,
-        rally: point.nullable(),
+        // `target` rallies onto a resource (harvesters gather) or friendly unit (spawns follow).
+        rally: point.extend({ target: positive.optional() }).nullable(),
         status: z.string(),
       })
       .strict()

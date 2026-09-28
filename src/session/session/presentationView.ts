@@ -13,7 +13,8 @@ export class PresentationView {
       const normal=world.view(visionPlayer),scene=normal.settlement?.mission?.scene;
       if(!scene || normal.settlement.outcome || !normal.settlement.fog)return normal;
       // Camera staging reveals only its set, without exploring it or giving AI vision.
-      const radius=24,fog=normal.settlement.fog,key=`${visionPlayer}:${fog.revision}:${scene.x}:${scene.y}`;
+      // The set must reach past hero vision (marshal: 28), or framing a speaker reveals nothing new.
+      const radius=36,fog=normal.settlement.fog,key=`${visionPlayer}:${fog.revision}:${scene.x}:${scene.y}`;
       if(this.sceneWorld!==world||this.sceneKey!==key){
         const cells=fog.cells.slice(),floorCells=fog.floors?.cells.slice();
         for(let y=Math.max(0,Math.floor(scene.y-radius));y<=Math.min(normal.size-1,scene.y+radius);y++)

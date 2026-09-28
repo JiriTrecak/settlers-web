@@ -29,5 +29,8 @@ for(const map of maps)describe(map.name,()=>{
 it('preserves identical terrain, starts and economic layout between biomes',()=>{
  expect(maps[1]!.playerStarts).toEqual(maps[0]!.playerStarts);expect(maps[1]!.entities).toEqual(maps[0]!.entities);
  expect(Array.from(projectScene(maps[1]!)!.field.samples)).toEqual(Array.from(projectScene(maps[0]!)!.field.samples));
- const shapes=(m:typeof maps[number])=>Object.fromEntries(m.authoring!.layers.map(l=>[l.id,l.shape]));expect(shapes(maps[1]!)).toEqual(shapes(maps[0]!));
+ const [forest,frost]=maps.map(m=>new Map(m.authoring!.layers.map(l=>[l.id,l])));
+ for(const [id,layer] of forest!)expect(frost!.get(id)?.shape,id).toEqual(layer.shape);
+ // Frost has no meadow grass recipe, so it carries its own grass cover layers on top of the shared layout.
+ for(const [id,layer] of frost!)if(!forest!.has(id))expect(layer.recipe,id).toMatch(/^recipe\.grass\./);
 });

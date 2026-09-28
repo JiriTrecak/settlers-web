@@ -13,6 +13,7 @@ import {LOCAL_SAVE_FORMAT_VERSION,localSaveSchema,type LocalSave} from '../../sh
 import {restoreSavedWorld} from '../session/restoreSavedWorld';
 import {captureCompany} from '../../sim/scenario/company';
 import type {ChatMessage} from '../../shared/chat/chat';
+import {navigationPaths,walkabilityCells,type NavigationDebug} from '../../sim/game/navigationDebug';
 
 export type RuntimeOptions={map:UtcMap;match:MatchConfig;player:number|null;remote:boolean};
 export type RuntimeHooks={chat?:(message:ChatMessage)=>void;applied?:(action:Action,tick:number)=>void;learned?:()=>void};
@@ -117,6 +118,17 @@ export class SimulationRuntime {
  canBuild(definition:string,position:{x:number;y:number},actor?:number,rotation=0){return this.world.settlement.canBuild(slotOwner(this.me),definition,position,actor,rotation);}
  company(){return captureCompany(this.world.settlement);}
  status(){return {tick:this.world.clock.tickIndex,checksum:this.world.checksum(),settlement:this.world.view(this.me).settlement,desynced:this.desynced};}
+ /** Debug overlay snapshot. Network players see only their own routes; local play follows the
+  * presented perspective (everything when revealed or observing). */
+ navigation(input:{grid:boolean;paths:boolean;revision:number}):NavigationDebug{
+  const game=this.world.settlement,s=game.spatial,out:NavigationDebug={revision:s.revision,size:s.size};
+  if(input.grid&&input.revision!==s.revision)out.cells=walkabilityCells(game);
+  if(input.paths){
+   const own=this.options.remote?slotOwner(this.me):null,viewer=this.options.remote||this.reveal?null:slotOwner(this.visionPlayer);
+   out.paths=navigationPaths(game,viewer,own);
+  }
+  return out;
+ }
  snapshotLocal():LocalSave{
   if(this.options.remote||!this.room)throw Error('Local saves require a singleplayer match');
   const local=this.locksteps.get(this.me)!;

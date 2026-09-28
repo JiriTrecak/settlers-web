@@ -19,8 +19,10 @@ export class RallyMarkers {
   private readonly flags = new Map<number, {root:Group;banner:Mesh<PlaneGeometry,MeshStandardMaterial>;ring:Mesh<RingGeometry,MeshBasicMaterial>;line:Line2;key:string}>();
   private readonly pole = new CylinderGeometry(.035, .05, POLE, 6).translate(0, POLE / 2, 0);
   private readonly finial = new SphereGeometry(.07, 8, 6).translate(0, POLE + .04, 0);
-  private readonly wood = new MeshStandardMaterial({color:0x5a4030,roughness:.85});
-  private readonly brass = new MeshStandardMaterial({color:0xd8b25a,roughness:.4,metalness:.6});
+  // Flags draw over scenery: rallies on trees sit inside canopies whose branches reach the ground.
+  // Transparent pass + late renderOrder, since foliage itself renders in the transparent pass.
+  private readonly wood = new MeshStandardMaterial({color:0x5a4030,roughness:.85,depthTest:false,transparent:true});
+  private readonly brass = new MeshStandardMaterial({color:0xd8b25a,roughness:.4,metalness:.6,depthTest:false,transparent:true});
   constructor(parent: Group) {
     this.group.name = "rally-markers";
     parent.add(this.group);
@@ -59,8 +61,10 @@ export class RallyMarkers {
     const pole = new Mesh(this.pole, this.wood), finial = new Mesh(this.finial, this.brass);
     pole.castShadow = finial.castShadow = true;
     const banner = new Mesh(new PlaneGeometry(BANNER_W, BANNER_H, 8, 2).translate(BANNER_W / 2, POLE - BANNER_H / 2 - .06, 0),
-      new MeshStandardMaterial({side:DoubleSide,roughness:.8}));
+      new MeshStandardMaterial({side:DoubleSide,roughness:.8,depthTest:false,transparent:true}));
     banner.castShadow = true;
+    pole.renderOrder = finial.renderOrder = 6;
+    banner.renderOrder = 7;
     const ring = new Mesh(new RingGeometry(.42, .55, 40).rotateX(-Math.PI / 2).translate(0, .07, 0),
       new MeshBasicMaterial({transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2,toneMapped:false}));
     root.add(pole, finial, banner, ring);

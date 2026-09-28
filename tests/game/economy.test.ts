@@ -148,7 +148,7 @@ describe("declarative physical economy", () => {
     const g=game([placed('supply','building.ants.house',245,240),placed('b','building.ants.barracks')]);
     const b=g.entities.find(e=>e.placement==='b')!;
     g.command('player.1',{type:'produce',actor:b.id,definition:'unit.ants.warrior'});
-    const nearest=g.spatial.nearest.bind(g.spatial);g.spatial.nearest=()=>null;
+    const deployment=g.spatial.deployment.bind(g.spatial);g.spatial.deployment=()=>null;
     run(g,100);
     expect(b.production!.status).toBe('Deployment blocked');
     expect(b.production!.active!.progress).toBe(40);
@@ -157,7 +157,7 @@ describe("declarative physical economy", () => {
     expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(true);
     expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(false);
     expect(b.production!.active).toBeNull();expect(b.inventory).toEqual({});
-    g.spatial.nearest=nearest;
+    g.spatial.deployment=deployment;
     const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
     expect(restored.checksum()).toBe(g.checksum());
   });

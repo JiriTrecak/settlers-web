@@ -4,7 +4,7 @@ Your economy has three spendable resources: **[Amber](/resources/item-amber)**, 
 
 ## Gather → carry → deposit
 
-Workers assigned to an Amber Mine pass through other units on the outward and return trip. Terrain, water and buildings still block them. Tree gathering and ordinary movement retain unit collision.
+Workers assigned to an Amber Mine pass through other units on the outward and return trip. Terrain, water and buildings still block them. Tree gatherers pass through units the same way; ordinary movement retains unit collision.
 
 Select Workers and right-click a [mine](/buildings/building-neutral-amber-mine) or [tree](/resources/resource-forest-tree). They approach, harvest and carry the load to a completed owned [Main Hall](/buildings/building-ants-fort). Resources become spendable **on delivery**, not when harvesting starts.
 
@@ -18,7 +18,7 @@ Amber Mines are neutral buildings already present on the map. You can select the
 
 Each mine has a shared assignment capacity, shown as **assigned / capacity** above it. An assignment occupies a slot during the entire trip, including approach and return to the Main Hall. Sending a group cannot overbook a mine. Retargeting a loaded worker also reserves its new assignment until the old load is delivered.
 
-Trees are directly targetable, including their canopies. A felled tree stops blocking movement, falls and then sinks out of view. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
+Trees are directly targetable, including their canopies. Forests are solid: each tree blocks the ground under its branches, so units walk around a forest or chop a way in from the edge. A felled tree stops blocking movement, falls and then sinks out of view. A timber worker can continue to another nearby tree. An exhausted mine does not automatically send its workers to an unrelated mine across the map.
 
 A [Forester lodge](/buildings/building-ants-forester) employs a worker to restore suitable depleted tree sites. The replacement needs time to mature; a mature tree cannot appear through a unit occupying its space.
 

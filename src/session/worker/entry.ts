@@ -49,11 +49,17 @@ function request(method:keyof Requests,params:unknown):unknown{
   case 'placement':{const p=params as Requests['placement']['input'];return runtime.canBuild(p.definition,p.position,p.actor,p.rotation);}
   case 'company':return runtime.company();
   case 'status':return runtime.status();
+  case 'navigation':return runtime.navigation(params as Requests['navigation']['input']);
  }
 }
 port.onmessage=({data})=>{
  try{
-  if(data.type==='request'){const value=request(data.method,data.params);post({type:'reply',id:data.id,value});}
+  if(data.type==='request'){
+   const value=request(data.method,data.params);
+   // The debug grid is freshly allocated per reply, so hand its buffer over instead of cloning it.
+   const cells=data.method==='navigation'?(value as Requests['navigation']['output']).cells:undefined;
+   post({type:'reply',id:data.id,value},cells?[cells.buffer as ArrayBuffer]:undefined);
+  }
   else if(data.type==='network')receive(data.message);
   else if(data.type==='ack'){if(data.sequence===inFlight){inFlight=0;if(dirty)publish();}}
   else if(data.type==='command'){

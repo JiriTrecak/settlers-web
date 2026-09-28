@@ -18,6 +18,8 @@ import { perf } from "../../debug/performance";
 import { FogOfWar } from "../visibility/fogOfWar";
 import { forestEnvironment } from "../sky/forestEnvironment";
 import { SettlementLayer } from "../settlement/settlementLayer";
+import { NavigationOverlay } from "../debug/navigationOverlay";
+import type { NavigationPath } from "../../sim/game/navigationDebug";
 import {
   environmentLight,
 } from "../../shared/environment/presets";
@@ -161,6 +163,8 @@ export class Renderer {
   }
   private importedWater?:ImportedWater;
   private height: HeightField | null = null;
+  private navigation: NavigationOverlay | null = null;
+  private relation: Parameters<SettlementLayer["viewer"]>[1] | null = null;
   private readonly ray = new Raycaster();
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
@@ -221,6 +225,19 @@ export class Renderer {
   gameViewer(slot: number, relation: Parameters<SettlementLayer["viewer"]>[1]) {
     this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
     this.settlement.viewer(slot, relation);
+    this.relation = relation;
+  }
+  /** Debug navigation overlay. `null` tears it down; `cells` is only sent when the grid changed. */
+  gameNavigation(state: {grid:boolean;size:number;cells?:Uint8Array;paths?:readonly NavigationPath[]} | null) {
+    if (!state) {
+      this.navigation?.dispose();
+      this.navigation = null;
+      return;
+    }
+    this.navigation ??= new NavigationOverlay(this.scene);
+    if (!state.grid) this.navigation.setGrid(state.size, null);
+    else if (state.cells) this.navigation.setGrid(state.size, state.cells);
+    this.navigation.setPaths(state.paths ?? null, (owner) => this.relation?.(owner) ?? "neutral");
   }  gameReady() {
     return this.settlement?.ready ?? Promise.resolve();
   }
@@ -685,6 +702,7 @@ export class Renderer {
     this.meadow.tick(now);this.placedGrass.tick(now);
     this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
+    this.navigation?.follow(this.camera.targetX,this.camera.targetZ,this.height);
     perf.end("Sky / water / wind", environment);
     const camera = perf.start();
     const cam = this.threeCam();
@@ -797,6 +815,8 @@ export class Renderer {
     this.walkPicker.dispose();
     this.portrait.destroy();
     this.settlement?.destroy(this.scene);
+    this.navigation?.dispose();
+    this.navigation = null;
     this.fog?.dispose();
 
 

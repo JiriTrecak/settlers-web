@@ -1,3 +1,4 @@
+import './sourceAssetFetch';
 import {it,expect,vi} from 'vitest';
 import {Texture,TextureLoader,DataTexture} from 'three';
 import {TerrainMaterial} from '../../src/render/terrain/terrainMaterial';
@@ -6,9 +7,7 @@ it('edits roads and moss independently in their shared texture channels',()=>{
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture());
  const m=new TerrainMaterial(16),field=new HeightField(16);
  try{
-  const shader={uniforms:{} as Record<string,{value:unknown}>,vertexShader:'#include <common>\n#include <begin_vertex>',fragmentShader:'#include <common>\n#include <map_fragment>'};
-  m.onBeforeCompile(shader as never,{} as never);
-  const mask=shader.uniforms.uRoadMask.value as DataTexture,data=mask.image.data as Uint8Array;
+  const data=(m as unknown as {roadMask:DataTexture}).roadMask.image.data as Uint8Array;
   m.setCover([{x:10,z:10,radius:3,density:1,seed:1,flowers:0,palette:'forest'}]);
   const moss=(Math.round(10-HEIGHT_ORIGIN)*field.verts+Math.round(10-HEIGHT_ORIGIN))*2+1;
   expect(data[moss]).toBe(255);

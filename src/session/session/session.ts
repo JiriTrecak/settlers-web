@@ -88,6 +88,29 @@ export class Session {
   private visualView() {return this.worker!.latest!.visual;}
   private selectionView() {return this.worker!.latest!.selection.settlement;}
   private workerProfiling=false;
+  /** Debug navigation overlay: panel toggles, the grid revision the renderer holds, and a
+   * single in-flight worker request. With both toggles off (or the profiler closed) the
+   * worker is never asked and the renderer owns no overlay. */
+  private navDebug={paths:false,walkability:false,revision:-1,pending:false,next:0,shown:false};
+  private pollNavigation(){
+    const d=this.navDebug,worker=this.worker,renderer=this.renderer;
+    if(!perf.enabled||!(d.paths||d.walkability)){
+      if(d.shown){renderer?.gameNavigation(null);d.shown=false;d.revision=-1;}
+      return;
+    }
+    const now=performance.now();
+    if(d.pending||now<d.next||!worker||!renderer)return;
+    const grid=d.walkability,paths=d.paths;
+    d.pending=true;d.next=now+250;
+    void worker.request('navigation',{grid,paths,revision:grid?d.revision:-1}).then(state=>{
+      d.pending=false;
+      // A stale reply may carry a grid the renderer no longer expects; the next poll corrects it.
+      if(worker!==this.worker||renderer!==this.renderer||grid!==d.walkability||paths!==d.paths)return;
+      renderer.gameNavigation({grid,size:state.size,cells:state.cells,paths:state.paths});
+      d.shown=true;
+      if(grid)d.revision=state.revision;
+    },error=>{d.pending=false;if(worker===this.worker)this.workerError(error);});
+  }
   private configureWorker(){const worker=this.worker;void worker?.request('configure',{speed:this.simulationSpeed,reveal:this.reveal,visionPlayer:this.visionPlayer,profiling:perf.enabled}).catch(error=>{if(worker===this.worker)this.workerError(error);});}
   private workerError(error:unknown){console.error(error);this.economyHud?.showError(`Simulation stopped: ${error instanceof Error?error.message:String(error)}`);}
   private acceptFrame(frame:RuntimeFrame){
@@ -439,6 +462,16 @@ export class Session {
           this.economyHud?.setSelection([]);
         }
       },
+      paths: this.navDebug.paths,
+      walkability: this.navDebug.walkability,
+      onPaths: (value) => {
+        this.navDebug.paths = value;
+      },
+      onWalkability: (value) => {
+        this.navDebug.walkability = value;
+        // The renderer drops its grid texture when the grid turns off; re-request it in full next time.
+        if (!value) this.navDebug.revision = -1;
+      },
     });
     this.mini?.paint();
     this.bridge = new EditorBridge({
@@ -597,6 +630,7 @@ export class Session {
     }else if(!cinematic&&this.unitCameraMode!=='rts'&&focus){renderer.unitCamera({mode:this.unitCameraMode,entity:focus.id});}
     else {renderer.unitCamera(null);if(cinematic&&scene){const target=shot&&worker.latest.targets.find(e=>e.tag===shot.entity);renderer.camera.lookAt(target?.x??scene.x,target?.y??scene.y);}}
     renderer.draw(view, this.stamps);
+    this.pollNavigation();
     const minimap = perf.start();
     this.mini?.paint();
     perf.end("Minimap paint", minimap);
@@ -649,15 +683,6 @@ export class Session {
     const owner = slotOwner(this.me),
       position = { x, y: z, ...("surface" in hit && typeof hit.surface==="string"?{surface:hit.surface}:{}) },
       binding = hud.targeting;
-    if (hud.rallyMode && binding) {
-      this.send({
-        type: "rally",
-        actor: binding.actors[0]!,
-        destination: position,
-      });
-      hud.clearMode();
-      return;
-    }
     if (hud.mode) {
       const key=JSON.stringify({definition:hud.mode,position,actor:hud.buildingActor,rotation:hud.placementRotation});
       const error=this.placementResult?.key===key?this.placementResult.error:null;
@@ -695,6 +720,17 @@ export class Session {
     // silhouette attacks that structure; friendly occupants remain selectable.
     if(target?.unit?.garrison&&target.owner!==owner&&(right||hud.attackMode))
       target=known.entities.find(e=>e.id===target!.unit!.garrison!.building)??target;
+    // Rally onto a resource (harvesters gather it) or a friendly unit (spawns follow it), else ground.
+    const rallyAt = (actor: number) => {
+      const onto = target && !target.remembered && target.id !== actor &&
+        (target.resource || (target.unit && target.owner === owner && !target.unit.contained)) ? target : null;
+      this.send(onto ? {type: "rally", actor, destination: null, target: onto.id} : {type: "rally", actor, destination: position});
+    };
+    if (hud.rallyMode && binding) {
+      rallyAt(binding.actors[0]!);
+      hud.clearMode();
+      return;
+    }
     if(!right&&!binding&&sameType&&target&&target.owner===owner&&target.unit){
       const screen=new Set(this.renderer!.unitsInScreenRect(selectable.filter(e=>e.unit),{left:0,top:0,right:innerWidth,bottom:innerHeight}));
       const ids=selectable.filter(e=>e.definition===target.definition&&e.owner===owner&&screen.has(e.id)).map(e=>e.id);
@@ -785,7 +821,7 @@ export class Session {
       const producers = this.rallyProducers(hud.selectedIds);
       if (producers.length) {
         const clear = !!target && producers.some((b) => b.id === target!.id);
-        for (const b of producers) this.send({type: "rally", actor: b.id, destination: clear ? null : position});
+        for (const b of producers) clear ? this.send({type: "rally", actor: b.id, destination: null}) : rallyAt(b.id);
         return;
       }
     }

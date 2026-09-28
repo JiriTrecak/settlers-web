@@ -103,7 +103,11 @@ describe("work disruption and capacity", () => {
     tree.resource!.growingUntil = g.state.tick + 1;
     g.tick();
     expect(tree.resource!.amount).toBe(0);
-    w.x += 1;
+    // The regrown tree reclaims its whole collision disc, so the worker must leave all of it.
+    w.x += 4;
+    w.unit!.position = null;
+    w.unit!.route = [];
+    w.unit!.goal = null;
     g.tick();
     expect(tree.resource!.amount).toBe(g.registry.get(tree.definition).yield);
   });

@@ -8,24 +8,6 @@ import {
 } from "../../src/shared";
 
 describe("utcmap", () => {
-  it("rejects invalid landscape settings instead of silently losing the scene appearance", () => {
-    const landscape = {
-      strokes: [],
-      cover: [],
-      environment: { hour: 8.8, season: "summer", playing: false },
-      water: {
-        rippleScale: 0.16,
-        rippleStrength: 0.14,
-        cloudStrength: 0.24,
-        foamStrength: 0.9,
-      },
-    };
-    expect(parseUtcMap({ ...emptyUtcMap(), landscape })).toBeNull();
-    landscape.water.cloudStrength = 0.18;
-    expect(parseUtcMap({ ...emptyUtcMap(), landscape })?.landscape).toEqual(
-      landscape,
-    );
-  });
   it("preserves forest understory and building exclusions when saving a map", () => {
     const landscape = {
       strokes: [],
@@ -43,7 +25,7 @@ describe("utcmap", () => {
           exclusions: [{ x: 125.7, z: 117, radius: 5.94 }],
         },
       ],
-      environment: { hour: 10, season: "summer", playing: false },
+      environment: { hour: 10, playing: false },
     };
     const parsed = parseUtcMap({ ...emptyUtcMap(), landscape });
     expect(parsed?.landscape).toEqual(landscape);

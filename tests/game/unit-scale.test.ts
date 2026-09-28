@@ -98,7 +98,8 @@ it('replans wide-body clearance when an adjacent building appears and disappears
 
 it('requires scaled headroom under bridges and spreads formation slots for larger units', () => {
   expect(context(1,true).spatial.unitWalkable({x:40,y:40})).toBe(true);
-  expect(context(1.7,true).spatial.unitWalkable({x:40,y:40})).toBe(false);
+  expect(context(1.7,true).spatial.unitWalkable({x:40,y:40})).toBe(true);
+  expect(context(2.5,true).spatial.unitWalkable({x:40,y:40})).toBe(false);
   const actors=Array.from({length:16},(_,i)=>({id:i,x:10+i%4,y:10+Math.floor(i/4)}));
   for(const scale of [1,1.7,3]){
     const spacing=unitDimensions(scale).formationSpacing;
@@ -143,7 +144,7 @@ it('uses individual dimensions for mixed-size collisions, gates and bridge headr
  const small=definitions.find(d=>d.id==='unit.ants.warrior');
  const tall=definitions.find(d=>d.id==='unit.ants.archer');
  small.dimensions={radius:.2,height:1.5,formationSpacing:1};
- tall.dimensions={radius:.65,height:4,formationSpacing:1.4};
+ tall.dimensions={radius:.65,height:5,formationSpacing:1.4};
  const c=new GameContext(emptyState(),new ContentRegistry(raw),{...emptyUtcMap(),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
  const a=c.create(placed('small',small.id,100,100)),b=c.create(placed('large',tall.id,101,100));c.spatial.rebuild();
  expect(c.spatial.unitWalkable({x:40,y:40},a)).toBe(true);

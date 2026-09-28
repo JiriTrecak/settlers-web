@@ -18,7 +18,8 @@ import {sceneryKind,terrainPixel} from '../../src/render/minimap/terrainStyle';
 const map=biomeFixture;
 describe('Frozen Forest and living woodland',()=>{
  it('persists creation weather independently of biome defaults',()=>{
-  const snowy=createBiomeMap('Snow',256,'frozen-forest');expect(biomeEnvironment(snowy.biome,snowy.landscape!.environment).weather!.kind).toBe('snow');
+  expect(biomeEnvironment('frozen-forest',createBiomeMap('Default',256,'frozen-forest').landscape!.environment).weather!.kind).toBe('clear');
+  const snowy=createBiomeMap('Snow',256,'frozen-forest','snow');expect(biomeEnvironment(snowy.biome,snowy.landscape!.environment).weather!.kind).toBe('snow');
   const rain=createBiomeMap('Rain',256,'frozen-forest','rain');const loaded=parseUtcMap(JSON.parse(stringifyUtcMap(rain)))!;
   expect(loaded.landscape!.environment.weather).toEqual({kind:'rain'});
   expect(biomeEnvironment('frozen-forest',createBiomeMap('Clear',256,'frozen-forest','clear').landscape!.environment).weather!.intensity).toBe(0);
@@ -26,9 +27,9 @@ describe('Frozen Forest and living woodland',()=>{
  });
  it('selects the actual winter tile maps and inherited normals',()=>{
   const scene=compileMapScene(createBiomeMap('Snow',256,'frozen-forest'),landscapeAssets),ground=authoredTerrain(scene.field,[],[]);
-  expect(ground.layers[0].ar).toBe('asset.terrain.winter-soil');expect(ground.layers[0].nh).toBe('asset.terrain.winter-soil-normal');
-  expect(ground.layers[1].ar).toBe('asset.terrain.winter-grass');expect(ground.layers[2].nh).toBe('asset.terrain.winter-dirt-normal');
-  expect(biomeById(scene.field.biome).minimap.forest).not.toBe(biomeById().minimap.forest);
+  const tiles=biomeById('frozen-forest').terrainTiles!;
+  expect(ground.layers[0].ar).toBe(tiles.soil!.ar);expect(ground.layers[0].nh).toBe(tiles.soil!.nh);
+  expect(ground.layers[1].ar).toBe(tiles.grass!.ar);expect(ground.layers[1].nh).toBe(tiles.grass!.nh);  expect(biomeById(scene.field.biome).minimap.forest).not.toBe(biomeById().minimap.forest);
  });
  it('compiles both authored maps with distinct biome-bound species and no missing dependencies',()=>{
   for(const slug of ['vibrant-forest','frozen-forest'] as const){

@@ -38,7 +38,11 @@ Each pulse lasts 0.4 seconds with a 0.15-second gap. Wall-clock timing keeps fee
 
 Unit clicking uses a padded screen-space capsule from the rendered feet to declared health height. The minimum clickable width is 28 CSS pixels, independent of render-resolution scaling; the nearest body wins in crowds. Only visible, living, observed units participate. This changes neither gameplay collision nor box-selection rules.
 
-A resource may declare `gatheringUnitCollision: false` (the Amber Mine does). Workers actively assigned to it, including a committed return trip, ignore unit blockers both when planning and executing motion. Other units can also pass through those gatherers. Static terrain, water, buildings and resource footprints remain blocking. Pending mine orders do not grant this behavior early. Trees retain normal unit collision.
+Workers actively gathering any resource, including a committed return trip or cargo delivery, ignore unit blockers both when planning and executing motion. Other units can also pass through those gatherers. A resource may opt back into collisions with `gatheringUnitCollision: true`. Static terrain, water, buildings and resource footprints remain blocking. Pending (queued) gather orders do not grant this behavior early.
+
+## Rally, deployment and overlaps
+
+A production rally is a ground point, or a `target`: a resource (harvesters spawn with a gather order, others walk to it) or a friendly unit (spawns follow it). Trained units appear on the building side nearest the rally, or the door side without one, searching outward ring by ring and only in the door's walk region. Bodies that already interpenetrate may always move apart (only motion toward the other body is blocked), and idle overlapping units are nudged to the nearest free cell.
 
 ## Command-card visibility
 

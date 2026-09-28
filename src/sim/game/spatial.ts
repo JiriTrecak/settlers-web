@@ -8,6 +8,7 @@ import {UnitIndex} from "./unitIndex";
 import {unitDimensions} from '../../content/unitScale';
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
+import {resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {
   clearSweep,
   clearRay,
@@ -28,6 +29,7 @@ export const point = (i: number, size = 256): Point => ({
 });
 export const distance2 = (a: Point, b: Point) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+let spatialRevisions = 0;
 type Body = {radius:number;height:number;formationSpacing:number};
 type Actor = Pick<Entity,'definition'>|Body;
 export class Spatial {
@@ -58,6 +60,9 @@ export class Spatial {
   readonly routing={searches:0,expanded:0,coarseExpanded:0,fallbacks:0};
   readonly tactical: TacticalTerrain;
   private blockedCells=new Set<number>();
+  /** Changes whenever blocking occupancy is rebuilt. Drawn from a module-wide counter so a
+   * restored World's fresh Spatial never repeats a revision a debug consumer has cached. */
+  revision=++spatialRevisions;
   constructor(
     map: UtcMap,
     readonly registry: ContentRegistry,
@@ -199,6 +204,39 @@ export class Spatial {
         );
     return result;
   }
+  /** Ground cells a standing resource blocks for movement. Placement, fog and picking keep
+   * using `footprint`; only walking and harvest approach see the wider disc. */
+  collision(e: Pick<Entity, "definition" | "x" | "y" | "rotation" | "appearance">): number[] {
+    const d = this.registry.get(e.definition);
+    if (d.collisionRadius === undefined) return this.footprint(e);
+    return resourceCollisionCells(e, d.footprint, d.collisionRadius, e.appearance?.scale ?? 1, e.rotation)
+      .map(p => p.x < 0 || p.y < 0 || p.x >= this.size || p.y >= this.size ? -1 : p.y * this.size + p.x);
+  }
+  /** Cells exactly `ring` cells outside a footprint rectangle (Chebyshev), in row-major order.
+   * Ring 1 is every cell touching the building, corners included. */
+  perimeter(e: Pick<Entity, "definition" | "x" | "y" | "rotation">, ring = 1): Point[] {
+    const f = this.registry.get(e.definition).footprint,
+      swap = Math.round(e.rotation / 90) % 2 !== 0,
+      hw = f ? Math.floor((swap ? f.depth : f.width) / 2) : 0,
+      hh = f ? Math.floor((swap ? f.width : f.depth) / 2) : 0;
+    const x0 = e.x - hw - ring, x1 = e.x + hw + ring, y0 = e.y - hh - ring, y1 = e.y + hh + ring, out: Point[] = [];
+    for (let y = y0; y <= y1; y++)
+      for (let x = x0; x <= x1; x += y === y0 || y === y1 ? 1 : x1 - x0)
+        if (x >= 0 && y >= 0 && x < this.size && y < this.size) out.push({ x, y });
+    return out;
+  }
+  /** WC3/SC2 exit rule: a trained unit appears on the building side nearest where it is
+   * headed, spiralling outward ring by ring once bodies fill the edge. Only cells in the
+   * door's walk region qualify, so a unit never spawns on an island behind the building. */
+  deployment(b: Pick<Entity, "definition" | "x" | "y" | "rotation">, toward: Point, actor?: Actor, maxRing = 8): Point | null {
+    const door = this.cell(this.entrance(b));
+    for (let ring = 1; ring <= maxRing; ring++) {
+      const cells = this.perimeter(b, ring).sort((p, q) => distance2(p, toward) - distance2(q, toward) || p.y - q.y || p.x - q.x);
+      for (const p of cells)
+        if (this.free(p, undefined, actor) && (door < 0 || this.sectors.connected(door, this.cell(p)))) return p;
+    }
+    return null;
+  }
   entrance(e: Pick<Entity, "definition" | "x" | "y" | "rotation">): Point {
     const offset = this.registry.get(e.definition).entrance ?? { x: 0, y: 0 },
       r = ((Math.round(e.rotation / 90) % 4) + 4) % 4;
@@ -208,6 +246,7 @@ export class Spatial {
   }
   rebuild() {
     const previous=this.blockedCells,next=new Set<number>();
+    this.revision=++spatialRevisions;
     this.occupied.fill(0);
     this.resources.fill(0);
     for (const e of this.entities())
@@ -216,7 +255,7 @@ export class Spatial {
           for (const i of this.footprint(e))
             if (i >= 0) {this.occupied[i] = e.id;next.add(i);}
         if (e.resource && e.resource.amount > 0)
-          for (const i of this.footprint(e))
+          for (const i of this.collision(e))
             if (i >= 0) {this.resources[i] = e.id;next.add(i);}
       }
     this.blockedCells=next;
@@ -468,6 +507,11 @@ export class Spatial {
         p.y > Math.max(from.y, to.y) + diameter
       )
         continue;
+      // Bodies that already interpenetrate (spawn, release, a ghost worker turning solid)
+      // may always move apart. Only motion toward the other centre is blocked; otherwise
+      // both would be frozen forever because every segment starts inside the separation.
+      const sx = p.x - from.x, sy = p.y - from.y;
+      if (square && sx * sx + sy * sy < separation ** 2 && sx * dx + sy * dy <= 0) continue;
       const t = square
         ? Math.max(
             0,

@@ -1959,6 +1959,7 @@
       "description": "Ten axe hits fell a tree, yielding one 10-lumber load. Foresters restore exhausted sites.",
       "asset": "asset.resource.tree-primary",
       "icon": "icon.item.wood",
+      "collisionRadius": 2,
       "regrowthTicks": 1600,
       "behaviors": {},
       "creation": {
