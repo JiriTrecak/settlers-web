@@ -1698,6 +1698,162 @@
     ]
   },
   {
+    "id": "asset.models.environment.shore-boulder-a",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.9,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-boulder-a/geometry.glb"
+    ],
+    "scenery": [
+      "shore-boulder-a"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shore-boulder-b",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.9,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-boulder-b/geometry.glb"
+    ],
+    "scenery": [
+      "shore-boulder-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shore-boulder-c",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.55,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-boulder-c/geometry.glb"
+    ],
+    "scenery": [
+      "shore-boulder-c"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shore-cattails",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-cattails/geometry.glb"
+    ],
+    "scenery": [
+      "shore-cattails"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shore-lily-pink",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.1,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-lily-pink/geometry.glb"
+    ],
+    "scenery": [
+      "shore-lily-pink"
+    ]
+  },
+  {
+    "id": "asset.models.environment.shore-lily-white",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 0.1,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.shore-lily-white/geometry.glb"
+    ],
+    "scenery": [
+      "shore-lily-white"
+    ]
+  },
+  {
     "id": "asset.models.environment.woodland-abandoned-camp",
     "transform": {
       "scale": 1,

@@ -17,7 +17,7 @@ import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
 import { areaSelection } from "../../presentation/commands";
 import { resourceStamps, ResourceScenery } from "../../presentation/scenery";
 import { content } from "../../content/builtin";
-import { slotOwner } from "../../content/schema";
+import { ownerSlot, slotOwner, type Owner } from "../../content/schema";
 import { perf } from "../../debug/performance";
 import { EditorBridge } from "../../shared/control/editorBridge";
 import { validAction } from "../../shared/types/types";
@@ -128,8 +128,38 @@ export class Session {
   private missionHud: MissionHud | null = null;
   private economyHud: SettlementHud | null = null;
   private placementPointer: { clientX: number; clientY: number } | null = null;
+  private hoverPointer: { clientX: number; clientY: number } | null = null;
+  private hoverId: number | null = null;
+  private hoverAge = Infinity;
+  private readonly onLeave = () => {
+    this.hoverPointer = null;
+    this.hoverId = null;
+  };
+  /** Circle tint as the viewing player sees it; teams come from the match lobby. */
+  private relationTo(owner: Owner): "own" | "ally" | "neutral" | "enemy" {
+    if (owner === "none") return "neutral";
+    const slot = ownerSlot(owner),
+      team = (player: number) => this.config.match?.slots.find((s) => s.player === player)?.team ?? player;
+    if (slot === this.visionPlayer) return "own";
+    return team(slot) === team(this.visionPlayer) ? "ally" : "enemy";
+  }
+  /** Selected own, finished buildings that train units: right-click sets their rally (WC3 convention). */
+  private rallyProducers(ids: readonly number[]) {
+    const owner = slotOwner(this.me);
+    return this.selectionView().entities.filter(
+      (e) =>
+        ids.includes(e.id) &&
+        e.owner === owner &&
+        !e.remembered &&
+        !e.construction &&
+        e.production &&
+        content.get(e.definition).behaviors.production?.outputs.some((id) => content.get(id).kind === "unit"),
+    );
+  }
   private readonly onHover = (e: { clientX: number; clientY: number }) => {
     this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
+    this.hoverPointer = this.placementPointer;
+    this.hoverAge = Infinity;
     const hit = this.economyHud?.mode ? this.renderer?.pickGround(e.clientX,e.clientY) : this.renderer?.pickWalk(e.clientX,e.clientY),
       kind = this.economyHud?.mode;
     const binding = this.economyHud?.targeting,
@@ -334,6 +364,8 @@ export class Session {
         void worker.request('company',undefined).then(company=>{if(worker===this.worker)this.config.hooks.onMissionContinue!(map.mission!.nextMission!,company);}).catch(error=>this.workerError(error));
       }:undefined);
     this.canvas.addEventListener("pointermove", this.onHover);
+    this.canvas.addEventListener("pointerleave", this.onLeave);
+    renderer.gameViewer(this.observing ? -1 : this.me, (owner) => this.relationTo(owner));
     this.mini = new Minimap(this.config.host, {
       camera: renderer.camera,
       clock: () => renderer.sky.snapshot(),
@@ -349,6 +381,7 @@ export class Session {
         if(binding?.type==='rally'){this.send({type:'rally',actor:binding.actors[0],destination});hud.clearMode();return true;}
         if(binding&&!['move','attack','patrol'].includes(binding.type))return true;
         const actors=binding?.actors??this.selectionView().entities.filter(e=>hud.selectedIds.includes(e.id)&&e.owner===slotOwner(this.me)&&e.unit&&!e.unit.contained&&content.get(e.definition).behaviors.playerControl).map(e=>e.id);
+        if(!binding&&!actors.length){for(const b of this.rallyProducers(hud.selectedIds))this.send({type:'rally',actor:b.id,destination});return true;}
         if(actors.length)this.send(binding?.type==='patrol'?{type:'patrol',actors,destination,...(shift?{append:true}:{})}:{type:'move',actors,destination,attackMove:binding?.type==='attack',...(shift?{append:true}:{})});
         if(binding)hud.clearMode();return true;
       },
@@ -540,6 +573,14 @@ export class Session {
       this.economyHud?.update(this.selectionView());
       this.missionHud?.update(view.settlement);
       renderer.gameSelect(cinematic ? [] : this.economyHud?.selectedIds ?? []);
+      // Re-pick on a short cadence so units walking under a still cursor pre-select.
+      this.hoverAge += dtMs;
+      if (this.hoverPointer && this.hoverAge > 120) {
+        this.hoverAge = 0;
+        const id = renderer.pickGameHover(this.hoverPointer.clientX, this.hoverPointer.clientY);
+        this.hoverId = id != null && view.settlement.entities.some((e) => e.id === id && content.get(e.definition).selectable !== false) ? id : null;
+      }
+      renderer.gameHover(cinematic || this.economyHud?.mode ? null : this.hoverId);
       this.canvas.style.cursor = this.economyHud?.attackMode
         ? "crosshair"
         : "default";
@@ -739,6 +780,15 @@ export class Session {
       hud.clearMode();
       return;
     }
+    // With only producers selected, right-click moves their rally; right-clicking one of them clears it.
+    if (right && !binding && !selected.length) {
+      const producers = this.rallyProducers(hud.selectedIds);
+      if (producers.length) {
+        const clear = !!target && producers.some((b) => b.id === target!.id);
+        for (const b of producers) this.send({type: "rally", actor: b.id, destination: clear ? null : position});
+        return;
+      }
+    }
     if (target) {
       if(right&&target.owner===owner&&!target.remembered&&content.get(target.definition).garrison){
         const actors=selected.filter(e=>content.get(target.definition).garrison!.accepts.includes(e.definition));
@@ -850,6 +900,7 @@ export class Session {
     this.unbindDebug = null;
     this.canvas.style.cursor = "";
     this.canvas.removeEventListener("pointermove", this.onHover);
+    this.canvas.removeEventListener("pointerleave", this.onLeave);
     this.chat?.destroy();
     this.chat = null;
     this.missionHud?.destroy();this.missionHud=null;

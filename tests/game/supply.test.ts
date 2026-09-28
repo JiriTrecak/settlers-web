@@ -88,6 +88,13 @@ describe('definition-driven colony supply and direct training',()=>{
   g.tick();expect(hall.production!.produced).toBe(1);expect(g.state.accounting.consumed['item.amber']).toBe(75);
   expect(g.entities.at(-1)!.unit!.order).toMatchObject({type:'move',destination:{x:230,y:233}});
  });
+ it('sets and clears the rally through the command channel',()=>{
+  const {g,hall}=setup();
+  expect(g.command('player.1',{type:'rally',actor:hall.id,destination:{x:228,y:231}}).accepted).toBe(true);
+  expect(hall.production!.rally).toEqual({x:228,y:231});
+  expect(g.command('player.1',{type:'rally',actor:hall.id,destination:null}).accepted).toBe(true);
+  expect(hall.production!.rally).toBeNull();
+ });
  it('counts garrisoned units and reserves fallen hero revival once; started revival survives supply loss',()=>{
   const {g,mound}=setup();const hero=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
   hero.hp=0;hero.fallen=true;expect(pool(g).used).toBe(7);

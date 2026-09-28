@@ -19,7 +19,7 @@ export function recipeInputs(recipe:LandscapeRecipe):RecipeInput[]{
   if('species'in values){values.density??=1;values.pattern??=values.patchiness?'patches':'scattered';values.patchiness??={scale:12,strength:.6};}
   for(const [key,value]of Object.entries(values)){
    const path=prefix+key,local=path.replace(/^(chunks\.|edge\.|details\.(banks|water)\.)/,'');
-   if(key==='details'&&value){for(const [group,settings]of Object.entries(value as Record<string,unknown>))if(settings)visit(settings as Record<string,unknown>,`details.${group}.`,group==='water'?'Water lilies · ':'Riverbank · ');continue;}
+   if(key==='details'&&value){for(const [group,settings]of Object.entries(value as Record<string,unknown>))if(settings&&!Array.isArray(settings))visit(settings as Record<string,unknown>,`details.${group}.`,group==='water'?'Water lilies · ':'Riverbank · ');continue;}
    if(key==='chunks'&&value){visit(value as Record<string,unknown>,'chunks.','Rock chunks · ');continue;}
    if(key==='edge'&&value){visit(value as Record<string,unknown>,'edge.','Edge · ');continue;}
    if(['patchiness','riverBank'].includes(key)&&value){visit(value as Record<string,unknown>,path+'.',labelPrefix);continue;}

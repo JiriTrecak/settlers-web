@@ -16,13 +16,15 @@ it('updates cached model decorations without recursive name searches and refresh
  const state={...view,entities:[entity]},field=new HeightField();
  layer.update(state,field,0);await layer.ready;layer.update(state,field,0);
  const root=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!;
- const health=root.getObjectByName('Health')!,selection=root.getObjectByName('Selection')!;
+ const health=root.getObjectByName('Health')!,circles=scene.getObjectByName('selection-circles')!;
+ const circleFor=()=>circles.children.filter(o=>o.userData.entityId===entity.id);
  const lookup=vi.spyOn(root,'getObjectByName');layer.select([entity.id]);
  for(let i=1;i<=60;i++)layer.update(state,field,i);
- expect(lookup).not.toHaveBeenCalled();expect(health.visible).toBe(true);expect(selection.visible).toBe(true);
+ expect(lookup).not.toHaveBeenCalled();expect(health.visible).toBe(true);expect(circleFor()).toHaveLength(1);
  const changed={...state,entities:[{...entity,appearance:{asset:'asset.ants.forester'}}]};layer.update(changed,field,61);await layer.ready;layer.update(changed,field,61);
  const replacement=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!;
- expect(replacement).not.toBe(root);expect(replacement.getObjectByName('Selection')!.visible).toBe(true);
+ expect(replacement).not.toBe(root);expect(circleFor()).toHaveLength(1);
+ layer.select([]);layer.update(changed,field,62);expect(circleFor()).toHaveLength(0);
  layer.destroy(scene);
 });
 
@@ -50,7 +52,8 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the shared rules scale
   expect(root.position.x).toBe(e.x);expect(root.position.z).toBe(e.y);expect(root.scale.x).toBe(1);
   if(unit){
    expect(root.getObjectByName('Cargo')!.position.y).toBeCloseTo(1.04*scale);
-   expect(root.getObjectByName('Selection')!.scale.x).toBeCloseTo(1.8*scale);
+   const dims=registry.get(e.definition).dimensions;
+   expect(root.userData.circleRadius).toBeCloseTo(dims?Math.max(dims.radius+.32,dims.formationSpacing*.45):.9*scale);
    expect(layer.cameraSubject(e.id)!.eyeHeight).toBeGreaterThan(scale);
   }
  });

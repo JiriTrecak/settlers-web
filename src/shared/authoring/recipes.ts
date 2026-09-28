@@ -23,13 +23,16 @@ const scatter=z.object({
  riverBank:z.object({min:finite.min(0).max(128),max:finite.positive().max(256)}).strict().optional(),
  patchiness:z.object({scale:finite.min(.5).max(128),strength:finite.min(0).max(1)}).strict().optional(),
 }).strict();
+/** Waterline band in metres from the river edge: negative is inside the water, positive on the bank.
+ * Shore items sit on the terrain, so boulders straddle the edge and stones rest on the visible bed. */
+const shoreDetail=scatter.extend({id:authoringId,bank:z.object({min:finite.min(-32).max(32),max:finite.min(-32).max(32)}).strict()}).strict();
 const recipeVariants=[
  z.object({type:z.literal('terrain'),operation:z.enum(['raise','lower','flatten']),height:finite.min(-128).max(128),falloff:finite.min(0).max(128),
   surface:z.enum(['bank','mountain']).optional(),roughness:finite.min(0).max(1).optional(),noiseScale:finite.min(1).max(128).optional(),
   grassStrength:finite.min(0).max(1).optional(),rockStrength:finite.min(0).max(1).optional(),
   chunks:scatter.optional(),
  }).strict(),
- z.object({type:z.literal('river'),water:authoringId,width:finite.min(.2).max(128),depth:finite.min(.1).max(64),bankWidth:finite.min(.1).max(64),bankMaterial:authoringId.optional(),bedMaterial:authoringId.optional(),flow:finite.min(0).max(3),maxUphillGrade:finite.min(0).max(.05),details:z.object({banks:scatter.optional(),water:scatter.optional()}).strict().optional()}).strict(),
+ z.object({type:z.literal('river'),water:authoringId,width:finite.min(.2).max(128),depth:finite.min(.1).max(64),bankWidth:finite.min(.1).max(64),bankMaterial:authoringId.optional(),bedMaterial:authoringId.optional(),flow:finite.min(0).max(3),maxUphillGrade:finite.min(0).max(.05),details:z.object({banks:scatter.optional(),water:scatter.optional(),shore:z.array(shoreDetail).max(8).optional()}).strict().optional()}).strict(),
  z.object({type:z.literal('path'),material:authoringId,width:finite.min(.2).max(128),shoulder:finite.min(0).max(64),flatten:finite.min(0).max(1),vegetationClearance:finite.min(0).max(32)}).strict(),
  z.object({type:z.literal('forest'),...scatter.shape,interiorMargin:finite.min(0).max(64).default(0),details:z.array(scatter.extend({id:authoringId}).strict()).max(8).optional(),edge:scatter.extend({width:finite.positive().max(64)}).strict().optional()}).strict(),
  z.object({type:z.literal('grass'),...scatter.shape}).strict(),
@@ -49,6 +52,7 @@ export const landscapeRecipeSchema=z.discriminatedUnion('type',recipeVariants).s
  if(r.type==='terrain'&&r.chunks&&r.chunks.scaleMax<r.chunks.scaleMin)c.addIssue({code:'custom',message:'Maximum chunk scale must exceed minimum scale',path:['chunks','scaleMax']});
  if('riverBank'in r&&r.riverBank&&r.riverBank.max<=r.riverBank.min)c.addIssue({code:'custom',message:'Riverbank maximum must exceed minimum',path:['riverBank']});
  if(r.type==='forest'&&r.edge){if(r.edge.scaleMax<r.edge.scaleMin)c.addIssue({code:'custom',message:'Edge maximum scale must exceed minimum scale',path:['edge','scaleMax']});if(r.edge.riverBank&&r.edge.riverBank.max<=r.edge.riverBank.min)c.addIssue({code:'custom',message:'Edge bank interval is empty',path:['edge','riverBank']});}
+ if(r.type==='river'&&r.details?.shore){if(new Set(r.details.shore.map(d=>d.id)).size!==r.details.shore.length)c.addIssue({code:'custom',message:'Shore pass IDs must be unique',path:['details','shore']});for(const d of r.details.shore)if(d.scaleMax<d.scaleMin||d.bank.max<=d.bank.min)c.addIssue({code:'custom',message:'Invalid shore pass scale or bank band',path:['details','shore']});}
  if(r.type==='forest'&&r.details){if(new Set(r.details.map(d=>d.id)).size!==r.details.length)c.addIssue({code:'custom',message:'Forest detail pass IDs must be unique',path:['details']});for(const d of r.details)if(d.scaleMax<d.scaleMin)c.addIssue({code:'custom',message:'Invalid forest detail scale range',path:['details']});}
  if(r.type==='meadow'&&r.accents){if(new Set(r.accents.map(a=>a.id)).size!==r.accents.length)c.addIssue({code:'custom',message:'Meadow accent IDs must be unique',path:['accents']});for(const a of r.accents){if(a.scaleMax<a.scaleMin)c.addIssue({code:'custom',message:'Invalid meadow accent scale range',path:['accents']});if(a.coverage&&a.coverage.max<a.coverage.min)c.addIssue({code:'custom',message:'Meadow accent coverage band is empty',path:['accents']});if(a.trees&&a.trees.max<a.trees.min)c.addIssue({code:'custom',message:'Meadow accent tree-distance band is empty',path:['accents']});}}
  if('scaleMin' in r&&r.scaleMax<r.scaleMin)c.addIssue({code:'custom',message:'Maximum scale must be at least minimum scale',path:['scaleMax']});
@@ -67,7 +71,7 @@ const scatterOverrides=scatter.partial().extend({
 });
 export const recipeOverridesSchema=z.discriminatedUnion('type',[
  recipeVariants[0].partial().extend({type:z.literal('terrain'),chunks:scatterOverrides.optional()}),
- recipeVariants[1].partial().extend({type:z.literal('river'),details:z.object({banks:scatterOverrides.optional(),water:scatterOverrides.optional()}).strict().optional()}),
+ recipeVariants[1].partial().extend({type:z.literal('river'),details:z.object({banks:scatterOverrides.optional(),water:scatterOverrides.optional(),shore:z.array(shoreDetail).max(8).optional()}).strict().optional()}),
  recipeVariants[2].partial().extend({type:z.literal('path')}),
  scatterOverrides.extend({type:z.literal('forest'),interiorMargin:finite.min(0).max(64).optional(),details:z.array(scatter.extend({id:authoringId}).strict()).max(8).optional(),edge:scatterOverrides.extend({width:finite.positive().max(64).optional()}).optional()}),
  scatterOverrides.extend({type:z.literal('grass')}),

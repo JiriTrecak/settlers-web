@@ -428,6 +428,54 @@
     "clearance": 0
   },
   {
+    "id": "asset.models.environment.shore-boulder-a",
+    "name": "shore boulder a",
+    "kind": "prop",
+    "scenery": "shore-boulder-a",
+    "scale": 1,
+    "clearance": 0.9
+  },
+  {
+    "id": "asset.models.environment.shore-boulder-b",
+    "name": "shore boulder b",
+    "kind": "prop",
+    "scenery": "shore-boulder-b",
+    "scale": 1,
+    "clearance": 0.9
+  },
+  {
+    "id": "asset.models.environment.shore-boulder-c",
+    "name": "shore boulder c",
+    "kind": "prop",
+    "scenery": "shore-boulder-c",
+    "scale": 1,
+    "clearance": 0.55
+  },
+  {
+    "id": "asset.models.environment.shore-cattails",
+    "name": "shore cattails",
+    "kind": "prop",
+    "scenery": "shore-cattails",
+    "scale": 1,
+    "clearance": 0.2
+  },
+  {
+    "id": "asset.models.environment.shore-lily-pink",
+    "name": "shore lily pink",
+    "kind": "prop",
+    "scenery": "shore-lily-pink",
+    "scale": 1,
+    "clearance": 0.1
+  },
+  {
+    "id": "asset.models.environment.shore-lily-white",
+    "name": "shore lily white",
+    "kind": "prop",
+    "scenery": "shore-lily-white",
+    "scale": 1,
+    "clearance": 0.1
+  },
+  {
     "id": "asset.models.environment.woodland-abandoned-camp",
     "name": "woodland abandoned camp",
     "kind": "prop",
@@ -2301,29 +2349,228 @@
           "pattern": "patches",
           "species": [
             {
-              "asset": "asset.models.environment.woodland-lily-a",
+              "asset": "asset.models.environment.shore-lily-pink",
               "weight": 2
             },
             {
-              "asset": "asset.models.environment.woodland-lily-b",
+              "asset": "asset.models.environment.shore-lily-white",
+              "weight": 1.5
+            },
+            {
+              "asset": "asset.models.environment.woodland-lily-a",
               "weight": 1
+            },
+            {
+              "asset": "asset.models.environment.woodland-lily-b",
+              "weight": 0.6
             }
           ],
           "spacing": 1.8,
           "probability": 0.6,
           "jitter": 0.8,
-          "scaleMin": 0.7,
-          "scaleMax": 1.1,
+          "scaleMin": 1.1,
+          "scaleMax": 1.7,
           "maxSlope": 1.5,
           "waterClearance": 0,
           "objectClearance": 0.6,
           "edgeFade": 1,
-          "minSpacing": 1.4,
+          "minSpacing": 1.8,
           "patchiness": {
             "scale": 5,
             "strength": 0.65
           }
-        }
+        },
+        "shore": [
+          {
+            "density": 1,
+            "pattern": "patches",
+            "species": [
+              {
+                "asset": "asset.models.environment.shore-boulder-a",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.shore-boulder-b",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.shore-boulder-c",
+                "weight": 2
+              }
+            ],
+            "spacing": 2.1,
+            "probability": 0.62,
+            "jitter": 0.9,
+            "scaleMin": 1,
+            "scaleMax": 2.1,
+            "maxSlope": 4,
+            "waterClearance": 0,
+            "objectClearance": 0.2,
+            "edgeFade": 0,
+            "minSpacing": 1.6,
+            "patchiness": {
+              "scale": 9,
+              "strength": 0.75
+            },
+            "id": "boulders",
+            "bank": {
+              "min": -1.8,
+              "max": 0.5
+            }
+          },
+          {
+            "density": 1,
+            "pattern": "patches",
+            "species": [
+              {
+                "asset": "asset.models.environment.shore-boulder-c",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.meadow-pebble-a",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.meadow-pebble-b",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.meadow-pebble-c",
+                "weight": 1
+              }
+            ],
+            "spacing": 1.5,
+            "probability": 0.4,
+            "jitter": 0.9,
+            "scaleMin": 0.8,
+            "scaleMax": 1.8,
+            "maxSlope": 4,
+            "waterClearance": 0,
+            "objectClearance": 0.1,
+            "edgeFade": 0,
+            "minSpacing": 0.9,
+            "patchiness": {
+              "scale": 6,
+              "strength": 0.6
+            },
+            "id": "stones",
+            "bank": {
+              "min": -3.5,
+              "max": -0.4
+            }
+          },
+          {
+            "density": 1,
+            "pattern": "patches",
+            "species": [
+              {
+                "asset": "asset.models.environment.shore-cattails",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.woodland-reed-tuft",
+                "weight": 1
+              }
+            ],
+            "spacing": 0.9,
+            "probability": 0.65,
+            "jitter": 0.9,
+            "scaleMin": 0.75,
+            "scaleMax": 1.2,
+            "maxSlope": 4,
+            "waterClearance": 0,
+            "objectClearance": 0.1,
+            "edgeFade": 0,
+            "minSpacing": 0.6,
+            "patchiness": {
+              "scale": 7,
+              "strength": 0.9
+            },
+            "id": "reeds",
+            "bank": {
+              "min": -1.1,
+              "max": 0.3
+            }
+          },
+          {
+            "density": 1,
+            "pattern": "patches",
+            "species": [
+              {
+                "asset": "asset.models.environment.woodland-drift-log",
+                "weight": 1
+              }
+            ],
+            "spacing": 10,
+            "probability": 0.3,
+            "jitter": 0.9,
+            "scaleMin": 0.8,
+            "scaleMax": 1.1,
+            "maxSlope": 4,
+            "waterClearance": 0,
+            "objectClearance": 0.4,
+            "edgeFade": 0,
+            "minSpacing": 6,
+            "id": "logs",
+            "bank": {
+              "min": -0.8,
+              "max": 0.6
+            }
+          },
+          {
+            "density": 1,
+            "pattern": "patches",
+            "species": [
+              {
+                "asset": "asset.models.environment.pl-grass-tall",
+                "weight": 3
+              },
+              {
+                "asset": "asset.models.environment.pl-grass-lush-a",
+                "weight": 2
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-white",
+                "weight": 1.2
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-yellow",
+                "weight": 1
+              },
+              {
+                "asset": "asset.models.environment.pl-flowers-blue",
+                "weight": 0.6
+              },
+              {
+                "asset": "asset.models.environment.pl-daisy",
+                "weight": 0.6
+              },
+              {
+                "asset": "asset.models.environment.pl-fern-sword",
+                "weight": 0.5
+              }
+            ],
+            "spacing": 0.8,
+            "probability": 0.6,
+            "jitter": 0.9,
+            "scaleMin": 0.75,
+            "scaleMax": 1.15,
+            "maxSlope": 2,
+            "waterClearance": 0,
+            "objectClearance": 0.15,
+            "edgeFade": 0,
+            "minSpacing": 0.45,
+            "patchiness": {
+              "scale": 5,
+              "strength": 0.55
+            },
+            "id": "fringe",
+            "bank": {
+              "min": 0.1,
+              "max": 2.6
+            }
+          }
+        ]
       }
     }
   },
@@ -2614,14 +2861,14 @@
     "scale": 1,
     "clearance": 0,
     "water": {
-      "shallowColor": "#72877a",
-      "deepColor": "#243d45",
-      "clarity": 3,
+      "shallowColor": "#35a39b",
+      "deepColor": "#033e7a",
+      "clarity": 1.1,
       "rippleScale": 0.15,
       "rippleStrength": 0.055,
-      "foamStrength": 0.3,
+      "foamStrength": 0.5,
       "reflectionStrength": 0.45,
-      "causticStrength": 0.3,
+      "causticStrength": 0.5,
       "cloudStrength": 0.03,
       "flowSpeed": 1
     }

@@ -25,9 +25,8 @@ import { SpellEffects } from "./spellEffects";
 import { HealthPips } from "./healthPips";
 import { HeldShortcuts } from "../../shared/input/heldShortcuts";
 import { healthBarVisible } from "../../presentation/healthVisibility";
-import { Line2 } from "three/addons/lines/Line2.js";
-import { LineGeometry } from "three/addons/lines/LineGeometry.js";
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+import { SelectionCircles, type CircleRelation, type SelectionCircle } from "./selectionCircles";
+import { RallyMarkers, type RallyMarker } from "./rallyMarkers";
 import {
   Quaternion,  Group,
   BufferGeometry,
@@ -39,7 +38,6 @@ import {
   MeshStandardMaterial,
   BoxGeometry,
   Box3,
-  PlaneGeometry,
   MeshBasicMaterial,
   Sprite,
   Vector3,
@@ -133,7 +131,6 @@ export class SettlementLayer {
       body: Object3D;
       carry: Object3D | undefined;
       cargo: Group;
-      selection: Group;
       hp: Sprite;
       mine?: Sprite;
     }
@@ -142,35 +139,12 @@ export class SettlementLayer {
   private readonly shells = new ShellEffects(this.root);
   private readonly projectiles = new ProjectileEffects(this.root);
   private dead = false;
-  private readonly selectionGeometry = new LineGeometry().setPositions([
-    -0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5, -0.5, 0, -0.5,
-  ]);
-  private readonly selectionMaterial = new LineMaterial({
-    color: 0xffffff,
-    linewidth: 3,
-    worldUnits: false,
-    transparent: true,
-    opacity: 0.95,
-    depthWrite: false,
-  });
-  private readonly attackTargetMaterial = new LineMaterial({
-    color: 0xff3636,
-    linewidth: 3,
-    worldUnits: false,
-    transparent: true,
-    opacity: 0.95,
-    depthWrite: false,
-  });
-  private readonly selectionFillGeometry = new PlaneGeometry(1, 1);
-  private readonly selectionFillMaterial = new MeshBasicMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.12,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1,
-  });
+  private readonly circles = new SelectionCircles(this.root);
+  private readonly rallies = new RallyMarkers(this.root);
+  private hovered: number | null = null;
+  /** Viewer-relative reaction for circle tint; the session owns team knowledge. */
+  private relation: (owner: EntityView["owner"]) => Exclude<CircleRelation, "target"> = (owner) => (owner === "none" ? "neutral" : "own");
+  private viewerSlot = -1;
   private readonly statusBadges = new StatusBadges();
   private readonly healthPips = new HealthPips();
   private readonly healthKeys = new HeldShortcuts(['health.all','health.friendly','health.enemy']);
@@ -241,6 +215,14 @@ export class SettlementLayer {
     this.selected = new Set(
       ids === null ? [] : typeof ids === "number" ? [ids] : ids,
     );
+  }
+  /** Pre-selection highlight under the cursor (WC3 shows a fainter circle). */
+  hover(id: number | null) {
+    this.hovered = id;
+  }
+  viewer(slot: number, relation: (owner: EntityView["owner"]) => Exclude<CircleRelation, "target">) {
+    this.viewerSlot = slot;
+    this.relation = relation;
   }
   /** Uses presented positions and observed units, never hidden simulation entities. */
   cutawaySubjects(){
@@ -396,28 +378,12 @@ export class SettlementLayer {
       cargo.scale.setScalar(scale/socketScale);
       backSocket.add(cargo);
     }else o.add(cargo);
-    const selection = new Group();
-    selection.name = "Selection";
-    selection.position.y = 0.12;
-    selection.scale.set(
-      d.dimensions ? Math.max(d.dimensions.radius*2+.3,d.dimensions.formationSpacing) : (d.footprint ? d.footprint.width + 0.3 : 1.8) * visualScale,
-      1,
-      d.dimensions ? Math.max(d.dimensions.radius*2+.3,d.dimensions.formationSpacing) : (d.footprint ? d.footprint.depth + 0.3 : 1.8) * visualScale,
-    );
-    const outline = new Line2(this.selectionGeometry, this.selectionMaterial);
-    outline.raycast = () => {}; // Selection decoration must not intercept unit picking.
-    selection.add(outline);
-    if (d.kind === "building") {
-      const fill = new Mesh(
-        this.selectionFillGeometry,
-        this.selectionFillMaterial,
-      );
-      fill.rotation.x = -Math.PI / 2;
-      fill.raycast = () => {};
-      selection.add(fill);
-    }
-    selection.visible = false;
-    o.add(selection);
+    // Circle hugs the body like WC3's selection scale: units by body radius / formation
+    // spacing; buildings by whichever is wider, footprint or model (palisades overhang it).
+    const bounds = d.footprint && new Box3().setFromObject(model).getSize(new Vector3());
+    o.userData.circleRadius = d.dimensions
+      ? Math.max(d.dimensions.radius + .32, d.dimensions.formationSpacing * .45)
+      : d.footprint && bounds ? Math.max(d.footprint.width / 2, d.footprint.depth / 2, bounds.x * .45, bounds.z * .45) + .35 : .9 * visualScale;
     const hp = new Sprite(
       this.healthPips.material(
         e.hp ?? 1,
@@ -453,7 +419,6 @@ export class SettlementLayer {
       body: model,
       carry: o.children.find((c) => c.name === "CarryBody"),
       cargo,
-      selection,
       hp,
     });
     this.entities.set(e.id, o);
@@ -493,6 +458,7 @@ export class SettlementLayer {
     const animationTiming=perf.start();
     const byId = this.observedById;
     const seen = new Set<number>();
+    const circles: SelectionCircle[] = [], rallies: RallyMarker[] = [];
     for (const e of this.modelEntities) {
       const d = this.registry.get(e.definition);
       seen.add(e.id);
@@ -620,17 +586,20 @@ export class SettlementLayer {
         ? Math.max(0.1, e.construction.progress / d.creation!.workTicks)
         : 1;
       body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
-      const selection = parts.selection;
       const attackTarget =
         commandedTargets.has(e.id) && !e.remembered && !e.unit?.contained;
-      selection.visible = this.selected.has(e.id) || attackTarget;
-      (selection.children[0] as Line2).material = attackTarget
-        ? this.attackTargetMaterial
-        : this.selectionMaterial;
-      if (selection.children[1])
-        selection.children[1].visible =
-          this.selected.has(e.id) && !attackTarget;
-      if (e.unit) selection.rotation.y = -o.rotation.y;
+      const chosen = this.selected.has(e.id);
+      if ((chosen || attackTarget || this.hovered === e.id) && o.visible)
+        circles.push({id:e.id,x:o.position.x,z:o.position.z,surface:e.surface,radius:o.userData.circleRadius*(e.appearance?.scale ?? 1),
+          relation:attackTarget?"target":this.relation(e.owner),hover:!chosen&&!attackTarget});
+      // Rally is private intent: only the viewer's own, currently seen, selected producers show it.
+      const rally = e.production?.rally;
+      if (chosen && rally && !e.remembered && !e.construction && ownerSlot(e.owner) === this.viewerSlot) {
+        const offset = d.entrance ?? {x:0,y:0}, r = ((Math.round(e.rotation / 90) % 4) + 4) % 4;
+        rallies.push({id:e.id,slot:this.viewerSlot,
+          from:{x:e.x+[offset.x,offset.y,-offset.x,-offset.y][r]!,z:e.y+[offset.y,-offset.x,-offset.y,offset.x][r]!,surface:e.surface},
+          to:{x:rally.x,z:rally.y,surface:rally.surface}});
+      }
       this.statusBadges.update(o, e, tick, o.userData.pickHeight);
       const hp = parts.hp;
       if (
@@ -684,6 +653,8 @@ export class SettlementLayer {
               : 0;
         });
     }
+    this.circles.update(circles, field);
+    this.rallies.update(rallies, field, now / 1000);
     this.impacts.update(renderTick,seen);
     this.meleeTrails.update(renderTick,seen);
     perf.end('Units · pose and overlays',animationTiming);
@@ -817,17 +788,12 @@ export class SettlementLayer {
     // Detach the character before disposing accessories; its factory owns rig/material cleanup.
     this.characters.get(id)?.dispose();
     this.characters.delete(id);
-    o.getObjectByName("Selection")?.removeFromParent();
     this.disposeInstance(o);
     o.removeFromParent();
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
-      if (
-        child instanceof Mesh &&
-        child.geometry !== this.selectionFillGeometry &&
-        child.geometry !== this.selectionGeometry
-      )
+      if (child instanceof Mesh)
         for (const m of Array.isArray(child.material)
           ? child.material
           : [child.material])
@@ -861,11 +827,8 @@ export class SettlementLayer {
     for (const p of new Set(this.prototypes.values())) this.disposePrototype(p);
     this.prototypes.clear();this.characterSources.clear();this.bindingLoads.clear();this.modelLoads.clear();
     this.characterBatchDisposers.forEach((dispose) => dispose());
-    this.selectionGeometry.dispose();
-    this.selectionMaterial.dispose();
-    this.attackTargetMaterial.dispose();
-    this.selectionFillGeometry.dispose();
-    this.selectionFillMaterial.dispose();
+    this.circles.dispose();
+    this.rallies.dispose();
     this.statusBadges.dispose();
     this.healthPips.dispose();
     this.healthKeys.dispose();

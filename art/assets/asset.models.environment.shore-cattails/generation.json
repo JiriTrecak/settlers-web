@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "shore-cattails",
+ "recipe": "art/recipes/river_shore.py",
+ "triangles": 208,
+ "size": [
+  1.075,
+  0.972,
+  1.564
+ ]
+}

@@ -1390,7 +1390,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 13,
       "behaviorSets": [
         "behavior-set.worker"
       ],
@@ -1430,7 +1430,7 @@
         "armor": 2,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 22,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -1475,7 +1475,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 22,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -1716,7 +1716,7 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 9,
         "depth": 7
@@ -1777,7 +1777,7 @@
         "armor": 3,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 7,
         "depth": 7
@@ -1829,7 +1829,7 @@
         "armor": 3,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 7,
         "depth": 7
@@ -1872,7 +1872,7 @@
         "armor": 2,
         "armorType": "structure"
       },
-      "vision": 22,
+      "vision": 25,
       "footprint": {
         "width": 7,
         "depth": 7
@@ -1988,7 +1988,7 @@
         "armor": 2,
         "armorType": "hero"
       },
-      "vision": 14,
+      "vision": 28,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -2354,7 +2354,7 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 7,
         "depth": 7
@@ -3064,7 +3064,7 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 9,
         "depth": 9
@@ -3165,7 +3165,7 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 11,
         "depth": 9
@@ -3221,7 +3221,7 @@
         "armor": 2,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 22,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -3281,7 +3281,7 @@
         "armor": 1,
         "armorType": "light"
       },
-      "vision": 12,
+      "vision": 22,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -3346,7 +3346,7 @@
         "armor": 5,
         "armorType": "structure"
       },
-      "vision": 12,
+      "vision": 14,
       "footprint": {
         "width": 11,
         "depth": 9
@@ -3410,7 +3410,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 13,
       "behaviorSets": [],
       "behaviors": {
         "movement": {
@@ -3435,7 +3435,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 13,
       "behaviorSets": [],
       "behaviors": {
         "movement": {
@@ -3658,7 +3658,7 @@
         "armor": 2,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 22,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],

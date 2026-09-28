@@ -124,8 +124,11 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
  for(const {layer,recipe,bounds} of prepared){
   if(recipe.type!=='river'||!recipe.details)continue;
   const course=rivers.find(r=>r.owner===layer.id)!;
-  for(const [mode,settings] of Object.entries(recipe.details)){
+  const {shore,...fixed}=recipe.details;
+  const passes=[...Object.entries(fixed),...(shore??[]).map(s=>['shore-'+s.id,s] as const)];
+  for(const [mode,settings] of passes){
    if(!settings)continue;
+   const band='bank'in settings?settings.bank:undefined;
    const density=settings.density??1;if(density===0)continue;
    const spacing=settings.spacing/Math.sqrt(density),separation=new Footprints();
    const loX=Math.max(Math.floor(bounds.minX/spacing),Math.floor(terrain.originX/spacing)),hiX=Math.min(Math.ceil(bounds.maxX/spacing),Math.floor((terrain.originX+(terrain.width-1)*terrain.step)/spacing));
@@ -138,7 +141,8 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
     const patch=settings.patchiness?1-settings.patchiness.strength+settings.patchiness.strength*patchNoise(layer.seed,layer.id,x,z,settings.patchiness.scale):1;
     if(random(2)>=settings.probability*patch)continue;
     const p=riverPoint(x,z,course),bank=p.offset-recipe.width*p.widthScale/2;
-    if(mode==='water'){
+    if(band){if(bank<band.min||bank>band.max)continue;}
+    else if(mode==='water'){
      const depth=p.elevation-sample(terrain,x,z);
      if(bank>-.5||bank< -Math.min(3,recipe.width*.4)||depth<.15||depth>2.5)continue;
     }else if(bank<settings.waterClearance||bank>recipe.bankWidth||sample(terrain,x,z)<=p.elevation+.03)continue;

@@ -42,7 +42,7 @@ it('preserves midflight snapshots and deterministic damage after restore',()=>{
  run(g,60);run(restored,60);expect(restored.snapshot()).toEqual(g.snapshot());
 });
 it('does not reveal unseen shell trajectories to another player',()=>{
- const {g,a,b}=scene();a.x=100;a.y=100;b.x=120;b.y=100;g.state.shells=[];g.observation.update();g.combat.shells.launch(a,b);
+ const {g,a,b}=scene();a.x=100;a.y=100;b.x=100+g.registry.get(b.definition).vision!+8;b.y=100;g.state.shells=[];g.observation.update();g.combat.shells.launch(a,b);
  expect(g.view('player.2').shells).toEqual([]);expect(g.view().shells).toHaveLength(1);
 });
 it('normal combat launches a shell instead of applying immediate or duplicate damage',()=>{

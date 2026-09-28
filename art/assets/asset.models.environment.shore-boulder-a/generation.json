@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "shore-boulder-a",
+ "recipe": "art/recipes/river_shore.py",
+ "triangles": 320,
+ "size": [
+  2.077,
+  1.859,
+  1.12
+ ]
+}

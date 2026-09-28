@@ -4578,6 +4578,222 @@
       ]
     },
     {
+      "id": "asset.models.environment.shore-boulder-a",
+      "name": "shore boulder a",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-boulder-a/geometry.glb",
+          "sha256": "42cf36a587c9ccaa04ed8c7e5623221a61959805ae82b9e318c9cb6d95d002ab",
+          "bytes": 8532
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-boulder-a",
+          "file": "assets/library/asset.models.environment.shore-boulder-a/geometry.glb",
+          "sceneryAsset": "shore-boulder-a"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-boulder-a",
+          "name": "shore boulder a",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-boulder-a/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shore-boulder-b",
+      "name": "shore boulder b",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-boulder-b/geometry.glb",
+          "sha256": "1eb61ae11d642fac9bc344356c037749cb33e28c8953a753b140fcccb8c60e87",
+          "bytes": 12320
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-boulder-b",
+          "file": "assets/library/asset.models.environment.shore-boulder-b/geometry.glb",
+          "sceneryAsset": "shore-boulder-b"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-boulder-b",
+          "name": "shore boulder b",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-boulder-b/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shore-boulder-c",
+      "name": "shore boulder c",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-boulder-c/geometry.glb",
+          "sha256": "14a273b2206c800543c548f8da170af8677e08b50a4b32da667de84af05900b7",
+          "bytes": 10708
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-boulder-c",
+          "file": "assets/library/asset.models.environment.shore-boulder-c/geometry.glb",
+          "sceneryAsset": "shore-boulder-c"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-boulder-c",
+          "name": "shore boulder c",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-boulder-c/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shore-cattails",
+      "name": "shore cattails",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-cattails/geometry.glb",
+          "sha256": "cc71041f40b662802801741b12ca6939d68404629dec990cbbb07261f7c0f76e",
+          "bytes": 10644
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-cattails",
+          "file": "assets/library/asset.models.environment.shore-cattails/geometry.glb",
+          "sceneryAsset": "shore-cattails"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-cattails",
+          "name": "shore cattails",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-cattails/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shore-lily-pink",
+      "name": "shore lily pink",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-lily-pink/geometry.glb",
+          "sha256": "62299e28c4810398330888604a451ad11baab9c707bc73b00d9f3ee00ca28514",
+          "bytes": 10784
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-lily-pink",
+          "file": "assets/library/asset.models.environment.shore-lily-pink/geometry.glb",
+          "sceneryAsset": "shore-lily-pink"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-lily-pink",
+          "name": "shore lily pink",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-lily-pink/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.shore-lily-white",
+      "name": "shore lily white",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "river"
+      ],
+      "revision": 5,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.shore-lily-white/geometry.glb",
+          "sha256": "76b1d0da1d1aac026f123481b7c0e9577188abc6f3d616802f390cf33b1fe76a",
+          "bytes": 9080
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.shore-lily-white",
+          "file": "assets/library/asset.models.environment.shore-lily-white/geometry.glb",
+          "sceneryAsset": "shore-lily-white"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "shore-lily-white",
+          "name": "shore lily white",
+          "category": "landmark",
+          "type": "prop",
+          "file": "library/asset.models.environment.shore-lily-white/geometry.glb"
+        }
+      ]
+    },
+    {
       "id": "asset.models.environment.woodland-abandoned-camp",
       "name": "woodland abandoned camp",
       "kind": "model",
@@ -8639,14 +8855,14 @@
         "authoring",
         "original"
       ],
-      "revision": 4,
+      "revision": 12,
       "profile": "landscape-recipe",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/recipe.river.gentle/definition.json",
-          "sha256": "e82319c402900d463ef0c018ed62d66e8c8e850024f44e3db46e5caab9c0aca6",
-          "bytes": 2190
+          "sha256": "47e62e1f5921f5e490113b1506e0c25e27e675111cb119fc2eac52fbca5a59c5",
+          "bytes": 7380
         }
       ],
       "render": [],
@@ -8830,14 +9046,14 @@
         "authoring",
         "source-informed"
       ],
-      "revision": 1,
+      "revision": 9,
       "profile": "water-profile",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/water.clear-forest/definition.json",
-          "sha256": "55602b2775fdab317d3ba6347678ec9fd439a2dac179eeb2b0d929bd2a3be2fd",
-          "bytes": 942
+          "sha256": "5c71c189ee9609e36caa4c1477d235cc3cd045c94758c4d040bc36079bd0c4b6",
+          "bytes": 944
         }
       ],
       "render": [],

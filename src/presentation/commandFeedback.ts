@@ -11,6 +11,7 @@ export const commandFeedbackStyles = {
 
 /** Use the click destination or an observed target, never hidden simulation coordinates. */
 export function commandFeedback(action: Action, view: SettlementView, registry: ContentRegistry): CommandFeedback | null {
+  if(action.type==="rally")return action.destination?{kind:"move",point:action.destination,radius:.85}:null;
   if(action.type==="patrol")return {kind:"move",point:action.destination,radius:.85};
   if (action.type === "move") return {kind: action.attackMove ? "attack" : "move", point: action.destination, radius: .85};
   if (action.type !== "attack" && action.type !== "gather" && action.type !== "pickup" && action.type !== "follow" && action.type !== "garrison") return null;

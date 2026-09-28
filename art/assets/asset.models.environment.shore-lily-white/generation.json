@@ -1,0 +1,11 @@
+{
+ "method": "procedural Blender recipe",
+ "slug": "shore-lily-white",
+ "recipe": "art/recipes/river_shore.py",
+ "triangles": 133,
+ "size": [
+  1.839,
+  1.7,
+  0.125
+ ]
+}

@@ -23,9 +23,11 @@ export function authoredTerrain(field:HeightField,strokes:readonly TerrainStroke
   for(const s of curves){const d=s.curve.distance(wx,wz);if(d>=1)continue;const w=s.opacity*Math.min(1,(1-d)/.45);grass=grass*(1-w)+(s.layer==='grass'?w:0);road=road*(1-w)+(['road','mud'].includes(s.layer)?w:0);rock=rock*(1-w)+(s.layer==='rock'?w:0);}
   for(const p of paints){const w=p.weights[i]??0;if(w<=0)continue;grass=grass*(1-w)+(p.channel===1?w:0);road=road*(1-w)+(p.channel===2?w:0);stones=stones*(1-w)+(p.channel===4?w:0);rock=rock*(1-w)+(p.channel===5?w:0);bed=bed*(1-w)+(p.channel===3?w:0);}
   const slope=Math.hypot(field.sample(wx+.5,wz)-field.sample(wx-.5,wz),field.sample(wx,wz+.5)-field.sample(wx,wz-.5));
-  masks[0]![i]=Math.round(255*grass*Math.max(0,Math.min(1,(h-water)/.5)));
+  // Grass runs to within ~20 cm of the waterline, leaving a thin wet-sand strip (bed tile
+  // ~10 cm above water) instead of a wide bare apron across the flattened bank.
+  masks[0]![i]=Math.round(255*grass*Math.max(0,Math.min(1,(h-water)/.2)));
   masks[1]![i]=Math.round(255*road);
-  masks[2]![i]=Math.round(255*Math.min(1,Math.max(0,(depth+.25)*2,bed)));
+  masks[2]![i]=Math.round(255*Math.min(1,Math.max(0,(depth+.1)*5,bed)));
   masks[3]![i]=Math.round(255*stones);
   masks[4]![i]=Math.round(255*Math.max(rock,Math.min(1,Math.max(0,slope-.7))));
  }

@@ -207,7 +207,21 @@ export class Renderer {
   gameSelect(id: number | null | readonly number[]) {
     this.settlement?.select(id);
   }
-  gameReady() {
+  gameHover(id: number | null) {
+    this.settlement?.hover(id);
+  }
+  /** Hover-grade pick: screen-space units, then entity bounds. Skips the terrain and
+   * instanced-scenery raycasts `pickGameEntity` needs, so it can run every few frames. */
+  pickGameHover(clientX: number, clientY: number): number | null {
+    const unit = this.settlement?.pickUnit(this.threeCam(), this.display.canvas.getBoundingClientRect(), clientX, clientY);
+    if (unit != null) return unit;
+    return this.aim(clientX, clientY) ? this.settlement?.pick(this.ray, Infinity) ?? null : null;
+  }
+  /** Relation decides selection-circle tint; the slot gates which rally flags are drawn. */
+  gameViewer(slot: number, relation: Parameters<SettlementLayer["viewer"]>[1]) {
+    this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
+    this.settlement.viewer(slot, relation);
+  }  gameReady() {
     return this.settlement?.ready ?? Promise.resolve();
   }
   private readonly refreshEnvironment = () =>

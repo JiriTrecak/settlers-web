@@ -483,7 +483,8 @@ export class Game {
         !production.outputs.some((id) => this.registry.get(id).kind === "unit")
       )
         return reject("No unit production");
-      actor.production.rally = { ...action.destination };
+      // Null clears the flag; spawns then idle at the entrance.
+      actor.production.rally = action.destination ? { ...action.destination } : null;
     }
     return { accepted: true, actors: [actor.id] };
   }

@@ -62,7 +62,7 @@ export const actionSchema = z.discriminatedUnion("type", [
     .object({ type: z.literal("cancel"), actor, queue: actor.optional() })
     .strict(),
   z
-    .object({ type: z.literal("rally"), actor, destination: pointSchema })
+    .object({ type: z.literal("rally"), actor, destination: pointSchema.nullable() })
     .strict(),
   z.object({ type: z.literal("pause"), actor, paused: z.boolean() }).strict(),
   z.object({ type: z.literal("noop") }).strict(),
