@@ -12,7 +12,7 @@ export class WeatherLayer {
  private readonly snow=new PlaneGeometry(.14,.14);
  private readonly spore=new PlaneGeometry(.18,.18);
  private readonly softParticle={value:0};
- private readonly material=new MeshBasicMaterial({color:0xc5d9e2,transparent:true,opacity:.24,depthWrite:false,side:DoubleSide});
+ private readonly material=new MeshBasicMaterial({color:0xc5d9e2,transparent:true,opacity:.24,depthWrite:false,side:DoubleSide,forceSinglePass:true});
  private readonly matrix=new Matrix4();
  private readonly position=new Vector3();
  private readonly direction=new Vector3();

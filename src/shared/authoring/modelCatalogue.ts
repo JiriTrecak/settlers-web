@@ -2,7 +2,8 @@ import {resourceFilename,type AssetDefinition} from './asset';
 
 /** Shared authored transform. Placement scale/rotation are applied outside this transform. */
 export type ModelTransform=AssetDefinition['transform'];
-export type ModelPlacement={transform:ModelTransform;groundContact?:NonNullable<AssetDefinition['capabilities']['groundContact']>['mode']};
+/** `canopy` marks giant overhanging foliage; only those crowns dissolve around units behind them. */
+export type ModelPlacement={transform:ModelTransform;groundContact?:NonNullable<AssetDefinition['capabilities']['groundContact']>['mode'];canopy?:true};
 export type PublishedModel=ModelPlacement&{id:string;geometry:string[];scenery:string[];capabilities?:AssetDefinition['capabilities']};
 
 export function modelCatalogue(assets:readonly AssetDefinition[]):PublishedModel[]{
@@ -10,6 +11,7 @@ export function modelCatalogue(assets:readonly AssetDefinition[]):PublishedModel
   id:a.id,transform:a.transform,
   ...(Object.keys(a.capabilities).length?{capabilities:a.capabilities}:{}),
   ...(a.capabilities.groundContact?{groundContact:a.capabilities.groundContact.mode}:{}),
+  ...(a.capabilities.canopy?{canopy:true as const}:{}),
   geometry:a.resources.filter(r=>r.role==='geometry').map(r=>`assets/library/${a.id}/${resourceFilename(r)}`),
   scenery:a.bindings.scenery.map(s=>s.id),
  }));

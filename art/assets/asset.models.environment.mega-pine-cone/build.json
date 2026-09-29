@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "category": "scenery",
+  "slug": "mega-pine-cone",
+  "files": {
+    "source.glb": {
+      "asset": "asset.models.environment.mega-pine-cone",
+      "role": "source",
+      "index": 2
+    },
+    "config.json": {
+      "asset": "asset.models.environment.mega-pine-cone",
+      "role": "source",
+      "index": 3
+    },
+    "provenance.json": {
+      "asset": "asset.models.environment.mega-pine-cone",
+      "role": "source",
+      "index": 4
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.mega-pine-cone",
+      "role": "reference",
+      "index": 1
+    }
+  }
+}

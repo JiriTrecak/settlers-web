@@ -25,7 +25,7 @@ export class CommandFeedbackEffects {
     }
     positions.needsUpdate = true;
     geometry.computeBoundingSphere();
-    const mesh = new Mesh(geometry, new MeshBasicMaterial({color: style.color, side: DoubleSide, transparent: true, opacity: .95, depthTest: false, depthWrite: false}));
+    const mesh = new Mesh(geometry, new MeshBasicMaterial({color: style.color, side: DoubleSide, forceSinglePass: true, transparent: true, opacity: .95, depthTest: false, depthWrite: false}));
     mesh.name = `command-feedback-${feedback.kind}`;
     mesh.renderOrder = 22;
     this.parent.add(mesh);

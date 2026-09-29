@@ -11,6 +11,7 @@ import {
 import type { FogView } from "../../sim/game/observation";
 import {FogRaster} from './fogRaster';
 import {FogAtlas} from './fogAtlas';
+type DrawItem = {object: Object3D; material: Material};
 
 /** A flat overview texture plus one compact atlas for actual stacked floors. */
 export class FogOfWar {
@@ -52,15 +53,29 @@ export class FogOfWar {
       this.atlas.update(fog.floors.cells,fog.revision);this.uniform.value=this.atlas.texture;
       this.grid.value.set(this.atlas.columns,this.atlas.rows);this.layerCount.value=this.atlas.count;this.heightRange.value.copy(this.atlas.heightRange);this.bounds.value.copy(this.atlas.bounds);
     }else{this.uniform.value=this.texture;this.grid.value.set(1,1);this.layerCount.value=1;}
-    this.prepare(scene);
+    if(!this.primed){this.primed=true;this.prepare(scene);}
   }
-  prepare(scene: Object3D) {
-    scene.traverse((o) => {
-      if (o instanceof Mesh)
-        for (const m of Array.isArray(o.material) ? o.material : [o.material])
-          this.patch(m);
-    });
+  private primed=false;
+  /** Per-frame patching of exactly what is about to draw. The renderer calls this between
+   * projection and the first draw call, so new or swapped materials get fog before their
+   * program compiles, without walking the ~10k-node scene (bones included) every frame. */
+  prepareDraws(list: {opaque: readonly DrawItem[]; transmissive: readonly DrawItem[]; transparent: readonly DrawItem[]}) {
+    for (const items of [list.opaque, list.transmissive, list.transparent])
+      for (const item of items) if (item.object instanceof Mesh && !this.patched.has(item.material)) this.patch(item.material);
   }
+  /** Patch every mesh material in the tree (warm-up compiles, separately rendered scenes).
+   * Subtrees that publish `userData.materialRevision` are skipped until it changes. */
+  prepare(root: Object3D) {
+    const revision = root.userData.materialRevision as number | undefined;
+    if (revision !== undefined) {
+      if (this.revisions.get(root) === revision) return;
+      this.revisions.set(root, revision);
+    }
+    if (root instanceof Mesh)
+      for (const m of Array.isArray(root.material) ? root.material : [root.material]) this.patch(m);
+    for (const child of root.children) this.prepare(child);
+  }
+  private readonly revisions = new WeakMap<Object3D, number>();
   private patch(material: Material) {
     if (this.patched.has(material)) return;
     this.patched.add(material);

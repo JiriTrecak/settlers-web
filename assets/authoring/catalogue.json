@@ -300,6 +300,62 @@
     "clearance": 0.15
   },
   {
+    "id": "asset.models.environment.mega-acorn",
+    "name": "Mega acorn",
+    "kind": "prop",
+    "scenery": "mega-acorn",
+    "scale": 1,
+    "clearance": 8
+  },
+  {
+    "id": "asset.models.environment.mega-clover",
+    "name": "Mega clover",
+    "kind": "prop",
+    "scenery": "mega-clover",
+    "scale": 1,
+    "clearance": 8
+  },
+  {
+    "id": "asset.models.environment.mega-fallen-leaf",
+    "name": "Mega fallen leaf",
+    "kind": "prop",
+    "scenery": "mega-fallen-leaf",
+    "scale": 1,
+    "clearance": 9
+  },
+  {
+    "id": "asset.models.environment.mega-fallen-log",
+    "name": "Mega fallen log",
+    "kind": "prop",
+    "scenery": "mega-fallen-log",
+    "scale": 1,
+    "clearance": 20
+  },
+  {
+    "id": "asset.models.environment.mega-mushroom",
+    "name": "Mega mushroom",
+    "kind": "prop",
+    "scenery": "mega-mushroom",
+    "scale": 1,
+    "clearance": 13
+  },
+  {
+    "id": "asset.models.environment.mega-oak-trunk",
+    "name": "Mega oak trunk",
+    "kind": "prop",
+    "scenery": "mega-oak-trunk",
+    "scale": 1,
+    "clearance": 19
+  },
+  {
+    "id": "asset.models.environment.mega-pine-cone",
+    "name": "Mega pine cone",
+    "kind": "prop",
+    "scenery": "mega-pine-cone",
+    "scale": 1,
+    "clearance": 9
+  },
+  {
     "id": "asset.models.environment.pl-clover-a",
     "name": "clover a",
     "kind": "foliage",

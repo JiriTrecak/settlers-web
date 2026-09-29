@@ -7909,7 +7909,7 @@
       "id": "asset.models.environment.canopy-ancient-tree",
       "name": "canopy ancient tree",
       "kind": "prop",
-      "revision": 2,
+      "revision": 3,
       "status": "published",
       "tags": [
         "original",
@@ -7983,6 +7983,7 @@
       },
       "capabilities": {
         "vegetationClearance": 5,
+        "canopy": true,
         "groundContact": {
           "mode": "pivot"
         }
@@ -9924,6 +9925,1203 @@
       },
       "provenance": {
         "method": "authored",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-acorn",
+      "name": "Mega acorn",
+      "kind": "prop",
+      "revision": 24,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "220e28e3ffd9af81e97587ada3735c9a15fe35f209cc850a9d57b15299b274d7",
+          "bytes": 585
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "1bc3c1ed20ebf337661fce7d07afe1901eab9546c8dafcf4b062482579f65294",
+          "bytes": 13285
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6f0f37664fd76d2b67981f0c37866cb9af86200eca00188767f6f2aa324b5b8c",
+          "bytes": 1812636
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "e8f3d3636bf1b6c3169e0bffafb5ae3dd05c4ffaf07966c4e35e7df15f1941be",
+          "bytes": 410202
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "bf17cf74992b2f0b049e8bf01fc4087e7bb77047fbad0932df20c8227db4fedd",
+          "bytes": 700771
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "231141ac8328c3c2ab18e4ffaeb20464d9e9b91e69ae2e79427dda7184d83077",
+          "bytes": 2441972
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "11050247eb5e23e97dcb418e4878dd799022ebc187ecb9e675f0b5f821776d0d",
+          "bytes": 9851932
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "0897647bb4feed628f7803e7a1ce553b10360492b5a7055a83ffa35513043be3",
+          "bytes": 357
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "77af06996080ff8e2cc3f025b60d2d30621f678caba125deb8f81aef79140f4a",
+          "bytes": 599
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-acorn",
+            "sceneryAsset": "mega-acorn",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-acorn"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-acorn",
+            "name": "Mega acorn",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 11.05,
+                "depth": 11.45,
+                "shape": "ellipse",
+                "x": 0,
+                "z": 0
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 8,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-clover",
+      "name": "Mega clover",
+      "kind": "prop",
+      "revision": 22,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "5f7d8940a7f52640de1c5169849c7220d744f62e5a3ddbcfe4902609730b59fb",
+          "bytes": 590
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "f31ecc54db12a05e6ac6bd1d63efafd4000f057790750814bd73ed8b5be81bf1",
+          "bytes": 13372
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "e6a07c6599d6694790117c0e414d7a205ee9a8d5d349f9e7f02044db380e5434",
+          "bytes": 1496416
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "abc03521f789e3311b743074753899dd40ae9a833085185bf42515b14624317a",
+          "bytes": 392696
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "35e4efeb3bfc1bbf3fcd0bd77c0ad8e26fc57d95c91b5fdd6c4e9f8292a9e180",
+          "bytes": 889319
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "49f32e82433b79a9e85f1b5519440d96773bad6d11be4cf395ef8f9a6b25cc55",
+          "bytes": 2214850
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "73cc4fffb739c97a89ec1b453ac7d106dec7ea58996d3f9bcad672d7c7392003",
+          "bytes": 7502560
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "821cd4d1b75e93d5ecff3ead5bb8cc5ecc8b633cf4a48dea8c05f488d65b8410",
+          "bytes": 420
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "ffd3d969d179b8ea272d3e2a1789e677a2c096d87da332b68ce2fcb94721d541",
+          "bytes": 600
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-clover",
+            "sceneryAsset": "mega-clover",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-clover"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-clover",
+            "name": "Mega clover",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 2.06,
+                "depth": 2.06,
+                "shape": "ellipse",
+                "x": 0.07,
+                "z": 0.15
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 8,
+        "canopy": true,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-fallen-leaf",
+      "name": "Mega fallen leaf",
+      "kind": "prop",
+      "revision": 23,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "1a793247bcf38cafe9417bcbf998a8894b5c1c3fd897e2c2c28161a6561b921f",
+          "bytes": 615
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "342955c0e649ea9cb6eb2ab6b85b085e345cfe9644fa98bbeaf5d64ea4264d02",
+          "bytes": 13437
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "d268114a972cca08910ae98490dc7c32e0dd4137eec23e3528426d8568d59c3e",
+          "bytes": 2085292
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "c113b27c718be1e4f2d0d3a51650a5d8b5c7acf73d0e1bdc595c4d16d9a50a42",
+          "bytes": 343094
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "cbc0b52f2889b0dbfac8753adbaed6f5c9e07fcb41ff67dc81c9c7462a5f3924",
+          "bytes": 773412
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5da5187bcb954fb995afddf934fcaa2e794efda8773a7df11995ecec93e47b6b",
+          "bytes": 2763942
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "666dc553fc182107b58dd81c565cb04652099bde2df52081666d733b91dec15d",
+          "bytes": 13470084
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "f8cae036a2a02065d92b2b1af3cdbd274a83201d3d0757d7fe3e81330b791e47",
+          "bytes": 455
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "7254b8b40e1b1b9b7ac8284f66c5f09b7452c4f5ce5585682d3d77a04b2d9704",
+          "bytes": 605
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-fallen-leaf",
+            "sceneryAsset": "mega-fallen-leaf",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-fallen-leaf"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-fallen-leaf",
+            "name": "Mega fallen leaf",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 9.6,
+                "depth": 9.81,
+                "shape": "ellipse",
+                "x": 0,
+                "z": 0
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 9,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-fallen-log",
+      "name": "Mega fallen log",
+      "kind": "prop",
+      "revision": 22,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "cc3af8055c3ff7843940e40176285ad93d59159b8c6607c4c3b61ae80d0af5d2",
+          "bytes": 610
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b359aff6b1a267faf25bba194ed86be34c72e83b4f18a35abeb77038fec9fbae",
+          "bytes": 13421
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "67c22102d92009acfd5a090a00d52a5e85d95b1cc55c1a28268ea6437c4ba35a",
+          "bytes": 6693984
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "5ef0240c1b5def42c59f80833a1be1a3265df3cd09319324fe69146be5d9b05f",
+          "bytes": 356609
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "9e9caa284ba67734ef00aab10d89a81d0325657729215f37117923e8550b2a73",
+          "bytes": 769216
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "49a2a1835b978049b252b1062a5b6ff79456c942ab1a85f50a14b4e9b7527e8e",
+          "bytes": 6355393
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "93094be09279f98e4423cc916084e5b2d9427e46f0160bb376412f55960f11a4",
+          "bytes": 15277216
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "86008a86a153041b910f65ab8f2fd67a79ba4da0224afba9f9a4ae8fc700a487",
+          "bytes": 453
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "178c8f8a8657cd96ea3d17423ef9da2e3297add70b629a8021493ad36edc2d3c",
+          "bytes": 604
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-fallen-log",
+            "sceneryAsset": "mega-fallen-log",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-fallen-log"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-fallen-log",
+            "name": "Mega fallen log",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 5.5,
+                "depth": 11.3,
+                "x": -19.25,
+                "z": -0.56
+              },
+              {
+                "width": 5.5,
+                "depth": 13.89,
+                "x": -13.75,
+                "z": -0.4
+              },
+              {
+                "width": 5.5,
+                "depth": 13.39,
+                "x": -8.25,
+                "z": -0.46
+              },
+              {
+                "width": 5.5,
+                "depth": 12.63,
+                "x": -2.75,
+                "z": -0.04
+              },
+              {
+                "width": 5.5,
+                "depth": 9.7,
+                "x": 2.75,
+                "z": 0.12
+              },
+              {
+                "width": 5.5,
+                "depth": 10.51,
+                "x": 8.25,
+                "z": 0.41
+              },
+              {
+                "width": 5.5,
+                "depth": 13.62,
+                "x": 13.75,
+                "z": 0.55
+              },
+              {
+                "width": 5.5,
+                "depth": 11.75,
+                "x": 19.25,
+                "z": 0.62
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 20,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-mushroom",
+      "name": "Mega mushroom",
+      "kind": "prop",
+      "revision": 22,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "e87f3c609df0a69b9a0dbd00da52ab817f050c175b4c5fd22b7b4fa9d01d077b",
+          "bytes": 600
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "274fe3a151462231bab6efa8e9ce03f5286e7b2beb4fb50f69e05565b9681d98",
+          "bytes": 13383
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "f44c03937bbf4670c18b50bdf4029f6fd98577981852ba3548c0ceb5945d58b8",
+          "bytes": 4688016
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "9664fa158a6d93c4a97e2d25575899587b81f840fe052819a524ec8e597ffa00",
+          "bytes": 378682
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "bf7f4c636fb7ca9996123c5b0012e6e063032f333f01588c3100e93f4ba4017b",
+          "bytes": 661254
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "800b10fd31213eae509dbddd5ba3f6b4770ff58a9671eb1dd7ae726a3df6bf4e",
+          "bytes": 4019903
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "cf648c3f56654ff3ab5feee1c4e718ac08844b0f865bde6b23be6d1d988bc26f",
+          "bytes": 7969132
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "4354ab306e1b81f97e0bc1938432cc97b1fdddca6c344da16fd138dc88657d3f",
+          "bytes": 425
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "c9841f1c5907a4b66225593be533bedf37b8d353569d1ffa5b30372a650f411d",
+          "bytes": 602
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-mushroom",
+            "sceneryAsset": "mega-mushroom",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-mushroom"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-mushroom",
+            "name": "Mega mushroom",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 4.97,
+                "depth": 4.97,
+                "shape": "ellipse",
+                "x": -0.86,
+                "z": -0.62
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 13,
+        "canopy": true,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-oak-trunk",
+      "name": "Mega oak trunk",
+      "kind": "prop",
+      "revision": 24,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "61edf6f5208af0b312b0c8b1da4f4fa731b325702488064bbd5112e010d48691",
+          "bytes": 605
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "82eaa19d58b4c25c031955bca81d44f71c7edb2e825ce4c3bc281c0867a39d42",
+          "bytes": 13377
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "d4b23f93afb61f2134d8ee6dba3d9badd5ae8b15ed9293025bff1e71257bf3a0",
+          "bytes": 5144112
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "666e75a0543f43608ef74c962a4c7094c7cb5ac7d03c7466136e16c1e15258f1",
+          "bytes": 370741
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "f5b202820a6941a365900cb93785d841c9e8d3f24283e1c9c7fbfa20490cd640",
+          "bytes": 997079
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "78f27b40999e518f0cc9f35204bad2cd594589471a924095f1f73b8cb6320133",
+          "bytes": 5322279
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "bb77d9cf15289f38cdd961f6d17b1e5306af721e21fbfec82df3294d647fd6e7",
+          "bytes": 12167208
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "06e90205feecbe38e49ed6930bcd48b44847a91bfe5ef163be8dd845cc441379",
+          "bytes": 419
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "03dd28642b8c2b6b64b408aefedee1b12624e5ceaa2c7ff2ae4890a5eaa0c568",
+          "bytes": 590
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-oak-trunk",
+            "sceneryAsset": "mega-oak-trunk",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-oak-trunk"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-oak-trunk",
+            "name": "Mega oak trunk",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 20.24,
+                "depth": 20.24,
+                "shape": "ellipse"
+              },
+              {
+                "width": 12.63,
+                "depth": 3.39,
+                "x": 14.29,
+                "z": -1.88,
+                "yaw": 0.1309
+              },
+              {
+                "width": 11.97,
+                "depth": 3.31,
+                "x": 13.01,
+                "z": -5.39,
+                "yaw": 0.3927
+              },
+              {
+                "width": 12.23,
+                "depth": 3.34,
+                "x": 11.27,
+                "z": -8.65,
+                "yaw": 0.6545
+              },
+              {
+                "width": 13.16,
+                "depth": 3.45,
+                "x": 8.94,
+                "z": -11.64,
+                "yaw": 0.9163
+              },
+              {
+                "width": 13.25,
+                "depth": 3.46,
+                "x": 5.63,
+                "z": -13.6,
+                "yaw": 1.1781
+              },
+              {
+                "width": 13.83,
+                "depth": 3.53,
+                "x": 1.96,
+                "z": -14.88,
+                "yaw": 1.4399
+              },
+              {
+                "width": 9.81,
+                "depth": 3.05,
+                "x": -1.7,
+                "z": -12.89,
+                "yaw": 1.7017
+              },
+              {
+                "width": 13.77,
+                "depth": 3.52,
+                "x": -5.73,
+                "z": -13.84,
+                "yaw": 1.9635
+              },
+              {
+                "width": 11.95,
+                "depth": 3.31,
+                "x": -8.57,
+                "z": -11.16,
+                "yaw": 2.2253
+              },
+              {
+                "width": 10.7,
+                "depth": 3.16,
+                "x": -10.67,
+                "z": -8.19,
+                "yaw": 2.4871
+              },
+              {
+                "width": 9.79,
+                "depth": 3.05,
+                "x": -12,
+                "z": -4.97,
+                "yaw": 2.7489
+              },
+              {
+                "width": 10.14,
+                "depth": 3.09,
+                "x": -13.05,
+                "z": -1.72,
+                "yaw": 3.0107
+              },
+              {
+                "width": 10.15,
+                "depth": 3.09,
+                "x": -13.06,
+                "z": 1.72,
+                "yaw": 3.2725
+              },
+              {
+                "width": 3.82,
+                "depth": 2.35,
+                "x": -9.24,
+                "z": 3.83,
+                "yaw": 3.5343
+              },
+              {
+                "width": 8.66,
+                "depth": 2.92,
+                "x": -9.86,
+                "z": 7.56,
+                "yaw": 3.7961
+              },
+              {
+                "width": 7.99,
+                "depth": 2.84,
+                "x": -7.36,
+                "z": 9.59,
+                "yaw": 4.0579
+              },
+              {
+                "width": 7.19,
+                "depth": 2.75,
+                "x": -4.47,
+                "z": 10.8,
+                "yaw": 4.3197
+              },
+              {
+                "width": 9.16,
+                "depth": 2.98,
+                "x": -1.65,
+                "z": 12.57,
+                "yaw": 4.5815
+              },
+              {
+                "width": 7.2,
+                "depth": 2.75,
+                "x": 1.53,
+                "z": 11.6,
+                "yaw": 4.8433
+              },
+              {
+                "width": 8.62,
+                "depth": 2.91,
+                "x": 4.75,
+                "z": 11.46,
+                "yaw": 5.1051
+              },
+              {
+                "width": 10.96,
+                "depth": 3.19,
+                "x": 8.26,
+                "z": 10.77,
+                "yaw": 5.3669
+              },
+              {
+                "width": 8.53,
+                "depth": 2.9,
+                "x": 9.81,
+                "z": 7.52,
+                "yaw": 5.6287
+              },
+              {
+                "width": 10.74,
+                "depth": 3.16,
+                "x": 12.44,
+                "z": 5.15,
+                "yaw": 5.8905
+              },
+              {
+                "width": 10.04,
+                "depth": 3.08,
+                "x": 13,
+                "z": 1.71,
+                "yaw": 6.1523
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 19,
+        "canopy": true,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.environment.mega-pine-cone",
+      "name": "Mega pine cone",
+      "kind": "prop",
+      "revision": 21,
+      "status": "published",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "6e00b575a4519f2a63ddb193355e8b1bd4af83d5c7c63aeac84425a79dd52412",
+          "bytes": 605
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "5d15fbc94a1473fe646911e223c65732cf0ff7adae0a56bacabe04c32fb413b2",
+          "bytes": 13256
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ccb0b034d85f35ecb04c954e54774bdf99fe1bf358105098ad51a493d155e48e",
+          "bytes": 1611064
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "4c3e3f4f2393f889c6e929c6618c62d503b7f69291735364906b00b73e4aab6a",
+          "bytes": 427828
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "c0ff7dc4df2c787ca2108d924bbe2b894371cc19b96715a5459cac3a6f198965",
+          "bytes": 824372
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "533c504b84ad38cc069bbab7c22c76c30cab28160d7f415e246eb01fb43021e1",
+          "bytes": 2115247
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "2ddcfda8bf10e853b8d9ca9566265b6e616c80f391212d1bd97d32d0a75eeb86",
+          "bytes": 7943544
+        },
+        {
+          "role": "source",
+          "index": 3,
+          "format": "json",
+          "sha256": "834606f58a5aa05e8707721a78684b4e09c56b99e00c2cdfa0161d5330becce8",
+          "bytes": 334
+        },
+        {
+          "role": "source",
+          "index": 4,
+          "format": "json",
+          "sha256": "60958d2419e313097226aa4d324b599a817f31a96cbf70e22ad611548cbf949d",
+          "bytes": 603
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.scenery.mega-pine-cone",
+            "sceneryAsset": "mega-pine-cone",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.environment.mega-pine-cone"
+            }
+          }
+        ],
+        "scenery": [
+          {
+            "id": "mega-pine-cone",
+            "name": "Mega pine cone",
+            "category": "landmark",
+            "type": "prop",
+            "geometry": {
+              "role": "geometry",
+              "index": 1
+            },
+            "blockers": [
+              {
+                "width": 11.9,
+                "depth": 11.14,
+                "shape": "ellipse",
+                "x": 0,
+                "z": 0
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": {
+        "vegetationClearance": 9,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
         "licenseNote": "Original artwork created for Under the Canopy.",
         "generation": {
           "role": "generation",
@@ -13146,7 +14344,7 @@
       "id": "asset.models.environment.woodland-canopy-elder",
       "name": "Ancient canopy oak",
       "kind": "prop",
-      "revision": 3,
+      "revision": 4,
       "status": "published",
       "tags": [
         "original",
@@ -13223,6 +14421,7 @@
       },
       "capabilities": {
         "vegetationClearance": 4.6,
+        "canopy": true,
         "groundContact": {
           "mode": "pivot"
         }
@@ -13241,7 +14440,7 @@
       "id": "asset.models.environment.woodland-canopy-spreading",
       "name": "Spreading canopy oak",
       "kind": "prop",
-      "revision": 3,
+      "revision": 4,
       "status": "published",
       "tags": [
         "original",
@@ -13318,6 +14517,7 @@
       },
       "capabilities": {
         "vegetationClearance": 4.6,
+        "canopy": true,
         "groundContact": {
           "mode": "pivot"
         }

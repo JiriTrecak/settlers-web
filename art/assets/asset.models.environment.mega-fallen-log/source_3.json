@@ -1,0 +1,34 @@
+{
+ "name": "Mega fallen log",
+ "material": "Mega fallen log bark",
+ "align": "long",
+ "measure": {
+  "axis": "x",
+  "size": 44
+ },
+ "sink": 1.2,
+ "textureSize": 2048,
+ "normalStrength": 0.6,
+ "tone": [
+  0.62,
+  0.6,
+  0.58
+ ],
+ "groundColor": false,
+ "vegetationClearance": 20,
+ "blockers": {
+  "mode": "strip",
+  "height": 6,
+  "slices": 8,
+  "core": 0.9
+ },
+ "dew": {
+  "count": 12,
+  "radius": [
+   0.25,
+   0.55
+  ],
+  "up": 0.85,
+  "seed": 9
+ }
+}

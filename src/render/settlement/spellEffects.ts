@@ -49,7 +49,7 @@ export class SpellEffects {
     entry={root:new Group(),parts:[],signature:visual};this.root.add(entry.root);this.active.set(cue.id,entry);
     for(const layer of visual.layers){
      if(!layer.enabled||layer.phase!==cue.phase)continue;
-     const material=new MeshBasicMaterial({color:layer.color,map:this.texture(layer.texture),transparent:true,depthWrite:false,side:layer.kind==='sphere'?FrontSide:DoubleSide,blending:layer.blending==='additive'?AdditiveBlending:NormalBlending});
+     const material=new MeshBasicMaterial({color:layer.color,map:this.texture(layer.texture),transparent:true,depthWrite:false,side:layer.kind==='sphere'?FrontSide:DoubleSide,forceSinglePass:true,blending:layer.blending==='additive'?AdditiveBlending:NormalBlending});
      const geometry=layer.kind==='ring'?this.ring:layer.kind==='sphere'?this.shell:layer.kind==='particles'&&layer.texture==='none'?this.spark:this.plane;
      const mesh=layer.kind==='particles'?new InstancedMesh(geometry,material,layer.count):new Mesh(geometry,material);
      mesh.name=`effect.${layer.id}`;mesh.renderOrder=3+entry.parts.length*.001;mesh.frustumCulled=false;

@@ -17,6 +17,10 @@ export const GAME_PITCH = (45 * Math.PI) / 180;
 /** Mild RTS perspective keeps foreground trees readable without wide-angle stretching. */
 export const GAME_FOV = 32;
 export const GAME_ASPECT = 16 / 9;
+/** Play eye ↔ target distance: default and the wheel limits. `gameZoom` is relative to the default. */
+export const GAME_DISTANCE = 52;
+export const GAME_DISTANCE_MIN = 14;
+export const GAME_DISTANCE_MAX = 78;
 /** Extra view-axis distance so the near-side ground stays in front of the ortho near plane. */
 const SLACK = 32;
 const PITCH_MIN = 0.12;
@@ -59,7 +63,7 @@ export class Camera {
   pitch = ISO_PITCH;
   zoom = 40;
   /** Eye ↔ target when `game`. Ortho ignores this. */
-  distance = 40;
+  distance = GAME_DISTANCE;
   minZoom = 6;
   maxZoom = 60;
   /** Play leaves this on — orbit is a no-op. Editor clears it. */
@@ -73,7 +77,6 @@ export class Camera {
   readonly minHeightAboveWater = 12;
   private waterLevel = 0;
   private terrain: ((x: number, z: number) => number) | null = null;
-  private readonly gameDistance = 40;
   private bound = 0;
 
   setTerrain(sample: ((x: number, z: number) => number) | null, waterLevel = 0): void {
@@ -88,7 +91,7 @@ export class Camera {
   private readonly rayA = new Vector3();
   private readonly rayB = new Vector3();
 
-  /** Play pose: fixed perspective, default distance 40, pan to half a block past the red. */
+  /** Play pose: fixed perspective at the default distance, pan to half a block past the red. */
   setGame(on: boolean, size = MAP_SIZE): void {
     this.topDown=false;
     this.focusHeight=0;
@@ -100,7 +103,7 @@ export class Camera {
     if (on) {
       this.yaw = GAME_YAW;
       this.pitch = GAME_PITCH;
-      this.distance = this.gameDistance;
+      this.distance = GAME_DISTANCE;
       this.clamp();
     }
     this.touch();
@@ -113,7 +116,7 @@ export class Camera {
     this.touch();
   }
 
-  get gameZoom(): number { return this.distance / this.gameDistance; }
+  get gameZoom(): number { return this.distance / GAME_DISTANCE; }
 
   /** One-shot look / zoom / orbit. `setGame` first if you also flip perspective. */
   pose(next: { x?: number; z?: number; height?:number; zoom?: number; gameZoom?: number; yaw?: number; pitch?: number }): void {
@@ -121,7 +124,7 @@ export class Camera {
     if (next.z !== undefined) this.targetZ = next.z;
     if(next.height!==undefined&&Number.isFinite(next.height))this.focusHeight=next.height;
     if (next.zoom !== undefined) this.zoom = clamp(next.zoom, this.minZoom, this.maxZoom);
-    if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = this.gameDistance * clamp(next.gameZoom, .5, 1.5);
+    if (next.gameZoom !== undefined && Number.isFinite(next.gameZoom)) this.distance = clamp(GAME_DISTANCE * next.gameZoom, GAME_DISTANCE_MIN, GAME_DISTANCE_MAX);
     if (next.yaw !== undefined) this.yaw = next.yaw;
     if (next.pitch !== undefined) this.pitch = this.topDown?Math.PI/2:clamp(next.pitch, PITCH_MIN, PITCH_MAX);
     this.clamp();
@@ -166,7 +169,7 @@ export class Camera {
     if(this.followingUnit)return;
     if (!Number.isFinite(factor) || factor <= 0) return;
     if (this.game) {
-      this.distance = clamp(this.distance * factor, this.gameDistance * .5, this.gameDistance * 1.5);
+      this.distance = clamp(this.distance * factor, GAME_DISTANCE_MIN, GAME_DISTANCE_MAX);
       this.clamp();
       this.touch();
       return;

@@ -10,15 +10,28 @@ import {referenceTexture,macroUrl} from '../terrain/referenceTerrain';
 import type {HeightField} from '../../shared/map/height';
 import {ResinShimmerLayer} from './resinShimmer';
 import type {SceneryCutaway} from '../visibility/sceneryCutaway';
+import {colouredInstanceCasterDepth,opaqueCaster} from '../renderer/casterDepth';
 import {batchStaticMaterials} from './staticBatch';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prototypeBounds, prototypeGroundOffset } from './grounding';
+import { prototypeDew } from './dewLayer';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
  */
-import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, Texture, type Raycaster, type Scene } from "three";
+import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, Texture, Group, Sphere, type Frustum, type Raycaster, type Scene } from "three";
+
+/** Scatter lower than this (metres, after stamp scale) casts no shadow: at RTS zoom its shadow
+ * is a few texels, while it would cost one shadow draw per cell and asset. Contact shade still grounds it. */
+const SHADOW_MIN_HEIGHT = 0.75;
+/** Batch cell edge in metres, for shadow casters and for main-pass-only scatter. */
+const CASTER_CELL = 48, SCATTER_CELL = 24;
+/** Stamps are re-created on every resource observation; compare what `place` reads. */
+const samePlacement = (a: MapStamp | undefined, b: MapStamp) =>
+  a === b || (!!a && a.x === b.x && a.y === b.y && a.yaw === b.yaw && a.pitch === b.pitch && a.roll === b.roll &&
+    a.scale === b.scale && a.widthScale === b.widthScale && a.heightScale === b.heightScale && a.depthScale === b.depthScale &&
+    a.elevation === b.elevation && a.sourceTransform === b.sourceTransform && a.walk === b.walk);
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
 
@@ -46,10 +59,18 @@ export class PropField {
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, Object3D>();
   private batches: InstancedMesh[]=[];
+  /** Coarse culling. Every batch lives in its spatial cell's group, so an offscreen cell costs one
+   * box test instead of a traversal and a frustum test per batch. Low scatter that casts no
+   * shadow sits in a sibling group the shadow pass hides: VSM draws every receiver into the
+   * map otherwise. `root.userData.materialRevision` lets fog skip the subtree when unchanged. */
+  private readonly root=new Group();
+  private readonly cells=new Map<string,{group:Group;casters:Group;scatter:Group;box:Box3}>();
   private instanceSlots=new Map<string,{batch:InstancedMesh;index:number;source:Mesh}[]>();
   private warmMeshes: InstancedMesh[]=[];
   contactRevision=0;
   contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
+  /** World-space dew beads (x, y, z, radius) of every placed model that bakes them; follows `contactRevision`. */
+  dew=new Float32Array(0);
   private lodGeometries=new Set<Mesh['geometry']>();
   private lodByGeometry=new Map<string,Mesh['geometry']>();
   private queued=false;
@@ -82,7 +103,24 @@ export class PropField {
     private readonly scene: Scene,
     private urls: ReadonlyMap<string, string>,
     private readonly cutaway?:SceneryCutaway,
-  ) {}
+  ) {this.root.name='props';this.root.userData.materialRevision=0;this.root.matrixAutoUpdate=false;this.scene.add(this.root);}
+
+  /** Show only cells intersecting `frustum` (all when null). The shadow pass also hides non-casting scatter. */
+  cull(frustum:Frustum|null,shadowPass=false):void {
+    for(const c of this.cells.values()){c.group.visible=!frustum||frustum.intersectsBox(c.box);c.scatter.visible=!shadowPass;}
+  }
+
+  private cell(key:string){
+    let c=this.cells.get(key);
+    if(!c){
+      const group=new Group(),casters=new Group(),scatter=new Group();
+      group.name=`props ${key}`;casters.name='casters';scatter.name='scatter';
+      for(const g of [group,casters,scatter]){g.matrixAutoUpdate=false;g.matrixWorldAutoUpdate=false;}
+      group.add(casters,scatter);this.root.add(group);
+      c={group,casters,scatter,box:new Box3()};this.cells.set(key,c);
+    }
+    return c;
+  }
 
   async ready():Promise<void>{await Promise.all([...this.protos.values(),this.referenceGround.ready]);}
   async preload(stamps: readonly MapStamp[]): Promise<void> {
@@ -167,7 +205,7 @@ export class PropField {
     this.urls = urls;
     this.modelOverrides=models;
     if(!changed.size)return;
-    this.gen++;this.lastStamps=null;
+    this.gen++;this.lastStamps=null;this.allDirty=true;
     for(const [id,root]of this.placed)if(changed.has(root.userData.asset)){root.removeFromParent();this.placed.delete(id);}
     for(const [key,pending]of this.protos)if(changed.has(key.slice(0,key.lastIndexOf('#')))){
       this.protos.delete(key);void pending.then(root=>{if(root)this.disposePrototype(root);});
@@ -208,14 +246,20 @@ export class PropField {
       seen.add(stamp.id);
       const existing = this.placed.get(stamp.id);
       if (existing && existing.userData.asset===stamp.asset && existing.userData.variant===stamp.variant) {
-        this.place(existing, stamp);
+        if (!samePlacement(existing.userData.stampRef, stamp)) {
+          this.detach(stamp.id, existing);
+          this.place(existing, stamp);
+          this.changed.add(stamp.id);
+        }
+        existing.userData.stampRef = stamp;
         continue;
       }
-      if (existing) this.placed.delete(stamp.id);
+      if (existing) {this.detach(stamp.id, existing);this.placed.delete(stamp.id);}
       void this.spawn(stamp, gen);
     }
     for (const [id, mesh] of this.placed) {
       if (seen.has(id)) continue;
+      this.detach(id, mesh);
       this.scene.remove(mesh);
       this.placed.delete(id);
     }
@@ -247,8 +291,9 @@ export class PropField {
     for(const geometry of this.lodGeometries)geometry.dispose();this.lodGeometries.clear();this.lodByGeometry.clear();
     for (const mesh of this.placed.values()) this.scene.remove(mesh);
     this.placed.clear();
-    for(const batch of this.batches){this.scene.remove(batch);batch.dispose();}
+    for(const batch of this.batches){batch.removeFromParent();batch.dispose();}
     this.batches=[];
+    this.cells.clear();this.root.clear();this.scene.remove(this.root);
     if (this.mark) {
       this.scene.remove(this.mark);
       this.mark.geometry.dispose();
@@ -276,6 +321,7 @@ export class PropField {
     this.place(mesh, stamp);
     this.tint(mesh);
     this.placed.set(stamp.id, mesh);
+    this.changed.add(stamp.id);
     this.queueBatches();
     if (stamp.id === this.picked) this.syncMark();
   }
@@ -309,7 +355,8 @@ export class PropField {
       const box=prototypeBounds(gltf.scene);
       const disposeWind=wind?this.wind.attach(gltf.scene,wind,referenceOrigin?box.max.y:box.max.y-box.min.y,referenceOrigin?this.referenceGround.sourceOffset:undefined):()=>{};
       this.resin.attach(gltf.scene);
-      gltf.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])this.cutaway?.attach(m,box.max.y-box.min.y);});
+      // Everything else stays solid so ordinary trees and rocks still hide units.
+      if(model?.canopy)gltf.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])this.cutaway?.attach(m,box.max.y-box.min.y);});
       // Trees use zero as their soil line; negative vertices are buried roots, not a pivot error.
       // Positive-only offsets still need normalization.
       const grounding=model?.groundContact;
@@ -318,6 +365,7 @@ export class PropField {
       this.prototypeDisposers.set(root,()=>{disposeBatch();disposeWind();});
       const transformed=prototypeBounds(root);
       this.bounds.set(id,{minY:transformed.min.y,height:transformed.max.y-transformed.min.y});
+      root.userData.dew=prototypeDew(root);
       root.userData.variant=variant;
       return root;
     } catch {
@@ -331,6 +379,7 @@ export class PropField {
     const x = stamp.x + 0.5;
     const z = stamp.y + 0.5;
     mesh.userData.asset = stamp.asset;
+    mesh.userData.stampRef = stamp;
     mesh.userData.lookAsset=this.modelOptions(stamp.asset)?.sourceAsset??stamp.asset;
     mesh.userData.stamp = stamp.id;
     mesh.userData.elevation=stamp.elevation??0;
@@ -353,6 +402,7 @@ export class PropField {
       const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
       mesh.position.y = mesh.userData.sourceHeight ?? (mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0));
     }
+    this.allDirty = true;
     this.queueBatches();
     this.syncMark();
   }
@@ -372,46 +422,96 @@ export class PropField {
     this.syncMark();
   }
 
+  /** Placement bookkeeping for incremental rebatching: a harvested tree regroups its own cell,
+   * not the whole 10k-prop forest. `allDirty` covers global edits (ground relift, model swaps). */
+  private readonly members=new Map<string,Set<string>>();
+  private readonly changed=new Set<string>();
+  private readonly dirty=new Set<string>();
+  private allDirty=true;
+  private detach(id:string,root:Object3D):void {
+    const cell=root.userData.batchCell as string|undefined;
+    if(cell){this.dirty.add(cell);this.members.get(cell)?.delete(id);root.userData.batchCell=undefined;}
+    this.changed.delete(id);this.instanceSlots.delete(id);
+  }
+  /** World matrices, bounds, contact shade and batch cell of one (re)placed root. */
+  private index(id:string,root:Object3D):void {
+    root.updateMatrixWorld(true);
+    const box=new Box3().setFromObject(root);
+    root.userData.cameraBounds=box;
+    const asset=String(root.userData.lookAsset??root.userData.asset);
+    root.userData.contact=undefined;
+    if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
+      const tree=/tree|pine/.test(asset),spread=tree?.17:.42;
+      root.userData.contact={x:root.position.x,z:root.position.z,radiusX:Math.max(.3,(box.max.x-box.min.x)*spread),radiusZ:Math.max(.3,(box.max.z-box.min.z)*spread),strength:tree?.27:.36};
+    }
+    const dew=root.userData.dew as number[]|undefined;
+    if(dew?.length){
+      const world=new Float32Array(dew.length),p=new Vector3(),scale=root.matrixWorld.getMaxScaleOnAxis();
+      for(let i=0;i<dew.length;i+=4){p.set(dew[i]!,dew[i+1]!,dew[i+2]!).applyMatrix4(root.matrixWorld);world.set([p.x,p.y,p.z,dew[i+3]!*scale],i);}
+      root.userData.dewWorld=world;
+    }
+    const height=(this.bounds.get(String(root.userData.asset))?.height??Infinity)*Math.abs(root.scale.y);
+    // Spatial batches allow camera and shadow frusta to reject offscreen forest. Casters use
+    // coarser cells: the sun frustum spans many cells, and each (cell, asset) pair is a draw.
+    const size=height>=SHADOW_MIN_HEIGHT?CASTER_CELL:SCATTER_CELL;
+    const cell=`${size}:${Math.floor(root.position.x/size)},${Math.floor(root.position.z/size)}`;
+    root.userData.batchCell=cell;root.userData.batchHeight=height;
+    let set=this.members.get(cell);if(!set)this.members.set(cell,set=new Set());set.add(id);
+    this.dirty.add(cell);
+  }
+
   private rebuildBatches():void {
     const timing=perf.start();
-    this.contacts=[];this.contactRevision++;this.instanceSlots.clear();
-    const previous=new Map(this.batches.map(b=>[b.userData.batchKey as string,b]));
-    this.batches=[];
-    const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[];sources:Mesh[]}>();
-    for(const [id,root] of this.placed){
-      root.updateMatrixWorld(true);
-      root.userData.cameraBounds=new Box3().setFromObject(root);
-      const asset=String(root.userData.lookAsset??root.userData.asset);
-      if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
-        const box=new Box3().setFromObject(root);
-        const tree=/tree|pine/.test(asset),spread=tree?.17:.42;
-        this.contacts.push({x:root.position.x,z:root.position.z,radiusX:Math.max(.3,(box.max.x-box.min.x)*spread),radiusZ:Math.max(.3,(box.max.z-box.min.z)*spread),strength:tree?.27:.36});
-      }
+    if(this.allDirty){
+      this.allDirty=false;this.members.clear();this.instanceSlots.clear();
+      for(const key of this.cells.keys())this.dirty.add(key);
+      for(const id of this.placed.keys())this.changed.add(id);
+    }
+    const contactsChanged=this.changed.size>0||this.dirty.size>0;
+    for(const id of this.changed){const root=this.placed.get(id);if(root)this.index(id,root);}
+    this.changed.clear();
+    if(!this.dirty.size){perf.end('Prop rebuild (event)',timing);return;}
+    const dirty=new Set(this.dirty);this.dirty.clear();
+    if(contactsChanged){
+      this.contacts=[];this.contactRevision++;
+      for(const root of this.placed.values())if(root.userData.contact)this.contacts.push(root.userData.contact);
+      const beads=[...this.placed.values()].map(root=>root.userData.dewWorld as Float32Array|undefined).filter((d):d is Float32Array=>!!d);
+      this.dew=new Float32Array(beads.reduce((n,d)=>n+d.length,0));let offset=0;for(const d of beads){this.dew.set(d,offset);offset+=d.length;}
+    }
+    const previous=new Map<string,InstancedMesh>(),kept:InstancedMesh[]=[];
+    for(const b of this.batches)if(dirty.has(b.userData.cell))previous.set(b.userData.batchKey,b);else kept.push(b);
+    this.batches=kept;
+    const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[];sources:Mesh[];cell:string;height:number}>();
+    for(const cell of dirty)for(const id of this.members.get(cell)??[]){
+      const root=this.placed.get(id);if(!root)continue;
+      this.instanceSlots.delete(id);
+      const height=root.userData.batchHeight as number;
       root.traverse(n=>{
         if(!(n instanceof Mesh))return;
         const mats=Array.isArray(n.material)?n.material:[n.material];
-        // Spatial batches allow camera and shadow frusta to reject offscreen forest.
-        const cell=`${Math.floor(root.position.x/24)},${Math.floor(root.position.z/24)}`;
         const key=cell+':'+n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');
-        let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[],sources:[]};groups.set(key,g);}
-        g.poses.push(n.matrixWorld.clone());g.ids.push(id);g.sources.push(n);
+        let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[],sources:[],cell,height:0};groups.set(key,g);}
+        g.poses.push(n.matrixWorld);g.ids.push(id);g.sources.push(n);g.height=Math.max(g.height,height);
       });
     }
     for(const [key,g] of groups){
       let b=previous.get(key);previous.delete(key);
       const capacity=b?.instanceMatrix.count??0;
-      if(b&&capacity<g.poses.length){this.scene.remove(b);b.dispose();b=undefined;}
+      if(b&&capacity<g.poses.length){b.removeFromParent();b.dispose();b=undefined;}
       if(!b){
         b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
         b.customDepthMaterial=g.source.customDepthMaterial;
-        b.userData.batchKey=key;
+        b.userData.batchKey=key;b.userData.cell=g.cell;
+        b.name=`prop ${String(this.placed.get(g.ids[0]!)?.userData.lookAsset??'')}`;
         b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
         let trianglesBefore=0;
         b.onBeforeRender=renderer=>{if(perf.enabled)trianglesBefore=renderer.info.render.triangles;};
         const batch=b;
         b.onAfterRender=renderer=>perf.count(batch.userData.category,renderer.info.render.triangles-trianglesBefore);
-        b.castShadow=g.source.castShadow;b.receiveShadow=g.source.receiveShadow;b.renderOrder=g.source.renderOrder;b.matrixAutoUpdate=false;b.matrixWorldAutoUpdate=false;this.scene.add(b);
+        b.receiveShadow=g.source.receiveShadow;b.renderOrder=g.source.renderOrder;b.matrixAutoUpdate=false;b.matrixWorldAutoUpdate=false;
       }
+      b.castShadow=g.source.castShadow&&g.height>=SHADOW_MIN_HEIGHT;
+      const cell=this.cell(g.cell);(b.castShadow?cell.casters:cell.scatter).add(b);
       let changed=b.count!==g.poses.length;
       const matrices=b.instanceMatrix.array;
       for(let i=0;i<g.poses.length;i++){
@@ -430,6 +530,7 @@ export class PropField {
           if(!b.instanceColor||b.instanceColor.getX(i)!==shelter){b.setColorAt(i,color.setRGB(shelter,1,1));colorChanged=true;}
         }
         if(colorChanged&&b.instanceColor)b.instanceColor.needsUpdate=true;
+        if(b.instanceColor&&!b.customDepthMaterial&&opaqueCaster(b.material))b.customDepthMaterial=colouredInstanceCasterDepth;
       }
       b.userData.category=/pine|fir|canopy-oak|canopy-ancient/.test(String(this.placed.get(g.ids[0])?.userData.asset))?'Tree triangles':'Other prop triangles';
       if(changed||!b.boundingSphere){
@@ -439,8 +540,16 @@ export class PropField {
       }
       this.batches.push(b);
     }
-    for(const b of previous.values()){this.scene.remove(b);b.dispose();}
-    perf.value('Prop batches',this.batches.length);perf.value('Placed props',this.placed.size);
+    for(const b of previous.values()){b.removeFromParent();b.dispose();}
+    const sphere=new Sphere();
+    for(const key of dirty){
+      const c=this.cells.get(key);if(!c)continue;
+      c.box.makeEmpty();
+      for(const b of [...c.casters.children,...c.scatter.children] as InstancedMesh[])if(b.boundingSphere)c.box.union(sphere.copy(b.boundingSphere).getBoundingBox(new Box3()));
+      if(c.box.isEmpty()){c.group.removeFromParent();this.cells.delete(key);this.members.delete(key);}
+    }
+    this.root.userData.materialRevision++;
+    perf.value('Prop batches',this.batches.length);perf.value('Placed props',this.placed.size);perf.value('Prop cells',this.cells.size);
     perf.end('Prop rebuild (event)',timing);
   }
 

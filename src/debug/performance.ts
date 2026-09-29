@@ -1,9 +1,10 @@
 import {TimingWindow} from './timingWindow';
+import type {DrawCensus} from './drawCensus';
 import {shortcuts,inputCaptured} from '../shared/input/shortcuts';
 type TraceEvent={name:string;cat:string;ph:'X'|'C';pid:number;tid:number;ts:number;dur?:number;args?:Record<string,number>};
 const MAX_TRACE_EVENTS=64000;
 const FRAME_BUDGET_MS=1000/120;
-type PerformanceReport={frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number};note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
+type PerformanceReport={frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
 export type MatchDebugControls = {
   reveal: boolean;
   speed: number;
@@ -13,6 +14,11 @@ export type MatchDebugControls = {
   onReveal(value: boolean): void;
   onSpeed(value: number): void;
   onVision(player: number): void;
+  /** Benchmark hooks (`utcPerformance.match` in the console / CDP scripts): capture or resume
+   * an exact match state and frame the camera, so perf runs are repeatable. */
+  snapshot(): Promise<unknown>;
+  restore(save: unknown): Promise<void>;
+  lookAt(x: number, y: number, distance?: number): void;
   /** Navigation overlay toggles; only polled while the profiler panel is enabled. */
   paths: boolean;
   walkability: boolean;
@@ -23,6 +29,7 @@ export type MatchDebugControls = {
 export class PerformanceDebug {
   enabled = false;
   private matchControls: MatchDebugControls | null = null;
+  get match() { return this.matchControls; }
   private controls: HTMLElement | null = null;
   bindMatch(controls: MatchDebugControls): () => void {
     this.matchControls = controls;
@@ -118,6 +125,11 @@ export class PerformanceDebug {
   private recording:Map<string,TimingWindow>|null=null;
   private captureStart=0;private captureEnd=0;
   private captureResult:PerformanceReport|null=null;
+  /** Set by the Draw census button; the display consumes it on its next frame. */
+  censusPending=false;
+  census:DrawCensus|null=null;
+  takeCensus(){if(!this.enabled||!this.censusPending)return false;this.censusPending=false;return true;}
+  setCensus(census:DrawCensus){this.census=census;console.table(census.rows.slice(0,40));}
   private baseline:PerformanceReport|null=null;
   private latest:Record<string,number>={};
   private spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>=[];
@@ -211,8 +223,9 @@ export class PerformanceDebug {
     const baseline=document.createElement('button');baseline.textContent='Set baseline';baseline.style.cssText=toggle.style.cssText;baseline.onclick=()=>{this.setBaseline();baseline.textContent='Baseline saved';};
     this.graph=document.createElement('canvas');this.graph.width=360;this.graph.height=70;this.graph.setAttribute('aria-label','Last 120 frame intervals; lines at 8, 17 and 33 milliseconds');this.graph.style.cssText='display:block;width:360px;height:70px;margin-top:5px';
     const trace=this.traceButton=document.createElement('button');trace.textContent='Download trace';trace.style.cssText=toggle.style.cssText;trace.disabled=true;trace.title='Record a capture, then open the downloaded JSON in a trace viewer';trace.onclick=()=>this.downloadTrace();
-    for(const b of [copy,capture,baseline,trace])b.dataset.profiler='true';
-    root.append(toggle, copy, capture, baseline, trace, this.graph, this.text);
+    const census=document.createElement('button');census.textContent='Draw census';census.style.cssText=toggle.style.cssText;census.title='Attribute one frame of draw calls and triangles to scene branches (main and shadow pass)';census.onclick=()=>{this.censusPending=true;};
+    for(const b of [copy,capture,baseline,trace,census])b.dataset.profiler='true';
+    root.append(toggle, copy, capture, baseline, trace, census, this.graph, this.text);
     if (
       location.pathname.endsWith("reference-stage.html") &&
       !new URLSearchParams(location.search).has("debug")
@@ -273,11 +286,24 @@ export class PerformanceDebug {
   value(name: string, value: string | number) {
     if (this.enabled) this.values[name] = value;
   }
+  /** Programs linked after warm-up. Each one is a main-thread stall (tens of ms), so these are
+   * recorded even with the panel closed; the renderer reports only newly created programs. */
+  readonly shaderLinks: Array<{ atMs: number; name: string; key: string }> = [];
+  shaderLink(name: string, key: string) {
+    if (this.shaderLinks.length < 200) this.shaderLinks.push({ atMs: Math.round(performance.now()), name, key: key.slice(0, 600) });
+    console.debug(`[perf] late shader link: ${name}`, key.slice(0, 600));
+    this.values["Late shader links"] = this.shaderLinks.length;
+  }
   report():PerformanceReport {
     const frames=(this.recording??this.rows).get('Frame interval')?.values()??[];
     const overBudget=frames.filter(ms=>ms>FRAME_BUDGET_MS).length;
+    // Presentation jitter puts half of all vsync-locked intervals just above the budget, so
+    // real hitches are counted against the median interval (the display's refresh period).
+    const refreshMs=[...frames].sort((a,b)=>a-b)[frames.length>>1]??FRAME_BUDGET_MS,missed=frames.filter(ms=>ms>refreshMs*1.5).length;
     return {
-      frameBudget:{targetMs:FRAME_BUDGET_MS,samples:frames.length,overBudget,overBudgetPercent:frames.length?100*overBudget/frames.length:0},
+      frameBudget:{targetMs:FRAME_BUDGET_MS,samples:frames.length,overBudget,overBudgetPercent:frames.length?100*overBudget/frames.length:0,refreshMs,missed,missedPercent:frames.length?100*missed/frames.length:0},
+      census:this.census??undefined,
+      shaderLinks:this.shaderLinks.length?[...this.shaderLinks]:undefined,
       note: "CPU scopes overlap; GPU is asynchronous. Timings are milliseconds over the last 120 samples or a 10-second capture (4096 samples per scope maximum). Spikes contain the latest scope samples, not a causal trace; GPU results arrive late. Counters describe the last frame; category triangles cover color passes, while total triangles include shadows and reflections.",
       values: {...this.values},
       capturedMs:this.recording?performance.now()-this.captureStart:undefined,
@@ -303,7 +329,7 @@ export class PerformanceDebug {
     const r = this.report();
     const frame = r.timings["Frame interval"];
     this.text.textContent =
-      `PERFORMANCE  ${frame ? (1000 / frame.mean).toFixed(1) + " FPS" : ""}\n120 FPS budget: 8.33 ms · ${r.frameBudget.overBudgetPercent.toFixed(1)}% of presented intervals over budget\nCPU scopes overlap • mean / p95 / p99 ms\n` +
+      `PERFORMANCE  ${frame ? (1000 / frame.mean).toFixed(1) + " FPS" : ""}\n120 FPS budget: 8.33 ms · ${r.frameBudget.overBudgetPercent.toFixed(1)}% of presented intervals over budget\nMissed refreshes (>1.5× ${r.frameBudget.refreshMs.toFixed(2)} ms): ${r.frameBudget.missed} (${r.frameBudget.missedPercent.toFixed(1)}%)\nCPU scopes overlap • mean / p95 / p99 ms\n` +
       Object.entries(r.timings)
         .map(
           ([k, v]) =>

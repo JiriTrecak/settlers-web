@@ -49,7 +49,7 @@ for(const [slug,name,width,depth] of items){
  // Overhanging crowns/caps are intentionally absent from ground collision.
  const blockers:NonNullable<AssetDefinition['bindings']['scenery'][number]['blockers']>=width?[{width,depth,...(slug.includes('fallen-log')?{}:{shape:'ellipse' as const})}]:[];
  p.definition.bindings={profile:'model',render:[{id:'asset.scenery.'+slug,sceneryAsset:slug,geometry:{role:'geometry',index:1,asset:id(slug)}}],scenery:[{id:slug,name,category:width?'landmark':'foliage',type:'prop',geometry:{role:'geometry',index:1},...(blockers.length?{blockers}:{})}]};
- p.definition.capabilities={groundContact:{mode:'pivot'},vegetationClearance:slug.includes('fallen-log')?4:width?width/2+.5:.2};
+ p.definition.capabilities={groundContact:{mode:'pivot'},vegetationClearance:slug.includes('fallen-log')?4:width?width/2+.5:.2,...(slug.includes('-canopy-')?{canopy:true as const}:{})};
  packs.push(p);
 }
 const brush=originalPackage('recipe.foliage.mushroom-patches','Woodland mushroom patches','landscape-recipe','authored');

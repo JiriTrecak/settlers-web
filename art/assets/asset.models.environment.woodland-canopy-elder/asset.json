@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-canopy-elder",
   "name": "Ancient canopy oak",
   "kind": "prop",
-  "revision": 3,
+  "revision": 4,
   "status": "published",
   "tags": [
     "original",
@@ -79,10 +79,11 @@
     ]
   },
   "capabilities": {
+    "vegetationClearance": 4.6,
+    "canopy": true,
     "groundContact": {
       "mode": "pivot"
-    },
-    "vegetationClearance": 4.6
+    }
   },
   "provenance": {
     "method": "authored",

@@ -462,6 +462,12 @@ export class Session {
           this.economyHud?.setSelection([]);
         }
       },
+      snapshot: () => this.snapshotLocal(),
+      restore: (save) => this.restoreLocal(save),
+      lookAt: (x, y, distance) => {
+        renderer.camera.lookAt(x, y);
+        if (distance !== undefined) renderer.camera.distance = distance;
+      },
       paths: this.navDebug.paths,
       walkability: this.navDebug.walkability,
       onPaths: (value) => {

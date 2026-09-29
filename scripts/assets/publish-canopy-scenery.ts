@@ -28,6 +28,6 @@ for(const slug of ['canopy-mushrooms-ochre','canopy-mushrooms-russet','canopy-ac
  await addFile(p,'source','blend','/tmp/utc-canopy-models/'+slug+'/source.blend');
  addBytes(p,'generation','json',Buffer.from(JSON.stringify({method:'authored',originalPixels:true,recipe:'scripts/assets/build-canopy-scenery.py',textures:['woodland-bark','woodland-oak-leaves']},null,2)+'\n'));
  p.definition.bindings={profile:'model',render:[{id:'asset.scenery.'+slug,sceneryAsset:slug,geometry:{role:'geometry',index:1,asset:id},...(tree?{harvestAnimation:{role:'geometry' as const,index:1,asset:id}}:{})}],scenery:[{id:slug,name:p.definition.name,category:giant?'landmark':'foliage',type:'prop',geometry:{role:'geometry',index:1},...(giant?{blocker:{width:8,depth:8,shape:'ellipse' as const}}:{})}]};
- p.definition.capabilities={vegetationClearance:giant?5:tree?1.1:.2,groundContact:{mode:'pivot'},...(tree?{harvesting:{replacement:'asset.models.environment.woodland-pine-stump',definition:'resource.forest.tree'},wind:{mode:'tree' as const,strength:.1,speed:.18,stiffness:.8}}:{})};packs.push(p);
+ p.definition.capabilities={vegetationClearance:giant?5:tree?1.1:.2,groundContact:{mode:'pivot'},...(giant?{canopy:true as const}:{}),...(tree?{harvesting:{replacement:'asset.models.environment.woodland-pine-stump',definition:'resource.forest.tree'},wind:{mode:'tree' as const,strength:.1,speed:.18,stiffness:.8}}:{})};packs.push(p);
 }
 await publishOriginals(packs);

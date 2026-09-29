@@ -1,4 +1,4 @@
-import {DataTexture,FloatType,NearestFilter,RGBAFormat,Vector3,type Camera,type Material} from 'three';
+import {DataTexture,FloatType,NearestFilter,RGFormat,Vector3,type Camera,type Material} from 'three';
 export type CutawaySubject={position:{x:number;y:number;z:number};height:number};
 const WIDTH=192,HEIGHT=108;
 /** Camera-only visibility mask. Only already-observed, living units are supplied.
@@ -6,17 +6,24 @@ const WIDTH=192,HEIGHT=108;
  * Solid shadow/depth materials never receive this hook, so the forest still blocks sunlight.
  */
 export class SceneryCutaway {
- private readonly data=new Float32Array(WIDTH*HEIGHT*4);
- private readonly next=new Float32Array(WIDTH*HEIGHT*4);
- readonly texture=new DataTexture(this.data,WIDTH,HEIGHT,RGBAFormat,FloatType);
+ // R = unit depth, G = coverage weight (the shader reads only .rg).
+ private readonly data=new Float32Array(WIDTH*HEIGHT*2);
+ private readonly next=new Float32Array(WIDTH*HEIGHT*2);
+ readonly texture=new DataTexture(this.data,WIDTH,HEIGHT,RGFormat,FloatType);
  private readonly enabled={value:0};
  private readonly point=new Vector3();
  private readonly top=new Vector3();
  private readonly view=new Vector3();
  private readonly attached=new WeakSet<Material>();
+ /** Row span [lo, hi) of texels written into `next` last frame; everything outside is zero. */
+ private written={lo:0,hi:0};
  constructor(){this.texture.name='Observed unit camera cutaways';this.texture.minFilter=this.texture.magFilter=NearestFilter;this.texture.needsUpdate=true;}
  update(camera:Camera,subjects:readonly CutawaySubject[]){
-  this.next.fill(0);let count=0;camera.updateMatrixWorld();
+  // Only rows touched last frame need clearing, and only rows touched in either frame can
+  // differ from the uploaded mask; an empty screen costs nothing.
+  const previous=this.written;
+  this.next.fill(0,previous.lo*WIDTH*2,previous.hi*WIDTH*2);
+  let count=0,lo=HEIGHT,hi=0;camera.updateMatrixWorld();
   for(const s of subjects){
    const h=Math.max(.8,s.height),y=s.position.y+h*.5;
    this.view.set(s.position.x,y,s.position.z).applyMatrix4(camera.matrixWorldInverse);
@@ -30,20 +37,31 @@ export class SceneryCutaway {
    const cx=(this.point.x*.5+.5)*WIDTH,cy=(this.point.y*.5+.5)*HEIGHT;
    if(cx+rx<0||cy+ry<0||cx-rx>=WIDTH||cy-ry>=HEIGHT)continue;
    count++;
-   for(let y=Math.max(0,Math.floor(cy-ry));y<=Math.min(HEIGHT-1,Math.ceil(cy+ry));y++)
-    for(let x=Math.max(0,Math.floor(cx-rx));x<=Math.min(WIDTH-1,Math.ceil(cx+rx));x++){
-     const d=Math.hypot((x+.5-cx)/rx,(y+.5-cy)/ry);if(d>=1)continue;
-     const t=Math.max(0,Math.min(1,(1-d)/.36)),weight=t*t*(3-2*t),i=(y*WIDTH+x)*4;
-     this.next[i]=Math.max(this.next[i]!,depth);
-     this.next[i+1]=Math.max(this.next[i+1]!,weight);
+   const y0=Math.max(0,Math.floor(cy-ry)),y1=Math.min(HEIGHT-1,Math.ceil(cy+ry)),x0=Math.max(0,Math.floor(cx-rx)),x1=Math.min(WIDTH-1,Math.ceil(cx+rx));
+   lo=Math.min(lo,y0);hi=Math.max(hi,y1+1);
+   for(let y=y0;y<=y1;y++){
+    const dy=(y+.5-cy)/ry,dy2=dy*dy;if(dy2>=1)continue;
+    for(let x=x0;x<=x1;x++){
+     const dx=(x+.5-cx)/rx,d2=dx*dx+dy2;if(d2>=1)continue;
+     const t=Math.min(1,(1-Math.sqrt(d2))/.36),weight=t*t*(3-2*t),i=(y*WIDTH+x)*2;
+     if(this.next[i]!<depth)this.next[i]=depth;
+     if(this.next[i+1]!<weight)this.next[i+1]=weight;
     }
+   }
   }
   this.enabled.value=count?1:0;
+  this.written=count?{lo,hi}:{lo:0,hi:0};
   // Idle armies do not upload the same mask again each frame.
-  for(let i=0;i<this.data.length;i++)if(this.data[i]!==this.next[i]){this.data.set(this.next);this.texture.needsUpdate=true;break;}
+  const from=Math.min(previous.lo,count?lo:HEIGHT)*WIDTH*2,to=Math.max(previous.hi,count?hi:0)*WIDTH*2;
+  for(let i=from;i<to;i++)if(this.data[i]!==this.next[i]){this.data.set(this.next.subarray(from,to),from);this.texture.needsUpdate=true;break;}
  }
- attach(material:Material,height=8,scope={value:1}){
+ /** Materials that dissolve unconditionally (canopy crowns); scoped ones gate themselves. */
+ private always=0;
+ /** False when nothing can dissolve, so the renderer skips rasterizing the unit mask. */
+ get active(){return this.always>0;}
+ attach(material:Material,height=8,scope?:{value:number}){
   if(this.attached.has(material))return;this.attached.add(material);
+  if(!scope)this.always++;scope??={value:1};
   const before=material.onBeforeCompile,cache=material.customProgramCacheKey.bind(material);
   material.onBeforeCompile=(shader,renderer)=>{
    before.call(material,shader,renderer);

@@ -1,5 +1,5 @@
 import connectedHudUrl from '../../../assets/library/image.woodland-connected-hud/image.png?url';
-import { AmbientLight, TextureLoader, SRGBColorSpace, LinearFilter, Box3, Color, DirectionalLight, OrthographicCamera, Scene, Vector3, Vector4, type Object3D, type Texture, type WebGLRenderer } from 'three';
+import { AmbientLight, TextureLoader, SRGBColorSpace, LinearFilter, Box3, Color, DirectionalLight, HalfFloatType, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Vector3, Vector4, WebGLRenderTarget, type Object3D, type Texture, type WebGLRenderer } from 'three';
 export type PortraitInstance = {root:Object3D;update:(dt:number)=>void;dispose:()=>void};
 /** A tiny scissored pass on the existing game canvas. No second context or pixel readbacks. */
 export class SelectionPortrait {
@@ -17,11 +17,23 @@ export class SelectionPortrait {
   private viewport=new Vector4();
   private scissor=new Vector4();
   private clear=new Color();
+  /** The canvas has no MSAA, so the unit renders linear HDR over transparent black into its own
+   * multisampled target. The blit draws the sRGB backdrop untonemapped (as a scene background
+   * was), then the unit with the renderer's tone mapping and premultiplied resolved edges. */
+  private readonly target=new WebGLRenderTarget(1,1,{type:HalfFloatType,samples:4});
+  private readonly blitScene=new Scene();
+  private readonly blitCamera=new OrthographicCamera(-1,1,1,-1,0,1);
+  private readonly quad=new PlaneGeometry(2,2);
+  private readonly blits=[
+    new Mesh(this.quad,new MeshBasicMaterial({map:this.backdrop,toneMapped:false,depthTest:false,depthWrite:false})),
+    new Mesh(this.quad,new MeshBasicMaterial({map:this.target.texture,transparent:true,premultipliedAlpha:true,depthTest:false,depthWrite:false})),
+  ];
   constructor(environment:Texture){
+    this.blits.forEach((mesh,i)=>{mesh.frustumCulled=false;mesh.renderOrder=i;this.blitScene.add(mesh);});
     // Match the portrait cutout in commandDock.css; reuse the approved panel texture.
     this.backdrop.colorSpace=SRGBColorSpace;this.backdrop.generateMipmaps=false;this.backdrop.minFilter=LinearFilter;
     this.backdrop.offset.set(.2494,.3304);this.backdrop.repeat.set(.1128,.336);
-    this.scene.background=this.backdrop;this.scene.environment=environment;this.scene.environmentIntensity=.7;
+    this.scene.environment=environment;this.scene.environmentIntensity=.7;
     this.scene.add(new AmbientLight(0xffefd5,1.2));
     const light=new DirectionalLight(0xffe2b3,3.2);light.position.set(-4,7,6);this.scene.add(light);
     const rim=new DirectionalLight(0x93afcf,1.3);rim.position.set(4,3,-3);this.scene.add(rim);
@@ -57,12 +69,20 @@ export class SelectionPortrait {
     const aspect=rect.width/rect.height,half=Math.max(y,x/aspect)*1.08;
     this.camera.left=-half*aspect;this.camera.right=half*aspect;this.camera.top=half;this.camera.bottom=-half;this.camera.near=.01;this.camera.far=Math.max(100,size.length()*6);this.camera.updateProjectionMatrix();
     }
-    gl.getViewport(this.viewport);gl.getScissor(this.scissor);const scissorTest=gl.getScissorTest(),auto=gl.autoClear,shadows=gl.shadowMap.enabled;
+    gl.getViewport(this.viewport);gl.getScissor(this.scissor);const scissorTest=gl.getScissorTest(),auto=gl.autoClear,shadows=gl.shadowMap.enabled,previous=gl.getRenderTarget();
     gl.getClearColor(this.clear);const alpha=gl.getClearAlpha();
-    gl.setViewport(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);
-    gl.setScissor(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);gl.setScissorTest(true);gl.autoClear=true;gl.shadowMap.enabled=false;
-    gl.render(this.scene,this.camera);
-    gl.setViewport(this.viewport);gl.setScissor(this.scissor);gl.setScissorTest(scissorTest);gl.autoClear=auto;gl.shadowMap.enabled=shadows;gl.setClearColor(this.clear,alpha);
+    const ratio=gl.getPixelRatio(),w=Math.max(1,Math.round(rect.width*ratio)),h=Math.max(1,Math.round(rect.height*ratio));
+    if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
+    try{
+      gl.autoClear=true;gl.shadowMap.enabled=false;
+      gl.setClearColor(0x000000,0);gl.setRenderTarget(this.target);gl.render(this.scene,this.camera);
+      gl.setRenderTarget(previous);
+      gl.setViewport(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);
+      gl.setScissor(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);gl.setScissorTest(true);
+      gl.autoClear=false;gl.render(this.blitScene,this.blitCamera);
+    }finally{
+      gl.setRenderTarget(previous);gl.setViewport(this.viewport);gl.setScissor(this.scissor);gl.setScissorTest(scissorTest);gl.autoClear=auto;gl.shadowMap.enabled=shadows;gl.setClearColor(this.clear,alpha);
+    }
   }
-  destroy(){this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();this.backdrop.dispose();}
+  destroy(){this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();this.backdrop.dispose();this.target.dispose();this.quad.dispose();this.blits.forEach(mesh=>mesh.material.dispose());}
 }

@@ -32,7 +32,7 @@ export class SimpleSpellEffects {
    if(!entry){
     const root=new Group();this.root.add(root);
     const guardShell=cue.phase==='impact'&&spell.effect==='guard';
-    const material=new MeshBasicMaterial({color:visual.color,transparent:true,depthWrite:false,side:guardShell?FrontSide:DoubleSide,blending:guardShell?NormalBlending:AdditiveBlending});
+    const material=new MeshBasicMaterial({color:visual.color,transparent:true,depthWrite:false,side:guardShell?FrontSide:DoubleSide,forceSinglePass:true,blending:guardShell?NormalBlending:AdditiveBlending});
     const accent=new MeshBasicMaterial({color:visual.accent,transparent:true,depthWrite:false,blending:AdditiveBlending});
     const ring=new Mesh(cue.phase==='impact'&&spell.effect==='guard'?this.shell:this.ring,material);
     ring.rotation.x=-Math.PI/2;ring.renderOrder=3;root.add(ring);

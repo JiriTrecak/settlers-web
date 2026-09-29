@@ -1,0 +1,33 @@
+{
+ "name": "Mega mushroom",
+ "material": "Mega mushroom cap",
+ "measure": {
+  "axis": "x",
+  "size": 18
+ },
+ "sink": 0.4,
+ "textureSize": 2048,
+ "normalStrength": 0.5,
+ "tone": [
+  0.8,
+  0.78,
+  0.76
+ ],
+ "groundColor": false,
+ "canopy": true,
+ "vegetationClearance": 13,
+ "blockers": {
+  "mode": "stem",
+  "at": 0.2,
+  "core": 1
+ },
+ "dew": {
+  "count": 22,
+  "radius": [
+   0.3,
+   0.85
+  ],
+  "up": 0.8,
+  "seed": 7
+ }
+}

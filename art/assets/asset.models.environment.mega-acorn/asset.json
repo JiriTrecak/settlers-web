@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-acorn",
+  "name": "Mega acorn",
+  "kind": "prop",
+  "revision": 24,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "220e28e3ffd9af81e97587ada3735c9a15fe35f209cc850a9d57b15299b274d7",
+      "bytes": 585
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1bc3c1ed20ebf337661fce7d07afe1901eab9546c8dafcf4b062482579f65294",
+      "bytes": 13285
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6f0f37664fd76d2b67981f0c37866cb9af86200eca00188767f6f2aa324b5b8c",
+      "bytes": 1812636
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "e8f3d3636bf1b6c3169e0bffafb5ae3dd05c4ffaf07966c4e35e7df15f1941be",
+      "bytes": 410202
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "bf17cf74992b2f0b049e8bf01fc4087e7bb77047fbad0932df20c8227db4fedd",
+      "bytes": 700771
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "231141ac8328c3c2ab18e4ffaeb20464d9e9b91e69ae2e79427dda7184d83077",
+      "bytes": 2441972
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "11050247eb5e23e97dcb418e4878dd799022ebc187ecb9e675f0b5f821776d0d",
+      "bytes": 9851932
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "0897647bb4feed628f7803e7a1ce553b10360492b5a7055a83ffa35513043be3",
+      "bytes": 357
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "77af06996080ff8e2cc3f025b60d2d30621f678caba125deb8f81aef79140f4a",
+      "bytes": 599
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-acorn",
+        "sceneryAsset": "mega-acorn",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-acorn"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-acorn",
+        "name": "Mega acorn",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 11.05,
+            "depth": 11.45,
+            "shape": "ellipse",
+            "x": 0,
+            "z": 0
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 8,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

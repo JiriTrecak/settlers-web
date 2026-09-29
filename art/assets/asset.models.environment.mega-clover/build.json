@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "category": "scenery",
+  "slug": "mega-clover",
+  "files": {
+    "source.glb": {
+      "asset": "asset.models.environment.mega-clover",
+      "role": "source",
+      "index": 2
+    },
+    "config.json": {
+      "asset": "asset.models.environment.mega-clover",
+      "role": "source",
+      "index": 3
+    },
+    "provenance.json": {
+      "asset": "asset.models.environment.mega-clover",
+      "role": "source",
+      "index": 4
+    },
+    "reference.png": {
+      "asset": "asset.models.environment.mega-clover",
+      "role": "reference",
+      "index": 1
+    }
+  }
+}

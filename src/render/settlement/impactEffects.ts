@@ -1,4 +1,4 @@
-import {AdditiveBlending,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshBasicMaterial,OctahedronGeometry,Quaternion,Vector3,Color} from 'three';
+import {AdditiveBlending,DynamicDrawUsage,Group,InstancedBufferAttribute,InstancedMesh,Matrix4,MeshBasicMaterial,OctahedronGeometry,Quaternion,Vector3,Color} from 'three';
 import {perf} from '../../debug/performance';
 type Impact={entity:number;x:number;y:number;z:number;tick:number;angle:number;power:number};
 /** Only confirmed observed HP loss produces a contact burst; never attack windup. */
@@ -8,7 +8,8 @@ export class ImpactEffects {
  private readonly mesh=new InstancedMesh(this.geometry,this.material,512);
  private impacts:Impact[]=[];
  private readonly matrix=new Matrix4();private readonly position=new Vector3();private readonly scale=new Vector3();private readonly rotation=new Quaternion();private readonly color=new Color();
- constructor(parent:Group){this.mesh.name='Confirmed hit sparks';this.mesh.count=0;this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);this.mesh.frustumCulled=false;parent.add(this.mesh);}
+ // instanceColor up front: setColorAt would create it on the first hit and switch programs mid-fight.
+ constructor(parent:Group){this.mesh.name='Confirmed hit sparks';this.mesh.count=0;this.mesh.instanceColor=new InstancedBufferAttribute(new Float32Array(512*3),3);this.mesh.instanceMatrix.setUsage(DynamicDrawUsage);this.mesh.frustumCulled=false;parent.add(this.mesh);}
  hit(entity:number,x:number,y:number,z:number,tick:number,angle:number,power=1){if(this.impacts.length===64)this.impacts.shift();this.impacts.push({entity,x,y,z,tick,angle,power:Math.min(2,Math.max(.5,power))});}
  update(tick:number,visible:ReadonlySet<number>){
   this.impacts=this.impacts.filter(h=>tick>=h.tick&&tick-h.tick<12&&visible.has(h.entity));this.mesh.count=0;

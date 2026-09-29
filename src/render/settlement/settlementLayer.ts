@@ -7,8 +7,8 @@ import {speechEnvelope} from '../characters/speech';
 import {perf} from '../../debug/performance';
 import {firstPersonBody} from '../camera/firstPersonBody';
 import type {CameraSubject} from '../camera/unitCamera';
-import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {batchStaticMaterials} from '../prop/staticBatch';
+import {effectWarmModels} from './effectWarmup';
 import { ShellEffects } from "./shellEffects";
 import { PresentationClock } from "./presentationClock";
 import { StatusBadges } from "./statusBadges";
@@ -40,11 +40,17 @@ import {
   Box3,
   MeshBasicMaterial,
   Sprite,
+  Sphere,
   Vector3,
+  type SkinnedMesh,
+  type Frustum,
   type Scene,
   type Raycaster,
 } from "three";
 import { createCharacterInstance } from "../characters/character-player.js";
+import { attachShadowProxies } from "../characters/shadowProxy";
+import { BakedCrowd } from "../characters/bakedCrowd";
+import type { UnitAnimator } from "../characters/bakedAnimator";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { content } from "../../content/builtin";
@@ -57,6 +63,17 @@ import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { placementGrid } from "./placementGrid";
 
+const UNIT_CULL_MARGIN = 6;
+/** A live rig (CharacterPlayer + SkinnedMesh) or a baked crowd member; `pose` syncs baked sockets. */
+type UnitCharacter = { root: Object3D; player: UnitAnimator; dispose(): void; pose?: () => void };
+/** three's updateMatrixWorld recurses every descendant even with matrixWorldAutoUpdate off, so a
+ * frozen unit (or held pose) would still recompose ~70 bones a frame. While `userData.matrixHeld`
+ * is set the whole subtree keeps last frame's matrices; the next update recomputes it in full. */
+function holdableMatrices(o: Object3D) {
+  o.updateMatrixWorld = function (this: Object3D, force?: boolean) {
+    if (!this.userData.matrixHeld) Object3D.prototype.updateMatrixWorld.call(this, force);
+  };
+}
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
@@ -113,14 +130,20 @@ export class SettlementLayer {
   private readonly meleeTrails = new MeleeTrails(this.root);
   private readonly spellEffects = new SpellEffects(this.root);
   private readonly characterSources = new Map<string, GLTF>();
-  private readonly characters = new Map<
-    number,
-    ReturnType<typeof createCharacterInstance>
-  >();
+  private readonly characters = new Map<number, UnitCharacter>();
+  /** Instanced, texture-skinned units: draws per unit type, not per unit. */
+  private readonly crowd = new BakedCrowd(this.root);
   private readonly corpses = new Map<
     number,
     { root: Object3D; remaining: number; born: number }
   >();
+  /** Merged depth casters for unit rigs (see shadowProxy.ts); shown only during the shadow pass. */
+  private readonly shadowProxies = new Set<SkinnedMesh>();
+  /** Called by the renderer around `shadowMap.render` for this scene. */
+  showShadowProxies(show: boolean) {
+    for (const proxy of this.shadowProxies) proxy.visible = show;
+    this.crowd.showShadows(show);
+  }
   private readonly characterBatchDisposers: Array<() => void> = [];
   private readonly prototypes = new Map<string, Object3D>();
   private readonly entities = new Map<number, Object3D>();
@@ -183,12 +206,22 @@ export class SettlementLayer {
   private readonly bindingLoads=new Map<string,Promise<void>>();
   private readonly modelLoader=new GLTFLoader();
   get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,...this.bindingLoads.values()]).then(()=>{});}
-  constructor(scene: Scene, private readonly cutaway?:SceneryCutaway, private readonly registry:ContentRegistry=content) {
+  constructor(scene: Scene, private readonly registry:ContentRegistry=content) {
     this.root.name = "game-entities";
     this.root.add(this.ghost, this.entranceGhost, this.gridLines);
     this.gridLines.visible = this.entranceGhost.visible = this.ghost.visible = false;
+    // Static root: children update their own subtrees, so a frozen (culled) unit is skipped
+    // by updateMatrixWorld instead of being force-updated through this node.
+    this.root.matrixAutoUpdate = false;
     scene.add(this.root);
   }
+  private viewFrustum: Frustum | null = null;
+  private poseFrame = 0;
+  private lastPoseAt = 0;
+  private poseInterval = 16.7;
+  private readonly cullSphere = new Sphere();
+  /** Last presented camera frustum; units outside it (plus margin) stop animating. */
+  setViewFrustum(frustum: Frustum | null) { this.viewFrustum = frustum; }
   /** Scope residency to requested entities/portraits/placement, deduplicating aliases. */
   private requestModel(id:string){
     if(this.dead||this.bindingLoads.has(id))return;
@@ -205,7 +238,17 @@ export class SettlementLayer {
         return gltf;
       });this.modelLoads.set(key,pending);
     }
-    const binding=pending.then(async gltf=>{if(asset.carryAsset)await this.bindingLoads.get(asset.carryAsset);if(this.dead)return;this.prototypes.set(id,gltf.scene);if(asset.character)this.characterSources.set(id,gltf);this.pendingPreview?.();});
+    const binding=pending.then(async gltf=>{
+      if(asset.carryAsset)await this.bindingLoads.get(asset.carryAsset);if(this.dead)return;
+      this.prototypes.set(id,gltf.scene);
+      if(asset.character){
+        this.characterSources.set(id,gltf);
+        const timing=perf.start();
+        this.crowd.register(id,gltf.scene,gltf.animations,asset.character,geometryModel(file)?.capabilities);
+        perf.end('Character bake (event)',timing);
+      }
+      this.pendingPreview?.();
+    });
     this.bindingLoads.set(id,binding);
     // Keep asynchronous late-spawn failures observable without an unhandled promise.
     void binding.catch(error=>console.error(`Model load failed: ${id}`,error));
@@ -254,21 +297,42 @@ export class SettlementLayer {
     }
     return null;
   }
+  /**
+   * Load every model this match can produce, not only what is observed at start, so warm-up
+   * compiles their programs too. Otherwise the first barracks an AI builds or the first amber
+   * a worker carries links shaders mid-game: a 30–200 ms stall for everyone watching.
+   * Factions come from the entities seen at start; neutral camps/mines and items are shared.
+   */
+  preloadRoster() {
+    const factions = new Set(["neutral", ...this.modelEntities.map((e) => e.definition.split(".")[1]!)]);
+    for (const d of this.registry.definitions)
+      if (d.kind === "item" || ((d.kind === "unit" || d.kind === "building") && factions.has(d.id.split(".")[1]!)))
+        this.requestModel(d.asset);
+  }
   /** Keep prepared material variants alive so the GPU program cache survives warm-up. */
   private warmModels: Object3D[] = [];
   private warmDisposers: Array<() => void> = [];
   prepareModels(): readonly Object3D[] {
     if (this.warmModels.length) return this.warmModels;
+    for (const model of this.harvestTrees.prepareModels()) this.warmModels.push(model);
+    const effects = effectWarmModels(this.mineLabels.material(0, 1));
+    this.warmModels.push(...effects.models); this.warmDisposers.push(effects.dispose);
+    this.warmModels.push(...this.crowd.warmModels());
+    const items = new Set(this.registry.definitions.filter((d) => d.kind === "item").map((d) => d.asset));
     for (const asset of this.prototypes.keys()) {
       const source = this.characterSources.get(asset);
       const character = source ? createCharacterInstance(source, this.registry.asset(asset).character,geometryModel(this.registry.asset(asset).file!)?.capabilities) : null;
       const model = character?.root ?? this.clone(asset);
       if (!model) continue;
       model.traverse(o => { if (o instanceof Mesh) {o.castShadow = true; o.receiveShadow = true;} });
-      if (!character) this.prepareCutaway(model);
       applyPlayerMaterials(model, 0);
       this.warmModels.push(model);
       this.warmDisposers.push(() => character ? character.dispose() : this.disposeInstance(model));
+      // Carried cargo is a bare clone without the ownership patch, so a separate program.
+      if (!character && items.has(asset)) {
+        const cargo = this.clone(asset);
+        if (cargo) { this.warmModels.push(cargo); this.warmDisposers.push(() => this.disposeInstance(cargo)); }
+      }
     }
     return this.warmModels;
   }
@@ -306,12 +370,6 @@ export class SettlementLayer {
     });
     return o;
   }
-  /** Scene instances own their materials; portrait clones keep their opaque shaders. */
-  private prepareCutaway(model:Object3D){
-    if(!this.cutaway)return;
-    const height=new Box3().setFromObject(model).getSize(new Vector3()).y;
-    model.traverse(node=>{if(node instanceof Mesh)for(const mat of Array.isArray(node.material)?node.material:[node.material])this.cutaway!.attach(mat,height);});
-  }
   private make(e: EntityView) {
     const d = this.registry.get(e.definition),
       assetId = e.appearance?.asset ?? d.asset;
@@ -326,23 +384,27 @@ export class SettlementLayer {
     if (o) return o;
     if(!this.prototypes.has(assetId)){this.requestModel(assetId);return null;}
     const source = this.characterSources.get(assetId);
-    const character = source
+    const baked = source ? this.crowd.create(assetId, e.id) : null;
+    const character: UnitCharacter | null = baked ?? (source
       ? createCharacterInstance(source, this.registry.asset(assetId).character,geometryModel(this.registry.asset(assetId).file!)?.capabilities)
-      : null;
+      : null);
     if (character) this.characters.set(e.id, character);
     const model = character?.root ?? this.clone(assetId);
-    if (character)
+    if (character && !baked) {
       model?.traverse((child) => {
         if (child instanceof Mesh) {
           child.castShadow = true;
           child.receiveShadow = true;
         }
       });
+      if (model) for (const proxy of attachShadowProxies(model)) this.shadowProxies.add(proxy);
+    }
     if (!model) return null;
-    if (d.kind === "building") this.prepareCutaway(model);
     o = new Group();
     model.name = "Body";
     o.add(model);
+    holdableMatrices(o);
+    if (character && !baked) holdableMatrices(model);
     o.userData.asset = assetId;
     o.userData.entityId = e.id;
     const asset = this.registry.asset(assetId),
@@ -456,6 +518,12 @@ export class SettlementLayer {
     const duration=dialogue?.durationTicks??Math.max(40,(dialogue?.text.length??0)/12*40);
     const speech=speaking?speechEnvelope(dialogue.text,(duration-(dialogue.cinematic?dialogue.remaining:dialogue.until-tick))/40,duration/40):0;
     const animationTiming=perf.start();
+    // On high-refresh displays (smoothed interval under 14 ms, i.e. above ~70 fps) each unit
+    // re-poses at half the display rate, alternating halves by id parity. Bone work is the top
+    // CPU cost, and 35–60 Hz skeletal animation reads as smooth; 60 Hz displays never stagger.
+    const frameMs=now-this.lastPoseAt;this.lastPoseAt=now;this.poseFrame++;
+    if(frameMs>0&&frameMs<100)this.poseInterval+=(frameMs-this.poseInterval)*.1;
+    const stagger=this.poseInterval<14;
     const byId = this.observedById;
     const seen = new Set<number>();
     const circles: SelectionCircle[] = [], rallies: RallyMarker[] = [];
@@ -500,7 +568,21 @@ export class SettlementLayer {
       o.userData.observedX = e.x;
       o.userData.observedZ = e.y;
       const character = this.characters.get(e.id);
-      if (character && e.unit && o.visible) {
+      // Off-view units freeze: no main/shadow draw, bone matrices or mixer. The margin covers
+      // shadows cast into view and a frame of camera travel (the frustum is last frame's).
+      // The state machine below still runs so a unit resumes in the right clip.
+      const frozen = !!character && o.visible && !!this.viewFrustum && !this.viewFrustum.intersectsSphere(this.cullSphere.set(o.position, UNIT_CULL_MARGIN));
+      if (frozen) o.visible = false;
+      o.userData.matrixHeld = frozen;
+      if (character) {
+        character.player.paused = frozen;
+        // Staggered pose: the model (mesh + bones) keeps last frame's matrices together, so the
+        // skin stays coherent; overlays on `o` still track the live position every frame.
+        const hold = stagger && ((e.id + this.poseFrame) & 1) === 1 && !this.selected.has(e.id) && e.id !== this.cameraHidden;
+        character.player.hold = hold;
+        parts.body.userData.matrixHeld = character.player.holding();
+      }
+      if (character && e.unit && (o.visible || frozen)) {
         const previousState = character.player.state;
         const attack = e.unit.attack;
         const attacked = !!attack && o.userData.attackStarted !== attack.started;
@@ -555,7 +637,7 @@ export class SettlementLayer {
           // Recovery is visual only and yields to movement, attacks and damage.
           const phase=cast
             ? contact*Math.max(0,renderTick-timeline.startTick)/Math.max(1,timeline.resolveTick-timeline.startTick)
-            : contact+(renderTick-timeline.resolveTick)/40*character.player.speed/character.player.action.getClip().duration;
+            : contact+(renderTick-timeline.resolveTick)/40*character.player.speed/character.player.clipDuration();
           if(phase>=1) {character.player.setState("idle",{fade:.05});character.player.update(0);}
           else character.player.sample(Math.max(0,Math.min(cast?contact:.999999,phase)),dt);
         } else if (cycle && character.player.state === e.unit.work?.animation) {
@@ -566,6 +648,7 @@ export class SettlementLayer {
           const restarted = castStarted || (hurt && character.player.state === "hit");
           character.player.update(previousState === character.player.state && !restarted ? dt : 0);
         }
+        character.pose?.();
         character.player.speak(e.id===speaker?speech:0);
         // A brief local recoil remains readable even during an authoritative
         // strike. It never moves the simulation body or delays damage.
@@ -574,7 +657,7 @@ export class SettlementLayer {
         parts.body.rotation.x=-.10*recoil;
         parts.body.position.z=-.045*recoil;
         if(attack&&!e.remembered&&character.player.state==='attack')
-          this.meleeTrails.sample(e.id,o,renderTick,attack.started,character.player.action.time/character.player.action.getClip().duration);
+          this.meleeTrails.sample(e.id,o,renderTick,attack.started,character.player.phase());
         o.userData.animationHp = e.hp;
       }
       const { carry, body } = parts;
@@ -704,6 +787,8 @@ export class SettlementLayer {
         this.corpses.delete(id);
       } else this.characters.get(id)?.player.update(corpseDelta);
     }
+    this.crowd.flush(this.cameraHidden);
+    perf.value('Baked units',this.crowd.units);
   }
   preview(
     definition: string | null,
@@ -794,6 +879,7 @@ export class SettlementLayer {
     // are owned here rather than by the character factory.
     const cargo=this.parts.get(o)?.cargo;
     if(cargo){this.disposeInstance(cargo);cargo.removeFromParent();}
+    o.traverse((child) => { if (child.userData.shadowProxy) this.shadowProxies.delete(child as SkinnedMesh); });
     // Detach the character before disposing accessories; its factory owns rig/material cleanup.
     this.characters.get(id)?.dispose();
     this.characters.delete(id);
@@ -802,7 +888,7 @@ export class SettlementLayer {
   }
   private disposeInstance(o: Object3D) {
     o.traverse((child) => {
-      if (child instanceof Mesh)
+      if (child instanceof Mesh && !child.userData.shadowProxy)
         for (const m of Array.isArray(child.material)
           ? child.material
           : [child.material])
@@ -833,6 +919,7 @@ export class SettlementLayer {
     this.shells.dispose();
     for (const [id, o] of this.entities) this.removeModel(id, o);
     for (const [id, corpse] of this.corpses) this.removeModel(id, corpse.root);
+    this.crowd.dispose();
     for (const p of new Set(this.prototypes.values())) this.disposePrototype(p);
     this.prototypes.clear();this.characterSources.clear();this.bindingLoads.clear();this.modelLoads.clear();
     this.characterBatchDisposers.forEach((dispose) => dispose());

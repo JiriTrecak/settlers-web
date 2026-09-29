@@ -34,7 +34,7 @@ function reset(){
  const input=document.querySelector<HTMLInputElement>('#unit-scale')!;
  if(!input.reportValidity()||!Number.isFinite(input.valueAsNumber))return;
  const source=structuredClone(builtinSource);(source.rules as Rules).unitScale=input.valueAsNumber;
- registry=new ContentRegistry(source);layer?.destroy(scene);layer=new SettlementLayer(scene,undefined,registry);
+ registry=new ContentRegistry(source);layer?.destroy(scene);layer=new SettlementLayer(scene,registry);
  for(const wall of walls){scene.remove(wall);wall.geometry.dispose();(wall.material as MeshStandardMaterial).dispose();}walls.length=0;
  const placements:Placement[]=[];const count=select.value==='traffic'||select.value==='advanced'?24:select.value==='army'||select.value==='warriors'?12:1;
  for(const side of ['red','blue'])for(let i=0;i<count;i++){

@@ -1,0 +1,28 @@
+{
+ "name": "Mega acorn",
+ "material": "Mega acorn shell",
+ "measure": {
+  "axis": "x",
+  "size": 13
+ },
+ "sink": 1.4,
+ "textureSize": 1024,
+ "normalStrength": 0.5,
+ "tone": [
+  0.68,
+  0.66,
+  0.64
+ ],
+ "groundColor": false,
+ "vegetationClearance": 8,
+ "blockers": {
+  "mode": "footprint",
+  "height": 7,
+  "core": 0.85
+ },
+ "rotate": [
+  0,
+  78,
+  0
+ ]
+}

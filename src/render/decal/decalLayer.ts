@@ -23,6 +23,12 @@ export class DecalLayer {
   private readonly group=new Group();
   private readonly textures=new Map(DECAL_KINDS.map(kind=>[kind,texture(kind)]));
   private readonly depth=new MeshDepthMaterial();
+  private warm:Mesh<BufferGeometry,MeshStandardMaterial>|null=null;
+  /** Warm-up stand-in so the no-shadow depth variant links before the sun first sees a decal. */
+  warmModel(){
+    if(!this.warm){this.warm=new Mesh(new BufferGeometry().setAttribute('position',new Float32BufferAttribute([0,0,0,1,0,0,0,0,1],3)),new MeshStandardMaterial());this.warm.receiveShadow=true;this.warm.customDepthMaterial=this.depth;}
+    return this.warm;
+  }
   constructor(scene: Scene){
     this.group.name='ground-decals';scene.add(this.group);
     // VSM also draws receivers into its depth pass; surface paint must not cast a second shadow.
@@ -48,7 +54,7 @@ export class DecalLayer {
     }
   }
   private clear(){for(const child of this.group.children){const m=child as Mesh<BufferGeometry,MeshStandardMaterial>;m.geometry.dispose();m.material.dispose();}this.group.clear();}
-  destroy(scene: Scene){this.clear();for(const t of this.textures.values())t.dispose();this.depth.dispose();scene.remove(this.group);}
+  destroy(scene: Scene){this.clear();this.warm?.geometry.dispose();this.warm?.material.dispose();for(const t of this.textures.values())t.dispose();this.depth.dispose();scene.remove(this.group);}
 }
 
 /** Small vector-painted patches with transparent borders; no baked directional shadows. */

@@ -54,7 +54,7 @@ export class ProductionPreview{
   const isSubject=asset.usesGeometry&&['unit','creature','building'].includes(asset.kind);
   const sceneKey=JSON.stringify([settings.mode,settings.map,settings.environment,asset,asset.recipe||asset.water?[settings.x,settings.z]:null]);
   const rebuild=sceneKey!==this.sceneKey;
-  if(rebuild)this.renderer.setAssets(urls,new Map([[previewId,{sourceAsset:sourceId,transform:asset.transform,groundContact:asset.capabilities.groundContact?.mode}]]));
+  if(rebuild)this.renderer.setAssets(urls,new Map([[previewId,{sourceAsset:sourceId,transform:asset.transform,groundContact:asset.capabilities.groundContact?.mode,...(asset.capabilities.canopy?{canopy:true as const}:{})}]]));
   const kinds=new Map(catalog.assets.map(a=>[a.id,a.type]));kinds.set(previewId,asset.capabilities.groundContact?.mode==='water'?'water':asset.bindings.scenery[0]?.type??'prop');if(rebuild)this.renderer.setKinds(kinds);
   const previewBiome=biomeById(settings.environment==='map'?environmentMap?.biome:settings.environment);
   if(map)map={...map,biome:previewBiome.id};

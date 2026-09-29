@@ -31,7 +31,8 @@ export class ProjectileEffects {
  private readonly tangent=new Vector3();
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
- constructor(parent:Group){parent.add(this.root);}
+ // Batches exist (hidden) from the start so warm-up links their program before the first volley.
+ constructor(parent:Group){parent.add(this.root);for(const kind of ['arrow','thorn'] as const)this.batch(kind,1).mesh.visible=false;}
  private batch(kind:ProjectileKind,count:number){
   let batch=this.batches.get(kind);if(batch&&batch.capacity>=count)return batch;
   let capacity=batch?.capacity??16;while(capacity<count)capacity*=2;

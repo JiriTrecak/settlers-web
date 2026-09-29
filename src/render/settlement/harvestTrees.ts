@@ -67,6 +67,11 @@ export class HarvestTrees {
     }
     for (const id of this.active.keys()) if (!seen.has(id)) this.remove(id);
   }
+  /** Warm-up clones. Proxies share their source's materials, so compiling one clone per
+   * source covers every tree felled later (these are plain meshes, not the instanced forest). */
+  prepareModels(): Object3D[] {
+    return [...this.sources.values()].map((s) => s.scene.clone(true));
+  }
   pickableRoots(): Object3D[] {
     return [...this.active.values()].filter(e => e.root.userData.harvestable).map(e => e.root);
   }

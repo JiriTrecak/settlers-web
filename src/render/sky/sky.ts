@@ -11,10 +11,12 @@ import {
   Color,
   DirectionalLight,
   HemisphereLight,
-  Fog, Vector3, SRGBColorSpace,
+  Fog, Vector3, SRGBColorSpace, Matrix4,
+  type PerspectiveCamera,
   type Scene,
 } from "three";
 import { MAP_FRINGE, MAP_HALO } from "../../shared";
+import { perf } from "../../debug/performance";
 
 
 export type SkyState = {
@@ -93,6 +95,43 @@ export class Sky {
     const dx=x-this.sun.target.position.x,dz=z-this.sun.target.position.z;
     this.sun.target.position.set(x,0,z);this.sun.position.x+=dx;this.sun.position.z+=dz;
     const c=this.sun.shadow.camera;c.left=c.bottom=-extent;c.right=c.top=extent;c.updateProjectionMatrix();this.sun.target.updateMatrixWorld();
+  }
+
+  private readonly fitPoint=new Vector3();
+  private readonly fitRay=new Vector3();
+  private readonly fitRotation=new Matrix4();
+  /**
+   * Tighten the sun's ortho box (after `focus`) to the view frustum's slice between heights
+   * `lo`..`hi`, measured in light space. A caster outside that light-space rectangle cannot
+   * shade anything inside it, so the shadow pass only draws casters that matter on screen,
+   * and texels are spent on the screen instead of an 80 m square around it.
+   * Bounds snap to whole texels in a light frame that doesn't pan with the camera, and the
+   * box size steps in 4 m increments, so panning and zooming don't make shadow edges crawl.
+   * Returns false (keeping the square box) when a frustum corner looks above the horizon.
+   */
+  fitView(view:PerspectiveCamera,lo:number,hi:number,pad=2):boolean {
+    const c=this.sun.shadow.camera,p=this.fitPoint,ray=this.fitRay;
+    c.position.copy(this.sun.position);c.lookAt(this.sun.target.position);c.updateMatrixWorld();
+    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    for(const nx of [-1,1])for(const ny of [-1,1]){
+      ray.set(nx,ny,1).unproject(view).sub(view.position);
+      if(ray.y>-1e-3)return false;
+      for(const y of [lo,hi]){
+        const t=Math.max(0,(y-view.position.y)/ray.y);
+        p.copy(view.position).addScaledVector(ray,t).applyMatrix4(c.matrixWorldInverse);
+        minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);
+      }
+    }
+    const width=Math.ceil((maxX-minX+pad*2)/4)*4,height=Math.ceil((maxY-minY+pad*2)/4)*4;
+    const texelX=width/this.sun.shadow.mapSize.x,texelY=height/this.sun.shadow.mapSize.y;
+    // The shadow camera sits on the target's light ray, so its light-space origin is the
+    // target rotated into the light frame; snap in that fixed frame, then shift back.
+    p.copy(this.sun.target.position).applyMatrix4(this.fitRotation.extractRotation(c.matrixWorldInverse));
+    const cx=(minX+maxX)/2+p.x,cy=(minY+maxY)/2+p.y;
+    const left=Math.floor((cx-width/2)/texelX)*texelX-p.x,bottom=Math.floor((cy-height/2)/texelY)*texelY-p.y;
+    c.left=left;c.right=left+width;c.bottom=bottom;c.top=bottom+height;c.updateProjectionMatrix();
+    perf.value('Sun shadow box (m)',`${width} × ${height}`);
+    return true;
   }
 
   /** Start haze around the view's ground focus so zooming keeps nearby detail clear. */

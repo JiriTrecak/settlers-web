@@ -463,11 +463,11 @@ export function editorTools(hub: EditorHub) {
           .describe("Reset yaw/pitch to true-iso before other overrides."),
         gameZoom: z
           .number()
-          .min(0.5)
-          .max(2)
+          .min(0.25)
+          .max(1.5)
           .optional()
           .describe(
-            "Perspective distance relative to normal Play camera. 2 is maximum zoom out; .5 is closest.",
+            "Perspective distance relative to the default Play camera (1). 1.5 is maximum zoom out; .27 is closest.",
           ),
         gameCam: z
           .boolean()

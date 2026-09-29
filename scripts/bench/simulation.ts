@@ -8,8 +8,9 @@ const mapId=option('--map','threewater-forest'),ticks=Number(option('--ticks','1
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')))!;
 if(!map||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Choose a valid map and at least 400 ticks');
 const start=performance.now();
-const world=new World({map,slots:map.playerStarts.map((_,i)=>({player:i,kind:'ai',team:i})),seed:731942});
-const resume=option('--resume','');if(resume)world.restore(JSON.parse(readFileSync(resume,'utf8')));
+const resume=option('--resume',''),saved=resume?JSON.parse(readFileSync(resume,'utf8')):null;
+const world=new World({map,slots:saved?.slots??map.playerStarts.map((_,i)=>({player:i,kind:'ai',team:i})),seed:731942});
+if(saved)world.restore(saved);
 const checkpoint=Number(option('--checkpoint','-1'));
 let navCalls=0,navMs=0;
 if(args.includes('--trace-navigation')||args.includes('--trace-routes')) {

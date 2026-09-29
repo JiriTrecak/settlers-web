@@ -609,11 +609,13 @@
     },
     "capabilities": {
       "vegetationClearance": 5,
+      "canopy": true,
       "groundContact": {
         "mode": "pivot"
       }
     },
     "groundContact": "pivot",
+    "canopy": true,
     "geometry": [
       "assets/library/asset.models.environment.canopy-ancient-tree/geometry.glb"
     ],
@@ -1199,6 +1201,194 @@
     ],
     "scenery": [
       "meadow-stick-b"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-acorn",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 8,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.mega-acorn/geometry.glb"
+    ],
+    "scenery": [
+      "mega-acorn"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-clover",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 8,
+      "canopy": true,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "canopy": true,
+    "geometry": [
+      "assets/library/asset.models.environment.mega-clover/geometry.glb"
+    ],
+    "scenery": [
+      "mega-clover"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-fallen-leaf",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 9,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.mega-fallen-leaf/geometry.glb"
+    ],
+    "scenery": [
+      "mega-fallen-leaf"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-fallen-log",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 20,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.mega-fallen-log/geometry.glb"
+    ],
+    "scenery": [
+      "mega-fallen-log"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-mushroom",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 13,
+      "canopy": true,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "canopy": true,
+    "geometry": [
+      "assets/library/asset.models.environment.mega-mushroom/geometry.glb"
+    ],
+    "scenery": [
+      "mega-mushroom"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-oak-trunk",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 19,
+      "canopy": true,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "canopy": true,
+    "geometry": [
+      "assets/library/asset.models.environment.mega-oak-trunk/geometry.glb"
+    ],
+    "scenery": [
+      "mega-oak-trunk"
+    ]
+  },
+  {
+    "id": "asset.models.environment.mega-pine-cone",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "vegetationClearance": 9,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.environment.mega-pine-cone/geometry.glb"
+    ],
+    "scenery": [
+      "mega-pine-cone"
     ]
   },
   {
@@ -2049,11 +2239,13 @@
     },
     "capabilities": {
       "vegetationClearance": 4.6,
+      "canopy": true,
       "groundContact": {
         "mode": "pivot"
       }
     },
     "groundContact": "pivot",
+    "canopy": true,
     "geometry": [
       "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb"
     ],
@@ -2075,11 +2267,13 @@
     },
     "capabilities": {
       "vegetationClearance": 4.6,
+      "canopy": true,
       "groundContact": {
         "mode": "pivot"
       }
     },
     "groundContact": "pivot",
+    "canopy": true,
     "geometry": [
       "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb"
     ],

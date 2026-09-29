@@ -3,7 +3,8 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Consolidate untextured materials within a rig group without changing its bones.
  * Team surfaces remain separate. Authored color becomes vertex color; exact PBR
- * factors occupy a nearest-filtered palette. Textured/morphed assets are untouched.
+ * factors occupy a nearest-filtered palette (addressed by rewritten UVs, unused by
+ * untextured paint). Textured/morphed surfaces are untouched.
  */
 export function batchCharacterMaterials(root:Object3D,clips:readonly AnimationClip[]=[]):()=>void {
  const animatedNames=new Set(clips.flatMap(c=>c.tracks.map(t=>t.name.split('.')[0])));
@@ -15,11 +16,13 @@ export function batchCharacterMaterials(root:Object3D,clips:readonly AnimationCl
   for(const child of parent.children){
    if(!(child instanceof SkinnedMesh)||!(child.material instanceof MeshStandardMaterial))continue;
    const m=child.material,g=child.geometry;
-   if(child.children.length||animatedNames.has(child.name)||m.type!=='MeshStandardMaterial'||m.name==='TC_TeamColor'||m.transparent||m.opacity!==1||m.alphaTest||m.emissive.getHex()||m.map||m.normalMap||m.roughnessMap||m.metalnessMap||m.aoMap||m.emissiveMap||m.bumpMap||m.displacementMap||m.alphaMap||m.envMap||child.morphTargetInfluences||g.groups.length||g.attributes.uv)continue;
+   if(child.children.length||animatedNames.has(child.name)||m.type!=='MeshStandardMaterial'||m.name==='TC_TeamColor'||m.transparent||m.opacity!==1||m.alphaTest||m.emissive.getHex()||m.map||m.normalMap||m.roughnessMap||m.metalnessMap||m.aoMap||m.emissiveMap||m.bumpMap||m.displacementMap||m.alphaMap||m.envMap||child.morphTargetInfluences||g.groups.length)continue;
    // Preserve vertex alpha rather than silently turning translucent paint opaque.
    const paint=g.attributes.color;
    if(m.vertexColors&&paint?.itemSize===4&&Array.from({length:paint.count},(_,i)=>paint.getW(i)).some(a=>a!==1))continue;
-   const key=[child.skeleton.uuid,child.matrix.elements.join(','),child.bindMatrix.elements.join(','),child.bindMode,m.side,m.flatShading,m.depthTest,m.depthWrite,child.visible,child.renderOrder,child.layers.mask,child.frustumCulled].join('|');
+   // GLTFLoader gives each primitive its own Skeleton over the same bones: group by the rig, not the object.
+   const rig=child.skeleton.bones.map(b=>b.uuid).join(',')+child.skeleton.boneInverses.map(b=>b.elements.join(',')).join(';');
+   const key=[rig,child.matrix.elements.join(','),child.bindMatrix.elements.join(','),child.bindMode,m.side,m.flatShading,m.depthTest,m.depthWrite,child.visible,child.renderOrder,child.layers.mask,child.frustumCulled].join('|');
    const list=groups.get(key)??[];list.push(child);groups.set(key,list);
   }
   for(const meshes of groups.values()){

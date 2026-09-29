@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-clover",
+  "name": "Mega clover",
+  "kind": "prop",
+  "revision": 22,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "5f7d8940a7f52640de1c5169849c7220d744f62e5a3ddbcfe4902609730b59fb",
+      "bytes": 590
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "f31ecc54db12a05e6ac6bd1d63efafd4000f057790750814bd73ed8b5be81bf1",
+      "bytes": 13372
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "e6a07c6599d6694790117c0e414d7a205ee9a8d5d349f9e7f02044db380e5434",
+      "bytes": 1496416
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "abc03521f789e3311b743074753899dd40ae9a833085185bf42515b14624317a",
+      "bytes": 392696
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "35e4efeb3bfc1bbf3fcd0bd77c0ad8e26fc57d95c91b5fdd6c4e9f8292a9e180",
+      "bytes": 889319
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "49f32e82433b79a9e85f1b5519440d96773bad6d11be4cf395ef8f9a6b25cc55",
+      "bytes": 2214850
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "73cc4fffb739c97a89ec1b453ac7d106dec7ea58996d3f9bcad672d7c7392003",
+      "bytes": 7502560
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "821cd4d1b75e93d5ecff3ead5bb8cc5ecc8b633cf4a48dea8c05f488d65b8410",
+      "bytes": 420
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "ffd3d969d179b8ea272d3e2a1789e677a2c096d87da332b68ce2fcb94721d541",
+      "bytes": 600
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-clover",
+        "sceneryAsset": "mega-clover",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-clover"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-clover",
+        "name": "Mega clover",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 2.06,
+            "depth": 2.06,
+            "shape": "ellipse",
+            "x": 0.07,
+            "z": 0.15
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 8,
+    "canopy": true,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

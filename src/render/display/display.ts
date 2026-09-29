@@ -3,6 +3,7 @@ import {AtmospherePass,type AtmosphereFrame} from '../atmosphere/atmospherePass'
 import {SHADOW_KEY,SHADOWS_CHANGED,readShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_KEY,GRAPHICS_CHANGED,readResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
 import {perf} from '../../debug/performance';
+import {drawCensus} from '../../debug/drawCensus';
 /**
  * Canvas + WebGLRenderer. GameApp owns the canvas for the page lifetime;
  * each match builds a Renderer on it. Shadows on. Output is sRGB.
@@ -14,6 +15,8 @@ export class Display {
   private atmosphere:AtmospherePass|null=null;
   private readonly gpu:GpuTimings;
   private scale=readResolutionScale();
+  private programs=-1;
+  private programChanges=0;
   private readonly graphicsChanged=(e:Event)=>{if(e instanceof StorageEvent&&e.key&&e.key!==RESOLUTION_KEY)return;if(e instanceof CustomEvent)this.scale=e.detail as ResolutionScale;else this.scale=readResolutionScale();this.onResize();};
   private readonly shadowsChanged=(event:Event)=>{
     if(event instanceof StorageEvent&&event.key&&event.key!==SHADOW_KEY)return;
@@ -32,7 +35,10 @@ export class Display {
     readonly canvas: HTMLCanvasElement,
     onResize?: () => void,
   ) {
-    this.gl = new WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+    // No canvas MSAA: every biome renders through the atmosphere pass, whose composite overwrites
+    // the whole canvas with its own FXAA. A 4× multisampled 3200 × 1800 backbuffer only added a
+    // store + resolve per frame (~117 → 147 fps). The portrait antialiases in its own target.
+    this.gl = new WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: "high-performance" });
     this.gl.info.autoReset=false;
     perf.attach();
     this.gpu=new GpuTimings(this.gl.getContext() as WebGL2RenderingContext);
@@ -75,7 +81,8 @@ export class Display {
     this.gl.info.reset();
     perf.resetCounts();
     try{
-      this.drawWorld(scene,camera,atmosphere,(label,draw)=>this.gpu.measure(label,draw));
+      const draw=()=>this.drawWorld(scene,camera,atmosphere,(label,pass)=>this.gpu.measure(label,pass));
+      if(perf.takeCensus()&&'isScene' in scene)perf.setCensus(drawCensus(scene,draw));else draw();
       if(after)this.gpu.measure('GPU portrait',after);
     }finally{this.gpu.end();}
     perf.finishCounts();
@@ -85,11 +92,17 @@ export class Display {
       perf.value('GPU timer',this.gpu.supported?'Supported':'Unavailable in this browser');
       perf.value('Draw calls',this.gl.info.render.calls);perf.value('Triangles (all passes)',this.gl.info.render.triangles.toLocaleString());
       perf.value('Textures',this.gl.info.memory.textures);perf.value('Geometries',this.gl.info.memory.geometries);
+      // A rising count during play means materials are recompiling (a hitch each time).
+      const programs=this.gl.info.programs?.length??0;if(programs!==this.programs){if(this.programs>=0)this.programChanges++;this.programs=programs;}
+      perf.value('Shader programs',programs);perf.value('Shader program changes (since debug on)',this.programChanges);
       perf.value('Canvas',`${this.canvas.width} × ${this.canvas.height} @ ${this.gl.getPixelRatio()} DPR`);
 
     }
   }
 
+  /** The atmosphere pass draws the scene into a linear target (no tone mapping); otherwise it goes
+   * straight to the canvas in sRGB + ACES. Programs differ between the two, so warm-up must match. */
+  sceneOffscreen(atmosphere?:AtmosphereFrame):atmosphere is AtmosphereFrame{return !!(atmosphere?.settings?.enabled||atmosphere?.daytime||atmosphere?.postProcessing||atmosphere?.canopy);}
   /** Also used by editor captures; the caller owns the destination target. */
   drawWorld(scene:Scene,camera:Camera,atmosphere?:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()){
     // Imported HDR multipliers stay literal; exposure is the renderer adapter,
@@ -97,7 +110,7 @@ export class Display {
     const exposure=this.gl.toneMappingExposure;
     if(atmosphere?.daytime)this.gl.toneMappingExposure=.28;
     try {
-    if(atmosphere?.settings?.enabled||atmosphere?.daytime||atmosphere?.postProcessing||atmosphere?.canopy){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
+    if(this.sceneOffscreen(atmosphere)){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
     else {perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>this.gl.render(scene,camera));}
     }finally{this.gl.toneMappingExposure=exposure;}
   }

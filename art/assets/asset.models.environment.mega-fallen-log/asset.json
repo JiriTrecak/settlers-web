@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-fallen-log",
+  "name": "Mega fallen log",
+  "kind": "prop",
+  "revision": 22,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "cc3af8055c3ff7843940e40176285ad93d59159b8c6607c4c3b61ae80d0af5d2",
+      "bytes": 610
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b359aff6b1a267faf25bba194ed86be34c72e83b4f18a35abeb77038fec9fbae",
+      "bytes": 13421
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "67c22102d92009acfd5a090a00d52a5e85d95b1cc55c1a28268ea6437c4ba35a",
+      "bytes": 6693984
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "5ef0240c1b5def42c59f80833a1be1a3265df3cd09319324fe69146be5d9b05f",
+      "bytes": 356609
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "9e9caa284ba67734ef00aab10d89a81d0325657729215f37117923e8550b2a73",
+      "bytes": 769216
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "49a2a1835b978049b252b1062a5b6ff79456c942ab1a85f50a14b4e9b7527e8e",
+      "bytes": 6355393
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "93094be09279f98e4423cc916084e5b2d9427e46f0160bb376412f55960f11a4",
+      "bytes": 15277216
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "86008a86a153041b910f65ab8f2fd67a79ba4da0224afba9f9a4ae8fc700a487",
+      "bytes": 453
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "178c8f8a8657cd96ea3d17423ef9da2e3297add70b629a8021493ad36edc2d3c",
+      "bytes": 604
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-fallen-log",
+        "sceneryAsset": "mega-fallen-log",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-fallen-log"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-fallen-log",
+        "name": "Mega fallen log",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 5.5,
+            "depth": 11.3,
+            "x": -19.25,
+            "z": -0.56
+          },
+          {
+            "width": 5.5,
+            "depth": 13.89,
+            "x": -13.75,
+            "z": -0.4
+          },
+          {
+            "width": 5.5,
+            "depth": 13.39,
+            "x": -8.25,
+            "z": -0.46
+          },
+          {
+            "width": 5.5,
+            "depth": 12.63,
+            "x": -2.75,
+            "z": -0.04
+          },
+          {
+            "width": 5.5,
+            "depth": 9.7,
+            "x": 2.75,
+            "z": 0.12
+          },
+          {
+            "width": 5.5,
+            "depth": 10.51,
+            "x": 8.25,
+            "z": 0.41
+          },
+          {
+            "width": 5.5,
+            "depth": 13.62,
+            "x": 13.75,
+            "z": 0.55
+          },
+          {
+            "width": 5.5,
+            "depth": 11.75,
+            "x": 19.25,
+            "z": 0.62
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 20,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

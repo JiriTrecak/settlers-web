@@ -3210,7 +3210,7 @@
         "original",
         "woodland"
       ],
-      "revision": 2,
+      "revision": 3,
       "profile": "model",
       "outputs": [
         {
@@ -3998,6 +3998,542 @@
           "category": "landmark",
           "type": "prop",
           "file": "library/asset.models.environment.meadow-stick-b/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-acorn",
+      "name": "Mega acorn",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 24,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-acorn/geometry.glb",
+          "sha256": "6f0f37664fd76d2b67981f0c37866cb9af86200eca00188767f6f2aa324b5b8c",
+          "bytes": 1812636
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-acorn",
+          "file": "assets/library/asset.models.environment.mega-acorn/geometry.glb",
+          "sceneryAsset": "mega-acorn"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-acorn",
+          "name": "Mega acorn",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 11.05,
+              "depth": 11.45,
+              "shape": "ellipse",
+              "x": 0,
+              "z": 0
+            }
+          ],
+          "file": "library/asset.models.environment.mega-acorn/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-clover",
+      "name": "Mega clover",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 22,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-clover/geometry.glb",
+          "sha256": "e6a07c6599d6694790117c0e414d7a205ee9a8d5d349f9e7f02044db380e5434",
+          "bytes": 1496416
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-clover",
+          "file": "assets/library/asset.models.environment.mega-clover/geometry.glb",
+          "sceneryAsset": "mega-clover"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-clover",
+          "name": "Mega clover",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 2.06,
+              "depth": 2.06,
+              "shape": "ellipse",
+              "x": 0.07,
+              "z": 0.15
+            }
+          ],
+          "file": "library/asset.models.environment.mega-clover/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-fallen-leaf",
+      "name": "Mega fallen leaf",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-fallen-leaf/geometry.glb",
+          "sha256": "d268114a972cca08910ae98490dc7c32e0dd4137eec23e3528426d8568d59c3e",
+          "bytes": 2085292
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-fallen-leaf",
+          "file": "assets/library/asset.models.environment.mega-fallen-leaf/geometry.glb",
+          "sceneryAsset": "mega-fallen-leaf"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-fallen-leaf",
+          "name": "Mega fallen leaf",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 9.6,
+              "depth": 9.81,
+              "shape": "ellipse",
+              "x": 0,
+              "z": 0
+            }
+          ],
+          "file": "library/asset.models.environment.mega-fallen-leaf/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-fallen-log",
+      "name": "Mega fallen log",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 22,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-fallen-log/geometry.glb",
+          "sha256": "67c22102d92009acfd5a090a00d52a5e85d95b1cc55c1a28268ea6437c4ba35a",
+          "bytes": 6693984
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-fallen-log",
+          "file": "assets/library/asset.models.environment.mega-fallen-log/geometry.glb",
+          "sceneryAsset": "mega-fallen-log"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-fallen-log",
+          "name": "Mega fallen log",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 5.5,
+              "depth": 11.3,
+              "x": -19.25,
+              "z": -0.56
+            },
+            {
+              "width": 5.5,
+              "depth": 13.89,
+              "x": -13.75,
+              "z": -0.4
+            },
+            {
+              "width": 5.5,
+              "depth": 13.39,
+              "x": -8.25,
+              "z": -0.46
+            },
+            {
+              "width": 5.5,
+              "depth": 12.63,
+              "x": -2.75,
+              "z": -0.04
+            },
+            {
+              "width": 5.5,
+              "depth": 9.7,
+              "x": 2.75,
+              "z": 0.12
+            },
+            {
+              "width": 5.5,
+              "depth": 10.51,
+              "x": 8.25,
+              "z": 0.41
+            },
+            {
+              "width": 5.5,
+              "depth": 13.62,
+              "x": 13.75,
+              "z": 0.55
+            },
+            {
+              "width": 5.5,
+              "depth": 11.75,
+              "x": 19.25,
+              "z": 0.62
+            }
+          ],
+          "file": "library/asset.models.environment.mega-fallen-log/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-mushroom",
+      "name": "Mega mushroom",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 22,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-mushroom/geometry.glb",
+          "sha256": "f44c03937bbf4670c18b50bdf4029f6fd98577981852ba3548c0ceb5945d58b8",
+          "bytes": 4688016
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-mushroom",
+          "file": "assets/library/asset.models.environment.mega-mushroom/geometry.glb",
+          "sceneryAsset": "mega-mushroom"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-mushroom",
+          "name": "Mega mushroom",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 4.97,
+              "depth": 4.97,
+              "shape": "ellipse",
+              "x": -0.86,
+              "z": -0.62
+            }
+          ],
+          "file": "library/asset.models.environment.mega-mushroom/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-oak-trunk",
+      "name": "Mega oak trunk",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 24,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-oak-trunk/geometry.glb",
+          "sha256": "d4b23f93afb61f2134d8ee6dba3d9badd5ae8b15ed9293025bff1e71257bf3a0",
+          "bytes": 5144112
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-oak-trunk",
+          "file": "assets/library/asset.models.environment.mega-oak-trunk/geometry.glb",
+          "sceneryAsset": "mega-oak-trunk"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-oak-trunk",
+          "name": "Mega oak trunk",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 20.24,
+              "depth": 20.24,
+              "shape": "ellipse"
+            },
+            {
+              "width": 12.63,
+              "depth": 3.39,
+              "x": 14.29,
+              "z": -1.88,
+              "yaw": 0.1309
+            },
+            {
+              "width": 11.97,
+              "depth": 3.31,
+              "x": 13.01,
+              "z": -5.39,
+              "yaw": 0.3927
+            },
+            {
+              "width": 12.23,
+              "depth": 3.34,
+              "x": 11.27,
+              "z": -8.65,
+              "yaw": 0.6545
+            },
+            {
+              "width": 13.16,
+              "depth": 3.45,
+              "x": 8.94,
+              "z": -11.64,
+              "yaw": 0.9163
+            },
+            {
+              "width": 13.25,
+              "depth": 3.46,
+              "x": 5.63,
+              "z": -13.6,
+              "yaw": 1.1781
+            },
+            {
+              "width": 13.83,
+              "depth": 3.53,
+              "x": 1.96,
+              "z": -14.88,
+              "yaw": 1.4399
+            },
+            {
+              "width": 9.81,
+              "depth": 3.05,
+              "x": -1.7,
+              "z": -12.89,
+              "yaw": 1.7017
+            },
+            {
+              "width": 13.77,
+              "depth": 3.52,
+              "x": -5.73,
+              "z": -13.84,
+              "yaw": 1.9635
+            },
+            {
+              "width": 11.95,
+              "depth": 3.31,
+              "x": -8.57,
+              "z": -11.16,
+              "yaw": 2.2253
+            },
+            {
+              "width": 10.7,
+              "depth": 3.16,
+              "x": -10.67,
+              "z": -8.19,
+              "yaw": 2.4871
+            },
+            {
+              "width": 9.79,
+              "depth": 3.05,
+              "x": -12,
+              "z": -4.97,
+              "yaw": 2.7489
+            },
+            {
+              "width": 10.14,
+              "depth": 3.09,
+              "x": -13.05,
+              "z": -1.72,
+              "yaw": 3.0107
+            },
+            {
+              "width": 10.15,
+              "depth": 3.09,
+              "x": -13.06,
+              "z": 1.72,
+              "yaw": 3.2725
+            },
+            {
+              "width": 3.82,
+              "depth": 2.35,
+              "x": -9.24,
+              "z": 3.83,
+              "yaw": 3.5343
+            },
+            {
+              "width": 8.66,
+              "depth": 2.92,
+              "x": -9.86,
+              "z": 7.56,
+              "yaw": 3.7961
+            },
+            {
+              "width": 7.99,
+              "depth": 2.84,
+              "x": -7.36,
+              "z": 9.59,
+              "yaw": 4.0579
+            },
+            {
+              "width": 7.19,
+              "depth": 2.75,
+              "x": -4.47,
+              "z": 10.8,
+              "yaw": 4.3197
+            },
+            {
+              "width": 9.16,
+              "depth": 2.98,
+              "x": -1.65,
+              "z": 12.57,
+              "yaw": 4.5815
+            },
+            {
+              "width": 7.2,
+              "depth": 2.75,
+              "x": 1.53,
+              "z": 11.6,
+              "yaw": 4.8433
+            },
+            {
+              "width": 8.62,
+              "depth": 2.91,
+              "x": 4.75,
+              "z": 11.46,
+              "yaw": 5.1051
+            },
+            {
+              "width": 10.96,
+              "depth": 3.19,
+              "x": 8.26,
+              "z": 10.77,
+              "yaw": 5.3669
+            },
+            {
+              "width": 8.53,
+              "depth": 2.9,
+              "x": 9.81,
+              "z": 7.52,
+              "yaw": 5.6287
+            },
+            {
+              "width": 10.74,
+              "depth": 3.16,
+              "x": 12.44,
+              "z": 5.15,
+              "yaw": 5.8905
+            },
+            {
+              "width": 10.04,
+              "depth": 3.08,
+              "x": 13,
+              "z": 1.71,
+              "yaw": 6.1523
+            }
+          ],
+          "file": "library/asset.models.environment.mega-oak-trunk/geometry.glb"
+        }
+      ]
+    },
+    {
+      "id": "asset.models.environment.mega-pine-cone",
+      "name": "Mega pine cone",
+      "kind": "model",
+      "tags": [
+        "original",
+        "woodland",
+        "forest-scale",
+        "mega",
+        "tripo"
+      ],
+      "revision": 21,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.environment.mega-pine-cone/geometry.glb",
+          "sha256": "ccb0b034d85f35ecb04c954e54774bdf99fe1bf358105098ad51a493d155e48e",
+          "bytes": 1611064
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.scenery.mega-pine-cone",
+          "file": "assets/library/asset.models.environment.mega-pine-cone/geometry.glb",
+          "sceneryAsset": "mega-pine-cone"
+        }
+      ],
+      "scenery": [
+        {
+          "id": "mega-pine-cone",
+          "name": "Mega pine cone",
+          "category": "landmark",
+          "type": "prop",
+          "blockers": [
+            {
+              "width": 11.9,
+              "depth": 11.14,
+              "shape": "ellipse",
+              "x": 0,
+              "z": 0
+            }
+          ],
+          "file": "library/asset.models.environment.mega-pine-cone/geometry.glb"
         }
       ]
     },
@@ -5131,7 +5667,7 @@
         "woodland",
         "forest-scale"
       ],
-      "revision": 3,
+      "revision": 4,
       "profile": "model",
       "outputs": [
         {
@@ -5174,7 +5710,7 @@
         "woodland",
         "forest-scale"
       ],
-      "revision": 3,
+      "revision": 4,
       "profile": "model",
       "outputs": [
         {

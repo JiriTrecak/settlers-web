@@ -1,4 +1,4 @@
-import {AdditiveBlending,Color,DoubleSide,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Quaternion,RingGeometry,SphereGeometry,Vector3} from 'three';
+import {AdditiveBlending,Color,DoubleSide,DynamicDrawUsage,Group,InstancedBufferAttribute,InstancedMesh,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Quaternion,RingGeometry,SphereGeometry,Vector3} from 'three';
 import type {Shell} from '../../sim/game/shellState';
 import type {HeightField} from '../../shared/map/height';
 
@@ -8,7 +8,7 @@ export class ShellEffects {
  private readonly ballGeometry=new SphereGeometry(.2,8,6);
  private readonly ringGeometry=new RingGeometry(.72,1,24);
  private readonly ballMaterial=new MeshStandardMaterial({color:0x655c4e,metalness:.65,roughness:.55});
- private readonly ringMaterial=new MeshBasicMaterial({color:0xffffff,transparent:true,depthWrite:false,side:DoubleSide,blending:AdditiveBlending});
+ private readonly ringMaterial=new MeshBasicMaterial({color:0xffffff,transparent:true,depthWrite:false,side:DoubleSide,forceSinglePass:true,blending:AdditiveBlending});
  private capacity=0;
  private balls:InstancedMesh|null=null;
  private rings:InstancedMesh|null=null;
@@ -16,12 +16,14 @@ export class ShellEffects {
  private readonly rotation=new Quaternion();private readonly flat=new Quaternion().setFromAxisAngle(new Vector3(1,0,0),-Math.PI/2);
  private readonly color=new Color();
  private readonly origins=new Map<number,{launched:number;position:Vector3}>();
- constructor(parent:Group){parent.add(this.root);}
+ // Reserved up front (with ring colours) so warm-up links both programs before the first shell.
+ constructor(parent:Group){parent.add(this.root);this.reserve(1);this.balls!.count=0;this.rings!.count=0;}
  private reserve(count:number){
   if(this.capacity>=count)return;
   let capacity=Math.max(16,this.capacity);while(capacity<count)capacity*=2;
   this.balls?.dispose();this.rings?.dispose();this.root.clear();this.capacity=capacity;
   this.balls=new InstancedMesh(this.ballGeometry,this.ballMaterial,capacity);this.rings=new InstancedMesh(this.ringGeometry,this.ringMaterial,capacity);
+  this.rings.instanceColor=new InstancedBufferAttribute(new Float32Array(capacity*3),3);
   for(const mesh of [this.balls,this.rings]){mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;this.root.add(mesh);}
  }
  update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined,unitScale=1){

@@ -38,6 +38,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
     this.roadMask=new DataTexture(new Uint8Array(this.verts*this.verts*2),this.verts,this.verts,RGFormat);
     this.roadMask.minFilter=this.roadMask.magFilter=LinearFilter;this.roadMask.needsUpdate=true;
     this.contacts.minFilter=this.contacts.magFilter=LinearFilter;this.contacts.needsUpdate=true;
+    this.contacts.onUpdate=()=>{this.fullContactUpload=false;};
     this.weights.minFilter=this.weights.magFilter=LinearFilter;
     this.weights.needsUpdate=true;
     this.onBeforeCompile=shader=>{
@@ -51,18 +52,45 @@ export class TerrainMaterial extends MeshStandardMaterial {
     if(this.groundLamps===lamps)return;
     this.groundLamps=lamps;
     bakeGroundLights(this.contacts.image.data as Uint8Array,1024,HEIGHT_ORIGIN,this.verts-1,(x,z)=>field.sample(x,z),lamps);
-    this.contacts.needsUpdate=true;
+    this.uploadAllContacts();
   }
-  setContacts(revision:number,contacts:readonly {x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]):void {
+  private drawnContacts=new Set<Contact>();
+  /** A whole-texture upload is queued; row ranges added now would truncate it to those rows. */
+  private fullContactUpload=true;
+  private uploadAllContacts(){this.contacts.clearUpdateRanges();this.fullContactUpload=true;this.contacts.needsUpdate=true;}
+  /** Contact shade under props (R channel, max-blended). A harvested tree changes one or two
+   * contacts, so only their texel rectangles are cleared, redrawn from every overlapping contact
+   * and uploaded row by row — a full redraw + 4 MB upload was an ~18 ms hitch per prop change.
+   * Unchanged props keep their contact object, so identity tells what changed. */
+  setContacts(revision:number,contacts:readonly Contact[]):void {
     if(this.contactRevision===revision)return;this.contactRevision=revision;
-    const data=this.contacts.image.data as Uint8Array;for(let i=0;i<data.length;i+=4)data[i]=0;const size=1024,scale=size/(this.verts-1);
-    for(const c of contacts){
-      const cx=(c.x-HEIGHT_ORIGIN)*scale,cz=(c.z-HEIGHT_ORIGIN)*scale,rx=c.radiusX*scale*1.5,rz=c.radiusZ*scale*1.5;
-      for(let z=Math.max(0,Math.floor(cz-rz));z<=Math.min(size-1,cz+rz);z++)for(let x=Math.max(0,Math.floor(cx-rx));x<=Math.min(size-1,cx+rx);x++){
-        const d=((x-cx)/rx)**2+((z-cz)/rz)**2;if(d>=1)continue;
-        const w=c.strength*(1-d)**2,i=(z*size+x)*4;data[i]=Math.max(data[i]!,Math.round(w*255));
+    const data=this.contacts.image.data as Uint8Array,size=1024,scale=size/(this.verts-1);
+    const next=new Set(contacts),changed:Contact[]=[];
+    for(const c of this.drawnContacts)if(!next.has(c))changed.push(c);
+    for(const c of contacts)if(!this.drawnContacts.has(c))changed.push(c);
+    this.drawnContacts=next;
+    const rect=(c:Contact)=>{const cx=(c.x-HEIGHT_ORIGIN)*scale,cz=(c.z-HEIGHT_ORIGIN)*scale,rx=c.radiusX*scale*1.5,rz=c.radiusZ*scale*1.5;
+      return {cx,cz,rx,rz,x0:Math.max(0,Math.floor(cx-rx)),x1:Math.min(size-1,Math.floor(cx+rx)),z0:Math.max(0,Math.floor(cz-rz)),z1:Math.min(size-1,Math.floor(cz+rz))};};
+    const stamp=(c:Contact,x0:number,x1:number,z0:number,z1:number)=>{
+      const r=rect(c);
+      for(let z=Math.max(z0,r.z0);z<=Math.min(z1,r.z1);z++)for(let x=Math.max(x0,r.x0);x<=Math.min(x1,r.x1);x++){
+        const d=((x-r.cx)/r.rx)**2+((z-r.cz)/r.rz)**2;if(d>=1)continue;
+        const i=(z*size+x)*4;data[i]=Math.max(data[i]!,Math.round(c.strength*(1-d)**2*255));
       }
-    }this.contacts.needsUpdate=true;
+    };
+    if(changed.length>Math.max(64,contacts.length/4)){
+      for(let i=0;i<data.length;i+=4)data[i]=0;
+      for(const c of contacts)stamp(c,0,size-1,0,size-1);
+      this.uploadAllContacts();return;
+    }
+    if(!changed.length)return;
+    const boxes=contacts.map(rect);
+    for(const c of changed){
+      const {x0,x1,z0,z1}=rect(c);
+      for(let z=z0;z<=z1;z++){for(let x=x0;x<=x1;x++)data[(z*size+x)*4]=0;if(!this.fullContactUpload)this.contacts.addUpdateRange((z*size+x0)*4,(x1-x0+1)*4);}
+      for(let i=0;i<contacts.length;i++){const b=boxes[i]!;if(b.x1>=x0&&b.x0<=x1&&b.z1>=z0&&b.z0<=z1)stamp(contacts[i]!,x0,x1,z0,z1);}
+    }
+    this.contacts.needsUpdate=true;
   }
   setCover(patches:readonly CoverPatch[]):void {
     if(this.cover===patches)return;
@@ -106,4 +134,5 @@ export class TerrainMaterial extends MeshStandardMaterial {
   }
   override dispose():void{ this.colorPrograms.clear();this.depthPrograms.clear(); this.imported?.dispose();this.native?.dispose(); this.roadMask.dispose();this.weights.dispose();this.contacts.dispose();super.dispose(); }
 }
+type Contact={x:number;z:number;radiusX:number;radiusZ:number;strength:number};
 const smooth=(a:number,b:number,x:number)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};

@@ -3,6 +3,7 @@ import {BeautyPass} from './beautyPass';
 import {NEUTRAL_POST_PROCESSING,type PostProcessingSettings} from '../../shared/environment/postProcessing';
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
 import type {ImportedWater} from '../water/importedWater';
+import type {DewLayer} from '../prop/dewLayer';
 import {createAtmosphereNoise} from './noiseVolume';
 import {createDaytimeLuts} from './daytimeLuts';
 import {Color,SRGBColorSpace,DepthTexture,HalfFloatType,Matrix4,Mesh,NearestFilter,OrthographicCamera,PCFShadowMap,PlaneGeometry,Scene,ShaderMaterial,UnsignedIntType,Vector2,Vector3,Vector4,WebGLRenderTarget,type Camera,type DirectionalLight,type Texture,type WebGLRenderer} from 'three';
@@ -12,13 +13,14 @@ import {perf} from '../../debug/performance';
 import {compositeFragment,filterFragment,fullscreenVertex,marchFragment} from './shaders';
 
 export const atmosphereQualitySpec=(quality:AtmosphereQuality)=>quality==='high'?{scale:.66,steps:40,maxPixels:900_000}:quality==='low'?{scale:.33,steps:16,maxPixels:180_000}:{scale:.5,steps:24,maxPixels:360_000};
-export type AtmosphereFrame={canopy?:CanopyFrame;postProcessing?:PostProcessingSettings;sourceWater?:ImportedWater;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
+export type AtmosphereFrame={canopy?:CanopyFrame;postProcessing?:PostProcessingSettings;sourceWater?:ImportedWater;dew?:DewLayer;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
 /** Bounded raymarch and depth-aware filter, then full-resolution composite. No history buffer. */
 export class AtmospherePass {
  private readonly beauty=new BeautyPass();
  private readonly noiseVolume=createAtmosphereNoise();
  private readonly daytimeLuts=createDaytimeLuts();
- private readonly sceneTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:true,samples:2});
+ /** Single-sample: the composite applies FXAA instead of MSAA (see compositeFragment). */
+ private readonly sceneTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:true});
  private readonly fogTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:false,minFilter:NearestFilter,magFilter:NearestFilter});
  private readonly filteredTarget=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:false,minFilter:NearestFilter,magFilter:NearestFilter});
  private readonly quadScene=new Scene();
@@ -33,7 +35,7 @@ export class AtmospherePass {
  private readonly filter=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:filterFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,fogTexture:{value:this.fogTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,
     bloomNear:{value:this.beauty.bloom[0].texture},bloomMid:{value:this.beauty.bloom[1].texture},bloomFar:{value:this.beauty.bloom[2].texture},contactTexture:{value:this.beauty.contact.texture},
-    contactSize:{value:new Vector2()},contactStrength:{value:0},bloomStrength:{value:0},lookExposure:{value:1},lookContrast:{value:1},highlightShoulder:{value:0},lookSaturation:{value:1},shadowTint:{value:new Color()},highlightTint:{value:new Color()},splitStrength:{value:0},shadowLift:{value:0},vignetteStrength:{value:0},
+    contactSize:{value:new Vector2()},sceneTexel:{value:new Vector2()},contactStrength:{value:0},bloomStrength:{value:0},lookExposure:{value:1},lookContrast:{value:1},highlightShoulder:{value:0},lookSaturation:{value:1},shadowTint:{value:new Color()},highlightTint:{value:new Color()},splitStrength:{value:0},shadowLift:{value:0},vignetteStrength:{value:0},
     toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},sourceReference:{value:false},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeLutStrength:{value:0},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly quad=new Mesh(this.geometry,this.march);
  private shaderKey='';
@@ -56,6 +58,8 @@ export class AtmospherePass {
   try{
    gl.autoClear=true;measure('GPU scene',()=>{gl.setRenderTarget(this.sceneTarget);gl.render(scene,camera);});
    if(frame.sourceWater)measure('GPU source water',()=>frame.sourceWater!.render(gl,this.sceneTarget,camera,frame.sun,frame.daytime));
+   // After water, so beads near a river refract it.
+   if(frame.dew)measure('GPU dew',()=>frame.dew!.render(gl,this.sceneTarget,camera,frame.sun));
    const start=perf.start();
    // Scene render has updated both camera matrices and the current sun shadow.
    const u=this.march.uniforms,s=this.shared;
@@ -86,6 +90,7 @@ export class AtmospherePass {
    if(frame.daytime){const f=frame.daytime.look.fog,scale=frame.daytimeFogDistanceScale??1;composite.daytimeFogColor.value.setRGB(f.color.rgb[0]/255,f.color.rgb[1]/255,f.color.rgb[2]/255,SRGBColorSpace).multiplyScalar(f.color.multiplier).multiply(this.fogTint.set(frame.daytimeFogTint??'#ffffff'));composite.daytimeFogDensity.value=f.density/scale*(look.distanceFogStrength??1);composite.daytimeFogDispersion.value=f.dispersionByHeight;composite.daytimeFogStart.value=f.startDist*scale;composite.daytimeFogHeight.value=f.startHeight+(frame.sourceHeightOffset??0);}
    measure('GPU biome finish',()=>{gl.shadowMap.autoUpdate=false;this.beauty.render(gl,this.sceneTarget,camera,frame.waterLevel,look);});
    composite.contactSize.value.set(this.beauty.contact.width,this.beauty.contact.height);
+   composite.sceneTexel.value.set(1/this.sceneTarget.width,1/this.sceneTarget.height);
    measure('GPU atmosphere',()=>{
    gl.shadowMap.autoUpdate=false;
    if(volumetrics){this.quad.material=this.march;gl.setRenderTarget(this.fogTarget);gl.render(this.quadScene,this.camera);

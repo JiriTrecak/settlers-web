@@ -34,7 +34,7 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the shared rules scale
   return {scene,animations:[new AnimationClip('idle',1,[])]} as any;
  });
  const raw=source();(raw.rules as Rules).unitScale=scale;
- const registry=new ContentRegistry(raw),scene=new Scene(),layer=new SettlementLayer(scene,undefined,registry);await layer.ready;
+ const registry=new ContentRegistry(raw),scene=new Scene(),layer=new SettlementLayer(scene,registry);await layer.ready;
  const definitions=['unit.ants.warrior','unit.ants.settler','building.ants.house'];
  const g=game(definitions.map((d,i)=>placed('size.'+i,d,205+i*5,210)),draft=>{(draft.rules as Rules).unitScale=scale;}),view=g.view();
  const state={...view,entities:view.entities.filter(e=>definitions.includes(e.definition))},field=new HeightField();

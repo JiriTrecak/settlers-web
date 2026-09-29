@@ -16,7 +16,7 @@ export function abilityOutline(aim:AbilityAim):Point[]{
 }
 export class AbilityTarget {
  private readonly root=new Group();
- private readonly fill=new Mesh(new BufferGeometry(),new MeshBasicMaterial({color:0x80e6db,transparent:true,opacity:.16,side:DoubleSide,depthWrite:false,depthTest:false}));
+ private readonly fill=new Mesh(new BufferGeometry(),new MeshBasicMaterial({color:0x80e6db,transparent:true,opacity:.16,side:DoubleSide,forceSinglePass:true,depthWrite:false,depthTest:false}));
  private readonly edge=new LineSegments(new BufferGeometry(),new LineBasicMaterial({color:0xb9fff1,transparent:true,opacity:.9,depthTest:false,depthWrite:false}));
  private readonly range=new LineSegments(new BufferGeometry(),new LineBasicMaterial({color:0xe8dfb0,transparent:true,opacity:.35,depthTest:false,depthWrite:false}));
  private key='';

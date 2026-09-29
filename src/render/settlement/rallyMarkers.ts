@@ -61,7 +61,7 @@ export class RallyMarkers {
     const pole = new Mesh(this.pole, this.wood), finial = new Mesh(this.finial, this.brass);
     pole.castShadow = finial.castShadow = true;
     const banner = new Mesh(new PlaneGeometry(BANNER_W, BANNER_H, 8, 2).translate(BANNER_W / 2, POLE - BANNER_H / 2 - .06, 0),
-      new MeshStandardMaterial({side:DoubleSide,roughness:.8,depthTest:false,transparent:true}));
+      new MeshStandardMaterial({side:DoubleSide,forceSinglePass:true,roughness:.8,depthTest:false,transparent:true}));
     banner.castShadow = true;
     pole.renderOrder = finial.renderOrder = 6;
     banner.renderOrder = 7;

@@ -161,6 +161,26 @@ uniform sampler2D bloomNear,bloomMid,bloomFar,contactTexture;
 uniform vec2 contactSize;
 uniform float contactStrength,bloomStrength,lookExposure,lookContrast,lookSaturation,splitStrength,shadowLift,vignetteStrength,highlightShoulder;
 uniform vec3 shadowTint,highlightTint;
+uniform vec2 sceneTexel;
+// FXAA (Lottes' console variant) on the linear HDR scene. The scene target has no MSAA: on
+// tile GPUs a multisampled HalfFloat target stores every sample to memory and resolves it,
+// which cost ~5 ms at 3200 × 1800. Luma is tonemapped so bright HDR edges don't dominate.
+float aaLuma(vec3 c){float l=dot(c,vec3(.299,.587,.114));return l/(1.+l);}
+vec3 sceneAntialiased(vec2 uv){
+ vec3 m=texture2D(sceneColor,uv).rgb;
+ vec3 nw=texture2D(sceneColor,uv+vec2(-1.,-1.)*sceneTexel).rgb,ne=texture2D(sceneColor,uv+vec2(1.,-1.)*sceneTexel).rgb;
+ vec3 sw=texture2D(sceneColor,uv+vec2(-1.,1.)*sceneTexel).rgb,se=texture2D(sceneColor,uv+vec2(1.,1.)*sceneTexel).rgb;
+ float lm=aaLuma(m),lnw=aaLuma(nw),lne=aaLuma(ne),lsw=aaLuma(sw),lse=aaLuma(se);
+ float lo=min(lm,min(min(lnw,lne),min(lsw,lse))),hi=max(lm,max(max(lnw,lne),max(lsw,lse)));
+ if(hi-lo<max(.0312,hi*.125))return m;
+ vec2 dir=vec2(-((lnw+lne)-(lsw+lse)),(lnw+lsw)-(lne+lse));
+ float reduce=max((lnw+lne+lsw+lse)*(.25/8.),1./128.);
+ dir=clamp(dir/(min(abs(dir.x),abs(dir.y))+reduce),vec2(-8.),vec2(8.))*sceneTexel;
+ vec3 a=.5*(texture2D(sceneColor,uv+dir*(1./3.-.5)).rgb+texture2D(sceneColor,uv+dir*(2./3.-.5)).rgb);
+ vec3 b=a*.5+.25*(texture2D(sceneColor,uv-dir*.5).rgb+texture2D(sceneColor,uv+dir*.5).rgb);
+ float lb=aaLuma(b);
+ return lb<lo||lb>hi?a:b;
+}
 float contactShade(vec3 surface){
  if(contactStrength<=0.)return 1.;
  vec2 pixel=vUv*contactSize-.5,base=floor(pixel),f=fract(pixel);
@@ -230,7 +250,7 @@ void main(){
  float visibility=1.;
  if(hasVisibility){vec2 uv=(surface.xz+.5)/mapSize;visibility=texture2D(visibilityMap,clamp(uv,0.,1.)).r;
  if(any(lessThan(uv,vec2(0.)))||any(greaterThan(uv,vec2(1.))))visibility=0.;}
- vec3 color=texture2D(sceneColor,vUv).rgb*contactShade(surface);
+ vec3 color=sceneAntialiased(vUv)*contactShade(surface);
  // Large continuous shade retains sky fill; apply it to bloom as well so
  // unshaded diffuse highlights cannot wash light back into the canopy shade.
  float canopyLight=1.-overheadShade(surface)*canopyStrength*visibility;

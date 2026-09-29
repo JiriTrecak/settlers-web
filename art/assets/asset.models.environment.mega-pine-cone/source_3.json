@@ -1,0 +1,23 @@
+{
+ "name": "Mega pine cone",
+ "material": "Mega pine cone scales",
+ "measure": {
+  "axis": "x",
+  "size": 14
+ },
+ "sink": 0.9,
+ "textureSize": 1024,
+ "normalStrength": 0.6,
+ "tone": [
+  0.58,
+  0.56,
+  0.55
+ ],
+ "groundColor": false,
+ "vegetationClearance": 9,
+ "blockers": {
+  "mode": "footprint",
+  "height": 9,
+  "core": 0.85
+ }
+}

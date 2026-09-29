@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
 import { MAP_BLOCK, MAP_SIZE } from "../../src/shared";
-import { Camera, GAME_ASPECT, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
+import { Camera, GAME_ASPECT, GAME_DISTANCE, GAME_DISTANCE_MAX, GAME_DISTANCE_MIN, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 
 describe("iso camera", () => {
   it("edge/arrow travel moves toward the corresponding projected ground edge", () => {
@@ -96,7 +96,7 @@ describe("iso camera", () => {
     expect(z).toBeCloseTo(hit.z, 4);
   });
 
-  it("setGame locks WC3 perspective, starts at distance 40, and allows distance zoom while locking orbit", () => {
+  it("setGame locks WC3 perspective, starts at the default distance, and allows distance zoom while locking orbit", () => {
     const cam = new Camera();
     cam.locked = false;
     cam.lookAt(128, 128);
@@ -109,7 +109,7 @@ describe("iso camera", () => {
     const three = new PerspectiveCamera();
     cam.applyTo(three, 1280, 720);
     expect(three.fov).toBe(GAME_FOV);
-    expect(cam.distance).toBe(40);
+    expect(cam.distance).toBe(GAME_DISTANCE);
     const dist = cam.distance;
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
@@ -168,14 +168,14 @@ describe("iso camera", () => {
 });
 
 describe("terrain-following game camera", () => {
-  it("zooms to distance 60 and clamps both zoom limits", () => {
+  it("clamps distance zoom to the play limits", () => {
     const camera = new Camera(); camera.lookAt(128,128); camera.setGame(true);
     const distance = camera.distance;
     camera.zoomBy(100);
-    expect(camera.distance).toBe(60);
+    expect(camera.distance).toBe(GAME_DISTANCE_MAX);
 
     camera.zoomBy(.0001);
-    expect(camera.distance).toBeCloseTo(distance * .5);
+    expect(camera.distance).toBe(GAME_DISTANCE_MIN);expect(distance).toBe(GAME_DISTANCE);
   });
   it("rises and descends with terrain without changing pitch or centered framing", () => {
     const camera=new Camera(); camera.lookAt(128,128); camera.setGame(true);
@@ -219,9 +219,9 @@ it("never descends toward the river bed below the water-relative camera floor", 
     expect(cam.yaw).toBe(GAME_YAW);
     expect(cam.pitch).toBe(GAME_PITCH);
     cam.pose({ gameZoom: 5 });
-    expect(cam.gameZoom).toBe(1.5);
+    expect(cam.gameZoom).toBe(GAME_DISTANCE_MAX/GAME_DISTANCE);
     cam.pose({ gameZoom: .1 });
-    expect(cam.gameZoom).toBe(.5);
+    expect(cam.gameZoom).toBe(GAME_DISTANCE_MIN/GAME_DISTANCE);
   });
 });
 

@@ -94,6 +94,7 @@ function mesh(buf: Buf, opacity: number): Mesh {
     new MeshBasicMaterial({
       vertexColors: true,
       side: DoubleSide,
+      forceSinglePass: true,
       depthWrite: false,
       transparent: opacity < 1,
       opacity,

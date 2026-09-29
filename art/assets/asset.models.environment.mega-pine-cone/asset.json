@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-pine-cone",
+  "name": "Mega pine cone",
+  "kind": "prop",
+  "revision": 21,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "6e00b575a4519f2a63ddb193355e8b1bd4af83d5c7c63aeac84425a79dd52412",
+      "bytes": 605
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "5d15fbc94a1473fe646911e223c65732cf0ff7adae0a56bacabe04c32fb413b2",
+      "bytes": 13256
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "ccb0b034d85f35ecb04c954e54774bdf99fe1bf358105098ad51a493d155e48e",
+      "bytes": 1611064
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "4c3e3f4f2393f889c6e929c6618c62d503b7f69291735364906b00b73e4aab6a",
+      "bytes": 427828
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "c0ff7dc4df2c787ca2108d924bbe2b894371cc19b96715a5459cac3a6f198965",
+      "bytes": 824372
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "533c504b84ad38cc069bbab7c22c76c30cab28160d7f415e246eb01fb43021e1",
+      "bytes": 2115247
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "2ddcfda8bf10e853b8d9ca9566265b6e616c80f391212d1bd97d32d0a75eeb86",
+      "bytes": 7943544
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "834606f58a5aa05e8707721a78684b4e09c56b99e00c2cdfa0161d5330becce8",
+      "bytes": 334
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "60958d2419e313097226aa4d324b599a817f31a96cbf70e22ad611548cbf949d",
+      "bytes": 603
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-pine-cone",
+        "sceneryAsset": "mega-pine-cone",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-pine-cone"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-pine-cone",
+        "name": "Mega pine cone",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 11.9,
+            "depth": 11.14,
+            "shape": "ellipse",
+            "x": 0,
+            "z": 0
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 9,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

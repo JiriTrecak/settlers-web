@@ -10,7 +10,7 @@ export class MeleeTrails {
  private geometry=new BufferGeometry();
  private positions=new BufferAttribute(new Float32Array(MAX_TRAILS*(POINTS-1)*6*3),3).setUsage(DynamicDrawUsage);
  private colors=new BufferAttribute(new Float32Array(MAX_TRAILS*(POINTS-1)*6*4),4).setUsage(DynamicDrawUsage);
- private material=new MeshBasicMaterial({vertexColors:true,transparent:true,depthWrite:false,side:DoubleSide,blending:AdditiveBlending,toneMapped:false});
+ private material=new MeshBasicMaterial({vertexColors:true,transparent:true,depthWrite:false,side:DoubleSide,forceSinglePass:true,blending:AdditiveBlending,toneMapped:false});
  private mesh=new Mesh(this.geometry,this.material);
  constructor(parent:Group){
   this.geometry.setAttribute('position',this.positions);this.geometry.setAttribute('color',this.colors);this.geometry.setDrawRange(0,0);

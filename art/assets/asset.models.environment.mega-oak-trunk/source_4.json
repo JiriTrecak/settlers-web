@@ -1,0 +1,19 @@
+{
+  "asset": "mega-oak-trunk",
+  "reference": "reference.png (generated isolated reference, styled from the user's forest-floor concept)",
+  "tripo": {
+    "studioUrl": "https://studio.tripo3d.ai/workspace/generate/050f1306-bb6c-4d42-9335-5201312c71b7",
+    "tool": "Model → HD Model",
+    "aiModel": "H3.1 – Best Quality",
+    "ultraMesh": true,
+    "aiComplete": false,
+    "texture": "4K",
+    "removeLighting": true,
+    "pbr": true,
+    "topology": "Triangle",
+    "polycount": 9000,
+    "generateInParts": false,
+    "credits": 55,
+    "submitted": "2026-09-29T12:57+02:00"
+  }
+}

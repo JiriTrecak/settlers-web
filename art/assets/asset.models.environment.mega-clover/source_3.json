@@ -1,0 +1,33 @@
+{
+ "name": "Mega clover",
+ "material": "Mega clover leaf",
+ "measure": {
+  "axis": "x",
+  "size": 12
+ },
+ "sink": 0.3,
+ "textureSize": 1024,
+ "normalStrength": 0.5,
+ "tone": [
+  0.8,
+  0.8,
+  0.78
+ ],
+ "groundColor": false,
+ "canopy": true,
+ "vegetationClearance": 8,
+ "blockers": {
+  "mode": "stem",
+  "at": 0.1,
+  "core": 1
+ },
+ "dew": {
+  "count": 34,
+  "radius": [
+   0.25,
+   0.6
+  ],
+  "up": 0.7,
+  "seed": 5
+ }
+}

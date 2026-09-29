@@ -2,6 +2,7 @@ import {biomeById,biomeLandscape,type ResolvedLandscape} from '../../content/bio
 import {PlacedGrass} from '../foliage/placedGrass';
 import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
 import {ImportedWater} from '../water/importedWater';
+import {DewLayer} from '../prop/dewLayer';
 import {InteriorCeiling,ceilingY} from '../terrain/interiorCeiling';
 import {unitCameraPose,type UnitShot} from '../camera/unitCamera';
 import {WalkSurfacePicker} from '../terrain/walkSurfacePicker';
@@ -49,6 +50,8 @@ import {
   Vector2,
   Vector3,
   Texture,
+  Frustum,
+  Matrix4,
   type Object3D,
 } from "three";
 import {
@@ -162,6 +165,7 @@ export class Renderer {
     this.importedWater=this.height?new ImportedWater(this.scene,this.height.source?.source??this.height):undefined;
   }
   private importedWater?:ImportedWater;
+  private readonly dew=new DewLayer();
   private height: HeightField | null = null;
   private navigation: NavigationOverlay | null = null;
   private relation: Parameters<SettlementLayer["viewer"]>[1] | null = null;
@@ -223,7 +227,7 @@ export class Renderer {
   }
   /** Relation decides selection-circle tint; the slot gates which rally flags are drawn. */
   gameViewer(slot: number, relation: Parameters<SettlementLayer["viewer"]>[1]) {
-    this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
+    this.settlement ??= new SettlementLayer(this.scene);
     this.settlement.viewer(slot, relation);
     this.relation = relation;
   }
@@ -254,6 +258,10 @@ export class Renderer {
     assets: ReadonlyMap<string, string> = new Map(),
   ) {
     this.display = new Display(canvas, () => this.present());
+    this.hookShadowCulling();
+    // The root never moves. With auto-update on, three's updateMatrix() marks it dirty every
+    // frame and force-recomputes every descendant, including static batches that opted out.
+    this.scene.matrixAutoUpdate = false;
     this.reflections = forestEnvironment(this.display.gl);
     this.scene.environment = this.reflections.texture;
     this.portrait = new SelectionPortrait(this.reflections.texture);
@@ -320,7 +328,7 @@ export class Renderer {
       gl.setRenderTarget(target);
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
-    this.cutaway.update(cam,this.camera.followingUnit?[]:this.settlement?.cutawaySubjects()??[]);
+    this.cutaway.update(cam,this.camera.followingUnit||!(this.cutaway.active||this.interiorCutaway.value)?[]:this.settlement?.cutawaySubjects()??[]);
       this.display.drawWorld(this.scene,cam,this.atmosphereFrame(animationTime===undefined?this.visualClock:animationTime*1000));
       const bytes = new Uint8Array(w * h * 4);
       gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
@@ -414,7 +422,8 @@ export class Renderer {
     await Promise.all([this.props.ready(),this.meadow.ready,this.placedGrass.ready,this.terrain?.material.ready,this.importedWater?.ready]);
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
-    this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
+    this.settlement ??= new SettlementLayer(this.scene);
+    this.settlement.preloadRoster();
     await Promise.all([this.props.preload(stamps), this.gameReady(), this.ready()]);
   }
   private warming: Promise<void> | null = null;
@@ -427,7 +436,7 @@ export class Renderer {
   private async prepareGraphics(): Promise<void> {
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
-    const models = [...(this.settlement?.prepareModels() ?? []), ...await this.props.prepareModels()];
+    const models = [...(this.settlement?.prepareModels() ?? []), ...await this.props.prepareModels(), this.decals.warmModel()];
     if(this.destroyed)return;
     const textures = new Set<Texture>();
     const upload = (root: Object3D) => root.traverse(o => {
@@ -436,25 +445,37 @@ export class Renderer {
       for (const m of Array.isArray(material) ? material : [material])
         for (const value of Object.values(m)) if (value instanceof Texture) textures.add(value);
     });
-    upload(this.scene); models.forEach(model => {this.fog?.prepare(model);upload(model);});
-    for (const texture of textures) this.display.gl.initTexture(texture);
-    await this.display.gl.compileAsync(this.scene, cam);
-    // Models need the same lights, fog and environment as their eventual scene.
-    if(this.destroyed)return;
-    const group=new Group();for(const model of models)group.add(model);
-    try {await this.display.gl.compileAsync(group,cam,this.scene);}
-    catch(error){group.clear();throw error;}
-    if(this.destroyed){group.clear();return;}
-    // Compile is not a vertex-buffer upload. A tiny offscreen draw also warms
-    // shared geometry and skinning; temporary instances never enter game state.
-    const target=new WebGLRenderTarget(64,64),gl=this.display.gl;
-    const previous=gl.getRenderTarget(),shadowUpdates=gl.shadowMap.autoUpdate;
-    group.position.set(this.camera.targetX,this.height?.sample(this.camera.targetX,this.camera.targetZ)??0,this.camera.targetZ);
-    for(const model of models){model.traverse(o=>{o.frustumCulled=false;});group.add(model);}
-    this.scene.add(group);
-    try {gl.shadowMap.autoUpdate=false;gl.setRenderTarget(target);gl.render(this.scene,cam);}
-    finally {gl.setRenderTarget(previous);gl.shadowMap.autoUpdate=shadowUpdates;group.removeFromParent();group.clear();target.dispose();}
+    this.fog?.prepare(this.scene);this.fog?.prepare(this.dew.scene);upload(this.scene); models.forEach(model => {this.fog?.prepare(model);upload(model);});
+    const gl=this.display.gl;
+    for (const texture of textures) gl.initTexture(texture);
+    // Program keys include output colour space and tone mapping, which follow the bound target:
+    // compiling against the canvas while play renders into the atmosphere target links the
+    // wrong variants and every first draw links again. compile() itself is synchronous, so the
+    // target is never left bound across an await.
+    const target=new WebGLRenderTarget(64,64),previous=gl.getRenderTarget();
+    const destination=this.display.sceneOffscreen(this.atmosphereFrame(performance.now()))?target:null;
+    const compile=(root:Object3D,into?:Scene)=>{gl.setRenderTarget(destination);try{return gl.compileAsync(root,cam,into);}finally{gl.setRenderTarget(previous);}};
+    const group=new Group();
+    try{
+      await compile(this.scene);
+      await compile(this.dew.scene);
+      // Models need the same lights, fog and environment as their eventual scene.
+      if(this.destroyed)return;
+      for(const model of models)group.add(model);
+      await compile(group,this.scene);
+      if(this.destroyed)return;
+      // Compile is not a vertex-buffer upload. A tiny draw also warms shared geometry and
+      // skinning; temporary instances never enter game state. present() below repaints the canvas.
+      const shadowUpdates=gl.shadowMap.autoUpdate;
+      group.position.set(this.camera.targetX,this.height?.sample(this.camera.targetX,this.camera.targetZ)??0,this.camera.targetZ);
+      for(const model of models){model.traverse(o=>{o.frustumCulled=false;});group.add(model);}
+      this.scene.add(group);
+      // One shadow pass links the depth/distance variants too (skinned, alpha-tested, custom depth).
+      try {gl.shadowMap.autoUpdate=false;gl.shadowMap.needsUpdate=true;gl.setRenderTarget(destination);gl.render(this.scene,cam);}
+      finally {gl.setRenderTarget(previous);gl.shadowMap.autoUpdate=shadowUpdates;}
+    }finally{group.removeFromParent();group.clear();target.dispose();}
     this.present();
+    this.pinPrograms();this.warmed=true;
     this.visualLast = null;
   }
   diagnostics() {
@@ -582,7 +603,7 @@ export class Renderer {
     if(this.height && this.bridgeStamps !== stamps){this.bridgeStamps=stamps;const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));const byId=new Map(surfaces.map(b=>[b.id,b]));field.walkSurface=(x,z,id)=>{const b=byId.get(id);return b?surfaceHeight(b,x,z):undefined;};this.walkPicker.set(surfaces);}
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
-      this.settlement ??= new SettlementLayer(this.scene,this.cutaway);
+      this.settlement ??= new SettlementLayer(this.scene);
       this.settlement.update(
         snapshot.settlement,
         this.height,
@@ -602,6 +623,7 @@ export class Renderer {
       this.fog.update(snapshot.settlement.fog, this.scene);
       // Rivers render in their own scene after opaque color/depth are copied.
       if(this.importedWater)this.fog.prepare(this.importedWater.group);
+      this.fog.prepare(this.dew.scene);
     }
     perf.end("Fog of war", visibility);
     (this.terrain?.material as TerrainMaterial | undefined)?.setContacts(
@@ -707,11 +729,17 @@ export class Renderer {
     const camera = perf.start();
     const cam = this.threeCam();
     this.camera.applyTo(cam, this.display.width, this.display.height);
+    if (cam === this.persp && !this.camera.followingUnit) {
+      // Receivers: ground around the focus height up to canopy tops.
+      const ground = this.height?.sample(this.camera.targetX, this.camera.targetZ) ?? 0;
+      cam.updateMatrixWorld();
+      this.sky.fitView(cam, ground - 6, ground + 12);
+    }
     this.settlement?.cameraOverlays(cam,this.display.canvas.clientHeight,this.camera.followingUnit);
     this.updateAtmosphere(cam);
     // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
-    this.cutaway.update(cam,this.camera.followingUnit?[]:this.settlement?.cutawaySubjects()??[]);
+    this.cutaway.update(cam,this.camera.followingUnit||!(this.cutaway.active||this.interiorCutaway.value)?[]:this.settlement?.cutawaySubjects()??[]);
     this.weather.update(
       now,
       this.camera.targetX,
@@ -722,13 +750,77 @@ export class Renderer {
     this.props.updateLOD(cam);
     this.meadow.updateLOD(cam);
     perf.end("Camera / atmosphere", camera);
-    this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now),this.atmosphereFrame(now));
+    cam.updateMatrixWorld();
+    this.viewFrustum.setFromProjectionMatrix(this.viewProjection.multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),cam.coordinateSystem);
+    this.props.cull(this.viewFrustum);
+    this.settlement?.setViewFrustum(this.camera.followingUnit ? null : this.viewFrustum);
+    this.culledFrame=true;
+    try{this.display.render(this.scene, cam,()=>this.portrait?.draw(this.display.gl, now),this.atmosphereFrame(now));}
+    finally{
+      this.culledFrame=false;
+      // Other paths (editor captures, warmup) render this scene with their own cameras.
+      this.props.cull(null);
+    }
     perf.end("Present total (CPU)", total);
   }
 
+  private readonly viewFrustum=new Frustum();
+  private readonly viewProjection=new Matrix4();
+  private culledFrame=false;
+  /** three builds the main render list before drawing shadows and never re-checks visibility
+   * afterwards, so prop cells culled for the camera can be re-culled for the sun just before
+   * the shadow pass: offscreen trees keep casting into view, and scatter stays out of the map.
+   * Wraps only this renderer's shadow map; three's internal render state stays intact. */
+  /**
+   * three frees a program when its last material is disposed. Per-cue effects (spells,
+   * impacts, command feedback) create and dispose materials, so every new cue re-linked the
+   * same program: a 20–100 ms stall. An extra reference keeps each variant alive for the
+   * renderer's lifetime; the set is bounded by content variants and freed with the context.
+   */
+  private readonly pinned=new WeakSet<object>();
+  private pinnedCount=0;
+  /** Set once the match warm-up finished; later program links are reported as stalls. */
+  private warmed=false;
+  private pinPrograms(){
+    const programs=this.display.gl.info.programs;
+    if(!programs||programs.length===this.pinnedCount)return;
+    for(const p of programs)if(!this.pinned.has(p)){this.pinned.add(p);p.usedTimes++;if(this.warmed)perf.shaderLink(`${p.name||'?'} @ ${this.programOwner(p)}`,p.cacheKey);}
+    this.pinnedCount=programs.length;
+  }
+  /** Scene path of the first mesh drawn with a late program. Runs only on a late link, which has already stalled the frame. */
+  private programOwner(program:object){
+    const properties=this.display.gl.properties;let owner='';
+    this.scene.traverse(o=>{
+      if(owner||!(o as Mesh).material)return;
+      const materials=(o as Mesh).material;
+      for(const m of [...(Array.isArray(materials)?materials:[materials]),o.customDepthMaterial,o.customDistanceMaterial])if(m&&(properties.get(m) as {currentProgram?:object}).currentProgram===program){
+        const path:string[]=[];for(let n:Object3D|null=o;n&&n!==this.scene&&path.length<5;n=n.parent)path.push(n.name||n.type);
+        owner=`${path.reverse().join(' / ')} [${m.name||m.type}]`;return;
+      }
+    });
+    return owner||'shadow/depth or offscreen';
+  }
+  private hookShadowCulling(){
+    const shadowMap=this.display.gl.shadowMap,render=shadowMap.render.bind(shadowMap);
+    shadowMap.render=(lights,scene,camera)=>{
+      if(scene===this.scene){this.fog?.prepareDraws(this.display.gl.renderLists.get(scene,0));this.pinPrograms();}
+      const sun=this.sky?.sun;
+      if(this.culledFrame&&sun&&scene===this.scene&&shadowMap.enabled&&lights.includes(sun)){
+        sun.shadow.updateMatrices(sun);
+        this.props.cull(sun.shadow.getFrustum(),true);
+      }
+      if(scene!==this.scene){render(lights,scene,camera);return;}
+      this.settlement?.showShadowProxies(true);
+      try{render(lights,scene,camera);}finally{this.settlement?.showShadowProxies(false);}
+    };
+  }
+
   private atmosphereFrame(now:number){
+    // Per frame, not per snapshot: prop models load asynchronously and rebatch after the
+    // update that placed them. Unchanged revisions return immediately.
+    this.dew.set(this.props.contactRevision,this.props.dew);
     const weather=this.landscape.environment.weather;
-    return {canopy:this.canopy.frame(),sourceWater:this.importedWater,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,postProcessing:this.landscape.environment.postProcessing,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    return {canopy:this.canopy.frame(),sourceWater:this.importedWater,dew:this.dew,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,postProcessing:this.landscape.environment.postProcessing,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }
@@ -811,6 +903,7 @@ export class Renderer {
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.importedWater?.dispose();
+    this.dew.dispose();
     this.props.destroy();
     this.walkPicker.dispose();
     this.portrait.destroy();

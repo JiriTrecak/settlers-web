@@ -13,7 +13,7 @@ export class SceneryLights {
  private field:HeightField|null=null;
  private lastX=NaN;private lastZ=NaN;
  invalidate(){this.stamps=null;this.lastX=NaN;}
- constructor(private readonly scene:Scene){for(const light of this.pool)scene.add(light);}
+ constructor(private readonly scene:Scene){for(const light of this.pool){light.visible=false;scene.add(light);}}
  sync(stamps:readonly MapStamp[],field:HeightField):void {
   if(this.stamps===stamps&&this.field===field)return;
   this.stamps=stamps;this.field=field;this.lastX=NaN;
@@ -23,6 +23,9 @@ export class SceneryLights {
    const x=d.x*scale*(s.widthScale??1),z=d.z*scale*(s.depthScale??1);
    return {...d,x:s.x+.5+c*x+r*z,z:s.y+.5-r*x+c*z,y:field.sample(s.x+.5,s.y+.5)+(s.elevation??0)+d.y*scale*(s.heightScale??1),range:d.range*scale};
   });
+  // Visible lights set NUM_POINT_LIGHTS in every lit program even at zero intensity. Toggle only
+  // per map (one recompile at load), never per camera move.
+  for(const light of this.pool)light.visible=this.sources.length>0;
  }
  update(x:number,z:number):void {
   if(x===this.lastX&&z===this.lastZ)return;this.lastX=x;this.lastZ=z;

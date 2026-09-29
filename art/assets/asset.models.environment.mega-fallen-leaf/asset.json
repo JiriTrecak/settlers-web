@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-fallen-leaf",
+  "name": "Mega fallen leaf",
+  "kind": "prop",
+  "revision": 23,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "1a793247bcf38cafe9417bcbf998a8894b5c1c3fd897e2c2c28161a6561b921f",
+      "bytes": 615
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "342955c0e649ea9cb6eb2ab6b85b085e345cfe9644fa98bbeaf5d64ea4264d02",
+      "bytes": 13437
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d268114a972cca08910ae98490dc7c32e0dd4137eec23e3528426d8568d59c3e",
+      "bytes": 2085292
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "c113b27c718be1e4f2d0d3a51650a5d8b5c7acf73d0e1bdc595c4d16d9a50a42",
+      "bytes": 343094
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "cbc0b52f2889b0dbfac8753adbaed6f5c9e07fcb41ff67dc81c9c7462a5f3924",
+      "bytes": 773412
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "5da5187bcb954fb995afddf934fcaa2e794efda8773a7df11995ecec93e47b6b",
+      "bytes": 2763942
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "666dc553fc182107b58dd81c565cb04652099bde2df52081666d733b91dec15d",
+      "bytes": 13470084
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "f8cae036a2a02065d92b2b1af3cdbd274a83201d3d0757d7fe3e81330b791e47",
+      "bytes": 455
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "7254b8b40e1b1b9b7ac8284f66c5f09b7452c4f5ce5585682d3d77a04b2d9704",
+      "bytes": 605
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-fallen-leaf",
+        "sceneryAsset": "mega-fallen-leaf",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-fallen-leaf"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-fallen-leaf",
+        "name": "Mega fallen leaf",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 9.6,
+            "depth": 9.81,
+            "shape": "ellipse",
+            "x": 0,
+            "z": 0
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 9,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

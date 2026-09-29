@@ -1,0 +1,19 @@
+{
+  "asset": "mega-clover",
+  "reference": "reference.png (generated isolated reference, styled from the user's ant-scale forest-floor mood board)",
+  "tripo": {
+    "studioUrl": "https://studio.tripo3d.ai/workspace/generate/3324b420-80cb-47b2-865c-c5ee17eee6b5",
+    "tool": "Model → HD Model",
+    "aiModel": "H3.1 – Best Quality",
+    "ultraMesh": true,
+    "aiComplete": false,
+    "texture": "4K",
+    "removeLighting": true,
+    "pbr": true,
+    "topology": "Triangle",
+    "polycount": 9000,
+    "generateInParts": false,
+    "credits": 55,
+    "submitted": "2026-09-29T13:40+02:00"
+  }
+}

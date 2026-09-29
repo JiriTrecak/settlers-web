@@ -28,7 +28,7 @@ it('captures the bow at release once, follows the observed target and retires at
  const shot:GameState['missiles'][number]={id:1,source:1,target:2,definition:'unit.ants.archer',owner:'player.1',origin:{x:10,y:10},destination:{x:20,y:10},launched:100,impact:120,damage:10,damageType:'piercing',viewers:['player.1'],resolved:false};
  const bow=new Vector3(10.4,1.1,10.1);let calls=0;
  const resolve=()=>{calls++;return bow};
- fx.update(99,[shot],field,resolve);expect(calls).toBe(0);expect(fx.root.children).toHaveLength(0);
+ fx.update(99,[shot],field,resolve);expect(calls).toBe(0);expect(fx.root.children.every(c=>!c.visible)).toBe(true);
  fx.update(100,[shot],field,resolve);
  const mesh=fx.root.getObjectByName('projectiles.arrow') as InstancedMesh;
  const position=()=>{const m=new Matrix4();mesh.getMatrixAt(0,m);return new Vector3().setFromMatrixPosition(m)};

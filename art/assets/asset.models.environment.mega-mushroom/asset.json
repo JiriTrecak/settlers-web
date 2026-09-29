@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "id": "asset.models.environment.mega-mushroom",
+  "name": "Mega mushroom",
+  "kind": "prop",
+  "revision": 22,
+  "status": "published",
+  "tags": [
+    "original",
+    "woodland",
+    "forest-scale",
+    "mega",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "e87f3c609df0a69b9a0dbd00da52ab817f050c175b4c5fd22b7b4fa9d01d077b",
+      "bytes": 600
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "274fe3a151462231bab6efa8e9ce03f5286e7b2beb4fb50f69e05565b9681d98",
+      "bytes": 13383
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f44c03937bbf4670c18b50bdf4029f6fd98577981852ba3548c0ceb5945d58b8",
+      "bytes": 4688016
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "9664fa158a6d93c4a97e2d25575899587b81f840fe052819a524ec8e597ffa00",
+      "bytes": 378682
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "bf7f4c636fb7ca9996123c5b0012e6e063032f333f01588c3100e93f4ba4017b",
+      "bytes": 661254
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "800b10fd31213eae509dbddd5ba3f6b4770ff58a9671eb1dd7ae726a3df6bf4e",
+      "bytes": 4019903
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "cf648c3f56654ff3ab5feee1c4e718ac08844b0f865bde6b23be6d1d988bc26f",
+      "bytes": 7969132
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "4354ab306e1b81f97e0bc1938432cc97b1fdddca6c344da16fd138dc88657d3f",
+      "bytes": 425
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "c9841f1c5907a4b66225593be533bedf37b8d353569d1ffa5b30372a650f411d",
+      "bytes": 602
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.scenery.mega-mushroom",
+        "sceneryAsset": "mega-mushroom",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.environment.mega-mushroom"
+        }
+      }
+    ],
+    "scenery": [
+      {
+        "id": "mega-mushroom",
+        "name": "Mega mushroom",
+        "category": "landmark",
+        "type": "prop",
+        "geometry": {
+          "role": "geometry",
+          "index": 1
+        },
+        "blockers": [
+          {
+            "width": 4.97,
+            "depth": 4.97,
+            "shape": "ellipse",
+            "x": -0.86,
+            "z": -0.62
+          }
+        ]
+      }
+    ]
+  },
+  "capabilities": {
+    "vegetationClearance": 13,
+    "canopy": true,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

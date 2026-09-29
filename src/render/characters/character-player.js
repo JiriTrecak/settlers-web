@@ -2,25 +2,39 @@ import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AnimationMixer, LoopOnce, LoopRepeat, Quaternion, Vector3 } from 'three';
 
 const ONE_SHOT = new Set(['attack', 'cast', 'hit', 'death']);
+const NO_SYNC = () => {};
+const HOLDABLE = new WeakSet();
+/** Semantic state → clip table and attack contact, shared by the live and baked players. */
+export function characterProfile(root, clips, variant, capabilities) {
+  let profile;
+  root.traverse(o => { if (o.userData.characterProfile) profile = o.userData.characterProfile; });
+  const definitions = capabilities?.animations;
+  if (definitions?.length) {
+    // Canonical asset metadata is authoritative. Embedded extras remain an
+    // import fallback for unpublished provider outputs, never a second editor.
+    const states = Object.fromEntries(definitions.map(a => [a.semantic, a.clip]));
+    const attack = definitions.find(a => a.semantic === 'attack');
+    const contact = attack?.events.find(e => e.name === 'hit' || e.name === 'release');
+    const duration = clips.find(c => c.name === attack?.clip)?.duration;
+    profile = {variants: {[variant]: {states}}, attackEvents: {[variant]: contact && duration ? {event: contact.name, normalizedTime: contact.time / duration} : undefined}};
+  }
+  if (!profile?.variants) throw new Error('Character asset is missing its animation profile');
+  return { profile, definitions };
+}
+export function oneShotState(definitions, state) {
+  return definitions?.find(a => a.semantic === state)?.loop === false || (!definitions && ONE_SHOT.has(state));
+}
 /** Shared by the studio and game. Call update(dt) with seconds from the game clock. */
 export class CharacterPlayer {
   constructor(root, clips, variant = 'base', capabilities) {
     this.root = root;
     this.mixer = new AnimationMixer(root);
     this.actions = new Map(clips.map(clip => [clip.name, this.mixer.clipAction(clip)]));
-    root.traverse(o => { if (o.userData.characterProfile) this.profile = o.userData.characterProfile; });
-    this.definitions = capabilities?.animations;
-    if (this.definitions?.length) {
-      // Canonical asset metadata is authoritative. Embedded extras remain an
-      // import fallback for unpublished provider outputs, never a second editor.
-      const states = Object.fromEntries(this.definitions.map(a => [a.semantic, a.clip]));
-      const attack = this.definitions.find(a => a.semantic === 'attack');
-      const contact = attack?.events.find(e => e.name === 'hit' || e.name === 'release');
-      const duration = clips.find(c => c.name === attack?.clip)?.duration;
-      this.profile = {variants: {[variant]: {states}}, attackEvents: {[variant]: contact && duration ? {event: contact.name, normalizedTime: contact.time / duration} : undefined}};
-    }
-    if (!this.profile?.variants) throw new Error('Character asset is missing its animation profile');
+    ({ profile: this.profile, definitions: this.definitions } = characterProfile(root, clips, variant, capabilities));
     this.variant = variant; this.state = null; this.paused = false; this.speed = 1.5;
+    // `hold` defers posing to a later frame (staggered animation rate); held time is banked in
+    // `pending` and applied on the next posed frame, so clip time and events stay exact.
+    this.hold = false; this.pending = 0; this.posed = false;
     this.onEvent = null; this.eventFired = false;
     this.mixer.addEventListener('finished', e => {
       if (e.action === this.action && this.state !== 'death' && this.hasState('idle')) this.setState('idle');
@@ -39,6 +53,8 @@ export class CharacterPlayer {
     this.root.traverse(o => { if (o.userData.role) o.visible = o.userData.role === 'base' || o.userData.role === variant; });
     if (this.state) this.setState(this.profile.variants[variant].states[this.state] ? this.state : 'idle', {restart:true});
   }
+  /** A fresh instance always poses its first frame; afterwards `hold` may defer it. */
+  holding() { return this.hold && this.posed; }
   hasState(state) { return this.actions.has(this.profile.variants[this.variant].states[state]); }
   setState(state, { restart = false, fade = .18 } = {}) {
     if (this.state === state && !restart) return;
@@ -50,7 +66,7 @@ export class CharacterPlayer {
     // Semantic aliases (run/charge) share one clip: preserve its gait phase.
     if (previous === next && !restart) return;
     next.reset().setEffectiveWeight(1).setEffectiveTimeScale(1);
-    const oneShot = this.definitions?.find(a => a.semantic === state)?.loop === false || (!this.definitions && ONE_SHOT.has(state));
+    const oneShot = oneShotState(this.definitions, state);
     next.setLoop(oneShot ? LoopOnce : LoopRepeat, oneShot ? 1 : Infinity);
     next.clampWhenFinished = oneShot;
     next.play();
@@ -59,24 +75,33 @@ export class CharacterPlayer {
   update(dt) {
     if (!Number.isFinite(dt) || dt < 0) throw new Error('Animation delta must be finite nonnegative seconds');
     if (this.paused) return;
+    this.pending += dt;
+    if (this.holding()) return;
+    const step = this.pending; this.pending = 0;
     const attack = this.state === 'attack', action = this.action;
     const event = this.profile.attackEvents?.[this.variant];
     // Evaluate the crossing before mixer.finished changes state, including a long frame.
-    const crossed = attack && event && !this.eventFired && action.time + dt * this.speed >= action.getClip().duration * event.normalizedTime;
+    const crossed = attack && event && !this.eventFired && action.time + step * this.speed >= action.getClip().duration * event.normalizedTime;
     if (crossed) { this.eventFired = true; this.onEvent?.({ type: event.event, variant: this.variant }); }
-    this.mixer.update(dt * this.speed);
+    this.mixer.update(step * this.speed); this.posed = true;
   }
   attackContact() { return this.profile.attackEvents?.[this.variant]?.normalizedTime ?? .55; }
+  clipDuration() { return this.action.getClip().duration; }
+  /** Current clip position, 0–1. */
+  phase() { return this.action.time / this.action.getClip().duration; }
   /** Authoritative pose time with live crossfades; unlike a studio scrub. */
   sample(normalized, dt) {
     if (!Number.isFinite(dt) || dt < 0) throw new Error('Animation delta must be finite nonnegative seconds');
     if (!this.action || this.paused) return;
+    this.pending += dt;
+    if (this.holding()) return;
+    const step = this.pending; this.pending = 0; this.posed = true;
     const action = this.action;
     action.time = Math.max(0, Math.min(.999999, normalized)) * action.getClip().duration;
     // Pause only this clip's clock. Mixer time still advances outgoing poses and
     // blend envelopes, while contact/release stays locked to simulation time.
     action.paused = true;
-    this.mixer.update(dt * this.speed);
+    this.mixer.update(step * this.speed);
     action.paused = false;
   }
   seek(normalized) {
@@ -107,10 +132,37 @@ export class CharacterPlayer {
 export function createCharacterInstance(gltf, variant = 'base', capabilities) {
   const root = clone(gltf.scene), materials = new Map();
   root.traverse(o => {
+    // Every mixer quaternion write otherwise re-derives bone.rotation (matrix + Euler
+    // decompose per bone per frame). Bones are driven by quaternions only.
+    if (o.isBone) o.quaternion._onChange(NO_SYNC);
     if (!o.isMesh) return;
     const own = m => { if (!materials.has(m)) materials.set(m, m.clone()); return materials.get(m); };
     o.material = Array.isArray(o.material) ? o.material.map(own) : own(o.material);
   });
+  // GLTFLoader gives every primitive of a skinned mesh its own Skeleton over the same bones, so a
+  // multi-material rig re-derived bone matrices and re-uploaded a bone texture per primitive.
+  // three updates each Skeleton once per frame, so primitives on one Skeleton pay once.
+  const skeletons = [];
+  root.traverse(o => {
+    if (!o.isSkinnedMesh) return;
+    const s = o.skeleton;
+    const same = skeletons.find(k => k.bones.length === s.bones.length && k.bones.every((b, i) => b === s.bones[i]) && k.boneInverses.every((m, i) => m.equals(s.boneInverses[i])));
+    if (same) o.skeleton = same; else skeletons.push(s);
+  });
+  // Bones never draw, yet three's projection and shadow walks visit every visible node (~70
+  // bones per unit, per pass). Bone subtrees with nothing drawable and no socket are hidden;
+  // updateMatrixWorld ignores visibility, so skinning and socket lookups stay correct.
+  const inert = o => !o.isMesh && !o.isLine && !o.isPoints && !o.isSprite && !/^socket/i.test(o.name) && o.children.every(inert);
+  const hideBones = o => { for (const c of o.children) if (c.isBone && inert(c)) c.visible = false; else hideBones(c); };
+  hideBones(root);
   const player = new CharacterPlayer(root, gltf.animations, variant, capabilities);
+  // three re-derives bone matrices and re-uploads the bone texture for every visible skinned
+  // mesh each frame. A held pose has unchanged bones, so that work (and upload) is skipped.
+  root.traverse(o => {
+    if (!o.isSkinnedMesh || HOLDABLE.has(o.skeleton)) return;
+    const skeleton = o.skeleton, update = skeleton.update.bind(skeleton);
+    HOLDABLE.add(skeleton);
+    skeleton.update = () => { if (!player.holding()) update(); };
+  });
   return { root, player, dispose() { player.dispose(); const skeletons = new Set(); root.traverse(o => { if (o.isSkinnedMesh) skeletons.add(o.skeleton); }); for (const skeleton of skeletons) skeleton.dispose(); for (const m of materials.values()) m.dispose(); root.removeFromParent(); } };
 }
