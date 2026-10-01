@@ -402,12 +402,7 @@
           "weight": 10
         }
       ],
-      "skillPreference": [
-        "spell.marshal.faultline",
-        "spell.marshal.rally",
-        "spell.marshal.carapace",
-        "spell.marshal.crownfall"
-      ]
+      "skillPreference": []
     },
     "armorTypes": {
       "light": {
@@ -609,567 +604,6 @@
           {
             "item": "item.winter-heart",
             "weight": 10
-          }
-        ]
-      }
-    },
-    "spells": {
-      "spell.marshal.faultline": {
-        "name": "Faultline",
-        "description": "Sends a mace shockwave along the ground, damaging and briefly stunning enemies.",
-        "icon": "icon.spell.faultline",
-        "hotkey": "Q",
-        "priority": 110,
-        "target": "point",
-        "effect": "line",
-        "damageType": "spell",
-        "visual": "effect.faultline",
-        "ranks": [
-          {
-            "requiredLevel": 1,
-            "mana": 60,
-            "cooldownTicks": 480,
-            "castTicks": 20,
-            "range": 14,
-            "radius": 2,
-            "damage": 100,
-            "stunTicks": 20,
-            "durationTicks": 0,
-            "reductionPermille": 0,
-            "damageBonusPermille": 0
-          },
-          {
-            "requiredLevel": 3,
-            "mana": 60,
-            "cooldownTicks": 480,
-            "castTicks": 20,
-            "range": 14,
-            "radius": 2,
-            "damage": 160,
-            "stunTicks": 30,
-            "durationTicks": 0,
-            "reductionPermille": 0,
-            "damageBonusPermille": 0
-          },
-          {
-            "requiredLevel": 5,
-            "mana": 60,
-            "cooldownTicks": 480,
-            "castTicks": 20,
-            "range": 14,
-            "radius": 2,
-            "damage": 220,
-            "stunTicks": 40,
-            "durationTicks": 0,
-            "reductionPermille": 0,
-            "damageBonusPermille": 0
-          }
-        ],
-        "damageTargetBudget": 6,
-        "placement": "bottom-row",
-        "column": 1
-      },
-      "spell.marshal.rally": {
-        "name": "Rally the Colony",
-        "description": "Grants nearby allied units additional attack damage for a short time.",
-        "icon": "icon.spell.rally",
-        "hotkey": "W",
-        "priority": 109,
-        "target": "self",
-        "effect": "rally",
-        "damageType": "spell",
-        "visual": "effect.rally",
-        "ranks": [
-          {
-            "requiredLevel": 1,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 0,
-            "damageBonusPermille": 100
-          },
-          {
-            "requiredLevel": 3,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 0,
-            "damageBonusPermille": 200
-          },
-          {
-            "requiredLevel": 5,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 0,
-            "damageBonusPermille": 300
-          }
-        ],
-        "placement": "bottom-row",
-        "column": 2
-      },
-      "spell.marshal.carapace": {
-        "name": "Iron Carapace",
-        "description": "Brace behind hardened armor to reduce incoming damage temporarily.",
-        "icon": "icon.spell.carapace",
-        "hotkey": "E",
-        "priority": 108,
-        "target": "self",
-        "effect": "guard",
-        "damageType": "spell",
-        "visual": "effect.carapace",
-        "ranks": [
-          {
-            "requiredLevel": 1,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 200,
-            "damageBonusPermille": 0
-          },
-          {
-            "requiredLevel": 3,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 300,
-            "damageBonusPermille": 0
-          },
-          {
-            "requiredLevel": 5,
-            "mana": 50,
-            "cooldownTicks": 1000,
-            "castTicks": 20,
-            "range": 0,
-            "radius": 10,
-            "damage": 0,
-            "stunTicks": 0,
-            "durationTicks": 400,
-            "reductionPermille": 400,
-            "damageBonusPermille": 0
-          }
-        ],
-        "placement": "bottom-row",
-        "column": 3
-      },
-      "spell.marshal.crownfall": {
-        "name": "Crownfall",
-        "description": "An immense ground slam damages and stuns enemies around the target point.",
-        "icon": "icon.spell.crownfall",
-        "hotkey": "R",
-        "priority": 107,
-        "target": "point",
-        "effect": "blast",
-        "damageType": "spell",
-        "visual": "effect.crownfall",
-        "ranks": [
-          {
-            "requiredLevel": 6,
-            "mana": 150,
-            "cooldownTicks": 3600,
-            "castTicks": 40,
-            "range": 14,
-            "radius": 7,
-            "damage": 280,
-            "stunTicks": 80,
-            "durationTicks": 0,
-            "reductionPermille": 0,
-            "damageBonusPermille": 0
-          }
-        ],
-        "damageTargetBudget": 6,
-        "placement": "bottom-row",
-        "column": 4
-      }
-    },
-    "spellVisuals": {
-      "effect.faultline": {
-        "color": "#E8A33D",
-        "accent": "#FFDF8A",
-        "durationTicks": 32,
-        "particles": 20,
-        "particleSize": 0.12,
-        "rise": 1.5,
-        "layers": [
-          {
-            "id": "contact",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "disc",
-            "texture": "spark",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 8,
-            "repeat": 1,
-            "color": "#fff1c0",
-            "endColor": "#ed9b3d",
-            "opacity": 0.85,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.3,
-            "endSize": 0.02,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "wave",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "ring",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 22,
-            "repeat": 1,
-            "color": "#edb760",
-            "endColor": "#835330",
-            "opacity": 0.7,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.12,
-            "endSize": 1.2,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "chips",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "particles",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 32,
-            "repeat": 1,
-            "color": "#edb760",
-            "endColor": "#835330",
-            "opacity": 0.6,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.16,
-            "endSize": 0.05,
-            "spread": 1,
-            "height": 2.5,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "normal"
-          }
-        ]
-      },
-      "effect.rally": {
-        "color": "#F4CE70",
-        "accent": "#FFFFFF",
-        "durationTicks": 120,
-        "particles": 16,
-        "particleSize": 0.12,
-        "rise": 3,
-        "layers": [
-          {
-            "id": "inscription",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "disc",
-            "texture": "rune",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 120,
-            "repeat": 3,
-            "color": "#e5bd61",
-            "endColor": "#fff2b3",
-            "opacity": 0.45,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.9,
-            "endSize": 1,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 40,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "orbit",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "particles",
-            "texture": "spark",
-            "motion": "orbit",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 120,
-            "repeat": 2,
-            "color": "#e5bd61",
-            "endColor": "#fff2b3",
-            "opacity": 0.7,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.15,
-            "endSize": 0.1,
-            "spread": 1,
-            "height": 1.7,
-            "rotation": 0,
-            "spin": 90,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "ward",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "sphere",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 120,
-            "repeat": 1,
-            "color": "#e5bd61",
-            "endColor": "#fff2b3",
-            "opacity": 0.13,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.95,
-            "endSize": 1,
-            "spread": 1,
-            "height": 1.3,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "normal"
-          }
-        ]
-      },
-      "effect.carapace": {
-        "color": "#79BBCE",
-        "accent": "#D7F3FF",
-        "durationTicks": 120,
-        "particles": 12,
-        "particleSize": 0.12,
-        "rise": 1,
-        "layers": [
-          {
-            "id": "orbit",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "particles",
-            "texture": "spark",
-            "motion": "orbit",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 120,
-            "repeat": 2,
-            "color": "#81d5ba",
-            "endColor": "#f2ffd0",
-            "opacity": 0.7,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.15,
-            "endSize": 0.1,
-            "spread": 1,
-            "height": 1.7,
-            "rotation": 0,
-            "spin": 90,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "ward",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "sphere",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 120,
-            "repeat": 1,
-            "color": "#66a5bd",
-            "endColor": "#b7e4db",
-            "opacity": 0.13,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.95,
-            "endSize": 1,
-            "spread": 1,
-            "height": 1.3,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "normal"
-          }
-        ]
-      },
-      "effect.crownfall": {
-        "color": "#FFB942",
-        "accent": "#FFF1B0",
-        "durationTicks": 64,
-        "particles": 40,
-        "particleSize": 0.18,
-        "rise": 4,
-        "layers": [
-          {
-            "id": "warning",
-            "enabled": true,
-            "phase": "cast",
-            "kind": "ring",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 40,
-            "repeat": 1,
-            "color": "#ffbd61",
-            "endColor": "#ffeab2",
-            "opacity": 0.4,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.9,
-            "endSize": 1,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "fractures",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "disc",
-            "texture": "cracks",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 64,
-            "repeat": 1,
-            "color": "#d99442",
-            "endColor": "#443024",
-            "opacity": 0.85,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 1,
-            "endSize": 1.08,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "normal"
-          },
-          {
-            "id": "shockwave",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "ring",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 22,
-            "repeat": 1,
-            "color": "#edb760",
-            "endColor": "#835330",
-            "opacity": 0.8,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.15,
-            "endSize": 1.4,
-            "spread": 1,
-            "height": 2,
-            "rotation": 0,
-            "spin": 0,
-            "count": 24,
-            "blending": "additive"
-          },
-          {
-            "id": "debris",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "particles",
-            "texture": "none",
-            "motion": "burst",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 40,
-            "repeat": 1,
-            "color": "#edb760",
-            "endColor": "#835330",
-            "opacity": 0.6,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.18,
-            "endSize": 0.06,
-            "spread": 1,
-            "height": 3,
-            "rotation": 0,
-            "spin": 0,
-            "count": 40,
-            "blending": "normal"
-          },
-          {
-            "id": "dust",
-            "enabled": true,
-            "phase": "impact",
-            "kind": "particles",
-            "texture": "soft",
-            "motion": "rise",
-            "anchor": "target",
-            "delay": 0,
-            "duration": 64,
-            "repeat": 1,
-            "color": "#bba280",
-            "endColor": "#756c5c",
-            "opacity": 0.25,
-            "fadeIn": 0.08,
-            "fadeOut": 0.65,
-            "size": 0.45,
-            "endSize": 1.1,
-            "spread": 1,
-            "height": 1.7,
-            "rotation": 0,
-            "spin": 0,
-            "count": 18,
-            "blending": "normal"
           }
         ]
       }
@@ -1512,76 +946,6 @@
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
-    },
-    {
-      "id": "unit.neutral.wolf",
-      "kind": "unit",
-      "name": "Wolf",
-      "description": "A territorial forest predator. Defends its camp and pursues nearby intruders.",
-      "asset": "asset.neutral.wolf",
-      "icon": "icon.neutral.wolf",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 300,
-        "armor": 0,
-        "armorType": "light"
-      },
-      "vision": 10,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 14,
-          "damageType": "melee",
-          "range": 1.5,
-          "cooldownTicks": 48,
-          "aggroRange": 8,
-          "attack": {
-            "windupTicks": 10,
-            "recoveryTicks": 10,
-            "rangeBuffer": 0.75
-          }
-        }
-      },
-      "level": 1,
-      "experienceYield": 35,
-      "supplyCost": 1
-    },
-    {
-      "id": "unit.neutral.ogre",
-      "kind": "unit",
-      "name": "Ogre",
-      "description": "A hulking neutral brute. Slow, strong, and dangerous in close combat.",
-      "asset": "asset.neutral.ogre",
-      "icon": "icon.neutral.ogre",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 900,
-        "armor": 4,
-        "armorType": "heavy"
-      },
-      "vision": 10,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 38,
-          "damageType": "melee",
-          "range": 2,
-          "cooldownTicks": 64,
-          "aggroRange": 10,
-          "attack": {
-            "windupTicks": 20,
-            "recoveryTicks": 16,
-            "rangeBuffer": 0.75
-          }
-        }
-      },
-      "level": 1,
-      "experienceYield": 120,
       "supplyCost": 1
     },
     {
@@ -2115,17 +1479,48 @@
           "slots": 4,
           "pickupRange": 1.5
         },
-        "spellcasting": {
-          "abilities": [
-            "spell.marshal.faultline",
-            "spell.marshal.rally",
-            "spell.marshal.carapace",
-            "spell.marshal.crownfall"
-          ],
+        "abilities": {
           "maxMana": 225,
-          "learningCategory": "category.hero.skills",
-          "manaIcon": "icon.item.moon-dew",
-          "manaRegenPerSecond": 0.76
+          "manaRegenPerSecond": 0.76,
+          "bindings": [
+            {
+              "id": "holy-light",
+              "ability": "ability.core.holy-light-lite",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1,
+                "icon": "icon.item.moon-dew"
+              },
+              "ai": {
+                "preference": "wounded-ally",
+                "intervalTicks": 12
+              }
+            },
+            {
+              "id": "blizzard",
+              "ability": "ability.core.blizzard",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            }
+          ]
         }
       },
       "experienceYield": 150,
@@ -2266,82 +1661,6 @@
       },
       "gatheringCapacity": 10,
       "gatheringUnitCollision": false
-    },
-    {
-      "id": "unit.neutral.thornspitter",
-      "kind": "unit",
-      "name": "Thornspitter",
-      "description": "A territorial seedpod creature that launches thorns at distant intruders.",
-      "asset": "asset.neutral.thornspitter",
-      "icon": "icon.neutral.thornspitter",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 400,
-        "armor": 1,
-        "armorType": "light"
-      },
-      "vision": 10,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 20,
-          "damageType": "piercing",
-          "range": 10,
-          "cooldownTicks": 64,
-          "aggroRange": 12,
-          "attack": {
-            "windupTicks": 14,
-            "recoveryTicks": 14,
-            "rangeBuffer": 0.75
-          },
-          "projectile": {
-            "speed": 32
-          }
-        }
-      },
-      "level": 2,
-      "experienceYield": 70,
-      "supplyCost": 1
-    },
-    {
-      "id": "unit.neutral.elder-thornspitter",
-      "kind": "unit",
-      "name": "Elder Thornspitter",
-      "description": "A territorial seedpod creature that launches thorns at distant intruders.",
-      "asset": "asset.neutral.thornspitter",
-      "icon": "icon.neutral.thornspitter",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 1000,
-        "armor": 3,
-        "armorType": "heavy"
-      },
-      "vision": 10,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 36,
-          "damageType": "piercing",
-          "range": 10,
-          "cooldownTicks": 68,
-          "aggroRange": 12,
-          "attack": {
-            "windupTicks": 14,
-            "recoveryTicks": 14,
-            "rangeBuffer": 0.75
-          },
-          "projectile": {
-            "speed": 32
-          }
-        }
-      },
-      "level": 5,
-      "experienceYield": 240,
-      "supplyCost": 1
     },
     {
       "id": "building.ants.sanctuary",
@@ -2982,76 +2301,6 @@
           }
         }
       }
-    },
-    {
-      "id": "unit.neutral.amberjaw-staglord",
-      "kind": "unit",
-      "name": "Amberjaw Staglord",
-      "description": "A legendary guardian of the ancient root. Challenge with an army; its camp carries a tier-three relic.",
-      "asset": "asset.neutral.amberjaw-staglord",
-      "icon": "icon.neutral.amberjaw-staglord",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 2400,
-        "armor": 7,
-        "armorType": "heavy"
-      },
-      "vision": 12,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 76,
-          "damageType": "melee",
-          "range": 2.5,
-          "cooldownTicks": 64,
-          "aggroRange": 10,
-          "attack": {
-            "windupTicks": 14,
-            "recoveryTicks": 14,
-            "rangeBuffer": 0.75
-          }
-        }
-      },
-      "level": 8,
-      "experienceYield": 600,
-      "supplyCost": 1
-    },
-    {
-      "id": "unit.neutral.thornblade-matriarch",
-      "kind": "unit",
-      "name": "Thornblade Matriarch",
-      "description": "A legendary guardian of the ancient root. Challenge with an army; its camp carries a tier-three relic.",
-      "asset": "asset.neutral.thornblade-matriarch",
-      "icon": "icon.neutral.thornblade-matriarch",
-      "selectionClass": "army",
-      "body": {
-        "maxHp": 1850,
-        "armor": 4,
-        "armorType": "heavy"
-      },
-      "vision": 12,
-      "behaviorSets": [
-        "behavior-set.neutral"
-      ],
-      "behaviors": {
-        "combat": {
-          "damage": 58,
-          "damageType": "melee",
-          "range": 2.5,
-          "cooldownTicks": 40,
-          "aggroRange": 10,
-          "attack": {
-            "windupTicks": 14,
-            "recoveryTicks": 14,
-            "rangeBuffer": 0.75
-          }
-        }
-      },
-      "level": 8,
-      "experienceYield": 600,
-      "supplyCost": 1
     },
     {
       "id": "building.ants.ironroot-forge",
@@ -3902,6 +3151,1228 @@
         "x": 0,
         "y": 4
       }
+    },
+    {
+      "id": "unit.neutral.thorn-slinger",
+      "kind": "unit",
+      "name": "Thorn Slinger",
+      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "asset": "asset.neutral.thorn-slinger",
+      "icon": "icon.neutral.thorn-slinger",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "body": {
+        "maxHp": 170,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 11,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.dew-sprite",
+      "kind": "unit",
+      "name": "Dew Sprite",
+      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "asset": "asset.neutral.dew-sprite",
+      "icon": "icon.neutral.dew-sprite",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.7,
+        "formationSpacing": 0.652
+      },
+      "body": {
+        "maxHp": 135,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 9,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.puddle-wisp",
+      "kind": "unit",
+      "name": "Puddle Wisp",
+      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "asset": "asset.neutral.puddle-wisp",
+      "icon": "icon.neutral.puddle-wisp",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.5,
+        "formationSpacing": 0.652
+      },
+      "body": {
+        "maxHp": 205,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 10,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.webling",
+      "kind": "unit",
+      "name": "Webling",
+      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "asset": "asset.neutral.webling",
+      "icon": "icon.neutral.webling",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.333,
+        "height": 1,
+        "formationSpacing": 0.75
+      },
+      "body": {
+        "maxHp": 180,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 12,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.spitter",
+      "kind": "unit",
+      "name": "Spitter",
+      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "asset": "asset.neutral.spitter",
+      "icon": "icon.neutral.spitter",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.333,
+        "height": 1.3,
+        "formationSpacing": 0.75
+      },
+      "body": {
+        "maxHp": 160,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 12,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.capling",
+      "kind": "unit",
+      "name": "Capling",
+      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "asset": "asset.neutral.capling",
+      "icon": "icon.neutral.capling",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "body": {
+        "maxHp": 220,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 13,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.puffcap",
+      "kind": "unit",
+      "name": "Puffcap",
+      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "asset": "asset.neutral.puffcap",
+      "icon": "icon.neutral.puffcap",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "body": {
+        "maxHp": 155,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 11,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 1,
+      "experienceYield": 25,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.rootling",
+      "kind": "unit",
+      "name": "Rootling",
+      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
+      "asset": "asset.neutral.rootling",
+      "icon": "icon.neutral.rootling",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.8,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 520,
+        "armor": 2,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 22,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 4,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.twigcaster",
+      "kind": "unit",
+      "name": "Twigcaster",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "asset": "asset.neutral.twigcaster",
+      "icon": "icon.neutral.twigcaster",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.4,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 330,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 18,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.old-root",
+      "kind": "unit",
+      "name": "Old Root",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "asset": "asset.neutral.old-root",
+      "icon": "icon.neutral.old-root",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 3.2,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 800,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 25,
+          "damageType": "piercing",
+          "range": 10,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 4,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.hornet-guard",
+      "kind": "unit",
+      "name": "Hornet Guard",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "asset": "asset.neutral.hornet-guard",
+      "icon": "icon.neutral.hornet-guard",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 450,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "combat": {
+          "damage": 21,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.needle-wasp",
+      "kind": "unit",
+      "name": "Needle Wasp",
+      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
+      "asset": "asset.neutral.needle-wasp",
+      "icon": "icon.neutral.needle-wasp",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.2,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 310,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "combat": {
+          "damage": 19,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.nest-mother",
+      "kind": "unit",
+      "name": "Nest Mother",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "asset": "asset.neutral.nest-mother",
+      "icon": "icon.neutral.nest-mother",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.8,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 780,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 8
+        },
+        "combat": {
+          "damage": 30,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 4,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.young-toad",
+      "kind": "unit",
+      "name": "Young Toad",
+      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "asset": "asset.neutral.young-toad",
+      "icon": "icon.neutral.young-toad",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.567,
+        "height": 2.5,
+        "formationSpacing": 1.276
+      },
+      "body": {
+        "maxHp": 900,
+        "armor": 2,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 34,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.tree-frog",
+      "kind": "unit",
+      "name": "Tree Frog",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "asset": "asset.neutral.tree-frog",
+      "icon": "icon.neutral.tree-frog",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.567,
+        "height": 1.6,
+        "formationSpacing": 1.276
+      },
+      "body": {
+        "maxHp": 420,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 20,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.tadpole-spirit",
+      "kind": "unit",
+      "name": "Tadpole Spirit",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 280,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 15,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.briar-hulk",
+      "kind": "unit",
+      "name": "Briar Hulk",
+      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "asset": "asset.neutral.briar-hulk",
+      "icon": "icon.neutral.briar-hulk",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 3.1,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 780,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 30,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 4,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.seedcaster",
+      "kind": "unit",
+      "name": "Seedcaster",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "asset": "asset.neutral.seedcaster",
+      "icon": "icon.neutral.seedcaster",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.5,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 410,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 22,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.bloom-witch",
+      "kind": "unit",
+      "name": "Bloom Witch",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "asset": "asset.neutral.bloom-witch",
+      "icon": "icon.neutral.bloom-witch",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.6,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 550,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 23,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 80,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.hollow-stag",
+      "kind": "unit",
+      "name": "Hollow Stag",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "asset": "asset.neutral.hollow-stag",
+      "icon": "icon.neutral.hollow-stag",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 1.331,
+        "height": 4,
+        "formationSpacing": 2.995
+      },
+      "body": {
+        "maxHp": 2500,
+        "armor": 6,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 65,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 9,
+      "experienceYield": 540,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.barkguard",
+      "kind": "unit",
+      "name": "Barkguard",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "asset": "asset.neutral.barkguard",
+      "icon": "icon.neutral.barkguard",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.918,
+        "height": 2.5,
+        "formationSpacing": 2.066
+      },
+      "body": {
+        "maxHp": 650,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 28,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 50,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 6,
+      "experienceYield": 180,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.willow-wisp",
+      "kind": "unit",
+      "name": "Willow Wisp",
+      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "asset": "asset.neutral.willow-wisp",
+      "icon": "icon.neutral.willow-wisp",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.68,
+        "height": 2,
+        "formationSpacing": 1.53
+      },
+      "body": {
+        "maxHp": 370,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 23,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 6,
+      "experienceYield": 180,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.rotwood-ancient",
+      "kind": "unit",
+      "name": "Rotwood Ancient",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "asset": "asset.neutral.rotwood-ancient",
+      "icon": "icon.neutral.rotwood-ancient",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.986,
+        "height": 4.2,
+        "formationSpacing": 2.219
+      },
+      "body": {
+        "maxHp": 2800,
+        "armor": 7,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 70,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 9,
+      "experienceYield": 540,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.corrupted-rootbeast",
+      "kind": "unit",
+      "name": "Corrupted Rootbeast",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "asset": "asset.neutral.corrupted-rootbeast",
+      "icon": "icon.neutral.corrupted-rootbeast",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.918,
+        "height": 3,
+        "formationSpacing": 2.066
+      },
+      "body": {
+        "maxHp": 920,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 35,
+          "damageType": "melee",
+          "range": 2.2,
+          "cooldownTicks": 66,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 12,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 7,
+      "experienceYield": 180,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.violet-sporeling",
+      "kind": "unit",
+      "name": "Violet Sporeling",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "asset": "asset.neutral.violet-sporeling",
+      "icon": "icon.neutral.violet-sporeling",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.68,
+        "height": 1.9,
+        "formationSpacing": 1.53
+      },
+      "body": {
+        "maxHp": 360,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 7
+        },
+        "combat": {
+          "damage": 25,
+          "damageType": "piercing",
+          "range": 8,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        }
+      },
+      "level": 6,
+      "experienceYield": 180,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.neutral.root-seer",
+      "kind": "unit",
+      "name": "Root Seer",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "asset": "asset.neutral.root-seer",
+      "icon": "icon.neutral.root-seer",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.68,
+        "height": 2.8,
+        "formationSpacing": 1.53
+      },
+      "body": {
+        "maxHp": 620,
+        "armor": 2,
+        "armorType": "heavy"
+      },
+      "vision": 12,
+      "behaviorSets": [
+        "behavior-set.neutral"
+      ],
+      "behaviors": {
+        "movement": {
+          "speed": 6
+        },
+        "combat": {
+          "damage": 31,
+          "damageType": "piercing",
+          "range": 10,
+          "cooldownTicks": 60,
+          "aggroRange": 12,
+          "attack": {
+            "windupTicks": 17,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        },
+        "abilities": {
+          "maxMana": 200,
+          "manaRegenPerSecond": 1,
+          "bindings": [
+            {
+              "id": "holy-light",
+              "ability": "ability.core.holy-light-lite",
+              "initialRank": 1,
+              "controls": [
+                "ai",
+                "scenario"
+              ],
+              "ai": {
+                "preference": "wounded-ally",
+                "intervalTicks": 12
+              }
+            }
+          ]
+        }
+      },
+      "level": 7,
+      "experienceYield": 180,
+      "supplyCost": 1
+    },
+    {
+      "id": "unit.spell.feral-spirit",
+      "kind": "unit",
+      "name": "Feral Spirit",
+      "description": "A temporary, controllable forest spirit summoned by magic.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 200,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 7,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 14,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 48,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 20,
+      "supplyCost": 0
     }
   ]
 }

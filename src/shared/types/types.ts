@@ -9,6 +9,8 @@ const actors = z
   .refine((xs) => new Set(xs).size === xs.length, "Duplicate actors");
 /** The only client-writable gameplay intentions. Costs, damage, ownership and job internals never cross here. */
 export const actionSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("abilityAutocast"),actor,binding:z.string().max(64),enabled:z.boolean()}).strict(),
+  z.object({type:z.literal("castAbility"),actor,binding:z.string().regex(/^[a-z][a-z0-9-]*$/).max(64),target:z.discriminatedUnion("kind",[z.object({kind:z.literal("unit"),entity:actor}).strict(),z.object({kind:z.literal("point"),position:z.object({x:pointSchema.shape.x,y:pointSchema.shape.y}).strict()}).strict()])}).strict(),
   z.object({type:z.literal("garrison"),actors,target:actor,append:z.boolean().optional()}).strict(),
   z.object({type:z.literal("unload"),actor}).strict(),
   z.object({type:z.literal("research"),actor,research:idSchema}).strict(),
@@ -18,7 +20,6 @@ export const actionSchema = z.discriminatedUnion("type", [
   z.object({type:z.literal("revive"),actor,hero:actor}).strict(),
   z.object({type:z.literal("cancelRevival"),actor,hero:actor}).strict(),
   z.object({type:z.literal("learnAbility"),actor:z.number().int().positive(),ability:z.string().min(1)}).strict(),
-  z.object({type:z.literal("cast"),actor:z.number().int().positive(),ability:z.string().min(1),point:pointSchema.optional()}).strict(),
   z.object({type:z.literal("gather"),actors,target:actor,append:z.boolean().optional()}).strict(),
   z.object({type:z.literal("pickup"),actor,target:actor,append:z.boolean().optional()}).strict(),
   z.object({type:z.literal("dropItem"),actor,slot:z.number().int().min(0).max(11)}).strict(),

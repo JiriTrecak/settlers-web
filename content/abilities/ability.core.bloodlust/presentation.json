@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.bloodlust",
+  "icon": "asset.icons.spell-bloodlust",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "frenzy-arrival",
+      "event": "released",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#ff4833",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 20,
+      "size": 0.17,
+      "height": 1.6,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "frenzy",
+      "event": "statusApplied",
+      "anchor": "target",
+      "shape": "streaks",
+      "colour": "#ee4b33",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 6,
+      "size": 0.12,
+      "height": 2.4,
+      "durationFrom": "delivery",
+      "follow": true,
+      "spread": 0.5,
+      "length": 0.65,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

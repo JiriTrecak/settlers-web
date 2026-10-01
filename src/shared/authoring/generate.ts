@@ -118,7 +118,8 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
  for(const obj of scene.objects.filter(o=>!o.bakedPlacement)){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
   if(inWater(obj.x,obj.z)&&obj.heightMode==='terrain')issues.push({code:'object-water-conflict',id:obj.id,message:'A placed object overlaps a river; its authored transform was preserved'});
  }
- let candidates=0;
+ // Candidate budget scales with map area: ~30 per cell (two million on a 256² map).
+ let candidates=0;const candidateBudget=Math.ceil(30.5*terrain.width*terrain.height*terrain.step*terrain.step);
  // River decoration belongs to the river layer: changing its course regenerates
  // banks and floating leaves deterministically, after structures reserve space.
  for(const {layer,recipe,bounds} of prepared){
@@ -133,7 +134,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    const spacing=settings.spacing/Math.sqrt(density),separation=new Footprints();
    const loX=Math.max(Math.floor(bounds.minX/spacing),Math.floor(terrain.originX/spacing)),hiX=Math.min(Math.ceil(bounds.maxX/spacing),Math.floor((terrain.originX+(terrain.width-1)*terrain.step)/spacing));
    const loZ=Math.max(Math.floor(bounds.minZ/spacing),Math.floor(terrain.originZ/spacing)),hiZ=Math.min(Math.ceil(bounds.maxZ/spacing),Math.floor((terrain.originZ+(terrain.height-1)*terrain.step)/spacing));
-   candidates+=(hiX-loX+1)*(hiZ-loZ+1);if(candidates>2000000)throw Error('Procedural density exceeds two million candidate cells');
+   candidates+=(hiX-loX+1)*(hiZ-loZ+1);if(candidates>candidateBudget)throw Error(`Procedural density exceeds ${candidateBudget} candidate cells at layer ${layer.id} (river ${mode}); increase spacing or reduce the region`);
    const sum=settings.species.reduce((n,s)=>n+s.weight,0);
    for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
     const random=(c:number)=>cellRandom(layer.seed,layer.id+'.river.'+mode,ix,iz,c);
@@ -223,7 +224,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   const shape=layer.shape,spacing=recipe.spacing/Math.sqrt(density);
   const minX=Math.max(Math.floor(bounds.minX/spacing),Math.floor(terrain.originX/spacing)),maxX=Math.min(Math.ceil(bounds.maxX/spacing),Math.ceil((terrain.originX+(terrain.width-1)*terrain.step)/spacing));
   const minZ=Math.max(Math.floor(bounds.minZ/spacing),Math.floor(terrain.originZ/spacing)),maxZ=Math.min(Math.ceil(bounds.maxZ/spacing),Math.ceil((terrain.originZ+(terrain.height-1)*terrain.step)/spacing));
-  candidates+=(maxX-minX+1)*(maxZ-minZ+1);if(candidates>2000000)throw Error('Procedural density exceeds two million candidate cells; increase spacing or reduce the region');
+  candidates+=(maxX-minX+1)*(maxZ-minZ+1);if(candidates>candidateBudget)throw Error(`Procedural density exceeds ${candidateBudget} candidate cells at layer ${layer.id} (${pass}); increase spacing or reduce the region`);
   const patchSettings=recipe.patchiness??(recipe.pattern==='patches'?{scale:12,strength:.6}:undefined);
   const weight=recipe.species.reduce((s,v)=>s+v.weight,0);
   for(let iz=minZ;iz<=maxZ;iz++)for(let ix=minX;ix<=maxX;ix++){

@@ -42,7 +42,7 @@ export class ItemEffects {
     for (const e of sources) {
       const stats = this.c.stats(e);
       e.hp = Math.min(e.hp!, stats.maxHp);
-      if (e.spellcasting) e.spellcasting.mana = Math.min(e.spellcasting.mana, stats.maxMana);
+      if (e.abilities) e.abilities.mana = Math.min(e.abilities.mana, stats.maxMana);
     }
   }
   applyPowerup(hero:Entity,definition:string):boolean {
@@ -51,13 +51,13 @@ export class ItemEffects {
     const bonuses=hero.progression.bonuses??={};
     for(const key of ["maxHp","damage","armor","maxMana"] as const)bonuses[key]=(bonuses[key]??0)+(effect.permanent[key]??0);
     hero.hp=Math.min(this.c.stats(hero).maxHp,hero.hp!+(effect.permanent.maxHp??0));
-    if(hero.spellcasting)hero.spellcasting.mana=Math.min(this.c.stats(hero).maxMana,hero.spellcasting.mana+(effect.permanent.maxMana??0));
+    if(hero.abilities)hero.abilities.mana=Math.min(this.c.stats(hero).maxMana,hero.abilities.mana+(effect.permanent.maxMana??0));
     return true;
   }
   use(hero: Entity, slot: number): string | null {
     const id = hero.equipment?.[slot], effect = id && this.c.registry.get(id).itemEffect;
     if (!id || !effect || (!effect.active && effect.type !== "consumable")) return "This item cannot be used";
-    if (!alive(hero) || isStunned(hero, this.c.registry) || hero.spellcasting?.pending) return "Cannot use items while busy or stunned";
+    if (!alive(hero) || isStunned(hero, this.c.registry) || hero.abilities?.pending) return "Cannot use items while busy or stunned";
     if(effect.type==="consumable"&&effect.permanent){if(!this.applyPowerup(hero,id))return "Only a hero can use this item";this.consume(hero,slot);return null;}
     const active = effect.active;
     const runtime = this.runtime(hero, slot);
@@ -67,13 +67,13 @@ export class ItemEffects {
     const heal = active?.heal ?? (effect.type === "consumable" ? effect.heal : 0), mana = active?.mana ?? 0;
     if (!targets.length) return "No targets in range";
     if (!active?.status && !active?.damage && !active?.reduceAbilityCooldownTicks && !targets.some(t =>
-      ((heal || active?.healMaxPermille) && t.hp! < this.c.stats(t).maxHp) || (mana && t.spellcasting && t.spellcasting.mana < this.c.stats(t).maxMana))) return "Health and mana are already full";
+      ((heal || active?.healMaxPermille) && t.hp! < this.c.stats(t).maxHp) || (mana && t.abilities && t.abilities.mana < this.c.stats(t).maxMana))) return "Health and mana are already full";
     for (const target of targets) {
       const stats = this.c.stats(target);
       target.hp = Math.min(stats.maxHp, target.hp! + heal + Math.round(stats.maxHp * (active?.healMaxPermille ?? 0) / 1000));
-      if (target.spellcasting) {
-        target.spellcasting.mana = Math.min(stats.maxMana, target.spellcasting.mana + mana);
-        if (active?.reduceAbilityCooldownTicks) for (const ability of Object.keys(target.spellcasting.cooldowns)) target.spellcasting.cooldowns[ability] = Math.max(this.c.state.tick, target.spellcasting.cooldowns[ability] - active.reduceAbilityCooldownTicks);
+      if (target.abilities) {
+        target.abilities.mana = Math.min(Math.max(0,stats.maxMana-(target.abilities.pending?.escrow??0)), target.abilities.mana + mana);
+        if (active?.reduceAbilityCooldownTicks) for (const ability of Object.keys(target.abilities.cooldowns)) target.abilities.cooldowns[ability] = Math.max(this.c.state.tick, target.abilities.cooldowns[ability] - active.reduceAbilityCooldownTicks);
       }
       if (active?.status) {
         target.itemStatuses = (target.itemStatuses ?? []).filter(s => s.item !== id || s.kind !== "active");
@@ -99,6 +99,12 @@ export class ItemEffects {
     const hits: DamageHit[] = [];
     if (damage <= 0 || this.allies(source, target)) return hits;
     const stats = this.c.stats(source);
+    const weapon = this.c.def(source).behaviors.combat;
+    // Return damage is secondary spell damage: it cannot trigger weapon procs or reflect again.
+    if (weapon && !weapon.projectile && !weapon.shell) {
+      const reflected = Math.floor(damage * this.c.stats(target).meleeReflectionPermille / 1000);
+      if (reflected > 0) hits.push({source: target.id, target: source.id, damage: reflected, damageType: 'spell'});
+    }
     source.hp = Math.min(stats.maxHp, source.hp! + Math.floor(Math.min(target.hp!, damage) * stats.lifestealPermille / 1000));
     const seen = new Set<string>();
     for (let slot = 0; slot < (source.equipment?.length ?? 0); slot++) {

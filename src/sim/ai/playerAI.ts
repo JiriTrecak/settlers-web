@@ -21,7 +21,7 @@ import {
   type Mission,
 } from "./state";
 import { economy, siteKey } from "./economy";
-import { heroActions, reactions } from "./tactics";
+import { abilityActions, heroActions, reactions } from "./tactics";
 
 const actors = (a: Action): number[] =>
   "actors" in a ? a.actors : "actor" in a ? [a.actor] : [];
@@ -83,7 +83,7 @@ export class PlayerAI {
       const a = p.action;
       if (a.type === "build") s.metrics.builds++;
       if (a.type === "produce") s.metrics.recruits++;
-      if (a.type === "cast") s.metrics.casts++;
+      if (a.type === "castAbility") s.metrics.casts++;
       if (a.type === "pickup") s.metrics.pickups++;
       if (a.type === "revive") s.metrics.revivals++;
     } else {
@@ -172,6 +172,7 @@ export class PlayerAI {
       return true;
     };
     // Skill/item management and immediate survival claim their actors before ordinary missions.
+    abilityActions(f,emit);
     heroActions(f, s, emit);
     if (tick >= s.nextStrategy) {
       this.strategy(f);

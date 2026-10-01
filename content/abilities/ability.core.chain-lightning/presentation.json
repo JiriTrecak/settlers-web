@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.chain-lightning",
+  "icon": "asset.icons.spell-chain-lightning",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "arc",
+      "event": "impact",
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#74c6ff",
+      "accent": "#ffffff",
+      "durationTicks": 10,
+      "count": 12,
+      "size": 0.085,
+      "height": 1.6
+    },
+    {
+      "id": "arc-sparks",
+      "event": "damaged",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#88dcff",
+      "accent": "#ffffff",
+      "durationTicks": 12,
+      "count": 10,
+      "size": 0.17,
+      "height": 1.6,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

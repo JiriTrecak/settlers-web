@@ -77,7 +77,7 @@ export class FogOfWar {
   }
   private readonly revisions = new WeakMap<Object3D, number>();
   private patch(material: Material) {
-    if (this.patched.has(material)) return;
+    if (material.userData.ignoreVisibility || this.patched.has(material)) return;
     this.patched.add(material);
     const before = material.onBeforeCompile,
       key = material.customProgramCacheKey();

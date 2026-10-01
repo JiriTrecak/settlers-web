@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.dispel-magic",
+  "icon": "asset.icons.spell-dispel-magic",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "purifying-stars",
+      "event": "released",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#c1edff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 60,
+      "size": 0.22,
+      "height": 2,
+      "distribution": "disc",
+      "spread": 5,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "magic-unbound",
+      "event": "dispelled",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#eee5ff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 12,
+      "size": 0.17,
+      "height": 1.6,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "purifying-light",
+      "event": "released",
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#d7edff",
+      "accent": "#ffffff",
+      "durationTicks": 15,
+      "count": 1,
+      "size": 10,
+      "height": 3,
+      "intensity": 50
+    }
+  ]
+}

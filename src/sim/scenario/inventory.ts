@@ -39,7 +39,7 @@ export function missionInventory(g:Game, entity:(id:Scalar)=>Entity|undefined, o
         if(target.e.equipmentState)target.e.equipmentState[slot]=null;
         const stats=g.context.stats(target.e);
         target.e.hp=Math.min(target.e.hp!,stats.maxHp);
-        if(target.e.spellcasting)target.e.spellcasting.mana=Math.min(target.e.spellcasting.mana,stats.maxMana);
+        if(target.e.abilities)target.e.abilities.mana=Math.min(target.e.abilities.mana,stats.maxMana);
       });
       return true;
     },

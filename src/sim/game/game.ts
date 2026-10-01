@@ -1,3 +1,6 @@
+import {validateAbilityState,validateSpellWorld} from '../abilities/validation';
+import {createGameAbilities} from '../abilities/gameHost';
+import type {AbilityRuntime} from '../abilities/runtime';
 import { colonySupply, supplyAdmission } from "./supply";
 import {resourceBlocksCell} from '../../shared/map/resourceClearance';
 import type {CampaignCompany} from '../../shared/scenario/company';
@@ -13,7 +16,6 @@ import { Research } from "./research";
 import { prerequisiteReason } from "../../content/prerequisites";
 import { Revival } from "./revival";
 import { Regeneration } from "./regeneration";
-import { Spellcasting } from "./spellcasting";
 import { idleMotion } from "./idleMotion";
 import { separateOverlaps } from "./separation";
 import { fixed, lengthCeil } from "./motion";
@@ -44,7 +46,8 @@ import {
   type UnitOrder,
 } from "./state";
 
-export const SIMULATION_BUILD = "declarative-sim-47";
+import {SIMULATION_BUILD} from '../../shared/simulationBuild';
+export {SIMULATION_BUILD} from '../../shared/simulationBuild';
 const snapshotSchema = z
   .object({
     version: z.literal(1),
@@ -76,7 +79,7 @@ export class Game {
   readonly campLoot: CampLoot;
   readonly inventory: Inventory;
   readonly revival: Revival;
-  readonly spells: Spellcasting;
+  readonly abilities: AbilityRuntime;
   readonly mission?: Mission;
   readonly timings: Record<string, number> = {};
   private readonly owners: Owner[];
@@ -140,7 +143,7 @@ export class Game {
       new Map(slots.map((s) => [slotOwner(s.player), s.team ?? s.player])),
     );
     this.inventory = new Inventory(this.context, this.combat.items);
-    this.spells = new Spellcasting(this.context, this.combat, this.observation);
+    this.abilities = createGameAbilities(this);
     if(map.mission) this.mission=new Mission(this);
     else if(!map.sandbox) this.economy.startGathering();
     this.observation.update();
@@ -238,7 +241,7 @@ export class Game {
     if (this.state.outcome) return reject("Match has ended");
     if(this.isDefeated(owner))return reject("Your colony has been defeated");
     const action = parsed.data;
-    const destination="destination" in action?action.destination:"position" in action?action.position:"point" in action?action.point:undefined;
+    const destination="destination" in action?action.destination:"position" in action?action.position:undefined;
     if(destination&&!this.spatial.validPoint(destination))return reject("Destination is not on a declared walk surface");
     if (action.type === "noop" || action.type === "ping")
       return { accepted: true, actors: [] };
@@ -269,7 +272,7 @@ export class Game {
       if(!host||!this.observation.previouslyVisible(owner,host))return reject('No visible friendly watchtower');
       const e=eligible.find(e=>e.unit&&!e.unit.garrison&&this.orders.canIssue(e,action.append)&&this.garrisons.available(e,host));
       if(!e)return reject('The watchtower needs one available Archer and an empty lookout');
-      if(!action.append)this.spells.cancel(e);
+      if(!action.append){this.abilities.cancel(e.id);}
       this.orders.issue(e,{type:'garrison',target:host.id},action.append);
       return {accepted:true,actors:[e.id]};
     }
@@ -283,7 +286,7 @@ export class Game {
       const applied:number[]=[];
       for(const e of eligible){
         if(!e.unit||!this.context.def(e).behaviors.movement||e.id===target?.id||!this.orders.canIssue(e,action.append))continue;
-        if(!action.append)this.spells.cancel(e);
+        if(!action.append){this.abilities.cancel(e.id);}
         this.orders.issue(e,action.type==='hold'?{type:'hold'}:action.type==='follow'?{type:'follow',target:target!.id}:{type:'patrol',destination:action.destination},action.append);applied.push(e.id);
       }
       return applied.length?{accepted:true,actors:applied}:reject('No actors support that order');
@@ -326,20 +329,20 @@ export class Game {
             (!action.force && !this.combat.hostile(e, target!))
           )
             continue;
-          if (!action.append) this.spells.cancel(e);
+          if (!action.append) {this.abilities.cancel(e.id);}
           this.orders.issue(e, {
             type: "attack",
             target: target!.id,
             force: action.force ?? false,
           }, action.append);
         } else if (action.type === "stop") {
-          this.spells.cancel(e);
+          {this.abilities.cancel(e.id);}
           this.economy.interrupt(e);
         } else {
           if (action.attackMove && !behaviors.combat) continue;
           const goal = destinations!.get(e.id);
           if (!goal) continue;
-          if (!action.append) this.spells.cancel(e);
+          if (!action.append) {this.abilities.cancel(e.id);}
           this.orders.issue(e, {
               type: "move",
               destination: goal,
@@ -394,17 +397,19 @@ export class Game {
           : this.revival.cancel(actor, action.hero);
       return error ? reject(error) : { accepted: true, actors: [actor.id] };
     }
-    if (action.type === "learnAbility") {
-      const error = this.spells.learn(actor, action.ability);
-      return error ? reject(error) : { accepted: true, actors: [actor.id] };
+    if(action.type==='abilityAutocast'){
+      const binding=this.context.def(actor).behaviors.abilities?.bindings.find(b=>b.id===action.binding);
+      const spell=binding&&this.registry.abilityLibrary.abilities.find(a=>a.id===binding.ability);
+      if(!actor.abilities||!binding?.controls.includes('player')||!binding.controls.includes('ai')||!spell?.autocast||!actor.abilities.ranks[binding.id])return reject('This ability cannot autocast');
+      (actor.abilities.autocast??={})[binding.id]=action.enabled;
+      return {accepted:true,actors:[actor.id]};
     }
-    if (action.type === "cast") {
-      if (
-        action.point &&
-        !this.observation.explored(owner, [action.point.y*this.spatial.size+action.point.x])
-      )
-        return reject("Explore the target first");
-      const error = this.spells.cast(actor, action.ability, action.point);
+    if(action.type==='castAbility'){
+      const error=this.abilities.cast(actor.id,action.binding,action.target.kind==='unit'?action.target.entity:action.target.position,this.slots.find(s=>slotOwner(s.player)===owner)?.kind==='ai'?'ai':'player');
+      return error?reject(error):{accepted:true,actors:[actor.id]};
+    }
+    if (action.type === "learnAbility") {
+      const error = this.learnAbility(actor, action.ability);
       return error ? reject(error) : { accepted: true, actors: [actor.id] };
     }
     if (action.type === "pickup") {
@@ -495,6 +500,16 @@ export class Game {
     }
     return { accepted: true, actors: [actor.id] };
   }
+  onCombatDeath(dead:Entity){
+    this.abilities.cancel(dead.id,'Caster died');
+    delete dead.spellStatuses;
+    this.campLoot.onDeath(dead);
+    if(!this.context.def(dead).hero)this.inventory.onDeath(dead);
+    this.observation.recordDeath(dead);
+    this.context.event(dead.owner,'Entity destroyed','death');
+    this.economy.remove(dead);
+    if(this.context.def(dead).hero)this.revival.retain(dead);
+  }
   private activateQueuedOrder(e: Entity, order: UnitOrder): boolean {
     if (order.type === "construct") {
       const building = this.context.get(order.target);
@@ -508,7 +523,8 @@ export class Game {
       : {...order, actors: [e.id]};
     return this.command(e.owner, action).accepted;
   }
-  tick(tick = this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1) {
+  // Passive units is an isolated workbench mode; normal/lockstep callers use the default.
+  tick(tick = this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1, {passiveUnits=false}: {passiveUnits?:boolean} = {}) {
     if (tick !== this.state.tick + (this.state.mission?.pausedTicks ?? 0) + 1)
       throw new Error("Ticks must advance exactly once");
     for (const name in this.timings) this.timings[name] = 0;
@@ -533,34 +549,33 @@ export class Game {
       observe();
       return;
     }
-    measure("Spell timers", () => this.spells.tick());
+    for(const e of this.state.entities)if(e.stunnedUntil!==undefined&&e.stunnedUntil<=this.state.tick)delete e.stunnedUntil;
+    measure("Ability lifecycle", () => {this.abilities.tick();if(!passiveUnits)this.abilities.ambient();});
     measure("Item effects", () => this.combat.items.tick());
     measure("Regeneration", () => new Regeneration(this.context).tick());
-    measure("Work assignment", () => {
+    if(!passiveUnits)measure("Work assignment", () => {
       measure("Assignment · queued orders", () => this.orders.advance((e, order) => this.activateQueuedOrder(e, order)));
       measure("Assignment · workers", () => this.economy.assign());
     });
     measure("Orders / navigation", () => {
+      if(!passiveUnits){
       measure("Orders · garrisons", () => this.garrisons.tick());
       measure("Orders · inventory", () => this.inventory.plan());
       measure("Orders · combat planning", () => this.combat.plan());
       measure("Orders · separation", () => separateOverlaps(this.context));
       measure("Orders · idle motion", () => idleMotion(this.context));
-      measure("Orders · movement", () => this.context.move());
+      }
+      measure("Orders · movement", () => this.context.move(passiveUnits));
     });
     this.combat.items.tick();
-    measure("Combat", () => {
+    if(!passiveUnits)measure("Combat", () => {
       const scripted=this.state.mission?.pendingDamage??[];
       if(this.state.mission)this.state.mission.pendingDamage=[];
-      for (const dead of this.combat.resolve([...this.spells.resolve(),...scripted])) {
-        this.campLoot.onDeath(dead);
-        if (!this.context.def(dead).hero) this.inventory.onDeath(dead);
-        this.observation.recordDeath(dead);
-        this.context.event(dead.owner, "Entity destroyed", "death");
-        this.economy.remove(dead);
-        if (this.context.def(dead).hero) this.revival.retain(dead);
+      for (const dead of this.combat.resolve(scripted)) {
+        this.onCombatDeath(dead);
       }
     });
+    measure("Ability delivery", () => this.abilities.resolve());
     measure("Economy", () => {
       this.economy.advance();
       this.inventory.advance();
@@ -593,9 +608,18 @@ export class Game {
     return !objective || !alive(objective);
   }
   view(owner?: number | Owner) {
-    return this.observation.view(
-      typeof owner === "number" ? slotOwner(owner) : owner,
-    );
+    const viewer=typeof owner==='number'?slotOwner(owner):owner;
+    const view=this.observation.view(viewer);view.abilityEvents=this.abilities.observedEvents(viewer);view.abilityDeliveries=this.abilities.observedDeliveries(viewer);return view;
+  }
+  private learnAbility(actor:Entity,bindingId:string):string|null {
+    const state=actor.abilities,bindings=this.context.def(actor).behaviors.abilities?.bindings,binding=bindings?.find(b=>b.id===bindingId);
+    if(!alive(actor)||!state||!binding?.learning||state.pending)return 'Cannot learn this ability';
+    const level=this.context.stats(actor).level,rank=state.ranks[bindingId];
+    if(binding.learning.requiredLevels[rank]===undefined)return 'Ability is fully learned';
+    if(binding.learning.requiredLevels[rank]>level)return 'Hero level is too low';
+    const spent=bindings!.reduce((n,b)=>n+(state.ranks[b.id]-b.initialRank),0);
+    if(spent>=level)return 'No skill points available';
+    state.ranks[bindingId]++;return null;
   }
   snapshot(): GameSnapshot {
     return {
@@ -622,6 +646,9 @@ export class Game {
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),
       jobs = new Set(state.jobs.map((j) => j.id));
+    validateSpellWorld(state,this.registry);
+    const casts=state.entities.flatMap(e=>e.abilities?.pending?[e.abilities.pending.id]:[]);
+    if(new Set(casts).size!==casts.length)throw Error('Duplicate saved cast identity');
     for (const [owner, ids] of Object.entries(state.research)) {
       if (!this.owners.includes(owner as Owner) || new Set(ids).size !== ids.length || ids.some(id => !this.registry.rules.research[id]))
         throw new Error("Invalid saved colony research");
@@ -688,17 +715,6 @@ export class Game {
       state.nextJob <= Math.max(0, ...jobs)
     )
       throw new Error("Invalid saved identity counters");
-    if (
-      new Set(state.visuals.map((v) => v.id)).size !== state.visuals.length ||
-      state.nextVisual <= Math.max(0, ...state.visuals.map((v) => v.id)) ||
-      state.visuals.some(
-        (v) =>
-          !this.registry.rules.spells[v.ability]?.ranks[v.rank - 1] ||
-          [v.origin,v.target].some(p => p.x > this.map.size-1 || p.y > this.map.size-1) ||
-          v.viewers.some((o) => !this.owners.includes(o)),
-      )
-    )
-      throw new Error("Invalid visual cues");
     const queues = state.entities
       .flatMap((e) => e.production?.queue ?? [])
       .map((q) => q.id);
@@ -848,40 +864,14 @@ export class Game {
         if (u.camp !== null && !this.map.camps.some((c) => c.id === u.camp))
           throw new Error("Unknown saved camp");
       }
-      const casting = e.spellcasting,
-        policy = d.behaviors.spellcasting;
-      if (!!casting !== !!policy) throw new Error("Invalid saved spellcaster");
-      if (casting && policy) {
-        const entries = Object.entries(casting.learned);
-        if (
-          casting.mana > entityStats(d, e, this.registry, state.research[e.owner]).maxMana ||
-          entries.reduce((n, [, rank]) => n + rank, 0) >
-            entityStats(d, e, this.registry, state.research[e.owner]).level ||
-          entries.some(
-            ([id, rank]) =>
-              !policy.abilities.includes(id) ||
-              rank < 1 ||
-              !this.registry.rules.spells[id]?.ranks[rank - 1] ||
-              this.registry.rules.spells[id].ranks[rank - 1].requiredLevel >
-                entityStats(d, e, this.registry, state.research[e.owner]).level,
-          ) ||
-          Object.keys(casting.cooldowns).some(
-            (id) => !policy.abilities.includes(id),
-          ) ||
-          (casting.pending &&
-            (!casting.learned[casting.pending.ability] ||
-              casting.pending.point.x > this.map.size-1 || casting.pending.point.y > this.map.size-1 ||
-              casting.pending.rank > casting.learned[casting.pending.ability] ||
-              casting.pending.resolveTick - casting.pending.startTick !== this.registry.rules.spells[casting.pending.ability]?.ranks[casting.pending.rank - 1]?.castTicks))
-        )
-          throw new Error("Invalid saved ability state");
+      const abilityPolicy=d.behaviors.abilities;
+      if(!!abilityPolicy!==!!e.abilities)throw Error('Invalid saved ability caster');
+      if(e.abilities&&abilityPolicy){
+        validateAbilityState({actor:{id:e.id,owner:e.owner,x:e.x,y:e.y,hp:e.hp??0,maxHp:d.body?.maxHp??0,alive:alive(e),unit:!!e.unit,blocked:false,targetable:true},state:e.abilities,bindings:abilityPolicy.bindings,maxMana:entityStats(d,e,this.registry,state.research[e.owner]).maxMana,regenPerSecond:abilityPolicy.manaRegenPerSecond},id=>this.registry.abilityLibrary.abilities.find(a=>a.id===id),state.tick,this.context.spatial.size);
+        const level=entityStats(d,e,this.registry,state.research[e.owner]).level;
+        if(abilityPolicy.bindings.reduce((sum,b)=>sum+e.abilities!.ranks[b.id]-b.initialRank,0)>level||abilityPolicy.bindings.some(b=>b.learning&&e.abilities!.ranks[b.id]>b.initialRank&&b.learning.requiredLevels[e.abilities!.ranks[b.id]-1]>level))throw Error('Invalid saved ability learning');
+        if(e.abilities.pending&&e.abilities.pending.id>=state.nextCast)throw Error('Invalid saved cast counter');
       }
-      if (
-        e.effects?.some(
-          (b) => !this.registry.rules.spells[b.ability]?.ranks[b.rank - 1],
-        )
-      )
-        throw new Error("Invalid saved status effect");
       if (e.production) {
         const p = e.production;
         if (
@@ -925,6 +915,8 @@ export class Game {
     this.spatial.rebuild();
 
     this.observation.restore(saved.knowledge);
+    this.abilities.clearEvents();
+
   }
   checksum() {
     return simulationHash([this.state, this.observation.checksum()]);

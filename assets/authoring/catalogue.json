@@ -966,6 +966,188 @@
     "clearance": 0
   },
   {
+    "id": "asset.models.units.neutral-barkguard",
+    "name": "Barkguard",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-bloom-witch",
+    "name": "Bloom Witch",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-briar-hulk",
+    "name": "Briar Hulk",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-capling",
+    "name": "Capling",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-corrupted-rootbeast",
+    "name": "Corrupted Rootbeast",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-dew-sprite",
+    "name": "Dew Sprite",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-hollow-stag",
+    "name": "Hollow Stag",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-hornet-guard",
+    "name": "Hornet Guard",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-needle-wasp",
+    "name": "Needle Wasp",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-nest-mother",
+    "name": "Nest Mother",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-old-root",
+    "name": "Old Root",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-puddle-wisp",
+    "name": "Puddle Wisp",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-puffcap",
+    "name": "Puffcap",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-root-seer",
+    "name": "Root Seer",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-rootling",
+    "name": "Rootling",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-rotwood-ancient",
+    "name": "Rotwood Ancient",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-seedcaster",
+    "name": "Seedcaster",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-spitter",
+    "name": "Spitter",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-tadpole-spirit",
+    "name": "Tadpole Spirit",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-thorn-slinger",
+    "name": "Thorn Slinger",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-tree-frog",
+    "name": "Tree Frog",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-twigcaster",
+    "name": "Twigcaster",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-violet-sporeling",
+    "name": "Violet Sporeling",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-webling",
+    "name": "Webling",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-willow-wisp",
+    "name": "Willow Wisp",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.neutral-young-toad",
+    "name": "Young Toad",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
     "id": "asset.placeholder.missing-model",
     "name": "Missing model",
     "kind": "prop",

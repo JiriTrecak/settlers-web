@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import raw from "../../content/game.json";
 import {renderAssets} from "../../src/shared/assets/manifest";
-const source={...raw,assets:renderAssets};
+import {coreAbilities} from '../../src/content/abilities/core';
+const source={...raw,assets:renderAssets,abilityLibrary:coreAbilities};
 import {
   buildCatalog,
   definitionPath,

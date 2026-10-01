@@ -6,7 +6,7 @@ export const companyMemberSchema=z.object({
  tag:z.string().min(1).max(120),definition:idSchema,
  bonuses:permanentBonusesSchema.optional(),
  experience:z.number().int().nonnegative().optional(),
- learned:z.record(idSchema,z.number().int().min(1).max(3)).optional(),
+ learned:z.record(idSchema,z.number().int().min(0).max(10)).optional(),
  equipment:z.array(idSchema.nullable()).max(12).optional(),
  equipmentState:z.array(itemRuntimeSchema.nullable()).max(12).optional(),
 }).strict();

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.feral-spirit",
+  "name": "Feral Spirit",
+  "description": "Summon two allied forest spirits for 60 seconds. Recasting replaces this caster’s previous spirits. Summons can be damaged by Dispel Magic.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 75,
+      "cooldownTicks": 1200,
+      "count": 2
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "target",
+      "amount": {
+        "rankParameter": "count"
+      },
+      "definition": "unit.spell.feral-spirit",
+      "durationTicks": 2400,
+      "replace": true,
+      "radius": 3
+    }
+  ],
+  "presentation": "presentation.core.feral-spirit"
+}

@@ -4,7 +4,6 @@ import {selectedWalk} from '../../editor/select/select';
 import {ScenePanel} from '../../editor/chrome/scenePanel';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
-import { SpellWorkbench } from "../../editor/chrome/spellWorkbench";
 import { getMap, rememberAuthoredMap } from "../../shared/map/library";
 import { playableMapError } from "../../shared/map/playable";
 import { SpawnDock } from "../../editor/chrome/spawnDock";
@@ -49,7 +48,6 @@ export class EditorScreen extends GameScreen {
   private dialog: Confirm | null = null;
   private modal: CatalogModal | null = null;
   private missionEditor:MissionEditor|null=null;
-  private spellWorkbench: SpellWorkbench | null = null;
   private readonly mcpPrefs = new McpPrefsStore();
   private mcpOpen = false;
   private skyOpen = false;
@@ -98,10 +96,6 @@ export class EditorScreen extends GameScreen {
         const id=rememberAuthoredMap(this.editor.map);
         window.open(`/?map=${encodeURIComponent(id)}`,"_blank");
       });},
-      onEffects: () => {
-        this.spellWorkbench?.destroy();
-        this.spellWorkbench = new SpellWorkbench(this.root);
-      },
       onSelect: () => this.armSelect(),
       onStamp: () => this.stamp(),
       onBrush: () => this.armBrush(),
@@ -230,7 +224,6 @@ export class EditorScreen extends GameScreen {
 
   override tick(dtMs: number, _nowMs: number): void {
     // The modal has its own preview renderer; freeze the covered map canvas.
-    if(this.spellWorkbench?.isOpen)return;
     this.editor.tick(dtMs);
     if (this.skyOpen && this.editor.sky?.playing) this.syncSky();
   }
@@ -241,7 +234,6 @@ export class EditorScreen extends GameScreen {
 
     this.modal?.close();
     this.dialog?.cancel();
-    this.spellWorkbench?.destroy();
     this.missionEditor?.destroy();
     this.bridge.stop();
     this.terrainDock.destroy();
@@ -688,7 +680,7 @@ export class EditorScreen extends GameScreen {
     const result = await this.files.load();
     if (!result) return;
     if (!result.ok) {
-      await this.alert("Couldn't load", "That file isn't a valid .utcmap.");
+      await this.alert("Couldn't load", `That file isn't a valid .utcmap: ${result.reason}`);
       return;
     }
     this.draft = new EditorDraft(sessionStorage, "file:" + result.map.name, result.map);

@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-willow-wisp",
+  "name": "Willow Wisp",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "hollow-stag",
+    "hard",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "2becc1b3d1815652e1a5f83b1b65a0ca5baa21151ae33c38e9b9d04d13bb4205",
+      "bytes": 1144368
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "bb4bf96585e3e7409a6bc5f065478f3dd775949b645416f215ee550fb1a9ffbc",
+      "bytes": 7995625
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "ffcb5c7c694c8a8ce88c1d9428da032b48182469436a7ef8a420aa7cdd04a2d8",
+      "bytes": 646770
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "424cce9669d67d19c1d0d7e58da237fb12e316ddc0906b2383074b250066492b",
+      "bytes": 575623
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3e8b56e20e7137d63acf2e76fdcb06889150d8bf851b3c7d2f15567716767754",
+      "bytes": 16947
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8bc241b12c4566d4a7710c2258a3e1d31a9523887487051ac73deaf02095b797",
+      "bytes": 516
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.willow-wisp",
+        "geometry": {
+          "asset": "asset.models.units.neutral-willow-wisp",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 2.2,
+        "projectile": "thorn",
+        "projectileSocket": "socket_projectile"
+      },
+      {
+        "id": "icon.neutral.willow-wisp",
+        "image": {
+          "asset": "asset.models.units.neutral-willow-wisp",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.68,
+      "height": 2,
+      "formationSpacing": 1.53
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

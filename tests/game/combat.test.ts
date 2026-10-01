@@ -66,8 +66,9 @@ describe("combat, knowledge and deterministic navigation", () => {
     expect(remembered.inventory).toBeUndefined();
   });
   it("S18 aggressive neutrals fight players, ignore unowned items, and return to camp after pursuit", () => {
+    // Mid-map, clear of player 1's starting fort and escort at (218,218).
     const wolf = {
-        ...placed("wolf", "unit.neutral.wolf", 205, 230),
+        ...placed("wolf", "unit.neutral.webling", 205, 130),
         owner: "none" as const,
       },
       g = new Game(
@@ -75,8 +76,8 @@ describe("combat, knowledge and deterministic navigation", () => {
           ...emptyUtcMap(),
           entities: [
             wolf,
-            placed("warrior", "unit.ants.warrior", 206, 230),
-            { ...placed("loose", "item.barkguard", 205, 231), owner: "none" },
+            placed("warrior", "unit.ants.warrior", 206, 130),
+            { ...placed("loose", "item.barkguard", 205, 131), owner: "none" },
           ],
           camps: [
             {
@@ -97,7 +98,7 @@ describe("combat, knowledge and deterministic navigation", () => {
     run(g, 30);
     expect(soldier.hp!).toBeLessThan(hp);
     neutral.x = 170;
-    neutral.y = 230;
+    neutral.y = 130;
     neutral.unit!.position = null;
     neutral.unit!.segment = null;
     neutral.unit!.route = [];
@@ -105,13 +106,16 @@ describe("combat, knowledge and deterministic navigation", () => {
     neutral.unit!.target = null;
     // End the pursuit with the enemy out of the return corridor.
     g.command("player.1", {type: "stop", actors: [soldier.id]});
-    soldier.x = 240; soldier.y = 245;
+    soldier.x = 240; soldier.y = 145;
     soldier.unit!.position = null; soldier.unit!.segment = null;
+    soldier.unit!.route = []; soldier.unit!.goal = null; soldier.unit!.target = null;
+    // Teleports must reindex, or the stale cells body-block the return corridor.
+    g.spatial.updateUnitMovement(neutral); g.spatial.updateUnitMovement(soldier);
     g.tick();
     for (let i = 0; i < 240 && neutral.unit!.returning; i++) g.tick();
     expect(neutral.unit!.returning).toBe(false);
     expect(
-      (precise(neutral).x - 205) ** 2 + (precise(neutral).y - 230) ** 2,
+      (precise(neutral).x - 205) ** 2 + (precise(neutral).y - 130) ** 2,
     ).toBeLessThanOrEqual(1);
     expect(
       g.entities.find((e) => e.placement === "loose")!.item!.quantity,

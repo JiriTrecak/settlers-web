@@ -1,3 +1,4 @@
+import {readAbilityLibrary} from '../../tooling/content/abilities';
 import { readFile, readdir, mkdir, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -91,7 +92,7 @@ export async function generate() {
     imageAssets,
     catalog,
     fragments,
-  } = buildCatalog({...source,assets:JSON.parse(await readFile(path.join(root,"assets/manifest.json"),"utf8")).records.flatMap((r:{render:unknown[]})=>r.render)});
+  } = buildCatalog({...source,abilityLibrary:await readAbilityLibrary(root),assets:JSON.parse(await readFile(path.join(root,"assets/manifest.json"),"utf8")).records.flatMap((r:{render:unknown[]})=>r.render)});
   const files = new Map<string, string | Buffer>(pages);
   const authored = path.join(root, "docs/wiki");
   for (const file of await paths(authored)) {
@@ -296,9 +297,9 @@ export async function generate() {
       collapsed: true,
       items: [
         { text: "Overview", link: "/abilities/" },
-        ...Object.entries(registry.rules.spells).map(([id, s]) => ({
+        ...registry.abilityLibrary.abilities.map(s => ({
           text: s.name,
-          link: `/${spellPath(id)}`,
+          link: `/${spellPath(s.id)}`,
         })),
       ],
     },

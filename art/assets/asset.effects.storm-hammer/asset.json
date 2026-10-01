@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "asset.effects.storm-hammer",
+  "name": "storm hammer effect texture",
+  "kind": "texture",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "effect"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b3d3a2a128375685e2b7a00f88013e8456f528f16c021e55c9ee34c916a8460f",
+      "bytes": 98491
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "28cd20c738b6faae4d9df4fa2102b8eb06a06fd8bd1d75756a4432f2409ce6e5",
+      "bytes": 1672390
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: A single chunky bronze fantasy war hammer seen diagonally in three quarter view, head at top right and handle at bottom left, with a compact halo of blue-white electrical sparks hugging its silhouette. No background. Readable and bold; hand painted stylized game sprite, no lettering. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

@@ -2,11 +2,11 @@
  * Save / load the current `UtcMap` as a `.utcmap` file.
  * Handle is only set after a save/load this session — restore is startIn only.
  */
-import { mapFileName, parseUtcMap, stringifyUtcMap, type UtcMap } from "../../shared";
+import { mapFileName, readUtcMap, stringifyUtcMap, type UtcMap } from "../../shared";
 import { readText, writeText, type DiskHandle } from "./disk";
 import { recallMap, rememberMap } from "./recent";
 
-export type LoadResult = { ok: true; map: UtcMap } | { ok: false; reason: "parse" } | undefined;
+export type LoadResult = { ok: true; map: UtcMap } | { ok: false; reason: string } | undefined;
 
 export class MapStore {
   private handle: DiskHandle | null = null;
@@ -42,19 +42,19 @@ export class MapStore {
       picked = await readText(this.startIn ?? this.handle);
     } catch (err) {
       console.error(err);
-      return { ok: false, reason: "parse" };
+      return { ok: false, reason: "The file is not valid JSON." };
     }
     if (!picked) return undefined;
     let raw: unknown;
     try {
       raw = JSON.parse(picked.text);
     } catch {
-      return { ok: false, reason: "parse" };
+      return { ok: false, reason: "The file is not valid JSON." };
     }
-    const map = parseUtcMap(raw);
-    if (!map) return { ok: false, reason: "parse" };
+    const read = readUtcMap(raw);
+    if ("error" in read) return { ok: false, reason: read.error };
     this.keep(picked.handle, picked.name);
-    return { ok: true, map };
+    return { ok: true, map: read.map };
   }
 
   clearFile(): void {

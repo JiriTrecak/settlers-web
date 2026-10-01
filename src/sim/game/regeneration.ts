@@ -14,12 +14,6 @@ export class Regeneration {
         carry.health %= POINT;
       }
       if (e.hp === stats.maxHp) carry.health = 0;
-      if (e.spellcasting && e.spellcasting.mana < stats.maxMana) {
-        carry.mana += Math.round(stats.manaRegenPerSecond * 1000);
-        e.spellcasting.mana = Math.min(stats.maxMana, e.spellcasting.mana + Math.floor(carry.mana / POINT));
-        carry.mana %= POINT;
-      }
-      if (!e.spellcasting || e.spellcasting.mana === stats.maxMana) carry.mana = 0;
     }
   }
 }

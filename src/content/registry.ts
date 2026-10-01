@@ -1,3 +1,4 @@
+import {abilityLibrarySchema,emptyAbilityLibrary,releaseEffects,type AbilityLibrary} from './abilities/schema';
 import { z } from "zod";
 import {scaleUnitDefinition} from './unitScale';
 import {
@@ -19,6 +20,7 @@ export type ContentSource = {
   assets: unknown[];
   actions: unknown;
   rules: unknown;
+  abilityLibrary?: unknown;
 };
 export function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
@@ -51,6 +53,7 @@ const ordinal = (a: { id: string }, b: { id: string }) =>
 
 /** No IO, browser, or simulation dependencies. The entire reference graph commits together. */
 export class ContentRegistry {
+  readonly abilityLibrary: AbilityLibrary;
   readonly definitions: readonly Definition[];
   readonly assets: readonly Asset[];
   readonly rules: Rules;
@@ -65,6 +68,7 @@ export class ContentRegistry {
       assets: z.array(z.unknown()),
       actions: z.unknown(),
       rules: z.unknown(),
+      abilityLibrary: z.unknown().optional(),
     })
       .strict()
       .parse(source);
@@ -155,13 +159,16 @@ export class ContentRegistry {
         })
         .sort(ordinal),
     );
+    this.abilityLibrary = freeze(abilityLibrarySchema.parse(source.abilityLibrary ?? emptyAbilityLibrary()));
     this.byId = Object.fromEntries(this.definitions.map((d) => [d.id, d]));
     this.validate();
+    for(const presentation of this.abilityLibrary.presentations)if(presentation.icon&&!this.asset(presentation.icon).image)throw Error(`Spell icon must reference an image: ${presentation.icon}`);
     this.fingerprint = fingerprint({
       definitions: this.definitions,
       assets: this.assets,
       actions: this.actions,
       rules: this.rules,
+      abilityLibrary: this.abilityLibrary,
     });
     freeze(this.byId);
     freeze(this.byAsset);
@@ -306,23 +313,16 @@ export class ContentRegistry {
       if (d.felling && (d.kind !== "resource" || !d.yield || !this.asset(d.asset).harvestAnimation))
         fail("felling requires a resource yield and animated scenery asset");
       if (d.kind !== "unit" && d.hero) fail("hero flag requires a unit");
-      if (d.behaviors.spellcasting) {
-        this.asset(d.behaviors.spellcasting.manaIcon);
-        if (!this.actions.categories[d.behaviors.spellcasting.learningCategory])
-          fail("unknown learning category");
-        if (!d.hero || !d.behaviors.progression)
-          fail("spellcasting requires a progressing hero");
-        if (
-          new Set(d.behaviors.spellcasting.abilities).size !==
-          d.behaviors.spellcasting.abilities.length
-        )
-          fail("duplicate abilities");
-        const abilityColumns = new Set<number>();
-        for (const id of d.behaviors.spellcasting.abilities) {
-          const spell = this.rules.spells[id];
-          if (!spell) fail(`unknown ability ${id}`);
-          if (abilityColumns.has(spell.column)) fail("duplicate ability column");
-          abilityColumns.add(spell.column);
+      if (d.behaviors.abilities) {
+        if(d.kind !== 'unit') fail('abilities require a unit');
+        const columns=new Set<number>();
+        for(const binding of d.behaviors.abilities.bindings){
+          const ability=this.abilityLibrary.abilities.find(a=>a.id===binding.ability);
+          if(!ability) fail(`Unknown ability ${binding.ability}`);
+          if(binding.initialRank>ability!.ranks.length)fail('Invalid initial ability rank');
+          if(binding.learning&&(!d.behaviors.progression||binding.learning.requiredLevels.length!==ability!.ranks.length))fail('Ability learning requires progression and a requirement per rank');
+          if(binding.command){if(!binding.controls.includes('player'))fail('A command requires player control');if(columns.has(binding.command.column))fail('Duplicate ability column');columns.add(binding.command.column);if(binding.command.icon)this.asset(binding.command.icon);}
+          if(binding.ai&&!binding.controls.includes('ai'))fail('AI policy requires AI control');
         }
       }
       if (d.behaviors.inventory && (!d.hero || !d.behaviors.movement))
@@ -343,13 +343,13 @@ export class ContentRegistry {
         if (first.maxHp !== d.body?.maxHp || first.armor !== d.body?.armor ||
             first.damage !== (d.behaviors.combat?.damage ?? 0) ||
             first.cooldownTicks !== (d.behaviors.combat?.cooldownTicks ?? 1) ||
-            first.maxMana !== (d.behaviors.spellcasting?.maxMana ?? 0) ||
-            first.manaRegenPerSecond !== (d.behaviors.spellcasting?.manaRegenPerSecond ?? 0))
-          fail("level-one stats must match body, combat and spellcasting declarations");
+            first.maxMana !== (d.behaviors.abilities?.maxMana ?? 0) ||
+            first.manaRegenPerSecond !== (d.behaviors.abilities?.manaRegenPerSecond ?? 0))
+          fail("level-one stats must match body, combat and ability declarations");
         if (d.behaviors.progression.levels.some((l,i,ls) =>
           (i > 0 && (l.maxHp < ls[i-1].maxHp || l.maxMana < ls[i-1].maxMana)) ||
-          (!d.behaviors.spellcasting && (l.maxMana > 0 || l.manaRegenPerSecond > 0))))
-          fail("progression pools must not shrink; mana requires spellcasting");
+          (!d.behaviors.abilities && (l.maxMana > 0 || l.manaRegenPerSecond > 0))))
+          fail("progression pools must not shrink; mana requires abilities");
         if (d.level !== undefined && d.level !== 1)
           fail("progression starts at level 1");
       }
@@ -504,27 +504,12 @@ export class ContentRegistry {
         keys.add(a.hotkey);
       }
     }
-    for (const [id, spell] of Object.entries(this.rules.spells)) {
-      this.asset(spell.icon);
-      if (spell.damageTargetBudget &&
-          (!["line", "blast"].includes(spell.effect) || spell.ranks.some(r => !r.damage)))
-        throw new Error(`${id}: damage budget requires an offensive area spell`);
-      if (!this.rules.spellVisuals[spell.visual])
-        throw new Error(`${id}: unknown spell visual`);
-      if (!this.rules.damageMultipliers[spell.damageType])
-        throw new Error(`${id}: unknown spell damage type`);
-      if (
-        spell.ranks.some(
-          (r, i) =>
-            i > 0 && r.requiredLevel <= spell.ranks[i - 1].requiredLevel,
-        )
-      )
-        throw new Error(`${id}: rank levels must increase`);
-      if (
-        (spell.effect === "line" || spell.effect === "blast") !==
-        (spell.target === "point")
-      )
-        throw new Error(`${id}: effect target mismatch`);
+    for(const ability of this.abilityLibrary.abilities)for(let rank=1;rank<=ability.ranks.length;rank++)for(const relation of ['ally','enemy'] as const){
+      for(const effect of releaseEffects(ability,rank,relation)){
+        const damageType=effect.op==='damage'||effect.op==='dispel'?effect.damageType:effect.op==='status'?effect.periodic?.damageType:undefined;
+        if(damageType&&!this.rules.damageTypes[damageType])throw Error(`${ability.id}: unknown damage type ${damageType}`);
+        if(effect.op==='summon'&&this.find(effect.definition)?.kind!=='unit')throw Error(`${ability.id}: summons require a unit definition`);
+      }
     }
     const setup = this.rules.startingSetup;
     const fort = expect(setup.fort, "building");
@@ -575,9 +560,9 @@ export class ContentRegistry {
     }
     for (const id of ai.skillPreference)
       if (
-        !this.rules.spells[id] ||
+        !this.abilityLibrary.abilities.some(a=>a.id===id) ||
         !this.definitions.some((d) =>
-          d.behaviors.spellcasting?.abilities.includes(id),
+          d.behaviors.abilities?.bindings.some(b=>b.ability===id),
         )
       )
         throw new Error(`rules.ai.skillPreference: unlearnable ${id}`);

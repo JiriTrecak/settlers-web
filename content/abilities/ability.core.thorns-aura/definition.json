@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.thorns-aura",
+  "name": "Thorns Aura",
+  "description": "A living bramble ward surrounds nearby allies. Returns 20% of actual ordinary melee damage to the attacker as spell damage. Ranged attacks and spells do not trigger reflection; multiple copies do not stack.",
+  "activation": "passive",
+  "aura": {
+    "radius": 10,
+    "meleeOnly": false
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 0,
+      "cooldownTicks": 0,
+      "duration": 1
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "thorns",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {
+        "meleeReflectionPermille": 200
+      }
+    }
+  ],
+  "presentation": "presentation.core.thorns-aura"
+}

@@ -1,0 +1,7 @@
+{
+  "provider": "OpenAI built-in imagegen",
+  "prompt": "Original flat Thorns Aura inner emblem: six-point thorn blossom, three curved emerald bramble hooks crossing around luminous amber seed diamond, six broad leaf spear points. Mint-white cores with restrained emerald halo, simple RTS shapes, no outer ring, writing, ground or background. Real alpha, 20% margin.",
+  "transparentBackground": true,
+  "runtimeSize": 512,
+  "generated": "2026-10-01"
+}

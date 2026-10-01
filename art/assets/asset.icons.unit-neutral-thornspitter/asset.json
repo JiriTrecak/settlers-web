@@ -3,8 +3,8 @@
   "id": "asset.icons.unit-neutral-thornspitter",
   "name": "Thornspitter",
   "kind": "icon",
-  "revision": 1,
-  "status": "published",
+  "revision": 2,
+  "status": "archived",
   "tags": [
     "ants-v1",
     "migrated"

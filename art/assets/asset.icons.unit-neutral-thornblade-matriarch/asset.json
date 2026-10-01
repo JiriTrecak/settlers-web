@@ -3,8 +3,8 @@
   "id": "asset.icons.unit-neutral-thornblade-matriarch",
   "name": "Thornblade Matriarch",
   "kind": "icon",
-  "revision": 1,
-  "status": "published",
+  "revision": 2,
+  "status": "archived",
   "tags": [
     "neutral-v1",
     "migrated"

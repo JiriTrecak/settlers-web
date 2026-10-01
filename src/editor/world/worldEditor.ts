@@ -1,3 +1,4 @@
+import type {InspectionShot} from '../../shared/camera/inspectionShot';
 import {biomeById} from '../../content/biomes';
 import {environmentConditions,type EnvironmentConditions} from '../../shared/environment/conditions';
 import {LayerContextMenu} from '../chrome/layerContextMenu';
@@ -27,6 +28,9 @@ import {
 import {
   putEntity,
   deleteEntity,
+  placeCamp,
+  deleteCamp,
+  type CampStamp,
   entityAuthoringState,
   restoreEntityAuthoring,
   type EntityAuthoringState,
@@ -106,6 +110,7 @@ export type EditorShot = {
 };
 
 export type EditorShotOpts = {
+  inspection?:InspectionShot;
   gameZoom?: number;
   x?: number;
   z?: number;
@@ -242,6 +247,19 @@ export class WorldEditor {
   removeEntity(id: string) {
     this.commitEntities(deleteEntity(this.map, id));
     if (this.selectedEntity === id) this.selectedEntity = null;
+  }
+  /** Entity-tool clicks stamp this whole composition instead of one definition while set. */
+  entityCamp: string | null = null;
+  placeCamp(stamp: CampStamp) {
+    this.commitEntities(placeCamp(this.map, stamp));
+  }
+  selectedCamp() {
+    return this.map.camps.find((c) => this.selectedEntity && c.members.includes(this.selectedEntity)) ?? null;
+  }
+  removeCamp(id: string) {
+    const camp = this.map.camps.find((c) => c.id === id);
+    this.commitEntities(deleteCamp(this.map, id));
+    if (camp?.members.includes(this.selectedEntity ?? "")) this.selectedEntity = null;
   }
   selectEntity(id: string | null) {
     this.selectedEntity = id;
@@ -990,11 +1008,12 @@ export class WorldEditor {
     }
     this.draw();
     const frame = grabFrame(
-      opts.aspect !== undefined || opts.animationTime !== undefined
+      opts.inspection !== undefined || opts.aspect !== undefined || opts.animationTime !== undefined
         ? renderer.capture(
             opts.maxWidth ?? 1600,
             opts.aspect ?? this.canvas.width / Math.max(1, this.canvas.height),
             opts.animationTime,
+            opts.inspection,
           )
         : this.canvas,
       opts.maxWidth ?? 1280,
@@ -1531,6 +1550,16 @@ export class WorldEditor {
       const hit = this.renderer?.pickGround(clientX, clientY);
       if (!hit) return;
       try {
+        if (this.entityCamp) {
+          this.placeCamp({
+            composition: this.entityCamp,
+            position: { x: Math.round(hit.x), y: Math.round(hit.z) },
+            rotation: Math.round((this.stampYaw * 180) / Math.PI),
+          });
+          this.entityMessage = "Camp placed. Select a member to move it or delete the camp.";
+          this.hooks.onSelect?.();
+          return;
+        }
         this.putEntity({
           id: crypto.randomUUID(),
           definition: this.entityDefinition,

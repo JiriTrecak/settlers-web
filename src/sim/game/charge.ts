@@ -14,7 +14,7 @@ export function maintainCharge(c: GameContext, e: Entity) {
       charge.target !== u.target || u.job || u.contained || u.returning ||
       (u.order?.type === 'move' && !u.order.attackMove) ||
       (u.order?.type === 'attack' && u.order.target !== charge.target) ||
-      isStunned(e, c.registry) || e.spellcasting?.pending ||
+      isStunned(e, c.registry) || e.abilities?.pending ||
       (itemFlag(e, c.registry, 'rooted') && !itemFlag(e, c.registry, 'controlImmune'))) {
     charge.target = null;
   }

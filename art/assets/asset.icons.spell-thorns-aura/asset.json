@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-thorns-aura",
+  "name": "Thorns Aura",
+  "kind": "icon",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "spell",
+    "aura",
+    "thorns",
+    "reflection",
+    "nature"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "72e464978a641b6e1f9bb8f7f7d5b08825520955c6b21c96aca176702d9429ac",
+      "bytes": 14744
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-thorns-aura",
+        "image": {
+          "asset": "asset.icons.spell-thorns-aura",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen thorn-heart artwork, reused as the command icon."
+  }
+}

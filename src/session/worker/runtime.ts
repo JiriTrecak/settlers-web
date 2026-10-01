@@ -7,6 +7,7 @@ import type {Action,MatchConfig,ServerMsg} from '../../shared';
 import type {UtcMap} from '../../shared/map/utcmap';
 import {slotOwner} from '../../content/schema';
 import {content} from '../../content/builtin';
+import {ContentRegistry,type ContentSource} from '../../content/registry';
 import {PresentationView,matchSpeed} from '../session/presentationView';
 import {ObserverIncome,observerStats} from '../../presentation/observerStats';
 import {LOCAL_SAVE_FORMAT_VERSION,localSaveSchema,type LocalSave} from '../../shared/save/localSave';
@@ -15,7 +16,7 @@ import {captureCompany} from '../../sim/scenario/company';
 import type {ChatMessage} from '../../shared/chat/chat';
 import {navigationPaths,walkabilityCells,type NavigationDebug} from '../../sim/game/navigationDebug';
 
-export type RuntimeOptions={map:UtcMap;match:MatchConfig;player:number|null;remote:boolean};
+export type RuntimeOptions={map:UtcMap;match:MatchConfig;player:number|null;remote:boolean;content?:{source:ContentSource;fingerprint:string}};
 export type RuntimeHooks={chat?:(message:ChatMessage)=>void;applied?:(action:Action,tick:number)=>void;learned?:()=>void};
 /** Worker-owned authoritative match. This class deliberately has no DOM, RAF,
  * renderer or timer dependency; the worker scheduler supplies elapsed time. */
@@ -44,7 +45,9 @@ export class SimulationRuntime {
  constructor(readonly options:RuntimeOptions,private readonly remoteChannel?:Channel,private readonly hooks:RuntimeHooks={}){
   this.match=options.match;this.me=options.player??options.match.slots[0]!.player;
   this.visionPlayer=this.me;this.reveal=options.player===null || (!options.remote && !!options.map.sandbox);
-  this.world=new World({map:options.map,slots:this.match.slots,seed:this.match.seed,company:this.match.company});
+  const registry=options.content?new ContentRegistry(options.content.source):content;
+  if(options.content&&registry.fingerprint!==options.content.fingerprint)throw Error("Resolved content differs between main thread and worker");
+  this.world=new World({map:options.map,slots:this.match.slots,seed:this.match.seed,company:this.match.company,registry});
   if(options.remote){
    if(!remoteChannel||options.player===null)throw Error('Remote match requires a player channel');
    this.locksteps.set(this.me,new Lockstep({send:m=>remoteChannel.send(m),onMessage:fn=>remoteChannel.onMessage(m=>{if(m.type==='desync')this.desynced=true;fn(m);})},this.me,this.match.delay));
@@ -92,7 +95,7 @@ export class SimulationRuntime {
    for(const receipt of this.world.commandReceipts)if(receipt.player===this.me&&receipt.action.type==='learnAbility')this.hooks.learned?.();
    if(!this.options.remote)for(const slot of this.match.slots){
     if(slot.kind!=='ai'||this.greeted.has(slot.player))continue;
-    const game=this.world.settlement,hall=game.context.get(game.state.objectives[slotOwner(slot.player)]),max=hall&&content.get(hall.definition).body?.maxHp;
+    const game=this.world.settlement,hall=game.context.get(game.state.objectives[slotOwner(slot.player)]),max=hall&&game.registry.get(hall.definition).body?.maxHp;
     if((hall&&max&&hall.hp!==null&&hall.hp<=max*.15)||game.isDefeated(slotOwner(slot.player))){this.greeted.add(slot.player);this.hooks.chat?.({name:slot.name??`Player ${slot.player+1}`,player:slot.player,text:'gg'});}
    }
    if(this.options.player===null)this.income.record(next,this.world.settlement.economy.deliveries);
@@ -109,7 +112,7 @@ export class SimulationRuntime {
   const begin=performance.now(),visual=this.visualView(),selection=this.options.player===null?visual:this.world.view(this.me);
   const scene=visual.settlement.mission?.scene,shot=scene?.camera;
   const targets=shot?this.world.settlement.entities.filter(e=>e.placement===shot.entity||e.placement===shot.lookAt).map(e=>({id:e.id,tag:e.placement,x:e.x,y:e.y})):[];
-  if(this.options.player===null&&this.world.clock.tickIndex-this.observerTick>=40){this.observerTick=this.world.clock.tickIndex;this.observer=observerStats(this.world.settlement.state,this.match.slots,content,this.income);}
+  if(this.options.player===null&&this.world.clock.tickIndex-this.observerTick>=40){this.observerTick=this.world.clock.tickIndex;this.observer=observerStats(this.world.settlement.state,this.match.slots,this.world.settlement.registry,this.income);}
   this.timings.projection=performance.now()-begin;
   const profileSamples=this.profileSamples;this.profileSamples=[];
   return {visual,selection,targets,observer:this.observer,tick:this.world.clock.tickIndex,desynced:this.desynced,
@@ -144,7 +147,7 @@ export class SimulationRuntime {
   if(save.player!==this.options.player||save.match.slots.length!==this.match.slots.length||save.match.slots.some((s,i)=>{const c=this.match.slots[i];return s.player!==c.player||s.kind!==c.kind||s.team!==c.team||s.name!==c.name;}))throw Error('Load this save with its original player setup.');
   if(save.mapId!==this.match.mapId||save.mapRevision!==this.match.mapRevision)throw Error('Open the same map and content revision before loading this save.');
   if(save.match.mapId!==save.mapId||save.match.mapRevision!==save.mapRevision||save.match.seed!==save.seed)throw Error('Saved match metadata does not match the scenario.');
-  const restored=restoreSavedWorld(save,this.options.map);
+  const restored=restoreSavedWorld(save,this.options.map,this.world.settlement.registry);
   this.destroy();this.locksteps.clear();this.match=structuredClone(save.match);this.bindLocal();this.room!.resume(save.pipeline);
   for(const client of save.clients)this.locksteps.get(client.player)!.restore(save.pipeline.commits,client.sentThrough,client.outbox);
   this.world=restored;this.acc=0;this.presentation=new PresentationView();this.income.reset(restored.clock.tickIndex);this.observerTick=-Infinity;this.observer=undefined;this.greeted.clear();this.profileSamples=[];this.droppedSamples=0;

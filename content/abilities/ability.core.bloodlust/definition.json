@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.bloodlust",
+  "name": "Bloodlust",
+  "description": "Empower an ally with 40% faster attacks and 25% faster movement for 60 seconds. Right-click its command to toggle autocast.",
+  "activation": "targeted",
+  "autocast": {
+    "intervalTicks": 12,
+    "enabledByDefault": false
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 40,
+      "duration": 2400
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "frenzy",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {
+        "attackSpeedPermille": 400,
+        "moveSpeedPermille": 250
+      }
+    }
+  ],
+  "presentation": "presentation.core.bloodlust"
+}

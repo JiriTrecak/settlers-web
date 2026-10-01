@@ -1,3 +1,4 @@
+import {spellModifiers} from '../abilities/statuses';
 import type { ContentRegistry } from "../../content/registry";
 import type { ItemModifiers } from "../../content/items";
 import type { Entity } from "./state";
@@ -7,9 +8,9 @@ export function statusModifiers(status: NonNullable<Entity["itemStatuses"]>[numb
   if (status.kind === "rescue") return {invulnerable: true};
   return (status.kind === "aura" ? effect?.aura?.modifiers : effect?.active?.status?.modifiers) ?? {};
 }
-export function itemModifiers(e: Pick<Entity, "equipment" | "itemStatuses">, registry?: ContentRegistry): ItemModifiers[] {
+export function itemModifiers(e: Pick<Entity, "equipment" | "itemStatuses" | "spellStatuses">, registry?: ContentRegistry): ItemModifiers[] {
   if (!registry) return [];
-  const modifiers: ItemModifiers[] = [];
+  const modifiers: ItemModifiers[] = spellModifiers(e,registry);
   // Flat equipment stats stack; each named aura is deduplicated by its interpreter.
   for (const id of e.equipment ?? []) {
     const effect = id && registry.find(id)?.itemEffect;

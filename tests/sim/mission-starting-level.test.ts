@@ -10,7 +10,7 @@ function map(experience:number,definition='unit.ants.marshal',health?:number){
 }
 it('starts an authored level-four hero with level-four health, mana and available skill points, and survives saves',()=>{
  const m=map(450);validatePlacements(m,content);const g=new Game(m,[{player:0,kind:'human'}]),hero=g.entities[0];
- expect(g.context.stats(hero).level).toBe(4);expect(hero.hp).toBe(925);expect(hero.spellcasting?.mana).toBe(285);expect(hero.spellcasting?.learned).toEqual({});
+ expect(g.context.stats(hero).level).toBe(4);expect(hero.hp).toBe(925);expect(hero.abilities?.mana).toBe(285);expect(hero.abilities?.ranks).toEqual({'holy-light':1,blizzard:1});
  const restored=new Game(m,[{player:0,kind:'human'}]);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
 it('validates initial XP against progression and mission caps, and initial health against the authored level',()=>{

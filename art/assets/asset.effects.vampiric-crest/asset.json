@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "asset.effects.vampiric-crest",
+  "name": "Vampiric Aura · pulsing crest",
+  "kind": "texture",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "effect",
+    "aura",
+    "ground",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "93b78323327031ef7b75ca8c55221821baa11ab1fb0167aec6b6c0fabe655763",
+      "bytes": 148841
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fa651ec96be2ddf9eac2d40ec8bd55e67b2db9188d5dd7428e2227f903a928a0",
+      "bytes": 417
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

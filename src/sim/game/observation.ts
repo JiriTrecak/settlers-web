@@ -3,7 +3,7 @@ import {elevatedPoint} from './garrisons';
 import {SectorIndex} from '../../shared/spatial/sectors';
 import {VisionMask} from './visionMask';
 import { workerPopulation } from "./population";
-import type { VisualCue } from "./visualCues";
+import type {AbilityEvent} from "../abilities/runtime";
 import { isStunned } from "./effects";
 import { atPoint, precise } from "./motion";
 import { summarizeGoods, type GoodsSummary } from "./goodsView";
@@ -38,7 +38,6 @@ export type EntityView = {
     releasing: boolean;
     stunned: boolean;
   };
-  effects?: Entity["effects"];
   itemStatuses?: Entity["itemStatuses"];
   equipmentState?: Entity["equipmentState"];
   hostile?: boolean;
@@ -53,7 +52,8 @@ export type EntityView = {
   stats?: ReturnType<typeof entityStats>;
   progression?: Entity["progression"];
   equipment?: Entity["equipment"];
-  spellcasting?: Entity["spellcasting"];
+  abilities?: Entity["abilities"];
+  spellStatuses?: Entity["spellStatuses"];
   appearance?: Entity["appearance"];
   remembered?: boolean;
   inventory?: Stock;
@@ -67,7 +67,7 @@ export type EntityView = {
     moving: boolean;
     strolling?: boolean;
     charging?: boolean;
-    casting?: { ability: string; startTick: number; resolveTick: number };
+    casting?: { ability: string; startTick: number; resolveTick: number; finishTick:number; channel?:{endTick:number} };
     contained: boolean;
     garrison?:NonNullable<Entity["unit"]>["garrison"];
     cargo: NonNullable<Entity["unit"]>["cargo"];
@@ -110,7 +110,8 @@ export type SettlementView = {
   fallenHeroes?: readonly EntityView[];
   shells?: GameState["shells"];
   missiles?: GameState["missiles"];
-  visuals?: VisualCue[];
+  abilityEvents?: AbilityEvent[];
+  abilityDeliveries?: import('../abilities/runtime').AbilityDeliveryView[];
   goods?: GoodsSummary[];
   population?: ReturnType<typeof workerPopulation>;
   supply?: Supply;
@@ -314,7 +315,7 @@ export class Observation {
   /** Neutral foliage changes only on harvest/regrowth. Reuse immutable projections
    * until a source value changes; remembered fog keeps the previous projection. */
   private cachedResource(e:Entity,observer?:Owner):EntityView|undefined {
-    if(e.owner!=="none"||!e.resource||e.unit||e.item||e.construction||e.itemStatuses?.length||e.effects?.length)return undefined;
+    if(e.owner!=="none"||!e.resource||e.unit||e.item||e.construction||e.itemStatuses?.length)return undefined;
     const definition=this.c.def(e);
     if(definition.kind!=="resource"||definition.body||definition.gatheringCapacity)return undefined;
     const old=this.resourceViews.get(e.id),r=e.resource,f=r.felling,previous=old?.resource,of=previous?.felling;
@@ -324,7 +325,7 @@ export class Observation {
       appearance?.asset===oa?.asset&&appearance?.scale===oa?.scale)return this.resourceOwnerView(old,observer);
     const view:EntityView={id:e.id,definition:e.definition,owner:e.owner,x:e.x,y:e.y,rotation:e.rotation,hp:e.hp,
       ...(e.surface?{surface:e.surface}:{}),resource:{...r,...(f?{felling:{...f,direction:{...f.direction}}}:{})},
-      ...(appearance?{appearance:{...appearance}}:{}),...(e.effects?{effects:[]} : {}),...(e.itemStatuses?{itemStatuses:[]} : {})};
+      ...(appearance?{appearance:{...appearance}}:{}),...(e.itemStatuses?{itemStatuses:[]} : {})};
     this.resourceViews.set(e.id,view);return this.resourceOwnerView(view,observer);
   }
   private describe(
@@ -334,7 +335,7 @@ export class Observation {
   ): EntityView {
     // Observer/reveal mode also includes every forest resource. Neutral foliage
     // has no commands; avoid running private unit/job projection for each tree.
-    const foliagePrivate = !e.progression && !e.spellcasting && !e.equipment && !e.equipmentState &&
+    const foliagePrivate = !e.progression && !e.abilities && !e.equipment && !e.equipmentState &&
       !e.production && !e.revival && !e.upgrade && !e.research && Object.keys(e.inventory).length === 0;
     const resource=(!privateData || foliagePrivate)?this.cachedResource(e,observer):undefined;
     if(resource){
@@ -368,11 +369,9 @@ export class Observation {
       ...(privateData && e.progression
         ? { progression: { ...e.progression } }
         : {}),
-      ...(privateData && e.spellcasting
-        ? { spellcasting: structuredClone(e.spellcasting) }
-        : {}),
+      ...(e.spellStatuses?{spellStatuses:structuredClone(e.spellStatuses)}:{}),
+      ...(privateData && e.abilities ? {abilities:structuredClone(e.abilities)} : {}),
       ...(e.itemStatuses ? {itemStatuses: structuredClone(e.itemStatuses)} : {}),
-      ...(e.effects ? {effects: structuredClone(e.effects)} : {}),
       ...(privateData && e.equipmentState ? {equipmentState: structuredClone(e.equipmentState)} : {}),
       ...(privateData && e.equipment ? { equipment: [...e.equipment] } : {}),
       ...(e.appearance ? { appearance: { ...e.appearance } } : {}),
@@ -397,12 +396,14 @@ export class Observation {
         moving: e.unit.lastMovedTick === this.c.state.tick,
         strolling: !!e.unit.idle?.walking,
         charging: e.unit.charge?.target != null && e.unit.charge.expires > this.c.state.tick,
-        ...(e.spellcasting?.pending && e.spellcasting.pending.startTick<=this.c.state.tick
+        ...(e.abilities?.pending && e.abilities.pending.startTick<=this.c.state.tick
           ? {
               casting: {
-                ability: e.spellcasting.pending.ability,
-                startTick: e.spellcasting.pending.startTick,
-                resolveTick: e.spellcasting.pending.resolveTick,
+                ability: e.abilities.pending.ability,
+                startTick: e.abilities.pending.startTick,
+                resolveTick: e.abilities.pending.releaseTick,
+                finishTick: e.abilities.pending.finishTick,
+                ...(e.abilities.pending.channel?{channel:{endTick:e.abilities.pending.channel.endTick}}:{}),
               },
             }
           : {}),
@@ -509,7 +510,7 @@ export class Observation {
     this.actors=[];this.forest=[];this.forestIds.clear();this.forestSlots.clear();
     for(const e of live){
       if(alive(e)&&!e.unit&&(e.resource||this.c.def(e).kind==="building"))stationary.push(e);
-      const resource=e.resource&&!e.progression&&!e.spellcasting&&!e.equipment&&!e.equipmentState&&
+      const resource=e.resource&&!e.progression&&!e.abilities&&!e.equipment&&!e.equipmentState&&
         !e.production&&!e.revival&&!e.upgrade&&!e.research&&Object.keys(e.inventory).length===0?this.cachedResource(e):undefined;
       if(resource){this.forestSlots.set(e.id,this.forest.length);this.forest.push(this.privateForestView(resource));this.forestIds.add(e.id);}
       else this.actors.push(e);
@@ -639,9 +640,6 @@ export class Observation {
         .map((e) => this.describe(e, true, owner)),
       missiles: this.c.state.missiles.filter(s=>!owner || (s.viewers.includes(owner) && m?.cells[this.c.spatial.cell(s.destination)] === 2)).map(s=>structuredClone(s)),
       shells: this.c.state.shells.filter(s=>!owner || s.viewers.includes(owner)).map(s=>structuredClone(s)),
-      visuals: this.c.state.visuals
-        .filter((v) => !owner || v.viewers.includes(owner))
-        .map((v) => structuredClone(v)),
       deaths: this.deathCues
         .filter((cue) => !owner || cue.viewers.includes(owner))
         .map((cue) => cue.entity),

@@ -2,81 +2,224 @@
   "version": 1,
   "records": [
     {
-      "id": "asset.icons.ability-ants-carapace",
-      "name": "Carapace",
-      "kind": "icon",
+      "id": "asset.effects.blizzard-ice",
+      "name": "Blizzard · falling ice",
+      "kind": "texture",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "blizzard",
+        "ice"
       ],
-      "revision": 1,
-      "profile": "icon",
+      "revision": 4,
+      "profile": "texture",
       "outputs": [
         {
           "role": "image",
-          "path": "assets/library/asset.icons.ability-ants-carapace/image.png",
-          "sha256": "4a67e0126d4d4c2d5f7cd2319383f82f981c4cce72022a810f6c90baa289e873",
-          "bytes": 36180
+          "path": "assets/library/asset.effects.blizzard-ice/image.png",
+          "sha256": "ceeb01cc66f77d27a00eb228161d391a451469aca2ea79657c141d04c53d6d3f",
+          "bytes": 43906
         }
       ],
-      "render": [
-        {
-          "id": "icon.spell.carapace",
-          "image": "assets/library/asset.icons.ability-ants-carapace/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
-      "id": "asset.icons.ability-ants-crownfall",
-      "name": "Crownfall",
-      "kind": "icon",
+      "id": "asset.effects.holy-light-sigil",
+      "name": "Holy Light · floating sigil",
+      "kind": "texture",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "holy-light",
+        "sigil"
       ],
-      "revision": 1,
-      "profile": "icon",
+      "revision": 4,
+      "profile": "texture",
       "outputs": [
         {
           "role": "image",
-          "path": "assets/library/asset.icons.ability-ants-crownfall/image.png",
-          "sha256": "f33abd30b03f25931e29bc74f52bbebcd0e98a068e4870bc2a119a37dc73330a",
-          "bytes": 39666
+          "path": "assets/library/asset.effects.holy-light-sigil/image.png",
+          "sha256": "749efa6d496fd4b4bac8d73e200ba6fda9955b1e801223a26f984a00faf6557e",
+          "bytes": 59294
         }
       ],
-      "render": [
-        {
-          "id": "icon.spell.crownfall",
-          "image": "assets/library/asset.icons.ability-ants-crownfall/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
-      "id": "asset.icons.ability-ants-faultline",
-      "name": "Faultline",
-      "kind": "icon",
+      "id": "asset.effects.holy-light-spark",
+      "name": "Holy Light · warm spark",
+      "kind": "texture",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "holy-light",
+        "particle"
       ],
-      "revision": 1,
-      "profile": "icon",
+      "revision": 4,
+      "profile": "texture",
       "outputs": [
         {
           "role": "image",
-          "path": "assets/library/asset.icons.ability-ants-faultline/image.png",
-          "sha256": "53ad272cf5cae6f37c1dd8559300f2ac26c14ac0a2a9438d5d0b79be87e4066b",
-          "bytes": 39202
+          "path": "assets/library/asset.effects.holy-light-spark/image.png",
+          "sha256": "b1f2ab7e5cc8782d76369a37d4be597b7b6dc8456c9bd0ab529f97efdeacdb40",
+          "bytes": 43252
         }
       ],
-      "render": [
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.living-roots",
+      "name": "living roots effect texture",
+      "kind": "texture",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "revision": 4,
+      "profile": "texture",
+      "outputs": [
         {
-          "id": "icon.spell.faultline",
-          "image": "assets/library/asset.icons.ability-ants-faultline/image.png"
+          "role": "image",
+          "path": "assets/library/asset.effects.living-roots/image.png",
+          "sha256": "4f89b37a9b176fb27837dedaa31470332b93b772701fc16621f29ae4ec288181",
+          "bytes": 66822
         }
       ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.seismic-crescent",
+      "name": "seismic crescent effect texture",
+      "kind": "texture",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "revision": 4,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.seismic-crescent/image.png",
+          "sha256": "2e0e90ad3bf99ee07b47a58fb1cce18077edb5c416b050a659d62598554a5341",
+          "bytes": 61262
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.storm-hammer",
+      "name": "storm hammer effect texture",
+      "kind": "texture",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "revision": 4,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.storm-hammer/image.png",
+          "sha256": "b3d3a2a128375685e2b7a00f88013e8456f528f16c021e55c9ee34c916a8460f",
+          "bytes": 98491
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.thorns-heart",
+      "name": "Thorns Aura · living heart",
+      "kind": "texture",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.thorns-heart/image.png",
+          "sha256": "bb7b540cfc5f21fa2c7e9fb2a35977694db0401328b30db7006903f02e9dbd49",
+          "bytes": 182102
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.thorns-wreath",
+      "name": "Thorns Aura · bramble wreath",
+      "kind": "texture",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.thorns-wreath/image.png",
+          "sha256": "9c2ce6cb8bf819b0642cdf5bdce1db5db12e07f2cdc3c018f78160cca6bad09e",
+          "bytes": 338530
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.vampiric-crest",
+      "name": "Vampiric Aura · pulsing crest",
+      "kind": "texture",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.vampiric-crest/image.png",
+          "sha256": "93b78323327031ef7b75ca8c55221821baa11ab1fb0167aec6b6c0fabe655763",
+          "bytes": 148841
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.vampiric-wreath",
+      "name": "Vampiric Aura · rotating wreath",
+      "kind": "texture",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "revision": 1,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.vampiric-wreath/image.png",
+          "sha256": "6cf49670af96f52211570e9f117236ff8279f392349e41b8cfb5c0ae2996a0db",
+          "bytes": 248129
+        }
+      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1735,6 +1878,295 @@
       "scenery": []
     },
     {
+      "id": "asset.icons.spell-blizzard",
+      "name": "Blizzard spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 6,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-blizzard/image.png",
+          "sha256": "c19c5280fe58877dffa90c905816b30c2c20204ba0aee93fad9d5306f3768523",
+          "bytes": 46384
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-blizzard",
+          "image": "assets/library/asset.icons.spell-blizzard/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-bloodlust",
+      "name": "bloodlust spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-bloodlust/image.png",
+          "sha256": "44eea94530c8f8992f7f1928988435c06919e4843ce4daf0f88d8e7637de093d",
+          "bytes": 44790
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-bloodlust",
+          "image": "assets/library/asset.icons.spell-bloodlust/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-chain-lightning",
+      "name": "chain lightning spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-chain-lightning/image.png",
+          "sha256": "c15e5f2a68001a4bee7d6d394dbb0fe8aad3ff3bd2992eb6c974c7efc017153e",
+          "bytes": 41123
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-chain-lightning",
+          "image": "assets/library/asset.icons.spell-chain-lightning/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-dispel-magic",
+      "name": "dispel magic spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-dispel-magic/image.png",
+          "sha256": "8a7a2cefaacfa76133bf4d26839bccd9eaac941f36f03d4b24ce3d47e561d4bb",
+          "bytes": 47774
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-dispel-magic",
+          "image": "assets/library/asset.icons.spell-dispel-magic/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-entangling-roots",
+      "name": "entangling roots spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-entangling-roots/image.png",
+          "sha256": "9a68a03ada3d01a8dfd64e094b733668d85b51410fb445e4db610532305f350e",
+          "bytes": 43436
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-entangling-roots",
+          "image": "assets/library/asset.icons.spell-entangling-roots/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-feral-spirit",
+      "name": "feral spirit spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-feral-spirit/image.png",
+          "sha256": "d7ac727bdc3422719fb42b0266b638cfa56e5b9355c32605a20dab50c259366c",
+          "bytes": 47218
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-feral-spirit",
+          "image": "assets/library/asset.icons.spell-feral-spirit/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-holy-light",
+      "name": "Holy Light spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 6,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-holy-light/image.png",
+          "sha256": "d3bd31ba4cd94d3b208fd6ceb941b56c0f6130f5e627a91e9fc461db1617f76a",
+          "bytes": 43992
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-holy-light",
+          "image": "assets/library/asset.icons.spell-holy-light/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-shockwave",
+      "name": "shockwave spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-shockwave/image.png",
+          "sha256": "0215dae5c0c503c6c084fcd16e19e6a68ad9da02cb1bf771f7d85ab0e8bf2dfb",
+          "bytes": 47849
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-shockwave",
+          "image": "assets/library/asset.icons.spell-shockwave/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-storm-bolt",
+      "name": "storm bolt spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-storm-bolt/image.png",
+          "sha256": "501fc6771524620d1c7335967f5fdd784ab328e115abc1d321ff7403d9f2de4f",
+          "bytes": 46257
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-storm-bolt",
+          "image": "assets/library/asset.icons.spell-storm-bolt/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-thorns-aura",
+      "name": "Thorns Aura",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "aura",
+        "thorns",
+        "reflection",
+        "nature"
+      ],
+      "revision": 1,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-thorns-aura/image.png",
+          "sha256": "72e464978a641b6e1f9bb8f7f7d5b08825520955c6b21c96aca176702d9429ac",
+          "bytes": 14744
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-thorns-aura",
+          "image": "assets/library/asset.icons.spell-thorns-aura/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.icons.spell-vampiric-aura",
+      "name": "vampiric aura spell icon",
+      "kind": "icon",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "revision": 4,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.icons.spell-vampiric-aura/image.png",
+          "sha256": "2f408c88168c6a1018b72b393b28fc30f62581759a2d32c7a5370f4a4926990a",
+          "bytes": 44177
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.icons.spell-vampiric-aura",
+          "image": "assets/library/asset.icons.spell-vampiric-aura/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.icons.stat-armor-heavy",
       "name": "Armor Heavy",
       "kind": "icon",
@@ -1946,136 +2378,6 @@
         }
       ],
       "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.unit-neutral-amberjaw-staglord",
-      "name": "Amberjaw Staglord",
-      "kind": "icon",
-      "tags": [
-        "neutral-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.unit-neutral-amberjaw-staglord/image.png",
-          "sha256": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c",
-          "bytes": 12656
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.neutral.amberjaw-staglord",
-          "image": "assets/library/asset.icons.unit-neutral-amberjaw-staglord/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.unit-neutral-ogre",
-      "name": "Ogre",
-      "kind": "icon",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.unit-neutral-ogre/image.png",
-          "sha256": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0",
-          "bytes": 34405
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.neutral.ogre",
-          "image": "assets/library/asset.icons.unit-neutral-ogre/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.unit-neutral-thornblade-matriarch",
-      "name": "Thornblade Matriarch",
-      "kind": "icon",
-      "tags": [
-        "neutral-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.unit-neutral-thornblade-matriarch/image.png",
-          "sha256": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac",
-          "bytes": 11820
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.neutral.thornblade-matriarch",
-          "image": "assets/library/asset.icons.unit-neutral-thornblade-matriarch/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.unit-neutral-thornspitter",
-      "name": "Thornspitter",
-      "kind": "icon",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.unit-neutral-thornspitter/image.png",
-          "sha256": "e707f096c787280cb0068fdbb614cf65138ae8ac770d4f14b618b3b72e5fe160",
-          "bytes": 24413
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.neutral.thornspitter",
-          "image": "assets/library/asset.icons.unit-neutral-thornspitter/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.unit-neutral-wolf",
-      "name": "Wolf",
-      "kind": "icon",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.unit-neutral-wolf/image.png",
-          "sha256": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d",
-          "bytes": 31839
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.neutral.wolf",
-          "image": "assets/library/asset.icons.unit-neutral-wolf/image.png"
-        }
-      ],
       "scenery": []
     },
     {
@@ -7811,6 +8113,1282 @@
       "scenery": []
     },
     {
+      "id": "asset.models.units.neutral-barkguard",
+      "name": "Barkguard",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-barkguard/geometry.glb",
+          "sha256": "7587ce396490547680131ac0ed8544f8453f96c2ec8ee5fbd804aed945515a9b",
+          "bytes": 1055164
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-barkguard/image.png",
+          "sha256": "790ef62ef065c39db16d2bfa8594c3284b3a13a2d7f7b015e1a9405c5c1bc449",
+          "bytes": 14473
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.barkguard",
+          "file": "assets/library/asset.models.units.neutral-barkguard/geometry.glb",
+          "dimensions": {
+            "radius": 0.918,
+            "height": 2.5,
+            "formationSpacing": 2.066
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.75
+        },
+        {
+          "id": "icon.neutral.barkguard",
+          "image": "assets/library/asset.models.units.neutral-barkguard/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-bloom-witch",
+      "name": "Bloom Witch",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-bloom-witch/geometry.glb",
+          "sha256": "aa6311b799ba9f57fcf789d372d5520eda250e1d7fce158e2b5dfa9a0e2e6886",
+          "bytes": 1116120
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-bloom-witch/image.png",
+          "sha256": "f05c167b6d76ded21e14917e82fddb8b28972ea2cbd46978a000112f325e84e2",
+          "bytes": 15783
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.bloom-witch",
+          "file": "assets/library/asset.models.units.neutral-bloom-witch/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.6,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.8600000000000003,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.bloom-witch",
+          "image": "assets/library/asset.models.units.neutral-bloom-witch/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-briar-hulk",
+      "name": "Briar Hulk",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-briar-hulk/geometry.glb",
+          "sha256": "5c316d4fd6896fd0edcfed51b1e3b4b7bc4ed79d381685cdcb2419921cbadf49",
+          "bytes": 1229304
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-briar-hulk/image.png",
+          "sha256": "57f4ea89b8db3c396fff57afa72587685004311c97604d2876c1fa385f673a8c",
+          "bytes": 17312
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.briar-hulk",
+          "file": "assets/library/asset.models.units.neutral-briar-hulk/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 3.1,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.4100000000000006
+        },
+        {
+          "id": "icon.neutral.briar-hulk",
+          "image": "assets/library/asset.models.units.neutral-briar-hulk/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-capling",
+      "name": "Capling",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "mushroom-circle",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-capling/geometry.glb",
+          "sha256": "4a1c5634afc585adf93a0d84bd36f2ff14d071f3d7ba2c877d1f16bdc7e36484",
+          "bytes": 1122184
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-capling/image.png",
+          "sha256": "a9940447f5be041bbb101aa405cbee8b999ef5d5f0e51c21c2789df1eaaefe5c",
+          "bytes": 17093
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.capling",
+          "file": "assets/library/asset.models.units.neutral-capling/geometry.glb",
+          "dimensions": {
+            "radius": 0.29,
+            "height": 1.8,
+            "formationSpacing": 0.652
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.9800000000000002
+        },
+        {
+          "id": "icon.neutral.capling",
+          "image": "assets/library/asset.models.units.neutral-capling/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-corrupted-rootbeast",
+      "name": "Corrupted Rootbeast",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb",
+          "sha256": "82ec159e006e5be6fbd18dd36cbfdceaf75b91d5404ee01cda4eb4ed52c6e4c7",
+          "bytes": 1185664
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png",
+          "sha256": "f8235e51aba28e9fd2ecd93292181d3807cf798aa0848ab46efef51b047cbaff",
+          "bytes": 19780
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.corrupted-rootbeast",
+          "file": "assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb",
+          "dimensions": {
+            "radius": 0.918,
+            "height": 3,
+            "formationSpacing": 2.066
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.3000000000000003
+        },
+        {
+          "id": "icon.neutral.corrupted-rootbeast",
+          "image": "assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-dew-sprite",
+      "name": "Dew Sprite",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "dewdrop-sprites",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-dew-sprite/geometry.glb",
+          "sha256": "6404b3cca650da424610d0dd616c4657dd0bd0a83aac8d28d68acbf8083b7b05",
+          "bytes": 1124404
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-dew-sprite/image.png",
+          "sha256": "1b3270ce570cef9658f66006911d78f91d2bcee600af7c098699289df6065641",
+          "bytes": 11062
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.dew-sprite",
+          "file": "assets/library/asset.models.units.neutral-dew-sprite/geometry.glb",
+          "dimensions": {
+            "radius": 0.29,
+            "height": 1.7,
+            "formationSpacing": 0.652
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.87,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.dew-sprite",
+          "image": "assets/library/asset.models.units.neutral-dew-sprite/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-hollow-stag",
+      "name": "Hollow Stag",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-hollow-stag/geometry.glb",
+          "sha256": "5e6f85d3e244bc520b48e3fdd2c53e6a99f1e9141428d4a7957189d33861d7e7",
+          "bytes": 1173064
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-hollow-stag/image.png",
+          "sha256": "669d0c225b6737ccca887e89ea5a097e35cc98cebf0f14ab90b51d00fc754d92",
+          "bytes": 11298
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.hollow-stag",
+          "file": "assets/library/asset.models.units.neutral-hollow-stag/geometry.glb",
+          "dimensions": {
+            "radius": 1.331,
+            "height": 4,
+            "formationSpacing": 2.995
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 4.4
+        },
+        {
+          "id": "icon.neutral.hollow-stag",
+          "image": "assets/library/asset.models.units.neutral-hollow-stag/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-hornet-guard",
+      "name": "Hornet Guard",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-hornet-guard/geometry.glb",
+          "sha256": "7e636247ed3d32d522d5dcc8c2b6a07a84b52f0916778dfa2e698dd5f4f77640",
+          "bytes": 1120504
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-hornet-guard/image.png",
+          "sha256": "84e37a5e7835b39f646e05fbe234f0d4d3f6487e6afd9d793d36a19f3675b427",
+          "bytes": 12979
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.hornet-guard",
+          "file": "assets/library/asset.models.units.neutral-hornet-guard/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.3,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.53
+        },
+        {
+          "id": "icon.neutral.hornet-guard",
+          "image": "assets/library/asset.models.units.neutral-hornet-guard/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-needle-wasp",
+      "name": "Needle Wasp",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-needle-wasp/geometry.glb",
+          "sha256": "aa42ce5e36f4f7b864597ced5c9e799f2da38e97841c7a50deb01cbf75546432",
+          "bytes": 1149032
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-needle-wasp/image.png",
+          "sha256": "33133aef3bbe449098a63974350b0d3be938789b7d3d7ce57ef9ae942df4229b",
+          "bytes": 10291
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.needle-wasp",
+          "file": "assets/library/asset.models.units.neutral-needle-wasp/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.2,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.4200000000000004,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.needle-wasp",
+          "image": "assets/library/asset.models.units.neutral-needle-wasp/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-nest-mother",
+      "name": "Nest Mother",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-nest-mother/geometry.glb",
+          "sha256": "004aead2e52567d479300f3b7e6bd767b319705f0760d94e46b279ecc433bf28",
+          "bytes": 1099992
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-nest-mother/image.png",
+          "sha256": "a1339173ebc373d85978ee44719bd0da8cd628a027a69ee23297a6fed5f7043e",
+          "bytes": 15074
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.nest-mother",
+          "file": "assets/library/asset.models.units.neutral-nest-mother/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.8,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.08
+        },
+        {
+          "id": "icon.neutral.nest-mother",
+          "image": "assets/library/asset.models.units.neutral-nest-mother/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-old-root",
+      "name": "Old Root",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-old-root/geometry.glb",
+          "sha256": "1111aba98f12dc51fef7d6483cb73c59ea0401cce413faa342c3e80756462e1b",
+          "bytes": 1103124
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-old-root/image.png",
+          "sha256": "d8af2f44e8e26786bf76af3616998f846edb4ab3a87d95740b9c7f5bfc9cbaa2",
+          "bytes": 19676
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.old-root",
+          "file": "assets/library/asset.models.units.neutral-old-root/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 3.2,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.5200000000000005,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.old-root",
+          "image": "assets/library/asset.models.units.neutral-old-root/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-puddle-wisp",
+      "name": "Puddle Wisp",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "dewdrop-sprites",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb",
+          "sha256": "cbb1163f267d89b4d4e6c7e16771b22fe8e190a6977bea39280a0345325945d6",
+          "bytes": 1038964
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-puddle-wisp/image.png",
+          "sha256": "f050a24b52fc337a9ab19aa0b26066fc7bde0f7eac03d0c8325c7c36430db247",
+          "bytes": 12730
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.puddle-wisp",
+          "file": "assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb",
+          "dimensions": {
+            "radius": 0.29,
+            "height": 1.5,
+            "formationSpacing": 0.652
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.6500000000000001
+        },
+        {
+          "id": "icon.neutral.puddle-wisp",
+          "image": "assets/library/asset.models.units.neutral-puddle-wisp/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-puffcap",
+      "name": "Puffcap",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "mushroom-circle",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-puffcap/geometry.glb",
+          "sha256": "dc1a1bf41e8d5e1e28d3280613e3b0da5dc770208935edef4177b6b2f8b39e80",
+          "bytes": 1101716
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-puffcap/image.png",
+          "sha256": "d3f545c4c427a46c66d6a62092231e4554a256bf490f9b4b03e9a8145f1d8fbb",
+          "bytes": 16521
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.puffcap",
+          "file": "assets/library/asset.models.units.neutral-puffcap/geometry.glb",
+          "dimensions": {
+            "radius": 0.29,
+            "height": 1.8,
+            "formationSpacing": 0.652
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.9800000000000002,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.puffcap",
+          "image": "assets/library/asset.models.units.neutral-puffcap/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-root-seer",
+      "name": "Root Seer",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-root-seer/geometry.glb",
+          "sha256": "267b7dc063cd4c346ebce3df889a18e371c2ed081c225026079c1bb481d4eaec",
+          "bytes": 1178040
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-root-seer/image.png",
+          "sha256": "c658d0d988959a2af6785b68c68078e4b05f875167ea3166a6d85013344bb8fe",
+          "bytes": 16535
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.root-seer",
+          "file": "assets/library/asset.models.units.neutral-root-seer/geometry.glb",
+          "dimensions": {
+            "radius": 0.68,
+            "height": 2.8,
+            "formationSpacing": 1.53
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.08,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.root-seer",
+          "image": "assets/library/asset.models.units.neutral-root-seer/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-rootling",
+      "name": "Rootling",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 4,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-rootling/geometry.glb",
+          "sha256": "998d7be43aa175e19fcd3f196b6a5ea57ed1c150154d3e112a1944cf2195b579",
+          "bytes": 1100780
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-rootling/image.png",
+          "sha256": "ef36605143086204efebb3eb12a465f15b441c8826b444582fcfe2f05565788c",
+          "bytes": 16753
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.rootling",
+          "file": "assets/library/asset.models.units.neutral-rootling/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.8,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 3.08
+        },
+        {
+          "id": "icon.neutral.rootling",
+          "image": "assets/library/asset.models.units.neutral-rootling/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-rotwood-ancient",
+      "name": "Rotwood Ancient",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb",
+          "sha256": "adb320902b7d51d7b52d9d169ee1e955ed72a10007d426d97fea26f53291109d",
+          "bytes": 1239384
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-rotwood-ancient/image.png",
+          "sha256": "920cf0ff4afff81ff481d8150e8ee0f992004d65de77c311134b9efcd9bbd06d",
+          "bytes": 19531
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.rotwood-ancient",
+          "file": "assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb",
+          "dimensions": {
+            "radius": 0.986,
+            "height": 4.2,
+            "formationSpacing": 2.219
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 4.620000000000001
+        },
+        {
+          "id": "icon.neutral.rotwood-ancient",
+          "image": "assets/library/asset.models.units.neutral-rotwood-ancient/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-seedcaster",
+      "name": "Seedcaster",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-seedcaster/geometry.glb",
+          "sha256": "86030fcab652f530a1492e8e8e90095110729a85d40faa4af8c8a0a95317eb34",
+          "bytes": 1211612
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-seedcaster/image.png",
+          "sha256": "03da73bd269ffed7c83a4cf8829d7a3d7b6d34c397059e88e56af98796a3ff6d",
+          "bytes": 14490
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.seedcaster",
+          "file": "assets/library/asset.models.units.neutral-seedcaster/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.5,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.75,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.seedcaster",
+          "image": "assets/library/asset.models.units.neutral-seedcaster/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-spitter",
+      "name": "Spitter",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hungry-weblings",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-spitter/geometry.glb",
+          "sha256": "ae8f1626763d6511bc1cef907d0a1c5a50cb392436a89815bace584e8bda2975",
+          "bytes": 1102544
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-spitter/image.png",
+          "sha256": "2ccfe6d29eb9574d46341bcce68ec0002de49e8c24028f50dab3d854fbdce978",
+          "bytes": 16267
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.spitter",
+          "file": "assets/library/asset.models.units.neutral-spitter/geometry.glb",
+          "dimensions": {
+            "radius": 0.333,
+            "height": 1.3,
+            "formationSpacing": 0.75
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.4300000000000002,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.spitter",
+          "image": "assets/library/asset.models.units.neutral-spitter/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-tadpole-spirit",
+      "name": "Tadpole Spirit",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb",
+          "sha256": "6f30281794b637431a0b9d5eff0fc2533c24d6a68a98f9f730ef9a187518e167",
+          "bytes": 1063524
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-tadpole-spirit/image.png",
+          "sha256": "dfe4380b1230704012f3d6d1244470e604330adfec87c5174ddece3f09f04029",
+          "bytes": 13373
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.tadpole-spirit",
+          "file": "assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 1.3,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.4300000000000002,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.tadpole-spirit",
+          "image": "assets/library/asset.models.units.neutral-tadpole-spirit/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-thorn-slinger",
+      "name": "Thorn Slinger",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "thornback-foragers",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb",
+          "sha256": "046a9ec85fa0330565601257bcce486dee7c9a8311f01aad20cd2b54662661c1",
+          "bytes": 1154376
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-thorn-slinger/image.png",
+          "sha256": "2690fd11df04eff4c77b51e904ba77ce2e590d6f297c65429dabab7a88531318",
+          "bytes": 14906
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.thorn-slinger",
+          "file": "assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb",
+          "dimensions": {
+            "radius": 0.29,
+            "height": 1.8,
+            "formationSpacing": 0.652
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.9800000000000002,
+          "projectile": "arrow",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.thorn-slinger",
+          "image": "assets/library/asset.models.units.neutral-thorn-slinger/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-tree-frog",
+      "name": "Tree Frog",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-tree-frog/geometry.glb",
+          "sha256": "c5514636e352a112147d487e63f3604ee4049b2da089b4d4ee8711149fe2f7f5",
+          "bytes": 989744
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-tree-frog/image.png",
+          "sha256": "2909402874aa0ae852730642670f65570ff35e438189801dfcec760a05e782af",
+          "bytes": 10841
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.tree-frog",
+          "file": "assets/library/asset.models.units.neutral-tree-frog/geometry.glb",
+          "dimensions": {
+            "radius": 0.567,
+            "height": 1.6,
+            "formationSpacing": 1.276
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.7600000000000002,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.tree-frog",
+          "image": "assets/library/asset.models.units.neutral-tree-frog/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-twigcaster",
+      "name": "Twigcaster",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-twigcaster/geometry.glb",
+          "sha256": "dc1d4e36a71a67124a753622e1c8bebab9aca3a01599bda2162a04184df5ff06",
+          "bytes": 1171868
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-twigcaster/image.png",
+          "sha256": "487b18d086b1b73e6d96fb15fd9b203d0db165fa79662934986fb6d1e4e28b70",
+          "bytes": 11975
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.twigcaster",
+          "file": "assets/library/asset.models.units.neutral-twigcaster/geometry.glb",
+          "dimensions": {
+            "radius": 0.42,
+            "height": 2.4,
+            "formationSpacing": 0.945
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.64,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.twigcaster",
+          "image": "assets/library/asset.models.units.neutral-twigcaster/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-violet-sporeling",
+      "name": "Violet Sporeling",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb",
+          "sha256": "f71005a10b04e593d67e78faff51f813a0970aff32e70ec8a06410a0476911eb",
+          "bytes": 1123184
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-violet-sporeling/image.png",
+          "sha256": "e2449403ced72099c19f6fbca78feea7a3c7d64f195cc06a70108e6267eef2b5",
+          "bytes": 17328
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.violet-sporeling",
+          "file": "assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb",
+          "dimensions": {
+            "radius": 0.68,
+            "height": 1.9,
+            "formationSpacing": 1.53
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.09,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.violet-sporeling",
+          "image": "assets/library/asset.models.units.neutral-violet-sporeling/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-webling",
+      "name": "Webling",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hungry-weblings",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-webling/geometry.glb",
+          "sha256": "6a42c6dfa257b9368a2760227e5764635a7ad795f3ba861366a8db0947e81063",
+          "bytes": 1110392
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-webling/image.png",
+          "sha256": "d2a8fda8d03d3f4d91964a6e93b4e19a0dab9d6dfda6411c71225d711ef58f83",
+          "bytes": 14101
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.webling",
+          "file": "assets/library/asset.models.units.neutral-webling/geometry.glb",
+          "dimensions": {
+            "radius": 0.333,
+            "height": 1,
+            "formationSpacing": 0.75
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 1.1
+        },
+        {
+          "id": "icon.neutral.webling",
+          "image": "assets/library/asset.models.units.neutral-webling/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-willow-wisp",
+      "name": "Willow Wisp",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-willow-wisp/geometry.glb",
+          "sha256": "2becc1b3d1815652e1a5f83b1b65a0ca5baa21151ae33c38e9b9d04d13bb4205",
+          "bytes": 1144368
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-willow-wisp/image.png",
+          "sha256": "3e8b56e20e7137d63acf2e76fdcb06889150d8bf851b3c7d2f15567716767754",
+          "bytes": 16947
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.willow-wisp",
+          "file": "assets/library/asset.models.units.neutral-willow-wisp/geometry.glb",
+          "dimensions": {
+            "radius": 0.68,
+            "height": 2,
+            "formationSpacing": 1.53
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.2,
+          "projectile": "thorn",
+          "projectileSocket": "socket_projectile"
+        },
+        {
+          "id": "icon.neutral.willow-wisp",
+          "image": "assets/library/asset.models.units.neutral-willow-wisp/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.neutral-young-toad",
+      "name": "Young Toad",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "revision": 2,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.neutral-young-toad/geometry.glb",
+          "sha256": "51f52b031e12f84cd80dc1c0629235875dc193db3d6915ff6022ef09abbb06da",
+          "bytes": 1050464
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.neutral-young-toad/image.png",
+          "sha256": "b9d5631dfc94f94d8bb4d1f69d215e7ee15babd3328b05aaabc6aa17e2a9075f",
+          "bytes": 16177
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.neutral.young-toad",
+          "file": "assets/library/asset.models.units.neutral-young-toad/geometry.glb",
+          "dimensions": {
+            "radius": 0.567,
+            "height": 2.5,
+            "formationSpacing": 1.276
+          },
+          "character": "base",
+          "scale": 1,
+          "healthHeight": 2.75
+        },
+        {
+          "id": "icon.neutral.young-toad",
+          "image": "assets/library/asset.models.units.neutral-young-toad/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "model",
@@ -7818,7 +9396,7 @@
         "placeholder",
         "diagnostic"
       ],
-      "revision": 17,
+      "revision": 18,
       "profile": "prop",
       "outputs": [
         {
@@ -7997,37 +9575,6 @@
             "forward": 0.15,
             "distance": 7
           }
-        },
-        {
-          "id": "asset.neutral.amberjaw-staglord",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.8
-        },
-        {
-          "id": "asset.neutral.ogre",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 3.3
-        },
-        {
-          "id": "asset.neutral.thornblade-matriarch",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.1
-        },
-        {
-          "id": "asset.neutral.thornspitter",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.5,
-          "projectile": "thorn"
-        },
-        {
-          "id": "asset.neutral.wolf",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 1.9
         },
         {
           "id": "asset.ants.sanctuary",

@@ -74,6 +74,8 @@ it('keeps a saved pipeline delay when loading on a newly slower connection',()=>
   const save={v:SAVE_FORMAT_VERSION,remote:true,match:start.config,pipeline:emptyPipeline(100,start.config.slots,start.config.delay)};
   time(3000);room.pulse();sample(room.hostToken,a,300);sample(joined.token,b,300);
   expect(room.load(room.hostToken,save)).toMatchObject({config:{delay:2}});
+  room.ingest(room.hostToken,{type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
+  room.ingest(joined.token,{type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
   room.ingest(room.hostToken,{type:'turn',through:103,bundles:[]});
   room.ingest(joined.token,{type:'turn',through:103,bundles:[]});
   expect(a.filter(m=>m.type==='commit').map(m=>m.tick)).toEqual([101,102,103]);

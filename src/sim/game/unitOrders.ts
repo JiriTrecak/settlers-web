@@ -10,7 +10,7 @@ export class UnitOrders {
 
   busy(e: Entity): boolean {
     const u = e.unit!;
-    return !!(e.spellcasting?.pending || u.order || u.job || u.cargo || u.employment || u.pendingMove || u.orderQueue.length);
+    return !!(e.abilities?.pending || u.order || u.job || u.cargo || u.employment || u.pendingMove || u.orderQueue.length);
   }
   canIssue(e: Entity, append = false): boolean {
     return !append || e.unit!.orderQueue.length < MAX_QUEUED_ORDERS;
@@ -33,7 +33,7 @@ export class UnitOrders {
   advance(activate: (e: Entity, order: UnitOrder) => boolean) {
     for (const e of this.c.activeUnits()) {
       const u = e.unit!;
-      if (u.order || u.job || u.cargo || u.pendingMove || e.spellcasting?.pending || isStunned(e, this.c.registry)) continue;
+      if (u.order || u.job || u.cargo || u.pendingMove || e.abilities?.pending || isStunned(e, this.c.registry)) continue;
       while (u.orderQueue.length) {
         const order = u.orderQueue.shift()!, remaining = u.orderQueue;
         // Normal activation replaces orders. Keep the already-authorized tail.

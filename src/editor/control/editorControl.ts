@@ -1,6 +1,9 @@
+import {inspectionShotSchema} from '../../shared/camera/inspectionShot';
 import {biomeById,biomeRecipes} from '../../content/biomes';
 import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
 import {campSchema} from '../../content/schema';
+import {campCompositions} from '../../content/campCompositions';
+import type {CampStamp} from '../world/entityAuthoring';
 import {missionSchema} from "../../shared/scenario/schema";
 import {validateMissionLua} from "../../shared/scenario/lua";
 import { content } from "../../content/builtin";
@@ -13,7 +16,7 @@ import {
   DEFAULT_WATER_STYLE,
   parseWaterStyle,
 } from "../../shared/landscape/waterStyle";
-import { parseUtcMap, stringifyUtcMap } from "../../shared";
+import { readUtcMap, stringifyUtcMap } from "../../shared";
 import type {
   CurvePoint,
   TerrainLayer,
@@ -84,6 +87,14 @@ export class EditorControl {
           return content.definitions;
         case "put":
           this.editor.putEntity(p.placement);
+          break;
+        case "compositions":
+          return campCompositions;
+        case "camp":
+          this.editor.placeCamp(p as unknown as CampStamp);
+          break;
+        case "deleteCamp":
+          this.editor.removeCamp(String(p.id));
           break;
         case "rename":
           this.editor.renameEntity(String(p.id),String(p.nextId));
@@ -193,9 +204,9 @@ export class EditorControl {
     if (action === "export")
       return { map: JSON.parse(stringifyUtcMap(this.editor.map)) };
     if (action === "load") {
-      const map = parseUtcMap(o.map);
-      if (!map) throw new Error("Invalid map");
-      this.editor.replace(map);
+      const read = readUtcMap(o.map);
+      if ("error" in read) throw new Error(`Invalid map — ${read.error}`);
+      this.editor.replace(read.map);
     } else if (action === "base") {
       const height = num(o.height);
       if (height === undefined || height < -16 || height > 24)
@@ -640,6 +651,7 @@ export class EditorControl {
     )
       throw new Error("animationTime must be seconds within 0..86400");
     const shot = this.editor.screenshot({
+      inspection:o.inspection===undefined?undefined:inspectionShotSchema.parse(o.inspection),
       x: num(o.x),
       z: num(o.z) ?? num(o.y),
       zoom: num(o.zoom),
@@ -670,6 +682,7 @@ export class EditorControl {
       height: shot.height,
       view: this.camViewFrom(shot.view),
       mapName: this.editor.map.name,
+      ...(o.inspection!==undefined?{inspection:inspectionShotSchema.parse(o.inspection)}:{}),
       environment: {
         ...this.editor.map.landscape?.environment,
         ...this.editor.sky?.snapshot(),

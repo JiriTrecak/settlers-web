@@ -1,5 +1,5 @@
+import {abilityCasterSchema} from './abilities/schema';
 import { itemEffectSchema } from "./items";
-import { spellSchema, spellVisualSchema } from "./spells";
 import { z } from "zod";
 
 export const idSchema = z.string().regex(/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/);
@@ -127,15 +127,6 @@ const progression = z
     experienceRadius: positive.max(64),
   })
   .strict();
-const spellcasting = z
-  .object({
-    abilities: z.array(idSchema).min(1).max(8),
-    learningCategory: idSchema,
-    manaIcon: idSchema,
-    maxMana: positive,
-    manaRegenPerSecond: z.number().nonnegative().max(10000).multipleOf(0.001),
-  })
-  .strict();
 const inventory = z
   .object({
     slots: positive.max(12),
@@ -170,7 +161,7 @@ export const behaviorSchema = z
     campDefense: empty.optional(),
     progression: progression.optional(),
     inventory: inventory.optional(),
-    spellcasting: spellcasting.optional(),
+    abilities: abilityCasterSchema.optional(),
     revival: z
       .object({ workTicks: positive, queueCapacity: positive.max(12) })
       .strict()
@@ -192,7 +183,7 @@ const rawBehaviors = z
     campDefense: empty.optional(),
     progression: progression.partial().optional(),
     inventory: inventory.partial().optional(),
-    spellcasting: spellcasting.partial().optional(),
+    abilities: abilityCasterSchema.optional(),
     revival: z
       .object({ workTicks: positive, queueCapacity: positive.max(12) })
       .strict()
@@ -375,8 +366,6 @@ export const rulesSchema = z
     constructionHpPermille: positive.max(1000),
     repairTicks: positive,
     research: z.record(idSchema, researchSchema),
-    spells: z.record(idSchema, spellSchema),
-    spellVisuals: z.record(idSchema, spellVisualSchema),
     lootPools: z.record(
       idSchema,
       z

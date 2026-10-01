@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-vampiric-aura",
+  "name": "vampiric aura spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2f408c88168c6a1018b72b393b28fc30f62581759a2d32c7a5370f4a4926990a",
+      "bytes": 44177
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "efba21c269e779c3d9b386fc38fcbd9b16baa0e3c12f17cbec205c08a93f61e4",
+      "bytes": 2241829
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-vampiric-aura",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-vampiric-aura"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: Two curved ivory fangs framing a glowing crimson life essence, violet aura behind, rich wine red and purple shadows. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

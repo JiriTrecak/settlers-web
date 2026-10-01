@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-violet-sporeling",
+  "name": "Violet Sporeling",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "rotwood-court",
+    "hard",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f71005a10b04e593d67e78faff51f813a0970aff32e70ec8a06410a0476911eb",
+      "bytes": 1123184
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "f137080cc8cc9bc60b3599fdbfd7b2158bf1345cf8ae3b2ec71a75ab03958fec",
+      "bytes": 7993724
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "f957012a182f6c1506476044e7e37a7cdfadc0742ac893eeed9cf1945badec2d",
+      "bytes": 657922
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "8f74c0604b0be142fb78a6684130bf184520b8930fed6ecaf737a605ec710b69",
+      "bytes": 555588
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "e2449403ced72099c19f6fbca78feea7a3c7d64f195cc06a70108e6267eef2b5",
+      "bytes": 17328
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "355bfe48a5c440286a73e70c7a9f9cfaf9d30827f80b42022a990739de06f0c1",
+      "bytes": 514
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.violet-sporeling",
+        "geometry": {
+          "asset": "asset.models.units.neutral-violet-sporeling",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 2.09,
+        "projectile": "thorn",
+        "projectileSocket": "socket_projectile"
+      },
+      {
+        "id": "icon.neutral.violet-sporeling",
+        "image": {
+          "asset": "asset.models.units.neutral-violet-sporeling",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.68,
+      "height": 1.9,
+      "formationSpacing": 1.53
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

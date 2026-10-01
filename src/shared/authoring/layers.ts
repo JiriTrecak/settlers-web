@@ -9,7 +9,7 @@ export const splineKnotSchema=point.extend({
  depthScale:z.number().finite().min(.05).max(8).default(1),
  flowScale:z.number().finite().min(0).max(8).default(1),
 }).strict();
-export const maskStrokeSchema=z.object({operation:z.enum(['add','subtract']),radius:z.number().finite().min(.25).max(128),points:z.array(point).min(1).max(8192)}).strict();
+export const maskStrokeSchema=z.object({operation:z.enum(['add','subtract']),radius:z.number().finite().min(.25).max(512),points:z.array(point).min(1).max(8192)}).strict();
 export const paintedMaskSchema=z.object({type:z.literal('mask'),elevation:z.number().finite().min(-128).max(128).default(-.6),strokes:z.array(maskStrokeSchema).max(4096)}).strict();
 export const layerShapeSchema=z.discriminatedUnion('type',[
  paintedMaskSchema,

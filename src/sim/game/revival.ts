@@ -5,8 +5,8 @@ import type {Entity} from './state';
 export class Revival {
  constructor(private readonly c:GameContext){}
  retain(hero:Entity){
-  hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.effects;delete hero.itemStatuses;delete hero.itemHits;
-  if(hero.spellcasting)hero.spellcasting.pending=null;
+  hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.stunnedUntil;delete hero.itemStatuses;delete hero.itemHits;
+  if(hero.abilities)hero.abilities.pending=null;
   this.c.state.entities.push(hero);this.c.state.entities.sort((a,b)=>a.id-b.id);this.c.reindex();
  }
  enqueue(building:Entity,id:number):string|null {
@@ -34,7 +34,7 @@ export class Revival {
    const location=this.c.spatial.nearest(this.c.spatial.entrance(building),12,hero.id);if(!location)continue;
    hero.x=location.x;hero.y=location.y;if(location.surface)hero.surface=location.surface;else delete hero.surface;hero.unit=this.c.freshUnit();hero.hp=this.c.stats(hero).maxHp;hero.regeneration={health:0,mana:0};delete hero.fallen;
    hero.readyTick=this.c.state.tick+1;
-   if(hero.spellcasting){hero.spellcasting.mana=this.c.stats(hero).maxMana;hero.spellcasting.pending=null;}
+   if(hero.abilities){hero.abilities.mana=this.c.stats(hero).maxMana;hero.abilities.pending=null;}
    queue!.shift();this.c.event(hero.owner,`${this.c.def(hero).name} has returned`);
   }
  }

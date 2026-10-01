@@ -3,7 +3,7 @@
   "id": "asset.placeholder.missing-model",
   "name": "Missing model",
   "kind": "prop",
-  "revision": 17,
+  "revision": 18,
   "status": "published",
   "tags": [
     "placeholder",
@@ -304,57 +304,6 @@
           "forward": 0.15,
           "distance": 7
         },
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.neutral.amberjaw-staglord",
-        "scale": 1,
-        "healthHeight": 2.8,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.neutral.ogre",
-        "scale": 1,
-        "healthHeight": 3.3,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.neutral.thornblade-matriarch",
-        "scale": 1,
-        "healthHeight": 4.1,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.neutral.thornspitter",
-        "scale": 1,
-        "healthHeight": 2.5,
-        "projectile": "thorn",
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
-        "id": "asset.neutral.wolf",
-        "scale": 1,
-        "healthHeight": 1.9,
         "geometry": {
           "role": "geometry",
           "index": 1,

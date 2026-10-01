@@ -1,5 +1,4 @@
 import type { ContentRegistry } from "../../content/registry";
-import type { Entity } from "./state";
 
 type Rules = ContentRegistry["rules"];
 export type DamageDefense = { armor: number; armorType: string; reductionPermille?: number };
@@ -8,9 +7,6 @@ export type DamageDefense = { armor: number; armorType: string; reductionPermill
 export function armorMultiplier(rules: Rules, armor: number): number {
   if (armor < 0) throw new Error("Negative armor is unsupported");
   return 1 / (1 + rules.armorCoefficient * armor);
-}
-export function guardReduction(rules: Rules, effects: Entity["effects"]): number {
-  return Math.max(0, ...(effects ?? []).map(b => rules.spells[b.ability].ranks[b.rank-1].reductionPermille));
 }
 export function resolveDamage(rules: Rules, target: DamageDefense, raw: number, type: string): number {
   const policy = rules.damageTypes[type];

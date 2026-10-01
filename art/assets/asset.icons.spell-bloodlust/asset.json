@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-bloodlust",
+  "name": "bloodlust spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "44eea94530c8f8992f7f1928988435c06919e4843ce4daf0f88d8e7637de093d",
+      "bytes": 44790
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "aab7ada75ac8582cbbde8a3c77308730a835b4d7019dc4e39c147ad1c5e21b0c",
+      "bytes": 2397431
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-bloodlust",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-bloodlust"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: A clenched orange-red armored ant fist surging with crimson magical energy, strong upward motion, warm amber highlight against burgundy shadows. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

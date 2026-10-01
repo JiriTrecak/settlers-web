@@ -44,32 +44,32 @@ it('starts the attack windup only after facing the victim',()=>{
  expect(a.unit!.attack?.started).toBe(5);expect(b.hp).toBe(300);
 });
 it('turns before a directional cast starts rather than snapping on the cast command',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!;
- const id='spell.marshal.faultline';expect(g.spells.learn(hero,id)).toBeNull();
+ const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
+ const id='ability.core.holy-light-lite';
  const point={x:hero.x+2,y:hero.y};hero.rotation=270;
- expect(g.spells.cast(hero,id,point)).toBeNull();
- expect(hero.rotation).toBe(270);expect(hero.spellcasting!.pending!.startTick).toBe(10);
+ const target=g.context.create({...placed('cast-target','unit.ants.warrior',point.x,point.y)});target.hp=100;g.observation.update();expect(g.abilities.cast(hero.id,'holy-light',target.id)).toBeNull();
+ expect(hero.rotation).toBe(270);expect(hero.abilities!.pending!.startTick).toBe(10);
  const casting=()=>g.view('player.1').entities.find(e=>e.id===hero.id)!.unit!.casting;
  expect(casting()).toBeUndefined();
  for(let i=0;i<10;i++)g.tick();
  expect(Math.abs(turnDifference(hero.rotation,heading(hero,point)))).toBeLessThan(1);
- expect(casting()).toEqual({ability:id,startTick:10,resolveTick:hero.spellcasting!.pending!.resolveTick});
+ expect(casting()).toEqual({ability:id,startTick:10,resolveTick:hero.abilities!.pending!.releaseTick,finishTick:hero.abilities!.pending!.finishTick});
 });
 
 it('a replacement move cancels a turning cast immediately and refunds an unreleased spell',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!,id='spell.marshal.faultline';
- g.spells.learn(hero,id);hero.rotation=270;const mana=hero.spellcasting!.mana;
- g.spells.cast(hero,id,{x:hero.x+2,y:hero.y});
- expect(hero.spellcasting!.pending).not.toBeNull();
+ const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!,id='ability.core.holy-light-lite';
+ hero.rotation=270;const mana=hero.abilities!.mana;
+ hero.hp=100;g.abilities.cast(hero.id,'holy-light',hero.id);
+ expect(hero.abilities!.pending).not.toBeNull();
  g.command(hero.owner,{type:'move',actors:[hero.id],destination:{x:hero.x,y:hero.y+2}});
- expect(hero.spellcasting!.pending).toBeNull();expect(hero.spellcasting!.mana).toBe(mana);expect(hero.spellcasting!.cooldowns[id]).toBeUndefined();
+ expect(hero.abilities!.pending).toBeNull();expect(hero.abilities!.mana).toBe(mana);expect(hero.abilities!.cooldowns[id]).toBeUndefined();
  g.tick();expect(hero.unit!.route.length).toBeGreaterThan(0);
 });
 it('an appended move waits for the spell instead of cancelling it',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.spellcasting)!,id='spell.marshal.faultline';
- g.spells.learn(hero,id);g.spells.cast(hero,id,{x:hero.x+2,y:hero.y});
+ const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
+ hero.hp=100;g.abilities.cast(hero.id,'holy-light',hero.id);
  g.command(hero.owner,{type:'move',actors:[hero.id],destination:{x:hero.x,y:hero.y+2},append:true});
- expect(hero.spellcasting!.pending).not.toBeNull();expect(hero.unit!.orderQueue).toHaveLength(1);
+ expect(hero.abilities!.pending).not.toBeNull();expect(hero.unit!.orderQueue).toHaveLength(1);
 });
 
 it('reports locomotion only on ticks that travel, not while turning or blocked',()=>{

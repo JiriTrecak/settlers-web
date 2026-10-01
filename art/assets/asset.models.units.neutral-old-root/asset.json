@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-old-root",
+  "name": "Old Root",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "rootbound-guardians",
+    "medium",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "1111aba98f12dc51fef7d6483cb73c59ea0401cce413faa342c3e80756462e1b",
+      "bytes": 1103124
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "d59b8c83b22eef4aea4489d9a80d7985b5a71d18870626787ea1124769c79a42",
+      "bytes": 8056704
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "047e84fabda4df5900c130bdfbf9d01018de91a2f97cb65ea3abc942187baff2",
+      "bytes": 893125
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "ef98b622afb93cdbc6b4d8a383e5bbaf1e95d1a417c264258052994c5c10273b",
+      "bytes": 624707
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d8af2f44e8e26786bf76af3616998f846edb4ab3a87d95740b9c7f5bfc9cbaa2",
+      "bytes": 19676
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "f8a15dc9fba3cd97c2a3272a8826a56d072af3e05e372738c0c055250dc87b36",
+      "bytes": 515
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.old-root",
+        "geometry": {
+          "asset": "asset.models.units.neutral-old-root",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 3.5200000000000005,
+        "projectile": "thorn",
+        "projectileSocket": "socket_projectile"
+      },
+      {
+        "id": "icon.neutral.old-root",
+        "image": {
+          "asset": "asset.models.units.neutral-old-root",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.42,
+      "height": 3.2,
+      "formationSpacing": 0.945
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

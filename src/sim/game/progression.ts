@@ -21,7 +21,7 @@ export class Progression {
       const after = this.c.stats(hero);
       // Preserve damage already sustained, rather than healing completely on level-up.
       hero.hp! += after.maxHp-before.maxHp;
-      if (hero.spellcasting) hero.spellcasting.mana += after.maxMana - before.maxMana;
+      if (hero.abilities) hero.abilities.mana += after.maxMana - before.maxMana;
       if (after.level > before.level) this.c.event(hero.owner,`${this.c.def(hero).name} reached level ${after.level}`);
     }
   }

@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-nest-mother",
+  "name": "Nest Mother",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "hornet-raiders",
+    "medium",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "004aead2e52567d479300f3b7e6bd767b319705f0760d94e46b279ecc433bf28",
+      "bytes": 1099992
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "3b7e2d10ffe8fbe71a1f32c2e3a18184835d7305fcbf9d37f2264d3e6c6bb7a8",
+      "bytes": 7410583
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "f35174073771f0984bcd3a1c7092167ff6d72eeea31960b8ad9ec18e70ca1d8b",
+      "bytes": 675410
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "7cfeea09c75beed7745a8b92d83f04b51af558204653602d50f33edeb1bb281d",
+      "bytes": 537642
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "a1339173ebc373d85978ee44719bd0da8cd628a027a69ee23297a6fed5f7043e",
+      "bytes": 15074
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "cd33b133bbd6b3d1e7a1501810595c6063a93b324d6ebcc47861e1f762968615",
+      "bytes": 514
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.nest-mother",
+        "geometry": {
+          "asset": "asset.models.units.neutral-nest-mother",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 3.08
+      },
+      {
+        "id": "icon.neutral.nest-mother",
+        "image": {
+          "asset": "asset.models.units.neutral-nest-mother",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.42,
+      "height": 2.8,
+      "formationSpacing": 0.945
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "hit",
+            "time": 0.5833333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": []
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

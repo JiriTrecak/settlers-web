@@ -14,9 +14,9 @@ function setup() {
     body:{maxHp:100,armor:0,armorType:"heavy"},
     behaviors:{movement:{speed:4},playerControl:{},combat:{damage:30,damageType:"melee",range:2,cooldownTicks:40,aggroRange:8},
       progression:{levels:[0,10,30].map((experience,i)=>({experience,maxHp:100+20*i,damage:30+5*i,armor:i,cooldownTicks:40,maxMana:0,healthRegenPerSecond:0,manaRegenPerSecond:0})),experienceRadius:8}}});
-  for(const d of data.definitions as Record<string,unknown>[]) if(d.id==="unit.neutral.wolf" || d.id==="unit.ants.settler")d.experienceYield=35;
+  for(const d of data.definitions as Record<string,unknown>[]) if(d.id==="unit.neutral.webling" || d.id==="unit.ants.settler")d.experienceYield=35;
   const map={...emptyUtcMap(),entities:[placed("hero1","unit.ants.test-hero",208,230),placed("hero2","unit.ants.test-hero",208,229),
-    {...placed("victim","unit.neutral.wolf",209,230,{health:1}),owner:"none" as const}],
+    {...placed("victim","unit.neutral.webling",209,230,{health:1}),owner:"none" as const}],
     camps:[{id:"camp",members:["victim"],home:{x:209,y:230},aggroRange:5,leash:10,aggression:"players" as const}]};
   return new Game(map,slots,new ContentRegistry(data));
 }
@@ -47,5 +47,19 @@ describe("hero leveling",()=>{
     expect(g.context.get(victim.id)).toBeUndefined();expect(h.progression!.experience).toBe(0);
     const saved=g.snapshot();saved.state.entities.find(e=>!e.progression)!.progression={experience:1};
     expect(()=>g.restore(saved)).toThrow(/Invalid saved entity/);
+  });
+});
+
+describe("fixed-point movement",()=>{
+  it("keeps snapshots restorable for units whose scaled speed is fractional",()=>{
+    // Webling speed 7 × unitScale 1.7 = 11.9 → 297.5 raw budget per tick before flooring.
+    const map={...emptyUtcMap(),entities:[{...placed("creep","unit.neutral.webling",100,100),owner:"none" as const}],
+      camps:[{id:"den",members:["creep"],home:{x:100,y:100},aggroRange:5,leash:10,aggression:"players" as const}]};
+    const g=new Game(map,slots,new ContentRegistry(source())),creep=g.entities.find(e=>e.placement==="creep")!;
+    creep.x=112;creep.y=104;
+    let moved=false;
+    for(let t=0;t<10;t++){g.tick();moved||=!!creep.unit!.segment;expect(Number.isInteger(creep.unit!.segment?.progress??0)).toBe(true);}
+    expect(moved).toBe(true);
+    expect(()=>new Game(map,slots,new ContentRegistry(source())).restore(g.snapshot())).not.toThrow();
   });
 });

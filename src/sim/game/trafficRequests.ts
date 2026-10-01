@@ -11,7 +11,7 @@ const STALL_TICKS=200;
 type Rank={root:number;depth:number};
 /** Ephemeral priority inheritance along actual friendly movement dependencies. */
 export function trafficRequests(c:GameContext,units:readonly Entity[]) {
- const moving=units.filter(e=>e.unit!.route.length&&!e.unit!.detour&&c.ready(e)&&!e.spellcasting?.pending&&
+ const moving=units.filter(e=>e.unit!.route.length&&!e.unit!.detour&&c.ready(e)&&!e.abilities?.pending&&
   !!c.def(e).behaviors.movement?.speed&&!isStunned(e,c.registry)&&
   !(itemFlag(e,c.registry,'rooted')&&!itemFlag(e,c.registry,'controlImmune'))&&!c.spatial.ignoresUnits(e));
  if(!moving.some(e=>e.unit!.lastMovedTick!==undefined&&c.state.tick-e.unit!.lastMovedTick>=STALL_TICKS))return new Map<number,{leader:Entity;parent:Entity}>();

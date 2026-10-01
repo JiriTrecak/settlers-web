@@ -1,3 +1,5 @@
+import type {AntState} from '../characters/character-player';
+import {castAnimation} from '../abilities/castAnimation';
 import {geometryModel} from '../../shared/assets/models';
 import {transformedModel} from '../prop/modelTransform';
 import {prototypeBounds} from '../prop/grounding';
@@ -21,7 +23,7 @@ import { MineLabels } from "./mineLabels";
 import { AbilityTarget, type AbilityAim } from "./abilityTarget";
 import { batchCharacterMaterials } from "../characters/materialBatch";
 import { ProjectileEffects } from "./projectileEffects";
-import { SpellEffects } from "./spellEffects";
+import {AbilityEffects} from '../abilities/abilityEffects';
 import { HealthPips } from "./healthPips";
 import { HeldShortcuts } from "../../shared/input/heldShortcuts";
 import { healthBarVisible } from "../../presentation/healthVisibility";
@@ -128,7 +130,9 @@ export class SettlementLayer {
   }
   private readonly impacts = new ImpactEffects(this.root);
   private readonly meleeTrails = new MeleeTrails(this.root);
-  private readonly spellEffects = new SpellEffects(this.root);
+  private readonly abilityEffects = new AbilityEffects();
+  private abilityEventId=0;
+  private abilityEventTick=-1;
   private readonly characterSources = new Map<string, GLTF>();
   private readonly characters = new Map<number, UnitCharacter>();
   /** Instanced, texture-skinned units: draws per unit type, not per unit. */
@@ -220,8 +224,28 @@ export class SettlementLayer {
   private lastPoseAt = 0;
   private poseInterval = 16.7;
   private readonly cullSphere = new Sphere();
+  /** Units update() froze off-view; keyed by entity id. */
+  private readonly frozen = new Map<number, Object3D>();
   /** Last presented camera frustum; units outside it (plus margin) stop animating. */
-  setViewFrustum(frustum: Frustum | null) { this.viewFrustum = frustum; }
+  /** Inputs of the last update(); units whose model was still loading are built from them. */
+  private lastUpdate: [SettlementView, HeightField, number, number] | null = null;
+  private modelArrived = false;
+  setViewFrustum(frustum: Frustum | null) {
+    this.viewFrustum = frustum;
+    // Play updates every frame, the editor only on edits: entities skipped because their model
+    // was still loading would never appear there, so rebuild once when a model arrives.
+    if (this.modelArrived && this.lastUpdate) this.update(...this.lastUpdate);
+    // The editor calls update() only on edits, so a unit frozen at that moment would stay hidden
+    // after the camera reaches it; wake it here until the next update() re-evaluates.
+    for (const [id, o] of this.frozen)
+      if (!frustum || frustum.intersectsSphere(this.cullSphere.set(o.position, UNIT_CULL_MARGIN))) {
+        o.visible = true;
+        o.userData.matrixHeld = false;
+        const character = this.characters.get(id);
+        if (character) character.player.paused = false;
+        this.frozen.delete(id);
+      }
+  }
   /** Scope residency to requested entities/portraits/placement, deduplicating aliases. */
   private requestModel(id:string){
     if(this.dead||this.bindingLoads.has(id))return;
@@ -248,6 +272,7 @@ export class SettlementLayer {
         perf.end('Character bake (event)',timing);
       }
       this.pendingPreview?.();
+      this.modelArrived = true;
     });
     this.bindingLoads.set(id,binding);
     // Keep asynchronous late-spawn failures observable without an unhandled promise.
@@ -379,6 +404,7 @@ export class SettlementLayer {
     if (o && (o.userData.asset !== assetId || o.userData.modelScale !== modelScale)) {
       this.removeModel(e.id, o);
       this.entities.delete(e.id);
+      this.frozen.delete(e.id);
       o = undefined;
     }
     if (o) return o;
@@ -493,6 +519,8 @@ export class SettlementLayer {
     tick: number,
     timeScale = 1,
   ) {
+    this.lastUpdate = [state, field, tick, timeScale];
+    this.modelArrived = false;
     if(this.observedEntities!==state.entities){
       this.observedEntities=state.entities;
       this.modelEntities=state.entities.filter(e=>this.registry.get(e.definition).kind!=="resource");
@@ -503,7 +531,18 @@ export class SettlementLayer {
     const heldHealth = this.healthKeys.active();
     this.commandEffects.update(now);
     const {tick: renderTick, delta: dt, smoothingDelta} = this.presentationClock.sample(tick, now, timeScale);
-    this.spellEffects.update(state.visuals ?? [], field, renderTick);
+    if(!this.abilityEffects.root.parent)this.root.add(this.abilityEffects.root);
+    if(tick<this.abilityEventTick){this.abilityEffects.clear();this.abilityEventId=0;}
+    this.abilityEventTick=tick;
+    for(const event of state.abilityEvents??[]){
+      if(event.id<=this.abilityEventId)continue;
+      const spell=this.registry.abilityLibrary.abilities.find(a=>a.id===event.ability),presentation=spell&&this.registry.abilityLibrary.presentations.find(p=>p.id===spell.presentation);
+      if(presentation)this.abilityEffects.consume(event,presentation,(x,y)=>field.sample(x,y));
+      this.abilityEventId=event.id;
+    }
+    this.abilityEffects.syncDeliveries(state.abilityDeliveries??[],id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
+    this.abilityEffects.syncStatuses(state.entities,renderTick,id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
+    this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)}:undefined;});
     this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
       this.modelEntities
@@ -572,7 +611,8 @@ export class SettlementLayer {
       // shadows cast into view and a frame of camera travel (the frustum is last frame's).
       // The state machine below still runs so a unit resumes in the right clip.
       const frozen = !!character && o.visible && !!this.viewFrustum && !this.viewFrustum.intersectsSphere(this.cullSphere.set(o.position, UNIT_CULL_MARGIN));
-      if (frozen) o.visible = false;
+      if (frozen) { o.visible = false; this.frozen.set(e.id, o); }
+      else this.frozen.delete(e.id);
       o.userData.matrixHeld = frozen;
       if (character) {
         character.player.paused = frozen;
@@ -594,12 +634,14 @@ export class SettlementLayer {
         if(hurt)o.userData.reactionTick=renderTick;
         const cast = e.unit.casting;
         const castStarted = !!cast && o.userData.castKey !== `${cast.ability}/${cast.resolveTick}`;
-        if (cast) {
-          const key = `${cast.ability}/${cast.resolveTick}`;
-          if (o.userData.castKey !== key)
-            character.player.setState("cast", { restart: true });
-          o.userData.castKey = key;
-          o.userData.castTimeline = cast;
+        const definition=cast?this.registry.abilityLibrary.abilities.find(a=>a.id===cast.ability):undefined;
+        const presentation=definition?this.registry.abilityLibrary.presentations.find(p=>p.id===definition.presentation):undefined;
+        const castPose=cast&&presentation?castAnimation(presentation,{startTick:cast.startTick,releaseTick:cast.resolveTick,finishTick:cast.finishTick,channel:cast.channel},renderTick,clip=>character.player.hasState(clip as AntState),this.registry.asset(e.appearance?.asset??d.asset).castContact??.55):undefined;
+        if (castPose) {
+          character.player.setState(castPose.clip as AntState,{restart:castStarted,fade:.08});
+          o.userData.castKey=`${cast!.ability}/${cast!.resolveTick}`;
+        } else if (o.userData.wasCasting && !e.unit.moving && !attack) {
+          character.player.setState("idle",{fade:.12});
         } else if (attack && !e.unit.moving) {
           character.player.setState("attack", { restart: attacked, fade: .18 });
 
@@ -612,8 +654,6 @@ export class SettlementLayer {
           const carrying=e.unit.strolling ? "carry_walk" : "carry_run";
           character.player.setState(e.unit.charging ? "charge" : e.unit.cargo && character.player.hasState(carrying) ? carrying : e.unit.strolling ? "walk" : "run");
         }
-        else if (character.player.state === "cast" && o.userData.castTimeline && tick < o.userData.castTimeline.resolveTick)
-          character.player.setState("idle", {fade:.05});
         else if (!attack && character.player.state === "attack") character.player.setState("idle", {fade:.18});
         else if (!["attack", "hit", "cast"].includes(character.player.state)) {
           const work =
@@ -623,23 +663,15 @@ export class SettlementLayer {
           );
           if (work) o.rotation.y = Math.atan2(work.x - e.x, work.y - e.y);
         }
+        o.userData.wasCasting=!!castPose;
         const cycle = e.unit.work?.cycle;
-        if (attack && character.player.state === "attack") {
+        if(castPose){character.player.sample(castPose.phase,dt);}
+        else if (attack && character.player.state === "attack") {
           const contact = character.player.attackContact();
           const phase = renderTick <= attack.impact
             ? contact * Math.max(0,renderTick-attack.started) / Math.max(1,attack.impact-attack.started)
             : contact + (1-contact) * (renderTick-attack.impact) / Math.max(1,attack.ends-attack.impact);
           character.player.sample(Math.min(.999999,phase),dt);
-        } else if (character.player.state === "cast" && o.userData.castTimeline) {
-          const timeline=o.userData.castTimeline as NonNullable<NonNullable<EntityView['unit']>['casting']>;
-          const contact=this.registry.asset(e.appearance?.asset??d.asset).castContact??.55;
-          // Windup follows authority, including late observations and long casts.
-          // Recovery is visual only and yields to movement, attacks and damage.
-          const phase=cast
-            ? contact*Math.max(0,renderTick-timeline.startTick)/Math.max(1,timeline.resolveTick-timeline.startTick)
-            : contact+(renderTick-timeline.resolveTick)/40*character.player.speed/character.player.clipDuration();
-          if(phase>=1) {character.player.setState("idle",{fade:.05});character.player.update(0);}
-          else character.player.sample(Math.max(0,Math.min(cast?contact:.999999,phase)),dt);
         } else if (cycle && character.player.state === e.unit.work?.animation) {
           // Authoritative work phase locks axe contact to the exact damage tick.
           character.player.sample(Math.min(.999999, (cycle.progress + renderTick - tick) / cycle.ticks),dt);
@@ -775,6 +807,7 @@ export class SettlementLayer {
           this.corpses.set(id, { root: o, remaining: 2, born: renderTick });
         } else this.removeModel(id, o);
         this.entities.delete(id);
+        this.frozen.delete(id);
       }
     for (const [id, corpse] of this.corpses) {
       const cell =
@@ -909,7 +942,7 @@ export class SettlementLayer {
     if (this.placementModel) this.disposeInstance(this.placementModel);
     this.gridLines.geometry.dispose();
     this.gridLines.material.dispose();
-    this.spellEffects.dispose();
+    this.abilityEffects.dispose();
     this.impacts.dispose();
     this.meleeTrails.dispose();
     this.commandEffects.dispose();

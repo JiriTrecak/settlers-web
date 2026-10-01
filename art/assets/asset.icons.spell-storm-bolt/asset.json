@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-storm-bolt",
+  "name": "storm bolt spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "501fc6771524620d1c7335967f5fdd784ab328e115abc1d321ff7403d9f2de4f",
+      "bytes": 46257
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "e4baf7a36167379e4163fd51b98f049c185d6b84b74777882cf608916c431ef5",
+      "bytes": 2357007
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-storm-bolt",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-storm-bolt"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: A massive bronze war hammer hurled diagonally forward, crackling with bright blue-white lightning, bold silhouette against deep navy. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

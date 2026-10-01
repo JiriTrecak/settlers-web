@@ -1,3 +1,4 @@
+import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {sceneCommandSchema} from '../../src/shared/authoring/sceneCommands';
 import {walkStampSchema} from '../../src/shared/map/utcmap';
@@ -44,7 +45,9 @@ const cellX = z.number().describe("Cell X. Playable 0–255, halo −16–271");
 const cellY = z.number().describe("Cell Y / Z. Same range as X");
 
 export function editorTools(hub: EditorHub) {
-  const call = (op: string, params?: unknown) => hub.call(op, params);
+  // Loading or regenerating a forested 512² map runs well past the 8 s default.
+  const call = (op: string, params?: unknown) =>
+    hub.call(op, params, op === "landscape" || op === "scene" ? 120_000 : undefined);
 
   return {
     editor_scene:createTool({id:'editor_scene',description:'Author live procedural layers and independent objects. Recipes generate in terrain/river/path/forest/grass/meadow order. Batch applies many put/remove edits as one undo step and one regeneration. Pick selects the owner layer; bake converts the complete scatter layer with undo. No detach or per-generated-object edits. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
@@ -52,12 +55,18 @@ export function editorTools(hub: EditorHub) {
     editor_entities: createTool({
       id: "editor_entities",
       description:
-        "List gameplay definitions or authored entities; put, select or delete an explicit placement. Neutral units create authored camps. These are gameplay entities, separate from decorative stamps.",
+        "List gameplay definitions or authored entities; put, select or delete an explicit placement. Neutral units create authored camps. compositions lists themed camp setups; camp stamps one whole (composition, position x/y, rotation degrees facing its melee line, optional id camp/<name> which replaces an existing camp, leash, lootPool, legendary); deleteCamp removes a camp and its members by id. These are gameplay entities, separate from decorative stamps.",
       inputSchema: z.object({
-        action: z.enum(["definitions", "list", "put", "select", "delete", "rename"]),
+        action: z.enum(["definitions", "list", "put", "select", "delete", "rename", "compositions", "camp", "deleteCamp"]),
         placement: placementSchema.optional(),
         id: z.string().optional(),
         nextId: z.string().optional(),
+        composition: z.string().optional(),
+        position: z.object({ x: z.number().int(), y: z.number().int() }).optional(),
+        rotation: z.number().optional(),
+        leash: z.number().positive().max(96).optional(),
+        lootPool: z.string().optional(),
+        legendary: z.boolean().optional(),
       }),
       execute: async (input) => call("entities", input),
     }),
@@ -439,6 +448,7 @@ export function editorTools(hub: EditorHub) {
       description:
         "Screenshot the live editor canvas. Omit args for the current view. Optional x/z, zoom (ortho 6–180), yaw/pitch in degrees, iso, or gameCam. Pose is restored after the shot unless keep=true. Returns an image.",
       inputSchema: z.object({
+        inspection:inspectionShotSchema.optional().describe("World-space eye/target and FOV for ground-level environment inspection. Capture-only; editor camera is unchanged."),
         x: cellX.optional().describe("Look-at cell X. Omit for current view."),
         z: cellY
           .optional()

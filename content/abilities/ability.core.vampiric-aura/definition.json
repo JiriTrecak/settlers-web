@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.vampiric-aura",
+  "name": "Vampiric Aura",
+  "description": "Nearby friendly melee units recover 15% of the actual damage dealt by their ordinary melee attacks. Multiple copies do not stack.",
+  "activation": "passive",
+  "aura": {
+    "radius": 10,
+    "meleeOnly": true
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 0,
+      "cooldownTicks": 0,
+      "duration": 1
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "vampirism",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {
+        "lifestealPermille": 150
+      }
+    }
+  ],
+  "presentation": "presentation.core.vampiric-aura"
+}

@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-thorn-slinger",
+  "name": "Thorn Slinger",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "thornback-foragers",
+    "small",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "046a9ec85fa0330565601257bcce486dee7c9a8311f01aad20cd2b54662661c1",
+      "bytes": 1154376
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "097471029ffe121c355d824cf71217b959acb1c4929e4c791f22345e1cc9fc67",
+      "bytes": 8315822
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "5bf1217b09fc35cf0db93abc8f8d698997ef77aacc843bddf056c0f7f6452d85",
+      "bytes": 700814
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "ba9757cb8aa3e9c849ff3a0dc7b04d732cab332bcc240febe3408cb0103ca97e",
+      "bytes": 551416
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2690fd11df04eff4c77b51e904ba77ce2e590d6f297c65429dabab7a88531318",
+      "bytes": 14906
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8f6fa2ded9d1187e9adb6e04b210cbb49b4a80465c5628a4c03b4d5f6ff6aec6",
+      "bytes": 515
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.thorn-slinger",
+        "geometry": {
+          "asset": "asset.models.units.neutral-thorn-slinger",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 1.9800000000000002,
+        "projectile": "arrow",
+        "projectileSocket": "socket_projectile"
+      },
+      {
+        "id": "icon.neutral.thorn-slinger",
+        "image": {
+          "asset": "asset.models.units.neutral-thorn-slinger",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.29,
+      "height": 1.8,
+      "formationSpacing": 0.652
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

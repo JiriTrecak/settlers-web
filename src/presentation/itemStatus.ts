@@ -16,9 +16,6 @@ export function itemStatusCard(entity: EntityView | undefined, tick: number, reg
     const modifiers = s.kind === "aura" ? effect.aura!.modifiers : s.kind === "rescue" ? {invulnerable:true} : effect.active!.status!.modifiers;
     return {key:`${s.item}:${s.kind}`, icon:d.icon, name:`${d.name}${s.kind === "aura" ? " aura" : ""}`, description:[modifierText(modifiers),s.shield !== undefined ? `${s.shield} shield remaining` : "", s.kind === "aura" ? `While within ${effect.aura!.radius} tiles of the bearer. Identical auras do not stack.` : `${Math.max(0,Math.ceil((s.expires-tick)/40))}s remaining`].filter(Boolean).join(" · ")};
   });
-  for (const s of entity.effects ?? []) {
-    const spell = registry.rules.spells[s.ability], rank = spell?.ranks[s.rank-1];
-    if (rank) cards.push({key:s.ability,icon:spell.icon,name:spell.name,description:`${spell.description} · ${Math.max(0,Math.ceil((s.expires-tick)/40))}s remaining`});
-  }
+
   return cards;
 }

@@ -29,7 +29,7 @@ it('catalog contains unique ids and declared abilities, buildings, recruitment a
  expect(c.find(s=>s.id==='command.navigation:back')?.key).toBe('Escape');
  expect(c.some(s=>s.id==='command.produce:unit.ants.archer')).toBe(true);
  expect(c.some(s=>s.id==='command.build:building.ants.barracks')).toBe(true);
- for(const id of Object.keys(content.rules.spells))expect(c.some(s=>s.id===`command.cast:${id}`)).toBe(true);
+ for(const d of content.definitions)for(const binding of d.behaviors.abilities?.bindings??[])if(binding.command)expect(c.some(s=>s.id===`command.cast:${binding.id}`&&s.key===`Key${binding.command!.hotkey}`)).toBe(true);
 });
 
 it('prefers an explicit shifted binding over queuing an earlier command with the same base key',()=>{

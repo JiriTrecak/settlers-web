@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "id": "asset.models.units.neutral-dew-sprite",
+  "name": "Dew Sprite",
+  "kind": "unit",
+  "revision": 2,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "dewdrop-sprites",
+    "small",
+    "skinned",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "6404b3cca650da424610d0dd616c4657dd0bd0a83aac8d28d68acbf8083b7b05",
+      "bytes": 1124404
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "e3235c2eb489bbbdd0fbfe482995a69b1aab2029256128b4b67c063c34220fa6",
+      "bytes": 7331579
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "bdeec4c730fba33fc10e21725d5f15caa39c3e0c9e1f084cb6fd34b20f211642",
+      "bytes": 630273
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "a3400845ccbe26c3d1f10d86a59f54f8b04958e91e1a1cebb2500caa042485fa",
+      "bytes": 468633
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "1b3270ce570cef9658f66006911d78f91d2bcee600af7c098699289df6065641",
+      "bytes": 11062
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+      "bytes": 12961
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6237a90e91d1ec969e4524cad6baff4e63e699d071414ff0f0be6da1fa36dc74",
+      "bytes": 517
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.neutral.dew-sprite",
+        "geometry": {
+          "asset": "asset.models.units.neutral-dew-sprite",
+          "role": "geometry",
+          "index": 1
+        },
+        "character": "base",
+        "scale": 1,
+        "healthHeight": 1.87,
+        "projectile": "thorn",
+        "projectileSocket": "socket_projectile"
+      },
+      {
+        "id": "icon.neutral.dew-sprite",
+        "image": {
+          "asset": "asset.models.units.neutral-dew-sprite",
+          "role": "image",
+          "index": 1
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "dimensions": {
+      "radius": 0.29,
+      "height": 1.7,
+      "formationSpacing": 0.652
+    },
+    "groundContact": {
+      "mode": "pivot"
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

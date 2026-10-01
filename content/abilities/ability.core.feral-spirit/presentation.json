@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.feral-spirit",
+  "icon": "asset.icons.spell-feral-spirit",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "spirit-emergence",
+      "event": "summoned",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#78d7ff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 40,
+      "size": 0.22,
+      "height": 3,
+      "spread": 3.5,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "summoning-light",
+      "event": "released",
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#72bcff",
+      "accent": "#ffffff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 8,
+      "height": 2,
+      "intensity": 35
+    }
+  ]
+}

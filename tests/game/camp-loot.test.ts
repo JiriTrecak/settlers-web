@@ -11,8 +11,8 @@ function setup() {
     {item: "item.barkguard", weight: 3}, {item: "item.thornband", weight: 1},
   ]} };
   const map = {...emptyUtcMap(), entities: [
-    {...placed("wolf.1", "unit.neutral.wolf", 100, 100), owner: "none" as const},
-    {...placed("wolf.2", "unit.neutral.wolf", 102, 100), owner: "none" as const},
+    {...placed("wolf.1", "unit.neutral.webling", 100, 100), owner: "none" as const},
+    {...placed("wolf.2", "unit.neutral.webling", 102, 100), owner: "none" as const},
   ], camps: [{id: "den", members: ["wolf.1", "wolf.2"], home: {x:100,y:100},
     aggroRange: 8, leash: 18, aggression: "players" as const, lootPool:"loot.test"}]};
   return new Game(map, slots, new ContentRegistry(data));

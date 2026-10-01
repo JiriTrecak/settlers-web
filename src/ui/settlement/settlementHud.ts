@@ -431,6 +431,7 @@ export class SettlementHud {
           const current = this.menuEntries.find((entry) => entry.id === b.id);
           if (current) this.activate(current,event.shiftKey);
         };
+        if('alternate' in b&&b.alternate){button.oncontextmenu=event=>{event.preventDefault();const current=this.menuEntries.find(entry=>entry.id===b.id);if(current&&'alternate' in current&&current.alternate)this.hooks.action(current.alternate);};button.dataset.autocast=String(b.autocast);button.style.boxShadow=b.autocast?'inset 0 0 0 2px #ebc764':'';button.dataset.tipDescription+='\nRight-click to toggle autocast.';}
         this.grid.append(button);
       }
       this.pages.replaceChildren();
@@ -539,13 +540,13 @@ export class SettlementHud {
         tipCosts: JSON.stringify(costs(content, d.id)),
       });
       this.hooks.portrait?.(this.portrait,d.id,focus.owner);
-      this.portrait.dataset.mana = String(!!focus.spellcasting);
-      this.portraitMana.hidden = !focus.spellcasting;
-      this.portraitMana.firstChild!.textContent = focus.spellcasting
-        ? `${focus.spellcasting.mana} / ${focus.stats!.maxMana}`
+      this.portrait.dataset.mana = String(!!focus.abilities);
+      this.portraitMana.hidden = !focus.abilities;
+      this.portraitMana.firstChild!.textContent = focus.abilities
+        ? `${focus.abilities.mana} / ${focus.stats!.maxMana}`
         : "";
-      if(focus.spellcasting){this.portraitMana.setAttribute('aria-label','Mana');this.portraitMana.setAttribute('aria-valuenow',String(focus.spellcasting.mana));this.portraitMana.setAttribute('aria-valuemax',String(focus.stats!.maxMana));}
-      if(focus.spellcasting)this.portraitMana.style.setProperty('--fill',`${Math.max(0,Math.min(1,focus.spellcasting.mana/Math.max(1,focus.stats!.maxMana)))*100}%`);
+      if(focus.abilities){this.portraitMana.setAttribute('aria-label','Mana');this.portraitMana.setAttribute('aria-valuenow',String(focus.abilities.mana));this.portraitMana.setAttribute('aria-valuemax',String(focus.stats!.maxMana));}
+      if(focus.abilities)this.portraitMana.style.setProperty('--fill',`${Math.max(0,Math.min(1,focus.abilities.mana/Math.max(1,focus.stats!.maxMana)))*100}%`);
       this.portraitHp.hidden = !d.body;
       if (d.body) {
         this.portraitHp.setAttribute('aria-label','Health');this.portraitHp.setAttribute('aria-valuenow',String(focus.hp??0));this.portraitHp.setAttribute('aria-valuemax',String(focus.stats?.maxHp??d.body.maxHp));

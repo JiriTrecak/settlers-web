@@ -57,7 +57,7 @@ export class Mission {
         operations.push(()=>{
           const e=entity(id);if(!e?.unit||!alive(e)||e.fallen)return;
           const stats=g.context.stats(e);e.hp=stats.maxHp;
-          if(e.spellcasting)e.spellcasting.mana=stats.maxMana;
+          if(e.abilities)e.abilities.mana=stats.maxMana;
         });
       },
       begin_scene:(x,y)=>{draft.scene={x:number(x),y:number(y)};},
@@ -114,15 +114,15 @@ export class Mission {
         if(owner!=='none'&&!g.map.playerStarts.some(s=>owner===`player.${s.player}`))throw new Error('Missing owner slot');
         const camp=rawCamp==null?undefined:g.map.camps.find(c=>c.id===string(rawCamp));
         if(rawCamp!=null&&(!camp||owner!=='none'||g.state.clearedCamps.includes(camp.id)))throw new Error('Transformation requires an uncleared neutral camp');
-        if(!target||target.kind!=='unit'||target.hero||target.behaviors.progression||target.behaviors.inventory||target.behaviors.spellcasting|| (!!target.behaviors.campDefense!==!!camp))throw new Error('Transformation target must be an ordinary unit with a matching camp assignment');
+        if(!target||target.kind!=='unit'||target.hero||target.behaviors.progression||target.behaviors.inventory||target.behaviors.abilities|| (!!target.behaviors.campDefense!==!!camp))throw new Error('Transformation target must be an ordinary unit with a matching camp assignment');
         if(!e?.unit||!alive(e))return false;
         const source=g.registry.get(e.definition);
-        if(source.hero||source.behaviors.progression||e.equipment||e.spellcasting||source.behaviors.campDefense||e.unit.contained||e.unit.release)throw new Error('Transformation requires an ordinary uncontained unit');
+        if(source.hero||source.behaviors.progression||e.equipment||e.abilities||source.behaviors.campDefense||e.unit.contained||e.unit.release)throw new Error('Transformation requires an ordinary uncontained unit');
         operations.push(()=>{
           const fraction=e.hp!/g.context.stats(e).maxHp,position=e.unit!.position;
           g.economy.interrupt(e);
           e.definition=target.id;e.owner=owner;e.unit=g.context.freshUnit();e.unit.position=position;if(camp)e.unit.camp=camp.id;
-          delete e.appearance;delete e.effects;delete e.itemStatuses;delete e.slows;
+          delete e.appearance;delete e.stunnedUntil;delete e.itemStatuses;delete e.slows;
           e.hp=Math.max(1,Math.round(g.context.stats(e).maxHp*fraction));
           e.regeneration={health:0,mana:0};
           g.context.reindex();

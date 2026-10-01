@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.chain-lightning",
+  "name": "Chain Lightning",
+  "description": "Lightning jumps to four distinct enemies. Each jump deals 15% less damage, choosing the nearest visible enemy.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "chain",
+    "bounces": {
+      "rankParameter": "bounces"
+    },
+    "radius": 7,
+    "intervalTicks": 6,
+    "retentionPermille": 850
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 50,
+      "cooldownTicks": 280,
+      "damage": 85,
+      "bounces": 4
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.chain-lightning"
+}

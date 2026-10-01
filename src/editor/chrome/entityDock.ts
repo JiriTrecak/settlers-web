@@ -1,4 +1,5 @@
 import { content } from "../../content/builtin";
+import { campComposition, campCompositions } from "../../content/campCompositions";
 import { type Owner } from "../../content/schema";
 import { btn, sheet } from "../../ui";
 import type { WorldEditor } from "../world/worldEditor";
@@ -13,6 +14,7 @@ export class EntityDock {
   private readonly scripted = document.createElement("input");
   private readonly state = document.createElement("textarea");
   private readonly controls = document.createElement("div");
+  private readonly deleteCamp: HTMLButtonElement;
   private key = "";
   constructor(
     host: HTMLElement,
@@ -28,11 +30,17 @@ export class EntityDock {
     title.textContent = "Entities";
     for (const kind of ["unit", "building", "item", "resource"])
       this.category.append(new Option(kind, kind));
+    this.category.append(new Option("camp (whole setup)", "camp"));
     this.category.onchange = () => {
       editor.selectedEntity = null;
       this.options();
     };
     this.definition.onchange = () => {
+      if (this.category.value === "camp") {
+        editor.entityCamp = this.definition.value;
+        this.sync();
+        return;
+      }
       editor.entityDefinition = this.definition.value;
       const d = content.get(editor.entityDefinition);
       if (d.behaviors.campDefense || d.gatheringCapacity)
@@ -58,6 +66,10 @@ export class EntityDock {
       b.onclick = () => this.run(fn);
       return b;
     };
+    this.deleteCamp = button("Delete whole camp", () => {
+      const camp = editor.selectedCamp();
+      if (camp) editor.removeCamp(camp.id);
+    });
     this.scriptId.style.cssText="width:100%;padding:7px;background:#14201a;border:1px solid #526453;color:#e4e7dc;font:12px monospace";
     this.scriptId.setAttribute("aria-label","Script ID");this.scriptId.placeholder="Unique script ID";
     this.scripted.type="checkbox";this.scripted.setAttribute("aria-label","Spawn through Lua");
@@ -78,6 +90,7 @@ export class EntityDock {
       }),
       button("Rotate 90°", () => editor.nudgeSelected(Math.PI / 2)),
       button("Delete", () => editor.deleteSelected()),
+      this.deleteCamp,
     );
     this.root.append(
       title,
@@ -106,6 +119,15 @@ export class EntityDock {
     this.sync();
   }
   private options() {
+    if (this.category.value === "camp") {
+      this.definition.replaceChildren(
+        ...campCompositions.map((c) => new Option(`${c.name} · ${c.difficulty}`, c.id)),
+      );
+      this.editor.entityCamp = this.definition.value;
+      this.sync();
+      return;
+    }
+    this.editor.entityCamp = null;
     this.definition.replaceChildren(
       ...content.definitions
         .filter((d) => d.kind === this.category.value && !d.currency)
@@ -116,7 +138,25 @@ export class EntityDock {
   }
   sync() {
     const p = this.editor.selectedPlacement(),
-      d = content.get(p?.definition ?? this.editor.entityDefinition);
+      d = content.get(p?.definition ?? this.editor.entityDefinition),
+      camp = this.editor.selectedCamp();
+    this.deleteCamp.hidden = !camp || camp.members.length < 2;
+    if (!p && this.editor.entityCamp) {
+      const c = campComposition(this.editor.entityCamp),
+        members = Object.entries(c.members).map(([m, n]) => `${n}× ${content.get(`unit.neutral.${m}`).name}`);
+      this.controls.hidden = true;
+      this.category.disabled = this.definition.disabled = false;
+      this.owner.disabled = true;
+      this.category.value = "camp";
+      if (!Array.from(this.definition.options).some((o) => o.value === c.id))
+        this.definition.replaceChildren(
+          ...campCompositions.map((k) => new Option(`${k.name} · ${k.difficulty}`, k.id)),
+        );
+      this.definition.value = c.id;
+      this.info.textContent =
+        this.editor.entityMessage || `${c.theme}\n${members.join(", ")}\nClick to stamp the camp. R rotates its front.`;
+      return;
+    }
     if (!p && d.gatheringCapacity) this.editor.entityOwner = "none";
     this.owner.disabled = !!d.gatheringCapacity;
     this.controls.hidden = !p;

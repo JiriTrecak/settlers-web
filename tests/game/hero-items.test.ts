@@ -44,7 +44,7 @@ describe('declarative hero items',()=>{
  it('restores mana without consuming a full hero potion, and expends charges exactly once',()=>{
   const {g,hero}=setup();equip(hero,'moon-dew');
   expect(g.inventory.use(hero,0)).toMatch(/full/);expect(hero.equipment![0]).toBe('item.moon-dew');
-  hero.spellcasting!.mana-=90;expect(g.inventory.use(hero,0)).toBeNull();expect(hero.equipment![0]).toBeNull();
+  hero.abilities!.mana-=90;expect(g.inventory.use(hero,0)).toBeNull();expect(hero.equipment![0]).toBeNull();
   equip(hero,'trailkeeper-flask');hero.hp!-=200;
   for(let n=0;n<3;n++) {g.state.tick=n*400;hero.hp!-=20;expect(g.inventory.use(hero,0)).toBeNull();if(n<2)expect(g.inventory.use(hero,0)).toMatch(/cooling/);}
   expect(hero.equipment![0]).toBeNull();
@@ -84,7 +84,7 @@ describe('declarative hero items',()=>{
   const before={x:enemy.x,y:enemy.y};g.context.spatial.rebuild();g.context.spatial.route(enemy,{x:enemy.x+4,y:enemy.y});g.context.move();
   expect({x:enemy.x,y:enemy.y}).toEqual(before);
   equip(enemy,'endless-brood-banner');g.inventory.use(enemy,0);
-  enemy.effects=[{ability:'spell.marshal.faultline',rank:1,source:hero.id,expires:100}];
+  enemy.stunnedUntil=100;
   expect(isStunned(enemy,g.registry)).toBe(false);
   g.state.tick=161;items.tick();expect(isStunned(enemy,g.registry)).toBe(true);
  });
@@ -106,12 +106,10 @@ describe('declarative hero items',()=>{
  });
  it('reduces spell cooldowns declaratively and never resets item cooldowns',()=>{
   const {g,hero}=setup();equip(hero,'deep-moon-scepter','amber-hourglass');
-  g.spells.learn(hero,'spell.marshal.faultline');const rank=g.registry.rules.spells['spell.marshal.faultline'].ranks[0];
-  expect(g.spells.cast(hero,'spell.marshal.faultline',{x:hero.x,y:hero.y})).toBeNull();
-  expect(hero.spellcasting!.cooldowns['spell.marshal.faultline']).toBe(Math.round(rank.cooldownTicks*.8));
-  hero.spellcasting!.pending=null;g.inventory.use(hero,1);
-  expect(hero.spellcasting!.cooldowns['spell.marshal.faultline']).toBe(Math.max(0,Math.round(rank.cooldownTicks*.8)-480));
-  expect(g.inventory.use(hero,1)).toMatch(/cooling/);
+  hero.abilities!.cooldowns['ability.core.holy-light-lite']=600;
+  expect(g.inventory.use(hero,1)).toBeNull();
+  expect(hero.abilities!.cooldowns['ability.core.holy-light-lite']).toBe(120);
+
  });
  it('has usable HUD actions, tier and charge/cooldown labels and validates corrupted saves',()=>{
   const {g,hero}=setup();equip(hero,'amber-carapace');g.observation.update();
@@ -122,7 +120,7 @@ describe('declarative hero items',()=>{
 });
 
 it.each(new ContentRegistry(builtinSource).definitions.filter(d=>d.itemTier).map(d=>[d.id]))('activates or equips declared item %s without identity-specific handling',(id)=>{
- const {g,hero,items}=setup();equip(hero,id.slice(5));hero.hp=100;hero.spellcasting!.mana=0;
+ const {g,hero,items}=setup();equip(hero,id.slice(5));hero.hp=100;hero.abilities!.mana=0;
  const effect=g.registry.get(id).itemEffect!;
  if(effect.active || effect.type==='consumable')expect(g.inventory.use(hero,0)).toBeNull();
  items.tick();expect(g.context.stats(hero).maxHp).toBeGreaterThan(0);

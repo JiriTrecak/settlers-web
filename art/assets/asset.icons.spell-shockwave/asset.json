@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-shockwave",
+  "name": "shockwave spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "0215dae5c0c503c6c084fcd16e19e6a68ad9da02cb1bf771f7d85ab0e8bf2dfb",
+      "bytes": 47849
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "597f18c6bdaf218217528ec9b496749043bf14dfc2a176015ec63a54cf1b7931",
+      "bytes": 2578796
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-shockwave",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-shockwave"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: A golden crescent of seismic force ripping across brown earth with large lifted rocks and a brilliant amber leading edge. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

@@ -7,7 +7,7 @@ export const itemModifiersSchema = z.object({
   healthRegenPerSecond: z.number().nonnegative().optional(), manaRegenPerSecond: z.number().nonnegative().optional(),
   damagePermille: n.max(1000).optional(), attackSpeedPermille: z.number().int().min(-800).max(1000).optional(),
   moveSpeedPermille: z.number().int().min(-800).max(1000).optional(), cooldownReductionPermille: n.max(500).optional(),
-  lifestealPermille: n.max(500).optional(), rooted: z.boolean().optional(), controlImmune: z.boolean().optional(),
+  lifestealPermille: n.max(500).optional(), meleeReflectionPermille: n.max(1000).optional(), rooted: z.boolean().optional(), controlImmune: z.boolean().optional(),
   invulnerable: z.boolean().optional(),
 }).strict();
 const status = z.object({durationTicks: n.positive(), modifiers: itemModifiersSchema, shield: n.optional()}).strict();

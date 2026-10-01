@@ -1,0 +1,7 @@
+{
+  "provider": "OpenAI built-in imagegen",
+  "prompt": "Original flat Thorns Aura: three interwoven circular bramble vines, large outward triangular thorns, six luminous leaf tips. Hollow 58% centre, pale mint/ivory cores, emerald and amber-gold glow, simplified RTS shapes; no text, ground, perspective or background, real alpha and 12% margin.",
+  "transparentBackground": true,
+  "runtimeSize": 512,
+  "generated": "2026-10-01"
+}

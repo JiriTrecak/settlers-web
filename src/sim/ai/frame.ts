@@ -3,7 +3,7 @@ import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {unitDimensions} from '../../content/unitScale';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
-import { armorMultiplier, guardReduction, resolveDamage } from "../game/damage";
+import { armorMultiplier, resolveDamage } from "../game/damage";
 import type { ContentRegistry } from "../../content/registry";
 import { type Owner, type Definition } from "../../content/schema";
 import type { SettlementView, EntityView } from "../game/observation";
@@ -45,7 +45,7 @@ export function playerObservation(
   return {
     ...view,
     events: [],
-    visuals: [],
+    abilityEvents: [],
     deaths: [],
     entities: view.entities.map((e) =>
       e.owner === owner
@@ -270,7 +270,6 @@ export class Frame {
     const body = this.def(target).body!;
     return resolveDamage(this.registry.rules, {
       armorType: body.armorType, armor: target.stats?.armor ?? body.armor,
-      reductionPermille: guardReduction(this.registry.rules, target.effects),
     }, raw, type);
   }
   nearestSafe(p: Point) {

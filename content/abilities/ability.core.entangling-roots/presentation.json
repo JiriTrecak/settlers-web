@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.entangling-roots",
+  "icon": "asset.icons.spell-entangling-roots",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "root-cage",
+      "event": "statusApplied",
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 4,
+      "height": 1,
+      "durationFrom": "delivery",
+      "blend": "normal",
+      "follow": true,
+      "spread": 0.8,
+      "length": 1,
+      "texture": {
+        "asset": "asset.effects.living-roots",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "root-arrival",
+      "event": "released",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#87cc4a",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 18,
+      "size": 0.17,
+      "height": 0.5,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

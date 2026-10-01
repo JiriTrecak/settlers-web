@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-blizzard",
+  "name": "Blizzard spell icon",
+  "kind": "icon",
+  "revision": 6,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c19c5280fe58877dffa90c905816b30c2c20204ba0aee93fad9d5306f3768523",
+      "bytes": 46384
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "b6b7031f8ff1fa9aafdbd652b04b52aa0e40cb6077997e52da0011b51e9cdc34",
+      "bytes": 2723317
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-blizzard",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-blizzard"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen artwork. Prompt: Use case: stylized-concept. Create one square painted fantasy RTS spell command icon inspired by Warcraft III's readable hand-painted ability art. Original Blizzard icon: three large sharp cyan and ivory ice shards plunging diagonally downward through a dark cobalt magical snowstorm, the largest crystal dominates the center; strong motion streaks and one small icy impact star below. Navy background, saturated cobalt blue, cyan and cold white highlights. Bold chunky painterly facets, powerful light-dark contrast, restrained detail, readable at 48x48 pixels. Full bleed square, no UI frame, no lettering, no text, no watermark, no montage. Not photorealistic, not a flat vector."
+  }
+}

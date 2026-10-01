@@ -120,7 +120,7 @@ describe("content and presentation contracts", () => {
     ).toBe(true);
     expect(
       commandCard(view, ids, "player.1", g.registry)
-        .filter(b => b.type !== "cast" && b.type !== "learnAbility").map((b) => b.type),
+        .filter(b => b.type !== "castAbility" && b.type !== "learnAbility").map((b) => b.type),
     ).toEqual(["move", "attack", "stop", "hold", "patrol", "follow"]);
   });
   it("S15 removing control removes orders from both UI and authoritative ingress", () => {
@@ -232,7 +232,7 @@ describe("content and presentation contracts", () => {
       placed("loot", "item.barkguard", 100, 100, { quantity: 1 }),
     );
     map = putEntity(map, {
-      ...placed("wolf", "unit.neutral.wolf", 110, 110),
+      ...placed("wolf", "unit.neutral.webling", 110, 110),
       owner: "none",
     });
     const parsed = parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
@@ -255,7 +255,7 @@ describe("content and presentation contracts", () => {
     const original = emptyUtcMap();
     const before = entityAuthoringState(original);
     const placedWolf = putEntity(original, {
-      ...placed("wolf", "unit.neutral.wolf", 100, 100),
+      ...placed("wolf", "unit.neutral.webling", 100, 100),
       owner: "none",
     });
     const after = entityAuthoringState(placedWolf);

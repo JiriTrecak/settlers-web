@@ -1,18 +1,17 @@
 import {BufferGeometry,Float32BufferAttribute,Group,LineBasicMaterial,LineSegments,Mesh,MeshBasicMaterial,DoubleSide} from 'three';
-import type {Spell} from '../../content/spells';
+import {value,type AbilityDefinition} from '../../content/abilities/schema';
 import type {HeightField} from '../../shared/map/height';
 type Point={x:number;y:number;surface?:string};
-export type AbilityAim={spell:Spell;rank:number;origin:Point;point:Point;valid:boolean};
-/** Geometry reflects the simulation's flat-ended line or radial impact footprint. */
+export type AbilityAim={spell:AbilityDefinition;rank:number;origin:Point;point:Point;valid:boolean};
 export function abilityOutline(aim:AbilityAim):Point[]{
- const rank=aim.spell.ranks[aim.rank-1],a=aim.origin,b=aim.point;
- const dx=b.x-a.x,dy=b.y-a.y,length=Math.hypot(dx,dy);
- if(aim.spell.effect==='line'&&length){
-  const nx=-dy/length*rank.radius,ny=dx/length*rank.radius;
-  return [{x:a.x+nx,y:a.y+ny},{x:b.x+nx,y:b.y+ny},{x:b.x-nx,y:b.y-ny},{x:a.x-nx,y:a.y-ny}];
+ const delivery=aim.spell.delivery;
+ if(delivery?.kind==='line'){
+  const dx=aim.point.x-aim.origin.x,dy=aim.point.y-aim.origin.y,length=Math.hypot(dx,dy)||1;
+  const ux=dx/length,uy=dy/length,w=delivery.width;
+  return [[0,-w],[delivery.length,-w],[delivery.length,w],[0,w]].map(([along,across])=>({x:aim.origin.x+ux*along-uy*across,y:aim.origin.y+uy*along+ux*across}));
  }
- const center=aim.spell.effect==='blast'?b:a;
- return Array.from({length:64},(_,i)=>({x:center.x+Math.cos(i*Math.PI/32)*rank.radius,y:center.y+Math.sin(i*Math.PI/32)*rank.radius}));
+ const radius=aim.spell.targeting.kind==='point'?value(aim.spell.targeting.radius!,aim.spell.ranks[aim.rank-1]):.8;
+ return Array.from({length:48},(_,i)=>({x:aim.point.x+Math.cos(i*Math.PI/24)*radius,y:aim.point.y+Math.sin(i*Math.PI/24)*radius}));
 }
 export class AbilityTarget {
  private readonly root=new Group();
@@ -26,7 +25,7 @@ export class AbilityTarget {
   const key=JSON.stringify(aim);if(key===this.key)return;this.key=key;
   this.fill.material.color.set(aim.valid?0x68dac9:0xef514b);this.edge.material.color.set(aim.valid?0xbefff0:0xff7770);
   const outline=abilityOutline(aim),positions:number[]=[],edges:number[]=[],range:number[]=[];
-  const xyz=(p:Point)=>[p.x,height.walkSample(p.x,p.y,aim.spell.effect==='blast'?aim.point.surface:aim.origin.surface)+.12,p.y];
+  const xyz=(p:Point)=>[p.x,height.walkSample(p.x,p.y,aim.point.surface)+.12,p.y];
   const center=outline.reduce((p,q)=>({x:p.x+q.x/outline.length,y:p.y+q.y/outline.length}),{x:0,y:0});
   for(let i=0;i<outline.length;i++){
    const a=outline[i],b=outline[(i+1)%outline.length],steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)));
@@ -35,7 +34,7 @@ export class AbilityTarget {
     positions.push(...xyz(center),...xyz(p),...xyz(q));edges.push(...xyz(p),...xyz(q));
    }
   }
-  const radius=aim.spell.ranks[aim.rank-1].range;
+  const radius=value(aim.spell.targeting.range,aim.spell.ranks[aim.rank-1]);
   for(let i=0;i<96;i++){if(i%2)continue;for(const angle of [i*Math.PI/48,(i+1)*Math.PI/48])range.push(...xyz({x:aim.origin.x+Math.cos(angle)*radius,y:aim.origin.y+Math.sin(angle)*radius}));}
   for(const [object,data] of [[this.fill,positions],[this.edge,edges],[this.range,range]] as const){object.geometry.dispose();object.geometry=new BufferGeometry();object.geometry.setAttribute('position',new Float32BufferAttribute(data,3));object.geometry.computeBoundingSphere();}
  }

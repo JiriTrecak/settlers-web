@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.shockwave",
+  "icon": "asset.icons.spell-shockwave",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "cues": [
+    {
+      "id": "wavefront",
+      "event": "projectile",
+      "anchor": "target",
+      "shape": "wavefront",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 4.5,
+      "height": 0.2,
+      "durationFrom": "delivery",
+      "orientation": "ground",
+      "intensity": 1.2,
+      "texture": {
+        "asset": "asset.effects.seismic-crescent",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "earth-fragments",
+      "event": "damaged",
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#ddb46c",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 16,
+      "size": 0.17,
+      "height": 1.1,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

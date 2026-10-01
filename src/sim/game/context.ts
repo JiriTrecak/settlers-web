@@ -7,7 +7,7 @@ import {TICK_MS} from "../../shared/match/match";
 import { itemFlag } from "./itemModifiers";
 import { isStunned } from "./effects";
 import {
-  fixed,
+  fixed, precise,
   lengthCeil,
   motionCell,
   POSITION_SCALE,
@@ -117,13 +117,7 @@ export class GameContext {
       };
     if (d.kind === "unit") { e.unit = this.freshUnit(); e.regeneration = { health: 0, mana: 0 }; }
     if (d.behaviors.progression) e.progression = { experience: initial?.experience ?? 0 };
-    if (d.behaviors.spellcasting)
-      e.spellcasting = {
-        mana: this.stats(e).maxMana,
-        learned: {},
-        cooldowns: {},
-        pending: null,
-      };
+    if(d.behaviors.abilities)e.abilities={mana:this.stats(e).maxMana,regeneration:0,ranks:Object.fromEntries(d.behaviors.abilities.bindings.map(b=>[b.id,b.initialRank])),cooldowns:{},pending:null};
     if (d.behaviors.inventory)
       e.equipment = Array(d.behaviors.inventory.slots).fill(null);
     if (d.kind === "building" && !complete) {
@@ -246,11 +240,11 @@ export class GameContext {
       (e) => this.ready(e) && e.unit && !e.unit.contained && !e.unit.release,
     );
   }
-  move() {
+  move(castFacingOnly=false) {
     this.spatial.beginUnitMovement();
-    try {this.moveUnits();} finally {this.spatial.endUnitMovement();this.motionRevision++;}
+    try {this.moveUnits(castFacingOnly);} finally {this.spatial.endUnitMovement();this.motionRevision++;}
   }
-  private moveUnits() {
+  private moveUnits(castFacingOnly=false) {
     const units = this.activeUnits();
     let requests:ReturnType<typeof trafficRequests>|undefined;
     const occupied = new Set(units.filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)]));
@@ -281,7 +275,8 @@ export class GameContext {
         continue;
       const movement = this.def(e).behaviors.movement;
       const turnStep=(movement?.turnRate ?? 720)*TICK_MS/1000;
-      if(e.spellcasting?.pending){turnToward(e,e.spellcasting.pending.point,turnStep);continue;}
+      if(e.abilities?.pending){const p=e.abilities.pending,target=this.get(p.target),point=p.point??(target?precise(target):undefined);if(point)turnToward(e,point,turnStep);continue;}
+      if(castFacingOnly)continue;
       const victim=this.get(u.target);
       if(!u.route.length && victim && alive(victim))turnToward(e,{x:victim.unit?.position ? victim.unit.position.x/1000 : victim.x,y:victim.unit?.position ? victim.unit.position.y/1000 : victim.y},turnStep);
       const speed = u.idle?.walking
@@ -293,7 +288,8 @@ export class GameContext {
       try {
         const charge = u.charge?.target !== null && u.charge?.target === u.target && u.charge.expires > this.state.tick
           ? (this.def(e).behaviors.combat?.charge?.speedPermille ?? 1000) : 1000;
-        let budget = (speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000;
+        // Fixed-point motion: scaled speeds (e.g. 7 × unitScale 1.7) must not leave fractional segment progress in snapshots.
+        let budget = Math.floor((speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000);
         u.position ??= fixed(e);
         if (u.detour) {
           this.moveDetour(e, budget, turnStep, units);

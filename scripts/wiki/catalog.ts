@@ -1,3 +1,4 @@
+import {value} from '../../src/content/abilities/schema';
 import {
   ContentRegistry,
   type ContentSource,
@@ -147,7 +148,7 @@ export function buildCatalog(source: ContentSource) {
         ["Inventory slots", b.inventory.slots],
         ["Pickup range", `${b.inventory.pickupRange} cells`],
       );
-    if (b.spellcasting)
+    if (b.abilities)
       stats.push(
         ["Mana", base.maxMana],
         ["Mana regeneration", `${base.manaRegenPerSecond} / second`],
@@ -209,8 +210,11 @@ export function buildCatalog(source: ContentSource) {
         }),
       )}\n`;
     }
-    if (b.spellcasting)
-      body += `## Abilities\n\n${b.spellcasting.abilities.map((id) => `- [${registry.rules.spells[id].name}](/${spellPath(id)}) — ${prose(registry.rules.spells[id].description)}`).join("\n")}\n\nLearn ranks with skill points. See [heroes and items](/guide/heroes) for progression and targeting.\n\n`;
+    if(b.abilities)body += `## Abilities
+
+${b.abilities.bindings.map(b=>{const a=registry.abilityLibrary.abilities.find(a=>a.id===b.ability)!;return `- [${a.name}](/${spellPath(a.id)}) — ${prose(a.description)}`;}).join('\n')}
+
+`;
     if (d.itemEffect) {
       const e = d.itemEffect;
       body += `## Effect\n\n${e.type === "equipment" ? "Passive while carried in a hero inventory." : "Consumed when activated from the hero inventory."}\n\n`;
@@ -249,51 +253,11 @@ export function buildCatalog(source: ContentSource) {
     body += `## Related reading\n\n[Economy](/guide/economy) · [Combat](/guide/combat) · [${section(d)} index](/${section(d)}/)\n\n<details class="source-details"><summary>Content source</summary>\n\nDefinition: \`${d.id}\`  \nModel reference: \`${d.asset}\`  \nGenerated from \`content/game.json\`, with behavior sets expanded by the game registry. Balance revision: \`${registry.fingerprint}\`.\n\n</details>\n`;
     files.set(`${definitionPath(d)}.md`, page(d.name, body, d.description));
   }
-  for (const [id, s] of Object.entries(registry.rules.spells)) {
-    const hosts = defs.filter((d) =>
-      d.behaviors.spellcasting?.abilities.includes(id),
-    );
-    let body = `<div class="entry-lead">${icon(s.icon)}<p>${prose(s.description)}</p></div>\n\nUsed by ${hosts.map((d) => link(d.id)).join(", ")}. **Shortcut: ${s.hotkey}**. **Target: ${s.target === "self" ? "self" : "ground position"}**.\n\n`;
-    const columns: [
-      string,
-      (r: (typeof s.ranks)[number]) => string | number,
-    ][] = [
-      ["Hero level", (r) => r.requiredLevel],
-      ["Mana", (r) => r.mana],
-      ["Cooldown", (r) => seconds(r.cooldownTicks)],
-      ["Cast time", (r) => seconds(r.castTicks)],
-    ];
-    const optional: typeof columns = [
-      ["Damage", (r) => r.damage],
-      ["Range (cells)", (r) => r.range],
-      ["Radius (cells)", (r) => r.radius],
-      ["Stun", (r) => seconds(r.stunTicks)],
-      ["Duration", (r) => seconds(r.durationTicks)],
-      ["Bonus attack damage", (r) => `${r.damageBonusPermille / 10}%`],
-      ["Damage reduction", (r) => `${r.reductionPermille / 10}%`],
-    ];
-    for (const c of optional)
-      if (
-        s.ranks.some((r) => ![0, "0 s", "0%"].includes(c[1](r))) &&
-        !(s.effect === "guard" && /Radius|Range/.test(c[0]))
-      )
-        columns.push(c);
-    if (s.damageTargetBudget) body += `Area damage has a **${s.damageTargetBudget}-target budget**: beyond that many eligible targets, damage per target is multiplied by ${s.damageTargetBudget} / target count before resistance. Stuns affect units only; heroes receive ${registry.rules.heroStunDurationPermille / 10}% duration.\n\n`;
-    body += `## Ranks\n${table(
-      ["Property", ...s.ranks.map((_, i) => `Rank ${i + 1}`)],
-      columns.map(([name, read]) => [name, ...s.ranks.map(read)]),
-    )}\n`;
-    body +=
-      s.effect === "line"
-        ? "## Targeting\n\nA flat-ended line from the Marshal toward the chosen ground position. Its full width is **twice the radius**. The footprint and casting range appear before you commit.\n\n"
-        : s.effect === "blast"
-          ? "## Targeting\n\nA circle centered on the chosen ground position. The footprint and casting range appear before you commit.\n\n"
-          : s.effect === "guard"
-            ? "## Targeting\n\nProtects the caster only. The declaration’s radius does not turn this self-guard effect into an area shield.\n\n"
-            : "## Targeting\n\nA self-centered rally affecting nearby friendly units.\n\n";
-    body +=
-      "For ground abilities, invalid or unexplored destinations show red. Escape or right-click cancels targeting.\n\n";
-    files.set(`${spellPath(id)}.md`, page(s.name, body, s.description));
+  for(const s of registry.abilityLibrary.abilities){
+    const hosts=defs.filter(d=>d.behaviors.abilities?.bindings.some(b=>b.ability===s.id));
+    const rows=s.ranks.map((r,i)=>[i+1,value(s.cast.cost.amount,r),seconds(value(s.cast.cooldown.ticks,r)),value(s.targeting.range,r)]);
+    const body=`${prose(s.description)}\n\nUsed by ${hosts.map(d=>link(d.id)).join(', ')}. Target: living visible unit.\n\n${table(['Rank','Mana','Cooldown','Range'],rows)}\n\nCosts commit on release. Interruption before release refunds mana.\n`;
+    files.set(`${spellPath(s.id)}.md`,page(s.name,body,s.description));
   }
   let loot =
     "Camp rewards use weighted rolls after the camp is cleared. Each roll selects independently **with replacement**, so multi-roll pools can give duplicate items. Percentages below are **per roll**, not the chance of receiving at least one copy from the camp.\n\n";
@@ -347,11 +311,7 @@ export function buildCatalog(source: ContentSource) {
     "abilities/index.md",
     page(
       "Abilities",
-      Object.entries(registry.rules.spells)
-        .map(
-          ([id, s]) =>
-            `## [${s.name}](/${spellPath(id)})\n\n${icon(s.icon)} ${prose(s.description)}\n\nShortcut **${s.hotkey}** · ${s.ranks.length} rank${s.ranks.length === 1 ? "" : "s"}`,
-        )
+      registry.abilityLibrary.abilities.map(s=>`## [${s.name}](/${spellPath(s.id)})\n\n${prose(s.description)}\n\n${s.ranks.length} ranks`)
         .join("\n\n"),
     ),
   );

@@ -14,7 +14,7 @@ export function captureCompany(game:Game):CampaignCompany {
  return campaignCompanySchema.parse(tags.flatMap(tag=>{
   const e=game.entities.find(e=>e.placement===tag&&e.owner==='player.1'&&e.unit&&alive(e));
   return e?[{tag,definition:e.definition,...(e.progression?{experience:e.progression.experience,...(e.progression.bonuses?{bonuses:{...e.progression.bonuses}}:{})}:{}),
-   ...(e.spellcasting?{learned:{...e.spellcasting.learned}}:{}),
+   ...(e.abilities?{learned:{...e.abilities.ranks}}:{}),
    ...(e.equipment?{equipment:[...e.equipment]}:{}),
    ...(e.equipmentState?{equipmentState:e.equipmentState.map(s=>s?{...s,readyTick:0,hits:0}:null)}:{})}]:[];
  }));
@@ -46,10 +46,14 @@ export function restoreCompanyMember(c:GameContext,e:Entity,m:CampaignCompany[nu
  validateItemState(e,c.registry);
  const stats=c.stats(e);
  if(m.learned){
-  const entries=Object.entries(m.learned),abilities=d.behaviors.spellcasting?.abilities;
-  if(!e.spellcasting||entries.reduce((n,[,r])=>n+r,0)>stats.level||entries.some(([id,rank])=>!abilities?.includes(id)||!c.registry.rules.spells[id]?.ranks[rank-1]||c.registry.rules.spells[id].ranks[rank-1].requiredLevel>stats.level))throw new Error('Invalid company abilities');
-  e.spellcasting.learned={...m.learned};
+  if(!e.abilities)throw Error('Company has no ability caster');
+  const bindings=d.behaviors.abilities!.bindings;
+  if(Object.keys(m.learned).length!==bindings.length)throw Error('Invalid company ability bindings');
+  let spent=0;
+  for(const b of bindings){const rank=m.learned[b.id];if(rank===undefined||rank<b.initialRank||rank>c.registry.abilityLibrary.abilities.find(a=>a.id===b.ability)!.ranks.length||(!b.learning&&rank!==b.initialRank)||(b.learning&&rank>0&&b.learning.requiredLevels[rank-1]>stats.level))throw Error('Invalid company ability rank');spent+=rank-b.initialRank;}
+  if(spent>stats.level)throw Error('Invalid company skill points');
+  e.abilities.ranks={...m.learned};
  }
  e.hp=stats.maxHp;
- if(e.spellcasting)e.spellcasting.mana=stats.maxMana;
+ if(e.abilities)e.abilities.mana=stats.maxMana;
 }

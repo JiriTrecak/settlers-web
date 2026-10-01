@@ -8,6 +8,7 @@ export const resolvedStatsSchema = z.object({
   moveSpeedPermille: z.number().default(1000),
   cooldownReductionPermille: z.number().default(0),
   lifestealPermille: z.number().default(0),
+  meleeReflectionPermille: z.number().default(0),
   level: z.number().int().positive(),
   maxHp: z.number().int().nonnegative(),
   damage: z.number().nonnegative(),
@@ -19,20 +20,20 @@ export const resolvedStatsSchema = z.object({
 }).strict();
 
 /** One resolved stat path for simulation, observation, HUD, AI and the encyclopedia. */
-export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipment"|"effects"|"itemStatuses"|"slows">, registry?: ContentRegistry, research: readonly string[] = []) {
+export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipment"|"itemStatuses"|"slows"|"spellStatuses">, registry?: ContentRegistry, research: readonly string[] = []) {
   const levels = d.behaviors.progression?.levels;
   const rank = levels ? levels.filter(l => l.experience <= (e.progression?.experience ?? 0)).length - 1 : 0;
   const level = levels?.[Math.max(0,rank)];
   const result = {
-    moveSpeedPermille: 1000, cooldownReductionPermille: 0, lifestealPermille: 0,
+    moveSpeedPermille: 1000, cooldownReductionPermille: 0, lifestealPermille: 0, meleeReflectionPermille: 0,
     level: levels ? rank + 1 : d.level ?? 1,
     maxHp: level?.maxHp ?? d.body?.maxHp ?? 0,
     damage: level?.damage ?? d.behaviors.combat?.damage ?? 0,
     armor: level?.armor ?? d.body?.armor ?? 0,
     cooldownTicks: level?.cooldownTicks ?? d.behaviors.combat?.cooldownTicks ?? 1,
-    maxMana: level?.maxMana ?? d.behaviors.spellcasting?.maxMana ?? 0,
+    maxMana: level?.maxMana ?? d.behaviors.abilities?.maxMana ?? 0,
     healthRegenPerSecond: level?.healthRegenPerSecond ?? 0,
-    manaRegenPerSecond: level?.manaRegenPerSecond ?? d.behaviors.spellcasting?.manaRegenPerSecond ?? 0,
+    manaRegenPerSecond: level?.manaRegenPerSecond ?? d.behaviors.abilities?.manaRegenPerSecond ?? 0,
   };
   for(const key of ["maxHp","damage","armor","maxMana"] as const) result[key]+=e.progression?.bonuses?.[key]??0;
   for (const id of e.equipment ?? []) {
@@ -60,6 +61,7 @@ export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipme
     result.moveSpeedPermille += m.moveSpeedPermille ?? 0;
     result.cooldownReductionPermille += m.cooldownReductionPermille ?? 0;
     result.lifestealPermille += m.lifestealPermille ?? 0;
+    result.meleeReflectionPermille += m.meleeReflectionPermille ?? 0;
     attackSpeed += m.attackSpeedPermille ?? 0; damageBonus += m.damagePermille ?? 0;
   }
   const slow = Math.max(0, ...(e.slows ?? []).map(s => s.permille));
@@ -67,11 +69,8 @@ export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipme
   result.moveSpeedPermille = Math.max(200, Math.min(1800, result.moveSpeedPermille));
   result.cooldownReductionPermille = Math.min(400, result.cooldownReductionPermille);
   result.lifestealPermille = Math.min(400, result.lifestealPermille);
+  result.meleeReflectionPermille = Math.min(1000, result.meleeReflectionPermille);
   result.cooldownTicks = Math.max(1, Math.round(result.cooldownTicks * 1000 / Math.max(200, attackSpeed)));
   result.damage *= 1 + damageBonus / 1000;
-  const bonus = (e.effects ?? []).reduce((n,b) => n +
-    (registry?.rules.spells[b.ability]?.ranks[b.rank-1].damageBonusPermille ?? 0), 0);
-  // Retain fractional attack bonuses until the single damage-application rounding step.
-  result.damage *= 1 + bonus / 1000;
   return result;
 }

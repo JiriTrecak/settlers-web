@@ -1,9 +1,8 @@
+import {abilityStateSchema,spellStatusSchema,spellDeliverySchema,summonedSchema} from '../abilities/state';
 import {missionStateSchema} from "../../shared/scenario/schema";
 import { missileSchema } from "./missileState";
-import {worldPointSchema} from './coordinates';
 import { shellSchema } from "./shellState";
 import { permanentBonusesSchema, itemRuntimeSchema, itemStatusSchema } from "../../content/items";
-import { visualCueSchema } from "./visualCues";
 import { z } from "zod";
 import {
   stockSchema,
@@ -76,36 +75,10 @@ export const entitySchema = z
     itemHits: z.array(z.object({item: idSchema, source: positive, target: positive, damage: natural, damageType: idSchema}).strict()).max(512).optional(),
     itemStatuses: z.array(itemStatusSchema).max(128).optional(),
     equipment: z.array(idSchema.nullable()).max(12).optional(),
-    spellcasting: z
-      .object({
-        mana: natural,
-        learned: z.record(idSchema, natural.max(3)),
-        cooldowns: z.record(idSchema, natural),
-        pending: z
-          .object({
-            ability: idSchema,
-            rank: positive.max(3),
-            point:worldPointSchema,
-            startTick: natural,
-            resolveTick: natural,
-          })
-          .strict()
-          .nullable(),
-      })
-      .strict()
-      .optional(),
-    effects: z
-      .array(
-        z
-          .object({
-            ability: idSchema,
-            source: positive,
-            expires: natural,
-            rank: positive.max(3),
-          })
-          .strict(),
-      )
-      .optional(),
+    abilities: abilityStateSchema.optional(),
+    spellStatuses:z.array(spellStatusSchema).max(32).optional(),
+    summoned:summonedSchema.optional(),
+    stunnedUntil: natural.optional(),
     appearance: z
       .object({
         asset: idSchema.optional(),
@@ -247,8 +220,8 @@ export const stateSchema = z
     missiles: z.array(missileSchema),
     nextShell: positive,
     shells: z.array(shellSchema),
-    nextVisual: positive,
-    visuals: z.array(visualCueSchema),
+    nextCast: positive,
+    spellDeliveries:z.array(spellDeliverySchema).max(512).default([]),
     nextId: positive,
     nextJob: positive,
     nextQueue: positive,
@@ -289,8 +262,8 @@ export const emptyState = (): GameState => ({
   missiles: [],
   nextShell: 1,
   shells: [],
-  nextVisual: 1,
-  visuals: [],
+  nextCast: 1,
+  spellDeliveries: [],
   nextId: 1,
   nextJob: 1,
   nextQueue: 1,

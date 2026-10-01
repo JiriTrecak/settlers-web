@@ -102,7 +102,7 @@ export class Display {
 
   /** The atmosphere pass draws the scene into a linear target (no tone mapping); otherwise it goes
    * straight to the canvas in sRGB + ACES. Programs differ between the two, so warm-up must match. */
-  sceneOffscreen(atmosphere?:AtmosphereFrame):atmosphere is AtmosphereFrame{return !!(atmosphere?.settings?.enabled||atmosphere?.daytime||atmosphere?.postProcessing||atmosphere?.canopy);}
+  sceneOffscreen(atmosphere?:AtmosphereFrame):atmosphere is AtmosphereFrame{return !!(atmosphere?.settings?.enabled||atmosphere?.daytime||atmosphere?.postProcessing||atmosphere?.canopy||atmosphere?.depthOfField);}
   /** Also used by editor captures; the caller owns the destination target. */
   drawWorld(scene:Scene,camera:Camera,atmosphere?:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()){
     // Imported HDR multipliers stay literal; exposure is the renderer adapter,

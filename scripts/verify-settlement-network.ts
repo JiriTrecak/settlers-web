@@ -118,7 +118,7 @@ try {
   const started = await post(`/api/rooms/${id}/start`, {}, tokens[0]);
   assert.equal((started.config as MatchConfig).slots.length, 2);
   await until(() => worlds.length === 2);
-  sockets.forEach((ws) => ws.send(JSON.stringify({ type: "ready" })));
+  sockets.forEach((ws) => ws.send(JSON.stringify({ type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' })));
   for (let through = 100; through <= 3000; through += 100) {
     for (const i of [
       through % 200 === 0 ? 1 : 0,

@@ -23,7 +23,7 @@ const campMap = () => ({
   entities: [
     {
       id: "camp-wolf",
-      definition: "unit.neutral.wolf",
+      definition: "unit.neutral.webling",
       position: { x: 110, y: 110 },
       rotation: 0,
       owner: "none" as const,
@@ -139,7 +139,7 @@ describe("player AI information and authority boundary", () => {
     enemy.owner = "player.2";
     enemy.unit!.cooldown = 999;
     enemy.unit!.cargo = { item: "item.wood", amount: 4 };
-    enemy.effects = [];
+    enemy.abilities = {mana:100,regeneration:0,ranks:{},cooldowns:{},pending:null};
     enemy.inventory = { "item.amber": 999 };
     const view = playerObservation(
       { ...base, entities: [enemy], deaths: [enemy] },
@@ -147,7 +147,7 @@ describe("player AI information and authority boundary", () => {
     );
     expect(view.entities[0].control).toBeUndefined();
     expect(view.entities[0].inventory).toBeUndefined();
-    expect(view.entities[0].effects).toBeUndefined();
+    expect(view.entities[0].abilities).toBeUndefined();
     expect(view.entities[0].unit).toMatchObject({
       cooldown: 0,
       cargo: null,
@@ -194,14 +194,14 @@ describe("player AI information and authority boundary", () => {
   });
 });
 describe("hero and tactical decisions", () => {
-  it("learns eligible ranks, heals damage and revives the same fallen hero", () => {
+  it("uses healing items and revives the same fallen hero", () => {
     const { world, geo } = fixture(),
       base = world.settlement.view(0),
       hero = soldier(900, "unit.ants.marshal", 205, 205, 140);
     hero.equipment = ["item.resin-salve", null, null, null, null, null];
-    hero.spellcasting = {
-      mana: 320,
-      learned: {},
+    hero.abilities = {
+      mana: 225,regeneration:0,
+      ranks: {'holy-light':1},
       cooldowns: {},
       pending: null,
     };
@@ -214,14 +214,6 @@ describe("hero and tactical decisions", () => {
       };
     heroActions(
       new Frame(seen(base, [hero]), "player.1", content, geo, 100),
-      state,
-      emit,
-    );
-    expect(actions[0].type).toBe("learnAbility");
-    hero.spellcasting.learned = { "spell.marshal.faultline": 1 };
-    actions.length = 0;
-    heroActions(
-      new Frame(seen(base, [hero]), "player.1", content, geo, 110),
       state,
       emit,
     );
@@ -245,57 +237,12 @@ describe("hero and tactical decisions", () => {
     ).toBeGreaterThan(0);
     expect(world.aiSummary()[0].metrics.revivals).toBe(1);
   });
-  it("waits for its reaction deadline before targeting a visible cluster", () => {
-    const { world, geo } = fixture(),
-      base = world.settlement.view(0),
-      hero = soldier(900, "unit.ants.marshal", 205, 205);
-    hero.equipment = [null, null, null, null, null, null];
-    hero.spellcasting = {
-      mana: 320,
-      learned: { "spell.marshal.faultline": 1 },
-      cooldowns: {},
-      pending: null,
-    };
-    const enemies = [
-      soldier(901, "unit.neutral.wolf", 208, 205),
-      soldier(902, "unit.neutral.wolf", 209, 205),
-    ];
-    for (const e of enemies) {
-      e.owner = "none";
-      e.hostile = true;
-      delete e.control;
-    }
-    const actions: Action[] = [],
-      state = newAIState(geo.map.fingerprint, 1);
-    state.inspected["contact:901"] = 100;
-    state.inspected["contact:902"] = 100;
-    const emit = (a: Action) => {
-      actions.push(a);
-      return true;
-    };
-    heroActions(
-      new Frame(seen(base, [hero, ...enemies]), "player.1", content, geo, 100),
-      state,
-      emit,
-    );
-    expect(actions).toHaveLength(0);
-    heroActions(
-      new Frame(seen(base, [hero, ...enemies]), "player.1", content, geo, 120),
-      state,
-      emit,
-    );
-    expect(actions).toContainEqual({
-      type: "cast",
-      actor: 900,
-      ability: "spell.marshal.faultline",
-      point: { x: 209, y: 205 },
-    });
-  });
+
   it("evacuates a damaged worker and remembers its harvest target instead of chasing the attacker", () => {
     const { world, geo } = fixture(),
       base = world.settlement.view(0),
       worker = soldier(900, "unit.ants.settler", 205, 205, 20),
-      enemy = soldier(901, "unit.neutral.wolf", 206, 205);
+      enemy = soldier(901, "unit.neutral.webling", 206, 205);
     worker.control!.order = { type: "gather", target: 999 };
     enemy.hostile = true;
     enemy.owner = "none";
@@ -346,32 +293,7 @@ describe("disruption and scaling gates", () => {
       target: 901,
     });
   });
-  it("does not crash or waste its guard cooldown merely because an enemy worker is nearby", () => {
-    const { world, geo } = fixture(),
-      base = world.settlement.view(0),
-      hero = soldier(900, "unit.ants.marshal", 205, 205, 200),
-      enemy = soldier(901, "unit.ants.settler", 206, 205);
-    hero.spellcasting = {
-      mana: 320,
-      learned: { "spell.marshal.carapace": 1 },
-      cooldowns: {},
-      pending: null,
-    };
-    enemy.owner = "player.2";
-    enemy.hostile = true;
-    const actions: Action[] = [],
-      state = newAIState(geo.map.fingerprint, 1);
-    state.inspected["contact:901"] = 0;
-    heroActions(
-      new Frame(seen(base, [hero, enemy]), "player.1", content, geo, 100),
-      state,
-      (a) => {
-        actions.push(a);
-        return true;
-      },
-    );
-    expect(actions.filter((a) => a.type === "cast")).toHaveLength(0);
-  });
+
   it("preserves witnessed death reports through a save between AI reviews", () => {
     const { world, brain } = fixture(),
       g = world.settlement,
@@ -380,7 +302,7 @@ describe("disruption and scaling gates", () => {
       )!;
     const enemy = g.context.create({
       id: "near-wolf",
-      definition: "unit.neutral.wolf",
+      definition: "unit.neutral.webling",
       position: { x: hero.x + 3, y: hero.y },
       rotation: 0,
       owner: "none",

@@ -161,7 +161,8 @@ uniform sampler2D bloomNear,bloomMid,bloomFar,contactTexture;
 uniform vec2 contactSize;
 uniform float contactStrength,bloomStrength,lookExposure,lookContrast,lookSaturation,splitStrength,shadowLift,vignetteStrength,highlightShoulder;
 uniform vec3 shadowTint,highlightTint;
-uniform vec2 sceneTexel;
+uniform vec2 sceneTexel,dofRange;
+uniform float dofRadius;
 // FXAA (Lottes' console variant) on the linear HDR scene. The scene target has no MSAA: on
 // tile GPUs a multisampled HalfFloat target stores every sample to memory and resolves it,
 // which cost ~5 ms at 3200 × 1800. Luma is tonemapped so bright HDR edges don't dominate.
@@ -180,6 +181,36 @@ vec3 sceneAntialiased(vec2 uv){
  vec3 b=a*.5+.25*(texture2D(sceneColor,uv-dir*.5).rgb+texture2D(sceneColor,uv+dir*.5).rgb);
  float lb=aaLuma(b);
  return lb<lo||lb>hi?a:b;
+}
+// Far-only disk aperture. A depth rejection keeps focused silhouettes crisp instead
+// of smearing nearby foliage over the distant forest. Never samples hidden geometry:
+// sceneColor has already received FoW, with a visibility boundary rejection below.
+float lensBlur(vec3 p){
+ float distance=dot(cameraWorld[3].xyz-p,cameraWorld[2].xyz);
+ return smoothstep(dofRange.x,dofRange.y,distance);
+}
+vec3 sceneFocused(vec3 surface,float visibility){
+ if(dofRadius<=0.)return sceneAntialiased(vUv);
+ float coc=lensBlur(surface),radius=dofRadius*coc;
+ if(radius<.5)return sceneAntialiased(vUv);
+ vec3 color=texture2D(sceneColor,vUv).rgb;float weight=1.;
+ for(int i=0;i<24;i++){
+  float angle=float(i)*2.39996323;
+  float disk=sqrt((float(i)+.5)/24.);
+  vec2 uv=vUv+vec2(cos(angle),sin(angle))*disk*radius*sceneTexel;
+  if(any(lessThan(uv,vec2(0.)))||any(greaterThan(uv,vec2(1.))))continue;
+  vec3 sampleSurface=surfaceAt(uv);
+  float sampleCoc=lensBlur(sampleSurface);
+  float w=smoothstep(coc*.5,coc*.85,sampleCoc);
+  if(hasVisibility){
+   vec2 mapUV=(sampleSurface.xz+.5)/mapSize;
+   float seen=texture2D(visibilityMap,clamp(mapUV,0.,1.)).r;
+   if(any(lessThan(mapUV,vec2(0.)))||any(greaterThan(mapUV,vec2(1.))))seen=0.;
+   w*=1.-smoothstep(.05,.2,abs(seen-visibility));
+  }
+  color+=texture2D(sceneColor,uv).rgb*w;weight+=w;
+ }
+ return color/weight;
 }
 float contactShade(vec3 surface){
  if(contactStrength<=0.)return 1.;
@@ -250,7 +281,7 @@ void main(){
  float visibility=1.;
  if(hasVisibility){vec2 uv=(surface.xz+.5)/mapSize;visibility=texture2D(visibilityMap,clamp(uv,0.,1.)).r;
  if(any(lessThan(uv,vec2(0.)))||any(greaterThan(uv,vec2(1.))))visibility=0.;}
- vec3 color=sceneAntialiased(vUv)*contactShade(surface);
+ vec3 color=sceneFocused(surface,visibility)*contactShade(surface);
  // Large continuous shade retains sky fill; apply it to bloom as well so
  // unshaded diffuse highlights cannot wash light back into the canopy shade.
  float canopyLight=1.-overheadShade(surface)*canopyStrength*visibility;

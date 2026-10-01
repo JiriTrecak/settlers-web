@@ -1,4 +1,5 @@
 // Oakfall Hollow: the mega-scenery showcase must still be a fair, fully connected skirmish map.
+import {CAMP_LOOT,campCompositions} from "../../src/content/campCompositions";
 import {beforeAll,describe,expect,it} from 'vitest';
 import {readFileSync} from 'node:fs';
 import {Game} from '../../src/sim/game/game';
@@ -54,17 +55,33 @@ describe('Oakfall Hollow',()=>{
    for(const start of starts)expect(game.spatial.findPath(start,near(mine.position.x,mine.position.y,10)),mine.id).not.toBeNull();
  });
  it('mirrors reachable neutral camps that never leash into a base',()=>{
-  expect(map.camps).toHaveLength(14);
+  // Light roster: small and medium camps only, one pair each.
+  expect(map.camps).toHaveLength(8);
+  const tier=new Map(campCompositions.map(c=>[CAMP_LOOT[c.difficulty],c.difficulty]));
+  expect(map.camps.map(c=>tier.get(c.lootPool!)).sort()).toEqual(['medium','medium','medium','medium','small','small','small','small']);
   const starts=map.playerStarts.map(b=>near(b.x,b.z+14));
   for(const camp of map.camps){
    const twin=map.camps.find(c=>c.id===camp.id.replace(/[ab]$/,s=>s==='a'?'b':'a'))!;
    expect(twin.home).toEqual({x:map.size-camp.home.x,y:map.size-camp.home.y});
    for(const b of map.playerStarts)expect(Math.hypot(camp.home.x-b.x,camp.home.y-b.z),camp.id).toBeGreaterThan(camp.aggroRange+camp.leash+10);
+   const home=near(camp.home.x,camp.home.y);
+   for(const start of starts)expect(game.spatial.findPath(start,home),camp.id).not.toBeNull();
    for(const id of camp.members){
-    const p=precise(game.entities.find(e=>e.placement===id||e.id===id)!),at=game.spatial.cell({x:Math.round(p.x),y:Math.round(p.y)});
+    const p=precise(game.entities.find(e=>e.placement===id)!),at=game.spatial.cell({x:Math.round(p.x),y:Math.round(p.y)});
     expect(game.spatial.walkable(at),id).toBe(true);
-    for(const start of starts)expect(game.spatial.findPath(start,at),id).not.toBeNull();
+    expect(game.spatial.findPath(home,at),id).not.toBeNull();
    }
+  }
+ });
+ it('lets armies march base to base without pulling a camp',()=>{
+  const [a,b]=map.playerStarts.map(s=>near(s.x,s.z+14)) as [number,number];
+  const route=game.spatial.findPath(a,b)!.map(n=>game.spatial.point(n));
+  // Either symmetric twin of the shortest route is as likely as the one A* returns.
+  const routes=[...route,...route.map(p=>({x:map.size-p.x,y:map.size-p.y}))];
+  for(const camp of map.camps)for(const id of camp.members){
+   const p=precise(game.entities.find(e=>e.placement===id)!);
+   const closest=Math.min(...routes.map(q=>Math.hypot(q.x-p.x,q.y-p.y)));
+   expect(closest,id).toBeGreaterThan(camp.aggroRange+3);
   }
  });
  it.each([0,1])('walks a settler over brook bridge %i and back to ground',index=>{

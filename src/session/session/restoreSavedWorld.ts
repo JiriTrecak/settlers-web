@@ -1,10 +1,11 @@
+import type {ContentRegistry} from '../../content/registry';
 import {World} from "../../sim/world/world";
 import type {UtcMap} from "../../shared/map/utcmap";
 import type {LocalSave} from "../../shared/save/localSave";
 /** Validate a complete snapshot before the running scenario is destroyed. */
-export function restoreSavedWorld(save:LocalSave,map:UtcMap):World {
+export function restoreSavedWorld(save:LocalSave,map:UtcMap,registry?:ContentRegistry):World {
     const restored = new World({
-      map: map,
+      map: map,registry,
       slots: save.match.slots,
       seed: save.seed,
       company: save.match.company,

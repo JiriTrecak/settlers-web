@@ -1,0 +1,17 @@
+{
+  "provider": "Tripo Studio",
+  "model": "H3.1",
+  "uuid": "04e2a211-6594-4e87-830e-943264467b7e",
+  "url": "https://studio.tripo3d.ai/workspace/generate/04e2a211-6594-4e87-830e-943264467b7e",
+  "cost": 55,
+  "creditsBefore": 565,
+  "topology": "Triangle",
+  "targetTriangles": 4500,
+  "sourceImage": "reference.png",
+  "editableSource": "source.blend",
+  "blenderAdapter": "scripts/assets/build-neutral-creep.py",
+  "triangleBudget": 5000,
+  "triangles": 4284,
+  "textureBudget": 512,
+  "bodyFamily": "biped"
+}

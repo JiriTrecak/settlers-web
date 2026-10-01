@@ -1,3 +1,5 @@
+import type {InspectionShot} from '../../shared/camera/inspectionShot';
+import {ForestSurroundingsLayer} from '../canopy/forestSurroundings';
 import {biomeById,biomeLandscape,type ResolvedLandscape} from '../../content/biomes';
 import {PlacedGrass} from '../foliage/placedGrass';
 import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
@@ -109,6 +111,7 @@ export class Renderer {
   private readonly display: Display;
   private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
+  private readonly surroundings = new ForestSurroundingsLayer(this.scene);
   private readonly ceiling = new InteriorCeiling(this.scene);
   private readonly sceneryLights = new SceneryLights(this.scene);
   private readonly ortho = new OrthographicCamera();
@@ -296,6 +299,7 @@ export class Renderer {
     width: number,
     aspect: number,
     animationTime?: number,
+    inspection?: InspectionShot,
   ): HTMLCanvasElement {
     const w = Math.max(256, Math.min(2048, Math.round(width))),
       h = Math.round(w / Math.max(0.5, Math.min(3, aspect)));
@@ -312,9 +316,13 @@ export class Renderer {
         this.meadow.tick(animationTime * 1000);this.placedGrass.tick(animationTime*1000);
         this.props.tick(animationTime * 1000);
       }
-      const cam = this.threeCam();
-      this.camera.applyTo(cam, w, h);
+      const cam = inspection ? new PerspectiveCamera(inspection.fov,w/h,.08,180) : this.threeCam();
+      if(inspection){cam.position.fromArray(inspection.eye);cam.lookAt(new Vector3().fromArray(inspection.target));cam.updateMatrixWorld();}
+      else this.camera.applyTo(cam, w, h);
       this.settlement?.cameraOverlays(cam,this.display.canvas.clientHeight,this.camera.followingUnit);
+      // Units frozen outside the live view stay hidden for another camera unless woken for it.
+      cam.updateMatrixWorld();
+      this.settlement?.setViewFrustum(new Frustum().setFromProjectionMatrix(new Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),cam.coordinateSystem));
     this.updateAtmosphere(cam);
       this.weather.update(
         animationTime === undefined ? performance.now() : animationTime * 1000,
@@ -328,7 +336,7 @@ export class Renderer {
       gl.setRenderTarget(target);
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
-    this.cutaway.update(cam,this.camera.followingUnit||!(this.cutaway.active||this.interiorCutaway.value)?[]:this.settlement?.cutawaySubjects()??[]);
+    this.cutaway.update(cam,inspection||this.camera.followingUnit||!(this.cutaway.active||this.interiorCutaway.value)?[]:this.settlement?.cutawaySubjects()??[]);
       this.display.drawWorld(this.scene,cam,this.atmosphereFrame(animationTime===undefined?this.visualClock:animationTime*1000));
       const bytes = new Uint8Array(w * h * 4);
       gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
@@ -402,6 +410,7 @@ export class Renderer {
     this.ceiling.configure(this.size||256,landscape.environment);
     this.weather.configure(landscape.environment.weather);
     this.canopy.configure(landscape.environment.canopy,this.height?.size??256);
+    this.configureSurroundings();
     if (presetChanged) this.refreshEnvironment();
     this.sky.setInterior(!!landscape.environment.interior);
     this.sky.setHour(landscape.environment.hour);
@@ -419,7 +428,7 @@ export class Renderer {
     }
   }
   async ready(): Promise<void> {
-    await Promise.all([this.props.ready(),this.meadow.ready,this.placedGrass.ready,this.terrain?.material.ready,this.importedWater?.ready]);
+    await Promise.all([this.surroundings.ready,this.props.ready(),this.meadow.ready,this.placedGrass.ready,this.terrain?.material.ready,this.importedWater?.ready]);
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     this.settlement ??= new SettlementLayer(this.scene);
@@ -542,6 +551,7 @@ export class Renderer {
     this.height = field;
     this.sky.setProfile(biomeById(field?.biome).lightingProfile);
     if(previous?.biome!==field?.biome)this.setLandscape(this.authoredLandscape);
+    this.configureSurroundings();
     if(!surfaceOnly)this.updateCourses();
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
@@ -638,6 +648,12 @@ export class Renderer {
   previewEditorStamp(stamp:MapStamp):void {this.props.previewStamp(stamp);}
   previewEditorEntities(settlement:NonNullable<ViewSnapshot['settlement']>):void {
     if(this.height)this.settlement?.update(settlement,this.height,0,this.gameTimeScale);
+  }
+
+  /** Picking standalone workbench models; never issues gameplay commands. */
+  pickInspectionObject(clientX:number,clientY:number,objects:import('three').Object3D[]){
+    if(!this.aim(clientX,clientY))return null;
+    return this.ray.intersectObjects(objects,true)[0]?.object??null;
   }
 
   pickGameEntity(clientX: number, clientY: number): number | null {
@@ -820,12 +836,22 @@ export class Renderer {
     // update that placed them. Unchanged revisions return immediately.
     this.dew.set(this.props.contactRevision,this.props.dew);
     const weather=this.landscape.environment.weather;
-    return {canopy:this.canopy.frame(),sourceWater:this.importedWater,dew:this.dew,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:this.landscape.environment.atmosphere,postProcessing:this.landscape.environment.postProcessing,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
+    const close=this.surroundings.closeFactor,profile=biomeById(this.height?.biome).surroundings;
+    const atmosphere=profile&&close>0&&!this.landscape.environment.interior?{
+      ...this.landscape.environment.atmosphere!,enabled:true,density:0,
+      shaftDensity:profile.closeShaftDensity*close,baseHeight:0,heightFalloff:24,
+      sunStrength:2.8,sunTint:'#ffe6b1',
+    }:this.landscape.environment.atmosphere;
+    return {depthOfField:profile?.depthOfField&&close>0&&!this.landscape.environment.interior?{...profile.depthOfField,strength:close}:undefined,canopy:this.canopy.frame(),sourceWater:this.importedWater,dew:this.dew,sourceHeightOffset:this.height?.source?.source.heightOffset??-16,...this.sky.fogModifiers(),daytime:this.sky.daytime(),settings:atmosphere,postProcessing:this.landscape.environment.postProcessing,sun:this.sky.sun,visibility:this.fog?.texture,mapSize:this.height?.size??256,
       waterLevel:(this.height?.waterLevel??0)-.03,time:now,windX:weather?.windX??.4,windZ:weather?.windZ??.2,
       rain:weather?.kind==='rain'?weather.intensity:0};
   }
 
+  private configureSurroundings(){
+    this.surroundings.configure(biomeById(this.height?.biome).surroundings,this.height,this.canopy.frame(),!!this.landscape.environment.interior);
+  }
   private updateAtmosphere(cam: OrthographicCamera | PerspectiveCamera): void {
+    this.surroundings.update(cam,this.canopy.frame(),this.sky.sun,this.visualClock);
     const x = this.camera.targetX,
       z = this.camera.targetZ;
     const focus = new Vector3(x, this.height?.sample(x, z) ?? 0, z);
@@ -896,6 +922,7 @@ export class Renderer {
     this.previewCurve([]);
     this.meadow.destroy();this.placedGrass.destroy();
     this.weather.dispose();
+    this.surroundings.dispose();
     this.canopy.dispose();
     this.ceiling.dispose();
     this.cutaway.dispose();

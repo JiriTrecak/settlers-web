@@ -3,22 +3,30 @@
   "assets": [
     {
       "version": 1,
-      "id": "asset.icons.ability-ants-carapace",
-      "name": "Carapace",
-      "kind": "icon",
-      "revision": 1,
+      "id": "asset.effects.blizzard-ice",
+      "name": "Blizzard · falling ice",
+      "kind": "texture",
+      "revision": 4,
       "status": "published",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "blizzard",
+        "ice"
       ],
       "resources": [
         {
           "role": "image",
           "index": 1,
           "format": "png",
-          "sha256": "4a67e0126d4d4c2d5f7cd2319383f82f981c4cce72022a810f6c90baa289e873",
-          "bytes": 36180
+          "sha256": "ceeb01cc66f77d27a00eb228161d391a451469aca2ea79657c141d04c53d6d3f",
+          "bytes": 43906
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "19bb415d06ee990a6279103299c9d3b729dac521111cb0f6fecff14c642117c0",
+          "bytes": 685672
         }
       ],
       "usesGeometry": false,
@@ -34,43 +42,41 @@
       },
       "materials": [],
       "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.spell.carapace",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.ability-ants-carapace"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
       "provenance": {
-        "method": "migration",
-        "sourceHash": "4a67e0126d4d4c2d5f7cd2319383f82f981c4cce72022a810f6c90baa289e873"
+        "method": "generated",
+        "licenseNote": "Original imagegen ice shard, 2026-09-30. Single downward-pointing stylized cyan crystal on transparency; broad hand-painted facets, no scenery."
       }
     },
     {
       "version": 1,
-      "id": "asset.icons.ability-ants-crownfall",
-      "name": "Crownfall",
-      "kind": "icon",
-      "revision": 1,
+      "id": "asset.effects.holy-light-sigil",
+      "name": "Holy Light · floating sigil",
+      "kind": "texture",
+      "revision": 4,
       "status": "published",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "holy-light",
+        "sigil"
       ],
       "resources": [
         {
           "role": "image",
           "index": 1,
           "format": "png",
-          "sha256": "f33abd30b03f25931e29bc74f52bbebcd0e98a068e4870bc2a119a37dc73330a",
-          "bytes": 39666
+          "sha256": "749efa6d496fd4b4bac8d73e200ba6fda9955b1e801223a26f984a00faf6557e",
+          "bytes": 59294
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "730778b11d0ac12c8d4a9e4d240545f3cbfd97b547f2cbddf99139036903b241",
+          "bytes": 871760
         }
       ],
       "usesGeometry": false,
@@ -86,43 +92,41 @@
       },
       "materials": [],
       "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.spell.crownfall",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.ability-ants-crownfall"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
       "provenance": {
-        "method": "migration",
-        "sourceHash": "f33abd30b03f25931e29bc74f52bbebcd0e98a068e4870bc2a119a37dc73330a"
+        "method": "generated",
+        "licenseNote": "Original generated healing sigil source, 2026-09-30."
       }
     },
     {
       "version": 1,
-      "id": "asset.icons.ability-ants-faultline",
-      "name": "Faultline",
-      "kind": "icon",
-      "revision": 1,
+      "id": "asset.effects.holy-light-spark",
+      "name": "Holy Light · warm spark",
+      "kind": "texture",
+      "revision": 4,
       "status": "published",
       "tags": [
-        "ants-v1",
-        "migrated"
+        "effect",
+        "holy-light",
+        "particle"
       ],
       "resources": [
         {
           "role": "image",
           "index": 1,
           "format": "png",
-          "sha256": "53ad272cf5cae6f37c1dd8559300f2ac26c14ac0a2a9438d5d0b79be87e4066b",
-          "bytes": 39202
+          "sha256": "b1f2ab7e5cc8782d76369a37d4be597b7b6dc8456c9bd0ab529f97efdeacdb40",
+          "bytes": 43252
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "c3a7c2407ba90a57ee6d25c2c8f1f6af3c3e56bd71739c4b55f2f7e1f3a2a515",
+          "bytes": 556713
         }
       ],
       "usesGeometry": false,
@@ -138,23 +142,380 @@
       },
       "materials": [],
       "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.spell.faultline",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.ability-ants-faultline"
-            }
-          }
-        ],
+        "render": [],
         "scenery": []
       },
       "capabilities": {},
       "provenance": {
-        "method": "migration",
-        "sourceHash": "53ad272cf5cae6f37c1dd8559300f2ac26c14ac0a2a9438d5d0b79be87e4066b"
+        "method": "generated",
+        "licenseNote": "Original generated Holy Light particle source, 2026-09-30."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.living-roots",
+      "name": "living roots effect texture",
+      "kind": "texture",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "4f89b37a9b176fb27837dedaa31470332b93b772701fc16621f29ae4ec288181",
+          "bytes": 66822
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "8520c77b08f7619edb11dee866615025f5a7a01780187d270c231128f7f305ac",
+          "bytes": 2121102
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A game VFX cutout of a low circular cage of thick winding living roots viewed from the side in three quarter perspective, with 5 curled root tips pointing upward and tiny green leaves, glowing emerald veins. Empty transparent center so a character can be seen through it, transparent outside. Clean stylized painted wood, broad readable shapes. No ground, scene, text, or frame. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.seismic-crescent",
+      "name": "seismic crescent effect texture",
+      "kind": "texture",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2e0e90ad3bf99ee07b47a58fb1cce18077edb5c416b050a659d62598554a5341",
+          "bytes": 61262
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "8da01e3bd2a9b8923aba8d3d671c76fb5f6541b652b50480512d098111978d70",
+          "bytes": 2151549
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A single curved golden shockwave crescent, seen from above, bright hot amber leading edge on right and brown-gold dust trailing left, several large stylized stone fragments swept along. Transparent everywhere outside the crescent, no terrain floor, no background, no text. A bold polished fantasy RTS particle sprite. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.storm-hammer",
+      "name": "storm hammer effect texture",
+      "kind": "texture",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "effect"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "b3d3a2a128375685e2b7a00f88013e8456f528f16c021e55c9ee34c916a8460f",
+          "bytes": 98491
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "28cd20c738b6faae4d9df4fa2102b8eb06a06fd8bd1d75756a4432f2409ce6e5",
+          "bytes": 1672390
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A single chunky bronze fantasy war hammer seen diagonally in three quarter view, head at top right and handle at bottom left, with a compact halo of blue-white electrical sparks hugging its silhouette. No background. Readable and bold; hand painted stylized game sprite, no lettering. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.thorns-heart",
+      "name": "Thorns Aura · living heart",
+      "kind": "texture",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "bb7b540cfc5f21fa2c7e9fb2a35977694db0401328b30db7006903f02e9dbd49",
+          "bytes": 182102
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b6532d3ed71cc9a798fb1c6194269369dee54e4d8c7c90cbb07d826d669ac16b",
+          "bytes": 454
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.thorns-wreath",
+      "name": "Thorns Aura · bramble wreath",
+      "kind": "texture",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "9c2ce6cb8bf819b0642cdf5bdce1db5db12e07f2cdc3c018f78160cca6bad09e",
+          "bytes": 338530
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "49ed3eb43b66120184afcd37b471b44553af6b1268d6dcbe49fd8b3ad51601ef",
+          "bytes": 434
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.vampiric-crest",
+      "name": "Vampiric Aura · pulsing crest",
+      "kind": "texture",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "93b78323327031ef7b75ca8c55221821baa11ab1fb0167aec6b6c0fabe655763",
+          "bytes": 148841
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "fa651ec96be2ddf9eac2d40ec8bd55e67b2db9188d5dd7428e2227f903a928a0",
+          "bytes": 417
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.vampiric-wreath",
+      "name": "Vampiric Aura · rotating wreath",
+      "kind": "texture",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "effect",
+        "aura",
+        "ground",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "6cf49670af96f52211570e9f117236ff8279f392349e41b8cfb5c0ae2996a0db",
+          "bytes": 248129
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "d7b195da424b51c18f3ced2fe1f094c247a6e2a8426f035c1d15ec3f0cff0023",
+          "bytes": 412
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
       }
     },
     {
@@ -3525,6 +3886,651 @@
     },
     {
       "version": 1,
+      "id": "asset.icons.spell-blizzard",
+      "name": "Blizzard spell icon",
+      "kind": "icon",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "c19c5280fe58877dffa90c905816b30c2c20204ba0aee93fad9d5306f3768523",
+          "bytes": 46384
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "b6b7031f8ff1fa9aafdbd652b04b52aa0e40cb6077997e52da0011b51e9cdc34",
+          "bytes": 2723317
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-blizzard",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-blizzard"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen artwork. Prompt: Use case: stylized-concept. Create one square painted fantasy RTS spell command icon inspired by Warcraft III's readable hand-painted ability art. Original Blizzard icon: three large sharp cyan and ivory ice shards plunging diagonally downward through a dark cobalt magical snowstorm, the largest crystal dominates the center; strong motion streaks and one small icy impact star below. Navy background, saturated cobalt blue, cyan and cold white highlights. Bold chunky painterly facets, powerful light-dark contrast, restrained detail, readable at 48x48 pixels. Full bleed square, no UI frame, no lettering, no text, no watermark, no montage. Not photorealistic, not a flat vector."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-bloodlust",
+      "name": "bloodlust spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "44eea94530c8f8992f7f1928988435c06919e4843ce4daf0f88d8e7637de093d",
+          "bytes": 44790
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "aab7ada75ac8582cbbde8a3c77308730a835b4d7019dc4e39c147ad1c5e21b0c",
+          "bytes": 2397431
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-bloodlust",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-bloodlust"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A clenched orange-red armored ant fist surging with crimson magical energy, strong upward motion, warm amber highlight against burgundy shadows. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-chain-lightning",
+      "name": "chain lightning spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "c15e5f2a68001a4bee7d6d394dbb0fe8aad3ff3bd2992eb6c974c7efc017153e",
+          "bytes": 41123
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "c099498e717b87413a59f55bceffd87d82838e3ae18c8597bb8477e7da6f74bd",
+          "bytes": 1943170
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-chain-lightning",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-chain-lightning"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: Three distinct white-blue branching lightning arcs jumping between three glowing points across a deep cobalt background. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-dispel-magic",
+      "name": "dispel magic spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "8a7a2cefaacfa76133bf4d26839bccd9eaac941f36f03d4b24ce3d47e561d4bb",
+          "bytes": 47774
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "61c875d580647e0aa0259e435025fc74546200f0b3e68a791eaedb636c9f98fe",
+          "bytes": 2171030
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-dispel-magic",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-dispel-magic"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A brilliant pearl-white magical starburst breaking violet magical chains into glowing fragments, rich cerulean and gold light. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-entangling-roots",
+      "name": "entangling roots spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "9a68a03ada3d01a8dfd64e094b733668d85b51410fb445e4db610532305f350e",
+          "bytes": 43436
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "ef3090fafcfc03ab3e755a6c5321c8249139e9484c87023351d7a4738336c585",
+          "bytes": 2225665
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-entangling-roots",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-entangling-roots"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: Thick living emerald roots curling upward and trapping a dark boot, fresh leaves and green magical sparks against deep woodland shadows. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-feral-spirit",
+      "name": "feral spirit spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d7ac727bdc3422719fb42b0266b638cfa56e5b9355c32605a20dab50c259366c",
+          "bytes": 47218
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "5ca333b6da12dbe3852990b88539bfdcda6ac33feb2e97aff4c3836b8b9aea25",
+          "bytes": 2148332
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-feral-spirit",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-feral-spirit"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: Two spectral blue wolf heads, one forward and one profile, glowing pale cyan eyes and wisps of ghostly fur on deep indigo. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-holy-light",
+      "name": "Holy Light spell icon",
+      "kind": "icon",
+      "revision": 6,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d3bd31ba4cd94d3b208fd6ceb941b56c0f6130f5e627a91e9fc461db1617f76a",
+          "bytes": 43992
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "ed8bdbc5b679d4d6b7c52e52d25adf3960c5a6cb1f4039849ce6fd67dfa299db",
+          "bytes": 2194905
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-holy-light",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-holy-light"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen artwork. Prompt: Use case: stylized-concept. Create one square painted fantasy RTS spell command icon inspired by Warcraft III's readable hand-painted ability art. Original Holy Light icon: a luminous ivory-gold hand cupping a concentrated golden healing star, three broad shafts of sacred golden light descending into the palm, a simple curling golden halo above it. Dark ochre and deep brown background, intense lemon gold and warm ivory focal light. Bold chunky painterly shapes, powerful light-dark contrast, restrained detail, readable at 48x48 pixels. Full bleed square, no UI frame, no lettering, no text, no watermark, no montage. Not photorealistic, not a flat vector."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-shockwave",
+      "name": "shockwave spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "0215dae5c0c503c6c084fcd16e19e6a68ad9da02cb1bf771f7d85ab0e8bf2dfb",
+          "bytes": 47849
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "597f18c6bdaf218217528ec9b496749043bf14dfc2a176015ec63a54cf1b7931",
+          "bytes": 2578796
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-shockwave",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-shockwave"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A golden crescent of seismic force ripping across brown earth with large lifted rocks and a brilliant amber leading edge. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-storm-bolt",
+      "name": "storm bolt spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "501fc6771524620d1c7335967f5fdd784ab328e115abc1d321ff7403d9f2de4f",
+          "bytes": 46257
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "e4baf7a36167379e4163fd51b98f049c185d6b84b74777882cf608916c431ef5",
+          "bytes": 2357007
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-storm-bolt",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-storm-bolt"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: A massive bronze war hammer hurled diagonally forward, crackling with bright blue-white lightning, bold silhouette against deep navy. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-thorns-aura",
+      "name": "Thorns Aura",
+      "kind": "icon",
+      "revision": 1,
+      "status": "published",
+      "tags": [
+        "spell",
+        "aura",
+        "thorns",
+        "reflection",
+        "nature"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "72e464978a641b6e1f9bb8f7f7d5b08825520955c6b21c96aca176702d9429ac",
+          "bytes": 14744
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-thorns-aura",
+            "image": {
+              "asset": "asset.icons.spell-thorns-aura",
+              "role": "image",
+              "index": 1
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen thorn-heart artwork, reused as the command icon."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.icons.spell-vampiric-aura",
+      "name": "vampiric aura spell icon",
+      "kind": "icon",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "spell",
+        "command-icon"
+      ],
+      "resources": [
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2f408c88168c6a1018b72b393b28fc30f62581759a2d32c7a5370f4a4926990a",
+          "bytes": 44177
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "efba21c269e779c3d9b386fc38fcbd9b16baa0e3c12f17cbec205c08a93f61e4",
+          "bytes": 2241829
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "icon",
+        "render": [
+          {
+            "id": "asset.icons.spell-vampiric-aura",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.icons.spell-vampiric-aura"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original built-in imagegen. Prompt: Two curved ivory fangs framing a glowing crimson life essence, violet aura behind, rich wine red and purple shadows. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.icons.stat-armor-heavy",
       "name": "Armor Heavy",
       "kind": "icon",
@@ -3953,266 +4959,6 @@
       "provenance": {
         "method": "migration",
         "sourceHash": "d6926b485107ad84237eb4a7ec26f6d45b25f66b8446d0b49377e24069a0b263"
-      }
-    },
-    {
-      "version": 1,
-      "id": "asset.icons.unit-neutral-amberjaw-staglord",
-      "name": "Amberjaw Staglord",
-      "kind": "icon",
-      "revision": 1,
-      "status": "published",
-      "tags": [
-        "neutral-v1",
-        "migrated"
-      ],
-      "resources": [
-        {
-          "role": "image",
-          "index": 1,
-          "format": "png",
-          "sha256": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c",
-          "bytes": 12656
-        }
-      ],
-      "usesGeometry": false,
-      "transform": {
-        "scale": 1,
-        "pivot": [
-          0,
-          0,
-          0
-        ],
-        "up": "Y",
-        "forward": "+Z"
-      },
-      "materials": [],
-      "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.neutral.amberjaw-staglord",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-neutral-amberjaw-staglord"
-            }
-          }
-        ],
-        "scenery": []
-      },
-      "capabilities": {},
-      "provenance": {
-        "method": "migration",
-        "sourceHash": "c7020de7019f360939abd570395085f279d53e2e6a662163bc4005ae67e0c30c"
-      }
-    },
-    {
-      "version": 1,
-      "id": "asset.icons.unit-neutral-ogre",
-      "name": "Ogre",
-      "kind": "icon",
-      "revision": 1,
-      "status": "published",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "resources": [
-        {
-          "role": "image",
-          "index": 1,
-          "format": "png",
-          "sha256": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0",
-          "bytes": 34405
-        }
-      ],
-      "usesGeometry": false,
-      "transform": {
-        "scale": 1,
-        "pivot": [
-          0,
-          0,
-          0
-        ],
-        "up": "Y",
-        "forward": "+Z"
-      },
-      "materials": [],
-      "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.neutral.ogre",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-neutral-ogre"
-            }
-          }
-        ],
-        "scenery": []
-      },
-      "capabilities": {},
-      "provenance": {
-        "method": "migration",
-        "sourceHash": "4f30b06d74db9131feee12c5c2e9cdb038af9ffc77bfb659881f2258278d9fd0"
-      }
-    },
-    {
-      "version": 1,
-      "id": "asset.icons.unit-neutral-thornblade-matriarch",
-      "name": "Thornblade Matriarch",
-      "kind": "icon",
-      "revision": 1,
-      "status": "published",
-      "tags": [
-        "neutral-v1",
-        "migrated"
-      ],
-      "resources": [
-        {
-          "role": "image",
-          "index": 1,
-          "format": "png",
-          "sha256": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac",
-          "bytes": 11820
-        }
-      ],
-      "usesGeometry": false,
-      "transform": {
-        "scale": 1,
-        "pivot": [
-          0,
-          0,
-          0
-        ],
-        "up": "Y",
-        "forward": "+Z"
-      },
-      "materials": [],
-      "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.neutral.thornblade-matriarch",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-neutral-thornblade-matriarch"
-            }
-          }
-        ],
-        "scenery": []
-      },
-      "capabilities": {},
-      "provenance": {
-        "method": "migration",
-        "sourceHash": "0ce970d1ff4ff787f8fd75c7f9241cfa59a8de2bae547e383a0130e97a091bac"
-      }
-    },
-    {
-      "version": 1,
-      "id": "asset.icons.unit-neutral-thornspitter",
-      "name": "Thornspitter",
-      "kind": "icon",
-      "revision": 1,
-      "status": "published",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "resources": [
-        {
-          "role": "image",
-          "index": 1,
-          "format": "png",
-          "sha256": "e707f096c787280cb0068fdbb614cf65138ae8ac770d4f14b618b3b72e5fe160",
-          "bytes": 24413
-        }
-      ],
-      "usesGeometry": false,
-      "transform": {
-        "scale": 1,
-        "pivot": [
-          0,
-          0,
-          0
-        ],
-        "up": "Y",
-        "forward": "+Z"
-      },
-      "materials": [],
-      "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.neutral.thornspitter",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-neutral-thornspitter"
-            }
-          }
-        ],
-        "scenery": []
-      },
-      "capabilities": {},
-      "provenance": {
-        "method": "migration",
-        "sourceHash": "e707f096c787280cb0068fdbb614cf65138ae8ac770d4f14b618b3b72e5fe160"
-      }
-    },
-    {
-      "version": 1,
-      "id": "asset.icons.unit-neutral-wolf",
-      "name": "Wolf",
-      "kind": "icon",
-      "revision": 1,
-      "status": "published",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "resources": [
-        {
-          "role": "image",
-          "index": 1,
-          "format": "png",
-          "sha256": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d",
-          "bytes": 31839
-        }
-      ],
-      "usesGeometry": false,
-      "transform": {
-        "scale": 1,
-        "pivot": [
-          0,
-          0,
-          0
-        ],
-        "up": "Y",
-        "forward": "+Z"
-      },
-      "materials": [],
-      "bindings": {
-        "profile": "icon",
-        "render": [
-          {
-            "id": "icon.neutral.wolf",
-            "image": {
-              "role": "image",
-              "index": 1,
-              "asset": "asset.icons.unit-neutral-wolf"
-            }
-          }
-        ],
-        "scenery": []
-      },
-      "capabilities": {},
-      "provenance": {
-        "method": "migration",
-        "sourceHash": "714c247c83090f4e237b601a2fae2747c1dc5704bbd877a89cf9a18c49c9195d"
       }
     },
     {
@@ -22238,10 +22984,4494 @@
     },
     {
       "version": 1,
+      "id": "asset.models.units.neutral-barkguard",
+      "name": "Barkguard",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "7587ce396490547680131ac0ed8544f8453f96c2ec8ee5fbd804aed945515a9b",
+          "bytes": 1055164
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "fb087beb24f726a66a30d0fadfdecccd3d6613f180c2a557df1b52b60d65f6a7",
+          "bytes": 7585498
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "261b6ec9225ee1ab8c14171a19f0f36ea1bceff5a38a18aec5c9e531377d596a",
+          "bytes": 652091
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "41b69533099f9cee2b1e573a2a9a136e3a02b69b3c7bd9e121300972fb60d8cf",
+          "bytes": 560164
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "790ef62ef065c39db16d2bfa8594c3284b3a13a2d7f7b015e1a9405c5c1bc449",
+          "bytes": 14473
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "c0323c586340abcdfebd9a7b4996d11268a9bb72bcc53333bcc23d55fc221cbb",
+          "bytes": 519
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.barkguard",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.75,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-barkguard"
+            }
+          },
+          {
+            "id": "icon.neutral.barkguard",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-barkguard"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.918,
+          "height": 2.5,
+          "formationSpacing": 2.066
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-bloom-witch",
+      "name": "Bloom Witch",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "aa6311b799ba9f57fcf789d372d5520eda250e1d7fce158e2b5dfa9a0e2e6886",
+          "bytes": 1116120
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "597b1b20f9b1aba1dbae76ecd79b599cd64fc7815a0d7f864672289767e0619c",
+          "bytes": 7307795
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "0b2ea19c2938a61cceaf256b833d0b6e8756c7c6a7b6739d6071d6788066997d",
+          "bytes": 701251
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "4fd2247b8f390c261026b14b7ba9e1e834ecb4861f3a92f31420fccd542c2f9c",
+          "bytes": 546561
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "f05c167b6d76ded21e14917e82fddb8b28972ea2cbd46978a000112f325e84e2",
+          "bytes": 15783
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "2a801316308ecbdc504ba8866b6639f896df535b86fd89b1d2921e5cbb13b0ac",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.bloom-witch",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.8600000000000003,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-bloom-witch"
+            }
+          },
+          {
+            "id": "icon.neutral.bloom-witch",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-bloom-witch"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.6,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-briar-hulk",
+      "name": "Briar Hulk",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "5c316d4fd6896fd0edcfed51b1e3b4b7bc4ed79d381685cdcb2419921cbadf49",
+          "bytes": 1229304
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "d8ea938f1c3ded8f9f562d365e427bd392b4a16b47f31e4222bf5480e759708a",
+          "bytes": 9188887
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "bf356eb88b00f30d9143c4b42fdc74cd0161db9b75013c828c5bc8eebc86ce5f",
+          "bytes": 890487
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "f8289ccaf769b80a61e61ddf96805a60d950f910af69bd50576b436173920923",
+          "bytes": 593207
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "57f4ea89b8db3c396fff57afa72587685004311c97604d2876c1fa385f673a8c",
+          "bytes": 17312
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "9f94f9bcb756ecfa90f765c59e29e015173ef1cb68a619ff30bbf19b45c6d8db",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.briar-hulk",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.4100000000000006,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-briar-hulk"
+            }
+          },
+          {
+            "id": "icon.neutral.briar-hulk",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-briar-hulk"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 3.1,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-capling",
+      "name": "Capling",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "mushroom-circle",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "4a1c5634afc585adf93a0d84bd36f2ff14d071f3d7ba2c877d1f16bdc7e36484",
+          "bytes": 1122184
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "d5e7e4146a8e22c0ee8871d551a7bad431ef732c424202b1b36c4b92fb5db356",
+          "bytes": 8587081
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "ce8cdafbd0dfe515347a941c88e758379e17a01194a8f0565762220d7da1d44b",
+          "bytes": 726685
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "a284f56e15b758a81467c73a19d3d45f686b9592f323639304d502c0b43f9077",
+          "bytes": 560892
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "a9940447f5be041bbb101aa405cbee8b999ef5d5f0e51c21c2789df1eaaefe5c",
+          "bytes": 17093
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "e34ef76eb8323e588273b1bc2807c279422aaaf030bafab490625c7b0a2d0c79",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.capling",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.9800000000000002,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-capling"
+            }
+          },
+          {
+            "id": "icon.neutral.capling",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-capling"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.29,
+          "height": 1.8,
+          "formationSpacing": 0.652
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-corrupted-rootbeast",
+      "name": "Corrupted Rootbeast",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "82ec159e006e5be6fbd18dd36cbfdceaf75b91d5404ee01cda4eb4ed52c6e4c7",
+          "bytes": 1185664
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "210f1423daa5ec0d7f620000f974d8922ece34a8903932d3af28699030c33757",
+          "bytes": 8939282
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "3686079b6042a426d7d144585deb019dfa7dd85f7bc59a1221c842b102a0084f",
+          "bytes": 886982
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "2d5cdc281fd6e0ee51206b257e18a31f769e902f781c07c9333d6695657c6fbc",
+          "bytes": 614005
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "f8235e51aba28e9fd2ecd93292181d3807cf798aa0848ab46efef51b047cbaff",
+          "bytes": 19780
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "cd99bb3fcd591c5f63183b4066b6c1822da48a022e3bb3205c72dd5ef7c20042",
+          "bytes": 518
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.corrupted-rootbeast",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.3000000000000003,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-corrupted-rootbeast"
+            }
+          },
+          {
+            "id": "icon.neutral.corrupted-rootbeast",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-corrupted-rootbeast"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.918,
+          "height": 3,
+          "formationSpacing": 2.066
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-dew-sprite",
+      "name": "Dew Sprite",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "dewdrop-sprites",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6404b3cca650da424610d0dd616c4657dd0bd0a83aac8d28d68acbf8083b7b05",
+          "bytes": 1124404
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "e3235c2eb489bbbdd0fbfe482995a69b1aab2029256128b4b67c063c34220fa6",
+          "bytes": 7331579
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "bdeec4c730fba33fc10e21725d5f15caa39c3e0c9e1f084cb6fd34b20f211642",
+          "bytes": 630273
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "a3400845ccbe26c3d1f10d86a59f54f8b04958e91e1a1cebb2500caa042485fa",
+          "bytes": 468633
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "1b3270ce570cef9658f66006911d78f91d2bcee600af7c098699289df6065641",
+          "bytes": 11062
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "6237a90e91d1ec969e4524cad6baff4e63e699d071414ff0f0be6da1fa36dc74",
+          "bytes": 517
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.dew-sprite",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.87,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-dew-sprite"
+            }
+          },
+          {
+            "id": "icon.neutral.dew-sprite",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-dew-sprite"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.29,
+          "height": 1.7,
+          "formationSpacing": 0.652
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-hollow-stag",
+      "name": "Hollow Stag",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "5e6f85d3e244bc520b48e3fdd2c53e6a99f1e9141428d4a7957189d33861d7e7",
+          "bytes": 1173064
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "ade7d9072ee6751fed588aecad35815b0c9300b3d2a2a4c2202c610b54fca8cd",
+          "bytes": 8854476
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "74afd8c8b82e21f05bee2818284ad48ddf0580d173d8ec2bddd2c80a3403b66d",
+          "bytes": 558138
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "ea713bd3bf35652f97d972f699f8696fdeb9c695d8b9e634d15cf37a35cb39c8",
+          "bytes": 518949
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "669d0c225b6737ccca887e89ea5a097e35cc98cebf0f14ab90b51d00fc754d92",
+          "bytes": 11298
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "e18edb206882016eadfa29e5f119bd5ff2d2e5b402357a3a7326f42a77fa0800",
+          "bytes": 518
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.hollow-stag",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 4.4,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-hollow-stag"
+            }
+          },
+          {
+            "id": "icon.neutral.hollow-stag",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-hollow-stag"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 1.331,
+          "height": 4,
+          "formationSpacing": 2.995
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-hornet-guard",
+      "name": "Hornet Guard",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "7e636247ed3d32d522d5dcc8c2b6a07a84b52f0916778dfa2e698dd5f4f77640",
+          "bytes": 1120504
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "532c2f91cca704e9079f5079cc3140d42cd4f037af8aa259bba4b001547231ff",
+          "bytes": 8468546
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "4c006772eef54f909d118bd7aeecb6da7acf08399432a2085e4f077c4b646a9f",
+          "bytes": 506080
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "49f03410fda9f2632402b6421741bd27f1c52142dba710ad8fd51d85fc4e690c",
+          "bytes": 510451
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "84e37a5e7835b39f646e05fbe234f0d4d3f6487e6afd9d793d36a19f3675b427",
+          "bytes": 12979
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "409675bd8b477607ad617aa0d2db09d9e5d3490fc1d1d473ec5d24f79674005f",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.hornet-guard",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.53,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-hornet-guard"
+            }
+          },
+          {
+            "id": "icon.neutral.hornet-guard",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-hornet-guard"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.3,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-needle-wasp",
+      "name": "Needle Wasp",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "aa42ce5e36f4f7b864597ced5c9e799f2da38e97841c7a50deb01cbf75546432",
+          "bytes": 1149032
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "058293ee064753a20818f8bea1e7a7f488b3904c6e35b798dbb432f273b5f446",
+          "bytes": 8463092
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "e8de69cb595794e9b179225b235cd22d01eb872ac7ca6d2dc4676b1699e97c20",
+          "bytes": 403778
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "f54b22aa632668a5f66c800f2e7fc7c1cbe4fb9df6e90d95df6be319a1f71217",
+          "bytes": 467015
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "33133aef3bbe449098a63974350b0d3be938789b7d3d7ce57ef9ae942df4229b",
+          "bytes": 10291
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "31cebaf404ceb57dc6873903d973f0055cdd9f2fc63f67986c96c022d904634f",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.needle-wasp",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.4200000000000004,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-needle-wasp"
+            }
+          },
+          {
+            "id": "icon.neutral.needle-wasp",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-needle-wasp"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.2,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-nest-mother",
+      "name": "Nest Mother",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hornet-raiders",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "004aead2e52567d479300f3b7e6bd767b319705f0760d94e46b279ecc433bf28",
+          "bytes": 1099992
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "3b7e2d10ffe8fbe71a1f32c2e3a18184835d7305fcbf9d37f2264d3e6c6bb7a8",
+          "bytes": 7410583
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "f35174073771f0984bcd3a1c7092167ff6d72eeea31960b8ad9ec18e70ca1d8b",
+          "bytes": 675410
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "7cfeea09c75beed7745a8b92d83f04b51af558204653602d50f33edeb1bb281d",
+          "bytes": 537642
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "a1339173ebc373d85978ee44719bd0da8cd628a027a69ee23297a6fed5f7043e",
+          "bytes": 15074
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "cd33b133bbd6b3d1e7a1501810595c6063a93b324d6ebcc47861e1f762968615",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.nest-mother",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.08,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-nest-mother"
+            }
+          },
+          {
+            "id": "icon.neutral.nest-mother",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-nest-mother"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.8,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-old-root",
+      "name": "Old Root",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "1111aba98f12dc51fef7d6483cb73c59ea0401cce413faa342c3e80756462e1b",
+          "bytes": 1103124
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "d59b8c83b22eef4aea4489d9a80d7985b5a71d18870626787ea1124769c79a42",
+          "bytes": 8056704
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "047e84fabda4df5900c130bdfbf9d01018de91a2f97cb65ea3abc942187baff2",
+          "bytes": 893125
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "ef98b622afb93cdbc6b4d8a383e5bbaf1e95d1a417c264258052994c5c10273b",
+          "bytes": 624707
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d8af2f44e8e26786bf76af3616998f846edb4ab3a87d95740b9c7f5bfc9cbaa2",
+          "bytes": 19676
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "f8a15dc9fba3cd97c2a3272a8826a56d072af3e05e372738c0c055250dc87b36",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.old-root",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.5200000000000005,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-old-root"
+            }
+          },
+          {
+            "id": "icon.neutral.old-root",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-old-root"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 3.2,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-puddle-wisp",
+      "name": "Puddle Wisp",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "dewdrop-sprites",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "cbb1163f267d89b4d4e6c7e16771b22fe8e190a6977bea39280a0345325945d6",
+          "bytes": 1038964
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "459332143d5a73ac8a24117ce394fb7bc3c596538c0b0dfa4a71960138fb99e8",
+          "bytes": 7262533
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "bffcae65931d1f2a7394e6b8f0cb7ff16f2cbc90707f3271226cd637ee2ed217",
+          "bytes": 574241
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "e7038dbf7b2dcb1a2482da8325037465f0005916a695b8bec66db3a83988e430",
+          "bytes": 489155
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "f050a24b52fc337a9ab19aa0b26066fc7bde0f7eac03d0c8325c7c36430db247",
+          "bytes": 12730
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "66afc0de1c7f6b5938c00a57797af8448692adcf662582b88258c74ddca02277",
+          "bytes": 517
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.puddle-wisp",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.6500000000000001,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-puddle-wisp"
+            }
+          },
+          {
+            "id": "icon.neutral.puddle-wisp",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-puddle-wisp"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.29,
+          "height": 1.5,
+          "formationSpacing": 0.652
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-puffcap",
+      "name": "Puffcap",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "mushroom-circle",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "dc1a1bf41e8d5e1e28d3280613e3b0da5dc770208935edef4177b6b2f8b39e80",
+          "bytes": 1101716
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5720ae94e9d72d1cdf35db27ced5b197106e33ad49bb1a56d090b7c4cdaf9dbd",
+          "bytes": 8031482
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "5e749e42ad4df48ab9aacdcf9567a3e963d6dfb9ad925f6abc8f7cc2c0c5a0fb",
+          "bytes": 655782
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "58d397dbec0df280323f395b52ab52f483b85e35619ab596edf587379ea8b8c5",
+          "bytes": 541907
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d3f545c4c427a46c66d6a62092231e4554a256bf490f9b4b03e9a8145f1d8fbb",
+          "bytes": 16521
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "e2a9bbd49dbaeb8593a58a2bbad21d8054536d9194bd5ff33f12c7fdee45a5a4",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.puffcap",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.9800000000000002,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-puffcap"
+            }
+          },
+          {
+            "id": "icon.neutral.puffcap",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-puffcap"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.29,
+          "height": 1.8,
+          "formationSpacing": 0.652
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-root-seer",
+      "name": "Root Seer",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "267b7dc063cd4c346ebce3df889a18e371c2ed081c225026079c1bb481d4eaec",
+          "bytes": 1178040
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "ba70bb8d978c0476c272c9fe51949c2392058a55056763d76b7d084d5dfc457e",
+          "bytes": 8303446
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "49fc18b594828b5b9d56d6f6d03b058bfd19763c1fbf61fa5b40c4d338aa88b5",
+          "bytes": 562647
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "e2566589cf54c380628a0e70c234054386e3d0e630f7ba18ba3f5eae7eabbad4",
+          "bytes": 566948
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "c658d0d988959a2af6785b68c68078e4b05f875167ea3166a6d85013344bb8fe",
+          "bytes": 16535
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "82d60f1f037b8133360e5b29eebfab9d22a19528dab9590b57f88b356a6fb79f",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.root-seer",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.08,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-root-seer"
+            }
+          },
+          {
+            "id": "icon.neutral.root-seer",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-root-seer"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.68,
+          "height": 2.8,
+          "formationSpacing": 1.53
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-rootling",
+      "name": "Rootling",
+      "kind": "unit",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "998d7be43aa175e19fcd3f196b6a5ea57ed1c150154d3e112a1944cf2195b579",
+          "bytes": 1100780
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "7e175841a2ee4d02f652bcad60bde9c8ead2be2b9f4315f31b3596a9c9efba98",
+          "bytes": 8049958
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "2ebc6fcc25b69d87c2ba53441162428d490e85e3ae834ea0d6a7475155d161b9",
+          "bytes": 790036
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "3add589e49790dcbf056cf2f558158f801ae832ad7ee536d869c1ae13b21a932",
+          "bytes": 562989
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "ef36605143086204efebb3eb12a465f15b441c8826b444582fcfe2f05565788c",
+          "bytes": 16753
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "db20ad4d7d6c7949168578b2bf77a8ada96e86943ffff1c424602ca9640f9249",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.rootling",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 3.08,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-rootling"
+            }
+          },
+          {
+            "id": "icon.neutral.rootling",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-rootling"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.8,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-rotwood-ancient",
+      "name": "Rotwood Ancient",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "adb320902b7d51d7b52d9d169ee1e955ed72a10007d426d97fea26f53291109d",
+          "bytes": 1239384
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "54a4c7e93bcb424111773aec3acda0fb3493aec8db9147286d84b2a4baf4e480",
+          "bytes": 9433347
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "1b8688f8e0c6ca4dbc65dc9ae991cd418ac39977619add5625527a995f4c12fa",
+          "bytes": 931703
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "d3dc7bc01f8dd31697b45da608005930cc0e54a4146388bbaa7b4214df62a30b",
+          "bytes": 617647
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "920cf0ff4afff81ff481d8150e8ee0f992004d65de77c311134b9efcd9bbd06d",
+          "bytes": 19531
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "776aa345642dcb3b3e9b3d6b5e40bb3d2cd19e218d5b923acccbb1261adf8da1",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.rotwood-ancient",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 4.620000000000001,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-rotwood-ancient"
+            }
+          },
+          {
+            "id": "icon.neutral.rotwood-ancient",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-rotwood-ancient"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.986,
+          "height": 4.2,
+          "formationSpacing": 2.219
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-seedcaster",
+      "name": "Seedcaster",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "briar-covenant",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "86030fcab652f530a1492e8e8e90095110729a85d40faa4af8c8a0a95317eb34",
+          "bytes": 1211612
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "3914591a357c531f6233106dbe6c5560431974e14ee263cfa210d046389868d5",
+          "bytes": 8710527
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "6dd8c55219613f451aba75a4847fb9bb1b00d05e24f375ea483516593145a588",
+          "bytes": 557316
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "bb2fc3a982bfbcd05fa3cdcfe503e22d679bee3fda8dc9dd5c85515edb310b0a",
+          "bytes": 553537
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "03da73bd269ffed7c83a4cf8829d7a3d7b6d34c397059e88e56af98796a3ff6d",
+          "bytes": 14490
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "3dcea6142c0095e33c2078833e5fb2b50875ce4785158a26780f2dcbeda6d826",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.seedcaster",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.75,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-seedcaster"
+            }
+          },
+          {
+            "id": "icon.neutral.seedcaster",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-seedcaster"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.5,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-spitter",
+      "name": "Spitter",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hungry-weblings",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "ae8f1626763d6511bc1cef907d0a1c5a50cb392436a89815bace584e8bda2975",
+          "bytes": 1102544
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a9fc7c5bb553786dafd905948d5951d5398d12f58151f1fd89f6dc29b72a9edd",
+          "bytes": 8003294
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "3fefc4b8b3a587295df7358f5533fb8be57058e8404b36879bc5ca94f49338f6",
+          "bytes": 803651
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "f6dd3d3a31852b4ea98305580173b3178deb8427972ca34ed2ba5a26cd17b64a",
+          "bytes": 555327
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2ccfe6d29eb9574d46341bcce68ec0002de49e8c24028f50dab3d854fbdce978",
+          "bytes": 16267
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "cbba40b09eff443eca058621360041d1c701671787d6ed920633fd62fe0d82fa",
+          "bytes": 576
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.spitter",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.4300000000000002,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-spitter"
+            }
+          },
+          {
+            "id": "icon.neutral.spitter",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-spitter"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.333,
+          "height": 1.3,
+          "formationSpacing": 0.75
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-tadpole-spirit",
+      "name": "Tadpole Spirit",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6f30281794b637431a0b9d5eff0fc2533c24d6a68a98f9f730ef9a187518e167",
+          "bytes": 1063524
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "a4da27ab0cc74868365a913a4a75a5deb29156021b4b67ec630b7112bc280be1",
+          "bytes": 7406317
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "43af3f5e33684b27e00911e94eb3cd331c4d5068f7f360c52c3a208f64dcf4df",
+          "bytes": 437872
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "5df7b369a565f263714e13eb0a0fe8fe4b3c310a24c251a75682458c3dfed176",
+          "bytes": 500322
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "dfe4380b1230704012f3d6d1244470e604330adfec87c5174ddece3f09f04029",
+          "bytes": 13373
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "c3d5bdd3fec34f2b3dfd535c1929937e941da9352e9da9bf200157b3aeeccebc",
+          "bytes": 516
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.tadpole-spirit",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.4300000000000002,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-tadpole-spirit"
+            }
+          },
+          {
+            "id": "icon.neutral.tadpole-spirit",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-tadpole-spirit"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 1.3,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-thorn-slinger",
+      "name": "Thorn Slinger",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "thornback-foragers",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "046a9ec85fa0330565601257bcce486dee7c9a8311f01aad20cd2b54662661c1",
+          "bytes": 1154376
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "097471029ffe121c355d824cf71217b959acb1c4929e4c791f22345e1cc9fc67",
+          "bytes": 8315822
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "5bf1217b09fc35cf0db93abc8f8d698997ef77aacc843bddf056c0f7f6452d85",
+          "bytes": 700814
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "ba9757cb8aa3e9c849ff3a0dc7b04d732cab332bcc240febe3408cb0103ca97e",
+          "bytes": 551416
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2690fd11df04eff4c77b51e904ba77ce2e590d6f297c65429dabab7a88531318",
+          "bytes": 14906
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "8f6fa2ded9d1187e9adb6e04b210cbb49b4a80465c5628a4c03b4d5f6ff6aec6",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.thorn-slinger",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.9800000000000002,
+            "projectile": "arrow",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-thorn-slinger"
+            }
+          },
+          {
+            "id": "icon.neutral.thorn-slinger",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-thorn-slinger"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.29,
+          "height": 1.8,
+          "formationSpacing": 0.652
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-tree-frog",
+      "name": "Tree Frog",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "c5514636e352a112147d487e63f3604ee4049b2da089b4d4ee8711149fe2f7f5",
+          "bytes": 989744
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "5412eb41f2d4d68fcab1337329396ecf7070be26e2ce4b992cbddddbd612e95f",
+          "bytes": 6818093
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "d99918c7eca8324a1b4d9903e2f6c483ac6c7403a499cf2bfe6d5b1785953101",
+          "bytes": 458733
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "7146f1a5934286e10dd45c63340dcc771413def9bf2971133ff4d3296f91b2fb",
+          "bytes": 475117
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "2909402874aa0ae852730642670f65570ff35e438189801dfcec760a05e782af",
+          "bytes": 10841
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "57560300c8a6d9b0e6fc93ee7dca6c38d788a8a1baa6d42cbce11178dbd537bf",
+          "bytes": 518
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.tree-frog",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.7600000000000002,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-tree-frog"
+            }
+          },
+          {
+            "id": "icon.neutral.tree-frog",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-tree-frog"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.567,
+          "height": 1.6,
+          "formationSpacing": 1.276
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-twigcaster",
+      "name": "Twigcaster",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rootbound-guardians",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "dc1d4e36a71a67124a753622e1c8bebab9aca3a01599bda2162a04184df5ff06",
+          "bytes": 1171868
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "511a002b1c312d799410fb84599e5fd1656d9fdba529f0ea72890b89869b825a",
+          "bytes": 8148665
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "c8c8e4b4de7cee68dc47229765c47d8c845e5a932c46a47a64703ea7fda0ed55",
+          "bytes": 576859
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "07b18477a5c2c8f7b7ffcf3d3bd404a39e2632770915095bfb566274f0111172",
+          "bytes": 504780
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "487b18d086b1b73e6d96fb15fd9b203d0db165fa79662934986fb6d1e4e28b70",
+          "bytes": 11975
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "22628948100e0b0f54c366e9165c09d4919fb817dc3e07110acdf5c6b01dad2e",
+          "bytes": 515
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.twigcaster",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.64,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-twigcaster"
+            }
+          },
+          {
+            "id": "icon.neutral.twigcaster",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-twigcaster"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.42,
+          "height": 2.4,
+          "formationSpacing": 0.945
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-violet-sporeling",
+      "name": "Violet Sporeling",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "rotwood-court",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "f71005a10b04e593d67e78faff51f813a0970aff32e70ec8a06410a0476911eb",
+          "bytes": 1123184
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "f137080cc8cc9bc60b3599fdbfd7b2158bf1345cf8ae3b2ec71a75ab03958fec",
+          "bytes": 7993724
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "f957012a182f6c1506476044e7e37a7cdfadc0742ac893eeed9cf1945badec2d",
+          "bytes": 657922
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "8f74c0604b0be142fb78a6684130bf184520b8930fed6ecaf737a605ec710b69",
+          "bytes": 555588
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "e2449403ced72099c19f6fbca78feea7a3c7d64f195cc06a70108e6267eef2b5",
+          "bytes": 17328
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "355bfe48a5c440286a73e70c7a9f9cfaf9d30827f80b42022a990739de06f0c1",
+          "bytes": 514
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.violet-sporeling",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.09,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-violet-sporeling"
+            }
+          },
+          {
+            "id": "icon.neutral.violet-sporeling",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-violet-sporeling"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.68,
+          "height": 1.9,
+          "formationSpacing": 1.53
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-webling",
+      "name": "Webling",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hungry-weblings",
+        "small",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "6a42c6dfa257b9368a2760227e5764635a7ad795f3ba861366a8db0947e81063",
+          "bytes": 1110392
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "68e28bfa127125abb9fca047d6155cc2b469a74112c6c2d46469fcdf49db12a4",
+          "bytes": 8206573
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "f240ee365c3081c3e7336b70a67ac7cd8ddb57602c0fabfa127f56e3992fba00",
+          "bytes": 463367
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "a720df3b0ff25a2b65cbbbeec6e1906c15f832c3ba71ccb8ab2e9aa01fb0a193",
+          "bytes": 519224
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d2a8fda8d03d3f4d91964a6e93b4e19a0dab9d6dfda6411c71225d711ef58f83",
+          "bytes": 14101
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "37a8da0bebe0f79e0ef6e92f47906974181c3591a894a0f8c883dac42d37e931",
+          "bytes": 516
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.webling",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 1.1,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-webling"
+            }
+          },
+          {
+            "id": "icon.neutral.webling",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-webling"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.333,
+          "height": 1,
+          "formationSpacing": 0.75
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-willow-wisp",
+      "name": "Willow Wisp",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "hollow-stag",
+        "hard",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "2becc1b3d1815652e1a5f83b1b65a0ca5baa21151ae33c38e9b9d04d13bb4205",
+          "bytes": 1144368
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "bb4bf96585e3e7409a6bc5f065478f3dd775949b645416f215ee550fb1a9ffbc",
+          "bytes": 7995625
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "ffcb5c7c694c8a8ce88c1d9428da032b48182469436a7ef8a420aa7cdd04a2d8",
+          "bytes": 646770
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "424cce9669d67d19c1d0d7e58da237fb12e316ddc0906b2383074b250066492b",
+          "bytes": 575623
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "3e8b56e20e7137d63acf2e76fdcb06889150d8bf851b3c7d2f15567716767754",
+          "bytes": 16947
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "8bc241b12c4566d4a7710c2258a3e1d31a9523887487051ac73deaf02095b797",
+          "bytes": 516
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.willow-wisp",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.2,
+            "projectile": "thorn",
+            "projectileSocket": "socket_projectile",
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-willow-wisp"
+            }
+          },
+          {
+            "id": "icon.neutral.willow-wisp",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-willow-wisp"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.68,
+          "height": 2,
+          "formationSpacing": 1.53
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "release",
+                "time": 0.7083333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [
+          {
+            "name": "projectile",
+            "node": "socket_projectile",
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.units.neutral-young-toad",
+      "name": "Young Toad",
+      "kind": "unit",
+      "revision": 2,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "bog-toad-hunters",
+        "medium",
+        "skinned",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "51f52b031e12f84cd80dc1c0629235875dc193db3d6915ff6022ef09abbb06da",
+          "bytes": 1050464
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "d2c7d54ce8e482848f5c671cc61a3bc703246d8de5d7c429daf72c595c031dde",
+          "bytes": 7596105
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "627569c9f820acaccefd662613472d1b61403b3bebcb7b820a4b3b4453a35bd4",
+          "bytes": 659999
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "c09c5a89a4799bdc249e0905db5a4df979588d1e994ef12144135b930cc02b98",
+          "bytes": 554914
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "b9d5631dfc94f94d8bb4d1f69d215e7ee15babd3328b05aaabc6aa17e2a9075f",
+          "bytes": 16177
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
+          "bytes": 12961
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "8d656f5ff004e80ddb734cc24850e7be61222b6f9e75fc59c4622b0329aaafde",
+          "bytes": 518
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "base",
+        "render": [
+          {
+            "id": "asset.neutral.young-toad",
+            "character": "base",
+            "scale": 1,
+            "healthHeight": 2.75,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.units.neutral-young-toad"
+            }
+          },
+          {
+            "id": "icon.neutral.young-toad",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.models.units.neutral-young-toad"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "dimensions": {
+          "radius": 0.567,
+          "height": 2.5,
+          "formationSpacing": 1.276
+        },
+        "animations": [
+          {
+            "semantic": "idle",
+            "clip": "idle",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "walk",
+            "clip": "walk",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "run",
+            "clip": "run",
+            "loop": true,
+            "events": []
+          },
+          {
+            "semantic": "attack",
+            "clip": "attack",
+            "loop": false,
+            "events": [
+              {
+                "name": "hit",
+                "time": 0.5833333333333333
+              }
+            ]
+          },
+          {
+            "semantic": "hit",
+            "clip": "hit",
+            "loop": false,
+            "events": []
+          },
+          {
+            "semantic": "death",
+            "clip": "death",
+            "loop": false,
+            "events": []
+          }
+        ],
+        "sockets": [],
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "prop",
-      "revision": 17,
+      "revision": 18,
       "status": "published",
       "tags": [
         "placeholder",
@@ -22542,57 +27772,6 @@
               "forward": 0.15,
               "distance": 7
             },
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.neutral.amberjaw-staglord",
-            "scale": 1,
-            "healthHeight": 2.8,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.neutral.ogre",
-            "scale": 1,
-            "healthHeight": 3.3,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.neutral.thornblade-matriarch",
-            "scale": 1,
-            "healthHeight": 4.1,
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.neutral.thornspitter",
-            "scale": 1,
-            "healthHeight": 2.5,
-            "projectile": "thorn",
-            "geometry": {
-              "role": "geometry",
-              "index": 1,
-              "asset": "asset.placeholder.missing-model"
-            }
-          },
-          {
-            "id": "asset.neutral.wolf",
-            "scale": 1,
-            "healthHeight": 1.9,
             "geometry": {
               "role": "geometry",
               "index": 1,

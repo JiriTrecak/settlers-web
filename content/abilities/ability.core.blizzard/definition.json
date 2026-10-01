@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.blizzard",
+  "name": "Blizzard",
+  "description": "Channel a storm over a fixed area. Six waves of falling ice strike enemies; moving or being stunned ends the storm.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 60,
+      "damage": 30,
+      "range": 18,
+      "radius": 5,
+      "waves": 6,
+      "intervalTicks": 40,
+      "cooldownTicks": 400
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": {
+      "rankParameter": "radius"
+    },
+    "maxTargets": 64,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "channel": {
+      "waves": {
+        "rankParameter": "waves"
+      },
+      "intervalTicks": {
+        "rankParameter": "intervalTicks"
+      }
+    },
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.blizzard"
+}

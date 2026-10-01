@@ -68,7 +68,7 @@ it('allows archers to see and shoot down, without revealing the upper deck to un
 });
 
 it('keeps neutral camp sight on the correct floor, then acquires troops at its own height',()=>{
- const m={...map(),entities:[{...placed('upper','unit.ants.warrior',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('sentry','unit.neutral.thornspitter',49,40),owner:'none' as const}],camps:[{id:'sentries',members:['sentry'],home:{x:49,y:40},aggroRange:10,leash:15,aggression:'players' as const}]};
+ const m={...map(),entities:[{...placed('upper','unit.ants.warrior',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('sentry','unit.neutral.spitter',49,40),owner:'none' as const}],camps:[{id:'sentries',members:['sentry'],home:{x:49,y:40},aggroRange:10,leash:15,aggression:'players' as const}]};
  const g=new Game(m,slots),upper=g.entities.find(e=>e.placement==='upper')!,sentry=g.entities.find(e=>e.placement==='sentry')!;
  expect(g.command('player.1',{type:'hold',actors:[upper.id]}).accepted).toBe(true);
  run(g,32);expect(sentry.unit!.target).toBeNull();expect(sentry.unit!.route).toHaveLength(0);

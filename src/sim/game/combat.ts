@@ -1,3 +1,4 @@
+import {spellControl} from '../abilities/statuses';
 import {elevatedPoint} from './garrisons';
 import {TargetIndex} from './targetIndex';
 import {routeToAttack} from './attackApproach';
@@ -7,7 +8,7 @@ import { Missiles } from "./missiles";
 import { ShellCombat } from "./shellCombat";
 import { maintainCharge, startCharge, chargeDamage } from "./charge";
 import { ItemEffects } from "./itemEffects";
-import { resolveDamage, guardReduction } from "./damage";
+import { resolveDamage } from "./damage";
 import {isStunned} from "./effects";
 import { atPoint, precise } from "./motion";
 import type { Camp, Owner } from "../../content/schema";
@@ -80,14 +81,14 @@ export class Combat {
         const victim = c.get(u.attack.target);
         if(victim && alive(victim) && this.perceives(e,victim))this.rememberTarget(e,victim);
         if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || u.target !== victim.id ||
-            isStunned(e,c.registry) || e.spellcasting?.pending || !this.perceives(e,victim)) delete u.attack;
+            (isStunned(e,c.registry)||spellControl(e,c.registry,"disarm")) || e.abilities?.pending || !this.perceives(e,victim)) delete u.attack;
         else if (!u.attack.released) {
           u.route = []; u.goal = null;
           if (u.cooldown > 0) u.cooldown--;
           continue;
         }
       }
-      if(e.spellcasting?.pending || isStunned(e,this.c.registry))continue;
+      if(e.abilities?.pending || (isStunned(e,this.c.registry)||spellControl(e,this.c.registry,"disarm")))continue;
       if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct" || order?.type === "garrison") {delete u.pursuit;continue;}
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
@@ -261,8 +262,17 @@ export class Combat {
     return this.items.absorb(target, resolveDamage(this.c.registry.rules, {
       armorType: this.c.def(target).body!.armorType,
       armor: this.c.stats(target).armor,
-      reductionPermille: guardReduction(this.c.registry.rules, target.effects),
     }, raw, type));
+  }
+  /** Direct ability delivery uses ordinary mitigation, item shields/rescue and XP. */
+  abilityHit(hit:DamageHit):{damage:number;dead:Entity[]}{
+    const a=this.c.get(hit.source)??(hit.owner?{id:hit.source,owner:hit.owner} as Entity:undefined),b=this.c.get(hit.target);
+    if(!a||!b||!alive(b)||b.hp===null)return {damage:0,dead:[]};
+    const damage=this.damage(b,hit.damage,hit.damageType),before=b.hp;
+    b.hp=Math.max(0,b.hp-damage);
+    const dead=!b.hp&&!this.items.rescue(b)?[b]:[];
+    if(dead.length&&this.opponents(a,b))new Progression(this.c).award(b,hero=>this.opponents(hero,b));
+    return {damage:Math.min(before,damage),dead};
   }
   resolve(extra:DamageHit[]=[]): Entity[] {
     extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve(), ...this.missiles.resolve()];
@@ -272,7 +282,7 @@ export class Combat {
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
-      if (a.spellcasting?.pending || isStunned(a,this.c.registry) || !combat || !b ||
+      if (a.abilities?.pending || (isStunned(a,this.c.registry)||spellControl(a,this.c.registry,"disarm")) || !combat || !b ||
           !alive(b) || b.hp === null || !this.perceives(a,b) ||
           (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a,b))) {
         delete u.attack;
@@ -291,15 +301,16 @@ export class Combat {
       const raw = chargeDamage(this.c,a,b);
       if (combat.projectile) { this.missiles.launch(a,b,raw); continue; }
       const damage = this.damage(b,raw,combat.damageType);
+      const actual=Math.min(damage,Math.max(0,b.hp!-(hits.get(b.id)??0)));
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
-      extra.push(...this.items.onHit(a, b, damage, combat.damageType));
+      extra.push(...this.items.onHit(a, b, actual, combat.damageType));
       if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
     }
     for(const hit of extra){
-      const a=this.c.get(hit.source),b=this.c.get(hit.target);
+      const a=this.c.get(hit.source)??(hit.owner?{id:hit.source,owner:hit.owner} as Entity:undefined),b=this.c.get(hit.target);
       if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null||b.unit?.garrison)continue;
       const damage=this.damage(b,hit.damage,hit.damageType);
-      if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,damage,hit.damageType));
+      if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0))),hit.damageType));
       hits.set(b.id,(hits.get(b.id)??0)+damage);
       if(damage>0 && (a ? this.opponents(a,b) : hit.owner !== b.owner && (hit.owner === "none" || b.owner === "none" || this.teams.get(hit.owner!) !== this.teams.get(b.owner))))contested.add(b.id);
     }

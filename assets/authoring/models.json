@@ -3957,6 +3957,2018 @@
     "scenery": []
   },
   {
+    "id": "asset.models.units.neutral-barkguard",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.918,
+        "height": 2.5,
+        "formationSpacing": 2.066
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-barkguard/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-bloom-witch",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.6,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-bloom-witch/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-briar-hulk",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 3.1,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-briar-hulk/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-capling",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-capling/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-corrupted-rootbeast",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.918,
+        "height": 3,
+        "formationSpacing": 2.066
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-dew-sprite",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.7,
+        "formationSpacing": 0.652
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-dew-sprite/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-hollow-stag",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 1.331,
+        "height": 4,
+        "formationSpacing": 2.995
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-hollow-stag/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-hornet-guard",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.3,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-hornet-guard/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-needle-wasp",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.2,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-needle-wasp/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-nest-mother",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.8,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-nest-mother/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-old-root",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 3.2,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-old-root/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-puddle-wisp",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.5,
+        "formationSpacing": 0.652
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-puffcap",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-puffcap/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-root-seer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.68,
+        "height": 2.8,
+        "formationSpacing": 1.53
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-root-seer/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-rootling",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.8,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-rootling/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-rotwood-ancient",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.986,
+        "height": 4.2,
+        "formationSpacing": 2.219
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-seedcaster",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.5,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-seedcaster/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-spitter",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.333,
+        "height": 1.3,
+        "formationSpacing": 0.75
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-spitter/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-tadpole-spirit",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-thorn-slinger",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.29,
+        "height": 1.8,
+        "formationSpacing": 0.652
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-tree-frog",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.567,
+        "height": 1.6,
+        "formationSpacing": 1.276
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-tree-frog/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-twigcaster",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.42,
+        "height": 2.4,
+        "formationSpacing": 0.945
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-twigcaster/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-violet-sporeling",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.68,
+        "height": 1.9,
+        "formationSpacing": 1.53
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-webling",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.333,
+        "height": 1,
+        "formationSpacing": 0.75
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-webling/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-willow-wisp",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.68,
+        "height": 2,
+        "formationSpacing": 1.53
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-willow-wisp/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.neutral-young-toad",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "dimensions": {
+        "radius": 0.567,
+        "height": 2.5,
+        "formationSpacing": 1.276
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.5833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.neutral-young-toad/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.placeholder.missing-model",
     "transform": {
       "scale": 1,

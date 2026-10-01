@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.dispel-magic",
+  "name": "Dispel Magic",
+  "description": "Remove dispellable positive and negative spell statuses in an area. Enemy summoned units also take 200 spell damage; auras and unremovable stuns remain.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 50,
+      "cooldownTicks": 80,
+      "damage": 200
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 5,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "dispel",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell",
+      "polarity": "all"
+    }
+  ],
+  "presentation": "presentation.core.dispel-magic"
+}

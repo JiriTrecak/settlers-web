@@ -68,7 +68,7 @@ A `.utcmap` placement refers to a definition, not a GLB filename:
 
 This instance starts damaged; its maximum HP still comes from the definition. The runtime allocates a numeric entity ID in stable authored-ID order. Moving the placement does not turn that ID into a different definition. Its map owner must have a player start. For a passive unowned object use `none`; aggression and direct control still require the relevant capability/policy.
 
-Placing `unit.neutral.wolf` through Editor → Entities writes an explicit camp record too. Editing raw JSON requires adding its placement ID to exactly one camp's `members`, with `home`, `aggroRange`, `leash` and `aggression`. The neutral model name is never inspected to discover a camp.
+Placing `unit.neutral.webling` through Editor → Entities writes an explicit camp record too. Editing raw JSON requires adding its placement ID to exactly one camp's `members`, with `home`, `aggroRange`, `leash` and `aggression`. The neutral model name is never inspected to discover a camp.
 
 ## Supply providers and trainers
 

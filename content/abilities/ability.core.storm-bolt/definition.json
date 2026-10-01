@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.storm-bolt",
+  "name": "Storm Bolt",
+  "description": "Hurl a lightning-charged bolt. It deals damage on impact and stuns the target; heroes recover sooner.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "projectile",
+    "speed": 18
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 320,
+      "damage": 100,
+      "duration": 200,
+      "heroDuration": 120
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "stunned",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "heroDuration": {
+        "rankParameter": "heroDuration"
+      },
+      "polarity": "negative",
+      "dispel": false,
+      "modifiers": {},
+      "stun": true
+    }
+  ],
+  "presentation": "presentation.core.storm-bolt"
+}

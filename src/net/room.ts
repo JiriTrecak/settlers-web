@@ -22,7 +22,7 @@ export class Room {
   private readonly dropped = new Set<number>();
   private readonly listeners: Array<(msg: ServerMsg) => void> = [];
 
-  constructor(readonly config: MatchConfig) {
+  constructor(readonly config: MatchConfig,private acceptingCommits=true) {
     for (const slot of config.slots) {
       this.through.set(slot.player, 0);
       this.held.set(slot.player, new Map());
@@ -108,7 +108,10 @@ export class Room {
     this.flush();
   }
 
+  releaseContentBarrier(){this.acceptingCommits=true;this.flush();}
+
   private flush(): void {
+    if(!this.acceptingCommits)return;
     while (this.ready(this.committed + 1)) {
       const tick = this.committed + 1;
       const slots = this.config.slots

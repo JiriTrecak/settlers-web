@@ -62,7 +62,7 @@ export type ClientMsg =
   | {type:'latencyReply';id:string}
   | { type: "chat"; text: string }
   | { type: "hello"; token: string }
-  | { type: "ready" }
+  | { type: "ready"; content: {abi:string;sha256:string}; build:string }
   | { type: "turn"; through: number; bundles: Bundle[] }
   | { type: "hash"; tick: number; checksum: number }
   | { type: "ended"; outcome: WireOutcome; tick: number; checksum: number }

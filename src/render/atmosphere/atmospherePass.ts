@@ -13,7 +13,7 @@ import {perf} from '../../debug/performance';
 import {compositeFragment,filterFragment,fullscreenVertex,marchFragment} from './shaders';
 
 export const atmosphereQualitySpec=(quality:AtmosphereQuality)=>quality==='high'?{scale:.66,steps:40,maxPixels:900_000}:quality==='low'?{scale:.33,steps:16,maxPixels:180_000}:{scale:.5,steps:24,maxPixels:360_000};
-export type AtmosphereFrame={canopy?:CanopyFrame;postProcessing?:PostProcessingSettings;sourceWater?:ImportedWater;dew?:DewLayer;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
+export type AtmosphereFrame={depthOfField?:{start:number;end:number;radius:number;strength:number};canopy?:CanopyFrame;postProcessing?:PostProcessingSettings;sourceWater?:ImportedWater;dew?:DewLayer;sourceHeightOffset?:number;daytime?:DaytimeSample;daytimeFogTint?:string;daytimeFogDistanceScale?:number;settings?:AtmosphereSettings;sun:DirectionalLight;visibility?:Texture;mapSize:number;waterLevel:number;time:number;windX:number;windZ:number;rain:number};
 /** Bounded raymarch and depth-aware filter, then full-resolution composite. No history buffer. */
 export class AtmospherePass {
  private readonly beauty=new BeautyPass();
@@ -35,7 +35,7 @@ export class AtmospherePass {
  private readonly filter=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:filterFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,fogTexture:{value:this.fogTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly composite=new ShaderMaterial({vertexShader:fullscreenVertex,fragmentShader:compositeFragment,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{...this.shared,
     bloomNear:{value:this.beauty.bloom[0].texture},bloomMid:{value:this.beauty.bloom[1].texture},bloomFar:{value:this.beauty.bloom[2].texture},contactTexture:{value:this.beauty.contact.texture},
-    contactSize:{value:new Vector2()},sceneTexel:{value:new Vector2()},contactStrength:{value:0},bloomStrength:{value:0},lookExposure:{value:1},lookContrast:{value:1},highlightShoulder:{value:0},lookSaturation:{value:1},shadowTint:{value:new Color()},highlightTint:{value:new Color()},splitStrength:{value:0},shadowLift:{value:0},vignetteStrength:{value:0},
+    dofRange:{value:new Vector2()},dofRadius:{value:0},contactSize:{value:new Vector2()},sceneTexel:{value:new Vector2()},contactStrength:{value:0},bloomStrength:{value:0},lookExposure:{value:1},lookContrast:{value:1},highlightShoulder:{value:0},lookSaturation:{value:1},shadowTint:{value:new Color()},highlightTint:{value:new Color()},splitStrength:{value:0},shadowLift:{value:0},vignetteStrength:{value:0},
     toneMappingExposure:{value:1},daytimeLutFrom:{value:this.daytimeLuts.textures.day},daytimeLutTo:{value:this.daytimeLuts.textures.day},daytimeLutBlend:{value:0},sourceReference:{value:false},hasVolumetrics:{value:false},hasDaytimeFog:{value:false},daytimeLutStrength:{value:0},daytimeFogColor:{value:new Color()},daytimeFogDensity:{value:0},daytimeFogDispersion:{value:0},daytimeFogStart:{value:0},daytimeFogHeight:{value:0},sceneColor:{value:this.sceneTarget.texture},fogTexture:{value:this.filteredTarget.texture},fogSize:{value:new Vector2()}}});
  private readonly quad=new Mesh(this.geometry,this.march);
  private shaderKey='';
@@ -46,7 +46,7 @@ export class AtmospherePass {
  render(gl:WebGLRenderer,scene:Scene,camera:Camera,frame:AtmosphereFrame,measure:(label:string,draw:()=>void)=>void=(_,draw)=>draw()):void {
   const quality=readAtmosphereQuality(),settings=frame.settings;
   const volumetrics=!!settings?.enabled&&quality!=='off';
-  if(!volumetrics&&!frame.daytime&&!frame.sourceWater&&!frame.postProcessing&&!frame.canopy){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
+  if(!volumetrics&&!frame.daytime&&!frame.sourceWater&&!frame.postProcessing&&!frame.canopy&&!frame.depthOfField){perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>gl.render(scene,camera));return;}
   const {scale,steps,maxPixels}=atmosphereQualitySpec(quality);const destination=gl.getRenderTarget();if(destination)this.size.set(destination.width,destination.height);else gl.getDrawingBufferSize(this.size);
   if(this.sceneTarget.width!==this.size.x||this.sceneTarget.height!==this.size.y)this.sceneTarget.setSize(this.size.x,this.size.y);
   const boundedScale=Math.min(scale,Math.sqrt(maxPixels/(this.size.x*this.size.y)));
@@ -81,6 +81,10 @@ export class AtmospherePass {
    settings.regions.forEach((r,i)=>{u.regions.value[i].set(r.x,r.y,r.z,r.density);u.regionShapes.value[i].set(r.radiusX,r.radiusY,r.radiusZ,0);});
    }
    const composite=this.composite.uniforms,look=frame.postProcessing??NEUTRAL_POST_PROCESSING;
+   // Only perspective close views use the biome lens. No additional render target or draw.
+   const dof=frame.depthOfField;
+   composite.dofRange.value.set(Math.max(0,dof?.start??0),Math.max((dof?.start??0)+1,dof?.end??1));
+   composite.dofRadius.value=dof&&quality!=='off'&&camera.projectionMatrix.elements[15]===0?Math.min(12,Math.max(0,dof.radius))*Math.min(1,Math.max(0,dof.strength))*this.size.y/1080:0;
    composite.contactStrength.value=look.contact.strength;composite.bloomStrength.value=look.bloom.strength;
    composite.highlightShoulder.value=look.highlightShoulder;composite.lookExposure.value=look.exposure;composite.lookContrast.value=look.contrast;composite.lookSaturation.value=look.saturation;
    composite.shadowTint.value.set(look.shadowTint).convertLinearToSRGB();composite.highlightTint.value.set(look.highlightTint).convertLinearToSRGB();

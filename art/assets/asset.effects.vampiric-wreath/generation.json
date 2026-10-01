@@ -1,0 +1,7 @@
+{
+  "provider": "OpenAI built-in imagegen",
+  "prompt": "Original top-down violet outer sigil: six clockwise bat-wing/fang hooks and broken arcs, hollow 60% centre, pale lavender-white luminous strokes, restrained violet halo, simple RTS shapes, transparent alpha and 12% padding. No text, perspective, ground or background.",
+  "transparentBackground": true,
+  "runtimeSize": 512,
+  "generated": "2026-10-01"
+}

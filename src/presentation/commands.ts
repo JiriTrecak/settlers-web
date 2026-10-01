@@ -1,3 +1,4 @@
+import {value,releaseEffects} from '../content/abilities/schema';
 import { supplyAdmission } from "../sim/game/supply";
 import {cameraModeName,nextCameraMode,type UnitCameraMode} from '../shared/camera/modes';
 import {prioritizeSelection} from "./selection";
@@ -7,18 +8,6 @@ import type { ActionName, Owner } from "../content/schema";
 import type { Action } from "../shared/types/types";
 import type { EntityView, SettlementView } from "../sim/game/observation";
 import { TICK_MS } from "../shared/match/match";
-
-/** Payload numbers come from the same rank that the cast command consumes. */
-function spellDetails(spell: ContentRegistry["rules"]["spells"][string], rank: ContentRegistry["rules"]["spells"][string]["ranks"][number], registry: ContentRegistry) {
-  return [
-    rank.damage ? `${rank.damage} ${registry.rules.damageTypes[spell.damageType].name.toLowerCase()} damage` : "",
-    rank.damageBonusPermille ? `+${rank.damageBonusPermille / 10}% attack damage` : "",
-    rank.reductionPermille ? `${rank.reductionPermille / 10}% incoming damage reduction` : "",
-    rank.durationTicks ? `${rank.durationTicks * TICK_MS / 1000}s duration` : "",
-    rank.stunTicks ? `${rank.stunTicks * TICK_MS / 1000}s unit stun; ${rank.stunTicks * registry.rules.heroStunDurationPermille / 1000 * TICK_MS / 1000}s against heroes` : "",
-    spell.damageTargetBudget ? `Damage shared beyond ${spell.damageTargetBudget} targets. Buildings cannot be stunned.` : "",
-  ].filter(Boolean).join(" · ");
-}
 
 export type CostView = {
   name: string;
@@ -43,8 +32,9 @@ export function inventoryCard(view:SettlementView,focusId:number|undefined,owner
 }
 export type CommandBinding = {
   id: string;
-  type: ActionName | "cast" | "learnAbility" | "revive" | "upgrade" | "cancelUpgrade" | "camera";
+  type: ActionName | "castAbility" | "learnAbility" | "revive" | "upgrade" | "cancelUpgrade" | "camera";
   ability?:string;
+  binding?:string;
   name: string;
   description: string;
   icon: string;
@@ -60,6 +50,8 @@ export type CommandBinding = {
   cooldown?: { remainingTicks: number; totalTicks: number };
   reason?: string;
   immediate?: Action;
+  alternate?: Action;
+  autocast?: boolean;
 };
 export type NavigationBinding = Omit<CommandBinding, "type" | "immediate"> & {
   type: "category" | "back";
@@ -359,26 +351,28 @@ export function commandCard(
     add("hold",movers,undefined,{type:"hold",actors:movers.map(e=>e.id)});
     add("patrol",movers);
     add("follow",movers);
-    const caster=controlled.filter(e=>e.definition===focus.definition).find(e=>e.spellcasting);
-    if(caster?.spellcasting){
-      const state=caster.spellcasting,policy=registry.get(caster.definition).behaviors.spellcasting!;
-      const level=caster.stats?.level??1,points=level-Object.values(state.learned).reduce((n,r)=>n+r,0);
-      for(const id of policy.abilities){
-        const spell=registry.rules.spells[id],learned=state.learned[id]??0,rank=spell.ranks[Math.max(0,learned-1)];
-        const remaining=Math.max(0,(state.cooldowns[id]??0)-view.revision);
-        const reason=state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<rank.mana?'Not enough mana':undefined;
-        if(learned>0)result.push({id:`cast:${id}`,type:'cast',ability:id,name:spell.name,icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,placement:spell.placement,column:spell.column,
-          description:`${spell.description}\n${spellDetails(spell,rank,registry)}\nRank ${learned}/${spell.ranks.length} · ${rank.cooldownTicks*TICK_MS/1000}s cooldown`,
-          cooldown:{remainingTicks:remaining,totalTicks:rank.cooldownTicks},
-          costs:[{kind:'mana',name:'Mana',icon:policy.manaIcon,amount:rank.mana}],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
-          ...(spell.target==='self'?{immediate:{type:'cast',actor:caster.id,ability:id} as Action}:{})});
-        const next=spell.ranks[learned];
-        if(next && points>0){
-          const reason=level<next.requiredLevel?`Requires level ${next.requiredLevel}`:undefined;
-          result.push({id:`learn:${id}`,type:'learnAbility',ability:id,name:`${spell.name} — Rank ${learned+1}`,description:`${spell.description}\n${spellDetails(spell,next,registry)}\nRequires level ${next.requiredLevel}. ${points} skill points available.`,
-            icon:spell.icon,hotkey:spell.hotkey,priority:spell.priority,category:policy.learningCategory,costs:[],actors:[caster.id],enabled:!view.outcome&&!reason,reason,
-            immediate:{type:'learnAbility',actor:caster.id,ability:id}});
+    const caster=controlled.filter(e=>e.definition===focus.definition).find(e=>e.abilities);
+    if(caster?.abilities){
+      const state=caster.abilities,policy=registry.get(caster.definition).behaviors.abilities!;
+      for(const binding of policy.bindings){
+        if(!binding.command||!binding.controls.includes('player'))continue;
+        const spell=registry.abilityLibrary.abilities.find(a=>a.id===binding.ability)!,learned=state.ranks[binding.id]??0;
+        const icon=binding.command.icon??registry.abilityLibrary.presentations.find(p=>p.id===spell.presentation)?.icon??registry.get(caster.definition).icon;
+        if(binding.learning&&learned<spell.ranks.length){
+          const level=caster.stats?.level??1,spent=policy.bindings.reduce((sum,b)=>sum+(state.ranks[b.id]??0)-b.initialRank,0),required=binding.learning.requiredLevels[learned];
+          const learnReason=state.pending?'Casting':level<required?`Requires level ${required}`:spent>=level?'No skill points available':undefined;
+          result.push({id:`learn:${binding.id}`,type:'learnAbility',ability:spell.id,binding:binding.id,name:`Learn ${spell.name}`,description:`${spell.description}\nRank ${learned+1}/${spell.ranks.length} · Requires level ${required}`,icon,costs:[],priority:60,category:'category.hero.skills',placement:'bottom-row',column:binding.command.column,hotkey:binding.command.hotkey,actors:[caster.id],enabled:!view.outcome&&!learnReason,reason:learnReason,immediate:{type:'learnAbility',actor:caster.id,ability:binding.id}});
         }
+        if(!learned)continue;
+        const rank=spell.ranks[learned-1],mana=value(spell.cast.cost.amount,rank),cooldown=Math.round(value(spell.cast.cooldown.ticks,rank)*(1000-(caster.stats?.cooldownReductionPermille??0))/1000);
+        const remaining=Math.max(0,(state.cooldowns[spell.id]??0)-view.revision);
+        const reason=spell.activation==='passive'?'Passive ability':state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<mana?'Not enough mana':undefined;
+        const details=spell.targeting.relations.map(relation=>`${relation}: ${releaseEffects(spell,learned,relation as 'ally'|'enemy').map(e=>`${e.amount} ${e.op}`).join(', ')}`).join(' · ');
+        const auto=spell.autocast&&(state.autocast?.[binding.id]??spell.autocast.enabledByDefault);
+        result.push({...((spell.targeting.kind==='self'&&spell.activation!=='passive')?{immediate:{type:'castAbility' as const,actor:caster.id,binding:binding.id,target:{kind:'unit' as const,entity:caster.id}}}:{}),
+          ...(spell.autocast?{autocast:!!auto,alternate:{type:'abilityAutocast' as const,actor:caster.id,binding:binding.id,enabled:!auto}}:{}),id:`cast:${binding.id}`,type:'castAbility',ability:spell.id,binding:binding.id,name:spell.name,icon,hotkey:binding.command.hotkey,priority:60,placement:'bottom-row',column:binding.command.column,
+          description:`${spell.description}\n${details}${spell.targeting.kind==='point'?` · radius ${value(spell.targeting.radius!,rank)}`:''}${spell.cast.channel?` · ${value(spell.cast.channel.waves,rank)} waves, ${value(spell.cast.channel.intervalTicks,rank)*TICK_MS/1000}s apart`:''}\nRank ${learned}/${spell.ranks.length} · ${cooldown*TICK_MS/1000}s cooldown`,
+          cooldown:{remainingTicks:remaining,totalTicks:cooldown},costs:[{kind:'mana',name:'Mana',icon,amount:mana}],actors:[caster.id],enabled:!view.outcome&&!reason,reason});
       }
     }
     const buildIds = new Set(

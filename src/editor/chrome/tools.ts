@@ -23,7 +23,6 @@ import {
   TreePine,
   Play,
   Sticker,
-  Sparkles,
   FileCode,
 } from "lucide";
 import type { GridMode } from "../../shared";
@@ -35,7 +34,6 @@ export type FileToolHooks = {
   onSaveAs(): void;
   onLoad(): void;
   onLeave(): void;
-  onEffects(): void;
   onMission(): void;
 };
 
@@ -64,7 +62,6 @@ export function fileTools(hooks: FileToolHooks): IconItem[] {
     { id: "save-as", label: "Export", icon: SaveAll, run: hooks.onSaveAs },
     { id: "load", label: "Load", icon: FolderOpen, run: hooks.onLoad },
     {id:"mission",label:"Mission & Lua",icon:FileCode,run:hooks.onMission},
-    { id: "effects", label: "Effects", icon: Sparkles, run: hooks.onEffects },
     { kind: "sep" },
     { id: "exit", label: "Exit", icon: LogOut, run: hooks.onLeave },
   ];

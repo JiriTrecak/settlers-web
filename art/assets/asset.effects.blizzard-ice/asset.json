@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.effects.blizzard-ice",
+  "name": "Blizzard · falling ice",
+  "kind": "texture",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "effect",
+    "blizzard",
+    "ice"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "ceeb01cc66f77d27a00eb228161d391a451469aca2ea79657c141d04c53d6d3f",
+      "bytes": 43906
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "19bb415d06ee990a6279103299c9d3b729dac521111cb0f6fecff14c642117c0",
+      "bytes": 685672
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original imagegen ice shard, 2026-09-30. Single downward-pointing stylized cyan crystal on transparency; broad hand-painted facets, no scenery."
+  }
+}

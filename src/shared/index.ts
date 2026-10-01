@@ -21,6 +21,7 @@ export {
   emptyUtcMap,
   mapFileName,
   parseUtcMap,
+  readUtcMap,
   stringifyUtcMap,
   UTCMAP_EXT,
   UTCMAP_VERSION,

@@ -17,6 +17,10 @@ These pages describe the maintained game and tools. Gameplay values come from `c
 - [Weather](expansion/weather.md), [atmosphere](expansion/volumetric-atmosphere.md), [graphics settings](expansion/graphics-settings.md)
 - [Spell effects](expansion/spell-effects.md), [unit cameras](expansion/unit-camera-modes.md), [team colors](declarations/team-color.md)
 
+## Proposed changes
+
+- [Declarative abilities architecture](design/abilities.md): proposed replacement for spells, including external publication, authoring, campaign bindings and lockstep. The current spell-effects page describes the implementation until this migration lands.
+
 ## Documentation policy
 
 Keep one current contract per system. Put implementation details beside the relevant source module when useful. Update the contract when behavior changes; remove superseded plans, copied audits, old map walkthroughs and temporary handoff notes. Git history provides change history.

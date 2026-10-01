@@ -1,3 +1,4 @@
+import {readAbilityLibrary} from './abilities';
 import {validateFiles} from '../asset-studio/server/manifest';
 import type { Plugin } from "vite";
 import { readFile, writeFile, rename, readdir, stat } from "node:fs/promises";
@@ -8,7 +9,7 @@ import {
   type ContentSource,
 } from "../../src/content/registry";
 
-async function readSource(file:string):Promise<ContentSource>{const raw=JSON.parse(await readFile(file,'utf8'));const manifest=JSON.parse(await readFile(resolve(file,'../../assets/manifest.json'),'utf8'));return {...raw,assets:manifest.records.flatMap((r:{render:unknown[]})=>r.render)};}
+async function readSource(file:string):Promise<ContentSource>{const raw=JSON.parse(await readFile(file,'utf8'));const manifest=JSON.parse(await readFile(resolve(file,'../../assets/manifest.json'),'utf8'));return {...raw,abilityLibrary:await readAbilityLibrary(resolve(file,'../..')),assets:manifest.records.flatMap((r:{render:unknown[]})=>r.render)};}
 async function validateModels(root: string, registry: ContentRegistry) {
   if(await stat(resolve(root,'.asset-work/publishing')).catch(()=>null))throw Error('Asset publication is in progress. Retry after it completes.');
   await validateFiles(root,JSON.parse(await readFile(resolve(root,'assets/manifest.json'),'utf8')));
@@ -66,7 +67,7 @@ export function contentAuthoring(): Plugin {
       // Content is a match contract. Saving a draft must neither mutate an
       // active simulation nor reload the world editor and discard its state.
       // Vite invalidates the module; an explicit page reload loads the revision.
-      if (context.file === resolve(root, "content/game.json")) return [];
+      if (context.file === resolve(root, 'content/game.json')||context.file.includes('/content/abilities/')) return [];
     },
     async buildStart() {
       const registry = new ContentRegistry(
@@ -126,6 +127,7 @@ export function contentAuthoring(): Plugin {
               );
               return;
             }
+            if(JSON.stringify(body.source.abilityLibrary)!==JSON.stringify(latest.abilityLibrary))throw Error('Manage abilities in Spell Editor.');
             if(JSON.stringify(body.source.assets)!==JSON.stringify(latest.assets))throw Error("Manage assets in Asset Studio.");
             const source = body.source as ContentSource,
               registry = new ContentRegistry(source);
@@ -148,7 +150,7 @@ export function contentAuthoring(): Plugin {
             }
             if (fingerprint(source) !== fingerprint(latest)) {
               const temporary = file + ".pending";
-              await writeFile(temporary, JSON.stringify({...source,assets:undefined}, null, 2) + "\n");
+              await writeFile(temporary, JSON.stringify({...source,assets:undefined,abilityLibrary:undefined}, null, 2) + "\n");
               await rename(temporary, file);
             }
             res.end(

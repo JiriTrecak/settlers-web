@@ -1,3 +1,4 @@
+import type {ForestSurroundings} from '../shared/landscape/forestSurroundings';
 import type {PostProcessingSettings} from '../shared/environment/postProcessing';
 import {FOREST,type GlobalLight} from '../shared/environment/presets';
 import {DEFAULT_ATMOSPHERE} from '../shared/landscape/atmosphere';
@@ -16,6 +17,7 @@ export type Biome = {
   terrainSet: 'temperate' | 'winter';
   /** breakup: 0..1 noise that frays a layer's coverage into bald and lush patches (see sourceTerrainShader). */
   terrainTiles?: Partial<Record<'soil'|'dirt'|'grass'|'waterbed'|'stones'|'rock', {ar:string; nh:string; tiling?:number; blend?:number; tint?:string; breakup?:number}>>;
+  surroundings?: ForestSurroundings;
   groundCover?: {radius:number; strength:number};
   minimap: {ground: string; grass: string; forest: string; crown: string};
   environment: EnvironmentState & {light:GlobalLight;postProcessing:PostProcessingSettings};
@@ -48,9 +50,18 @@ const AUTUMN_FINISH:PostProcessingSettings={
  bloom:{strength:.3,threshold:1,knee:.3,radius:4},
 };
 
+const FOREST_SURROUNDINGS:ForestSurroundings={
+ floorTexture:'asset.terrain.woodland-grass',floorColor:'#667747',
+ trunk:'mega-oak-trunk',mushroom:'mega-mushroom',log:'mega-fallen-log',
+ rings:[{distance:48,spacing:92,height:155},{distance:145,spacing:110,height:195},{distance:270,spacing:120,height:240}],
+ leafColors:['#365d24','#547c2b','#739235','#2e5027'],
+ hazeColor:'#c6d3b8',hazeStart:170,hazeEnd:850,closeShaftDensity:.0026,depthOfField:{start:60,end:260,radius:9},leafSpacing:16,leafLength:24,
+};
+
 /** Art direction and editor choices live here. Entries refer to published assets/recipes. */
 const BASE_BIOMES: readonly Biome[] = [{
   id: 'vibrant-forest',
+  surroundings:FOREST_SURROUNDINGS,
   name: 'Vibrant Forest',
   description: 'Warm exposed soil, patchy meadow grass, dense pines and clear woodland streams.',
   ground: 'soil',
@@ -75,6 +86,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   scenery: {prefixes: ['woodland-', 'leafbound-', 'canopy-'], default: 'woodland-moss-boulder'},
   landforms: [{id: 'recipe.terrain.hill', name: 'Woodland hill'}, {id:'recipe.terrain.bank',name:'Grassy banks'}, {id:'recipe.terrain.mountain',name:'Rocky mountains'}],
 }, {
+  surroundings:{...FOREST_SURROUNDINGS,floorTexture:'asset.terrain.winter-soil',floorColor:'#d1dbdb',leafColors:['#729c98','#9ebbb7','#e0e6dd','#4b746d'],hazeColor:'#c4d9e4'},
   id: 'frozen-forest', name: 'Frozen Forest',
   description: 'Snow-covered earth, frosted pines, winter undergrowth and cold meltwater channels.',
   ground: 'soil', lightingProfile:'winter', terrainSet: 'winter',
@@ -87,6 +99,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   scenery: {prefixes: ['frost-', 'canopy-ancient-tree'], default: 'frost-boulder'},
   landforms: [{id: 'recipe.terrain.hill', name: 'Snowy hill'}, {id:'recipe.terrain.bank',name:'Snowy banks'}, {id:'recipe.terrain.mountain',name:'Rocky mountains'}],
 }, {
+  surroundings:{...FOREST_SURROUNDINGS,leafColors:['#ad6128','#ce952e','#7c8131','#7a4226'],hazeColor:'#d7c3a2'},
   id: 'autumn-forest', name: 'Amberleaf Forest',
   description: 'Golden broadleaf crowns, copper leaf litter, dry woodland grass and warm earthen paths.',
   ground: 'soil', lightingProfile:'temperate', terrainSet: 'temperate',

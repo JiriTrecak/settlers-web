@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-feral-spirit",
+  "name": "feral spirit spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d7ac727bdc3422719fb42b0266b638cfa56e5b9355c32605a20dab50c259366c",
+      "bytes": 47218
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "5ca333b6da12dbe3852990b88539bfdcda6ac33feb2e97aff4c3836b8b9aea25",
+      "bytes": 2148332
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-feral-spirit",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-feral-spirit"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: Two spectral blue wolf heads, one forward and one profile, glowing pale cyan eyes and wisps of ghostly fur on deep indigo. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

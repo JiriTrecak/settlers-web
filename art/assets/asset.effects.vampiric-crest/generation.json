@@ -1,0 +1,7 @@
+{
+  "provider": "OpenAI built-in imagegen",
+  "prompt": "Original flat vampiric inner emblem: symmetrical angular bat-wing crest around a pointed blood-drop diamond, two fang hooks below. Pale lavender-white strokes with violet glow, bold RTS readability, no outer ring, text or background; real alpha and 20% transparent margin.",
+  "transparentBackground": true,
+  "runtimeSize": 512,
+  "generated": "2026-10-01"
+}

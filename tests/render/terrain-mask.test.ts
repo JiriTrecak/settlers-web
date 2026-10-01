@@ -3,6 +3,7 @@ import {it,expect,vi} from 'vitest';
 import {Texture,TextureLoader,DataTexture} from 'three';
 import {TerrainMaterial} from '../../src/render/terrain/terrainMaterial';
 import {HeightField,HEIGHT_ORIGIN} from '../../src/shared/map/height';
+vi.mock('../../src/render/terrain/sourceReflection',()=>({sourceReflection:()=>({texture:new Texture(),brdf:new Texture(),ready:Promise.resolve(),dispose(){}})}));
 it('edits roads and moss independently in their shared texture channels',()=>{
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture());
  const m=new TerrainMaterial(16),field=new HeightField(16);

@@ -1,9 +1,8 @@
-import { areaDamageScale, stunDuration } from "../game/damage";
-import { spellAreaContains } from "../../content/spellArea";
+import {abilityTargetScore,value} from '../abilities/ai';
 import type { EntityView } from "../game/observation";
 import type { AIState } from "./state";
 import type { Emit } from "./economy";
-import { Frame, ordinal, distance, integerPoint } from "./frame";
+import { Frame, distance } from "./frame";
 
 function itemValue(f: Frame, id: string | null) {
   const effect = id ? f.registry.get(id).itemEffect : null;
@@ -15,47 +14,24 @@ function itemValue(f: Frame, id: string | null) {
       ? effect.damage * 8 + effect.armor * 20 + effect.maxHp
       : effect.heal * 0.5;
 }
+export function abilityActions(f:Frame,emit:Emit){
+ for(const caster of [...f.own].sort((a,b)=>a.id-b.id)){
+  const state=caster.abilities;if(!state||state.pending||caster.control?.stunned)continue;
+  for(const binding of f.def(caster).behaviors.abilities?.bindings??[]){
+   if(!binding.ai||!binding.controls.includes('ai'))continue;
+   const ability=f.registry.abilityLibrary.abilities.find(a=>a.id===binding.ability)!,rank=state.ranks[binding.id];
+   if(ability.activation==='passive'||ability.autocast)continue;
+   if(!rank||(state.cooldowns[ability.id]??0)>f.tick||state.mana<value(ability.cast.cost.amount,ability.ranks[rank-1]))continue;
+   const range=value(ability.targeting.range,ability.ranks[rank-1]);
+   const candidates=[...f.own.map(e=>({e,relation:'ally' as const})),...f.hostiles.map(e=>({e,relation:'enemy' as const}))].filter(({e})=>e.unit&&(ability.targeting.kind!=='self'||e.id===caster.id)&&!e.remembered&&(e.hp??0)>0&&(e.id!==caster.id||ability.targeting.allowSelf)&&distance(e,caster)<=range)
+    .map(({e,relation})=>({e,score:abilityTargetScore(ability,rank,relation,e.hp!,e.stats?.maxHp??f.def(e).body!.maxHp,binding.ai!.preference)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.e.id-b.e.id);
+   if(candidates[0]&&emit({type:'castAbility',actor:caster.id,binding:binding.id,target:ability.targeting.kind==='point'?{kind:'point',position:{x:Math.round(candidates[0].e.x),y:Math.round(candidates[0].e.y)}}:{kind:'unit',entity:candidates[0].e.id}},'Cast a declared ability on a visible useful target'))break;
+  }
+ }
+}
 export function heroActions(f: Frame, s: AIState, emit: Emit) {
-  const preference = (id: string) => {
-    const i = f.registry.rules.ai.skillPreference.indexOf(id);
-    return i < 0 ? Number.MAX_SAFE_INTEGER : i;
-  };
   for (const hero of f.army.filter((e) => f.def(e).hero)) {
-    const d = f.def(hero),
-      casting = hero.spellcasting,
-      level = hero.stats?.level ?? 1;
-    if (casting) {
-      const spent = Object.values(casting.learned).reduce((a, b) => a + b, 0);
-      if (spent < level) {
-        const abilities = d.behaviors
-          .spellcasting!.abilities.map((id) => ({
-            id,
-            spell: f.registry.rules.spells[id]!,
-            learned: casting.learned[id] ?? 0,
-          }))
-          .filter((a) => a.spell.ranks[a.learned]?.requiredLevel <= level)
-          .sort((a, b) => {
-            const ultimate = (a: (typeof abilities)[number]) =>
-              a.spell.ranks.length === 1 && a.spell.ranks[0]!.requiredLevel > 1
-                ? 1
-                : 0;
-            return (
-              ultimate(b) - ultimate(a) ||
-              a.learned - b.learned ||
-              preference(a.id) - preference(b.id) ||
-              ordinal(a.id, b.id)
-            );
-          });
-        if (
-          abilities[0] &&
-          emit(
-            { type: "learnAbility", actor: hero.id, ability: abilities[0].id },
-            "Spend the hero skill point on an eligible rank",
-          )
-        )
-          continue;
-      }
-    }
+    const d=f.def(hero);
     const missing = (hero.stats?.maxHp ?? d.body!.maxHp) - (hero.hp ?? 0);
     const healing =
       hero.equipment?.findIndex((id, slot) => {
@@ -63,12 +39,12 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
         if (!effect || (hero.equipmentState?.[slot]?.readyTick ?? 0)>f.tick) return false;
         const active=effect.active;
         const heal=active?.heal ?? (effect.type==="consumable" ? effect.heal : 0);
-        const missingMana=(hero.stats?.maxMana ?? 0)-(hero.spellcasting?.mana ?? 0);
+        const missingMana=(hero.stats?.maxMana ?? 0)-(hero.abilities?.mana ?? 0);
         const fighting=f.hostiles.some(e=>e.unit && distance(hero,e)<(active?.radius || 8));
         if(heal>0 && missing>=Math.min(heal*.65,(hero.stats?.maxHp ?? 0)*.35)) return true;
         if(active?.mana && missingMana>=active.mana*.65) return true;
         if(active?.healMaxPermille && missing>=(hero.stats?.maxHp ?? 0)*.3) return true;
-        if(active?.reduceAbilityCooldownTicks) return fighting && Object.values(hero.spellcasting?.cooldowns ?? {}).some(t=>t-f.tick>200);
+        if(active?.reduceAbilityCooldownTicks) return fighting && Object.values(hero.abilities?.cooldowns ?? {}).some(t=>t-f.tick>200);
         return !!active && fighting && !!(active.damage || active.status);
 
       }) ?? -1;
@@ -85,91 +61,6 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
     const visibleEnemies = f.hostiles.filter(
       (e) => e.unit && distance(hero, e) < 18,
     );
-    const enemies = visibleEnemies.filter(
-      (e) =>
-        f.tick - (s.inspected[`contact:${e.id}`] ?? f.tick) >=
-        f.registry.rules.ai.reactionTicks,
-    );
-    if (enemies.length && casting) {
-      const candidates: {
-        id: string;
-        point?: { x: number; y: number };
-        score: number;
-      }[] = [];
-      for (const id of d.behaviors.spellcasting?.abilities ?? []) {
-        const spell = f.registry.rules.spells[id]!,
-          rankIndex = (casting.learned[id] ?? 0) - 1,
-          rank = spell.ranks[rankIndex];
-        if (
-          !rank ||
-          casting.mana < rank.mana ||
-          (casting.cooldowns[id] ?? 0) > f.tick
-        )
-          continue;
-        if (spell.effect === "guard") {
-          if (
-            (hero.hp ?? 0) / (hero.stats?.maxHp ?? 1) < 0.65 &&
-            enemies.some(
-              (e) =>
-                f.def(e).behaviors.combat &&
-                distance(e, hero) < f.def(e).behaviors.combat!.range + 3,
-            ) &&
-            !hero.effects?.some((e) => e.ability === id)
-          )
-            candidates.push({ id, score: 60 });
-        } else if (spell.effect === "rally") {
-          const allies = f.army.filter(
-            (e) =>
-              distance(e, hero) <= rank.radius &&
-              !e.effects?.some((b) => b.ability === id),
-          );
-          if (allies.length >= 3 && enemies.some((e) => distance(e, hero) < 10))
-            candidates.push({
-              id,
-              score: allies.reduce((sum, a) => sum + (a.stats?.damage ?? 0) * rank.damageBonusPermille / 1000, 0) * 3,
-            });
-        } else {
-          for (const target of enemies.slice(
-            0,
-            f.registry.rules.ai.limits.spellCandidates,
-          )) {
-            const p = integerPoint(target);
-            if (
-              distance(p, hero) > rank.range ||
-              !f.view.fog?.cells[f.geo.index(p)]
-            )
-              continue;
-            const effect = spell.effect;
-            const hits = enemies.filter(enemy => spellAreaContains(effect, hero, p, rank.radius, enemy));
-            const eligible = hits.filter(e => f.registry.rules.damageMultipliers[spell.damageType][f.def(e).body!.armorType] > 0);
-            const scale = areaDamageScale(spell.damageTargetBudget, eligible.length);
-            let score = 0;
-            for (const enemy of hits) {
-              score += Math.min(enemy.hp ?? 0, f.damage(enemy, rank.damage * scale, spell.damageType));
-              score += stunDuration(f.registry.rules, rank.stunTicks, !!enemy.unit, !!f.def(enemy).hero) * 0.75;
-            }
-            // Expensive ultimates require a cluster or a durable priority target.
-            if (score >= Math.max(35, rank.damage * 0.7))
-              candidates.push({ id, point: p, score });
-          }
-        }
-      }
-      candidates.sort((a, b) => b.score - a.score || ordinal(a.id, b.id));
-      const best = candidates[0];
-      if (
-        best &&
-        emit(
-          {
-            type: "cast",
-            actor: hero.id,
-            ability: best.id,
-            ...(best.point ? { point: best.point } : {}),
-          },
-          "Cast where the visible combat value justifies the cost",
-        )
-      )
-        continue;
-    }
     if (visibleEnemies.length || hero.control?.order?.type === "pickup")
       continue;
     const items = f.view.entities

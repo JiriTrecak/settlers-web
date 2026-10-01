@@ -102,9 +102,8 @@ it('a new spell cancels a local escape before turning toward its cast point',()=
  const {g,mover,placements}=fixture('unit.ants.marshal');
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  expect(mover.unit!.detour).toBeDefined();
- const spell='spell.marshal.faultline';g.spells.learn(mover,spell);
- const p=precise(mover);
- expect(g.spells.cast(mover,spell,{x:Math.round(p.x)+2,y:Math.round(p.y)})).toBeNull();
+ mover.hp=100;
+ expect(g.abilities.cast(mover.id,'holy-light',mover.id)).toBeNull();
  expect(mover.unit!.detour).toBeUndefined();
  const restored=game(placements);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
@@ -116,12 +115,12 @@ it('keeps self-spell visuals and saves at the hero’s precise position between 
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  const p=precise(mover),center={x:p.x,y:p.y};
  expect(Number.isInteger(p.x)).toBe(false);
- const spell='spell.marshal.rally';g.spells.learn(mover,spell);
- expect(g.spells.cast(mover,spell)).toBeNull();
- const cue=g.state.visuals.at(-1)!;
- expect(cue.origin).toEqual(center);expect(cue.target).toEqual(center);
+ const spell='ability.core.holy-light-lite';mover.hp=100;
+ expect(g.abilities.cast(mover.id,'holy-light',mover.id)).toBeNull();
+ const cue=g.abilities.observedEvents().at(-1)!;
+ expect(cue.origin).toEqual(center);expect(cue.point).toEqual(center);
  expect(cue.viewers).toContain('player.2');
  const restored=game(placements);restored.restore(g.snapshot());
  for(let n=0;n<25;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}
- expect(g.state.visuals.some(v=>v.ability===spell&&v.phase==='impact'&&v.target.x===center.x)).toBe(true);
+ expect(g.abilities.observedEvents().some(v=>v.ability===spell&&v.event==='released'&&v.point.x===center.x)).toBe(true);
 });

@@ -6,7 +6,7 @@ import {HeightField} from '../../src/shared';
 it('batches authoritative volleys, uses their impact time, and reuses buffers',()=>{
  const parent=new Group(),fx=new ProjectileEffects(parent),field=new HeightField();
  const shot=(id:number,definition='unit.ants.archer'):GameState['missiles'][number]=>({id,source:1,target:2,definition,owner:'player.1',origin:{x:0,y:0},destination:{x:10,y:0},launched:10,impact:22,damage:10,damageType:'piercing',viewers:['player.1'],resolved:false});
- const shots=Array.from({length:200},(_,i)=>shot(i+1));shots.push(shot(201,'unit.neutral.thornspitter'));
+ const shots=Array.from({length:200},(_,i)=>shot(i+1));shots.push(shot(201,'unit.neutral.spitter'));
  fx.update(16,shots,field);
  expect(fx.root.children).toHaveLength(2);
  const arrows=fx.root.getObjectByName('projectiles.arrow') as InstancedMesh,thorns=fx.root.getObjectByName('projectiles.thorn') as InstancedMesh;

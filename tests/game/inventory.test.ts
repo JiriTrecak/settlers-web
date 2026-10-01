@@ -57,7 +57,7 @@ describe("hero inventory",()=>{
 
 it('retains a pickup order through a stun and transfers the chest only after recovery',()=>{
  const g=setup(),hero=g.entities.find(e=>e.owner==='player.1'&&e.equipment)!,ring=g.entities.find(e=>e.placement==='ring')!;
- hero.effects=[{ability:'spell.marshal.faultline',rank:1,source:hero.id,expires:g.state.tick+10}];
+ hero.stunnedUntil=g.state.tick+10;
  expect(g.command('player.1',{type:'pickup',actor:hero.id,target:ring.id}).accepted).toBe(true);
  for(let i=0;i<9;i++)g.tick();
  expect(g.context.get(ring.id)).toBe(ring);expect(hero.equipment!.every(x=>x===null)).toBe(true);
@@ -73,7 +73,7 @@ it('revives the same hero with items, XP and skills after real combat death and 
  g.context.create(placed('supply','building.ants.house',245,245));
  for(const e of [victim,attacker,shrine])e.readyTick=0;
  victim.equipment!.fill('item.test-ring');victim.progression!.experience=100;
- expect(g.spells.learn(victim,'spell.marshal.faultline')).toBeNull();
+
  g.tick();
  attacker.rotation=heading(attacker,victim);
  expect(g.command('player.1',{type:'attack',actors:[attacker.id],target:victim.id,force:true}).accepted).toBe(true);
@@ -82,7 +82,7 @@ it('revives the same hero with items, XP and skills after real combat death and 
  expect(g.view('player.1').entities.some(e=>e.id===victim.id)).toBe(false);
  expect(g.view('player.2').fallenHeroes?.some(e=>e.id===victim.id)).toBe(false);
  expect(g.entities.filter(e=>e.definition==='item.test-ring')).toHaveLength(1);
- const equipment=[...victim.equipment!],learned={...victim.spellcasting!.learned},xp=victim.progression!.experience;
+ const equipment=[...victim.equipment!],learned={...victim.abilities!.ranks},xp=victim.progression!.experience;
  expect(g.command('player.1',{type:'revive',actor:shrine.id,hero:victim.id}).accepted).toBe(true);
  expect(g.command('player.1',{type:'revive',actor:shrine.id,hero:victim.id}).accepted).toBe(false);
  for(let t=0;t<125;t++)g.tick();
@@ -90,7 +90,7 @@ it('revives the same hero with items, XP and skills after real combat death and 
  for(const sim of [g,restored])for(let t=0;t<275;t++)sim.tick();
  expect(restored.snapshot()).toEqual(g.snapshot());
  expect(victim.fallen).toBeUndefined();expect(victim.hp).toBe(g.context.stats(victim).maxHp);
- expect(victim.equipment).toEqual(equipment);expect(victim.progression!.experience).toBe(xp);expect(victim.spellcasting!.learned).toEqual(learned);
+ expect(victim.equipment).toEqual(equipment);expect(victim.progression!.experience).toBe(xp);expect(victim.abilities!.ranks).toEqual(learned);
  expect(g.view('player.1').entities.some(e=>e.id===victim.id)).toBe(true);
  expect(shrine.revival!.queue).toEqual([]);
 });

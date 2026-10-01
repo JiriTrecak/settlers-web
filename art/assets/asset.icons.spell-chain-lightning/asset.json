@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "id": "asset.icons.spell-chain-lightning",
+  "name": "chain lightning spell icon",
+  "kind": "icon",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "spell",
+    "command-icon"
+  ],
+  "resources": [
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c15e5f2a68001a4bee7d6d394dbb0fe8aad3ff3bd2992eb6c974c7efc017153e",
+      "bytes": 41123
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "c099498e717b87413a59f55bceffd87d82838e3ae18c8597bb8477e7da6f74bd",
+      "bytes": 1943170
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "icon",
+    "render": [
+      {
+        "id": "asset.icons.spell-chain-lightning",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.icons.spell-chain-lightning"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original built-in imagegen. Prompt: Three distinct white-blue branching lightning arcs jumping between three glowing points across a deep cobalt background. Original square fantasy RTS command icon; hand-painted chunky shapes, high contrast; no text, frame or watermark."
+  }
+}

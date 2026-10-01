@@ -93,14 +93,27 @@ export function emptyUtcMap(size: MapSize = 256): UtcMap {
   };
 }
 
+/** Parsed map, or null when invalid. Use readUtcMap for the reason. */
 export function parseUtcMap(raw: unknown): UtcMap | null {
-  if (!raw || typeof raw !== "object") return null;
+  const read = readUtcMap(raw);
+  return "map" in read ? read.map : null;
+}
+
+/** First Zod issue as `path: message`, so a rejected map names the offending field. */
+function issue(label: string, error: z.ZodError): string {
+  const first = error.issues[0];
+  return `${[label, ...(first?.path ?? [])].join(".")}: ${first?.message ?? "invalid"}`;
+}
+
+/** Validate a `.utcmap` document; on rejection, say which field failed and why. */
+export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
+  const fail = (error: string) => ({ error });
+  if (!raw || typeof raw !== "object") return fail("Map must be a JSON object");
   const o = raw as Record<string, unknown>;
-  if (o.v !== UTCMAP_VERSION) return null;
-  if (
-    Object.keys(o).some(
-      (k) =>
-        ![
+  if (o.v !== UTCMAP_VERSION) return fail(`v: expected ${UTCMAP_VERSION}, got ${JSON.stringify(o.v)}`);
+  const unknown = Object.keys(o).find(
+    (k) =>
+      ![
           "v",
           "size",
           "name",
@@ -117,48 +130,52 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
           "authoring",
           "biome",
         ].includes(k),
-    )
-  )
-    return null;
-  if (o.size !== 256 && o.size !== 512 && o.size !== 1024 && o.size !== 2048) return null;
-  if (o.biome !== undefined && !BIOMES.some(b => b.id === o.biome)) return null;
+  );
+  if (unknown) return fail(`Unknown top-level key: ${unknown}`);
+  if (o.size !== 256 && o.size !== 512 && o.size !== 1024 && o.size !== 2048) return fail(`size: must be 256, 512, 1024 or 2048, got ${JSON.stringify(o.size)}`);
+  if (o.biome !== undefined && !BIOMES.some(b => b.id === o.biome)) return fail(`biome: unknown ${JSON.stringify(o.biome)}`);
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
-  if (!mission.success) return null;
+  if (!mission.success) return fail(issue("mission", mission.error));
   const authoring=authoringSceneSchema.optional().safeParse(o.authoring);
-  if(!authoring.success)return null;
-  if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return null;
-  if (o.sandbox && mission.data) return null;
+  if(!authoring.success)return fail(issue("authoring", authoring.error));
+  if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return fail("sandbox: must be a boolean");
+  if (o.sandbox && mission.data) return fail("A testbed (sandbox) cannot also be a mission");
   const starts = z.array(startSchema).min(mission.data || o.sandbox ? 1 : 2).max(o.sandbox ? 1 : 8).safeParse(o.playerStarts);
-  if (o.sandbox && starts.success && starts.data[0].player !== 1) return null;
+  if (o.sandbox && starts.success && starts.data[0].player !== 1) return fail("playerStarts.0.player: a testbed uses player 1");
   const placements = z.array(placementSchema).safeParse(o.entities),
     camps = z.array(campSchema).safeParse(o.camps);
-  if (!starts.success || !placements.success || !camps.success) return null;
+  if (!starts.success) return fail(issue("playerStarts", starts.error));
+  if (!placements.success) return fail(issue("entities", placements.error));
+  if (!camps.success) return fail(issue("camps", camps.error));
   const playerStarts = starts.data;
-  if (
-    playerStarts.some((p) => p.x >= size || p.z >= size) ||
-    placements.data.some((p) => p.position.x >= size || p.position.y >= size)
-  )
-    return null;
+  const outside = playerStarts.find((p) => p.x >= size || p.z >= size);
+  if (outside) return fail(`playerStarts: player ${outside.player} at ${outside.x},${outside.z} is outside the ${size} map`);
+  const stray = placements.data.find((p) => p.position.x >= size || p.position.y >= size);
+  if (stray) return fail(`entities: ${stray.id} at ${stray.position.x},${stray.position.y} is outside the ${size} map`);
   if (new Set(playerStarts.map((p) => p.player)).size !== playerStarts.length)
-    return null;
+    return fail("playerStarts: duplicate player number");
   if (
     o.description !== undefined &&
     (typeof o.description !== "string" || o.description.length > 1200)
   )
-    return null;
+    return fail("description: must be a string of at most 1200 characters");
   const description =
     typeof o.description === "string" ? o.description.trim() : undefined;
   const name = parseName(o.name);
   const stamps = parseStamps(o.stamps);
-  if (!name || !stamps) return null;
+  if (!name) return fail("name: must be a string");
+  if (!stamps) {
+    const bad = Array.isArray(o.stamps) ? o.stamps.findIndex((item) => !parseStamps([item])) : -1;
+    return fail(bad < 0 ? "stamps: must be an array" : `stamps.${bad}: invalid stamp ${JSON.stringify((o.stamps as {id?: unknown}[])[bad]?.id ?? null)}`);
+  }
   const waterLevel = parseWaterLevel(o.waterLevel);
-  if (waterLevel === false) return null;
+  if (waterLevel === false) return fail("waterLevel: must be a finite number");
   const height = parseHeight(o.height, size);
-  if (height === false) return null;
+  if (height === false) return fail(`height: not a valid packed ${size}² height field`);
   const landscape = parseLandscape(o.landscape);
-  if (o.landscape !== undefined && !landscape) return null;
-  return {
+  if (o.landscape !== undefined && !landscape) return fail("landscape: invalid strokes, cover or environment");
+  return { map: {
     v: UTCMAP_VERSION,
     size,
     name,
@@ -174,7 +191,7 @@ export function parseUtcMap(raw: unknown): UtcMap | null {
     ...(authoring.data?{authoring:authoring.data}:{}),
     ...(waterLevel !== undefined ? { waterLevel } : {}),
     ...(height !== undefined ? { height } : {}),
-  };
+  } };
 }
 
 export function stringifyUtcMap(map: UtcMap): string {

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.entangling-roots",
+  "name": "Entangling Roots",
+  "description": "Living roots prevent movement and attacks while dealing periodic damage. The target may still cast spells.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 50,
+      "cooldownTicks": 320,
+      "damage": 15,
+      "duration": 360,
+      "heroDuration": 120
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "rooted",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "heroDuration": {
+        "rankParameter": "heroDuration"
+      },
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "rooted": true
+      },
+      "disarm": true,
+      "periodic": {
+        "intervalTicks": 40,
+        "damage": {
+          "rankParameter": "damage"
+        },
+        "damageType": "spell"
+      }
+    }
+  ],
+  "presentation": "presentation.core.entangling-roots"
+}

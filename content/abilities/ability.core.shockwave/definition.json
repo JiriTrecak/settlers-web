@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.shockwave",
+  "name": "Shockwave",
+  "description": "Send a travelling seismic wave through enemies in a line. Each unit can be struck once per cast.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "line",
+    "speed": 22,
+    "length": 24,
+    "width": 1.8
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 60,
+      "cooldownTicks": 320,
+      "damage": 75
+    }
+  ],
+  "targeting": {
+    "includeBuildings": true,
+    "kind": "point",
+    "radius": 2,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.shockwave"
+}

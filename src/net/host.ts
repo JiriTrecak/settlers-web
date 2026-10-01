@@ -41,6 +41,8 @@ export class HostedMatch {
   private state: RoomState = "waiting";
   private readonly members = new Map<string, Member>();
   private readonly ready = new Set<number>();
+  private contentAgreement:string|null=null;
+  private started=false;
   private readonly hashes = new Map<number, Map<number, number>>();
   private mailbox: Room | null = null;
   private config: MatchConfig | null = null;
@@ -150,7 +152,7 @@ export class HostedMatch {
       return;
     }
     this.members.delete(auth);
-    if (m.role === "player" && m.player != null) this.mailbox?.drop(m.player);
+    if (m.role === "player" && m.player != null) {this.mailbox?.drop(m.player);this.tryGo();}
   }
 
   start(auth: string): { error: string } | { config: MatchConfig } {
@@ -177,10 +179,10 @@ export class HostedMatch {
       slots,
     };
     this.config = config;
-    this.mailbox = new Room(config);
+    this.mailbox = new Room(config,false);
     this.mailbox.subscribe((msg) => this.fanout(msg));
     this.state = "playing";
-    this.ready.clear();
+    this.ready.clear();this.contentAgreement=null;this.started=false;
     for (const m of this.members.values()) {
       const you = this.you(m.token);
       if (you) m.send?.({ type: "start", config, you });
@@ -218,11 +220,11 @@ export class HostedMatch {
     const config = namedMatch({ ...parsed.match, roomId: this.id }, names);
     this.config = config;
     this.lastSave = save;
-    this.mailbox = new Room(config);
+    this.mailbox = new Room(config,false);
     this.mailbox.subscribe((msg) => this.fanout(msg));
     this.mailbox.resume(parsed.pipeline);
     this.state = "playing";
-    this.ready.clear();
+    this.ready.clear();this.contentAgreement=null;this.started=false;
     this.hashes.clear();
     for (const m of this.members.values()) {
       const you = this.you(m.token);
@@ -245,8 +247,8 @@ export class HostedMatch {
     this.config = config;
     this.lastSave = null;
     this.hashes.clear();
-    this.ready.clear();
-    this.mailbox = new Room(config);
+    this.ready.clear();this.contentAgreement=null;this.started=false;
+    this.mailbox = new Room(config,false);
     this.mailbox.subscribe((msg) => this.fanout(msg));
     for (const m of this.members.values()) {
       const you = this.you(m.token);
@@ -273,10 +275,8 @@ export class HostedMatch {
         you,
         save: this.lastSave ?? undefined,
       });
-      const need = this.config.slots.length;
-      const goTick = (this.mailbox?.tick ?? 0) + 1;
-      if (need > 0 && this.ready.size >= need)
-        send({ type: "go", tick: goTick });
+      // A reconnect must revalidate its content before receiving go.
+      if(m.player!=null)this.ready.delete(m.player);
     }
     return { you, room: this.view() };
   }
@@ -287,7 +287,7 @@ export class HostedMatch {
     m.send = null;
     m.latency.reset();
     if (this.state === "playing" && m.role === "player" && m.player != null) {
-      this.mailbox?.drop(m.player);
+      this.mailbox?.drop(m.player);this.tryGo();
     }
   }
 
@@ -323,13 +323,19 @@ export class HostedMatch {
     if (msg.type === "ready") {
       if (this.state !== "playing" || m.role !== "player" || m.player == null)
         return;
+      const valid=msg.content&&typeof msg.content.abi==='string'&&typeof msg.build==='string'&&/^[a-f0-9]{64}$/.test(msg.content.sha256);
+      const identity=valid?JSON.stringify([msg.build,msg.content.abi,msg.content.sha256]):null;
+      if(!identity||(this.contentAgreement!==null&&identity!==this.contentAgreement)){
+        this.state='desynced';this.fanout({type:'error',code:'CONTENT_MISMATCH',message:'Players have different engine or published ability content. Reload with matching content.'});return;
+      }
+      this.contentAgreement=identity;
       this.ready.add(m.player);
-      const need = this.config?.slots.length ?? 0;
-      if (need > 0 && this.ready.size >= need)
-        this.fanout({ type: "go", tick: (this.mailbox?.tick ?? 0) + 1 });
+      if(this.started)m.send?.({type:'go',tick:(this.mailbox?.tick??0)+1});
+      else this.tryGo();
       return;
     }
     if (msg.type === "turn") {
+      if(this.state!=="playing")return;
       if (
         m.role !== "player" ||
         m.player == null ||
@@ -378,6 +384,13 @@ export class HostedMatch {
       if (this.state !== "playing") return;
       this.shutdown(msg.outcome);
     }
+  }
+
+  private tryGo(){
+    if(this.started||this.state!=='playing'||!this.contentAgreement)return;
+    const required=this.config?.slots.filter(s=>this.membersStill(s.player))??[];
+    if(!required.length||required.some(s=>!this.ready.has(s.player)))return;
+    this.started=true;this.fanout({type:'go',tick:(this.mailbox?.tick??0)+1});this.mailbox?.releaseContentBarrier();
   }
 
   /** Terminal: fanout `ended`, drop send callbacks. MatchHost.discard deletes the row. */

@@ -3,8 +3,8 @@
   "id": "asset.icons.unit-neutral-ogre",
   "name": "Ogre",
   "kind": "icon",
-  "revision": 1,
-  "status": "published",
+  "revision": 2,
+  "status": "archived",
   "tags": [
     "ants-v1",
     "migrated"

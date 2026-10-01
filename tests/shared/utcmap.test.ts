@@ -3,6 +3,7 @@ import {
   emptyUtcMap,
   mapFileName,
   parseUtcMap,
+  readUtcMap,
   stringifyUtcMap,
   UTCMAP_VERSION,
 } from "../../src/shared";
@@ -75,5 +76,24 @@ describe("utcmap", () => {
     expect(parseUtcMap({})).toBeNull();
     expect(parseUtcMap({ v: 1, stamps: [{ id: "a" }] })).toBeNull();
     expect(parseUtcMap({ v: 1, name: 3 })).toBeNull();
+  });
+
+  it("names the field that made a map invalid", () => {
+    const error = (raw: unknown) => {
+      const read = readUtcMap(raw);
+      return "error" in read ? read.error : null;
+    };
+    expect(error({ ...emptyUtcMap(), extra: 1 })).toMatch(/extra/);
+    expect(error({ ...emptyUtcMap(), name: 3 })).toMatch(/name/);
+    expect(
+      error({ ...emptyUtcMap(), stamps: [{ id: "a", asset: "pine" }] }),
+    ).toMatch(/stamps\.0/);
+    expect(
+      error({
+        ...emptyUtcMap(),
+        landscape: { strokes: [], cover: [{ palette: "unknown" }] },
+      }),
+    ).toMatch(/landscape/);
+    expect(error(emptyUtcMap())).toBeNull();
   });
 });

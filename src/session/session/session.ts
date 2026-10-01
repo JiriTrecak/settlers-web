@@ -1,3 +1,6 @@
+import {matchContentIdentity} from '../../content/identity';
+import {SIMULATION_BUILD} from '../../shared/simulationBuild';
+import {value as abilityValue} from '../../content/abilities/schema';
 import {biomeEnvironment} from '../../content/biomes';
 import {UNIT_CAMERA_MODES,nextCameraMode,type UnitCameraMode} from '../../shared/camera/modes';
 import type {CampaignCompany} from '../../shared/scenario/company';
@@ -16,7 +19,7 @@ import type {LocalSave} from "../../shared/save/localSave";
 import { createSkirmishMatch, defaultSlots } from "../../shared/match/skirmish";
 import { areaSelection } from "../../presentation/commands";
 import { resourceStamps, ResourceScenery } from "../../presentation/scenery";
-import { content } from "../../content/builtin";
+import { content,builtinSource } from "../../content/builtin";
 import { ownerSlot, slotOwner, type Owner } from "../../content/schema";
 import { perf } from "../../debug/performance";
 import { EditorBridge } from "../../shared/control/editorBridge";
@@ -127,7 +130,7 @@ export class Session {
     if(frame.observer&&frame.observer.tick!==this.observerStatsTick){this.observerStatsTick=frame.observer.tick;this.observerPanel?.update(frame.observer);}
     if(this.economyHud?.mode&&this.placementPointer){this.placementResult=undefined;this.onHover(this.placementPointer);}
   }
-  private explored(x:number,y:number){const view=this.selectionView(),size=this.visualView().size;return x>=0&&y>=0&&x<size&&y<size&&!!view.fog?.cells[y*size+x];}
+  private visibleGround(x:number,y:number){const view=this.selectionView(),size=this.visualView().size;return x>=0&&y>=0&&x<size&&y<size&&view.fog?.cells[y*size+x]===2;}
 
   private bridge: EditorBridge | null = null;
   private terrain = new HeightField();
@@ -188,20 +191,20 @@ export class Session {
     const binding = this.economyHud?.targeting,
       sim = this.worker?.latest?.selection.settlement;
     const caster =
-      binding?.type === "cast" ? sim?.entities.find(e=>e.id===binding.actors[0]) : null;
+      binding?.type === "castAbility" ? sim?.entities.find(e=>e.id===binding.actors[0]) : null;
     const spell = binding?.ability
-      ? content.rules.spells[binding.ability]
+      ? content.abilityLibrary.abilities.find(a=>a.id===binding.ability)
       : null;
     const rank = binding?.ability
-      ? caster?.spellcasting?.learned[binding.ability]
+      ? caster?.abilities?.ranks[binding.binding!]
       : 0;
     if (hit && caster && spell && rank) {
       const origin = caster,
         point = { x: Math.round(hit.x), y: Math.round(hit.z), ...("surface" in hit&&typeof hit.surface==="string"?{surface:hit.surface}:{}) };
       const valid =
         Math.hypot(point.x - origin.x, point.y - origin.y) <=
-          spell.ranks[rank - 1].range &&
-        this.explored(point.x,point.y);
+          abilityValue(spell.targeting.range,spell.ranks[rank-1]) &&
+        this.visibleGround(point.x,point.y);
       this.renderer?.gameAbilityTarget({ spell, rank, origin, point, valid });
     } else this.renderer?.gameAbilityTarget(null);
     if (!hit || !kind) {
@@ -298,7 +301,7 @@ export class Session {
       frame:frame=>this.acceptFrame(frame),chat:message=>this.chat?.receive(message),
       learned:()=>this.economyHud?.learnedAbility(),error:error=>{this.desynced=true;this.workerError(error);},sample:(name,ms)=>perf.sample(name,ms),
     },this.config.channel);
-    const initial=await worker.request('init',{map,match,player:this.config.player,remote:!!this.config.channel});check();
+    const initial=await worker.request('init',{map,match,player:this.config.player,remote:!!this.config.channel,content:{source:builtinSource,fingerprint:content.fingerprint}});check();
     if(this.observing){this.observerPanel=new ObserverPanel(this.config.host);if(worker.latest?.observer)this.observerPanel.update(worker.latest.observer);}
     const catalog = projectCatalogue(),
       urls = new Map(
@@ -436,6 +439,8 @@ export class Session {
     renderer.sky.setPlaying(!map.sandbox && !biomeEnvironment(map.biome).interior);
     this.started = true;
     await worker.request("start",undefined);check();
+    const identity=await matchContentIdentity();check();
+    this.config.channel?.send({type:'ready',content:identity,build:SIMULATION_BUILD});
     this.unbindDebug = perf.bindMatch({
       reveal: this.reveal,
       speed: this.simulationSpeed,
@@ -625,7 +630,7 @@ export class Session {
         : "default";
     }
     perf.end("Economy HUD / minimap data", hud);
-    if (this.economyHud?.targeting?.type === "cast" && this.placementPointer)
+    if (this.economyHud?.targeting?.type === "castAbility" && this.placementPointer)
       this.onHover(this.placementPointer);
     const focus=view.settlement?.entities.find(e=>e.id===this.economyHud?.selectedIds[0]);
     if(!focus?.unit||focus.remembered||focus.unit.contained||(focus.hp!==null&&focus.hp<=0))this.unitCameraMode='rts';
@@ -785,28 +790,12 @@ export class Session {
       hud.clearMode();
       return;
     }
-    if (binding?.type === "cast" && binding.ability) {
-      const caster = sim.entities.find(e=>e.id===binding.actors[0]),
-        spell = content.rules.spells[binding.ability],
-        rank = caster?.spellcasting?.learned[binding.ability];
-      if (
-        !caster ||
-        !rank ||
-        Math.hypot(
-          position.x - caster.x,
-          position.y - caster.y,
-        ) > spell.ranks[rank - 1].range ||
-        !this.explored(position.x,position.y)
-      )
-        return;
-      this.send({
-        type: "cast",
-        actor: binding.actors[0],
-        ability: binding.ability,
-        point: position,
-      });
-      hud.clearMode();
-      return;
+    if (binding?.type === "castAbility" && binding.binding) {
+      const spell=content.abilityLibrary.abilities.find(a=>a.id===binding.ability);
+      if(spell?.targeting.kind==='point'){this.send({type:'castAbility',actor:binding.actors[0],binding:binding.binding,target:{kind:'point',position:{x:Math.round(position.x),y:Math.round(position.y)}}});hud.clearMode();return;}
+      if(!target?.unit||target.remembered)return;
+      this.send({type:'castAbility',actor:binding.actors[0],binding:binding.binding,target:{kind:'unit',entity:target.id}});
+      hud.clearMode();return;
     }
     if(binding?.type==='follow'){
       if(target)this.send({type:'follow',actors:binding.actors,target:target.id,...(shift?{append:true}:{})});

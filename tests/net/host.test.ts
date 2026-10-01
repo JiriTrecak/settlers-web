@@ -40,9 +40,9 @@ describe("MatchHost", () => {
     expect(a.some((m) => m.type === "start")).toBe(true);
     expect(b.some((m) => m.type === "start")).toBe(true);
 
-    room.ingest(created.token, { type: "ready" });
+    room.ingest(created.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
     expect(a.some((m) => m.type === "go")).toBe(false);
-    room.ingest(joined.token, { type: "ready" });
+    room.ingest(joined.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
     expect(a.some((m) => m.type === "go")).toBe(true);
     expect(b.some((m) => m.type === "go")).toBe(true);
 
@@ -66,15 +66,15 @@ describe("MatchHost", () => {
     room.bind(created.token, (m) => a.push(m));
     room.bind(joined.token, () => {});
     room.start(created.token);
-    room.ingest(created.token, { type: "ready" });
-    room.ingest(joined.token, { type: "ready" });
+    room.ingest(created.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
+    room.ingest(joined.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
     room.unbind(joined.token);
     a.length = 0;
     room.ingest(created.token, { type: "turn", through: 1, bundles: [] });
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 
-  it("commits turns without waiting for ready/go", () => {
+  it("holds early turns until content agreement", () => {
     const host = new MatchHost();
     const created = host.create(draft());
     const room = host.get(created.room.id)!;
@@ -86,6 +86,9 @@ describe("MatchHost", () => {
     room.ingest(created.token, { type: "turn", through: 1, bundles: [] });
     expect(a.some((m) => m.type === "commit")).toBe(false);
     room.ingest(joined.token, { type: "turn", through: 1, bundles: [] });
+    expect(a.some((m) => m.type === "commit")).toBe(false);
+    room.ingest(created.token, {type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
+    room.ingest(joined.token, {type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
     expect(a.some((m) => m.type === "commit" && m.tick === 1)).toBe(true);
   });
 
@@ -98,6 +101,8 @@ describe("MatchHost", () => {
     room.bind(created.token, (m) => a.push(m));
     room.bind(joined.token, () => {});
     room.start(created.token);
+    room.ingest(created.token,{type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
+    room.ingest(joined.token,{type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
     room.ingest(created.token, {
       type: "turn",
       through: 1,
@@ -131,8 +136,8 @@ describe("MatchHost", () => {
     room.bind(created.token, (m) => a.push(m));
     room.bind(joined.token, () => {});
     room.start(created.token);
-    room.ingest(created.token, { type: "ready" });
-    room.ingest(joined.token, { type: "ready" });
+    room.ingest(created.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
+    room.ingest(joined.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
     room.ingest(created.token, { type: "hash", tick: 8, checksum: 1 });
     room.ingest(joined.token, { type: "hash", tick: 8, checksum: 2 });
     expect(a.some((m) => m.type === "desync" && m.tick === 8)).toBe(true);
@@ -147,8 +152,8 @@ describe("MatchHost", () => {
     room.bind(created.token, (m) => a.push(m));
     room.bind(joined.token, () => {});
     room.start(created.token);
-    room.ingest(created.token, { type: "ready" });
-    room.ingest(joined.token, { type: "ready" });
+    room.ingest(created.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
+    room.ingest(joined.token, { type: 'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48' });
     room.ingest(created.token, { type: "hash", tick: 8, checksum: 7 });
     room.ingest(joined.token, { type: "hash", tick: 8, checksum: 7 });
     expect(a.some((m) => m.type === "hashOk" && m.tick === 8)).toBe(true);
@@ -226,4 +231,14 @@ it("clears all sessions, notifies players, and never reuses deleted ids", () => 
   expect(messages.filter((m) => m.type === "ended")).toHaveLength(2);
   expect(host.discardAll()).toBe(0);
   expect(host.create(draft()).room.id).toBe("4");
+});
+
+it('rejects mismatched published content before any buffered turn can commit',()=>{
+ const host=new MatchHost(),created=host.create(draft()),room=host.get(created.room.id)!,joined=room.join('p2','player') as {token:string},messages:ServerMsg[]=[];
+ room.bind(created.token,m=>messages.push(m));room.bind(joined.token,()=>{});room.start(created.token);
+ room.ingest(created.token,{type:'turn',through:1,bundles:[]});room.ingest(joined.token,{type:'turn',through:1,bundles:[]});
+ room.ingest(created.token,{type:'ready',content:{abi:'abilities-1',sha256:'a'.repeat(64)},build:'declarative-sim-48'});
+ room.ingest(joined.token,{type:'ready',content:{abi:'abilities-1',sha256:'b'.repeat(64)},build:'declarative-sim-48'});
+ expect(messages.some(m=>m.type==='error'&&m.code==='CONTENT_MISMATCH')).toBe(true);
+ expect(messages.some(m=>m.type==='go'||m.type==='commit')).toBe(false);
 });

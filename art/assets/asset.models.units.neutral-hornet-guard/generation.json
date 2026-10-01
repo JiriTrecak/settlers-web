@@ -1,0 +1,17 @@
+{
+  "provider": "Tripo Studio",
+  "model": "H3.1",
+  "uuid": "df2b9e2f-30cf-47de-88b1-724f7af8d070",
+  "url": "https://studio.tripo3d.ai/workspace/generate/df2b9e2f-30cf-47de-88b1-724f7af8d070",
+  "cost": 55,
+  "creditsBefore": 1005,
+  "topology": "Triangle",
+  "targetTriangles": 4500,
+  "sourceImage": "reference.png",
+  "editableSource": "source.blend",
+  "blenderAdapter": "scripts/assets/build-neutral-creep.py",
+  "triangleBudget": 5000,
+  "triangles": 4430,
+  "textureBudget": 512,
+  "bodyFamily": "flyer"
+}
