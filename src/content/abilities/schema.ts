@@ -1,3 +1,4 @@
+import {effectBindingSchema} from '../effects/schema';
 import {z} from 'zod';
 import {itemModifiersSchema} from '../items';
 
@@ -108,31 +109,10 @@ export const abilityCasterSchema=z.object({
  bindings:z.array(abilityBindingSchema).min(1).max(12).refine(a=>new Set(a.map(b=>b.id)).size===a.length,'Binding IDs must be unique'),
 }).strict();
 export type AbilityBinding=z.infer<typeof abilityBindingSchema>;
-const colour=z.string().regex(/^#[a-fA-F0-9]{6}$/);
-const pulseSchema=z.object({periodTicks:z.number().int().min(1).max(2400),min:z.number().min(0).max(4),max:z.number().min(0).max(4),easing:z.enum(['sine','smoothstep','bounce']),phase:z.number().min(0).max(1).optional()}).strict().refine(p=>p.max>=p.min,'Pulse maximum must be at least its minimum');
-export const cueMotionSchema=z.object({
- rotation:z.object({periodTicks:z.number().int().min(1).max(2400),direction:z.enum(['clockwise','counterclockwise']),phaseDegrees:z.number().min(-360).max(360).optional()}).strict().optional(),
- scale:pulseSchema.optional(),opacity:pulseSchema.refine(p=>p.max<=1,'Opacity cannot exceed one').optional(),
-}).strict();
-export const presentationSchema=z.object({
- schemaVersion:z.literal(1),id:abilityId,icon:abilityId.optional(),
- animations:z.object({prepare:z.string().min(1).max(80),release:z.string().min(1).max(80),recover:z.string().min(1).max(80),fallback:z.string().min(1).max(80),channel:z.string().min(1).max(80).optional()}).strict(),
- cues:z.array(z.object({
-  id:z.string().min(1).max(64),event:z.enum(['accepted','released','healed','damaged','cancelled','waveStarted','wave','finished','projectile','impact','statusApplied','dispelled','summoned']),
-  anchor:z.enum(['caster','target']),shape:z.enum(['ring','pillar','burst','billboard','streaks','glow','light','rain','missile','beam','wavefront']),
-  colour,accent:colour,durationTicks:z.number().int().min(1).max(400),count:z.number().int().min(1).max(128),
-  size:z.number().min(.01).max(20),height:z.number().min(0).max(30),
-  lifetime:z.enum(['finite','status']).optional(),motion:cueMotionSchema.optional(),
-  durationFrom:z.literal('delivery').optional(),sizeFrom:z.literal('radius').optional(),spreadFrom:z.literal('radius').optional(),distribution:z.enum(['point','disc']).optional(),
-  fallSpeed:z.number().min(.25).max(8).optional(),launchDelayMs:z.number().min(0).max(500).optional(),fallAngleDegrees:z.number().min(0).max(70).optional(),fallAzimuthDegrees:z.number().min(-360).max(360).optional(),
-  impact:z.object({durationTicks:z.number().int().min(1).max(80),count:z.number().int().min(1).max(12),size:z.number().min(.01).max(2),spread:z.number().min(0).max(5),height:z.number().min(0).max(5),colour,accent:colour}).strict().optional(),
-  blend:z.enum(['additive','normal']).optional(),orientation:z.enum(['camera','ground']).optional(),
-  follow:z.boolean().optional(),intensity:z.number().min(0).max(500).optional(),spread:z.number().min(0).max(20).optional(),length:z.number().min(.01).max(20).optional(),
-  texture:z.object({asset:abilityId,role:z.literal('image'),index:z.number().int().min(1).max(32)}).strict().optional(),
- }).strict().refine(c=>c.lifetime!=='status'||c.event==='statusApplied'&&c.anchor==='target'&&['ring','glow','billboard','light'].includes(c.shape),'Status lifetime requires a target status layer').refine(c=>!c.motion||['ring','glow','billboard','light'].includes(c.shape),'Transform motion requires a layer shape').refine(c=>c.shape==='rain'||[c.fallSpeed,c.launchDelayMs,c.fallAngleDegrees,c.fallAzimuthDegrees,c.impact].every(v=>v===undefined),'Launch, fall and impact settings require rain').refine(c=>!c.texture||['burst','billboard','streaks','rain','missile','wavefront'].includes(c.shape),'This cue does not accept textures').refine(c=>!['billboard','streaks','rain'].includes(c.shape)||!!c.texture,'Billboards and streaks require a published texture')).max(16).refine(c=>new Set(c.map(x=>x.id)).size===c.length,'Cue IDs must be unique'),
-}).strict();
+export {cueMotionSchema} from '../effects/schema';
+export const presentationSchema=z.object({schemaVersion:z.literal(1),id:abilityId,icon:abilityId.optional(),animations:z.object({prepare:z.string().min(1).max(80),release:z.string().min(1).max(80),recover:z.string().min(1).max(80),fallback:z.string().min(1).max(80),channel:z.string().min(1).max(80).optional()}).strict(),effects:z.array(effectBindingSchema).max(32).refine(b=>new Set(b.map(x=>x.id)).size===b.length,'Binding IDs must be unique')}).strict();
 export type AbilityPresentation=z.infer<typeof presentationSchema>;
-export const abilityLibrarySchema=z.object({schemaVersion:z.literal(1),abilities:z.array(abilitySchema).max(2048),presentations:z.array(presentationSchema).max(2048)}).strict().superRefine((library,ctx)=>{
+export const abilityLibrarySchema=z.object({schemaVersion:z.literal(1),abilities:z.array(abilitySchema).max(10000),presentations:z.array(presentationSchema).max(10000)}).strict().superRefine((library,ctx)=>{
  for(const key of ['abilities','presentations']as const)if(new Set(library[key].map(v=>v.id)).size!==library[key].length)ctx.addIssue({code:'custom',path:[key],message:'Duplicate definition ID'});
  const ids=new Set(library.presentations.map(p=>p.id));
  library.abilities.forEach((a,i)=>{if(!ids.has(a.presentation))ctx.addIssue({code:'custom',path:['abilities',i,'presentation'],message:'Unknown presentation'});});

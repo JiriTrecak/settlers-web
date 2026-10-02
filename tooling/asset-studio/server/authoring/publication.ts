@@ -1,3 +1,4 @@
+import {readEffectLibrary} from '../../../content/effects';
 import {presentationImages} from '../../../../src/content/abilities/resources';
 import {readAbilityLibrary} from '../../../content/abilities';
 import {inspectGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
@@ -44,10 +45,10 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
  try{content=await json(await within(root,'content/game.json'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
  if(content)new ContentRegistry({...content,abilityLibrary:await readAbilityLibrary(root),assets:manifest.records.flatMap(a=>a.render)});
  // Dependents follow stable IDs, but publication must never leave a broken reference.
- for(const presentation of (await readAbilityLibrary(root)).presentations)for(const ref of presentationImages(presentation)){
-  const asset=sorted.find(a=>a.id===ref.asset);
-  if(!asset||!runtimeResources(asset).some(r=>r.role===ref.role&&r.index===ref.index))throw Error(`Published spell presentation ${presentation.id} requires ${ref.asset}/${ref.role}:${ref.index}`);
- }
+ const effectLibrary=await readEffectLibrary(root);
+ const imageRefs=[...(await readAbilityLibrary(root)).presentations.flatMap(p=>presentationImages(p,effectLibrary.effects).map(ref=>({owner:p.id,ref}))),...effectLibrary.effects.flatMap(e=>e.layers.flatMap(l=>l.texture?[{owner:e.id,ref:l.texture}]:[]))];
+ for(const {owner,ref} of imageRefs){const asset=sorted.find(a=>a.id===ref.asset);if(!asset||!runtimeResources(asset).some(r=>r.role===ref.role&&r.index===ref.index))throw Error(`Published content ${owner} requires ${ref.asset}/${ref.role}:${ref.index}`);}
+
  const prior=await readPublished(root),ids=new Set(sorted.map(a=>a.id)),scenery=new Set(manifest.records.flatMap(a=>a.scenery.map(s=>s.id)));
  const removedAssets=new Set((prior??[]).filter(a=>!ids.has(a.id)).map(a=>a.id));
  const removedScenery=new Set((prior??[]).flatMap(a=>a.bindings.scenery.map(s=>s.id)).filter(id=>!scenery.has(id)));

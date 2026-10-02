@@ -1,9 +1,25 @@
+import {libraryKindSchema,treeActionSchema} from './libraryTree';
+import {effectPreviewSettingsSchema} from './effectPreview';
+import {visualEffectSchema} from '../../../src/content/effects/schema';
 import {z} from 'zod';
 import {abilitySchema,presentationSchema,abilityId,abilityCasterSchema} from '../../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../../src/content/abilities/encounter';
 export const documentSchema=z.object({definition:abilitySchema,presentation:presentationSchema}).strict().refine(d=>d.definition.presentation===d.presentation.id,'Presentation ID does not match');
 export type SpellDocument=z.infer<typeof documentSchema>;
 export const spellCommandSchema=z.discriminatedUnion('op',[
+ z.object({op:z.literal('tree.read'),kind:libraryKindSchema}).strict(),
+ z.object({op:z.literal('tree.mutate'),kind:libraryKindSchema,action:treeActionSchema,expectedRevision:z.string()}).strict(),
+ z.object({op:z.literal('effects.preview.load'),document:visualEffectSchema,settings:effectPreviewSettingsSchema.default(()=>effectPreviewSettingsSchema.parse({}))}).strict(),
+ z.object({op:z.literal('effects.preview.state')}).strict(),
+ z.object({op:z.literal('effects.preview.seek'),tick:z.number().min(0).max(12000)}).strict(),
+ z.object({op:z.literal('effects.preview.play'),playing:z.boolean(),speed:z.number().min(.1).max(4).default(1)}).strict(),
+ z.object({op:z.literal('effects.preview.stop')}).strict(),
+ z.object({op:z.literal('effects.list')}).strict(),
+ z.object({op:z.literal('effects.library')}).strict(),
+ z.object({op:z.literal('effects.read'),id:abilityId}).strict(),
+ z.object({op:z.literal('effects.validate'),document:visualEffectSchema}).strict(),
+ z.object({op:z.literal('effects.save'),document:visualEffectSchema,expectedRevision:z.string().nullable()}).strict(),
+ z.object({op:z.literal('effects.publish'),id:abilityId,expectedRevision:z.string()}).strict(),
  z.object({op:z.literal('list')}).strict(),
  z.object({op:z.literal('catalog')}).strict(),
  z.object({op:z.literal('binding.read'),definition:abilityId}).strict(),

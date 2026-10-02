@@ -1,3 +1,5 @@
+import {coreEffects} from '../../src/content/effects/library';
+import {visualEffectSchema} from '../../src/content/effects/schema';
 import {expect,it,vi} from 'vitest';
 import {TextureLoader,Texture,Mesh} from 'three';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
@@ -37,7 +39,8 @@ it.each(['vampiric-aura','thorns-aura'])('%s keeps all three layers steady beyon
 
 it('validates animation ranges and status-bound lifecycle declarations',()=>{
  const p=structuredClone(coreAbilities.presentations.find(p=>p.id==='presentation.core.vampiric-aura')!);
- p.cues[0].event='released';expect(presentationSchema.safeParse(p).success).toBe(false);
- p.cues[0].event='statusApplied';p.cues[1].motion!.rotation!.periodTicks=0;expect(presentationSchema.safeParse(p).success).toBe(false);
- p.cues[1].motion!.rotation!.periodTicks=320;p.cues[2].motion!.scale!.max=.1;expect(presentationSchema.safeParse(p).success).toBe(false);
+ p.effects[0].event='released';expect(presentationSchema.safeParse(p).success).toBe(false);
+ const e=structuredClone(coreEffects.find(e=>e.id===p.effects[0].effect)!);
+ e.layers[1].motion!.rotation!.periodTicks=0;expect(visualEffectSchema.safeParse(e).success).toBe(false);
+ e.layers[1].motion!.rotation!.periodTicks=320;e.layers[2].motion!.scale!.max=.1;expect(visualEffectSchema.safeParse(e).success).toBe(false);
 });

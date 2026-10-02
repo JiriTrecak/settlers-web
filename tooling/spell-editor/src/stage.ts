@@ -1,3 +1,4 @@
+import {coreEffects} from '../../../src/content/effects/library';
 import {value} from '../../../src/content/abilities/schema';
 import {AbilityTarget} from '../../../src/render/settlement/abilityTarget';
 import {castAnimation} from '../../../src/render/abilities/castAnimation';
@@ -16,10 +17,11 @@ type TargetSelection={kind:'point';position:{x:number;y:number}}|{kind:'unit';en
 export class SpellStage{
  private hover?:TargetSelection;
  private field=new HeightField(256);private aimRoot=new Group();private aimVisual=new AbilityTarget(this.aimRoot);
- private renderer:Renderer;private effects=new AbilityEffects();private fixtures=new Group();
+ private renderer:Renderer;private effects=new AbilityEffects(()=>this.state?.effects??coreEffects);private fixtures=new Group();
  private subjects=new Map<number,InspectionSubject>();private epoch=-1;private eventId=0;private lastTick=0;private state?:PreviewState;
  private receivedAt=0;
  private modelKey='';private version=0;private mode:ViewMode='encounter';private frame=0;private abort=new AbortController();private drag?:{x:number;y:number;startX:number;startY:number};
+ private active=true;
  private grid=new GridHelper(40,40,0x80908c,0x65716a);
  private floorGeometry=new PlaneGeometry(2000,2000);private floorMaterial=new MeshStandardMaterial({color:0x263438,roughness:1});
  constructor(private canvas:HTMLCanvasElement,private onError:(error:unknown)=>void,private onAim:(selection:TargetSelection)=>void){
@@ -34,7 +36,7 @@ export class SpellStage{
    }this.drag=undefined;
   },{signal});canvas.addEventListener('pointercancel',()=>{this.drag=undefined;},{signal});canvas.addEventListener('contextmenu',e=>e.preventDefault(),{signal});
   canvas.addEventListener('wheel',e=>{e.preventDefault();this.renderer.camera.zoomBy(Math.exp(e.deltaY*.001));},{signal,passive:false});
-  const frame=(now:number)=>{if(this.state){const tick=this.state.tick+(this.state.playing?Math.min(75,Math.max(0,now-this.receivedAt))*this.state.speed/25:0);this.updateEffects(tick);}this.renderer.present(now);this.frame=requestAnimationFrame(frame);};this.frame=requestAnimationFrame(frame);
+  const frame=(now:number)=>{if(!this.active){this.frame=requestAnimationFrame(frame);return;}if(this.state){const tick=this.state.tick+(this.state.playing?Math.min(75,Math.max(0,now-this.receivedAt))*this.state.speed/25:0);this.updateEffects(tick);}this.renderer.present(now);this.frame=requestAnimationFrame(frame);};this.frame=requestAnimationFrame(frame);
  }
  async update(state:PreviewState){
   if(!state.loaded)return;if(!this.state||state.tick!==this.state.tick||state.playing!==this.state.playing||state.epoch!==this.state.epoch)this.receivedAt=performance.now();this.state=state;
@@ -102,6 +104,7 @@ export class SpellStage{
   }
   this.fixtures.visible=this.mode!=='environment';this.fit();
  }
+ setActive(active:boolean){this.active=active;}
  setMode(mode:ViewMode){this.mode=mode;if(this.state){this.fit();for(const s of this.subjects.values())s.root.visible=mode!=='effect';this.fixtures.visible=mode!=='environment';}}
  fit(){const state=this.state;if(!state)return;const target=state.entities.find(e=>e.id===state.target),caster=state.entities.find(e=>e.id===state.caster);
   const focus=this.mode==='caster'?caster:this.mode==='target'||this.mode==='effect'?(state.document.definition.targeting.kind==='point'?state.aim:target):undefined;

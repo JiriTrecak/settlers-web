@@ -1,3 +1,4 @@
+import {coreEffects} from '../../src/content/effects/library';
 import {it,expect} from 'vitest';
 import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
 import os from 'node:os';
@@ -17,7 +18,9 @@ it('replaces a shared texture under the same ID without republishing spells, but
   await writeFile(path.join(root,'assets/authoring/published.json'),JSON.stringify({version:1,assets:[asset]}));
   const spell=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.vampiric-aura')!);
   const look=structuredClone(coreAbilities.presentations.find(p=>p.id===spell.presentation)!);
-  delete look.icon;look.cues=look.cues.filter(c=>c.texture?.asset===asset.id);
+  delete look.icon;
+  const effect=structuredClone(coreEffects.find(e=>e.id===look.effects[0].effect)!);effect.layers=effect.layers.filter(c=>c.texture?.asset===asset.id);
+  await mkdir(path.join(root,'content/effects'),{recursive:true});await writeFile(path.join(root,'content/effects/published.json'),JSON.stringify({schemaVersion:1,effects:[effect]}));
   const copy={...spell,id:'ability.test.shared-texture',presentation:'presentation.test.shared-texture'};
   const publication={schemaVersion:1,abi:ABILITY_ABI,library:{schemaVersion:1,abilities:[spell,copy],presentations:[look,{...look,id:copy.presentation}]}};
   await mkdir(path.join(root,'content/abilities'),{recursive:true});

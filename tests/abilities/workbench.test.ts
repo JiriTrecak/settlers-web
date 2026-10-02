@@ -6,7 +6,7 @@ import type {SpellDocument} from '../../tooling/spell-editor/shared/protocol';
 async function fixture(name:string,settings:Record<string,unknown>={}){
  const definition=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!);
  const presentation=structuredClone(coreAbilities.presentations.find(p=>p.id===definition.presentation)!);
- delete presentation.icon;presentation.cues=presentation.cues.filter(c=>!c.texture);
+ delete presentation.icon;presentation.effects=[];
  const document:SpellDocument={definition,presentation},service=new SpellEditorService('/tmp');
  await service.execute({op:'preview.load',document,settings:{relationship:'enemy',targetHealth:500,...settings}});
  return {service,document,state:()=>service.state() as PreviewState};

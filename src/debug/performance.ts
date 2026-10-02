@@ -185,6 +185,7 @@ export class PerformanceDebug {
     }
   };
   attach() {
+    if (document.documentElement.dataset.profiler === "off") return;
     if (this.refs++ > 0) return;
     try {
       this.enabled =
@@ -197,6 +198,7 @@ export class PerformanceDebug {
     root.style.cssText =
       "position:fixed;right:12px;top:48px;z-index:10000;color:#dce8e9;font:12px/1.5 monospace;pointer-events:auto";
     const toggle = document.createElement("button");
+    toggle.className = "performance-debug-toggle";
     toggle.textContent = "Debug";
     toggle.onclick = () => this.toggle();
     toggle.style.cssText =

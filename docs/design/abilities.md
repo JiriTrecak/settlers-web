@@ -48,7 +48,7 @@ Hero progression owns learned ranks, prerequisites and skill points. Mechanics d
 
 ### Presentation and animation bindings
 
-Presentation recipes reference published textures, models and sounds and describe finite cues attached to lifecycle events. Unit/model bindings map semantic animation roles (`cast.prepare`, `cast.release`, `cast.recover`, later `cast.channel`) to actual clips and sockets.
+Spell presentations link independently published visual effects by stable ID, lifecycle event, anchor and lifetime. Effect definitions own their layer stacks, particle emitters, textures and motion. `EffectPlayer` renders them without a spell dependency; `AbilityEffects` supplies authoritative event and status context. The independent studio has separate Spells and Effects workspaces. Models, sounds and socket sequencing remain later presentation capabilities. Unit/model bindings map semantic animation roles (`cast.prepare`, `cast.release`, `cast.recover`, later `cast.channel`) to actual clips and sockets.
 
 This makes one spell portable between an ant, a mushroom and a neutral creature. Missing optional sockets have a declared fallback, such as entity centre; required sockets/clips fail binding validation. No assumed bone name is embedded in spell mechanics.
 

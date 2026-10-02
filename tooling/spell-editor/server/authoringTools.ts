@@ -1,0 +1,54 @@
+import {z} from 'zod';
+import sharp from 'sharp';
+import {AuthoringStore} from '../../asset-studio/server/authoring/store';
+import {assetDefinitionSchema,type AssetDefinition} from '../../../src/shared/authoring/asset';
+import {assetCommandSchema} from '../../../src/shared/authoring/commands';
+import {documentSchema,spellCommandSchema} from '../shared/protocol';
+import {visualEffectSchema} from '../../../src/content/effects/schema';
+import {encounterSettingsSchema} from '../../../src/content/abilities/encounter';
+import {authoringTools,type AuthoringToolName} from '../shared/authoringTools';
+import type {SpellEditorService} from './service';
+import type {Credentials} from './credentials';
+import type {CanvasBridge} from './canvasBridge';
+
+export function authoringSchema(section:string){
+ const schemas={spell:documentSchema,effect:visualEffectSchema,encounter:encounterSettingsSchema,asset:assetCommandSchema};
+ if(section==='commands')return spellCommandSchema.options.map(s=>s.shape.op.value);
+ if(section in schemas)return z.toJSONSchema(schemas[section as keyof typeof schemas]);
+ const command=spellCommandSchema.options.find(s=>s.shape.op.value===section);if(!command)throw Error('Unknown schema. Use commands, spell, effect, encounter, asset, or a command name.');
+ return z.toJSONSchema(command);
+}
+export class AuthoringToolkit {
+ private generating=new Set<string>();
+ constructor(private service:SpellEditorService,private credentials:Credentials,private canvas:CanvasBridge,private fetcher:typeof fetch=fetch){}
+ async execute(name:AuthoringToolName,raw:unknown,client?:string,signal?:AbortSignal):Promise<unknown>{
+  const input=authoringTools[name].inputSchema.parse(raw);
+  if(name==='studio_schema')return authoringSchema((input as {section:string}).section);
+  if(name==='studio_author')return this.service.execute(JSON.parse((input as {commandJson:string}).commandJson));
+  if(name==='studio_canvas')return this.canvas.request(authoringTools.studio_canvas.inputSchema.parse(input),client);
+  return this.generate(authoringTools.studio_image.inputSchema.parse(input),signal);
+ }
+ private async generate(input:z.infer<typeof authoringTools.studio_image.inputSchema>,signal?:AbortSignal){
+  signal?.throwIfAborted();
+  if(this.generating.has(input.id))throw Error('This asset is already being generated. Wait for that request to finish.');
+  this.generating.add(input.id);
+  try{return await this.generateAsset(input,signal);}finally{this.generating.delete(input.id);}
+ }
+ private async generateAsset(input:z.infer<typeof authoringTools.studio_image.inputSchema>,signal?:AbortSignal){
+  const store=new AuthoringStore(this.service.root);
+  try{await store.get(input.id);throw Error('Asset ID already exists. Choose a new ID.');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+  const definition=assetDefinitionSchema.parse({version:1,id:input.id,name:input.name,kind:input.kind,revision:1,status:'draft',tags:['spell-effects','generated'],resources:[],usesGeometry:false,provenance:{method:'generated',licenseNote:'Original artwork generated with OpenAI GPT Image 2.5.'},bindings:{render:[{id:input.id,image:{asset:input.id,role:'image',index:1}}],scenery:[]}});
+  const settings=await this.credentials.settings();
+  const response=await this.fetcher('https://api.openai.com/v1/images/generations',{method:'POST',headers:{Authorization:'Bearer '+await this.credentials.key(),'Content-Type':'application/json'},body:JSON.stringify({model:settings.imageModel,prompt:input.prompt,background:input.transparent?'transparent':'opaque',output_format:'png',size:'1024x1024',quality:'high',n:1}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(240000)]):AbortSignal.timeout(240000)});
+  if(!response.ok)throw Error(`Image generation failed (${response.status}). Check your OpenAI account and model access in Settings.`);
+  const data=await response.json() as {data?:{b64_json?:string}[]};const encoded=data.data?.[0]?.b64_json;if(!encoded)throw Error('OpenAI returned no image. No asset was created.');
+  const original=Buffer.from(encoded,'base64');if(original.length>30*1024*1024)throw Error('Generated image exceeds the import limit.');
+  const image=await sharp(original,{limitInputPixels:16777216}).resize(512,512,{fit:'inside'}).png().toBuffer();
+  const meta=await sharp(image).metadata();if(input.transparent&&!meta.hasAlpha)throw Error('The generated image has no alpha channel. Retry with a transparent-background prompt.');
+  signal?.throwIfAborted();
+  let asset=await store.dispatch({op:'asset.create',definition}) as AssetDefinition;
+  for(const [role,bytes,format] of [['source',original,'png'],['image',image,'png'],['generation',Buffer.from(JSON.stringify({provider:'openai',model:settings.imageModel,prompt:input.prompt,transparent:input.transparent,createdAt:new Date().toISOString()})),'json']] as const){asset=await store.dispatch({op:'asset.upload',id:asset.id,expectedRevision:asset.revision,role,index:1,format,base64:bytes.toString('base64')}) as AssetDefinition;}
+  asset=await store.dispatch({op:'asset.publish',id:asset.id,expectedRevision:asset.revision}) as AssetDefinition;
+  return {asset:asset.id,texture:{asset:asset.id,role:'image',index:1},width:meta.width,height:meta.height,transparent:meta.hasAlpha,image:'data:image/png;base64,'+image.toString('base64'),published:true};
+ }
+}

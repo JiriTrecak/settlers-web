@@ -8,37 +8,20 @@
     "recover": "idle",
     "fallback": "idle"
   },
-  "cues": [
+  "effects": [
     {
-      "id": "spirit-emergence",
-      "event": "summoned",
+      "id": "effect-0",
+      "effect": "effect.core.feral-spirit.summoned",
       "anchor": "target",
-      "shape": "burst",
-      "colour": "#78d7ff",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 40,
-      "size": 0.22,
-      "height": 3,
-      "spread": 3.5,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
+      "event": "summoned",
+      "lifetime": "finite"
     },
     {
-      "id": "summoning-light",
-      "event": "released",
+      "id": "effect-1",
+      "effect": "effect.core.feral-spirit.released-1",
       "anchor": "target",
-      "shape": "light",
-      "colour": "#72bcff",
-      "accent": "#ffffff",
-      "durationTicks": 30,
-      "count": 1,
-      "size": 8,
-      "height": 2,
-      "intensity": 35
+      "event": "released",
+      "lifetime": "finite"
     }
   ]
 }

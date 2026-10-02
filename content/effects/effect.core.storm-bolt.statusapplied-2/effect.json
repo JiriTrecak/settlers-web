@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.storm-bolt.statusapplied-2",
+  "name": "Storm Bolt",
+  "description": "",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "stun-orbit",
+      "shape": "ring",
+      "colour": "#ffdf73",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 0.65,
+      "height": 3,
+      "follow": true,
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

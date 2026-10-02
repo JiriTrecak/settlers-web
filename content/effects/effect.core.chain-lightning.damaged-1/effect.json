@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.chain-lightning.damaged-1",
+  "name": "Chain Lightning Hit",
+  "description": "",
+  "durationTicks": 12,
+  "loop": false,
+  "layers": [
+    {
+      "id": "arc-sparks",
+      "shape": "burst",
+      "colour": "#88dcff",
+      "accent": "#ffffff",
+      "durationTicks": 12,
+      "count": 10,
+      "size": 0.17,
+      "height": 1.6,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

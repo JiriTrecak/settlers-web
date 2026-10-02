@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "folders": [
+    {
+      "id": "folder.spells",
+      "name": "spells",
+      "parent": "root"
+    },
+    {
+      "id": "folder.heroes",
+      "name": "heroes",
+      "parent": "folder.spells"
+    },
+    {
+      "id": "folder.units",
+      "name": "units",
+      "parent": "folder.spells"
+    },
+    {
+      "id": "folder.paladin",
+      "name": "paladin",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.holy-light-lite",
+      "name": "holy-light-lite",
+      "parent": "folder.paladin"
+    },
+    {
+      "id": "folder.archmage",
+      "name": "archmage",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.blizzard",
+      "name": "blizzard",
+      "parent": "folder.archmage"
+    },
+    {
+      "id": "folder.shaman",
+      "name": "shaman",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.spell.bloodlust",
+      "name": "bloodlust",
+      "parent": "folder.shaman"
+    },
+    {
+      "id": "folder.far-seer",
+      "name": "far-seer",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.feral-spirit",
+      "name": "feral-spirit",
+      "parent": "folder.far-seer"
+    },
+    {
+      "id": "folder.priest",
+      "name": "priest",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.spell.dispel-magic",
+      "name": "dispel-magic",
+      "parent": "folder.priest"
+    },
+    {
+      "id": "folder.mountain-king",
+      "name": "mountain-king",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.storm-bolt",
+      "name": "storm-bolt",
+      "parent": "folder.mountain-king"
+    },
+    {
+      "id": "folder.keeper-of-the-grove",
+      "name": "keeper-of-the-grove",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.entangling-roots",
+      "name": "entangling-roots",
+      "parent": "folder.keeper-of-the-grove"
+    },
+    {
+      "id": "folder.spell.chain-lightning",
+      "name": "chain-lightning",
+      "parent": "folder.far-seer"
+    },
+    {
+      "id": "folder.tauren-chieftain",
+      "name": "tauren-chieftain",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.shockwave",
+      "name": "shockwave",
+      "parent": "folder.tauren-chieftain"
+    },
+    {
+      "id": "folder.dreadlord",
+      "name": "dreadlord",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.spell.vampiric-aura",
+      "name": "vampiric-aura",
+      "parent": "folder.dreadlord"
+    },
+    {
+      "id": "folder.spell.thorns-aura",
+      "name": "thorns-aura",
+      "parent": "folder.keeper-of-the-grove"
+    },
+    {
+      "id": "folder.0eec223b-904a-4ff3-be9d-2a5b027a951f",
+      "name": "environment",
+      "parent": "root"
+    }
+  ],
+  "items": {
+    "effect.core.holy-light-lite.accepted": "folder.spell.holy-light-lite",
+    "effect.core.holy-light-lite.released-1": "folder.spell.holy-light-lite",
+    "effect.core.holy-light-lite.healed-2": "folder.spell.holy-light-lite",
+    "effect.core.holy-light-lite.damaged-3": "folder.spell.holy-light-lite",
+    "effect.core.blizzard.wavestarted": "folder.spell.blizzard",
+    "effect.core.bloodlust.released": "folder.spell.bloodlust",
+    "effect.core.bloodlust.statusapplied-1": "folder.spell.bloodlust",
+    "effect.core.feral-spirit.summoned": "folder.spell.feral-spirit",
+    "effect.core.feral-spirit.released-1": "folder.spell.feral-spirit",
+    "effect.core.dispel-magic.released": "folder.spell.dispel-magic",
+    "effect.core.dispel-magic.dispelled-1": "folder.spell.dispel-magic",
+    "effect.core.storm-bolt.projectile": "folder.spell.storm-bolt",
+    "effect.core.storm-bolt.impact-1": "folder.spell.storm-bolt",
+    "effect.core.storm-bolt.statusapplied-2": "folder.spell.storm-bolt",
+    "effect.core.entangling-roots.statusapplied": "folder.spell.entangling-roots",
+    "effect.core.entangling-roots.released-1": "folder.spell.entangling-roots",
+    "effect.core.chain-lightning.impact": "folder.spell.chain-lightning",
+    "effect.core.chain-lightning.damaged-1": "folder.spell.chain-lightning",
+    "effect.core.shockwave.projectile": "folder.spell.shockwave",
+    "effect.core.shockwave.damaged-1": "folder.spell.shockwave",
+    "effect.core.vampiric-aura.statusapplied": "folder.spell.vampiric-aura",
+    "effect.core.thorns-aura.statusapplied": "folder.spell.thorns-aura"
+  }
+}

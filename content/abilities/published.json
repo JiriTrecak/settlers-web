@@ -853,127 +853,34 @@
           "recover": "attack",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "gather",
-            "event": "accepted",
+            "id": "effect-0",
+            "effect": "effect.core.holy-light-lite.accepted",
             "anchor": "caster",
-            "shape": "ring",
-            "colour": "#effc86",
-            "accent": "#fffbd4",
-            "durationTicks": 12,
-            "count": 1,
-            "size": 0.7,
-            "height": 0.04,
-            "intensity": 0.5
+            "event": "accepted",
+            "lifetime": "finite"
           },
           {
-            "id": "target-illumination",
-            "event": "released",
+            "id": "effect-1",
+            "effect": "effect.core.holy-light-lite.released-1",
             "anchor": "target",
-            "shape": "light",
-            "colour": "#f1ff64",
-            "accent": "#fffcd5",
-            "durationTicks": 42,
-            "count": 1,
-            "size": 7,
-            "height": 3.8,
-            "follow": true,
-            "intensity": 90
-          },
-          {
-            "id": "ground-glow",
             "event": "released",
-            "anchor": "target",
-            "shape": "glow",
-            "colour": "#f1ff64",
-            "accent": "#fffcd5",
-            "durationTicks": 42,
-            "count": 1,
-            "size": 2.2,
-            "height": 0.05,
-            "follow": true,
-            "intensity": 1.8
+            "lifetime": "finite"
           },
           {
-            "id": "holy-sigil",
-            "event": "released",
+            "id": "effect-2",
+            "effect": "effect.core.holy-light-lite.healed-2",
             "anchor": "target",
-            "shape": "billboard",
-            "colour": "#f1ff64",
-            "accent": "#fffcd5",
-            "durationTicks": 48,
-            "count": 1,
-            "size": 2.6,
-            "height": 5.25,
-            "follow": true,
-            "intensity": 1.25,
-            "texture": {
-              "asset": "asset.effects.holy-light-sigil",
-              "role": "image",
-              "index": 1
-            }
-          },
-          {
-            "id": "rising-rays",
-            "event": "released",
-            "anchor": "target",
-            "shape": "streaks",
-            "colour": "#f1ff64",
-            "accent": "#fffcd5",
-            "durationTicks": 44,
-            "count": 22,
-            "size": 0.09,
-            "height": 4.3,
-            "follow": true,
-            "intensity": 1.4,
-            "spread": 0.9,
-            "length": 1.8,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
-          },
-          {
-            "id": "healing-flash",
             "event": "healed",
-            "anchor": "target",
-            "shape": "burst",
-            "colour": "#f1ff64",
-            "accent": "#fffcd5",
-            "durationTicks": 24,
-            "count": 9,
-            "size": 0.4,
-            "height": 1.5,
-            "follow": true,
-            "intensity": 1.1,
-            "spread": 0.8,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "finite"
           },
           {
-            "id": "searing-flash",
-            "event": "damaged",
+            "id": "effect-3",
+            "effect": "effect.core.holy-light-lite.damaged-3",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#ffdf70",
-            "accent": "#fffcd5",
-            "durationTicks": 20,
-            "count": 12,
-            "size": 0.35,
-            "height": 1.6,
-            "follow": true,
-            "intensity": 1.1,
-            "spread": 1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "damaged",
+            "lifetime": "finite"
           }
         ]
       },
@@ -988,40 +895,15 @@
           "fallback": "idle",
           "channel": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "falling-ice",
-            "event": "waveStarted",
+            "id": "effect-0",
+            "effect": "effect.core.blizzard.wavestarted",
             "anchor": "target",
-            "shape": "rain",
-            "colour": "#ffffff",
-            "accent": "#f0fcff",
-            "durationTicks": 40,
-            "count": 38,
-            "size": 1.05,
-            "height": 9,
             "durationFrom": "delivery",
+            "event": "waveStarted",
             "spreadFrom": "radius",
-            "fallSpeed": 2.6,
-            "launchDelayMs": 50,
-            "fallAngleDegrees": 30,
-            "fallAzimuthDegrees": -35,
-            "impact": {
-              "durationTicks": 16,
-              "count": 4,
-              "size": 0.25,
-              "spread": 1.1,
-              "height": 0.85,
-              "colour": "#197dff",
-              "accent": "#74dfff"
-            },
-            "intensity": 1,
-            "length": 1.7,
-            "texture": {
-              "asset": "asset.effects.blizzard-ice",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "finite"
           }
         ]
       },
@@ -1035,45 +917,21 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "frenzy-arrival",
-            "event": "released",
+            "id": "effect-0",
+            "effect": "effect.core.bloodlust.released",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#ff4833",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 20,
-            "size": 0.17,
-            "height": 1.6,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "released",
+            "lifetime": "finite"
           },
           {
-            "id": "frenzy",
-            "event": "statusApplied",
+            "id": "effect-1",
+            "effect": "effect.core.bloodlust.statusapplied-1",
             "anchor": "target",
-            "shape": "streaks",
-            "colour": "#ee4b33",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 6,
-            "size": 0.12,
-            "height": 2.4,
             "durationFrom": "delivery",
-            "follow": true,
-            "spread": 0.5,
-            "length": 0.65,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "statusApplied",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1087,37 +945,20 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "spirit-emergence",
-            "event": "summoned",
+            "id": "effect-0",
+            "effect": "effect.core.feral-spirit.summoned",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#78d7ff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 40,
-            "size": 0.22,
-            "height": 3,
-            "spread": 3.5,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "summoned",
+            "lifetime": "finite"
           },
           {
-            "id": "summoning-light",
-            "event": "released",
+            "id": "effect-1",
+            "effect": "effect.core.feral-spirit.released-1",
             "anchor": "target",
-            "shape": "light",
-            "colour": "#72bcff",
-            "accent": "#ffffff",
-            "durationTicks": 30,
-            "count": 1,
-            "size": 8,
-            "height": 2,
-            "intensity": 35
+            "event": "released",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1131,56 +972,20 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "purifying-stars",
-            "event": "released",
+            "id": "effect-0",
+            "effect": "effect.core.dispel-magic.released",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#c1edff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 60,
-            "size": 0.22,
-            "height": 2,
-            "distribution": "disc",
-            "spread": 5,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "released",
+            "lifetime": "finite"
           },
           {
-            "id": "magic-unbound",
+            "id": "effect-1",
+            "effect": "effect.core.dispel-magic.dispelled-1",
+            "anchor": "target",
             "event": "dispelled",
-            "anchor": "target",
-            "shape": "burst",
-            "colour": "#eee5ff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 12,
-            "size": 0.17,
-            "height": 1.6,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
-          },
-          {
-            "id": "purifying-light",
-            "event": "released",
-            "anchor": "target",
-            "shape": "light",
-            "colour": "#d7edff",
-            "accent": "#ffffff",
-            "durationTicks": 15,
-            "count": 1,
-            "size": 10,
-            "height": 3,
-            "intensity": 50
+            "lifetime": "finite"
           }
         ]
       },
@@ -1194,57 +999,29 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "bolt",
+            "id": "effect-0",
+            "effect": "effect.core.storm-bolt.projectile",
+            "anchor": "target",
+            "durationFrom": "delivery",
             "event": "projectile",
-            "anchor": "target",
-            "shape": "missile",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 1,
-            "size": 1.5,
-            "height": 1.6,
-            "durationFrom": "delivery",
-            "blend": "normal",
-            "texture": {
-              "asset": "asset.effects.storm-hammer",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "finite"
           },
           {
-            "id": "thunder-impact",
+            "id": "effect-1",
+            "effect": "effect.core.storm-bolt.impact-1",
+            "anchor": "target",
             "event": "impact",
-            "anchor": "target",
-            "shape": "burst",
-            "colour": "#62caff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 26,
-            "size": 0.17,
-            "height": 1.6,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "finite"
           },
           {
-            "id": "stun-orbit",
-            "event": "statusApplied",
+            "id": "effect-2",
+            "effect": "effect.core.storm-bolt.statusapplied-2",
             "anchor": "target",
-            "shape": "ring",
-            "colour": "#ffdf73",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 1,
-            "size": 0.65,
-            "height": 3,
             "durationFrom": "delivery",
-            "follow": true
+            "event": "statusApplied",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1258,46 +1035,21 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "root-cage",
-            "event": "statusApplied",
+            "id": "effect-0",
+            "effect": "effect.core.entangling-roots.statusapplied",
             "anchor": "target",
-            "shape": "billboard",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 1,
-            "size": 4,
-            "height": 1,
             "durationFrom": "delivery",
-            "blend": "normal",
-            "follow": true,
-            "spread": 0.8,
-            "length": 1,
-            "texture": {
-              "asset": "asset.effects.living-roots",
-              "role": "image",
-              "index": 1
-            }
+            "event": "statusApplied",
+            "lifetime": "finite"
           },
           {
-            "id": "root-arrival",
-            "event": "released",
+            "id": "effect-1",
+            "effect": "effect.core.entangling-roots.released-1",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#87cc4a",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 18,
-            "size": 0.17,
-            "height": 0.5,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "released",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1311,36 +1063,20 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "arc",
-            "event": "impact",
+            "id": "effect-0",
+            "effect": "effect.core.chain-lightning.impact",
             "anchor": "target",
-            "shape": "beam",
-            "colour": "#74c6ff",
-            "accent": "#ffffff",
-            "durationTicks": 10,
-            "count": 12,
-            "size": 0.085,
-            "height": 1.6
+            "event": "impact",
+            "lifetime": "finite"
           },
           {
-            "id": "arc-sparks",
-            "event": "damaged",
+            "id": "effect-1",
+            "effect": "effect.core.chain-lightning.damaged-1",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#88dcff",
-            "accent": "#ffffff",
-            "durationTicks": 12,
-            "count": 10,
-            "size": 0.17,
-            "height": 1.6,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "damaged",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1354,44 +1090,21 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "wavefront",
-            "event": "projectile",
+            "id": "effect-0",
+            "effect": "effect.core.shockwave.projectile",
             "anchor": "target",
-            "shape": "wavefront",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 1,
-            "size": 4.5,
-            "height": 0.2,
             "durationFrom": "delivery",
-            "orientation": "ground",
-            "intensity": 1.2,
-            "texture": {
-              "asset": "asset.effects.seismic-crescent",
-              "role": "image",
-              "index": 1
-            }
+            "event": "projectile",
+            "lifetime": "finite"
           },
           {
-            "id": "earth-fragments",
-            "event": "damaged",
+            "id": "effect-1",
+            "effect": "effect.core.shockwave.damaged-1",
             "anchor": "target",
-            "shape": "burst",
-            "colour": "#ddb46c",
-            "accent": "#ffffff",
-            "durationTicks": 24,
-            "count": 16,
-            "size": 0.17,
-            "height": 1.1,
-            "spread": 1.1,
-            "texture": {
-              "asset": "asset.effects.holy-light-spark",
-              "role": "image",
-              "index": 1
-            }
+            "event": "damaged",
+            "lifetime": "finite"
           }
         ]
       },
@@ -1405,81 +1118,13 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "ground-glow",
-            "event": "statusApplied",
+            "id": "effect-0",
+            "effect": "effect.core.vampiric-aura.statusapplied",
             "anchor": "target",
-            "shape": "glow",
-            "colour": "#823bcc",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 1.65,
-            "height": 0.045,
-            "lifetime": "status",
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.5
-          },
-          {
-            "id": "rotating-wreath",
             "event": "statusApplied",
-            "anchor": "target",
-            "shape": "billboard",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 4.5,
-            "height": 0.06,
-            "lifetime": "status",
-            "motion": {
-              "rotation": {
-                "periodTicks": 320,
-                "direction": "clockwise"
-              }
-            },
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.85,
-            "texture": {
-              "asset": "asset.effects.vampiric-wreath",
-              "role": "image",
-              "index": 1
-            }
-          },
-          {
-            "id": "pulsing-heart",
-            "event": "statusApplied",
-            "anchor": "target",
-            "shape": "billboard",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 2.6,
-            "height": 0.075,
-            "lifetime": "status",
-            "motion": {
-              "scale": {
-                "periodTicks": 80,
-                "min": 0.72,
-                "max": 1.06,
-                "easing": "bounce"
-              }
-            },
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.9,
-            "texture": {
-              "asset": "asset.effects.vampiric-crest",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "status"
           }
         ]
       },
@@ -1493,87 +1138,13 @@
           "recover": "idle",
           "fallback": "idle"
         },
-        "cues": [
+        "effects": [
           {
-            "id": "ground-glow",
-            "event": "statusApplied",
+            "id": "effect-0",
+            "effect": "effect.core.thorns-aura.statusapplied",
             "anchor": "target",
-            "shape": "glow",
-            "colour": "#46b966",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 1.65,
-            "height": 0.045,
-            "lifetime": "status",
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.5
-          },
-          {
-            "id": "rotating-wreath",
             "event": "statusApplied",
-            "anchor": "target",
-            "shape": "billboard",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 4.5,
-            "height": 0.06,
-            "lifetime": "status",
-            "motion": {
-              "rotation": {
-                "periodTicks": 480,
-                "direction": "counterclockwise"
-              }
-            },
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.85,
-            "texture": {
-              "asset": "asset.effects.thorns-wreath",
-              "role": "image",
-              "index": 1
-            }
-          },
-          {
-            "id": "pulsing-heart",
-            "event": "statusApplied",
-            "anchor": "target",
-            "shape": "billboard",
-            "colour": "#ffffff",
-            "accent": "#ffffff",
-            "durationTicks": 80,
-            "count": 1,
-            "size": 2.6,
-            "height": 0.075,
-            "lifetime": "status",
-            "motion": {
-              "scale": {
-                "periodTicks": 112,
-                "min": 0.8,
-                "max": 1.04,
-                "easing": "sine"
-              },
-              "opacity": {
-                "periodTicks": 112,
-                "min": 0.7,
-                "max": 1,
-                "easing": "sine"
-              }
-            },
-            "blend": "additive",
-            "orientation": "ground",
-            "follow": true,
-            "intensity": 0.9,
-            "texture": {
-              "asset": "asset.effects.thorns-heart",
-              "role": "image",
-              "index": 1
-            }
+            "lifetime": "status"
           }
         ]
       }

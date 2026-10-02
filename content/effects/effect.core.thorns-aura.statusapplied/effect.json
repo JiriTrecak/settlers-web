@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.thorns-aura.statusapplied",
+  "name": "Thorns Aura",
+  "description": "",
+  "durationTicks": 320,
+  "loop": true,
+  "layers": [
+    {
+      "durationTicks": 80,
+      "count": 1,
+      "height": 0.045,
+      "follow": true,
+      "orientation": "ground",
+      "blend": "additive",
+      "accent": "#ffffff",
+      "id": "ground-glow",
+      "shape": "glow",
+      "colour": "#46b966",
+      "size": 1.65,
+      "intensity": 0.5,
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": true
+    },
+    {
+      "durationTicks": 80,
+      "count": 1,
+      "height": 0.06,
+      "follow": true,
+      "orientation": "ground",
+      "blend": "additive",
+      "accent": "#ffffff",
+      "id": "rotating-wreath",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "size": 4.5,
+      "intensity": 0.85,
+      "texture": {
+        "asset": "asset.effects.thorns-wreath",
+        "role": "image",
+        "index": 1
+      },
+      "motion": {
+        "rotation": {
+          "periodTicks": 480,
+          "direction": "counterclockwise"
+        }
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": true
+    },
+    {
+      "durationTicks": 80,
+      "count": 1,
+      "height": 0.075,
+      "follow": true,
+      "orientation": "ground",
+      "blend": "additive",
+      "accent": "#ffffff",
+      "id": "pulsing-heart",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "size": 2.6,
+      "intensity": 0.9,
+      "texture": {
+        "asset": "asset.effects.thorns-heart",
+        "role": "image",
+        "index": 1
+      },
+      "motion": {
+        "scale": {
+          "periodTicks": 112,
+          "min": 0.8,
+          "max": 1.04,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 112,
+          "min": 0.7,
+          "max": 1,
+          "easing": "sine"
+        }
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": true
+    }
+  ]
+}

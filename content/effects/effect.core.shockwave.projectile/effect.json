@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.shockwave.projectile",
+  "name": "Shockwave Projectile",
+  "description": "",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "wavefront",
+      "shape": "wavefront",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 4.5,
+      "height": 0.2,
+      "orientation": "ground",
+      "intensity": 1.2,
+      "texture": {
+        "asset": "asset.effects.seismic-crescent",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

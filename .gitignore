@@ -54,3 +54,8 @@ __pycache__/
 /docs/proofs/
 /artifacts/
 /experiments/ai/
+
+# Local Eve conversations, compiled runtimes and diagnostic data
+/tooling/spell-editor/agent-app/.eve/
+/tooling/spell-editor/agent-app/.output/
+/tooling/spell-editor/agent-app/.nitro/

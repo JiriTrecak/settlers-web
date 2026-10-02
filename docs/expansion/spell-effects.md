@@ -1,6 +1,18 @@
-# Spell Editor and declarative abilities
+# Spell & Effect Studio
 
-The **Spell Editor** is a separate application. Start `npm run dev:spells` and open `http://127.0.0.1:5177/`. It does not require the game or map editor to be open. `npm run mcp:spells` starts its independent stdio MCP server; the editor service must be running.
+The **Spell & Effect Studio** is a separate application with Spells and Effects workspaces. Start `npm run dev:spells` and open `http://127.0.0.1:5177/`. It does not require the game or map editor to be open. `npm run mcp:spells` starts its independent stdio MCP server; the editor service must be running.
+
+## Embedded authoring assistant
+
+Open **Settings** to save an OpenAI API key and select the authoring and image models, then open **Assistant**. The key lives in the operating-system credential store (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux). There is no plaintext fallback: unlock that store if it is unavailable. The key is not returned to the browser, agent, tool results, or project files. Removing it revokes subsequent provider requests. This is a local, single-user workbench, bound to loopback; it is not a remotely hosted multi-user service.
+
+Eve starts on demand using the Node 24 runtime installed by `npm install`. It receives a short-lived local proxy capability; only the editor backend injects the real OpenAI key into requests to OpenAI. Chat and tool history stay in ignored `tooling/spell-editor/agent-app/.eve/` data. Requests, canvas images and generated-art prompts are sent to the configured OpenAI account when used. Image generation is billed by OpenAI.
+
+The complete authoring skill is `tooling/spell-editor/agent-app/author-spells/SKILL.md`. `agent/instructions.ts` imports it directly as the system prompt: there is no external skill discovery or filesystem tool. Edit that one guide when authoring practices change. It explains deterministic mechanics, reusable visual layers, schema discovery, revision-safe publication, folders, unit bindings, image generation and preview verification.
+
+The four tools—`studio_schema`, `studio_author`, `studio_canvas`, `studio_image`—share contracts in `tooling/spell-editor/shared/authoringTools.ts` and implementations in `server/authoringTools.ts`. Both Eve and MCP call those same services. Canvas requests target the agent's browser tab and cannot replace an unsaved draft. Images use GPT Image 2.5, retain their original source and generation metadata, and publish 512px PNGs through the canonical asset pipeline; transparent images retain alpha. Existing asset IDs cannot be overwritten. The assistant has no shell, arbitrary file access, or API-key tool.
+
+The UI uses shadcn components and a zinc theme; the game debug/profiling overlay is disabled in this host. Server implementation changes require restarting `dev:spells`. Content publication deliberately reloads the client without restarting the backend or interrupting agent work.
 
 ## Current capability set
 
@@ -14,11 +26,13 @@ These are declarative `targeting.kind: point`, `targeting.radius` and `cast.chan
 
 ## Workbench
 
-- **Ability:** name, description, rank-one values, prepare/recover timing, validated JSON and published unit bindings.
-- **Encounter:** caster and target models, one to eight targets, spacing, relationship, health, mana, distance, biome and active rank. Click the stage to aim ground spells; dragging still orbits. Ground spells default to a group of enemies. Stun, target displacement and removal exercise real cancellation rules.
-- **Visuals:** event-anchored rings, soft ground glows, pillars, camera-facing sigils, rising light strips, textured bursts real target lights and falling textured ice/rain. `durationFrom: delivery`, `sizeFrom: radius` and `spreadFrom: radius` bind visual dimensions to authoritative channel events, so changing spell radius or wave interval keeps the storm synchronized. Rain supports `fallSpeed`, `launchDelayMs`, `fallAngleDegrees` (from vertical), `fallAzimuthDegrees` and a nested `impact` burst. Blizzard launches each shard with a stable random 0–50 ms delay, falls at 30° with `fallSpeed: 2.6` (approximately 385 ms travel), and emits blue fragments plus a small ground flash at its terrain-sampled landing point. The old storm/impact rings are removed. Faster rain starts later within the wave interval so contact remains aligned with damage. Landing positions stay inside the target disc; visual impacts may trail the simultaneous damage tick by up to 50 ms. Randomness derives from cast, wave tick and shard index, so seeking is repeatable and never touches simulation RNG. Impact tails share the 512-particle budget and are removed on interruption. Disc-distributed bursts remain available for other spells. Edit colours, textures, intensity, size, count, height, spread, strip length and duration. Advanced JSON exposes target-following and semantic animation clips. Holy Light combines target illumination, a floating sigil and rising strips on release, plus an impact burst on heal/damage.
-- **Views:** encounter, caster, target, effect-only and biome environment. These share the game's renderer, models, team colours and lighting.
-- **Transport:** cast, interrupt, reset, pause, single tick, and playback speed. There are no spell-specific preview buttons or hand-picked preview times. Timeline stages and visual spans come from the selected definition, presentation, and simulation events. `preview.replay` accepts an explicit tick and optional `from: release` for automated inspection. The bottom Timeline has animation, impact, status and visual-effect tracks. Drag the tick-accurate playhead or click a span to seek; the Events tab retains the event inspector. Seeking reconstructs the same take, including recorded interruption probes.
+- **Layout:** Library and Inspector header buttons hide or restore either sidebar. Drag the dividers or focus them and use arrow keys to resize. Each workspace remembers its layout and last expanded widths locally. Collapsing keeps the forms and canvas mounted, preserving unsaved edits.
+- **Spells:** the Ability inspector provides quick values and a **Configure all attributes** dialog. Its Mechanics & ranks tab exposes the complete supported definition schema: targeting, cast lifecycle, delivery, programs, statuses, modifiers, summons, rank values and AI policy. The Animations & effect links tab maps semantic clips and authoritative events to published effect IDs. Nested operations, arrays and optional fields are editable without JSON. Unit bindings have their own complete configuration dialog.
+- **Effects:** a standalone visual stage with the same renderer, biome lighting and resource catalogue as the game. Create effects, add/reorder/duplicate/mute/solo layers, edit textures and parameters, undo/redo, preview and publish. Spells cannot edit these layers; they only reference effects.
+- **Layers:** rings, glows, pillars, billboards, streaks, bursts, lights, rain, missiles, beams, wavefronts and generic particle emitters. Particle controls include burst/continuous emission, lifetime, rate, cone direction, speed variation, gravity, drag, spawn radius, start/end size, spin and opacity envelopes. Layer start offsets, source/target anchors and spatial offsets compose a reusable effect. Cyclic rotation, scale and opacity animate ground symbols. Rain retains angle, randomized launch delay and per-shard impact fragments.
+- **Libraries:** compact, windowed Headless Tree browsers with a visible root, search, small spell icons, keyboard selection, multi-selection, drag-and-drop, and create/rename/move/remove-empty-folder actions. Existing spells are grouped under `/spells/heroes` and `/spells/units`; effects add a folder for each spell. `/environment` is available for reusable scenery effects. Folder changes preserve document IDs and links. Search includes descendants of matching folders. Only visible rows are mounted.
+- **Encounter:** independent setup selection, stationary target dummies by default, optional combat, models, team relationships, health, distance, biome and active rank. Cast resets the fixture immediately, then requests a unit/point target or immediately activates self/passive spells. Test mana/cooldown do not restrict repeated casts. The game definitions retain their costs.
+- **Transport:** spell timeline and event inspector use actual simulation ticks; seeking reconstructs the encounter. Effect playback is visual-only and has its own layered timeline, seek, restart, stop, repeat, speed, deterministic seed, source/target distance and sustain controls. Preview solo/repeat controls never modify published effects.
 
 The backend creates an isolated instance of the actual `Game` simulation. It runs at 40 ticks per second and never edits a production map. Renderer frames cannot apply healing or damage. Preview reset clears actors and cues; the event inspector shows authoritative lifecycle outcomes and a state checksum.
 
@@ -26,14 +40,18 @@ Save validates and commits the draft with an expected revision. Publish requires
 
 ## Files and publication
 
-Each ability has one folder:
+Stable-ID source directories are independent of the logical library folders:
 
 ```text
 content/abilities/ability.core.holy-light-lite/definition.json
 content/abilities/ability.core.holy-light-lite/presentation.json
+content/abilities/folders.json
+content/effects/effect.core.holy-light-lite.released-1/effect.json
+content/effects/published.json
+content/effects/folders.json
 ```
 
-`content/abilities/published.json` is the single current published library. There are no historical release files, version selectors, or dependency pins. Texture resources remain in the standard Asset Studio pipeline; Holy Light uses `asset.effects.holy-light-spark` and `asset.effects.holy-light-sigil`; Blizzard also uses the original generated `asset.effects.blizzard-ice`, role `image`, index `1`. Each source and 256px runtime image is in its asset's own folder. Spells never name uploaded filenames.
+`content/abilities/published.json` and `content/effects/published.json` hold the current published spell and effect libraries. Spell presentations contain `effects` bindings, never embedded visual layers. Each binding chooses an effect ID, lifecycle event, caster/target anchor and finite/status lifetime; optional radius/delivery bindings adapt its dimensions to the authoritative event. Publishing an effect updates every linked spell in newly loaded content. Draft changes remain private until publication. There are no historical release files, version selectors, or dependency pins. Texture resources remain in the standard Asset Studio pipeline; Holy Light uses `asset.effects.holy-light-spark` and `asset.effects.holy-light-sigil`; Blizzard also uses the original generated `asset.effects.blizzard-ice`, role `image`, index `1`. Each source and 256px runtime image is in its asset's own folder. Spells never name uploaded filenames.
 
 Spells reference assets by stable ID and role/index. Republishing a texture under the same ID updates its consumers without republishing their spells. Publishing still verifies current resource bytes and rejects missing references; a referenced asset cannot be removed until its consumers are updated. Startup validates the current definitions and image references. Multiplayer holds early turns until peers agree on simulation build and the SHA-256 identity of published content. The same serializable source is passed to the worker, validated, frozen and checked against the main-thread registry fingerprint.
 
@@ -73,6 +91,14 @@ For bindings, `binding.read` takes a unit definition ID and returns its caster p
 
 Other preview commands are `preview.aim` (integer world position), `preview.state`, `preview.play`, `preview.stop`, `preview.reset`, `preview.replay`, `preview.rank`, `preview.stun`, `preview.displace` and `preview.kill`. MCP and UI control the same encounter. A newly loaded MCP document is reflected by a clean UI; unsaved UI edits are retained.
 
+### Independent effect and folder commands
+
+Use `effects.list`, `effects.library`, `effects.read`, `effects.validate`, `effects.save` and `effects.publish` for the visual library. Save/publish use optimistic `expectedRevision` concurrency checks, not version pins. `effects.preview.load` accepts a visual effect and preview settings; `effects.preview.seek`, `effects.preview.play`, `effects.preview.stop` and `effects.preview.state` control the independent visual stage. Loading does not run or create a spell. The Effects workspace displays incoming MCP previews while protecting an unsaved local draft.
+
+`tree.read {kind}` returns logical folders, document assignments and their revision. `tree.mutate {kind, expectedRevision, action}` applies `create`, `rename`, `move` (multiple IDs), or `remove` (empty folders only). `kind` is `spells` or `effects`; `root` is immutable. Parent cycles, sibling-name collisions and stale revisions are rejected. The same commands drive the UI and MCP.
+
+`EffectPlayer` owns bounded visual playback, accepts an effect definition plus source/target positions, clock and seed, and returns a stop handle. `AbilityEffects` adapts authoritative spell events and persistent statuses to that player. Chain target selection, damage and channel scheduling remain exclusively in simulation; a beam simply renders each supplied source/target segment. No gameplay mutation happens in an effect. The standalone player is ready for future world scenery consumers, but placing effects in the map editor is not part of this implementation.
+
 ## Integration and limits
 
 The Ant Marshal has player/AI bindings for Holy Light on Q and Blizzard on W. The Root Seer has a hidden AI binding and scores wounded camp allies through the same targeting and cast interpreter. Campaign company transfer carries learned binding ranks; full saves preserve escrow, cooldowns and pending casts. Obsolete spell saves require the new simulation build.
@@ -111,9 +137,9 @@ Bounds: 512 in-flight deliveries per world; 128 victims per line/area; 16 chain 
 
 ### Layered ground auras
 
-A presentation can compose up to 16 ordinary cues. Use `shape: "billboard"`, a published transparent `texture`, and `orientation: "ground"` for a ground-facing symbol. `follow: true` follows the recipient. `shape: "glow"` provides the soft untextured light pool. Put layers at slightly different `height` offsets to avoid coplanar flicker.
+An effect composes up to 32 visual layers. A spell presentation links published effects through event bindings. Use `shape: "billboard"`, a published transparent `texture`, and `orientation: "ground"` for a ground-facing symbol. `follow: true` follows the recipient. `shape: "glow"` provides the soft untextured light pool. Put layers at slightly different `height` offsets to avoid coplanar flicker.
 
-`lifetime: "status"` binds a target `statusApplied` layer to the actual observed status: steady opacity, no finite fade/restart, removed on expiry, dispel, range loss, or death. It supports billboard, glow, ring, and light layers. Regular finite cues retain their existing envelopes. Aura animation uses the world tick phase, so rebuilding membership each tick, load, visibility re-entry, and preview seeking do not restart the cycle. Timed statuses use their start tick.
+`lifetime: "status"` on a spell effect binding binds its target `statusApplied` effect to the actual observed status: steady opacity, no finite fade/restart, removed on expiry, dispel, range loss, or death. It supports billboard, glow, ring, and light layers. Regular finite cues retain their existing envelopes. Aura animation uses the world tick phase, so rebuilding membership each tick, load, visibility re-entry, and preview seeking do not restart the cycle. Timed statuses use their start tick.
 
 Reusable `motion` channels are independent:
 
@@ -125,7 +151,7 @@ Reusable `motion` channels are independent:
 }
 ```
 
-There are 40 simulation ticks per second. Scale and opacity pulse between their bounds; `sine`, `smoothstep`, and `bounce` are supported. The workbench's **Visuals → Layer animation** controls expose these channels, direction, phase, lifetime, follow, orientation, and blending. MCP uses the same document schema through `spell_schema` and normal save/publish commands. No spell names are consulted by the renderer or these controls.
+There are 40 simulation ticks per second. Scale and opacity pulse between their bounds; `sine`, `smoothstep`, and `bounce` are supported. The Effects layer inspector's **Motion** controls expose these channels, direction and phase, alongside sustain, follow, orientation and blending. The spell owns status lifetime; an effect can also sustain or loop independently. MCP uses the same document schema through `spell_schema` and normal save/publish commands. No spell names are consulted by the renderer or these controls.
 
 Vampiric Aura uses a constant violet glow, an eight-second outer wreath rotation, and a two-second bouncing inner bat crest. Thorns Aura uses an emerald glow, a twelve-second reverse-rotating bramble wreath, and a 2.8-second breathing thorn-heart. Four original generated ground textures are 512×512 RGBA; the Thorns command icon is 128×128. Generation descriptions live in each `art/assets/asset.effects.{vampiric-wreath,vampiric-crest,thorns-wreath,thorns-heart}/generation.json`.
 

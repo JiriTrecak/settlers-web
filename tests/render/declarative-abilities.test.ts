@@ -1,3 +1,5 @@
+import {coreEffects,presentationRecipes} from '../../src/content/effects/library';
+import {visualEffectSchema} from '../../src/content/effects/schema';
 import {it,expect,vi} from 'vitest';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
 import {castAnimation} from '../../src/render/abilities/castAnimation';
@@ -43,8 +45,8 @@ it('renders the sigil and strips, follows the target, and bounds and disposes re
 });
 it('requires published texture references for sigils and strips',()=>{
  for(const shape of ['billboard','streaks']as const){
-  const p=structuredClone(coreAbilities.presentations[0]);const cue=p.cues.find(c=>c.shape===shape)!;
-  delete cue.texture;expect(presentationSchema.safeParse(p).success).toBe(false);
+  const p=structuredClone(coreEffects.find(e=>e.layers.some(c=>c.shape===shape))!);const cue=p.layers.find(c=>c.shape===shape)!;
+  delete cue.texture;expect(visualEffectSchema.safeParse(p).success).toBe(false);
  }
 });
 
@@ -54,7 +56,7 @@ it('ties falling particles to authoritative wave duration and radius, then clear
  const effects=new AbilityEffects();
  try{
   effects.consume({...event(1,'waveStarted'),durationTicks:80,radius:8},p);
-  const launch=10+80-80/(p.cues.find(c=>c.shape==='rain')!.fallSpeed??1);
+  const launch=10+80-80/(presentationRecipes(p).find(c=>c.shape==='rain')!.fallSpeed??1);
   effects.update(launch+5);const cue=effects.root.children[0],shard=cue.children[10] as Sprite,start=shard.position.y;
   expect(shard.position.y).toBeGreaterThan(0);
   effects.update(launch+10);expect(shard.position.y).toBeLessThan(start);expect(effects.liveCues).toBe(1);
@@ -64,25 +66,26 @@ it('ties falling particles to authoritative wave duration and radius, then clear
 
 it('staggers angled shards, lands within the disc on terrain, and explodes per shard without changing simulation events',async()=>{
  const {default:raw}=await import('../../content/abilities/ability.core.blizzard/presentation.json');
- const p=presentationSchema.parse(raw),r=p.cues.find(c=>c.shape==='rain')!;
+ const p=presentationSchema.parse(raw),r=presentationRecipes(p).find(c=>c.shape==='rain')!;
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),fx=new AbilityEffects();
  try{
-  expect(p.cues.some(c=>c.shape==='ring')).toBe(false);
+  expect(presentationRecipes(p).some(c=>c.shape==='ring')).toBe(false);
   fx.consume({...event(9,'waveStarted'),durationTicks:40,radius:5},p,(x,z)=>x*.03+z*.07);
-  const root=fx.root.children[0],shards=root.children.slice(0,r.count) as Sprite[];
+  const root=fx.root.children[0],shardCount=root.children.length/(r.impact!.count+2),shards=root.children.slice(0,shardCount) as Sprite[];
+  expect(Number.isInteger(shardCount)).toBe(true);expect(shardCount).toBeLessThanOrEqual(r.count);expect(root.children.length).toBeLessThanOrEqual(512);
   const flight=40/(r.fallSpeed??1),launch=50-flight;
   fx.update(launch-.01);expect(shards.every(s=>!s.visible)).toBe(true);
   fx.update(launch+.8);const visible=shards.filter(s=>s.visible).length;
-  expect(visible).toBeGreaterThan(0);expect(visible).toBeLessThan(r.count);
+  expect(visible).toBeGreaterThan(0);expect(visible).toBeLessThan(shardCount);
   fx.update(launch+2.01);expect(shards.every(s=>s.visible)).toBe(true);
   fx.update(launch+5);const earlier=shards.map(s=>s.position.clone());
   fx.update(launch+10);shards.forEach((s,i)=>{const delta=s.position.clone().sub(earlier[i]);expect(-delta.y).toBeCloseTo(r.height*5/flight);expect(Math.hypot(delta.x,delta.z)/Math.abs(delta.y)).toBeCloseTo(Math.tan(Math.PI/6));});
   const positions=shards.map(s=>s.position.toArray());fx.update(launch+9);fx.update(launch+10);expect(shards.map(s=>s.position.toArray())).toEqual(positions);
   fx.update(50.8);expect(shards.some(s=>s.visible)).toBe(true);expect(shards.some(s=>!s.visible)).toBe(true);
-  const impacts=root.children.slice(r.count);expect(impacts.some(s=>s.visible)).toBe(true);
+  const impacts=root.children.slice(shardCount);expect(impacts.some(s=>s.visible)).toBe(true);
   fx.update(52.01);expect(shards.every(s=>!s.visible)).toBe(true);
   const perImpact=r.impact!.count+1;
-  for(let i=0;i<r.count;i++){
+  for(let i=0;i<shardCount;i++){
    const flash=impacts[i*perImpact+r.impact!.count];expect(flash.visible).toBe(true);
    expect(Math.hypot(flash.position.x,flash.position.z)).toBeLessThanOrEqual(5);
    const world=flash.position.clone().add(root.position);expect(world.y).toBeCloseTo(world.x*.03+world.z*.07+.055);

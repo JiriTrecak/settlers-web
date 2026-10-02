@@ -1,6 +1,6 @@
-import type {AbilityPresentation} from '../../content/abilities/schema';
+import type {EffectRecipe} from '../../content/effects/schema';
 
-type Motion=NonNullable<AbilityPresentation['cues'][number]['motion']>;
+type Motion=NonNullable<EffectRecipe['motion']>;
 type Pulse=NonNullable<Motion['scale']>;
 const cycle=(tick:number,period:number,phase=0)=>((tick/period+phase)%1+1)%1;
 function bounce(t:number):number{

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.holy-light-lite.released-1",
+  "name": "Holy Light Lite Cast",
+  "description": "",
+  "durationTicks": 48,
+  "loop": false,
+  "layers": [
+    {
+      "id": "target-illumination",
+      "shape": "light",
+      "colour": "#f1ff64",
+      "accent": "#fffcd5",
+      "durationTicks": 42,
+      "count": 1,
+      "size": 7,
+      "height": 3.8,
+      "follow": true,
+      "intensity": 90,
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    },
+    {
+      "id": "ground-glow",
+      "shape": "glow",
+      "colour": "#f1ff64",
+      "accent": "#fffcd5",
+      "durationTicks": 42,
+      "count": 1,
+      "size": 2.2,
+      "height": 0.05,
+      "follow": true,
+      "intensity": 1.8,
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    },
+    {
+      "id": "holy-sigil",
+      "shape": "billboard",
+      "colour": "#f1ff64",
+      "accent": "#fffcd5",
+      "durationTicks": 48,
+      "count": 1,
+      "size": 2.6,
+      "height": 5.25,
+      "follow": true,
+      "intensity": 1.25,
+      "texture": {
+        "asset": "asset.effects.holy-light-sigil",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    },
+    {
+      "id": "rising-rays",
+      "shape": "streaks",
+      "colour": "#f1ff64",
+      "accent": "#fffcd5",
+      "durationTicks": 44,
+      "count": 22,
+      "size": 0.09,
+      "height": 4.3,
+      "follow": true,
+      "intensity": 1.4,
+      "spread": 0.9,
+      "length": 1.8,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

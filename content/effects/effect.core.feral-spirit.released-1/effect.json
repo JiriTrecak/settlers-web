@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.feral-spirit.released-1",
+  "name": "Feral Spirit Cast",
+  "description": "",
+  "durationTicks": 30,
+  "loop": false,
+  "layers": [
+    {
+      "id": "summoning-light",
+      "shape": "light",
+      "colour": "#72bcff",
+      "accent": "#ffffff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 8,
+      "height": 2,
+      "intensity": 35,
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

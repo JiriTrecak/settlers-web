@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.entangling-roots.statusapplied",
+  "name": "Entangling Roots",
+  "description": "",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "root-cage",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 4,
+      "height": 1,
+      "blend": "normal",
+      "follow": true,
+      "spread": 0.8,
+      "length": 1,
+      "texture": {
+        "asset": "asset.effects.living-roots",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

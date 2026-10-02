@@ -8,44 +8,21 @@
     "recover": "idle",
     "fallback": "idle"
   },
-  "cues": [
+  "effects": [
     {
-      "id": "wavefront",
-      "event": "projectile",
+      "id": "effect-0",
+      "effect": "effect.core.shockwave.projectile",
       "anchor": "target",
-      "shape": "wavefront",
-      "colour": "#ffffff",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 1,
-      "size": 4.5,
-      "height": 0.2,
       "durationFrom": "delivery",
-      "orientation": "ground",
-      "intensity": 1.2,
-      "texture": {
-        "asset": "asset.effects.seismic-crescent",
-        "role": "image",
-        "index": 1
-      }
+      "event": "projectile",
+      "lifetime": "finite"
     },
     {
-      "id": "earth-fragments",
-      "event": "damaged",
+      "id": "effect-1",
+      "effect": "effect.core.shockwave.damaged-1",
       "anchor": "target",
-      "shape": "burst",
-      "colour": "#ddb46c",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 16,
-      "size": 0.17,
-      "height": 1.1,
-      "spread": 1.1,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
+      "event": "damaged",
+      "lifetime": "finite"
     }
   ]
 }

@@ -8,57 +8,29 @@
     "recover": "idle",
     "fallback": "idle"
   },
-  "cues": [
+  "effects": [
     {
-      "id": "bolt",
+      "id": "effect-0",
+      "effect": "effect.core.storm-bolt.projectile",
+      "anchor": "target",
+      "durationFrom": "delivery",
       "event": "projectile",
-      "anchor": "target",
-      "shape": "missile",
-      "colour": "#ffffff",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 1,
-      "size": 1.5,
-      "height": 1.6,
-      "durationFrom": "delivery",
-      "blend": "normal",
-      "texture": {
-        "asset": "asset.effects.storm-hammer",
-        "role": "image",
-        "index": 1
-      }
+      "lifetime": "finite"
     },
     {
-      "id": "thunder-impact",
+      "id": "effect-1",
+      "effect": "effect.core.storm-bolt.impact-1",
+      "anchor": "target",
       "event": "impact",
-      "anchor": "target",
-      "shape": "burst",
-      "colour": "#62caff",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 26,
-      "size": 0.17,
-      "height": 1.6,
-      "spread": 1.1,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
+      "lifetime": "finite"
     },
     {
-      "id": "stun-orbit",
-      "event": "statusApplied",
+      "id": "effect-2",
+      "effect": "effect.core.storm-bolt.statusapplied-2",
       "anchor": "target",
-      "shape": "ring",
-      "colour": "#ffdf73",
-      "accent": "#ffffff",
-      "durationTicks": 24,
-      "count": 1,
-      "size": 0.65,
-      "height": 3,
       "durationFrom": "delivery",
-      "follow": true
+      "event": "statusApplied",
+      "lifetime": "finite"
     }
   ]
 }

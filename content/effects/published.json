@@ -1,0 +1,863 @@
+{
+  "schemaVersion": 1,
+  "effects": [
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.entangling-roots.statusapplied",
+      "name": "Entangling Roots",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "root-cage",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 4,
+          "height": 1,
+          "blend": "normal",
+          "follow": true,
+          "spread": 0.8,
+          "length": 1,
+          "texture": {
+            "asset": "asset.effects.living-roots",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.bloodlust.released",
+      "name": "Bloodlust Cast",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "frenzy-arrival",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ff4833",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 20,
+          "size": 0.17,
+          "height": 1.6,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.shockwave.damaged-1",
+      "name": "Shockwave Hit",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "earth-fragments",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ddb46c",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 16,
+          "size": 0.17,
+          "height": 1.1,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.holy-light-lite.healed-2",
+      "name": "Holy Light Lite Heal",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "healing-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#f1ff64",
+          "accent": "#fffcd5",
+          "durationTicks": 24,
+          "count": 9,
+          "size": 0.4,
+          "height": 1.5,
+          "follow": true,
+          "intensity": 1.1,
+          "spread": 0.8,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.thorns-aura.statusapplied",
+      "name": "Thorns Aura",
+      "description": "",
+      "durationTicks": 320,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ground-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#46b966",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.65,
+          "height": 0.045,
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.5
+        },
+        {
+          "id": "rotating-wreath",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 4.5,
+          "height": 0.06,
+          "motion": {
+            "rotation": {
+              "periodTicks": 480,
+              "direction": "counterclockwise"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.85,
+          "texture": {
+            "asset": "asset.effects.thorns-wreath",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "pulsing-heart",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.075,
+          "motion": {
+            "scale": {
+              "periodTicks": 112,
+              "min": 0.8,
+              "max": 1.04,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 112,
+              "min": 0.7,
+              "max": 1,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.9,
+          "texture": {
+            "asset": "asset.effects.thorns-heart",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.chain-lightning.impact",
+      "name": "Chain Lightning Impact",
+      "description": "",
+      "durationTicks": 10,
+      "loop": false,
+      "layers": [
+        {
+          "id": "arc",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#74c6ff",
+          "accent": "#ffffff",
+          "durationTicks": 10,
+          "count": 12,
+          "size": 0.085,
+          "height": 1.6
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.holy-light-lite.damaged-3",
+      "name": "Holy Light Lite Hit",
+      "description": "",
+      "durationTicks": 20,
+      "loop": false,
+      "layers": [
+        {
+          "id": "searing-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ffdf70",
+          "accent": "#fffcd5",
+          "durationTicks": 20,
+          "count": 12,
+          "size": 0.35,
+          "height": 1.6,
+          "follow": true,
+          "intensity": 1.1,
+          "spread": 1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.dispel-magic.dispelled-1",
+      "name": "Dispel Magic Dispel",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "magic-unbound",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#eee5ff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 12,
+          "size": 0.17,
+          "height": 1.6,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.holy-light-lite.accepted",
+      "name": "Holy Light Lite Preparation",
+      "description": "",
+      "durationTicks": 12,
+      "loop": false,
+      "layers": [
+        {
+          "id": "gather",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#effc86",
+          "accent": "#fffbd4",
+          "durationTicks": 12,
+          "count": 1,
+          "size": 0.7,
+          "height": 0.04,
+          "intensity": 0.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.shockwave.projectile",
+      "name": "Shockwave Projectile",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "wavefront",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "wavefront",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 4.5,
+          "height": 0.2,
+          "orientation": "ground",
+          "intensity": 1.2,
+          "texture": {
+            "asset": "asset.effects.seismic-crescent",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.feral-spirit.released-1",
+      "name": "Feral Spirit Cast",
+      "description": "",
+      "durationTicks": 30,
+      "loop": false,
+      "layers": [
+        {
+          "id": "summoning-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#72bcff",
+          "accent": "#ffffff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 8,
+          "height": 2,
+          "intensity": 35
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.dispel-magic.released",
+      "name": "Dispel Magic Cast",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "purifying-stars",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#c1edff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 60,
+          "size": 0.22,
+          "height": 2,
+          "distribution": "disc",
+          "spread": 5,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "purifying-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#d7edff",
+          "accent": "#ffffff",
+          "durationTicks": 15,
+          "count": 1,
+          "size": 10,
+          "height": 3,
+          "intensity": 50
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.storm-bolt.impact-1",
+      "name": "Storm Bolt Impact",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "thunder-impact",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#62caff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 26,
+          "size": 0.17,
+          "height": 1.6,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.bloodlust.statusapplied-1",
+      "name": "Bloodlust",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "frenzy",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "streaks",
+          "colour": "#ee4b33",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 6,
+          "size": 0.12,
+          "height": 2.4,
+          "follow": true,
+          "spread": 0.5,
+          "length": 0.65,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.vampiric-aura.statusapplied",
+      "name": "Vampiric Aura",
+      "description": "",
+      "durationTicks": 320,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ground-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#823bcc",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.65,
+          "height": 0.045,
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.5
+        },
+        {
+          "id": "rotating-wreath",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 4.5,
+          "height": 0.06,
+          "motion": {
+            "rotation": {
+              "periodTicks": 320,
+              "direction": "clockwise"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.85,
+          "texture": {
+            "asset": "asset.effects.vampiric-wreath",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "pulsing-heart",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.075,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.72,
+              "max": 1.06,
+              "easing": "bounce"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.9,
+          "texture": {
+            "asset": "asset.effects.vampiric-crest",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.entangling-roots.released-1",
+      "name": "Entangling Roots Cast",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "root-arrival",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#87cc4a",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 18,
+          "size": 0.17,
+          "height": 0.5,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.storm-bolt.projectile",
+      "name": "Storm Bolt Projectile",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "bolt",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 1.5,
+          "height": 1.6,
+          "blend": "normal",
+          "texture": {
+            "asset": "asset.effects.storm-hammer",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.storm-bolt.statusapplied-2",
+      "name": "Storm Bolt",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "stun-orbit",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#ffdf73",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 0.65,
+          "height": 3,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.feral-spirit.summoned",
+      "name": "Feral Spirit Summon",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "spirit-emergence",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#78d7ff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 40,
+          "size": 0.22,
+          "height": 3,
+          "spread": 3.5,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.chain-lightning.damaged-1",
+      "name": "Chain Lightning Hit",
+      "description": "",
+      "durationTicks": 12,
+      "loop": false,
+      "layers": [
+        {
+          "id": "arc-sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#88dcff",
+          "accent": "#ffffff",
+          "durationTicks": 12,
+          "count": 10,
+          "size": 0.17,
+          "height": 1.6,
+          "spread": 1.1,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.holy-light-lite.released-1",
+      "name": "Holy Light Lite Cast",
+      "description": "",
+      "durationTicks": 48,
+      "loop": false,
+      "layers": [
+        {
+          "id": "target-illumination",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#f1ff64",
+          "accent": "#fffcd5",
+          "durationTicks": 42,
+          "count": 1,
+          "size": 7,
+          "height": 3.8,
+          "follow": true,
+          "intensity": 90
+        },
+        {
+          "id": "ground-glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#f1ff64",
+          "accent": "#fffcd5",
+          "durationTicks": 42,
+          "count": 1,
+          "size": 2.2,
+          "height": 0.05,
+          "follow": true,
+          "intensity": 1.8
+        },
+        {
+          "id": "holy-sigil",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#f1ff64",
+          "accent": "#fffcd5",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 2.6,
+          "height": 5.25,
+          "follow": true,
+          "intensity": 1.25,
+          "texture": {
+            "asset": "asset.effects.holy-light-sigil",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "rising-rays",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "streaks",
+          "colour": "#f1ff64",
+          "accent": "#fffcd5",
+          "durationTicks": 44,
+          "count": 22,
+          "size": 0.09,
+          "height": 4.3,
+          "follow": true,
+          "intensity": 1.4,
+          "spread": 0.9,
+          "length": 1.8,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.blizzard.wavestarted",
+      "name": "Blizzard Shards",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "falling-ice",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "rain",
+          "colour": "#ffffff",
+          "accent": "#f0fcff",
+          "durationTicks": 40,
+          "count": 128,
+          "size": 1.05,
+          "height": 9,
+          "fallSpeed": 2.6,
+          "launchDelayMs": 50,
+          "fallAngleDegrees": 30,
+          "fallAzimuthDegrees": -35,
+          "impact": {
+            "durationTicks": 16,
+            "count": 4,
+            "size": 0.25,
+            "spread": 1.1,
+            "height": 0.85,
+            "colour": "#197dff",
+            "accent": "#74dfff"
+          },
+          "intensity": 1,
+          "spread": 1,
+          "length": 1.7,
+          "texture": {
+            "asset": "asset.effects.blizzard-ice",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    }
+  ]
+}

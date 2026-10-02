@@ -11,7 +11,7 @@ afterEach(async()=>{await Promise.all(roots.splice(0).map(r=>rm(r,{recursive:tru
 async function setup(){
  const root=await mkdtemp(path.join(os.tmpdir(),'utc-spells-'));roots.push(root);const doc={definition:structuredClone(coreAbilities.abilities[0]),presentation:structuredClone(coreAbilities.presentations[0])};
  delete doc.presentation.icon;
- doc.presentation.cues=doc.presentation.cues.filter(c=>!c.texture);
+ doc.presentation.effects=[];
  const folder=path.join(root,'content/abilities',doc.definition.id);await mkdir(folder,{recursive:true});await writeFile(path.join(folder,'definition.json'),JSON.stringify(doc.definition));await writeFile(path.join(folder,'presentation.json'),JSON.stringify(doc.presentation));return {root,doc,service:new SpellEditorService(root)};
 }
 describe('independent spell authoring service',()=>{

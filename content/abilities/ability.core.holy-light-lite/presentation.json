@@ -8,127 +8,34 @@
     "recover": "attack",
     "fallback": "idle"
   },
-  "cues": [
+  "effects": [
     {
-      "id": "gather",
-      "event": "accepted",
+      "id": "effect-0",
+      "effect": "effect.core.holy-light-lite.accepted",
       "anchor": "caster",
-      "shape": "ring",
-      "colour": "#effc86",
-      "accent": "#fffbd4",
-      "durationTicks": 12,
-      "count": 1,
-      "size": 0.7,
-      "height": 0.04,
-      "intensity": 0.5
+      "event": "accepted",
+      "lifetime": "finite"
     },
     {
-      "id": "target-illumination",
-      "event": "released",
+      "id": "effect-1",
+      "effect": "effect.core.holy-light-lite.released-1",
       "anchor": "target",
-      "shape": "light",
-      "colour": "#f1ff64",
-      "accent": "#fffcd5",
-      "durationTicks": 42,
-      "count": 1,
-      "size": 7,
-      "height": 3.8,
-      "follow": true,
-      "intensity": 90
-    },
-    {
-      "id": "ground-glow",
       "event": "released",
-      "anchor": "target",
-      "shape": "glow",
-      "colour": "#f1ff64",
-      "accent": "#fffcd5",
-      "durationTicks": 42,
-      "count": 1,
-      "size": 2.2,
-      "height": 0.05,
-      "follow": true,
-      "intensity": 1.8
+      "lifetime": "finite"
     },
     {
-      "id": "holy-sigil",
-      "event": "released",
+      "id": "effect-2",
+      "effect": "effect.core.holy-light-lite.healed-2",
       "anchor": "target",
-      "shape": "billboard",
-      "colour": "#f1ff64",
-      "accent": "#fffcd5",
-      "durationTicks": 48,
-      "count": 1,
-      "size": 2.6,
-      "height": 5.25,
-      "follow": true,
-      "intensity": 1.25,
-      "texture": {
-        "asset": "asset.effects.holy-light-sigil",
-        "role": "image",
-        "index": 1
-      }
-    },
-    {
-      "id": "rising-rays",
-      "event": "released",
-      "anchor": "target",
-      "shape": "streaks",
-      "colour": "#f1ff64",
-      "accent": "#fffcd5",
-      "durationTicks": 44,
-      "count": 22,
-      "size": 0.09,
-      "height": 4.3,
-      "follow": true,
-      "intensity": 1.4,
-      "spread": 0.9,
-      "length": 1.8,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
-    },
-    {
-      "id": "healing-flash",
       "event": "healed",
-      "anchor": "target",
-      "shape": "burst",
-      "colour": "#f1ff64",
-      "accent": "#fffcd5",
-      "durationTicks": 24,
-      "count": 9,
-      "size": 0.4,
-      "height": 1.5,
-      "follow": true,
-      "intensity": 1.1,
-      "spread": 0.8,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
+      "lifetime": "finite"
     },
     {
-      "id": "searing-flash",
-      "event": "damaged",
+      "id": "effect-3",
+      "effect": "effect.core.holy-light-lite.damaged-3",
       "anchor": "target",
-      "shape": "burst",
-      "colour": "#ffdf70",
-      "accent": "#fffcd5",
-      "durationTicks": 20,
-      "count": 12,
-      "size": 0.35,
-      "height": 1.6,
-      "follow": true,
-      "intensity": 1.1,
-      "spread": 1,
-      "texture": {
-        "asset": "asset.effects.holy-light-spark",
-        "role": "image",
-        "index": 1
-      }
+      "event": "damaged",
+      "lifetime": "finite"
     }
   ]
 }

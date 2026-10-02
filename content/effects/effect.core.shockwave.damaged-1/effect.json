@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.shockwave.damaged-1",
+  "name": "Shockwave Hit",
+  "description": "",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "earth-fragments",
+      "shape": "burst",
+      "colour": "#ddb46c",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 16,
+      "size": 0.17,
+      "height": 1.1,
+      "spread": 1.1,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      },
+      "anchor": "target",
+      "enabled": true,
+      "startTick": 0,
+      "sustain": false
+    }
+  ]
+}

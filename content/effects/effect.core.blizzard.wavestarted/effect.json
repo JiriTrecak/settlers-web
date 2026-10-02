@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.blizzard.wavestarted",
+  "name": "Blizzard Shards",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "falling-ice",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "rain",
+      "colour": "#ffffff",
+      "accent": "#f0fcff",
+      "durationTicks": 40,
+      "count": 128,
+      "size": 1.05,
+      "height": 9,
+      "fallSpeed": 2.6,
+      "launchDelayMs": 50,
+      "fallAngleDegrees": 30,
+      "fallAzimuthDegrees": -35,
+      "impact": {
+        "durationTicks": 16,
+        "count": 4,
+        "size": 0.25,
+        "spread": 1.1,
+        "height": 0.85,
+        "colour": "#197dff",
+        "accent": "#74dfff"
+      },
+      "intensity": 1,
+      "spread": 1,
+      "length": 1.7,
+      "texture": {
+        "asset": "asset.effects.blizzard-ice",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

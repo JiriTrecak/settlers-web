@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "folders": [
+    {
+      "id": "folder.spells",
+      "name": "spells",
+      "parent": "root"
+    },
+    {
+      "id": "folder.heroes",
+      "name": "heroes",
+      "parent": "folder.spells"
+    },
+    {
+      "id": "folder.units",
+      "name": "units",
+      "parent": "folder.spells"
+    },
+    {
+      "id": "folder.paladin",
+      "name": "paladin",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.archmage",
+      "name": "archmage",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.shaman",
+      "name": "shaman",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.far-seer",
+      "name": "far-seer",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.priest",
+      "name": "priest",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.mountain-king",
+      "name": "mountain-king",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.keeper-of-the-grove",
+      "name": "keeper-of-the-grove",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.tauren-chieftain",
+      "name": "tauren-chieftain",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.dreadlord",
+      "name": "dreadlord",
+      "parent": "folder.heroes"
+    }
+  ],
+  "items": {
+    "ability.core.holy-light-lite": "folder.paladin",
+    "ability.core.blizzard": "folder.archmage",
+    "ability.core.bloodlust": "folder.shaman",
+    "ability.core.feral-spirit": "folder.far-seer",
+    "ability.core.dispel-magic": "folder.priest",
+    "ability.core.storm-bolt": "folder.mountain-king",
+    "ability.core.entangling-roots": "folder.keeper-of-the-grove",
+    "ability.core.chain-lightning": "folder.far-seer",
+    "ability.core.shockwave": "folder.tauren-chieftain",
+    "ability.core.vampiric-aura": "folder.dreadlord",
+    "ability.core.thorns-aura": "folder.keeper-of-the-grove"
+  }
+}

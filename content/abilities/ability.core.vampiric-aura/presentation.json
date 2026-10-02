@@ -8,81 +8,13 @@
     "recover": "idle",
     "fallback": "idle"
   },
-  "cues": [
+  "effects": [
     {
-      "event": "statusApplied",
+      "id": "effect-0",
+      "effect": "effect.core.vampiric-aura.statusapplied",
       "anchor": "target",
-      "durationTicks": 80,
-      "count": 1,
-      "height": 0.045,
-      "lifetime": "status",
-      "follow": true,
-      "orientation": "ground",
-      "blend": "additive",
-      "accent": "#ffffff",
-      "id": "ground-glow",
-      "shape": "glow",
-      "colour": "#823bcc",
-      "size": 1.65,
-      "intensity": 0.5
-    },
-    {
       "event": "statusApplied",
-      "anchor": "target",
-      "durationTicks": 80,
-      "count": 1,
-      "height": 0.06,
-      "lifetime": "status",
-      "follow": true,
-      "orientation": "ground",
-      "blend": "additive",
-      "accent": "#ffffff",
-      "id": "rotating-wreath",
-      "shape": "billboard",
-      "colour": "#ffffff",
-      "size": 4.5,
-      "intensity": 0.85,
-      "texture": {
-        "asset": "asset.effects.vampiric-wreath",
-        "role": "image",
-        "index": 1
-      },
-      "motion": {
-        "rotation": {
-          "periodTicks": 320,
-          "direction": "clockwise"
-        }
-      }
-    },
-    {
-      "event": "statusApplied",
-      "anchor": "target",
-      "durationTicks": 80,
-      "count": 1,
-      "height": 0.075,
-      "lifetime": "status",
-      "follow": true,
-      "orientation": "ground",
-      "blend": "additive",
-      "accent": "#ffffff",
-      "id": "pulsing-heart",
-      "shape": "billboard",
-      "colour": "#ffffff",
-      "size": 2.6,
-      "intensity": 0.9,
-      "texture": {
-        "asset": "asset.effects.vampiric-crest",
-        "role": "image",
-        "index": 1
-      },
-      "motion": {
-        "scale": {
-          "periodTicks": 80,
-          "min": 0.72,
-          "max": 1.06,
-          "easing": "bounce"
-        }
-      }
+      "lifetime": "status"
     }
   ]
 }
