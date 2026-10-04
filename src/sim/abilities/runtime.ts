@@ -43,6 +43,9 @@ export interface AbilityHost {
  effect?(caster:number,target:number,spell:AbilityDefinition,rank:number,cast:number,effect:ReturnType<typeof releaseEffects>[number],aura?:boolean,owner?:string,point?:AbilityPoint,context?:{aim:AbilityPoint;origin:AbilityPoint&{sourceContext?:SpellSource};creationGrant?:boolean}):number;
  hasStatus?(target:number,ability:string):boolean;
  ambientCasters?():number[]; targets?():number[];
+ /** Alive targets visible to this caster, in the same order as targets().
+  * Hosts can reject candidates before constructing full combat/source records. */
+ visibleTargets?(caster:AbilityActor):number[];
  tick():number; nextCast():number; casters():number[];
  get(id:number):AbilityActor|undefined; caster(id:number):CasterAccess|undefined;
  definition(id:string):AbilityDefinition|undefined;
@@ -183,7 +186,12 @@ export class AbilityRuntime {
     if(!binding.controls.includes('ai'))continue;
     if(spell.persistent?.toggle&&this.host.instances?.().some(i=>i.source===id&&i.ability===spell.id))continue;
     const aim=(target:number):AbilityAim=>spell.targeting.kind==='self'?id:spell.targeting.kind==='point'?{x:Math.round(this.host.get(target)!.x),y:Math.round(this.host.get(target)!.y)}:target;
-    const observed=this.profile.measure('Visible target enumeration',()=>(this.host.targets?.()??[]).map(target=>this.host.get(target)!).filter(t=>t?.alive&&this.host.visible(caster.actor.owner,t,caster.actor)).map(t=>({...t,...(t.owner===caster.actor.owner?{mana:this.host.caster(t.id)?.state.mana??0}:{})})));
+    const observed=this.profile.measure('Visible target enumeration',()=>{
+     const selected=this.host.visibleTargets?this.profile.measure('Visibility candidate query',()=>this.host.visibleTargets!(caster.actor)):undefined;
+     const actors=this.profile.measure('Actor materialization',()=>(selected??this.host.targets?.()??[]).map(target=>this.host.get(target)!));
+     const visible=selected?actors:this.profile.measure('Visibility filtering',()=>actors.filter(t=>t?.alive&&this.host.visible(caster.actor.owner,t,caster.actor)));
+     return this.profile.measure('Allied mana lookup',()=>visible.map(t=>({...t,...(t.owner===caster.actor.owner?{mana:this.host.caster(t.id)?.state.mana??0}:{})})));
+    });
     const intent=binding.ai?.intent;
     if(intent&&intent!=='utility'){
      const destinations=strategicAbilityAims(intent,spell,rank,caster.actor,observed,t=>this.host.relation(caster.actor,t),{valid:p=>this.host.validPoint(p),visible:p=>this.host.visiblePoint(caster.actor.owner,p,caster.actor),explored:p=>this.host.exploredPoint?.(caster.actor.owner,p)??false});

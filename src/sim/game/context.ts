@@ -37,6 +37,9 @@ export class GameContext {
   readonly profile=new SimulationProfiler();
   /** Derived presentation invalidation, excluded from saves and lockstep hashes. */
   observationRevision=0;
+  /** Creation/removal receipts let observation update actor membership without
+   * reclassifying stationary scenery. Other revision changes remain conservative. */
+  readonly observationEntityChanges:{type:'add'|'remove';entity:Entity}[]=[];
   motionRevision=0;
   readonly changedResources=new Set<Entity>();
   private readonly resourceSectors=new SectorIndex<Entity>();
@@ -76,9 +79,13 @@ export class GameContext {
     this.spatial.route=this.profile.wrap('Route request',this.spatial.route.bind(this.spatial));
     this.spatial.findPath=this.profile.wrap('Path search',this.spatial.findPath.bind(this.spatial));
     this.spatial.sectors.corridor=this.profile.wrap('Sector corridor',this.spatial.sectors.corridor.bind(this.spatial.sectors));
+    this.spatial.rebuild=this.profile.wrap('Static occupancy rebuild',this.spatial.rebuild.bind(this.spatial));
+    this.spatial.refreshAfterRemoval=this.profile.wrap('Static occupancy removal',this.spatial.refreshAfterRemoval.bind(this.spatial));
+    this.spatial.appendOccupancy=this.profile.wrap('Static occupancy addition',this.spatial.appendOccupancy.bind(this.spatial));
+    this.spatial.sectors.prepare=this.profile.wrap('Sector preparation',this.spatial.sectors.prepare.bind(this.spatial.sectors));
   }
   reindex() {
-    this.observationRevision++;this.changedResources.clear();
+    this.observationRevision++;this.changedResources.clear();this.observationEntityChanges.length=0;
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
     this.resourceSectors.clear();for(const e of this.state.entities)this.indexResource(e);
     this.unitEntities = this.state.entities.filter(e => e.unit);
@@ -173,6 +180,7 @@ export class GameContext {
     if (d.behaviors.research) e.research = {queue: []};
     if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
     this.observationRevision++;
+    this.observationEntityChanges.push({type:'add',entity:e});
     this.state.entities.push(e);
     this.index.set(e.id, e);this.indexResource(e);
     if(e.unit)this.unitEntities.push(e);
@@ -209,6 +217,7 @@ export class GameContext {
     this.onRemoving?.(e);
     for(const occupant of this.liveUnits())if(occupant.unit?.garrison?.building===e.id)this.release(occupant,this.spatial.entrance(e));
     this.observationRevision++;this.changedResources.delete(e);
+    this.observationEntityChanges.push({type:'remove',entity:e});
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
     this.index.delete(e.id);this.resourceSectors.delete(e.id);
     if(e.unit)this.unitEntities.splice(this.unitEntities.indexOf(e),1);

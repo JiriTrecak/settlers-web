@@ -45,7 +45,12 @@ export class Economy {
       });
     worker.unit!.cargo = null;
   }
-  constructor(private readonly c: GameContext) {}
+  constructor(private readonly c: GameContext) {
+    this.advanceHarvest=c.profile.wrap('Harvest progression',this.advanceHarvest.bind(this));
+    this.completeUnit=c.profile.wrap('Unit deployment',this.completeUnit.bind(this));
+    this.canRegrow=c.profile.wrap('Regrowth clearance',this.canRegrow.bind(this));
+    this.deliver=c.profile.wrap('Cargo delivery',this.deliver.bind(this));
+  }
   private get s() {
     return this.c.state;
   }
@@ -479,7 +484,7 @@ export class Economy {
     this.c.resourceChanged(resource);
     u.cargo = { item: job.item!, amount: (u.cargo?.amount ?? 0) + amount };
     this.c.event(w.owner, "Harvested", "produced", job.item!, amount);
-    if (!resource.resource.amount) this.c.spatial.rebuild();
+    if (!resource.resource.amount) this.c.spatial.refreshAfterRemoval(resource.id);
     if (u.cargo.amount >= job.amount || !resource.resource.amount) {
       job.amount = u.cargo.amount;
       // Goods belong to this worker at the final blow; departure waits for the fall.
@@ -727,7 +732,9 @@ export class Economy {
           if (u.order?.type === "construct" && u.order.target === b.id) u.order = null;
           b.readyTick = this.s.tick + 1;
           this.eraseJob(job);
-          this.c.spatial.rebuild();
+          // Construction already occupied its final footprint. Verify that the
+          // static inputs are unchanged instead of rebuilding the whole forest.
+          this.c.spatial.refreshAfterRemoval();
         }
         continue;
       }

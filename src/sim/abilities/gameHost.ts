@@ -28,14 +28,26 @@ export function createGameAbilities(game:Game){
  c.onRemoving=e=>{new SpellSplitForms(game).removing(e);new SpellContainments(game).releaseHosted(e.id);};
  game.combat.onWeaponRelease=(holder,target,weapon)=>reactions.weaponRelease(holder,target,weapon);
  game.combat.onLethal=(source,target,owner)=>reactions.kill(source,target,owner);
- const get=(id:number):AbilityActor|undefined=>{
+ const get=(id:number,resolved?:ReturnType<typeof c.stats>):AbilityActor|undefined=>{
   const e=c.get(id);if(!e)return;
-  const stats=c.stats(e),definition=c.def(e);
-  return {height:c.spatial.height(precise(e))+c.spatial.elevation(e),sourceContext:spellSource(c,e),id:e.id,owner:e.owner,camp:e.unit?.camp??undefined,...precise(e),hp:e.hp??0,mana:e.abilities?.mana??0,maxHp:stats.maxHp,maxMana:stats.maxMana,alive:alive(e),unit:!!e.unit,locomotion:locomotion(definition),nature:unitNature(definition),hero:!!definition.hero,summoned:!!e.summoned,...(e.summoned?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{}),level:stats.level,spellImmunity:spellImmunity(e,c.registry),...damageEligibility(e,c.registry),controlImmunity:[...controlImmunities(e,c.registry)],melee:!!definition.behaviors.combat&&!definition.behaviors.combat?.projectile&&!definition.behaviors.combat?.shell,blocked:isStunned(e,c.registry)||spellControl(e,c.registry,'silence')||!!e.unit?.contained||!!e.unit?.garrison||!!e.unit?.release,targetable:!e.unit?.contained&&!e.unit?.garrison&&!e.unit?.release};
+  const stats=resolved??c.stats(e),definition=c.def(e);
+  return {height:c.spatial.height(precise(e))+c.spatial.elevation(e),sourceContext:spellSource(c,e,stats),id:e.id,owner:e.owner,camp:e.unit?.camp??undefined,...precise(e),hp:e.hp??0,mana:e.abilities?.mana??0,maxHp:stats.maxHp,maxMana:stats.maxMana,alive:alive(e),unit:!!e.unit,locomotion:locomotion(definition),nature:unitNature(definition),hero:!!definition.hero,summoned:!!e.summoned,...(e.summoned?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{}),level:stats.level,spellImmunity:spellImmunity(e,c.registry),...damageEligibility(e,c.registry),controlImmunity:[...controlImmunities(e,c.registry)],melee:!!definition.behaviors.combat&&!definition.behaviors.combat?.projectile&&!definition.behaviors.combat?.shell,blocked:isStunned(e,c.registry)||spellControl(e,c.registry,'silence')||!!e.unit?.contained||!!e.unit?.garrison||!!e.unit?.release,targetable:!e.unit?.contained&&!e.unit?.garrison&&!e.unit?.release};
  };
  const world=new SpellWorldEffects(game);
  // Runtime actors use absolute height; terrain sight accepts a relative elevation.
- const sightPoint=(actor:AbilityActor)=>({...actor,elevation:(actor.height??c.spatial.height(actor))-c.spatial.height(actor)});
+ type SightTarget=Pick<AbilityActor,'id'|'x'|'y'|'surface'|'height'>;
+ const sightPoint=(actor:SightTarget)=>({...actor,elevation:(actor.height??c.spatial.height(actor))-c.spatial.height(actor)});
+ const visibleEntity=(owner:string,entity:Entity,caster?:AbilityActor,target?:SightTarget)=>{
+  if(owner==='none'){
+   const p=target??precise(entity);
+   if(!caster||(caster.x-p.x)**2+(caster.y-p.y)**2>24**2)return false;
+   if(!game.observation.detects(owner,entity,c.get(caster.id)))return false;
+   const point=target??{id:entity.id,...p,height:c.spatial.height(p)+c.spatial.elevation(entity)};
+   return c.spatial.visible(sightPoint(caster),sightPoint(point));
+  }
+  if(!game.observation.detects(owner as Owner,entity,caster?c.get(caster.id):undefined))return false;
+  return game.observation.visible(owner as Owner,entity);
+ };
  const host:AbilityHost={
   height:p=>c.spatial.height({...p,x:Math.max(0,Math.min(c.spatial.size-1,p.x)),y:Math.max(0,Math.min(c.spatial.size-1,p.y))}),
   weaponOrders:()=>c.profile.measure('Weapon cast orders',()=>weapons.tick()),weaponCastReason:(s,t,a)=>weapons.reason(s,t,a),orderWeaponCast:(...args)=>weapons.order(...args),
@@ -57,20 +69,19 @@ export function createGameAbilities(game:Game){
   validateAim:(...args)=>world.validateAim(...args),
   endInstance:cast=>{for(const e of c.state.entities){if(!e.spellStatuses)continue;const before=e.spellStatuses.length;e.spellStatuses=e.spellStatuses?.filter(s=>s.cast!==cast||spellStatusDefinition(s,c.registry)?.lifetime!=='instance');if(!e.spellStatuses?.length)delete e.spellStatuses;if(before!==(e.spellStatuses?.length??0))c.clampPools(e);}},instances:()=>c.state.spellInstances,reactions:()=>c.profile.measure('Reactions',()=>reactions.resolve()),death:id=>{const e=c.get(id);if(e)reactions.death(e);},deliveries:()=>c.state.spellDeliveries,lifecycle:()=>c.profile.measure('Status lifecycle',()=>statuses.tick()),effect:(...args)=>statuses.apply(...args),hasStatus:(...args)=>statuses.has(...args),
   ambientCasters:()=>c.activeUnits().filter(e=>e.owner==='none'&&e.abilities).map(e=>e.id).sort((a,b)=>a-b),targets:()=>c.liveBodies().map(e=>e.id),
+  visibleTargets:caster=>c.liveBodies().filter(e=>visibleEntity(caster.owner,e,caster)).map(e=>e.id),
   tick:()=>c.state.tick,nextCast:()=>c.state.nextCast++,casters:()=>c.profile.measure('Caster enumeration',()=>c.state.entities.filter(e=>e.abilities).map(e=>e.id)),get,
-  caster(id){const e=c.get(id);if(!e?.abilities)return;const policy=c.def(e).behaviors.abilities!,stats=c.stats(e);return {actor:get(id)!,state:e.abilities,bindings:policy.bindings,maxMana:stats.maxMana,regenPerSecond:stats.manaRegenPerSecond,cooldownReductionPermille:stats.cooldownReductionPermille};},
+  caster(id){const e=c.get(id);if(!e?.abilities)return;const policy=c.def(e).behaviors.abilities!,stats=c.stats(e);return {actor:get(id,stats)!,state:e.abilities,bindings:policy.bindings,maxMana:stats.maxMana,regenPerSecond:stats.manaRegenPerSecond,cooldownReductionPermille:stats.cooldownReductionPermille};},
   definition:id=>c.registry.abilityLibrary.abilities.find(a=>a.id===id),
   relation(a,b){const ea=({id:a.id,owner:a.owner,...(a.camp?{unit:{camp:a.camp}}:{})} as Entity),eb=c.get(b.id)??({id:b.id,owner:b.owner,...(b.camp?{unit:{camp:b.camp}}:{})} as Entity);if(a.id===b.id||game.combat.allied(ea,eb)||(ea.owner==='none'&&eb.owner==='none'&&ea.unit?.camp&&ea.unit.camp===eb.unit?.camp))return 'ally';return game.combat.opponents(ea,eb)?'enemy':'neutral';},
   visible(owner,target,caster){
    const entity=c.get(target.id);if(!entity)return false;
-   if(!game.observation.detects(owner as Owner,entity,caster?c.get(caster.id):undefined))return false;
-   if(owner==='none')return !!caster&&c.spatial.visible(sightPoint(caster),sightPoint(target))&&(caster.x-target.x)**2+(caster.y-target.y)**2<=24**2;
-   return game.observation.visible(owner as Owner,entity);
+   return visibleEntity(owner,entity,caster,target);
   },
   validPoint:p=>Number.isInteger(p.x)&&Number.isInteger(p.y)&&p.x>=0&&p.y>=0&&p.x<c.spatial.size&&p.y<c.spatial.size,
   exploredPoint:(owner,p)=>game.observation.explored(owner as Owner,[c.spatial.cell(p)]),
   visiblePoint(owner,p,caster){
-   if(owner==='none')return !!caster&&c.spatial.visible(sightPoint(caster),p)&&(caster.x-p.x)**2+(caster.y-p.y)**2<=24**2;
+   if(owner==='none')return !!caster&&(caster.x-p.x)**2+(caster.y-p.y)**2<=24**2&&c.spatial.visible(sightPoint(caster),p);
    return game.observation.currentlyVisible(owner as Owner,[Math.round(p.y)*c.spatial.size+Math.round(p.x)]);
   },
   viewers:()=>game.slots.map(s=>`player.${s.player+1}`),

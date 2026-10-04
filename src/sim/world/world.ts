@@ -295,10 +295,10 @@ export class World {
     this.pending.push(...keep);
     due.sort((a, b) => a.tick - b.tick || a.player - b.player || a.seq - b.seq);
     for (const item of due) {
-      const receipt = this.settlement.command(
+      const receipt = this.settlement.context.profile.measure(`Command ${item.action.type}`,()=>this.settlement.command(
         slotOwner(item.player),
         item.action,
-      );
+      ));
       if (receipt.accepted) this.commandReceipts.push({tick: this.clock.tickIndex, player: item.player, action: item.action});
       this.brains
         .get(item.player)

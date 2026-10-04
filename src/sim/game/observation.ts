@@ -569,6 +569,22 @@ export class Observation {
     }
     return stationary;
   }
+  /** Only use receipts when they explain every revision since the last update.
+   * Unknown invalidations (forms, ownership, editor edits, reindex) keep the full
+   * path. Check every receipt before changing anything, including add-then-remove. */
+  private updateActorMembership():boolean {
+    const changes=this.c.observationEntityChanges;
+    if(this.structureRevision<0||!changes.length||this.c.observationRevision-this.structureRevision!==changes.length)return false;
+    for(const {type,entity:e} of changes){
+      if(type==='add'&&(e.resource||!e.unit&&this.c.def(e).kind==='building'))return false;
+      if(type==='remove'&&(this.forestIds.has(e.id)||this.staticRecords.has(e.id)))return false;
+    }
+    const removed=new Set(changes.filter(c=>c.type==='remove').map(c=>c.entity.id));
+    if(removed.size)this.actors=this.actors.filter(e=>!removed.has(e.id));
+    for(const {type,entity} of changes)if(type==='add'&&!removed.has(entity.id))this.actors.push(entity);
+    this.structureRevision=this.c.observationRevision;
+    return true;
+  }
   /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
   update(incremental=false) {
     this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
@@ -580,15 +596,16 @@ export class Observation {
     )
       this.deathCues.shift();
     const changedResources=new Set([...this.c.changedResources].map(e=>e.id));
-    const rebuild=!incremental||this.structureRevision!==this.c.observationRevision;
+    let rebuild=!incremental||this.structureRevision!==this.c.observationRevision;
+    if(rebuild&&incremental&&this.c.profile.measure('Actor membership receipts',()=>this.updateActorMembership()))rebuild=false;
     if(rebuild){
-      this.stationary=this.projectEntities();this.structureRevision=this.c.observationRevision;
+      this.stationary=this.c.profile.measure('Entity classification',()=>this.projectEntities());this.structureRevision=this.c.observationRevision;
       for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
     }else for(const e of this.c.changedResources){
       const index=this.forestSlots.get(e.id);
       if(index!==undefined)this.forest[index]=this.privateForestView(this.cachedResource(e)!);
     }
-    this.c.changedResources.clear();this.projectWork();
+    this.c.changedResources.clear();this.c.observationEntityChanges.length=0;this.projectWork();
     const initializeStatic=!this.staticCells;
     const stationary=this.stationary,staticCells=this.staticCells??=new Int32Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size**2);
     const staticChanged=rebuild&&(initializeStatic || stationary.length !== this.staticRecords.size || stationary.some(e => {
@@ -612,12 +629,12 @@ export class Observation {
       m.observedDeaths = m.observedDeaths.filter(
         (d) => this.c.state.tick - d.tick <= 400,
       );
-      const sensors = this.c.liveSensors().filter(
+      const sensors = this.c.profile.measure('Vision sensors',()=>this.c.liveSensors().filter(
           (e) => this.sharesVision(m.owner,e) && !e.unit?.contained && !e.unit?.release,
-        );
+        ));
       let mask=this.masks.get(m.owner);
       if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
-      const visionChanged=mask.update([...sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:this.c.spatial.elevation(e)+(e.unit?.garrison?.height??0),radius:this.c.def(e).vision??0})),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius,sensor.ignoreTerrain);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
+      const visionChanged=this.c.profile.measure('Sight masks',()=>mask!.update([...sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:this.c.spatial.elevation(e)+(e.unit?.garrison?.height??0),radius:this.c.def(e).vision??0})),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius,sensor.ignoreTerrain);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;}));
       m.cells=mask.cells;m.visibleCells=mask.visible;
       maskMs+=performance.now()-maskStarted;
       const knowledgeStarted=performance.now();

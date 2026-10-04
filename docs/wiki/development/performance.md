@@ -1855,6 +1855,16 @@ Current target: **3 ms p99 for non-render computation across four players, one h
 and three AIs, on Heartroot**. Do not claim success from average or world-tick time alone. Browser input/HUD work
 and worker delivery still need live accounting before full-budget acceptance.
 
+Standing objective requirement: for every rebuild, scan and invalidation, identify
+the triggering change, the affected entities/cells/observers, and downstream
+dependencies. Prefer work proportional to that affected set. A building placement
+must not imply revisiting distant unrelated scenery or vision; maintain local
+occupancy and sight changes where valid, propagating only dependencies that can
+actually change (including routes whose connectivity is affected). Retain a full
+refresh for genuinely global changes or unclassified external edits. Verify local
+updates against the full reference path. Moving the same work to another phase
+does not count as an optimization.
+
 `src/sim/profiling.ts` supplies opt-in hierarchical inclusive/self timings,
 separate from saved state and gameplay. The worker publishes them to existing
 debug captures and `game_performance` MCP. Categories include lifecycle,
@@ -1951,3 +1961,94 @@ Validation: 775 regression tests passed, plus application/benchmark TypeScript
 checks. Four independent replicas replayed ticks 6000→6600 through Room/Lockstep
 with synthetic delayed delivery and one connection stall, matching routine
 checkpoints and the full end-state audit (`/tmp/heartroot-signal-four-peer.json`).
+
+### Section 1: economy stalls from static occupancy rebuilds
+
+The renewed 3 ms p99 goal starts with complete slow-tick attribution.
+`match-budget.ts --details` keeps the slowest 1% of frames and reports mean
+contributions within that same cohort. This exposed resource depletion as the
+largest tail contributor: finishing a single harvest rebuilt every static
+footprint, averaging 8.59 ms per depletion in the diagnostic replay. Ordinary
+mean timing hid this because it happened on only 30 of 2,200 measured ticks.
+
+Depletion now uses verified incremental occupancy removal. Derived owner stacks
+are recorded only for overlapping cells during the existing occupancy rebuild;
+removing one footprint restores the remaining last writer locally. Changes to
+unrelated static geometry still trigger the conservative full rebuild. Completion
+of construction verifies that its already-occupied footprint is unchanged.
+Navigation invalidation and sector preparation still happen immediately; no
+gameplay update or simulation cadence was reduced.
+
+Paired unprofiled Heartroot tick-6000→8400 replay, identical map/content:
+
+- Economy: **7.84 → 1.17 ms p99**, 0.241 → 0.141 ms mean.
+- Accounted non-render CPU: **13.33 → 9.31 ms p99**, 4.66 → 4.52 ms mean.
+- Both full end-state audits: **2923285889**; 229 live units.
+- Detailed replay: all 30 depletion events use local removal, with no fallback
+  rebuilds; removal plus sector preparation averages 1.19 ms per event.
+
+Evidence: `/tmp/heartroot-section1-before-plain.json`,
+`/tmp/heartroot-section1-after-plain.json`,
+`/tmp/heartroot-section1-final-detail.json`. This remains the idle-human headless
+baseline, not final 3 ms acceptance. Next contributors are observation refresh,
+ability target construction/visibility and the remaining build-command rebuilds.
+Validation: 781 regression tests and application/benchmark TypeScript checks pass.
+Four replicas with synthetic delayed delivery and a connection stall match all
+seven checkpoints and full audit `3789296646` at tick 6600, unchanged from before
+this optimization (`/tmp/heartroot-section1-four-peer.json`).
+
+### Section 2: actor membership must not reclassify the forest
+
+Creating or removing an ordinary actor invalidated observation's entire entity
+classification. Observation now consumes context creation/removal receipts when
+they explain every revision since the previous update. It changes only the actor
+list and preserves stationary indexes and resource projections. Resource changes
+still refresh through their existing receipts. Static changes, unexplained
+revisions, restore/reindex and explicit editor updates retain the full path.
+Vision sensors and sight-mask updates have separate detailed timing scopes.
+
+Paired unprofiled Heartroot replay, ticks 6001–8400, first 200 excluded:
+- Observation p99: **2.36 → 1.07 ms**; mean **0.479 → 0.453 ms**.
+- Observation static-index p99: **1.85 → 0.034 ms**.
+- Accounted non-render p99: **9.57 → 9.15 ms**; mean **4.50 → 4.56 ms**.
+  The average has not improved; this addresses a specific tail-latency spike.
+- Both replays retain full audit `2923285889` and 229 units.
+
+Evidence: `/tmp/heartroot-section2-before-plain.json`,
+`/tmp/heartroot-section2-after-plain.json`,
+`/tmp/heartroot-section2-after-detail.json`. The headless/idle-human coverage limits
+above still apply. Remaining global rebuilds include building placement; audit
+their affected footprints, observers and route dependencies before optimizing.
+Validation: 787 tests pass (two localhost socket tests rerun with sandbox access),
+including forced-full observation comparisons, mixed changes, transient actors,
+restore and immutable prior views. Application TypeScript check passes.
+Four independent replicas with synthetic delayed delivery and one stall match
+all seven checkpoints and the unchanged full audit `3789296646` at tick 6600
+(`/tmp/heartroot-section2-four-peer.json`).
+
+### Section 3: local building occupancy on placement
+
+The build command now appends the new building's footprint to synchronized
+occupancy rather than re-rasterizing every forest resource. Overlap owner stacks
+retain entity-order precedence. Only newly blocked cells invalidate navigation;
+existing clearance padding, sector boundary links and connectivity propagation
+remain unchanged. Unsupported insertion order falls back to rebuild; external
+edits to existing blockers still require the explicit full refresh.
+
+The three measured build events averaged **11.77 → 0.75 ms** for occupancy plus
+sector preparation in detailed captures. This removes rare stalls; it is not a
+large mean-time saving. Paired unprofiled ticks 6001–8400 (200 warmup excluded)
+measured total non-render **9.34 → 9.03 ms p99**, **4.58 → 4.65 ms mean** and
+**19.52 → 16.12 ms maximum**. Both end at full audit `2923285889`, 229 units.
+The overall budget is still unmet, and the headless/idle-human limitations remain.
+
+Evidence: `/tmp/heartroot-section3-before-plain.json`,
+`/tmp/heartroot-section3-after-plain.json`,
+`/tmp/heartroot-section3-after-detail.json` and the preceding section's detailed
+capture. Focused tests cover real build commands versus forced full rebuilds,
+route-cache invalidation, successive overlapping additions/removals, and fallback
+for duplicate or out-of-order additions. Building observation classification is
+still conservative; ability target enumeration is the next major CPU contributor.
+Validation: 791 regression tests and application TypeScript pass. Four replicas
+with synthetic delays/stall agree at all seven checkpoints and retain full audit
+`3789296646` at tick 6600 (`/tmp/heartroot-section3-four-peer.json`).

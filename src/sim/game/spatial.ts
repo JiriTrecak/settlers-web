@@ -38,7 +38,7 @@ export const distance2 = (a: Point, b: Point) =>
 let spatialRevisions = 0;
 type Body = {radius:number;height:number;formationSpacing:number;locomotion?:'ground'|'air'};
 type Actor = Pick<Entity,'definition'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>|Body;
-type OccupancyInput = {id:number;definition:string;x:number;y:number;rotation:number;surface?:string;scale:number;building:boolean;resource:boolean;overlaps:boolean};
+type OccupancyInput = {id:number;definition:string;x:number;y:number;rotation:number;surface?:string;scale:number;building:boolean;resource:boolean};
 export class Spatial {
   airborne(actor?:Actor){return !!actor&&('definition' in actor?locomotion(formDefinition(this.registry.get(actor.definition),actor,this.registry))==='air':actor.locomotion==='air');}
   sameLocomotion(a?:Actor,b?:Actor){return this.airborne(a)===this.airborne(b);}
@@ -88,6 +88,10 @@ export class Spatial {
   readonly tactical: TacticalTerrain;
   private blockedCells=new Set<number>();
   private occupancyInputs:OccupancyInput[]=[];
+  // Only overlapping cells need an owner stack. Single-owner cells continue to
+  // use the existing arrays. Order matches the authoritative last-writer rule.
+  private readonly occupiedOverlaps=new Map<number,number[]>();
+  private readonly resourceOverlaps=new Map<number,number[]>();
   /** Changes whenever blocking occupancy is rebuilt. Drawn from a module-wide counter so a
    * restored World's fresh Spatial never repeats a revision a debug consumer has cached. */
   revision=++spatialRevisions;
@@ -296,11 +300,9 @@ export class Spatial {
     if(index!==this.occupancyInputs.length){this.rebuild();return;}
     if(removedIndex>=0){
       const old=this.occupancyInputs[removedIndex];
-      // Rebuild overlaps to restore the previous owner in original entity order.
-      if(old.overlaps){this.rebuild();return;}
       const cells=new Set<number>();
-      if(old.building)for(const cell of this.footprint(old))if(cell>=0){this.occupied[cell]=0;cells.add(cell);}
-      if(old.resource)for(const cell of this.collision({...old,appearance:{scale:old.scale}}))if(cell>=0){this.resources[cell]=0;cells.add(cell);}
+      if(old.building)for(const cell of this.footprint(old))if(cell>=0){this.removeCellOwner(this.occupied,this.occupiedOverlaps,cell,old.id);cells.add(cell);}
+      if(old.resource)for(const cell of this.collision({...old,appearance:{scale:old.scale}}))if(cell>=0){this.removeCellOwner(this.resources,this.resourceOverlaps,cell,old.id);cells.add(cell);}
       const changed:number[]=[];
       for(const cell of cells)if(!this.occupied[cell]&&!this.resources[cell]){this.blockedCells.delete(cell);changed.push(cell);}
       this.occupancyInputs.splice(removedIndex,1);
@@ -308,10 +310,47 @@ export class Spatial {
     }
     this.revision=++spatialRevisions;this.sectors.prepare();
   }
+  private removeCellOwner(grid:Int32Array,overlaps:Map<number,number[]>,cell:number,id:number){
+    const owners=overlaps.get(cell);
+    if(!owners){if(grid[cell]===id)grid[cell]=0;return;}
+    const at=owners.indexOf(id);if(at>=0)owners.splice(at,1);
+    grid[cell]=owners.at(-1)??0;
+    if(owners.length<=1)overlaps.delete(cell);
+  }
+  /** A normal build command appends one entity to synchronized occupancy. Touch
+   * only its footprint; direct edits to existing blockers still require rebuild.
+   * Appending preserves the same last-writer ownership as a full entity scan. */
+  appendOccupancy(e:Entity) {
+    if(this.entities().at(-1)!==e||(this.occupancyInputs.at(-1)?.id??0)>=e.id){this.rebuild();return;}
+    const building=this.registry.get(e.definition).kind==='building',resource=!!e.resource&&e.resource.amount>0;
+    const changed:number[]=[];
+    if(alive(e)&&(building||resource)){
+      this.occupancyInputs.push({id:e.id,definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,
+        surface:e.surface,scale:e.appearance?.scale??1,building,resource});
+      const occupy=(grid:Int32Array,overlaps:Map<number,number[]>,cells:readonly number[])=>{
+        for(const cell of cells)if(cell>=0){
+          this.addCellOwner(grid,overlaps,cell,e.id);
+          if(!this.blockedCells.has(cell)){this.blockedCells.add(cell);changed.push(cell);}
+        }
+      };
+      if(building)occupy(this.occupied,this.occupiedOverlaps,this.footprint(e));
+      if(resource)occupy(this.resources,this.resourceOverlaps,this.collision(e));
+    }
+    this.revision=++spatialRevisions;
+    this.invalidateOccupancy(changed);this.sectors.prepare();
+  }
+  private addCellOwner(grid:Int32Array,overlaps:Map<number,number[]>,cell:number,id:number){
+    if(grid[cell]&&grid[cell]!==id){
+      let owners=overlaps.get(cell);
+      if(!owners){owners=[grid[cell]!];overlaps.set(cell,owners);}
+      owners.push(id);
+    }
+    grid[cell]=id;
+  }
   rebuild() {
     const previous=this.blockedCells,next=new Set<number>();
     const inputs:OccupancyInput[]=[];
-    const byId=new Map<number,OccupancyInput>();
+    this.occupiedOverlaps.clear();this.resourceOverlaps.clear();
     this.revision=++spatialRevisions;
     this.occupied.fill(0);
     this.resources.fill(0);
@@ -320,19 +359,17 @@ export class Spatial {
         const building=this.registry.get(e.definition).kind==='building',resource=!!e.resource&&e.resource.amount>0;
         if(!building&&!resource)continue;
         const input:OccupancyInput={id:e.id,definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,
-          surface:e.surface,scale:e.appearance?.scale??1,building,resource,overlaps:false};
-        inputs.push(input);byId.set(e.id,input);
+          surface:e.surface,scale:e.appearance?.scale??1,building,resource};
+        inputs.push(input);
         if (building)
           for (const i of this.footprint(e))
             if (i >= 0) {
-              if(this.occupied[i]&&this.occupied[i]!==e.id){byId.get(this.occupied[i])!.overlaps=true;input.overlaps=true;}
-              this.occupied[i] = e.id;next.add(i);
+              this.addCellOwner(this.occupied,this.occupiedOverlaps,i,e.id);next.add(i);
             }
         if (resource)
           for (const i of this.collision(e))
             if (i >= 0) {
-              if(this.resources[i]&&this.resources[i]!==e.id){byId.get(this.resources[i])!.overlaps=true;input.overlaps=true;}
-              this.resources[i] = e.id;next.add(i);
+              this.addCellOwner(this.resources,this.resourceOverlaps,i,e.id);next.add(i);
             }
       }
     this.occupancyInputs=inputs;

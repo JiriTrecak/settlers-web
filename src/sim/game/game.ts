@@ -463,7 +463,7 @@ export class Game {
       );
       this.economy.admitProject(b, reservation);
       this.orders.issue(builder, {type: "construct", target: b.id}, action.append);
-      this.spatial.rebuild();
+      this.spatial.appendOccupancy(b);
       return { accepted: true, actors: [builder.id] };
     }
     if (action.type === "cancel" && actor.construction) {

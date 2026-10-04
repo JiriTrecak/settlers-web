@@ -16,6 +16,16 @@ network hashing. Projection, encode, transport and main-thread decode remain
 separate costs. Detailed instrumentation adds overhead; use an unprofiled run
 of `scripts/bench/match-budget.ts` for budget comparisons.
 
+With `--details`, that benchmark also keeps complete profiles for the slowest 1%
+of measured ticks (`slowTicks`) and their mean self/inclusive contributions
+(`tailProfile`). These describe the *same* slow frames, not a sum of independently
+computed category percentiles. The opt-in runtime/MCP scopes now break down
+autocast actor construction, visibility and allied mana, harvest progression,
+deployment, regrowth, static occupancy, sector preparation and command kinds.
+Static occupancy additions have their own scope: normal building placement
+updates only the new footprint, then invalidates dependent navigation cells and
+sectors. Global terrain/state edits still use the explicit full rebuild.
+
 The Heartroot four-player CPU target is **3 ms p99**, not a mean. Routine network
 checkpoints target **0.1 ms per check**: existing counters/economy totals plus at
 most 32 actors read directly from the maintained body index. `sim/game/checkpoint.ts`
@@ -24,6 +34,12 @@ omitted; many internal differences will only surface through sampled gameplay
 outcomes, and some may never be detected. No work is relocated into other systems.
 `World.checksum('full')` remains an explicit expensive correctness audit, absent
 from the routine worker path. Neither mode implements resync or anti-cheat.
+
+Audit every full rebuild by its trigger, affected entities/cells/observers and
+downstream dependencies. Local changes should do local work; prove equivalence
+against a full refresh, and explicitly justify any remaining global invalidation.
+Include dependent route connectivity, not just geographical proximity. Shifting
+unchanged work to another subsystem does not satisfy the optimization objective.
 
 Frame interval measures the app loop (including the existing 40 Hz unfocused
 fallback), not render submission cadence. GPU time covers the entire render,

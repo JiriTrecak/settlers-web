@@ -7,8 +7,8 @@ import type {AbilityActor} from './runtime';
 import type {SpellSource} from './state';
 import type {ContentRegistry} from '../../content/registry';
 /** Snapshot primitive values only; never keep removed entity objects alive. */
-export function spellSource(c:GameContext,e:Entity):SpellSource{
- const stats=c.stats(e),p=precise(e);
+export function spellSource(c:GameContext,e:Entity,stats=c.stats(e)):SpellSource{
+ const p=precise(e);
  return {height:c.spatial.height(p)+c.spatial.elevation({...e,...p}),locomotion:locomotion(c.def(e)),source:e.id,definition:e.definition,owner:e.owner,position:{x:p.x,y:p.y},camp:e.unit?.camp??undefined,level:stats.level,summoned:!!e.summoned,resources:{hp:Math.min(e.hp??0,stats.maxHp),maxHp:stats.maxHp,mana:Math.min(e.abilities?.mana??0,stats.maxMana),maxMana:stats.maxMana}};
 }
 export function sourceActor(s:SpellSource,registry:ContentRegistry):AbilityActor{
